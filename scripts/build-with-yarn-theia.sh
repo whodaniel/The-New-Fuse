@@ -12,11 +12,11 @@ cd apps/theia-ide
 
 # Install dependencies with bun (following project convention)
 echo "Installing Theia dependencies with bun..."
-bun install
+pnpm install
 
-# Build Theia with bunx (which provides yarn-like functionality for Theia)
-echo "Building Theia with bunx @theia/cli..."
-bunx @theia/cli@1.59.0 build --mode production
+# Build Theia with pnpm dlx (which provides yarn-like functionality for Theia)
+echo "Building Theia with pnpm dlx @theia/cli..."
+pnpm dlx @theia/cli@1.59.0 build --mode production
 
 # Verify build success
 if [ -f "lib/backend/main.js" ] && [ -f "src-gen/backend/main.js" ]; then
@@ -30,7 +30,7 @@ if [ -f "lib/backend/main.js" ] && [ -f "src-gen/backend/main.js" ]; then
   "version": "2.0.0",
   "built": true,
   "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-  "buildMethod": "bunx @theia/cli build",
+  "buildMethod": "pnpm dlx @theia/cli build",
   "buildTime": "optimized",
   "features": [
     "ai-powered",
@@ -54,7 +54,7 @@ cd ../..
 
 # Step 2: Build other packages
 echo "📦 Step 2: Building other packages..."
-bun run build:packages
+pnpm run build:packages
 
 echo "✅ Build completed successfully!"
 echo "🎯 Theia IDE is now fully functional and ready for Browser Hub integration"

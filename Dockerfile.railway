@@ -8,13 +8,13 @@ WORKDIR /app
 COPY package.json bun.lockb ./
 
 # Install dependencies
-RUN bun install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the application code to the working directory
 COPY . .
 
 # Build the application
-RUN bun run build
+RUN pnpm run build
 
 # Expose the port that the application will run on
 EXPOSE 3000

@@ -117,12 +117,12 @@ Analyze packages/integration-tests/ and testing framework:
 5. Check API integration test coverage
 6. Run performance benchmarking suite
 7. Execute build verification commands:
-   - bun install
-   - bun run build
-   - bun run typecheck
-   - bun run lint
-   - bun run test:integration
-   - bun run test:e2e
+   - pnpm install
+   - pnpm run build
+   - pnpm run typecheck
+   - pnpm run lint
+   - pnpm run test:integration
+   - pnpm run test:e2e
 
 Document test results, failures, and infrastructure gaps.
 ```

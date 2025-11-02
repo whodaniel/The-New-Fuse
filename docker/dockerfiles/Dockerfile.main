@@ -32,13 +32,13 @@ COPY packages/sync-core/package.json ./packages/sync-core/
 
 # Dependencies stage
 FROM base AS deps
-RUN bun install --frozen-lockfile --production
+RUN pnpm install --frozen-lockfile --production
 
 # Build stage
 FROM base AS build
 COPY . .
-RUN bun install --frozen-lockfile
-RUN bun run build
+RUN pnpm install --frozen-lockfile
+RUN pnpm run build
 
 # API Server Production Image
 FROM base AS api-server

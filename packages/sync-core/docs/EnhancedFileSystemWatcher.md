@@ -346,7 +346,7 @@ The package includes comprehensive integration tests:
 
 ```bash
 # Run integration tests
-bun test src/watchers/EnhancedFileSystemWatcher.integration.test.ts
+pnpm test src/watchers/EnhancedFileSystemWatcher.integration.test.ts
 ```
 
 ### Test Coverage

@@ -34,15 +34,15 @@ fi
 
 # Step 3: Install dependencies
 echo "📦 Installing dependencies..."
-bun install
+pnpm install
 
 # Step 4: Build essential packages in the correct order
 echo "🔨 Building essential packages..."
-bun run build
+pnpm run build
 
 # Step 5: Start the frontend development server
 echo "🚀 Starting the frontend development server..."
 cd apps/frontend
-bun run dev
+pnpm run dev
 
 echo "✅ Setup complete! The application should be running at http://localhost:3000"

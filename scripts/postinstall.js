@@ -81,11 +81,11 @@ function main() {
       console.log('🎉 Canvas native module fix successful!');
     } else {
       console.log('⚠️  Canvas compiled but may have runtime issues');
-      console.log('💡 You may need system dependencies: bun run fix:native-modules');
+      console.log('💡 You may need system dependencies: pnpm run fix:native-modules');
     }
   } else {
     console.log('⚠️  Automatic canvas fix failed');
-    console.log('💡 Run manually: bun run fix:native-modules');
+    console.log('💡 Run manually: pnpm run fix:native-modules');
   }
 }
 
@@ -93,5 +93,5 @@ try {
   main();
 } catch (error) {
   console.log('⚠️  Postinstall check failed:', error.message);
-  console.log('💡 If you encounter issues, run: bun run fix:native-modules');
+  console.log('💡 If you encounter issues, run: pnpm run fix:native-modules');
 }

@@ -2,28 +2,28 @@
 
 ## ✅ **What's New**
 
-The `bun run dev` command now provides a **complete integrated development experience**:
+The `pnpm run dev` command now provides a **complete integrated development experience**:
 
 ### **🎯 One Command Does Everything**
 ```bash
-bun run dev
+pnpm run dev
 ```
 
 **Previous workflow (multiple steps):**
 ```bash
 # Old way - multiple terminals and commands
-bun run build                    # 5-10 minutes
-bun run services:start          # Terminal 1
-bun run hub:functional          # Terminal 2
+pnpm run build                    # 5-10 minutes
+pnpm run services:start          # Terminal 1
+pnpm run hub:functional          # Terminal 2
 ```
 
 **New workflow (single command):**
 ```bash
 # New way - everything integrated
-bun run dev                     # One command, everything works!
+pnpm run dev                     # One command, everything works!
 ```
 
-## 🔧 **What Happens When You Run `bun run dev`**
+## 🔧 **What Happens When You Run `pnpm run dev`**
 
 ### **Phase 1: Smart Build Check** ⚡
 ```
@@ -88,7 +88,7 @@ bun run dev                     # One command, everything works!
 - **Graceful degradation** - works even if some services fail
 
 ### **👥 Developer Experience**
-- **One command to rule them all** - `bun run dev`
+- **One command to rule them all** - `pnpm run dev`
 - **Clear status messages** - know exactly what's happening
 - **Proper error handling** - helpful messages when things fail
 
@@ -97,19 +97,19 @@ bun run dev                     # One command, everything works!
 ### **Before Integration**
 ```bash
 # First time setup (every time)
-bun run build          # 5-10 minutes
-bun run services:start # Terminal 1, manual management
-bun run hub:functional # Terminal 2, manual launch
+pnpm run build          # 5-10 minutes
+pnpm run services:start # Terminal 1, manual management
+pnpm run hub:functional # Terminal 2, manual launch
 # Total: 5-10 minutes + manual coordination
 ```
 
 ### **After Integration**
 ```bash
 # First time
-bun run dev            # 5-10 minutes (builds everything)
+pnpm run dev            # 5-10 minutes (builds everything)
 
 # Subsequent times  
-bun run dev            # 10-30 seconds (skips build)
+pnpm run dev            # 10-30 seconds (skips build)
 # Total: Massive time savings + zero manual work
 ```
 
@@ -118,25 +118,25 @@ bun run dev            # 10-30 seconds (skips build)
 ### **Primary Commands**
 ```bash
 # Integrated development (recommended)
-bun run dev
+pnpm run dev
 
 # Check build status only
-bun run check-build
+pnpm run check-build
 ```
 
 ### **Alternative Commands** (for specific needs)
 ```bash
 # Services only (no browser)
-bun run services:start
+pnpm run services:start
 
 # Browser only (limited functionality)
-bun run hub:functional
+pnpm run hub:functional
 
 # Direct dev (bypass smart checks)
-bun run dev:direct
+pnpm run dev:direct
 
 # With frontend included
-bun run dev:with-frontend
+pnpm run dev:with-frontend
 ```
 
 ## 🚀 **Usage Examples**
@@ -144,7 +144,7 @@ bun run dev:with-frontend
 ### **Daily Development Session**
 ```bash
 # Morning - start everything
-bun run dev
+pnpm run dev
 
 # Output shows:
 # ✅ Build artifacts found. Skipping build step.
@@ -157,7 +157,7 @@ bun run dev
 ### **First Time Setup**
 ```bash
 # First run - builds everything
-bun run dev
+pnpm run dev
 
 # Output shows:
 # 🔨 Running full build...
@@ -170,7 +170,7 @@ bun run dev
 ### **After Making Changes**
 ```bash
 # Just restart - smart detection handles the rest
-bun run dev
+pnpm run dev
 
 # Automatically:
 # - Detects what needs rebuilding
@@ -181,14 +181,14 @@ bun run dev
 ## 💡 **Pro Tips**
 
 ### **Development Workflow**
-1. **Run `bun run dev` once** - everything starts
+1. **Run `pnpm run dev` once** - everything starts
 2. **Make your changes** - services auto-reload
 3. **Browser hub stays connected** - real-time updates
 4. **Stop with Ctrl+C** - clean shutdown
 
 ### **Troubleshooting**
 - **Services not connecting?** Wait 30 seconds for startup
-- **Build issues?** Run `bun run build` manually first
+- **Build issues?** Run `pnpm run build` manually first
 - **Port conflicts?** Script handles automatic cleanup
 
 ### **Performance**
@@ -202,7 +202,7 @@ bun run dev
 
 ```bash
 # The only command you need
-bun run dev
+pnpm run dev
 ```
 
 **Everything else is handled automatically! 🚀**

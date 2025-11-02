@@ -52,21 +52,21 @@ All AI enhancements and capabilities have been successfully implemented and are 
 ### **Start Everything**
 ```bash
 # From the project root - launches all services
-bun run start
+pnpm run start
 # or
-bun run launch
+pnpm run launch
 ```
 
 ### **Individual Services**
 ```bash
 # Start Theia IDE only
-cd apps/theia-ide && bun run start
+cd apps/theia-ide && pnpm run start
 
 # Open Browser Hub
 open apps/browser-hub/enhanced-browser-hub.html
 
 # Start enhanced server
-cd apps/backend && bun run simple-main
+cd apps/backend && pnpm run simple-main
 ```
 
 ## 🤖 **AI Features Usage**

@@ -64,7 +64,7 @@ DB_NAME=the_new_fuse_dev
 
 ```bash
 # Start with Docker (recommended)
-bun run docker:start
+pnpm run docker:start
 
 # Check if running
 docker ps | grep postgres
@@ -144,7 +144,7 @@ REDIS_URL=redis://localhost:6380
 
 ```bash
 # Start with Docker (recommended)
-bun run docker:start
+pnpm run docker:start
 
 # Check if running
 docker ps | grep redis
@@ -278,13 +278,13 @@ When Prisma is integrated:
 
 ```bash
 # Generate migration
-bun run db:migrate
+pnpm run db:migrate
 
 # Reset database
-bun run db:reset
+pnpm run db:reset
 
 # Seed database
-bun run db:seed
+pnpm run db:seed
 ```
 
 ## Performance Tuning
@@ -349,7 +349,7 @@ The system includes automatic health monitoring:
 curl http://localhost:3004/api/services/status
 
 # Test Docker connectivity
-bun run docker:test
+pnpm run docker:test
 
 # View system metrics
 curl http://localhost:3004/api/system/metrics
@@ -445,8 +445,8 @@ REDIS_TLS=true
 docker ps | grep -E "postgres|redis"
 
 # Restart containers
-bun run docker:stop
-bun run docker:start
+pnpm run docker:stop
+pnpm run docker:start
 ```
 
 **2. Port Conflicts**
@@ -496,12 +496,12 @@ docker logs -f tnf-redis-dev
 
 ```bash
 # Recreate containers (data preserved in volumes)
-bun run docker:stop
+pnpm run docker:stop
 docker-compose -f docker-compose.dev-simple.yml up --force-recreate -d
 
 # Complete reset (destroys data)
 docker-compose -f docker-compose.dev-simple.yml down -v
-bun run docker:start
+pnpm run docker:start
 ```
 
 ## Production Deployment
@@ -551,8 +551,8 @@ DATABASE_URL=postgresql://prod-user:prod-pass@prod-host:5432/prod-db
 ## Support
 
 For database-related issues:
-1. Check container status: `bun run docker:status`
-2. View logs: `bun run docker:logs`
-3. Test connectivity: `bun run docker:test`
+1. Check container status: `pnpm run docker:status`
+2. View logs: `pnpm run docker:logs`
+3. Test connectivity: `pnpm run docker:test`
 4. Check the troubleshooting section above
 5. Review Docker container health checks

@@ -9,7 +9,7 @@
 ## Solution Implemented
 
 ### 1. Optimized Build Process
-- **Fixed Build Command**: `bun run build` now properly builds Theia using `bunx @theia/cli@1.59.0`
+- **Fixed Build Command**: `pnpm run build` now properly builds Theia using `pnpm dlx @theia/cli@1.59.0`
 - **Verification System**: Added comprehensive build verification to ensure all required files are present
 - **Build Info Tracking**: Creates `lib/build-info.json` with build metadata and functionality status
 
@@ -23,7 +23,7 @@
 
 ### 3. Build Verification System
 ```bash
-bun run verify:theia  # Verifies Theia build status
+pnpm run verify:theia  # Verifies Theia build status
 ```
 
 Checks for:
@@ -37,36 +37,36 @@ Checks for:
 
 ### Build Commands
 ```bash
-bun run build                    # Main build (includes optimized Theia)
-bun run build:with-optimized-theia  # Direct Theia build
-bun run verify:theia            # Verify Theia build status
+pnpm run build                    # Main build (includes optimized Theia)
+pnpm run build:with-optimized-theia  # Direct Theia build
+pnpm run verify:theia            # Verify Theia build status
 ```
 
 ### Development Commands
 ```bash
-bun run dev                     # Main dev (staged startup)
-bun run dev:functional-theia    # Alternative with explicit checks
+pnpm run dev                     # Main dev (staged startup)
+pnpm run dev:functional-theia    # Alternative with explicit checks
 ```
 
 ## Test Results ✅
 
 ### Build Test
 ```bash
-$ bun run build
-✅ Theia IDE build completed and verified with bunx-theia-cli-optimized
+$ pnpm run build
+✅ Theia IDE build completed and verified with pnpm dlx-theia-cli-optimized
 🎯 Theia is now fully functional and ready for Browser Hub integration
 ✅ Build completed successfully!
 ```
 
 ### Verification Test
 ```bash
-$ bun run verify:theia
+$ pnpm run verify:theia
 ✅ Theia IDE build verification PASSED
 🎯 Theia is ready for Browser Hub integration
 📋 Build Details:
    • Version: 2.0.0
    • Built: 2025-08-18T10:05:40.805Z
-   • Method: bunx-theia-cli-optimized
+   • Method: pnpm dlx-theia-cli-optimized
    • Fully Functional: YES
 ```
 
@@ -79,7 +79,7 @@ $ curl -s -o /dev/null -w "%{http_code}" http://localhost:3007
 ## Key Improvements
 
 ### 1. Build Reliability
-- Uses `bunx @theia/cli@1.59.0` for consistent Theia builds
+- Uses `pnpm dlx @theia/cli@1.59.0` for consistent Theia builds
 - Verifies all required files are generated
 - Creates build metadata for tracking
 
@@ -113,8 +113,8 @@ $ curl -s -o /dev/null -w "%{http_code}" http://localhost:3007
 ## Result
 
 When you run:
-1. `bun run build` - Theia will be fully built and verified
-2. `bun run dev` - Services start in sequence, Theia is ready before Browser Hub
+1. `pnpm run build` - Theia will be fully built and verified
+2. `pnpm run dev` - Services start in sequence, Theia is ready before Browser Hub
 
 **The Browser Hub now launches with a fully functional Theia IDE** - no more cross-origin restrictions or incomplete functionality!
 
@@ -122,9 +122,9 @@ When you run:
 
 To confirm the solution works:
 
-1. **Build Theia**: `bun run build`
-2. **Verify Build**: `bun run verify:theia` 
-3. **Start Development**: `bun run dev`
+1. **Build Theia**: `pnpm run build`
+2. **Verify Build**: `pnpm run verify:theia` 
+3. **Start Development**: `pnpm run dev`
 4. **Check Browser Hub**: Theia should be fully functional when embedded
 
 The solution ensures Theia is completely ready before Browser Hub attempts to use it, eliminating the functionality issues you experienced.

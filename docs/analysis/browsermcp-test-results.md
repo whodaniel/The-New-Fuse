@@ -154,7 +154,7 @@ Flow: Browser Hub → Extension → MCP Server
 ```bash
 # 1. Start Browser Hub
 cd apps/electron-desktop
-bunx electron dist/main/main.js
+pnpm dlx electron dist/main/main.js
 
 # 2. Verify extension installation
 Navigate to: chrome://extensions/

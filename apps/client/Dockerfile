@@ -13,16 +13,16 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/ui/package.json ./packages/ui/
 
 # Install dependencies
-RUN bun install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Copy source files
 COPY . .
 
 # Build packages
-RUN cd packages/types && bun run build && cd ../..
-RUN cd packages/utils && bun run build && cd ../..
-RUN cd packages/ui && bun run build && cd ../..
-RUN cd apps/client && bun run build && cd ../..
+RUN cd packages/types && pnpm run build && cd ../..
+RUN cd packages/utils && pnpm run build && cd ../..
+RUN cd packages/ui && pnpm run build && cd ../..
+RUN cd apps/client && pnpm run build && cd ../..
 
 # Production stage
 FROM nginx:alpine

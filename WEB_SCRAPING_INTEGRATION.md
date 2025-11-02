@@ -105,13 +105,13 @@ The New Fuse now includes comprehensive web scraping infrastructure that enables
 
 ### 1. **Install Dependencies**
 ```bash
-bun install
+pnpm install
 ```
 
 ### 2. **Start MCP Server with Web Scraping**
 ```bash
 # Run the web scraping MCP server
-bun run packages/mcp-core/examples/web-scraping-server.ts
+pnpm run packages/mcp-core/examples/web-scraping-server.ts
 ```
 
 ### 3. **Deploy Serverless Functions**
@@ -197,7 +197,7 @@ AI Agent → Vercel Functions → Target Website
 ```bash
 # Start the web scraping MCP server
 cd packages/mcp-core
-bun run examples/web-scraping-server.ts
+pnpm run examples/web-scraping-server.ts
 ```
 
 ### **2. Test Serverless Functions**

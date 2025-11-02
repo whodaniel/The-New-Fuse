@@ -9,26 +9,26 @@ The Theia IDE build process has been optimized to ensure full functionality when
 ### 1. Build Command
 ```bash
 # Primary build command (includes yarn-based Theia build)
-bun run build
+pnpm run build
 
 # Direct optimized Theia build
-bun run build:with-optimized-theia
+pnpm run build:with-optimized-theia
 ```
 
 ### 2. Development Command
 ```bash
 # Primary dev command (ensures Theia is functional before Browser Hub)
-bun run dev
+pnpm run dev
 
 # Alternative with explicit Theia functionality check
-bun run dev:functional-theia
+pnpm run dev:functional-theia
 ```
 
 ## Build Sequence
 
-### Build Phase (`bun run build`)
-1. **Theia Dependencies**: Install with `bun install` in `apps/theia-ide/`
-2. **Theia Build**: Execute `bunx @theia/cli@1.59.0 build --mode production`
+### Build Phase (`pnpm run build`)
+1. **Theia Dependencies**: Install with `pnpm install` in `apps/theia-ide/`
+2. **Theia Build**: Execute `pnpm dlx @theia/cli@1.59.0 build --mode production`
 3. **Verification**: Check for required files:
    - `lib/backend/main.js`
    - `lib/frontend/index.html`
@@ -36,7 +36,7 @@ bun run dev:functional-theia
 4. **Build Info**: Create `lib/build-info.json` with build metadata
 5. **Other Packages**: Build remaining packages with turbo
 
-### Development Phase (`bun run dev`)
+### Development Phase (`pnpm run dev`)
 1. **Build Check**: Verify Theia is built and functional
 2. **Stage 1**: Start core services (API Gateway, Backend, Frontend)
 3. **Stage 2**: Start Theia IDE and wait for full readiness
@@ -46,7 +46,7 @@ bun run dev:functional-theia
 
 ### Check Theia Build Status
 ```bash
-bun run verify:theia
+pnpm run verify:theia
 ```
 
 This will verify:
@@ -57,9 +57,9 @@ This will verify:
 ## Key Features
 
 ### Optimized Theia Integration
-- Theia dependencies installed with `bun install` (following project convention)
-- Theia built with `bunx @theia/cli@1.59.0 build --mode production`
-- Uses bunx for proper Theia CLI execution while maintaining bun ecosystem
+- Theia dependencies installed with `pnpm install` (following project convention)
+- Theia built with `pnpm dlx @theia/cli@1.59.0 build --mode production`
+- Uses pnpm dlx for proper Theia CLI execution while maintaining bun ecosystem
 
 ### Staged Development
 - Services start in sequence to ensure dependencies are ready
@@ -74,8 +74,8 @@ This will verify:
 ## Troubleshooting
 
 ### If Theia is not functional in Browser Hub:
-1. Run `bun run verify:theia` to check build status
-2. If verification fails, run `bun run build:with-optimized-theia`
+1. Run `pnpm run verify:theia` to check build status
+2. If verification fails, run `pnpm run build:with-optimized-theia`
 3. Ensure Theia is responding at `http://localhost:3007` before launching Browser Hub
 
 ### Common Issues:
@@ -95,7 +95,7 @@ This will verify:
 
 ## Result
 
-When you run `bun run build` followed by `bun run dev`, Theia will be:
+When you run `pnpm run build` followed by `pnpm run dev`, Theia will be:
 1. ✅ Fully built using yarn
 2. ✅ Completely functional before Browser Hub launches
 3. ✅ Ready for embedding without cross-origin issues

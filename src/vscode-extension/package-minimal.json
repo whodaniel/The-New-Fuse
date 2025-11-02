@@ -11,7 +11,7 @@
   "main": "./dist/extension-minimal.js",
   "scripts": {
     "build": "esbuild src/extension-minimal.ts --bundle --outfile=dist/extension-minimal.js --external:vscode --format=cjs --platform=node",
-    "package": "bunx vsce package",
+    "package": "pnpm dlx vsce package",
     "clean": "rm -rf dist *.vsix"
   },
   "contributes": {

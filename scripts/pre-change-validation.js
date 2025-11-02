@@ -69,7 +69,7 @@ class PreChangeValidator {
   async validateTypeScript() {
     try {
       this.log('Validating TypeScript compilation...');
-      execSync('bun run type-check', { stdio: 'pipe' });
+      execSync('pnpm run type-check', { stdio: 'pipe' });
       this.results.passed++;
       this.log('TypeScript compilation successful');
     } catch (error) {
@@ -81,7 +81,7 @@ class PreChangeValidator {
   async runTests() {
     try {
       this.log('Running test suite...');
-      const testResult = execSync('bun test --passWithNoTests', { encoding: 'utf8' });
+      const testResult = execSync('pnpm test --passWithNoTests', { encoding: 'utf8' });
       this.results.passed++;
       this.log('All tests passed');
       

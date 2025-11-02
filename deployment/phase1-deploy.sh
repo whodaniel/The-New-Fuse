@@ -73,23 +73,23 @@ build_and_test() {
     
     # Install dependencies
     echo "Installing dependencies..."
-    bun install --frozen-lockfile
+    pnpm install --frozen-lockfile
     
     # Generate Prisma client
     echo "Generating Prisma client..."
-    bun run db:generate
+    pnpm run db:generate
     
     # Build packages
     echo "Building packages..."
-    bun run build:packages
+    pnpm run build:packages
     
     # Build apps
     echo "Building applications..."
-    bun run build:apps
+    pnpm run build:apps
     
     # Run tests
     echo "Running tests..."
-    bun run test:unit
+    pnpm run test:unit
     
     echo -e "${GREEN}✅ Local build and test completed${NC}"
 }

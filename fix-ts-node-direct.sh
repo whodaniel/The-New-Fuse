@@ -34,4 +34,4 @@ cp -r temp-fix/node_modules/@* node_modules/ 2>/dev/null || true
 # Clean up
 rm -rf temp-fix
 
-echo "ts-node has been installed directly. Now try running 'bun install' again."
+echo "ts-node has been installed directly. Now try running 'pnpm install' again."

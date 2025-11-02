@@ -9,7 +9,7 @@ The New Fuse framework features a production-optimized build system designed to 
 ### Health Check (Start Here!)
 ```bash
 # Check if your system is ready for building
-bun run build:health-check
+pnpm run build:health-check
 
 # Or run the script directly
 node scripts/build-health-check.cjs
@@ -18,16 +18,16 @@ node scripts/build-health-check.cjs
 ### Optimized Build Commands
 ```bash
 # Full optimized build with comprehensive error handling
-bun run build:optimized
+pnpm run build:optimized
 
 # Fast build (packages then apps)
-bun run build:fast
+pnpm run build:fast
 
 # Verify existing build outputs
-bun run build:verify
+pnpm run build:verify
 
 # Original memory-optimized build
-bun run build
+pnpm run build
 ```
 
 ## 🔧 Build System Components
@@ -140,14 +140,14 @@ node scripts/setup-native-modules.cjs
 
 # Alternative: Clean rebuild
 rm -rf node_modules
-bun install
+pnpm install
 ```
 
 #### 2. TypeScript Compilation Errors
 ```bash
 # Symptom: Type compatibility errors
 # Solution: Check TypeScript version consistency
-bun run build:verify
+pnpm run build:verify
 
 # Check individual app configs
 cd apps/api && tsc --noEmit
@@ -157,7 +157,7 @@ cd apps/api && tsc --noEmit
 ```bash
 # Symptom: "JavaScript heap out of memory"
 # Solution: Use low-memory build
-BUILD_MEMORY_LIMIT=2048 BUILD_CONCURRENCY=1 bun run build
+BUILD_MEMORY_LIMIT=2048 BUILD_CONCURRENCY=1 pnpm run build
 
 # Or increase Node.js heap
 export NODE_OPTIONS="--max-old-space-size=8192"
@@ -170,7 +170,7 @@ export NODE_OPTIONS="--max-old-space-size=8192"
 turbo clean
 
 # Full clean rebuild
-bun run build:optimized clean
+pnpm run build:optimized clean
 ```
 
 ### Health Check Diagnostics
@@ -201,14 +201,14 @@ node scripts/build-health-check.cjs
   run: node scripts/setup-native-modules.cjs
 
 - name: Optimized Build
-  run: bun run build:optimized
+  run: pnpm run build:optimized
   env:
     BUILD_MEMORY_LIMIT: 4096
     BUILD_CONCURRENCY: 2
     NODE_ENV: production
 
 - name: Verify Build Outputs
-  run: bun run build:verify
+  run: pnpm run build:verify
 ```
 
 ### Docker Build Strategy
@@ -225,18 +225,18 @@ COPY scripts/ scripts/
 RUN node scripts/setup-native-modules.cjs
 
 # Dependencies
-RUN bun install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Build
 COPY . .
-RUN bun run build:optimized
+RUN pnpm run build:optimized
 
 # Production image
 FROM oven/bun:1.2-slim AS production
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
-RUN bun install --production --frozen-lockfile
+RUN pnpm install --production --frozen-lockfile
 ```
 
 ## 📈 Performance Metrics
@@ -300,7 +300,7 @@ Individual packages can override build behavior:
 
 ## 🆘 Getting Help
 
-1. **Run Health Check**: Start with `bun run build:health-check`
+1. **Run Health Check**: Start with `pnpm run build:health-check`
 2. **Check Logs**: Review generated log files for specific errors
 3. **Clean Build**: Try `./scripts/build-optimized.sh clean` for a fresh start
 4. **Environment**: Verify all required tools are installed and up to date

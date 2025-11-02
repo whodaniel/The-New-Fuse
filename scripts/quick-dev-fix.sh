@@ -35,7 +35,7 @@ rm -rf node_modules/electron
 
 # Reinstall Electron
 echo "📦 Reinstalling Electron..."
-bun add electron@latest --dev
+pnpm add electron@latest --dev
 
 # Fix 3: Clear problematic build artifacts
 echo "🧹 Clearing build artifacts..."
@@ -43,4 +43,4 @@ rm -rf .turbo/
 rm -rf apps/theia-ide/lib/
 rm -rf apps/theia-ide/src-gen/
 
-echo "✅ Quick fix complete! Try running 'bun run dev' again."
+echo "✅ Quick fix complete! Try running 'pnpm run dev' again."

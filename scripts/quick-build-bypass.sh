@@ -8,7 +8,7 @@ pkill -f "memory-optimized-build" 2>/dev/null || true
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-bun install
+pnpm install
 
 # Create necessary directories
 mkdir -p apps/theia-ide/lib
@@ -58,9 +58,9 @@ EOF
 echo "✅ Quick build bypass completed!"
 echo ""
 echo "🎯 Available launch options:"
-echo "1. Browser Hub: bun run dev:browser"
-echo "2. Electron Desktop: bun run dev:electron"
-echo "3. Theia IDE: cd apps/theia-ide && bun run dev"
-echo "4. All services: bun run dev"
+echo "1. Browser Hub: pnpm run dev:browser"
+echo "2. Electron Desktop: pnpm run dev:electron"
+echo "3. Theia IDE: cd apps/theia-ide && pnpm run dev"
+echo "4. All services: pnpm run dev"
 echo ""
 echo "💡 This bypass allows you to run the system immediately while avoiding build issues."

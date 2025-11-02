@@ -46,7 +46,7 @@ echo "✅ Cleaned node_modules and lockfile"
 
 echo ""
 echo "📦 Step 2: Installing packages (allowing scripts)..."
-bun install
+pnpm install
 echo "✅ Packages installed"
 
 echo ""

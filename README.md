@@ -17,7 +17,7 @@ git clone <repository-url>
 cd the-new-fuse
 
 # Install dependencies (includes automatic native module setup)
-bun install
+pnpm install
 ```
 
 > **Note**: The installation process automatically sets up required native modules (canvas, drivelist, node-pty, @vscode/ripgrep) for optimal performance across different systems.
@@ -28,14 +28,14 @@ bun install
 
 ```bash
 # Option 1: Fastest startup (no IDE) - RECOMMENDED FOR FIRST RUN
-bun run dev:no-ide      # Core services ready in ~11 seconds
+pnpm run dev:no-ide      # Core services ready in ~11 seconds
 
 # Option 2: Auto-detect mode from .env
 cp .env.example .env    # Configure your preferences
-bun run dev             # Smart startup based on configuration
+pnpm run dev             # Smart startup based on configuration
 
 # Option 3: Cloud IDE (if available)
-bun run dev:cloud-ide   # Connect to remote IDE instance
+pnpm run dev:cloud-ide   # Connect to remote IDE instance
 ```
 
 **🔧 Having Build Issues?** → See [Theia Quick Start Guide](docs/THEIA_QUICK_START.md)
@@ -44,10 +44,10 @@ bun run dev:cloud-ide   # Connect to remote IDE instance
 
 ```bash
 # With Docker Infrastructure
-bun run docker:start && bun run dev:frontend
+pnpm run docker:start && pnpm run dev:frontend
 
 # Traditional approach (may have build issues)
-bun run dev:legacy
+pnpm run dev:legacy
 ```
 
 ## 🏗️ Modular Architecture
@@ -177,19 +177,19 @@ The project uses Docker for production-ready database services:
 
 ```bash
 # Start Docker services
-bun run docker:start
+pnpm run docker:start
 
 # Check service status
-bun run docker:status
+pnpm run docker:status
 
 # Test connectivity
-bun run docker:test
+pnpm run docker:test
 
 # View logs
-bun run docker:logs
+pnpm run docker:logs
 
 # Stop services
-bun run docker:stop
+pnpm run docker:stop
 ```
 
 ## 🛠️ Development
@@ -198,53 +198,53 @@ bun run docker:stop
 
 ```bash
 # Development
-bun run dev                 # Start all services
-bun run dev:frontend        # Frontend only
-bun run dev:backend         # Backend only
-bun run dev:hub            # Electron app only
+pnpm run dev                 # Start all services
+pnpm run dev:frontend        # Frontend only
+pnpm run dev:backend         # Backend only
+pnpm run dev:hub            # Electron app only
 
 # Docker Management
-bun run docker:start       # Start PostgreSQL & Redis
-bun run docker:stop        # Stop Docker services
-bun run docker:test        # Test connectivity
-bun run docker:status      # Check service status
+pnpm run docker:start       # Start PostgreSQL & Redis
+pnpm run docker:stop        # Stop Docker services
+pnpm run docker:test        # Test connectivity
+pnpm run docker:status      # Check service status
 
 # Building
-bun run build              # Build all apps
-bun run build:frontend     # Build frontend
-bun run build:backend      # Build backend
+pnpm run build              # Build all apps
+pnpm run build:frontend     # Build frontend
+pnpm run build:backend      # Build backend
 
 # Testing
-bun run test               # Run all tests
-bun run test:frontend      # Frontend tests
-bun run test:backend       # Backend tests
+pnpm run test               # Run all tests
+pnpm run test:frontend      # Frontend tests
+pnpm run test:backend       # Backend tests
 
 # Quality
-bun run lint               # Lint all code
-bun run type-check         # TypeScript checking
-bun run format             # Format code
+pnpm run lint               # Lint all code
+pnpm run type-check         # TypeScript checking
+pnpm run format             # Format code
 
 # Claude Agent Management  
-bun run claude:agents:sync     # Synchronize .claude agents
-bun run claude:agents:register # Register agents in database
-bun run claude:agents:search   # Search agent ecosystem
-bun run claude:agents:status   # Agent system status
+pnpm run claude:agents:sync     # Synchronize .claude agents
+pnpm run claude:agents:register # Register agents in database
+pnpm run claude:agents:search   # Search agent ecosystem
+pnpm run claude:agents:status   # Agent system status
 ```
 
 ### Development Workflow
 
 1. **Setup Environment**:
    ```bash
-   bun install
-   bun run docker:start
-   bun run claude:agents:sync    # Initialize agent system
+   pnpm install
+   pnpm run docker:start
+   pnpm run claude:agents:sync    # Initialize agent system
    ```
 
 2. **Start Development**:
    ```bash
-   bun run dev:frontend
-   bun run dev:backend
-   bun run dev:hub
+   pnpm run dev:frontend
+   pnpm run dev:backend
+   pnpm run dev:hub
    ```
 
 3. **Access Services**:
@@ -255,7 +255,7 @@ bun run claude:agents:status   # Agent system status
 
 4. **Monitor Services**:
    ```bash
-   bun run docker:status
+   pnpm run docker:status
    curl http://localhost:3004/api/services/status
    ```
 
@@ -279,22 +279,22 @@ bun run claude:agents:status   # Agent system status
 
 ### Unit Tests
 ```bash
-bun run test
+pnpm run test
 ```
 
 ### Integration Tests
 ```bash
 # Start services first
-bun run docker:start
-bun run dev
+pnpm run docker:start
+pnpm run dev
 
 # Run integration tests
-bun run test:integration
+pnpm run test:integration
 ```
 
 ### Docker Integration Test
 ```bash
-bun run docker:test
+pnpm run docker:test
 ```
 
 ## 📚 Documentation
@@ -317,14 +317,14 @@ bun run docker:test
 ### Development
 ```bash
 # With Docker infrastructure
-bun run docker:start
-bun run dev
+pnpm run docker:start
+pnpm run dev
 ```
 
 ### Production
 ```bash
 # Build for production
-bun run build
+pnpm run build
 
 # Deploy with Docker Compose
 docker-compose -f docker-compose.yml up -d
@@ -385,15 +385,15 @@ git clone <your-fork-url>
 cd the-new-fuse
 
 # Install dependencies
-bun install
+pnpm install
 
 # Start development environment
-bun run docker:start
-bun run dev
+pnpm run docker:start
+pnpm run dev
 
 # Run tests
-bun run test
-bun run docker:test
+pnpm run test
+pnpm run docker:test
 ```
 
 ## 📋 Requirements
@@ -417,13 +417,13 @@ bun run docker:test
 **Native Module Build Errors:**
 ```bash
 # Automatic fix (recommended)
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Manual fix
-bun run fix:native-modules
+pnpm run fix:native-modules
 
 # Complete reinstall
-rm -rf node_modules && bun install
+rm -rf node_modules && pnpm install
 ```
 
 **Docker services won't start:**
@@ -432,8 +432,8 @@ rm -rf node_modules && bun install
 docker info
 
 # Restart Docker services
-bun run docker:stop
-bun run docker:start
+pnpm run docker:stop
+pnpm run docker:start
 ```
 
 **Port conflicts:**
@@ -448,10 +448,10 @@ lsof -i :6380
 **Connection issues:**
 ```bash
 # Test connectivity
-bun run docker:test
+pnpm run docker:test
 
 # Check logs
-bun run docker:logs
+pnpm run docker:logs
 ```
 
 For detailed troubleshooting, see:

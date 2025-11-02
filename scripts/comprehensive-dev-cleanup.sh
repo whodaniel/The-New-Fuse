@@ -249,7 +249,7 @@ if [ "$cleanup_level" = "2" ]; then
     safe_remove ".pnp.cjs" "Yarn PnP file"
     safe_remove ".pnp.loader.mjs" "Yarn PnP loader"
     
-    print_warning "Deep cleanup complete - you'll need to run 'bun install' to restore dependencies"
+    print_warning "Deep cleanup complete - you'll need to run 'pnpm install' to restore dependencies"
 fi
 
 # Final cleanup
@@ -264,19 +264,19 @@ du -sh . 2>/dev/null || echo "Could not calculate new size"
 echo ""
 print_status "🔄 Next steps:"
 if [ "$cleanup_level" = "2" ]; then
-    echo "  1. Run: bun install"
-    echo "  2. Run: bun run build (if needed)"
-    echo "  3. Run: bun run dev"
+    echo "  1. Run: pnpm install"
+    echo "  2. Run: pnpm run build (if needed)"
+    echo "  3. Run: pnpm run dev"
 else
-    echo "  1. Run: bun run dev (should start cleanly)"
+    echo "  1. Run: pnpm run dev (should start cleanly)"
     echo "  2. All processes and ports have been cleared"
 fi
 
 echo ""
 print_status "💡 Additional maintenance tips:"
 echo "  • Run this script regularly to keep your dev environment clean"
-echo "  • Use 'bun run clear-ports' for quick port cleanup"
+echo "  • Use 'pnpm run clear-ports' for quick port cleanup"
 echo "  • Monitor disk usage with 'du -sh .' in project root"
-echo "  • Consider using 'bun install --frozen-lockfile' for consistent installs"
+echo "  • Consider using 'pnpm install --frozen-lockfile' for consistent installs"
 
 print_success "Development environment cleanup complete! 🎉"

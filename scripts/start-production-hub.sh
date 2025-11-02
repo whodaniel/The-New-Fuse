@@ -51,14 +51,14 @@ check_dependencies() {
 # Install dependencies
 install_dependencies() {
     print_status "Installing dependencies..."
-    bun install
+    pnpm install
     print_success "Dependencies installed"
 }
 
 # Build the project
 build_project() {
     print_status "Building the project..."
-    bun run build:packages
+    pnpm run build:packages
     print_success "Project built successfully"
 }
 
@@ -66,7 +66,7 @@ build_project() {
 start_api_server() {
     print_status "Starting API server..."
     cd apps/api
-    bun run dev &
+    pnpm run dev &
     API_PID=$!
     cd ../..
     
@@ -88,7 +88,7 @@ start_api_server() {
 start_frontend() {
     print_status "Starting frontend..."
     cd apps/frontend
-    bun run dev &
+    pnpm run dev &
     FRONTEND_PID=$!
     cd ../..
     

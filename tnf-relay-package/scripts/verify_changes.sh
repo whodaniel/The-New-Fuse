@@ -10,7 +10,7 @@ bun lint
 
 # 3. Run tests to ensure nothing broke
 echo -e "\n=== Running tests ==="
-bun run test
+pnpm run test
 
 # 4. Check for any remaining .js files in React components
 echo -e "\n=== Checking for remaining .js files in React components ==="

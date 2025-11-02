@@ -9,13 +9,13 @@ This guide covers common issues when running The New Fuse with Docker infrastruc
 ### Check Service Status
 ```bash
 # Check all Docker services
-bun run docker:status
+pnpm run docker:status
 
 # Test connectivity
-bun run docker:test
+pnpm run docker:test
 
 # View service logs
-bun run docker:logs
+pnpm run docker:logs
 ```
 
 ### Common Status Indicators
@@ -58,8 +58,8 @@ tnf-redis-dev      Exited (127) X seconds ago
 
 2. **Restart Docker Services:**
    ```bash
-   bun run docker:stop
-   bun run docker:start
+   pnpm run docker:stop
+   pnpm run docker:start
    ```
 
 3. **Check Docker Daemon:**
@@ -150,7 +150,7 @@ tnf-redis-dev      Exited (127) X seconds ago
 3. **Complete Reset (CAUTION: Destroys all data):**
    ```bash
    docker-compose -f docker-compose.dev-simple.yml down -v
-   bun run docker:start
+   pnpm run docker:start
    ```
 
 ## Redis Issues
@@ -260,7 +260,7 @@ tnf-redis-dev      Exited (127) X seconds ago
    docker system prune -f
    
    # Restart
-   bun run docker:start
+   pnpm run docker:start
    ```
 
 2. **Fix Permissions (macOS):**
@@ -315,7 +315,7 @@ tnf-redis-dev      Exited (127) X seconds ago
    ```bash
    docker-compose -f docker-compose.dev-simple.yml down -v
    docker volume prune -f
-   bun run docker:start
+   pnpm run docker:start
    ```
 
 ## Application Integration Issues
@@ -372,7 +372,7 @@ tnf-redis-dev      Exited (127) X seconds ago
 2. **Verify Backend is Running:**
    ```bash
    lsof -i :3004
-   bun run dev:backend
+   pnpm run dev:backend
    ```
 
 3. **Check CORS Configuration:**
@@ -468,7 +468,7 @@ tnf-redis-dev      Exited (127) X seconds ago
 
 ```bash
 # 1. Stop all services
-bun run docker:stop
+pnpm run docker:stop
 docker stop $(docker ps -q)
 
 # 2. Remove containers and volumes (DESTROYS DATA)
@@ -481,8 +481,8 @@ sudo systemctl restart docker  # Linux
 # Or restart Docker Desktop on macOS/Windows
 
 # 4. Start fresh
-bun run docker:start
-bun run docker:test
+pnpm run docker:start
+pnpm run docker:test
 ```
 
 ### Data Recovery
@@ -531,17 +531,17 @@ watch docker stats
 
 1. **Always check Docker status before starting:**
    ```bash
-   bun run docker:status
+   pnpm run docker:status
    ```
 
 2. **Use test script regularly:**
    ```bash
-   bun run docker:test
+   pnpm run docker:test
    ```
 
 3. **Monitor logs during development:**
    ```bash
-   bun run docker:logs
+   pnpm run docker:logs
    ```
 
 ### System Maintenance
@@ -577,8 +577,8 @@ docker-compose version
 bun --version
 
 # Service status
-bun run docker:status
-bun run docker:test
+pnpm run docker:status
+pnpm run docker:test
 
 # Container logs
 docker logs tnf-postgres-dev --tail 50

@@ -33,7 +33,7 @@
 ## Testing Instructions
 
 ### Test Terminal (Electron Mode)
-1. Start the electron app: `bun run dev` (from apps/electron-desktop)
+1. Start the electron app: `pnpm run dev` (from apps/electron-desktop)
 2. Click "Terminal" in the sidebar
 3. Verify terminal section appears at bottom
 4. Test resize, clear, and hide buttons

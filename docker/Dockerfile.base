@@ -14,6 +14,6 @@ RUN apt-get update && apt-get install -y \
 COPY package.json bun.lockb ./
 
 # Install dependencies
-RUN bun install
+RUN pnpm install
 
 CMD ["bun", "run", "dev"]

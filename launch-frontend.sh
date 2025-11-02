@@ -41,12 +41,12 @@ echo -e "${BLUE}📂 Frontend directory: $FRONTEND_DIR${NC}"
 # Install dependencies with Bun
 echo -e "${YELLOW}📦 Installing dependencies...${NC}"
 cd "$PROJECT_ROOT"
-bun install
+pnpm install
 
 # Build the frontend
 echo -e "${YELLOW}🔨 Building frontend...${NC}"
 cd "$FRONTEND_DIR"
-bun run build
+pnpm run build
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Frontend build failed${NC}"
@@ -73,7 +73,7 @@ lsof -ti:3001 | xargs kill -9 2>/dev/null || true
 
 # Start the server in background
 echo -e "${BLUE}🚀 Launching server with Bun...${NC}"
-bun run bun-server.ts &
+pnpm run bun-server.ts &
 SERVER_PID=$!
 
 # Wait a moment for server to start

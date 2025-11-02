@@ -103,7 +103,7 @@ const serviceUrls = {
 ### **🌟 Option 1: Integrated Development (Recommended)**
 ```bash
 # One command for everything - build check + services + browser hub
-bun run dev
+pnpm run dev
 ```
 **What it does:**
 - ✅ Checks if Theia IDE and other components are already built
@@ -116,7 +116,7 @@ bun run dev
 ### **🎯 Option 2: Browser Hub with Full Services**
 ```bash
 # Launch browser with all backend services
-bun run hub:with-services
+pnpm run hub:with-services
 ```
 **What it does:**
 - ✅ Ensures everything is built
@@ -127,7 +127,7 @@ bun run hub:with-services
 ### **⚡ Option 3: Browser Hub Only**
 ```bash
 # Launch just the functional browser
-bun run hub:functional
+pnpm run hub:functional
 ```
 **What it does:**
 - ✅ Quick build check
@@ -137,14 +137,14 @@ bun run hub:functional
 ### **🔍 Option 4: Check Build Status**
 ```bash
 # Check what's built without running anything
-bun run check-build
+pnpm run check-build
 ```
 
 ### **🛠️ Option 5: Force Full Build**
 ```bash
 # Force a complete rebuild
-bun run build
-bun run dev
+pnpm run build
+pnpm run dev
 ```
 
 ## 🎯 **What Works Right Now**
@@ -209,7 +209,7 @@ let serviceStatus = {};         // Backend service health
 
 ## 🚀 **Next Steps for Full Functionality**
 
-1. **Start Backend Services** - Run `bun run dev` to enable all features
+1. **Start Backend Services** - Run `pnpm run dev` to enable all features
 2. **Test Service Integration** - Verify all APIs are responding
 3. **Add More Services** - Extend the service catalog as needed
 4. **Customize Dashboard** - Add more widgets and metrics

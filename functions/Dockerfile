@@ -19,19 +19,19 @@ COPY packages/feature-tracker/package.json ./packages/feature-tracker/
 COPY functions/package.json ./functions/
 
 # Install dependencies
-RUN bun install
+RUN pnpm install
 
 # Copy source code
 COPY . .
 
 # Build packages in order
-RUN cd packages/types && bun run build && cd ../.. && \
-    cd packages/utils && bun run build && cd ../.. && \
-    cd packages/core && bun run build && cd ../.. && \
-    cd packages/database && bun run build && cd ../.. && \
-    cd packages/feature-tracker && bun run build && cd ../.. && \
-    cd packages/feature-suggestions && bun run build && cd ../.. && \
-    cd functions && bun run build && cd ..
+RUN cd packages/types && pnpm run build && cd ../.. && \
+    cd packages/utils && pnpm run build && cd ../.. && \
+    cd packages/core && pnpm run build && cd ../.. && \
+    cd packages/database && pnpm run build && cd ../.. && \
+    cd packages/feature-tracker && pnpm run build && cd ../.. && \
+    cd packages/feature-suggestions && pnpm run build && cd ../.. && \
+    cd functions && pnpm run build && cd ..
 
 # Start the Firebase Functions emulator
 CMD ["cd", "functions", "&&", "bun", "run", "serve"]

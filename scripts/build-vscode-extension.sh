@@ -8,15 +8,15 @@ cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
 
 # Install dependencies with bun
 echo "Installing dependencies..."
-bun install
+pnpm install
 
 # Build extension
 echo "Building extension..."
-bun run build
+pnpm run build
 
 # Package extension
 echo "Packaging extension..."
-bun run package
+pnpm run package
 
 echo "✅ VSCode extension built successfully!"
 ls -la *.vsix

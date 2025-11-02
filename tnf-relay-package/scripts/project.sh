@@ -29,11 +29,11 @@ function setup_project() {
     fi
     
     # Install dependencies
-    bun install
+    pnpm install
     
     # Initialize database
-    cd packages/database && bun run generate && cd ../..
-    cd packages/database && bun run migrate && cd ../..
+    cd packages/database && pnpm run generate && cd ../..
+    cd packages/database && pnpm run migrate && cd ../..
     
     echo -e "${GREEN}✅ Setup complete!${NC}"
 }
@@ -43,15 +43,15 @@ function build_project() {
     echo -e "${BLUE}🏗️  Building project for ${env}...${NC}"
     
     # Build core packages first
-    cd packages/types && bun run build && cd ../..
-    cd packages/utils && bun run build && cd ../..
-    cd packages/core && bun run build && cd ../..
+    cd packages/types && pnpm run build && cd ../..
+    cd packages/utils && pnpm run build && cd ../..
+    cd packages/core && pnpm run build && cd ../..
     
     # Build all other packages
     for dir in packages/*/; do
         if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
             echo "Building $dir..."
-            cd "$dir" && bun run build && cd ../..
+            cd "$dir" && pnpm run build && cd ../..
         fi
     done
     
@@ -64,10 +64,10 @@ function start_services() {
     
     if [ "$env" == "prod" ]; then
         docker-compose -f docker-compose.prod.yml up -d
-        cd packages/backend && bun run start:prod
+        cd packages/backend && pnpm run start:prod
     else
         docker-compose up -d
-        cd packages/backend && bun run start:dev
+        cd packages/backend && pnpm run start:dev
     fi
 }
 
@@ -80,7 +80,7 @@ function run_tests() {
             for dir in packages/*/; do
                 if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
                     echo "Running tests in watch mode for $dir..."
-                    cd "$dir" && bun run test:watch && cd ../..
+                    cd "$dir" && pnpm run test:watch && cd ../..
                 fi
             done
             ;;
@@ -88,7 +88,7 @@ function run_tests() {
             for dir in packages/*/; do
                 if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
                     echo "Running tests with coverage for $dir..."
-                    cd "$dir" && bun run test:coverage && cd ../..
+                    cd "$dir" && pnpm run test:coverage && cd ../..
                 fi
             done
             ;;
@@ -96,7 +96,7 @@ function run_tests() {
             for dir in packages/*/; do
                 if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
                     echo "Running tests for $dir..."
-                    cd "$dir" && bun test && cd ../..
+                    cd "$dir" && pnpm test && cd ../..
                 fi
             done
             ;;

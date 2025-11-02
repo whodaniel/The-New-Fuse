@@ -35,28 +35,28 @@ The New Fuse uses Docker for production-ready database infrastructure including 
 
 ```bash
 # Start PostgreSQL and Redis
-bun run docker:start
+pnpm run docker:start
 
 # Check service status
-bun run docker:status
+pnpm run docker:status
 
 # Test connectivity
-bun run docker:test
+pnpm run docker:test
 ```
 
 ### 2. Start Applications
 
 ```bash
 # Start frontend
-bun run dev:frontend
+pnpm run dev:frontend
 
 # Start backend (with Docker database)
 DATABASE_URL=postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev \
 REDIS_URL=redis://localhost:6380 \
-bun run dev:backend
+pnpm run dev:backend
 
 # Start Electron app
-bun run dev:hub
+pnpm run dev:hub
 ```
 
 ## Docker Services
@@ -130,22 +130,22 @@ export $(cat .env.docker | xargs)
 
 ```bash
 # Start services
-bun run docker:start
+pnpm run docker:start
 
 # Stop services
-bun run docker:stop
+pnpm run docker:stop
 
 # View service status
-bun run docker:status
+pnpm run docker:status
 
 # View service logs
-bun run docker:logs
+pnpm run docker:logs
 
 # Test connectivity
-bun run docker:test
+pnpm run docker:test
 
 # Start everything with Docker
-bun run dev:with-docker
+pnpm run dev:with-docker
 ```
 
 ### Manual Docker Commands
@@ -209,26 +209,26 @@ curl http://localhost:3004/api/system/metrics
 
 ```bash
 # 1. Start Docker infrastructure
-bun run docker:start
+pnpm run docker:start
 
 # 2. Start development servers
-bun run dev:frontend    # Frontend on 3000
-bun run dev:backend     # Backend on 3004 (using Docker DB)
-bun run dev:hub         # Electron app
+pnpm run dev:frontend    # Frontend on 3000
+pnpm run dev:backend     # Backend on 3004 (using Docker DB)
+pnpm run dev:hub         # Electron app
 ```
 
 ### Option 2: All-in-Docker (Future)
 
 ```bash
 # Full Docker development environment
-bun run dev:with-docker
+pnpm run dev:with-docker
 ```
 
 ### Option 3: Local Only
 
 ```bash
 # Traditional development without Docker
-bun run dev
+pnpm run dev
 ```
 
 ## Data Persistence
@@ -290,8 +290,8 @@ docker logs tnf-postgres-dev
 docker logs tnf-redis-dev
 
 # Restart containers
-bun run docker:stop
-bun run docker:start
+pnpm run docker:stop
+pnpm run docker:start
 ```
 
 **4. Permission Issues**
@@ -310,7 +310,7 @@ docker exec tnf-postgres-dev pg_isready -U newfuse
 docker exec tnf-redis-dev redis-cli ping
 
 # Run comprehensive test
-bun run docker:test
+pnpm run docker:test
 ```
 
 ## Production Deployment
@@ -401,4 +401,4 @@ For Docker-related issues:
 2. Review Docker container logs
 3. Ensure Docker Desktop is running
 4. Verify port availability
-5. Test connectivity with `bun run docker:test`
+5. Test connectivity with `pnpm run docker:test`

@@ -8,7 +8,7 @@ Brief description of what this package does and its purpose within The New Fuse 
 
 ```bash
 # Within the monorepo
-bun install --filter @the-new-fuse/package-name
+pnpm install --filter @the-new-fuse/package-name
 ```
 
 ## Usage
@@ -35,13 +35,13 @@ Description of the function and what it does.
 
 ```bash
 # Build the package
-bun run --filter @the-new-fuse/package-name build
+pnpm run --filter @the-new-fuse/package-name build
 
 # Run tests
-bun run --filter @the-new-fuse/package-name test
+pnpm run --filter @the-new-fuse/package-name test
 
 # Development mode with watch
-bun run --filter @the-new-fuse/package-name dev
+pnpm run --filter @the-new-fuse/package-name dev
 ```
 
 ## Dependencies

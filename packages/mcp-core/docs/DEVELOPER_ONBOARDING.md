@@ -80,7 +80,7 @@ cd mcp-core
 # Install dependencies
 npm install
 # or
-bun install
+pnpm install
 
 # Build the project
 npm run build

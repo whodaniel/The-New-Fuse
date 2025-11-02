@@ -8,8 +8,8 @@ COPY packages ./packages
 COPY apps ./apps
 
 # Install dependencies and build
-RUN bun install
-RUN bun run build:frontend
+RUN pnpm install
+RUN pnpm run build:frontend
 
 FROM nginx:alpine
 

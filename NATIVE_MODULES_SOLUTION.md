@@ -57,13 +57,13 @@ This document outlines the complete automated solution for native module issues 
 ## 🔧 How It Works
 
 ### Installation Process
-1. User runs `bun install`
+1. User runs `pnpm install`
 2. Postinstall hook executes `scripts/setup-native-modules.cjs`
 3. Script detects, installs, and builds all required native modules
 4. System is ready for development
 
 ### Build Process  
-1. User runs `bun run build`
+1. User runs `pnpm run build`
 2. Pre-build check verifies all native modules are working
 3. If issues detected, automatic repair is attempted
 4. If repair succeeds, build continues normally
@@ -84,7 +84,7 @@ This document outlines the complete automated solution for native module issues 
 - ❌ Manual intervention required for every build
 
 ### Solutions Implemented
-- ✅ **Automatic Installation**: Native modules installed during `bun install`
+- ✅ **Automatic Installation**: Native modules installed during `pnpm install`
 - ✅ **Intelligent Discovery**: Finds modules in subdependencies and relocates them
 - ✅ **Automatic Rebuilding**: Compiles native modules for current architecture
 - ✅ **Pre-Build Verification**: Prevents build failures by checking first
@@ -94,7 +94,7 @@ This document outlines the complete automated solution for native module issues 
 ## 🎁 Benefits for Next Agent/Developer
 
 ### Zero Configuration Required
-- Fresh clone + `bun install` = working environment
+- Fresh clone + `pnpm install` = working environment
 - No manual native module compilation needed
 - No debugging of missing binaries
 
@@ -117,13 +117,13 @@ This document outlines the complete automated solution for native module issues 
 ### For End Users
 ```bash
 # Complete setup (automatic)
-bun install
+pnpm install
 
 # Manual native module setup (if needed)
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Build (with automatic verification)
-bun run build
+pnpm run build
 ```
 
 ### For Debugging
@@ -176,8 +176,8 @@ The solution has been tested and verified:
 
 ### After This Solution  
 - ✅ Zero-configuration fresh installations
-- ⚡ Builds work immediately after `bun install`
+- ⚡ Builds work immediately after `pnpm install`
 - 🤖 Fully automated recovery from common issues
 - 📚 Self-documenting system with comprehensive guides
 
-**The next agent or developer can now clone the repository, run `bun install`, and immediately start building and developing without any native module configuration or debugging required.**
+**The next agent or developer can now clone the repository, run `pnpm install`, and immediately start building and developing without any native module configuration or debugging required.**

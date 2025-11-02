@@ -262,7 +262,7 @@ echo ""
 # Install dependencies if node_modules doesn't exist
 if [ ! -d "node_modules" ]; then
   echo -e "📦 ${YELLOW}Installing dependencies...${NC}"
-  bun install
+  pnpm install
   echo -e "${GREEN}Dependencies installed.${NC}"
   echo ""
 fi
@@ -270,8 +270,8 @@ fi
 # Run database migrations if needed
 if [ "$skip_db" != true ]; then
   echo -e "🗄️ ${YELLOW}Running database migrations...${NC}"
-  bun run db:generate
-  bun run db:migrate
+  pnpm run db:generate
+  pnpm run db:migrate
   echo -e "${GREEN}Database migrations complete.${NC}"
   echo ""
 else
@@ -288,16 +288,16 @@ if [ "$incremental" == true ]; then
   
   # Leverage turbo to build packages in dependency order
   # This assumes your turbo.json is correctly configured with build dependencies
-  bun run build --filter=./packages/*
+  pnpm run build --filter=./packages/*
 
   # If you need to build apps specifically after packages, you can add:
-  # bun run build --filter=./apps/*
+  # pnpm run build --filter=./apps/*
 
   # For watch mode, turbo handles persistent tasks
   if [ "$watch" == true ]; then
     echo -e "${CYAN}Starting watch mode for all packages...${NC}"
-    bun run dev --filter=./packages/*
-    bun run dev --filter=./apps/*
+    pnpm run dev --filter=./packages/*
+    pnpm run dev --filter=./apps/*
   fi
   
 elif [ ${#packages[@]} -gt 0 ]; then
@@ -305,20 +305,20 @@ elif [ ${#packages[@]} -gt 0 ]; then
   for package in "${packages[@]}"; do
     echo -e "🧩 ${YELLOW}Building package: ${MAGENTA}$package${NC}..."
     if [ "$watch" == true ]; then
-      cd packages/$package && bun run dev & cd ../..
+      cd packages/$package && pnpm run dev & cd ../..
     else
-      cd packages/$package && bun run build && cd ../..
+      cd packages/$package && pnpm run build && cd ../..
     fi
   done
 else
   # Build everything using turbo
   echo -e "${CYAN}Building all packages...${NC}"
   if [ "$production" == true ]; then
-    bun run build
+    pnpm run build
   elif [ "$watch" == true ]; then
-    bun run dev
+    pnpm run dev
   else
-    bun run build
+    pnpm run build
   fi
 fi
 
@@ -331,9 +331,9 @@ if [ "$extensions" == true ]; then
   if [ -d "packages/vscode-extension" ]; then
     echo -e "🧩 ${YELLOW}Building VS Code extension...${NC}"
     cd packages/vscode-extension
-    bun install
-    bun run build
-    bun run package
+    pnpm install
+    pnpm run build
+    pnpm run package
     cd ../..
     echo -e "${GREEN}VS Code extension built.${NC}"
     echo ""
@@ -343,8 +343,8 @@ if [ "$extensions" == true ]; then
   if [ -d "packages/chrome-extension" ]; then
     echo -e "🧩 ${YELLOW}Building Chrome extension...${NC}"
     cd packages/chrome-extension
-    bun install
-    bun run build
+    pnpm install
+    pnpm run build
     cd ../..
     echo -e "${GREEN}Chrome extension built.${NC}"
     echo ""
@@ -362,7 +362,7 @@ fi
 # Run tests if needed
 if [ "$skip_tests" != true ] && [ "$watch" != true ]; then
   echo -e "🧪 ${YELLOW}Running tests...${NC}"
-  bun test
+  pnpm test
   echo -e "${GREEN}Tests complete.${NC}"
   echo ""
 else
@@ -381,8 +381,8 @@ echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo -e "  • ${BLUE}To run the development environment:${NC} ./run-dev-docker.sh"
 echo -e "  • ${BLUE}To run the production environment:${NC} ./run-prod-docker.sh"
-echo -e "  • ${BLUE}To start the API server:${NC} cd packages/api && bun run start"
-echo -e "  • ${BLUE}To start the frontend:${NC} cd packages/frontend && bun run start"
+echo -e "  • ${BLUE}To start the API server:${NC} cd packages/api && pnpm run start"
+echo -e "  • ${BLUE}To start the frontend:${NC} cd packages/frontend && pnpm run start"
 echo ""
 
 # If in watch mode, wait for Ctrl+C

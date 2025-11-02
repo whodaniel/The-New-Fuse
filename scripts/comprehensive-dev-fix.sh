@@ -22,12 +22,12 @@ rm -rf apps/frontend/dist/
 # Step 3: Fix Prisma client
 echo "🔧 Step 3: Fixing Prisma client..."
 cd packages/database
-bunx prisma generate --schema=../../prisma/schema.prisma || echo "Prisma generation failed, continuing..."
+pnpm dlx prisma generate --schema=../../prisma/schema.prisma || echo "Prisma generation failed, continuing..."
 cd - > /dev/null
 
 # Step 4: Install missing dependencies
 echo "📦 Step 4: Installing missing dependencies..."
-bun add cookie@latest @chakra-ui/icons --dev
+pnpm add cookie@latest @chakra-ui/icons --dev
 
 # Step 5: Rebuild native modules with proper flags
 echo "🔨 Step 5: Rebuilding native modules..."
@@ -52,7 +52,7 @@ lsof -ti:3000,3001,3002,3004,3005,3007,3008,5174 | xargs kill -9 2>/dev/null || 
 echo "✅ Comprehensive fix complete!"
 echo ""
 echo "🎯 Next steps:"
-echo "1. Try running 'bun run dev' again"
+echo "1. Try running 'pnpm run dev' again"
 echo "2. If Theia still has issues, the IDE should work on port 3008"
 echo "3. Frontend should be available on port 3000"
 echo "4. API Gateway should be on port 3005"

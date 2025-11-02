@@ -38,7 +38,7 @@ echo "Starting TNF Relay Adapter for $INSTANCE_ID..."
 
 # Start the adapter in the background
 cd "$SCRIPT_DIR"
-nohup npx bun run relay-adapter.js --instance-id="$INSTANCE_ID" > "$ADAPTER_LOG" 2>&1 &
+nohup npx pnpm run relay-adapter.js --instance-id="$INSTANCE_ID" > "$ADAPTER_LOG" 2>&1 &
 ADAPTER_PID_NUM=$!
 
 # Save the PID

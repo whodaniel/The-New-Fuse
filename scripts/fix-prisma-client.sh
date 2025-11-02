@@ -7,11 +7,11 @@ echo "🔧 Fixing Prisma Client configuration..."
 
 # Step 1: Update Prisma client to latest version
 echo "📦 Updating Prisma client..."
-bun add @prisma/client@latest prisma@latest --dev
+pnpm add @prisma/client@latest prisma@latest --dev
 
 # Step 2: Generate Prisma client
 echo "🔨 Generating Prisma client..."
-bunx prisma generate --schema=prisma/schema.prisma
+pnpm dlx prisma generate --schema=prisma/schema.prisma
 
 # Step 3: Ensure the generated client is accessible
 echo "🔗 Creating symlink for generated client..."

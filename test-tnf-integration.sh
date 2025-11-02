@@ -8,14 +8,14 @@ echo "🔧 Building TNF Relay Integration..."
 cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/The New Fuse Chrome extension June-4-25Archive/chrome-extension"
 
 echo "📦 Installing dependencies..."
-bun install
+pnpm install
 
 echo "🔧 Generating icons..."
-bun run generate-icons
-bun run generate-notification-icons
+pnpm run generate-icons
+pnpm run generate-notification-icons
 
 echo "🔨 Building extension..."
-bun run build
+pnpm run build
 
 if [ $? -eq 0 ]; then
   echo "✅ Build completed successfully!"

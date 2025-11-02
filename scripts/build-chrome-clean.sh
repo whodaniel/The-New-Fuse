@@ -12,7 +12,7 @@ rm -rf dist/*.js dist/*.css
 
 # Build with existing system
 echo "Building extension..."
-bun run build
+pnpm run build
 
 echo "✅ Chrome extension built successfully!"
 ls -la dist/

@@ -18,8 +18,8 @@ COPY packages ./packages
 COPY apps ./apps
 
 # Install dependencies and build
-RUN bun install
-RUN bun run build
+RUN pnpm install
+RUN pnpm run build
 
 FROM node:20-bullseye-slim
 
@@ -32,7 +32,7 @@ COPY --from=builder /app/bun.lockb ./
 
 # Install production dependencies with Bun
 COPY --from=oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
-RUN bun install --production
+RUN pnpm install --production
 
 EXPOSE 3001
 CMD ["node", "dist/main.js"]
@@ -50,8 +50,8 @@ COPY packages ./packages
 COPY apps ./apps
 
 # Install dependencies and build
-RUN bun install
-RUN bun run build:frontend
+RUN pnpm install
+RUN pnpm run build:frontend
 
 FROM nginx:alpine
 
@@ -83,7 +83,7 @@ RUN apt-get update && apt-get install -y \
 COPY package.json bun.lockb ./
 
 # Install dependencies
-RUN bun install
+RUN pnpm install
 
 CMD ["bun", "run", "dev"]
 EOF
@@ -97,10 +97,10 @@ echo "🔄 Updating CI/CD workflows..."
 if [ -f ".github/workflows/ci.yml" ]; then
     sed -i.bak 's/uses: actions\/setup-node@v[0-9]*/uses: oven-sh\/setup-bun@v1/g' .github/workflows/ci.yml
     sed -i.bak 's/node-version:/bun-version:/g' .github/workflows/ci.yml
-    sed -i.bak 's/yarn install/bun install/g' .github/workflows/ci.yml
-    sed -i.bak 's/yarn build/bun run build/g' .github/workflows/ci.yml
-    sed -i.bak 's/yarn test/bun run test/g' .github/workflows/ci.yml
-    sed -i.bak 's/yarn lint/bun run lint/g' .github/workflows/ci.yml
+    sed -i.bak 's/yarn install/pnpm install/g' .github/workflows/ci.yml
+    sed -i.bak 's/yarn build/pnpm run build/g' .github/workflows/ci.yml
+    sed -i.bak 's/yarn test/pnpm run test/g' .github/workflows/ci.yml
+    sed -i.bak 's/yarn lint/pnpm run lint/g' .github/workflows/ci.yml
     sed -i.bak 's/cache: "yarn"/cache: "bun"/g' .github/workflows/ci.yml
     rm -f .github/workflows/ci.yml.bak
 fi
@@ -110,10 +110,10 @@ for file in .github/workflows/*.yml .github/workflows/*.yaml; do
     if [ -f "$file" ] && [ "$file" != ".github/workflows/ci.yml" ]; then
         sed -i.bak 's/uses: actions\/setup-node@v[0-9]*/uses: oven-sh\/setup-bun@v1/g' "$file"
         sed -i.bak 's/node-version:/bun-version:/g' "$file"
-        sed -i.bak 's/yarn install/bun install/g' "$file"
-        sed -i.bak 's/yarn build/bun run build/g' "$file"
-        sed -i.bak 's/yarn test/bun run test/g' "$file"
-        sed -i.bak 's/yarn lint/bun run lint/g' "$file"
+        sed -i.bak 's/yarn install/pnpm install/g' "$file"
+        sed -i.bak 's/yarn build/pnpm run build/g' "$file"
+        sed -i.bak 's/yarn test/pnpm run test/g' "$file"
+        sed -i.bak 's/yarn lint/pnpm run lint/g' "$file"
         sed -i.bak 's/cache: "yarn"/cache: "bun"/g' "$file"
         rm -f "${file}.bak" 2>/dev/null
     fi

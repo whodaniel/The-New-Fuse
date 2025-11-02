@@ -29,13 +29,13 @@ else
 fi
 
 echo "2️⃣ Installing dependencies using Bun..."
-if ! bun install; then
+if ! pnpm install; then
     echo "❌ Failed to install dependencies using Bun. Check Bun setup and project dependencies."
     # Attempt to clean and reinstall as a fallback
-    echo "   Attempting 'bun install --force' as a fallback..."
-    bun install --force
+    echo "   Attempting 'pnpm install --force' as a fallback..."
+    pnpm install --force
     if [ \$? -ne 0 ]; then
-        echo "❌ Fallback 'bun install --force' also failed."
+        echo "❌ Fallback 'pnpm install --force' also failed."
         exit 1
     fi
 fi
@@ -45,12 +45,12 @@ echo "3️⃣ Building extension..."
 BUILD_SUCCESSFUL=false
 # Check if 'compile' script exists in package.json
 if grep -q '"compile":' package.json; then
-    echo "   Found 'compile' script. Attempting 'bun run compile'..."
-    if bun run compile; then
-        echo "✅ Build successful with 'bun run compile'."
+    echo "   Found 'compile' script. Attempting 'pnpm run compile'..."
+    if pnpm run compile; then
+        echo "✅ Build successful with 'pnpm run compile'."
         BUILD_SUCCESSFUL=true
     else
-        echo "⚠️  'bun run compile' failed."
+        echo "⚠️  'pnpm run compile' failed."
     fi
 else
     echo "⚠️  'compile' script not found in package.json."

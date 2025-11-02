@@ -44,19 +44,19 @@ jobs:
         bun-version: 'latest'
     
     - name: Install Dependencies
-      run: bun install --frozen-lockfile
+      run: pnpm install --frozen-lockfile
     
     - name: Run Linter
-      run: bun run lint
+      run: pnpm run lint
     
     - name: Run Tests
-      run: bun test
+      run: pnpm test
       env:
         DATABASE_URL: postgresql://test:test@localhost:5432/test_db
         REDIS_URL: redis://localhost:6379
     
     - name: Run E2E Tests
-      run: bun run test:e2e
+      run: pnpm run test:e2e
       env:
         DATABASE_URL: postgresql://test:test@localhost:5432/test_db
         REDIS_URL: redis://localhost:6379

@@ -7,15 +7,15 @@ set -e
 echo "🚀 Running quality gate checks..."
 
 echo "📋 Running linter..."
-bun run lint
+pnpm run lint
 
 echo "🔍 Running type check..."
-bun run type-check
+pnpm run type-check
 
 echo "🧪 Running unit tests..."
-bun run test:unit
+pnpm run test:unit
 
 echo "🔗 Running integration tests..."
-bun run test:integration
+pnpm run test:integration
 
 echo "✅ All quality gate checks passed!"

@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package.json bun.lockb* ./
 
 # Install dependencies
-RUN bun install
+RUN pnpm install
 
 # Copy Prisma schema
 COPY prisma ./prisma/
@@ -18,7 +18,7 @@ RUN npx prisma generate
 COPY . .
 
 # Build TypeScript
-RUN bun run build
+RUN pnpm run build
 
 # Production image
 FROM oven/bun:1

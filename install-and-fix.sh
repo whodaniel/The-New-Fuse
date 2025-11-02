@@ -2,10 +2,10 @@
 echo "🔧 Installing dependencies with Bun to resolve TypeScript package issues..."
 
 # Install root dependencies with Bun
-bun install
+pnpm install
 
 # Install workspace dependencies
-bun run build:packages 2>/dev/null || echo "Build packages not available, continuing..."
+pnpm run build:packages 2>/dev/null || echo "Build packages not available, continuing..."
 
 # Verify core packages exist
 if [ ! -d "node_modules/@the-new-fuse" ]; then

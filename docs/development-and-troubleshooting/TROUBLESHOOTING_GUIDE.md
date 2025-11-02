@@ -152,7 +152,7 @@ window.postMessage({ type: 'TNF_RESET_ELEMENTS' }, '*');
 ```bash
 npm install ws
 # or
-bun install ws
+pnpm install ws
 ```
 
 **B. Check Node.js Version:**

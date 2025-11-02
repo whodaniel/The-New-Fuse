@@ -4,7 +4,7 @@
 
 Successfully resolved the canvas native module installation and compilation issues that were preventing tests from running. The problem manifested as:
 
-- `bun install` silently failing to install the canvas package
+- `pnpm install` silently failing to install the canvas package
 - Missing `node_modules/canvas` directory after installation
 - Test failures with "Cannot find module 'canvas.node'" errors
 - Bun's incompatibility with certain native module build processes
@@ -27,7 +27,7 @@ nvm use 18.20.5
 
 # 2. Clean installation
 rm -rf node_modules bun.lockb
-bun install --ignore-scripts
+pnpm install --ignore-scripts
 
 # 3. Manual native module compilation
 cd node_modules/canvas
@@ -58,7 +58,7 @@ bun -e "const { createCanvas } = require('canvas'); console.log('Canvas works wi
 - **Location**: `scripts/fix-native-modules.sh`
 - Automated implementation of the hybrid approach
 - Interactive script with error checking and verification
-- Added as npm script: `bun run fix:native-modules`
+- Added as npm script: `pnpm run fix:native-modules`
 
 ### 4. Updated Documentation Index
 - Added native modules guide to main docs README
@@ -87,7 +87,7 @@ bun -e "const { createCanvas } = require('canvas'); console.log('Canvas works wi
 
 ### Before Fix
 ```
-❌ bun install - Canvas package not installed
+❌ pnpm install - Canvas package not installed
 ❌ Tests failing with canvas.node missing
 ❌ node_modules/canvas directory missing
 ```

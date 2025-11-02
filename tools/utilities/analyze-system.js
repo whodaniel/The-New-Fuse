@@ -39,13 +39,13 @@ async function analyzeSystem() {
         // Check if we should use low-memory mode
         if (resources.memory.available < 2048) {
             console.log('\n⚠️  LOW MEMORY DETECTED - Using memory-optimized build');
-            console.log('   Run: bun run build:low-memory');
+            console.log('   Run: pnpm run build:low-memory');
         } else if (resources.memory.available < 4096) {
             console.log('\n⚠️  MODERATE MEMORY - Using adaptive build');
-            console.log('   Run: bun run build:adaptive');
+            console.log('   Run: pnpm run build:adaptive');
         } else {
             console.log('\n✅ SUFFICIENT MEMORY - Using standard build');
-            console.log('   Run: bun run build');
+            console.log('   Run: pnpm run build');
         }
         
     } catch (error) {
@@ -54,11 +54,11 @@ async function analyzeSystem() {
         
         // Fallback analysis
         if (totalMem < 8) {
-            console.log('   Run: bun run build:low-memory');
+            console.log('   Run: pnpm run build:low-memory');
         } else if (totalMem < 16) {
-            console.log('   Run: bun run build:adaptive');
+            console.log('   Run: pnpm run build:adaptive');
         } else {
-            console.log('   Run: bun run build');
+            console.log('   Run: pnpm run build');
         }
     }
 }

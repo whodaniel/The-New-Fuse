@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "cd apps/frontend && bun run build",
+  "buildCommand": "cd apps/frontend && pnpm run build",
   "outputDirectory": "apps/frontend/dist",
-  "installCommand": "bun install",
+  "installCommand": "pnpm install",
   "framework": "vite",
   "functions": {
     "apps/frontend/api/**/*.ts": {

@@ -45,12 +45,12 @@ The New Fuse is now **production-ready** with a complete drag & drop workflow bu
 ./scripts/start-production-hub.sh
 
 # Option 2: Use bun scripts
-bun run services:start
+pnpm run services:start
 
 # Option 3: Manual startup
-bun run dev:api &
-bun run dev:frontend &
-bun run hub:dev &
+pnpm run dev:api &
+pnpm run dev:frontend &
+pnpm run hub:dev &
 ```
 
 ### 2. **Access the Browser Hub**
@@ -198,10 +198,10 @@ curl http://localhost:3000/api/system/status
 ### **Production**
 ```bash
 # Build for production
-bun run build
+pnpm run build
 
 # Start production services
-bun run services:start
+pnpm run services:start
 ```
 
 ### **Docker** (Optional)
@@ -219,7 +219,7 @@ docker-compose up -d
 
 1. **Services not starting**
    - Check if ports 3000, 3001, 5173, 8080 are available
-   - Run `bun run services:health` to check service status
+   - Run `pnpm run services:health` to check service status
 
 2. **WebSocket connection failed**
    - Ensure WebSocket server is started via Browser Hub
@@ -236,7 +236,7 @@ docker-compose up -d
 ### **Debug Commands**
 ```bash
 # Check service health
-bun run services:health
+pnpm run services:health
 
 # Test all connections
 node scripts/test-connections.js

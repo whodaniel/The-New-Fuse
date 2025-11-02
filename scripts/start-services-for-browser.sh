@@ -47,7 +47,7 @@ node scripts/clear-ports.js
 
 # Start services in background
 echo "🚀 Starting backend services..."
-bun run dev:direct > /tmp/tnf-services.log 2>&1 &
+pnpm run dev:direct > /tmp/tnf-services.log 2>&1 &
 SERVICES_PID=$!
 
 echo "📝 Services starting with PID: $SERVICES_PID"

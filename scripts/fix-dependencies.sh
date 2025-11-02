@@ -16,6 +16,6 @@ grep -r "@nestjs/graphql" . --include="*.json" || echo "No GraphQL dependencies 
 
 # Clean install
 echo "Clean installing dependencies..."
-bun install --no-cache
+pnpm install --no-cache
 
 echo "✅ Dependencies fixed!"

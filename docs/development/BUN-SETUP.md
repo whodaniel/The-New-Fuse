@@ -32,10 +32,10 @@ If you're new to the project:
 
 ```bash
 # Install all dependencies
-bun install
+pnpm install
 
 # Run the setup script
-bun run scripts/setup-bun.js
+pnpm run scripts/setup-bun.js
 ```
 
 ## Daily Usage
@@ -46,19 +46,19 @@ Bun commands are straightforward:
 
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Build the project
-bun run build
+pnpm run build
 
 # Run development server
-bun run dev
+pnpm run dev
 
 # Run tests
-bun test
+pnpm test
 
 # Run a specific workspace
-bun run --filter @the-new-fuse/core build
+pnpm run --filter @the-new-fuse/core build
 ```
 
 ### Adding Dependencies
@@ -67,13 +67,13 @@ Adding dependencies is simple with Bun:
 
 ```bash
 # Add a regular dependency
-bun add react
+pnpm add react
 
 # Add a dev dependency
-bun add -d typescript
+pnpm add -d typescript
 
 # Add to a specific workspace
-bun add express --cwd packages/core
+pnpm add express --cwd packages/core
 ```
 
 ## Working with Monorepo Workspaces
@@ -82,13 +82,13 @@ This project uses Bun workspaces for monorepo management. To work with specific 
 
 ```bash
 # Run a script in a specific workspace
-bun run --filter @the-new-fuse/core build
+pnpm run --filter @the-new-fuse/core build
 
 # Install dependencies for a specific workspace
-bun install --cwd packages/core
+pnpm install --cwd packages/core
 
 # Add a dependency to a specific workspace
-bun add express --cwd packages/api
+pnpm add express --cwd packages/api
 ```
 
 ## Environment Variables
@@ -116,7 +116,7 @@ If you encounter Bun-related issues:
 
 1. Check Bun version: `bun --version`
 2. Clear cache: `bun pm cache clear`
-3. Reinstall dependencies: `rm -rf node_modules && bun install`
+3. Reinstall dependencies: `rm -rf node_modules && pnpm install`
 4. Check for conflicting package managers (remove yarn.lock if present)
 
 ## Migration from Yarn
@@ -124,7 +124,7 @@ If you encounter Bun-related issues:
 If migrating from Yarn:
 1. Remove yarn.lock and .yarn directory
 2. Remove .yarnrc.yml file
-3. Run `bun install` to create bun.lockb
+3. Run `pnpm install` to create bun.lockb
 4. Update scripts to use `bun` instead of `yarn`
 
 ## Why Bun?

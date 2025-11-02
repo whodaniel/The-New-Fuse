@@ -86,7 +86,7 @@ if [ "$DRY_RUN" = false ]; then
     echo "✅ Emergency cleanup completed!"
     echo "📦 Backups stored in: $BACKUP_DIR"
     echo "⚠️  This was a CONSERVATIVE cleanup - many issues will need manual fixing"
-    echo "🔍 Run 'bun run dev' to check if basic compilation works now"
+    echo "🔍 Run 'pnpm run dev' to check if basic compilation works now"
     echo ""
     echo "To restore files if something went wrong:"
     echo "  cp $BACKUP_DIR/*.backup <original-location>"

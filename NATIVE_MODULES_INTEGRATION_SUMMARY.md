@@ -2,7 +2,7 @@
 
 ## Problem Solved ✅
 
-**Before**: Developers would encounter canvas native module failures when running `bun install`, `bun run build`, or `bun run test`, requiring manual intervention and knowledge of the hybrid package manager approach.
+**Before**: Developers would encounter canvas native module failures when running `pnpm install`, `pnpm run build`, or `pnpm run test`, requiring manual intervention and knowledge of the hybrid package manager approach.
 
 **After**: The solution is now **fully integrated** into the build process. Developers can use standard commands without worrying about native module issues.
 
@@ -10,10 +10,10 @@
 
 ### 1. Automatic Postinstall Hook
 **File**: `scripts/postinstall.js`
-**Trigger**: Runs automatically after every `bun install`
+**Trigger**: Runs automatically after every `pnpm install`
 
 ```bash
-bun install  # Automatically detects and fixes canvas issues
+pnpm install  # Automatically detects and fixes canvas issues
 ```
 
 **What it does**:
@@ -24,11 +24,11 @@ bun install  # Automatically detects and fixes canvas issues
 
 ### 2. Pre-build Checks
 **Files**: `scripts/pre-build-check.js`
-**Trigger**: Runs before `bun run build` and `bun run test`
+**Trigger**: Runs before `pnpm run build` and `pnpm run test`
 
 ```bash
-bun run build  # Automatically checks native modules first
-bun run test   # Automatically checks native modules first
+pnpm run build  # Automatically checks native modules first
+pnpm run test   # Automatically checks native modules first
 ```
 
 **What it does**:
@@ -38,10 +38,10 @@ bun run test   # Automatically checks native modules first
 
 ### 3. Smart Installation
 **File**: `scripts/smart-install.sh`
-**Usage**: `bun run install:smart`
+**Usage**: `pnpm run install:smart`
 
 ```bash
-bun run install:smart  # Complete automated installation with native module support
+pnpm run install:smart  # Complete automated installation with native module support
 ```
 
 **What it does**:
@@ -67,10 +67,10 @@ bun run install:smart  # Complete automated installation with native module supp
 
 ### 5. Manual Fix Option
 **File**: `scripts/fix-native-modules.sh`
-**Usage**: `bun run fix:native-modules`
+**Usage**: `pnpm run fix:native-modules`
 
 ```bash
-bun run fix:native-modules  # Manual fix when needed
+pnpm run fix:native-modules  # Manual fix when needed
 ```
 
 **What it does**:
@@ -90,25 +90,25 @@ cd The-New-Fuse
 ./scripts/setup-project.sh
 
 # Start developing
-bun run dev
+pnpm run dev
 ```
 
 ### Existing Developers
 ```bash
 # Standard workflow - no changes needed
-bun install     # Automatically handles native modules
-bun run build   # Automatically checks native modules
-bun run test    # Automatically checks native modules
-bun run dev     # Just works
+pnpm install     # Automatically handles native modules
+pnpm run build   # Automatically checks native modules
+pnpm run test    # Automatically checks native modules
+pnpm run dev     # Just works
 ```
 
 ### When Issues Occur
 ```bash
 # Quick fix
-bun run fix:native-modules
+pnpm run fix:native-modules
 
 # Complete reinstall
-bun run install:smart
+pnpm run install:smart
 
 # Full project reset
 ./scripts/setup-project.sh
@@ -132,14 +132,14 @@ bun run install:smart
 ```
 
 ### Automatic Triggers
-- **`postinstall`** - After every `bun install`
+- **`postinstall`** - After every `pnpm install`
 - **`prebuild`** - Before every build or test command
 - **Error detection** - Automatic guidance when issues occur
 
 ### CI/CD Support
 ```bash
 # Skip native modules in CI if not needed
-SKIP_NATIVE_MODULES=true bun install
+SKIP_NATIVE_MODULES=true pnpm install
 
 # Or ensure they're properly compiled
 ./scripts/setup-project.sh
@@ -149,14 +149,14 @@ SKIP_NATIVE_MODULES=true bun install
 
 ### Existing Workflows
 All existing commands continue to work:
-- ✅ `bun install` - Now automatically handles native modules
-- ✅ `bun run build` - Now includes pre-build checks
-- ✅ `bun run test` - Now includes pre-build checks
-- ✅ `bun run dev` - No changes needed
+- ✅ `pnpm install` - Now automatically handles native modules
+- ✅ `pnpm run build` - Now includes pre-build checks
+- ✅ `pnpm run test` - Now includes pre-build checks
+- ✅ `pnpm run dev` - No changes needed
 
 ### Manual Processes
 All manual processes are still available:
-- ✅ `bun run fix:native-modules` - Manual fix option
+- ✅ `pnpm run fix:native-modules` - Manual fix option
 - ✅ Direct node-gyp commands - Still work if needed
 - ✅ System dependency installation - Still required
 
@@ -204,15 +204,15 @@ All manual processes are still available:
 
 ### Before Integration
 ```bash
-bun install                    # ❌ Canvas fails silently
-bun run test                   # ❌ Tests fail with canvas.node missing
+pnpm install                    # ❌ Canvas fails silently
+pnpm run test                   # ❌ Tests fail with canvas.node missing
 # Manual fix required every time
 ```
 
 ### After Integration  
 ```bash
-bun install                    # ✅ Automatically detects and fixes canvas
-bun run test                   # ✅ Pre-build check ensures native modules work
+pnpm install                    # ✅ Automatically detects and fixes canvas
+pnpm run test                   # ✅ Pre-build check ensures native modules work
 # Zero manual intervention needed
 ```
 

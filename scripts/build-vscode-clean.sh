@@ -12,11 +12,11 @@ chmod +x ../../scripts/fix-vscode-errors.sh
 
 # Build
 echo "Building clean extension..."
-bun run compile
+pnpm run compile
 
 if [ $? -eq 0 ]; then
     echo "Packaging extension..."
-    bun run package
+    pnpm run package
     echo "✅ VSCode extension built successfully!"
     ls -la *.vsix
 else

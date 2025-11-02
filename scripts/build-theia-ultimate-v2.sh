@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ultimate Theia Build Script (v7)
-# This script performs a full bun install and then builds Theia and other packages.
+# This script performs a full pnpm install and then builds Theia and other packages.
 
 set -e
 
@@ -26,7 +26,7 @@ echo "Removing old node_modules and bun.lockb..."
 rm -rf node_modules bun.lockb
 rm -rf apps/theia-ide/node_modules
 echo "Installing all dependencies (allowing scripts)..."
-bun install
+pnpm install
 echo "✅ Clean install complete."
 
 # 2. Generate Prisma Client
@@ -42,7 +42,7 @@ echo "
 echo "Creating symlink for Theia's node_modules..."
 ln -s ../../node_modules apps/theia-ide/node_modules
 
-(cd apps/theia-ide && bunx @theia/cli@1.59.0 build --mode production)
+(cd apps/theia-ide && pnpm dlx @theia/cli@1.59.0 build --mode production)
 echo "✅ Theia IDE build complete."
 
 # 4. Build the rest of the packages

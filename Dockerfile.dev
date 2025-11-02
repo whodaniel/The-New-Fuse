@@ -26,7 +26,7 @@ COPY apps/api/package.json ./apps/api/
 COPY packages ./packages
 
 # Install dependencies
-RUN bun install
+RUN pnpm install
 
 # Frontend stage
 FROM base AS frontend

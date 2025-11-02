@@ -66,7 +66,7 @@ if node scripts/pre-build-check.cjs 2>/dev/null | grep -q "✅ Native modules re
     echo -e "${GREEN}✅ Native modules are ready${NC}"
 else
     echo -e "${YELLOW}⚠️  Native modules may need attention${NC}"
-    echo "  Run: bun run fix:native-modules"
+    echo "  Run: pnpm run fix:native-modules"
 fi
 
 # Summary
@@ -74,7 +74,7 @@ echo ""
 echo -e "${BLUE}📊 Environment Status Summary:${NC}"
 if [ -z "$dev_processes" ] && [ ${#occupied_ports[@]} -eq 0 ]; then
     echo -e "${GREEN}✅ Environment is clean and ready for development${NC}"
-    echo -e "${GREEN}🚀 You can now run: bun run dev${NC}"
+    echo -e "${GREEN}🚀 You can now run: pnpm run dev${NC}"
 else
     echo -e "${YELLOW}⚠️  Environment needs attention before starting development${NC}"
     if [ -n "$dev_processes" ]; then
@@ -83,5 +83,5 @@ else
     if [ ${#occupied_ports[@]} -gt 0 ]; then
         echo "  • Clear occupied ports"
     fi
-    echo "  • Run: bun run clean:dev for comprehensive cleanup"
+    echo "  • Run: pnpm run clean:dev for comprehensive cleanup"
 fi

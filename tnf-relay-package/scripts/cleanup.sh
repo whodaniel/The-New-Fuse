@@ -51,4 +51,4 @@ else
 fi
 
 echo -e "\n${GREEN}Cleanup complete!${NC}"
-echo -e "${GREEN}Run 'bun install' to reinstall dependencies${NC}"
+echo -e "${GREEN}Run 'pnpm install' to reinstall dependencies${NC}"

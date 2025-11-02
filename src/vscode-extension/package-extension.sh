@@ -49,7 +49,7 @@ fi
 
 # Install dependencies using Bun
 echo "2️⃣ Installing dependencies using Bun..."
-bun install --frozen-lockfile
+pnpm install --frozen-lockfile
 if [ $? -ne 0 ]; then
     print_error "Failed to install dependencies using Bun. Check for Bun installation or workspace errors."
     exit 1
@@ -58,9 +58,9 @@ print_status "Dependencies installed using Bun"
 
 # Build the extension using Bun
 echo "3️⃣ Building extension using Bun..."
-bun run compile # Assuming 'compile' is the correct build script in package.json
+pnpm run compile # Assuming 'compile' is the correct build script in package.json
 if [ $? -ne 0 ]; then
-    print_warning "Build failed with errors (bun run compile), but attempting to package anyway..."
+    print_warning "Build failed with errors (pnpm run compile), but attempting to package anyway..."
     echo "   Attempting fallback build with esbuild..."
     npx esbuild ./src/extension.ts --bundle --outfile=./dist/extension.js --format=cjs --platform=node --external:vscode --allow-overwrite
     if [ $? -ne 0 ]; then
@@ -74,7 +74,7 @@ if [ $? -ne 0 ]; then
         print_status "Updated main entry point to ./dist/extension.js"
     fi
 else
-    print_status "Build completed successfully (bun run compile)"
+    print_status "Build completed successfully (pnpm run compile)"
 fi
 
 # Package the extension

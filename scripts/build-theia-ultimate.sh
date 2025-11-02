@@ -26,7 +26,7 @@ echo "Removing old node_modules and bun.lockb..."
 rm -rf node_modules bun.lockb
 rm -rf apps/theia-ide/node_modules
 echo "Installing all dependencies but ignoring their scripts..."
-bun install --ignore-scripts
+pnpm install --ignore-scripts
 echo "✅ Clean install complete."
 
 # 2. Manually Rebuild ALL Native Modules
@@ -65,13 +65,13 @@ echo "
 echo "Creating symlink for Theia's node_modules..."
 ln -s ../../node_modules apps/theia-ide/node_modules
 
-(cd apps/theia-ide && bunx @theia/cli@1.59.0 build --mode production)
+(cd apps/theia-ide && pnpm dlx @theia/cli@1.59.0 build --mode production)
 echo "✅ Theia IDE build complete."
 
 # 5. Build the rest of the packages
 echo "
 --- Step 5: Building remaining project packages ---"
-bun run build:packages
+pnpm run build:packages
 
 echo "
 🎉🎉🎉 BUILD SUCCEEDED! 🎉🎉🎉"

@@ -16,7 +16,7 @@ COPY packages ./packages
 COPY apps/api/package.json ./apps/api/
 
 # Install dependencies
-RUN bun install
+RUN pnpm install
 
 # Copy API source code
 COPY apps/api ./apps/api

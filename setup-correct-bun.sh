@@ -40,16 +40,16 @@ rm -f .yarnrc.yml yarn.lock
 
 # Install dependencies
 echo -e "${YELLOW}Installing dependencies with Bun...${NC}"
-bun install
+pnpm install
 
 # Check if installation was successful
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}✅ Project setup completed successfully!${NC}"
   echo -e "${GREEN}✅ Using Bun version: $BUN_VERSION${NC}"
   echo -e "${YELLOW}You can now run:${NC}"
-  echo -e "  ${YELLOW}bun run dev${NC}     - Start development server"
-  echo -e "  ${YELLOW}bun run build${NC}   - Build the project"
-  echo -e "  ${YELLOW}bun run test${NC}    - Run tests"
+  echo -e "  ${YELLOW}pnpm run dev${NC}     - Start development server"
+  echo -e "  ${YELLOW}pnpm run build${NC}   - Build the project"
+  echo -e "  ${YELLOW}pnpm run test${NC}    - Run tests"
 else
   echo -e "${RED}❌ Project setup failed. Please check the errors above.${NC}"
   exit 1

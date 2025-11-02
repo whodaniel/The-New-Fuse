@@ -67,7 +67,7 @@ class PostChangeValidator {
   async validateTypeScript() {
     try {
       this.log('Validating TypeScript compilation...');
-      const output = execSync('bun run type-check', { encoding: 'utf8' });
+      const output = execSync('pnpm run type-check', { encoding: 'utf8' });
       this.results.passed++;
       this.log('TypeScript compilation successful');
       
@@ -127,7 +127,7 @@ class PostChangeValidator {
   async runTestsAndCompare() {
     try {
       this.log('Running test suite...');
-      const testResult = execSync('bun test --passWithNoTests', { encoding: 'utf8' });
+      const testResult = execSync('pnpm test --passWithNoTests', { encoding: 'utf8' });
       this.results.passed++;
       this.log('All tests passed');
       
@@ -160,7 +160,7 @@ class PostChangeValidator {
       this.log('Validating build process...');
       const startTime = Date.now();
       
-      execSync('bun run build', { stdio: 'pipe' });
+      execSync('pnpm run build', { stdio: 'pipe' });
       
       const buildTime = Date.now() - startTime;
       this.log(`Build completed in ${buildTime}ms`);
@@ -242,7 +242,7 @@ class PostChangeValidator {
           fs.writeFileSync(tempFile, importStatement);
           
           // Check if TypeScript can resolve it
-          execSync(`bunx tsc --noEmit ${tempFile}`, { stdio: 'pipe' });
+          execSync(`pnpm dlx tsc --noEmit ${tempFile}`, { stdio: 'pipe' });
           this.log(`✓ Import resolved: ${importStatement}`);
           
           // Clean up
@@ -271,7 +271,7 @@ class PostChangeValidator {
       
       // Build time comparison
       const startTime = Date.now();
-      execSync('bun run type-check', { stdio: 'pipe' });
+      execSync('pnpm run type-check', { stdio: 'pipe' });
       const typeCheckTime = Date.now() - startTime;
       
       this.log(`Type checking took ${typeCheckTime}ms`);

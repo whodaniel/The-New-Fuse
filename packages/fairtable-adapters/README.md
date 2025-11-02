@@ -19,7 +19,7 @@ This package provides seamless migration adapters that allow existing codebases 
 ### 1. Installation
 
 ```bash
-bun add @the-new-fuse/airtable-adapters
+pnpm add @the-new-fuse/airtable-adapters
 ```
 
 ### 2. Drop-in Replacement

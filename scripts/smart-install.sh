@@ -45,12 +45,12 @@ fi
 echo ""
 echo "📦 Step 1: Installing packages with Bun..."
 
-# Try normal bun install first
-if bun install; then
+# Try normal pnpm install first
+if pnpm install; then
     echo "✅ Bun install completed"
 else
     echo "⚠️  Bun install had issues, trying with --ignore-scripts..."
-    bun install --ignore-scripts
+    pnpm install --ignore-scripts
 fi
 
 echo ""
@@ -87,7 +87,7 @@ else
     echo "❌ Canvas package not found - this indicates a dependency issue"
     echo "   Trying to reinstall with --ignore-scripts..."
     rm -rf node_modules bun.lockb
-    bun install --ignore-scripts
+    pnpm install --ignore-scripts
     
     if [ -d "node_modules/canvas" ]; then
         echo "   Canvas package now found, compiling..."
@@ -117,7 +117,7 @@ else
     echo "   macOS: brew install cairo pango libpng jpeg giflib librsvg"
     echo "   Ubuntu: sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev"
     echo ""
-    echo "   Then run: bun run fix:native-modules"
+    echo "   Then run: pnpm run fix:native-modules"
     exit 1
 fi
 
@@ -130,6 +130,6 @@ echo "   ✅ Native modules compiled and verified"
 echo "   ✅ Canvas functionality confirmed"
 echo ""
 echo "🚀 You can now run:"
-echo "   bun run build"
-echo "   bun run dev"
-echo "   bun run test"
+echo "   pnpm run build"
+echo "   pnpm run dev"
+echo "   pnpm run test"

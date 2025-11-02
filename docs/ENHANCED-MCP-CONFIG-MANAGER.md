@@ -81,7 +81,7 @@ enhanced_mcp_config.json           # Enhanced configuration file example
 
 ### 1. Install Dependencies
 ```bash
-bun install @modelcontextprotocol/sdk express jsonwebtoken cors
+pnpm install @modelcontextprotocol/sdk express jsonwebtoken cors
 ```
 
 ### 2. Update Your MCP Configuration

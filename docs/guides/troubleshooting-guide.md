@@ -17,15 +17,15 @@
 2. **Restart with full frontend:**
    ```bash
    # Stop current services (Ctrl+C)
-   bun run dev:with-frontend
+   pnpm run dev:with-frontend
    ```
 
 3. **Check frontend build status:**
    ```bash
    cd apps/frontend
-   bun run build
+   pnpm run build
    cd ../..
-   bun run dev
+   pnpm run dev
    ```
 
 ### **Issue 2: Services Show as Online but Tabs Don't Load**
@@ -54,7 +54,7 @@
 **Solutions:**
 1. **Start services first:**
    ```bash
-   bun run dev
+   pnpm run dev
    ```
 2. **Check port availability:**
    ```bash
@@ -65,7 +65,7 @@
 3. **Clear ports and restart:**
    ```bash
    node scripts/clear-ports.js
-   bun run dev
+   pnpm run dev
    ```
 
 ### **Issue 4: Blank or White Tabs**
@@ -85,7 +85,7 @@
    - Compare with tab content
 
 ### **Issue 5: Services Start But Don't Connect**
-**Problem:** `bun run dev` starts services but browser hub doesn't connect
+**Problem:** `pnpm run dev` starts services but browser hub doesn't connect
 
 **Root Cause:** Timing issues or service readiness
 
@@ -113,7 +113,7 @@
 **Root Cause:** Bun has compatibility issues with native modules like canvas, causing silent installation failures
 
 **Symptoms:**
-- `node_modules/canvas` directory missing after `bun install`
+- `node_modules/canvas` directory missing after `pnpm install`
 - Tests fail with canvas.node missing errors
 - Canvas package appears in package.json but doesn't install
 
@@ -127,7 +127,7 @@
 2. **Clean installation with script bypass:**
    ```bash
    rm -rf node_modules bun.lockb
-   bun install --ignore-scripts
+   pnpm install --ignore-scripts
    ```
 
 3. **Manually compile canvas native bindings:**
@@ -166,7 +166,7 @@ If the above doesn't work, you can use npm for installation and Bun for runtime:
 # Edit package.json: "packageManager": "npm@10.8.2"
 npm install
 # Change back: "packageManager": "bun@1.2.16"
-bun test  # Use Bun for running tests
+pnpm test  # Use Bun for running tests
 ```
 
 ## 🔍 **Diagnostic Commands**
@@ -174,7 +174,7 @@ bun test  # Use Bun for running tests
 ### **Check Service Status**
 ```bash
 # Quick service check
-bun run check-build
+pnpm run check-build
 
 # Manual port check
 lsof -i :3000 :3005 :3007 :3004
@@ -207,9 +207,9 @@ node --version  # Should be 18.x or 20.x for best native module support
 tail -f /tmp/tnf-services.log
 
 # Individual service logs
-cd apps/frontend && bun run dev
-cd apps/api-gateway && bun run dev
-cd apps/theia-ide && bun run dev
+cd apps/frontend && pnpm run dev
+cd apps/api-gateway && pnpm run dev
+cd apps/theia-ide && pnpm run dev
 ```
 
 ### **Network Debugging**
@@ -227,7 +227,7 @@ telnet localhost 3007
 
 ### **Step 1: Verify Build Status**
 ```bash
-bun run check-build
+pnpm run check-build
 ```
 **Expected:** All components should show as built
 
@@ -241,7 +241,7 @@ pkill -f "node.*3000"
 node scripts/clear-ports.js
 
 # Start fresh
-bun run dev
+pnpm run dev
 ```
 
 ### **Step 3: Wait for Full Startup**
@@ -257,7 +257,7 @@ curl http://localhost:3004/api/agents
 ```
 
 ### **Step 5: Test Browser Hub**
-1. **Launch browser hub** (should happen automatically with `bun run dev`)
+1. **Launch browser hub** (should happen automatically with `pnpm run dev`)
 2. **Check service status** in toolbar (should show green dots)
 3. **Try opening a service** (click sidebar item)
 4. **Check for errors** in browser console (F12)
@@ -271,8 +271,8 @@ ls -la apps/frontend/dist/
 
 # Build frontend manually
 cd apps/frontend
-bun run build
-bun run dev
+pnpm run build
+pnpm run dev
 
 # Check frontend routes
 curl http://localhost:3000/workflows
@@ -290,7 +290,7 @@ curl http://localhost:3005/v1/agents
 
 # Check gateway logs
 cd apps/api-gateway
-bun run dev
+pnpm run dev
 ```
 
 ### **Theia IDE Issues**
@@ -303,13 +303,13 @@ ls -la apps/theia-ide/lib/
 
 # Start Theia manually
 cd apps/theia-ide
-bun run dev
+pnpm run dev
 ```
 
 ## 💡 **Pro Tips**
 
 ### **Development Workflow**
-1. **Always use `bun run dev`** - it handles everything
+1. **Always use `pnpm run dev`** - it handles everything
 2. **Wait for full startup** - don't rush to open tabs
 3. **Check service status** before opening services
 4. **Use browser console** to debug loading issues
@@ -321,15 +321,15 @@ bun run dev
 4. **Monitor service logs** for issues
 
 ### **Common Fixes**
-1. **Restart everything:** `pkill -f turbo && bun run dev`
+1. **Restart everything:** `pkill -f turbo && pnpm run dev`
 2. **Clear browser cache:** Hard refresh (Ctrl+Shift+R)
 3. **Check firewall:** Ensure ports 3000-3008 are open
-4. **Update dependencies:** `bun install` in root and service directories
+4. **Update dependencies:** `pnpm install` in root and service directories
 
 ## 🎉 **Expected Behavior**
 
 ### **When Everything Works:**
-- ✅ `bun run dev` starts all services
+- ✅ `pnpm run dev` starts all services
 - ✅ Browser hub launches automatically
 - ✅ Service status shows green dots
 - ✅ Tabs load full service interfaces

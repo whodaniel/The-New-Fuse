@@ -61,6 +61,6 @@ done
 echo "✅ Cleanup complete!"
 echo ""
 echo "📝 Next steps:"
-echo "1. Run 'bun run build' to compile TypeScript properly to dist directories"
+echo "1. Run 'pnpm run build' to compile TypeScript properly to dist directories"
 echo "2. Make sure your build scripts use the correct output directories"
 echo "3. Update any imports that might reference .js files directly"

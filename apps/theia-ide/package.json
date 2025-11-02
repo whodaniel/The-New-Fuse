@@ -6,12 +6,12 @@
   "main": "enhanced-server.js",
   "scripts": {
     "build": "node build-theia.js",
-    "build:optimized": "bun install && bunx @theia/cli@1.59.0 build --mode production",
+    "build:optimized": "pnpm install && pnpm dlx @theia/cli@1.59.0 build --mode production",
     "start": "node enhanced-server.js",
     "start:basic": "node simple-server.js",
     "dev": "PORT=3007 node enhanced-server.js",
     "clean": "rm -rf lib dist node_modules/.cache",
-    "rebuild": "bun run clean && bun install && bun run build",
+    "rebuild": "pnpm run clean && pnpm install && pnpm run build",
     "theia:build": "theia build --mode production",
     "theia:start": "theia start",
     "theia": "theia"

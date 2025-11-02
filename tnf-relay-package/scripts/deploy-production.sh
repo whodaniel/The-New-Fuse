@@ -12,7 +12,7 @@ fi
 # Build production assets
 echo "📦 Building production assets..."
 bun clean
-bun install --frozen-lockfile
+pnpm install --frozen-lockfile
 bun workspaces foreach -pt run build
 
 # Generate fresh Prisma client

@@ -43,7 +43,7 @@ async function testAPIConnection() {
     return true;
   } catch (error) {
     console.log('❌ API is not responding');
-    console.log('   Please ensure The New Fuse is running: bun run dev:full');
+    console.log('   Please ensure The New Fuse is running: pnpm run dev:full');
     return false;
   }
 }

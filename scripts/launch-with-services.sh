@@ -34,7 +34,7 @@ fi
 
 # Start backend services in background
 echo "🚀 Starting backend services..."
-bun run dev:direct &
+pnpm run dev:direct &
 DEV_PID=$!
 
 # Wait for services to be ready

@@ -84,14 +84,14 @@ package.json                          # New dev scripts
 ### **New Recommended Workflow**
 ```bash
 # Unified development (Frontend + API Gateway)
-bun run dev:unified
+pnpm run dev:unified
 
 # Gateway only
-bun run dev:gateway
+pnpm run dev:gateway
 
 # Individual services (legacy)
-bun run dev:api
-bun run dev:frontend
+pnpm run dev:api
+pnpm run dev:frontend
 ```
 
 ### **Access Points**

@@ -311,7 +311,7 @@ The service includes comprehensive tests covering:
 Run tests with:
 
 ```bash
-bun test --cwd packages/sync-core SyncOrchestrator.test.ts
+pnpm test --cwd packages/sync-core SyncOrchestrator.test.ts
 ```
 
 ## Troubleshooting

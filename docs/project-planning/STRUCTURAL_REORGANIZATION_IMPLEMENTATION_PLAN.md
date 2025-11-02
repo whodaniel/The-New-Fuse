@@ -144,15 +144,15 @@ echo "=============================="
 
 # Test core services
 echo "Testing core services..."
-cd apps/api && bun test --reporter=verbose
+cd apps/api && pnpm test --reporter=verbose
 
 # Test frontend components
 echo "Testing frontend..."
-cd ../frontend && bun test
+cd ../frontend && pnpm test
 
 # Test extensions
 echo "Testing VS Code extension..."
-cd ../extension && bun test
+cd ../extension && pnpm test
 
 # Test package builds
 echo "Testing package builds..."
@@ -160,7 +160,7 @@ cd ../../packages
 for pkg in */; do
     if [ -f "$pkg/package.json" ]; then
         echo "Building $pkg..."
-        cd "$pkg" && bun run build && cd ..
+        cd "$pkg" && pnpm run build && cd ..
     fi
 done
 
@@ -616,14 +616,14 @@ pkg.scripts = {
 
   // Maintenance commands
   "clean": "turbo run clean",
-  "clean:all": "rm -rf node_modules packages/*/node_modules apps/*/node_modules && bun install",
+  "clean:all": "rm -rf node_modules packages/*/node_modules apps/*/node_modules && pnpm install",
   "lint": "turbo run lint",
   "format": "prettier --write .",
   "typecheck": "turbo run typecheck",
 
   // Verification
   "verify": "./scripts/verify-features.sh",
-  "health-check": "bun run typecheck && bun run test && bun run build"
+  "health-check": "pnpm run typecheck && pnpm run test && pnpm run build"
 };
 
 fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
@@ -649,13 +649,13 @@ echo "🏗️  Building all packages and apps..."
 
 # Build in dependency order
 echo "1. Building types..."
-bun run build:types
+pnpm run build:types
 
 echo "2. Building packages..."
-bun run build:packages
+pnpm run build:packages
 
 echo "3. Building applications..."
-bun run build:apps
+pnpm run build:apps
 
 echo "✅ All builds completed successfully"
 EOF
@@ -680,7 +680,7 @@ fi
 
 # Start development servers
 echo "Starting API and Frontend..."
-bun run dev:full
+pnpm run dev:full
 
 echo "✅ Development environment ready"
 EOF
@@ -845,33 +845,33 @@ echo "🧪 Running comprehensive feature verification..."
 
 # 1. Install all dependencies
 echo "Installing dependencies..."
-bun install
+pnpm install
 
 # 2. Type checking
 echo "Running type checks..."
-bun run typecheck
+pnpm run typecheck
 
 # 3. Build all packages
 echo "Building all packages..."
-bun run build
+pnpm run build
 
 # 4. Run all tests
 echo "Running all tests..."
-bun run test
+pnpm run test
 
 # 5. Verify specific features
 echo "Verifying webhook functionality..."
-cd packages/webhooks && bun test
+cd packages/webhooks && pnpm test
 
 echo "Verifying A2A functionality..."
-cd ../a2a-core && bun test
+cd ../a2a-core && pnpm test
 
 echo "Verifying UI components..."
-cd ../ui && bun test
+cd ../ui && pnpm test
 
 # 6. Start development servers to verify
 echo "Testing development startup..."
-timeout 30s bun run dev:api &
+timeout 30s pnpm run dev:api &
 API_PID=$!
 sleep 10
 
@@ -923,7 +923,7 @@ for feature in "${FEATURES[@]}"; do
             ;;
         "a2a-communication")
             # Test A2A functionality
-            if ! bun test packages/a2a-core; then
+            if ! pnpm test packages/a2a-core; then
                 FAILED_TESTS+=("$feature")
             fi
             ;;
@@ -1030,26 +1030,26 @@ cat > docs/development/DEVELOPER_ONBOARDING_POST_REORG.md << 'EOF'
    ```bash
    git clone [repository-url]
    cd "The New Fuse"
-   bun install
+   pnpm install
    ```
 
 2. **Start Development**
 
    ```bash
    # Start full development environment
-   bun run dev:full
+   pnpm run dev:full
    
    # Or start individual services
-   bun run dev:api      # Backend only
-   bun run dev:frontend # Frontend only
+   pnpm run dev:api      # Backend only
+   pnpm run dev:frontend # Frontend only
    ```
 
 3. **Run Tests**
 
    ```bash
-   bun run test        # All tests
-   bun run test:unit   # Package tests only
-   bun run verify      # Feature verification
+   pnpm run test        # All tests
+   pnpm run test:unit   # Package tests only
+   pnpm run verify      # Feature verification
    ```
 
 ## Project Structure
@@ -1077,13 +1077,13 @@ configs/        # Shared configurations
 
 ```bash
 # Build specific package
-cd packages/webhooks && bun run build
+cd packages/webhooks && pnpm run build
 
 # Test specific package
-cd packages/core && bun test
+cd packages/core && pnpm test
 
 # Add dependency to package
-cd packages/ui && bun add react
+cd packages/ui && pnpm add react
 ```
 
 EOF
@@ -1104,13 +1104,13 @@ echo "=========================="
 
 # 1. Clean slate test
 echo "1. Testing clean build..."
-bun run clean:all
-bun install
-bun run build
+pnpm run clean:all
+pnpm install
+pnpm run build
 
 # 2. All tests
 echo "2. Running all tests..."
-bun run test
+pnpm run test
 
 # 3. Feature verification
 echo "3. Running feature verification..."
@@ -1118,7 +1118,7 @@ echo "3. Running feature verification..."
 
 # 4. Performance test
 echo "4. Testing startup performance..."
-time bun run dev:api &
+time pnpm run dev:api &
 API_PID=$!
 sleep 5
 kill $API_PID
@@ -1268,7 +1268,7 @@ cd "The New Fuse"
 git reset --hard HEAD~1  # Before reorganization commit
 
 # 3. Reinstall dependencies
-bun install
+pnpm install
 
 echo "✅ Rollback completed - system restored to pre-reorganization state"
 ```

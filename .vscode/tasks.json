@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "Scaffold wallet, transaction, and web3auth modules/services/controllers (NestJS)",
-			"command": "bunx nest generate module wallets && bunx nest generate service wallets && bunx nest generate controller wallets && bunx nest generate module transactions && bunx nest generate service transactions && bunx nest generate module web3auth && bunx nest generate service web3auth",
+			"command": "pnpm dlx nest generate module wallets && pnpm dlx nest generate service wallets && pnpm dlx nest generate controller wallets && pnpm dlx nest generate module transactions && pnpm dlx nest generate service transactions && pnpm dlx nest generate module web3auth && pnpm dlx nest generate service web3auth",
 			"group": "build",
 			"isBackground": false
 		}

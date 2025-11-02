@@ -47,11 +47,11 @@ GRPC_URL=0.0.0.0:50051
 
 ```bash
 # Development
-bun run dev:grpc
+pnpm run dev:grpc
 
 # Production
-bun run build
-bun run start:grpc
+pnpm run build
+pnpm run start:grpc
 ```
 
 ### 3. Using the gRPC Client
@@ -155,20 +155,20 @@ const results = await client.searchByText('documents', 'sample query', {
 ### Building
 
 ```bash
-bun run build
+pnpm run build
 ```
 
 ### Testing
 
 ```bash
-bun run test
+pnpm run test
 ```
 
 ### Proto Generation
 
 ```bash
 cd ../proto-definitions
-bun run generate
+pnpm run generate
 ```
 
 ## Integration
@@ -210,9 +210,9 @@ The service automatically registers with the gRPC infrastructure and provides he
 FROM oven/bun:latest
 WORKDIR /app
 COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN bun run build
+RUN pnpm run build
 EXPOSE 50051
 CMD ["bun", "run", "start:grpc"]
 ```
@@ -256,7 +256,7 @@ spec:
 ### Debug Mode
 
 ```bash
-DEBUG=vector-db:* bun run start:grpc
+DEBUG=vector-db:* pnpm run start:grpc
 ```
 
 ## Contributing

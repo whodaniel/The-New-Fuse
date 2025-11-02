@@ -5,7 +5,7 @@
 ### **🌟 Option 1: Integrated Development (Recommended)**
 ```bash
 # Starts everything: build check + all services + browser hub
-bun run dev
+pnpm run dev
 ```
 **What it does:**
 - ✅ Checks if build is needed (skips if already built)
@@ -19,13 +19,13 @@ bun run dev
 ### **Option 2: Services Only**
 ```bash
 # Just start backend services (no browser)
-bun run services:start
+pnpm run services:start
 ```
 
 ### **Option 3: Browser Only (Limited Functionality)**
 ```bash
 # Just the browser interface
-bun run hub:functional
+pnpm run hub:functional
 ```
 
 ## 🔧 **Troubleshooting Connection Issues**
@@ -41,7 +41,7 @@ localhost:3000/health:1 Failed to load resource: net::ERR_CONNECTION_REFUSED
 **Solution:**
 1. **Start the services first:**
    ```bash
-   bun run services:start
+   pnpm run services:start
    ```
 
 2. **Wait for services to be ready** (you'll see):
@@ -53,7 +53,7 @@ localhost:3000/health:1 Failed to load resource: net::ERR_CONNECTION_REFUSED
 
 3. **Then launch the browser:**
    ```bash
-   bun run hub:functional
+   pnpm run hub:functional
    ```
 
 ### **Problem: Blank Tabs**
@@ -124,7 +124,7 @@ These warnings:
 ### **Daily Development:**
 ```bash
 # One command does everything!
-bun run dev
+pnpm run dev
 ```
 **This will:**
 - ✅ Check build status (skip rebuild if not needed)
@@ -135,19 +135,19 @@ bun run dev
 ### **First Time Setup:**
 ```bash
 # 1. Build everything (includes Theia)
-bun run build
+pnpm run build
 
 # 2. Start services
-bun run services:start
+pnpm run services:start
 
 # 3. Launch browser
-bun run hub:functional
+pnpm run hub:functional
 ```
 
 ### **Service Management:**
 ```bash
 # Start services for browser
-bun run services:start
+pnpm run services:start
 
 # Check service health
 curl http://localhost:3005/health
@@ -162,7 +162,7 @@ curl http://localhost:3004/api/agents
 
 ### **Performance:**
 - **Keep services running** between browser sessions
-- **Use smart dev** (`bun run dev`) to avoid rebuilds
+- **Use smart dev** (`pnpm run dev`) to avoid rebuilds
 - **Close unused tabs** to save memory
 
 ### **Debugging:**

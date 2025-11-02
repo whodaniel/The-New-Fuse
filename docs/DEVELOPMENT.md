@@ -17,16 +17,16 @@ git clone <repository-url>
 cd "The New Fuse"
 
 # Install dependencies
-bun install
+pnpm install
 
 # Run type checking
-bun run type-check
+pnpm run type-check
 
 # Run tests
-bun test
+pnpm test
 
 # Start development server
-bun run dev
+pnpm run dev
 ```
 
 ## Architecture Overview
@@ -77,7 +77,7 @@ code --install-extension bradlc.vscode-tailwindcss
 code --install-extension ms-vscode.vscode-typescript-next
 
 # Set up Git hooks
-bun run prepare
+pnpm run prepare
 ```
 
 ### 2. Making Changes
@@ -101,31 +101,31 @@ git commit -m "feat: your feature description"
 
 ```bash
 # Run all tests
-bun test
+pnpm test
 
 # Run specific test types
-bun run test:unit
-bun run test:integration
-bun run test:e2e
+pnpm run test:unit
+pnpm run test:integration
+pnpm run test:e2e
 
 # Run tests with coverage
-bun run test:coverage
+pnpm run test:coverage
 
 # Run tests in watch mode
-bun test --watch
+pnpm test --watch
 ```
 
 ### 4. Building
 
 ```bash
 # Build all packages
-bun run build
+pnpm run build
 
 # Build specific packages
-bun run build --filter=@the-new-fuse/types
+pnpm run build --filter=@the-new-fuse/types
 
 # Build for production
-bun run build:prod
+pnpm run build:prod
 ```
 
 ## Contributing Guidelines
@@ -186,7 +186,7 @@ cat > package.json << EOF
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "bun test"
+    "test": "pnpm test"
   }
 }
 EOF
@@ -220,9 +220,9 @@ EOF
 
 ```bash
 # Clear cache and rebuild
-bun run clean
-bun install
-bun run build
+pnpm run clean
+pnpm install
+pnpm run build
 ```
 
 #### Test Failures
@@ -232,14 +232,14 @@ bun run build
 cat jest.setup.cjs
 
 # Verify test environment
-bun test test/index.test.ts
+pnpm test test/index.test.ts
 ```
 
 #### TypeScript Errors
 
 ```bash
 # Check type definitions
-bun run type-check
+pnpm run type-check
 
 # Verify path mappings
 cat tsconfig.base.json

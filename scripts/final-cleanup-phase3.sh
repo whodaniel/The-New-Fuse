@@ -24,14 +24,14 @@ safe_replace() {
             
             # Replace yarn commands with bun equivalents
             sed -i.bak \
-                -e 's/yarn install/bun install/g' \
-                -e 's/yarn add/bun add/g' \
+                -e 's/yarn install/pnpm install/g' \
+                -e 's/yarn add/pnpm add/g' \
                 -e 's/yarn remove/bun remove/g' \
-                -e 's/yarn build/bun run build/g' \
-                -e 's/yarn dev/bun run dev/g' \
-                -e 's/yarn start/bun run start/g' \
-                -e 's/yarn test/bun run test/g' \
-                -e 's/yarn run /bun run /g' \
+                -e 's/yarn build/pnpm run build/g' \
+                -e 's/yarn dev/pnpm run dev/g' \
+                -e 's/yarn start/pnpm run start/g' \
+                -e 's/yarn test/pnpm run test/g' \
+                -e 's/yarn run /pnpm run /g' \
                 -e 's/yarn workspace \([^ ]*\) \([^ ]*\)/bun --filter \1 run \2/g' \
                 -e 's/yarn workspace \([^ ]*\)/bun --filter \1/g' \
                 -e 's/yarn --version/bun --version/g' \
@@ -112,13 +112,13 @@ find . -name "package.json" -not -path "*/node_modules/*" -not -path "*/.git/*" 
         
         # Fix package.json yarn references
         sed -i.bak \
-            -e 's/"yarn /"bun run /g' \
+            -e 's/"yarn /"pnpm run /g' \
             -e 's/"packageManager": "yarn@.*"/"packageManager": "bun@1.1.38"/g' \
-            -e 's/yarn install/bun install/g' \
-            -e 's/yarn build/bun run build/g' \
-            -e 's/yarn dev/bun run dev/g' \
-            -e 's/yarn start/bun run start/g' \
-            -e 's/yarn test/bun run test/g' \
+            -e 's/yarn install/pnpm install/g' \
+            -e 's/yarn build/pnpm run build/g' \
+            -e 's/yarn dev/pnpm run dev/g' \
+            -e 's/yarn start/pnpm run start/g' \
+            -e 's/yarn test/pnpm run test/g' \
             "$pkg"
         
         rm -f "$pkg.bak"
@@ -169,7 +169,7 @@ echo "📊 Remaining yarn references: $REMAINING"
 
 if [[ "$REMAINING" -lt 50 ]]; then
     echo "🎉 SUCCESS! Yarn to Bun migration is essentially complete!"
-    echo "🚀 Ready for: bun install && bun run build && bun run dev"
+    echo "🚀 Ready for: pnpm install && pnpm run build && pnpm run dev"
 else
     echo "⚠️  Still has $REMAINING references - may need manual review"
     echo "📝 Check remaining files with: grep -r 'yarn' . --exclude-dir=node_modules --exclude-dir=.git"

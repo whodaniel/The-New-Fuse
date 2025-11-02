@@ -64,7 +64,7 @@ sleep 2
 echo "📊 Starting with memory monitoring..."
 
 # 1. Start API Gateway first (lightweight)
-if start_service_safe "API Gateway" 3005 "cd apps/api-gateway && bun run dev"; then
+if start_service_safe "API Gateway" 3005 "cd apps/api-gateway && pnpm run dev"; then
     echo "✅ API Gateway running"
 else
     echo "❌ Failed to start API Gateway"
@@ -74,7 +74,7 @@ fi
 sleep 5
 
 # 2. Start Frontend (moderate memory)
-if start_service_safe "Frontend" 3000 "cd apps/frontend && bun run dev"; then
+if start_service_safe "Frontend" 3000 "cd apps/frontend && pnpm run dev"; then
     echo "✅ Frontend running"
 else
     echo "⚠️  Frontend failed, continuing with other services..."
@@ -84,14 +84,14 @@ sleep 5
 
 # 3. Start Theia IDE (high memory - only if we have enough)
 if check_memory; then
-    if start_service_safe "Theia IDE" 3008 "cd apps/theia-ide && bun run dev"; then
+    if start_service_safe "Theia IDE" 3008 "cd apps/theia-ide && pnpm run dev"; then
         echo "✅ Theia IDE running"
     else
         echo "⚠️  Theia IDE failed, but other services are running"
     fi
 else
     echo "⚠️  Skipping Theia IDE due to memory constraints"
-    echo "💡 You can start it manually later with: cd apps/theia-ide && bun run dev"
+    echo "💡 You can start it manually later with: cd apps/theia-ide && pnpm run dev"
 fi
 
 sleep 3
@@ -99,7 +99,7 @@ sleep 3
 # 4. Start Electron (if memory allows)
 if check_memory; then
     echo "🔄 Starting Electron Desktop..."
-    cd apps/electron-desktop && bun run dev &
+    cd apps/electron-desktop && pnpm run dev &
     echo "✅ Electron Desktop starting..."
 else
     echo "⚠️  Skipping Electron due to memory constraints"

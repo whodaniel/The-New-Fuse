@@ -333,7 +333,7 @@ The MasterClockService includes comprehensive tests covering:
 Run tests with:
 ```bash
 cd packages/sync-core
-bun test MasterClockService.test.ts
+pnpm test MasterClockService.test.ts
 ```
 
 ## Next Steps

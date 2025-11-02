@@ -25,13 +25,13 @@ The project includes automated native module setup that runs during installation
 
 ```bash
 # Fresh installation (includes native module setup)
-bun install
+pnpm install
 
 # Manual native module setup
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Legacy native module fix
-bun run fix:native-modules
+pnpm run fix:native-modules
 ```
 
 ### Build Process Integration
@@ -39,7 +39,7 @@ The build system automatically checks and fixes native modules:
 
 ```bash
 # Build with automatic native module verification
-bun run build
+pnpm run build
 
 # If build fails, the system will:
 # 1. Detect missing native modules
@@ -50,7 +50,7 @@ bun run build
 ## How the Automated System Works
 
 ### 1. Installation Hook
-When you run `bun install`, the postinstall script automatically:
+When you run `pnpm install`, the postinstall script automatically:
 - Runs the standard postinstall tasks
 - Executes `scripts/setup-native-modules.cjs`
 - Verifies all required modules are properly built
@@ -81,7 +81,7 @@ Error: Cannot find module '../build/Release/canvas.node'
 **Solution:**
 ```bash
 # Automatic fix
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Manual fix
 cd node_modules/canvas && node-gyp rebuild
@@ -95,10 +95,10 @@ Error: Cannot find module 'drivelist/build/Release/drivelist.node'
 **Solution:**
 ```bash
 # Automatic fix  
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Manual fix
-bun add drivelist --dev
+pnpm add drivelist --dev
 ```
 
 #### Issue 3: Node-PTY Missing
@@ -109,10 +109,10 @@ Error: Cannot find module 'node-pty/build/Release/spawn-helper'
 **Solution:**
 ```bash
 # Automatic fix
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Manual fix
-bun add node-pty --dev
+pnpm add node-pty --dev
 ```
 
 #### Issue 4: Ripgrep Binary Missing
@@ -123,10 +123,10 @@ Error: Cannot find module '@vscode/ripgrep/bin/rg'
 **Solution:**
 ```bash
 # Automatic fix
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Manual fix
-bun add @vscode/ripgrep --dev
+pnpm add @vscode/ripgrep --dev
 ```
 
 ### Advanced Troubleshooting
@@ -136,13 +136,13 @@ If you encounter persistent issues:
 
 ```bash
 # Complete clean rebuild
-bun run clean:all
-bun install
+pnpm run clean:all
+pnpm install
 
 # Or step by step
 rm -rf node_modules
-bun install
-bun run setup:native-modules
+pnpm install
+pnpm run setup:native-modules
 ```
 
 #### Node.js Version Issues
@@ -154,7 +154,7 @@ node --version
 
 # Recommended: Use Node.js 18.x for best compatibility
 nvm use 18
-bun install
+pnpm install
 ```
 
 #### Architecture Mismatches
@@ -162,7 +162,7 @@ On Apple Silicon Macs or other architectures:
 
 ```bash
 # Force rebuild for current architecture
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Or manually for specific modules
 cd node_modules/canvas && node-gyp rebuild --arch=arm64
@@ -177,10 +177,10 @@ git clone <repository-url>
 cd the-new-fuse
 
 # 2. Install dependencies (automatic native module setup)
-bun install
+pnpm install
 
 # 3. Verify everything works
-bun run build
+pnpm run build
 ```
 
 ### Continuous Integration
@@ -189,13 +189,13 @@ For CI/CD pipelines, ensure native modules are properly handled:
 ```yaml
 # GitHub Actions example
 - name: Install dependencies
-  run: bun install
+  run: pnpm install
 
 - name: Verify native modules
-  run: bun run setup:native-modules
+  run: pnpm run setup:native-modules
 
 - name: Build project
-  run: bun run build
+  run: pnpm run build
 ```
 
 ### Docker Integration
@@ -215,8 +215,8 @@ RUN apt-get update && apt-get install -y \
 
 # Install and setup
 COPY package.json bun.lock ./
-RUN bun install
-RUN bun run setup:native-modules
+RUN pnpm install
+RUN pnpm run setup:native-modules
 ```
 
 ## Monitoring and Diagnostics
@@ -224,10 +224,10 @@ RUN bun run setup:native-modules
 ### Health Check Commands
 ```bash
 # Quick health check
-bun run setup:native-modules
+pnpm run setup:native-modules
 
 # Full build verification
-bun run build
+pnpm run build
 
 # Individual module testing
 node -e "const { createCanvas } = require('canvas'); console.log('Canvas OK');"
@@ -239,7 +239,7 @@ The setup script provides detailed logging:
 
 ```bash
 # Run with verbose output
-DEBUG=* bun run setup:native-modules
+DEBUG=* pnpm run setup:native-modules
 
 # Check specific module status
 ls -la node_modules/canvas/build/Release/
@@ -315,5 +315,5 @@ uname -a  # or systeminfo on Windows
 
 # Module status
 ls -la node_modules/*/build/Release/ 2>/dev/null | head -20
-bun run setup:native-modules
+pnpm run setup:native-modules
 ```

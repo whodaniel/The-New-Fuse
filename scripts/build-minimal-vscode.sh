@@ -11,18 +11,18 @@ cp package-minimal.json package.json
 
 # Install minimal dependencies
 echo "Installing minimal dependencies..."
-bun install
+pnpm install
 
 # Create dist directory
 mkdir -p dist
 
 # Build with esbuild directly
 echo "Building extension..."
-bunx esbuild src/extension-minimal.ts --bundle --outfile=dist/extension-minimal.js --external:vscode --format=cjs --platform=node
+pnpm dlx esbuild src/extension-minimal.ts --bundle --outfile=dist/extension-minimal.js --external:vscode --format=cjs --platform=node
 
 # Package extension
 echo "Packaging extension..."
-bunx vsce package
+pnpm dlx vsce package
 
 echo "✅ Minimal VSCode extension built successfully!"
 ls -la *.vsix

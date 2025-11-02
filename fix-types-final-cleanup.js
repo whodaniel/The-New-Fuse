@@ -167,7 +167,7 @@ try {
   fixAllRemainingIssues();
   
   console.log('✅ Final cleanup completed successfully!');
-  console.log('🔄 Now run: bun run build');
+  console.log('🔄 Now run: pnpm run build');
 } catch (error) {
   console.error('❌ Error during cleanup:', error);
   process.exit(1);

@@ -290,7 +290,7 @@ The ConflictManager includes comprehensive tests covering:
 
 Run tests with:
 ```bash
-bun test ConflictManager.test.ts
+pnpm test ConflictManager.test.ts
 ```
 
 ## Configuration

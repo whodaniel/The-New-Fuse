@@ -8,8 +8,8 @@ COPY packages ./packages
 COPY apps ./apps
 
 # Install dependencies and build
-RUN bun install
-RUN bun run build
+RUN pnpm install
+RUN pnpm run build
 
 FROM node:20-bullseye-slim
 
@@ -22,7 +22,7 @@ COPY --from=builder /app/bun.lockb ./
 
 # Install production dependencies with Bun
 COPY --from=oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
-RUN bun install --production
+RUN pnpm install --production
 
 EXPOSE 3001
 CMD ["node", "dist/main.js"]

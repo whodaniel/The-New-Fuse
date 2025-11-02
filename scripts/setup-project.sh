@@ -69,7 +69,7 @@ echo "----------------------------------"
 # Generate Prisma client if needed
 if [ -f "prisma/schema.prisma" ]; then
     echo "Setting up database schema..."
-    bun run db:generate
+    pnpm run db:generate
 fi
 
 echo ""
@@ -80,7 +80,7 @@ echo "Running health checks..."
 
 # Check if build works
 echo "Testing build process..."
-if bun run build > /dev/null 2>&1; then
+if pnpm run build > /dev/null 2>&1; then
     echo "✅ Build process working"
 else
     echo "⚠️  Build process has issues (this may be expected for incomplete setup)"
@@ -88,7 +88,7 @@ fi
 
 # Check if tests work
 echo "Testing test suite..."
-if timeout 30 bun run test > /dev/null 2>&1; then
+if timeout 30 pnpm run test > /dev/null 2>&1; then
     echo "✅ Test suite working"
 else
     echo "⚠️  Some tests may be failing (this may be expected)"
@@ -105,13 +105,13 @@ echo "   ✅ Database schema generated (if applicable)"
 echo "   ✅ Build and test processes verified"
 echo ""
 echo "🚀 Next steps:"
-echo "   bun run dev          # Start development servers"
-echo "   bun run build        # Build the project"
-echo "   bun run test         # Run tests"
+echo "   pnpm run dev          # Start development servers"
+echo "   pnpm run build        # Build the project"
+echo "   pnpm run test         # Run tests"
 echo ""
 echo "💡 If you encounter issues:"
-echo "   bun run fix:native-modules    # Fix native module issues"
-echo "   bun run install:smart         # Reinstall with smart detection"
+echo "   pnpm run fix:native-modules    # Fix native module issues"
+echo "   pnpm run install:smart         # Reinstall with smart detection"
 echo "   ./scripts/setup-project.sh    # Re-run this setup"
 echo ""
 echo "📚 Documentation:"

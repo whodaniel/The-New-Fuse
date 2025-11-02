@@ -19,13 +19,13 @@ echo "📦 Updating dependencies in apps/frontend..."
 cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
 
 # Update package.json with optimized dependencies
-bun add react@18.2.0 react-dom@18.2.0
-bun add -D @types/react@18.2.0 @types/react-dom@18.2.0
+pnpm add react@18.2.0 react-dom@18.2.0
+pnpm add -D @types/react@18.2.0 @types/react-dom@18.2.0
 
 # Add modern UI libraries if not already present
-bun add @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-tabs
-bun add @tanstack/react-query@latest
-bun add zustand@latest
+pnpm add @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-tabs
+pnpm add @tanstack/react-query@latest
+pnpm add zustand@latest
 
 # Ensure TypeScript is properly configured
 echo "⚙️ Configuring TypeScript..."
@@ -33,13 +33,13 @@ cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
 
 # Integrate feature tracker functionality
 echo "🔗 Integrating feature tracker functionality..."
-bun add @the-new-fuse/feature-tracker@workspace:* @the-new-fuse/feature-suggestions@workspace:*
+pnpm add @the-new-fuse/feature-tracker@workspace:* @the-new-fuse/feature-suggestions@workspace:*
 
 # Clean up and rebuild
 echo "🧹 Cleaning and rebuilding frontend..."
 bun clean
-bun install
-bun run build
+pnpm install
+pnpm run build
 
 echo "✅ Frontend consolidation completed successfully!"
 echo "🚀 The frontend has been consolidated with the best features from both implementations."

@@ -37,10 +37,10 @@ cp apps/frontend/.env.example apps/frontend/.env
 
 ```bash
 # Install all dependencies
-bun install
+pnpm install
 
 # Generate Prisma client
-bun run --filter @the-new-fuse/database generate
+pnpm run --filter @the-new-fuse/database generate
 ```
 
 ### 4. Database Setup
@@ -50,10 +50,10 @@ bun run --filter @the-new-fuse/database generate
 docker-compose up -d postgres
 
 # Run migrations
-bun run --filter @the-new-fuse/database migrate:deploy
+pnpm run --filter @the-new-fuse/database migrate:deploy
 
 # Seed database (optional)
-bun run --filter @the-new-fuse/database seed
+pnpm run --filter @the-new-fuse/database seed
 ```
 
 ### 5. Start Services
@@ -63,7 +63,7 @@ bun run --filter @the-new-fuse/database seed
 bun dev
 
 # Production mode
-bun run build
+pnpm run build
 bun start
 ```
 
@@ -112,11 +112,11 @@ curl http://localhost:8000/health
 
 ```bash
 # Run all tests
-bun test
+pnpm test
 
 # Run specific tests
-bun run test:api
-bun run test:frontend
+pnpm run test:api
+pnpm run test:frontend
 ```
 
 ## Troubleshooting

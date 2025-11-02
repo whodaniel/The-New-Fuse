@@ -47,7 +47,7 @@ echo "✅ Cleaned node_modules and lockfile"
 
 echo ""
 echo "📦 Step 2: Installing packages (ignoring scripts)..."
-bun install --ignore-scripts
+pnpm install --ignore-scripts
 echo "✅ Packages installed"
 
 echo ""

@@ -52,15 +52,15 @@
 ### Quick Start
 ```bash
 # From the project root
-bun run start
+pnpm run start
 # or
-bun run launch
+pnpm run launch
 ```
 
 ### Manual Launch  
 ```bash
 # Start Theia IDE only
-cd apps/theia-ide && bun run start
+cd apps/theia-ide && pnpm run start
 
 # Open Browser Hub
 open apps/browser-hub/enhanced-browser-hub.html

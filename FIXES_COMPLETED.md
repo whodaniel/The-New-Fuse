@@ -10,7 +10,7 @@
 - Updated all references in package.json and shell scripts
 
 ### **2. ✅ Smart Build System Working**
-**Problem:** `bun run dev` always rebuilt Theia (5-10 minutes)
+**Problem:** `pnpm run dev` always rebuilt Theia (5-10 minutes)
 **Solution:** 
 - ✅ Smart build detection checks for existing build artifacts
 - ✅ Skips unnecessary rebuilds when Theia is already built
@@ -44,17 +44,17 @@
 ### **✅ Smart Development Workflow**
 ```bash
 # First time (builds everything)
-bun run dev
+pnpm run dev
 # Output: 🔨 Building Theia IDE... (5-10 minutes)
 
 # Subsequent times (skips build)
-bun run dev  
+pnpm run dev  
 # Output: ✅ Build artifacts found. Skipping build step. (10 seconds)
 ```
 
 ### **✅ Build Status Checking**
 ```bash
-bun run check-build
+pnpm run check-build
 # Shows exactly what's built and what's missing
 ```
 
@@ -75,19 +75,19 @@ bun run check-build
 
 ```bash
 # Smart development (recommended)
-bun run dev
+pnpm run dev
 
 # Check what's built
-bun run check-build
+pnpm run check-build
 
 # Launch browser with services
-bun run hub:with-services
+pnpm run hub:with-services
 
 # Launch browser only
-bun run hub:functional
+pnpm run hub:functional
 
 # Direct dev (bypass smart checks)
-bun run dev:direct
+pnpm run dev:direct
 ```
 
 ## 🎯 **Next Steps to Complete**

@@ -7,9 +7,9 @@ console.log('⏱️  Build Performance Monitor');
 console.log('============================');
 
 const commands = [
-  { name: 'Fast Build', cmd: 'bun run build:fast' },
-  { name: 'Optimized Build', cmd: 'bun run build:optimized' },
-  { name: 'Production Build', cmd: 'bun run build:production' }
+  { name: 'Fast Build', cmd: 'pnpm run build:fast' },
+  { name: 'Optimized Build', cmd: 'pnpm run build:optimized' },
+  { name: 'Production Build', cmd: 'pnpm run build:production' }
 ];
 
 const results = [];

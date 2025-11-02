@@ -13,7 +13,7 @@ cd apps/theia-ide
 
 # Install dependencies with bun
 echo "Installing Theia dependencies with bun..."
-bun install
+pnpm install
 
 # Manually rebuild problematic native modules
 echo "🔨 Manually rebuilding native modules..."
@@ -30,9 +30,9 @@ fi
 echo "✅ Manual rebuilds complete."
 
 
-# Build Theia with bunx
-echo "Building Theia with bunx @theia/cli..."
-bunx @theia/cli@1.59.0 build --mode production
+# Build Theia with pnpm dlx
+echo "Building Theia with pnpm dlx @theia/cli..."
+pnpm dlx @theia/cli@1.59.0 build --mode production
 
 # Verify build success
 if [ -f "lib/backend/main.js" ] && [ -f "src-gen/backend/main.js" ]; then
@@ -46,7 +46,7 @@ if [ -f "lib/backend/main.js" ] && [ -f "src-gen/backend/main.js" ]; then
   "version": "2.0.0",
   "built": true,
   "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-  "buildMethod": "bunx @theia/cli build with manual rebuilds",
+  "buildMethod": "pnpm dlx @theia/cli build with manual rebuilds",
   "buildTime": "optimized",
   "features": [
     "ai-powered",
@@ -70,7 +70,7 @@ cd ../..
 
 # Step 2: Build other packages
 echo "📦 Step 2: Building other packages..."
-bun run build:packages
+pnpm run build:packages
 
 echo "✅ Build completed successfully!"
 echo "🎯 Theia IDE is now fully functional and ready for Browser Hub integration"

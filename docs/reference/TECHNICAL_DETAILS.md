@@ -378,9 +378,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: bun install
+        run: pnpm install
       - name: Run tests
-        run: bun test
+        run: pnpm test
 
   deploy:
     needs: test
@@ -408,7 +408,7 @@ jobs:
 git clone https://github.com/username/the-new-fuse.git
 
 # Install dependencies
-bun install
+pnpm install
 
 # Setup environment
 cp .env.example .env
@@ -420,14 +420,14 @@ bun dev
 ### Testing
 ```bash
 # Run all tests
-bun test
+pnpm test
 
 # Run specific tests
-bun run test:api
-bun run test:frontend
+pnpm run test:api
+pnpm run test:frontend
 
 # Run e2e tests
-bun run test:e2e
+pnpm run test:e2e
 ```
 
 ## Scaling Considerations

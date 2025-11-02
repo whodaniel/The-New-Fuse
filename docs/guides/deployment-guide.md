@@ -29,7 +29,7 @@ This guide implements a three-phase deployment strategy for The New Fuse Platfor
 # 1. Clone and setup
 git clone <repository>
 cd the-new-fuse
-bun install
+pnpm install
 
 # 2. Configure environment
 cp .env.example .env.production
@@ -46,7 +46,7 @@ cp .env.example .env.production
 1. **Connect Repository**:
    - Link GitHub repository to Vercel
    - Set root directory: `apps/frontend`
-   - Build command: `bun run build`
+   - Build command: `pnpm run build`
    - Output directory: `dist`
 
 2. **Environment Variables**:
@@ -286,20 +286,20 @@ data:
 #### Build Failures
 ```bash
 # Check Turbo configuration
-bun run build --filter=@the-new-fuse/api-server
+pnpm run build --filter=@the-new-fuse/api-server
 
 # Clear cache
-bun run clean:cache
-bun install --frozen-lockfile
+pnpm run clean:cache
+pnpm install --frozen-lockfile
 ```
 
 #### Database Connection Issues
 ```bash
 # Generate Prisma client
-bun run db:generate
+pnpm run db:generate
 
 # Run migrations
-bun run db:migrate
+pnpm run db:migrate
 ```
 
 #### Service Communication

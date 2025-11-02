@@ -18,8 +18,8 @@ The Theia IDE build has been successfully completed after fixing the native modu
 - **Command**: `bash scripts/fix-native-modules-complete.sh`
 - **Result**: ✅ Native module built successfully
 
-### 3. Path Resolution Issue with bunx
-- **Problem**: `bunx` commands running from temporary directories couldn't resolve native modules
+### 3. Path Resolution Issue with pnpm dlx
+- **Problem**: `pnpm dlx` commands running from temporary directories couldn't resolve native modules
 - **Solution**: Updated build strategy to use direct `theia` command first
 - **Change**: Modified `scripts/memory-optimized-build.cjs` to prioritize `direct-theia-build` strategy
 - **Result**: ✅ Build now works consistently

@@ -43,45 +43,45 @@ bun dev
 bun start
 
 # Build project
-bun run build
+pnpm run build
 
 # Type checking
-bun run type-check
+pnpm run type-check
 ```
 
 ### Testing
 ```bash
 # Run all tests
-bun test
+pnpm test
 
 # Run specific tests
-bun run test:unit
-bun run test:integration
-bun run test:e2e
+pnpm run test:unit
+pnpm run test:integration
+pnpm run test:e2e
 ```
 
 ### Database Operations
 ```bash
 # Reset development database
-bun run db:reset
+pnpm run db:reset
 
 # Run migrations
-bun run db:migrate
+pnpm run db:migrate
 
 # Generate types
-bun run db:generate
+pnpm run db:generate
 ```
 
 ### Docker Operations
 ```bash
 # Start Docker environment
-bun run docker:up
+pnpm run docker:up
 
 # Stop Docker environment
-bun run docker:down
+pnpm run docker:down
 
 # Clean Docker artifacts
-bun run clean:docker
+pnpm run clean:docker
 ```
 
 ## Maintenance Scripts

@@ -44,21 +44,21 @@ echo "🚀 Starting essential services..."
 # Start API Gateway
 echo "📡 Starting API Gateway..."
 cd apps/api-gateway
-bun run dev &
+pnpm run dev &
 API_PID=$!
 cd - > /dev/null
 
 # Start Frontend
 echo "🌐 Starting Frontend..."
 cd apps/frontend
-bun run dev &
+pnpm run dev &
 FRONTEND_PID=$!
 cd - > /dev/null
 
 # Start Theia IDE (most important for development)
 echo "💻 Starting Theia IDE..."
 cd apps/theia-ide
-bun run dev &
+pnpm run dev &
 THEIA_PID=$!
 cd - > /dev/null
 

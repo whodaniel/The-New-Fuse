@@ -42,22 +42,22 @@
 
 ### Option 1: Full Development Environment
 ```bash
-bun run dev
+pnpm run dev
 ```
 
 ### Option 2: Individual Services
 ```bash
 # Start Theia IDE only
-bun run dev:theia
+pnpm run dev:theia
 
 # Start Frontend only  
-bun run dev:frontend
+pnpm run dev:frontend
 
 # Start API Gateway only
-bun run dev:api-gateway
+pnpm run dev:api-gateway
 
 # Start Electron Desktop
-bun run dev:electron
+pnpm run dev:electron
 ```
 
 ## Access Points
@@ -84,7 +84,7 @@ bun run dev:electron
 
 ## Next Steps
 
-1. **Start Development**: Run `bun run dev` to start all services
+1. **Start Development**: Run `pnpm run dev` to start all services
 2. **Access Theia IDE**: Open http://localhost:3008 for the full IDE experience
 3. **Test Frontend**: Visit http://localhost:3000 for the web interface
 4. **Monitor Services**: Check logs for any remaining issues

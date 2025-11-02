@@ -15,9 +15,9 @@ fi
 rm -rf .yarn/cache .yarn/install-state.gz node_modules chrome-extension/node_modules .yarn/build-state.yml
 
 # Install dependencies
-bun install
+pnpm install
 
 # Build chrome extension
 cd chrome-extension
-bun install
-bun run build
+pnpm install
+pnpm run build

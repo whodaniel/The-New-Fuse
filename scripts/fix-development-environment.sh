@@ -49,7 +49,7 @@ fix_electron() {
     
     # Reinstall Electron
     echo "📦 Reinstalling Electron..."
-    bun add electron@latest --dev
+    pnpm add electron@latest --dev
     
     echo "✅ Electron fixed successfully"
 }
@@ -162,12 +162,12 @@ main() {
     
     # Step 6: Reinstall dependencies to ensure everything is consistent
     echo "📦 Reinstalling dependencies..."
-    bun install --force
+    pnpm install --force
     
     echo "🎉 Development environment fix complete!"
     echo ""
     echo "Next steps:"
-    echo "1. Try running 'bun run dev' again"
+    echo "1. Try running 'pnpm run dev' again"
     echo "2. If issues persist, check the troubleshooting guide"
     echo ""
 }

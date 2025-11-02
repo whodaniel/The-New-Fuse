@@ -11,17 +11,17 @@ cd "$(dirname "$0")"
 # 1. Install dependencies for the new package
 echo "📦 Installing prompt-templating package dependencies..."
 cd packages/prompt-templating
-bun install
+pnpm install
 cd ../..
 
 # 2. Build the prompt templating package
 echo "🔨 Building prompt-templating package..."
-bun run turbo run build --filter=@the-new-fuse/prompt-templating
+pnpm run turbo run build --filter=@the-new-fuse/prompt-templating
 
 # 3. Update frontend dependencies to include prompt templating
 echo "🔗 Adding prompt-templating to frontend dependencies..."
 cd apps/frontend
-bun add @the-new-fuse/prompt-templating@workspace:*
+pnpm add @the-new-fuse/prompt-templating@workspace:*
 cd ../..
 
 # 4. Update workspace package references
@@ -30,20 +30,20 @@ echo "🏗️ Updating workspace references..."
 # Add to types package if it exists
 if [ -d "packages/types" ]; then
     cd packages/types
-    bun add @the-new-fuse/prompt-templating@workspace:*
+    pnpm add @the-new-fuse/prompt-templating@workspace:*
     cd ../..
 fi
 
 # Add to ui-components package
 if [ -d "packages/ui-components" ]; then
     cd packages/ui-components
-    bun add @the-new-fuse/prompt-templating@workspace:*
+    pnpm add @the-new-fuse/prompt-templating@workspace:*
     cd ../..
 fi
 
 # 5. Build all packages to ensure integration
 echo "🔧 Building all packages..."
-bun run turbo run build --concurrency=20
+pnpm run turbo run build --concurrency=20
 
 # 6. Test the integration
 echo "🧪 Testing integration..."
@@ -104,7 +104,7 @@ EOF
 echo "🎉 Prompt Templating System integration complete!"
 echo ""
 echo "📋 Next Steps:"
-echo "1. Test the system: bun run dev"
+echo "1. Test the system: pnpm run dev"
 echo "2. Navigate to /workflows in the frontend"
 echo "3. Try the Prompt Templates tab"
 echo "4. Create templates and export to workflows"

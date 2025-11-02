@@ -37,7 +37,7 @@ echo -e "${GREEN}Starting enhanced cleanup process...${NC}"
 # If we do, execute the script directly in direct mode
 if [ "$DIRECT_MODE" = false ] && [ -f "package.json" ]; then
     # Check for bun error from lockfile
-    if bun install --dry-run 2>&1 | grep -q "package doesn't seem to be present"; then
+    if pnpm install --dry-run 2>&1 | grep -q "package doesn't seem to be present"; then
         echo -e "${YELLOW}Detected lockfile issues. Switching to direct execution mode...${NC}"
         # Re-execute this script directly with all the same arguments plus --direct
         exec bash "$0" "$@" --direct
@@ -151,12 +151,12 @@ fi
 echo -e "\n${GREEN}Cleanup complete!${NC}"
 
 if [ "$CLEAN_DEV" = true ]; then
-    echo -e "${YELLOW}Development environment cleaned. Run 'bun install' and 'bun run dev' to restart development servers${NC}"
+    echo -e "${YELLOW}Development environment cleaned. Run 'pnpm install' and 'pnpm run dev' to restart development servers${NC}"
 elif [ "$CLEAN_DEPS" = true ]; then
-    echo -e "${YELLOW}Run 'bun install' to reinstall dependencies${NC}"
+    echo -e "${YELLOW}Run 'pnpm install' to reinstall dependencies${NC}"
 fi
 
-# If we deleted the lockfile or have lockfile issues, suggest running bun install
+# If we deleted the lockfile or have lockfile issues, suggest running pnpm install
 if [ ! -f "bun.lockb" ] || [ "$DIRECT_MODE" = true ]; then
-    echo -e "${YELLOW}Bun lockfile issues detected. Run 'bun install' to regenerate the lockfile${NC}"
+    echo -e "${YELLOW}Bun lockfile issues detected. Run 'pnpm install' to regenerate the lockfile${NC}"
 fi

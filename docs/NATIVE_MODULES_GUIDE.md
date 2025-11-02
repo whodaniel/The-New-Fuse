@@ -14,7 +14,7 @@ Bun sometimes fails to properly install or compile native modules, particularly:
 ### Symptoms
 - Package appears in `package.json` but `node_modules/[package]` directory is missing
 - Tests fail with "Cannot find module '[package].node'" errors
-- Silent installation failures during `bun install`
+- Silent installation failures during `pnpm install`
 - Native bindings not compiled properly
 
 ## The Solution: Hybrid Package Manager Approach
@@ -47,7 +47,7 @@ Remove existing problematic installations:
 rm -rf node_modules bun.lockb
 
 # Install packages without running build scripts
-bun install --ignore-scripts
+pnpm install --ignore-scripts
 ```
 
 ### 3. Manual Native Module Compilation
@@ -103,7 +103,7 @@ npm install
 
 # Switch back to Bun
 # Edit package.json: "packageManager": "bun@1.2.16"
-bun test  # Use Bun for runtime
+pnpm test  # Use Bun for runtime
 ```
 
 ### Approach 2: Docker Development Environment
@@ -168,7 +168,7 @@ In CI environments, use the hybrid approach:
 
 - name: Install dependencies
   run: |
-    bun install --ignore-scripts
+    pnpm install --ignore-scripts
     cd node_modules/canvas && node-gyp rebuild && cd ../..
 ```
 
@@ -192,9 +192,9 @@ This approach has been tested with:
 ### Built-in Solutions
 The project now includes automated native module handling:
 
-- **`postinstall` script** - Automatically runs after `bun install` to detect and fix native module issues
+- **`postinstall` script** - Automatically runs after `pnpm install` to detect and fix native module issues
 - **`prebuild` checks** - Verifies native modules before building or testing  
-- **Smart install script** - `bun run install:smart` for complete automated setup
+- **Smart install script** - `pnpm run install:smart` for complete automated setup
 - **Setup script** - `./scripts/setup-project.sh` for new developer onboarding
 
 ### Automatic Detection
@@ -209,7 +209,7 @@ New developers can now simply run:
 ```bash
 ./scripts/setup-project.sh  # Complete automated setup
 # OR
-bun install                  # Automatic postinstall fixes
+pnpm install                  # Automatic postinstall fixes
 ```
 
 ## Future Considerations

@@ -17,7 +17,7 @@
   - Ensure all imports use proper file extensions (.js, .ts, .d.ts)
   - Validate `exports` and `main` fields point to correct entry points
 - [ ] **Build system verification**:
-  - `bun run build` should complete without TypeScript errors
+  - `pnpm run build` should complete without TypeScript errors
   - All packages should build in correct dependency order
   - Verify `dist/` outputs contain proper .d.ts files
 
@@ -417,21 +417,21 @@
 ### 14.2 System Verification Commands
 - [ ] **Build verification**:
   ```bash
-  bun install
-  bun run build  # Should complete without errors
-  bun run typecheck  # Should pass all type checks
-  bun run lint  # Should pass linting
+  pnpm install
+  pnpm run build  # Should complete without errors
+  pnpm run typecheck  # Should pass all type checks
+  pnpm run lint  # Should pass linting
   ```
 - [ ] **Service startup verification**:
   ```bash
-  bun run start:api  # API server should start
-  bun run start:browser-hub  # Electron app should launch
-  bun run start:frontend  # Frontend should serve
+  pnpm run start:api  # API server should start
+  pnpm run start:browser-hub  # Electron app should launch
+  pnpm run start:frontend  # Frontend should serve
   ```
 - [ ] **Integration test execution**:
   ```bash
-  bun run test:integration  # All integration tests should pass
-  bun run test:e2e  # End-to-end tests should pass
+  pnpm run test:integration  # All integration tests should pass
+  pnpm run test:e2e  # End-to-end tests should pass
   ```
 
 ## 15. FAIRTABLE ECOSYSTEM RESTORATION
@@ -572,6 +572,6 @@ Each item should be verified with specific commands and tests before moving to t
 **Next Priority Steps:**
 1. Complete TypeScript configuration audit across all 42 packages
 2. Verify MCP server implementation status
-3. Test end-to-end build process (`bun run build`)
+3. Test end-to-end build process (`pnpm run build`)
 4. Assess database connectivity and Prisma schema status
 5. Validate agent orchestration core functionality

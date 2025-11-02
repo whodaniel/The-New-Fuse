@@ -44,10 +44,10 @@ Use our smart installer that handles native modules automatically:
 
 ```bash
 # Smart install (recommended)
-bun run install:smart
+pnpm run install:smart
 
 # Or standard install (may need manual fixes)
-bun install
+pnpm install
 ```
 
 ### 3. Fix Native Modules (if needed)
@@ -56,11 +56,11 @@ If you encounter canvas or other native module issues:
 
 ```bash
 # Automatic fix
-bun run fix:native-modules
+pnpm run fix:native-modules
 
 # Or manual fix
 rm -rf node_modules bun.lockb
-bun install --ignore-scripts
+pnpm install --ignore-scripts
 cd node_modules/canvas && node-gyp rebuild && cd ../..
 ```
 
@@ -68,18 +68,18 @@ cd node_modules/canvas && node-gyp rebuild && cd ../..
 
 ```bash
 # Start development servers
-bun run dev
+pnpm run dev
 
 # Build the project
-bun run build
+pnpm run build
 
 # Run tests
-bun run test
+pnpm run test
 
 # Run specific services
-bun run dev:frontend    # Frontend only
-bun run dev:api        # API only
-bun run dev:hub        # Browser hub only
+pnpm run dev:frontend    # Frontend only
+pnpm run dev:api        # API only
+pnpm run dev:hub        # Browser hub only
 ```
 
 ## Troubleshooting
@@ -90,10 +90,10 @@ If you see errors like "Cannot find module 'canvas.node'":
 
 ```bash
 # Quick fix
-bun run fix:native-modules
+pnpm run fix:native-modules
 
 # Complete reinstall
-bun run install:smart
+pnpm run install:smart
 
 # Check system dependencies (macOS)
 brew install cairo pango libpng jpeg giflib librsvg
@@ -106,18 +106,18 @@ brew install cairo pango libpng jpeg giflib librsvg
 node -e "const { createCanvas } = require('canvas'); console.log('Canvas works!');"
 
 # Verify installation
-bun run prebuild
+pnpm run prebuild
 
 # Clean and rebuild
-bun run clean:all
-bun run install:smart
+pnpm run clean:all
+pnpm run install:smart
 ```
 
 ### Port Conflicts
 
 ```bash
 # Clear all ports
-bun run clear-ports
+pnpm run clear-ports
 
 # Check what's running
 lsof -i :3000 :3005 :3007
@@ -151,11 +151,11 @@ The-New-Fuse/
 
 ## Development Workflow
 
-1. **Start services**: `bun run dev`
+1. **Start services**: `pnpm run dev`
 2. **Open browser hub**: Automatically opens or visit `http://localhost:8080`
 3. **Access services**: Use the sidebar to navigate between services
 4. **Make changes**: Hot reload is enabled for most services
-5. **Run tests**: `bun run test` (native modules are automatically checked)
+5. **Run tests**: `pnpm run test` (native modules are automatically checked)
 
 ## Environment Variables
 
@@ -204,10 +204,10 @@ cd node_modules/canvas && node-gyp rebuild
 
 After setup, you might want to:
 
-1. **Explore the browser hub** - `bun run dev` and open the interface
+1. **Explore the browser hub** - `pnpm run dev` and open the interface
 2. **Read the architecture docs** - `docs/architecture/`
 3. **Try the workflow builder** - Available in the browser hub
 4. **Set up your development environment** - IDE extensions, etc.
-5. **Run the test suite** - `bun run test:all`
+5. **Run the test suite** - `pnpm run test:all`
 
 Happy coding! 🚀

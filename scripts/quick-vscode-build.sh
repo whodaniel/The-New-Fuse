@@ -8,10 +8,10 @@ cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
 
 # Install dependencies locally
 echo "Installing VSCode extension dependencies..."
-bun install --no-cache
+pnpm install --no-cache
 
 # Build
 echo "Building..."
-bun run compile
+pnpm run compile
 
 echo "✅ VSCode extension compiled successfully!"

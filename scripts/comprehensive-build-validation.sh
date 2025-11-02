@@ -41,13 +41,13 @@ print_info "Starting comprehensive build validation..."
 
 # Step 1: Clean everything
 print_info "Step 1: Cleaning previous builds..."
-bun run clean:all || {
+pnpm run clean:all || {
     print_warning "Clean failed, continuing anyway..."
 }
 
 # Step 2: Install dependencies
 print_info "Step 2: Installing dependencies..."
-bun install || {
+pnpm install || {
     print_error "Failed to install dependencies"
     exit 1
 }
@@ -55,7 +55,7 @@ print_status "Dependencies installed successfully"
 
 # Step 3: Generate Prisma client
 print_info "Step 3: Generating Prisma client..."
-bun run db:generate || {
+pnpm run db:generate || {
     print_error "Failed to generate Prisma client"
     exit 1
 }
@@ -63,7 +63,7 @@ print_status "Prisma client generated successfully"
 
 # Step 4: Build types first
 print_info "Step 4: Building type definitions..."
-bun run build:types || {
+pnpm run build:types || {
     print_error "Failed to build types"
     exit 1
 }
@@ -71,7 +71,7 @@ print_status "Type definitions built successfully"
 
 # Step 5: Build packages
 print_info "Step 5: Building packages..."
-bun run build:packages || {
+pnpm run build:packages || {
     print_error "Failed to build packages"
     exit 1
 }
@@ -79,7 +79,7 @@ print_status "Packages built successfully"
 
 # Step 6: Build applications
 print_info "Step 6: Building applications..."
-bun run build:apps || {
+pnpm run build:apps || {
     print_error "Failed to build applications"
     exit 1
 }
@@ -87,13 +87,13 @@ print_status "Applications built successfully"
 
 # Step 7: Type checking
 print_info "Step 7: Running type checking..."
-bun run type-check || {
+pnpm run type-check || {
     print_warning "Type checking failed, but continuing..."
 }
 
 # Step 8: Linting
 print_info "Step 8: Running linting..."
-bun run lint || {
+pnpm run lint || {
     print_warning "Linting failed, but continuing..."
 }
 
@@ -212,10 +212,10 @@ echo ""
 
 print_status "System is ready for development and testing!"
 print_info "Next steps:"
-echo "  1. Start the development servers: bun run dev"
+echo "  1. Start the development servers: pnpm run dev"
 echo "  2. Test API endpoints: curl http://localhost:3001/health"
 echo "  3. Load Chrome extension from chrome-extension/dist/"
-echo "  4. Run tests: bun run test"
+echo "  4. Run tests: pnpm run test"
 echo ""
 
 exit 0
