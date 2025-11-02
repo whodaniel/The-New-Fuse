@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 env:
-  PNPM_VERSION: '8'
+  PNPM_VERSION: '10'
   NODE_VERSION: '20'
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
