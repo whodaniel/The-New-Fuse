@@ -5,6 +5,7 @@ import { A2AService } from './a2a.service';
 import { A2ARedisAdapter } from './redis-adapter';
 import { A2AWebSocketAdapter } from './websocket-adapter';
 import { A2AConfig } from './types';
+import { Ap2ProtocolModule } from '@the-new-fuse/ap2-protocol';
 
 @Global()
 @Module({})
@@ -14,7 +15,8 @@ export class A2ACoreModule {
       module: A2ACoreModule,
       imports: [
         ConfigModule,
-        RedisModule.forRoot({ isGlobal: true })
+        RedisModule.forRoot({ isGlobal: true }),
+        Ap2ProtocolModule
       ],
       providers: [
         {
