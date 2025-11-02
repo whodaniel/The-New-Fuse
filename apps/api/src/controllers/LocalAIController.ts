@@ -5,8 +5,7 @@
 
 import { Controller, Get, Post, Param, Request, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AgentService } from '@the-new-fuse/api-core';
-import { Agent } from '@the-new-fuse/api-core/src/modules/repositories/agent.repository';
+import { AgentService } from '../services/agent.service';
 // import { LocalAIDetectionService, LocalAIProvider } from '@the-new-fuse/core'; // Commented out due to build errors
 import { AgentCapability } from '@the-new-fuse/types';
 
