@@ -250,6 +250,11 @@ export class A2AController {
     };
   }
 
+  @Post('payment')
+  async createPayment(@Body() paymentDetails: { amount: number; currency: string; recipient: string }) {
+    return this.a2aService.createPayment(paymentDetails);
+  }
+
   // Utility endpoints
   @Get('agents/capabilities/:capabilityName')
   async findAgentsByCapability(@Param('capabilityName') capabilityName: string) {

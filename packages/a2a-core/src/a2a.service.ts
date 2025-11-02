@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
+import { Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
 import { EventEmitter } from 'events';
 import {
   AgentRegistration,
@@ -57,7 +58,8 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   private redis: Redis;
 
   constructor(
-    private configService: ConfigService
+    private configService: ConfigService,
+    private ap2ProtocolService: Ap2ProtocolService
   ) {
     this.initializeDefaultRoutes();
     this.redis = new Redis({
@@ -66,6 +68,14 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       password: this.configService.get('REDIS_PASSWORD'),
       db: this.configService.get('REDIS_DB') || 0,
     });
+  }
+
+  async createPayment(paymentDetails: { amount: number; currency: string; recipient: string }): Promise<any> {
+    const paymentRequest = {
+      value: paymentDetails.amount,
+      currency: paymentDetails.currency,
+    };
+    return this.ap2ProtocolService.createPayment(paymentRequest);
   }
 
   async onModuleInit(): Promise<void> {
