@@ -58,10 +58,10 @@ These commands are also available as Bun scripts:
 
 ```bash
 # Run component analysis
-bun run analyze:components
+pnpm run analyze:components
 
 # Run component analysis and show summary report
-bun run analyze:components:report
+pnpm run analyze:components:report
 ```
 
 ## Integration with MCP

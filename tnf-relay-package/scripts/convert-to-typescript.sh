@@ -106,7 +106,7 @@ fi
 # Run tests unless skipped
 if [ "$SKIP_TESTS" = false ] && [ "$DRY_RUN" = false ]; then
     echo -e "${GREEN}Running tests to verify conversion...${NC}"
-    if bun run test; then
+    if pnpm run test; then
         echo -e "${GREEN}All tests passed!${NC}"
     else
         echo -e "${RED}Tests failed! You may need to fix type errors manually.${NC}"
@@ -118,7 +118,7 @@ echo -e "${GREEN}TypeScript conversion completed!${NC}"
 if [ "$DRY_RUN" = false ]; then
     echo -e "${YELLOW}Next steps:${NC}"
     echo "1. Review converted files for any necessary type annotations"
-    echo "2. Run 'bun run tsc' to check for type errors"
+    echo "2. Run 'pnpm run tsc' to check for type errors"
     echo "3. Update any remaining 'require()' statements to 'import'"
     echo "4. Add missing type definitions for external modules"
 fi

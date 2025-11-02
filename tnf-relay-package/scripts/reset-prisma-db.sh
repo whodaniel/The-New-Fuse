@@ -34,7 +34,7 @@ cd packages/database || {
 
 # Install dependencies if needed
 echo "Installing dependencies..."
-bun install || {
+pnpm install || {
   echo "Error: Failed to install dependencies."
   exit 1
 }

@@ -31,7 +31,7 @@ echo -e "${GREEN}Successfully replaced workspace protocol references with fixed 
 echo "Now installing dev dependencies..."
 
 # Install the required dev dependencies
-bun add --dev @types/passport @faker-js/faker
+pnpm add --dev @types/passport @faker-js/faker
 
 echo -e "${GREEN}Installation complete!${NC}"
 echo -e "${YELLOW}Note: If you're using a monorepo, make sure to restore workspace links after package installation by running:${NC}"

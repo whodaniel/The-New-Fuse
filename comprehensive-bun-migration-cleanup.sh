@@ -66,7 +66,7 @@ if [ -d node_modules ]; then
 fi
 
 echo -e "${YELLOW}Installing dependencies with Bun...${NC}"
-bun install
+pnpm install
 
 echo -e "${GREEN}✅ Dependencies installed with Bun${NC}"
 
@@ -93,8 +93,8 @@ echo -e "${YELLOW}🔍 Verifying Bun setup...${NC}"
 if [ -f bun.lockb ]; then
     echo -e "${GREEN}✅ bun.lockb exists${NC}"
 else
-    echo -e "${RED}❌ bun.lockb not found - running bun install...${NC}"
-    bun install
+    echo -e "${RED}❌ bun.lockb not found - running pnpm install...${NC}"
+    pnpm install
 fi
 
 # Step 7: Test basic Bun commands
@@ -103,11 +103,11 @@ echo -e "${YELLOW}🧪 Testing basic Bun commands...${NC}"
 echo -e "${YELLOW}Testing 'bun --version'...${NC}"
 bun --version
 
-echo -e "${YELLOW}Testing 'bun run' commands...${NC}"
-if bun run --help > /dev/null 2>&1; then
-    echo -e "${GREEN}✅ bun run command works${NC}"
+echo -e "${YELLOW}Testing 'pnpm run' commands...${NC}"
+if pnpm run --help > /dev/null 2>&1; then
+    echo -e "${GREEN}✅ pnpm run command works${NC}"
 else
-    echo -e "${RED}❌ bun run command failed${NC}"
+    echo -e "${RED}❌ pnpm run command failed${NC}"
 fi
 
 # Step 8: Summary
@@ -123,9 +123,9 @@ echo -e "\n${BLUE}🎉 Migration to Bun completed successfully!${NC}"
 echo -e "${BLUE}===========================================${NC}"
 
 echo -e "\n${YELLOW}Next steps:${NC}"
-echo -e "1. Run 'bun install' to install dependencies"
-echo -e "2. Run 'bun run dev' to start development"
-echo -e "3. Run 'bun run build' to build the project"
+echo -e "1. Run 'pnpm install' to install dependencies"
+echo -e "2. Run 'pnpm run dev' to start development"
+echo -e "3. Run 'pnpm run build' to build the project"
 echo -e "4. Update any remaining scripts to use 'bun' instead of 'yarn'"
 
 echo -e "\n${GREEN}For more information, see docs/development/BUN-SETUP.md${NC}"

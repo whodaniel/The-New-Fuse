@@ -9,7 +9,7 @@ total_ts_files=$(find . -type f -name "*.ts" ! -path "*/node_modules/*" ! -path 
 total_tsx_files=$(find . -type f -name "*.tsx" ! -path "*/node_modules/*" ! -path "*/dist/*" | wc -l)
 
 # Count files with type issues
-files_with_issues=$(bun run tsc --noEmit 2>&1 | grep -c "error TS" || true)
+files_with_issues=$(pnpm run tsc --noEmit 2>&1 | grep -c "error TS" || true)
 
 # Generate report
 echo "

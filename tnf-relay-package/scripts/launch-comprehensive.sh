@@ -34,7 +34,7 @@ done
 # Clean install dependencies
 echo "📦 Installing dependencies..."
 bun clean
-bun install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Build core packages in correct order
 echo "🔨 Building core packages..."

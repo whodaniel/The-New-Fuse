@@ -25,15 +25,15 @@ echo "📋 Starting services in optimized sequence..."
 
 # Start core services first (API Gateway, Backend, Frontend)
 echo "🔨 Stage 1: Starting core services..."
-bun run dev:api &
+pnpm run dev:api &
 API_PID=$!
 sleep 2
 
-bun run dev:gateway &
+pnpm run dev:gateway &
 GATEWAY_PID=$!
 sleep 2
 
-bun run dev:frontend &
+pnpm run dev:frontend &
 FRONTEND_PID=$!
 sleep 3
 
@@ -63,7 +63,7 @@ fi
 
 # Start Browser Hub after Theia is confirmed ready
 echo "🔨 Stage 3: Starting Browser Hub (Theia is ready)..."
-bun run dev:hub &
+pnpm run dev:hub &
 HUB_PID=$!
 
 echo ""

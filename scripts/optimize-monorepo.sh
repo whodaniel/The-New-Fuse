@@ -44,15 +44,15 @@ echo "========================================"
 
 # Build only essential packages first
 echo "Building essential packages..."
-bun run --filter='@the-new-fuse/types' build
-bun run --filter='@the-new-fuse/utils' build
-bun run --filter='@the-new-fuse/core' build
+pnpm run --filter='@the-new-fuse/types' build
+pnpm run --filter='@the-new-fuse/utils' build
+pnpm run --filter='@the-new-fuse/core' build
 
 # Build remaining packages in parallel groups
 echo "Building remaining packages..."
-bun run --filter='./packages/api*' build &
-bun run --filter='./packages/ui*' build &
-bun run --filter='./packages/feature*' build &
+pnpm run --filter='./packages/api*' build &
+pnpm run --filter='./packages/ui*' build &
+pnpm run --filter='./packages/feature*' build &
 wait
 
 echo "✅ Fast build completed!"
@@ -88,12 +88,12 @@ echo "============================"
 
 # Start essential services first
 echo "Starting essential services..."
-bun run --filter='@the-new-fuse/types' build
+pnpm run --filter='@the-new-fuse/types' build
 
 # Start development servers in parallel
 echo "Starting development servers..."
-bun run --filter='@the-new-fuse/api*' dev &
-bun run --filter='@the-new-fuse/frontend*' dev &
+pnpm run --filter='@the-new-fuse/api*' dev &
+pnpm run --filter='@the-new-fuse/frontend*' dev &
 
 # Wait for user input to stop
 echo "Press Ctrl+C to stop all development servers"
@@ -204,9 +204,9 @@ console.log('⏱️  Build Performance Monitor');
 console.log('============================');
 
 const commands = [
-  { name: 'Fast Build', cmd: 'bun run build:fast' },
-  { name: 'Optimized Build', cmd: 'bun run build:optimized' },
-  { name: 'Production Build', cmd: 'bun run build:production' }
+  { name: 'Fast Build', cmd: 'pnpm run build:fast' },
+  { name: 'Optimized Build', cmd: 'pnpm run build:optimized' },
+  { name: 'Production Build', cmd: 'pnpm run build:production' }
 ];
 
 const results = [];
@@ -269,7 +269,7 @@ find . -name "coverage" -type d -prune -exec rm -rf {} \; 2>/dev/null || true
 echo "Cleaning lock files..."
 rm -f bun.lockb package-lock.json bun.lockb
 
-echo "✅ Workspace cleaned! Run 'bun install' to reinstall dependencies."
+echo "✅ Workspace cleaned! Run 'pnpm install' to reinstall dependencies."
 EOF
 
 chmod +x scripts/clean-workspace.sh
@@ -320,8 +320,8 @@ cat > templates/package-template/package.json << 'EOF'
     "clean": "rimraf dist",
     "dev": "bun tsc --watch",
     "type-check": "bun tsc --noEmit",
-    "test": "bun test",
-    "test:watch": "bun test --watch"
+    "test": "pnpm test",
+    "test:watch": "pnpm test --watch"
   },
   "dependencies": {},
   "devDependencies": {
@@ -399,10 +399,10 @@ echo ""
 echo -e "${CYAN}🎉 Your monorepo is now optimized for 43+ packages!${NC}"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
-echo -e "1. Run: ${GREEN}bun install${NC} to reinstall dependencies"
+echo -e "1. Run: ${GREEN}pnpm install${NC} to reinstall dependencies"
 echo -e "2. Run: ${GREEN}node scripts/analyze-dependencies.js${NC} to analyze your setup"
 echo -e "3. Run: ${GREEN}pnpm run build:optimized${NC} to test the new build system"
-echo -e "4. Run: ${GREEN}pnpm run dev${NC} for optimized development"
+echo -e "4. Run: ${GREEN}pnpm run dev:optimized${NC} for optimized development"
 echo ""
 echo -e "${BLUE}Performance improvements:${NC}"
 echo -e "• Increased concurrency to 50 (up from 30)"

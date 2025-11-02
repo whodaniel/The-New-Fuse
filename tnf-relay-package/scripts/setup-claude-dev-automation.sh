@@ -65,9 +65,9 @@ check_prerequisites() {
         exit 1
     fi
     
-    # Check for bun run
+    # Check for pnpm run
     if ! command_exists yarn; then
-        print_error "bun run is required but not installed."
+        print_error "pnpm run is required but not installed."
         exit 1
     fi
     
@@ -98,10 +98,10 @@ install_dependencies() {
     )
     
     print_status "Installing production dependencies..."
-    bun add ${dependencies[@]}
+    pnpm add ${dependencies[@]}
     
     print_status "Installing development dependencies..."
-    bun add -D ${dev_dependencies[@]}
+    pnpm add -D ${dev_dependencies[@]}
     
     cd "${PROJECT_ROOT}"
     print_success "Dependencies installed!"
@@ -418,7 +418,7 @@ main() {
     echo "Next steps:"
     echo "1. Set your CLAUDE_DEV_API_KEY in apps/api/.env"
     echo "2. Ensure Redis is running"
-    echo "3. Start your API server: cd apps/api && bun run start"
+    echo "3. Start your API server: cd apps/api && pnpm run start"
     echo "4. Test with: cd apps/api && bun claude-dev templates"
     echo ""
     echo "Documentation: apps/api/docs/CLAUDE_DEV_AUTOMATION_README.md"

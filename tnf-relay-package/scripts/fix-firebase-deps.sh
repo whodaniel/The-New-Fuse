@@ -4,10 +4,10 @@ set -e
 echo "🔧 Fixing Firebase dependencies..."
 
 # Install Firebase core dependencies first
-bun add @firebase/app @firebase/app-types
+pnpm add @firebase/app @firebase/app-types
 
 # Install Firebase feature packages
-bun add \
+pnpm add \
   @firebase/analytics \
   @firebase/auth \
   @firebase/firestore \
@@ -19,7 +19,7 @@ bun add \
   @firebase/storage
 
 # Install compat versions
-bun add \
+pnpm add \
   firebase \
   @firebase/analytics-compat \
   @firebase/app-check-compat \

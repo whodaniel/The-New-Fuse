@@ -10,4 +10,4 @@ fi
 # Verify bun version
 bun --version
 
-echo "Now try running 'bun install' again."
+echo "Now try running 'pnpm install' again."

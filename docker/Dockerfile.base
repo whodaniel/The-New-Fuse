@@ -1,0 +1,19 @@
+FROM oven/bun:latest
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy package files
+COPY package.json bun.lockb ./
+
+# Install dependencies
+RUN pnpm install
+
+CMD ["bun", "run", "dev"]

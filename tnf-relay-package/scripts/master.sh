@@ -72,7 +72,7 @@ build_project() {
     bash "$SCRIPT_DIR/manage/clean-all.sh"
     
     # Install dependencies
-    bun install --frozen-lockfile
+    pnpm install --frozen-lockfile
     
     # Build packages in correct order
     build_packages

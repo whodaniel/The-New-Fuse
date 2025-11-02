@@ -18,7 +18,11 @@ npm install -g pnpm
 ### Verify Installation
 
 ```bash
-pnpm --version
+# Install all dependencies
+pnpm install
+
+# Run the setup script
+pnpm run scripts/setup-bun.js
 ```
 
 ## Project Setup
@@ -26,13 +30,33 @@ pnpm --version
 ### Install Dependencies
 
 ```bash
+# Install dependencies
 pnpm install
+
+# Build the project
+pnpm run build
+
+# Run development server
+pnpm run dev
+
+# Run tests
+pnpm test
+
+# Run a specific workspace
+pnpm run --filter @the-new-fuse/core build
 ```
 
 ### Run Setup Script
 
 ```bash
-pnpm run scripts/setup-pnpm.js
+# Add a regular dependency
+pnpm add react
+
+# Add a dev dependency
+pnpm add -d typescript
+
+# Add to a specific workspace
+pnpm add express --cwd packages/core
 ```
 
 ## Development Workflow
@@ -40,7 +64,14 @@ pnpm run scripts/setup-pnpm.js
 ### Install Dependencies
 
 ```bash
-pnpm install
+# Run a script in a specific workspace
+pnpm run --filter @the-new-fuse/core build
+
+# Install dependencies for a specific workspace
+pnpm install --cwd packages/core
+
+# Add a dependency to a specific workspace
+pnpm add express --cwd packages/api
 ```
 
 ### Build Project
@@ -67,16 +98,18 @@ pnpm run --filter @the-new-fuse/core build
 
 ### Common Issues
 
-1. **Lock file conflicts**: Delete `pnpm-lock.yaml` and run `pnpm install`
-2. **Build failures**: Run `pnpm run clean` then `pnpm run build`
-3. **Dependency issues**: Run `pnpm install --force`
+1. Check Bun version: `bun --version`
+2. Clear cache: `bun pm cache clear`
+3. Reinstall dependencies: `rm -rf node_modules && pnpm install`
+4. Check for conflicting package managers (remove yarn.lock if present)
 
 ### Package-specific Commands
 
-```bash
-# Install in specific package
-pnpm install --cwd packages/core
-```
+If migrating from Yarn:
+1. Remove yarn.lock and .yarn directory
+2. Remove .yarnrc.yml file
+3. Run `pnpm install` to create bun.lockb
+4. Update scripts to use `bun` instead of `yarn`
 
 ## Best Practices
 

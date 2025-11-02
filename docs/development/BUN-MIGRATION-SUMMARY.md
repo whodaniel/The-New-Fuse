@@ -39,13 +39,13 @@ Replace old Yarn commands with these Bun equivalents:
 
 | Old Yarn Command | New Bun Command |
 |------------------|-----------------|
-| `yarn install` | `bun install` |
-| `yarn add package` | `bun add package` |
-| `yarn add -D package` | `bun add -d package` |
-| `yarn run script` | `bun run script` |
-| `yarn workspace pkg script` | `bun run --filter pkg script` |
-| `yarn build` | `bun run build` |
-| `yarn test` | `bun test` |
+| `yarn install` | `pnpm install` |
+| `yarn add package` | `pnpm add package` |
+| `yarn add -D package` | `pnpm add -d package` |
+| `yarn run script` | `pnpm run script` |
+| `yarn workspace pkg script` | `pnpm run --filter pkg script` |
+| `yarn build` | `pnpm run build` |
+| `yarn test` | `pnpm test` |
 
 ## Post-Migration Instructions
 
@@ -56,7 +56,7 @@ Replace old Yarn commands with these Bun equivalents:
    rm -rf node_modules
    
    # Install with Bun
-   bun install
+   pnpm install
    ```
 
 ### 2. **Verify Setup**
@@ -65,31 +65,31 @@ Replace old Yarn commands with these Bun equivalents:
    bun --version
    
    # Run setup script
-   bun run scripts/setup-bun.js
+   pnpm run scripts/setup-bun.js
    ```
 
 ### 3. **Development Workflow**
    ```bash
    # Start development
-   bun run dev
+   pnpm run dev
    
    # Build project
-   bun run build
+   pnpm run build
    
    # Run tests
-   bun test
+   pnpm test
    ```
 
 ### 4. **Adding New Dependencies**
    ```bash
    # Regular dependency
-   bun add package-name
+   pnpm add package-name
    
    # Dev dependency
-   bun add -d package-name
+   pnpm add -d package-name
    
    # Workspace-specific dependency
-   bun add package-name --cwd packages/workspace-name
+   pnpm add package-name --cwd packages/workspace-name
    ```
 
 ## Benefits of Migration
@@ -105,7 +105,7 @@ Replace old Yarn commands with these Bun equivalents:
 For new team members:
 1. Install Bun: `curl -fsSL https://bun.sh/install | bash`
 2. Clone repository
-3. Run `bun install`
+3. Run `pnpm install`
 4. Follow `BUN-SETUP.md` for detailed instructions
 
 ## Rollback Plan

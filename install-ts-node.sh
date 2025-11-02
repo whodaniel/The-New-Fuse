@@ -6,4 +6,4 @@ pnpm install --no-save ts-node@10.9.3
 echo "Checking ts-node installation..."
 npx ts-node --version
 
-echo "Installation complete. Now try running 'bun install' again."
+echo "Installation complete. Now try running 'pnpm install' again."

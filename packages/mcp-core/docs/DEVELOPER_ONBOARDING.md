@@ -80,7 +80,7 @@ cd mcp-core
 # Install dependencies
 pnpm install
 # or
-bun install
+pnpm install
 
 # Build the project
 pnpm run build

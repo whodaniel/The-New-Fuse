@@ -26,11 +26,11 @@ sleep 10
 
 # Install dependencies without frozen lockfile to resolve peer dependencies
 echo "📦 Installing dependencies..."
-bun install
+pnpm install
 
 # Start development servers
 echo "🔧 Starting development servers..."
-bun run dev
+pnpm run dev
 
 echo "✨ The New Fuse is now running in development mode!"
 echo "

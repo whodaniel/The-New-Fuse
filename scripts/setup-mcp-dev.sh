@@ -37,7 +37,7 @@ fi
 # Install dependencies using the appropriate package manager
 if [ "$HAS_BUN_LOCK" = true ] || [ "$HAS_BUN" = true ]; then
     echo -e "${YELLOW}Using bun to install dependencies...${NC}"
-    bun install
+    pnpm install
 else
     echo -e "${YELLOW}Using npm to install dependencies...${NC}"
     pnpm install
@@ -53,7 +53,7 @@ echo -e "${GREEN}Dependencies installed successfully.${NC}"
 # Step 2: Compile TypeScript
 echo -e "${YELLOW}Step 2: Compiling TypeScript...${NC}"
 if [ "$HAS_BUN_LOCK" = true ] || [ "$HAS_BUN" = true ]; then
-    bun run compile || bun run tsc || npx tsc
+    pnpm run compile || pnpm run tsc || npx tsc
 else
     pnpm run compile || npx tsc
 fi

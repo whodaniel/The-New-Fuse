@@ -10,11 +10,11 @@ echo "📋 Step 1: Pre-validation checks..."
 ./scripts/quality-gate.sh
 
 echo "🏗️ Step 2: Build validation..."
-bun run build
+pnpm run build
 echo "✅ Build successful"
 
 echo "🧪 Step 3: Test validation..."
-bun test
+pnpm test
 echo "✅ Tests passed"
 
 echo "📊 Step 4: Performance validation..."
@@ -22,7 +22,7 @@ echo "📊 Step 4: Performance validation..."
 
 echo "🔒 Step 5: Security validation..."
 if command -v bun &> /dev/null; then
-    bun audit
+    pnpm audit
 else
     echo "⚠️ Bun audit not available, skipping security check"
 fi

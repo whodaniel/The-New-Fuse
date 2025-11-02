@@ -68,8 +68,8 @@ pnpm run launch
 ### Manual Launch  
 
 ```bash
-# Start Browser Hub only
-cd apps/browser-hub && pnpm run start
+# Start Theia IDE only
+cd apps/theia-ide && pnpm run start
 
 # Open Browser Hub
 open apps/browser-hub/enhanced-browser-hub.html

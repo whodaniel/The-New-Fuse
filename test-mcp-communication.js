@@ -301,7 +301,7 @@ testWebSocketConnection().then(() => {
     console.log('1. Start a Browser-Use MCP server:');
     console.log('   cd browser-use-mcp && python -m browser_use.mcp');
     console.log('2. Start Browser Hub:');
-    console.log('   cd apps/electron-desktop && bunx electron dist/main/main.js');
+    console.log('   cd apps/electron-desktop && pnpm dlx electron dist/main/main.js');
     console.log('3. Click "🔌 Connect MCP" in Browser Hub');
     console.log('4. Use extension popup to test browser automation');
     

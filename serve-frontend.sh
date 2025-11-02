@@ -37,7 +37,7 @@ BUILD_DIR="$PROJECT_ROOT/apps/frontend/dist"
 if [ ! -d "$BUILD_DIR" ]; then
     echo -e "${YELLOW}⚠️  Frontend not built yet. Building now...${NC}"
     cd "$PROJECT_ROOT/apps/frontend"
-    bun run build
+    pnpm run build
     cd "$PROJECT_ROOT"
 fi
 
@@ -54,4 +54,4 @@ export PORT=3001
 export HOST=localhost
 
 # Start the server
-bun run bun-server.ts
+pnpm run bun-server.ts

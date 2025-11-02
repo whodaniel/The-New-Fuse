@@ -28,13 +28,13 @@ else
     echo "✅ vsce is already installed."
 fi
 
-echo "2️⃣ Installing dependencies using pnpm..."
+echo "2️⃣ Installing dependencies using Bun..."
 if ! pnpm install; then
-    echo "❌ Failed to install dependencies using pnpm. Check pnpm setup and project dependencies."
-    echo ""
+    echo "❌ Failed to install dependencies using Bun. Check Bun setup and project dependencies."
+    # Attempt to clean and reinstall as a fallback
     echo "   Attempting 'pnpm install --force' as a fallback..."
     pnpm install --force
-    if [ $? -ne 0 ]; then
+    if [ \$? -ne 0 ]; then
         echo "❌ Fallback 'pnpm install --force' also failed."
         exit 1
     fi
@@ -48,7 +48,7 @@ if grep -q '"compile":' package.json; then
     echo "   Found 'compile' script. Attempting 'pnpm run compile'..."
     if pnpm run compile; then
         echo "✅ Build successful with 'pnpm run compile'."
-        BUILD_SUCCESS=true
+        BUILD_SUCCESSFUL=true
     else
         echo "⚠️  'pnpm run compile' failed."
     fi

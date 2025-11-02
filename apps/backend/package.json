@@ -15,9 +15,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "dev": "cross-env PORT=3004 pnpm --watch src/simple-main.ts",
+    "dev": "cross-env PORT=3004 bun --watch src/simple-main.ts",
     "start:simple": "pnpm run src/simple-main.ts",
-    "dev:simple": "pnpm --watch src/simple-main.ts",
+    "dev:simple": "bun --watch src/simple-main.ts",
     "start:augment-bridge": "ts-node src/scripts/augment-bridge.ts",
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   },

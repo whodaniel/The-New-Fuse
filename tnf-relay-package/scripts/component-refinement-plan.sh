@@ -19,7 +19,7 @@ analyze_phase() {
     # Check test coverage if tests are set up
     if [ -f "jest.config.js" ] || [ -f "jest.config.ts" ]; then
         echo "Running test coverage..."
-        bun run test --coverage || echo "Warning: Test coverage check failed"
+        pnpm run test --coverage || echo "Warning: Test coverage check failed"
     else
         echo "Warning: Jest configuration not found, skipping test coverage"
     fi

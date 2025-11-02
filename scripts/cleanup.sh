@@ -33,14 +33,5 @@ rm -rf .cache
 rm -rf .turbo
 rm -rf .next
 
-# Remove logs
-echo "📝 Removing logs..."
-rm -f *.log
-rm -f apps/*/*.log
-rm -f packages/*/*.log
-
-# Reinstall dependencies
-echo "📦 Reinstalling dependencies..."
-pnpm install
-
-echo "✅ Cleanup completed!"
+echo -e "\n${GREEN}Cleanup complete!${NC}"
+echo -e "${GREEN}Run 'pnpm install' to reinstall dependencies${NC}"

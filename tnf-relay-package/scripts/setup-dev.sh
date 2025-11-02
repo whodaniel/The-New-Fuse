@@ -16,7 +16,7 @@ cp apps/frontend/.env.example apps/frontend/.env
 
 # Install dependencies
 echo "Installing dependencies..."
-bun install
+pnpm install
 
 # Build core packages
 echo "Building core packages..."
@@ -34,4 +34,4 @@ echo "Starting development environment..."
 docker-compose -f docker/docker-compose.dev.yml up -d
 
 echo "✨ Development environment setup complete!"
-echo "🚀 Run 'bun run dev' to start the development servers"
+echo "🚀 Run 'pnpm run dev' to start the development servers"

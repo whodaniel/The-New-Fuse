@@ -16,7 +16,7 @@ This guide provides step-by-step instructions to implement the comprehensive reo
 
 ### 1. Initialize the Reorganization
 ```bash
-bun run reorganize:init
+pnpm run reorganize:init
 ```
 This command will:
 - Perform comprehensive pre-checks
@@ -26,7 +26,7 @@ This command will:
 
 ### 2. Execute Phase 1 - Package Standardization
 ```bash
-bun run reorganize:phase1
+pnpm run reorganize:phase1
 ```
 This will:
 - Update all `@tnf/` imports to `@the-new-fuse/`
@@ -35,13 +35,13 @@ This will:
 
 ### 3. Validate After Each Phase
 ```bash
-bun run reorganize:validate
+pnpm run reorganize:validate
 ```
 Always run this after completing any phase to ensure functionality is preserved.
 
 ### 4. If Issues Arise - Rollback
 ```bash
-bun run reorganize:rollback
+pnpm run reorganize:rollback
 ```
 Provides guided rollback options:
 - Complete rollback to backup
@@ -51,7 +51,7 @@ Provides guided rollback options:
 
 ### 5. Emergency Procedures
 ```bash
-bun run reorganize:emergency
+pnpm run reorganize:emergency
 ```
 For critical issues requiring immediate intervention.
 
@@ -62,11 +62,11 @@ For critical issues requiring immediate intervention.
 
 ```bash
 # Run the automated phase 1
-bun run reorganize:phase1
+pnpm run reorganize:phase1
 
 # Verify results
-bun run type-check
-bun test
+pnpm run type-check
+pnpm test
 ```
 
 **What it does:**
@@ -104,7 +104,7 @@ bun test
 ```
 
 2. Update all child tsconfig.json files to extend the base
-3. Validate: `bun run reorganize:validate`
+3. Validate: `pnpm run reorganize:validate`
 
 ### Phase 3: Directory Structure (Days 9-12)
 **Status**: Manual Implementation Required
@@ -117,7 +117,7 @@ rm -rf src/modules/webhooks/
 
 2. Update import paths to point to correct locations
 3. Implement consistent module structure
-4. Validate: `bun run reorganize:validate`
+4. Validate: `pnpm run reorganize:validate`
 
 ### Phase 4: Configuration Management (Days 13-15)
 **Status**: Manual Implementation Required
@@ -155,7 +155,7 @@ rm -rf src/modules/webhooks/
 **Status**: Automated ✅
 
 ```bash
-bun run reorganize:validate
+pnpm run reorganize:validate
 ```
 
 ## Validation Checkpoints
@@ -163,16 +163,16 @@ bun run reorganize:validate
 ### After Each Phase:
 ```bash
 # Check TypeScript compilation
-bun run type-check
+pnpm run type-check
 
 # Run tests
-bun test
+pnpm test
 
 # Validate imports
-bun run reorganize:validate
+pnpm run reorganize:validate
 
 # Check build
-bun run build
+pnpm run build
 ```
 
 ### Critical Validation Points:
@@ -189,7 +189,7 @@ bun run build
 **Import Resolution Errors:**
 ```bash
 # Re-run import updates
-bun run reorganize:phase1
+pnpm run reorganize:phase1
 
 # Check for missed patterns
 grep -r "@tnf/" . --include="*.ts" --include="*.js"
@@ -198,7 +198,7 @@ grep -r "@tnf/" . --include="*.ts" --include="*.js"
 **TypeScript Compilation Errors:**
 ```bash
 # Check configuration
-bun run type-check
+pnpm run type-check
 
 # Review path mappings in tsconfig files
 ```
@@ -207,16 +207,16 @@ bun run type-check
 ```bash
 # Clear cache and rebuild
 bun pm cache rm
-bun install
-bun run build
+pnpm install
+pnpm run build
 ```
 
 ### Emergency Rollback:
 ```bash
 # Immediate rollback to backup
 git checkout backup-$(date +%Y%m%d)
-bun install
-bun run build
+pnpm install
+pnpm run build
 ```
 
 ## Success Criteria
@@ -255,7 +255,7 @@ git log --oneline -5
 cat validation-results/post-change-report.json
 
 # Review backup options
-bun run reorganize:rollback
+pnpm run reorganize:rollback
 ```
 
 ## Next Steps After Completion

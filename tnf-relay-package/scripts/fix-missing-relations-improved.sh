@@ -11,7 +11,7 @@ if [ -f "packages/database/prisma/schema.prisma" ]; then
 else
   echo "Using root schema at prisma/schema.prisma"
   SCHEMA_PATH="prisma/schema.prisma"
-  PRISMA_CMD="bun run prisma"
+  PRISMA_CMD="pnpm run prisma"
 fi
 
 # 2. First fix the Role enum issue if it exists

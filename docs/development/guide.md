@@ -156,18 +156,18 @@ If you prefer to build manually:
 
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Build packages in the correct order
-bun run build:types
-bun run build:utils
-bun run build:core
-bun run build:ui
-bun run build:feature-tracker
-bun run build:feature-suggestions
+pnpm run build:types
+pnpm run build:utils
+pnpm run build:core
+pnpm run build:ui
+pnpm run build:feature-tracker
+pnpm run build:feature-suggestions
 
 # Build all applications
-bun run build
+pnpm run build
 ```
 
 ## Testing
@@ -177,23 +177,23 @@ bun run build
 To run all tests:
 
 ```bash
-bun test
+pnpm test
 ```
 
 To run specific test suites:
 
 ```bash
 # Run unit tests
-bun run test:unit
+pnpm run test:unit
 
 # Run integration tests
-bun run test:integration
+pnpm run test:integration
 
 # Run end-to-end tests
-bun run test:e2e
+pnpm run test:e2e
 
 # Run tests with coverage
-bun run test:coverage
+pnpm run test:coverage
 ```
 
 ## Deployment

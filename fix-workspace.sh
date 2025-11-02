@@ -14,9 +14,9 @@ if ! command -v bun &> /dev/null; then
 fi
 
 echo "⚙️ Installing dependencies with Bun..."
-bun install
+pnpm install
 
 echo "🏗️ Building the workspace..."
-bun run build
+pnpm run build
 
 echo "✅ Setup complete!"

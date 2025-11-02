@@ -20,8 +20,8 @@ pnpm install -g ts-node@10.9.3
 echo "Step 4: Running pnpm install..."
 pnpm install
 
-# Step 5: Try bun install
-echo "Step 5: Running bun install..."
-bun install
+# Step 5: Try pnpm install
+echo "Step 5: Running pnpm install..."
+pnpm install
 
 echo "Process completed. Check if the installation was successful."

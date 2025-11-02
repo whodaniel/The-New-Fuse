@@ -27,7 +27,7 @@
     "watch": "tsc -watch -p ./",
     "test": "pnpm run compile && pnpm test-extension.js",
     "package": "pnpm dlx vsce package",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist out *.vsix",
     "dev": "pnpm run compile && pnpm run bundle"
   },
   "dependencies": {

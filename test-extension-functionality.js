@@ -171,7 +171,7 @@ if (filesExist) {
 }
 
 console.log('\n🔍 To manually test the extension:');
-console.log('1. Open Browser Hub: cd apps/electron-desktop && bunx electron dist/main/main.js');
+console.log('1. Open Browser Hub: cd apps/electron-desktop && pnpm dlx electron dist/main/main.js');
 console.log('2. Navigate to chrome://extensions/ to verify installation');
 console.log('3. Click the BrowserMCP extension icon to test popup');
 console.log('4. Use Browser Hub controls to test MCP integration');

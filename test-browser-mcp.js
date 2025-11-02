@@ -170,7 +170,7 @@ async function runTests() {
             console.log('✅ Command structure: Verified');
             console.log('\n🎉 BrowserMCP Extension appears to be properly configured!');
             console.log('\n💡 To test fully:');
-            console.log('   1. Launch Browser Hub with: bun run dev');
+            console.log('   1. Launch Browser Hub with: pnpm run dev');
             console.log('   2. Click the BrowserMCP extension icon');
             console.log('   3. Click "Connect to Current Tab"');
             console.log('   4. Test screenshot and page info features');

@@ -14,9 +14,9 @@ NC='\033[0m' # No Color
 # Step 1: Build Chrome Extension
 echo -e "\n${BLUE}📦 Building Chrome Extension Fresh...${NC}"
 cd chrome-extension
-bun install
-bun run clean || rm -rf dist
-bun run build
+pnpm install
+pnpm run clean || rm -rf dist
+pnpm run build
 if [ -d "dist" ]; then
     echo -e "${GREEN}✅ Chrome Extension built successfully${NC}"
     echo -e "   📁 Location: chrome-extension/dist/"
@@ -28,10 +28,10 @@ cd ..
 # Step 2: Build VS Code Extension
 echo -e "\n${BLUE}🔧 Building VS Code Extension Fresh...${NC}"
 cd src/vscode-extension
-bun install
-bun run clean || rm -rf dist *.vsix
-bun run compile
-bun run bundle
+pnpm install
+pnpm run clean || rm -rf dist *.vsix
+pnpm run compile
+pnpm run bundle
 # Try different package commands
 vsce package --out "the-new-fuse-$(date +%Y%m%d-%H%M%S).vsix" 2>/dev/null || \
 npx vsce package --out "the-new-fuse-$(date +%Y%m%d-%H%M%S).vsix" 2>/dev/null || \
@@ -47,8 +47,8 @@ cd ../..
 
 # Step 3: Build Monorepo
 echo -e "\n${BLUE}🏗️ Building Entire Monorepo...${NC}"
-bun install
-bun run build:all || bun run build
+pnpm install
+pnpm run build:all || pnpm run build
 echo -e "${GREEN}✅ Monorepo build completed${NC}"
 
 # Step 4: Launch Services
@@ -63,7 +63,7 @@ docker-compose up -d --build 2>/dev/null || echo -e "${YELLOW}⚠️ Docker Comp
 # Start development server
 echo -e "\n${BLUE}⚡ Starting Development Server...${NC}"
 # Run in background
-nohup bun run dev > dev-server.log 2>&1 &
+nohup pnpm run dev > dev-server.log 2>&1 &
 DEV_PID=$!
 echo $DEV_PID > dev-server.pid
 echo -e "${GREEN}✅ Development server started (PID: $DEV_PID)${NC}"

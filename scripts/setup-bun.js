@@ -23,12 +23,12 @@ console.log('- Workspace management');
 console.log('- Fast package installation');
 console.log('- Built-in bundler');
 
-// Ensure bun.lockb exists by running bun install
+// Ensure bun.lockb exists by running pnpm install
 try {
-  console.log('Running bun install to ensure lockfile exists...');
-  execSync('bun install', { stdio: 'inherit' });
+  console.log('Running pnpm install to ensure lockfile exists...');
+  execSync('pnpm install', { stdio: 'inherit' });
   console.log('Bun setup complete!');
 } catch (error) {
-  console.error('Failed to run bun install:', error);
+  console.error('Failed to run pnpm install:', error);
 }
 

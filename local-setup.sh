@@ -17,7 +17,7 @@ fi
 
 # Install required dependencies
 echo "Installing dependencies..."
-bun add js-yaml
+pnpm add js-yaml
 
 # Set up local monitoring
 echo "Configuring local monitoring..."

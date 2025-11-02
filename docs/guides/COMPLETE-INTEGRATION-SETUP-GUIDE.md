@@ -37,7 +37,7 @@ Before starting with The New Fuse, ensure you have:
 
 2. **Install dependencies:**
    ```bash
-   bun install
+   pnpm install
    ```
 
 3. **Initialize MCP integration:**
@@ -77,8 +77,8 @@ the-new-fuse/
 #### Method 1: Development Installation
 ```bash
 cd src/vscode-extension
-bun install
-bun run compile
+pnpm install
+pnpm run compile
 code --install-extension .
 ```
 

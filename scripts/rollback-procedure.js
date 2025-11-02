@@ -106,11 +106,11 @@ class RollbackManager {
       
       // Reinstall dependencies
       this.log('Reinstalling dependencies...');
-      execSync('bun install', { stdio: 'inherit' });
+      execSync('pnpm install', { stdio: 'inherit' });
       
       // Rebuild
       this.log('Rebuilding project...');
-      execSync('bun run build', { stdio: 'inherit' });
+      execSync('pnpm run build', { stdio: 'inherit' });
       
       // Verify rollback
       await this.verifyRollback();
@@ -140,10 +140,10 @@ class RollbackManager {
           
           // Reinstall and rebuild
           this.log('Reinstalling dependencies...');
-          execSync('bun install', { stdio: 'inherit' });
+          execSync('pnpm install', { stdio: 'inherit' });
           
           this.log('Rebuilding project...');
-          execSync('bun run build', { stdio: 'inherit' });
+          execSync('pnpm run build', { stdio: 'inherit' });
           
           await this.verifyRollback();
           this.log('✅ Partial rollback successful');
@@ -235,8 +235,8 @@ class RollbackManager {
         if (confirm.toLowerCase() === 'y') {
           // Try common migration rollback commands
           const rollbackCommands = [
-            `bun run migration:rollback --steps=${stepCount}`,
-            `bun run typeorm migration:revert`,
+            `pnpm run migration:rollback --steps=${stepCount}`,
+            `pnpm run typeorm migration:revert`,
             `npm run migration:rollback ${stepCount}`
           ];
           
@@ -264,10 +264,10 @@ class RollbackManager {
     
     try {
       // Basic verification
-      execSync('bun run type-check', { stdio: 'pipe' });
+      execSync('pnpm run type-check', { stdio: 'pipe' });
       this.log('✓ TypeScript compilation successful');
       
-      execSync('bun test --passWithNoTests', { stdio: 'pipe' });
+      execSync('pnpm test --passWithNoTests', { stdio: 'pipe' });
       this.log('✓ Tests passing');
       
       // Save rollback verification
@@ -325,7 +325,7 @@ class RollbackManager {
         this.log('Resetting node_modules...');
         try {
           execSync('rm -rf node_modules package-lock.json bun.lockb');
-          execSync('bun install');
+          execSync('pnpm install');
           this.log('Dependencies reinstalled');
         } catch (error) {
           this.log(`Dependencies reset failed: ${error.message}`, 'error');
@@ -336,7 +336,7 @@ class RollbackManager {
         const confirm = await this.promptUser('This will reset the database. Continue? (y/N): ');
         if (confirm.toLowerCase() === 'y') {
           try {
-            execSync('bun run db:reset', { stdio: 'inherit' });
+            execSync('pnpm run db:reset', { stdio: 'inherit' });
             this.log('Database reset completed');
           } catch (error) {
             this.log(`Database reset failed: ${error.message}`, 'error');
@@ -347,7 +347,7 @@ class RollbackManager {
       case '4':
         this.log('Simulating service restart...');
         try {
-          execSync('bun run build');
+          execSync('pnpm run build');
           this.log('Build successful - services ready for restart');
         } catch (error) {
           this.log(`Service restart check failed: ${error.message}`, 'error');
