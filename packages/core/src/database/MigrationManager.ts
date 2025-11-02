@@ -1,39 +1,69 @@
-import { /* TODO: specify imports */ } from /@nestjs/common'';
- timestamp: Date;statependingexecuted'failed'
-      const [migrations, executedMigrations] = 'await Promise.all([';';
-      this.dataSource.query(', SELECT * FROM _prisma_migrations ORDERBYstarted_atDESC]);'
-          (em: any)= 'placeholder';
-          state: 'executed?('executed.rolled_back_at?failed:executed) : 'pending,'
-    } catch (error: 'placeholder'Failed to get migration status: ', error);'
-        transaction: 'options.transaction ?? true'
-   this.metrics.increment('database.migrations.failed);'
-        error('errorasError).message,'
-     this.logger.error('message', context);
-      const duration = 'placeholder';
-   this.metrics.increment('database.migrations.revert.success);'
-    } catch (error: unknown){ const duration = 'placeholder';
-   this.metrics.timing('database.migrations.revert.duration, duration);'
-   this.metrics.increment('database.migrations.revert.failed);'
-    this.logger.error('')
-      // Generate migration file usingTypeORMCLI'
-   this.metrics.increment('database.migrations.generated);'
-    } catch (error){ this.logger.error(''Failed to generate migration: ' ', error);'
-   this.metrics.increment('database.migrations.generation.failed);'
-      throw error'
-   this.metrics.increment('database.migrations.validation.success);'
-    } catch (error) { this.logger.error(''Migration validation failed: ' ', error);'
-   this.metrics.increment('')
-      throw error'
-      // The COPY command here is illustrative and not a direct pg_dump equivalent.'
-      // importchild_process';
-      this.logger.warn('')
-      // Placeholder for actual backup logic'
-      await this.dataSource.query(SELECT 1); // Placeholder query'
-    } catch (error) { this.metrics.increment('database.backup.failed);'
-      this.logger.error('message', context);
-      // Similar to backup, actual restore (e.g., psql) iscomplex.'
-      // Placeholder for actual restore logic'
-      await this.dataSource.query(SELECT 1); // Placeholder query'
-   this.metrics.increment('database.restore.success);'
-      this.logger.info('Database restored from);';
-     this.logger.error('message', context);
+import { Injectable, Logger } from '@nestjs/common';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
+
+@Injectable()
+export class MigrationManager {
+  private readonly logger = new Logger(MigrationManager.name);
+
+  constructor() {}
+
+  async runMigrations(): Promise<{ stdout: string; stderr: string }> {
+    this.logger.log('Running database migrations...');
+    try {
+      const result = await execAsync('pnpm prisma migrate deploy');
+      this.logger.log('Migrations applied successfully.');
+      this.logger.debug(result.stdout);
+      if (result.stderr) {
+        this.logger.warn('Migration command produced stderr:', result.stderr);
+      }
+      return result;
+    } catch (error) {
+      this.logger.error('Error running migrations:', error.stack);
+      throw error;
+    }
+  }
+
+  async revertLastMigration(): Promise<{ stdout: string; stderr: string }> {
+    this.logger.log('Reverting last database migration...');
+    try {
+      // Note: `migrate reset` is destructive and will delete data.
+      // A more sophisticated approach might be needed for production environments.
+      const result = await execAsync('pnpm prisma migrate reset --force');
+      this.logger.log('Last migration reverted successfully.');
+      return result;
+    } catch (error) {
+      this.logger.error('Error reverting migration:', error.stack);
+      throw error;
+    }
+  }
+
+  async createMigration(name: string): Promise<{ stdout: string; stderr: string }> {
+    if (!name || !/^[a-zA-Z0-9_-]+$/.test(name)) {
+      throw new Error('Invalid migration name. Use only alphanumeric characters, underscores, and hyphens.');
+    }
+    this.logger.log(`Creating new migration: ${name}`);
+    try {
+      const result = await execAsync(`pnpm prisma migrate dev --name ${name}`);
+      this.logger.log('Migration created successfully.');
+      return result;
+    } catch (error) {
+      this.logger.error('Error creating migration:', error.stack);
+      throw error;
+    }
+  }
+
+  async getMigrationStatus(): Promise<{ stdout: string; stderr: string }> {
+    this.logger.log('Checking migration status...');
+    try {
+      const result = await execAsync('pnpm prisma migrate status');
+      this.logger.log('Migration status retrieved.');
+      return result;
+    } catch (error) {
+      this.logger.error('Error getting migration status:', error.stack);
+      throw error;
+    }
+  }
+}

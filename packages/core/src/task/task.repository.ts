@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-
-// Conflict 1 Resolution: Use imports from 'Incoming'
-import { Task } from './task.entity';
-import { TaskStatus } from '../types/types'; // Assuming this path is correct for the refactor
+import { Task, TaskStatus } from './task.entity';
 
 @Injectable()
 export class TaskRepository {
   constructor(
     @InjectRepository(Task)
-    private readonly taskRepo: Repository<Task>,
+    private readonly taskRepo: Repository<Task>
   ) {}
 
   async create(data: Partial<Task>): Promise<Task> {
@@ -31,9 +28,6 @@ export class TaskRepository {
     return this.taskRepo.findOne({ where: { id } });
   }
 
-  // Conflict 2 Resolution: Keep all useful methods from both branches
-
-  // From 'Current'
   async findByUserId(userId: string): Promise<Task[]> {
     return this.taskRepo.find({
       where: { userId },
@@ -41,7 +35,6 @@ export class TaskRepository {
     });
   }
 
-  // From 'Current'
   async findByStatus(status: TaskStatus): Promise<Task[]> {
     return this.taskRepo.find({
       where: { status },
@@ -49,14 +42,7 @@ export class TaskRepository {
     });
   }
 
-  // From 'Incoming'
-  async findAll(): Promise<Task[]> {
-    return this.taskRepo.find();
-  }
-
-  // From 'Incoming' (better return type)
-  async delete(id: string): Promise<boolean> {
-    const result = await this.taskRepo.delete(id);
-    return !!result.affected;
+  async delete(id: string): Promise<void> {
+    await this.taskRepo.delete(id);
   }
 }

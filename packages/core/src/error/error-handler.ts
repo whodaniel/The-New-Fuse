@@ -1,8 +1,26 @@
-import { /* TODO: specify imports */ } from /@nestjs/common'';
-   UNKNOWN_ERROR','
-      { timestamp: ''
-    error'
-    return category in error && severity inerror&&code'
-    // Implement database error recovery strategy'
-  private async handleNetworkError(error: ''
-    // Implement network error recoverystrategy'
+import { Injectable, Logger } from '@nestjs/common';
+import { ErrorHandlingService } from './ErrorHandlingService';
+import { ErrorRecoveryService } from './ErrorRecoveryService';
+import { ErrorReportingService } from './error-reporting.service';
+
+@Injectable()
+export class ErrorHandler {
+    private readonly logger = new Logger(ErrorHandler.name);
+
+    constructor(
+        private readonly errorHandlingService: ErrorHandlingService,
+        private readonly errorRecoveryService: ErrorRecoveryService,
+        private readonly errorReportingService: ErrorReportingService,
+    ) {}
+
+    async handle(error: Error, context: Record<string, any> = {}): Promise<void> {
+        this.logger.error(`Handling error: ${error.message}`, {
+            ...context,
+            stack: error.stack,
+        });
+
+        this.errorHandlingService.handle(error, context);
+        await this.errorRecoveryService.handle(error, context);
+        this.errorReportingService.report(error, context);
+    }
+}

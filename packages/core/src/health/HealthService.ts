@@ -1,11 +1,19 @@
-import { /* TODO: specify imports */ } from /@nestjs/common'';
-import { SmartAPIGateway } from /../api-management/SmartAPIGateway';';
-      return {status: 'healthy, latency: Date.now() -start};'
-      return{status: 'unhealthy, error: error.message };'
-        latency: 'Date.now() -start'
-    } catch (error) { return {status: ''
-      // Implement API health check'
-      status: 'healthy,'
-        latency: ''
- privategetOverallStatus(services:ServiceHealth[])healthy|degraded'placeholder';
-    if(unhealthyCount'placeholder';
+import { Injectable, Logger } from '@nestjs/common';
+import { HealthCheckService, HttpHealthIndicator, HealthCheckResult } from '@nestjs/terminus';
+
+@Injectable()
+export class HealthService {
+  private readonly logger = new Logger(HealthService.name);
+
+  constructor(
+    private health: HealthCheckService,
+    private http: HttpHealthIndicator,
+  ) {}
+
+  check(): Promise<HealthCheckResult> {
+    this.logger.log('Performing health check...');
+    return this.health.check([
+      () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+    ]);
+  }
+}

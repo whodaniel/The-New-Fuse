@@ -321,23 +321,13 @@ export class MasterAgentRegistry extends EventEmitter {
     verificationHash: string;
     spreadsheetRowId?: string;
   }> {
-    console.log('🚨 REGISTERAGENT METHOD CALLED - VERY FIRST LINE');
     try {
-      console.error('🔥 REGISTERAGENT METHOD CALLED - ENTRY POINT');
-      console.error('🔥 Profile received:', JSON.stringify(profile, null, 2));
-      console.error('🔥 Logger exists:', !!this.logger);
-      console.error('🔥 Prisma exists:', !!this.prisma);
-      console.error('🔥 ENTERING TRY BLOCK');
-      console.error('🔍 DEBUG: registerAgent called with profile:', JSON.stringify(profile, null, 2));
       this.logger.info(`🚀 MASTER REGISTRATION INITIATED: ${profile.name || 'Unknown Agent'}`);
 
       // Generate unique ID if not provided
       const agentId = profile.id || this.generateAgentId(profile.type || 'BASIC', profile.platform || 'unknown');
-      console.error('🔥 Generated agentId:', agentId);
-      console.error('🔍 DEBUG: Generated agentId:', agentId);
       
       // Create complete profile with defaults
-      console.log('🔍 DEBUG: Creating complete profile...');
       const completeProfile: MasterAgentProfile = {
         id: agentId,
         name: profile.name || `${profile.type || 'Unknown'} Agent`,
@@ -412,12 +402,6 @@ export class MasterAgentRegistry extends EventEmitter {
       };
 
       // 1. Store in Prisma database (single source of truth)
-      console.log('🔍 DEBUG: About to call prisma.agent.create with data:', JSON.stringify({
-        id: agentId,
-        name: completeProfile.name,
-        type: completeProfile.type,
-        status: completeProfile.status
-      }, null, 2));
       const dbAgent = await this.prisma.agent.create({
         data: {
           id: agentId,
@@ -448,7 +432,6 @@ export class MasterAgentRegistry extends EventEmitter {
         },
         include: { metadata: true }
       });
-      console.log('🔍 DEBUG: Prisma agent.create successful, dbAgent:', JSON.stringify(dbAgent, null, 2));
 
       // 2. Register with legacy system for backward compatibility
       const legacyAgent: LegacyAgent = {
@@ -527,8 +510,6 @@ export class MasterAgentRegistry extends EventEmitter {
         spreadsheetRowId
       };
     } catch (error) {
-      console.log('🔍 DEBUG: Error in registerAgent:', error);
-      console.log('🔍 DEBUG: Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       this.logger.error(`❌ MASTER REGISTRATION FAILED: ${error instanceof Error ? error.message : String(error)}`);
       return {
         success: false,
@@ -611,7 +592,7 @@ export class MasterAgentRegistry extends EventEmitter {
       {
         id: 'todo_system_integration',
         requirement: 'Todo System Integration',
-        description: 'Initialize and test personal todo list management like Claude CLI',
+        description: 'Initialize and test personal todo list management',
         verificationMethod: 'automatic',
         status: 'pending',
         orientationMaterials: []
@@ -686,7 +667,7 @@ export class MasterAgentRegistry extends EventEmitter {
   }
 
   /**
-   * AGENT TODO LIST MANAGEMENT - LIKE CLAUDE CLI
+   * AGENT TODO LIST MANAGEMENT
    * Integrates with existing Task system for persistence
    */
   async initializeAgentTodoList(agentId: string): Promise<void> {
@@ -748,43 +729,39 @@ export class MasterAgentRegistry extends EventEmitter {
     // Store in agent's todo list
     agent.todoList.push(todo);
 
-    // Also create a Prisma Task for persistence and integration
-    if (todoData.category !== 'onboarding') { // Don't clutter Task table with onboarding todos
-      // First ensure we have a default pipeline for this agent
-      let defaultPipeline = await this.prisma.pipeline.findFirst({
-        where: { agentId, name: 'Default Agent Pipeline' }
-      });
-      
-      if (!defaultPipeline) {
-        defaultPipeline = await this.prisma.pipeline.create({
-          data: {
-            name: 'Default Agent Pipeline',
-            description: 'Default pipeline for agent tasks',
-            agentId,
-            userId: agent.userId
-          }
-        });
-      }
-
-      const prismaTask = await this.prisma.task.create({
+    const prismaTask = await this.prisma.task.create({
+      data: {
+        type: todo.content,
         data: {
-          type: todo.content,
-          data: {
-            title: todo.content,
-            description: `Agent todo: ${todo.content}`,
-            masterRegistryTodoId: todoId,
-            category: todo.category,
-            context: todo.context
+          title: todo.content,
+          description: `Agent todo: ${todo.content}`,
+          masterRegistryTodoId: todoId,
+          category: todo.category,
+          context: todo.context,
+        },
+        status: this.convertTodoStatusToTaskStatus(todo.status),
+        priority: this.convertTodoPriorityToTaskPriority(todo.priority),
+        pipeline: {
+          connectOrCreate: {
+            where: {
+              agentId_name: {
+                agentId,
+                name: 'Default Agent Pipeline',
+              },
+            },
+            create: {
+              name: 'Default Agent Pipeline',
+              description: 'Default pipeline for agent tasks',
+              agentId,
+              userId: agent.userId,
+            },
           },
-          status: this.convertTodoStatusToTaskStatus(todo.status),
-          priority: this.convertTodoPriorityToTaskPriority(todo.priority),
-          pipelineId: defaultPipeline.id,
-          agentId,
-          userId: agent.userId
-        }
-      });
-      todo.integrationId = prismaTask.id;
-    }
+        },
+        agentId,
+        userId: agent.userId,
+      },
+    });
+    todo.integrationId = prismaTask.id;
 
     this.updateSystemMetrics();
     
@@ -1514,26 +1491,6 @@ export class MasterAgentRegistry extends EventEmitter {
     }
 
     try {
-      // Create metadata for IPFS upload (simplified - in production would upload to IPFS)
-      // const metadata = {
-      //   name: profile.name,
-      //   description: profile.description || `${profile.type} agent in The New Fuse ecosystem`,
-      //   image: `https://api.the-new-fuse.io/agents/${profile.id}/avatar`,
-      //   attributes: [
-      //     { trait_type: "Agent Type", value: profile.type },
-      //     { trait_type: "Platform", value: profile.platform },
-      //     { trait_type: "Success Rate", value: profile.metrics.successRate },
-      //     { trait_type: "Total Tasks", value: profile.metrics.totalTasks },
-      //     { trait_type: "Created At", value: profile.registeredAt.toISOString() }
-      //   ],
-      //   properties: {
-      //     agentId: profile.id,
-      //     platform: profile.platform,
-      //     capabilities: profile.capabilities,
-      //     version: profile.metadata.version
-      //   }
-      // };
-
       // Mock IPFS hash (in production, upload to IPFS first)
       const metadataURI = `ipfs://QmAgent${profile.id}Metadata`;
       const legalContractURI = `ipfs://QmAgent${profile.id}Constitution`;
@@ -1567,8 +1524,7 @@ export class MasterAgentRegistry extends EventEmitter {
         throw new Error('Failed to parse token ID from mint transaction');
       }
 
-      // TODO: In production, trigger TBA creation here
-      const tbaAddress = `0x${profile.id.slice(-40).padStart(40, '0')}`; // Mock TBA address
+      const tbaAddress = await this.blockchainService.createTokenBoundAccount(tokenId);
 
       const onChainData: OnChainAgentData = {
         isOnChain: true,

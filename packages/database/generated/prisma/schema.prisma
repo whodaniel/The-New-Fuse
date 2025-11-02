@@ -793,3 +793,27 @@ model LLMConfig {
 
   @@map("llm_configs")
 }
+
+// =============================================================================
+// MONITORING AND METRICS
+// =============================================================================
+
+model BusinessMetric {
+  id        String   @id @default(uuid())
+  name      String
+  value     Float
+  tags      Json?
+  createdAt DateTime @default(now())
+
+  @@map("business_metrics")
+}
+
+model ErrorLog {
+  id        String   @id @default(uuid())
+  message   String
+  stack     String?
+  context   Json?
+  createdAt DateTime @default(now())
+
+  @@map("error_logs")
+}

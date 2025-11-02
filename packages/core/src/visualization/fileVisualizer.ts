@@ -46,15 +46,18 @@ export class FileVisualizer {
 
   async generateDependencyGraph(filePath: string): Promise<{ nodes: any[], edges: any[], message?: string }> {
     try {
-      // Basic implementation for dependency analysis
+      const content = await fs.promises.readFile(filePath, 'utf-8');
+      const dependencies = this.parseDependencies(content);
       const nodes = [{ id: filePath, label: path.basename(filePath) }];
-      const edges: any[] = [];
+      const edges = dependencies.map(dep => ({
+        from: filePath,
+        to: dep,
+      }));
 
-      // TODO: Implement actual dependency parsing
       return {
         nodes,
         edges,
-        message: 'Basic dependency graph generated'
+        message: 'Dependency graph generated'
       };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -134,9 +137,8 @@ export class FileVisualizer {
   }
 
   private calculateComplexity(content: string): number {
-    // Simple complexity calculation based on control structures
     const complexityKeywords = ['if', 'else', 'for', 'while', 'switch', 'case', 'catch', 'try'];
-    let complexity = 1; // Base complexity
+    let complexity = 1;
 
     for (const keyword of complexityKeywords) {
       const regex = new RegExp(`\\b${keyword}\\b`, 'g');
@@ -150,17 +152,26 @@ export class FileVisualizer {
   }
 
   private countDependencies(content: string): number {
-    const importRegex = /^import\s+.*?from\s+['"].*?['"];?$/gm;
-    const requireRegex = /require\s*\(\s*['"].*?['"]\s*\)/g;
+    return this.parseDependencies(content).length;
+  }
+
+  private parseDependencies(content: string): string[] {
+    const importRegex = /from\s+['"]([^'"]+)['"]/g;
+    const requireRegex = /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+    const dependencies = new Set<string>();
     
-    const imports = content.match(importRegex) || [];
-    const requires = content.match(requireRegex) || [];
+    let match;
+    while ((match = importRegex.exec(content)) !== null) {
+      dependencies.add(match[1]);
+    }
+    while ((match = requireRegex.exec(content)) !== null) {
+      dependencies.add(match[1]);
+    }
     
-    return imports.length + requires.length;
+    return Array.from(dependencies);
   }
 
   private generateSVG(data: any): string {
-    // Basic SVG generation
     return `<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#f0f0f0"/>
       <text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="16">

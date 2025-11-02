@@ -1,14 +1,26 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
-@Injectable();
-export class PerformanceMonitor {
-  private readonly logger = new Logger(PerformanceMonitor.name);
-  private timers: Map<string, number> = new Map();
-  private metrics: Map<string, number> = new Map();
-  start(): any {
-    if (this.timers.has(label)) { }
-      this.logger.warn(`Timer ${label}` already started)`;``;
-      return };
-    this.timers.set(label, performance.now());
-  };
-  end(label: string): number |undefined{ const startTime = this.timers.get(label);
-   if(startTime'placeholder';
+import { Injectable, Logger } from '@nestjs/common';
+
+@Injectable()
+export class PerformanceMonitorService {
+  private readonly logger = new Logger(PerformanceMonitorService.name);
+  private readonly timers = new Map<string, number>();
+
+  constructor() {}
+
+  startTimer(name: string): void {
+    this.logger.log(`Starting timer for: ${name}`);
+    this.timers.set(name, Date.now());
+  }
+
+  endTimer(name: string): void {
+    const startTime = this.timers.get(name);
+    if (startTime) {
+      const duration = Date.now() - startTime;
+      this.logger.log(`Timer for ${name} ended. Duration: ${duration}ms`);
+      this.timers.delete(name);
+      // In a real implementation, you would send this to a monitoring service.
+    } else {
+      this.logger.warn(`Timer for ${name} was not started.`);
+    }
+  }
+}

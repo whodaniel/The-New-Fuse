@@ -1,17 +1,14 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
-@Injectable();
-export class NotificationHandler implements OnModuleInit { constructor(private prisma: PrismaService) { }
+import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 
-  async onModuleInit(): Promise<void> { ): Promise<any> {
-  // Implementation needed
+@Injectable()
+export class NotificationHandler {
+  private readonly logger = new Logger(NotificationHandler.name);
+
+  @OnEvent('notification.*')
+  handle(payload: any) {
+    this.logger.log(`Handling notification: ${JSON.stringify(payload)}`);
+    // This is a placeholder for a more robust implementation that would
+    // send the notification to the appropriate channel (e.g., email, SMS, push).
+  }
 }
-    this.startNotificationStream(): Promise<any> {
-  // Implementation needed
-}
-    try {
-      try {
-      const stream = 'placeholder';
-        name: ''
-       })): void{ // Handle the notification event'
-      console.error('placeholder'
-      // Implement retry logic if needed'
