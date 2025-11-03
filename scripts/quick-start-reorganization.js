@@ -57,7 +57,7 @@ try {
   // Type check
   console.log('🔍 Running type check...');
   try {
-    execSync('bun run type-check', { stdio: 'pipe' });
+    execSync('pnpm run type-check', { stdio: 'pipe' });
     console.log('✅ Type check passed');
   } catch (error) {
     console.log('⚠️  Type check found issues - see COMPREHENSIVE_REORGANIZATION_PLAN.md for fixes');
@@ -67,8 +67,8 @@ try {
   console.log('\n📖 Next steps:');
   console.log('1. Review COMPREHENSIVE_REORGANIZATION_PLAN.md for detailed instructions');
   console.log('2. Execute Phase 2: TypeScript configuration unification');
-  console.log('3. Run validation: bun run reorganize:validate');
-  console.log('4. If issues arise: bun run reorganize:rollback');
+  console.log('3. Run validation: pnpm run reorganize:validate');
+  console.log('4. If issues arise: pnpm run reorganize:rollback');
 
 } catch (error) {
   console.error('❌ Reorganization initialization failed:', error.message);

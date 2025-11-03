@@ -51,8 +51,8 @@ else
     print_status "vsce is already installed"
 fi
 
-# Install dependencies using pnpm
-echo "2️⃣ Installing dependencies using pnpm..."
+# Install dependencies using Bun
+echo "2️⃣ Installing dependencies using Bun..."
 pnpm install --frozen-lockfile
 if [ $? -ne 0 ]; then
     print_error "Failed to install dependencies using pnpm. Check for pnpm installation or workspace errors."
@@ -60,8 +60,8 @@ if [ $? -ne 0 ]; then
 fi
 print_status "Dependencies installed using pnpm"
 
-# Build the extension using pnpm
-echo "3️⃣ Building extension using pnpm..."
+# Build the extension using Bun
+echo "3️⃣ Building extension using Bun..."
 pnpm run compile # Assuming 'compile' is the correct build script in package.json
 if [ $? -ne 0 ]; then
     print_warning "Build failed with errors (pnpm run compile), but attempting to package anyway..."

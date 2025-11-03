@@ -37,7 +37,7 @@ A secure, scalable, and compliant crypto wallet infrastructure for both humans a
 1. **Install Dependencies**
    ```bash
    cd apps/api
-   bun install
+   pnpm install
    ```
 
 2. **Configure Environment**
@@ -48,8 +48,8 @@ A secure, scalable, and compliant crypto wallet infrastructure for both humans a
 
 3. **Setup Database**
    ```bash
-   bunx prisma migrate dev
-   bunx prisma generate
+   pnpm dlx prisma migrate dev
+   pnpm dlx prisma generate
    ```
 
 4. **Deploy Smart Contracts** (Optional - for full setup)
@@ -61,7 +61,7 @@ A secure, scalable, and compliant crypto wallet infrastructure for both humans a
 
 5. **Start the API Server**
    ```bash
-   bun run dev
+   pnpm run dev
    ```
 
 ## 📋 API Endpoints
@@ -200,10 +200,10 @@ Access the monitoring dashboard at `/monitoring/health` for:
 
 ```bash
 # Run unit tests
-bun test
+pnpm test
 
 # Run integration tests  
-bun test:integration
+pnpm test:integration
 
 # Smart contract tests
 cd contracts && forge test
@@ -213,13 +213,13 @@ cd contracts && forge test
 
 ### Development
 ```bash
-bun run dev
+pnpm run dev
 ```
 
 ### Production
 ```bash
-bun run build
-bun run start:prod
+pnpm run build
+pnpm run start:prod
 ```
 
 ### Docker
@@ -266,7 +266,7 @@ docker run -p 3001:3001 tnf-wallet-api
 
 ### Debug Mode
 ```bash
-DEBUG=tnf:* bun run dev
+DEBUG=tnf:* pnpm run dev
 ```
 
 ## 📚 Documentation

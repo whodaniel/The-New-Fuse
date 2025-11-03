@@ -36,7 +36,7 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 2. **Generate dependency map**
 
    ```bash
-   bun run --filter="*" list-deps > dependency-map.txt
+   pnpm run --filter="*" list-deps > dependency-map.txt
    ```
 
 3. **Document current functionality**
@@ -59,8 +59,8 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 2. **Install additional tooling**
 
    ```bash
-   bun add -D @typescript-eslint/parser @typescript-eslint/eslint-plugin
-   bun add -D madge dependency-cruiser
+   pnpm add -D @typescript-eslint/parser @typescript-eslint/eslint-plugin
+   pnpm add -D madge dependency-cruiser
    ```
 
 3. **Create validation scripts**
@@ -88,7 +88,7 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 3. **Validation checkpoint**
 
    ```bash
-   bun run scripts/validate-functionality.js
+   pnpm run scripts/validate-functionality.js
    ```
 
 #### Day 4: Import Path Consolidation
@@ -125,13 +125,13 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 1. **Consolidate duplicate dependencies**
 
    ```bash
-   bun run dependency-cruiser --config .dependency-cruiser.js src
+   pnpm run dependency-cruiser --config .dependency-cruiser.js src
    ```
 
 2. **Remove unused dependencies**
 
    ```bash
-   bun run depcheck
+   pnpm run depcheck
    ```
 
 3. **Update workspace dependencies**
@@ -196,7 +196,7 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 3. **Validate compilation**
 
    ```bash
-   bun run type-check
+   pnpm run type-check
    ```
 
 #### Day 8: Build System Optimization
@@ -219,9 +219,9 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
    ```json
    {
      "scripts": {
-       "build": "bun run build:packages && bun run build:apps",
-       "build:packages": "bun run --filter='./packages/*' build",
-       "build:apps": "bun run --filter='./apps/*' build"
+       "build": "pnpm run build:packages && pnpm run build:apps",
+       "build:packages": "pnpm run --filter='./packages/*' build",
+       "build:apps": "pnpm run --filter='./apps/*' build"
      }
    }
    ```
@@ -337,9 +337,9 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
    ```json
    {
      "scripts": {
-       "build:dev": "bun run build --mode development",
-       "build:prod": "bun run build --mode production",
-       "build:test": "bun run build --mode test"
+       "build:dev": "pnpm run build --mode development",
+       "build:prod": "pnpm run build --mode production",
+       "build:test": "pnpm run build --mode test"
      }
    }
    ```
@@ -349,8 +349,8 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
    ```bash
    # scripts/deploy.sh
    #!/bin/bash
-   bun run build:prod
-   bun run test:e2e
+   pnpm run build:prod
+   pnpm run test:e2e
    # Deploy logic
    ```
 
@@ -363,10 +363,10 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
    ```json
    {
      "scripts": {
-       "test": "bun test",
-       "test:unit": "bun test --filter='**/*.unit.test.ts'",
-       "test:integration": "bun test --filter='**/*.integration.test.ts'",
-       "test:e2e": "bun test --filter='**/*.e2e.test.ts'"
+       "test": "pnpm test",
+       "test:unit": "pnpm test --filter='**/*.unit.test.ts'",
+       "test:integration": "pnpm test --filter='**/*.integration.test.ts'",
+       "test:e2e": "pnpm test --filter='**/*.e2e.test.ts'"
      }
    }
    ```
@@ -405,10 +405,10 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 
    ```bash
    # scripts/quality-gate.sh
-   bun run lint
-   bun run type-check
-   bun run test:unit
-   bun run test:integration
+   pnpm run lint
+   pnpm run type-check
+   pnpm run test:unit
+   pnpm run test:integration
    ```
 
 ### Phase 7: Documentation & Developer Experience (Days 18-19)
@@ -432,7 +432,7 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 3. **Generate API documentation**
 
    ```bash
-   bun run docs:generate
+   pnpm run docs:generate
    ```
 
 #### Day 19: Developer Tooling
@@ -451,8 +451,8 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 
    ```bash
    # .husky/pre-commit
-   bun run lint-staged
-   bun run type-check
+   pnpm run lint-staged
+   pnpm run type-check
    ```
 
 3. **EditorConfig and Prettier**
@@ -472,13 +472,13 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 1. **Bundle analysis**
 
    ```bash
-   bun run build:analyze
+   pnpm run build:analyze
    ```
 
 2. **Dependency optimization**
 
    ```bash
-   bun run bundle-analyzer
+   pnpm run bundle-analyzer
    ```
 
 3. **Build time optimization**
@@ -496,25 +496,25 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 1. **Full functionality test**
 
    ```bash
-   bun run scripts/validate-all-features.js
+   pnpm run scripts/validate-all-features.js
    ```
 
 2. **Performance benchmarking**
 
    ```bash
-   bun run scripts/performance-benchmark.js
+   pnpm run scripts/performance-benchmark.js
    ```
 
 3. **Security audit**
 
    ```bash
-   bun audit
+   pnpm audit
    ```
 
 4. **Final deployment test**
 
    ```bash
-   bun run scripts/test-deployment.js
+   pnpm run scripts/test-deployment.js
    ```
 
 ## Validation Procedures
@@ -571,16 +571,16 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 
 ```bash
 git checkout backup-$(date +%Y%m%d)
-bun install
-bun run build
-bun run start
+pnpm install
+pnpm run build
+pnpm run start
 ```
 
 ### Partial Rollback (specific changes)
 
 ```bash
 git cherry-pick <specific-commits>
-bun run scripts/validate-functionality.js
+pnpm run scripts/validate-functionality.js
 ```
 
 ### Emergency Procedures
@@ -588,19 +588,19 @@ bun run scripts/validate-functionality.js
 1. **Database rollback**
 
    ```bash
-   bun run migration:rollback
+   pnpm run migration:rollback
    ```
 
 2. **Cache clear**
 
    ```bash
-   bun run cache:clear
+   pnpm run cache:clear
    ```
 
 3. **Service restart**
 
    ```bash
-   bun run restart:all
+   pnpm run restart:all
    ```
 
 ## Success Criteria

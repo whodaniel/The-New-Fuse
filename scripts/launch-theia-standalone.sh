@@ -21,7 +21,7 @@ echo "🔧 Port: $PORT"
 # Verify Theia build exists
 if [ ! -f "apps/theia-ide/src-gen/backend/main.js" ]; then
     echo "❌ Theia backend not found. Building first..."
-    bun run build:theia
+    pnpm run build:theia
     
     if [ $? -ne 0 ]; then
         echo "❌ Theia build failed"

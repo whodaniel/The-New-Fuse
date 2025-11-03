@@ -41,5 +41,5 @@ Session manager can be configured with the following options:
 Run tests with:
 
 ```bash
-bun test
+pnpm test
 ```

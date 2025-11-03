@@ -16,7 +16,7 @@ echo '{
 mkdir -p temp-install
 cp temp-package.json temp-install/package.json
 cd temp-install
-bun install
+pnpm install
 cd ..
 
 # Copy the installed ts-node to the project's node_modules
@@ -26,8 +26,8 @@ cp -r temp-install/node_modules/ts-node node_modules/
 # Clean up
 rm -rf temp-install temp-package.json
 
-# Try bun install again
-echo "Running bun install..."
-bun install
+# Try pnpm install again
+echo "Running pnpm install..."
+pnpm install
 
 echo "Process completed."

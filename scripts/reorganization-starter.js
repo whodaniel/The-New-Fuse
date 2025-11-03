@@ -157,18 +157,18 @@ class ReorganizationStarter {
     console.log('Phase 8: Final Validation (Day 21)');
 
     console.log('\n=== AVAILABLE COMMANDS ===');
-    console.log('bun run reorganize:phase1    - Start package standardization');
-    console.log('bun run reorganize:phase2    - Start TypeScript unification');
-    console.log('bun run reorganize:phase3    - Start directory optimization');
-    console.log('bun run reorganize:validate  - Run post-change validation');
-    console.log('bun run reorganize:rollback  - Access rollback procedures');
+    console.log('pnpm run reorganize:phase1    - Start package standardization');
+    console.log('pnpm run reorganize:phase2    - Start TypeScript unification');
+    console.log('pnpm run reorganize:phase3    - Start directory optimization');
+    console.log('pnpm run reorganize:validate  - Run post-change validation');
+    console.log('pnpm run reorganize:rollback  - Access rollback procedures');
 
     // Create/update package.json scripts
     await this.addReorganizationScripts();
 
     console.log('\n=== NEXT STEPS ===');
     console.log('1. Review the comprehensive plan: COMPREHENSIVE_REORGANIZATION_PLAN.md');
-    console.log('2. Start with Phase 1: bun run reorganize:phase1');
+    console.log('2. Start with Phase 1: pnpm run reorganize:phase1');
     console.log('3. Follow validation checkpoints between phases');
     console.log('4. Use rollback procedures if needed');
 
@@ -194,17 +194,17 @@ class ReorganizationStarter {
       // Add reorganization scripts
       const newScripts = {
         'reorganize:init': 'node scripts/reorganization-starter.js',
-        'reorganize:phase1': 'node scripts/update-imports.js && bun run reorganize:validate',
+        'reorganize:phase1': 'node scripts/update-imports.js && pnpm run reorganize:validate',
         'reorganize:phase2': 'echo "Phase 2: TypeScript Configuration - See plan for manual steps"',
         'reorganize:phase3': 'echo "Phase 3: Directory Structure - See plan for manual steps"',
         'reorganize:validate': 'node scripts/post-change-validation.js',
         'reorganize:rollback': 'node scripts/rollback-procedure.js',
         'reorganize:emergency': 'node scripts/rollback-procedure.js emergency',
-        'type-check': 'bunx tsc --noEmit',
-        'lint': 'bunx eslint . --ext .ts,.js,.tsx,.jsx',
-        'build:packages': 'bun run --filter="./packages/*" build',
-        'build:apps': 'bun run --filter="./apps/*" build',
-        'build': 'bun run build:packages && bun run build:apps'
+        'type-check': 'pnpm dlx tsc --noEmit',
+        'lint': 'pnpm dlx eslint . --ext .ts,.js,.tsx,.jsx',
+        'build:packages': 'pnpm run --filter="./packages/*" build',
+        'build:apps': 'pnpm run --filter="./apps/*" build',
+        'build': 'pnpm run build:packages && pnpm run build:apps'
       };
 
       Object.assign(packageJson.scripts, newScripts);

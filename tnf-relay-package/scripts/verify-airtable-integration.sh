@@ -101,10 +101,10 @@ fi
 echo ""
 echo "🏗️ Testing build process..."
 echo "Installing dependencies..."
-bun install --silent
+pnpm install --silent
 
 echo "Building airtable packages..."
-if bun run build --filter="@the-new-fuse/airtable-*" > /dev/null 2>&1; then
+if pnpm run build --filter="@the-new-fuse/airtable-*" > /dev/null 2>&1; then
     echo "✅ Airtable packages build successfully"
 else
     echo "❌ Airtable packages failed to build"

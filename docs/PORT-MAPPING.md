@@ -18,7 +18,7 @@
 ### ✅ **Recommended: Unified Architecture**
 ```bash
 # Start API Gateway + Frontend
-bun run dev:unified
+pnpm run dev:unified
 
 # Access Points:
 # - Frontend: http://localhost:3000
@@ -29,9 +29,9 @@ bun run dev:unified
 ### 🏗️ **Alternative: Individual Services**
 ```bash
 # Start services individually
-bun run dev:gateway    # Port 8080
-bun run dev:frontend   # Port 3000
-bun run dev:api        # Port 3001
+pnpm run dev:gateway    # Port 8080
+pnpm run dev:frontend   # Port 3000
+pnpm run dev:api        # Port 3001
 ```
 
 ## API Endpoint Migration

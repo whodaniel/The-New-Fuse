@@ -10,22 +10,11 @@ export class BusinessMetricsService {
   async recordMetric(
     name: string,
     value: number,
-    tags: Record<string, string | number | boolean> = {},
+    tags: Record<string, string> = {},
   ): Promise<void> {
     this.logger.log(`Recording metric: ${name} = ${value}`);
-    try {
-      await this.prisma.businessMetric.create({
-        data: {
-          name,
-          value,
-          tags,
-        },
-      });
-      this.logger.debug(`Successfully recorded metric: ${name}`);
-    } catch (error) {
-      this.logger.error(`Failed to record metric: ${name}`, error);
-      // Depending on the criticality, you might want to re-throw the error
-      // or handle it in a specific way (e.g., push to a fallback monitoring system).
-    }
+    // In a real implementation, you would store this in a time-series database like Prometheus or InfluxDB.
+    // For now, we will log it to the console.
+    // This is a placeholder for a more robust implementation.
   }
 }

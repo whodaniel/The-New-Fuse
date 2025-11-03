@@ -23,4 +23,4 @@ find . -name "coverage" -type d -prune -exec rm -rf {} \; 2>/dev/null || true
 echo "Cleaning lock files..."
 rm -f bun.lockb package-lock.json bun.lockb
 
-echo "✅ Workspace cleaned! Run 'bun install' to reinstall dependencies."
+echo "✅ Workspace cleaned! Run 'pnpm install' to reinstall dependencies."

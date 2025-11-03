@@ -98,7 +98,7 @@ initialize_project() {
     bash "$SCRIPT_DIR/organize-project-structure.sh"
     
     # Install dependencies
-    bun install --frozen-lockfile
+    pnpm install --frozen-lockfile
     
     # Setup environment
     cp .env.example .env
@@ -134,8 +134,8 @@ dev_tools_menu() {
         echo
         show_menu DEV_TOOLS
         case $? in
-            1) bun run dev & show_spinner $! ;;
-            2) bun run test ;;
+            1) pnpm run dev & show_spinner $! ;;
+            2) pnpm run test ;;
             3) bash "$SCRIPT_DIR/typescript-fixes/fix-typescript-consolidated.sh" ;;
             4) bun lint ;;
             5) return ;;

@@ -14,7 +14,7 @@ This package contains the consolidated UI components for The New Fuse platform. 
 ## Installation
 
 ```bash
-bun add @the-new-fuse/ui-consolidated
+pnpm add @the-new-fuse/ui-consolidated
 ```
 
 ## Usage
@@ -362,30 +362,30 @@ function App() {
 
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Start development server
 bun dev
 
 # Run tests
-bun test
+pnpm test
 
 # Build the package
-bun run build
+pnpm run build
 
 # Run Storybook
-bun run storybook
+pnpm run storybook
 ```
 
 ## Testing
 
 ```bash
 # Run all tests
-bun test
+pnpm test
 
 # Run tests in watch mode
-bun run test:watch
+pnpm run test:watch
 
 # Generate test coverage
-bun run test:coverage
+pnpm run test:coverage
 ```

@@ -7,9 +7,9 @@ echo "🔍 Verifying frontend setup..."
 if ! lsof -i :3000 > /dev/null; then
     echo "❌ Frontend is not running. Starting frontend..."
     cd apps/frontend
-    bun install
-    bun run build
-    bun run dev &
+    pnpm install
+    pnpm run build
+    pnpm run dev &
     sleep 5
 fi
 
@@ -17,8 +17,8 @@ fi
 if ! curl -s http://localhost:3002/health > /dev/null; then
     echo "❌ Backend is not responding. Starting backend..."
     cd apps/backend
-    bun install
-    bun run dev &
+    pnpm install
+    pnpm run dev &
     sleep 5
 fi
 
@@ -30,7 +30,7 @@ rm -rf apps/frontend/node_modules/.cache
 # Rebuild frontend
 echo "🔨 Rebuilding frontend..."
 cd apps/frontend
-bun run build
-bun run dev &
+pnpm run build
+pnpm run dev &
 
 echo "✅ Frontend verification complete!"

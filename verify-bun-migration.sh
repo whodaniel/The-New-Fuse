@@ -39,7 +39,7 @@ echo -e "\n${YELLOW}3. Checking for bun.lockb...${NC}"
 if [ -f bun.lockb ]; then
     echo -e "${GREEN}✅ bun.lockb exists${NC}"
 else
-    echo -e "${RED}❌ bun.lockb not found (run 'bun install')${NC}"
+    echo -e "${RED}❌ bun.lockb not found (run 'pnpm install')${NC}"
     ISSUES_FOUND=$((ISSUES_FOUND + 1))
 fi
 
@@ -93,10 +93,10 @@ else
     ISSUES_FOUND=$((ISSUES_FOUND + 1))
 fi
 
-if bun run --help > /dev/null 2>&1; then
-    echo -e "${GREEN}✅ bun run works${NC}"
+if pnpm run --help > /dev/null 2>&1; then
+    echo -e "${GREEN}✅ pnpm run works${NC}"
 else
-    echo -e "${RED}❌ bun run failed${NC}"
+    echo -e "${RED}❌ pnpm run failed${NC}"
     ISSUES_FOUND=$((ISSUES_FOUND + 1))
 fi
 
@@ -131,10 +131,10 @@ if [ $ISSUES_FOUND -eq 0 ]; then
     echo -e "${GREEN}All checks passed. Your project is ready to use Bun.${NC}"
     
     echo -e "\n${BLUE}Quick commands to get started:${NC}"
-    echo -e "• bun install          # Install dependencies"
-    echo -e "• bun run dev          # Start development"
-    echo -e "• bun run build        # Build project"
-    echo -e "• bun test             # Run tests"
+    echo -e "• pnpm install          # Install dependencies"
+    echo -e "• pnpm run dev          # Start development"
+    echo -e "• pnpm run build        # Build project"
+    echo -e "• pnpm test             # Run tests"
 else
     echo -e "${RED}⚠️ Migration incomplete: $ISSUES_FOUND issues found${NC}"
     echo -e "${YELLOW}Please address the issues above before proceeding.${NC}"

@@ -196,15 +196,15 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 
 ```bash
 # Start API Gateway + Frontend (Recommended)
-bun run dev:unified
+pnpm run dev:unified
 
 # Start API Gateway only
-bun run dev:gateway
+pnpm run dev:gateway
 
 # Start individual services (Legacy)
-bun run dev:api      # Backend only
-bun run dev:frontend # Frontend only
-bun run dev:full     # Backend + Frontend
+pnpm run dev:api      # Backend only
+pnpm run dev:frontend # Frontend only
+pnpm run dev:full     # Backend + Frontend
 ```
 
 ### Service Health Checks
@@ -289,8 +289,8 @@ curl -H "Authorization: Bearer <token>" http://localhost:8080/v1/agents
 
 ### Development Environment Setup
 
-1. **Start API Gateway**: `bun run dev:gateway`
-2. **Start Frontend**: `bun run dev:frontend`
+1. **Start API Gateway**: `pnpm run dev:gateway`
+2. **Start Frontend**: `pnpm run dev:frontend`
 3. **Verify Documentation**: Visit `http://localhost:8080/docs`
 4. **Test API Calls**: Use Swagger UI or curl commands
 

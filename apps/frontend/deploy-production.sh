@@ -23,23 +23,23 @@ rm -rf .vite/
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-bun install
+pnpm install
 
 # Run linting (if available)
 if grep -q '"lint"' package.json; then
     echo "🔍 Running linter..."
-    bun run lint || echo "⚠️  Linting warnings found, continuing..."
+    pnpm run lint || echo "⚠️  Linting warnings found, continuing..."
 fi
 
 # Run type checking (if available)
 if grep -q '"type-check"' package.json; then
     echo "🔧 Running type check..."
-    bun run type-check || echo "⚠️  Type check warnings found, continuing..."
+    pnpm run type-check || echo "⚠️  Type check warnings found, continuing..."
 fi
 
 # Build for production
 echo "🏗️  Building for production..."
-NODE_ENV=production bun run build
+NODE_ENV=production pnpm run build
 
 # Verify build output
 if [ ! -d "dist" ]; then

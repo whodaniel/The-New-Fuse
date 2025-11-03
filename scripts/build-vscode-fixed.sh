@@ -11,16 +11,16 @@ cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
 
 # Install dependencies
 echo "Installing dependencies..."
-bun install
+pnpm install
 
 # Build
 echo "Building extension..."
-bun run compile
+pnpm run compile
 
 # Package if compile succeeds
 if [ $? -eq 0 ]; then
     echo "Packaging extension..."
-    bun run package
+    pnpm run package
     echo "✅ VSCode extension built and packaged successfully!"
     ls -la *.vsix
 else

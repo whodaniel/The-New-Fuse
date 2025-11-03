@@ -246,7 +246,7 @@ async function main() {
     await import('glob');
   } catch (error) {
     console.log('📦 Installing required dependency: glob');
-    console.log('Run: bun add glob --dev');
+    console.log('Run: pnpm add glob --dev');
     process.exit(1);
   }
 

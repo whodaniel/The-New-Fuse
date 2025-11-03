@@ -30,15 +30,15 @@ fi
 
 # --- 2. Install dependencies ---
 echo "Installing dependencies with bun..."
-bun install
+pnpm install
 
 # --- 3. Compile the extension ---
 echo "Compiling TypeScript..."
-bun run compile # Assumes 'compile' script exists in package.json for tsc
+pnpm run compile # Assumes 'compile' script exists in package.json for tsc
 
 # --- 4. Package the extension ---
 echo "Packaging .vsix file..."
-bun run package # Assumes 'package' script exists for 'vsce package'
+pnpm run package # Assumes 'package' script exists for 'vsce package'
 
 echo ""
 echo "✅ Success! New .vsix package created."

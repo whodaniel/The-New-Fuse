@@ -27,7 +27,7 @@ check_package() {
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then
     echo "Installing dependencies..."
-    bun install
+    pnpm install
 fi
 
 # Check each package

@@ -72,8 +72,8 @@ cd "$PROJECT_ROOT"
 lsof -ti:3001 | xargs kill -9 2>/dev/null || true
 
 # Start the server in background
-echo -e "${BLUE}🚀 Launching server with pnpm...${NC}"
-pnpm run server &
+echo -e "${BLUE}🚀 Launching server with Bun...${NC}"
+pnpm run bun-server.ts &
 SERVER_PID=$!
 
 # Wait a moment for server to start

@@ -36,7 +36,7 @@ if [ ! -z "$PORT_3002" ]; then
 fi
 
 echo "3. Installing dependencies..."
-bun install
+pnpm install
 
 echo "4. Starting servers with correct port configuration..."
 echo "   Frontend: http://localhost:3000"
@@ -45,14 +45,14 @@ echo ""
 
 # Start the development servers
 echo "Starting API server on port 3001..."
-bun run dev:api &
+pnpm run dev:api &
 API_PID=$!
 
 # Wait a moment for API to start
 sleep 3
 
 echo "Starting frontend on port 3000..."
-bun run dev &
+pnpm run dev &
 FRONTEND_PID=$!
 
 # Wait a moment for frontend to start
@@ -68,7 +68,7 @@ echo "   API PID: $API_PID"
 echo "   Frontend PID: $FRONTEND_PID"
 echo ""
 echo "To stop servers: kill $API_PID $FRONTEND_PID"
-echo "Or use: bun run dev:stop (if available)"
+echo "Or use: pnpm run dev:stop (if available)"
 
 # Keep script running to monitor
 echo "Press Ctrl+C to stop all servers..."

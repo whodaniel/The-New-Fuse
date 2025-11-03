@@ -4,7 +4,7 @@ set -e
 echo "🔧 Fixing reflect-metadata dependencies..."
 
 # Install reflect-metadata at the root
-bun add reflect-metadata
+pnpm add reflect-metadata
 
 # Add to specific workspaces that need it
 bun --filter @the-new-fuse/api run add reflect-metadata

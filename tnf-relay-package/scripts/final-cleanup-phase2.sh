@@ -13,7 +13,7 @@ echo "📝 Fixing TypeScript/JavaScript source files..."
 
 # Fix admin controller
 if [[ -f "apps/api/src/controllers/admin.controller.js" ]]; then
-    sed -i.bak 's/yarn fuse/bun run fuse/g' apps/api/src/controllers/admin.controller.js
+    sed -i.bak 's/yarn fuse/pnpm run fuse/g' apps/api/src/controllers/admin.controller.js
     rm -f apps/api/src/controllers/admin.controller.js.bak
 fi
 
@@ -38,8 +38,8 @@ find apps/api/docs -name "*.md" | while read file; do
     if grep -q "yarn" "$file" 2>/dev/null; then
         echo "  📝 Updating: $file"
         sed -i.bak \
-            -e 's/yarn claude-dev/bun run claude-dev/g' \
-            -e 's/yarn /bun run /g' \
+            -e 's/yarn claude-dev/pnpm run claude-dev/g' \
+            -e 's/yarn /pnpm run /g' \
             "$file"
         rm -f "$file.bak"
     fi
@@ -116,13 +116,13 @@ find scripts -name "*.sh" | while read script; do
     if grep -q "yarn" "$script" 2>/dev/null && [[ "$script" != *"cleanup"* ]] && [[ "$script" != *"remove-yarn"* ]]; then
         echo "  📝 Updating: $script"
         sed -i.bak \
-            -e 's/yarn /bun run /g' \
-            -e 's/yarn$/bun run/g' \
+            -e 's/yarn /pnpm run /g' \
+            -e 's/yarn$/pnpm run/g' \
             -e 's/"yarn"/"bun"/g' \
-            -e 's/yarn install/bun install/g' \
-            -e 's/yarn build/bun run build/g' \
-            -e 's/yarn dev/bun run dev/g' \
-            -e 's/yarn test/bun run test/g' \
+            -e 's/yarn install/pnpm install/g' \
+            -e 's/yarn build/pnpm run build/g' \
+            -e 's/yarn dev/pnpm run dev/g' \
+            -e 's/yarn test/pnpm run test/g' \
             "$script"
         rm -f "$script.bak"
     fi
@@ -146,7 +146,7 @@ const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 packageJson.packageManager = "bun@1.1.38";
 
 if (packageJson.scripts) {
-  packageJson.scripts.clean = "bun run clean:build && bun run clean:deps && bun run clean:cache";
+  packageJson.scripts.clean = "pnpm run clean:build && pnpm run clean:deps && pnpm run clean:cache";
   packageJson.scripts["clean:build"] = "rimraf packages/*/{dist,build,out,.next,coverage,*.tsbuildinfo} .turbo coverage";
   packageJson.scripts["clean:deps"] = "find . -name node_modules -type d -prune -exec rm -rf {} \\; 2>/dev/null || true";
   packageJson.scripts["clean:cache"] = "bun pm cache rm && rimraf .parcel-cache .cache";
@@ -175,4 +175,4 @@ fi
 
 echo ""
 echo "🎉 Yarn to Bun migration phase 2 complete!"
-echo "🚀 Ready for: bun install && bun run build && bun run dev"
+echo "🚀 Ready for: pnpm install && pnpm run build && pnpm run dev"

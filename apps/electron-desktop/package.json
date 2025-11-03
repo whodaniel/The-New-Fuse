@@ -6,15 +6,18 @@
   "homepage": "./",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"pnpm dev:vite\" \"pnpm dev:electron\"",
+    "dev": "pnpm run build:main && concurrently \"pnpm run sync:watch\" \"pnpm run dev:vite\" \"node ../browser-hub/serve-hub.js\" \"pnpm run dev:electron\"",
     "dev:vite": "vite --port ${PORT:-5174}",
-    "dev:electron": "wait-on tcp:${PORT:-5174} && pnpm exec electron dist/main/main.js",
-    "build": "vite build && tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json",
-    "build:with-theia": "cd ../theia-ide && pnpm build && cd ../electron-desktop && vite build && tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json",
-    "start": "pnpm exec electron dist/main/main.js",
+    "dev:electron": "wait-on tcp:${PORT:-5174} && pnpm dlx electron dist/main/main.js",
+    "build:main": "tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json",
+    "build": "vite build && tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json && node ./scripts/sync-browser-hub.js --once",
+    "build:with-theia": "cd ../theia-ide && pnpm run build && cd ../electron-desktop && vite build && tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json && node ./scripts/sync-browser-hub.js --once",
+    "start": "node ./scripts/sync-browser-hub.js --once && pnpm dlx electron dist/main/main.js",
+    "sync:once": "node ./scripts/sync-browser-hub.js --once",
+    "sync:watch": "node ./scripts/sync-browser-hub.js --watch",
     "package": "electron-builder",
-    "dist": "pnpm build && electron-builder",
-    "postinstall": "electron-builder install-app-deps || echo 'electron-builder not found, skipping app deps installation'"
+    "dist": "pnpm run build && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

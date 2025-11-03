@@ -14,7 +14,7 @@ Complete Model Context Protocol implementation for The New Fuse platform.
 
 ### 1. Install Dependencies
 ```bash
-bun install
+pnpm install
 ```
 
 ### 2. Build the MCP Server

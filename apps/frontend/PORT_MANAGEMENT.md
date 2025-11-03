@@ -18,7 +18,7 @@ The New Fuse uses standardized ports across all services to ensure consistent de
 
 ### Clean Development Start
 ```bash
-bun run dev
+pnpm run dev
 ```
 - Automatically clears ports before starting
 - Launches Vite dev server on port 3000
@@ -26,14 +26,14 @@ bun run dev
 
 ### Manual Port Clearing
 ```bash
-bun run clear-ports
+pnpm run clear-ports
 ```
 - Clears all standard ports manually
 - Useful for troubleshooting port conflicts
 
 ### Force Clean Start
 ```bash
-bun run dev:clean
+pnpm run dev:clean
 ```
 - Clears ports + forces Vite to rebuild cache
 - Use when experiencing build cache issues
@@ -66,7 +66,7 @@ The dev script automatically handles this - no manual intervention needed.
 ### Permission Errors
 On some systems, you may need elevated permissions:
 ```bash
-sudo bun run clear-ports
+sudo pnpm run clear-ports
 ```
 
 ### Custom Ports

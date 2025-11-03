@@ -14,7 +14,7 @@ mkdir -p "$LOGS_DIR"
 
 # Step 1: Build and prepare
 echo "📦 Step 1: Building and preparing..."
-bun run build > "$LOGS_DIR/build.log" 2>&1
+pnpm run build > "$LOGS_DIR/build.log" 2>&1
 bun prisma:generate >> "$LOGS_DIR/build.log" 2>&1
 echo "✅ Build and preparation completed"
 

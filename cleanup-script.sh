@@ -36,13 +36,13 @@ find packages/ -name "*.js.map" -delete
 echo "🔄 Regenerating files..."
 
 # Regenerate Prisma client
-bun run db:generate
+pnpm run db:generate
 
 # Clean build everything
-bun run build:clean
+pnpm run build:clean
 
 echo "✅ Cleanup complete! Please test your application."
 echo "📝 Next steps:"
 echo "   1. Update imports in frontend/src that used models/enums.ts"
-echo "   2. Run 'bun run dev' to test"
+echo "   2. Run 'pnpm run dev' to test"
 echo "   3. Commit the cleanup changes"

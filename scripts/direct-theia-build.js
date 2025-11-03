@@ -17,7 +17,7 @@ function runTheiaDirectBuild() {
     console.log(`📁 Building in: ${theiaPath}`);
     console.log('🔧 Using NODE_OPTIONS="--max-old-space-size=4096"');
     
-    const child = spawn('bunx', ['@theia/cli@1.59.0', 'build', '--mode', 'production'], {
+    const child = spawn('pnpm dlx', ['@theia/cli@1.59.0', 'build', '--mode', 'production'], {
       stdio: 'inherit',
       cwd: theiaPath,
       env: {

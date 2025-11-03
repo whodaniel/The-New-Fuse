@@ -16,7 +16,7 @@ This document consolidates essential protocols and procedures for AI agents work
 ### Handoff Checklist
 
 - [ ] Review current project status and recent changes
-- [ ] Verify build system is functional (`bun run build:all`)
+- [ ] Verify build system is functional (`pnpm run build:all`)
 - [ ] Check service health (API, database, frontend)
 - [ ] Identify any TypeScript errors or build failures
 - [ ] Assess documentation currency and completeness
@@ -36,7 +36,7 @@ This document consolidates essential protocols and procedures for AI agents work
 2. **Project Status Assessment**
    - Review recent commits and changes
    - Check CI/CD pipeline status
-   - Verify all dependencies are installed (`bun install`)
+   - Verify all dependencies are installed (`pnpm install`)
    - Run health checks on all services
 
 3. **Architecture Validation**

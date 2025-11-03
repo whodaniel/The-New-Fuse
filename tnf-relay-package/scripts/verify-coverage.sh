@@ -16,7 +16,7 @@ echo "Checking test coverage against targets..."
 
 # Run tests with coverage
 echo "Running unit tests..."
-bun run test:coverage
+pnpm run test:coverage
 
 # Parse coverage results (adjust these paths according to your coverage report location)
 UNIT_COVERAGE=$(jq '.total.lines.pct' coverage/coverage-summary.json)

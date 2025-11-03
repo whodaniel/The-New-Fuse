@@ -70,7 +70,7 @@ pnpm run clean
 # 3. Install dependencies
 log_info "Installing dependencies..."
 if command -v bun > /dev/null 2>&1; then
-    bun install
+    pnpm install
 else
     pnpm install
 fi
