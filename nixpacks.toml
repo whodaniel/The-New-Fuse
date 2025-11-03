@@ -11,7 +11,7 @@ NODE_VERSION = "20.19.0"
 
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile"]
+cmds = ["pnpm install"]
 
 
 [phases.build]

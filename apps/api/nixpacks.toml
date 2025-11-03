@@ -15,7 +15,7 @@ cmds = [
   "cp ../../pnpm-lock.yaml .",
   "cp ../../package.json .",
   # Install all workspace dependencies
-  "pnpm install --frozen-lockfile"
+  "pnpm install"
 ]
 
 [phases.build]
