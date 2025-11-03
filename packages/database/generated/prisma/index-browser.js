@@ -512,6 +512,22 @@ exports.Prisma.LLMConfigScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
+exports.Prisma.BusinessMetricScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  value: 'value',
+  tags: 'tags',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ErrorLogScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  stack: 'stack',
+  context: 'context',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -757,6 +773,17 @@ exports.Prisma.LLMConfigOrderByRelevanceFieldEnum = {
   apiKey: 'apiKey',
   apiEndpoint: 'apiEndpoint'
 };
+
+exports.Prisma.BusinessMetricOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
+exports.Prisma.ErrorLogOrderByRelevanceFieldEnum = {
+  id: 'id',
+  message: 'message',
+  stack: 'stack'
+};
 exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -977,7 +1004,9 @@ exports.Prisma.ModelName = {
   Wallet: 'Wallet',
   Transaction: 'Transaction',
   RegisteredEntity: 'RegisteredEntity',
-  LLMConfig: 'LLMConfig'
+  LLMConfig: 'LLMConfig',
+  BusinessMetric: 'BusinessMetric',
+  ErrorLog: 'ErrorLog'
 };
 
 /**

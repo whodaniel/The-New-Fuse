@@ -31,7 +31,7 @@ module.exports = {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/test/mocks/fileMock.cjs'
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(@the-new-fuse|@tnf)/|lodash-es)'
+    'node_modules/(?!(@the-new-fuse|@tnf)/|lodash-es|uuid)'
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
