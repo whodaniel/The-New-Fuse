@@ -1,21 +1,23 @@
-import { BaseService } from '../core/BaseService'; // Corrected import path assuming BaseService is in core
+import { BaseService } from '../core/BaseService';
 import { Logger } from '@the-new-fuse/core';
+import { v4 as uuidv4 } from 'uuid';
 
-// TODO: Define specific alert types/interfaces if needed
 export interface AlertPayload {
   severity: 'info' | 'warning' | 'error' | 'critical';
   message: string;
-  source?: string; // e.g., 'AgentX', 'TaskProcessor'
+  source?: string;
   details?: Record<string, unknown>;
 }
 
-export interface AlertChannel {
-  send(payload: AlertPayload): Promise<void>;
+export interface Alert extends AlertPayload {
+  id: string;
+  timestamp: Date;
 }
 
-/**
- * Service responsible for handling and dispatching alerts.
- */
+export interface AlertChannel {
+  send(alert: Alert): Promise<void>;
+}
+
 export class AlertService extends BaseService {
   private channels: AlertChannel[] = [];
   private logger: Logger;
@@ -23,7 +25,7 @@ export class AlertService extends BaseService {
   constructor() {
     super({ name: 'AlertService' });
     this.logger = new Logger('AlertService');
-    // TODO: Initialize alert channels (e.g., email, Slack, PagerDuty) based on config
+    this.registerChannel(new ConsoleAlertChannel());
     this.logger.info('AlertService initialized.');
   }
 
@@ -33,25 +35,29 @@ export class AlertService extends BaseService {
   }
 
   async dispatchAlert(payload: AlertPayload): Promise<void> {
-    if (payload.severity === 'info') {
-      this.logger.info(`Dispatching alert: ${payload.message}`);
-    } else if (payload.severity === 'warning') {
-      this.logger.warn(`Dispatching alert: ${payload.message}`);
+    const alert: Alert = {
+      ...payload,
+      id: uuidv4(),
+      timestamp: new Date(),
+    };
+
+    if (alert.severity === 'info') {
+      this.logger.info(`Dispatching alert: ${alert.message}`);
+    } else if (alert.severity === 'warning') {
+      this.logger.warn(`Dispatching alert: ${alert.message}`);
     } else {
-      this.logger.error(`Dispatching alert: ${payload.message}`);
+      this.logger.error(`Dispatching alert: ${alert.message}`);
     }
 
     const dispatchPromises = this.channels.map(channel =>
-      channel.send(payload).catch(error => {
+      channel.send(alert).catch(error => {
         this.logger.error(`Failed to send alert via ${channel.constructor.name}: ${error.message}`);
-        // Optionally, implement retry logic or fallback channels
       })
     );
 
     await Promise.all(dispatchPromises);
   }
 
-  // Example usage methods
   info(message: string, source?: string, details?: Record<string, unknown>): Promise<void> {
     return this.dispatchAlert({ severity: 'info', message, source, details });
   }
@@ -69,9 +75,11 @@ export class AlertService extends BaseService {
   }
 }
 
-// Example simple console alert channel
 export class ConsoleAlertChannel implements AlertChannel {
-  async send(): Promise<void> {
-    
+  private readonly logger = new Logger(ConsoleAlertChannel.name);
+
+  async send(alert: Alert): Promise<void> {
+    const logMessage = `[${alert.severity.toUpperCase()}] - ${alert.message} - Source: ${alert.source || 'Unknown'}`;
+    this.logger.log(logMessage, alert.details);
   }
 }

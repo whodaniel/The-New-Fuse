@@ -3,13 +3,26 @@ import { AgentRole } from '@the-new-fuse/types';
 
 // Stub implementations for missing core dependencies
 class ClineBridgeClient {
+    private listeners: Map<string, ((channel: string, message: string) => void)[]> = new Map();
+
     async connect(): Promise<void> {}
     async disconnect(): Promise<void> {}
     async publish(_channel: string, _message: string): Promise<void> {}
     async subscribe(_channel: string): Promise<void> {}
     async ping(): Promise<boolean> { return true; }
-    on(_event: string, _callback: (channel: string, message: string) => void): void {}
-    emit(_event: string): void {}
+
+    on(event: string, callback: (channel: string, message: string) => void): void {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, []);
+        }
+        this.listeners.get(event)!.push(callback);
+    }
+
+    emit(event: string, channel: string, message: string): void {
+        if (this.listeners.has(event)) {
+            this.listeners.get(event)!.forEach(callback => callback(channel, message));
+        }
+    }
 }
 
 class DirectCommunication {
