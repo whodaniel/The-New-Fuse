@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-nixpacksConfigPath = "nixpacks.toml"
+nixpacksConfigPath = "apps/frontend/nixpacks.toml"
 watchPaths = ["apps/frontend/**", "packages/**"]
 
 [deploy]
