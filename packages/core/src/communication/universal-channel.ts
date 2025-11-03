@@ -1,1 +1,8 @@
-import * as vscode from \'vscode\';\n\nexport interface MessagePacket {\n  from: string;\n  to: string;\n  content: any;\n  type: \'user\' | \'ai_agent\';\n}\n\nexport class UniversalChannel {\n  private readonly eventEmitter = new vscode.EventEmitter<MessagePacket>();\n\n  public get onDidReceiveMessage(): vscode.Event<MessagePacket> {\n    return this.eventEmitter.event;\n  }\n\n  public postMessage(message: MessagePacket): void {\n    console.log(\'Posting message:\', message);\n    this.eventEmitter.fire(message);\n  }\n\n  public broadcast(message: Omit<MessagePacket, \'to\'>): void {\n    console.log(\'Broadcasting message:\', message);\n    this.eventEmitter.fire({ ...message, to: \'*\` });\n  }\n}\n
+import * as vscode from 'vscode';
+  type: 'user' | 'ai_agent'
+      id: 'augment'
+      type: 'ai_agent'
+      capabilities: ['code_analysis', 'communication', '
+    console.log('');
+    this.eventEmitter.fire({ type: ''
+    const messagePacket: MessagePacket = { from: '';
