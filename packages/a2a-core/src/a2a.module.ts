@@ -5,7 +5,7 @@ import { A2AService } from './a2a.service';
 import { A2ARedisAdapter } from './redis-adapter';
 import { A2AWebSocketAdapter } from './websocket-adapter';
 import { A2AConfig } from './types';
-import { Ap2ProtocolModule } from '@the-new-fuse/ap2-protocol';
+import { Ap2ProtocolModule, Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
 
 @Global()
 @Module({})
@@ -66,9 +66,10 @@ export class A2ACoreModule {
         {
           provide: A2AService,
           useFactory: (
-            configService: ConfigService
-          ) => new A2AService(configService),
-          inject: [ConfigService]
+            configService: ConfigService,
+            ap2ProtocolService: Ap2ProtocolService
+          ) => new A2AService(configService, ap2ProtocolService),
+          inject: [ConfigService, Ap2ProtocolService]
         }
       ],
       exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],
@@ -109,9 +110,10 @@ export class A2ACoreModule {
         {
           provide: A2AService,
           useFactory: (
-            configService: ConfigService
-          ) => new A2AService(configService),
-          inject: [ConfigService]
+            configService: ConfigService,
+            ap2ProtocolService: Ap2ProtocolService
+          ) => new A2AService(configService, ap2ProtocolService),
+          inject: [ConfigService, Ap2ProtocolService]
         }
       ],
       exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],
