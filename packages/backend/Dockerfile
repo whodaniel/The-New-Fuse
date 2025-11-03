@@ -20,7 +20,7 @@ COPY packages/*/package.json ./packages/*/
 COPY apps/*/package.json ./apps/*/
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy all source code
 COPY . .

@@ -23,7 +23,7 @@ COPY tnf-relay-package/package.json ./tnf-relay-package/
 COPY apps/api/package.json ./apps/api/
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy source code for packages and app
 COPY packages/types ./packages/types

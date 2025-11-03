@@ -17,7 +17,7 @@ COPY packages/utils/package.json ./packages/utils/
 COPY apps/backend/package.json ./apps/backend/
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy source code for packages and app
 COPY packages/types ./packages/types

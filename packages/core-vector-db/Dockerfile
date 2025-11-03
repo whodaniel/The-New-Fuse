@@ -26,7 +26,7 @@ COPY apps/*/package.json ./apps/
 
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy the entire monorepo source
 COPY . ./
@@ -63,7 +63,7 @@ COPY --from=builder /monorepo/packages/core-vector-db ./packages/core-vector-db
 COPY --from=builder /monorepo/node_modules ./node_modules
 
 # Install only production dependencies
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --prod
 
 # Expose gRPC port
 EXPOSE 50051

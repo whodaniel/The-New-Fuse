@@ -13,7 +13,7 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/ui/package.json ./packages/ui/
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy source files
 COPY . .

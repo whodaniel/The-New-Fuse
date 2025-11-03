@@ -11,7 +11,7 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY .npmrc .npmrc
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # 3. Build all packages
 FROM base AS builder
@@ -34,7 +34,7 @@ FROM prod_base AS api-gateway
 COPY --chown=appuser:nodejs --from=builder /app .
 RUN pnpm deploy --filter @the-new-fuse/api-gateway /app/deploy
 WORKDIR /app/deploy
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod
 CMD ["node", "dist/main.js"]
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:${PORT:-3002}/health || exit 1
@@ -44,7 +44,7 @@ FROM prod_base AS backend
 COPY --chown=appuser:nodejs --from=builder /app .
 RUN pnpm deploy --filter @the-new-fuse/backend-app /app/deploy
 WORKDIR /app/deploy
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod
 CMD ["node", "dist/main.js"]
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:${PORT:-3003}/health || exit 1
@@ -56,7 +56,7 @@ COPY --chown=appuser:nodejs --from=builder /app/apps/frontend/dist ./dist
 COPY --chown=appuser:nodejs --from=builder /app/server.js ./
 COPY --chown=appuser:nodejs --from=builder /app/package.json ./
 COPY --chown=appuser:nodejs --from=builder /app/pnpm-lock.yaml ./
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod
 CMD ["node", "server.js"]
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
