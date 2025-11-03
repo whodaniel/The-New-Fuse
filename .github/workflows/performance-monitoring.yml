@@ -83,7 +83,7 @@ jobs:
             });
             
       - name: Upload metrics
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: performance-metrics
           path: src/vscode-extension/benchmark-results/*.json
