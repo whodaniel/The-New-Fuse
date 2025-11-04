@@ -1,7 +1,9 @@
 [build]
 builder = "NIXPACKS"
 nixpacksConfigPath = "apps/frontend/nixpacks.toml"
+# Watch only frontend app and shared packages, ignore docs and other changes
 watchPaths = ["apps/frontend/**", "packages/**"]
+# Note: Railway may still deploy on any push; watchPaths is advisory only
 
 [deploy]
 healthcheckPath = "/"
