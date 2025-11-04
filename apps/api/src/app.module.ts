@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import llmProviderConfig from './config/llm-provider.config';
+import securityConfig from './config/security.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
@@ -27,11 +30,25 @@ import { Web3authModule } from './web3auth/web3auth.module';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 
+// Security imports
+import { InputSanitizationService } from './security/input-sanitization.service';
+import { ResponseSanitizationService } from './security/response-sanitization.service';
+import { SecurityLoggingService } from './security/security-logging.service';
+import { EnhancedRateLimitService } from './security/enhanced-rate-limit.service';
+import { ApiEndpointMonitoringService } from './security/api-endpoint-monitoring.service';
+import { SecurityIntegrationService } from './security/security-integration.service';
+import { SecurityValidationMiddleware } from './middleware/security-validation.middleware';
+import { CsrfProtectionMiddleware } from './middleware/csrf-protection.middleware';
+import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
+import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-handler.middleware';
+import { SecurityGuard } from './guards/security.guard';
+import { SecureAuthGuard } from './guards/secure-auth.guard';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [llmProviderConfig],
+      load: [llmProviderConfig, securityConfig],
     }) as any,
     // Use Prisma instead of TypeORM
     DatabaseModule as any,
@@ -67,7 +84,8 @@ import { MonitoringModule } from './monitoring/monitoring.module';
     LLMProviderController,
     SystemController,
     WebSocketController,
-    WorkflowController
+    WorkflowController,
+    SecurityController
   ],
   providers: [
     AppService, 
@@ -76,7 +94,42 @@ import { MonitoringModule } from './monitoring/monitoring.module';
     LLMProviderService,
     SystemController,
     WebSocketController,
-    WorkflowController
+    WorkflowController,
+    // Security services
+    InputSanitizationService,
+    ResponseSanitizationService,
+    SecurityLoggingService,
+    EnhancedRateLimitService,
+    ApiEndpointMonitoringService,
+    SecurityIntegrationService,
+    SecurityValidationMiddleware,
+    CsrfProtectionMiddleware,
+    EnhancedSecurityMiddleware,
+    EnhancedErrorHandlerMiddleware,
+    // Global security guards (in order of precedence)
+    {
+      provide: APP_GUARD,
+      useClass: SecurityGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: SecureAuthGuard,
+    },
+    // Global validation pipe
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        forbidUnknownValues: true,
+        disableErrorMessages: process.env.NODE_ENV === 'production',
+        validationError: {
+          target: false,
+          value: false,
+        },
+      }),
+    },
   ],
 })
 export class AppModule {}

@@ -1,7 +1,40 @@
 /**
- * System Controller - System health and metrics
+ * System Controller
+ * 
+ * Provides system health monitoring, metrics collection, status reporting,
+ * and system management capabilities. This controller handles operational
+ * aspects of the system including health checks, performance metrics,
+ * service status monitoring, and system restart operations.
+ * 
+ * The controller is designed to be:
+ * - Lightweight and fast for health checks
+ * - Comprehensive for system monitoring
+ * - Reliable for production environments
+ * - Secure for system management operations
+ * 
+ * All endpoints provide real-time system information useful for:
+ * - Health monitoring and alerting
+ * - Performance analysis and optimization
+ * - Capacity planning and scaling decisions
+ * - Troubleshooting and debugging
+ * - System administration and maintenance
+ * 
+ * @example
+ * // Health check endpoint
+ * GET /api/system/health
+ * 
+ * @example
+ * // Get comprehensive system metrics
+ * GET /api/system/metrics
+ * 
+ * @example
+ * // Check overall system status
+ * GET /api/system/status
+ * 
+ * @example
+ * // Request system restart
+ * POST /api/system/restart
  */
-
 import { Request, Response } from 'express';
 import { Logger } from '@nestjs/common';
 import * as os from 'os';
@@ -9,9 +42,48 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export class SystemController {
+  /** Logger instance for system controller operations */
   private logger = new Logger(SystemController.name);
 
-  // GET /api/system/health
+  /**
+   * Get comprehensive system health status
+   * 
+   * Performs health checks on all critical system components and services.
+   * This endpoint is optimized for fast response times and is commonly used
+   * by load balancers, monitoring systems, and health check probes.
+   * 
+   * @param req - Express request object
+   * @param res - Express response object
+   * @returns Promise that resolves when response is sent
+   * 
+   * @throws Will return 500 status if health check fails completely
+   * 
+   * @api
+   * GET /api/system/health
+   * 
+   * @example
+   * // Successful health check response
+   * {
+   *   "status": "healthy",
+   *   "timestamp": "2025-11-05T02:17:55.000Z",
+   *   "uptime": 86400,
+   *   "version": "v18.17.0",
+   *   "environment": "production",
+   *   "services": {
+   *     "api": "online",
+   *     "database": "online",
+   *     "filesystem": "online",
+   *     "memory": "normal"
+   *   }
+   * }
+   * 
+   * @example
+   * // Unhealthy system response
+   * {
+   *   "status": "unhealthy",
+   *   "error": "Health check failed"
+   * }
+   */
   async getHealth(req: Request, res: Response): Promise<void> {
     try {
       const health = {
@@ -38,7 +110,68 @@ export class SystemController {
     }
   }
 
-  // GET /api/system/metrics
+  /**
+   * Get detailed system metrics
+   * 
+   * Collects comprehensive system performance and resource usage metrics
+   * including CPU, memory, disk, and process information. This data is
+   * essential for performance monitoring, capacity planning, and system
+   * optimization.
+   * 
+   * @param req - Express request object
+   * @param res - Express response object
+   * @returns Promise that resolves when response is sent
+   * 
+   * @throws Will return 500 status if metrics collection fails
+   * 
+   * @api
+   * GET /api/system/metrics
+   * 
+   * @example
+   * // Comprehensive metrics response
+   * {
+   *   "timestamp": "2025-11-05T02:17:55.000Z",
+   *   "system": {
+   *     "platform": "linux",
+   *     "arch": "x64",
+   *     "hostname": "api-server-01",
+   *     "uptime": 86400,
+   *     "loadavg": [0.5, 0.3, 0.2]
+   *   },
+   *   "process": {
+   *     "pid": 1234,
+   *     "uptime": 86400,
+   *     "version": "v18.17.0",
+   *     "memoryUsage": {
+   *       "rss": 52428800,
+   *       "heapTotal": 31457280,
+   *       "heapUsed": 20971520,
+   *       "external": 1048576
+   *     },
+   *     "cpuUsage": {
+   *       "user": 1000000,
+   *       "system": 500000
+   *     }
+   *   },
+   *   "memory": {
+   *     "total": 8589934592,
+   *     "free": 4294967296,
+   *     "used": 4294967296,
+   *     "usage": 50
+   *   },
+   *   "cpu": {
+   *     "count": 8,
+   *     "model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+   *     "usage": 25
+   *   },
+   *   "disk": {
+   *     "path": "/app",
+   *     "available": "unknown",
+   *     "used": "unknown",
+   *     "total": "unknown"
+   *   }
+   * }
+   */
   async getMetrics(req: Request, res: Response): Promise<void> {
     try {
       const metrics = {
@@ -78,7 +211,34 @@ export class SystemController {
     }
   }
 
-  // GET /api/system/status
+  /**
+   * Get overall system status
+   * 
+   * Returns the operational status of all major system components and
+   * services. This is a high-level overview useful for dashboards and
+   * status pages that need to show overall system health at a glance.
+   * 
+   * @param req - Express request object
+   * @param res - Express response object
+   * @returns Promise that resolves when response is sent
+   * 
+   * @throws Will return 500 status if status check fails
+   * 
+   * @api
+   * GET /api/system/status
+   * 
+   * @example
+   * // System status response
+   * {
+   *   "api": "online",
+   *   "database": "online",
+   *   "websocket": "online",
+   *   "workflows": "online",
+   *   "agents": "online",
+   *   "mcp": "partial",
+   *   "timestamp": "2025-11-05T02:17:55.000Z"
+   * }
+   */
   async getStatus(req: Request, res: Response): Promise<void> {
     try {
       const status = {
@@ -98,7 +258,32 @@ export class SystemController {
     }
   }
 
-  // POST /api/system/restart
+  /**
+   * Restart the system
+   * 
+   * Initiates a graceful system restart. This operation is typically used
+   * for system maintenance, updates, or recovery from critical issues.
+   * The response is sent before the actual restart occurs.
+   * 
+   * @warning This operation will restart the entire application process.
+   * All active connections will be terminated.
+   * 
+   * @param req - Express request object
+   * @param res - Express response object
+   * @returns Promise that resolves when response is sent
+   * 
+   * @throws Will return 500 status if restart initiation fails
+   * 
+   * @api
+   * POST /api/system/restart
+   * 
+   * @example
+   * // Restart initiated response
+   * {
+   *   "message": "System restart initiated",
+   *   "timestamp": "2025-11-05T02:17:55.000Z"
+   * }
+   */
   async restart(req: Request, res: Response): Promise<void> {
     try {
       this.logger.warn('System restart requested');
@@ -118,7 +303,41 @@ export class SystemController {
     }
   }
 
-  // GET /api/system/logs
+  /**
+   * Get system logs
+   * 
+   * Retrieves system log entries with filtering options. Currently returns
+   * mock data but would be extended to read from actual log files in a
+   * production environment. Supports filtering by log level and limiting
+   * the number of entries returned.
+   * 
+   * @param req - Express request object containing query parameters
+   * @param req.query.lines - Maximum number of log entries to return (default: 100)
+   * @param req.query.level - Log level filter ('all', 'error', 'warn', 'info', 'debug')
+   * @param res - Express response object
+   * @returns Promise that resolves when response is sent
+   * 
+   * @throws Will return 500 status if log retrieval fails
+   * 
+   * @api
+   * GET /api/system/logs?lines=50&level=error
+   * 
+   * @example
+   * // Log entries response
+   * {
+   *   "timestamp": "2025-11-05T02:17:55.000Z",
+   *   "level": "info",
+   *   "lines": 100,
+   *   "entries": [
+   *     {
+   *       "timestamp": "2025-11-05T02:17:55.000Z",
+   *       "level": "info",
+   *       "message": "System health check completed",
+   *       "service": "system"
+   *     }
+   *   ]
+   * }
+   */
   async getLogs(req: Request, res: Response): Promise<void> {
     try {
       const { lines = 100, level = 'all' } = req.query;
@@ -158,6 +377,22 @@ export class SystemController {
     }
   }
 
+  /**
+   * Check database connectivity and health
+   * 
+   * Performs a connectivity test to the primary database. This is a simple
+   * check that would be extended in production to include more sophisticated
+   * health checks like query performance, connection pool status, and
+   * replication lag.
+   * 
+   * @returns Promise resolving to health status string
+   * @returns 'online' - Database is healthy and responsive
+   * @returns 'offline' - Database is unreachable or not responding
+   * 
+   * @example
+   * const dbStatus = await this.checkDatabaseHealth();
+   * console.log(dbStatus); // "online"
+   */
   private async checkDatabaseHealth(): Promise<string> {
     try {
       // This would check database connectivity
@@ -168,6 +403,21 @@ export class SystemController {
     }
   }
 
+  /**
+   * Check filesystem health and write permissions
+   * 
+   * Tests filesystem write and delete operations to ensure the filesystem
+   * is functioning properly. This is important for file uploads, logging,
+   * and temporary file operations.
+   * 
+   * @returns Promise resolving to health status string
+   * @returns 'online' - Filesystem is healthy and writable
+   * @returns 'offline' - Filesystem has issues or is read-only
+   * 
+   * @example
+   * const fsStatus = await this.checkFilesystemHealth();
+   * console.log(fsStatus); // "online"
+   */
   private async checkFilesystemHealth(): Promise<string> {
     try {
       const testFile = path.join(os.tmpdir(), 'health-check.tmp');
@@ -179,6 +429,22 @@ export class SystemController {
     }
   }
 
+  /**
+   * Get current memory usage status
+   * 
+   * Analyzes system memory usage and categorizes it into status levels
+   * for monitoring and alerting purposes. Uses thresholds to classify
+   * memory usage as normal, warning, or critical.
+   * 
+   * @returns Memory status string
+   * @returns 'normal' - Memory usage is healthy (< 80%)
+   * @returns 'warning' - Memory usage is elevated (80-90%)
+   * @returns 'critical' - Memory usage is very high (> 90%)
+   * 
+   * @example
+   * const memStatus = this.getMemoryStatus();
+   * console.log(memStatus); // "normal"
+   */
   private getMemoryStatus(): string {
     const usage = (os.totalmem() - os.freemem()) / os.totalmem();
     if (usage > 0.9) return 'critical';
@@ -186,6 +452,19 @@ export class SystemController {
     return 'normal';
   }
 
+  /**
+   * Get current CPU usage percentage
+   * 
+   * Measures CPU usage over a 100ms sample period and calculates the
+   * percentage of CPU time used. This provides a snapshot of current
+   * CPU utilization.
+   * 
+   * @returns Promise resolving to CPU usage percentage (0-100)
+   * 
+   * @example
+   * const cpuUsage = await this.getCPUUsage();
+   * console.log(cpuUsage); // 25
+   */
   private async getCPUUsage(): Promise<number> {
     return new Promise((resolve) => {
       const startUsage = process.cpuUsage();
@@ -204,6 +483,25 @@ export class SystemController {
     });
   }
 
+  /**
+   * Get disk usage information
+   * 
+   * Collects disk usage statistics for the application directory.
+   * Currently returns limited information but would be extended in
+   * production to include detailed disk metrics across all mounted
+   * filesystems.
+   * 
+   * @returns Promise resolving to disk usage object
+   * @returns.path - Disk path being monitored
+   * @returns.available - Available space (when implemented)
+   * @returns.used - Used space (when implemented)
+   * @returns.total - Total space (when implemented)
+   * @returns.error - Error message if collection fails
+   * 
+   * @example
+   * const diskInfo = await this.getDiskUsage();
+   * console.log(diskInfo);
+   */
   private async getDiskUsage(): Promise<any> {
     try {
       const stats = fs.statSync(process.cwd());
@@ -220,6 +518,21 @@ export class SystemController {
     }
   }
 
+  /**
+   * Check workflow engine health
+   * 
+   * Monitors the health and availability of the workflow engine service.
+   * This would include checks for engine responsiveness, active workflows,
+   * and queue status in a production environment.
+   * 
+   * @returns Promise resolving to health status string
+   * @returns 'online' - Workflow engine is healthy
+   * @returns 'offline' - Workflow engine is not responding
+   * 
+   * @example
+   * const workflowStatus = await this.checkWorkflowEngineHealth();
+   * console.log(workflowStatus); // "online"
+   */
   private async checkWorkflowEngineHealth(): Promise<string> {
     try {
       // This would check workflow engine status
@@ -229,6 +542,21 @@ export class SystemController {
     }
   }
 
+  /**
+   * Check agent system health
+   * 
+   * Monitors the health and status of the distributed agent system.
+   * This would include checks for agent connectivity, active agents,
+   * and system throughput in a production environment.
+   * 
+   * @returns Promise resolving to health status string
+   * @returns 'online' - Agent system is healthy
+   * @returns 'offline' - Agent system is not responding
+   * 
+   * @example
+   * const agentStatus = await this.checkAgentSystemHealth();
+   * console.log(agentStatus); // "online"
+   */
   private async checkAgentSystemHealth(): Promise<string> {
     try {
       // This would check agent system status
@@ -238,6 +566,21 @@ export class SystemController {
     }
   }
 
+  /**
+   * Check MCP (Model Context Protocol) health
+   * 
+   * Monitors the health and connectivity of MCP server components.
+   * MCP servers may be partially available, hence the 'partial' status.
+   * 
+   * @returns Promise resolving to health status string
+   * @returns 'online' - All MCP servers are healthy
+   * @returns 'partial' - Some MCP servers are available
+   * @returns 'offline' - No MCP servers are responding
+   * 
+   * @example
+   * const mcpStatus = await this.checkMCPHealth();
+   * console.log(mcpStatus); // "partial"
+   */
   private async checkMCPHealth(): Promise<string> {
     try {
       // This would check MCP server status

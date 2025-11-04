@@ -1,33 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  CircularProgress,
-  Alert,
-  List,
-  ListItem,
-  ListItemText,
-  Switch,
-  FormControlLabel,
-  Chip,
-  Grid,
-  Card,
-  CardContent,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-import {
-  Wifi as WifiIcon,
-  WifiOff as WifiOffIcon,
-  ErrorOutline as ErrorIcon,
-  CheckCircle as CheckCircleIcon,
-  Refresh as RefreshIcon,
-  Send as SendIcon,
-  Clear as ClearIcon,
-} from "@mui/icons-material";
+
+
 
 interface CommunicationPanelProps {
   isMainApp?: boolean;
@@ -217,7 +190,7 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
     >
       {/* Connection Status */}
       <Card sx={{ mb: 2 }}>
-        <CardContent>
+        <CardBody>
           <Box
             sx={{
               display: "flex",
@@ -226,8 +199,8 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
               mb: 2,
             }}
           >
-            <Typography variant="h6">Connection Status</Typography>
-            <Chip
+            <Text variant="h6">Connection Status</Text>
+            <Tag
               icon={statusInfo.icon}
               label={statusInfo.text}
               color={statusInfo.chipColor}
@@ -250,7 +223,7 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
             </Alert>
           )}
 
-          <TextField
+          <Input
             fullWidth
             label="WebSocket URL"
             value={websocketUrl}
@@ -283,7 +256,7 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
             </Button>
           </Box>
 
-          <FormControlLabel
+          <FormLabel
             control={
               <Switch
                 checked={autoReconnect}
@@ -292,12 +265,12 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
             }
             label="Auto-reconnect"
           />
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Connection Log */}
       <Card sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        <CardContent
+        <CardBody
           sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
         >
           <Box
@@ -308,7 +281,7 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
               mb: 2,
             }}
           >
-            <Typography variant="h6">Connection Log</Typography>
+            <Text variant="h6">Connection Log</Text>
             <Box>
               <Tooltip title="Refresh">
                 <IconButton
@@ -326,7 +299,7 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
             </Box>
           </Box>
 
-          <Paper
+          <Box
             variant="outlined"
             sx={{
               flexGrow: 1,
@@ -338,16 +311,16 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
             }}
           >
             {connectionLog.length === 0 ? (
-              <Typography
+              <Text
                 variant="body2"
                 color="text.secondary"
                 sx={{ fontStyle: "italic" }}
               >
                 No log entries yet...
-              </Typography>
+              </Text>
             ) : (
               connectionLog.map((entry, index) => (
-                <Typography
+                <Text
                   key={index}
                   variant="body2"
                   sx={{
@@ -359,11 +332,11 @@ const CommunicationPanel: React.FC<CommunicationPanelProps> = ({
                   }}
                 >
                   {entry}
-                </Typography>
+                </Text>
               ))
             )}
-          </Paper>
-        </CardContent>
+          </Box>
+        </CardBody>
       </Card>
     </Box>
   );

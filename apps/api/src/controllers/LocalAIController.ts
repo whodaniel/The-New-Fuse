@@ -3,11 +3,12 @@
  * Handles detection and registration of local AI providers as Agents
  */
 
-import { Controller, Get, Post, Param, Request, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Param, Request, Logger, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AgentService } from '../services/agent.service';
 // import { LocalAIDetectionService, LocalAIProvider } from '@the-new-fuse/core'; // Commented out due to build errors
 import { AgentCapability } from '@the-new-fuse/types';
+import { SecureAuthGuard, JwtAuth, RateLimitTier } from '../guards/secure-auth.guard';
 
 interface AuthenticatedRequest {
   user?: { id: string };
@@ -15,6 +16,9 @@ interface AuthenticatedRequest {
 
 @ApiTags('local-ai')
 @Controller('api/local-ai')
+@UseGuards(SecureAuthGuard)
+@JwtAuth()
+@RateLimitTier(RateLimitTier.API)
 export class LocalAIController {
   private readonly logger = new Logger(LocalAIController.name);
 

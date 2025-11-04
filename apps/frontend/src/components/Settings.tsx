@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import components_1 from '../components';
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 const Settings = () => {
     const [settings, setSettings] = react_1.default.useState({
         enableLogging: true,
@@ -18,10 +18,10 @@ const Settings = () => {
                 : event.target.value }));
     };
     return (<div className="p-6">
-      <material_1.Grid container spacing={3}>
+      <SimpleGrid columns={3}>
         
-        <material_1.Grid item xs={12} md={6}>
-          <material_1.Paper className="p-4">
+        <GridItem colSpan={12} md={6}>
+          <Box className="p-4">
             <h2 className="text-xl font-bold mb-4 flex items-center">
               <icons_material_1.Settings className="mr-2"/>
               System Settings
@@ -49,11 +49,11 @@ const Settings = () => {
                 <material_1.TextField type="number" value={settings.maxAgents} onChange={handleSettingChange('maxAgents')} size="small" style={{ width: 100 }}/>
               </material_1.ListItem>
             </material_1.List>
-          </material_1.Paper>
+          </Box>
         </material_1.Grid>
 
-        <material_1.Grid item xs={12} md={6}>
-          <material_1.Paper className="p-4">
+        <GridItem colSpan={12} md={6}>
+          <Box className="p-4">
             <h2 className="text-xl font-bold mb-4 flex items-center">
               <icons_material_1.Security className="mr-2"/>
               API Configuration
@@ -65,28 +65,28 @@ const Settings = () => {
                 Verify Configuration
               </material_1.Button>
             </div>
-          </material_1.Paper>
+          </Box>
         </material_1.Grid>
 
-        <material_1.Grid item xs={12} md={6}>
-          <material_1.Paper className="p-4">
+        <GridItem colSpan={12} md={6}>
+          <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">LLM Configuration</h2>
             <components_1.LLMSelector />
-          </material_1.Paper>
+          </Box>
         </material_1.Grid>
 
-        <material_1.Grid item xs={12} md={6}>
-          <material_1.Paper className="p-4">
+        <GridItem colSpan={12} md={6}>
+          <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">GPU Management</h2>
             <components_1.GPUManager />
-          </material_1.Paper>
+          </Box>
         </material_1.Grid>
 
-        <material_1.Grid item xs={12}>
-          <material_1.Paper className="p-4">
+        <GridItem colSpan={12}>
+          <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">Webhook Management</h2>
             <components_1.WebhookManager />
-          </material_1.Paper>
+          </Box>
         </material_1.Grid>
       </material_1.Grid>
     </div>);

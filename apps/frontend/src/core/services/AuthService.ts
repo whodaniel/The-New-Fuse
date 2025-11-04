@@ -1,6 +1,8 @@
 import { StateManager } from '../../domain/core/stateManager';
 import { LoggingService } from '../../services/logging';
+import { authHelpers, supabase } from '../../lib/supabase';
 const API_BASE_URL = '/api';
+
 export class AuthService {
     constructor() {
         this.eventBus = EventBus.getInstance();
@@ -15,21 +17,22 @@ export class AuthService {
     }
     async login(credentials) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(credentials)
-            });
-            if (!response.ok) {
-                throw new Error('Login failed');
+            // Use Supabase Auth for authentication
+            const result = await authHelpers.signIn(credentials.email, credentials.password);
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Login failed');
             }
-            const tokens = await response.json();
-            this.setTokens(tokens);
+
+            const { data } = result;
+            this.setTokens({
+                accessToken: data.session?.access_token,
+                refreshToken: data.session?.refresh_token
+            });
+            
             await this.fetchAndSetUserProfile();
             this.eventBus.emit('auth_login', { email: credentials.email }, 'AuthService');
-            return { success: true, data: tokens };
+            return { success: true, data: data.session };
         }
         catch (error) {
             this.logger.error('Login failed', error);
@@ -45,15 +48,13 @@ export class AuthService {
     }
     async logout() {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.getAccessToken()}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Logout failed');
+            // Use Supabase Auth for logout
+            const result = await authHelpers.signOut();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Logout failed');
             }
+
             this.clearTokens();
             this.stateManager.setState(['auth', 'user'], null);
             this.eventBus.emit('auth_logout', null, 'AuthService');
@@ -73,21 +74,27 @@ export class AuthService {
     }
     async register(credentials) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(credentials)
+            // Use Supabase Auth for registration
+            const result = await authHelpers.signUp(credentials.email, credentials.password, {
+                name: credentials.name,
+                role: credentials.role || 'user'
             });
-            if (!response.ok) {
-                throw new Error('Registration failed');
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Registration failed');
             }
-            const tokens = await response.json();
-            this.setTokens(tokens);
-            await this.fetchAndSetUserProfile();
+
+            const { data } = result;
+            if (data.session) {
+                this.setTokens({
+                    accessToken: data.session.access_token,
+                    refreshToken: data.session.refresh_token
+                });
+                await this.fetchAndSetUserProfile();
+            }
+            
             this.eventBus.emit('auth_register', { email: credentials.email }, 'AuthService');
-            return { success: true, data: tokens };
+            return { success: true, data: data.session };
         }
         catch (error) {
             this.logger.error('Registration failed', error);
@@ -135,15 +142,21 @@ export class AuthService {
     }
     async fetchAndSetUserProfile() {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
-                headers: {
-                    'Authorization': `Bearer ${this.getAccessToken()}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch user profile');
+            // Use Supabase Auth to get current user
+            const user = await authHelpers.getCurrentUser();
+            if (!user) {
+                throw new Error('No authenticated user found');
             }
-            const profile = await response.json();
+
+            // Convert Supabase user to our profile format
+            const profile = {
+                id: user.id,
+                email: user.email,
+                name: user.user_metadata?.name || user.email,
+                role: user.user_metadata?.role || 'user',
+                created_at: user.created_at
+            };
+
             this.stateManager.setState(['auth', 'user'], profile);
         }
         catch (error) {
@@ -151,8 +164,9 @@ export class AuthService {
             throw error;
         }
     }
-    isAuthenticated() {
-        return !!this.getAccessToken();
+    async isAuthenticated() {
+        // Use Supabase Auth for proper session validation
+        return await authHelpers.isAuthenticated();
     }
     getCurrentUser() {
         return this.stateManager.getState(['auth', 'user']);
@@ -165,8 +179,8 @@ export class AuthService {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
     }
-    getAccessToken() {
-        return localStorage.getItem('accessToken');
+    async getAccessToken() {
+        return await authHelpers.getAccessToken();
     }
     getRefreshToken() {
         return localStorage.getItem('refreshToken');

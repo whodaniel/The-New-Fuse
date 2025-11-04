@@ -13,28 +13,28 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScrollBar = exports.ScrollArea = void 0;
 import React from 'react';
-import ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
+
 import utils_1 from '../../lib/utils';
 const ScrollArea = React.forwardRef((props, ref) => {
     var { className, children } = props, restProps = __rest(props, ["className", "children"]);
-    return (<ScrollAreaPrimitive.Root ref={ref} className={(0, utils_1.cn)("relative overflow-hidden", className)} {...restProps}>
-		<ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+    return (<ScrollArea.Root ref={ref} className={(0, utils_1.cn)("relative overflow-hidden", className)} {...restProps}>
+		<ScrollArea.Viewport className="h-full w-full rounded-[inherit]">
 			{children}
-		</ScrollAreaPrimitive.Viewport>
+		</ScrollArea.Viewport>
 		<ScrollBar />
-		<ScrollAreaPrimitive.Corner />
-	</ScrollAreaPrimitive.Root>);
+		<ScrollArea.Corner />
+	</ScrollArea.Root>);
 });
 exports.ScrollArea = ScrollArea;
-ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
+ScrollArea.displayName = ScrollArea.Root.displayName;
 const ScrollBar = React.forwardRef((props, ref) => {
     var { className, orientation = "vertical" } = props, restProps = __rest(props, ["className", "orientation"]);
-    return (<ScrollAreaPrimitive.ScrollAreaScrollbar ref={ref} orientation={orientation} className={(0, utils_1.cn)("flex touch-none select-none transition-colors", orientation === "vertical" &&
+    return (<ScrollArea.ScrollAreaScrollbar ref={ref} orientation={orientation} className={(0, utils_1.cn)("flex touch-none select-none transition-colors", orientation === "vertical" &&
             "h-full w-2.5 border-l border-l-transparent p-[1px]", orientation === "horizontal" &&
             "h-2.5 flex-col border-t border-t-transparent p-[1px]", className)} {...restProps}>
-		<ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-neutral-200 dark:bg-neutral-800"/>
-	</ScrollAreaPrimitive.ScrollAreaScrollbar>);
+		<ScrollArea.ScrollAreaThumb className="relative flex-1 rounded-full bg-neutral-200 dark:bg-neutral-800"/>
+	</ScrollArea.ScrollAreaScrollbar>);
 });
 exports.ScrollBar = ScrollBar;
-ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
+ScrollBar.displayName = ScrollArea.ScrollAreaScrollbar.displayName;
 export {};

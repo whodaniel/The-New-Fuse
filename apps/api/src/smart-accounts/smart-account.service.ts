@@ -130,12 +130,53 @@ export class SmartAccountService {
         };
       }
 
-      // For now, mock deployment since we need Web3Auth integration
-      this.logger.log(`Smart Account deployment would be executed here for wallet ${walletId}`);
+      // Get Web3Auth provider for the agent
+      const provider = await this.web3authService.getProvider(
+        wallet.agent?.user?.username || ''
+      );
 
+      // Deploy Smart Account via factory contract
+      const salt = this.generateSalt(wallet.agent?.user?.id || '', wallet.address);
+      const factoryAddress = process.env.SMART_ACCOUNT_FACTORY_ADDRESS;
+      
+      if (!factoryAddress) {
+        throw new Error('Smart Account Factory address not configured');
+      }
+
+      // Create transaction for deployment
+      const deployTx = await provider.walletClient.writeContract({
+        address: factoryAddress as `0x${string}`,
+        abi: this.factoryAbi,
+        functionName: 'createAccount',
+        args: [
+          wallet.address as `0x${string}`,
+          salt as `0x${string}`
+        ]
+      });
+
+      // Wait for transaction confirmation
+      const receipt = await provider.walletClient.waitForTransactionReceipt({
+        hash: deployTx
+      });
+
+      if (receipt.status === 'reverted') {
+        throw new Error('Smart Account deployment transaction failed');
+      }
+
+      // Update wallet with deployment info
+      await this.prisma.wallet.update({
+        where: { id: walletId },
+        data: {
+          smartAccountDeployed: true,
+          smartAccountAddress: metadata.address || wallet.address
+        }
+      });
+
+      this.logger.log(`Smart Account deployed successfully: ${deployTx}`);
+      
       return {
-        smartAccountAddress: wallet.address,
-        transactionHash: '0x' + Math.random().toString(16).substr(2, 64), // Mock transaction hash
+        smartAccountAddress: metadata.address || wallet.address,
+        transactionHash: deployTx,
         isCounterfactual: false
       };
     } catch (error) {
@@ -146,9 +187,9 @@ export class SmartAccountService {
 
   async executeSmartAccountTransaction(
     walletId: string,
-    _target: string,
-    _value: bigint,
-    _data: string
+    target: string,
+    value: bigint,
+    data: string
   ): Promise<string> {
     try {
       this.logger.log(`Executing Smart Account transaction for wallet ${walletId}`);
@@ -172,10 +213,25 @@ export class SmartAccountService {
         throw new Error(`Smart Account not enabled for wallet ${walletId}`);
       }
 
-      // For now, mock transaction execution
-      const mockTxHash = '0x' + Math.random().toString(16).substr(2, 64);
-      this.logger.log(`Smart Account transaction executed: ${mockTxHash}`);
-      return mockTxHash;
+      // Get Web3Auth provider for signing
+      const provider = await this.web3authService.getProvider(
+        wallet.agent?.user?.username || ''
+      );
+
+      // Execute transaction through Smart Account
+      const txHash = await provider.walletClient.writeContract({
+        address: metadata.address as `0x${string}`,
+        abi: this.smartAccountAbi,
+        functionName: 'execute',
+        args: [
+          target as `0x${string}`,
+          value,
+          data as `0x${string}`
+        ]
+      });
+
+      this.logger.log(`Smart Account transaction executed: ${txHash}`);
+      return txHash;
     } catch (error) {
       this.logger.error(`Failed to execute Smart Account transaction for wallet ${walletId}:`, error);
       throw error;
@@ -184,7 +240,7 @@ export class SmartAccountService {
 
   async executeBatchSmartAccountTransaction(
     walletId: string,
-    _transactions: Array<{
+    transactions: Array<{
       target: string;
       value: bigint;
       data: string;
@@ -212,10 +268,26 @@ export class SmartAccountService {
         throw new Error(`Smart Account not enabled for wallet ${walletId}`);
       }
 
-      // For now, mock batch transaction execution
-      const mockTxHash = '0x' + Math.random().toString(16).substr(2, 64);
-      this.logger.log(`Batch Smart Account transaction executed: ${mockTxHash}`);
-      return mockTxHash;
+      // Get Web3Auth provider for signing
+      const provider = await this.web3authService.getProvider(
+        wallet.agent?.user?.username || ''
+      );
+
+      // Prepare batch transaction data
+      const targets = transactions.map(tx => tx.target as `0x${string}`);
+      const values = transactions.map(tx => tx.value);
+      const dataArray = transactions.map(tx => tx.data as `0x${string}`);
+
+      // Execute batch transaction through Smart Account
+      const txHash = await provider.walletClient.writeContract({
+        address: metadata.address as `0x${string}`,
+        abi: this.smartAccountAbi,
+        functionName: 'executeBatch',
+        args: [targets, values, dataArray]
+      });
+
+      this.logger.log(`Batch Smart Account transaction executed: ${txHash}`);
+      return txHash;
     } catch (error) {
       this.logger.error(`Failed to execute batch Smart Account transaction for wallet ${walletId}:`, error);
       throw error;

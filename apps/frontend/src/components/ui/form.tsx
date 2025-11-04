@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { FieldPath, FieldValues, UseFormReturn } from 'react-hook-form';
+import { Control, FieldPath, FieldValues, UseFormReturn, ControllerFieldState, ControllerRenderProps } from 'react-hook-form';
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -59,9 +59,9 @@ const FormField = <
   name,
   render,
 }: {
-  control: any;
+  control: Control<TFieldValues, TName>;
   name: TName;
-  render: ({ field }: { field: any }) => React.ReactElement;
+  render: ({ field }: { field: ControllerRenderProps<TFieldValues, TName> }) => React.ReactElement;
 }) => {
   return (
     <FormFieldContext.Provider value={{ name }}>

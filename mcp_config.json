@@ -27,14 +27,14 @@
     "database": {
       "type": "database",
       "provider": "postgresql",
-      "connection": "postgresql://postgres:postgres@localhost:5432/fuse",
+      "connection": "postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}",
       "enabled": true,
       "capabilities": ["read", "write", "schema"]
     },
     "cache": {
       "type": "cache", 
       "provider": "redis",
-      "connection": "redis://localhost:6379",
+      "connection": "redis://${REDIS_HOST}:${REDIS_PORT}",
       "enabled": true,
       "capabilities": ["read", "write", "expire"]
     }
@@ -46,7 +46,7 @@
     "health-check-interval": 60
   },
   "security": {
-    "jwt-secret": "your-secure-jwt-secret-key-change-in-production",
+    "jwt-secret": "${JWT_SECRET}",
     "jwt-expiration": 3600,
     "rate-limit": {
       "window-ms": 60000,
@@ -130,7 +130,7 @@
         "modelcontextprotocol/brave-search"
       ],
       "env": {
-        "BRAVE_API_KEY": "YOUR_ACTUAL_BRAVE_SEARCH_API_KEY"
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
       }
     },
     "postgres": {
@@ -143,7 +143,7 @@
         "modelcontextprotocol/postgres"
       ],
       "env": {
-        "POSTGRES_CONNECTION_STRING": "postgresql://postgres:postgres@localhost:5432/fuse"
+        "POSTGRES_CONNECTION_STRING": "${DATABASE_URL}"
       }
     },
     "browsermcp": {

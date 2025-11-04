@@ -2,45 +2,8 @@
 // Displays comprehensive system metrics, alerts, health checks, and performance analytics
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Chip,
-  IconButton,
-  Alert,
-  LinearProgress,
-  Tooltip,
-  Switch,
-  FormControlLabel,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
-import {
-  Refresh as RefreshIcon,
-  Warning as WarningIcon,
-  Error as ErrorIcon,
-  CheckCircle as CheckCircleIcon,
-  TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon,
-  Speed as SpeedIcon,
-  Memory as MemoryIcon,
-  Storage as StorageIcon,
-  NetworkCheck as NetworkIcon,
-  Close as CloseIcon,
-} from '@mui/icons-material';
+
+
 import {
   LineChart,
   Line,
@@ -236,10 +199,10 @@ const MonitoringDashboard: React.FC = () => {
   if (loading) {
     return (
       <Box sx={{ width: '100%', p: 3 }}>
-        <LinearProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>
+        <Progress />
+        <Text variant="h6" sx={{ mt: 2 }}>
           Loading monitoring dashboard...
-        </Typography>
+        </Text>
       </Box>
     );
   }
@@ -261,11 +224,11 @@ const MonitoringDashboard: React.FC = () => {
     <Box sx={{ p: 3 }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
+        <Text variant="h4" component="h1">
           System Monitoring Dashboard
-        </Typography>
+        </Text>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <FormControlLabel
+          <FormLabel
             control={
               <Switch
                 checked={autoRefresh}
@@ -281,98 +244,98 @@ const MonitoringDashboard: React.FC = () => {
       </Box>
 
       {/* System Overview */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={2}>
+      <SimpleGrid container columns={3} sx={{ mb: 3 }}>
+        <SimpleGrid item xs={12} sm={6} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center' }}>
+            <CardBody sx={{ textAlign: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
                 {getStatusIcon(dashboardData.overview.status)}
-                <Typography variant="h6" sx={{ ml: 1 }}>
+                <Text variant="h6" sx={{ ml: 1 }}>
                   System Status
-                </Typography>
+                </Text>
               </Box>
-              <Chip
+              <Tag
                 label={dashboardData.overview.status.toUpperCase()}
                 color={getStatusColor(dashboardData.overview.status) as any}
                 variant="filled"
               />
-            </CardContent>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} sm={6} md={2}>
+        <SimpleGrid item xs={12} sm={6} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" color="textSecondary">
+            <CardBody sx={{ textAlign: 'center' }}>
+              <Text variant="h6" color="textSecondary">
                 Uptime
-              </Typography>
-              <Typography variant="h5">
+              </Text>
+              <Text variant="h5">
                 {formatUptime(dashboardData.overview.uptime)}
-              </Typography>
-            </CardContent>
+              </Text>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} sm={6} md={2}>
+        <SimpleGrid item xs={12} sm={6} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" color="textSecondary">
+            <CardBody sx={{ textAlign: 'center' }}>
+              <Text variant="h6" color="textSecondary">
                 Active Users
-              </Typography>
-              <Typography variant="h5">
+              </Text>
+              <Text variant="h5">
                 {dashboardData.overview.totalUsers}
-              </Typography>
-            </CardContent>
+              </Text>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} sm={6} md={2}>
+        <SimpleGrid item xs={12} sm={6} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" color="textSecondary">
+            <CardBody sx={{ textAlign: 'center' }}>
+              <Text variant="h6" color="textSecondary">
                 Active Agents
-              </Typography>
-              <Typography variant="h5">
+              </Text>
+              <Text variant="h5">
                 {dashboardData.overview.activeAgents}
-              </Typography>
-            </CardContent>
+              </Text>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} sm={6} md={2}>
+        <SimpleGrid item xs={12} sm={6} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" color="textSecondary">
+            <CardBody sx={{ textAlign: 'center' }}>
+              <Text variant="h6" color="textSecondary">
                 Workflows
-              </Typography>
-              <Typography variant="h5">
+              </Text>
+              <Text variant="h5">
                 {dashboardData.overview.totalWorkflows}
-              </Typography>
-            </CardContent>
+              </Text>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} sm={6} md={2}>
+        <SimpleGrid item xs={12} sm={6} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" color="textSecondary">
+            <CardBody sx={{ textAlign: 'center' }}>
+              <Text variant="h6" color="textSecondary">
                 System Load
-              </Typography>
-              <Typography variant="h5">
+              </Text>
+              <Text variant="h5">
                 {dashboardData.overview.systemLoad.toFixed(1)}%
-              </Typography>
-            </CardContent>
+              </Text>
+            </CardBody>
           </Card>
-        </Grid>
-      </Grid>
+        </SimpleGrid>
+      </SimpleGrid>
 
       {/* Alerts */}
       {activeAlerts.length > 0 && (
         <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+          <CardBody>
+            <Text variant="h6" sx={{ mb: 2 }}>
               Active Alerts ({activeAlerts.length})
-            </Typography>
+            </Text>
             {activeAlerts.slice(0, 5).map((alert) => (
               <Alert
                 key={alert.id}
@@ -399,18 +362,18 @@ const MonitoringDashboard: React.FC = () => {
                 View All Alerts ({activeAlerts.length})
               </Button>
             )}
-          </CardContent>
+          </CardBody>
         </Card>
       )}
 
       {/* Performance Metrics */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6}>
+      <SimpleGrid container columns={3} sx={{ mb: 3 }}>
+        <SimpleGrid item xs={12} md={6}>
           <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+            <CardBody>
+              <Text variant="h6" sx={{ mb: 2 }}>
                 System Performance
-              </Typography>
+              </Text>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -435,16 +398,16 @@ const MonitoringDashboard: React.FC = () => {
                   />
                 </AreaChart>
               </ResponsiveContainer>
-            </CardContent>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} md={6}>
+        <SimpleGrid item xs={12} md={6}>
           <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+            <CardBody>
+              <Text variant="h6" sx={{ mb: 2 }}>
                 Network & Cache Performance
-              </Typography>
+              </Text>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -465,27 +428,27 @@ const MonitoringDashboard: React.FC = () => {
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </CardContent>
+            </CardBody>
           </Card>
-        </Grid>
-      </Grid>
+        </SimpleGrid>
+      </SimpleGrid>
 
       {/* Detailed Metrics */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={4}>
+      <SimpleGrid container columns={3} sx={{ mb: 3 }}>
+        <SimpleGrid item xs={12} md={4}>
           <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+            <CardBody>
+              <Text variant="h6" sx={{ mb: 2 }}>
                 System Resources
-              </Typography>
+              </Text>
               <Box sx={{ mb: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">CPU Usage</Typography>
-                  <Typography variant="body2">
+                  <Text variant="body2">CPU Usage</Text>
+                  <Text variant="body2">
                     {dashboardData.realTimeMetrics.system.cpu.toFixed(1)}%
-                  </Typography>
+                  </Text>
                 </Box>
-                <LinearProgress
+                <Progress
                   variant="determinate"
                   value={dashboardData.realTimeMetrics.system.cpu}
                   color={dashboardData.realTimeMetrics.system.cpu > 80 ? 'error' : 'primary'}
@@ -493,12 +456,12 @@ const MonitoringDashboard: React.FC = () => {
               </Box>
               <Box sx={{ mb: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Memory Usage</Typography>
-                  <Typography variant="body2">
+                  <Text variant="body2">Memory Usage</Text>
+                  <Text variant="body2">
                     {dashboardData.realTimeMetrics.system.memory.toFixed(1)}%
-                  </Typography>
+                  </Text>
                 </Box>
-                <LinearProgress
+                <Progress
                   variant="determinate"
                   value={dashboardData.realTimeMetrics.system.memory}
                   color={dashboardData.realTimeMetrics.system.memory > 80 ? 'error' : 'primary'}
@@ -506,118 +469,118 @@ const MonitoringDashboard: React.FC = () => {
               </Box>
               <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Disk Usage</Typography>
-                  <Typography variant="body2">
+                  <Text variant="body2">Disk Usage</Text>
+                  <Text variant="body2">
                     {dashboardData.realTimeMetrics.system.disk.toFixed(1)}%
-                  </Typography>
+                  </Text>
                 </Box>
-                <LinearProgress
+                <Progress
                   variant="determinate"
                   value={dashboardData.realTimeMetrics.system.disk}
                   color={dashboardData.realTimeMetrics.system.disk > 85 ? 'error' : 'primary'}
                 />
               </Box>
-            </CardContent>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} md={4}>
+        <SimpleGrid item xs={12} md={4}>
           <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+            <CardBody>
+              <Text variant="h6" sx={{ mb: 2 }}>
                 Cache Performance
-              </Typography>
+              </Text>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2">Hit Rate</Typography>
-                <Typography variant="body2" color={dashboardData.realTimeMetrics.cache.hitRate > 90 ? 'success.main' : 'warning.main'}>
+                <Text variant="body2">Hit Rate</Text>
+                <Text variant="body2" color={dashboardData.realTimeMetrics.cache.hitRate > 90 ? 'success.main' : 'warning.main'}>
                   {dashboardData.realTimeMetrics.cache.hitRate.toFixed(1)}%
-                </Typography>
+                </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2">Memory Usage</Typography>
-                <Typography variant="body2">
+                <Text variant="body2">Memory Usage</Text>
+                <Text variant="body2">
                   {formatBytes(dashboardData.realTimeMetrics.cache.memoryUsage)}
-                </Typography>
+                </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2">Total Keys</Typography>
-                <Typography variant="body2">
+                <Text variant="body2">Total Keys</Text>
+                <Text variant="body2">
                   {dashboardData.realTimeMetrics.cache.totalKeys.toLocaleString()}
-                </Typography>
+                </Text>
               </Box>
-            </CardContent>
+            </CardBody>
           </Card>
-        </Grid>
+        </SimpleGrid>
 
-        <Grid item xs={12} md={4}>
+        <SimpleGrid item xs={12} md={4}>
           <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+            <CardBody>
+              <Text variant="h6" sx={{ mb: 2 }}>
                 Job Queue Status
-              </Typography>
+              </Text>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2">Active Jobs</Typography>
-                <Typography variant="body2">
+                <Text variant="body2">Active Jobs</Text>
+                <Text variant="body2">
                   {dashboardData.realTimeMetrics.queue.activeJobs}
-                </Typography>
+                </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2">Completed</Typography>
-                <Typography variant="body2">
+                <Text variant="body2">Completed</Text>
+                <Text variant="body2">
                   {dashboardData.realTimeMetrics.queue.completedJobs}
-                </Typography>
+                </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2">Failed</Typography>
-                <Typography variant="body2" color={dashboardData.realTimeMetrics.queue.failedJobs > 0 ? 'error.main' : 'text.primary'}>
+                <Text variant="body2">Failed</Text>
+                <Text variant="body2" color={dashboardData.realTimeMetrics.queue.failedJobs > 0 ? 'error.main' : 'text.primary'}>
                   {dashboardData.realTimeMetrics.queue.failedJobs}
-                </Typography>
+                </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body2">Throughput</Typography>
-                <Typography variant="body2">
+                <Text variant="body2">Throughput</Text>
+                <Text variant="body2">
                   {dashboardData.realTimeMetrics.queue.throughput}/min
-                </Typography>
+                </Text>
               </Box>
-            </CardContent>
+            </CardBody>
           </Card>
-        </Grid>
-      </Grid>
+        </SimpleGrid>
+      </SimpleGrid>
 
       {/* Health Checks */}
       <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+        <CardBody>
+          <Text variant="h6" sx={{ mb: 2 }}>
             Component Health
-          </Typography>
-          <Grid container spacing={2}>
+          </Text>
+          <SimpleGrid container columns={2}>
             {Object.entries(dashboardData.healthChecks).map(([component, health]) => (
-              <Grid item xs={12} sm={6} md={2.4} key={component}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
+              <SimpleGrid item xs={12} sm={6} md={2.4} key={component}>
+                <Box sx={{ p: 2, textAlign: 'center' }}>
                   {getStatusIcon(health.status)}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>
+                  <Text variant="subtitle2" sx={{ mt: 1 }}>
                     {component.toUpperCase()}
-                  </Typography>
-                  <Chip
+                  </Text>
+                  <Tag
                     size="small"
                     label={health.status}
                     color={getStatusColor(health.status) as any}
                   />
-                </Paper>
-              </Grid>
+                </Box>
+              </SimpleGrid>
             ))}
-          </Grid>
-        </CardContent>
+          </SimpleGrid>
+        </CardBody>
       </Card>
 
       {/* Alert Dialog */}
-      <Dialog
+      <Modal
         open={alertDialogOpen}
         onClose={() => setAlertDialogOpen(false)}
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>
+        <ModalHeader>
           All Active Alerts
           <IconButton
             onClick={() => setAlertDialogOpen(false)}
@@ -625,52 +588,52 @@ const MonitoringDashboard: React.FC = () => {
           >
             <CloseIcon />
           </IconButton>
-        </DialogTitle>
-        <DialogContent>
+        </ModalHeader>
+        <ModalBody>
           <TableContainer>
             <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Severity</TableCell>
-                  <TableCell>Service</TableCell>
-                  <TableCell>Message</TableCell>
-                  <TableCell>Time</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+              <Thead>
+                <Tr>
+                  <Td>Severity</Td>
+                  <Td>Service</Td>
+                  <Td>Message</Td>
+                  <Td>Time</Td>
+                  <Td>Action</Td>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {activeAlerts.map((alert) => (
-                  <TableRow key={alert.id}>
-                    <TableCell>
-                      <Chip
+                  <Tr key={alert.id}>
+                    <Td>
+                      <Tag
                         size="small"
                         label={alert.type}
                         color={alert.type === 'critical' ? 'error' : alert.type as any}
                       />
-                    </TableCell>
-                    <TableCell>{alert.service}</TableCell>
-                    <TableCell>{alert.message}</TableCell>
-                    <TableCell>
+                    </Td>
+                    <Td>{alert.service}</Td>
+                    <Td>{alert.message}</Td>
+                    <Td>
                       {new Date(alert.timestamp).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
+                    </Td>
+                    <Td>
                       <Button
                         size="small"
                         onClick={() => resolveAlert(alert.id)}
                       >
                         Resolve
                       </Button>
-                    </TableCell>
-                  </TableRow>
+                    </Td>
+                  </Tr>
                 ))}
-              </TableBody>
+              </Tbody>
             </Table>
           </TableContainer>
-        </DialogContent>
-        <DialogActions>
+        </ModalBody>
+        <ModalFooter>
           <Button onClick={() => setAlertDialogOpen(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
+        </ModalFooter>
+      </Modal>
     </Box>
   );
 };

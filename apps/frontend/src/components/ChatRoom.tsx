@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatRoom = void 0;
 import react_1 from 'react';
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 import useSocket_1 from '../hooks/useSocket';
 import useAuth_1 from '../hooks/useAuth';
 import chat_1 from '../types/chat';
@@ -104,12 +104,12 @@ const ChatRoom = ({ roomId, title }) => {
             {(_a = sender === null || sender === void 0 ? void 0 : sender.name) === null || _a === void 0 ? void 0 : _a.charAt(0)}
           </material_1.Avatar>
         </material_1.ListItemAvatar>
-        <material_1.Box sx={{
+        <Box{{
                 maxWidth: '70%',
                 ml: isSelf ? 0 : 2,
                 mr: isSelf ? 2 : 0
             }}>
-          <material_1.Paper elevation={1} sx={{
+          <Box elevation={1} sx={{
                 p: 2,
                 bgcolor: isSelf ? 'primary.light' : 'background.paper',
                 borderRadius: 2
@@ -124,14 +124,14 @@ const ChatRoom = ({ roomId, title }) => {
             
             {message.type === chat_1.MessageType.MARKDOWN && (<MarkdownRenderer_1.default content={message.content}/>)}
             
-            {message.type === chat_1.MessageType.CODE && (<material_1.Box sx={{ mt: 1 }}>
+            {message.type === chat_1.MessageType.CODE && (<Box{{ mt: 1 }}>
                 <icons_material_1.Code color="action" sx={{ mr: 1 }}/>
                 <pre>
                   <code>{message.content}</code>
                 </pre>
               </material_1.Box>)}
             
-            {(message.type === chat_1.MessageType.IMAGE || message.type === chat_1.MessageType.VIDEO) && (<material_1.Box sx={{ mt: 1 }}>
+            {(message.type === chat_1.MessageType.IMAGE || message.type === chat_1.MessageType.VIDEO) && (<Box{{ mt: 1 }}>
                 {message.type === chat_1.MessageType.IMAGE && <icons_material_1.Image color="action"/>}
                 {message.type === chat_1.MessageType.VIDEO && <icons_material_1.VideoLibrary color="action"/>}
                 <material_1.Typography variant="caption" sx={{ ml: 1 }}>
@@ -142,7 +142,7 @@ const ChatRoom = ({ roomId, title }) => {
             <material_1.Typography variant="caption" color="textSecondary" sx={{ mt: 1, display: 'block' }}>
               {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
             </material_1.Typography>
-          </material_1.Paper>
+          </Box>
         </material_1.Box>
       </material_1.ListItem>);
     };
@@ -156,9 +156,9 @@ const ChatRoom = ({ roomId, title }) => {
         <material_1.Typography color="error">{error}</material_1.Typography>
       </material_1.Box>);
     }
-    return (<material_1.Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    return (<Box{{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       
-      <material_1.Paper sx={{ p: 2, mb: 2 }} elevation={1}>
+      <Box sx={{ p: 2, mb: 2 }} elevation={1}>
         <material_1.Box display="flex" alignItems="center" justifyContent="space-between">
           <material_1.Typography variant="h6">{title || `Chat Room ${roomId}`}</material_1.Typography>
           <material_1.Box display="flex" alignItems="center">
@@ -172,9 +172,9 @@ const ChatRoom = ({ roomId, title }) => {
             </material_1.IconButton>
           </material_1.Box>
         </material_1.Box>
-      </material_1.Paper>
+      </Box>
 
-      <material_1.Paper sx={{
+      <Box sx={{
             flex: 1,
             mb: 2,
             p: 2,
@@ -185,9 +185,9 @@ const ChatRoom = ({ roomId, title }) => {
           {messages.map(renderMessage)}
         </material_1.List>
         <div ref={messagesEndRef}/>
-      </material_1.Paper>
+      </Box>
 
-      <material_1.Paper sx={{ p: 2 }} elevation={1}>
+      <Box sx={{ p: 2 }} elevation={1}>
         <material_1.Box display="flex" alignItems="center">
           <material_1.IconButton size="small">
             <icons_material_1.AttachFile />
@@ -200,7 +200,7 @@ const ChatRoom = ({ roomId, title }) => {
             Send
           </material_1.Button>
         </material_1.Box>
-      </material_1.Paper>
+      </Box>
     </material_1.Box>);
 };
 exports.ChatRoom = ChatRoom;

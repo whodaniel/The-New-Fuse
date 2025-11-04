@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import icons_material_1 from '@mui/icons-material';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 import use_debounce_1 from 'use-debounce';
 import axios_1 from 'axios';
 import ui_1 from '../../shared/components/ui';

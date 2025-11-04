@@ -27,13 +27,13 @@ export class AuthService {
 
     const accessToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET || 'your-jwt-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_REFRESH_SECRET || 'your-jwt-refresh-secret-key',
+      process.env.JWT_REFRESH_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -65,13 +65,13 @@ export class AuthService {
 
     const accessToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET || 'your-jwt-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_REFRESH_SECRET || 'your-jwt-refresh-secret-key',
+      process.env.JWT_REFRESH_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -115,13 +115,13 @@ export class AuthService {
 
       const accessToken = jwt.sign(
         { userId: user.id },
-        process.env.JWT_SECRET || 'your-jwt-secret-key',
+        process.env.JWT_SECRET,
         { expiresIn: '15m' }
       );
 
       const newRefreshToken = jwt.sign(
         { userId: user.id },
-        process.env.JWT_REFRESH_SECRET || 'your-jwt-refresh-secret-key',
+        process.env.JWT_REFRESH_SECRET,
         { expiresIn: '7d' }
       );
 

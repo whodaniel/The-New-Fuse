@@ -2,67 +2,8 @@
 // Provides comprehensive debugging tools with message tracing, conversation analysis, and real-time monitoring
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Tabs,
-  Tab,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton,
-  Tooltip,
-  Switch,
-  FormControlLabel,
-  LinearProgress,
-  Alert,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Badge,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-} from '@mui/material';
-import {
-  PlayArrow as PlayIcon,
-  Stop as StopIcon,
-  Pause as PauseIcon,
-  FilterList as FilterIcon,
-  Download as DownloadIcon,
-  Refresh as RefreshIcon,
-  Close as CloseIcon,
-  ExpandMore as ExpandMoreIcon,
-  BugReport as BugReportIcon,
-  Speed as SpeedIcon,
-  Error as ErrorIcon,
-  Warning as WarningIcon,
-  Info as InfoIcon,
-  CheckCircle as CheckCircleIcon,
-  Timeline as TimelineIcon,
-  NetworkCheck as NetworkIcon,
-  Message as MessageIcon,
-  Agent as AgentIcon,
-} from '@mui/icons-material';
+
+
 import {
   LineChart,
   Line,
@@ -447,11 +388,11 @@ const A2ADebugger: React.FC = () => {
     <Box sx={{ p: 3 }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
+        <Text variant="h4" component="h1">
           A2A Communication Debugger
-        </Typography>
+        </Text>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <FormControlLabel
+          <FormLabel
             control={
               <Switch
                 checked={realTimeUpdates}
@@ -472,59 +413,59 @@ const A2ADebugger: React.FC = () => {
 
       {/* Status Bar */}
       <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={3}>
+        <CardBody>
+          <SimpleGrid container columns={3}>
+            <SimpleGrid item xs={12} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" color="textSecondary">
+                <Text variant="h6" color="textSecondary">
                   Active Session
-                </Typography>
-                <Typography variant="h5">
+                </Text>
+                <Text variant="h5">
                   {activeSession ? activeSession.name : 'None'}
-                </Typography>
+                </Text>
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={3}>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" color="textSecondary">
+                <Text variant="h6" color="textSecondary">
                   Capturing
-                </Typography>
-                <Chip
+                </Text>
+                <Tag
                   label={isCapturing ? 'Active' : 'Stopped'}
                   color={isCapturing ? 'success' : 'default'}
                   icon={isCapturing ? <PlayIcon /> : <StopIcon />}
                 />
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={3}>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" color="textSecondary">
+                <Text variant="h6" color="textSecondary">
                   Messages Captured
-                </Typography>
-                <Typography variant="h5">
+                </Text>
+                <Text variant="h5">
                   {capturedMessages.length}
-                </Typography>
+                </Text>
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={3}>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" color="textSecondary">
+                <Text variant="h6" color="textSecondary">
                   Active Agents
-                </Typography>
-                <Typography variant="h5">
+                </Text>
+                <Text variant="h5">
                   {agents.filter(a => a.status === 'online').length}
-                </Typography>
+                </Text>
               </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
+            </SimpleGrid>
+          </SimpleGrid>
+        </CardBody>
       </Card>
 
       {/* Control Panel */}
       <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={4}>
+        <CardBody>
+          <SimpleGrid container columns={2} alignItems="center">
+            <SimpleGrid item xs={12} sm={4}>
               <FormControl fullWidth>
                 <InputLabel>Debug Session</InputLabel>
                 <Select
@@ -535,14 +476,14 @@ const A2ADebugger: React.FC = () => {
                   }}
                 >
                   {debugSessions.map((session) => (
-                    <MenuItem key={session.id} value={session.id}>
+                    <Option key={session.id} value={session.id}>
                       {session.name} ({session.status})
-                    </MenuItem>
+                    </Option>
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={8}>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={8}>
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <Button
                   variant="contained"
@@ -585,9 +526,9 @@ const A2ADebugger: React.FC = () => {
                   Refresh
                 </Button>
               </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
+            </SimpleGrid>
+          </SimpleGrid>
+        </CardBody>
       </Card>
 
       {/* Main Content Tabs */}
@@ -599,48 +540,48 @@ const A2ADebugger: React.FC = () => {
           <Tab label="Analytics" icon={<SpeedIcon />} />
         </Tabs>
 
-        <CardContent>
+        <CardBody>
           {/* Message Trace Tab */}
           {activeTab === 0 && (
             <Box>
               <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
                 <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Timestamp</TableCell>
-                      <TableCell>From Agent</TableCell>
-                      <TableCell>To Agent</TableCell>
-                      <TableCell>Message Type</TableCell>
-                      <TableCell>Latency</TableCell>
-                      <TableCell>Priority</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
+                  <Thead>
+                    <Tr>
+                      <Td>Status</Td>
+                      <Td>Timestamp</Td>
+                      <Td>From Agent</Td>
+                      <Td>To Agent</Td>
+                      <Td>Message Type</Td>
+                      <Td>Latency</Td>
+                      <Td>Priority</Td>
+                      <Td>Actions</Td>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
                     {capturedMessages.map((message) => (
-                      <TableRow key={message.id} hover>
-                        <TableCell>
-                          <Chip
+                      <Tr key={message.id} hover>
+                        <Td>
+                          <Tag
                             icon={getStatusIcon(message.status)}
                             label={message.status}
                             color={getStatusColor(message.status) as any}
                             size="small"
                           />
-                        </TableCell>
-                        <TableCell>{formatTimestamp(message.timestamp)}</TableCell>
-                        <TableCell>{message.fromAgent}</TableCell>
-                        <TableCell>{message.toAgent}</TableCell>
-                        <TableCell>{message.messageType}</TableCell>
-                        <TableCell>{formatLatency(message.performanceMetrics.totalLatency)}</TableCell>
-                        <TableCell>
-                          <Chip
+                        </Td>
+                        <Td>{formatTimestamp(message.timestamp)}</Td>
+                        <Td>{message.fromAgent}</Td>
+                        <Td>{message.toAgent}</Td>
+                        <Td>{message.messageType}</Td>
+                        <Td>{formatLatency(message.performanceMetrics.totalLatency)}</Td>
+                        <Td>
+                          <Tag
                             label={message.priority}
                             color={message.priority <= 2 ? 'error' : message.priority <= 3 ? 'warning' : 'default'}
                             size="small"
                           />
-                        </TableCell>
-                        <TableCell>
+                        </Td>
+                        <Td>
                           <Tooltip title="Analyze Message">
                             <IconButton
                               size="small"
@@ -657,10 +598,10 @@ const A2ADebugger: React.FC = () => {
                               <InfoIcon />
                             </IconButton>
                           </Tooltip>
-                        </TableCell>
-                      </TableRow>
+                        </Td>
+                      </Tr>
                     ))}
-                  </TableBody>
+                  </Tbody>
                 </Table>
               </TableContainer>
             </Box>
@@ -669,61 +610,61 @@ const A2ADebugger: React.FC = () => {
           {/* Conversations Tab */}
           {activeTab === 1 && (
             <Box>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+              <Text variant="h6" sx={{ mb: 2 }}>
                 Active Conversations
-              </Typography>
+              </Text>
               {conversations.map((conversation) => (
                 <Accordion key={conversation.id}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-                      <Chip
+                      <Tag
                         label={conversation.status}
                         color={conversation.status === 'active' ? 'success' : 'default'}
                         size="small"
                       />
-                      <Typography variant="body1">
+                      <Text variant="body1">
                         {conversation.participants.join(' ↔ ')}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" sx={{ ml: 'auto' }}>
+                      </Text>
+                      <Text variant="body2" color="textSecondary" sx={{ ml: 'auto' }}>
                         {conversation.summary.totalMessages} messages
-                      </Typography>
+                      </Text>
                     </Box>
                   </AccordionSummary>
                   <AccordionDetails>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2">Summary</Typography>
+                    <SimpleGrid container columns={2}>
+                      <SimpleGrid item xs={12} sm={6}>
+                        <Text variant="subtitle2">Summary</Text>
                         <List dense>
                           <ListItem>
-                            <ListItemText
+                            <ListItem
                               primary="Total Messages"
                               secondary={conversation.summary.totalMessages}
                             />
                           </ListItem>
                           <ListItem>
-                            <ListItemText
+                            <ListItem
                               primary="Average Latency"
                               secondary={formatLatency(conversation.summary.avgLatency)}
                             />
                           </ListItem>
                           <ListItem>
-                            <ListItemText
+                            <ListItem
                               primary="Error Count"
                               secondary={conversation.summary.errorCount}
                             />
                           </ListItem>
                         </List>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Typography variant="subtitle2">Timeline</Typography>
+                      </SimpleGrid>
+                      <SimpleGrid item xs={12} sm={6}>
+                        <Text variant="subtitle2">Timeline</Text>
                         <Box sx={{ height: 200 }}>
                           {/* Would implement conversation flow visualization */}
-                          <Typography variant="body2" color="textSecondary">
+                          <Text variant="body2" color="textSecondary">
                             Conversation flow visualization would go here
-                          </Typography>
+                          </Text>
                         </Box>
-                      </Grid>
-                    </Grid>
+                      </SimpleGrid>
+                    </SimpleGrid>
                   </AccordionDetails>
                 </Accordion>
               ))}
@@ -733,11 +674,11 @@ const A2ADebugger: React.FC = () => {
           {/* Agents Tab */}
           {activeTab === 2 && (
             <Box>
-              <Grid container spacing={3}>
+              <SimpleGrid container columns={3}>
                 {agents.map((agent) => (
-                  <Grid item xs={12} sm={6} md={4} key={agent.id}>
+                  <SimpleGrid item xs={12} sm={6} md={4} key={agent.id}>
                     <Card>
-                      <CardContent>
+                      <CardBody>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                           <Badge
                             color={agent.status === 'online' ? 'success' : 'error'}
@@ -745,70 +686,70 @@ const A2ADebugger: React.FC = () => {
                           >
                             <AgentIcon />
                           </Badge>
-                          <Typography variant="h6" sx={{ ml: 1 }}>
+                          <Text variant="h6" sx={{ ml: 1 }}>
                             {agent.name}
-                          </Typography>
+                          </Text>
                         </Box>
-                        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                        <Text variant="body2" color="textSecondary" sx={{ mb: 2 }}>
                           Type: {agent.type}
-                        </Typography>
+                        </Text>
                         
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                        <Text variant="subtitle2" sx={{ mb: 1 }}>
                           Message Statistics
-                        </Typography>
-                        <Grid container spacing={1} sx={{ mb: 2 }}>
-                          <Grid item xs={6}>
-                            <Typography variant="body2">
+                        </Text>
+                        <SimpleGrid container columns={1} sx={{ mb: 2 }}>
+                          <SimpleGrid item xs={6}>
+                            <Text variant="body2">
                               Sent: {agent.messageStats.sent}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography variant="body2">
+                            </Text>
+                          </SimpleGrid>
+                          <SimpleGrid item xs={6}>
+                            <Text variant="body2">
                               Received: {agent.messageStats.received}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography variant="body2">
+                            </Text>
+                          </SimpleGrid>
+                          <SimpleGrid item xs={6}>
+                            <Text variant="body2">
                               Processed: {agent.messageStats.processed}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography variant="body2">
+                            </Text>
+                          </SimpleGrid>
+                          <SimpleGrid item xs={6}>
+                            <Text variant="body2">
                               Failed: {agent.messageStats.failed}
-                            </Typography>
-                          </Grid>
-                        </Grid>
+                            </Text>
+                          </SimpleGrid>
+                        </SimpleGrid>
 
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                        <Text variant="subtitle2" sx={{ mb: 1 }}>
                           Performance
-                        </Typography>
-                        <Typography variant="body2">
+                        </Text>
+                        <Text variant="body2">
                           Response Time: {formatLatency(agent.performanceMetrics.avgResponseTime)}
-                        </Typography>
-                        <Typography variant="body2">
+                        </Text>
+                        <Text variant="body2">
                           Reliability: {(agent.performanceMetrics.reliability * 100).toFixed(1)}%
-                        </Typography>
-                        <Typography variant="body2">
+                        </Text>
+                        <Text variant="body2">
                           Error Rate: {agent.performanceMetrics.errorRate.toFixed(1)}%
-                        </Typography>
-                      </CardContent>
+                        </Text>
+                      </CardBody>
                     </Card>
-                  </Grid>
+                  </SimpleGrid>
                 ))}
-              </Grid>
+              </SimpleGrid>
             </Box>
           )}
 
           {/* Analytics Tab */}
           {activeTab === 3 && (
             <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+              <SimpleGrid container columns={3}>
+                <SimpleGrid item xs={12} md={6}>
                   <Card>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ mb: 2 }}>
+                    <CardBody>
+                      <Text variant="h6" sx={{ mb: 2 }}>
                         Message Latency Trends
-                      </Typography>
+                      </Text>
                       <ResponsiveContainer width="100%" height={300}>
                         <LineChart data={prepareLatencyChart()}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -823,16 +764,16 @@ const A2ADebugger: React.FC = () => {
                           />
                         </LineChart>
                       </ResponsiveContainer>
-                    </CardContent>
+                    </CardBody>
                   </Card>
-                </Grid>
+                </SimpleGrid>
 
-                <Grid item xs={12} md={6}>
+                <SimpleGrid item xs={12} md={6}>
                   <Card>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ mb: 2 }}>
+                    <CardBody>
+                      <Text variant="h6" sx={{ mb: 2 }}>
                         Message Types Distribution
-                      </Typography>
+                      </Text>
                       <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={prepareMessageTypeChart()}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -842,59 +783,59 @@ const A2ADebugger: React.FC = () => {
                           <Bar dataKey="count" fill="#8884d8" />
                         </BarChart>
                       </ResponsiveContainer>
-                    </CardContent>
+                    </CardBody>
                   </Card>
-                </Grid>
+                </SimpleGrid>
 
-                <Grid item xs={12}>
+                <SimpleGrid item xs={12}>
                   <Card>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ mb: 2 }}>
+                    <CardBody>
+                      <Text variant="h6" sx={{ mb: 2 }}>
                         Error Analysis
-                      </Typography>
+                      </Text>
                       <TableContainer>
                         <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Error Type</TableCell>
-                              <TableCell>Count</TableCell>
-                              <TableCell>Last Occurrence</TableCell>
-                              <TableCell>Affected Agents</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
+                          <Thead>
+                            <Tr>
+                              <Td>Error Type</Td>
+                              <Td>Count</Td>
+                              <Td>Last Occurrence</Td>
+                              <Td>Affected Agents</Td>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
                             {/* Would show error analysis data */}
-                            <TableRow>
-                              <TableCell colSpan={4} align="center">
-                                <Typography variant="body2" color="textSecondary">
+                            <Tr>
+                              <Td colSpan={4} align="center">
+                                <Text variant="body2" color="textSecondary">
                                   No errors detected in current session
-                                </Typography>
-                              </TableCell>
-                            </TableRow>
-                          </TableBody>
+                                </Text>
+                              </Td>
+                            </Tr>
+                          </Tbody>
                         </Table>
                       </TableContainer>
-                    </CardContent>
+                    </CardBody>
                   </Card>
-                </Grid>
-              </Grid>
+                </SimpleGrid>
+              </SimpleGrid>
             </Box>
           )}
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Create Session Dialog */}
-      <Dialog open={createSessionDialog} onClose={() => setCreateSessionDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Create New Debug Session</DialogTitle>
-        <DialogContent>
-          <TextField
+      <Modal open={createSessionDialog} onClose={() => setCreateSessionDialog(false)} maxWidth="sm" fullWidth>
+        <ModalHeader>Create New Debug Session</ModalHeader>
+        <ModalBody>
+          <Input
             fullWidth
             label="Session Name"
             value={newSessionName}
             onChange={(e) => setNewSessionName(e.target.value)}
             margin="normal"
           />
-          <TextField
+          <Input
             fullWidth
             label="Description"
             value={newSessionDescription}
@@ -903,24 +844,24 @@ const A2ADebugger: React.FC = () => {
             multiline
             rows={3}
           />
-        </DialogContent>
-        <DialogActions>
+        </ModalBody>
+        <ModalFooter>
           <Button onClick={() => setCreateSessionDialog(false)}>Cancel</Button>
           <Button onClick={createDebugSession} variant="contained" disabled={!newSessionName}>
             Create Session
           </Button>
-        </DialogActions>
-      </Dialog>
+        </ModalFooter>
+      </Modal>
 
       {/* Message Details Dialog */}
       {selectedMessage && (
-        <Dialog
+        <Modal
           open={Boolean(selectedMessage)}
           onClose={() => setSelectedMessage(null)}
           maxWidth="md"
           fullWidth
         >
-          <DialogTitle>
+          <ModalHeader>
             Message Details
             <IconButton
               onClick={() => setSelectedMessage(null)}
@@ -928,60 +869,60 @@ const A2ADebugger: React.FC = () => {
             >
               <CloseIcon />
             </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <Typography variant="subtitle1" sx={{ mb: 2 }}>
+          </ModalHeader>
+          <ModalBody>
+            <Text variant="subtitle1" sx={{ mb: 2 }}>
               Message ID: {selectedMessage.messageId}
-            </Typography>
+            </Text>
             
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle2">Basic Information</Typography>
-                <Typography variant="body2">From: {selectedMessage.fromAgent}</Typography>
-                <Typography variant="body2">To: {selectedMessage.toAgent}</Typography>
-                <Typography variant="body2">Type: {selectedMessage.messageType}</Typography>
-                <Typography variant="body2">Priority: {selectedMessage.priority}</Typography>
-                <Typography variant="body2">Status: {selectedMessage.status}</Typography>
-              </Grid>
+            <SimpleGrid container columns={2}>
+              <SimpleGrid item xs={12} sm={6}>
+                <Text variant="subtitle2">Basic Information</Text>
+                <Text variant="body2">From: {selectedMessage.fromAgent}</Text>
+                <Text variant="body2">To: {selectedMessage.toAgent}</Text>
+                <Text variant="body2">Type: {selectedMessage.messageType}</Text>
+                <Text variant="body2">Priority: {selectedMessage.priority}</Text>
+                <Text variant="body2">Status: {selectedMessage.status}</Text>
+              </SimpleGrid>
               
-              <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle2">Performance Metrics</Typography>
-                <Typography variant="body2">
+              <SimpleGrid item xs={12} sm={6}>
+                <Text variant="subtitle2">Performance Metrics</Text>
+                <Text variant="body2">
                   Send Time: {formatTimestamp(selectedMessage.performanceMetrics.sendTime)}
-                </Typography>
-                <Typography variant="body2">
+                </Text>
+                <Text variant="body2">
                   Total Latency: {formatLatency(selectedMessage.performanceMetrics.totalLatency)}
-                </Typography>
-                <Typography variant="body2">
+                </Text>
+                <Text variant="body2">
                   Processing Time: {formatLatency(selectedMessage.performanceMetrics.processTime)}
-                </Typography>
-                <Typography variant="body2">
+                </Text>
+                <Text variant="body2">
                   Bandwidth: {selectedMessage.performanceMetrics.bandwidth} bytes
-                </Typography>
-              </Grid>
+                </Text>
+              </SimpleGrid>
               
-              <Grid item xs={12}>
-                <Typography variant="subtitle2">Payload</Typography>
-                <Paper sx={{ p: 2, bgcolor: 'grey.50', maxHeight: 200, overflow: 'auto' }}>
+              <SimpleGrid item xs={12}>
+                <Text variant="subtitle2">Payload</Text>
+                <Box sx={{ p: 2, bgcolor: 'grey.50', maxHeight: 200, overflow: 'auto' }}>
                   <pre style={{ margin: 0, fontSize: '0.8rem' }}>
                     {JSON.stringify(selectedMessage.payload, null, 2)}
                   </pre>
-                </Paper>
-              </Grid>
+                </Box>
+              </SimpleGrid>
               
               {selectedMessage.metadata.errors.length > 0 && (
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2">Errors</Typography>
+                <SimpleGrid item xs={12}>
+                  <Text variant="subtitle2">Errors</Text>
                   {selectedMessage.metadata.errors.map((error, index) => (
                     <Alert key={index} severity="error" sx={{ mt: 1 }}>
                       {error}
                     </Alert>
                   ))}
-                </Grid>
+                </SimpleGrid>
               )}
-            </Grid>
-          </DialogContent>
-        </Dialog>
+            </SimpleGrid>
+          </ModalBody>
+        </Modal>
       )}
     </Box>
   );

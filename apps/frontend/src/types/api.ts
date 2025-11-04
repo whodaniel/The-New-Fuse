@@ -15,7 +15,42 @@ export enum ReasoningStrategy {
     ABDUCTIVE = "abductive",
     ANALOGICAL = "analogical"
 }
-export const transformApiMessage = (apiMessage): any => {
+
+export interface RawApiMessage {
+    id: string;
+    conversationId: string;
+    sender: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface RawApiConversation {
+    id: string;
+    userId: string;
+    messages: RawApiMessage[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface TransformedMessage {
+    id: string;
+    conversationId: string;
+    sender: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface TransformedConversation {
+    id: string;
+    userId: string;
+    messages: TransformedMessage[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+export const transformApiMessage = (apiMessage: RawApiMessage): TransformedMessage => {
     return {
         id: apiMessage.id,
         conversationId: apiMessage.conversationId,
@@ -25,7 +60,8 @@ export const transformApiMessage = (apiMessage): any => {
         updatedAt: apiMessage.updatedAt,
     };
 };
-export const transformApiConversation = (apiConversation): any => {
+
+export const transformApiConversation = (apiConversation: RawApiConversation): TransformedConversation => {
     return {
         id: apiConversation.id,
         userId: apiConversation.userId,

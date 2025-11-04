@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataCard = DataCard;
 import react_1 from 'react';
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 function DataCard({ title, subtitle, tooltip, data, isLoading, loadingMessage = 'Loading...', hasError, errorMessage, onRefresh, actions, expandable = false, defaultExpanded = true, renderContent, sx, className }) {
     const [expanded, setExpanded] = react_1.default.useState(defaultExpanded);
     const handleExpandClick = () => {

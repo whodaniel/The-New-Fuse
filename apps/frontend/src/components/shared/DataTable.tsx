@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataTable = DataTable;
 import react_1 from 'react';
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 function DataTable({ columns: initialColumns, data, isLoading, loadingMessage, hasError, errorMessage, defaultSort, onSort, onFilter, onRowClick, onRowSelect, actions = {}, onAction, rowsPerPageOptions = [10, 25, 50, 100], defaultPageSize = 10, stickyHeader = true, dense = false, selectable = false, searchable = true, sx, className }) {
     const [columns, setColumns] = (0, react_1.useState)(initialColumns);
     const [page, setPage] = (0, react_1.useState)(0);
@@ -127,7 +127,7 @@ function DataTable({ columns: initialColumns, data, isLoading, loadingMessage, h
         a.click();
         window.URL.revokeObjectURL(url);
     };
-    return (<material_1.Paper sx={Object.assign({ width: '100%' }, sx)} className={className}>
+    return (<Box sx={Object.assign({ width: '100%' }, sx)} className={className}>
             <material_1.Toolbar sx={{ pl: 2, pr: 1 }}>
                 <material_1.Typography sx={{ flex: '1 1 100%' }} variant="h6" component="div">
                     {selectedRows.length > 0 ? (`${selectedRows.length} selected`) : ('Data Table')}
@@ -180,50 +180,50 @@ function DataTable({ columns: initialColumns, data, isLoading, loadingMessage, h
                     {filters.map((filter, index) => (<material_1.Chip key={index} label={`${filter.column} ${filter.operator} ${filter.value}`} onDelete={() => handleRemoveFilter(index)}/>))}
                 </material_1.Box>)}
 
-            <material_1.TableContainer sx={{ maxHeight: stickyHeader ? 440 : undefined }}>
-                <material_1.Table stickyHeader={stickyHeader} size={dense ? 'small' : 'medium'}>
-                    <material_1.TableHead>
-                        <material_1.TableRow>
-                            {selectable && (<material_1.TableCell padding="checkbox">
+            <TableContainer sx={{ maxHeight: stickyHeader ? 440 : undefined }}>
+                <Table stickyHeader={stickyHeader} size={dense ? 'small' : 'medium'}>
+                    <TableHead>
+                        <TableRow>
+                            {selectable && (<TableCell padding="checkbox">
                                     <material_1.Checkbox indeterminate={selectedRows.length > 0 && selectedRows.length < processedData.length} checked={processedData.length > 0 && selectedRows.length === processedData.length} onChange={handleSelectAll}/>
-                                </material_1.TableCell>)}
-                            {columns.filter(col => !col.hidden).map(column => (<material_1.TableCell key={column.id} align={column.align || (column.numeric ? 'right' : 'left')} style={{ width: column.width }}>
-                                    {column.sortable !== false ? (<material_1.TableSortLabel active={sortBy === column.id} direction={sortBy === column.id ? sortDirection : 'asc'} onClick={() => handleSort(column.id)}>
+                                </TableCell>)}
+                            {columns.filter(col => !col.hidden).map(column => (<TableCell key={column.id} align={column.align || (column.numeric ? 'right' : 'left')} style={{ width: column.width }}>
+                                    {column.sortable !== false ? (<TableSortLabel active={sortBy === column.id} direction={sortBy === column.id ? sortDirection : 'asc'} onClick={() => handleSort(column.id)}>
                                             {column.label}
-                                        </material_1.TableSortLabel>) : (column.label)}
-                                </material_1.TableCell>))}
-                        </material_1.TableRow>
-                    </material_1.TableHead>
-                    <material_1.TableBody>
-                        {isLoading ? (<material_1.TableRow>
-                                <material_1.TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
+                                        </TableSortLabel>) : (column.label)}
+                                </TableCell>))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {isLoading ? (<TableRow>
+                                <TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
                                     {loadingMessage || 'Loading...'}
-                                </material_1.TableCell>
-                            </material_1.TableRow>) : hasError ? (<material_1.TableRow>
-                                <material_1.TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
+                                </TableCell>
+                            </TableRow>) : hasError ? (<TableRow>
+                                <TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
                                     {errorMessage || 'An error occurred'}
-                                </material_1.TableCell>
-                            </material_1.TableRow>) : processedData.length === 0 ? (<material_1.TableRow>
-                                <material_1.TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
+                                </TableCell>
+                            </TableRow>) : processedData.length === 0 ? (<TableRow>
+                                <TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
                                     No data available
-                                </material_1.TableCell>
-                            </material_1.TableRow>) : (processedData
+                                </TableCell>
+                            </TableRow>) : (processedData
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row, index) => (<material_1.TableRow hover key={row.id} onClick={() => onRowClick === null || onRowClick === void 0 ? void 0 : onRowClick(row)} selected={selectedRows.some(r => r.id === row.id)} sx={{ cursor: onRowClick ? 'pointer' : undefined }}>
-                                        {selectable && (<material_1.TableCell padding="checkbox">
+            .map((row, index) => (<TableRow hover key={row.id} onClick={() => onRowClick === null || onRowClick === void 0 ? void 0 : onRowClick(row)} selected={selectedRows.some(r => r.id === row.id)} sx={{ cursor: onRowClick ? 'pointer' : undefined }}>
+                                        {selectable && (<TableCell padding="checkbox">
                                                 <material_1.Checkbox checked={selectedRows.some(r => r.id === row.id)} onChange={() => handleSelectRow(row)} onClick={(e) => e.stopPropagation()}/>
-                                            </material_1.TableCell>)}
-                                        {columns.filter(col => !col.hidden).map(column => (<material_1.TableCell key={column.id} align={column.align || (column.numeric ? 'right' : 'left')}>
+                                            </TableCell>)}
+                                        {columns.filter(col => !col.hidden).map(column => (<TableCell key={column.id} align={column.align || (column.numeric ? 'right' : 'left')}>
                                                 {column.format
                     ? column.format(row[column.id])
                     : row[column.id]}
-                                            </material_1.TableCell>))}
-                                    </material_1.TableRow>)))}
-                    </material_1.TableBody>
-                </material_1.Table>
-            </material_1.TableContainer>
+                                            </TableCell>))}
+                                    </TableRow>)))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            <material_1.TablePagination rowsPerPageOptions={rowsPerPageOptions} component="div" count={processedData.length} rowsPerPage={rowsPerPage} page={page} onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange}/>
+            <TablePagination rowsPerPageOptions={rowsPerPageOptions} component="div" count={processedData.length} rowsPerPage={rowsPerPage} page={page} onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange}/>
 
             <material_1.Menu anchorEl={columnMenuAnchor} open={Boolean(columnMenuAnchor)} onClose={() => setColumnMenuAnchor(null)}>
                 {columns.map(column => (<material_1.MenuItem key={column.id}>
@@ -269,6 +269,6 @@ function DataTable({ columns: initialColumns, data, isLoading, loadingMessage, h
                     </material_1.Button>
                 </material_1.DialogActions>
             </material_1.Dialog>
-        </material_1.Paper>);
+        </Box>);
 }
 export {};

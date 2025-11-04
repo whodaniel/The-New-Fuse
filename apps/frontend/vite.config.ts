@@ -2,6 +2,8 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
+import compression from 'vite-plugin-compression';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -31,7 +33,23 @@ export default defineConfig(({ mode }) => {
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')]
       }),
-    ],
+      // Generate bundle analysis report in production
+      isProduction && visualizer({
+        filename: 'dist/bundle-analysis.html',
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+      // Compression plugins for better performance
+      isProduction && compression({
+        algorithm: 'gzip',
+        ext: '.gz',
+      }),
+      isProduction && compression({
+        algorithm: 'brotliCompress',
+        ext: '.br',
+      }),
+    ].filter(Boolean),
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -63,30 +81,153 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       assetsDir: 'assets',
       sourcemap: !isProduction,
-      minify: isProduction,
+      minify: isProduction ? 'terser' : false,
       target: 'es2020',
+      // Performance optimizations
+      cssMinify: isProduction,
+      // Increase chunk size warning limit to identify heavy bundles
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
         },
+        // External dependencies that shouldn't be bundled
+        external: isDev ? [] : [
+          // Firebase is large, handle separately
+        ],
         output: {
+          // Use hash-based filenames for better caching
+          assetFileNames: 'assets/[name].[hash][extname]',
+          chunkFileNames: 'assets/[name].[hash].js',
+          entryFileNames: 'assets/[name].[hash].js',
           manualChunks: {
-            // Core React runtime
-            vendor: ['react', 'react-dom', 'react-router-dom'],
+            // Core React runtime and routing
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
             
-            // UI Libraries (multiple in use - preserve all)
-            ui: ['@mui/material', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+            // State management and data fetching
+            'state-mgmt': ['@tanstack/react-query', 'zustand', '@reduxjs/toolkit', 'react-redux'],
             
-            // Utilities
-            utils: ['lodash', 'date-fns', 'axios'],
+            // UI Framework - Chakra UI
+            'chakra-ui': ['@chakra-ui/react', '@emotion/react', '@emotion/styled', '@chakra-ui/icons', '@chakra-ui/avatar', '@chakra-ui/layout', '@chakra-ui/progress'],
             
-            // Powerful features - separate chunks for efficiency
-            workflow: ['reactflow'],
-            firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-            monaco: ['@monaco-editor/react', 'monaco-editor'],
+            // Material UI components (separate chunk for smaller load)
+            'mui-core': ['@mui/material', '@mui/icons-material'],
             
-            // A2A and MCP protocols
-            protocols: ['@the-new-fuse/a2a-react', '@the-new-fuse/a2a-core'],
+            // Radix UI components (split by functionality)
+            'radix-ui-core': [
+              '@radix-ui/react-dialog', 
+              '@radix-ui/react-dropdown-menu', 
+              '@radix-ui/react-select',
+              '@radix-ui/react-tabs',
+              '@radix-ui/react-toast',
+              '@radix-ui/react-progress'
+            ],
+            'radix-ui-inputs': [
+              '@radix-ui/react-avatar', 
+              '@radix-ui/react-checkbox', 
+              '@radix-ui/react-label',
+              '@radix-ui/react-scroll-area',
+              '@radix-ui/react-slider',
+              '@radix-ui/react-switch'
+            ],
+            
+            // Core utilities
+            'utils-core': [
+              'axios', 
+              'date-fns', 
+              'lodash.debounce',
+              'class-variance-authority',
+              'clsx',
+              'tailwind-merge',
+              'text-case',
+              'change-case'
+            ],
+            
+            // Authentication and Firebase
+            'auth-firebase': [
+              'firebase', 
+              '@firebase/app', 
+              '@firebase/auth', 
+              '@firebase/app-types'
+            ],
+            
+            // Monaco Editor (heavy - separate chunk)
+            'monaco-editor': ['@monaco-editor/react', 'monaco-editor'],
+            
+            // React Flow and workflow components
+            'workflow': ['reactflow', '@reactflow/node-resizer'],
+            
+            // Data visualization and charts
+            'charts': ['recharts', 'd3', 'd3-force-graph', '@types/d3'],
+            
+            // Web3 and blockchain
+            'web3': ['ethers'],
+            
+            // High performance features
+            'framer-motion': ['framer-motion'],
+            
+            // File handling
+            'file-ops': ['file-saver', '@types/file-saver', 'dompurify', 'he'],
+            
+            // Code highlighting and markdown
+            'content': ['highlight.js', 'marked'],
+            
+            // Internationalization
+            'i18n': ['i18next', 'react-i18next'],
+            
+            // Communication protocols
+            'protocols': [
+              '@the-new-fuse/a2a-react', 
+              '@the-new-fuse/a2a-core',
+              '@the-new-fuse/core',
+              '@the-new-fuse/types'
+            ],
+            
+            // MCP and specialized features
+            'mcp-features': [
+              '@the-new-fuse/feature-suggestions',
+              '@the-new-fuse/port-management',
+              '@the-new-fuse/prompt-templating',
+              '@the-new-fuse/ui-consolidated'
+            ],
+            
+            // Headless UI
+            'headless-ui': ['@headlessui/react'],
+            
+            // Drag and drop
+            'drag-drop': ['@hello-pangea/dnd'],
+            
+            // Device detection
+            'device': ['react-device-detect'],
+            
+            // Heroicons
+            'icons': ['@heroicons/react', 'lucide-react', 'react-icons'],
+            
+            // Phosphor icons
+            'phosphor-icons': ['@phosphor-icons/react'],
+            
+            // React Hook Form and validation
+            'forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
+            
+            // Notifications and toasts
+            'notifications': ['react-hot-toast', 'react-toastify', 'react-tooltip'],
+            
+            // Loading states
+            'loading': ['react-loading-skeleton'],
+            
+            // Device themes
+            'themes': ['next-themes'],
+            
+            // Floating UI
+            'floating-ui': ['@floating-ui/dom', '@floating-ui/react-dom'],
+            
+            // Other utilities
+            'utilities': [
+              'ws', 
+              'reflect-metadata', 
+              'rxjs',
+              'truncate'
+            ],
           },
         },
       },

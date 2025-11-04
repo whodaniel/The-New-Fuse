@@ -298,7 +298,7 @@ export class SecurityObservabilityService extends EventEmitter {
     private async verifyPassword(password: string, hash: string): Promise<boolean> {
         // Simplified password verification
         // In real implementation, use bcrypt or similar
-        return password === 'admin' || password === 'password';
+        return password === process.env.VSCODE_EXTENSION_ADMIN_PASSWORD;
     }
 
     private createSession(user: User, ipAddress: string, userAgent: string): Session {

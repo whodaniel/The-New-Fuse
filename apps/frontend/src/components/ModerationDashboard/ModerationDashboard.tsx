@@ -1,37 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Grid,
-  Paper,
-  Typography,
-  Card,
-  CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Tabs,
-  Tab,
-  Chip
-} from '@mui/material';
-import {
-  Delete,
-  Block,
-  VolumeOff,
-  Warning,
-  Add,
-  Edit
-} from '@mui/icons-material';
+
+
 import {
   ResponsiveContainer,
   LineChart,
@@ -133,12 +102,12 @@ const ModerationDashboard: React.FC = () => {
   };
 
   const renderOverview = () => (
-    <Grid container spacing={3}>
-      <Grid item xs={12} md={8}>
-        <Paper sx={{ p: 2, height: '400px' }}>
-          <Typography variant="h6" gutterBottom>
+    <SimpleGrid container columns={3}>
+      <SimpleGrid item xs={12} md={8}>
+        <Box sx={{ p: 2, height: '400px' }}>
+          <Text variant="h6" gutterBottom>
             Moderation Actions Trend
-          </Typography>
+          </Text>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={actionTrends}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -151,61 +120,61 @@ const ModerationDashboard: React.FC = () => {
               <Line type="monotone" dataKey="deletes" stroke="#9c27b0" />
             </LineChart>
           </ResponsiveContainer>
-        </Paper>
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
+        </Box>
+      </SimpleGrid>
+      <SimpleGrid item xs={12} md={4}>
+        <SimpleGrid container columns={2}>
+          <SimpleGrid item xs={6}>
             <Card>
-              <CardContent>
-                <Typography color="textSecondary" gutterBottom>
+              <CardBody>
+                <Text color="textSecondary" gutterBottom>
                   Total Actions
-                </Typography>
-                <Typography variant="h4">
+                </Text>
+                <Text variant="h4">
                   {stats?.totalActions || 0}
-                </Typography>
-              </CardContent>
+                </Text>
+              </CardBody>
             </Card>
-          </Grid>
-          <Grid item xs={6}>
+          </SimpleGrid>
+          <SimpleGrid item xs={6}>
             <Card>
-              <CardContent>
-                <Typography color="textSecondary" gutterBottom>
+              <CardBody>
+                <Text color="textSecondary" gutterBottom>
                   Active Rules
-                </Typography>
-                <Typography variant="h4">
+                </Text>
+                <Text variant="h4">
                   {stats?.activeRules || 0}
-                </Typography>
-              </CardContent>
+                </Text>
+              </CardBody>
             </Card>
-          </Grid>
-          <Grid item xs={6}>
+          </SimpleGrid>
+          <SimpleGrid item xs={6}>
             <Card>
-              <CardContent>
-                <Typography color="textSecondary" gutterBottom>
+              <CardBody>
+                <Text color="textSecondary" gutterBottom>
                   Banned Users
-                </Typography>
-                <Typography variant="h4">
+                </Text>
+                <Text variant="h4">
                   {stats?.bannedUsers || 0}
-                </Typography>
-              </CardContent>
+                </Text>
+              </CardBody>
             </Card>
-          </Grid>
-          <Grid item xs={6}>
+          </SimpleGrid>
+          <SimpleGrid item xs={6}>
             <Card>
-              <CardContent>
-                <Typography color="textSecondary" gutterBottom>
+              <CardBody>
+                <Text color="textSecondary" gutterBottom>
                   Muted Users
-                </Typography>
-                <Typography variant="h4">
+                </Text>
+                <Text variant="h4">
                   {stats?.mutedUsers || 0}
-                </Typography>
-              </CardContent>
+                </Text>
+              </CardBody>
             </Card>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+          </SimpleGrid>
+        </SimpleGrid>
+      </SimpleGrid>
+    </SimpleGrid>
   );
 
   const renderRecentActions = () => (
@@ -219,28 +188,28 @@ const ModerationDashboard: React.FC = () => {
             </IconButton>
           }
         >
-          <ListItemText
+          <ListItem
             primary={
               <Box display="flex" alignItems="center" gap={1}>
                 {action.type === 'ban' && <Block color="error" />}
                 {action.type === 'mute' && <VolumeOff color="warning" />}
                 {action.type === 'warn' && <Warning color="info" />}
-                <Typography>
+                <Text>
                   {`${action.type.toUpperCase()} - User: ${action.userId}`}
-                </Typography>
+                </Text>
               </Box>
             }
             secondary={
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Text variant="body2" color="text.secondary">
                   {`Reason: ${action.reason}`}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
+                </Text>
+                <Text variant="caption" color="text.secondary">
                   {`By: ${action.moderatorId} at ${format(
                     new Date(action.timestamp),
                     'PPpp'
                   )}`}
-                </Typography>
+                </Text>
               </Box>
             }
           />
@@ -273,11 +242,11 @@ const ModerationDashboard: React.FC = () => {
               </IconButton>
             }
           >
-            <ListItemText
+            <ListItem
               primary={
                 <Box display="flex" alignItems="center" gap={1}>
-                  <Typography>{rule.type}</Typography>
-                  <Chip
+                  <Text>{rule.type}</Text>
+                  <Tag
                     size="small"
                     label={rule.action}
                     color={
@@ -288,7 +257,7 @@ const ModerationDashboard: React.FC = () => {
                         : 'default'
                     }
                   />
-                  <Chip
+                  <Tag
                     size="small"
                     label={rule.isActive ? 'Active' : 'Inactive'}
                     color={rule.isActive ? 'success' : 'default'}
@@ -298,18 +267,18 @@ const ModerationDashboard: React.FC = () => {
               secondary={
                 <Box>
                   {rule.pattern && (
-                    <Typography variant="body2">
+                    <Text variant="body2">
                       Pattern: {rule.pattern}
-                    </Typography>
+                    </Text>
                   )}
                   {rule.keywords && (
-                    <Typography variant="body2">
+                    <Text variant="body2">
                       Keywords: {rule.keywords.join(', ')}
-                    </Typography>
+                    </Text>
                   )}
-                  <Typography variant="body2">
+                  <Text variant="body2">
                     Threshold: {rule.threshold}
-                  </Typography>
+                  </Text>
                 </Box>
               }
             />
@@ -321,9 +290,9 @@ const ModerationDashboard: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
+      <Text variant="h4" gutterBottom>
         Moderation Dashboard
-      </Typography>
+      </Text>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label="Overview" />
@@ -336,16 +305,16 @@ const ModerationDashboard: React.FC = () => {
       {activeTab === 1 && renderRecentActions()}
       {activeTab === 2 && renderRules()}
 
-      <Dialog
+      <Modal
         open={isRuleDialogOpen}
         onClose={() => setIsRuleDialogOpen(false)}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
+        <ModalHeader>
           {selectedRule ? 'Edit Rule' : 'Create Rule'}
-        </DialogTitle>
-        <DialogContent>
+        </ModalHeader>
+        <ModalBody>
           <Box component="form" sx={{ mt: 2 }}>
             <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Type</InputLabel>
@@ -358,14 +327,14 @@ const ModerationDashboard: React.FC = () => {
                   )
                 }
               >
-                <MenuItem value="spam">Spam</MenuItem>
-                <MenuItem value="profanity">Profanity</MenuItem>
-                <MenuItem value="harassment">Harassment</MenuItem>
-                <MenuItem value="custom">Custom</MenuItem>
+                <Option value="spam">Spam</Option>
+                <Option value="profanity">Profanity</Option>
+                <Option value="harassment">Harassment</Option>
+                <Option value="custom">Custom</Option>
               </Select>
             </FormControl>
 
-            <TextField
+            <Input
               fullWidth
               label="Pattern"
               sx={{ mb: 2 }}
@@ -377,7 +346,7 @@ const ModerationDashboard: React.FC = () => {
               }
             />
 
-            <TextField
+            <Input
               fullWidth
               label="Keywords (comma-separated)"
               sx={{ mb: 2 }}
@@ -407,15 +376,15 @@ const ModerationDashboard: React.FC = () => {
                   )
                 }
               >
-                <MenuItem value="warn">Warn</MenuItem>
-                <MenuItem value="delete">Delete</MenuItem>
-                <MenuItem value="mute">Mute</MenuItem>
-                <MenuItem value="ban">Ban</MenuItem>
+                <Option value="warn">Warn</Option>
+                <Option value="delete">Delete</Option>
+                <Option value="mute">Mute</Option>
+                <Option value="ban">Ban</Option>
               </Select>
             </FormControl>
           </Box>
-        </DialogContent>
-        <DialogActions>
+        </ModalBody>
+        <ModalFooter>
           <Button onClick={() => setIsRuleDialogOpen(false)}>Cancel</Button>
           <Button
             onClick={() => selectedRule && handleRuleSave(selectedRule)}
@@ -423,8 +392,8 @@ const ModerationDashboard: React.FC = () => {
           >
             Save
           </Button>
-        </DialogActions>
-      </Dialog>
+        </ModalFooter>
+      </Modal>
     </Box>
   );
 };

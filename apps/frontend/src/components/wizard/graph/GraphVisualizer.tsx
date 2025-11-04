@@ -4,8 +4,8 @@ exports.GraphVisualizer = GraphVisualizer;
 import react_1 from 'react';
 import reactflow_1 from 'reactflow';
 require("reactflow/dist/style.css");
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 import DataCard_1 from '../../shared/DataCard';
 import dagre_1 from 'dagre';
 const layoutAlgorithms = {
@@ -150,8 +150,8 @@ function GraphVisualizer({ nodes: initialNodes, edges: initialEdges, config: ini
         }
     }, [pathfindingMode, startNode, endNode, findPath, onNodeClick]);
     return (<reactflow_1.ReactFlowProvider>
-            <material_1.Box sx={{ height: '100%', position: 'relative' }}>
-                <DataCard_1.DataCard title="Knowledge Graph" tooltip="Interactive visualization of the knowledge graph" data={{ nodes, edges }} isLoading={false} renderContent={() => (<material_1.Box sx={{ height: 600 }}>
+            <Box style={{ height: '100%', position: 'relative' }}>
+                <DataCard_1.DataCard title="Knowledge Graph" tooltip="Interactive visualization of the knowledge graph" data={{ nodes, edges }} isLoading={false} renderContent={() => (<Box style={{ height: 600 }}>
                             <reactflow_1.default nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onNodeClick={handleNodeClick} onEdgeClick={(_, edge) => onEdgeClick === null || onEdgeClick === void 0 ? void 0 : onEdgeClick(edge)} connectionMode={reactflow_1.ConnectionMode.LOOSE} fitView>
                                 <reactflow_1.Background />
                                 <reactflow_1.Controls />

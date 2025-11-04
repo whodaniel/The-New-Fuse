@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import components_1 from '../components';
-import material_1 from '@mui/material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 import react_chartjs_2_1 from 'react-chartjs-2';
 import chart_js_1 from 'chart';
 // Register ChartJS components
@@ -38,54 +38,54 @@ const Analytics = () => {
         ],
     };
     return (<div className="p-6">
-      <material_1.Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <material_1.Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
-          <material_1.Tab label="Performance"/>
-          <material_1.Tab label="Resources"/>
-          <material_1.Tab label="Knowledge Graph"/>
-          <material_1.Tab label="Task Analysis"/>
-        </material_1.Tabs>
+      <Box style={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
+          <Tab label="Performance"/>
+          <Tab label="Resources"/>
+          <Tab label="Knowledge Graph"/>
+          <Tab label="Task Analysis"/>
+        </Tabs>
       </material_1.Box>
 
-      {activeTab === 0 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 0 && (<SimpleGrid columns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">System Performance</h2>
               <components_1.PerformanceMetrics />
               <div className="mt-4 h-80">
                 <react_chartjs_2_1.Line data={performanceData} options={{ maintainAspectRatio: false }}/>
               </div>
-            </material_1.Paper>
+            </Box>
           </material_1.Grid>
         </material_1.Grid>)}
 
-      {activeTab === 1 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 1 && (<SimpleGrid columns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">Resource Usage</h2>
               <components_1.SystemMetrics />
               <div className="mt-4 h-80">
                 <react_chartjs_2_1.Bar data={resourceUsageData} options={{ maintainAspectRatio: false }}/>
               </div>
-            </material_1.Paper>
+            </Box>
           </material_1.Grid>
         </material_1.Grid>)}
 
-      {activeTab === 2 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 2 && (<SimpleGrid columns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">Knowledge Graph Analysis</h2>
               <components_1.DynamicKnowledgeGraph />
-            </material_1.Paper>
+            </Box>
           </material_1.Grid>
         </material_1.Grid>)}
 
-      {activeTab === 3 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 3 && (<SimpleGrid columns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">Task Allocation Analysis</h2>
               <components_1.PredictiveTaskAllocator />
-            </material_1.Paper>
+            </Box>
           </material_1.Grid>
         </material_1.Grid>)}
     </div>);

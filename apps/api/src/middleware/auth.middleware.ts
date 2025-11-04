@@ -23,7 +23,7 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
     }
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
+    const jwtSecret = process.env.JWT_SECRET;
 
     const decoded = jwt.verify(token, jwtSecret) as any;
     

@@ -162,9 +162,28 @@ export class WalletMonitoringService {
   private async checkWeb3AuthHealth(): Promise<'healthy' | 'degraded' | 'down'> {
     try {
       // Check Web3Auth service responsiveness
-      // This would ping Web3Auth endpoints or check recent connection success rates
-      return 'healthy';
+      const web3AuthUrl = process.env.WEB3AUTH_URL || 'https://auth.web3auth.io';
+      
+      const startTime = Date.now();
+      const response = await fetch(`${web3AuthUrl}/health`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
+      
+      const responseTime = Date.now() - startTime;
+      
+      if (response.ok && responseTime < 2000) {
+        return 'healthy';
+      } else if (responseTime < 5000) {
+        return 'degraded';
+      } else {
+        return 'down';
+      }
     } catch (error) {
+      this.logger.warn('Web3Auth health check failed:', error.message);
       return 'down';
     }
   }
@@ -194,10 +213,40 @@ export class WalletMonitoringService {
 
   private async getPaymasterBalance(): Promise<string> {
     try {
-      // Check paymaster balance on-chain
-      // This would query the EntryPoint contract for the paymaster's deposit
-      return '1.5'; // Placeholder
+      // Check paymaster balance on-chain using EntryPoint contract
+      const entryPointAddress = process.env.ENTRY_POINT_ADDRESS;
+      const paymasterAddress = process.env.TNF_PAYMASTER_ADDRESS;
+      
+      if (!entryPointAddress || !paymasterAddress) {
+        throw new Error('EntryPoint or Paymaster address not configured');
+      }
+
+      // Create public client for reading
+      const { createPublicClient, http } = await import('viem');
+      const { mainnet } = await import('viem/chains');
+      
+      const publicClient = createPublicClient({
+        chain: mainnet,
+        transport: http()
+      });
+
+      // Query paymaster deposit from EntryPoint
+      const entryPointAbi = [
+        'function getDeposit(address account) external view returns (uint256)'
+      ];
+      
+      const deposit = await publicClient.readContract({
+        address: entryPointAddress as `0x${string}`,
+        abi: entryPointAbi,
+        functionName: 'getDeposit',
+        args: [paymasterAddress as `0x${string}`]
+      });
+
+      // Convert from wei to ether
+      const { formatEther } = await import('viem');
+      return formatEther(deposit as bigint);
     } catch (error) {
+      this.logger.error('Failed to get paymaster balance:', error);
       return '0';
     }
   }

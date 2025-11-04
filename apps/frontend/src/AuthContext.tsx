@@ -1,8 +1,8 @@
 /* global localStorage */
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './lib/firebase';
+import { User } from '@supabase/supabase-js';
+import { authHelpers, supabase } from './lib/supabase';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -26,20 +26,41 @@ export const AuthProvider: React.React.FC<{ children: React.ReactNode }> = ({ ch
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        const token = await user.getIdToken();
-        setToken(token);
-        localStorage.setItem('auth_token', token);
-      } else {
-        setToken(null);
-        localStorage.removeItem('auth_token');
+    // Get initial session
+    const initAuth = async () => {
+      try {
+        const session = await authHelpers.getCurrentSession();
+        if (session?.user) {
+          setUser(session.user);
+          setToken(session.access_token);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+      } finally {
+        setIsInitialized(true);
       }
-      setIsInitialized(true);
-    });
+    };
 
-    return () => unsubscribe();
+    initAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state change:', event);
+        
+        if (session?.user) {
+          setUser(session.user);
+          setToken(session.access_token);
+        } else {
+          setUser(null);
+          setToken(null);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const value = {

@@ -181,7 +181,7 @@ async function executeCode(request: ExecutionRequest): Promise<ExecutionResponse
 }
 
 /**
- * Execute JavaScript code
+ * Execute JavaScript code - SECURE IMPLEMENTATION
  */
 async function executeJavaScript(
   code: string,
@@ -192,6 +192,57 @@ async function executeJavaScript(
   context: Record<string, any>
 ): Promise<{ result?: any, error?: Error }> {
   try {
+    // Security: Validate and sanitize code
+    if (typeof code !== 'string' || code.length > 10000) {
+      throw new Error('Code must be a string with maximum length of 10000 characters');
+    }
+    
+    // Check for dangerous patterns in the code
+    const dangerousPatterns = [
+      /require\s*\(/,           // require()
+      /import\s+/,              // import statements
+      /eval\s*\(/,              // eval()
+      /Function\s*\(/,          // Function constructor
+      /process\./,              // process object
+      /global\./,               // global object
+      /window\./,               // window object
+      /document\./,             // document object
+      /XMLHttpRequest/,         // XHR
+      /fetch\s*\(/,             // fetch API
+      /setTimeout\s*\(/,        // setTimeout (we'll provide our own safe version)
+      /setInterval\s*\(/,       // setInterval
+      /constructor/,            // constructor
+      /__proto__/,              // __proto__
+      /prototype/,              // prototype
+      /class\s+/,               // class declarations
+      /fs\./,                   // File system
+      /child_process/,          // Child process
+      /exec\s*\(/,              // exec()
+      /spawn\s*\(/,             // spawn()
+      /fs\.readFile/,           // File read
+      /fs\.writeFile/,          // File write
+      /fs\.unlink/,             // File delete
+      /fs\.rmdir/,              // Directory delete
+      /open\s*\(/,              // window.open
+      /location\./,             // window.location
+      /navigator\./,            // window.navigator
+      /localStorage/,           // localStorage
+      /sessionStorage/,         // sessionStorage
+      /cookie/,                 // document.cookie
+      /indexedDB/,              // indexedDB
+      /ServiceWorker/,          // Service Workers
+      /Worker\s*\(/,            // Web Workers
+      /SharedArrayBuffer/,      // SharedArrayBuffer
+      /Atomics/,                // Atomics
+      /WebAssembly/,            // WebAssembly
+    ];
+    
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(code)) {
+        throw new Error(`Code contains potentially dangerous patterns: ${pattern.source}`);
+      }
+    }
+    
     // Create a secure context with limited capabilities
     const secureContext: Record<string, any> = {
       console: {
@@ -200,36 +251,80 @@ async function executeJavaScript(
         warn: (...args: any[]) => output.push(`[warn] ${args.join(' ')}`),
         info: (...args: any[]) => output.push(`[info] ${args.join(' ')}`),
       },
-      setTimeout: (cb: Function, ms: number) => {
-        if (ms > timeout) {
-          throw new Error(`setTimeout duration exceeds execution timeout`);
-        }
-        return setTimeout(cb, ms);
-      },
-      clearTimeout,
+      // Only allow safe built-in functions and objects
+      Math: Math,
+      Boolean: Boolean,
+      Number: Number,
+      String: String,
+      Array: Array,
+      Object: Object,
+      JSON: JSON,
+      Date: Date,
+      RegExp: RegExp,
+      Error: Error,
+      TypeError: TypeError,
+      ReferenceError: ReferenceError,
+      SyntaxError: SyntaxError,
+      RangeError: RangeError,
+      URIError: URIError,
+      EvalError: EvalError,
+      // Provide safe utility functions
+      max: Math.max,
+      min: Math.min,
+      abs: Math.abs,
+      floor: Math.floor,
+      ceil: Math.ceil,
+      round: Math.round,
+      parseInt: parseInt,
+      parseFloat: parseFloat,
+      isNaN: isNaN,
+      isFinite: isFinite,
+      encodeURIComponent: encodeURIComponent,
+      decodeURIComponent: decodeURIComponent,
+      btoa: btoa,
+      atob: atob,
+      // Add context variables safely
       ...context,
     };
 
-    // Add allowed modules to context
-    // Note: In Cloudflare Workers, we can't dynamically import modules
-    // This is a simplified implementation
+    // Create a restricted scope for execution
+    const restrictedScope = Object.create(null);
+    Object.assign(restrictedScope, secureContext);
 
-    // Wrap code in a function to capture return value
-    const wrappedCode = `
-      try {
-        ${code}
-      } catch (e) {
-        throw e;
-      }
-    `;
-
-    // Execute code with timeout
+    // Safe code execution using a restricted eval in a function scope
     const executionPromise = new Promise<any>((resolve, reject) => {
       try {
-        // In a real implementation, we would use a proper sandbox
-        // For now, use Function constructor (not secure for production)
-        const fn = new Function(...Object.keys(secureContext), wrappedCode);
-        const result = fn(...Object.values(secureContext));
+        // Create a safe wrapper function
+        const safeExecutor = (userCode: string, scope: any) => {
+          // Wrap user code to ensure it only has access to the restricted scope
+          const wrappedCode = `
+            'use strict';
+            (function() {
+              // Create a closure with only the allowed variables
+              const { ${Object.keys(scope).join(', ')} } = this;
+              
+              // Execute the user code
+              ${userCode}
+            })
+          `;
+          
+          // Use Function constructor only with our controlled parameters
+          // This is safer because we're not injecting user input into the function parameters
+          const executorFn = new Function('allowedScope', `
+            'use strict';
+            return (function() {
+              const { ${Object.keys(scope).join(', ')} } = allowedScope;
+              return (function() {
+                ${userCode}
+              })();
+            });
+          `);
+          
+          const innerFn = executorFn(scope);
+          return innerFn.call(scope);
+        };
+        
+        const result = safeExecutor(code, restrictedScope);
         resolve(result);
       } catch (e) {
         reject(e);

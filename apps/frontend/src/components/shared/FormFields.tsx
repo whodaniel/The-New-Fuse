@@ -8,8 +8,8 @@ exports.FormSliderField = FormSliderField;
 exports.FormAutocompleteField = FormAutocompleteField;
 exports.FormArrayField = FormArrayField;
 import react_1 from 'react';
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 function FormTextField({ name, label, value, type = 'text', required, disabled, error, helperText, multiline, rows, placeholder, autoComplete, onChange, sx }): any {
     const [showPassword, setShowPassword] = react_1.default.useState(false);
     return (<material_1.TextField fullWidth name={name} label={label} value={value} type={type === 'password' && showPassword ? 'text' : type} required={required} disabled={disabled} error={error} helperText={helperText} multiline={multiline} rows={rows} placeholder={placeholder} autoComplete={autoComplete} onChange={(e) => onChange(e.target.value)} sx={sx} InputProps={type === 'password' ? {
@@ -67,7 +67,7 @@ function FormArrayField({ name, label, value, renderField, addLabel = 'Add Item'
     };
     return (<material_1.FormControl fullWidth error={error} required={required} disabled={disabled} sx={sx}>
             <material_1.Typography gutterBottom>{label}</material_1.Typography>
-            <material_1.Stack spacing={2}>
+            <material_1.Stack columns={2}>
                 {value.map((item, index) => (<material_1.Box key={index} display="flex" alignItems="center" gap={1}>
                         {renderField(item, index)}
                         <material_1.IconButton onClick={() => handleRemove(index)} color="error" title={removeLabel}>

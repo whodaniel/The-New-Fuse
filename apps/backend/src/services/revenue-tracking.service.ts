@@ -247,29 +247,85 @@ export class RevenueTrackingService {
   }
 
   private async processRevenueEvents(fromBlock: number, toBlock: number): Promise<void> {
-    // This would scan smart contract events for revenue additions
-    // For now, we'll implement a placeholder that could be extended
-    
+    // Scan smart contract events for revenue additions
     try {
-      // Example: Listen for task completion events, marketplace sales, etc.
-      // These would trigger revenue tracking
+      const { createPublicClient, http, parseAbi } = await import('viem');
+      const { mainnet } = await import('viem/chains');
       
-      // Mock revenue event for demonstration
-      const mockRevenueEvents = await this.getMockRevenueEvents(fromBlock, toBlock);
-      
-      for (const event of mockRevenueEvents) {
-        await this.trackRevenue(event);
+      // Create public client for event scanning
+      const publicClient = createPublicClient({
+        chain: mainnet,
+        transport: http()
+      });
+
+      // Revenue distributor contract address
+      const revenueDistributorAddress = process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS;
+      if (!revenueDistributorAddress) {
+        this.logger.warn('Revenue distributor contract address not configured');
+        return;
       }
+
+      // Revenue added event ABI
+      const revenueDistributorAbi = parseAbi([
+        'event RevenueAdded(uint256 indexed streamId, uint256 amount)'
+      ]);
+
+      // Listen for RevenueAdded events
+      const logs = await publicClient.getLogs({
+        address: revenueDistributorAddress as `0x${string}`,
+        event: revenueDistributorAbi.find(
+          (event) => event.name === 'RevenueAdded'
+        ),
+        fromBlock: BigInt(fromBlock),
+        toBlock: BigInt(toBlock)
+      });
+
+      // Process each revenue event
+      for (const log of logs) {
+        try {
+          const { streamId, amount } = log.args as any;
+          
+          // Find the agent NFT for this stream
+          const revenueStream = await this.prisma.revenueStream.findFirst({
+            where: {
+              // Assuming streamId matches database ID or there's a mapping
+              id: streamId.toString()
+            },
+            include: {
+              agentNFT: {
+                include: { agent: true }
+              }
+            }
+          });
+
+          if (revenueStream && revenueStream.agentNFT) {
+            // Create revenue event
+            const revenueEvent: RevenueEvent = {
+              agentId: revenueStream.agentNFT.agent.id,
+              amount: amount.toString(),
+              tokenAddress: revenueStream.tokenAddress,
+              source: 'blockchain_event',
+              metadata: {
+                streamId: streamId.toString(),
+                blockNumber: log.blockNumber.toString(),
+                transactionHash: log.transactionHash
+              }
+            };
+
+            await this.trackRevenue(revenueEvent);
+          }
+        } catch (eventError) {
+          this.logger.error('Failed to process revenue event:', eventError);
+        }
+      }
+
+      this.logger.log(`Processed ${logs.length} revenue events from blocks ${fromBlock} to ${toBlock}`);
     } catch (error) {
       this.logger.error('Failed to process revenue events:', error);
     }
   }
 
-  private async getMockRevenueEvents(fromBlock: number, toBlock: number): Promise<RevenueEvent[]> {
-    // This is a mock implementation - in reality, you'd scan blockchain events
-    // or integrate with external systems that generate revenue
-    return [];
-  }
+
 
   private async getLastProcessedBlock(): Promise<number> {
     // This would be stored in a configuration table or cache

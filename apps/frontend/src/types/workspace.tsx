@@ -12,9 +12,7 @@ export interface WorkspaceData {
   updatedAt?: string;
   pfpUrl?: string;
   suggestedMessages?: SuggestedMessage[];
-  settings?: {
-    [key: string]: any;
-  };
+  settings?: Record<string, unknown>;
 }
 
 export interface WorkspaceStats {
@@ -55,7 +53,7 @@ export interface WorkspacePermissions {
 export interface WorkspaceError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
 }
 
 export interface ChatMessage {
@@ -63,7 +61,7 @@ export interface ChatMessage {
   content: string;
   role: 'user' | 'assistant' | 'system';
   createdAt: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface Thread {

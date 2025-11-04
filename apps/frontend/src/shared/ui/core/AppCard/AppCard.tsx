@@ -10,7 +10,7 @@ var __rest = (this && this.__rest) || function (s, e): any {
     return t;
 };
 import React, { forwardRef } from 'react';
-import { Slot } from '@radix-ui/react-slot';
+
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 export const appCardVariants = cva('rounded-xl transition-all duration-200', {

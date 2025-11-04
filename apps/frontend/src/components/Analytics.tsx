@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import components_1 from '../components';
-import material_1 from '@mui/material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 import react_chartjs_2_1 from 'react-chartjs-2';
 import chart_js_1 from 'chart';
 chart_js_1.Chart.register(chart_js_1.CategoryScale, chart_js_1.LinearScale, chart_js_1.PointElement, chart_js_1.LineElement, chart_js_1.BarElement, chart_js_1.Title, chart_js_1.Tooltip, chart_js_1.Legend);
@@ -36,56 +36,56 @@ const Analytics = () => {
         ],
     };
     return (<div className="p-6">
-      <material_1.Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <material_1.Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
-          <material_1.Tab label="Performance"/>
-          <material_1.Tab label="Resources"/>
-          <material_1.Tab label="Knowledge Graph"/>
-          <material_1.Tab label="Task Analysis"/>
-        </material_1.Tabs>
-      </material_1.Box>
+      <Box{{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
+          <Tab"Performance"/>
+          <Tab"Resources"/>
+          <Tab"Knowledge Graph"/>
+          <Tab"Task Analysis"/>
+        </Tabs>
+      </Box>
 
-      {activeTab === 0 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 0 && (<SimpleGrid templateColumns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">System Performance</h2>
               <components_1.PerformanceMetrics />
               <div className="mt-4 h-80">
                 <react_chartjs_2_1.Line data={performanceData} options={{ maintainAspectRatio: false }}/>
               </div>
-            </material_1.Paper>
-          </material_1.Grid>
-        </material_1.Grid>)}
+            </Box>
+          </SimpleGrid>
+        </SimpleGrid>)}
 
-      {activeTab === 1 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 1 && (<SimpleGrid templateColumns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">Resource Usage</h2>
               <components_1.SystemMetrics />
               <div className="mt-4 h-80">
                 <react_chartjs_2_1.Bar data={resourceUsageData} options={{ maintainAspectRatio: false }}/>
               </div>
-            </material_1.Paper>
-          </material_1.Grid>
-        </material_1.Grid>)}
+            </Box>
+          </SimpleGrid>
+        </SimpleGrid>)}
 
-      {activeTab === 2 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 2 && (<SimpleGrid templateColumns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">Knowledge Graph Analysis</h2>
               <components_1.DynamicKnowledgeGraph />
-            </material_1.Paper>
-          </material_1.Grid>
-        </material_1.Grid>)}
+            </Box>
+          </SimpleGrid>
+        </SimpleGrid>)}
 
-      {activeTab === 3 && (<material_1.Grid container spacing={3}>
-          <material_1.Grid item xs={12}>
-            <material_1.Paper className="p-4">
+      {activeTab === 3 && (<SimpleGrid templateColumns={3}>
+          <GridItem colSpan={12}>
+            <Box className="p-4">
               <h2 className="text-xl font-bold mb-4">Task Allocation Analysis</h2>
               <components_1.PredictiveTaskAllocator />
-            </material_1.Paper>
-          </material_1.Grid>
-        </material_1.Grid>)}
+            </Box>
+          </SimpleGrid>
+        </SimpleGrid>)}
     </div>);
 };
 exports.default = Analytics;

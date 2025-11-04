@@ -2,7 +2,7 @@
 export {}
 exports.GraphAnalytics = GraphAnalytics;
 import react_1 from 'react';
-import material_1 from '@mui/material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 import recharts_1 from 'recharts';
 import WizardProvider_1 from './WizardProvider';
 import WizardWebSocket_1 from './WizardWebSocket';
@@ -39,8 +39,8 @@ function GraphAnalytics(): any {
         setSelectedTimeRange(range);
         sendMessage('request_graph_metrics', { timeRange: range });
     };
-    const renderMetricsOverview = (): any => (<material_1.Grid container spacing={2}>
-            <material_1.Grid item xs={12} md={6}>
+    const renderMetricsOverview = (): any => (<SimpleGrid columns={2}>
+            <GridItem colSpan={12} md={6}>
                 <material_1.Card>
                     <material_1.CardContent>
                         <material_1.Typography variant="h6" gutterBottom>Graph Overview</material_1.Typography>
@@ -57,7 +57,7 @@ function GraphAnalytics(): any {
                     </material_1.CardContent>
                 </material_1.Card>
             </material_1.Grid>
-            <material_1.Grid item xs={12} md={6}>
+            <GridItem colSpan={12} md={6}>
                 <material_1.Card>
                     <material_1.CardContent>
                         <material_1.Typography variant="h6" gutterBottom>Node Distribution</material_1.Typography>
@@ -133,13 +133,13 @@ function GraphAnalytics(): any {
             </material_1.Box>);
     }
     return (<material_1.Box>
-            <material_1.Paper sx={{ mb: 2 }}>
-                <material_1.Tabs value={selectedTab} onChange={(_, newValue) => setSelectedTab(newValue)} variant="fullWidth">
-                    <material_1.Tab label="Overview"/>
-                    <material_1.Tab label="Edge Analytics"/>
-                    <material_1.Tab label="Time Series"/>
-                </material_1.Tabs>
-            </material_1.Paper>
+            <Box sx={{ mb: 2 }}>
+                <Tabs value={selectedTab} onChange={(_, newValue) => setSelectedTab(newValue)} variant="fullWidth">
+                    <Tab label="Overview"/>
+                    <Tab label="Edge Analytics"/>
+                    <Tab label="Time Series"/>
+                </Tabs>
+            </Box>
 
             <material_1.Box mt={2}>
                 {selectedTab === 0 && renderMetricsOverview()}

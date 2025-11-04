@@ -121,7 +121,7 @@ export class Web3authService implements OnModuleInit {
       exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour expiry
     };
 
-    const secret = process.env.WEB3AUTH_JWT_SECRET || 'your-jwt-secret';
+    const secret = process.env.WEB3AUTH_JWT_SECRET;
     return jwt.sign(payload, secret, { algorithm: 'HS256' });
   }
 

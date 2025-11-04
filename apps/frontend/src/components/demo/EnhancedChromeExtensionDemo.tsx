@@ -1,27 +1,6 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Tab,
-  Tabs,
-  Paper,
-  Chip,
-  IconButton,
-  Tooltip,
-  Alert,
-} from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
-import { createUnifiedTheme } from "../../themes/chromeExtensionTheme";
-import { PopupContainer } from "../ui/popup";
-import ExtensionIcon from "@mui/icons-material/Extension";
-import CloseIcon from "@mui/icons-material/Close";
-import LaunchIcon from "@mui/icons-material/Launch";
-import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
-import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import { Container, Card, CardBody, Box, Text, Button, Tabs, TabList, Tab, TabPanels, TabPanel, Input, Textarea } from '@chakra-ui/react';
+import { Extension, Close, ExternalLink, Code, ArrowRightLeft } from 'lucide-react';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -32,8 +11,12 @@ interface TabPanelProps {
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
   return (
-    <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      {...other}
+    >
+      {value === index && <Box p={4}>{children}</Box>}
     </div>
   );
 }
@@ -42,8 +25,6 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-
-  const theme = createUnifiedTheme(isDarkMode);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -54,332 +35,143 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ maxWidth: 1200, mx: "auto", p: 3 }}>
-        {/* Header */}
-        <Card
-          sx={{
-            mb: 3,
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          }}
-        >
-          <CardContent>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <ExtensionIcon sx={{ fontSize: 40, color: "white" }} />
-                <Box>
-                  <Typography
-                    variant="h4"
-                    sx={{ color: "white", fontWeight: 600 }}
-                  >
-                    Chrome Extension UI Integration
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ color: "rgba(255,255,255,0.9)" }}
-                  >
-                    Successfully recovered and integrated UI components from
-                    GitHub repository
-                  </Typography>
-                </Box>
-              </Box>
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <Chip
-                  label="✅ Recovered"
-                  sx={{ bgcolor: "rgba(255,255,255,0.2)", color: "white" }}
-                />
-                <Chip
-                  label="🔄 Integrated"
-                  sx={{ bgcolor: "rgba(255,255,255,0.2)", color: "white" }}
-                />
-                <Chip
-                  label="🚀 Enhanced"
-                  sx={{ bgcolor: "rgba(255,255,255,0.2)", color: "white" }}
-                />
+    <Container maxW="1200px" mx="auto" p={4}>
+      {/* Header */}
+      <Card mb={4} bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" color="white">
+        <CardBody>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Box display="flex" alignItems="center" gap={3}>
+              <Extension size={32} />
+              <Box>
+                <Text fontSize="2xl" fontWeight="bold">Enhanced Chrome Extension</Text>
+                <Text opacity={0.9}>Advanced UI Components & Features</Text>
               </Box>
             </Box>
-          </CardContent>
-        </Card>
+            <Button
+              size="sm"
+              colorScheme="whiteAlpha"
+              variant="outline"
+              onClick={() => setShowPopup(!showPopup)}
+              leftIcon={<ExternalLink />}
+            >
+              Launch Extension
+            </Button>
+          </Box>
+        </CardBody>
+      </Card>
 
-        {/* Integration Status */}
-        <Alert severity="success" sx={{ mb: 3 }}>
-          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-            ✅ Chrome Extension UI Successfully Integrated!
-          </Typography>
-          <Typography variant="body2">
-            All UI components from the GitHub repository have been recovered and
-            merged with your local enhanced features. No functionality has been
-            lost in the process.
-          </Typography>
-        </Alert>
+      {/* Feature Tabs */}
+      <Card>
+        <CardBody>
+          <Tabs index={activeTab} onChange={setActiveTab}>
+            <TabList>
+              <Tab>Interface</Tab>
+              <Tab>Code Integration</Tab>
+              <Tab>Data Flow</Tab>
+              <Tab>Settings</Tab>
+            </TabList>
 
-        {/* Tabs */}
-        <Paper sx={{ mb: 3 }}>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            variant="fullWidth"
-          >
-            <Tab icon={<LaunchIcon />} label="Live Demo" iconPosition="start" />
-            <Tab
-              icon={<CompareArrowsIcon />}
-              label="Integration Comparison"
-              iconPosition="start"
-            />
-            <Tab
-              icon={<IntegrationInstructionsIcon />}
-              label="Technical Details"
-              iconPosition="start"
-            />
-          </Tabs>
-        </Paper>
+            <TabPanels>
+              <TabPanel>
+                <Box>
+                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Extension Interface</Text>
+                  <Text color="gray.600" mb={4}>
+                    The extension provides a streamlined interface for Chrome browser integration
+                    with real-time communication and feature management.
+                  </Text>
+                  <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap={4}>
+                    <Card>
+                      <CardBody>
+                        <Box display="flex" alignItems="center" gap={2} mb={2}>
+                          <Extension size={20} />
+                          <Text fontWeight="medium">Core Features</Text>
+                        </Box>
+                        <Text fontSize="sm" color="gray.600">
+                          Element selection, DOM manipulation, and browser state management.
+                        </Text>
+                      </CardBody>
+                    </Card>
+                    <Card>
+                      <CardBody>
+                        <Box display="flex" alignItems="center" gap={2} mb={2}>
+                          <Code size={20} />
+                          <Text fontWeight="medium">Developer Tools</Text>
+                        </Box>
+                        <Text fontSize="sm" color="gray.600">
+                          Advanced debugging and development features for power users.
+                        </Text>
+                      </CardBody>
+                    </Card>
+                  </Box>
+                </Box>
+              </TabPanel>
 
-        {/* Tab Content */}
-        <TabPanel value={activeTab} index={0}>
-          {/* Live Demo */}
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    🎯 Interactive Chrome Extension UI
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" paragraph>
-                    This is the actual Chrome extension interface recovered from
-                    your GitHub repository, now fully integrated into your main
-                    application with all enhanced features preserved.
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={() => setShowPopup(true)}
-                    startIcon={<ExtensionIcon />}
-                    sx={{ mr: 1, mb: 1 }}
-                  >
-                    Open Extension Interface
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setIsDarkMode(!isDarkMode)}
-                    sx={{ mb: 1 }}
-                  >
-                    Toggle Theme
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    🔧 Enhanced Features Preserved
-                  </Typography>
-                  <Box
-                    sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}
-                  >
-                    <Chip label="A2A Protocol" color="primary" size="small" />
-                    <Chip
-                      label="Multi-Agent Chat"
-                      color="primary"
-                      size="small"
-                    />
-                    <Chip
-                      label="Workflow Builder"
-                      color="primary"
-                      size="small"
-                    />
-                    <Chip
-                      label="Performance Monitor"
-                      color="primary"
-                      size="small"
-                    />
-                    <Chip
-                      label="Enhanced Analytics"
-                      color="primary"
-                      size="small"
+              <TabPanel>
+                <Box>
+                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Code Integration</Text>
+                  <Text color="gray.600" mb={4}>
+                    Seamless integration with your development workflow and codebase.
+                  </Text>
+                  <Box mb={4}>
+                    <Text fontSize="sm" fontWeight="medium" mb={2}>API Endpoint Configuration</Text>
+                    <Input placeholder="https://api.example.com/endpoint" size="sm" />
+                  </Box>
+                  <Box mb={4}>
+                    <Text fontSize="sm" fontWeight="medium" mb={2}>Custom Scripts</Text>
+                    <Textarea 
+                      placeholder="Enter custom JavaScript or configuration..." 
+                      size="sm" 
+                      rows={4}
                     />
                   </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    All your local enhancements remain fully functional and have
-                    been seamlessly integrated with the recovered Chrome
-                    extension UI components.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </TabPanel>
+                </Box>
+              </TabPanel>
 
-        <TabPanel value={activeTab} index={1}>
-          {/* Integration Comparison */}
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%" }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom color="error">
-                    ❌ What Was Lost (Before Recovery)
-                  </Typography>
-                  <ul>
-                    <li>Material-UI based Chrome extension popup interface</li>
-                    <li>Professional tabbed navigation system</li>
-                    <li>WebSocket connection management UI</li>
-                    <li>Web integration controls</li>
-                    <li>Enhanced features configuration panel</li>
-                    <li>Sophisticated theming system</li>
-                    <li>Floating panel system for web pages</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card sx={{ height: "100%" }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom color="success.main">
-                    ✅ What Has Been Recovered & Enhanced
-                  </Typography>
-                  <ul>
-                    <li>✅ Complete Material-UI popup interface</li>
-                    <li>✅ Enhanced tabbed navigation with local features</li>
-                    <li>✅ Advanced WebSocket management + A2A protocol</li>
-                    <li>✅ Web integration + multi-agent capabilities</li>
-                    <li>✅ Enhanced features + local improvements</li>
-                    <li>✅ Unified theming system</li>
-                    <li>✅ Integrated floating panel + workflow system</li>
-                    <li>🚀 PLUS: All local enhancements preserved!</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </TabPanel>
+              <TabPanel>
+                <Box>
+                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Data Flow Management</Text>
+                  <Text color="gray.600" mb={4}>
+                    Real-time data synchronization and state management across components.
+                  </Text>
+                  <Box display="flex" alignItems="center" gap={4} p={4} bg="gray.50" borderRadius="md">
+                    <ArrowRightLeft size={24} color="blue.500" />
+                    <Box>
+                      <Text fontWeight="medium">Connected Services</Text>
+                      <Text fontSize="sm" color="gray.600">4 active integrations</Text>
+                    </Box>
+                  </Box>
+                </Box>
+              </TabPanel>
 
-        <TabPanel value={activeTab} index={2}>
-          {/* Technical Details */}
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    🛠️ Integration Process
-                  </Typography>
-                  <ol>
-                    <li>
-                      <strong>Recovery:</strong> Used git commands to retrieve
-                      chrome-extension files from GitHub
-                    </li>
-                    <li>
-                      <strong>Analysis:</strong> Analyzed both GitHub version
-                      and local enhancements
-                    </li>
-                    <li>
-                      <strong>Theme Integration:</strong> Created unified
-                      Material-UI theme system
-                    </li>
-                    <li>
-                      <strong>Component Migration:</strong> Migrated popup
-                      components to main app
-                    </li>
-                    <li>
-                      <strong>Feature Preservation:</strong> Ensured all local
-                      features remain functional
-                    </li>
-                    <li>
-                      <strong>Enhancement:</strong> Added new capabilities to
-                      recovered components
-                    </li>
-                  </ol>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    📁 New File Structure
-                  </Typography>
-                  <Paper
-                    variant="outlined"
-                    sx={{
-                      p: 2,
-                      bgcolor: "background.default",
-                      fontFamily: "monospace",
-                      fontSize: "0.875rem",
-                    }}
-                  >
-                    {`apps/frontend/src/
-├── themes/
-│   └── chromeExtensionTheme.ts
-├── components/
-│   ├── ui/popup/
-│   │   ├── PopupContainer.tsx
-│   │   ├── CommunicationPanel.tsx
-│   │   ├── WebIntegrationPanel.tsx
-│   │   └── EnhancedFeaturesPanel.tsx
-│   └── demo/
-│       └── ChromeExtensionDemo.tsx
-└── chrome-extension/ (recovered)
-    └── src/popup/components/`}
-                  </Paper>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </TabPanel>
-
-        {/* Floating Popup Demo */}
-        {showPopup && (
-          <Box
-            sx={{
-              position: "fixed",
-              top: 20,
-              right: 20,
-              zIndex: 9999,
-              boxShadow: 8,
-              borderRadius: 2,
-              overflow: "hidden",
-            }}
-          >
-            <Box
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                zIndex: 10000,
-              }}
-            >
-              <Tooltip title="Close Demo">
-                <IconButton
-                  size="small"
-                  onClick={() => setShowPopup(false)}
-                  sx={{
-                    bgcolor: "rgba(0,0,0,0.5)",
-                    color: "white",
-                    "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-                  }}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-            <PopupContainer
-              isMainApp={true}
-              initialDarkMode={isDarkMode}
-              onThemeChange={handleThemeChange}
-              containerSx={{
-                width: 420,
-                height: 620,
-                maxHeight: "90vh",
-              }}
-            />
-          </Box>
-        )}
-      </Box>
-    </ThemeProvider>
+              <TabPanel>
+                <Box>
+                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Settings & Configuration</Text>
+                  <Text color="gray.600" mb={4}>
+                    Customize extension behavior and preferences.
+                  </Text>
+                  <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4}>
+                    <Box>
+                      <Text fontSize="sm" fontWeight="medium" mb={2}>Theme</Text>
+                      <Button size="sm" variant="outline">
+                        {isDarkMode ? 'Dark' : 'Light'} Mode
+                      </Button>
+                    </Box>
+                    <Box>
+                      <Text fontSize="sm" fontWeight="medium" mb={2}>Notifications</Text>
+                      <Button size="sm" colorScheme="blue">Enable</Button>
+                    </Box>
+                    <Box>
+                      <Text fontSize="sm" fontWeight="medium" mb={2}>Auto-update</Text>
+                      <Button size="sm" colorScheme="green">Active</Button>
+                    </Box>
+                  </Box>
+                </Box>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </CardBody>
+      </Card>
+    </Container>
   );
 };
 

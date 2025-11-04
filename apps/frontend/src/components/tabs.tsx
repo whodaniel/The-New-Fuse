@@ -13,26 +13,26 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TabsContent = exports.TabsTrigger = exports.TabsList = exports.Tabs = void 0;
 import React from 'react';
-import TabsPrimitive from '@radix-ui/react-tabs';
+
 import { cn } from '../../lib/utils';
-const Tabs = TabsPrimitive.Root;
+const Tabs = Tabs.Root;
 exports.Tabs = Tabs;
 const TabsList = React.forwardRef((props, ref) => {
     var { className } = props, restProps = __rest(props, ["className"]);
-    return (<TabsPrimitive.List ref={ref} className={(0, utils_1.cn)("inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground", className)} {...restProps}/>);
+    return (<Tabs.List ref={ref} className={(0, utils_1.cn)("inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground", className)} {...restProps}/>);
 });
 exports.TabsList = TabsList;
-TabsList.displayName = TabsPrimitive.List.displayName;
+TabsList.displayName = Tabs.List.displayName;
 const TabsTrigger = React.forwardRef((props, ref) => {
     var { className } = props, restProps = __rest(props, ["className"]);
-    return (<TabsPrimitive.Trigger ref={ref} className={(0, utils_1.cn)("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm", className)} {...restProps}/>);
+    return (<Tabs.Trigger ref={ref} className={(0, utils_1.cn)("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm", className)} {...restProps}/>);
 });
 exports.TabsTrigger = TabsTrigger;
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
+TabsTrigger.displayName = Tabs.Trigger.displayName;
 const TabsContent = React.forwardRef((props, ref) => {
     var { className } = props, restProps = __rest(props, ["className"]);
-    return (<TabsPrimitive.Content ref={ref} className={(0, utils_1.cn)("mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className)} {...restProps}/>);
+    return (<Tabs.Content ref={ref} className={(0, utils_1.cn)("mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className)} {...restProps}/>);
 });
 exports.TabsContent = TabsContent;
-TabsContent.displayName = TabsPrimitive.Content.displayName;
+TabsContent.displayName = Tabs.Content.displayName;
 export {};

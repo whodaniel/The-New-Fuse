@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Root as ScrollArea } from '@radix-ui/react-scroll-area';
+
 import AgentMessage from './agent-message';
 import { webSocketService } from '../services/websocket';
 

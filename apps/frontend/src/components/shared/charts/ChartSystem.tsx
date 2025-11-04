@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartSystem = void 0;
 import react_1 from 'react';
 import recharts_1 from 'recharts';
-import material_1 from '@mui/material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 const ChartSystem = ({ title, description, series, config, height = 400, width = '100%', sx, className }) => {
     const theme = (0, material_1.useTheme)();
     const defaultColors = [
@@ -84,7 +84,7 @@ const ChartSystem = ({ title, description, series, config, height = 400, width =
     const renderHeatmap = () => {
         const maxValue = Math.max(...transformedData.map(d => Number(d[config.yAxisKey || ''])));
         const minValue = Math.min(...transformedData.map(d => Number(d[config.yAxisKey || ''])));
-        return (<material_1.Box sx={{
+        return (<Box style={{
                 display: 'grid',
                 gridTemplateColumns: `repeat(${Math.ceil(Math.sqrt(transformedData.length))}, 1fr)`,
                 gap: 1,
@@ -117,7 +117,7 @@ const ChartSystem = ({ title, description, series, config, height = 400, width =
         radar: renderRadarChart,
         heatmap: renderHeatmap
     };
-    return (<material_1.Paper sx={Object.assign({ p: 2, height: height, width: width }, sx)} className={className}>
+    return (<Box sx={Object.assign({ p: 2, height: height, width: width }, sx)} className={className}>
             {title && (<material_1.Typography variant="h6" gutterBottom>
                     {title}
                 </material_1.Typography>)}
@@ -127,7 +127,7 @@ const ChartSystem = ({ title, description, series, config, height = 400, width =
             <recharts_1.ResponsiveContainer width="100%" height={title || description ? '90%' : '100%'}>
                 {chartMap[config.type]()}
             </recharts_1.ResponsiveContainer>
-        </material_1.Paper>);
+        </Box>);
 };
 exports.ChartSystem = ChartSystem;
 export {};

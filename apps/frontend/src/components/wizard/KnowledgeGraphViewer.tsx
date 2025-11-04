@@ -3,8 +3,8 @@ exports.KnowledgeGraphViewer = KnowledgeGraphViewer;
 import react_1 from 'react';
 import reactflow_1 from 'reactflow';
 require("reactflow/dist/style.css");
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 import WizardProvider_1 from './WizardProvider';
 const nodeTypes = {
     concept: ConceptNode,
@@ -108,7 +108,7 @@ function KnowledgeGraphViewer() {
                 <material_1.CircularProgress />
             </material_1.Box>);
     }
-    return (<material_1.Paper elevation={3} sx={{ height: '600px', position: 'relative' }}>
+    return (<Box elevation={3} sx={{ height: '600px', position: 'relative' }}>
             <material_1.Box position="absolute" top={16} left={16} zIndex={5} display="flex" gap={2}>
                 <material_1.TextField size="small" placeholder="Search nodes..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyUp={(e) => e.key === 'Enter' && handleSearch()}/>
                 <material_1.Button variant="contained" size="small" startIcon={<icons_material_1.Add />} onClick={handleAddNode}>
@@ -127,7 +127,7 @@ function KnowledgeGraphViewer() {
                     ? Object.assign(Object.assign({}, n), { data: Object.assign(Object.assign({}, n.data), updatedData) }) : n));
                 setSelectedNode(null);
             }}/>)}
-        </material_1.Paper>);
+        </Box>);
 }
 function ConceptNode({ data }) {
     return (<div className="concept-node">
@@ -153,7 +153,7 @@ function EntityNode({ data }) {
 }
 function NodeDetailsPanel({ node, onClose, onUpdate }) {
     const [editData, setEditData] = (0, react_1.useState)(node.data);
-    return (<material_1.Paper sx={{
+    return (<Box sx={{
             position: 'absolute',
             right: 16,
             top: 16,
@@ -180,6 +180,6 @@ function NodeDetailsPanel({ node, onClose, onUpdate }) {
                     Update
                 </material_1.Button>
             </material_1.Box>
-        </material_1.Paper>);
+        </Box>);
 }
 export {};

@@ -19,9 +19,9 @@ import remark_gfm_1 from 'remark-gfm';
 import remark_math_1 from 'remark-math';
 import rehype_katex_1 from 'rehype-katex';
 require("katex/dist/katex.min.css");
-import material_1 from '@mui/material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 const MarkdownRenderer = ({ content }) => {
-    return (<material_1.Box sx={{ '& > *': { mb: 2 } }}>
+    return (<Box style={{ '& > *': { mb: 2 } }}>
       <react_markdown_1.default remarkPlugins={[remark_gfm_1.default, remark_math_1.default]} rehypePlugins={[rehype_katex_1.default]} components={{
             code(_a) {
                 var { node, inline, className, children } = _a, props = __rest(_a, ["node", "inline", "className", "children"]);

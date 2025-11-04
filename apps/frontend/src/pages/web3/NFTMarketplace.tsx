@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import {
   Box,
   Flex,
@@ -42,6 +43,13 @@ import {
   FiHeart
 } from 'react-icons/fi';
 
+// Type declarations for Web3
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 interface NFTItem {
   id: string;
   name: string;
@@ -75,77 +83,45 @@ const NFTMarketplace: React.FC = () => {
   const loadNFTs = async () => {
     try {
       setLoading(true);
-      // Simulate API call - replace with actual blockchain integration
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const mockNFTs: NFTItem[] = [
-        {
-          id: '1',
-          name: 'AI Agent #001',
-          description: 'First generation autonomous AI agent with advanced learning capabilities',
-          image: 'https://via.placeholder.com/300x300/4F46E5/FFFFFF?text=AI+Agent+1',
-          price: 2.5,
-          currency: 'ETH',
-          creator: '0x1234...5678',
-          owner: '0x8765...4321',
-          category: 'AI Agents',
-          likes: 45,
-          views: 234,
-          isForSale: true,
-          rarity: 'Epic',
-          blockchain: 'Ethereum'
+      // Real blockchain integration using Web3.js or ethers.js
+      // This would typically connect to your API or directly to blockchain
+      const response = await fetch('/api/agents/nft/marketplace', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          id: '2',
-          name: 'Workflow Blueprint',
-          description: 'Rare workflow automation blueprint for enterprise deployment',
-          image: 'https://via.placeholder.com/300x300/10B981/FFFFFF?text=Workflow',
-          price: 1.8,
-          currency: 'ETH',
-          creator: '0x2345...6789',
-          owner: '0x9876...5432',
-          category: 'Workflows',
-          likes: 67,
-          views: 456,
-          isForSale: true,
-          rarity: 'Rare',
-          blockchain: 'Polygon'
-        },
-        {
-          id: '3',
-          name: 'TNF Genesis Token',
-          description: 'Limited edition TNF platform genesis token with exclusive benefits',
-          image: 'https://via.placeholder.com/300x300/F59E0B/FFFFFF?text=TNF+Genesis',
-          price: 100,
-          currency: 'TNF',
-          creator: '0x3456...7890',
-          owner: '0x0987...6543',
-          category: 'Platform',
-          likes: 123,
-          views: 789,
-          isForSale: true,
-          rarity: 'Legendary',
-          blockchain: 'TNF-Chain'
-        },
-        {
-          id: '4',
-          name: 'Data Pipeline Schema',
-          description: 'Optimized data processing pipeline with ML integration',
-          image: 'https://via.placeholder.com/300x300/8B5CF6/FFFFFF?text=Data+Pipeline',
-          price: 0.9,
-          currency: 'ETH',
-          creator: '0x4567...8901',
-          owner: '0x1098...7654',
-          category: 'Data',
-          likes: 34,
-          views: 167,
-          isForSale: true,
-          rarity: 'Common',
-          blockchain: 'Polygon'
-        }
-      ];
+      });
       
-      setNfts(mockNFTs);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Transform blockchain data to frontend format
+        const nftItems: NFTItem[] = data.data.map((nft: any) => ({
+          id: nft.id || nft.tokenId.toString(),
+          name: nft.name || `Agent NFT #${nft.tokenId}`,
+          description: nft.description || 'AI Agent NFT from The New Fuse platform',
+          image: nft.image || nft.metadata?.image || 'https://via.placeholder.com/300x300/4F46E5/FFFFFF?text=AI+Agent',
+          price: parseFloat(ethers.utils.formatEther(nft.price || '0')),
+          currency: 'ETH',
+          creator: nft.creator || nft.owner,
+          owner: nft.currentOwner || nft.owner,
+          category: nft.category || 'AI Agents',
+          likes: nft.likes || 0,
+          views: nft.views || 0,
+          isForSale: nft.isForSale || false,
+          rarity: nft.rarity || 'Common',
+          blockchain: nft.blockchain || 'Ethereum'
+        }));
+        
+        setNfts(nftItems);
+      } else {
+        throw new Error(data.error || 'Failed to load NFTs');
+      }
     } catch (error) {
       toast({
         title: 'Error loading NFTs',
@@ -164,15 +140,102 @@ const NFTMarketplace: React.FC = () => {
     onOpen();
   };
 
-  const purchaseNFT = (nft: NFTItem) => {
-    toast({
-      title: 'Purchase Initiated',
-      description: `Initiating purchase of ${nft.name} for ${nft.price} ${nft.currency}`,
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    });
-    onClose();
+  const purchaseNFT = async (nft: NFTItem) => {
+    try {
+      if (!window.ethereum) {
+        throw new Error('No Ethereum wallet detected. Please install MetaMask.');
+      }
+
+      toast({
+        title: 'Connecting to Wallet',
+        description: 'Please approve the connection in your wallet',
+        status: 'info',
+        duration: 2000,
+        isClosable: true,
+      });
+
+      // Request wallet connection
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      
+      // Initialize provider
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      
+      toast({
+        title: 'Processing Purchase',
+        description: `Initiating purchase of ${nft.name} for ${nft.price} ${nft.currency}`,
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Call backend API to initiate purchase
+      const response = await fetch('/api/agents/nft/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify({
+          nftId: nft.id,
+          price: ethers.utils.parseEther(nft.price.toString()),
+          buyerAddress: await signer.getAddress()
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Purchase failed');
+      }
+
+      const purchaseData = await response.json();
+      
+      if (purchaseData.txHash) {
+        // Sign and send transaction
+        const tx = await signer.sendTransaction({
+          to: purchaseData.to,
+          value: purchaseData.value,
+          data: purchaseData.data,
+          gasLimit: purchaseData.gasLimit,
+          maxFeePerGas: purchaseData.maxFeePerGas,
+          maxPriorityFeePerGas: purchaseData.maxPriorityFeePerGas,
+        });
+
+        toast({
+          title: 'Transaction Sent',
+          description: `Transaction hash: ${tx.hash}`,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        // Wait for confirmation
+        const receipt = await tx.wait();
+        
+        if (receipt.status === 1) {
+          toast({
+            title: 'Purchase Successful!',
+            description: `Successfully purchased ${nft.name}`,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+        } else {
+          throw new Error('Transaction failed');
+        }
+      }
+
+      onClose();
+    } catch (error) {
+      console.error('Purchase error:', error);
+      toast({
+        title: 'Purchase Failed',
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   const getRarityColor = (rarity: string) => {

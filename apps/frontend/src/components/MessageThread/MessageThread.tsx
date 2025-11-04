@@ -4,7 +4,7 @@ exports.MessageThread = void 0;
 import react_1 from 'react';
 import { format } from 'date-fns';
 import ui_1 from '../../shared/components/ui';
-import icons_material_1 from '@mui/icons-material';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 import MessageReactions_1 from '../MessageReactions/MessageReactions';
 import MarkdownRenderer_1 from '../MarkdownRenderer';
 const MessageThread = ({ parentMessage, replies, onReply, onClose, currentUserId }) => {

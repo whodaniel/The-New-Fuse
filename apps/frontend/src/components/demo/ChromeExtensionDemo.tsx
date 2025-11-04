@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  Card,
-  CardContent,
-  Fade,
-} from "@mui/material";
+import { Card, CardBody, Box, Text, Button, Fade } from '@chakra-ui/react';
+import { Extension, Close } from 'lucide-react';
+
 import { PopupContainer } from "../ui/popup";
-import ExtensionIcon from "@mui/icons-material/Extension";
-import CloseIcon from "@mui/icons-material/Close";
 
 export interface ChromeExtensionDemoProps {
   /** Whether to show the demo by default */
@@ -28,24 +21,24 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
 
   if (!isOpen) {
     return (
-      <Card sx={{ m: 2, maxWidth: 400 }}>
-        <CardContent>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-            <ExtensionIcon color="primary" />
-            <Typography variant="h6">Chrome Extension UI Demo</Typography>
+      <Card m={2} maxW="400px">
+        <CardBody>
+          <Box display="flex" alignItems="center" gap={2} mb={2}>
+            <Extension color="blue.500" />
+            <Text fontSize="xl" fontWeight="bold">Chrome Extension UI Demo</Text>
           </Box>
-          <Typography variant="body2" color="text.secondary" paragraph>
+          <Text color="gray.600" mb={4}>
             Experience the recovered Chrome extension interface integrated into
             the main application.
-          </Typography>
+          </Text>
           <Button
-            variant="contained"
+            colorScheme="blue"
             onClick={() => setIsOpen(true)}
-            startIcon={<ExtensionIcon />}
+            leftIcon={<Extension />}
           >
             Open Extension Interface
           </Button>
-        </CardContent>
+        </CardBody>
       </Card>
     );
   }
@@ -53,37 +46,31 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
   return (
     <Fade in={isOpen}>
       <Box
-        sx={{
-          position: "fixed",
-          top: 20,
-          right: 20,
-          zIndex: 9999,
-          boxShadow: 8,
-          borderRadius: 2,
-          overflow: "hidden",
-          backgroundColor: "background.paper",
-        }}
+        position="fixed"
+        top="20px"
+        right="20px"
+        zIndex="9999"
+        boxShadow="2xl"
+        borderRadius="lg"
+        overflow="hidden"
+        bg="white"
       >
         {/* Close Button */}
         <Box
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            zIndex: 10000,
-          }}
+          position="absolute"
+          top="8px"
+          right="8px"
+          zIndex="10000"
         >
           <Button
-            size="small"
+            size="sm"
             onClick={() => setIsOpen(false)}
-            sx={{
-              minWidth: "auto",
-              p: 0.5,
-              bgcolor: "rgba(0,0,0,0.1)",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.2)" },
-            }}
+            minW="auto"
+            p="2px"
+            bg="rgba(0,0,0,0.1)"
+            _hover={{ bg: "rgba(0,0,0,0.2)" }}
           >
-            <CloseIcon fontSize="small" />
+            <Close size="16px" />
           </Button>
         </Box>
 
@@ -92,9 +79,9 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
           isMainApp={true}
           initialDarkMode={isDarkMode}
           onThemeChange={handleThemeChange}
-          containerSx={{
-            width: 420,
-            height: 620,
+          containerStyle={{
+            width: "420px",
+            height: "620px",
             maxHeight: "90vh",
           }}
         />

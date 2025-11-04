@@ -2,8 +2,8 @@
 export {}
 exports.WizardMonitoring = WizardMonitoring;
 import react_1 from 'react';
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 import WizardWebSocket_1 from './WizardWebSocket';
 import WizardProvider_1 from './WizardProvider';
 function WizardMonitoring(): any {
@@ -68,8 +68,8 @@ function WizardMonitoring(): any {
             return `${ms}ms`;
         return `${(ms / 1000).toFixed(2)}s`;
     };
-    const renderMetrics = (): any => (<material_1.Grid container spacing={2}>
-            <material_1.Grid item xs={12} md={3}>
+    const renderMetrics = (): any => (<SimpleGrid columns={2}>
+            <GridItem colSpan={12} md={3}>
                 <material_1.Card>
                     <material_1.CardContent>
                         <material_1.Box display="flex" alignItems="center" gap={1}>
@@ -84,7 +84,7 @@ function WizardMonitoring(): any {
                 </material_1.Card>
             </material_1.Grid>
 
-            <material_1.Grid item xs={12} md={3}>
+            <GridItem colSpan={12} md={3}>
                 <material_1.Card>
                     <material_1.CardContent>
                         <material_1.Box display="flex" alignItems="center" gap={1}>
@@ -99,7 +99,7 @@ function WizardMonitoring(): any {
                 </material_1.Card>
             </material_1.Grid>
 
-            <material_1.Grid item xs={12} md={3}>
+            <GridItem colSpan={12} md={3}>
                 <material_1.Card>
                     <material_1.CardContent>
                         <material_1.Box display="flex" alignItems="center" gap={1}>
@@ -114,7 +114,7 @@ function WizardMonitoring(): any {
                 </material_1.Card>
             </material_1.Grid>
 
-            <material_1.Grid item xs={12} md={3}>
+            <GridItem colSpan={12} md={3}>
                 <material_1.Card>
                     <material_1.CardContent>
                         <material_1.Box display="flex" alignItems="center" gap={1}>
@@ -177,14 +177,14 @@ function WizardMonitoring(): any {
                 </material_1.Tooltip>
             </material_1.Box>
 
-            <material_1.Grid container spacing={2}>
-                <material_1.Grid item xs={12}>
+            <SimpleGrid columns={2}>
+                <GridItem colSpan={12}>
                     {renderMetrics()}
                 </material_1.Grid>
-                <material_1.Grid item xs={12} md={6}>
+                <GridItem colSpan={12} md={6}>
                     {renderAlerts()}
                 </material_1.Grid>
-                <material_1.Grid item xs={12} md={6}>
+                <GridItem colSpan={12} md={6}>
                     {renderPerformanceLogs()}
                 </material_1.Grid>
             </material_1.Grid>
@@ -192,14 +192,14 @@ function WizardMonitoring(): any {
             <material_1.Dialog open={showSettings} onClose={() => setShowSettings(false)}>
                 <material_1.DialogTitle>Monitoring Settings</material_1.DialogTitle>
                 <material_1.DialogContent>
-                    <material_1.Grid container spacing={2}>
-                        <material_1.Grid item xs={12}>
+                    <SimpleGrid columns={2}>
+                        <GridItem colSpan={12}>
                             <material_1.TextField fullWidth label="Alert Threshold (%)" type="number" value={settings.alertThreshold} onChange={(e) => setSettings((prev: any) => (Object.assign(Object.assign({}, prev), { alertThreshold: Number(e.target.value) })))}/>
                         </material_1.Grid>
-                        <material_1.Grid item xs={12}>
+                        <GridItem colSpan={12}>
                             <material_1.TextField fullWidth label="Log Retention (days)" type="number" value={settings.logRetentionDays} onChange={(e) => setSettings((prev: any) => (Object.assign(Object.assign({}, prev), { logRetentionDays: Number(e.target.value) })))}/>
                         </material_1.Grid>
-                        <material_1.Grid item xs={12}>
+                        <GridItem colSpan={12}>
                             <material_1.TextField fullWidth label="Metrics Interval (ms)" type="number" value={settings.metricsInterval} onChange={(e) => setSettings((prev: any) => (Object.assign(Object.assign({}, prev), { metricsInterval: Number(e.target.value) })))}/>
                         </material_1.Grid>
                     </material_1.Grid>

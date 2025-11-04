@@ -4,14 +4,15 @@
 
 import { Request, Response } from 'express';
 import { Logger } from '@tnf/relay-core';
+import { PrismaClient, DatabaseWhere } from '../../../shared/types';
 
 export class WorkflowController {
   private logger: Logger;
-  private prisma: any;
+  private prisma: PrismaClient;
 
   constructor(
     logger: Logger,
-    prisma: any
+    prisma: PrismaClient
   ) {
     this.logger = logger;
     this.prisma = prisma;
@@ -23,7 +24,7 @@ export class WorkflowController {
       const { page = 1, limit = 20, status, search } = req.query;
       const skip = (Number(page) - 1) * Number(limit);
 
-      const where: any = {};
+      const where: DatabaseWhere = {};
       
       if (status) {
         where.status = status;
@@ -159,7 +160,7 @@ export class WorkflowController {
 
       this.logger.info(`Updated workflow: ${workflow.name} (${workflow.id})`);
       res.json(workflow);
-    } catch (error: any) {
+    } catch (error: Error) {
       this.logger.error(`Failed to update workflow: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Workflow not found' });
@@ -180,7 +181,7 @@ export class WorkflowController {
 
       this.logger.info(`Deleted workflow: ${id}`);
       res.status(204).send();
-    } catch (error: any) {
+    } catch (error: Error) {
       this.logger.error(`Failed to delete workflow: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Workflow not found' });
@@ -230,7 +231,7 @@ export class WorkflowController {
 
       this.logger.info(`Started execution: ${execution.id} for workflow: ${workflowId}`);
       res.status(201).json(execution);
-    } catch (error: any) {
+    } catch (error: Error) {
       this.logger.error(`Failed to execute workflow: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Workflow not found' });
@@ -275,7 +276,7 @@ export class WorkflowController {
       const { page = 1, limit = 20, status } = req.query;
       const skip = (Number(page) - 1) * Number(limit);
 
-      const where: any = {};
+      const where: DatabaseWhere = {};
       
       if (workflowId) {
         where.workflowId = workflowId;
@@ -330,7 +331,7 @@ export class WorkflowController {
 
       this.logger.info(`Cancelled execution: ${executionId}`);
       res.json(execution);
-    } catch (error: any) {
+    } catch (error: Error) {
       this.logger.error(`Failed to cancel execution: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Execution not found' });
@@ -354,7 +355,7 @@ export class WorkflowController {
 
       this.logger.info(`Paused execution: ${executionId}`);
       res.json(execution);
-    } catch (error: any) {
+    } catch (error: Error) {
       this.logger.error(`Failed to pause execution: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Execution not found' });
@@ -378,7 +379,7 @@ export class WorkflowController {
 
       this.logger.info(`Resumed execution: ${executionId}`);
       res.json(execution);
-    } catch (error: any) {
+    } catch (error: Error) {
       this.logger.error(`Failed to resume execution: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Execution not found' });
@@ -489,7 +490,7 @@ export class WorkflowController {
 
       this.logger.info(`Created workflow from template: ${workflow.name} (${workflow.id})`);
       res.status(201).json(workflow);
-    } catch (error: any) {
+    } catch (error: Error) {
       this.logger.error(`Failed to create workflow from template: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Template not found' });

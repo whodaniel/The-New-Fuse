@@ -1,31 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Alert,
-  Grid,
-  Card,
-  CardContent,
-  IconButton,
-  Tooltip,
-  Switch,
-  FormControlLabel,
-  Chip,
-  Divider,
-} from "@mui/material";
-import {
-  Send as SendIcon,
-  Visibility as VisibilityIcon,
-  Code as CodeIcon,
-  TouchApp as TouchAppIcon,
-  ContentCopy as ContentCopyIcon,
-  Clear as ClearIcon,
-  PlayArrow as PlayArrowIcon,
-  Stop as StopIcon,
-} from "@mui/icons-material";
+
+
 
 interface WebIntegrationPanelProps {
   isMainApp?: boolean;
@@ -251,13 +226,13 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
 
       {/* Selectors Configuration */}
       <Card sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
+        <CardBody>
+          <Text variant="h6" gutterBottom>
             Page Selectors
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
+          </Text>
+          <SimpleGrid container columns={2}>
+            <SimpleGrid item xs={12}>
+              <Input
                 fullWidth
                 label="Chat Input Selector"
                 placeholder="e.g., #chat-input, .message-input"
@@ -270,9 +245,9 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                   ),
                 }}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
+            </SimpleGrid>
+            <SimpleGrid item xs={12}>
+              <Input
                 fullWidth
                 label="Chat Output Selector"
                 placeholder="e.g., .messages, #chat-output"
@@ -285,9 +260,9 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                   ),
                 }}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
+            </SimpleGrid>
+            <SimpleGrid item xs={12}>
+              <Input
                 fullWidth
                 label="Send Button Selector"
                 placeholder="e.g., #send-btn, .send-button"
@@ -300,18 +275,18 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                   ),
                 }}
               />
-            </Grid>
-          </Grid>
-        </CardContent>
+            </SimpleGrid>
+          </SimpleGrid>
+        </CardBody>
       </Card>
 
       {/* Send to Page */}
       <Card sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
+        <CardBody>
+          <Text variant="h6" gutterBottom>
             Send to Page
-          </Typography>
-          <TextField
+          </Text>
+          <Input
             fullWidth
             multiline
             rows={3}
@@ -339,12 +314,12 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
               Click Send Button
             </Button>
           </Box>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Capture Output */}
       <Card sx={{ mb: 2 }}>
-        <CardContent>
+        <CardBody>
           <Box
             sx={{
               display: "flex",
@@ -353,9 +328,9 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
               mb: 2,
             }}
           >
-            <Typography variant="h6">Captured Output</Typography>
+            <Text variant="h6">Captured Output</Text>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <FormControlLabel
+              <FormLabel
                 control={
                   <Switch
                     checked={autoCapture}
@@ -401,7 +376,7 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
             </Box>
           </Box>
 
-          <Paper
+          <Box
             variant="outlined"
             sx={{
               p: 2,
@@ -414,7 +389,7 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
             }}
           >
             {capturedOutput ? (
-              <Typography
+              <Text
                 variant="body2"
                 sx={{
                   whiteSpace: "pre-wrap",
@@ -423,45 +398,45 @@ const WebIntegrationPanel: React.FC<WebIntegrationPanelProps> = ({
                 }}
               >
                 {capturedOutput}
-              </Typography>
+              </Text>
             ) : (
-              <Typography
+              <Text
                 variant="body2"
                 color="text.secondary"
                 sx={{ fontStyle: "italic" }}
               >
                 No output captured yet. Click "Capture Now" or enable
                 auto-capture.
-              </Typography>
+              </Text>
             )}
-          </Paper>
-        </CardContent>
+          </Box>
+        </CardBody>
       </Card>
 
       {/* Monitoring Status */}
       <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
+        <CardBody>
+          <Text variant="h6" gutterBottom>
             Monitoring Status
-          </Typography>
+          </Text>
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            <Chip
+            <Tag
               label={isMonitoring ? "Monitoring Active" : "Monitoring Inactive"}
               color={isMonitoring ? "success" : "default"}
               variant="outlined"
             />
-            <Chip
+            <Tag
               label={autoCapture ? "Auto-Capture ON" : "Auto-Capture OFF"}
               color={autoCapture ? "primary" : "default"}
               variant="outlined"
             />
-            <Chip
+            <Tag
               label={`Page: ${isMainApp ? "Main App" : "Extension"}`}
               color="info"
               variant="outlined"
             />
           </Box>
-        </CardContent>
+        </CardBody>
       </Card>
     </Box>
   );

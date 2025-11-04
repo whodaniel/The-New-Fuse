@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import ui_1 from '../../shared/components/ui';
-import icons_material_1 from '@mui/icons-material';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 const VideoChat = () => {
     const videoRef = (0, react_1.useRef)(null);
     const [stream, setStream] = react_1.default.useState(null);

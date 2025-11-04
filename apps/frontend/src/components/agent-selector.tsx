@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as ScrollArea from '@radix-ui/react-scroll-area';
+
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';

@@ -10,7 +10,7 @@ const __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import * as React from 'react';
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+
 import { Check, Minus } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/utils/cn';

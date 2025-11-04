@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Web3authService } from '../web3auth/web3auth.service';
 import { PrismaService } from '../services/prisma.service';
 import { SmartAccountService } from '../smart-accounts/smart-account.service';
-import { createWalletClient, http, parseEther, formatEther } from 'viem';
+import { createWalletClient, http, parseEther, formatEther, parseAbi, encodeFunctionData, getAddress } from 'viem';
 import { mainnet } from 'viem/chains';
 
 interface ComplianceCheckResult {
@@ -190,18 +190,103 @@ export class TransactionsService {
   }
 
   private encodeExecuteCall(target: string, value: bigint, data: string): string {
-    // Mock implementation - replace with actual ABI encoding
-    return '0x' + Math.random().toString(16).substr(2, 64);
+    // Encode the execute call data for Smart Account contract
+    try {
+      const executeAbi = parseAbi([
+        'function execute(address dest, uint256 value, bytes calldata func) external'
+      ]);
+      
+      return encodeFunctionData({
+        abi: executeAbi,
+        functionName: 'execute',
+        args: [target as `0x${string}`, value, data as `0x${string}`]
+      });
+    } catch (error) {
+      this.logger.error('Failed to encode execute call:', error);
+      throw new Error('Failed to encode transaction data');
+    }
   }
 
   private async getNonce(smartAccountAddress: string): Promise<number> {
-    // Mock implementation - replace with actual EntryPoint query
-    return Math.floor(Math.random() * 1000);
+    try {
+      // Get nonce from EntryPoint contract for ERC-4337
+      const entryPointAddress = process.env.ENTRY_POINT_ADDRESS;
+      if (!entryPointAddress) {
+        throw new Error('EntryPoint address not configured');
+      }
+
+      // Create public client for reading
+      const publicClient = createPublicClient({
+        chain: mainnet,
+        transport: http()
+      });
+
+      const entryPointAbi = parseAbi([
+        'function getNonce(address sender, uint192 key) external view returns (uint256 nonce)'
+      ]);
+
+      const nonce = await publicClient.readContract({
+        address: entryPointAddress as `0x${string}`,
+        abi: entryPointAbi,
+        functionName: 'getNonce',
+        args: [
+          smartAccountAddress as `0x${string}`,
+          '0x0000000000000000000000000000000000000000000000000000000000000000' // key
+        ]
+      });
+
+      return Number(nonce);
+    } catch (error) {
+      this.logger.error('Failed to get nonce:', error);
+      throw new Error('Failed to get transaction nonce');
+    }
   }
 
   private getUserOperationHash(userOp: any): string {
-    // Mock implementation - replace with actual UserOperation hash calculation
-    return '0x' + Math.random().toString(16).substr(2, 64);
+    try {
+      // Calculate UserOperation hash for ERC-4337
+      // This would typically involve keccak hashing the UserOperation struct
+      // For now, return a proper hash structure
+      
+      const userOpType = {
+        sender: 'address',
+        nonce: 'uint256',
+        initCode: 'bytes',
+        callData: 'bytes',
+        callGasLimit: 'uint256',
+        verificationGasLimit: 'uint256',
+        preVerificationGas: 'uint256',
+        maxFeePerGas: 'uint256',
+        maxPriorityFeePerGas: 'uint256',
+        paymaster: 'address',
+        paymasterData: 'bytes',
+        signature: 'bytes'
+      };
+
+      // This is a simplified implementation
+      // In production, you'd use proper EIP-712 typed data signing
+      const userOpData = JSON.stringify({
+        sender: userOp.sender,
+        nonce: userOp.nonce,
+        initCode: userOp.initCode || '0x',
+        callData: userOp.callData,
+        callGasLimit: userOp.callGasLimit,
+        verificationGasLimit: userOp.verificationGasLimit,
+        preVerificationGas: userOp.preVerificationGas,
+        maxFeePerGas: userOp.maxFeePerGas,
+        maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
+        paymaster: userOp.paymaster || '0x0000000000000000000000000000000000000000',
+        paymasterData: userOp.paymasterData || '0x',
+        signature: userOp.signature || '0x'
+      });
+
+      // Create a proper hash (simplified)
+      const { keccak256 } = require('viem');
+      return keccak256(userOpData as `0x${string}`);
+    } catch (error) {
+      this.logger.error('Failed to calculate UserOperation hash:', error);
+      throw new Error('Failed to calculate operation hash');
+    }
   }
 
   async executeTransaction(
@@ -426,19 +511,62 @@ export class TransactionsService {
 
   private async performComplianceCheck(fromAddress: string, toAddress: string): Promise<ComplianceCheckResult> {
     try {
-      // Placeholder for compliance API integration
-      // This would integrate with services like Sumsub, Castellum.AI, etc.
-      
       this.logger.log(`Performing compliance check for transaction from ${fromAddress} to ${toAddress}`);
       
-      // Mock compliance check - replace with actual API call
-      const mockRiskScore = Math.random() * 100;
-      const isHighRisk = mockRiskScore > 80;
+      // Create public client for blockchain queries
+      const publicClient = createPublicClient({
+        chain: mainnet,
+        transport: http()
+      });
+
+      let riskScore = 0;
+      const riskFactors: string[] = [];
+
+      // Check if addresses are valid
+      if (!this.isValidAddress(fromAddress)) {
+        riskScore += 50;
+        riskFactors.push('Invalid sender address');
+      }
+
+      if (!this.isValidAddress(toAddress)) {
+        riskScore += 50;
+        riskFactors.push('Invalid recipient address');
+      }
+
+      // Check if addresses are on blacklist (if available)
+      const blacklist = process.env.ADDRESS_BLACKLIST?.split(',') || [];
+      if (blacklist.some(addr => addr.toLowerCase() === toAddress.toLowerCase())) {
+        riskScore += 80;
+        riskFactors.push('Recipient on blacklist');
+      }
+
+      // Check transaction patterns (simplified)
+      const recentTransactions = await this.getRecentTransactions(fromAddress);
+      if (recentTransactions.length > 50) {
+        riskScore += 20;
+        riskFactors.push('High transaction frequency');
+      }
+
+      // Check for suspicious contract interactions
+      const codeAtAddress = await publicClient.getBytecode({
+        address: toAddress as `0x${string}`
+      });
+      
+      if (codeAtAddress && codeAtAddress !== '0x') {
+        // This is a contract, check if it's verified or suspicious
+        const contractRisk = await this.assessContractRisk(toAddress);
+        riskScore += contractRisk;
+        if (contractRisk > 30) {
+          riskFactors.push('Suspicious contract interaction');
+        }
+      }
+
+      const isHighRisk = riskScore > 70;
       
       return {
         isHighRisk,
-        riskScore: mockRiskScore,
-        reason: isHighRisk ? 'High-risk address detected' : undefined
+        riskScore,
+        reason: isHighRisk ? riskFactors.join(', ') : undefined
       };
     } catch (error) {
       this.logger.error('Compliance check failed:', error);
@@ -448,6 +576,37 @@ export class TransactionsService {
         riskScore: 100,
         reason: 'Compliance service unavailable'
       };
+    }
+  }
+
+  private isValidAddress(address: string): boolean {
+    return /^0x[a-fA-F0-9]{40}$/.test(address);
+  }
+
+  private async getRecentTransactions(address: string): Promise<any[]> {
+    try {
+      // In a real implementation, you would query an indexer or API
+      // For now, return empty array as a placeholder
+      return [];
+    } catch (error) {
+      this.logger.error('Failed to get recent transactions:', error);
+      return [];
+    }
+  }
+
+  private async assessContractRisk(address: string): Promise<number> {
+    try {
+      // In a real implementation, you would:
+      // 1. Check contract verification status
+      // 2. Analyze contract code for suspicious patterns
+      // 3. Check contract age and activity
+      // 4. Query external risk APIs
+      
+      // For now, return a default low risk score
+      return 10;
+    } catch (error) {
+      this.logger.error('Failed to assess contract risk:', error);
+      return 30; // Medium risk on error
     }
   }
 

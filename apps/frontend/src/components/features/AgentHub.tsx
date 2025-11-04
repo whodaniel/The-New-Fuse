@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import components_1 from '../components';
-import material_1 from '@mui/material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 import store_1 from '../store';
 const AgentHub = () => {
     const { agents, selectedAgent, setSelectedAgent } = (0, store_1.default)();
@@ -11,10 +11,10 @@ const AgentHub = () => {
         setActiveTab(newValue);
     };
     return (<div className="p-6">
-      <material_1.Grid container spacing={3}>
+      <SimpleGrid columns={3}>
         
-        <material_1.Grid item xs={12} md={4}>
-          <material_1.Paper className="p-4">
+        <GridItem colSpan={12} md={4}>
+          <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">Available Agents</h2>
             <div className="space-y-2">
               {agents.map((agent) => (<div key={agent.id} className={`p-3 rounded cursor-pointer ${(selectedAgent === null || selectedAgent === void 0 ? void 0 : selectedAgent.id) === agent.id
@@ -26,18 +26,18 @@ const AgentHub = () => {
                   </div>
                 </div>))}
             </div>
-          </material_1.Paper>
+          </Box>
         </material_1.Grid>
 
-        <material_1.Grid item xs={12} md={8}>
-          <material_1.Paper className="p-4">
-            <material_1.Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-              <material_1.Tabs value={activeTab} onChange={handleTabChange}>
-                <material_1.Tab label="Details"/>
-                <material_1.Tab label="Personality"/>
-                <material_1.Tab label="Skills"/>
-                <material_1.Tab label="Training"/>
-              </material_1.Tabs>
+        <GridItem colSpan={12} md={8}>
+          <Box className="p-4">
+            <Box style={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+              <Tabs value={activeTab} onChange={handleTabChange}>
+                <Tab label="Details"/>
+                <Tab label="Personality"/>
+                <Tab label="Skills"/>
+                <Tab label="Training"/>
+              </Tabs>
             </material_1.Box>
 
             {activeTab === 0 && selectedAgent && (<components_1.AgentDetails agent={selectedAgent}/>)}
@@ -51,7 +51,7 @@ const AgentHub = () => {
                 </p>
                 <components_1.CreateAgent />
               </div>)}
-          </material_1.Paper>
+          </Box>
         </material_1.Grid>
       </material_1.Grid>
     </div>);

@@ -13,7 +13,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScrollBar = exports.ScrollArea = void 0;
 import React from 'react';
-import { Root as ScrollAreaPrimitive } from '@radix-ui/react-scroll-area';
+
 import { cn } from '../../lib/utils';
 const ScrollArea = React.forwardRef((props, ref) => {
     var { className, children } = props, restProps = __rest(props, ["className", "children"]);

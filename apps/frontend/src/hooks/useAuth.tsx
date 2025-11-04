@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { authHelpers } from '../lib/supabase';
 
 // Define user type
 export interface User {
@@ -58,67 +59,48 @@ const createAuthService = () => {
   return {
     getCurrentUser: async () => {
       try {
-        return await api.request('/api/auth/me');
-      } catch (error) {
-        // For demo purposes, return a mock user if API is not available
-        if (import.meta.env.DEV) {
-          console.warn('API not available, using demo user');
-          return { 
-            data: { 
-              id: '1', 
-              email: 'demo@thenewfuse.com', 
-              name: 'Demo User', 
-              role: 'admin' // Set to admin for demo
-            } 
-          };
+        // Use Supabase Auth to get current user
+        const user = await authHelpers.getCurrentUser();
+        if (!user) {
+          throw new Error('No authenticated user found');
         }
+        return { 
+          data: { 
+            id: user.id, 
+            email: user.email, 
+            name: user.user_metadata?.name || user.email, 
+            role: user.user_metadata?.role || 'user'
+          } 
+        };
+      } catch (error) {
         throw error;
       }
     },
     
     login: async (email: string, password: string) => {
       try {
-        return await api.request('/api/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({ email, password }),
-        });
-      } catch (error) {
-        // For demo purposes, allow any email with "user" for authentication
-        if (import.meta.env.DEV && email.includes('user')) {
-          console.warn('API not available, using demo authentication');
-          return { 
-            data: { 
-              token: 'demo-token-' + Date.now(), 
-              user: { 
-                id: '1', 
-                email, 
-                name: email.split('@')[0], 
-                role: email.includes('admin') ? 'admin' : 'user'
-              } 
-            } 
-          };
+        // Use Supabase Auth for authentication
+        const result = await authHelpers.signIn(email, password);
+        if (!result.success) {
+          throw new Error(result.error || 'Login failed');
         }
+        return { data: result.data };
+      } catch (error) {
+        // Remove mock authentication - no more demo bypass
         throw error;
       }
     },
     
     register: async (name: string, email: string, password: string) => {
       try {
-        return await api.request('/api/auth/register', {
-          method: 'POST',
-          body: JSON.stringify({ name, email, password }),
-        });
-      } catch (error) {
-        // For demo purposes, allow registration
-        if (import.meta.env.DEV) {
-          console.warn('API not available, using demo registration');
-          return { 
-            data: { 
-              token: 'demo-token-' + Date.now(), 
-              user: { id: '1', email, name, role: 'user' } 
-            } 
-          };
+        // Use Supabase Auth for registration
+        const result = await authHelpers.signUp(email, password, { name });
+        if (!result.success) {
+          throw new Error(result.error || 'Registration failed');
         }
+        return { data: result.data };
+      } catch (error) {
+        // Remove mock registration
         throw error;
       }
     },
@@ -166,19 +148,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Check if user is authenticated
   const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
-
     try {
+      // Use Supabase Auth for proper session validation
+      const isAuth = await authHelpers.isAuthenticated();
+      if (!isAuth) {
+        setIsLoading(false);
+        return;
+      }
+
       const { data } = await authService.getCurrentUser();
       setUser(data as User);
       setError(null); // Clear any previous errors
     } catch (error: any) {
       console.error('Auth check failed:', error);
-      localStorage.removeItem('auth_token');
       setUser(null);
       setError(error.message || 'Authentication failed');
     } finally {
@@ -192,9 +174,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const { data } = await authService.login(email, password);
-      if (data?.token) {
-        localStorage.setItem('auth_token', data.token);
-        setUser(data.user as User);
+      if (data?.session?.user) {
+        const supabaseUser = data.session.user;
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          name: supabaseUser.user_metadata?.name || supabaseUser.email!,
+          role: supabaseUser.user_metadata?.role || 'user'
+        } as User);
       } else {
         throw new Error('Invalid response from server');
       }
@@ -212,9 +199,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const { data } = await authService.register(name, email, password);
-      if (data?.token) {
-        localStorage.setItem('auth_token', data.token);
-        setUser(data.user as User);
+      if (data?.session?.user) {
+        const supabaseUser = data.session.user;
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          name: supabaseUser.user_metadata?.name || supabaseUser.email!,
+          role: supabaseUser.user_metadata?.role || 'user'
+        } as User);
       } else {
         throw new Error('Invalid response from server');
       }
@@ -234,7 +226,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('auth_token');
       setUser(null);
       setIsLoading(false);
     }
@@ -268,19 +259,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    // For development, return a default context to prevent crashes
-    if (import.meta.env.DEV) {
-      console.warn('useAuth called outside AuthProvider, returning default context');
-      return {
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        login: async () => {},
-        register: async () => {},
-        logout: async () => {},
-        error: null,
-      };
-    }
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

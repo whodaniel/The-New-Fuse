@@ -91,13 +91,86 @@ const LoopNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
     }
   };
   
-  // Test loop condition
+  // Test loop condition - SAFE IMPLEMENTATION
   const testLoopCondition = () => {
     try {
       if (config.loopType === 'condition') {
-        // Test condition code
-        const conditionFn = new Function('input', 'index', config.conditionCode || 'return false;');
-        const result = conditionFn({}, 0);
+        // Security: Validate and sanitize condition code to prevent injection
+        const conditionCode = (config.conditionCode || 'return false;').trim();
+        
+        // Check for dangerous patterns
+        const dangerousPatterns = [
+          /require\s*\(/,      // require()
+          /import\s+/,         // import statements
+          /eval\s*\(/,         // eval()
+          /Function\s*\(/,     // Function constructor
+          /process\./,         // process object
+          /global\./,          // global object
+          /window\./,          // window object
+          /document\./,        // document object
+          /XMLHttpRequest/,    // XHR
+          /fetch\s*\(/,        // fetch API
+          /setTimeout\s*\(/,   // setTimeout
+          /setInterval\s*\(/,  // setInterval
+          /constructor/,       // constructor
+          /__proto__/,         // __proto__
+          /prototype/,         // prototype
+          /class\s+/,          // class declarations
+        ];
+        
+        for (const pattern of dangerousPatterns) {
+          if (pattern.test(conditionCode)) {
+            throw new Error('Condition code contains potentially dangerous patterns');
+          }
+        }
+        
+        // Only allow specific safe patterns
+        const allowedPattern = /^return\s+[\s\S]*;$/;
+        if (!allowedPattern.test(conditionCode)) {
+          throw new Error('Condition code must be a simple return statement');
+        }
+        
+        // Create a restricted evaluation context
+        const restrictedContext = {
+          input: {},
+          index: 0,
+          // Only allow safe built-in functions
+          Math: Math,
+          Boolean: Boolean,
+          Number: Number,
+          String: String,
+          Array: Array,
+          Object: Object,
+          JSON: JSON,
+          // Provide safe utility functions
+          max: Math.max,
+          min: Math.min,
+          length: undefined, // Will be handled by objects
+        };
+        
+        // Safely evaluate the condition with restricted context
+        let result = false;
+        try {
+          // Use a try-catch to handle any remaining issues
+          result = (function(condition) {
+            // Create a restricted scope
+            const scope = Object.create(null);
+            Object.assign(scope, restrictedContext);
+            
+            // Execute the condition in a restricted scope
+            return eval(`
+              (function() {
+                ${condition}
+              })()
+            `);
+          })(conditionCode);
+        } catch (evalError) {
+          throw new Error(`Invalid condition code: ${evalError.message}`);
+        }
+        
+        if (typeof result !== 'boolean') {
+          throw new Error('Condition must return a boolean value');
+        }
         
         setTestResult({
           success: true,

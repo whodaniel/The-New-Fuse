@@ -3,7 +3,7 @@ export {}
 exports.WizardInterface = WizardInterface;
 import react_1 from 'react';
 import WizardProvider_1 from './WizardProvider';
-import material_1 from '@mui/material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
 const steps = [
     {
         label: 'Initialize',
@@ -60,7 +60,7 @@ function WizardInterface(): any {
             </material_1.Container>);
     }
     return (<material_1.Container maxWidth="lg">
-            <material_1.Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+            <Box elevation={3} sx={{ p: 3, mt: 3 }}>
                 <material_1.Typography variant="h4" gutterBottom>
                     FUSE AI Wizard
                 </material_1.Typography>
@@ -83,7 +83,7 @@ function WizardInterface(): any {
                     {state.isInitialized &&
             react_1.default.createElement(((_b = steps[state.currentStep]) === null || _b === void 0 ? void 0 : _b.component) || InitializeStep)}
                 </material_1.Box>
-            </material_1.Paper>
+            </Box>
         </material_1.Container>);
 }
 function InitializeStep(): any {

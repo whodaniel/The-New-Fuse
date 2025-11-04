@@ -1,8 +1,8 @@
 export {}
 exports.AgentConfig = AgentConfig;
 import react_1 from 'react';
-import material_1 from '@mui/material';
-import icons_material_1 from '@mui/icons-material';
+import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
 import agent_types_1 from '../../domain/core/wizards/types/agent_types';
 import WizardProvider_1 from './WizardProvider';
 function AgentConfig({ onUpdate }): any {
@@ -70,11 +70,11 @@ function AgentConfig({ onUpdate }): any {
                 <material_1.Typography variant="h6" gutterBottom>
                     Add New Agent
                 </material_1.Typography>
-                <material_1.Grid container spacing={2} alignItems="flex-end">
-                    <material_1.Grid item xs={4}>
+                <SimpleGrid columns={2} alignItems="flex-end">
+                    <GridItem colSpan={4}>
                         <material_1.TextField fullWidth label="Agent Name" value={newAgentName} onChange={(e) => setNewAgentName(e.target.value)}/>
                     </material_1.Grid>
-                    <material_1.Grid item xs={4}>
+                    <GridItem colSpan={4}>
                         <material_1.FormControl fullWidth>
                             <material_1.InputLabel>Agent Type</material_1.InputLabel>
                             <material_1.Select value={newAgentType} onChange={(e) => setNewAgentType(e.target.value)} label="Agent Type">
@@ -85,7 +85,7 @@ function AgentConfig({ onUpdate }): any {
                             </material_1.Select>
                         </material_1.FormControl>
                     </material_1.Grid>
-                    <material_1.Grid item xs={4}>
+                    <GridItem colSpan={4}>
                         <material_1.Button variant="contained" startIcon={<icons_material_1.Add />} onClick={handleAddAgent} disabled={!newAgentName || !newAgentType}>
                             Add Agent
                         </material_1.Button>
@@ -96,8 +96,8 @@ function AgentConfig({ onUpdate }): any {
             <material_1.Typography variant="h6" gutterBottom>
                 Active Agents
             </material_1.Typography>
-            <material_1.Grid container spacing={2}>
-                {Array.from(agents.values()).map((agent) => (<material_1.Grid item xs={12} md={6} key={agent.id}>
+            <SimpleGrid columns={2}>
+                {Array.from(agents.values()).map((agent) => (<GridItem colSpan={12} md={6} key={agent.id}>
                         <material_1.Card>
                             <material_1.CardContent>
                                 <material_1.Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -125,18 +125,18 @@ function AgentConfig({ onUpdate }): any {
                                     <material_1.Typography variant="subtitle2" gutterBottom>
                                         Performance Metrics
                                     </material_1.Typography>
-                                    <material_1.Grid container spacing={1}>
-                                        <material_1.Grid item xs={4}>
+                                    <SimpleGrid columns={1}>
+                                        <GridItem colSpan={4}>
                                             <material_1.Typography variant="body2" color="text.secondary">
                                                 CPU: {agent.performance.cpu_usage}%
                                             </material_1.Typography>
                                         </material_1.Grid>
-                                        <material_1.Grid item xs={4}>
+                                        <GridItem colSpan={4}>
                                             <material_1.Typography variant="body2" color="text.secondary">
                                                 Memory: {agent.performance.memory_usage}MB
                                             </material_1.Typography>
                                         </material_1.Grid>
-                                        <material_1.Grid item xs={4}>
+                                        <GridItem colSpan={4}>
                                             <material_1.Typography variant="body2" color="text.secondary">
                                                 Tasks: {agent.tasks.length}
                                             </material_1.Typography>

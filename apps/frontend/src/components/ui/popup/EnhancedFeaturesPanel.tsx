@@ -1,44 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Switch,
-  FormControlLabel,
-  Card,
-  CardContent,
-  Grid,
-  Slider,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Button,
-  Chip,
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  IconButton,
-  Tooltip,
-  Alert,
-} from "@mui/material";
-import {
-  AutoAwesome as AutoAwesomeIcon,
-  Speed as SpeedIcon,
-  Memory as MemoryIcon,
-  Security as SecurityIcon,
-  Notifications as NotificationsIcon,
-  Palette as PaletteIcon,
-  VolumeUp as VolumeUpIcon,
-  Keyboard as KeyboardIcon,
-  Language as LanguageIcon,
-  CloudSync as CloudSyncIcon,
-  Analytics as AnalyticsIcon,
-  Psychology as PsychologyIcon,
-  Settings as SettingsIcon,
-  Refresh as RefreshIcon,
-} from "@mui/icons-material";
+
+
 
 interface EnhancedFeaturesPanelProps {
   isMainApp?: boolean;
@@ -245,23 +207,23 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
 
       {/* Enhanced Features */}
       <Card sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography
+        <CardBody>
+          <Text
             variant="h6"
             gutterBottom
             sx={{ display: "flex", alignItems: "center", gap: 1 }}
           >
             <AutoAwesomeIcon />
             Enhanced Features
-          </Typography>
+          </Text>
 
           <List dense>
             {featureList.map((feature) => (
               <ListItem key={feature.key} sx={{ px: 0 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
+                <ListItem sx={{ minWidth: 40 }}>
                   {feature.icon}
-                </ListItemIcon>
-                <ListItemText
+                </ListItem>
+                <ListItem
                   primary={feature.label}
                   secondary={feature.description}
                   primaryTypographyProps={{ variant: "body2", fontWeight: 500 }}
@@ -277,26 +239,26 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
               </ListItem>
             ))}
           </List>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Performance Settings */}
       <Card sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography
+        <CardBody>
+          <Text
             variant="h6"
             gutterBottom
             sx={{ display: "flex", alignItems: "center", gap: 1 }}
           >
             <SpeedIcon />
             Performance Settings
-          </Typography>
+          </Text>
 
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="body2" gutterBottom>
+          <SimpleGrid container columns={3}>
+            <SimpleGrid item xs={12} sm={6}>
+              <Text variant="body2" gutterBottom>
                 Processing Speed: {performance.processingSpeed}%
-              </Typography>
+              </Text>
               <Slider
                 value={performance.processingSpeed}
                 onChange={(_, value) =>
@@ -308,11 +270,11 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                 marks
                 size="small"
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="body2" gutterBottom>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={6}>
+              <Text variant="body2" gutterBottom>
                 Memory Optimization: {performance.memoryOptimization}%
-              </Typography>
+              </Text>
               <Slider
                 value={performance.memoryOptimization}
                 onChange={(_, value) =>
@@ -324,11 +286,11 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                 marks
                 size="small"
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="body2" gutterBottom>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={6}>
+              <Text variant="body2" gutterBottom>
                 Batch Size: {performance.batchSize}
-              </Typography>
+              </Text>
               <Slider
                 value={performance.batchSize}
                 onChange={(_, value) =>
@@ -340,11 +302,11 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                 marks
                 size="small"
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="body2" gutterBottom>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={6}>
+              <Text variant="body2" gutterBottom>
                 Cache Level: {performance.cacheLevel}%
-              </Typography>
+              </Text>
               <Slider
                 value={performance.cacheLevel}
                 onChange={(_, value) =>
@@ -356,25 +318,25 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                 marks
                 size="small"
               />
-            </Grid>
-          </Grid>
-        </CardContent>
+            </SimpleGrid>
+          </SimpleGrid>
+        </CardBody>
       </Card>
 
       {/* Personalization */}
       <Card sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography
+        <CardBody>
+          <Text
             variant="h6"
             gutterBottom
             sx={{ display: "flex", alignItems: "center", gap: 1 }}
           >
             <PaletteIcon />
             Personalization
-          </Typography>
+          </Text>
 
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+          <SimpleGrid container columns={2}>
+            <SimpleGrid item xs={12} sm={6}>
               <FormControl fullWidth size="small">
                 <InputLabel>Theme</InputLabel>
                 <Select
@@ -384,13 +346,13 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                     handlePersonalizationChange("theme", e.target.value)
                   }
                 >
-                  <MenuItem value="light">Light</MenuItem>
-                  <MenuItem value="dark">Dark</MenuItem>
-                  <MenuItem value="auto">Auto</MenuItem>
+                  <Option value="light">Light</Option>
+                  <Option value="dark">Dark</Option>
+                  <Option value="auto">Auto</Option>
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </SimpleGrid>
+            <SimpleGrid item xs={12} sm={6}>
               <FormControl fullWidth size="small">
                 <InputLabel>Language</InputLabel>
                 <Select
@@ -400,17 +362,17 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                     handlePersonalizationChange("language", e.target.value)
                   }
                 >
-                  <MenuItem value="en">English</MenuItem>
-                  <MenuItem value="es">Spanish</MenuItem>
-                  <MenuItem value="fr">French</MenuItem>
-                  <MenuItem value="de">German</MenuItem>
-                  <MenuItem value="zh">Chinese</MenuItem>
+                  <Option value="en">English</Option>
+                  <Option value="es">Spanish</Option>
+                  <Option value="fr">French</Option>
+                  <Option value="de">German</Option>
+                  <Option value="zh">Chinese</Option>
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12}>
+            </SimpleGrid>
+            <SimpleGrid item xs={12}>
               <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                <FormControlLabel
+                <FormLabel
                   control={
                     <Switch
                       checked={personalization.notifications}
@@ -425,7 +387,7 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                   }
                   label="Notifications"
                 />
-                <FormControlLabel
+                <FormLabel
                   control={
                     <Switch
                       checked={personalization.soundEffects}
@@ -440,7 +402,7 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                   }
                   label="Sound Effects"
                 />
-                <FormControlLabel
+                <FormLabel
                   control={
                     <Switch
                       checked={personalization.animations}
@@ -455,7 +417,7 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                   }
                   label="Animations"
                 />
-                <FormControlLabel
+                <FormLabel
                   control={
                     <Switch
                       checked={personalization.compactMode}
@@ -471,29 +433,29 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
                   label="Compact Mode"
                 />
               </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
+            </SimpleGrid>
+          </SimpleGrid>
+        </CardBody>
       </Card>
 
       {/* Current Status */}
       <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
+        <CardBody>
+          <Text variant="h6" gutterBottom>
             Current Status
-          </Typography>
+          </Text>
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}>
-            <Chip
+            <Tag
               label={`${Object.values(features).filter(Boolean).length}/${Object.keys(features).length} Features Active`}
               color="primary"
               size="small"
             />
-            <Chip
+            <Tag
               label={`Performance: ${Math.round(Object.values(performance).reduce((a, b) => a + b, 0) / Object.keys(performance).length)}%`}
               color="success"
               size="small"
             />
-            <Chip
+            <Tag
               label={`Theme: ${personalization.theme}`}
               color="info"
               size="small"
@@ -520,7 +482,7 @@ const EnhancedFeaturesPanel: React.FC<EnhancedFeaturesPanelProps> = ({
               Reset to Defaults
             </Button>
           </Box>
-        </CardContent>
+        </CardBody>
       </Card>
     </Box>
   );

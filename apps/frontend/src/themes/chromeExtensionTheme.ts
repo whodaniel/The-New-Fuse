@@ -1,23 +1,7 @@
-import { createTheme } from "@mui/material/styles";
+import { Box, Button, Card, Tabs, Tab, Input, Input } from '@chakra-ui/react';
 
 // Import the chrome extension theme
-export const chromeExtensionLightTheme = createTheme({
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#667eea", // Purple-blue primary
-      light: "#9bb5ff",
-      dark: "#2e4cb7",
-      contrastText: "#ffffff",
-    },
-    secondary: {
-      main: "#764ba2", // Deep purple secondary
-      light: "#a479d9",
-      dark: "#4a2c64",
-      contrastText: "#ffffff",
-    },
-    background: {
-      default: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+export const chromeExtensionLightTheme = createChakraTheme()",
       paper: "rgba(255, 255, 255, 0.95)",
     },
     text: {
@@ -192,23 +176,7 @@ export const chromeExtensionLightTheme = createTheme({
   },
 });
 
-export const chromeExtensionDarkTheme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: {
-      main: "#667eea",
-      light: "#9bb5ff",
-      dark: "#2e4cb7",
-      contrastText: "#ffffff",
-    },
-    secondary: {
-      main: "#764ba2",
-      light: "#a479d9",
-      dark: "#4a2c64",
-      contrastText: "#ffffff",
-    },
-    background: {
-      default: "linear-gradient(135deg, #2c3e50 0%, #34495e 100%)",
+export const chromeExtensionDarkTheme = createChakraTheme()",
       paper: "rgba(30, 30, 30, 0.95)",
     },
     text: {
