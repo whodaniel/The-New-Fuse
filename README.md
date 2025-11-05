@@ -81,7 +81,7 @@ graph TD
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   Frontend      │    │    Backend API   │    │ API Gateway     │
-│  React + Vite   │    │  NestJS + Bun    │    │ Route + Auth    │
+│  React + Vite   │    │  NestJS          │    │ Route + Auth    │
 │  Port: 3000     │    │  Port: 3001      │    │ Port: 3005      │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
          │                        │                        │
@@ -548,7 +548,7 @@ pnpm run docker:test
 ## 📋 Requirements
 
 ### System Requirements
-- **Node.js**: 18+ (Bun recommended)
+- **Node.js**: 18+
 - **Docker**: Latest stable version
 - **Memory**: 4GB+ recommended
 - **Storage**: 2GB+ available space
@@ -613,7 +613,7 @@ For detailed troubleshooting, see:
 
 ## 🙏 Acknowledgments
 
-- Built with [Bun](https://bun.sh) for fast JavaScript runtime
+- Built with pnpm for fast and reliable dependency management
 - [Docker](https://docker.com) for containerization
 - [NestJS](https://nestjs.com) for backend framework
 - [React](https://react.dev) for frontend framework

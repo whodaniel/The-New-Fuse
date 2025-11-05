@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  FiFile, 
-  FiGlobe, 
-  FiTerminal, 
-  FiCode, 
-  FiLink, 
-  FiCpu,
-  FiGithub,
-  FiDatabase,
-  FiClipboard,
-  FiCloud,
-  FiChevronDown
-} from 'react-icons/fi';
+  File, 
+  Globe, 
+  Terminal, 
+  Code, 
+  Link, 
+  Cpu,
+  Github,
+  Database,
+  Clipboard,
+  Cloud,
+  ChevronDown
+} from 'lucide-react';
 import { useWizard } from '../WizardProvider';
 
 export const ToolsSelectionStep: React.FC = () => {
@@ -72,7 +72,7 @@ export const ToolsSelectionStep: React.FC = () => {
   const toolCategories = [
     {
       name: 'File Management',
-      icon: FiFile,
+      icon: File,
       tools: [
         { id: 'save-file', label: 'Save File', description: 'Create new files with content' },
         { id: 'edit-file', label: 'Edit File', description: 'View, create, and edit files' },
@@ -81,7 +81,7 @@ export const ToolsSelectionStep: React.FC = () => {
     },
     {
       name: 'Web Interaction',
-      icon: FiGlobe,
+      icon: Globe,
       tools: [
         { id: 'open-browser', label: 'Open Browser', description: 'Open URLs in the default browser' },
         { id: 'web-search', label: 'Web Search', description: 'Search the web for information' },
@@ -90,7 +90,7 @@ export const ToolsSelectionStep: React.FC = () => {
     },
     {
       name: 'Process Management',
-      icon: FiTerminal,
+      icon: Terminal,
       tools: [
         { id: 'launch-process', label: 'Launch Process', description: 'Run shell commands' },
         { id: 'kill-process', label: 'Kill Process', description: 'Terminate processes' },
@@ -101,7 +101,7 @@ export const ToolsSelectionStep: React.FC = () => {
     },
     {
       name: 'Code Analysis',
-      icon: FiCode,
+      icon: Code,
       tools: [
         { id: 'diagnostics', label: 'Diagnostics', description: 'Get issues from the IDE' },
         { id: 'codebase-retrieval', label: 'Codebase Retrieval', description: 'Search the codebase for information' },
@@ -109,7 +109,7 @@ export const ToolsSelectionStep: React.FC = () => {
     },
     {
       name: 'Memory Tools',
-      icon: FiCpu,
+      icon: Cpu,
       tools: [
         { id: 'remember', label: 'Remember', description: 'Create long-term memories' },
       ]
@@ -119,7 +119,7 @@ export const ToolsSelectionStep: React.FC = () => {
   const integrationCategories = [
     {
       name: 'Development Tools',
-      icon: FiGithub,
+      icon: Github,
       integrations: [
         { id: 'github-api', label: 'GitHub API', description: 'Interact with GitHub repositories, issues, and PRs' },
         { id: 'linear', label: 'Linear', description: 'Manage tasks and issues in Linear' },
@@ -127,7 +127,7 @@ export const ToolsSelectionStep: React.FC = () => {
     },
     {
       name: 'Project Management',
-      icon: FiClipboard,
+      icon: Clipboard,
       integrations: [
         { id: 'jira', label: 'Jira', description: 'Work with Jira issues and projects' },
         { id: 'confluence', label: 'Confluence', description: 'Access and update Confluence pages' },
@@ -135,14 +135,14 @@ export const ToolsSelectionStep: React.FC = () => {
     },
     {
       name: 'Knowledge Management',
-      icon: FiDatabase,
+      icon: Database,
       integrations: [
         { id: 'notion', label: 'Notion', description: 'Interact with Notion databases and pages' },
       ]
     },
     {
       name: 'Cloud Services',
-      icon: FiCloud,
+      icon: Cloud,
       integrations: [
         { id: 'supabase', label: 'Supabase', description: 'Interact with Supabase databases and services' },
       ]
@@ -189,7 +189,7 @@ export const ToolsSelectionStep: React.FC = () => {
                     <category.icon className="w-4 h-4" />
                     <span className="font-medium">{category.name}</span>
                   </div>
-                  <FiChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-4 h-4" />
                 </summary>
                 <div className="pb-4 px-3">
                   <div className="space-y-3">
@@ -252,7 +252,7 @@ export const ToolsSelectionStep: React.FC = () => {
                     <category.icon className="w-4 h-4" />
                     <span className="font-medium">{category.name}</span>
                   </div>
-                  <FiChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-4 h-4" />
                 </summary>
                 <div className="pb-4 px-3">
                   <div className="space-y-3">

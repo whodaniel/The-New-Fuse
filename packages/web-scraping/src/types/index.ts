@@ -73,6 +73,7 @@ export interface ScrapingResult {
     method: 'fetch' | 'puppeteer';
     resourcesLoaded?: number;
     jsErrors?: string[];
+    customExtractions?: Record<string, any>;
   };
 }
 

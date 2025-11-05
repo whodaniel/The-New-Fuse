@@ -5,12 +5,11 @@
  * using SSE for better browser compatibility than WebSockets.
  */
 
-import { Controller, Get, Query, Res, Logger, Sse, MessageEvent } from '@nestjs/common';
-import { Response } from 'express';
-import { Observable, Subject, interval, map, takeUntil, filter } from 'rxjs';
+import { Controller, Get, Query, Logger, Sse, MessageEvent } from '@nestjs/common';
+import { Observable, Subject, interval, takeUntil, mergeMap } from 'rxjs';
 import { WebScrapingService } from '../core/WebScrapingService';
 import { ProxyService } from '../proxy/ProxyService';
-import { WebScrapingConfig, ScrapingResult } from '../types';
+import { ScrapingResult } from '../types';
 
 interface StreamingSession {
   id: string;
@@ -263,7 +262,7 @@ export class WebScrapingSSEController {
     
     return interval(intervalMs).pipe(
       takeUntil(stopSubject),
-      map(async (index) => {
+      mergeMap(async (index) => {
         try {
           // Scrape the website
           const result = await this.webScrapingService.scrapeAuto(url, {
@@ -300,9 +299,7 @@ export class WebScrapingSSEController {
             })
           } as MessageEvent;
         }
-      }),
-      // Convert Promise<MessageEvent> to MessageEvent
-      map(promise => promise)
+      })
     );
   }
 

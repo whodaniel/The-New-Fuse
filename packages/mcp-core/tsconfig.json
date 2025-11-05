@@ -9,14 +9,14 @@
     "composite": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"]
     }
   },
   "include": [
-    "src/**/*",
-    "../database/generated/prisma"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
@@ -27,8 +27,5 @@
     "**/*.spec.js",
     "**/*.integration.test.js",
     "**/*.js"
-  ],
-  "references": [
-    { "path": "../database" }
   ]
 }

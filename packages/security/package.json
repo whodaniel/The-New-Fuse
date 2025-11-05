@@ -17,7 +17,8 @@
     "jsonwebtoken": "^9.0.2",
     "bcrypt": "^6.0.0",
     "@nestjs/common": "^11.1.6",
-    "@the-new-fuse/database": "workspace:*"
+    "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

@@ -34,13 +34,13 @@ import {
   CloseButton
 } from '@chakra-ui/react';
 import {
-  FiRefreshCw,
-  FiMaximize2,
-  FiMinimize2,
-  FiInfo,
-  FiCheckCircle,
-  FiAlertCircle
-} from 'react-icons/fi';
+  RefreshCw,
+  Maximize2,
+  Minimize2,
+  Info,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react';
 
 interface OnboardingWizardPreviewProps {}
 
@@ -139,9 +139,9 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              {notification.type === 'success' && <FiCheckCircle className="w-5 h-5 mr-2" />}
-              {notification.type === 'error' && <FiAlertCircle className="w-5 h-5 mr-2" />}
-              {notification.type === 'info' && <FiInfo className="w-5 h-5 mr-2" />}
+              {notification.type === 'success' && <CheckCircle className="w-5 h-5 mr-2" />}
+              {notification.type === 'error' && <AlertCircle className="w-5 h-5 mr-2" />}
+              {notification.type === 'info' && <Info className="w-5 h-5 mr-2" />}
               <span>{notification.message}</span>
             </div>
             <button

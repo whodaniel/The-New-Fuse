@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@the-new-fuse/ui-consolidated';
-import { FaCheckCircle } from 'react-icons/fa';
+import { CheckCircle } from 'lucide-react';
 import { useWizard } from '../WizardProvider';
 
 export const WelcomeStep: React.FC = () => {
@@ -38,19 +38,19 @@ export const WelcomeStep: React.FC = () => {
               // AI Agent benefits
               <>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Seamless communication with other AI agents</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Access to powerful tools and capabilities</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Standardized protocols for agent interaction</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Secure and reliable message exchange</span>
                 </div>
               </>
@@ -58,19 +58,19 @@ export const WelcomeStep: React.FC = () => {
               // Human user features
               <>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Create and manage AI agent workflows</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Seamless integration with development environments</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Powerful tools for AI agent collaboration</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <FaCheckCircle className="text-green-500 flex-shrink-0" />
+                  <CheckCircle className="text-green-500 flex-shrink-0" />
                   <span>Intuitive interface for managing complex AI systems</span>
                 </div>
               </>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useMatch } from "react-router-dom";
-import { ArrowUUpLeft, Wrench } from "@phosphor-icons/react";
+import { ArrowUpLeft, Wrench } from "lucide-react";
 import useUser from "@/hooks/useUser";
 import paths from "@/utils/paths";
 export function SettingsButton() {
@@ -14,13 +14,14 @@ export function SettingsButton() {
     if (isInSettings) {
         return (<div className="flex w-fit">
         <Link to={paths.home()} className={commonClasses} aria-label="Home" data-tooltip-id="footer-item" data-tooltip-content="Back to workspaces">
-          <ArrowUUpLeft className={iconClasses} weight="fill" color={iconColor}/>
+          <ArrowUpLeft className={iconClasses} stroke={iconColor}/>
         </Link>
       </div>);
     }
     return (<div className="flex w-fit">
-      <Link to={paths.settings.appearance()} className={commonClasses} aria-label="Settings" data-tooltip-id="footer-item" data-tooltip-content="Open settings">
-        <Wrench className={iconClasses} weight="fill" color={iconColor}/>
+      <Link to={paths.settings()} className={commonClasses} aria-label="Settings" data-tooltip-id="footer-item" data-tooltip-content="System Settings">
+        <Wrench className={iconClasses} stroke={iconColor}/>
       </Link>
     </div>);
 }
+export default SettingsButton;

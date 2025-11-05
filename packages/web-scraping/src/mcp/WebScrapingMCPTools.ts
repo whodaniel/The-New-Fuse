@@ -8,11 +8,11 @@
 import { ToolHandler, ToolResult } from '@the-new-fuse/mcp-core';
 import { WebScrapingService } from '../core/WebScrapingService';
 import { ProxyService } from '../proxy/ProxyService';
-import { 
-  WebScrapingConfig, 
-  ContentExtractionOptions, 
+import {
+  WebScrapingConfig,
+  ContentExtractionOptions,
   ProxyRequest,
-  SecurityPolicy 
+  SecurityPolicy
 } from '../types';
 
 export class WebScrapingMCPTools {
@@ -81,11 +81,11 @@ export class WebScrapingMCPTools {
         required: ['url']
       },
       handler: {
-        async execute(params: {
+        execute: async (params: {
           url: string;
           config?: WebScrapingConfig;
           extraction?: ContentExtractionOptions;
-        }): Promise<ToolResult> {
+        }): Promise<ToolResult> => {
           try {
             const result = await this.webScrapingService.scrapeSimple(
               params.url,
@@ -107,6 +107,7 @@ export class WebScrapingMCPTools {
                 method: result.metadata?.method
               },
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_simple',
                 timestamp: new Date().toISOString(),
                 success: result.success
@@ -117,6 +118,7 @@ export class WebScrapingMCPTools {
               success: false,
               error: error instanceof Error ? error.message : 'Scraping failed',
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_simple',
                 timestamp: new Date().toISOString()
               }
@@ -173,21 +175,16 @@ export class WebScrapingMCPTools {
         required: ['url']
       },
       handler: {
-        async execute(params: {
+        execute: async (params: {
           url: string;
           config?: WebScrapingConfig;
           extraction?: ContentExtractionOptions;
-        }): Promise<ToolResult> {
+        }): Promise<ToolResult> => {
           try {
-            const extractionOptions = {
-              ...params.extraction,
-              includeMetadata: params.extraction?.includeScreenshot || false
-            };
-
             const result = await this.webScrapingService.scrapeFull(
               params.url,
               { ...params.config, enableJavaScript: true },
-              extractionOptions
+              params.extraction || {}
             );
 
             return {
@@ -207,6 +204,7 @@ export class WebScrapingMCPTools {
                 method: result.metadata?.method
               },
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_full',
                 timestamp: new Date().toISOString(),
                 success: result.success
@@ -217,6 +215,7 @@ export class WebScrapingMCPTools {
               success: false,
               error: error instanceof Error ? error.message : 'Full scraping failed',
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_full',
                 timestamp: new Date().toISOString()
               }
@@ -259,11 +258,11 @@ export class WebScrapingMCPTools {
         required: ['url']
       },
       handler: {
-        async execute(params: {
+        execute: async (params: {
           url: string;
           config?: WebScrapingConfig;
           extraction?: ContentExtractionOptions;
-        }): Promise<ToolResult> {
+        }): Promise<ToolResult> => {
           try {
             const result = await this.webScrapingService.scrapeAuto(
               params.url,
@@ -286,6 +285,7 @@ export class WebScrapingMCPTools {
                 methodUsed: result.metadata?.method === 'fetch' ? 'simple' : 'full'
               },
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_auto',
                 timestamp: new Date().toISOString(),
                 success: result.success
@@ -296,6 +296,7 @@ export class WebScrapingMCPTools {
               success: false,
               error: error instanceof Error ? error.message : 'Auto scraping failed',
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_auto',
                 timestamp: new Date().toISOString()
               }
@@ -343,7 +344,7 @@ export class WebScrapingMCPTools {
         required: ['url']
       },
       handler: {
-        async execute(params: ProxyRequest): Promise<ToolResult> {
+        execute: async (params: ProxyRequest): Promise<ToolResult> => {
           try {
             const result = await this.proxyService.proxyRequest(params);
 
@@ -358,6 +359,7 @@ export class WebScrapingMCPTools {
               },
               error: result.error,
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'proxy_web_request',
                 timestamp: new Date().toISOString(),
                 url: result.metadata.url,
@@ -369,6 +371,7 @@ export class WebScrapingMCPTools {
               success: false,
               error: error instanceof Error ? error.message : 'Proxy request failed',
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'proxy_web_request',
                 timestamp: new Date().toISOString()
               }
@@ -401,10 +404,10 @@ export class WebScrapingMCPTools {
         required: ['url']
       },
       handler: {
-        async execute(params: {
+        execute: async (params: {
           url: string;
           includeScreenshot?: boolean;
-        }): Promise<ToolResult> {
+        }): Promise<ToolResult> => {
           try {
             const result = await this.webScrapingService.scrapeFull(
               params.url,
@@ -437,6 +440,7 @@ export class WebScrapingMCPTools {
               success: true,
               result: analysis,
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'analyze_website',
                 timestamp: new Date().toISOString(),
                 success: result.success
@@ -447,6 +451,7 @@ export class WebScrapingMCPTools {
               success: false,
               error: error instanceof Error ? error.message : 'Website analysis failed',
               metadata: {
+                executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'analyze_website',
                 timestamp: new Date().toISOString()
               }
@@ -471,7 +476,6 @@ export class WebScrapingMCPTools {
    * Cleanup resources
    */
   async cleanup(): Promise<void> {
-    await this.webScrapingService.cleanup();
     this.proxyService.clearRateLimitData();
   }
 }

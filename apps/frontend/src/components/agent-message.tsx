@@ -1,25 +1,64 @@
 import React from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-const AgentMessage = ({ agent, message, isCurrentUser }) => {
-    const messageClasses = cn('flex w-full max-w-md gap-2 p-4', isCurrentUser ? 'ml-auto flex-row-reverse' : 'mr-auto');
-    const renderMessageContent = () => {
-        var _a;
-        switch (message.type) {
-            case 'code':
-                return (<pre className="bg-gray-100 p-2 rounded-md overflow-x-auto">
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import { Card } from './ui/card';
+import { cn } from '../lib/utils';
+
+interface Agent {
+  id: string;
+  name: string;
+  avatar?: string;
+}
+
+interface Message {
+  id: string;
+  content: string;
+  timestamp: string;
+  type: 'text' | 'code' | 'image';
+  agent: Agent;
+  metadata?: Record<string, any>;
+}
+
+interface AgentMessageProps {
+  agent: Agent;
+  message: Message;
+  isCurrentUser: boolean;
+}
+
+const AgentMessage: React.FC<AgentMessageProps> = ({ agent, message, isCurrentUser }) => {
+  const messageClasses = cn(
+    'flex w-full max-w-md gap-2 p-4',
+    isCurrentUser ? 'ml-auto flex-row-reverse' : 'mr-auto'
+  );
+
+  const renderMessageContent = () => {
+    switch (message.type) {
+      case 'code':
+        return (
+          <pre className="bg-gray-100 p-2 rounded-md overflow-x-auto">
             <code>{message.content}</code>
-          </pre>);
-            case 'image':
-                return (<img src={message.content} alt={((_a = message.metadata) === null || _a === void 0 ? void 0 : _a.alt) || 'Message image'} className="max-w-full rounded-md"/>);
-            default:
-                return <p className="text-sm">{message.content}</p>;
-        }
-    };
-    return (<Card className={messageClasses}>
+          </pre>
+        );
+      case 'image':
+        return (
+          <img
+            src={message.content}
+            alt={message.metadata?.alt || 'Message image'}
+            className="max-w-full rounded-md"
+          />
+        );
+      default:
+        return <p className="text-sm">{message.content}</p>;
+    }
+  };
+
+  return (
+    <Card className={messageClasses}>
       <Avatar className="h-8 w-8">
-        {agent.avatar ? (<AvatarImage src={agent.avatar} alt={agent.name}/>) : (<AvatarFallback>{agent.name[0].toUpperCase()}</AvatarFallback>)}
+        {agent.avatar ? (
+          <AvatarImage src={agent.avatar} alt={agent.name} />
+        ) : (
+          <AvatarFallback>{agent.name[0].toUpperCase()}</AvatarFallback>
+        )}
       </Avatar>
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
@@ -30,6 +69,8 @@ const AgentMessage = ({ agent, message, isCurrentUser }) => {
         </div>
         {renderMessageContent()}
       </div>
-    </Card>);
+    </Card>
+  );
 };
+
 export default AgentMessage;

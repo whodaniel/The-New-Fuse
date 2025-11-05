@@ -28,16 +28,10 @@ else
     echo "✅ vsce is already installed."
 fi
 
-echo "2️⃣ Installing dependencies using Bun..."
+echo "2️⃣ Installing dependencies using pnpm..."
 if ! pnpm install; then
-    echo "❌ Failed to install dependencies using Bun. Check Bun setup and project dependencies."
-    # Attempt to clean and reinstall as a fallback
-    echo "   Attempting 'pnpm install --force' as a fallback..."
-    pnpm install --force
-    if [ \$? -ne 0 ]; then
-        echo "❌ Fallback 'pnpm install --force' also failed."
-        exit 1
-    fi
+echo "❌ Failed to install dependencies using pnpm. Check pnpm setup and project dependencies."
+exit 1
 fi
 echo "✅ Dependencies installed successfully using pnpm."
 
@@ -71,7 +65,7 @@ if [ "\$BUILD_SUCCESSFUL" = false ]; then
     ESBUILD_OUTFILE="./dist/extension.js"
     # Ensure dist directory exists for esbuild output
     mkdir -p ./dist
-    if npx esbuild ./src/extension.ts --bundle "--outfile=\$ESBUILD_OUTFILE" --format=cjs --platform=node --external:vscode --allow-overwrite; then
+    if npx esbuild ./src/extension.ts --bundle "--outfile=$ESBUILD_OUTFILE" --format=cjs --platform=node --external:vscode --allow-overwrite; then
         echo "✅ Fallback build with esbuild completed. Output: \$ESBUILD_OUTFILE"
         BUILD_SUCCESSFUL=true
         # If esbuild fallback is used, ensure package.json main points to it

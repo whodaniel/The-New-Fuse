@@ -194,6 +194,7 @@ export var AgentStatus;
     AgentStatus["INITIALIZING"] = "INITIALIZING";
     AgentStatus["READY"] = "READY";
     AgentStatus["TERMINATED"] = "TERMINATED";
+    AgentStatus["ARCHIVED"] = "ARCHIVED";
 })(AgentStatus || (AgentStatus = {}));
 export var AgentType;
 (function (AgentType) {

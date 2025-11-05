@@ -16,8 +16,8 @@
     "sync:once": "node ./scripts/sync-browser-hub.js --once",
     "sync:watch": "node ./scripts/sync-browser-hub.js --watch",
     "package": "electron-builder",
-    "dist": "pnpm run build && electron-builder",
-    "postinstall": "electron-builder install-app-deps"
+    "dist": "pnpm run build && electron-builder"
+
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

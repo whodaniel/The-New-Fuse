@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { isMobile } from "react-device-detect";
-import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { ChevronsUpDown, Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Sidebar from "@/components/SettingsSidebar";
 import System from "@/models/system";
@@ -34,7 +33,24 @@ import LiteLLMOptions from "@/components/EmbeddingSelection/LiteLLMOptions";
 import GenericOpenAiEmbeddingOptions from "@/components/EmbeddingSelection/GenericOpenAiOptions";
 import MistralAiOptions from "@/components/EmbeddingSelection/MistralAiOptions";
 import EmbedderItem from "@/components/EmbeddingSelection/EmbedderItem";
-const STYLES = Object.assign(Object.assign({}, COMMON_STYLES), { container: "w-screen h-screen overflow-hidden bg-theme-bg-container flex", contentContainer: (isMobile) => `relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0`, form: "flex w-full", formContent: "flex flex-col w-full px-1 md:pl-6 md:pr-[50px] py-16 md:py-6", header: "w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10", title: "text-lg leading-6 font-bold text-white", description: "text-xs leading-[18px] font-base text-white text-opacity-60", searchOverlay: "fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 backdrop-blur-sm z-10", searchContainer: "absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] overflow-auto white-scrollbar min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20", searchInput: "border-none -ml-4 my-2 bg-transparent z-20 pl-12 h-[38px] w-full px-4 py-1 text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium", embedderButton: "w-full max-w-[640px] h-[64px] bg-theme-settings-input-bg rounded-lg flex items-center p-[14px] justify-between cursor-pointer border-2 border-transparent hover:border-primary-button transition-all duration-300", embedderLogo: "w-10 h-10 rounded-md" });
+
+const STYLES = {
+  ...COMMON_STYLES,
+  container:
+    "w-screen h-screen overflow-hidden bg-theme-bg-container flex",
+  contentContainer: `relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0`,
+  form: "flex w-full",
+  formContent:
+    "flex flex-col w-full px-1 md:pl-6 md:pr-[50px] py-16 md:py-6",
+  header: "w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10",
+  title: "text-lg leading-6 font-bold text-white",
+  description: "text-xs leading-[18px] font-base text-white text-opacity-60",
+  searchOverlay: "fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 backdrop-blur-sm z-10",
+  searchContainer: "absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] overflow-auto white-scrollbar min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20",
+  searchInput: "border-none -ml-4 my-2 bg-transparent z-20 pl-12 h-[38px] w-full px-4 py-1 text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium",
+  embedderButton: "w-full max-w-[640px] h-[64px] bg-theme-settings-input-bg rounded-lg flex items-center p-[14px] justify-between cursor-pointer border-2 border-transparent hover:border-primary-button transition-all duration-300",
+  embedderLogo: "w-10 h-10 rounded-md"
+};
 const EMBEDDERS = [
     {
         name: "AnythingLLM Embedder",
@@ -215,7 +231,7 @@ export default function GeneralEmbeddingPreference() {
           <div className="w-full h-full flex justify-center items-center">
             <PreLoader />
           </div>
-        </div>) : (<div className={STYLES.contentContainer(isMobile)}>
+        </div>) : (<div className={STYLES.contentContainer}>
           <form id="embedding-form" onSubmit={handleSubmit} className={STYLES.form}>
             <div className={STYLES.formContent}>
               <div className={STYLES.header}>
@@ -240,23 +256,59 @@ export default function GeneralEmbeddingPreference() {
               </div>
               <div className="relative">
                 {searchMenuOpen && (<div className={STYLES.searchOverlay} onClick={() => setSearchMenuOpen(false)}/>)}
-                {searchMenuOpen ? (<div className={STYLES.searchContainer}>
+                {searchMenuOpen ? (
+                  <div className={STYLES.searchContainer}>
                     <div className="w-full flex flex-col gap-y-1">
                       <div className="flex items-center sticky top-0 border-b border-[#9CA3AF] mx-4 bg-theme-settings-input-bg">
-                        <MagnifyingGlass size={20} weight="bold" className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"/>
-                        <input type="text" name="embedder-search" autoComplete="off" placeholder="Search all embedding providers" className={STYLES.searchInput} onChange={(e) => setSearchQuery(e.target.value)} ref={searchInputRef} onKeyDown={(e) => {
-                    if (e.key === "Enter")
-                        e.preventDefault();
-                }}/>
-                        <X size={20} weight="bold" className="cursor-pointer text-white hover:text-x-button" onClick={handleXButton}/>
+                        <Search
+                          size={20}
+                          className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
+                        />
+                        <input
+                          type="text"
+                          name="embedder-search"
+                          autoComplete="off"
+                          placeholder="Search all embedding providers"
+                          className={STYLES.searchInput}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          ref={searchInputRef}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") e.preventDefault();
+                          }}
+                        />
+                        <X
+                          size={20}
+                          className="cursor-pointer text-white hover:text-x-button"
+                          onClick={handleXButton}
+                        />
                       </div>
                       <div className="flex-1 pl-4 pr-2 flex flex-col gap-y-1 overflow-y-auto white-scrollbar pb-4">
-                        {filteredEmbedders.map((embedder) => (<EmbedderItem key={embedder.name} name={embedder.name} value={embedder.value} image={embedder.logo} description={embedder.description} checked={selectedEmbedder === embedder.value} onClick={() => updateChoice(embedder.value)}/>))}
+                        {filteredEmbedders.map((embedder) => (
+                          <EmbedderItem
+                            key={embedder.name}
+                            name={embedder.name}
+                            value={embedder.value}
+                            image={embedder.logo}
+                            description={embedder.description}
+                            checked={selectedEmbedder === embedder.value}
+                            onClick={() => updateChoice(embedder.value)}
+                          />
+                        ))}
                       </div>
                     </div>
-                  </div>) : (<button className={STYLES.embedderButton} type="button" onClick={() => setSearchMenuOpen(true)}>
+                  </div>
+                ) : (
+                  <button
+                    className={STYLES.embedderButton}
+                    type="button"
+                    onClick={() => setSearchMenuOpen(true)}
+                  >
                     <div className="flex gap-x-4 items-center">
-                      <img src={selectedEmbedderObject.logo} alt={`${selectedEmbedderObject.name} logo`} className={STYLES.embedderLogo}/>
+                      <img
+                        src={selectedEmbedderObject.logo}
+                        alt={`${selectedEmbedderObject.name} logo`}
+                        className={STYLES.embedderLogo}
+                      />
                       <div className="flex flex-col text-left">
                         <div className="text-sm font-semibold text-white">
                           {selectedEmbedderObject.name}
@@ -266,8 +318,9 @@ export default function GeneralEmbeddingPreference() {
                         </div>
                       </div>
                     </div>
-                    <CaretUpDown size={24} weight="bold" className="text-white"/>
-                  </button>)}
+                    <ChevronsUpDown size={24} className="text-white" />
+                  </button>
+                )}
               </div>
               <div onChange={() => setHasChanges(true)} className="mt-4 flex flex-col gap-y-1">
                 {selectedEmbedder &&

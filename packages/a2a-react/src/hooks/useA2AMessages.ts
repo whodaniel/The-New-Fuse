@@ -3,6 +3,8 @@ import { useState, useCallback } from 'react';
 export interface A2AMessage {
   id: string;
   type: string;
+  fromAgent?: string;
+  toAgent?: string;
   payload: any;
   timestamp: string;
 }
@@ -15,6 +17,8 @@ export function useA2AMessages() {
     const newMessage: A2AMessage = {
       id: Date.now().toString(),
       type: message.type || 'message',
+      fromAgent: message.fromAgent,
+      toAgent: message.toAgent,
       payload: message.payload,
       timestamp: new Date().toISOString()
     };
@@ -25,7 +29,7 @@ export function useA2AMessages() {
     return sendMessage({ type: 'request', payload: request });
   }, [sendMessage]);
 
-  const broadcast = useCallback(async (payload: any, options?: any) => {
+  const broadcast = useCallback(async (payload: any, _options?: any) => {
     return sendMessage({ type: 'broadcast', payload });
   }, [sendMessage]);
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
-import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
+import { Edit2, Trash2, Plus } from 'lucide-react';
 
 interface UserType {
   id: string;
@@ -290,7 +290,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                 onClick={handleAddUserType}
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                <FiPlus className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" />
                 Add User Type
               </button>
             </div>
@@ -341,7 +341,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                             aria-label="Edit user type"
                             title="Edit user type"
                           >
-                            <FiEdit2 className="h-4 w-4" />
+                            <Edit2 className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDeleteUserType(userType.id)}
@@ -349,7 +349,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                             aria-label="Delete user type"
                             title="Delete user type"
                           >
-                            <FiTrash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
                       </td>

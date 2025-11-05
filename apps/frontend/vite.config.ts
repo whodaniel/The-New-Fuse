@@ -77,6 +77,19 @@ export default defineConfig(({ mode }) => {
     },
     base: env.VITE_BASE_PATH || '/',
     publicDir: 'public',
+    optimizeDeps: {
+      include: [
+        'firebase',
+        '@firebase/app',
+        '@firebase/auth'
+      ],
+      exclude: [
+        '@firebase/app-types',
+        '@firebase/app-compat',
+        '@types/d3',
+        '@types/file-saver'
+      ]
+    },
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
@@ -103,131 +116,6 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             // Core React runtime and routing
             'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-            
-            // State management and data fetching
-            'state-mgmt': ['@tanstack/react-query', 'zustand', '@reduxjs/toolkit', 'react-redux'],
-            
-            // UI Framework - Chakra UI
-            'chakra-ui': ['@chakra-ui/react', '@emotion/react', '@emotion/styled', '@chakra-ui/icons', '@chakra-ui/avatar', '@chakra-ui/layout', '@chakra-ui/progress'],
-            
-            // Material UI components (separate chunk for smaller load)
-            'mui-core': ['@mui/material', '@mui/icons-material'],
-            
-            // Radix UI components (split by functionality)
-            'radix-ui-core': [
-              '@radix-ui/react-dialog', 
-              '@radix-ui/react-dropdown-menu', 
-              '@radix-ui/react-select',
-              '@radix-ui/react-tabs',
-              '@radix-ui/react-toast',
-              '@radix-ui/react-progress'
-            ],
-            'radix-ui-inputs': [
-              '@radix-ui/react-avatar', 
-              '@radix-ui/react-checkbox', 
-              '@radix-ui/react-label',
-              '@radix-ui/react-scroll-area',
-              '@radix-ui/react-slider',
-              '@radix-ui/react-switch'
-            ],
-            
-            // Core utilities
-            'utils-core': [
-              'axios', 
-              'date-fns', 
-              'lodash.debounce',
-              'class-variance-authority',
-              'clsx',
-              'tailwind-merge',
-              'text-case',
-              'change-case'
-            ],
-            
-            // Authentication and Firebase
-            'auth-firebase': [
-              'firebase', 
-              '@firebase/app', 
-              '@firebase/auth', 
-              '@firebase/app-types'
-            ],
-            
-            // Monaco Editor (heavy - separate chunk)
-            'monaco-editor': ['@monaco-editor/react', 'monaco-editor'],
-            
-            // React Flow and workflow components
-            'workflow': ['reactflow', '@reactflow/node-resizer'],
-            
-            // Data visualization and charts
-            'charts': ['recharts', 'd3', 'd3-force-graph', '@types/d3'],
-            
-            // Web3 and blockchain
-            'web3': ['ethers'],
-            
-            // High performance features
-            'framer-motion': ['framer-motion'],
-            
-            // File handling
-            'file-ops': ['file-saver', '@types/file-saver', 'dompurify', 'he'],
-            
-            // Code highlighting and markdown
-            'content': ['highlight.js', 'marked'],
-            
-            // Internationalization
-            'i18n': ['i18next', 'react-i18next'],
-            
-            // Communication protocols
-            'protocols': [
-              '@the-new-fuse/a2a-react', 
-              '@the-new-fuse/a2a-core',
-              '@the-new-fuse/core',
-              '@the-new-fuse/types'
-            ],
-            
-            // MCP and specialized features
-            'mcp-features': [
-              '@the-new-fuse/feature-suggestions',
-              '@the-new-fuse/port-management',
-              '@the-new-fuse/prompt-templating',
-              '@the-new-fuse/ui-consolidated'
-            ],
-            
-            // Headless UI
-            'headless-ui': ['@headlessui/react'],
-            
-            // Drag and drop
-            'drag-drop': ['@hello-pangea/dnd'],
-            
-            // Device detection
-            'device': ['react-device-detect'],
-            
-            // Heroicons
-            'icons': ['@heroicons/react', 'lucide-react', 'react-icons'],
-            
-            // Phosphor icons
-            'phosphor-icons': ['@phosphor-icons/react'],
-            
-            // React Hook Form and validation
-            'forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
-            
-            // Notifications and toasts
-            'notifications': ['react-hot-toast', 'react-toastify', 'react-tooltip'],
-            
-            // Loading states
-            'loading': ['react-loading-skeleton'],
-            
-            // Device themes
-            'themes': ['next-themes'],
-            
-            // Floating UI
-            'floating-ui': ['@floating-ui/dom', '@floating-ui/react-dom'],
-            
-            // Other utilities
-            'utilities': [
-              'ws', 
-              'reflect-metadata', 
-              'rxjs',
-              'truncate'
-            ],
           },
         },
       },

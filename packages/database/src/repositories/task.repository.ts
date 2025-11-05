@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Task, TaskStatus, TaskPriority, PrismaClient } from '@prisma/client';
+import { Prisma, Task, $Enums } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
-import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TaskRepository {
   constructor(private prisma: PrismaService) {}
 
-  
-
   private getTaskSelect() {
     return {
       id: true,
+      title: true,
+      description: true,
       type: true,
       status: true,
       priority: true,
@@ -21,8 +20,9 @@ export class TaskRepository {
       startTime: true,
       endTime: true,
       pipelineId: true,
-      agentId: true,
+      assignedToId: true,
       userId: true,
+      metadata: true,
       createdAt: true,
       updatedAt: true,
       deletedAt: true,
@@ -60,16 +60,17 @@ export class TaskRepository {
     return task;
   }
 
-  async update(id: string, data: Prisma.TaskUpdateInput): Promise<Task> {
-    const task = await this.prisma.task.update({
+  async update(
+    id: string,
+    data: Partial<Prisma.TaskUncheckedUpdateInput>,
+  ): Promise<Task> {
+    return this.prisma.task.update({
       where: { id },
       data: {
         ...data,
-        updatedAt: new Date()
       },
-      select: this.getTaskSelect()
+      select: this.getTaskSelect(),
     });
-    return task;
   }
 
   async delete(id: string): Promise<Task> {
@@ -96,7 +97,7 @@ export class TaskRepository {
 
   async findByAgentId(agentId: string): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
-      where: { agentId },
+      where: { assignedToId: agentId },
       select: this.getTaskSelect(),
       orderBy: [
         { priority: 'desc' },
@@ -107,7 +108,7 @@ export class TaskRepository {
     return tasks;
   }
 
-  async findByStatus(status: TaskStatus): Promise<Task[]> {
+  async findByStatus(status: $Enums.TaskStatus): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
       where: { status },
       select: this.getTaskSelect(),
@@ -120,7 +121,7 @@ export class TaskRepository {
     return tasks;
   }
 
-  async findByPriority(priority: TaskPriority): Promise<Task[]> {
+  async findByPriority(priority: $Enums.TaskPriority): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
       where: { priority },
       select: this.getTaskSelect(),
@@ -132,13 +133,13 @@ export class TaskRepository {
     return tasks;
   }
 
-  async updateStatus(id: string, status: TaskStatus): Promise<Task> {
-    const updateData: any = {
+  async updateStatus(id: string, status: $Enums.TaskStatus): Promise<Task> {
+    const updateData: { status: $Enums.TaskStatus; updatedAt: Date; endTime?: Date } = {
       status,
       updatedAt: new Date()
     };
 
-    if (status === TaskStatus.COMPLETED) {
+    if (status === $Enums.TaskStatus.COMPLETED) {
       updateData.endTime = new Date();
     }
 
@@ -155,8 +156,8 @@ export class TaskRepository {
     const task = await this.prisma.task.update({
       where: { id },
       data: {
-        agentId,
-        status: TaskStatus.IN_PROGRESS,
+        assignedToId: agentId,
+        status: $Enums.TaskStatus.IN_PROGRESS,
         startTime: new Date(),
         updatedAt: new Date()
       },
@@ -190,7 +191,7 @@ export class TaskRepository {
     const completedTasks = await this.prisma.task.count({
       where: {
         ...where,
-        status: TaskStatus.COMPLETED
+        status: $Enums.TaskStatus.COMPLETED
       }
     });
 
@@ -201,11 +202,11 @@ export class TaskRepository {
       completed: completedTasks,
       overdue: overdueTasks,
       completionRate: totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0,
-      byStatus: statusCounts.reduce((acc: Record<string, number>, { status, _count }: { status: TaskStatus, _count: { id: number } }) => {
+      byStatus: statusCounts.reduce((acc: Record<string, number>, { status, _count }: { status: $Enums.TaskStatus, _count: { id: number } }) => {
         acc[status] = _count.id;
         return acc;
       }, {} as Record<string, number>),
-      byPriority: priorityCounts.reduce((acc: Record<string, number>, { priority, _count }: { priority: TaskPriority, _count: { id: number } }) => {
+      byPriority: priorityCounts.reduce((acc: Record<string, number>, { priority, _count }: { priority: $Enums.TaskPriority, _count: { id: number } }) => {
         acc[priority] = _count.id;
         return acc;
       }, {} as Record<string, number>)

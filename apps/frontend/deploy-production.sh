@@ -11,9 +11,9 @@ echo "🚀 Starting Production Build for The New Fuse..."
 cd "$(dirname "$0")"
 
 # Check if required tools are installed
-if ! command -v bun &> /dev/null; then
-    echo "❌ Error: Bun is required but not installed. Please install bun first."
-    exit 1
+if ! command -v pnpm &> /dev/null; then
+echo "❌ Error: pnpm is required but not installed. Please install pnpm first."
+exit 1
 fi
 
 # Clean previous build

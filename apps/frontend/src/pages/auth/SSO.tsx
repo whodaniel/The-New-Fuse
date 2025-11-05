@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { Loader } from 'lucide-react';
 
 const SSO = () => {
   const { provider } = useParams<{ provider: string }>();
@@ -24,7 +25,7 @@ const SSO = () => {
       <h3 className="text-lg font-medium">
         Processing {provider} login...
       </h3>
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+      <Loader className="animate-spin h-8 w-8 text-blue-600 mx-auto" />
       <p className="text-sm text-gray-600">
         Please wait while we authenticate your account.
       </p>

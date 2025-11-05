@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import System from "@/models/system";
 import { PreLoader } from "@/components/Preloader";
 import { LOCALAI_COMMON_URLS } from "@/utils/constants";
@@ -56,17 +56,20 @@ export function LocalAiOptions({ settings }: LocalAiOptionsProps) {
           </label>
         </div>
 
-        <button
-          className={COMMON_STYLES.advancedButton}
-          onClick={() => setShowAdvanced(!showAdvanced)}
-        >
-          Advanced Options
-          {showAdvanced ? (
-            <CaretUp className={COMMON_STYLES.caretIcon} />
-          ) : (
-            <CaretDown className={COMMON_STYLES.caretIcon} />
-          )}
-        </button>
+        <div className="flex justify-start">
+          <button
+            type="button"
+            className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-800"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+          >
+            {showAdvanced ? (
+              <ChevronUp className="mr-2 h-4 w-4" />
+            ) : (
+              <ChevronDown className="mr-2 h-4 w-4" />
+            )}
+            {showAdvanced ? "Hide Advanced Options" : "Show Advanced Options"}
+          </button>
+        </div>
 
         {showAdvanced && (
           <>
@@ -105,4 +108,8 @@ export function LocalAiOptions({ settings }: LocalAiOptionsProps) {
       </div>
     </div>
   );
+}
+
+export default function LocalAiOptionsWrapper(props: LocalAiOptionsProps) {
+  return <LocalAiOptions {...props} />;
 }

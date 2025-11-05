@@ -1,25 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  Heading,
-  Text,
-  Card,
-  CardHeader,
-  CardBody,
-  Stack,
-  StackDivider,
-  Flex,
-  Icon,
-  Progress,
-  HStack,
-  Badge
-} from '@chakra-ui/react';
 import { 
   FiUsers, 
   FiActivity, 
@@ -138,117 +117,105 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <Box>
-      <Heading mb={6}>Admin Dashboard</Heading>
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
       
       {/* Stats */}
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
-        <Stat p={4} shadow="md" border="1px" borderColor="gray.200" borderRadius="md">
-          <StatLabel>Total Users</StatLabel>
-          <Flex align="center">
-            <Icon as={FiUsers} mr={2} color="blue.500" />
-            <StatNumber>{stats.totalUsers}</StatNumber>
-          </Flex>
-          <StatHelpText>
-            <StatArrow type="increase" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="p-4 shadow-md border border-gray-200 rounded-md">
+          <div className="text-sm text-gray-500">Total Users</div>
+          <div className="flex items-center">
+            <FiUsers className="mr-2 text-blue-500" />
+            <div className="text-2xl font-bold">{stats.totalUsers}</div>
+          </div>
+          <div className="text-sm text-gray-500">
+            <span className="text-green-500">↑</span>
             {stats.userGrowth}% since last month
-          </StatHelpText>
-        </Stat>
+          </div>
+        </div>
         
-        <Stat p={4} shadow="md" border="1px" borderColor="gray.200" borderRadius="md">
-          <StatLabel>Active Users</StatLabel>
-          <StatNumber>{stats.activeUsers}</StatNumber>
-          <StatHelpText>
+        <div className="p-4 shadow-md border border-gray-200 rounded-md">
+          <div className="text-sm text-gray-500">Active Users</div>
+          <div className="text-2xl font-bold">{stats.activeUsers}</div>
+          <div className="text-sm text-gray-500">
             {Math.round((stats.activeUsers / stats.totalUsers) * 100)}% of total users
-          </StatHelpText>
-        </Stat>
+          </div>
+        </div>
         
-        <Stat p={4} shadow="md" border="1px" borderColor="gray.200" borderRadius="md">
-          <StatLabel>Total Agents</StatLabel>
-          <Flex align="center">
-            <Icon as={FiMessageSquare} mr={2} color="green.500" />
-            <StatNumber>{stats.totalAgents}</StatNumber>
-          </Flex>
-          <StatHelpText>
-            <StatArrow type="increase" />
+        <div className="p-4 shadow-md border border-gray-200 rounded-md">
+          <div className="text-sm text-gray-500">Total Agents</div>
+          <div className="flex items-center">
+            <FiMessageSquare className="mr-2 text-green-500" />
+            <div className="text-2xl font-bold">{stats.totalAgents}</div>
+          </div>
+          <div className="text-sm text-gray-500">
+            <span className="text-green-500">↑</span>
             {stats.agentGrowth}% since last month
-          </StatHelpText>
-        </Stat>
+          </div>
+        </div>
         
-        <Stat p={4} shadow="md" border="1px" borderColor="gray.200" borderRadius="md">
-          <StatLabel>System Health</StatLabel>
-          <Flex align="center">
-            <Icon as={FiServer} mr={2} color="purple.500" />
-            <StatNumber>{stats.systemHealth}%</StatNumber>
-          </Flex>
-          <Progress value={stats.systemHealth} colorScheme="green" size="sm" mt={2} />
-        </Stat>
-      </SimpleGrid>
+        <div className="p-4 shadow-md border border-gray-200 rounded-md">
+          <div className="text-sm text-gray-500">System Health</div>
+          <div className="flex items-center">
+            <FiServer className="mr-2 text-purple-500" />
+            <div className="text-2xl font-bold">{stats.systemHealth}%</div>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
+            <div className="bg-green-600 h-2.5 rounded-full" style={{width: `${stats.systemHealth}%`}}></div>
+          </div>
+        </div>
+      </div>
       
       {/* Recent Activity and Alerts */}
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-        <Card>
-          <CardHeader>
-            <Heading size="md">Recent Activity</Heading>
-          </CardHeader>
-          <CardBody>
-            <Stack divider={<StackDivider />} spacing={4}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="p-4 border-b">
+            <h2 className="text-lg font-semibold">Recent Activity</h2>
+          </div>
+          <div className="p-4">
+            <div className="divide-y divide-gray-200">
               {recentActivities.map((activity) => (
-                <Box key={activity.id}>
-                  <HStack justify="space-between">
-                    <HStack>
-                      <Icon 
-                        as={activity.type === 'user' ? FiUsers : activity.type === 'agent' ? FiMessageSquare : FiActivity} 
-                        color={activity.type === 'user' ? 'blue.500' : activity.type === 'agent' ? 'green.500' : 'purple.500'} 
+                <div key={activity.id} className="py-4">
+                  <div className="flex justify-between">
+                    <div className="flex">
+                      <FiActivity 
+                        className={`mr-3 ${activity.type === 'user' ? 'text-blue-500' : activity.type === 'agent' ? 'text-green-500' : 'text-gray-500'}`}
                       />
-                      <Text fontWeight="bold">{activity.user}</Text>
-                    </HStack>
-                    <Text fontSize="sm" color="gray.500">
-                      {formatTime(activity.timestamp)}
-                    </Text>
-                  </HStack>
-                  <Text mt={1}>{activity.action}</Text>
-                </Box>
+                      <div>
+                        <div className="font-semibold">{activity.user}</div>
+                        <div className="text-sm text-gray-600">{activity.action}</div>
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-500">{formatTime(activity.timestamp)}</div>
+                  </div>
+                </div>
               ))}
-            </Stack>
-          </CardBody>
-        </Card>
+            </div>
+          </div>
+        </div>
         
-        <Card>
-          <CardHeader>
-            <Heading size="md">System Alerts</Heading>
-          </CardHeader>
-          <CardBody>
-            {alerts.length === 0 ? (
-              <Text>No alerts at this time.</Text>
-            ) : (
-              <Stack divider={<StackDivider />} spacing={4}>
-                {alerts.map((alert) => (
-                  <Box key={alert.id}>
-                    <HStack justify="space-between">
-                      <HStack>
-                        <Icon 
-                          as={FiAlertCircle} 
-                          color={alert.level === 'error' ? 'red.500' : alert.level === 'warning' ? 'orange.500' : 'blue.500'} 
-                        />
-                        <Badge 
-                          colorScheme={alert.level === 'error' ? 'red' : alert.level === 'warning' ? 'orange' : 'blue'}
-                        >
-                          {alert.level.toUpperCase()}
-                        </Badge>
-                      </HStack>
-                      <Text fontSize="sm" color="gray.500">
-                        {formatTime(alert.timestamp)}
-                      </Text>
-                    </HStack>
-                    <Text mt={1}>{alert.message}</Text>
-                  </Box>
-                ))}
-              </Stack>
-            )}
-          </CardBody>
-        </Card>
-      </SimpleGrid>
-    </Box>
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="p-4 border-b">
+            <h2 className="text-lg font-semibold">System Alerts</h2>
+          </div>
+          <div className="p-4">
+            <div className="space-y-4">
+              {alerts.map((alert) => (
+                <div 
+                  key={alert.id} 
+                  className={`p-4 rounded-md flex items-start ${alert.level === 'info' ? 'bg-blue-100 text-blue-800' : alert.level === 'warning' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+                  <FiAlertCircle className="mr-3 mt-1" />
+                  <div>
+                    <div className="font-semibold">{alert.level.charAt(0).toUpperCase() + alert.level.slice(1)}</div>
+                    <div className="text-sm">{alert.message}</div>
+                    <div className="text-xs mt-1">{formatTime(alert.timestamp)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

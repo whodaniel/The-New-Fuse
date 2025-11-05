@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
-  EllipsisVerticalIcon,
-  PlayIcon,
-  PauseIcon,
-  StopIcon,
-  PencilIcon,
-  TrashIcon,
-  ChartBarIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  XCircleIcon,
-  CpuChipIcon,
-  CloudIcon,
-  UserIcon,
-  Cog6ToothIcon
-} from '@heroicons/react/24/outline';
+  Plus,
+  Search,
+  Filter,
+  MoreVertical,
+  Play,
+  Pause,
+  StopCircle,
+  Pencil,
+  Trash2,
+  BarChart,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  Cpu,
+  Cloud,
+  User,
+  Cog,
+  Pencil
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Agent {
@@ -51,7 +52,6 @@ const AgentDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('lastActive');
-  const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
   // Mock data for development
@@ -171,46 +171,46 @@ const AgentDashboard: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'active':
-        return <CheckCircleIcon className="w-5 h-5 text-green-500" />;
+        return <CheckCircle className="w-5 h-5 text-green-500" />;
       case 'inactive':
-        return <PauseIcon className="w-5 h-5 text-gray-500" />;
+        return <Pause className="w-5 h-5 text-gray-500" />;
       case 'error':
-        return <XCircleIcon className="w-5 h-5 text-red-500" />;
+        return <XCircle className="w-5 h-5 text-red-500" />;
       case 'training':
-        return <ClockIcon className="w-5 h-5 text-yellow-500" />;
+        return <Clock className="w-5 h-5 text-yellow-500" />;
       default:
-        return <ExclamationTriangleIcon className="w-5 h-5 text-gray-500" />;
+        return <AlertTriangle className="w-5 h-5 text-gray-500" />;
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'conversational':
-        return <UserIcon className="w-5 h-5" />;
+        return <User className="w-5 h-5" />;
       case 'task-automation':
-        return <Cog6ToothIcon className="w-5 h-5" />;
+        return <Cog className="w-5 h-5" />;
       case 'data-analysis':
-        return <ChartBarIcon className="w-5 h-5" />;
+        return <BarChart className="w-5 h-5" />;
       case 'content-generation':
-        return <PencilIcon className="w-5 h-5" />;
+        return <Pencil className="w-5 h-5" />;
       default:
-        return <CpuChipIcon className="w-5 h-5" />;
+        return <Cpu className="w-5 h-5" />;
     }
   };
 
   const getDeploymentIcon = (deployment: string) => {
     switch (deployment) {
       case 'cloud':
-        return <CloudIcon className="w-4 h-4" />;
+        return <Cloud className="w-4 h-4" />;
       case 'local':
-        return <CpuChipIcon className="w-4 h-4" />;
+        return <Cpu className="w-4 h-4" />;
       case 'hybrid':
         return <div className="flex space-x-1">
-          <CloudIcon className="w-3 h-3" />
-          <CpuChipIcon className="w-3 h-3" />
+          <Cloud className="w-3 h-3" />
+          <Cpu className="w-3 h-3" />
         </div>;
       default:
-        return <CpuChipIcon className="w-4 h-4" />;
+        return <Cpu className="w-4 h-4" />;
     }
   };
 
@@ -525,7 +525,7 @@ const AgentDashboard: React.FC = () => {
                         className="p-1 text-gray-500 hover:text-yellow-600 transition-colors"
                         title="Pause Agent"
                       >
-                        <PauseIcon className="w-4 h-4" />
+                        <Pause className="w-4 h-4" />
                       </button>
                     )}
                     
@@ -535,7 +535,7 @@ const AgentDashboard: React.FC = () => {
                         className="p-1 text-gray-500 hover:text-green-600 transition-colors"
                         title="Start Agent"
                       >
-                        <PlayIcon className="w-4 h-4" />
+                        <Play className="w-4 h-4" />
                       </button>
                     )}
                     
@@ -544,7 +544,7 @@ const AgentDashboard: React.FC = () => {
                       className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
                       title="View Details"
                     >
-                      <ChartBarIcon className="w-4 h-4" />
+                      <ChartBar className="w-4 h-4" />
                     </Link>
                     
                     <button
@@ -552,7 +552,7 @@ const AgentDashboard: React.FC = () => {
                       className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
                       title="Edit Agent"
                     >
-                      <PencilIcon className="w-4 h-4" />
+                      <Pencil className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

@@ -15,51 +15,23 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/index.ts",
-    "src/types/index.ts",
-    "src/types/core.ts",
-    "src/types/agent.ts",
-    "src/types/analysis.ts",
-    "src/types/communication.ts",
-    "src/types/enums.ts",
-    "src/types/memory.ts",
-    "src/types/monitoring.ts",
-    "src/types/prompt.types.ts",
-    "src/types/security.ts",
-    "src/types/state.ts",
-    "src/types/task.ts",
-    "src/types/validation.ts",
-    "src/types/workflow.ts",
-    "src/types/featureFlags.ts",
-    "src/types/models.ts",
-    "src/constants/types.ts",
-    "src/utils/logger.ts",
-    "src/utils/errors.ts",
-    "src/services/SystemMonitor.ts",
-    "src/services/MetricsCollector.ts", 
-    "src/services/PerformanceMonitor.ts",
-    "src/services/UnifiedMonitoringService.ts",
-    "src/services/LocalAIDetectionService.ts",
-    "src/services/AgentLLMService.ts",
-    "src/services/PromptService.ts",
-    "src/services/FeatureFlagService.ts",
-    "src/services/MongoFeatureFlagService.ts",
-    "src/agents/agent-orchestrator.ts",
-    "src/agents/AgentSwarmOrchestrationService.ts",
-    "src/agent/AgentProcessor.ts",
-    "src/memory/MemorySystem.ts",
-    "src/memory/MemoryManager.ts",
-    "src/workflow/WorkflowEngine.ts",
-    "src/workflow/WorkflowExecutor.ts",
-    "src/config/ConfigService.ts",
-    "src/config/redis.config.ts",
-    "src/database/DatabaseService.ts",
-    "src/models/FeatureFlag.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
     "**/*.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "../database"
+    },
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../utils"
+    }
   ]
 }

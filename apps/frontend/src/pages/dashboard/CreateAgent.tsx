@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { 
-  ArrowLeftIcon,
-  CheckIcon,
-  XMarkIcon,
-  InformationCircleIcon,
-  CpuChipIcon,
-  CloudIcon,
-  UserIcon,
-  Cog6ToothIcon,
-  ChartBarIcon,
-  PencilIcon,
-  PlayIcon,
-  DocumentTextIcon,
-  CodeBracketIcon,
-  GlobeAltIcon
-} from '@heroicons/react/24/outline';
+  ArrowLeft,
+  Check,
+  X,
+  Info,
+  Cpu,
+  Cloud,
+  User,
+  Cog,
+  BarChart,
+  Pencil,
+  Play,
+  FileText,
+  Code,
+  Globe
+} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface AgentConfig {
@@ -65,11 +65,11 @@ const CreateAgent: React.FC = () => {
   });
 
   const steps = [
-    { id: 1, name: 'Basic Info', icon: InformationCircleIcon },
-    { id: 2, name: 'Configuration', icon: Cog6ToothIcon },
-    { id: 3, name: 'Capabilities', icon: CpuChipIcon },
-    { id: 4, name: 'Advanced', icon: CodeBracketIcon },
-    { id: 5, name: 'Review', icon: CheckIcon }
+    { id: 1, name: 'Basic Info', icon: Info },
+    { id: 2, name: 'Configuration', icon: Cog },
+    { id: 3, name: 'Capabilities', icon: Cpu },
+    { id: 4, name: 'Advanced', icon: Code },
+    { id: 5, name: 'Review', icon: Check }
   ];
 
   const agentTypes = [
@@ -77,28 +77,28 @@ const CreateAgent: React.FC = () => {
       id: 'conversational',
       name: 'Conversational',
       description: 'Chat-based agents for customer support, Q&A, and general conversation',
-      icon: UserIcon,
+      icon: User,
       color: 'blue'
     },
     {
       id: 'task-automation',
       name: 'Task Automation',
       description: 'Agents that automate workflows, processes, and repetitive tasks',
-      icon: Cog6ToothIcon,
+      icon: Cog,
       color: 'green'
     },
     {
       id: 'data-analysis',
       name: 'Data Analysis',
       description: 'Agents specialized in analyzing data, generating reports, and insights',
-      icon: ChartBarIcon,
+      icon: BarChart,
       color: 'purple'
     },
     {
       id: 'content-generation',
       name: 'Content Generation',
       description: 'Agents for creating content, writing, and creative tasks',
-      icon: PencilIcon,
+      icon: Pencil,
       color: 'orange'
     }
   ];
@@ -234,7 +234,7 @@ const CreateAgent: React.FC = () => {
                         </p>
                       </div>
                       {config.type === type.id && (
-                        <CheckIcon className={`w-5 h-5 text-${type.color}-600`} />
+                        <Check className={`w-5 h-5 text-${type.color}-600`} />
                       )}
                     </div>
                   </div>
@@ -589,7 +589,7 @@ const CreateAgent: React.FC = () => {
               
               {config.capabilities.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Capabilities</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-900 mb-2">Capabilities</h4>
                   <div className="flex flex-wrap gap-2">
                     {config.capabilities.map((capability) => (
                       <span
@@ -605,7 +605,7 @@ const CreateAgent: React.FC = () => {
               
               {config.tags.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Tags</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-900 mb-2">Tags</h4>
                   <div className="flex flex-wrap gap-2">
                     {config.tags.map((tag) => (
                       <span
@@ -727,19 +727,16 @@ const CreateAgent: React.FC = () => {
             ) : (
               <button
                 onClick={handleSave}
-                disabled={saving || !isStepValid()}
-                className="flex items-center space-x-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={saving}
+                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 flex items-center justify-center"
               >
                 {saving ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                    <span>Creating...</span>
+                    <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    Saving...
                   </>
                 ) : (
-                  <>
-                    <PlayIcon className="w-4 h-4" />
-                    <span>Create Agent</span>
-                  </>
+                  'Save Agent'
                 )}
               </button>
             )}

@@ -11,9 +11,9 @@
     }
   },
   "scripts": {
-    "build": "bun tsc",
+    "build": "pnpm tsc",
     "test": "pnpm test",
-    "clean": "bun rimraf dist"
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@testing-library/react": "^16.3.0",

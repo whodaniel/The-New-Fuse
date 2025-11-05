@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Gear } from '@phosphor-icons/react';
+import { Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useUser from '@/hooks/useUser';
 import paths from '@/utils/paths';
@@ -18,12 +18,12 @@ export const SettingsButton: React.React.FC<SettingsButtonProps> = ({ className 
     <Link to={paths.settings()}>
       <Button
         variant="ghost"
-        size="icon"
-        className={className}
-        aria-label="Settings"
+        className={`transition-all duration-300 ${className}`}
       >
-        <Gear className="h-5 w-5" />
+        <Settings className="h-5 w-5" />
       </Button>
     </Link>
   );
 };
+
+export default SettingsButton;

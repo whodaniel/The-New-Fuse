@@ -6,8 +6,8 @@ import ErrorBoundary from './components/core/ErrorBoundary';
 import { usePerformanceMonitor } from './components/performance/PerformanceMonitor';
 import PerformanceMonitor from './components/performance/PerformanceMonitor';
 
-// Performance-optimized router with code splitting
-import OptimizedRouter from './components/performance/OptimizedRouter';
+// Using ComprehensiveRouter (stable implementation)
+import ComprehensiveRouter from './ComprehensiveRouter';
 
 const queryClient = new QueryClient();
 
@@ -17,9 +17,9 @@ const AppContent: React.FC = () => {
   
   return (
     <>
-      <OptimizedRouter />
+      <ComprehensiveRouter />
       {showMonitor && (
-        <PerformanceMonitor 
+        <PerformanceMonitor
           position="bottom-right"
           compact={true}
         />

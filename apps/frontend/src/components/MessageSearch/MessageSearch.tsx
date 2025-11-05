@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
+import { Search } from 'lucide-react';
 import use_debounce_1 from 'use-debounce';
 import axios_1 from 'axios';
 import ui_1 from '../../shared/components/ui';
@@ -38,7 +38,7 @@ const MessageSearch = () => {
     return (<ui_1.Card variant="default" className="w-full max-w-2xl mx-auto">
       <ui_1.CardHeader>
         <div className="flex items-center space-x-2">
-          <icons_material_1.Search className="text-gray-400"/>
+          <Search className="text-gray-400"/>
           <ui_2.Label>Search Messages</ui_2.Label>
         </div>
         <div className="mt-2">

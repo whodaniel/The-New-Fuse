@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box } from '@chakra-ui/react';
 
 interface ColorBoxProps {
   color: string;
@@ -7,14 +6,9 @@ interface ColorBoxProps {
 }
 
 export const ColorBox: React.React.FC<ColorBoxProps> = ({ color, onClick }) => (
-  <Box
-    width="40px"
-    height="40px"
-    backgroundColor={color}
-    cursor="pointer"
-    border="2px solid white"
-    borderRadius="4px"
-    _hover={{ opacity: 0.8 }}
+  <div
+    style={{ backgroundColor: color }}
+    className="w-10 h-10 cursor-pointer border-2 border-white rounded hover:opacity-80"
     onClick={onClick}
   />
 );

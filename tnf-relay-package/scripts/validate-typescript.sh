@@ -11,7 +11,7 @@ check_package() {
     cd "packages/$package_name"
     
     # Run type checking
-    bun tsc --noEmit
+    pnpm tsc --noEmit
     
     # Run ESLint
     bun eslint "src/**/*.{ts,tsx}"

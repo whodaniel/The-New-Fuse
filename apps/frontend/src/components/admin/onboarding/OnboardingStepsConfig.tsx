@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@the-new-fuse/ui-consolidated';
 import {
-  FiPlus,
-  FiEdit2,
-  FiTrash2,
-  FiArrowUp,
-  FiArrowDown,
-  FiEye,
-  FiSettings,
-  FiInfo
-} from 'react-icons/fi';
+  Plus,
+  Edit2,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  Settings,
+  Info
+} from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 
@@ -278,7 +278,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
           disabled={isLoading}
           className="flex items-center gap-2"
         >
-          <FiPlus />
+          <Plus />
           Add Step
         </Button>
       </div>
@@ -288,7 +288,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
           Configure the steps in your onboarding wizard. Drag and drop to reorder steps.
         </p>
         <div className="relative group">
-          <FiInfo className="text-gray-400 cursor-help" />
+          <Info className="text-gray-400 cursor-help" />
           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
             Each step represents a screen in the onboarding wizard. Steps can be customized for different user types.
           </div>
@@ -358,7 +358,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                               className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                               aria-label="Move step up"
                             >
-                              <FiArrowUp />
+                              <ArrowUp />
                             </button>
                             <button
                               onClick={() => handleMoveStep(step.id, 'down')}
@@ -366,7 +366,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                               className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                               aria-label="Move step down"
                             >
-                              <FiArrowDown />
+                              <ArrowDown />
                             </button>
                             <button
                               onClick={() => handleToggleStep(step.id)}
@@ -375,21 +375,21 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                               } hover:text-blue-800`}
                               aria-label="Toggle step"
                             >
-                              <FiEye />
+                              <Eye />
                             </button>
                             <button
                               onClick={() => handleEditStep(step)}
                               className="p-1 text-gray-400 hover:text-gray-600"
                               aria-label="Edit step"
                             >
-                              <FiEdit2 />
+                              <Edit2 />
                             </button>
                             <button
                               onClick={() => handleDeleteStep(step.id)}
                               className="p-1 text-gray-400 hover:text-red-600"
                               aria-label="Delete step"
                             >
-                              <FiTrash2 />
+                              <Trash2 />
                             </button>
                           </div>
                         </div>

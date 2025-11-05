@@ -39,7 +39,7 @@ interface ScrapingSession {
 @Injectable()
 export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(WebScrapingWebSocketGateway.name);
   private activeSessions = new Map<string, ScrapingSession>();

@@ -1,6 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  Heart,
+  RefreshCw,
+  CheckCircle,
+  AlertTriangle,
+  Siren,
+  TrendingUp,
+  TrendingDown,
+  ArrowRight,
+  Plug,
+  Database,
+  Zap,
+  Search,
+  Mail,
+  Save,
+  BarChart,
+  Settings,
+  Wrench,
+} from 'lucide-react';
 
 interface SystemMetric {
   name: string;
@@ -184,22 +203,33 @@ export default function SystemHealth() {
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up': return '📈';
-      case 'down': return '📉';
-      case 'stable': return '➡️';
-      default: return '➡️';
+      case 'up':
+        return <TrendingUp className="h-5 w-5 text-green-500" />;
+      case 'down':
+        return <TrendingDown className="h-5 w-5 text-red-500" />;
+      case 'stable':
+        return <ArrowRight className="h-5 w-5 text-gray-500" />;
+      default:
+        return <ArrowRight className="h-5 w-5 text-gray-500" />;
     }
   };
 
   const getServiceIcon = (serviceName: string) => {
-    if (serviceName.includes('API')) return '🔌';
-    if (serviceName.includes('Database')) return '🗄️';
-    if (serviceName.includes('Cache')) return '⚡';
-    if (serviceName.includes('Vector')) return '🔍';
-    if (serviceName.includes('Queue')) return '📬';
-    if (serviceName.includes('Storage')) return '💾';
-    if (serviceName.includes('Monitor')) return '📊';
-    return '⚙️';
+    if (serviceName.includes('API'))
+      return <Plug className="h-5 w-5 text-gray-500" />;
+    if (serviceName.includes('Database'))
+      return <Database className="h-5 w-5 text-gray-500" />;
+    if (serviceName.includes('Cache'))
+      return <Zap className="h-5 w-5 text-gray-500" />;
+    if (serviceName.includes('Vector'))
+      return <Search className="h-5 w-5 text-gray-500" />;
+    if (serviceName.includes('Queue'))
+      return <Mail className="h-5 w-5 text-gray-500" />;
+    if (serviceName.includes('Storage'))
+      return <Save className="h-5 w-5 text-gray-500" />;
+    if (serviceName.includes('Monitor'))
+      return <BarChart className="h-5 w-5 text-gray-500" />;
+    return <Settings className="h-5 w-5 text-gray-500" />;
   };
 
   const overallHealth = (() => {
@@ -237,15 +267,22 @@ export default function SystemHealth() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">💚 System Health</h1>
-            <p className="text-gray-600">Monitor system performance and service status</p>
+            <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-2">
+              <Heart className="h-8 w-8 mr-2 text-green-500" /> System Health
+            </h1>
+            <p className="text-gray-600">
+              Monitor system performance and service status
+            </p>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">
               Last updated: {lastRefresh.toLocaleTimeString()}
             </span>
             <Button onClick={refreshData} disabled={loading}>
-              {loading ? '🔄' : '↻'} Refresh
+              <RefreshCw
+                className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+              />{' '}
+              Refresh
             </Button>
           </div>
         </div>
@@ -257,11 +294,22 @@ export default function SystemHealth() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="text-4xl">
-                {overallHealth === 'healthy' ? '✅' : overallHealth === 'warning' ? '⚠️' : '🚨'}
+                {overallHealth === 'healthy' ? (
+                  <CheckCircle className="h-10 w-10 text-green-500" />
+                ) : overallHealth === 'warning' ? (
+                  <AlertTriangle className="h-10 w-10 text-yellow-500" />
+                ) : (
+                  <Siren className="h-10 w-10 text-red-500" />
+                )}
               </div>
               <div>
                 <h2 className="text-2xl font-bold">
-                  System Status: {overallHealth === 'healthy' ? 'Healthy' : overallHealth === 'warning' ? 'Warning' : 'Critical'}
+                  System Status:{' '}
+                  {overallHealth === 'healthy'
+                    ? 'Healthy'
+                    : overallHealth === 'warning'
+                      ? 'Warning'
+                      : 'Critical'}
                 </h2>
                 <p className="text-gray-600">
                   {services.filter(s => s.status === 'online').length}/{services.length} services online
@@ -377,25 +425,25 @@ export default function SystemHealth() {
       <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <Button variant="outline" className="p-4 h-auto">
           <div className="text-center">
-            <div className="text-2xl mb-2">📊</div>
+            <BarChart className="h-8 w-8 mx-auto mb-2" />
             <div className="font-medium">View Logs</div>
           </div>
         </Button>
         <Button variant="outline" className="p-4 h-auto">
           <div className="text-center">
-            <div className="text-2xl mb-2">🔧</div>
+            <Wrench className="h-8 w-8 mx-auto mb-2" />
             <div className="font-medium">System Settings</div>
           </div>
         </Button>
         <Button variant="outline" className="p-4 h-auto">
           <div className="text-center">
-            <div className="text-2xl mb-2">📈</div>
+            <TrendingUp className="h-8 w-8 mx-auto mb-2" />
             <div className="font-medium">Performance</div>
           </div>
         </Button>
         <Button variant="outline" className="p-4 h-auto">
           <div className="text-center">
-            <div className="text-2xl mb-2">🚨</div>
+            <Siren className="h-8 w-8 mx-auto mb-2" />
             <div className="font-medium">Alerts</div>
           </div>
         </Button>

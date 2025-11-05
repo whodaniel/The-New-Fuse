@@ -1,195 +1,116 @@
 import React, { useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import { useAuth } from '../../contexts/AuthContext';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
 import {
-  Box,
-  Button,
+  Form,
   FormControl,
+  FormField,
+  FormItem,
   FormLabel,
-  Input,
-  Stack,
-  useColorModeValue,
-  Heading,
-  Text,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
-  Spinner, // For loading state
-  InputGroup, // For password visibility toggle
-  InputRightElement, // For password visibility toggle
-  Icon, // For password visibility toggle icon
-  Checkbox, // For terms and conditions
-  Link as ChakraLink, // For linking to terms/privacy
-} from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'; // Icons for password visibility
-import { useAuth } from '../../contexts/AuthContext'; // Adjust path as necessary
-import { useNavigate } from 'react-router-dom'; // To redirect after successful registration
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+const registerSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  username: z.string().min(3),
+});
 
 export function RegisterForm() {
-  const [username, setUsername] = useState(''); // Optional: if you collect username
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { register } = useAuth(); // Assuming this function exists in AuthContext
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      username: "",
+    },
+  });
 
-    if (!email || !password || !confirmPassword) {
-      setError('All fields are required.');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-    if (!agreedToTerms) {
-      setError('You must agree to the terms and conditions.');
-      return;
-    }
-    // Add more validation as needed (e.g., password strength)
-
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
     setIsLoading(true);
     try {
-      // The register function should handle API calls
-      // It might take an object with email, password, and optionally username
-      await register({ email, password, username }); // Adjust payload as needed
-      // On successful registration, navigate to a confirmation page or login
-      navigate('/dashboard'); // Or '/login' or a "please verify your email" page
-    } catch (err: any) {
-      setError(err.message || 'Failed to register. Please try again.');
+      await register(values.username, values.email, values.password);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Registration failed", error);
+      // Handle error (e.g., show an error message)
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const cardBorderColor = useColorModeValue('gray.200', 'gray.600');
+  }
 
   return (
-    <Box
-      bg={cardBg}
-      p={{ base: 6, sm: 8 }}
-      shadow="base"
-      borderRadius="lg"
-      borderWidth="1px"
-      borderColor={cardBorderColor}
-    >
-      <Stack spacing="6" as="form" onSubmit={handleSubmit}>
-        {error && (
-          <Alert status="error" borderRadius="md">
-            <AlertIcon />
-            <Box flex="1">
-              <AlertTitle>Error!</AlertTitle>
-              <AlertDescription display="block">{error}</AlertDescription>
-            </Box>
-            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setError(null)} />
-          </Alert>
-        )}
-        {/* Optional: Username field */}
-        {/* <FormControl id="username-register">
-          <FormLabel>Username (Optional)</FormLabel>
-          <Input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="yourusername"
-            autoComplete="username"
-          />
-        </FormControl> */}
-        <FormControl id="email-register" isRequired>
-          <FormLabel>Email address</FormLabel>
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            autoComplete="email"
-          />
-        </FormControl>
-        <FormControl id="password-register" isRequired>
-          <FormLabel>Password</FormLabel>
-          <InputGroup>
-            <Input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="new-password"
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center">Create an account</h2>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <InputRightElement>
-              <IconButton
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                onClick={() => setShowPassword(!showPassword)}
-                variant="ghost"
-              />
-            </InputRightElement>
-          </InputGroup>
-        </FormControl>
-        <FormControl id="confirm-password-register" isRequired>
-          <FormLabel>Confirm Password</FormLabel>
-          <InputGroup>
-            <Input
-              type={showConfirmPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="new-password"
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="your.email@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <InputRightElement>
-              <IconButton
-                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                icon={showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />}
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                variant="ghost"
-              />
-            </InputRightElement>
-          </InputGroup>
-        </FormControl>
-        <FormControl id="terms-agreement" isRequired>
-          <Checkbox
-            isChecked={agreedToTerms}
-            onChange={(e) => setAgreedToTerms(e.target.checked)}
-            colorScheme="brand"
-          >
-            <Text fontSize="sm">
-              I agree to the{' '}
-              <ChakraLink href="/terms" color="brand.500" isExternal>
-                Terms and Conditions
-              </ChakraLink>{' '}
-              and{' '}
-              <ChakraLink href="/privacy" color="brand.500" isExternal>
-                Privacy Policy
-              </ChakraLink>
-              .
-            </Text>
-          </Checkbox>
-        </FormControl>
-        <Button
-          type="submit"
-          colorScheme="brand"
-          size="lg"
-          fontSize="md"
-          isLoading={isLoading}
-          spinner={<Spinner size="sm" />}
-          w="full" // Make button full width
-        >
-          Create Account
-        </Button>
-      </Stack>
-    </Box>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating account..." : "Create an account"}
+            </Button>
+            <p className="text-sm font-light text-gray-500">
+              Already have an account?{" "}
+              <RouterLink
+                to="/login"
+                className="font-medium text-blue-600 hover:underline"
+              >
+                Login here
+              </RouterLink>
+            </p>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }
 
 export default RegisterForm;
-
-// Need to import IconButton for password visibility toggle
-import { IconButton } from '@chakra-ui/react';

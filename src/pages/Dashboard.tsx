@@ -1,26 +1,6 @@
-import {
-  Box,
-  Container,
-  SimpleGrid,
-  Heading,
-  Text,
-  Stat as ChakraStat,
-  StatLabel as ChakraStatLabel,
-  StatNumber as ChakraStatNumber,
-  StatHelpText as ChakraStatHelpText,
-  useColorMode,
-  chakra,
-} from '@chakra-ui/react';
-
-const Stat = chakra(ChakraStat);
-const StatLabel = chakra(ChakraStatLabel);
-const StatNumber = chakra(ChakraStatNumber);
-const StatHelpText = chakra(ChakraStatHelpText);
+import React from 'react';
 
 export function Dashboard() {
-  const { colorMode } = useColorMode();
-  const bgColor = colorMode === 'light' ? 'white' : 'gray.700';
-
   const stats = [
     {
       label: 'Total Users',
@@ -45,49 +25,34 @@ export function Dashboard() {
   ];
 
   return (
-    <Container maxW="container.xl" py={8}>
-      <Box>
-        <Heading size="lg" mb={6}>
-          Dashboard
-        </Heading>
+    <div className="container mx-auto py-8">
+      <div>
+        <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
 
-        <SimpleGrid
-          columns={{ base: 1, md: 2, lg: 4 }}
-          gap={6}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
-            <Box
-              key={index}
-              p={4}
-              bg={bgColor}
-              rounded="lg"
-              shadow="base"
-            >
-              <Stat>
-                <StatLabel>{stat.label}</StatLabel>
-                <StatNumber>{stat.value}</StatNumber>
-                <StatHelpText>{stat.change}</StatHelpText>
-              </Stat>
-            </Box>
+            <div key={index} className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-md">
+              <div className="stat">
+                <div className="stat-label">{stat.label}</div>
+                <div className="stat-number">{stat.value}</div>
+                <div className="stat-help-text">{stat.change}</div>
+              </div>
+            </div>
           ))}
-        </SimpleGrid>
+        </div>
 
-        <SimpleGrid
-          columns={{ base: 1, lg: 2 }}
-          gap={8}
-          mt={8}
-        >
-          <Box p={6} bg={bgColor} rounded="lg" shadow="base">
-            <Heading size="md" mb={4}>Recent Activity</Heading>
-            <Text color="gray.500">No recent activity</Text>
-          </Box>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+          <div className="p-6 bg-white dark:bg-gray-700 rounded-lg shadow-md">
+            <h2 className="text-lg font-bold mb-4">Recent Activity</h2>
+            <p className="text-gray-500">No recent activity</p>
+          </div>
 
-          <Box p={6} bg={bgColor} rounded="lg" shadow="base">
-            <Heading size="md" mb={4}>Quick Actions</Heading>
-            <Text color="gray.500">No actions available</Text>
-          </Box>
-        </SimpleGrid>
-      </Box>
-    </Container>
+          <div className="p-6 bg-white dark:bg-gray-700 rounded-lg shadow-md">
+            <h2 className="text-lg font-bold mb-4">Quick Actions</h2>
+            <p className="text-gray-500">No actions available</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

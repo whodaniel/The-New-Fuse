@@ -9,7 +9,7 @@
     "start": "pnpm run dev:hub",
     "launch": "pnpm run dev:hub",
     "launch:browser": "node apps/browser-hub/launch-with-theia.js",
-    "build": "node scripts/pre-build-check.cjs && node scripts/memory-optimized-build.cjs",
+    "build": "turbo run build",
     "build:with-optimized-theia": "./scripts/build-with-yarn-theia.sh",
     "build:original": "cd apps/theia-ide && pnpm install && node build-theia.js && cd ../.. && turbo run build",
     "build:types": "turbo run build --filter=@the-new-fuse/types",
@@ -164,5 +164,5 @@
     "apps/*",
     "packages/*"
   ],
-  "packageManager": "pnpm@10.19.0"
+  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
 }

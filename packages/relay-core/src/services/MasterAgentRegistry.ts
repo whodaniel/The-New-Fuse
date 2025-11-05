@@ -13,9 +13,8 @@ import {
   AgentStatus,
   TaskStatus,
   TaskPriority,
-  PrismaClient
 } from '@the-new-fuse/database';
-import { ethers, Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
+import { Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
 import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
 // import { sha256 } from '../../../../src/utils/cryptoUtils';
@@ -432,11 +431,6 @@ export class MasterAgentRegistry extends EventEmitter {
           }
         },
         include: { metadata: true }
-      });
-
-      const dbAgent = await this.prisma.agent.findUnique({
-        where: { id: agentId },
-        include: { metadata: true },
       });
 
       if (!dbAgent) {
@@ -1532,6 +1526,10 @@ export class MasterAgentRegistry extends EventEmitter {
 
       if (!tokenId) {
         throw new Error('Failed to parse token ID from mint transaction');
+      }
+
+      if (!this.blockchainService) {
+        throw new Error('BlockchainService not initialized');
       }
 
       const tbaAddress = await this.blockchainService.createTokenBoundAccount(tokenId);

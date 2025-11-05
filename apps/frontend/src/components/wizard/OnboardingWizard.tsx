@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card } from '@the-new-fuse/ui-consolidated';
-import { FiChevronLeft, FiChevronRight, FiCheck } from 'react-icons/fi';
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useWizard } from './WizardProvider';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { UserProfileStep } from './steps/UserProfileStep';
@@ -128,7 +128,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
                         : 'bg-gray-200 text-gray-500'
                   }`}>
                     {index < activeStep ? (
-                      <FiCheck className="w-4 h-4" />
+                      <Check className="w-4 h-4" />
                     ) : (
                       <span>{index + 1}</span>
                     )}
@@ -157,7 +157,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
                 variant="outline"
                 className="flex items-center space-x-2"
               >
-                <FiChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4" />
                 <span>Back</span>
               </Button>
             )}
@@ -182,7 +182,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
                 className="flex items-center space-x-2"
               >
                 <span>Next</span>
-                <FiChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4" />
               </Button>
             )}
           </div>

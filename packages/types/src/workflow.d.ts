@@ -75,7 +75,10 @@ export declare enum WorkflowExecutionStatus {
 export interface WorkflowInput {
     [key: string]: unknown;
 }
-export interface WorkflowExecution extends BaseEntity {
+export interface WorkflowExecution {
+    id?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
     workflowId: string;
     status: WorkflowExecutionStatus;
     input?: WorkflowInput;

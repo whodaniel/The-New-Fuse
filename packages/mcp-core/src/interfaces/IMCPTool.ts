@@ -44,7 +44,9 @@ export interface ToolResult {
  */
 export interface ToolExecutionMetadata {
   /** Unique execution identifier */
-  executionId: string;
+  executionId?: string;
+  /** Tool name */
+  toolName?: string;
   /** Execution time in milliseconds */
   executionTime?: number;
   /** Memory usage in bytes */
@@ -55,6 +57,8 @@ export interface ToolExecutionMetadata {
   context?: Record<string, any>;
   /** Warnings generated during execution */
   warnings?: string[];
+  /** Additional metadata */
+  [key: string]: any;
 }
 
 /**

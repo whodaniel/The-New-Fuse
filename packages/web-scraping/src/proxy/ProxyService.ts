@@ -6,17 +6,19 @@
  */
 
 import axios from 'axios';
-import { ProxyRequest, ProxyResponse, WebScrapingConfig, SecurityPolicy } from '../types';
+import { ProxyRequest, ProxyResponse, SecurityPolicy } from '../types';
 // Simple error and monitoring implementations for proxy service
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {
-    console.error('[Proxy Error]', error.message, context);
+    // eslint-disable-next-line no-console
+    console.error('[Proxy Error]', error.message, context || {});
   }
 }
 
 class BaseMonitoringSystem {
   recordMetric(name: string, value: number, tags?: any): void {
-    console.log(`[Proxy Metric] ${name}: ${value}`, tags);
+    // eslint-disable-next-line no-console
+    console.log(`[Proxy Metric] ${name}: ${value}`, tags || {});
   }
   
   getMetrics(): any {
@@ -226,7 +228,7 @@ export class ProxyService {
   /**
    * Get client identifier for rate limiting
    */
-  private getClientId(request: ProxyRequest): string {
+  private getClientId(_request: ProxyRequest): string {
     // In a real implementation, this would use IP address or API key
     // For now, use a simple hash of the request
     return 'default-client';

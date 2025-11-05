@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import AgentMessage from './agent-message';
 import { webSocketService } from '../services/websocket';
 
-interface AgentChatRoomProps {
-  roomId: string;
-}
+interface AgentChatRoomProps {}
 
 interface Message {
   id: string;
@@ -23,7 +22,7 @@ interface Message {
   metadata?: Record<string, any>;
 }
 
-export function AgentChatRoom({ roomId }: AgentChatRoomProps) {
+export function AgentChatRoom({}: AgentChatRoomProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentAgent] = useState({
     id: 'composer',

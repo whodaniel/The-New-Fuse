@@ -15,6 +15,7 @@
     "isolatedModules": true,
     "noEmit": false,
     "incremental": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@the-new-fuse/fairtable-core": ["./fairtable-core/dist"],

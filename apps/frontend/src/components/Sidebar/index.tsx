@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, List } from "@phosphor-icons/react";
+import { Plus, List } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import NewWorkspaceModal, {
@@ -82,7 +82,7 @@ export default function Sidebar() {
                       onClick={showNewWsModal}
                       className={STYLES.newWorkspaceButton}
                     >
-                      <Plus size={18} weight="bold" />
+                      <Plus size={18} />
                       <p className="text-sidebar text-sm font-semibold">
                         {t("new-workspace.title")}
                       </p>
@@ -138,6 +138,7 @@ export function SidebarMobileHeader() {
         <button
           onClick={() => setShowSidebar(true)}
           className={STYLES.mobileMenuButton}
+          title="Show menu"
         >
           <List className="h-6 w-6" />
         </button>
@@ -166,7 +167,7 @@ export function SidebarMobileHeader() {
           className={STYLES.mobileSidebarContent}
         >
           <div className={STYLES.mobileContentWrapper}>
-            <div className={STYLES.mobileHeader}>
+            <div className={STYLES.mobileHeaderInner}>
               <div className={STYLES.mobileLogoContainer}>
                 <img
                   src={logo}

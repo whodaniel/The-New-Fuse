@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 export interface Agent {
-  agentId: string;
+  id: string;
   name: string;
   type: string;
   status: string;

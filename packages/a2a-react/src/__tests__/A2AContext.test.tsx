@@ -1,37 +1,25 @@
 import React from 'react';
 import { renderHook } from '@testing-library/react';
-import { A2AProvider, useA2AContext } from '../context/A2AContext';
+import { useA2AContext, A2AProvider } from '..';
 
-describe('A2AContext', () => {
-  it('should throw error when used outside provider', () => {
-    const originalError = console.error;
-    console.error = jest.fn();
-    
-    expect(() => {
-      renderHook(() => useA2AContext());
-    }).toThrow('useA2AContext must be used within an A2AProvider');
-    
-    console.error = originalError;
+describe('useA2AContext', () => {
+  it('should throw an error when used outside of a provider', () => {
+    // Suppress console.error for this test
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    expect(() => renderHook(() => useA2AContext())).toThrow(
+      'useA2AContext must be used within an A2AProvider'
+    );
+    consoleErrorSpy.mockRestore();
   });
 
-  it('should provide context when used within provider', async () => {
+  it('should provide context when used within a provider', () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <A2AProvider url="ws://test">
-        {children}
-      </A2AProvider>
+      <A2AProvider config={{ url: 'ws://test', agentId: 'test-agent' }}>{children}</A2AProvider>
     );
-
     const { result } = renderHook(() => useA2AContext(), { wrapper });
-    
-    // Wait for initial connection
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
-    expect(result.current).toHaveProperty('url');
-    expect(result.current).toHaveProperty('isConnected');
-    expect(result.current).toHaveProperty('agents');
-    expect(result.current).toHaveProperty('messages');
-    expect(result.current).toHaveProperty('sendMessage');
-    expect(result.current).toHaveProperty('connect');
-    expect(result.current).toHaveProperty('disconnect');
+
+    expect(result.current).toBeDefined();
+    expect(result.current.connectionState.connected).toBe(false);
+    expect(result.current.agents).toEqual([]);
   });
 });

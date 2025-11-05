@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@the-new-fuse/ui-consolidated';
-import { FiHome, FiSettings, FiUsers, FiCode, FiBook, FiMessageSquare, FiCheckCircle } from 'react-icons/fi';
+import { Home, Settings, Users, Code, Book, MessageSquare, CheckCircle } from 'lucide-react';
 import { useWizard } from '../WizardProvider';
 
 export const CompletionStep: React.FC = () => {
@@ -11,37 +11,37 @@ export const CompletionStep: React.FC = () => {
   const humanNextSteps = [
     {
       title: 'Explore Dashboard',
-      icon: FiHome,
+      icon: Home,
       description: 'Get familiar with your dashboard and navigation',
       link: '/dashboard'
     },
     {
       title: 'Configure Workspace',
-      icon: FiSettings,
+      icon: Settings,
       description: 'Customize your workspace settings',
       link: '/workspace/settings'
     },
     {
       title: 'Invite Team Members',
-      icon: FiUsers,
+      icon: Users,
       description: 'Collaborate with your team',
       link: '/workspace/members'
     },
     {
       title: 'Create Your First Workflow',
-      icon: FiCode,
+      icon: Code,
       description: 'Build an AI workflow with multiple agents',
       link: '/workflows/new'
     },
     {
       title: 'Read Documentation',
-      icon: FiBook,
+      icon: Book,
       description: 'Learn more about The New Fuse',
       link: '/docs'
     },
     {
       title: 'Get Help',
-      icon: FiMessageSquare,
+      icon: MessageSquare,
       description: 'Contact support or join the community',
       link: '/support'
     }
@@ -50,25 +50,25 @@ export const CompletionStep: React.FC = () => {
   const agentNextSteps = [
     {
       title: 'API Documentation',
-      icon: FiBook,
+      icon: Book,
       description: 'Explore the API documentation',
       link: '/api/docs'
     },
     {
       title: 'Test Integration',
-      icon: FiCode,
+      icon: Code,
       description: 'Test your integration with The New Fuse',
       link: '/api/test'
     },
     {
       title: 'Monitor Usage',
-      icon: FiHome,
+      icon: Home,
       description: 'Monitor your API usage and performance',
       link: '/api/dashboard'
     },
     {
       title: 'Join Agent Network',
-      icon: FiUsers,
+      icon: Users,
       description: 'Connect with other agents in the network',
       link: '/api/network'
     }
@@ -80,7 +80,7 @@ export const CompletionStep: React.FC = () => {
     <div>
       <div className="space-y-8">
         <div className="text-center">
-          <FiCheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-2">
             {isAIAgent ? 'Integration Complete!' : 'Setup Complete!'}
           </h2>

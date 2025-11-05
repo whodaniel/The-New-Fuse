@@ -1,5 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  Users,
+  Building,
+  Heart,
+  AlertTriangle,
+  AlertCircle,
+  Circle,
+  Flag,
+  Plug,
+  Settings,
+  User,
+  RefreshCw,
+  Bot,
+  Plus,
+  Hammer,
+  BarChart,
+  Siren,
+  ClipboardList,
+} from 'lucide-react';
 
 interface SystemMetrics {
   totalUsers: number;
@@ -53,13 +72,13 @@ export default function AdminPanel() {
   const getHealthIcon = (health: SystemMetrics['serverHealth']) => {
     switch (health) {
       case 'healthy':
-        return '💚';
+        return <Heart className="h-5 w-5 text-green-500" />;
       case 'warning':
-        return '⚠️';
+        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
       case 'critical':
-        return '🔴';
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
       default:
-        return '⚫';
+        return <Circle className="h-5 w-5 text-gray-500" />;
     }
   };
 
@@ -73,42 +92,42 @@ export default function AdminPanel() {
     {
       title: 'User Management',
       description: 'Manage users, roles, and permissions',
-      icon: '👥',
+      icon: <Users className="h-6 w-6" />,
       link: '/admin/users',
       color: 'bg-blue-500'
     },
     {
       title: 'Workspace Management',
       description: 'Manage workspaces and organizations',
-      icon: '🏢',
+      icon: <Building className="h-6 w-6" />,
       link: '/admin/workspaces',
       color: 'bg-green-500'
     },
     {
       title: 'System Health',
       description: 'Monitor system performance and status',
-      icon: '💚',
+      icon: <Heart className="h-6 w-6" />,
       link: '/admin/system-health',
       color: 'bg-emerald-500'
     },
     {
       title: 'Feature Flags',
       description: 'Enable/disable features and experiments',
-      icon: '🏴',
+      icon: <Flag className="h-6 w-6" />,
       link: '/admin/feature-flags',
       color: 'bg-purple-500'
     },
     {
       title: 'Port Management',
       description: 'Manage application ports and services',
-      icon: '🔌',
+      icon: <Plug className="h-6 w-6" />,
       link: '/admin/port-management',
       color: 'bg-orange-500'
     },
     {
       title: 'Admin Settings',
       description: 'Configure admin panel preferences',
-      icon: '⚙️',
+      icon: <Settings className="h-6 w-6" />,
       link: '/admin/settings',
       color: 'bg-gray-500'
     }
@@ -130,18 +149,18 @@ export default function AdminPanel() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">👨‍💼 Admin Panel</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center"><User className="h-8 w-8 mr-2" /> Admin Panel</h1>
             <p className="text-gray-600">System administration and management dashboard</p>
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-500">
               Last updated: {new Date().toLocaleTimeString()}
             </div>
-            <button 
+            <button
               onClick={() => window.location.reload()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
             >
-              🔄 Refresh
+              <RefreshCw className="h-4 w-4 mr-2" /> Refresh
             </button>
           </div>
         </div>
@@ -159,7 +178,7 @@ export default function AdminPanel() {
                   <p className="text-sm text-gray-600">Total Users</p>
                   <p className="text-xs text-green-600">{metrics.activeUsers} active now</p>
                 </div>
-                <div className="text-3xl">👥</div>
+                <div className="text-3xl"><Users className="h-8 w-8 text-gray-400" /></div>
               </div>
             </div>
             
@@ -170,7 +189,7 @@ export default function AdminPanel() {
                   <p className="text-sm text-gray-600">Total Workspaces</p>
                   <p className="text-xs text-green-600">{metrics.activeWorkspaces} active</p>
                 </div>
-                <div className="text-3xl">🏢</div>
+                <div className="text-3xl"><Building className="h-8 w-8 text-gray-400" /></div>
               </div>
             </div>
 
@@ -181,7 +200,7 @@ export default function AdminPanel() {
                   <p className="text-sm text-gray-600">Total Agents</p>
                   <p className="text-xs text-green-600">{metrics.runningAgents} running</p>
                 </div>
-                <div className="text-3xl">🤖</div>
+                <div className="text-3xl"><Bot className="h-8 w-8 text-gray-400" /></div>
               </div>
             </div>
 
@@ -189,8 +208,8 @@ export default function AdminPanel() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">System Health</p>
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full border ${getHealthBadge(metrics.serverHealth)}`}>
-                    {getHealthIcon(metrics.serverHealth)} {metrics.serverHealth}
+                  <span className={`px-3 py-1 text-sm font-medium rounded-full border ${getHealthBadge(metrics.serverHealth)} flex items-center`}>
+                    {getHealthIcon(metrics.serverHealth)} <span className="ml-1">{metrics.serverHealth}</span>
                   </span>
                   <p className="text-xs text-gray-500 mt-1">Uptime: {metrics.systemUptime}</p>
                 </div>
@@ -236,38 +255,38 @@ export default function AdminPanel() {
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button className="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors text-left">
-            <div className="text-2xl mb-2">➕</div>
+          <button className="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors text-left flex flex-col">
+            <div className="text-2xl mb-2"><Plus className="h-8 w-8" /></div>
             <div className="font-medium">Create User</div>
             <div className="text-sm opacity-90">Add a new user to the system</div>
           </button>
           
-          <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors text-left">
-            <div className="text-2xl mb-2">🏗️</div>
+          <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors text-left flex flex-col">
+            <div className="text-2xl mb-2"><Hammer className="h-8 w-8" /></div>
             <div className="font-medium">Create Workspace</div>
             <div className="text-sm opacity-90">Set up a new workspace</div>
           </button>
           
-          <button className="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 transition-colors text-left">
-            <div className="text-2xl mb-2">🤖</div>
+          <button className="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 transition-colors text-left flex flex-col">
+            <div className="text-2xl mb-2"><Bot className="h-8 w-8" /></div>
             <div className="font-medium">Deploy Agent</div>
             <div className="text-sm opacity-90">Deploy a new AI agent</div>
           </button>
           
-          <button className="bg-orange-600 text-white p-4 rounded-lg hover:bg-orange-700 transition-colors text-left">
-            <div className="text-2xl mb-2">📊</div>
+          <button className="bg-orange-600 text-white p-4 rounded-lg hover:bg-orange-700 transition-colors text-left flex flex-col">
+            <div className="text-2xl mb-2"><BarChart className="h-8 w-8" /></div>
             <div className="font-medium">View Reports</div>
             <div className="text-sm opacity-90">Generate system reports</div>
           </button>
           
-          <button className="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition-colors text-left">
-            <div className="text-2xl mb-2">🚨</div>
+          <button className="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition-colors text-left flex flex-col">
+            <div className="text-2xl mb-2"><Siren className="h-8 w-8" /></div>
             <div className="font-medium">System Alerts</div>
             <div className="text-sm opacity-90">Check system alerts</div>
           </button>
           
-          <button className="bg-gray-600 text-white p-4 rounded-lg hover:bg-gray-700 transition-colors text-left">
-            <div className="text-2xl mb-2">📋</div>
+          <button className="bg-gray-600 text-white p-4 rounded-lg hover:bg-gray-700 transition-colors text-left flex flex-col">
+            <div className="text-2xl mb-2"><ClipboardList className="h-8 w-8" /></div>
             <div className="font-medium">Audit Logs</div>
             <div className="text-sm opacity-90">Review system activity</div>
           </button>

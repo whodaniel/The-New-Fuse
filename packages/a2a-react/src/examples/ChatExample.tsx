@@ -39,8 +39,9 @@ const ChatComponent: React.FC = () => {
 };
 
 const ChatExample: React.FC = () => {
+  const config = { url: "ws://localhost:8080", agentId: "user" };
   return (
-    <A2AProvider url="ws://localhost:8080">
+    <A2AProvider config={config}>
       <ChatComponent />
     </A2AProvider>
   );

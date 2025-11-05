@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import System from '@/models/system';
 import PreLoader from '@/components/Preloader';
 import { LOCALAI_COMMON_URLS } from '@/utils/constants';
@@ -120,30 +120,43 @@ export default function LocalAiOptions({ settings }: LocalAiOptionsProps) {
                 onClick={() => setShowAdvanced(!showAdvanced)}
             >
                 {t('Advanced Settings')}
-                {showAdvanced ? <CaretUp size={12} /> : <CaretDown size={12} />}
-            </button>
-
-            {showAdvanced && (
-                <div className={COMMON_STYLES.inputsContainer}>
-                    <div className={COMMON_STYLES.inputWrapper}>
-                        <label className={COMMON_STYLES.label} htmlFor="maxChunkLength">
-                            {t('Max Chunk Length')}
-                        </label>
-                        <input
-                            id="maxChunkLength"
-                            type="number"
-                            className={COMMON_STYLES.input}
-                            placeholder="8192"
-                            defaultValue={settings?.EmbeddingModelMaxChunkLength || 8192}
-                            onChange={(e) => handleSettingsUpdate({ 
-                                EmbeddingModelMaxChunkLength: parseInt(e.target.value, 10) 
-                            })}
-                            min={1}
-                            required
-                        />
-                    </div>
+                <div className="flex justify-start">
+                    <button
+                        type="button"
+                        className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-800"
+                        onClick={() => setShowAdvanced(!showAdvanced)}
+                    >
+                        {showAdvanced ? (
+                          <ChevronUp className="mr-2 h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="mr-2 h-4 w-4" />
+                        )}
+                        {showAdvanced ? t('Hide Advanced Options') : t('Show Advanced Options')}
+                    </button>
                 </div>
-            )}
+
+                {showAdvanced && (
+                    <div className={COMMON_STYLES.inputsContainer}>
+                        <div className={COMMON_STYLES.inputWrapper}>
+                            <label className={COMMON_STYLES.label} htmlFor="maxChunkLength">
+                                {t('Max Chunk Length')}
+                            </label>
+                            <input
+                                id="maxChunkLength"
+                                type="number"
+                                className={COMMON_STYLES.input}
+                                placeholder="8192"
+                                defaultValue={settings?.EmbeddingModelMaxChunkLength || 8192}
+                                onChange={(e) => handleSettingsUpdate({ 
+                                    EmbeddingModelMaxChunkLength: parseInt(e.target.value, 10) 
+                                })}
+                                min={1}
+                                required
+                            />
+                        </div>
+                    </div>
+                )}
+            </button>
         </div>
     );
 }

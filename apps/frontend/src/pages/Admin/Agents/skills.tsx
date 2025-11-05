@@ -1,7 +1,8 @@
 import AgentSQLConnectorSelection from './SQLConnectorSelection';
+import AgentWebSearchSelection from './WebSearchSelection';
 import GenericSkillPanel from './GenericSkillPanel';
 import DefaultSkillPanel from './DefaultSkillPanel';
-import { Brain, File, Browser, ChartBar, FileMagnifyingGlass, } from "@phosphor-icons/react";
+import { Brain, File, Search, BarChart, FileSearch } from "lucide-react";
 import RAGImage from "@/media/agents/rag-memory.png";
 import SummarizeImage from "@/media/agents/view-summarize.png";
 import ScrapeWebsitesImage from "@/media/agents/scrape-websites.png";
@@ -26,7 +27,7 @@ export const defaultSkills = {
         title: "Scrape websites",
         description: "Allow the agent to visit and scrape the content of websites.",
         component: DefaultSkillPanel,
-        icon: Browser,
+        icon: Search,
         image: ScrapeWebsitesImage,
     },
 };
@@ -36,7 +37,7 @@ export const configurableSkills = {
         description: "Enable the default agent to generate and write to files that can be saved to your computer.",
         component: GenericSkillPanel,
         skill: "save-file-to-browser",
-        icon: FileMagnifyingGlass,
+        icon: FileSearch,
         image: GenerateSaveImages,
     },
     "create-chart": {
@@ -44,7 +45,7 @@ export const configurableSkills = {
         description: "Enable the default agent to generate various types of charts from data provided or given in chat.",
         component: GenericSkillPanel,
         skill: "create-chart",
-        icon: ChartBar,
+        icon: BarChart,
         image: GenerateChartsImage,
     },
     "web-browsing": {

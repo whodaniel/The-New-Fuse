@@ -7,6 +7,17 @@ interface OnboardingGeneralSettingsProps {
   hasUnsavedChanges: boolean;
 }
 
+const CustomSwitch = ({ id, isChecked, onChange, label }) => (
+  <label htmlFor={id} className="flex items-center cursor-pointer">
+    <div className="relative">
+      <input id={id} type="checkbox" className="sr-only" checked={isChecked} onChange={onChange} />
+      <div className={`block w-14 h-8 rounded-full ${isChecked ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
+      <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${isChecked ? 'transform translate-x-6' : ''}`}></div>
+    </div>
+    <div className="ml-3 text-gray-700 font-medium">{label}</div>
+  </label>
+);
+
 export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps> = ({
   onSave,
   onChange,
@@ -94,7 +105,8 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
 
   // Handle number input change
   const handleNumberChange = (name: string, value: string) => {
-    setSettings(prev => ({ ...prev, [name]: parseInt(value) }));
+    const num = parseInt(value, 10);
+    setSettings(prev => ({ ...prev, [name]: isNaN(num) ? 0 : num }));
     onChange();
   };
 
@@ -102,318 +114,278 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
   const handleSave = async () => {
     try {
       await OnboardingAdminService.updateGeneralSettings(settings);
-      onSave();
-
-      toast({
-        title: 'Settings saved',
-        description: 'General settings have been saved successfully.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      onSave(); // This will trigger the notification in the parent component
     } catch (err) {
       console.error('Error saving general settings:', err);
-
-      toast({
-        title: 'Error saving settings',
-        description: 'There was an error saving your settings. Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      showNotification('error', 'Error saving settings', 'There was an error saving your settings. Please try again.');
     }
   };
 
-  const cardBg = useColorModeValue('white', 'gray.700');
-
   return (
-    <Box>
+    <div>
+      {notification && (
+        <div className={`mb-4 p-4 rounded-md border ${
+          notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <h3 className="font-bold">{notification.title}</h3>
+          <p>{notification.description}</p>
+        </div>
+      )}
+
       {isLoading && (
-        <Box textAlign="center" py={10}>
-          <Spinner size="xl" mb={4} />
-          <Text>Loading general settings...</Text>
-        </Box>
+        <div className="text-center py-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading general settings...</p>
+        </div>
       )}
 
       {error && !isLoading && (
-        <Alert status="error" mb={4}>
-          <AlertIcon />
-          <Box flex="1">
-            <Text fontWeight="bold">Error Loading Settings</Text>
-            <Text>{error}</Text>
-          </Box>
-          <Button
-            size="sm"
-            colorScheme="red"
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong className="font-bold">Error Loading Settings. </strong>
+          <span className="block sm:inline">{error}</span>
+          <button
+            className="absolute top-0 bottom-0 right-0 px-4 py-3"
             onClick={() => window.location.reload()}
           >
             Retry
-          </Button>
-        </Alert>
+          </button>
+        </div>
       )}
 
       {!isLoading && !error && (
-        <VStack spacing={6} align="stretch">
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* General Settings */}
-          <Card bg={cardBg}>
-            <CardHeader pb={0}>
-              <Heading size="md">General Settings</Heading>
-            </CardHeader>
-            <CardBody>
-              <VStack spacing={4} align="stretch">
-                <FormControl display="flex" alignItems="center">
-                  <Switch
-                    id="onboarding-enabled"
-                    isChecked={settings.onboardingEnabled}
-                    onChange={handleSwitchChange('onboardingEnabled')}
-                    colorScheme="blue"
-                  />
-                  <FormLabel htmlFor="onboarding-enabled" mb={0} ml={2}>
-                    Enable onboarding for new users
-                  </FormLabel>
-                </FormControl>
-
-                <FormControl display="flex" alignItems="center">
-                  <Switch
-                    id="skip-returning"
-                    isChecked={settings.skipForReturningUsers}
-                    onChange={handleSwitchChange('skipForReturningUsers')}
-                    colorScheme="blue"
-                  />
-                  <FormLabel htmlFor="skip-returning" mb={0} ml={2}>
-                    Skip onboarding for returning users
-                  </FormLabel>
-                </FormControl>
-
-                <FormControl display="flex" alignItems="center">
-                  <Switch
-                    id="allow-skipping"
-                    isChecked={settings.allowSkipping}
-                    onChange={handleSwitchChange('allowSkipping')}
-                    colorScheme="blue"
-                  />
-                  <FormLabel htmlFor="allow-skipping" mb={0} ml={2}>
-                    Allow users to skip onboarding
-                  </FormLabel>
-                </FormControl>
-
-                <FormControl display="flex" alignItems="center">
-                  <Switch
-                    id="require-email"
-                    isChecked={settings.requireEmailVerification}
-                    onChange={handleSwitchChange('requireEmailVerification')}
-                    colorScheme="blue"
-                  />
-                  <FormLabel htmlFor="require-email" mb={0} ml={2}>
-                    Require email verification
-                  </FormLabel>
-                </FormControl>
-              </VStack>
-            </CardBody>
-          </Card>
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">General Settings</h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <CustomSwitch
+                  id="onboarding-enabled"
+                  isChecked={settings.onboardingEnabled}
+                  onChange={handleSwitchChange('onboardingEnabled')}
+                  label="Enable onboarding for new users"
+                />
+                <CustomSwitch
+                  id="skip-returning"
+                  isChecked={settings.skipForReturningUsers}
+                  onChange={handleSwitchChange('skipForReturningUsers')}
+                  label="Skip onboarding for returning users"
+                />
+                <CustomSwitch
+                  id="allow-skipping"
+                  isChecked={settings.allowSkipping}
+                  onChange={handleSwitchChange('allowSkipping')}
+                  label="Allow users to skip onboarding"
+                />
+                <CustomSwitch
+                  id="require-email"
+                  isChecked={settings.requireEmailVerification}
+                  onChange={handleSwitchChange('requireEmailVerification')}
+                  label="Require email verification"
+                />
+              </div>
+            </div>
+          </div>
 
           {/* Appearance */}
-          <Card bg={cardBg}>
-            <CardHeader pb={0}>
-              <Heading size="md">Appearance</Heading>
-            </CardHeader>
-            <CardBody>
-              <VStack spacing={4} align="stretch">
-                <FormControl>
-                  <FormLabel>Logo URL</FormLabel>
-                  <Input
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Appearance</h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700">Logo URL</label>
+                  <input
+                    type="text"
                     name="logoUrl"
+                    id="logoUrl"
                     value={settings.logoUrl}
                     onChange={handleChange}
                     placeholder="URL to your logo"
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
-                </FormControl>
+                </div>
 
-                <SimpleGrid columns={2} spacing={4}>
-                  <FormControl>
-                    <FormLabel>Primary Color</FormLabel>
-                    <HStack>
-                      <Input
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="primaryColor" className="block text-sm font-medium text-gray-700">Primary Color</label>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <input
+                        type="text"
                         name="primaryColor"
+                        id="primaryColor"
                         value={settings.primaryColor}
                         onChange={handleChange}
                         placeholder="#3182CE"
+                        className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
-                      <Box
-                        w="36px"
-                        h="36px"
-                        borderRadius="md"
-                        bg={settings.primaryColor}
-                        border="1px solid"
-                        borderColor="gray.200"
+                      <div
+                        className="w-9 h-9 rounded-md border border-gray-200"
+                        style={{ backgroundColor: settings.primaryColor }}
                       />
-                    </HStack>
-                  </FormControl>
+                    </div>
+                  </div>
 
-                  <FormControl>
-                    <FormLabel>Secondary Color</FormLabel>
-                    <HStack>
-                      <Input
+                  <div>
+                    <label htmlFor="secondaryColor" className="block text-sm font-medium text-gray-700">Secondary Color</label>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <input
+                        type="text"
                         name="secondaryColor"
+                        id="secondaryColor"
                         value={settings.secondaryColor}
                         onChange={handleChange}
                         placeholder="#4FD1C5"
+                        className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
-                      <Box
-                        w="36px"
-                        h="36px"
-                        borderRadius="md"
-                        bg={settings.secondaryColor}
-                        border="1px solid"
-                        borderColor="gray.200"
+                      <div
+                        className="w-9 h-9 rounded-md border border-gray-200"
+                        style={{ backgroundColor: settings.secondaryColor }}
                       />
-                    </HStack>
-                  </FormControl>
-                </SimpleGrid>
+                    </div>
+                  </div>
+                </div>
 
-                <FormControl>
-                  <FormLabel>Background Image URL (optional)</FormLabel>
-                  <Input
+                <div>
+                  <label htmlFor="backgroundImage" className="block text-sm font-medium text-gray-700">Background Image URL (optional)</label>
+                  <input
+                    type="text"
                     name="backgroundImage"
+                    id="backgroundImage"
                     value={settings.backgroundImage}
                     onChange={handleChange}
                     placeholder="URL to background image"
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
-                </FormControl>
-              </VStack>
-            </CardBody>
-          </Card>
-        </SimpleGrid>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Content */}
-        <Card bg={cardBg}>
-          <CardHeader pb={0}>
-            <Heading size="md">Content</Heading>
-          </CardHeader>
-          <CardBody>
-            <VStack spacing={4} align="stretch">
-              <FormControl>
-                <FormLabel>Welcome Title</FormLabel>
-                <Input
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Content</h3>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="welcomeTitle" className="block text-sm font-medium text-gray-700">Welcome Title</label>
+                <input
+                  type="text"
                   name="welcomeTitle"
+                  id="welcomeTitle"
                   value={settings.welcomeTitle}
                   onChange={handleChange}
                   placeholder="Welcome to The New Fuse"
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
-              </FormControl>
+              </div>
 
-              <FormControl>
-                <FormLabel>Welcome Message</FormLabel>
-                <Textarea
+              <div>
+                <label htmlFor="welcomeMessage" className="block text-sm font-medium text-gray-700">Welcome Message</label>
+                <textarea
                   name="welcomeMessage"
+                  id="welcomeMessage"
                   value={settings.welcomeMessage}
                   onChange={handleChange}
                   placeholder="Enter welcome message"
                   rows={3}
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
-              </FormControl>
-            </VStack>
-          </CardBody>
-        </Card>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Behavior */}
-          <Card bg={cardBg}>
-            <CardHeader pb={0}>
-              <Heading size="md">Behavior</Heading>
-            </CardHeader>
-            <CardBody>
-              <VStack spacing={4} align="stretch">
-                <FormControl>
-                  <FormLabel>Session Timeout (minutes)</FormLabel>
-                  <NumberInput
-                    min={5}
-                    max={120}
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Behavior</h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="timeoutMinutes" className="block text-sm font-medium text-gray-700">Session Timeout (minutes)</label>
+                  <input
+                    type="number"
+                    name="timeoutMinutes"
+                    id="timeoutMinutes"
+                    min="5"
+                    max="120"
                     value={settings.timeoutMinutes}
-                    onChange={(value) => handleNumberChange('timeoutMinutes', value)}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </FormControl>
-
-                <FormControl display="flex" alignItems="center">
-                  <Switch
-                    id="save-automatically"
-                    isChecked={settings.saveProgressAutomatically}
-                    onChange={handleSwitchChange('saveProgressAutomatically')}
-                    colorScheme="blue"
+                    onChange={(e) => handleNumberChange('timeoutMinutes', e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
-                  <FormLabel htmlFor="save-automatically" mb={0} ml={2}>
-                    Save progress automatically
-                  </FormLabel>
-                </FormControl>
+                </div>
 
-                <FormControl>
-                  <FormLabel>Redirect After Completion</FormLabel>
-                  <Input
+                <CustomSwitch
+                  id="save-automatically"
+                  isChecked={settings.saveProgressAutomatically}
+                  onChange={handleSwitchChange('saveProgressAutomatically')}
+                  label="Save progress automatically"
+                />
+
+                <div>
+                  <label htmlFor="redirectAfterCompletion" className="block text-sm font-medium text-gray-700">Redirect After Completion</label>
+                  <input
+                    type="text"
                     name="redirectAfterCompletion"
+                    id="redirectAfterCompletion"
                     value={settings.redirectAfterCompletion}
                     onChange={handleChange}
                     placeholder="/dashboard"
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border--blue-500 sm:text-sm"
                   />
-                </FormControl>
-              </VStack>
-            </CardBody>
-          </Card>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Analytics */}
-          <Card bg={cardBg}>
-            <CardHeader pb={0}>
-              <Heading size="md">Analytics</Heading>
-            </CardHeader>
-            <CardBody>
-              <VStack spacing={4} align="stretch">
-                <FormControl display="flex" alignItems="center">
-                  <Switch
-                    id="track-analytics"
-                    isChecked={settings.trackOnboardingAnalytics}
-                    onChange={handleSwitchChange('trackOnboardingAnalytics')}
-                    colorScheme="blue"
-                  />
-                  <FormLabel htmlFor="track-analytics" mb={0} ml={2}>
-                    Track onboarding analytics
-                  </FormLabel>
-                </FormControl>
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Analytics</h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <CustomSwitch
+                  id="track-analytics"
+                  isChecked={settings.trackOnboardingAnalytics}
+                  onChange={handleSwitchChange('trackOnboardingAnalytics')}
+                  label="Track onboarding analytics"
+                />
+                <CustomSwitch
+                  id="collect-feedback"
+                  isChecked={settings.collectFeedback}
+                  onChange={handleSwitchChange('collectFeedback')}
+                  label="Collect user feedback"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <FormControl display="flex" alignItems="center">
-                  <Switch
-                    id="collect-feedback"
-                    isChecked={settings.collectFeedback}
-                    onChange={handleSwitchChange('collectFeedback')}
-                    colorScheme="blue"
-                  />
-                  <FormLabel htmlFor="collect-feedback" mb={0} ml={2}>
-                    Collect user feedback
-                  </FormLabel>
-                </FormControl>
-              </VStack>
-            </CardBody>
-          </Card>
-        </SimpleGrid>
+        <hr />
 
-        <Divider />
-
-        <HStack justifyContent="flex-end">
-          <Button
-            colorScheme="blue"
+        <div className="flex justify-end">
+          <button
+            type="button"
             onClick={handleSave}
-            isDisabled={!hasUnsavedChanges}
+            disabled={!hasUnsavedChanges}
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Changes
-          </Button>
-        </HStack>
-      </VStack>
+          </button>
+        </div>
+      </div>
       )}
-    </Box>
+    </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
+import { CheckCircle, XCircle, AlertTriangle, Info, Settings, BrainCircuit, Bot, FileJson, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface OnboardingAISettingsProps {
   onSave: () => void;
@@ -204,14 +205,16 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
           <div className="flex">
             <div className="flex-shrink-0">
               {notification.type === 'success' && (
-                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
+                <CheckCircle className="h-5 w-5 text-green-400" />
               )}
               {notification.type === 'error' && (
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
+                <XCircle className="h-5 w-5 text-red-400" />
+              )}
+              {notification.type === 'warning' && (
+                <AlertTriangle className="h-5 w-5 text-yellow-400" />
+              )}
+              {notification.type === 'info' && (
+                <Info className="h-5 w-5 text-blue-400" />
               )}
             </div>
             <div className="ml-3">
@@ -241,9 +244,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
         <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
+              <XCircle className="h-5 w-5 text-red-400" />
             </div>
             <div className="ml-3 flex-1">
               <h3 className="text-sm font-medium text-red-800">Error Loading Settings</h3>
@@ -303,9 +304,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                        type="button"
                        onClick={() => handleSwitchChange('ragEnabled', !settings.ragEnabled)}
                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${settings.ragEnabled ? 'bg-blue-600' : 'bg-gray-200'}`}
-                       role="switch"
-                       aria-checked={settings.ragEnabled}
-                       aria-label="Toggle RAG (Retrieval-Augmented Generation)"
+                       aria-label="Enable RAG"
                      >
                        <span
                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.ragEnabled ? 'translate-x-5' : 'translate-x-0'}`}
@@ -314,82 +313,60 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="defaultEmbeddingModel" className="block text-sm font-medium text-gray-700 mb-2">Default Embedding Model</label>
+                    <label htmlFor="embeddingModel" className="block text-sm font-medium text-gray-700 mb-2">Embedding Model</label>
                     <select
-                      id="defaultEmbeddingModel"
-                      name="defaultEmbeddingModel"
-                      value={settings.defaultEmbeddingModel}
+                      id="embeddingModel"
+                      name="embeddingModel"
+                      value={settings.embeddingModel}
                       onChange={handleInputChange}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
-                      <option value="text-embedding-3-large">OpenAI text-embedding-3-large</option>
-                      <option value="text-embedding-3-small">OpenAI text-embedding-3-small</option>
-                      <option value="text-embedding-ada-002">OpenAI text-embedding-ada-002</option>
-                      <option value="voyage-large-2">Voyage AI voyage-large-2</option>
-                      <option value="voyage-code-2">Voyage AI voyage-code-2</option>
-                      <option value="cohere-embed-english-v3.0">Cohere embed-english-v3.0</option>
+                      <option value="text-embedding-ada-002">Ada v2 (OpenAI)</option>
+                      <option value="text-embedding-3-large">Embedding 3 Large (OpenAI)</option>
+                      <option value="text-embedding-3-small">Embedding 3 Small (OpenAI)</option>
                     </select>
-                    <p className="mt-1 text-sm text-gray-500">
-                      The embedding model used to convert text into vector representations
-                    </p>
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="vectorDatabaseType" className="block text-sm font-medium text-gray-700 mb-2">Vector Database</label>
+                    <label htmlFor="vectorDatabase" className="block text-sm font-medium text-gray-700 mb-2">Vector Database</label>
                     <select
-                      id="vectorDatabaseType"
+                      id="vectorDatabase"
                       name="vectorDatabaseType"
                       value={settings.vectorDatabaseType}
                       onChange={handleInputChange}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       <option value="pinecone">Pinecone</option>
-                      <option value="qdrant">Qdrant</option>
                       <option value="weaviate">Weaviate</option>
-                      <option value="milvus">Milvus</option>
-                      <option value="chroma">ChromaDB</option>
+                      <option value="qdrant">Qdrant</option>
                     </select>
-                    <p className="mt-1 text-sm text-gray-500">
-                      The vector database used to store and retrieve embeddings
-                    </p>
                   </div>
 
-                  {/* Vector Database Configuration Accordion */}
-                  <div className="border border-gray-200 rounded-md">
+                  <div className="border-t border-gray-200 pt-4">
                     <button
-                      type="button"
-                      onClick={() => setShowVectorConfig(!showVectorConfig)}
-                      className="w-full px-4 py-3 text-left flex items-center justify-between bg-gray-50 hover:bg-gray-100 rounded-t-md"
-                      aria-expanded={showVectorConfig}
-                      aria-label="Toggle vector database configuration"
+                      onClick={() => setVectorDbConfigOpen(!vectorDbConfigOpen)}
+                      className="flex justify-between items-center w-full text-left"
+                      aria-expanded={vectorDbConfigOpen}
                     >
-                      <span className="font-medium text-gray-900">Vector Database Configuration</span>
-                      <svg
-                        className={`h-5 w-5 text-gray-500 transform transition-transform ${showVectorConfig ? 'rotate-180' : ''}`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                      <h4 className="text-md font-medium text-gray-900">Vector Database Configuration</h4>
+                      <ChevronDown className={`w-5 h-5 transform transition-transform ${vectorDbConfigOpen ? 'rotate-180' : ''}`} />
                     </button>
-                    {showVectorConfig && (
-                      <div className="px-4 py-4 border-t border-gray-200">
+
+                    {vectorDbConfigOpen && (
+                      <div className="mt-4">
                         {settings.vectorDatabaseType === 'pinecone' && (
                           <>
                             <div className="mb-4">
                               <label className="block text-sm font-medium text-gray-700 mb-2">Pinecone API Key</label>
                               <input
-                                type="password"
                                 name="vectorDatabaseConfig.pineconeApiKey"
                                 value={settings.vectorDatabaseConfig.pineconeApiKey}
                                 onChange={handleInputChange}
+                                type="password"
                                 placeholder="Enter your Pinecone API key"
                                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                               />
                             </div>
-
                             <div className="mb-4">
                               <label className="block text-sm font-medium text-gray-700 mb-2">Pinecone Environment</label>
                               <input
@@ -400,7 +377,6 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                               />
                             </div>
-
                             <div className="mb-4">
                               <label className="block text-sm font-medium text-gray-700 mb-2">Pinecone Index</label>
                               <input
@@ -506,16 +482,18 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Default Temperature: {settings.defaultTemperature}</label>
-                    <div className="flex items-center space-x-4">
+                    <label htmlFor="defaultTemperature" className="block text-sm font-medium text-gray-700 mb-2">Default Temperature</label>
+                    <div className="flex items-center">
                       <input
+                        id="defaultTemperature"
                         type="range"
-                        min="0"
-                        max="1"
-                        step="0.1"
                         value={settings.defaultTemperature}
                         onChange={(e) => handleSliderChange('defaultTemperature', parseFloat(e.target.value))}
-                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        step="0.1"
+                        min="0"
+                        max="1"
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        aria-label="Default Temperature"
                       />
                       <input
                         type="number"
@@ -525,6 +503,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                         min="0"
                         max="1"
                         className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                        aria-label="Default Temperature Value"
                       />
                     </div>
                     <p className="mt-1 text-sm text-gray-500">
@@ -533,9 +512,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Default Max Tokens</label>
+                    <label htmlFor="defaultMaxTokens" className="block text-sm font-medium text-gray-700 mb-2">Default Max Tokens</label>
                     <input
                       type="number"
+                      id="defaultMaxTokens"
                       value={settings.defaultMaxTokens}
                       onChange={(e) => handleSliderChange('defaultMaxTokens', parseInt(e.target.value))}
                       min="100"
@@ -559,11 +539,13 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                 </div>
                 <div className="px-6 py-4">
                   <div className="flex items-center justify-between mb-4">
-                    <label className="text-sm font-medium text-gray-700">Enable Greeter Agent</label>
+                    <label htmlFor="greeterAgentEnabled" className="text-sm font-medium text-gray-700">Enable Greeter Agent</label>
                     <button
                       type="button"
+                      id="greeterAgentEnabled"
                       onClick={() => handleSwitchChange('greeterAgentEnabled', !settings.greeterAgentEnabled)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${settings.greeterAgentEnabled ? 'bg-blue-600' : 'bg-gray-200'}`}
+                      aria-label="Enable Greeter Agent"
                     >
                       <span
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.greeterAgentEnabled ? 'translate-x-5' : 'translate-x-0'}`}
@@ -572,9 +554,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Agent Name</label>
+                    <label htmlFor="greeterAgentName" className="block text-sm font-medium text-gray-700 mb-2">Agent Name</label>
                     <input
                       name="greeterAgentName"
+                      id="greeterAgentName"
                       value={settings.greeterAgentName}
                       onChange={handleInputChange}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -582,9 +565,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Agent Avatar URL</label>
+                    <label htmlFor="greeterAgentAvatar" className="block text-sm font-medium text-gray-700 mb-2">Agent Avatar URL</label>
                     <input
                       name="greeterAgentAvatar"
+                      id="greeterAgentAvatar"
                       value={settings.greeterAgentAvatar}
                       onChange={handleInputChange}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -592,9 +576,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">System Prompt</label>
+                    <label htmlFor="greeterAgentPrompt" className="block text-sm font-medium text-gray-700 mb-2">System Prompt</label>
                     <textarea
                       name="greeterAgentPrompt"
+                      id="greeterAgentPrompt"
                       value={settings.greeterAgentPrompt}
                       onChange={handleInputChange}
                       rows={5}
@@ -621,6 +606,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                           type="button"
                           onClick={() => handleToggleKnowledgeBase(kb.id)}
                           className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${kb.enabled ? 'bg-blue-600' : 'bg-gray-200'}`}
+                          aria-label={`Enable ${kb.name} Knowledge Base`}
                         >
                           <span
                             className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${kb.enabled ? 'translate-x-5' : 'translate-x-0'}`}
@@ -641,11 +627,13 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                 </div>
                 <div className="px-6 py-4">
                   <div className="flex items-center justify-between mb-4">
-                    <label className="text-sm font-medium text-gray-700">Enable Multimodal Support</label>
+                    <label htmlFor="multimodalEnabled" className="text-sm font-medium text-gray-700">Enable Multimodal Support</label>
                     <button
                       type="button"
+                      id="multimodalEnabled"
                       onClick={() => handleSwitchChange('multimodalEnabled', !settings.multimodalEnabled)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${settings.multimodalEnabled ? 'bg-blue-600' : 'bg-gray-200'}`}
+                      aria-label="Enable Multimodal Support"
                     >
                       <span
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.multimodalEnabled ? 'translate-x-5' : 'translate-x-0'}`}
@@ -677,6 +665,7 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                               ? 'bg-blue-100 border-blue-300 text-blue-800'
                               : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'
                           }`}
+                          aria-label={`Enable ${modality} modality`}
                         >
                           {modality.charAt(0).toUpperCase() + modality.slice(1)}
                         </button>
@@ -685,9 +674,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Image Analysis Model</label>
+                    <label htmlFor="imageAnalysisModel" className="block text-sm font-medium text-gray-700 mb-2">Image Analysis Model</label>
                     <select
                       name="imageAnalysisModel"
+                      id="imageAnalysisModel"
                       value={settings.imageAnalysisModel}
                       onChange={handleInputChange}
                       disabled={!settings.supportedModalities.includes('image')}
@@ -700,9 +690,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Audio Transcription Model</label>
+                    <label htmlFor="audioTranscriptionModel" className="block text-sm font-medium text-gray-700 mb-2">Audio Transcription Model</label>
                     <select
                       name="audioTranscriptionModel"
+                      id="audioTranscriptionModel"
                       value={settings.audioTranscriptionModel}
                       onChange={handleInputChange}
                       disabled={!settings.supportedModalities.includes('audio')}
@@ -725,11 +716,13 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                 </div>
                 <div className="px-6 py-4">
                   <div className="flex items-center justify-between mb-4">
-                    <label className="text-sm font-medium text-gray-700">Enable Debug Mode</label>
+                    <label htmlFor="enableDebugMode" className="text-sm font-medium text-gray-700">Enable Debug Mode</label>
                     <button
                       type="button"
+                      id="enableDebugMode"
                       onClick={() => handleSwitchChange('enableDebugMode', !settings.enableDebugMode)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${settings.enableDebugMode ? 'bg-blue-600' : 'bg-gray-200'}`}
+                      aria-label="Enable Debug Mode"
                     >
                       <span
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.enableDebugMode ? 'translate-x-5' : 'translate-x-0'}`}
@@ -738,11 +731,13 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between mb-4">
-                    <label className="text-sm font-medium text-gray-700">Log User Interactions</label>
+                    <label htmlFor="logUserInteractions" className="text-sm font-medium text-gray-700">Log User Interactions</label>
                     <button
                       type="button"
+                      id="logUserInteractions"
                       onClick={() => handleSwitchChange('logUserInteractions', !settings.logUserInteractions)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${settings.logUserInteractions ? 'bg-blue-600' : 'bg-gray-200'}`}
+                      aria-label="Log User Interactions"
                     >
                       <span
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings.logUserInteractions ? 'translate-x-5' : 'translate-x-0'}`}
@@ -751,9 +746,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Max Concurrent Requests</label>
+                    <label htmlFor="maxConcurrentRequests" className="block text-sm font-medium text-gray-700 mb-2">Max Concurrent Requests</label>
                     <input
                       type="number"
+                      id="maxConcurrentRequests"
                       value={settings.maxConcurrentRequests}
                       onChange={(e) => handleSliderChange('maxConcurrentRequests', parseInt(e.target.value))}
                       min="1"
@@ -763,9 +759,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Request Timeout (seconds)</label>
+                    <label htmlFor="requestTimeout" className="block text-sm font-medium text-gray-700 mb-2">Request Timeout (seconds)</label>
                     <input
                       type="number"
+                      id="requestTimeout"
                       value={settings.requestTimeout}
                       onChange={(e) => handleSliderChange('requestTimeout', parseInt(e.target.value))}
                       min="5"
@@ -775,9 +772,10 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Fallback Behavior</label>
+                    <label htmlFor="fallbackBehavior" className="block text-sm font-medium text-gray-700 mb-2">Fallback Behavior</label>
                     <select
                       name="fallbackBehavior"
+                      id="fallbackBehavior"
                       value={settings.fallbackBehavior}
                       onChange={handleInputChange}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -798,13 +796,16 @@ export const OnboardingAISettings: React.FC<OnboardingAISettingsProps> = ({
       )}
 
       {!isLoading && (
-        <button
-          onClick={handleSaveChanges}
-          disabled={!hasUnsavedChanges || isLoading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-md text-lg"
-        >
-          {isLoading ? 'Saving...' : 'Save Changes'}
-        </button>
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={handleSaveChanges}
+            disabled={!hasUnsavedChanges || isLoading}
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-md flex items-center"
+          >
+            <Save className="w-5 h-5 mr-2" />
+            {isLoading ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
       )}
     </div>
   );

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import System from '../../../models/system';
-import { AUTH_TOKEN, AUTH_USER } from '../../../utils/constants';
-import paths from '../../../utils/paths';
+import System from "../../../models/system";
+import { AUTH_TOKEN, AUTH_USER } from "../../../utils/constants";
+import paths from "../../../utils/paths";
 import showToast from "@/utils/toast";
-import { ModalWrapper } from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import RecoveryCodeModal from "@/components/Modals/DisplayRecoveryCodeModal";
 import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface User {
   id: string;
@@ -46,26 +48,7 @@ interface ResetPasswordFormProps {
   onSubmit: (newPassword: string, confirmPassword: string) => void;
 }
 
-const STYLES = {
-  container: "flex flex-col justify-center items-center relative rounded-2xl bg-theme-bg-secondary md:shadow-[0_4px_14px_rgba(0,0,0,0.25)] md:px-12 py-12 -mt-4 md:mt-0",
-  recoveryContainer: "flex flex-col justify-center items-center relative rounded-2xl border-none bg-theme-bg-secondary md:shadow-[0_4px_14px_rgba(0,0,0,0.25)] md:px-8 px-0 py-4 w-full md:w-fit mt-10 md:mt-0",
-  header: "flex items-start justify-between pt-11 pb-9 rounded-t",
-  headerContent: "flex items-center flex-col gap-y-4",
-  titleContainer: "flex gap-x-1",
-  title: "text-md md:text-2xl font-bold text-white text-center white-space-nowrap hidden md:block",
-  appName: "text-4xl md:text-2xl font-bold bg-gradient-to-r from-[#75D6FF] via-[#FFFFFF] light:via-[#75D6FF] to-[#FFFFFF] light:to-[#75D6FF] bg-clip-text text-transparent",
-  subtitle: "text-sm text-theme-text-secondary text-center",
-  formContent: "w-full px-4 md:px-12",
-  inputContainer: "w-full flex flex-col gap-y-4",
-  inputWrapper: "w-screen md:w-full md:px-0 px-6",
-  input: "border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-md p-2.5 w-full h-[48px] md:w-[300px] md:h-[34px]",
-  error: "text-red-400 text-sm",
-  buttonContainer: "flex items-center md:p-12 px-10 mt-12 md:mt-0 space-x-2 border-gray-600 w-full flex-col gap-y-8",
-  button: "md:text-primary-button md:bg-transparent text-dark-text text-sm font-bold focus:ring-4 focus:outline-none rounded-md border-[1.5px] border-primary-button md:h-[34px] h-[48px] md:hover:text-white md:hover:bg-primary-button bg-primary-button focus:z-10 w-full",
-  resetButton: "text-white text-sm flex gap-x-1 hover:text-primary-button hover:underline",
-};
-
-const RecoveryForm: React.React.FC<RecoveryFormProps> = ({ onSubmit, setShowRecoveryForm }) => {
+const RecoveryForm: React.FC<RecoveryFormProps> = ({ onSubmit, setShowRecoveryForm }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [recoveryCodeInputs, setRecoveryCodeInputs] = useState<string[]>(
@@ -87,74 +70,64 @@ const RecoveryForm: React.React.FC<RecoveryFormProps> = ({ onSubmit, setShowReco
   };
 
   return (
-    <form onSubmit={handleSubmit} className={STYLES.recoveryContainer}>
-      <div className="flex items-start justify-between pt-11 pb-9 w-screen md:w-full md:px-12 px-6">
-        <div className="flex flex-col gap-y-4 w-full">
-          <h3 className="text-4xl md:text-lg font-bold text-theme-text-primary text-center md:text-left">
-            {t("login.password-reset.title")}
-          </h3>
-          <p className="text-sm text-theme-text-secondary md:text-left md:max-w-[300px] px-4 md:px-0 text-center">
-            {t("login.password-reset.description")}
-          </p>
+    <div className="w-full max-w-md">
+      <DialogHeader>
+        <DialogTitle>{t("login.password-reset.title")}</DialogTitle>
+        <DialogDescription>
+          {t("login.password-reset.description")}
+        </DialogDescription>
+      </DialogHeader>
+      <form onSubmit={handleSubmit} className="space-y-4 py-4">
+        <div className="space-y-2">
+          <label htmlFor="username" className="text-sm font-medium">
+            {t("login.multi-user.placeholder-username")}
+          </label>
+          <Input
+            id="username"
+            name="username"
+            type="text"
+            placeholder={t("login.multi-user.placeholder-username")}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
         </div>
-      </div>
-      <div className="md:px-12 px-6 space-y-6 flex h-full w-full">
-        <div className="w-full flex flex-col gap-y-4">
-          <div className="flex flex-col gap-y-2">
-            <label className="text-white text-sm font-bold">
-              {t("login.multi-user.placeholder-username")}
-            </label>
-            <input
-              name="username"
+        <div className="space-y-2">
+          <label className="text-sm font-medium">
+            {t("login.password-reset.recovery-codes")}
+          </label>
+          {recoveryCodeInputs.map((code, index) => (
+            <Input
+              key={index}
               type="text"
-              placeholder={t("login.multi-user.placeholder-username")}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className={STYLES.input}
+              name={`recoveryCode${index + 1}`}
+              placeholder={t("login.password-reset.recovery-code", {
+                index: index + 1,
+              })}
+              value={code}
+              onChange={(e) =>
+                handleRecoveryCodeChange(index, e.target.value)
+              }
               required
             />
-          </div>
-          <div className="flex flex-col gap-y-2">
-            <label className="text-white text-sm font-bold">
-              {t("login.password-reset.recovery-codes")}
-            </label>
-            {recoveryCodeInputs.map((code, index) => (
-              <div key={index}>
-                <input
-                  type="text"
-                  name={`recoveryCode${index + 1}`}
-                  placeholder={t("login.password-reset.recovery-code", {
-                    index: index + 1,
-                  })}
-                  value={code}
-                  onChange={(e) =>
-                    handleRecoveryCodeChange(index, e.target.value)
-                  }
-                  className={STYLES.input}
-                  required
-                />
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
-      </div>
-      <div className={STYLES.buttonContainer}>
-        <button type="submit" className={STYLES.button}>
-          {t("login.password-reset.title")}
-        </button>
-        <button
-          type="button"
-          className={STYLES.resetButton}
-          onClick={() => setShowRecoveryForm(false)}
-        >
-          {t("login.password-reset.back")}
-        </button>
-      </div>
-    </form>
+        <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+          <Button type="submit">{t("login.password-reset.title")}</Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setShowRecoveryForm(false)}
+          >
+            {t("login.password-reset.back")}
+          </Button>
+        </DialogFooter>
+      </form>
+    </div>
   );
 };
 
-const ResetPasswordForm: React.React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
+const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -164,40 +137,196 @@ const ResetPasswordForm: React.React.FC<ResetPasswordFormProps> = ({ onSubmit })
   };
 
   return (
-    <form onSubmit={handleSubmit} className={STYLES.recoveryContainer}>
-      <div className="flex items-start justify-between pt-11 pb-9 w-screen md:w-full md:px-12 px-6">
-        <div className="flex flex-col gap-y-4 w-full">
-          <h3 className="text-4xl md:text-2xl font-bold text-white text-center md:text-left">
-            Reset Password
-          </h3>
-          <p className="text-sm text-white/90 md:text-left md:max-w-[300px] px-4 md:px-0 text-center">
-            Enter your new password.
-          </p>
+    <div className="w-full max-w-md">
+      <DialogHeader>
+        <DialogTitle>Reset Password</DialogTitle>
+        <DialogDescription>Enter your new password.</DialogDescription>
+      </DialogHeader>
+      <form onSubmit={handleSubmit} className="space-y-4 py-4">
+        <div className="space-y-2">
+          <label htmlFor="newPassword">New Password</label>
+          <Input
+            id="newPassword"
+            type="password"
+            name="newPassword"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
         </div>
-      </div>
-      <div className="md:px-12 px-6 space-y-6 flex h-full w-full">
-        <div className="w-full flex flex-col gap-y-4">
-          <div>
-            <input
-              type="password"
-              name="newPassword"
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className={STYLES.input}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={STYLES.input}
-              required
-            />
+        <div className="space-y-2">
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
+        <DialogFooter>
+          <Button type="submit">Reset Password</Button>
+        </DialogFooter>
+      </form>
+    </div>
+  );
+};
+
+export default function MultiUserAuth() {
+  const { t } = useTranslation();
+  const {
+    isOpen: isRecoveryModalOpen,
+    openModal: openRecoveryModal,
+    closeModal: closeRecoveryModal,
+  } = useModal();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [appName, setAppName] = useState<string | null>(null);
+  const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
+  const [showRecoveryForm, setShowRecoveryForm] = useState(false);
+  const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
+  const [resetToken, setResetToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAppName = async () => {
+      const { appName } = (await System.keys()) as CustomAppNameResponse;
+      setAppName(appName);
+    };
+    fetchAppName();
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    const { valid, user, token, message, recoveryCodes } = await System.login(
+      username,
+      password
+    );
+    if (valid && !!token) {
+      if (recoveryCodes) {
+        setRecoveryCodes(recoveryCodes);
+        openRecoveryModal();
+      }
+      window.localStorage.setItem(AUTH_TOKEN, token);
+      window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
+      window.location.replace(paths.home());
+    } else {
+      setError(message);
+    }
+  };
+
+  const handleRecovery = async (username: string, recoveryCodes: string[]) => {
+    const { success, resetToken, error } = (await System.recoverPassword(
+      username,
+      recoveryCodes
+    )) as RecoveryResponse;
+    if (success && resetToken) {
+      setResetToken(resetToken);
+      setShowRecoveryForm(false);
+      setShowResetPasswordForm(true);
+    } else {
+      showToast(error, "error");
+    }
+  };
+
+  const handleResetPassword = async (newPassword: string, confirmPassword: string) => {
+    if (newPassword !== confirmPassword) {
+      showToast("Passwords do not match", "error");
+      return;
+    }
+    if (!resetToken) return;
+
+    const { success, error } = (await System.resetPassword(
+      resetToken,
+      newPassword
+    )) as ResetPasswordResponse;
+    if (success) {
+      setShowResetPasswordForm(false);
+      showToast("Password reset successfully. You can now log in.", "success");
+    } else {
+      showToast(error, "error");
+    }
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={() => {}}>
+      <DialogContent className="w-full max-w-md">
+        {showRecoveryForm ? (
+          <RecoveryForm
+            onSubmit={handleRecovery}
+            setShowRecoveryForm={setShowRecoveryForm}
+          />
+        ) : showResetPasswordForm ? (
+          <ResetPasswordForm onSubmit={handleResetPassword} />
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-x-2">
+                <span className="text-2xl font-bold text-white">
+                  {t("login.multi-user.title")}
+                </span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-[#75D6FF] to-[#FFFFFF] bg-clip-text text-transparent">
+                  {appName}
+                </span>
+              </DialogTitle>
+              <DialogDescription>
+                {t("login.multi-user.description")}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleLogin} className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="username">{t("login.multi-user.placeholder-username")}</label>
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder={t("login.multi-user.placeholder-username")}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="password">{t("login.multi-user.placeholder-password")}</label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder={t("login.multi-user.placeholder-password")}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              {error && <p className="text-sm text-red-500">{error}</p>}
+              <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center">
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={() => setShowRecoveryForm(true)}
+                  className="p-0 h-auto"
+                >
+                  {t("login.password-reset.title")}
+                </Button>
+                <Button type="submit">{t("login.multi-user.login-button")}</Button>
+              </DialogFooter>
+            </form>
+          </>
+        )}
+      </DialogContent>
+      {isRecoveryModalOpen && recoveryCodes && (
+        <RecoveryCodeModal
+          newRecoveryCodes={recoveryCodes}
+          closeModal={closeRecoveryModal}
+        />
+      )}
+    </Dialog>
+  );
+}
           </div>
         </div>
       </div>
@@ -348,8 +477,7 @@ export function MultiUserAuth() {
                 {t("login.sign-in.start")} {customAppName || "AnythingLLM"}{" "}
                 {t("login.sign-in.end")}
               </p>
-            </div>
-          </div>
+            
           <div className={STYLES.formContent}>
             <div className={STYLES.inputContainer}>
               <div className={STYLES.inputWrapper}>

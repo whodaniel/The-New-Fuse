@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { OpenAiEmbeddingSettings, COMMON_STYLES } from '@/types/embedding';
 import System from '@/models/system';
 import { useTranslation } from 'react-i18next';
@@ -40,14 +40,19 @@ export default function OpenAiOptions({ settings }: OpenAiOptionsProps) {
                     />
                 </div>
 
-                <button
-                    type="button"
-                    className={COMMON_STYLES.advancedButton}
-                    onClick={() => setShowAdvanced(!showAdvanced)}
-                >
-                    {showAdvanced ? <CaretUp size={16} /> : <CaretDown size={16} />}
-                    {t('Advanced Options')}
-                </button>
+                <div className="flex justify-start">
+                    <button
+                        onClick={() => setShowAdvanced(!showAdvanced)}
+                        className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+                    >
+                        {showAdvanced ? (
+                            <ChevronUp className="mr-2 h-4 w-4" />
+                        ) : (
+                            <ChevronDown className="mr-2 h-4 w-4" />
+                        )}
+                        {showAdvanced ? t('Hide Advanced Options') : t('Show Advanced Options')}
+                    </button>
+                </div>
 
                 {showAdvanced && (
                     <div className={COMMON_STYLES.advancedSection}>

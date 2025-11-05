@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { LMStudioEmbeddingSettings, CustomModel, COMMON_STYLES } from '@/types/embedding';
 import System from '@/models/system';
 import { LMSTUDIO_COMMON_URLS } from '@/utils/constants';
@@ -130,14 +130,19 @@ export default function LMStudioOptions({ settings }: LMStudioOptionsProps) {
                 />
             </div>
 
-            <button
-                type="button"
-                className={COMMON_STYLES.advancedButton}
-                onClick={() => setShowAdvanced(!showAdvanced)}
-            >
-                {t('Advanced Settings')}
-                {showAdvanced ? <CaretUp size={12} /> : <CaretDown size={12} />}
-            </button>
+            <div className="flex justify-start">
+                <button
+                    onClick={() => setShowAdvanced(!showAdvanced)}
+                    className="flex items-center text-sm text-gray-600 hover:text-gray-800"
+                >
+                    {showAdvanced ? (
+                        <ChevronUp className="mr-2 h-4 w-4" />
+                    ) : (
+                        <ChevronDown className="mr-2 h-4 w-4" />
+                    )}
+                    {showAdvanced ? t('Hide Advanced Options') : t('Show Advanced Options')}
+                </button>
+            </div>
 
             {showAdvanced && (
                 <div className={COMMON_STYLES.inputsContainer}>

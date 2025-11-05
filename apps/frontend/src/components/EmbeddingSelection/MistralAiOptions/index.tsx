@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { MistralAiEmbeddingSettings, COMMON_STYLES } from '@/types/embedding';
 import System from '@/models/system';
 import { useTranslation } from 'react-i18next';
@@ -74,9 +74,9 @@ export default function MistralAiOptions({ settings }: MistralAiOptionsProps) {
             >
                 {t('Advanced Settings')}
                 {showAdvanced ? (
-                    <CaretUp size={12} />
+                    <ChevronUp size={12} />
                 ) : (
-                    <CaretDown size={12} />
+                    <ChevronDown size={12} />
                 )}
             </button>
 

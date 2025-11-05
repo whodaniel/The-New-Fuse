@@ -13,7 +13,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "types": []
+    "types": [],
+    "composite": true
   },
   "include": [
     "src/**/*"

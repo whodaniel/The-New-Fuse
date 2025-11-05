@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Select, Checkbox } from '@the-new-fuse/ui-consolidated';
-import { FaPlus, FaTimes } from 'react-icons/fa';
+import { Plus, X } from 'lucide-react';
 import { useWizard } from '../WizardProvider';
 
 export const AIPreferencesStep: React.FC = () => {
@@ -283,7 +283,7 @@ export const AIPreferencesStep: React.FC = () => {
                     disabled={!formData.customCapability.trim()}
                     className="flex items-center gap-2"
                   >
-                    <FaPlus className="w-3 h-3" />
+                    <Plus className="w-3 h-3" />
                     Add
                   </Button>
                 </div>
@@ -305,7 +305,7 @@ export const AIPreferencesStep: React.FC = () => {
                          title={`Remove ${capability} capability`}
                          aria-label={`Remove ${capability} capability`}
                        >
-                         <FaTimes className="w-3 h-3" />
+                         <X className="w-3 h-3" />
                        </button>
                     </span>
                   ))}

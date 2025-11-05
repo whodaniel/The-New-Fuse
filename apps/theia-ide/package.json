@@ -5,7 +5,7 @@
   "private": true,
   "main": "enhanced-server.js",
   "scripts": {
-    "build": "node build-theia.js",
+    "build": "pnpm run theia:build",
     "build:optimized": "pnpm install && pnpm dlx @theia/cli@1.59.0 build --mode production",
     "start": "node enhanced-server.js",
     "start:basic": "node simple-server.js",

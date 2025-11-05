@@ -1,17 +1,11 @@
 #!/bin/bash
 
-echo "Fixing ppnpm installation issues..."
+echo "Fixing pnpm installation issues..."
 
 # Remove any existing yarn.lock file (if still present)
 if [ -f yarn.lock ]; then
   echo "Removing existing yarn.lock file..."
   rm yarn.lock
-fi
-
-# Remove any existing bun.lockb file
-if [ -f bun.lockb ]; then
-  echo "Removing existing bun.lockb file..."
-  rm bun.lockb
 fi
 
 # Remove node_modules directory
@@ -20,16 +14,16 @@ if [ -d node_modules ]; then
   rm -rf node_modules
 fi
 
-# Clear ppnpm store
-echo "Clearing ppnpm store..."
+# Clear pnpm store
+echo "Clearing pnpm store..."
 pnpm store prune
 
 # Install ts-node globally with pnpm
 echo "Installing ts-node globally with pnpm..."
-ppnpm install -g ts-node@10.9.3
+pnpm install -g ts-node@10.9.3
 
-# Try ppnpm install again
-echo "Running ppnpm install..."
-ppnpm install
+# Try pnpm install again
+echo "Running pnpm install..."
+pnpm install
 
 echo "Process completed."

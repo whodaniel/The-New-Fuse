@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  FiDownload, 
-  FiCalendar, 
-  FiRefreshCw, 
-  FiMoreVertical,
-  FiBarChart2,
-  FiPieChart,
-  FiTrendingUp,
-  FiUsers,
-  FiClock,
-  FiAlertCircle
-} from 'react-icons/fi';
+  Download, 
+  Calendar, 
+  RefreshCw, 
+  MoreVertical,
+  BarChart2,
+  PieChart,
+  TrendingUp,
+  Users,
+  Clock,
+  AlertCircle
+} from 'lucide-react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 import {
   LineChart,
@@ -181,28 +181,28 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
               className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors disabled:opacity-50"
               title="Refresh data"
             >
-              <FiRefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
           </div>
           
           <div className="relative group">
             <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
-              <FiMoreVertical className="w-4 h-4" />
+              <MoreVertical className="w-4 h-4" />
             </button>
             <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
               <button 
                 onClick={handleExport}
                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
-                <FiDownload className="w-4 h-4 mr-2" />
+                <Download className="w-4 h-4 mr-2" />
                 Export Data
               </button>
               <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <FiCalendar className="w-4 h-4 mr-2" />
+                <Calendar className="w-4 h-4 mr-2" />
                 Custom Date Range
               </button>
               <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <FiBarChart2 className="w-4 h-4 mr-2" />
+                <BarChart2 className="w-4 h-4 mr-2" />
                 Advanced Analytics
               </button>
             </div>
@@ -220,7 +220,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
       {error && !isLoading && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4 mb-4">
           <div className="flex items-start">
-            <FiAlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
             <div className="flex-1">
               <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Error Loading Analytics</h3>
               <p className="text-sm text-red-700 dark:text-red-300 mt-1">{error}</p>
@@ -247,7 +247,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     {analytics ? `${(analytics.completionRate * 100).toFixed(1)}%` : '78.0%'}
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
-                    <FiTrendingUp className="w-3 h-3 mr-1" />
+                    <TrendingUp className="w-3 h-3 mr-1" />
                     5.2% vs. previous period
                   </p>
                 </div>
@@ -262,7 +262,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     {analytics ? `${Math.floor(analytics.averageTimeSpent / 60)}m ${analytics.averageTimeSpent % 60}s` : '4m 0s'}
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
-                    <FiTrendingUp className="w-3 h-3 mr-1 rotate-180" />
+                    <TrendingUp className="w-3 h-3 mr-1 rotate-180" />
                     30s vs. previous period
                   </p>
                 </div>
@@ -277,7 +277,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     {analytics ? analytics.totalOnboardings : 198}
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
-                    <FiTrendingUp className="w-3 h-3 mr-1" />
+                    <TrendingUp className="w-3 h-3 mr-1" />
                     12.5% vs. previous period
                   </p>
                 </div>
@@ -292,7 +292,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     {analytics ? analytics.completedOnboardings : 154}
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
-                    <FiTrendingUp className="w-3 h-3 mr-1" />
+                    <TrendingUp className="w-3 h-3 mr-1" />
                     18.3% vs. previous period
                   </p>
                 </div>
@@ -430,7 +430,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{Math.round(point.rate * (analytics.totalOnboardings || 198))}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             <span className={`flex items-center ${index % 2 === 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              <FiTrendingUp className={`w-3 h-3 mr-1 ${index % 2 === 0 ? '' : 'rotate-180'}`} />
+                              <TrendingUp className={`w-3 h-3 mr-1 ${index % 2 === 0 ? '' : 'rotate-180'}`} />
                               {(Math.random() * 5).toFixed(1)}%
                             </span>
                           </td>
@@ -453,7 +453,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">24</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             <span className="flex items-center text-green-600">
-                              <FiTrendingUp className="w-3 h-3 mr-1" />
+                              <TrendingUp className="w-3 h-3 mr-1" />
                               2.3%
                             </span>
                           </td>
@@ -473,7 +473,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">16</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             <span className="flex items-center text-red-600">
-                              <FiTrendingUp className="w-3 h-3 mr-1 rotate-180" />
+                              <TrendingUp className="w-3 h-3 mr-1 rotate-180" />
                               1.5%
                             </span>
                           </td>
@@ -493,7 +493,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">4</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             <span className="flex items-center text-green-600">
-                              <FiTrendingUp className="w-3 h-3 mr-1" />
+                              <TrendingUp className="w-3 h-3 mr-1" />
                               0.5%
                             </span>
                           </td>
@@ -524,7 +524,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
                   <div className="text-blue-500 mt-1">
-                    <FiAlertCircle className="w-6 h-6" />
+                    <AlertCircle className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">Simplify the Profile step</p>
@@ -534,7 +534,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                 
                 <div className="flex items-start space-x-4">
                   <div className="text-blue-500 mt-1">
-                    <FiUsers className="w-6 h-6" />
+                    <Users className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">Optimize for AI Agents</p>
@@ -544,7 +544,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                 
                 <div className="flex items-start space-x-4">
                   <div className="text-blue-500 mt-1">
-                    <FiClock className="w-6 h-6" />
+                    <Clock className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">Reduce time spent on AI Preferences</p>

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import System from '../../../../models/system';
 export function usePasswordModal(isNewToken = false): any {
     const [loading, setLoading] = useState(true);

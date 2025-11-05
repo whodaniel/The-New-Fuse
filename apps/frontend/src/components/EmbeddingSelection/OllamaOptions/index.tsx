@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { OllamaEmbeddingSettings, COMMON_STYLES } from '@/types/embedding';
 import System from '@/models/system';
 import { OLLAMA_COMMON_URLS } from '@/utils/constants';
@@ -78,17 +78,23 @@ export default function OllamaOptions({ settings }: OllamaOptionsProps) {
                     />
                 </div>
 
-                <button
-                    type="button"
-                    className={COMMON_STYLES.advancedButton}
-                    onClick={() => setShowAdvanced(!showAdvanced)}
-                >
-                    {showAdvanced ? <CaretUp size={16} /> : <CaretDown size={16} />}
-                    {t('Advanced Options')}
-                </button>
+                <div className="flex justify-start">
+                    <button
+                        type="button"
+                        className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-800"
+                        onClick={() => setShowAdvanced(!showAdvanced)}
+                    >
+                        {showAdvanced ? (
+                            <ChevronUp className="mr-2 h-4 w-4" />
+                        ) : (
+                            <ChevronDown className="mr-2 h-4 w-4" />
+                        )}
+                        {showAdvanced ? t('Hide Advanced Options') : t('Show Advanced Options')}
+                    </button>
+                </div>
 
                 {showAdvanced && (
-                    <div className={COMMON_STYLES.advancedSection}>
+                    <div className="mt-4">
                         <div className={COMMON_STYLES.inputWrapper}>
                             <label className={COMMON_STYLES.label} htmlFor="modelName">
                                 {t('Model')}

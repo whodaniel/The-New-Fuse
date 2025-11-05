@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/Logger.js';
-import { ethers, BigNumberish, JsonRpcProvider, Wallet, Contract, TransactionReceipt, formatEther, parseEther, formatUnits, parseUnits, isAddress, verifyMessage, id as keccak256 } from 'ethers';
+import { ethers, BigNumberish, JsonRpcProvider, Wallet, Contract, TransactionReceipt, formatEther, parseEther, formatUnits, parseUnits, isAddress, verifyMessage } from 'ethers';
 
 
 
@@ -369,7 +369,7 @@ export class BlockchainService extends EventEmitter {
   static verifyMessage(message: string, signature: string): string | null {
     try {
       return verifyMessage(message, signature);
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -414,6 +414,19 @@ export class BlockchainService extends EventEmitter {
    */
   static fromWei(amount: BigNumberish, unit: BigNumberish = 'ether'): string {
     return formatUnits(amount, unit);
+  }
+
+  /**
+   * Create a token bound account for a given token ID.
+   */
+  async createTokenBoundAccount(tokenId: number): Promise<string> {
+    // This is a placeholder implementation.
+    // In a real-world scenario, you would interact with a smart contract
+    // to create a token-bound account.
+    this.logger.info(`Creating token-bound account for token ID: ${tokenId}`);
+    const tbaAddress = ethers.Wallet.createRandom().address;
+    this.logger.info(`Token-bound account created: ${tbaAddress}`);
+    return tbaAddress;
   }
 
   /**

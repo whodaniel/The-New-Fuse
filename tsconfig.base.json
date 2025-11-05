@@ -19,7 +19,7 @@
     "sourceMap": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@the-new-fuse/*": ["./packages/*"],
+      "@the-new-fuse/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*"]
     }
   },

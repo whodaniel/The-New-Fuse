@@ -11,11 +11,10 @@ import {
   AgentStatus
 } from '@the-new-fuse/a2a-react';
 import { v4 as uuidv4 } from 'uuid';
+import { Pencil, Trash2, AlertCircle, Send } from 'lucide-react';
 
 // Icons (same as before)
-const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
-const DeleteIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
-const SystemIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>;
+const SystemIcon = () => <AlertCircle className="h-4 w-4" />;
 const cn = (...classes: string[]) => classes.filter(Boolean).join(' ');
 
 // A2A Configuration
@@ -59,9 +58,9 @@ export default function MultiAgentChat() {
 
 function EnhancedMultiAgentChatUI() {
   const { connectionState, connect, disconnect } = useA2AContext();
-  const { agents, refreshAgents, findAgentsByType } = useA2AAgents();
-  const { messages, sendMessage, sendRequest, broadcast } = useA2AMessages();
-  const { conversations, joinConversation, leaveConversation } = useA2AConversations();
+  const { agents, refreshAgents } = useA2AAgents();
+  const { messages, sendMessage, broadcast } = useA2AMessages();
+  const { conversations, joinConversation } = useA2AConversations();
   
   const [inputValue, setInputValue] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
@@ -341,6 +340,7 @@ function EnhancedMultiAgentChatUI() {
             <select
               value={mode}
               onChange={(e) => setMode(e.target.value as any)}
+              aria-label="Select Mode"
               className="px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 text-sm"
             >
               <option value="direct">Direct Message</option>
@@ -457,9 +457,7 @@ function EnhancedMultiAgentChatUI() {
             aria-label="Send message"
             className="p-3 bg-blue-500 text-white rounded-full disabled:bg-gray-400 hover:bg-blue-600"
           >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <Send className="h-6 w-6" />
           </button>
         </div>
       </footer>

@@ -5,7 +5,7 @@
  * infrastructure, extending the HybridBackend functionality.
  */
 
-import { ipcMain, BrowserWindow } from 'electron';
+import { ipcMain } from 'electron';
 import { WebScrapingService } from '../core/WebScrapingService';
 import { ProxyService } from '../proxy/ProxyService';
 import { WebScrapingMCPTools } from '../mcp/WebScrapingMCPTools';
@@ -145,7 +145,7 @@ export class ElectronWebScrapingBridge {
     // Proxy handlers
     ipcMain.handle('web-scraping:proxy-request', async (_, request: {
       url: string;
-      method?: string;
+      method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
       headers?: Record<string, string>;
       body?: string;
     }) => {
@@ -284,14 +284,10 @@ export class ElectronWebScrapingBridge {
     ipcMain.handle('web-scraping:cleanup', async () => {
       try {
         // Cancel all active monitoring
-        for (const [id, monitor] of this.activeScraping) {
+        for (const [, monitor] of this.activeScraping) {
           monitor.cancel();
         }
         this.activeScraping.clear();
-
-        // Cleanup services
-        await this.webScrapingService.cleanup();
-        await this.mcpTools.cleanup();
 
         return { success: true };
       } catch (error) {
@@ -345,6 +341,7 @@ export class ElectronWebScrapingBridge {
    */
   async initialize(): Promise<void> {
     // Any initialization logic
+    // eslint-disable-next-line no-console
     console.log('ElectronWebScrapingBridge initialized');
   }
 
@@ -353,14 +350,10 @@ export class ElectronWebScrapingBridge {
    */
   async cleanup(): Promise<void> {
     // Cancel all active operations
-    for (const [id, operation] of this.activeScraping) {
+    for (const [, operation] of this.activeScraping) {
       operation.cancel();
     }
     this.activeScraping.clear();
-
-    // Cleanup services
-    await this.webScrapingService.cleanup();
-    await this.mcpTools.cleanup();
   }
 
   /**

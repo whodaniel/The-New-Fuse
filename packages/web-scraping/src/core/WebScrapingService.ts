@@ -9,24 +9,25 @@ import axios, { AxiosResponse } from 'axios';
 import puppeteer, { Browser, Page } from 'puppeteer';
 import * as cheerio from 'cheerio';
 import urlParse from 'url-parse';
-import { lookup } from 'mime-types';
 import { 
   WebScrapingConfig, 
   ScrapingResult, 
   ContentExtractionOptions,
   BrowserSession,
-  SecurityPolicy 
+  SecurityPolicy
 } from '../types';
 // Simple error and monitoring implementations for web scraping
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {
-    console.error('[WebScraping Error]', error.message, context);
+    // eslint-disable-next-line no-console
+    console.error('[WebScraping Error]', error.message, context || {});
   }
 }
 
 class BaseMonitoringSystem {
   recordMetric(name: string, value: number, tags?: any): void {
-    console.log(`[WebScraping Metric] ${name}: ${value}`, tags);
+    // eslint-disable-next-line no-console
+    console.log(`[WebScraping Metric] ${name}: ${value}`, tags || {});
   }
   
   getMetrics(): any {
@@ -117,13 +118,14 @@ export class WebScrapingService {
         url,
         finalUrl: response.request?.responseURL || url,
         statusCode: response.status,
-        headers: response.headers,
+        headers: response.headers as Record<string, string>,
         html: response.data,
         ...extractedContent,
         metadata: {
           executionTime: Date.now() - startTime,
           timestamp: new Date(),
-          method: 'fetch'
+          method: 'fetch',
+          customExtractions: {}
         }
       };
 
@@ -143,7 +145,8 @@ export class WebScrapingService {
         metadata: {
           executionTime: Date.now() - startTime,
           timestamp: new Date(),
-          method: 'fetch'
+          method: 'fetch',
+          customExtractions: {}
         }
       };
     }
@@ -220,7 +223,7 @@ export class WebScrapingService {
 
       // Additional wait time if specified
       if (finalConfig.waitTime) {
-        await page.waitForTimeout(finalConfig.waitTime);
+        await new Promise(resolve => setTimeout(resolve, finalConfig.waitTime));
       }
 
       // Get page content
@@ -255,7 +258,8 @@ export class WebScrapingService {
           timestamp: new Date(),
           method: 'puppeteer',
           resourcesLoaded: resourcesLoaded.length,
-          jsErrors: jsErrors.length > 0 ? jsErrors : undefined
+          jsErrors: jsErrors.length > 0 ? jsErrors : undefined,
+          customExtractions: {}
         }
       };
 
@@ -275,16 +279,17 @@ export class WebScrapingService {
         metadata: {
           executionTime: Date.now() - startTime,
           timestamp: new Date(),
-          method: 'puppeteer'
+          method: 'puppeteer',
+          customExtractions: {}
         }
       };
 
     } finally {
       // Cleanup
-      if (page) {
+      if (page && !page.isClosed()) {
         await page.close().catch(() => {});
       }
-      if (browser) {
+      if (browser && browser.isConnected()) {
         await browser.close().catch(() => {});
       }
     }
@@ -407,7 +412,13 @@ export class WebScrapingService {
           customExtractions[selector] = elements.first().text().trim();
         }
       }
-      result.metadata = { ...result.metadata, customExtractions };
+      result.metadata = { 
+        ...(result.metadata || {}), 
+        customExtractions, 
+        executionTime: 0, 
+        timestamp: new Date(), 
+        method: 'fetch' 
+      };
     }
 
     return result;
@@ -491,15 +502,17 @@ export class WebScrapingService {
   /**
    * Cleanup resources
    */
-  async cleanup(): Promise<void> {
-    // Close any active browser sessions
-    for (const session of this.activeSessions.values()) {
+  private async cleanup(browser: Browser | null, page: Page | null) {
+    if (page && !page.isClosed()) {
+      await page.close();
+    }
+    if (browser) {
       try {
-        if (session.browser) {
-          await session.browser.close();
+        if (browser.isConnected()) {
+          await browser.close();
         }
-      } catch (error) {
-        // Ignore cleanup errors
+      } catch {
+        // Ignore errors during cleanup
       }
     }
     this.activeSessions.clear();

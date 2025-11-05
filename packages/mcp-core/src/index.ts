@@ -44,6 +44,19 @@ export type {
   LogLevel
 } from './types';
 
+// Tool-related types
+export type {
+  ToolResult,
+  JSONSchema,
+  ValidationResult,
+  ToolExecutionMetadata,
+  ToolUsageStats,
+  ToolConfig,
+  ResourceLimits,
+  ToolPermissions,
+  RateLimitConfig
+} from './interfaces';
+
 // Error types and classes
 export {
   MCPErrorClass,

@@ -25,7 +25,7 @@ while [[ "$#" -gt 0 ]]; do
         --cache) CLEAN_CACHE=true; CLEAN_DEPS=false; CLEAN_BUILD=false; CLEAN_DOCKER=false ;;
         --no-docker) CLEAN_DOCKER=false ;;
         --force) FORCE=true ;;
-        --direct) DIRECT_MODE=true ;; # Allow direct execution without bun
+        --direct) DIRECT_MODE=true ;; # Allow direct execution without pnpm
         *) echo "Unknown parameter: $1"; exit 1 ;;
     esac
     shift
@@ -33,10 +33,10 @@ done
 
 echo -e "${GREEN}Starting enhanced cleanup process...${NC}"
 
-# When executing through bun, check if we have a lockfile issue
+# When executing through pnpm, check if we have a lockfile issue
 # If we do, execute the script directly in direct mode
 if [ "$DIRECT_MODE" = false ] && [ -f "package.json" ]; then
-    # Check for bun error from lockfile
+    # Check for pnpm error from lockfile
     if pnpm install --dry-run 2>&1 | grep -q "package doesn't seem to be present"; then
         echo -e "${YELLOW}Detected lockfile issues. Switching to direct execution mode...${NC}"
         # Re-execute this script directly with all the same arguments plus --direct
@@ -70,14 +70,14 @@ if [ "$CLEAN_DEV" = true ]; then
     find . -name "__snapshots__" -type d -prune -exec rm -rf '{}' +
 fi
 
-# Clean dependencies (node_modules, bun cache)
+# Clean dependencies (node_modules, pnpm cache)
 if [ "$CLEAN_DEPS" = true ]; then
     echo -e "\n${GREEN}Cleaning dependencies...${NC}"
-    # Bun/npm
-    if [ "$DIRECT_MODE" = true ] || ! command -v bun &> /dev/null; then
-        echo "Skipping bun cache clean (direct mode or bun not available)"
+    # pnpm
+    if [ "$DIRECT_MODE" = true ] || ! command -v pnpm &> /dev/null; then
+        echo "Skipping pnpm cache clean (direct mode or pnpm not available)"
     else
-        bun pm cache rm || true
+        pnpm cache clean || true
     fi
     rm -rf .yarn/cache
     rm -rf .yarn/build-state.yml
@@ -132,7 +132,7 @@ if [ "$CLEAN_CACHE" = true ]; then
     find . -type f -name "*copy*" -delete
     find . -type f -name "*.log" -mtime +7 -delete
     find . -type f -name "*.pid" -delete
-    find . -type f -name "*.lock" ! -name "bun.lockb" -delete
+    find . -type f -name "*.lock" ! -name "pnpm-lock.yaml" -delete
     find . -type f -name ".DS_Store" -delete
     find . -type f -name "Thumbs.db" -delete
     
@@ -157,6 +157,6 @@ elif [ "$CLEAN_DEPS" = true ]; then
 fi
 
 # If we deleted the lockfile or have lockfile issues, suggest running pnpm install
-if [ ! -f "bun.lockb" ] || [ "$DIRECT_MODE" = true ]; then
-    echo -e "${YELLOW}Bun lockfile issues detected. Run 'pnpm install' to regenerate the lockfile${NC}"
+if [ ! -f "pnpm-lock.yaml" ] || [ "$DIRECT_MODE" = true ]; then
+    echo -e "${YELLOW}pnpm lockfile issues detected. Run 'pnpm install' to regenerate the lockfile${NC}"
 fi

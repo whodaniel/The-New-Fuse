@@ -1,8 +1,7 @@
 /**
  * Core interface definitions for The New Fuse
  */
-import { TaskStatus } from './enums';
-import { AgentCapability, AgentRole, AgentStatus } from '../agent-types.d';
+import { TaskStatus, AgentCapability, AgentRole, AgentStatus } from './enums';
 export { TaskStatus, AgentCapability, AgentRole, AgentStatus };
 /**
  * Agent interface representing an AI agent in the system
