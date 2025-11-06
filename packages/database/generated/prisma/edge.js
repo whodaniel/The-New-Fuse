@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.17.1
- * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
+ * Prisma Client JS version: 6.11.0
+ * Query Engine version: 9c30299f5a0ea26a96790e13f796dc6094db3173
  */
 Prisma.prismaVersion = {
-  client: "6.17.1",
-  engine: "272a37d34178c2894197e17273bf937f25acdeac"
+  client: "6.11.0",
+  engine: "9c30299f5a0ea26a96790e13f796dc6094db3173"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -500,6 +500,32 @@ exports.Prisma.ErrorLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SyncStateScalarFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  version: 'version',
+  checksum: 'checksum',
+  lastSync: 'lastSync',
+  syncedBy: 'syncedBy',
+  metadata: 'metadata'
+};
+
+exports.Prisma.SyncConflictScalarFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  conflictType: 'conflictType',
+  localVersion: 'localVersion',
+  remoteVersion: 'remoteVersion',
+  createdAt: 'createdAt',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  resolution: 'resolution'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -756,6 +782,24 @@ exports.Prisma.ErrorLogOrderByRelevanceFieldEnum = {
   message: 'message',
   stack: 'stack'
 };
+
+exports.Prisma.SyncStateOrderByRelevanceFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  checksum: 'checksum',
+  syncedBy: 'syncedBy'
+};
+
+exports.Prisma.SyncConflictOrderByRelevanceFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  conflictType: 'conflictType',
+  resolvedBy: 'resolvedBy'
+};
 exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -978,7 +1022,9 @@ exports.Prisma.ModelName = {
   RegisteredEntity: 'RegisteredEntity',
   LLMConfig: 'LLMConfig',
   BusinessMetric: 'BusinessMetric',
-  ErrorLog: 'ErrorLog'
+  ErrorLog: 'ErrorLog',
+  SyncState: 'SyncState',
+  SyncConflict: 'SyncConflict'
 };
 /**
  * Create the Client
@@ -991,7 +1037,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/app/packages/database/generated/prisma",
+      "value": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -1000,7 +1046,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "darwin",
         "native": true
       }
     ],
@@ -1009,7 +1055,7 @@ const config = {
       "fullTextSearchPostgres",
       "metrics"
     ],
-    "sourceFilePath": "/app/packages/database/prisma/schema.prisma",
+    "sourceFilePath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -1017,8 +1063,8 @@ const config = {
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
-  "clientVersion": "6.17.1",
-  "engineVersion": "272a37d34178c2894197e17273bf937f25acdeac",
+  "clientVersion": "6.11.0",
+  "engineVersion": "9c30299f5a0ea26a96790e13f796dc6094db3173",
   "datasourceNames": [
     "db"
   ],

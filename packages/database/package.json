@@ -8,6 +8,8 @@
     "build": "tsc",
     "build:foundation": "tsc",
     "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
     "lint": "eslint src",
     "clean": "rimraf dist"
   },

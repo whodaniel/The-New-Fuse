@@ -820,3 +820,38 @@ model ErrorLog {
 
   @@map("error_logs")
 }
+
+// =============================================================================
+// SYNC SYSTEM
+// =============================================================================
+
+model SyncState {
+  id           String   @id @default(uuid())
+  resourceType String
+  resourceId   String
+  tenantId     String?
+  version      Int
+  checksum     String
+  lastSync     DateTime
+  syncedBy     String
+  metadata     Json
+
+  @@unique([resourceType, resourceId, tenantId])
+  @@map("sync_states")
+}
+
+model SyncConflict {
+  id            String    @id @default(uuid())
+  resourceType  String
+  resourceId    String
+  tenantId      String?
+  conflictType  String
+  localVersion  Json
+  remoteVersion Json
+  createdAt     DateTime  @default(now())
+  resolvedAt    DateTime?
+  resolvedBy    String?
+  resolution    Json?
+
+  @@map("sync_conflicts")
+}
