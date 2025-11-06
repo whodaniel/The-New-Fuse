@@ -451,18 +451,36 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
    */
   private async updateSyncState(operation: SyncOperation): Promise<void> {
     const checksum = this.calculateChecksum(operation.data);
-    
-    await this.dbService.$executeRaw`
-      INSERT INTO sync_states (id, resource_type, resource_id, tenant_id, version, checksum, last_sync, synced_by, metadata)
-      VALUES (${operation.id}, ${operation.resourceType}, ${operation.resourceId}, ${operation.tenantId}, 1, ${checksum}, ${new Date()}, 'sync-orchestrator', ${JSON.stringify(operation.data)})
-      ON CONFLICT (resource_type, resource_id, tenant_id)
-      DO UPDATE SET
-        version = sync_states.version + 1,
-        checksum = ${checksum},
-        last_sync = ${new Date()},
-        synced_by = 'sync-orchestrator',
-        metadata = ${JSON.stringify(operation.data)}
-    `;
+
+    await this.dbService.syncState.upsert({
+      where: {
+        resourceType_resourceId_tenantId: {
+          resourceType: operation.resourceType,
+          resourceId: operation.resourceId,
+          tenantId: operation.tenantId || null,
+        },
+      },
+      create: {
+        id: operation.id,
+        resourceType: operation.resourceType,
+        resourceId: operation.resourceId,
+        tenantId: operation.tenantId,
+        version: 1,
+        checksum,
+        lastSync: new Date(),
+        syncedBy: 'sync-orchestrator',
+        metadata: operation.data as any,
+      },
+      update: {
+        version: {
+          increment: 1,
+        },
+        checksum,
+        lastSync: new Date(),
+        syncedBy: 'sync-orchestrator',
+        metadata: operation.data as any,
+      },
+    });
   }
 
   /**
@@ -473,15 +491,15 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
     resourceId: string,
     tenantId?: string
   ): Promise<SyncStateData | null> {
-    const result = await this.dbService.$queryRaw<SyncStateData[]>`
-      SELECT * FROM sync_states 
-      WHERE resource_type = ${resourceType} 
-      AND resource_id = ${resourceId} 
-      AND (tenant_id = ${tenantId} OR (tenant_id IS NULL AND ${tenantId} IS NULL))
-      LIMIT 1
-    `;
-    
-    return result[0] || null;
+    return this.dbService.syncState.findUnique({
+      where: {
+        resourceType_resourceId_tenantId: {
+          resourceType,
+          resourceId,
+          tenantId: tenantId || null,
+        },
+      },
+    });
   }
 
   /**
@@ -598,13 +616,14 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
     conflictId: string,
     resolution: Partial<SyncConflictData>
   ): Promise<void> {
-    await this.dbService.$executeRaw`
-      UPDATE sync_conflicts 
-      SET resolved_at = ${resolution.resolvedAt},
-          resolved_by = ${resolution.resolvedBy},
-          resolution = ${JSON.stringify(resolution)}
-      WHERE id = ${conflictId}
-    `;
+    await this.dbService.syncConflict.update({
+      where: { id: conflictId },
+      data: {
+        resolvedAt: resolution.resolvedAt,
+        resolvedBy: resolution.resolvedBy,
+        resolution: resolution as any,
+      },
+    });
   }
 
   private hasConflict(operation: SyncOperation, existingState: SyncStateData): boolean {
@@ -628,13 +647,22 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
     };
 
     // Store conflict in database
-    await this.dbService.$executeRaw`
-      INSERT INTO sync_conflicts (id, resource_type, resource_id, tenant_id, conflict_type, local_version, remote_version, created_at)
-      VALUES (${conflict.id}, ${conflict.resourceType}, ${conflict.resourceId}, ${conflict.tenantId}, ${conflict.conflictType}, ${JSON.stringify(conflict.localVersion)}, ${JSON.stringify(conflict.remoteVersion)}, ${conflict.createdAt})
-    `;
+    await this.dbService.syncConflict.create({
+      data: {
+        id: conflict.id,
+        resourceType: conflict.resourceType,
+        resourceId: conflict.resourceId,
+        tenantId: conflict.tenantId,
+        conflictType: conflict.conflictType,
+        localVersion: conflict.localVersion as any,
+        remoteVersion: conflict.remoteVersion as any,
+        createdAt: conflict.createdAt,
+      },
+    });
 
     // Publish conflict event
-    const channel = `${this.config.conflictChannelPrefix}${operation.tenantId || 'global'}`;
+    const channel = `${this.config.conflictChannelPrefix}${operation.tenantId ||
+      'global'}`;
     await this.redisService.publish(channel, conflict);
   }
 
