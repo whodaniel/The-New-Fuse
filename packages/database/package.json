@@ -9,7 +9,8 @@
     "build:foundation": "tsc",
     "db:generate": "prisma generate",
     "lint": "eslint src",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@the-new-fuse/types": "workspace:*",
