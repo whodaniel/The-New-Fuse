@@ -500,6 +500,32 @@ exports.Prisma.ErrorLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SyncStateScalarFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  version: 'version',
+  checksum: 'checksum',
+  lastSync: 'lastSync',
+  syncedBy: 'syncedBy',
+  metadata: 'metadata'
+};
+
+exports.Prisma.SyncConflictScalarFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  conflictType: 'conflictType',
+  localVersion: 'localVersion',
+  remoteVersion: 'remoteVersion',
+  createdAt: 'createdAt',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  resolution: 'resolution'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -756,6 +782,24 @@ exports.Prisma.ErrorLogOrderByRelevanceFieldEnum = {
   message: 'message',
   stack: 'stack'
 };
+
+exports.Prisma.SyncStateOrderByRelevanceFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  checksum: 'checksum',
+  syncedBy: 'syncedBy'
+};
+
+exports.Prisma.SyncConflictOrderByRelevanceFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  tenantId: 'tenantId',
+  conflictType: 'conflictType',
+  resolvedBy: 'resolvedBy'
+};
 exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -978,7 +1022,9 @@ exports.Prisma.ModelName = {
   RegisteredEntity: 'RegisteredEntity',
   LLMConfig: 'LLMConfig',
   BusinessMetric: 'BusinessMetric',
-  ErrorLog: 'ErrorLog'
+  ErrorLog: 'ErrorLog',
+  SyncState: 'SyncState',
+  SyncConflict: 'SyncConflict'
 };
 /**
  * Create the Client
