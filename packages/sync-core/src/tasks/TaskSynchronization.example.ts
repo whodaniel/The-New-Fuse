@@ -173,10 +173,10 @@ export async function taskExecutionExample() {
     
     // Handle execution failure
     try {
-      await mockTaskManagementService.completeTaskExecution(
+await mockTaskManagementService.completeTaskExecution(
         'execution-id',
         undefined,
-        error.message,
+        error instanceof Error ? error.message : String(error),
         tenantId
       );
     } catch (completionError) {
@@ -429,7 +429,6 @@ export async function monitoringExample() {
   console.log('=== Task Monitoring Example ===');
 
   const userId = 'user-123';
-  const tenantId = 'tenant-789';
 
   try {
     // Get task sync metrics
@@ -619,12 +618,4 @@ export async function runAllExamples() {
 }
 
 // Export individual examples for selective testing
-export {
-  createAndManageTaskExample,
-  taskExecutionExample,
-  taskDependencyExample,
-  conflictResolutionExample,
-  notificationExample,
-  monitoringExample,
-  bulkOperationsExample
-};
+// Functions are already exported above during declaration

@@ -206,9 +206,20 @@ if (document.readyState === 'loading') {
 }
 
 // Handle dynamic content loading
+let contentScript = null;
 window.addEventListener('load', () => {
     // Re-extract content after full page load
     setTimeout(() => {
-        const contentScript = new TabConnectionsContent();
+        if (!contentScript) {
+            contentScript = new TabConnectionsContent();
+        }
     }, 1000);
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (contentScript) {
+        contentScript.destroy();
+        contentScript = null;
+    }
 });

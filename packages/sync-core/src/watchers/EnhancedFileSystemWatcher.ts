@@ -2,11 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as chokidar from 'chokidar';
 import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
+import { Stats } from 'fs';
 import * as path from 'path';
 import { EventEmitter } from 'events';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { FileChangeEvent, SyncConflictData, TenantSyncContext } from '../types';
+import { FileChangeEvent, SyncConflictData } from '../types';
 
 export interface WatcherConfig {
   paths: string[];
@@ -203,7 +204,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
   private async handleFileChange(
     type: 'create' | 'update' | 'delete',
     filePath: string,
-    stats?: fs.Stats,
+    stats?: Stats,
     context: { tenantId?: string } = {}
   ): Promise<void> {
     try {
@@ -231,7 +232,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
   private async processFileChange(
     type: 'create' | 'update' | 'delete',
     filePath: string,
-    stats?: fs.Stats,
+    stats?: Stats,
     context: { tenantId?: string } = {}
   ): Promise<void> {
     try {

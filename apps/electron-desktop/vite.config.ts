@@ -16,7 +16,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/renderer/index.html')
-      }
+      },
+      external: ['@the-new-fuse/utils']
     }
   },
   server: {

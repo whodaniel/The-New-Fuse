@@ -2,10 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "declaration": true,
     "composite": true,
-    "noEmitOnError": false,
     "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
@@ -20,18 +18,9 @@
   "include": [
     "src/**/*"
   ],
-  "exclude": [
-    "node_modules", 
-    "dist", 
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/*.js",
-    "../core/**/*",
-    "../api-types/**/*.test.ts",
-    "../types/**/*.test.ts"
-  ],
   "references": [
     { "path": "../types" },
-    { "path": "../database" }
+    { "path": "../database" },
+    { "path": "../core" }
   ]
 }

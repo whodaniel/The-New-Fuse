@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "build": "rimraf dist && tsc --project tsconfig.json",
+    "build": "rimraf dist && tsc --project tsconfig.build.json",
     "dev": "tsc --watch",
     "clean": "rimraf dist"
   },

@@ -93,13 +93,21 @@
     // Run immediately
     ensureButtonVisibility();
     // And also run after a delay to catch any buttons added after initial load
-    setTimeout(ensureButtonVisibility, 300);
-    setTimeout(ensureButtonVisibility, 800);
-    setTimeout(ensureButtonVisibility, 1500);
-    setTimeout(ensureButtonVisibility, 3000);
+    const timeouts = [
+        setTimeout(ensureButtonVisibility, 300),
+        setTimeout(ensureButtonVisibility, 800),
+        setTimeout(ensureButtonVisibility, 1500),
+        setTimeout(ensureButtonVisibility, 3000)
+    ];
     
     // Keep checking periodically
-    setInterval(ensureButtonVisibility, 5000);
+    const buttonVisibilityInterval = setInterval(ensureButtonVisibility, 5000);
+    
+    // Cleanup function for this module
+    window.addEventListener('beforeunload', () => {
+        timeouts.forEach(clearTimeout);
+        clearInterval(buttonVisibilityInterval);
+    });
     
     // Get DOM elements safely
     function getElement(id) {

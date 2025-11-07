@@ -1018,7 +1018,7 @@ class ElectronMain {
 
   // Helper method for detecting system tools
   private async detectSystemTools(): Promise<any[]> {
-    const tools = [];
+    const tools: any[] = [];
     
     // Check Chrome installation
     try {

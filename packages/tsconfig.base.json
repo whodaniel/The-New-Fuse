@@ -10,12 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "ESNext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": false,
-    "incremental": true,
-    "ignoreDeprecations": "6.0",
+    "moduleResolution": "node16",
     "baseUrl": ".",
     "paths": {
       "@the-new-fuse/fairtable-core": ["./fairtable-core/dist"],

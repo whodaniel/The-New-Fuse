@@ -1,9 +1,0 @@
-import { Module } from '@nestjs/common';
-import { EventEmitterModule } from /@nestjs/event-emitter'';
-import { AgentCardService } from /../services/AgentCardService'';
-import { A2AProtocolHandler } from /../protocols/A2AProtocolHandler'';
-import { ProtocolAdapterService } from /../protocols/ProtocolAdapterService'';
-import { GoogleA2AAdapter } from /../protocols/adapters/GoogleA2AAdapter'';
-import { ACAProtocolAdapter } from /../protocols/adapters/ACAProtocolAdapter'';
-import { A2AWebSocketService } from /../services/A2AWebSocketService'';
-import { A2AController } from /../controllers/A2AController'';

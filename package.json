@@ -15,6 +15,7 @@
     "build:types": "turbo run build --filter=@the-new-fuse/types",
     "build:packages": "turbo run build --filter=./packages/*",
     "build:apps": "turbo run build --filter=./apps/*",
+    "clean": "rimraf packages/*/dist",
     "build:clean": "pnpm run clean && turbo run build",
     "build:memory-optimized": "BUILD_STRATEGY=memory-optimized BUILD_MEMORY_LIMIT=2048 BUILD_CONCURRENCY=2 turbo run build:memory-optimized --concurrency=2",
     "build:low-memory": "BUILD_STRATEGY=memory-optimized BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 turbo run build:memory-optimized --concurrency=1",
@@ -26,7 +27,7 @@
     "sync:browser-hub": "node scripts/sync-browser-hub-global.cjs --once",
     "sync:browser-hub:watch": "node scripts/sync-browser-hub-global.cjs --watch",
     "sync:browser-hub:config": "node scripts/sync-browser-hub-global.cjs --config",
-    "dev": "node scripts/memory-optimized-dev.cjs",
+    "dev": "turbo run dev --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/electron-desktop --filter=@the-new-fuse/theia-ide --filter=@the-new-fuse/backend-app --concurrency=6",
     "dev:functional-theia": "./scripts/dev-with-functional-theia.sh",
     "dev:original": "node scripts/smart-dev.cjs",
     "dev:direct": "node scripts/clear-ports.js && turbo run dev --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/electron-desktop --filter=@the-new-fuse/theia-ide --filter=@the-new-fuse/backend-app --concurrency=6",
@@ -123,7 +124,7 @@
     "prisma": "6.11.0",
     "rimraf": "^5.0.10",
     "turbo": "^2.5.5",
-    "typescript": "^5.8.3"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",

@@ -3663,10 +3663,64 @@ class TNFInjectableUI {
     }, 2000);
 
     // Set up periodic synchronization
-    setInterval(() => {
+    this.syncInterval = setInterval(() => {
       this.synchronizeWithTNFCore();
       this.updatePerformanceMetrics();
     }, 30000); // Every 30 seconds
+  }
+
+  // Cleanup method to prevent memory leaks
+  destroy() {
+    // Clear all intervals
+    if (this.performanceInterval) {
+      clearInterval(this.performanceInterval);
+      this.performanceInterval = null;
+    }
+    
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+    
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = null;
+    }
+    
+    // Clear all timeouts
+    if (this.renderThrottle) {
+      clearTimeout(this.renderThrottle);
+      this.renderThrottle = null;
+    }
+    
+    if (this.canvasContentTimeout) {
+      clearTimeout(this.canvasContentTimeout);
+      this.canvasContentTimeout = null;
+    }
+    
+    if (this.responseDebounceTimeout) {
+      clearTimeout(this.responseDebounceTimeout);
+      this.responseDebounceTimeout = null;
+    }
+    
+    if (this.monitoringTimeout) {
+      clearTimeout(this.monitoringTimeout);
+      this.monitoringTimeout = null;
+    }
+    
+    // Disconnect all observers
+    this.cleanupMonitoring();
+    
+    // Remove UI elements
+    if (this.container) {
+      this.container.remove();
+      this.container = null;
+    }
+    
+    if (this.toggleButton) {
+      this.toggleButton.remove();
+      this.toggleButton = null;
+    }
   }
 }
 
@@ -3689,3 +3743,19 @@ if (!window.tnfInjectableUI) {
 } else {
   console.log('⚠️ TNF Injectable UI already exists');
 }
+
+// Add cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (window.tnfInjectableUI) {
+    console.log('🧹 Cleaning up TNF Injectable UI...');
+    window.tnfInjectableUI.destroy();
+  }
+});
+
+// Also cleanup on visibility change (page becomes hidden)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && window.tnfInjectableUI) {
+    console.log('🧹 Page hidden, cleaning up TNF Injectable UI...');
+    window.tnfInjectableUI.destroy();
+  }
+});

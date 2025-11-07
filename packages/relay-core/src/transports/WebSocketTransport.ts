@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter } from 'events';
-import WebSocket from 'ws';
+import WebSocket, { Server } from 'ws';
 import { Transport, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 
@@ -20,7 +20,7 @@ export class WebSocketTransport extends EventEmitter implements Transport {
   public readonly name = 'websocket';
   private config: WebSocketTransportConfig;
   private logger: Logger;
-  private wss: WebSocket.Server | null = null;
+  private wss: Server | null = null;
   private clients: Map<string, WebSocket> = new Map();
   private messageHandlers: ((message: RelayMessage) => void)[] = [];
   private heartbeatInterval?: NodeJS.Timeout;
@@ -38,7 +38,7 @@ export class WebSocketTransport extends EventEmitter implements Transport {
     }
 
     try {
-      this.wss = new WebSocket.Server({ port: this.config.port });
+      this.wss = new Server({ port: this.config.port });
       this.logger.info(`WebSocket server started on port ${this.config.port}`);
 
       this.wss.on('connection', this.handleConnection.bind(this));

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ES2022",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "strict": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
@@ -17,11 +17,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/*": ["./packages/*/src"],
-      "@apps/*": ["./apps/*"]
-    }
+
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

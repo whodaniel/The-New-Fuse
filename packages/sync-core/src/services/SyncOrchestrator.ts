@@ -295,9 +295,9 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
       const tenantId = updatedAgent.userId || 'global';
 
       // Sync via tenant-aware method
+      const { id, ...restOfState } = state;
       await this.syncTenantData(tenantId, 'agent', {
-        id: agentId,
-        ...state,
+        ...restOfState,
         updatedAgent
       });
 
@@ -360,8 +360,7 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
 
       // Update conflict in database
       await this.updateConflictResolution(conflict.id, {
-        strategy,
-        resolvedData,
+        resolution: resolvedData,
         resolvedAt: new Date(),
         resolvedBy: 'system'
       });
@@ -457,7 +456,7 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
         resourceType_resourceId_tenantId: {
           resourceType: operation.resourceType,
           resourceId: operation.resourceId,
-          tenantId: operation.tenantId || null,
+          tenantId: operation.tenantId ?? null,
         },
       },
       create: {
@@ -490,7 +489,7 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
     resourceType: string,
     resourceId: string,
     tenantId?: string
-  ): Promise<SyncStateData | null> {
+  ): Promise<any | null> {
     return this.dbService.syncState.findUnique({
       where: {
         resourceType_resourceId_tenantId: {

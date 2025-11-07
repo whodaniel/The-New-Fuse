@@ -4,8 +4,6 @@ import { PrismaService } from '@the-new-fuse/database';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import {
   SyncOperation,
-  SyncResourceType,
-  TenantSyncContext,
   ConflictResolution
 } from '../types';
 
@@ -295,7 +293,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
             data: executionData,
             priority: executionData.error ? 'high' : 'medium',
             timestamp: new Date(),
-            requiresAck: executionData.error // Require acknowledgment for failures
+            requiresAck: !!executionData.error // Require acknowledgment for failures
           };
 
           await this.sendTaskNotification(notification);
@@ -318,7 +316,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
     tenantId?: string
   ): Promise<void> {
     try {
-      const oldDependencies = this.taskDependencyGraph.get(taskId) || new Set();
+      this.taskDependencyGraph.get(taskId); // Check old dependencies
       const newDependencies = new Set(dependencies);
 
       // Update in-memory graph
@@ -556,15 +554,14 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         );
 
         // Update task status if dependencies are met
-        if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
+if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
           const updatedTaskData: TaskSyncData = {
             id: dependentTaskId,
             type: dependentTask.type,
             status: 'IN_PROGRESS',
             priority: dependentTask.priority,
             data: dependentTask.data,
-            pipelineId: dependentTask.pipelineId,
-            agentId: dependentTask.agentId || undefined,
+            pipelineId: dependentTask.pipelineId || '',
             userId: dependentTask.userId,
             version: 1, // Will be updated by versioning system
             lastModified: new Date(),
