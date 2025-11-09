@@ -13,8 +13,12 @@ export class BusinessMetricsService {
     tags: Record<string, string> = {},
   ): Promise<void> {
     this.logger.log(`Recording metric: ${name} = ${value}`);
-    // In a real implementation, you would store this in a time-series database like Prometheus or InfluxDB.
-    // For now, we will log it to the console.
-    // This is a placeholder for a more robust implementation.
+    await this.prisma.businessMetric.create({
+      data: {
+        name,
+        value,
+        tags,
+      },
+    });
   }
 }
