@@ -605,7 +605,7 @@
 # DEVOPS & CONTAINERS
 # ==============================================================================
 # Docker
-**/Dockerfile*
+# **/Dockerfile* - COMMENTED OUT: We need Dockerfiles in git for Railway deployments
 **/.dockerignore
 **/docker-compose*.yml
 **/.docker/
