@@ -11,13 +11,7 @@
     "noFallthroughCasesInSwitch": true,
     "module": "ESNext",
     "moduleResolution": "node16",
-    "baseUrl": ".",
-    "paths": {
-      "@the-new-fuse/fairtable-core": ["./fairtable-core/dist"],
-      "@the-new-fuse/fairtable-components": ["./fairtable-components/dist"],
-      "@the-new-fuse/fairtable-utils": ["./fairtable-utils/dist"],
-      "@the-new-fuse/hooks-types": ["./hooks/src/types"]
-    }
+
   },
   "include": [],
   "exclude": ["node_modules", "dist"]

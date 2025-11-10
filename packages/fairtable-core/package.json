@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "keywords": [
     "fairtable",
@@ -18,7 +19,11 @@
   "author": "The New Fuse Team",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0",
     "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.5",
     "typescript": "^5.9.3"
   },
   "type": "module",

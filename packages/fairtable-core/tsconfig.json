@@ -9,9 +9,16 @@
     "composite": true,
     "incremental": true,
     "noEmit": false,
-    "types": [],
-    "module": "Node16"
+    "types": ["jest"],
+    "module": "Node16",
+    "isolatedModules": true,
+    "paths": {
+      "@the-new-fuse/fairtable-core": ["./dist"],
+      "@the-new-fuse/fairtable-components": ["../fairtable-components/dist"],
+      "@the-new-fuse/fairtable-utils": ["../fairtable-utils/dist"],
+      "@the-new-fuse/hooks-types": ["../hooks/src/types"]
+    }
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["dist", "node_modules"]
 }
