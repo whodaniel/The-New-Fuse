@@ -1,10 +1,10 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "apps/frontend/Dockerfile"
-watchPaths = ["apps/frontend/**", "packages/**"]
+dockerfilePath = "apps/api/Dockerfile"
+watchPaths = ["apps/api/**", "packages/**"]
 
 [deploy]
-healthcheckPath = "/"
+healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyMaxRetries = 10
 restartPolicyType = "ON_FAILURE"
