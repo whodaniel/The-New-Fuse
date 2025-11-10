@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
+import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { PrismaService } from '@the-new-fuse/database';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
@@ -46,7 +47,7 @@ export interface SyncOrchestratorConfig {
 }
 
 @Injectable()
-export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
+export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SyncOrchestrator.name);
   
   private readonly config: SyncOrchestratorConfig = {
@@ -87,7 +88,9 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
     private readonly dbService: PrismaService,
     private readonly promptTemplateService: PromptTemplateServiceImpl
-  ) {}
+  ) {
+    super();
+  }
 
   async onModuleInit(): Promise<void> {
     await this.initializeChannelSubscriptions();
@@ -206,10 +209,21 @@ export class SyncOrchestrator implements OnModuleInit, OnModuleDestroy {
       // Update metrics
       this.updateSyncMetrics(startTime, true);
       this.metrics.operations.sync++;
-
+      this.emit('sync_operation_completed', {
+        agentId: tenantId,
+        operation: { type: dataType },
+        duration: Date.now() - startTime,
+        tenantId,
+      });
       this.logger.debug(`Synced ${dataType} for tenant ${tenantId}`);
     } catch (error) {
       this.updateSyncMetrics(startTime, false);
+      this.emit('sync_operation_failed', {
+        agentId: tenantId,
+        operation: { type: dataType },
+        error,
+        tenantId,
+      });
       this.logger.error(`Failed to sync tenant data:`, error);
       throw error;
     }

@@ -223,7 +223,7 @@ export class MasterClockService extends EventEmitter {
     this.metrics.instanceCount = instances.length;
     this.updateHealthStatus(maxDrift);
 
-    this.emit('drift_detected', report);
+    this.emit('clock_drift_detected', report);
     return report;
   }
 
