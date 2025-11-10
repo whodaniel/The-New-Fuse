@@ -60,6 +60,7 @@ COPY --from=build /app/prisma ./prisma
 # Copy service-specific files
 COPY apps/${SERVICE_PATH}/package.json ./apps/${SERVICE_PATH}/
 COPY apps/${SERVICE_PATH}/src ./apps/${SERVICE_PATH}/src
+COPY scripts/run-service.sh scripts/run-service.sh
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -73,4 +74,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "apps/${SERVICE_PATH}/dist/index.js"]
+CMD ["sh", "scripts/run-service.sh"]
