@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter } from 'events';
 import { PrismaClient, SyncConflict, AuthEvent } from '@the-new-fuse/database/generated/prisma';
 import { BaseErrorHandler, ErrorSeverity, ErrorCategory } from '@tnf/core-error-handling';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
@@ -47,20 +48,32 @@ interface ConflictResolutionContext {
  * Integrates with existing Prisma database infrastructure and audit logging
  */
 @Injectable()
-export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictResolutionContext> {
+export class ConflictManager extends EventEmitter {
   private readonly logger = new Logger(ConflictManager.name);
+  private errorHandler: BaseErrorHandler<ConflictError, ConflictResolutionContext>;
 
   constructor(
     private readonly prisma: PrismaClient,
     private readonly syncDb: SyncDatabaseService
   ) {
-    super({
+    super();
+    this.errorHandler = new BaseErrorHandler<ConflictError, ConflictResolutionContext>({
       enableAutoRecovery: true,
       maxRecoveryAttempts: 3,
       statisticsInterval: 60000,
       enableLogging: true,
       logLevel: 'error'
     });
+    this.initializeErrorHandling();
+  }
+
+  private initializeErrorHandling() {
+    // We need to bind the methods to the errorHandler instance
+    this.initializeDefaultRecoveryStrategies = this.initializeDefaultRecoveryStrategies.bind(this.errorHandler);
+    this.initializeDefaultErrorHandlers = this.initializeDefaultErrorHandlers.bind(this.errorHandler);
+
+    this.initializeDefaultRecoveryStrategies();
+    this.initializeDefaultErrorHandlers();
   }
 
   /**
@@ -122,6 +135,12 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
           tenantId,
         });
 
+        this.emit('conflict_detected', {
+          agentId: tenantId,
+          conflict,
+          tenantId,
+        });
+
         return conflict;
       });
 
@@ -140,7 +159,7 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
         metadata: { originalError: error }
       };
 
-      await this.handleError(conflictError, {
+      await this.errorHandler.handleError(conflictError, {
         component: 'ConflictManager',
         operation: 'detectConflict',
         tenantId,
@@ -227,6 +246,12 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
           tenantId: conflict.tenantId,
         });
 
+        this.emit('conflict_resolved', {
+          agentId: conflict.tenantId,
+          conflict,
+          tenantId: conflict.tenantId,
+        });
+
         return resolution;
       });
 
@@ -244,7 +269,7 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
         metadata: { conflictId, strategy, originalError: error }
       };
 
-      await this.handleError(conflictError, {
+      await this.errorHandler.handleError(conflictError, {
         component: 'ConflictManager',
         operation: 'resolveConflict',
         metadata: { conflictId, strategy }
@@ -352,7 +377,7 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
    */
   protected initializeDefaultRecoveryStrategies(): void {
     // Retry strategy for transient database errors
-    this.registerRecoveryStrategy({
+    this.errorHandler.registerRecoveryStrategy({
       name: 'database-retry',
       applicableErrorCodes: [5001, 5002, 5003],
       maxAttempts: 3,
@@ -365,7 +390,7 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
     });
 
     // Conflict resolution fallback strategy
-    this.registerRecoveryStrategy({
+    this.errorHandler.registerRecoveryStrategy({
       name: 'conflict-fallback',
       applicableErrorCodes: [5002],
       maxAttempts: 1,
@@ -383,7 +408,7 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
    */
   protected initializeDefaultErrorHandlers(): void {
     // Database connection error handler
-    this.registerErrorHandler(5001, {
+    this.errorHandler.registerErrorHandler(5001, {
       name: 'database-connection-handler',
       canHandle: (error) => error.code === 5001,
       handle: async (error, context) => {
@@ -396,7 +421,7 @@ export class ConflictManager extends BaseErrorHandler<ConflictError, ConflictRes
     });
 
     // Conflict resolution error handler
-    this.registerErrorHandler(5002, {
+    this.errorHandler.registerErrorHandler(5002, {
       name: 'conflict-resolution-handler',
       canHandle: (error) => error.code === 5002,
       handle: async (error, context) => {
