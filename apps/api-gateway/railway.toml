@@ -1,5 +1,6 @@
 [build]
 builder = "DOCKERFILE"
+dockerfilePath = "apps/api-gateway/Dockerfile"
 watchPaths = ["apps/api-gateway/**", "packages/**"]
 
 [deploy]

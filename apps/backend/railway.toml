@@ -1,5 +1,6 @@
 [build]
 builder = "DOCKERFILE"
+dockerfilePath = "apps/backend/Dockerfile"
 watchPaths = ["apps/backend/**", "packages/**"]
 
 [deploy]
