@@ -1,7 +1,7 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
-watchPaths = ["./**", "../packages/**"]
+dockerfilePath = "apps/backend/Dockerfile"
+watchPaths = ["apps/backend/**", "packages/**"]
 
 [deploy]
 healthcheckPath = "/health"
