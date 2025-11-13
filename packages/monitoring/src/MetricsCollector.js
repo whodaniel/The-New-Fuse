@@ -1,0 +1,38 @@
+import { Gauge, Counter, Registry } from 'prom-client';
+export class MetricsCollector {
+    logger;
+    registry;
+    activeAgents;
+    activePipelines;
+    taskCounter;
+    errorCounter;
+    constructor(logger) {
+        this.logger = logger;
+        this.registry = new Registry();
+        this.activeAgents = new Gauge({
+            name: fuse_active_agents, ',: help, Number, of, currently, active, agents, ',: registers, [this.registry]: 
+        });
+        this.activePipelines = new Gauge({
+            name: fuse_active_pipelines, ',: help, Number, of, currently, active, pipelines, ',: registers, [this.registry]: 
+        });
+        this.taskCounter = new Counter({
+            name: fuse_tasks_total, ',: help, Total, number, of, tasks, processed, ',: labelNames, ['status']: ,
+            registers: [this.registry]
+        });
+        this.errorCounter = new Counter({
+            name: fuse_errors_total, ',: help, Total, number, of, errors, ',: labelNames, ['type']: ,
+            registers: [this.registry]
+        });
+        number;
+        void {
+            this: .activeAgents.set(count), number, void: {
+                this: .activePipelines.set(count), success, ' | ': failure, '): void {: this.taskCounter.labels(status), string, void: {
+                    this: .errorCounter.labels(type), Promise() {
+                        return this.registry.metrics();
+                    }
+                }
+            }
+        };
+    }
+}
+//# sourceMappingURL=MetricsCollector.js.map

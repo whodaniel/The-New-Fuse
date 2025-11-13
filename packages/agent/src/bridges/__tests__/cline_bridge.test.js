@@ -1,0 +1,77 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PriorityManager = void 0;
+const cline_bridge_1 = require("../cline_bridge");
+const globals_1 = require("@jest/globals");
+class PriorityManager {
+    static DEFAULT_FACTORS = {
+        basePriority: 1,
+        dependencyWeight: 1.5,
+        failureWeight: 1.2,
+        resourceWeight: 0.8,
+        retryPenalty: 0.7
+    };
+    factors;
+    constructor(factors) {
+        this.factors = { ...PriorityManager.DEFAULT_FACTORS, ...factors };
+    }
+    calculateTaskPriority(task, dependencies, phase, resourceAvailability) {
+        let priority = task.basePriority || this.factors.basePriority;
+        // Adjust for dependencies
+        if (dependencies.some(dep => dep.status === 'failed')) {
+            priority *= this.factors.dependencyWeight;
+        }
+        // Adjust for previous failures in the phase
+        const failureRate = this.calculatePhaseFailureRate(phase);
+        if (failureRate > 0) {
+            priority *= (1 + failureRate * this.factors.failureWeight);
+        }
+        // Adjust for resource availability
+        priority *= (resourceAvailability * this.factors.resourceWeight);
+        // Adjust for retry attempts
+        if (task.retryCount && task.retryCount > 0) {
+            priority *= Math.pow(this.factors.retryPenalty, task.retryCount);
+        }
+        return priority;
+    }
+    calculatePhaseFailureRate(phase) {
+        if (!phase.tasks || phase.tasks.length === 0)
+            return 0;
+        const failedTasks = phase.tasks.filter(task => task.status === 'failed').length;
+        return failedTasks / phase.tasks.length;
+    }
+}
+exports.PriorityManager = PriorityManager;
+describe('ClineBridge', () => {
+    let bridge;
+    beforeEach(() => {
+        bridge = new cline_bridge_1.ClineBridge();
+    });
+    afterEach(async () => {
+        await bridge.shutdown();
+    });
+    test('initializes successfully', async () => {
+        const result = await bridge.initialize();
+        expect(result).toBe(true);
+    });
+    test('sends task successfully', async () => {
+        await bridge.initialize();
+        const task = { type: 'test', data: 'sample' };
+        await expect(bridge.sendTask(task)).resolves.not.toThrow();
+    });
+    test('receives results correctly', async () => {
+        await bridge.initialize();
+        const callback = globals_1.jest.fn();
+        await bridge.onResult(callback);
+        // Simulate receiving a result
+        const mockResult = { status: 'success', data: 'test' };
+        bridge.client.emit('message', 'AI_RESULT_CHANNEL', JSON.stringify(mockResult));
+        expect(callback).toHaveBeenCalledWith(mockResult);
+    });
+    test('health check returns correct status', async () => {
+        await bridge.initialize();
+        const health = await bridge.isHealthy();
+        expect(health).toBe(true);
+    });
+});
+//# sourceMappingURL=cline_bridge.test.js.map
