@@ -5,9 +5,10 @@
 # and other essential settings for a successful deployment.
 
 [build]
-  base = "apps/frontend"
-  command = "pnpm run build"
-  publish = "dist"
+  base = "."
+  command = "pnpm install --frozen-lockfile && pnpm run build:frontend"
+  publish = "apps/frontend/dist"
+  functions = "netlify/functions"
 
 [build.environment]
   # Set Node.js version for consistency across environments.
