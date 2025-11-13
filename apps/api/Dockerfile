@@ -9,25 +9,25 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@10.20.0
 
-# Copy root package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY .npmrc .pnpmrc ./
+# Copy root package files (relative to repo root)
+COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
+COPY ../../.npmrc ../../.pnpmrc ./
 
 # Copy scripts directory (needed for postinstall)
-COPY scripts ./scripts
+COPY ../../scripts ./scripts
 
 # Copy all package.json files for workspace resolution
-COPY apps/api/package.json ./apps/api/
-COPY packages/types/package.json ./packages/types/
-COPY packages/core/package.json ./packages/core/
-COPY packages/database/package.json ./packages/database/
-COPY packages/utils/package.json ./packages/utils/
-COPY packages/shared/package.json ./packages/shared/
-COPY packages/a2a-core/package.json ./packages/a2a-core/
-COPY packages/api-types/package.json ./packages/api-types/
-COPY packages/port-management/package.json ./packages/port-management/
-COPY packages/security/package.json ./packages/security/
-COPY packages/relay-core/package.json ./packages/relay-core/
+COPY package.json ./apps/api/
+COPY ../../packages/types/package.json ./packages/types/
+COPY ../../packages/core/package.json ./packages/core/
+COPY ../../packages/database/package.json ./packages/database/
+COPY ../../packages/utils/package.json ./packages/utils/
+COPY ../../packages/shared/package.json ./packages/shared/
+COPY ../../packages/a2a-core/package.json ./packages/a2a-core/
+COPY ../../packages/api-types/package.json ./packages/api-types/
+COPY ../../packages/port-management/package.json ./packages/port-management/
+COPY ../../packages/security/package.json ./packages/security/
+COPY ../../packages/relay-core/package.json ./packages/relay-core/
 
 # Install dependencies (skip postinstall scripts in Docker - they're for native modules not needed in production)
 RUN pnpm install --frozen-lockfile --ignore-scripts
@@ -45,12 +45,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps ./apps
 COPY --from=deps /app/packages ./packages
 
-# Copy source code and config
-COPY turbo.json ./
-COPY tsconfig.base.json ./
-COPY apps/api ./apps/api
-COPY packages ./packages
-COPY prisma ./prisma
+# Copy source code and config (relative to repo root)
+COPY ../../turbo.json ./
+COPY ../../tsconfig.base.json ./
+COPY . ./apps/api
+COPY ../../packages ./packages
+COPY ../../prisma ./prisma
 
 # Build packages first, then the API
 ENV NODE_ENV=production

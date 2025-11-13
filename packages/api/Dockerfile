@@ -9,20 +9,20 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@10.20.0
 
-# Copy root package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY .npmrc .pnpmrc ./
+# Copy root package files (relative to repo root)
+COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
+COPY ../../.npmrc ../../.pnpmrc ./
 
 # Copy scripts directory (needed for postinstall)
-COPY scripts ./scripts
+COPY ../../scripts ./scripts
 
 # Copy all package.json files for workspace resolution
-COPY packages/api/package.json ./packages/api/
-COPY packages/types/package.json ./packages/types/
-COPY packages/core/package.json ./packages/core/
-COPY packages/database/package.json ./packages/database/
-COPY packages/utils/package.json ./packages/utils/
-COPY packages/infrastructure/package.json ./packages/infrastructure/
+COPY package.json ./packages/api/
+COPY ../types/package.json ./packages/types/
+COPY ../core/package.json ./packages/core/
+COPY ../database/package.json ./packages/database/
+COPY ../utils/package.json ./packages/utils/
+COPY ../infrastructure/package.json ./packages/infrastructure/
 
 # Install dependencies (skip postinstall scripts in Docker)
 RUN pnpm install --frozen-lockfile --ignore-scripts
@@ -39,16 +39,16 @@ RUN npm install -g pnpm@10.20.0
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 
-# Copy source code and config
-COPY turbo.json ./
-COPY tsconfig.base.json ./
-COPY packages/api ./packages/api
-COPY packages/types ./packages/types
-COPY packages/core ./packages/core
-COPY packages/database ./packages/database
-COPY packages/utils ./packages/utils
-COPY packages/infrastructure ./packages/infrastructure
-COPY prisma ./prisma
+# Copy source code and config (relative to repo root)
+COPY ../../turbo.json ./
+COPY ../../tsconfig.base.json ./
+COPY . ./packages/api
+COPY ../types ./packages/types
+COPY ../core ./packages/core
+COPY ../database ./packages/database
+COPY ../utils ./packages/utils
+COPY ../infrastructure ./packages/infrastructure
+COPY ../../prisma ./prisma
 
 # Build packages first, then the API
 ENV NODE_ENV=production

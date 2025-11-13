@@ -9,19 +9,19 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@10.20.0
 
-# Copy root package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY .npmrc .pnpmrc ./
+# Copy root package files (relative to repo root)
+COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
+COPY ../../.npmrc ../../.pnpmrc ./
 
 # Copy scripts directory (needed for postinstall)
-COPY scripts ./scripts
+COPY ../../scripts ./scripts
 
 # Copy all package.json files for workspace resolution
-COPY apps/backend/package.json ./apps/backend/
-COPY packages/types/package.json ./packages/types/
-COPY packages/core/package.json ./packages/core/
-COPY packages/database/package.json ./packages/database/
-COPY packages/utils/package.json ./packages/utils/
+COPY package.json ./apps/backend/
+COPY ../../packages/types/package.json ./packages/types/
+COPY ../../packages/core/package.json ./packages/core/
+COPY ../../packages/database/package.json ./packages/database/
+COPY ../../packages/utils/package.json ./packages/utils/
 
 # Install dependencies (skip postinstall scripts in Docker - they're for native modules not needed in production)
 RUN pnpm install --frozen-lockfile --ignore-scripts
@@ -39,12 +39,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps ./apps
 COPY --from=deps /app/packages ./packages
 
-# Copy source code and config
-COPY turbo.json ./
-COPY tsconfig.base.json ./
-COPY apps/backend ./apps/backend
-COPY packages ./packages
-COPY prisma ./prisma
+# Copy source code and config (relative to repo root)
+COPY ../../turbo.json ./
+COPY ../../tsconfig.base.json ./
+COPY . ./apps/backend
+COPY ../../packages ./packages
+COPY ../../prisma ./prisma
 
 # Build packages first, then the backend
 ENV NODE_ENV=production

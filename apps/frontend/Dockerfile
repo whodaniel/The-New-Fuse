@@ -9,23 +9,23 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@10.20.0
 
-# Copy root package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY .npmrc .pnpmrc ./
+# Copy root package files (relative to repo root)
+COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
+COPY ../../.npmrc ../../.pnpmrc ./
 
 # Copy scripts directory (needed for postinstall)
-COPY scripts ./scripts
+COPY ../../scripts ./scripts
 
 # Copy all package.json files for workspace resolution
-COPY apps/frontend/package.json ./apps/frontend/
-COPY packages/types/package.json ./packages/types/
-COPY packages/core/package.json ./packages/core/
-COPY packages/ui-consolidated/package.json ./packages/ui-consolidated/
-COPY packages/a2a-core/package.json ./packages/a2a-core/
-COPY packages/a2a-react/package.json ./packages/a2a-react/
-COPY packages/feature-suggestions/package.json ./packages/feature-suggestions/
-COPY packages/port-management/package.json ./packages/port-management/
-COPY packages/prompt-templating/package.json ./packages/prompt-templating/
+COPY package.json ./apps/frontend/
+COPY ../../packages/types/package.json ./packages/types/
+COPY ../../packages/core/package.json ./packages/core/
+COPY ../../packages/ui-consolidated/package.json ./packages/ui-consolidated/
+COPY ../../packages/a2a-core/package.json ./packages/a2a-core/
+COPY ../../packages/a2a-react/package.json ./packages/a2a-react/
+COPY ../../packages/feature-suggestions/package.json ./packages/feature-suggestions/
+COPY ../../packages/port-management/package.json ./packages/port-management/
+COPY ../../packages/prompt-templating/package.json ./packages/prompt-templating/
 
 # Install dependencies (skip postinstall scripts in Docker - they're for native modules not needed in production)
 RUN pnpm install --frozen-lockfile --ignore-scripts
@@ -42,11 +42,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps ./apps
 COPY --from=deps /app/packages ./packages
 
-# Copy source code
-COPY turbo.json ./
-COPY tsconfig.base.json ./
-COPY apps/frontend ./apps/frontend
-COPY packages ./packages
+# Copy source code (relative to repo root)
+COPY ../../turbo.json ./
+COPY ../../tsconfig.base.json ./
+COPY . ./apps/frontend
+COPY ../../packages ./packages
 
 # Build the frontend
 ENV NODE_ENV=production
