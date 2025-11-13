@@ -5,8 +5,9 @@
 # and other essential settings for a successful deployment.
 
 [build]
-  command = "pnpm run build --filter=@the-new-fuse/client"
-  publish = "packages/client/build"
+  base = "apps/frontend"
+  command = "pnpm run build"
+  publish = "dist"
 
 [build.environment]
   # Set Node.js version for consistency across environments.
