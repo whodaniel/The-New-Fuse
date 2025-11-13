@@ -1,0 +1,272 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "NODE_ENV",
+    "DATABASE_URL",
+    "REDIS_URL",
+    "JWT_SECRET",
+    "API_PORT", 
+    "FRONTEND_PORT",
+    "API_URL",       
+    "BACKEND_URL",
+    "BUILD_MEMORY_LIMIT",
+    "BUILD_CONCURRENCY",
+    "BUILD_STAGE",
+    "BUILD_STRATEGY"
+  ],
+  "remoteCache": {
+    "signature": true
+  },
+  "concurrency": "4",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_STRATEGY"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_STRATEGY"],
+      "cache": true
+    },
+    "build:foundation": {
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "cache": true
+    },
+    "build:core": {
+      "dependsOn": ["^build:foundation"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "cache": true
+    },
+    "build:memory-optimized": {
+      "dependsOn": ["^build:memory-optimized"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY"],
+      "cache": true
+    },
+    "build:staged": {
+      "dependsOn": ["^build:staged"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_STAGE", "BUILD_MEMORY_LIMIT"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_STAGE", "BUILD_MEMORY_LIMIT"],
+      "cache": true
+    },
+    "lint": {
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        ".eslintrc*",
+        "package.json",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [],
+      "cache": true
+    },
+    "lint:fix": {
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        ".eslintrc*",
+        "package.json",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [],
+      "cache": false
+    },
+    "type-check": {
+      "dependsOn": ["^build:types"],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "!**/*.test.{ts,tsx}",
+        "!**/*.spec.{ts,tsx}"
+      ],
+      "outputs": [],
+      "cache": true
+    },
+    "build:types": {
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**/*.d.ts", "types/**/*.d.ts", "lib/**/*.d.ts", "*.tsbuildinfo"],
+      "cache": true
+    },
+    "dev": {
+      "dependsOn": ["^build:types", "^build"],
+      "cache": false,
+      "persistent": true,
+      "env": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_ENABLE_MONITORING"],
+      "passThroughEnv": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_ENABLE_MONITORING"]
+    },
+    "start": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true,
+      "env": ["NODE_ENV", "PORT"],
+      "passThroughEnv": ["NODE_ENV", "PORT"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "**/*.test.{ts,tsx,js,jsx}",
+        "**/*.spec.{ts,tsx,js,jsx}",
+        "package.json",
+        "jest.config.*",
+        "vitest.config.*"
+      ],
+      "outputs": ["coverage/**", "test-results/**"]
+    },
+    "test:unit": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "**/*.test.{ts,tsx,js,jsx}",
+        "**/*.spec.{ts,tsx,js,jsx}",
+        "package.json",
+        "jest.config.*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "**/*.test.{ts,tsx,js,jsx}",
+        "**/*.spec.{ts,tsx,js,jsx}",
+        "package.json"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "e2e/**/*.{ts,js}",
+        "playwright.config.*"
+      ],
+      "outputs": ["test-results/**", "playwright-report/**"]
+    },
+    "test:ci": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "**/*.test.{ts,tsx,js,jsx}",
+        "**/*.spec.{ts,tsx,js,jsx}",
+        "package.json",
+        "jest.config.*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "db:generate": {
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["node_modules/.prisma/**", "prisma/generated/**", "generated/**"],
+      "cache": true
+    },
+    "db:migrate": {
+      "inputs": ["prisma/migrations/**", "prisma/schema.prisma"],
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "docker:build": {
+      "dependsOn": ["build"],
+      "inputs": ["Dockerfile*", "docker-compose*.yml"],
+      "outputs": []
+    }
+  }
+}
