@@ -8,8 +8,15 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "examples"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.test.ts",
+    "examples"
+  ],
   "references": [
     {
       "path": "../types"
@@ -22,6 +29,9 @@
     },
     {
       "path": "../prompt-templating"
+    },
+    {
+      "path": "../database"
     }
   ]
 }

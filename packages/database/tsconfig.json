@@ -11,9 +11,19 @@
     "module": "commonjs",
     "types": []
   },
-  "include": ["src/**/*", "generated/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
+  "include": [
+    "src/**/*",
+    "generated/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
   "references": [
-    { "path": "../types" }
+    {
+      "path": "../types"
+    }
   ]
 }

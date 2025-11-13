@@ -7,11 +7,19 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "../api-types" },
-    { "path": "../types" }
+    {
+      "path": "../api-types"
+    },
+    {
+      "path": "../types"
+    }
   ]
 }

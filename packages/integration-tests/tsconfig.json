@@ -19,23 +19,40 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/*": ["../../packages/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@the-new-fuse/*": [
+        "../../packages/*"
+      ]
     },
-    "types": ["jest", "node"],
+    "types": [
+      "jest",
+      "node"
+    ],
     "moduleResolution": "node",
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
-    "node_modules", 
-    "dist", 
+    "node_modules",
+    "dist",
     "coverage"
   ],
   "references": [
-    { "path": "../extension-system" },
-    { "path": "../core" },
-    { "path": "../utils" },
-    { "path": "../types" }
+    {
+      "path": "../extension-system"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../types"
+    }
   ]
 }

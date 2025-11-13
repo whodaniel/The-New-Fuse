@@ -9,7 +9,11 @@
     "noEmit": false,
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "types": ["jest", "node", "react"],
+    "types": [
+      "jest",
+      "node",
+      "react"
+    ],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -19,6 +23,26 @@
     "noImplicitAny": false,
     "strict": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.test.tsx", "**/*.spec.tsx"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx"
+  ],
+  "references": [
+    {
+      "path": "../api-client"
+    },
+    {
+      "path": "../fairtable-core"
+    },
+    {
+      "path": "../types"
+    }
+  ]
 }

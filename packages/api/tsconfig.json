@@ -13,14 +13,29 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "types": ["jest", "node"]
+    "types": [
+      "jest",
+      "node"
+    ]
   },
   "include": [
     "src/**/*"
   ],
   "references": [
-    { "path": "../types" },
-    { "path": "../database" },
-    { "path": "../core" }
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../database"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../infrastructure"
+    },
+    {
+      "path": "../utils"
+    }
   ]
 }

@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -20,18 +24,39 @@
     "declarationDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/api-client": ["../api-client/src"],
-      "@the-new-fuse/hooks": ["../hooks/src"],
-      "@the-new-fuse/types": ["../types/src"],
+      "@/*": [
+        "./src/*"
+      ],
+      "@the-new-fuse/api-client": [
+        "../api-client/src"
+      ],
+      "@the-new-fuse/hooks": [
+        "../hooks/src"
+      ],
+      "@the-new-fuse/types": [
+        "../types/src"
+      ],
       "types": []
     }
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "./tsconfig.node.json" },
-    { "path": "../api-client" },
-    { "path": "../hooks" },
-    { "path": "../types" }
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "../api-client"
+    },
+    {
+      "path": "../hooks"
+    },
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../utils"
+    }
   ]
 }

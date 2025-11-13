@@ -5,10 +5,21 @@
     "rootDir": "./src",
     "types": []
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
   "references": [
-    { "path": "../database" },
-    { "path": "../core" }
+    {
+      "path": "../database"
+    },
+    {
+      "path": "../core"
+    }
   ]
 }
