@@ -895,15 +895,6 @@
 # uploads/
 # downloads/
 
-# ==============================================================================
-# NETLIFY
-# ==============================================================================
-# Netlify local development
-**/.netlify/
-**/netlify/functions/node_modules/
-**/netlify/functions/dist/
-.env.netlify
-
 # Firebase
 **/.firebase/
 **/firebase-debug.log

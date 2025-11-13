@@ -18,7 +18,7 @@ class DeploymentManager {
   constructor() {
     this.platforms = {
       vercel: this.deployToVercel.bind(this),
-      netlify: this.deployToNetlify.bind(this),
+      railway: this.deployToRailway.bind(this),
       docker: this.deployToDocker.bind(this),
       aws: this.deployToAWS.bind(this),
       heroku: this.deployToHeroku.bind(this),
@@ -133,40 +133,15 @@ class DeploymentManager {
     execSync(deployCmd, { cwd: rootDir, stdio: 'inherit' });
   }
 
-  async deployToNetlify(environment) {
-    console.log('🌐 Deploying to Netlify...');
-    
-    // Create netlify.toml configuration
-    const netlifyConfig = `
-[build]
-  base = "apps/frontend"
-  command = "npm run build"
-  publish = "dist"
+  async deployToRailway(environment) {
+    console.log('🚂 Deploying to Railway...');
 
-[build.environment]
-  NODE_ENV = "${environment}"
-  VITE_API_URL = "/api"
-  VITE_WS_URL = "/ws"
+    // Railway uses railway.toml which is already configured
+    // Just trigger deployment via CLI
+    const deployCmd = 'railway up';
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-`;
-    
-    fs.writeFileSync(path.join(rootDir, 'netlify.toml'), netlifyConfig);
-    
-    // Deploy
-    const deployCmd = environment === 'production'
-      ? 'netlify deploy --prod'
-      : 'netlify deploy';
-      
     execSync(deployCmd, { cwd: rootDir, stdio: 'inherit' });
+    console.log('✅ Railway deployment initiated!');
   }
 
   async deployToDocker(environment) {
