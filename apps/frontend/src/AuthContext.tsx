@@ -1,8 +1,7 @@
 /* global localStorage */
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '@supabase/supabase-js';
-import { authHelpers, supabase } from './lib/supabase';
+import { authHelpers, supabase, User } from './lib/supabase';
 
 interface AuthContextType {
   isAuthenticated: boolean;
