@@ -6,7 +6,7 @@ builder = "DOCKERFILE"
 
 # API Gateway Service
 [services.api-gateway.build]
-dockerfilePath = "apps/api-gateway/Dockerfile"
+dockerfilePath = "apps/api-gateway/Dockerfile.railway"
 watchPaths = ["apps/api-gateway/**", "packages/**"]
 
 [services.api-gateway.deploy]
@@ -17,7 +17,7 @@ restartPolicyType = "ON_FAILURE"
 
 # API Service
 [services.api.build]
-dockerfilePath = "apps/api/Dockerfile"
+dockerfilePath = "apps/api/Dockerfile.railway"
 watchPaths = ["apps/api/**", "packages/**", "prisma/**"]
 
 [services.api.deploy]
@@ -28,7 +28,7 @@ restartPolicyType = "ON_FAILURE"
 
 # Backend Service
 [services.backend.build]
-dockerfilePath = "apps/backend/Dockerfile"
+dockerfilePath = "apps/backend/Dockerfile.railway"
 watchPaths = ["apps/backend/**", "packages/**", "prisma/**"]
 
 [services.backend.deploy]
@@ -39,7 +39,7 @@ restartPolicyType = "ON_FAILURE"
 
 # Frontend Service
 [services.frontend.build]
-dockerfilePath = "apps/frontend/Dockerfile"
+dockerfilePath = "apps/frontend/Dockerfile.railway"
 watchPaths = ["apps/frontend/**", "packages/**"]
 
 [services.frontend.deploy]
