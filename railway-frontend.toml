@@ -1,8 +1,0 @@
-[build]
-builder = "DOCKERFILE"
-dockerfilePath = "apps/frontend/Dockerfile"
-watchPaths = ["apps/frontend/**", "packages/**"]
-
-[deploy]
-restartPolicyMaxRetries = 10
-restartPolicyType = "ON_FAILURE"
