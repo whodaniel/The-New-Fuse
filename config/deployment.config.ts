@@ -133,7 +133,7 @@ class DeploymentConfigManager {
     
     // Deployment platform detection
     if (process.env.VERCEL) return process.env.VERCEL_ENV || 'production';
-    if (process.env.NETLIFY) return process.env.CONTEXT === 'production' ? 'production' : 'staging';
+    if (process.env.RAILWAY_ENVIRONMENT) return process.env.RAILWAY_ENVIRONMENT || 'production';
     if (process.env.HEROKU_APP_NAME) return 'production';
     if (process.env.AWS_EXECUTION_ENV) return 'production';
     if (process.env.RENDER) return 'production';
