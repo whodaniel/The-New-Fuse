@@ -39,7 +39,7 @@ restartPolicyType = "ON_FAILURE"
 
 # Frontend Service
 [services.frontend.build]
-dockerfilePath = "Dockerfile"
+dockerfilePath = "./Dockerfile"
 watchPaths = ["apps/frontend/**", "packages/**"]
 
 [services.frontend.deploy]

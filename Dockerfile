@@ -1,4 +1,5 @@
 FROM node:22-alpine AS base
+RUN apk add --no-cache build-base cairo-dev jpeg-dev pango-dev giflib-dev pkgconfig
 RUN npm install -g pnpm@10.20.0
 WORKDIR /app
 
