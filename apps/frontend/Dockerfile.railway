@@ -1,3 +1,5 @@
+# CACHE_BUSTER=1
+
 # Railway Dockerfile for The New Fuse Frontend
 # Built from repository root
 
