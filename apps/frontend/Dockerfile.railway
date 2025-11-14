@@ -39,8 +39,7 @@ RUN pnpm --filter @the-new-fuse/ui-consolidated build || echo "ui-consolidated b
 RUN pnpm --filter @the-new-fuse/types build || echo "types build failed"
 
 # Build frontend
-WORKDIR /app/apps/frontend
-RUN pnpm run build
+RUN pnpm --filter @the-new-fuse/frontend-app build
 
 # Stage 3: Production - serve with nginx
 FROM nginx:alpine AS runner
