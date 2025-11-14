@@ -39,9 +39,8 @@ Thumbs.db
 .gitignore
 
 # Docker
-Dockerfile*
+# Note: DO NOT ignore Dockerfiles - Railway needs them!
 docker-compose*
-.dockerignore
 
 # Testing
 coverage
