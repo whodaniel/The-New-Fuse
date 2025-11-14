@@ -2,6 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Skip native module builds in CI/Docker/Railway environments
+if (process.env.RAILWAY_ENVIRONMENT || process.env.CI || process.env.DOCKER || process.env.KUBERNETES_SERVICE_HOST) {
+  console.log('[postinstall.js] Skipping native module builds in CI/Docker/Railway environment');
+  process.exit(0);
+}
+
 const canvasModulePath = path.join(__dirname, '..', 'node_modules', 'canvas');
 const canvasNodeFile = path.join(canvasModulePath, 'build', 'Release', 'canvas.node');
 
