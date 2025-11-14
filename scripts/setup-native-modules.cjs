@@ -9,6 +9,12 @@ const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Skip native module builds in CI/Docker/Railway environments
+if (process.env.RAILWAY_ENVIRONMENT || process.env.CI || process.env.DOCKER || process.env.KUBERNETES_SERVICE_HOST) {
+  console.log('[native-setup] Skipping native module setup in CI/Docker/Railway environment');
+  process.exit(0);
+}
+
 function log(message, type = 'info') {
   const timestamp = new Date().toISOString();
   const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warn' ? '⚠️' : 'ℹ️';
