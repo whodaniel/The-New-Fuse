@@ -4,7 +4,7 @@ RUN npm install -g pnpm@10.20.0
 WORKDIR /app
 
 COPY . .
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 WORKDIR /app/apps/frontend
 RUN pnpm run build
