@@ -33,52 +33,65 @@
 
 ## 🎯 NEXT STEPS (Manual Action Required)
 
-### Step 1: Push the Railway Fix Branch
+**Git push commands are hanging due to SSH/credential issues. Complete these steps via GitHub web UI:**
 
-The Railway fix is committed locally on the `railway-dockerfile-fix` branch but **not yet pushed to GitHub** (git push commands were hanging).
+### Step 1: Add Dockerfile via GitHub Web UI
 
-**To push manually**:
-```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
-git push -u origin railway-dockerfile-fix
+1. Go to: **https://github.com/whodaniel/fuse**
+2. Click "Add file" → "Create new file"
+3. Name the file: `Dockerfile`
+4. Paste this content:
+```dockerfile
+FROM node:22-alpine AS base
+RUN npm install -g pnpm@10.20.0
+WORKDIR /app
+
+COPY . .
+RUN pnpm install --frozen-lockfile
+
+WORKDIR /app/apps/frontend
+RUN pnpm run build
+
+FROM node:22-alpine AS runner
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=base /app/apps/frontend/dist ./dist
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 frontend && \
+    chown -R frontend:nodejs /app
+USER frontend
+EXPOSE 3000
+ENV PORT=3000 NODE_ENV=production
+CMD ["serve", "-s", "dist", "-l", "3000"]
 ```
+5. Commit message: "Add root-level Dockerfile for Railway deployment"
+6. Commit directly to `main` branch
+7. Click "Commit new file"
 
-### Step 2: Create Pull Request
+### Step 2: Update railway.toml via GitHub Web UI
 
-After pushing, create a PR to merge `railway-dockerfile-fix` into `main`:
+1. Go to: **https://github.com/whodaniel/fuse/blob/main/railway.toml**
+2. Click the pencil icon (Edit this file)
+3. Find line 42 where it says: `dockerfilePath = "apps/frontend/Dockerfile"`
+4. Change it to: `dockerfilePath = "Dockerfile"`
+5. Commit message: "Update railway.toml to use root Dockerfile"
+6. Commit directly to `main` branch
+7. Click "Commit changes"
 
-**Option A - Via GitHub Web UI**:
-- Go to: https://github.com/whodaniel/fuse
-- Click "Compare & pull request" button (should appear after push)
-- Title: "Fix Railway deployment with root-level Dockerfile"
-- Base: `main`
-- Compare: `railway-dockerfile-fix`
-- Click "Create pull request"
+### Step 3: Monitor Railway Deployment
 
-**Option B - Via gh CLI**:
-```bash
-gh pr create --base main --head railway-dockerfile-fix \
-  --title "Fix Railway deployment with root-level Dockerfile" \
-  --body "Fixes Railway build failures by creating a root-level Dockerfile with proper paths for monorepo builds."
-```
+**Railway dashboard (already open in browser)**:
+https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
 
-### Step 3: Merge the PR
+Once you commit the changes to GitHub:
+1. Railway will auto-detect the push to `main`
+2. It will rebuild using the new root `Dockerfile`
+3. Watch the build logs in the Railway dashboard
+4. Verify the deployment succeeds
 
-Once the PR is created, merge it into `main`. This will trigger Railway to rebuild.
+### Step 4: Run Branch Cleanup (After Deployment Success)
 
-### Step 4: Handle the prepare-public-release PR
-
-There's also a branch `claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8` that was created earlier. Check if:
-- It has a PR open at GitHub
-- If yes, review and merge it
-- If no, it can be deleted in the cleanup
-
-**I already opened this in your browser**:
-https://github.com/whodaniel/fuse/pull/new/claude/prepare-public-release-011CV5qmykNfFy3h3LGLUHo8
-
-### Step 5: Run Branch Cleanup
-
-After all PRs are merged to `main`, run the cleanup script:
+Once Railway deployment is successful, clean up the repository:
 
 ```bash
 cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
@@ -86,17 +99,6 @@ cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 ```
 
 This will delete all 88+ stale branches and leave only `main`.
-
-### Step 6: Monitor Railway Deployment
-
-**I already opened Railway dashboard in your browser**:
-https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
-
-Once the PR is merged:
-1. Railway will auto-detect the push to `main`
-2. It will rebuild using the new root `Dockerfile`
-3. Watch the build logs in the Railway dashboard
-4. Verify the deployment succeeds
 
 ---
 
@@ -111,10 +113,13 @@ Once the PR is merged:
   - Line 42: `dockerfilePath = "Dockerfile"` (was `apps/frontend/Dockerfile`)
 - `/DEPLOYMENT_STATUS.md` - This file (updated)
 
-### On Branch: `railway-dockerfile-fix`
-- Current branch has 1 commit ahead of `main`
-- Commit: `02873e4eb Fix Railway deployment with root-level Dockerfile`
-- **Status**: Local only, needs to be pushed
+### Local Status:
+- Currently on branch: `main`
+- Changes merged locally from `railway-dockerfile-fix`
+- Commits:
+  - `02873e4eb` - Fix Railway deployment with root-level Dockerfile
+  - `9cb4583f3` - Add deployment status doc and cleanup script
+- **Status**: Files exist locally but NOT on GitHub (git push hanging)
 
 ---
 
@@ -174,6 +179,7 @@ Once the PR is merged:
 
 ---
 
-**Current Status**: Awaiting manual git push and PR merge
-**Next Action**: Push `railway-dockerfile-fix` branch to GitHub
-**Estimated Time**: 5-10 minutes for all steps
+**Current Status**: ✅ Railway fix ready locally | ⏳ Awaiting manual GitHub web UI upload
+**Next Action**: Add Dockerfile and update railway.toml via GitHub web UI (see Step 1 & 2 above)
+**Estimated Time**: 2-3 minutes to upload files + 10-15 minutes for Railway to build
+**Railway Dashboard**: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
