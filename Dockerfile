@@ -3,8 +3,11 @@ RUN apk add --no-cache build-base cairo-dev jpeg-dev pango-dev giflib-dev pkgcon
 RUN npm install -g pnpm@10.20.0
 WORKDIR /app
 
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc .pnpmrc* ./
+RUN pnpm install --frozen-lockfile --ignore-scripts || pnpm install --no-frozen-lockfile --ignore-scripts
+
 COPY . .
-RUN pnpm install --frozen-lockfile --ignore-scripts
 
 WORKDIR /app/apps/frontend
 RUN pnpm run build
