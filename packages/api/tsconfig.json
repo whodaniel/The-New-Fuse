@@ -16,26 +16,11 @@
     "types": [
       "jest",
       "node"
-    ]
+    ],
+    
   },
   "include": [
-    "src/**/*"
+    "src/**/*.ts"
   ],
-  "references": [
-    {
-      "path": "../types"
-    },
-    {
-      "path": "../database"
-    },
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../infrastructure"
-    },
-    {
-      "path": "../utils"
-    }
-  ]
+  "references": []
 }

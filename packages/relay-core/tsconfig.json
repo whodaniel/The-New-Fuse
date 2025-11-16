@@ -5,7 +5,10 @@
     "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
+    "declaration": true,
     "composite": true,
+    
+    "types": ["node"],
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [
@@ -17,15 +20,5 @@
     "**/*.test.ts",
     "**/*.spec.ts"
   ],
-  "references": [
-    {
-      "path": "../database"
-    },
-    {
-      "path": "../types"
-    },
-    {
-      "path": "../utils"
-    }
-  ]
+  "references": []
 }

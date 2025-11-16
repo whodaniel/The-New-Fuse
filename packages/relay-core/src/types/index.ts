@@ -10,6 +10,7 @@ export interface RelayConfig {
     websocket: number;
     proxy?: number;
     ui?: number;
+    grpc?: number;
   };
   transports: {
     websocket: boolean;
@@ -17,6 +18,7 @@ export interface RelayConfig {
     file: boolean;
     mcp: boolean;
     redis?: boolean;
+    grpc?: boolean;
   };
   interceptRules: Map<string, InterceptRule>;
   workspaceDir: string;
@@ -25,6 +27,7 @@ export interface RelayConfig {
     host: string;
     port: number;
     database: number;
+    password?: string;
   };
 }
 

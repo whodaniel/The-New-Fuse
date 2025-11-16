@@ -31,14 +31,10 @@
       "@tnf/relay-core": ["../relay-core/src"],
       "@tnf/relay-core/*": ["../relay-core/src/*"]
     },
-    "types": []
+    "types": ["node"]
   },
   "include": ["src"],
-  "references": [
-    { "path": "../relay-core" },
-    { "path": "../security" },
-    { "path": "../database" }
-  ],
+  "references": [],
   "exclude": [
     "node_modules",
     "dist",

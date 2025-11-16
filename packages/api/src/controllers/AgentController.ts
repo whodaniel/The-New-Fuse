@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { AgentService } from '../services/agent.service';
 import { toError } from '../utils/error';
 import { CurrentUser } from '../modules/decorators/current-user.decorator';
@@ -57,7 +57,7 @@ export class AgentController {
   async createAgent(@Body() createAgentDto: AgentDto, @CurrentUser() user: User, res: Response) {
     try {
       // Remove timestamp fields that should be set by the service
-      const { createdAt, updatedAt, ...agentData } = createAgentDto;
+      const { createdAt: _createdAt, updatedAt: _updatedAt, ...agentData } = createAgentDto;
       const agent = await this.agentService.createAgent(agentData, user.id);
       return res.status(201).json(agent);
     } catch (error) {
@@ -77,7 +77,7 @@ export class AgentController {
   async updateAgent(@Param('id') id: string, @Body() updateAgentDto: AgentDto, @CurrentUser() user: User, res: Response) {
     try {
       // Remove timestamp fields that should be managed by the service
-      const { createdAt, updatedAt, ...agentData } = updateAgentDto;
+      const { createdAt: _createdAt2, updatedAt: _updatedAt2, ...agentData } = updateAgentDto;
       const updatedAgent = await this.agentService.updateAgent(id, agentData, user.id);
       return res.status(200).json(updatedAgent);
     } catch (error) {

@@ -6,7 +6,6 @@
  */
 
 // import { AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
-import type { MasterAgentProfile } from '@tnf/relay-core';
 
 // Define local types to replace database imports
 export enum TaskPriority {

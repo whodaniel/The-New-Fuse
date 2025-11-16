@@ -160,7 +160,7 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": [],
       "inputs": [
         "src/**/*.{ts,tsx}",
         "package.json",

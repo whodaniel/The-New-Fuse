@@ -39,6 +39,7 @@ export { // Export classes as values
   AgentType,
   AgentCapability
 } from './agent';
+// Also export the AgentCapability type for TS consumers
 
 // Messaging types
 export type {

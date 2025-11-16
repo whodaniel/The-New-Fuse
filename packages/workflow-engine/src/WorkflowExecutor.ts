@@ -11,7 +11,6 @@ import { Logger } from '@tnf/relay-core';
 import { MasterAgentRegistry } from '@tnf/relay-core';
 import { WorkflowEngine } from './WorkflowEngine';
 import {
-  WorkflowDefinition,
   WorkflowInstance,
   WorkflowStep,
   WorkflowStepStatus,
@@ -140,7 +139,7 @@ export class WorkflowExecutor extends EventEmitter {
       this.logger.info(`Step ${stepId} completed for instance ${instanceId} with status ${stepState.status}`);
 
       if (stepState.status === WorkflowStepStatus.COMPLETED) {
-        const workflow = this.workflowEngine.getWorkflow(instance.workflowDefinitionId).then(workflow => {
+        this.workflowEngine.getWorkflow(instance.workflowDefinitionId).then(workflow => {
             if(workflow) {
                 const step = workflow.steps.find(s => s.id === stepId);
                 if (step) {
@@ -155,7 +154,7 @@ export class WorkflowExecutor extends EventEmitter {
     }
   }
 
-  private isWorkflowComplete(instance: WorkflowInstance): boolean {
+  private isWorkflowComplete(_instance: WorkflowInstance): boolean {
     // Simplified: assumes completion if an END step is reached.
     // A more robust implementation would check if all paths have concluded.
     return true;

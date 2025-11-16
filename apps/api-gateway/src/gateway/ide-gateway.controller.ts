@@ -6,10 +6,7 @@
 import {
   Controller,
   Get,
-  Post,
   All,
-  Param,
-  Body,
   Headers,
   Res,
   Req,

@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../packages/tsconfig.base.json",
   "compilerOptions": {
 
     "target": "ES2022",
@@ -20,8 +20,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "ignoreDeprecations": "5.0",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["./src/*"],
       "@components/*": ["./components/*"],
       "@lib/*": ["./lib/*"]
     },

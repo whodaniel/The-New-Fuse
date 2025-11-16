@@ -10,6 +10,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -47,9 +48,9 @@ const Button = React.forwardRef((props, ref) => {
         {children}
         {icon && iconPosition === 'end' && <span className="ml-2">{icon}</span>}
       </>);
-    return (<Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} disabled={isLoading || restProps.disabled} {...restProps}>>
-        {content}
-      </Comp>);
+  return (<Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} disabled={isLoading || restProps.disabled} {...restProps}>
+    {content}
+  </Comp>);
 });
 Button.displayName = "Button";
 export { Button, buttonVariants };

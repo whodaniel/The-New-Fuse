@@ -10,7 +10,6 @@ import {
   WorkflowDefinition,
   WorkflowStep,
   StepType,
-  StepAssignee,
 } from './WorkflowTypes';
 
 interface ValidationResult {
@@ -57,7 +56,6 @@ export class WorkflowValidator {
   }
 
   private validateSteps(definition: WorkflowDefinition, errors: string[]): void {
-    const stepIds = new Set(definition.steps.map(s => s.id));
     for (const step of definition.steps) {
       if (!step.id || !step.name || !step.type) {
         errors.push(`Step ${step.id || '(no id)'} is missing required fields (id, name, type).`);
