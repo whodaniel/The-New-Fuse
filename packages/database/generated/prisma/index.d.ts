@@ -1,452 +1,230 @@
-// Comprehensive Prisma client TypeScript definitions
-import { PrismaClient as BasePrismaClient } from '@prisma/client';
+// Comprehensive Placeholder Prisma Client types
 
-export { PrismaClient } from '@prisma/client';
+export * from '@prisma/client/runtime/library';
 
 // Enums from schema
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  AGENCY_OWNER = 'AGENCY_OWNER',
+  AGENCY_ADMIN = 'AGENCY_ADMIN',
+  AGENCY_MANAGER = 'AGENCY_MANAGER',
+  AGENT_OPERATOR = 'AGENT_OPERATOR',
+}
+
+export enum AgentType {
+  BASIC = 'BASIC',
+  CHAT = 'CHAT',
+  WORKFLOW = 'WORKFLOW',
+  TASK = 'TASK',
+  ASSISTANT = 'ASSISTANT',
+  ANALYSIS = 'ANALYSIS',
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  IDE_EXTENSION = 'IDE_EXTENSION',
+  API = 'API',
+}
+
+export enum AgentStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  IDLE = 'IDLE',
+  BUSY = 'BUSY',
+  ERROR = 'ERROR',
+  OFFLINE = 'OFFLINE',
+  INITIALIZING = 'INITIALIZING',
+  READY = 'READY',
+  TERMINATED = 'TERMINATED',
+}
+
 export enum TaskStatus {
   PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
 export enum TaskPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
-  URGENT = 'URGENT'
-}
-
-export enum AgentStatus {
-  IDLE = 'IDLE',
-  BUSY = 'BUSY',
-  ERROR = 'ERROR',
-  OFFLINE = 'OFFLINE'
-}
-
-export enum AgentType {
-  GENERIC = 'GENERIC',
-  CODER = 'CODER',
-  ANALYZER = 'ANALYZER',
-  COORDINATOR = 'COORDINATOR',
-  COMMUNICATOR = 'COMMUNICATOR'
-}
-
-export enum EntityStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  PENDING = 'PENDING'
-}
-
-export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-  AGENT = 'AGENT'
-}
-
-export enum A2AAgentStatus {
-  ONLINE = 'ONLINE',
-  OFFLINE = 'OFFLINE',
-  BUSY = 'BUSY',
-  IDLE = 'IDLE',
-  ERROR = 'ERROR'
-}
-
-export enum A2AMessageType {
-  HANDSHAKE = 'HANDSHAKE',
-  REQUEST = 'REQUEST',
-  RESPONSE = 'RESPONSE',
-  NOTIFICATION = 'NOTIFICATION',
-  HEARTBEAT = 'HEARTBEAT',
-  ERROR = 'ERROR',
-  BROADCAST = 'BROADCAST'
-}
-
-export enum A2AMessagePriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  URGENT = 'URGENT'
-}
-
-export enum A2AConversationStatus {
-  ACTIVE = 'ACTIVE',
-  PAUSED = 'PAUSED',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED'
-}
-
-export enum MarketplaceStatus {
-  ACTIVE = 'ACTIVE',
-  SOLD = 'SOLD',
-  CANCELLED = 'CANCELLED',
-  EXPIRED = 'EXPIRED'
-}
-
-export enum OfferStatus {
-  ACTIVE = 'ACTIVE',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-  CANCELLED = 'CANCELLED',
-  EXPIRED = 'EXPIRED'
+  URGENT = 'URGENT',
 }
 
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
+  PUBLISHED = 'PUBLISHED',
+  ARCHIVED = 'ARCHIVED',
   ACTIVE = 'ACTIVE',
-  ARCHIVED = 'ARCHIVED'
+  PAUSED = 'PAUSED',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
 }
 
 export enum WorkflowExecutionStatus {
   PENDING = 'PENDING',
   RUNNING = 'RUNNING',
-  SUCCEEDED = 'SUCCEEDED',
+  COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
-// JSON value types
-export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
-export type JsonObject = { [key: string]: JsonValue };
-export type JsonArray = JsonValue[];
+export enum MessageRole {
+  USER = 'USER',
+  AGENT = 'AGENT',
+  SYSTEM = 'SYSTEM',
+  ASSISTANT = 'ASSISTANT',
+  TOOL = 'TOOL',
+}
 
-// Type definitions for models
-export interface Task {
+// Model types
+export interface User {
   id: string;
-  title: string;
-  description?: string | null;
-  status: TaskStatus;
-  priority: TaskPriority;
-  type: string;
+  email: string;
+  username?: string | null;
+  name?: string | null;
   createdAt: Date;
   updatedAt: Date;
-  dueDate?: Date | null;
-  assignedTo?: string | null;
-  createdBy: string;
-  metadata?: JsonValue | null;
-  tags: string[];
-  dependencies: string[];
-  error?: string | null;
-  completedAt?: Date | null;
+  hashedPassword: string;
+  role: UserRole;
+  roles: UserRole[];
+  isActive: boolean;
+  lastLogin?: Date | null;
+  preferences?: any;
+  refreshToken?: string | null;
+  deletedAt?: Date | null;
+  emailVerified: boolean;
 }
 
 export interface Agent {
   id: string;
   name: string;
-  description?: string | null;
   type: AgentType;
   status: AgentStatus;
+  description?: string | null;
+  systemPrompt?: string | null;
+  config?: any;
   capabilities: string[];
   provider: string;
-  lastActive: Date;
-  metadata?: JsonValue | null;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
-  userId?: string | null;
+  deletedAt?: Date | null;
 }
 
-export interface User {
+export interface Task {
   id: string;
-  email: string;
-  name?: string | null;
-  passwordHash: string;
-  role: UserRole;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface RegisteredEntity {
-  id: string;
-  name: string;
-  type: string;
+  title?: string | null;
   description?: string | null;
-  metadata?: JsonValue | null;
-  status: EntityStatus;
+  type: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  data?: any;
+  result?: any;
+  error?: string | null;
+  startTime?: Date | null;
+  endTime?: Date | null;
+  pipelineId?: string | null;
+  assignedToId?: string | null;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt?: Date | null;
+  metadata?: any;
 }
 
-export interface ChatMessage {
+export interface Message {
   id: string;
   content: string;
-  role: string;
-  userId: string;
-  sessionId?: string | null;
-  metadata?: JsonValue | null;
-  createdAt: Date;
+  role: MessageRole;
+  senderId?: string | null;
+  senderName?: string | null;
+  agentId?: string | null;
+  chatId?: string | null;
+  roomId?: string | null;
+  parentMessageId?: string | null;
+  metadata?: any;
+  attachments: string[];
+  timestamp: Date;
   updatedAt: Date;
+  isEdited: boolean;
+  isDeleted: boolean;
+  isEphemeral: boolean;
+  expiresAt?: Date | null;
+  reactions?: any;
 }
 
 export interface Workflow {
   id: string;
   name: string;
   description?: string | null;
+  definition?: any;
   status: WorkflowStatus;
-  definition: JsonValue;
+  creatorId?: string | null;
+  agentId?: string | null;
+  metadata?: any;
+  isActive: boolean;
+  variables?: any;
+  triggers?: any;
   createdAt: Date;
   updatedAt: Date;
+  lastExecutedAt?: Date | null;
+  executionCount: number;
+  statistics?: any;
+  deletedAt?: Date | null;
 }
 
 export interface WorkflowExecution {
   id: string;
   workflowId: string;
   status: WorkflowExecutionStatus;
-  input?: JsonValue | null;
-  output?: JsonValue | null;
+  input?: any;
+  output?: any;
   error?: string | null;
-  startedAt?: Date | null;
-  finishedAt?: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Input types for create operations
-export interface TaskCreateInput {
-  id?: string;
-  title: string;
-  description?: string | null;
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  type: string;
-  dueDate?: Date | null;
-  assignedTo?: string | null;
-  createdBy: string;
-  metadata?: JsonValue | null;
-  tags?: string[];
-  dependencies?: string[];
-  error?: string | null;
+  startedAt: Date;
   completedAt?: Date | null;
 }
 
-export interface AgentCreateInput {
-  id?: string;
-  name: string;
-  description?: string | null;
-  type?: AgentType;
-  status?: AgentStatus;
-  capabilities?: string[];
-  provider: string;
-  lastActive?: Date;
-  metadata?: JsonValue | null;
-  userId?: string | null;
-}
-
-export interface UserCreateInput {
-  id?: string;
-  email: string;
-  name?: string | null;
-  passwordHash: string;
-  role?: UserRole;
-}
-
-// Update input types
-export interface TaskUpdateInput {
-  title?: string;
-  description?: string | null;
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  type?: string;
-  dueDate?: Date | null;
-  assignedTo?: string | null;
-  metadata?: JsonValue | null;
-  tags?: string[];
-  dependencies?: string[];
-  error?: string | null;
-  completedAt?: Date | null;
-}
-
-export interface AgentUpdateInput {
-  name?: string;
-  description?: string | null;
-  type?: AgentType;
-  status?: AgentStatus;
-  capabilities?: string[];
-  provider?: string;
-  lastActive?: Date;
-  metadata?: JsonValue | null;
-  userId?: string | null;
-}
-
-// Where input types for queries
-export interface TaskWhereInput {
-  id?: string;
-  title?: string;
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  type?: string;
-  assignedTo?: string;
-  createdBy?: string;
-  AND?: TaskWhereInput[];
-  OR?: TaskWhereInput[];
-  NOT?: TaskWhereInput;
-}
-
-export interface AgentWhereInput {
-  id?: string;
-  name?: string;
-  type?: AgentType;
-  status?: AgentStatus;
-  provider?: string;
-  userId?: string;
-  AND?: AgentWhereInput[];
-  OR?: AgentWhereInput[];
-  NOT?: AgentWhereInput;
-}
-
-export interface RegisteredEntityWhereInput {
-  id?: string;
-  name?: string;
-  type?: string;
-  status?: EntityStatus;
-  AND?: RegisteredEntityWhereInput[];
-  OR?: RegisteredEntityWhereInput[];
-  NOT?: RegisteredEntityWhereInput;
-}
-
-export interface WorkflowWhereInput {
-  id?: string;
-  name?: string;
-  status?: WorkflowStatus;
-  AND?: WorkflowWhereInput[];
-  OR?: WorkflowWhereInput[];
-  NOT?: WorkflowWhereInput;
-}
-
-export interface WorkflowExecutionWhereInput {
-  id?: string;
-  workflowId?: string;
-  status?: WorkflowExecutionStatus;
-  AND?: WorkflowExecutionWhereInput[];
-  OR?: WorkflowExecutionWhereInput[];
-  NOT?: WorkflowExecutionWhereInput;
-}
-
-// Unique where inputs
-export interface TaskWhereUniqueInput {
-  id?: string;
-}
-
-export interface AgentWhereUniqueInput {
-  id?: string;
-}
-
-export interface UserWhereUniqueInput {
-  id?: string;
-  email?: string;
-}
-
-export interface RegisteredEntityWhereUniqueInput {
-  id?: string;
-}
-
-export interface WorkflowWhereUniqueInput {
-  id?: string;
-}
-
-export interface WorkflowExecutionWhereUniqueInput {
-  id?: string;
-}
-
-// Order by inputs
-export interface TaskOrderByWithRelationInput {
-  id?: 'asc' | 'desc';
-  title?: 'asc' | 'desc';
-  status?: 'asc' | 'desc';
-  priority?: 'asc' | 'desc';
-  createdAt?: 'asc' | 'desc';
-  updatedAt?: 'asc' | 'desc';
-}
-
-export interface AgentOrderByWithRelationInput {
-  id?: 'asc' | 'desc';
-  name?: 'asc' | 'desc';
-  type?: 'asc' | 'desc';
-  status?: 'asc' | 'desc';
-  createdAt?: 'asc' | 'desc';
-  updatedAt?: 'asc' | 'desc';
-}
-
-export interface RegisteredEntityOrderByWithRelationInput {
-  id?: 'asc' | 'desc';
-  name?: 'asc' | 'desc';
-  type?: 'asc' | 'desc';
-  status?: 'asc' | 'desc';
-  createdAt?: 'asc' | 'desc';
-  updatedAt?: 'asc' | 'desc';
-}
-
-// Prisma namespace with all required types
+// Prisma namespace
 export namespace Prisma {
-  export {
-    TaskStatus,
-    TaskPriority,
-    AgentStatus,
-    AgentType,
-    EntityStatus,
-    UserRole,
-    A2AAgentStatus,
-    A2AMessageType,
-    A2AMessagePriority,
-    A2AConversationStatus,
-    MarketplaceStatus,
-    OfferStatus,
-    WorkflowStatus,
-    WorkflowExecutionStatus,
-    JsonValue,
-    JsonObject,
-    JsonArray
-  };
-
-  // Export input types
-  export type {
-    TaskCreateInput,
-    AgentCreateInput,
-    UserCreateInput,
-    TaskUpdateInput,
-    AgentUpdateInput,
-    TaskWhereInput,
-    AgentWhereInput,
-    RegisteredEntityWhereInput,
-    WorkflowWhereInput,
-    WorkflowExecutionWhereInput,
-    TaskWhereUniqueInput,
-    AgentWhereUniqueInput,
-    UserWhereUniqueInput,
-    RegisteredEntityWhereUniqueInput,
-    WorkflowWhereUniqueInput,
-    WorkflowExecutionWhereUniqueInput,
-    TaskOrderByWithRelationInput,
-    AgentOrderByWithRelationInput,
-    RegisteredEntityOrderByWithRelationInput
-  };
-
-  // Special Prisma values
-  export const JsonNull: JsonValue;
-  export const DbNull: JsonValue;
-  export const AnyNull: JsonValue;
-
-  // Error classes
-  export class PrismaClientKnownRequestError extends Error {
-    code: string;
-    meta?: Record<string, unknown>;
-    constructor(message: string, code: string, clientVersion: string, meta?: Record<string, unknown>);
-  }
-
-  export class PrismaClientUnknownRequestError extends Error {
-    constructor(message: string, clientVersion: string);
-  }
-
-  export class PrismaClientRustPanicError extends Error {
-    constructor(message: string, clientVersion: string);
-  }
-
-  export class PrismaClientInitializationError extends Error {
-    constructor(message: string, clientVersion: string);
-  }
-
-  export class PrismaClientValidationError extends Error {
-    constructor(message: string, clientVersion: string);
-  }
+  export type TypeMap = any;
+  export type PrismaPromise<T> = Promise<T>;
 }
+
+export namespace $Enums {
+  export {UserRole};
+  export {AgentType};
+  export {AgentStatus};
+  export {TaskStatus};
+  export {TaskPriority};
+  export {WorkflowStatus};
+  export {WorkflowExecutionStatus};
+  export {MessageRole};
+}
+
+// PrismaClient class
+export class PrismaClient {
+  constructor(options?: any);
+  $connect(): Promise<void>;
+  $disconnect(): Promise<void>;
+  $executeRaw(query: any, ...values: any[]): Promise<any>;
+  $queryRaw(query: any, ...values: any[]): Promise<any>;
+  $transaction<R>(fn: (prisma: PrismaClient) => Promise<R>): Promise<R>;
+  $on(eventType: string, callback: Function): void;
+  
+  user: any;
+  agent: any;
+  chat: any;
+  message: any;
+  workflow: any;
+  task: any;
+  pipeline: any;
+  authSession: any;
+  codeExecutionSession: any;
+  workflowExecution: any;
+  registeredEntity: any;
+}
+
+export default PrismaClient;
+export { Prisma };

@@ -47,8 +47,9 @@ function main() {
   }
   
   // Check if all required native modules are working
+  // Note: canvas is optional as it requires system dependencies (pangocairo, etc.)
   const nativeModuleChecks = [
-    { name: 'canvas', check: () => checkCanvas() && testCanvas() },
+    { name: 'canvas', check: () => checkCanvas() && testCanvas(), optional: true },
     { name: 'drivelist', check: () => checkNativeModule('drivelist') },
     { name: 'node-pty', check: () => checkNativeModule('node-pty') },
     { name: '@vscode/ripgrep', check: () => checkNativeModule('@vscode/ripgrep') }
@@ -56,17 +57,30 @@ function main() {
   
   let allPassed = true;
   const failedModules = [];
-  
+  const optionalFailed = [];
+
   for (const moduleCheck of nativeModuleChecks) {
     try {
       if (!moduleCheck.check()) {
+        if (moduleCheck.optional) {
+          optionalFailed.push(moduleCheck.name);
+        } else {
+          allPassed = false;
+          failedModules.push(moduleCheck.name);
+        }
+      }
+    } catch (error) {
+      if (moduleCheck.optional) {
+        optionalFailed.push(moduleCheck.name);
+      } else {
         allPassed = false;
         failedModules.push(moduleCheck.name);
       }
-    } catch (error) {
-      allPassed = false;
-      failedModules.push(moduleCheck.name);
     }
+  }
+
+  if (optionalFailed.length > 0) {
+    log(`⚠️  Optional native modules not available: ${optionalFailed.join(', ')} (non-critical)`);
   }
   
   if (allPassed) {

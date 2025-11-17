@@ -95,6 +95,7 @@
     "start:message-broker": "pnpm run dev:gateway"
   },
   "devDependencies": {
+    "@prisma/engines": "6.19.0",
     "@types/node": "^24.0.13",
     "@vscode/ripgrep": "^1.15.14",
     "concurrently": "^9.2.0",
