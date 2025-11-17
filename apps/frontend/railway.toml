@@ -1,6 +1,6 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "apps/frontend/Dockerfile"
+dockerfilePath = "apps/frontend/Dockerfile.railway"
 watchPaths = ["apps/frontend/**", "packages/**"]
 
 [deploy]

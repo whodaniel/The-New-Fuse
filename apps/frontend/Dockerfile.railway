@@ -1,4 +1,4 @@
-# CACHE_BUSTER=1
+# CACHE_BUSTER=2
 
 # Railway Dockerfile for The New Fuse Frontend
 # Built from repository root
@@ -14,14 +14,11 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY .npmrc .pnpmrc* ./
 COPY scripts ./scripts
 
-# Copy all package.json files for workspace
+# Copy all package.json files for workspace (only existing apps)
 COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/api/package.json ./apps/api/
 COPY apps/api-gateway/package.json ./apps/api-gateway/
 COPY apps/backend/package.json ./apps/backend/
-COPY apps/browser-hub/package.json ./apps/browser-hub/
-COPY apps/electron-desktop/package.json ./apps/electron-desktop/
-COPY apps/theia-ide/package.json ./apps/theia-ide/
 
 # Copy package packages
 COPY packages/*/package.json ./packages/
