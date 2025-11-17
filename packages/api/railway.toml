@@ -1,7 +1,7 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "packages/api/Dockerfile"
-watchPaths = ["packages/api/**", "packages/types/**", "packages/core/**", "packages/database/**"]
+dockerfilePath = "Dockerfile"
+watchPaths = ["./**", "../types/**", "../core/**", "../database/**"]
 
 [deploy]
 healthcheckPath = "/health"
