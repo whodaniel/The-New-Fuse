@@ -67,4 +67,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3001/health || exit 1
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "apps/api/dist/src/index.js"]
+CMD ["node", "apps/api/dist/index.js"]
