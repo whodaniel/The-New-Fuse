@@ -6,7 +6,7 @@
  * proper tenant isolation and privacy boundaries.
  */
 
-import { PrismaClient, User, UserRole } from '@prisma/client';
+import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { 

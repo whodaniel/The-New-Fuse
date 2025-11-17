@@ -2,6 +2,28 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 /**
+ * Generic Redis interface for compatibility across sync-core
+ */
+export interface RedisService {
+  setex(key: string, seconds: number, value: string): Promise<string>;
+  get(key: string): Promise<string | null>;
+  sadd(key: string, member: string): Promise<number>;
+  smembers(key: string): Promise<string[]>;
+  srem(key: string, member: string): Promise<number>;
+  del(key: string): Promise<number>;
+  lpush(key: string, value: string): Promise<number>;
+  lrange(key: string, start: number, stop: number): Promise<string[]>;
+  publish(channel: string, message: string): Promise<number>;
+  subscribe?(channel: string, callback: (channel: string, message: string) => void): Promise<void>;
+  keys?(pattern: string): Promise<string[]>;
+  set?(key: string, value: string): Promise<string>;
+  expire?(key: string, seconds: number): Promise<number>;
+  hset?(key: string, field: string, value: string): Promise<number>;
+  hget?(key: string, field: string): Promise<string | null>;
+  hgetall?(key: string): Promise<Record<string, string>>;
+}
+
+/**
  * Redis keyspace patterns for tenant-isolated sync operations
  * Integrates with existing Redis infrastructure while providing sync-specific patterns
  */

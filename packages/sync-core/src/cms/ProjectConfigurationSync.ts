@@ -6,7 +6,7 @@
  * data isolation and security using existing tenant patterns.
  */
 
-import { PrismaClient, User, UserRole } from '@prisma/client';
+import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';

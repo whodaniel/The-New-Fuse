@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { PrismaClient, UserRole } from '@prisma/client';
+import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { CMSIntegrationService } from './CMSIntegrationService';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';

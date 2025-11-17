@@ -10,7 +10,8 @@
     "incremental": true,
     "noEmit": false,
     "types": ["jest"],
-    "module": "Node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "paths": {
       "@the-new-fuse/fairtable-core": ["./dist"],
