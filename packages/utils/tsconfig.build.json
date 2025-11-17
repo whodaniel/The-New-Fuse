@@ -6,7 +6,8 @@
     "declaration": true,
     "sourceMap": true,
     "composite": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "jsx": "react-jsx"
   },
   "files": [],
   "include": ["src/**/*"],

@@ -9,6 +9,7 @@ export interface RelayConfig {
         websocket: number;
         proxy?: number;
         ui?: number;
+        grpc?: number;
     };
     transports: {
         websocket: boolean;
@@ -16,6 +17,7 @@ export interface RelayConfig {
         file: boolean;
         mcp: boolean;
         redis?: boolean;
+        grpc?: boolean;
     };
     interceptRules: Map<string, InterceptRule>;
     workspaceDir: string;
@@ -24,6 +26,7 @@ export interface RelayConfig {
         host: string;
         port: number;
         database: number;
+        password?: string;
     };
 }
 export interface InterceptRule {
@@ -95,5 +98,4 @@ export interface ProtocolAdapter {
     canTranslate(from: ProtocolType, to: ProtocolType): boolean;
     translate(message: any, from: ProtocolType, to: ProtocolType): Promise<any>;
 }
-export type { MasterAgentProfile } from '../services/MasterAgentRegistry';
 //# sourceMappingURL=index.d.ts.map

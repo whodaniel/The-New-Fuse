@@ -5,7 +5,7 @@
  * Provides a REST API for interacting with the relay.
  */
 import { EventEmitter } from 'events';
-import { Transport, InterceptRule } from '../types/index.js';
+import { Transport, RelayMessage, InterceptRule } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 export interface HTTPTransportConfig {
     port: number;
@@ -20,5 +20,10 @@ export declare class HTTPTransport extends EventEmitter implements Transport {
     private messageHandlers;
     constructor(config: HTTPTransportConfig);
     start(): Promise<boolean>;
+    stop(): Promise<void>;
+    send(message: RelayMessage): Promise<boolean>;
+    onMessage(handler: (message: RelayMessage) => void): void;
+    isConnected(): boolean;
+    private setupRoutes;
 }
 //# sourceMappingURL=HTTPTransport.d.ts.map

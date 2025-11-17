@@ -5,7 +5,7 @@
  * Handles communication with Model Context Protocol (MCP) clients.
  */
 import { EventEmitter } from 'events';
-import { Transport } from '../types/index.js';
+import { Transport, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 export interface MCPTransportConfig {
     relayId: string;
@@ -20,5 +20,10 @@ export declare class MCPTransport extends EventEmitter implements Transport {
     private messageHandlers;
     constructor(config: MCPTransportConfig);
     start(): Promise<boolean>;
+    stop(): Promise<void>;
+    send(message: RelayMessage): Promise<boolean>;
+    onMessage(handler: (message: RelayMessage) => void): void;
+    isConnected(): boolean;
+    private setupRequestHandlers;
 }
 //# sourceMappingURL=MCPTransport.d.ts.map

@@ -12,7 +12,7 @@ export * from './response';
 export * from './auth';
 
 // Export common types except BaseResponse (already exported from response.js)
-export {
+export type {
   UUID,
   ISODateTime,
   Pagination,

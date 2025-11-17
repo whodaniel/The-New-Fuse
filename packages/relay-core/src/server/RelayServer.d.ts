@@ -9,7 +9,7 @@
  * - message-bridge.js
  */
 import { EventEmitter } from 'events';
-import { RelayConfig } from '../types/index.js';
+import { RelayConfig, Agent, RelayMessage, SystemStatus, InterceptRule } from '../types/index.js';
 export declare class RelayServer extends EventEmitter {
     private config;
     private logger;
@@ -23,5 +23,22 @@ export declare class RelayServer extends EventEmitter {
     private interceptedMessages;
     private orchestratorService;
     constructor(config: RelayConfig);
+    private setupEventHandlers;
+    start(): Promise<boolean>;
+    stop(): Promise<void>;
+    private initializeTransports;
+    private startTransports;
+    private handleMessage;
+    private handleAgentRegistration;
+    private handleHeartbeat;
+    private handleWorkflowExecution;
+    getRelayCapabilities(): string[];
+    getSystemStatus(): SystemStatus;
+    getAgents(): Agent[];
+    getInterceptedMessages(limit?: number): RelayMessage[];
+    sendMessage(message: RelayMessage): Promise<boolean>;
+    addInterceptRule(hostname: string, rule: InterceptRule): void;
+    removeInterceptRule(hostname: string): void;
+    private initializeProtocolAdapters;
 }
 //# sourceMappingURL=RelayServer.d.ts.map

@@ -15,5 +15,17 @@ export declare class OpenAIAdapter implements ProtocolAdapter {
     constructor(logger: Logger);
     canTranslate(from: ProtocolType, to: ProtocolType): boolean;
     translate(message: RelayMessage, sourceProtocol: ProtocolType, targetProtocol: ProtocolType): Promise<RelayMessage>;
+    private openaiToA2A;
+    private a2aToOpenAI;
+    private isOpenAIFunctionCall;
+    private isOpenAIAssistantMessage;
+    private isOpenAIToolOutput;
+    private parseOpenAIFunctionParameters;
+    private extractOpenAIContent;
+    private extractOpenAIMetadata;
+    private createOpenAIFunctionCall;
+    private createOpenAIToolOutput;
+    private createOpenAIAssistantMessage;
+    private createOpenAIMessage;
 }
 //# sourceMappingURL=OpenAIAdapter.d.ts.map

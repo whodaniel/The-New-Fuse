@@ -1,10 +1,7 @@
-"use strict";
 /**
  * A2A Protocol Adapter for The New Fuse Relay System
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A2AProtocolAdapter = void 0;
-class A2AProtocolAdapter {
+export class A2AProtocolAdapter {
     name = 'a2a';
     version = '2.0';
     supportedProtocols = ['a2a-v2.0'];
@@ -17,5 +14,4 @@ class A2AProtocolAdapter {
         return message;
     }
 }
-exports.A2AProtocolAdapter = A2AProtocolAdapter;
 //# sourceMappingURL=A2AProtocolAdapter.js.map

@@ -32,7 +32,7 @@ export declare abstract class BaseRepository<T, CreateInput, UpdateInput, WhereI
         orderBy?: undefined;
     } | {
         orderBy: {
-            [x: string]: "asc" | "desc";
+            [x: string]: "desc" | "asc";
         };
     };
     /**

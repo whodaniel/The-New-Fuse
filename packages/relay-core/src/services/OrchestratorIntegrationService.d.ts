@@ -98,5 +98,71 @@ export declare class OrchestratorIntegrationService extends EventEmitter {
      * Handle stagnation detection
      */
     private handleStagnationDetected;
+    /**
+     * Handle agent ping requirements
+     */
+    private handleAgentPingRequired;
+    /**
+     * Handle escalation requirements
+     */
+    private handleEscalationRequired;
+    /**
+     * Handle human intervention requirements
+     */
+    private handleHumanInterventionRequired;
+    /**
+     * Handle task reassignment
+     */
+    private handleTaskReassignment;
+    /**
+     * Create anti-stagnation handoff prompt
+     */
+    private createAntiStagnationHandoff;
+    /**
+     * Get anti-stagnation strategies based on stagnation type
+     */
+    private getAntiStagnationStrategies;
+    /**
+     * Get fallback options based on severity
+     */
+    private getFallbackOptions;
+    /**
+     * Record task start
+     */
+    private recordTaskStart;
+    /**
+     * Record task progress
+     */
+    private recordTaskProgress;
+    /**
+     * Record task completion
+     */
+    private recordTaskCompletion;
+    /**
+     * Get task context for handoff preservation
+     */
+    private getTaskContext;
+    /**
+     * Generate human action recommendations
+     */
+    private generateHumanActionRecommendations;
+    /**
+     * Perform final cleanup
+     */
+    private performFinalCleanup;
+    /**
+     * Get comprehensive orchestration metrics
+     */
+    getOrchestrationMetrics(): OrchestrationMetrics;
+    /**
+     * Get service status
+     */
+    getServiceStatus(): {
+        initialized: boolean;
+        heartbeatMonitoring: any;
+        cleanup: any;
+        taskStates: number;
+        metrics: OrchestrationMetrics;
+    };
 }
 //# sourceMappingURL=OrchestratorIntegrationService.d.ts.map

@@ -67,8 +67,112 @@ export declare class HeartbeatMonitoringService extends EventEmitter {
      */
     recordActivity(agentId: string, activityType: string, metadata?: any): void;
     /**
+     * Perform comprehensive health check
+     */
+    private performHealthCheck;
+    /**
+     * Handle heartbeat timeout
+     */
+    private handleHeartbeatTimeout;
+    /**
+     * Handle activity stagnation
+     */
+    private handleActivityStagnation;
+    /**
+     * Create stagnation alert
+     */
+    private createStagnationAlert;
+    /**
      * Clear stagnation alert
      */
     private clearStagnationAlert;
+    /**
+     * Trigger fallback mechanism based on severity
+     */
+    private triggerFallbackMechanism;
+    /**
+     * Execute specific fallback action
+     */
+    private executeFallbackAction;
+    /**
+     * Execute retry action
+     */
+    private executeRetryAction;
+    /**
+     * Execute escalation action
+     */
+    private executeEscalationAction;
+    /**
+     * Execute reassign action
+     */
+    private executeReassignAction;
+    /**
+     * Execute human notification action
+     */
+    private executeHumanNotificationAction;
+    /**
+     * Execute emergency stop action
+     */
+    private executeEmergencyStopAction;
+    /**
+     * Process queued human notifications
+     */
+    private processHumanNotifications;
+    /**
+     * Create consolidated notification message
+     */
+    private createConsolidatedNotification;
+    /**
+     * Update agent status based on timing thresholds
+     */
+    private updateAgentStatus;
+    /**
+     * Calculate severity based on duration and failure count
+     */
+    private calculateSeverity;
+    /**
+     * Get monitoring status
+     */
+    getMonitoringStatus(): {
+        activeAgents: number;
+        stalledAgents: number;
+        failedAgents: number;
+        activeAlerts: number;
+        humanNotificationsPending: number;
+    };
+    /**
+     * Get agent heartbeat details
+     */
+    getAgentHeartbeat(agentId: string): AgentHeartbeat | undefined;
+    /**
+     * Get all stagnation alerts
+     */
+    getStagnationAlerts(): StagnationAlert[];
+    /**
+     * Get agent health status
+     */
+    getAgentHealth(agentId: string): Promise<{
+        agentId: string;
+        status: string;
+        lastHeartbeat: Date;
+        lastActivity: Date;
+        consecutiveFailures: number;
+        isHealthy: boolean;
+        timeSinceLastHeartbeat: number;
+        timeSinceLastActivity: number;
+    } | null>;
+    /**
+     * Get overall stagnation status
+     */
+    getStagnationStatus(): Promise<{
+        totalAgents: number;
+        activeAgents: number;
+        stalledAgents: number;
+        failedAgents: number;
+        activeAlerts: StagnationAlert[];
+        criticalAlerts: number;
+        emergencyAlerts: number;
+        averageResponseTime: number;
+    }>;
 }
 //# sourceMappingURL=HeartbeatMonitoringService.d.ts.map

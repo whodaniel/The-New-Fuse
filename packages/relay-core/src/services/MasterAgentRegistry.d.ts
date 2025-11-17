@@ -7,9 +7,9 @@
  */
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
-import { AgentType, AgentStatus, PrismaClient } from '../types/database.js';
-import { BlockchainConfig } from './shared/BlockchainService';
-export type { BlockchainConfig } from './shared/BlockchainService.js';
+import { VCIssuanceService } from './VCIssuanceService';
+import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
+export { BlockchainConfig } from './shared/BlockchainService.js';
 export interface OnChainAgentData {
     tokenId?: number;
     contractAddress?: string;
@@ -22,8 +22,8 @@ export interface OnChainAgentData {
 export interface MasterAgentProfile {
     id: string;
     name: string;
-    type: AgentType;
-    status: AgentStatus;
+    type: string;
+    status: string;
     description?: string;
     systemPrompt?: string;
     configuration?: any;
@@ -166,7 +166,7 @@ export declare class MasterAgentRegistry extends EventEmitter {
     private agentNFTContract;
     private web3Provider;
     private wallet;
-    constructor(prisma: PrismaClient, logger: Logger, blockchainConfig?: BlockchainConfig, vcPrivateKey?: string);
+    constructor(prisma: any, logger: Logger, blockchainConfig?: BlockchainConfig, vcPrivateKey?: string);
     /**
      * MASTER AGENT REGISTRATION - THE SINGLE ENTRY POINT
      * ALL AGENTS MUST GO THROUGH THIS PROCESS
@@ -181,15 +181,158 @@ export declare class MasterAgentRegistry extends EventEmitter {
         spreadsheetRowId?: string;
     }>;
     /**
+     * UNIVERSAL ONBOARDING PROTOCOL - MANDATORY FOR ALL AGENTS
+     * Single standardized onboarding checklist that ensures every agent meets requirements
+     */
+    startUniversalOnboarding(agentId: string): Promise<{
+        success: boolean;
+        onboardingSteps: OnboardingChecklistItem[];
+        estimatedDuration: number;
+        orientationMaterials: string[];
+        workspaceAccess: string;
+    }>;
+    /**
      * SYSTEM-WIDE ROLLING PROTOCOL CHECKLIST
      * Acts as the main orchestration layer that sets conditions and guard rails
      */
     private initializeUniversalOnboardingProtocol;
     /**
-     * AGENT TODO LIST MANAGEMENT - LIKE CLAUDE CLI
+     * AGENT TODO LIST MANAGEMENT
      * Integrates with existing Task system for persistence
      */
     initializeAgentTodoList(agentId: string): Promise<void>;
     addAgentTodo(agentId: string, todoData: Partial<MasterAgentTodo>): Promise<string>;
+    /**
+     * MERKLE TREE VERIFICATION SYSTEM
+     * Provides cryptographic verification of agent states
+     */
+    private generateVerificationHash;
+    private updateMerkleTree;
+    private buildAgentMerkleTree;
+    /**
+     * FAIRTABLE/SPREADSHEET INTEGRATION
+     * Provides front-facing spreadsheet view of all agents
+     */
+    private initializeSpreadsheetIntegration;
+    private syncAgentToSpreadsheet;
+    private syncAllAgentsToSpreadsheet;
+    /**
+     * PERIODIC VERIFICATION AND SYSTEM HEALTH
+     * Continuous monitoring of all agents and system state
+     */
+    private startPeriodicVerification;
+    private performSystemHealthCheck;
+    private performFullSystemVerification;
+    /**
+     * UTILITY METHODS AND INTEGRATIONS
+     */
+    private loadExistingAgents;
+    private convertDbAgentToMasterProfile;
+    /**
+     * Issue a Verifiable Credential for an agent
+     * @param agentId Agent ID to issue credential for
+     * @param requestedCapabilities Capabilities to verify and include
+     * @returns Promise<VerifiableCredential | null>
+     */
+    issueAgentCredential(agentId: string, requestedCapabilities?: string[]): Promise<any | null>;
+    /**
+     * Verify an agent's Verifiable Credential
+     * @param credential The credential to verify
+     * @returns Promise<boolean>
+     */
+    verifyAgentCredential(credential: any): Promise<boolean>;
+    /**
+     * Get VCIssuanceService instance
+     * @returns VCIssuanceService instance or null
+     */
+    getVCIssuanceService(): VCIssuanceService | null;
+    /**
+     * Get BlockchainService instance
+     * @returns BlockchainService instance or null
+     */
+    getBlockchainService(): BlockchainService | null;
+    /**
+     * Check blockchain connection health
+     */
+    checkBlockchainHealth(): Promise<{
+        healthy: boolean;
+        details: any;
+    }>;
+    private updateSystemMetrics;
+    private calculateOnboardingCompletionRate;
+    private calculateProtocolComplianceRate;
+    private verifyAgentCompliance;
+    private convertToLegacyType;
+    private convertToLegacyStatus;
+    private extractLegacyCapabilities;
+    private convertTodoStatusToTaskStatus;
+    private convertTodoPriorityToTaskPriority;
+    private generateAgentId;
+    /**
+     * PUBLIC API METHODS
+     */
+    getAgentProfile(agentId: string): MasterAgentProfile | undefined;
+    getAllAgents(): MasterAgentProfile[];
+    getSystemMetrics(): SystemWideMetrics;
+    getMerkleTreeRoot(): string | undefined;
+    getSpreadsheetIntegration(): SpreadsheetIntegration;
+    updateAgentStatus(agentId: string, status: string): Promise<boolean>;
+    /**
+     * Update agent capabilities
+     */
+    updateAgentCapabilities(agentId: string, capabilities: Partial<MasterAgentProfile['capabilities']>): Promise<boolean>;
+    recordAgentHeartbeat(agentId: string): Promise<boolean>;
+    /**
+     * Add task to agent - missing method for tests
+     */
+    addTaskToAgent(agentId: string, taskData: {
+        content: string;
+        priority?: 'low' | 'medium' | 'high';
+        category?: string;
+        estimatedDuration?: number;
+    }): Promise<string>;
+    /**
+     * BLOCKCHAIN INTEGRATION METHODS
+     * On-chain identity and economic primitives
+     */
+    private initializeBlockchainIntegration;
+    private mintAgentNFT;
+    updateAgentOnChainMetadata(agentId: string, newMetadataURI: string): Promise<boolean>;
+    getBlockchainConfig(): BlockchainConfig;
+    getOnChainAgentData(agentId: string): Promise<OnChainAgentData | null>;
+    /**
+     * MAIN SYSTEM STATUS REPORT
+     * Up-to-the-minute status check for all agents and system health
+     */
+    generateSystemStatusReport(): {
+        timestamp: Date;
+        systemHealth: SystemWideMetrics;
+        agentSummary: {
+            totalAgents: number;
+            byStatus: Record<string, number>;
+            byPlatform: Record<string, number>;
+            recentActivity: {
+                agentId: string;
+                lastSeen: Date;
+                status: string;
+            }[];
+        };
+        todoSummary: {
+            totalTodos: number;
+            byStatus: Record<string, number>;
+            overdueTodos: number;
+            highPriorityPending: number;
+        };
+        complianceReport: {
+            onboardingCompletionRate: number;
+            protocolComplianceRate: number;
+            verificationStatus: string;
+            lastFullVerification: Date;
+        };
+        spreadsheetIntegration: SpreadsheetIntegration;
+    };
+    private groupAgentsByStatus;
+    private groupAgentsByPlatform;
+    private groupTodosByStatus;
 }
 //# sourceMappingURL=MasterAgentRegistry.d.ts.map

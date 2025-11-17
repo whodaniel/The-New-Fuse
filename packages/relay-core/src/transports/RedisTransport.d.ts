@@ -37,7 +37,15 @@ export declare class RedisTransport extends EventEmitter implements Transport {
     start(): Promise<boolean>;
     stop(): Promise<void>;
     send(message: RelayMessage): Promise<boolean>;
+    private getChannelForMessage;
+    onMessage(handler: (message: RelayMessage) => void): void;
+    isConnected(): boolean;
+    private startHeartbeat;
+    setDistributedLock(key: string, value: string, ttlMs: number): Promise<boolean>;
     releaseDistributedLock(key: string, value: string): Promise<boolean>;
-    else: any;
+    storeAgentState(agentId: string, state: any, ttlMs?: number): Promise<boolean>;
+    getAgentState(agentId: string): Promise<any | null>;
+    addToWorkflowQueue(workflowId: string, task: any): Promise<boolean>;
+    getFromWorkflowQueue(workflowId: string): Promise<any | null>;
 }
 //# sourceMappingURL=RedisTransport.d.ts.map
