@@ -1,4 +1,4 @@
-# CACHE_BUSTER=3
+# CACHE_BUSTER=4
 
 # Railway Dockerfile for The New Fuse Frontend
 # Built from repository root
@@ -32,13 +32,14 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 COPY . .
 
-# Build required packages in dependency order
+# Build all dependencies of frontend first, then build frontend
 ENV NODE_ENV=production
-RUN pnpm --filter @the-new-fuse/types build || echo "types build failed"
-RUN pnpm --filter @the-new-fuse/core build || echo "core build failed"
-RUN pnpm --filter @the-new-fuse/ui-consolidated build
 
-# Build frontend
+# Build all workspace dependencies that frontend needs
+# This will build: types, api-types, utils, hooks, database, infrastructure, core, api-client, ui-consolidated
+RUN pnpm --filter @the-new-fuse/frontend-app^... build
+
+# Now build the frontend itself
 RUN pnpm --filter @the-new-fuse/frontend-app build
 
 # Stage 3: Production - serve with nginx
