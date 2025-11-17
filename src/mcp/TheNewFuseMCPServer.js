@@ -1,23 +1,29 @@
+"use strict";
 /**
  * Complete MCP Server Implementation for The New Fuse
  * Provides Model Context Protocol server for AI agency platform capabilities
  */
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
-import { CallToolRequestSchema, ListToolsRequestSchema, McpError, ErrorCode, } from '@modelcontextprotocol/sdk/types.js';
-import express from 'express';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TheNewFuseMCPServer = void 0;
+const index_js_1 = require("@modelcontextprotocol/sdk/server/index.js");
+const stdio_js_1 = require("@modelcontextprotocol/sdk/server/stdio.js");
+const sse_js_1 = require("@modelcontextprotocol/sdk/server/sse.js");
+const types_js_1 = require("@modelcontextprotocol/sdk/types.js");
+const express_1 = __importDefault(require("express"));
 /**
  * The New Fuse MCP Server
  * Provides comprehensive AI agency platform capabilities via MCP
  */
-export class TheNewFuseMCPServer {
+class TheNewFuseMCPServer {
     server;
     isRemote;
     services = {};
     constructor(isRemote = false) {
         this.isRemote = isRemote;
-        this.server = new Server({
+        this.server = new index_js_1.Server({
             name: 'the-new-fuse',
             version: '2.1.0',
         }, {
@@ -38,7 +44,7 @@ export class TheNewFuseMCPServer {
      */
     setupToolHandlers() {
         // Agent Management Tools
-        this.server.setRequestHandler(ListToolsRequestSchema, async () => ({
+        this.server.setRequestHandler(types_js_1.ListToolsRequestSchema, async () => ({
             tools: [
                 // Agent Management
                 {
@@ -220,7 +226,7 @@ export class TheNewFuseMCPServer {
             ]
         }));
         // Tool execution handler
-        this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+        this.server.setRequestHandler(types_js_1.CallToolRequestSchema, async (request) => {
             const { name, arguments: args } = request.params;
             try {
                 switch (name) {
@@ -261,11 +267,11 @@ export class TheNewFuseMCPServer {
                     case 'create_task':
                         return await this.handleCreateTask(args);
                     default:
-                        throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
+                        throw new types_js_1.McpError(types_js_1.ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
                 }
             }
             catch (error) {
-                throw new McpError(ErrorCode.InternalError, `Error executing tool ${name}: ${error instanceof Error ? error.message : String(error)}`);
+                throw new types_js_1.McpError(types_js_1.ErrorCode.InternalError, `Error executing tool ${name}: ${error instanceof Error ? error.message : String(error)}`);
             }
         });
     }
@@ -631,18 +637,18 @@ export class TheNewFuseMCPServer {
      */
     async start(transport = 'stdio', port) {
         if (transport === 'stdio') {
-            const stdinTransport = new StdioServerTransport();
+            const stdinTransport = new stdio_js_1.StdioServerTransport();
             await this.server.connect(stdinTransport);
             console.error('The New Fuse MCP Server running on stdio');
         }
         else if (transport === 'http') {
-            const app = express();
-            app.use(express.json());
+            const app = (0, express_1.default)();
+            app.use(express_1.default.json());
             const httpPort = port || 3001;
             const httpServer = app.listen(httpPort, () => {
                 console.error(`The New Fuse MCP Server running on http://localhost:${httpPort}`);
             });
-            const transport = new SSEServerTransport('/message', httpServer);
+            const transport = new sse_js_1.SSEServerTransport('/message', httpServer);
             await this.server.connect(transport);
         }
     }
@@ -653,4 +659,5 @@ export class TheNewFuseMCPServer {
         await this.server.close();
     }
 }
+exports.TheNewFuseMCPServer = TheNewFuseMCPServer;
 //# sourceMappingURL=TheNewFuseMCPServer.js.map

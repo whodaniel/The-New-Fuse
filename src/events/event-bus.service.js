@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,17 +8,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventBus = exports.BaseEvent = void 0;
+const common_1 = require("@nestjs/common");
+const event_emitter_1 = require("@nestjs/event-emitter");
 /**
  * Base class for all events in the system
  */
-export class BaseEvent {
+class BaseEvent {
     timestamp;
     constructor(timestamp = new Date()) {
         this.timestamp = timestamp;
     }
 }
+exports.BaseEvent = BaseEvent;
 /**
  * Event bus service for publishing and subscribing to events
  */
@@ -40,9 +44,9 @@ let EventBus = class EventBus {
         this.eventEmitter.off(eventName, handler);
     }
 };
-EventBus = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [EventEmitter2])
+exports.EventBus = EventBus;
+exports.EventBus = EventBus = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [event_emitter_1.EventEmitter2])
 ], EventBus);
-export { EventBus };
 //# sourceMappingURL=event-bus.service.js.map
