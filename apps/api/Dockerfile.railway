@@ -1,4 +1,4 @@
-# CACHE_BUSTER=6
+# CACHE_BUSTER=7
 
 # Railway Dockerfile for The New Fuse API Service
 # Built from repository root
@@ -32,12 +32,15 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 COPY . .
 
-# Build required packages
+# Build all dependencies of API service first, then build API
 ENV NODE_ENV=production
-RUN pnpm --filter @the-new-fuse/types build || echo "types build failed"
-RUN pnpm --filter @the-new-fuse/core build || echo "core build failed"
-RUN pnpm --filter @the-new-fuse/database build || echo "database build failed"
-RUN pnpm --filter @the-new-fuse/api-server build || echo "API build failed"
+
+# Build all workspace dependencies that API needs
+# This will build: types, database, infrastructure, core, and other dependencies
+RUN pnpm --filter @the-new-fuse/api-server^... build
+
+# Now build the API service itself
+RUN pnpm --filter @the-new-fuse/api-server build
 
 # Generate Prisma if schema exists
 RUN pnpm prisma generate --schema=./prisma/schema.prisma || echo "No Prisma schema"

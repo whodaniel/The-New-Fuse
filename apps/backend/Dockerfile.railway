@@ -1,4 +1,4 @@
-# CACHE_BUSTER=2
+# CACHE_BUSTER=3
 
 # Railway Dockerfile for The New Fuse Backend Service
 # Built from repository root
@@ -32,12 +32,14 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 COPY . .
 
-# Build required packages
+# Build all dependencies of Backend service first, then build Backend
 ENV NODE_ENV=production
-RUN pnpm --filter @the-new-fuse/types build || echo "types build failed"
-RUN pnpm --filter @the-new-fuse/core build || echo "core build failed"
-RUN pnpm --filter @the-new-fuse/database build || echo "database build failed"
-RUN pnpm --filter @the-new-fuse/backend build || echo "Backend build failed"
+
+# Build all workspace dependencies that Backend needs
+RUN pnpm --filter @the-new-fuse/backend^... build
+
+# Now build the Backend service itself
+RUN pnpm --filter @the-new-fuse/backend build
 
 # Generate Prisma if schema exists
 RUN pnpm prisma generate --schema=./prisma/schema.prisma || echo "No Prisma schema"
