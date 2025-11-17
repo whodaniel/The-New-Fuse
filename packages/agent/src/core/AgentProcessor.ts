@@ -1,5 +1,6 @@
 import { Logger } from '@the-new-fuse/core';
-import { Message, MessageType, UUID } from '@the-new-fuse/api-types';
+import { Message, MessageType } from '@the-new-fuse/types';
+import { UUID } from '@the-new-fuse/api-types';
 
 /**
  * Main processor for an agent instance.

@@ -8,9 +8,7 @@ export interface BaseMessage {
 
 export interface TaskMessage {
     type: 'TASK';
-    payload: unknown;
-  // Implementation needed
-}
+    payload: {
         taskId: string;
         action: string;
         data: unknown;
@@ -19,9 +17,7 @@ export interface TaskMessage {
 
 export interface StateMessage {
     type: 'STATE';
-    payload: unknown;
-  // Implementation needed
-}
+    payload: {
         stateId: string;
         action: 'UPDATE' | 'DELETE';
         data: unknown;

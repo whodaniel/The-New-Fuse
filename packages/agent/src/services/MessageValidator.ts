@@ -112,7 +112,9 @@ export class MessageValidator extends BaseService {
   }
 
   private sanitizeMessageForLog(message: Message): any {
-    const sanitizedContent = { ...message.content };
+    const sanitizedContent = typeof message.content === 'object' && message.content !== null
+      ? { ...message.content as object }
+      : message.content;
     if (typeof sanitizedContent === 'object' && sanitizedContent !== null) {
         for (const key of Object.keys(sanitizedContent)) {
             if (key.toLowerCase().includes('password') || key.toLowerCase().includes('token') || key.toLowerCase().includes('apikey')) {

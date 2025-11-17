@@ -22,6 +22,7 @@ export interface CommandResult {
   timestamp: Date;
   duration?: number;
   metadata?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export interface Notification {

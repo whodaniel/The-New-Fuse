@@ -15,11 +15,14 @@
     "forceConsistentCasingInFileNames": true,
     "composite": true,
     "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "types": []
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [
-    "src/**/*"
+    "src/types/llm.types.ts",
+    "src/types/memory.types.ts",
+    "src/types/messages.ts",
+    "src/types/multi-agent-chat.types.ts",
+    "src/utils/correlation-id.ts"
   ],
   "exclude": [
     "node_modules",
