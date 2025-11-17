@@ -8,7 +8,6 @@
     "build": "tsc -p tsconfig.clean.json",
     "build:core": "tsc -p tsconfig.clean.json",
     "dev": "tsc -p tsconfig.clean.json --watch",
-    "build:core": "tsc -p tsconfig.clean.json",
     "build:watch": "tsc -p tsconfig.clean.json --watch",
     "build:production": "NODE_ENV=production tsc -p tsconfig.clean.json",
     "clean": "rimraf dist",
