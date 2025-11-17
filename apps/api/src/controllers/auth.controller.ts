@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { AuthGuard } from '../guards/auth.guard';
-import { SecureAuthGuard, RateLimitTier, AuthLevel } from '../guards/secure-auth.guard';
+import { SecureAuthGuard, SetRateLimitTier, RateLimitTier, AuthLevel } from '../guards/secure-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 /**
@@ -46,7 +46,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 @ApiTags('auth')
 @Controller('auth')
 @UseGuards(SecureAuthGuard)
-@RateLimitTier(RateLimitTier.AUTH)
+@SetRateLimitTier(RateLimitTier.AUTH)
 export class AuthController {
   /**
    * Constructor for AuthController

@@ -47,7 +47,7 @@ export function RequireAuthLevel(level: AuthLevel) {
 /**
  * Apply rate limiting with specific tier
  */
-export function RateLimitTier(tier: RateLimitTier) {
+export function SetRateLimitTier(tier: RateLimitTier) {
   return SetMetadata(RATE_LIMIT_KEY, tier);
 }
 

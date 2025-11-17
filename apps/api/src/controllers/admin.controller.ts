@@ -5,7 +5,7 @@ import { Permission } from '@the-new-fuse/types';
 import { RoleService } from '../services/role.service';
 import { AuditService } from '../services/audit.service';
 import { MetricsService } from '../services/metrics.service';
-import { SecureAuthGuard, AdminOnly, RateLimitTier, AuditLog, HighSecurity } from '../guards/secure-auth.guard';
+import { SecureAuthGuard, AdminOnly, SetRateLimitTier, RateLimitTier, AuditLog, HighSecurity } from '../guards/secure-auth.guard';
 
 /**
  * Admin Controller
@@ -51,7 +51,7 @@ import { SecureAuthGuard, AdminOnly, RateLimitTier, AuditLog, HighSecurity } fro
 @Controller('admin')
 @UseGuards(SecureAuthGuard)
 @AdminOnly()
-@RateLimitTier(RateLimitTier.ADMIN)
+@SetRateLimitTier(RateLimitTier.ADMIN)
 @AuditLog()
 @HighSecurity()
 export class AdminController {

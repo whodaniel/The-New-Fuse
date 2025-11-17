@@ -4,7 +4,9 @@
 
 import { Request, Response } from 'express';
 import { Logger } from '@tnf/relay-core';
-import { PrismaClient, DatabaseWhere } from '../../../shared/types';
+import { PrismaClient } from '@prisma/client';
+
+type DatabaseWhere = Record<string, any>;
 
 export class WorkflowController {
   private logger: Logger;
