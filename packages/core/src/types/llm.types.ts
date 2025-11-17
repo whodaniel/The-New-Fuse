@@ -3,9 +3,7 @@ export interface LLMProviderConfig {
     apiKey?: string;
     model: string;
     baseUrl?: string;
-    parameters: unknown;
-  // Implementation needed
-}
+    parameters: {
         temperature: number;
         maxTokens: number;
         topP?: number;
@@ -59,9 +57,7 @@ export interface AgentLLMConfig {
     provider: string;
     model: string;
     systemPrompt?: string;
-    parameters: unknown;
-  // Implementation needed
-}
+    parameters: {
         temperature: number;
         maxTokens: number;
         topP?: number;
@@ -69,15 +65,11 @@ export interface AgentLLMConfig {
         presencePenalty?: number;
     };
     constraints?: {
-  // Implementation needed
-}
         maxRequestsPerMinute?: number;
         maxTokensPerRequest?: number;
         maxCostPerDay?: number;
     };
     capabilities?: {
-  // Implementation needed
-}
         streaming: boolean;
         functionCalling: boolean;
         toolUse: boolean;
