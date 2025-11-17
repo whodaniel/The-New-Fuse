@@ -16,7 +16,8 @@ export { WebScrapingWebSocketGateway } from './websocket/WebScrapingWebSocketGat
 export { WebScrapingSSEController } from './streaming/WebScrapingSSEController';
 
 // Electron integration
-export { ElectronWebScrapingBridge } from './electron/ElectronWebScrapingBridge';
+// Temporarily disabled - Electron is a non-SAAS framework component moved to separate branch
+// export { ElectronWebScrapingBridge } from './electron/ElectronWebScrapingBridge';
 
 // Types and interfaces
 export * from './types';
