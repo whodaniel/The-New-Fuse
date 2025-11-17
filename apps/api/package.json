@@ -2,7 +2,6 @@
   "name": "@the-new-fuse/api-server",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@firebase/app-compat": "^0.5.4",
     "@nestjs/common": "^11.1.6",
