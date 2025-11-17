@@ -1,4 +1,4 @@
-# CACHE_BUSTER=2
+# CACHE_BUSTER=3
 
 # Railway Dockerfile for The New Fuse API Gateway
 # Built from repository root
@@ -32,11 +32,14 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 COPY . .
 
-# Build required packages
+# Build all dependencies of API Gateway first, then build API Gateway
 ENV NODE_ENV=production
-RUN pnpm --filter @the-new-fuse/types build || echo "types build failed"
-RUN pnpm --filter @the-new-fuse/core build || echo "core build failed"
-RUN pnpm --filter @the-new-fuse/api-gateway build || echo "API Gateway build failed"
+
+# Build all workspace dependencies that API Gateway needs
+RUN pnpm --filter @the-new-fuse/api-gateway^... build
+
+# Now build the API Gateway itself
+RUN pnpm --filter @the-new-fuse/api-gateway build
 
 # Stage 3: Production
 FROM base AS runner
