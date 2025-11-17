@@ -1,4 +1,4 @@
-// Comprehensive Placeholder Prisma Client types
+// Comprehensive Placeholder Prisma Client types with input types
 
 export * from '@prisma/client/runtime/library';
 
@@ -35,6 +35,34 @@ export enum AgentStatus {
   INITIALIZING = 'INITIALIZING',
   READY = 'READY',
   TERMINATED = 'TERMINATED',
+}
+
+export enum AgentCapability {
+  CODE_GENERATION = 'CODE_GENERATION',
+  CODE_REVIEW = 'CODE_REVIEW',
+  CODE_REFACTORING = 'CODE_REFACTORING',
+  CODE_EXECUTION = 'CODE_EXECUTION',
+  DEBUGGING = 'DEBUGGING',
+  TESTING = 'TESTING',
+  DOCUMENTATION = 'DOCUMENTATION',
+  ARCHITECTURE_DESIGN = 'ARCHITECTURE_DESIGN',
+  OPTIMIZATION = 'OPTIMIZATION',
+  SECURITY_AUDIT = 'SECURITY_AUDIT',
+  PROJECT_MANAGEMENT = 'PROJECT_MANAGEMENT',
+  TOOL_USAGE = 'TOOL_USAGE',
+  TASK_EXECUTION = 'TASK_EXECUTION',
+  FILE_MANAGEMENT = 'FILE_MANAGEMENT',
+  CODE_COMPLETION = 'CODE_COMPLETION',
+  CODE_SUGGESTIONS = 'CODE_SUGGESTIONS',
+  SYNTAX_HIGHLIGHTING = 'SYNTAX_HIGHLIGHTING',
+  ERROR_DETECTION = 'ERROR_DETECTION',
+  CODE_FORMATTING = 'CODE_FORMATTING',
+  INTELLISENSE = 'INTELLISENSE',
+  CHAT = 'CHAT',
+  WORKFLOW = 'WORKFLOW',
+  RESEARCH = 'RESEARCH',
+  ANALYSIS = 'ANALYSIS',
+  INTEGRATION = 'INTEGRATION',
 }
 
 export enum TaskStatus {
@@ -78,6 +106,33 @@ export enum MessageRole {
   TOOL = 'TOOL',
 }
 
+export enum PipelineStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  PAUSED = 'PAUSED',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
+
+export enum RegisteredEntityType {
+  AGENT = 'AGENT',
+  WORKFLOW = 'WORKFLOW',
+  TOOL = 'TOOL',
+  SERVICE = 'SERVICE',
+  INTEGRATION = 'INTEGRATION',
+  TEMPLATE = 'TEMPLATE',
+  COMPONENT = 'COMPONENT',
+  MODULE = 'MODULE',
+}
+
+export enum EntityStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  DEPRECATED = 'DEPRECATED',
+  PENDING = 'PENDING',
+  FAILED = 'FAILED',
+}
+
 // Model types
 export interface User {
   id: string;
@@ -105,7 +160,7 @@ export interface Agent {
   description?: string | null;
   systemPrompt?: string | null;
   config?: any;
-  capabilities: string[];
+  capabilities: AgentCapability[];
   provider: string;
   userId: string;
   createdAt: Date;
@@ -186,21 +241,129 @@ export interface WorkflowExecution {
   completedAt?: Date | null;
 }
 
-// Prisma namespace
+export interface RegisteredEntity {
+  id: string;
+  name: string;
+  type: RegisteredEntityType;
+  description?: string | null;
+  metadata?: any;
+  config?: any;
+  status: EntityStatus;
+  version: string;
+  namespace?: string | null;
+  tags: string[];
+  capabilities: string[];
+  dependencies: string[];
+  isPublic: boolean;
+  ownerId?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date | null;
+}
+
+// Prisma error classes
+export class PrismaClientKnownRequestError extends Error {
+  code: string;
+  clientVersion: string;
+  meta?: Record<string, any>;
+  constructor(message: string, options: { code: string; clientVersion: string; meta?: Record<string, any> });
+}
+
+export class PrismaClientUnknownRequestError extends Error {
+  clientVersion: string;
+  constructor(message: string, options: { clientVersion: string });
+}
+
+export class PrismaClientValidationError extends Error {
+  constructor(message: string);
+}
+
+// Prisma namespace with input types
 export namespace Prisma {
   export type TypeMap = any;
   export type PrismaPromise<T> = Promise<T>;
+
+  // JSON types and special values
+  export type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
+  export type JsonObject = { [key: string]: JsonValue };
+  export type JsonArray = JsonValue[];
+  export type InputJsonValue = string | number | boolean | null | InputJsonObject | InputJsonArray;
+  export type InputJsonObject = { [key: string]: InputJsonValue };
+  export type InputJsonArray = InputJsonValue[];
+
+  export const JsonNull: symbol;
+  export const DbNull: symbol;
+
+  // Error classes
+  export { PrismaClientKnownRequestError };
+  export { PrismaClientUnknownRequestError };
+  export { PrismaClientValidationError };
+
+  // Where input types
+  export type UserWhereInput = Partial<User> & { [key: string]: any };
+  export type AgentWhereInput = Partial<Agent> & { [key: string]: any };
+  export type TaskWhereInput = Partial<Task> & { [key: string]: any };
+  export type MessageWhereInput = Partial<Message> & { [key: string]: any };
+  export type WorkflowWhereInput = Partial<Workflow> & { [key: string]: any };
+  export type WorkflowExecutionWhereInput = Partial<WorkflowExecution> & { [key: string]: any };
+  export type RegisteredEntityWhereInput = Partial<RegisteredEntity> & { [key: string]: any };
+
+  // WhereUniqueInput types
+  export type UserWhereUniqueInput = { id: string } | { email: string } | { [key: string]: any };
+  export type AgentWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type TaskWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type MessageWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type WorkflowWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type WorkflowExecutionWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type RegisteredEntityWhereUniqueInput = { id: string } | { [key: string]: any };
+
+  // OrderBy input types
+  export type SortOrder = 'asc' | 'desc';
+  export type UserOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type AgentOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type TaskOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type MessageOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type WorkflowOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type WorkflowExecutionOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type RegisteredEntityOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  
+  // Create input types
+  export type UserCreateInput = Partial<User> & { [key: string]: any };
+  export type AgentCreateInput = Partial<Agent> & { [key: string]: any };
+  export type TaskCreateInput = Partial<Task> & { [key: string]: any };
+  export type MessageCreateInput = Partial<Message> & { [key: string]: any };
+  export type WorkflowCreateInput = Partial<Workflow> & { [key: string]: any };
+  export type WorkflowExecutionCreateInput = Partial<WorkflowExecution> & { [key: string]: any };
+  export type RegisteredEntityCreateInput = Partial<RegisteredEntity> & { [key: string]: any };
+  
+  // Update input types
+  export type UserUpdateInput = Partial<User> & { [key: string]: any };
+  export type AgentUpdateInput = Partial<Agent> & { [key: string]: any };
+  export type TaskUpdateInput = Partial<Task> & { [key: string]: any };
+  export type MessageUpdateInput = Partial<Message> & { [key: string]: any };
+  export type WorkflowUpdateInput = Partial<Workflow> & { [key: string]: any };
+  export type WorkflowExecutionUpdateInput = Partial<WorkflowExecution> & { [key: string]: any };
+  export type RegisteredEntityUpdateInput = Partial<RegisteredEntity> & { [key: string]: any };
+  
+  // Unchecked input types
+  export type TaskUncheckedUpdateInput = Partial<Task> & { [key: string]: any };
+  export type MessageUncheckedCreateInput = Partial<Message> & { [key: string]: any };
+  export type MessageUncheckedUpdateInput = Partial<Message> & { [key: string]: any };
 }
 
 export namespace $Enums {
-  export {UserRole};
-  export {AgentType};
-  export {AgentStatus};
-  export {TaskStatus};
-  export {TaskPriority};
-  export {WorkflowStatus};
-  export {WorkflowExecutionStatus};
-  export {MessageRole};
+  export { UserRole };
+  export { AgentType };
+  export { AgentStatus };
+  export { AgentCapability };
+  export { TaskStatus };
+  export { TaskPriority };
+  export { WorkflowStatus };
+  export { WorkflowExecutionStatus };
+  export { MessageRole };
+  export { PipelineStatus };
+  export { RegisteredEntityType };
+  export { EntityStatus };
 }
 
 // PrismaClient class

@@ -36,6 +36,34 @@ const AgentStatus = {
   TERMINATED: 'TERMINATED',
 };
 
+const AgentCapability = {
+  CODE_GENERATION: 'CODE_GENERATION',
+  CODE_REVIEW: 'CODE_REVIEW',
+  CODE_REFACTORING: 'CODE_REFACTORING',
+  CODE_EXECUTION: 'CODE_EXECUTION',
+  DEBUGGING: 'DEBUGGING',
+  TESTING: 'TESTING',
+  DOCUMENTATION: 'DOCUMENTATION',
+  ARCHITECTURE_DESIGN: 'ARCHITECTURE_DESIGN',
+  OPTIMIZATION: 'OPTIMIZATION',
+  SECURITY_AUDIT: 'SECURITY_AUDIT',
+  PROJECT_MANAGEMENT: 'PROJECT_MANAGEMENT',
+  TOOL_USAGE: 'TOOL_USAGE',
+  TASK_EXECUTION: 'TASK_EXECUTION',
+  FILE_MANAGEMENT: 'FILE_MANAGEMENT',
+  CODE_COMPLETION: 'CODE_COMPLETION',
+  CODE_SUGGESTIONS: 'CODE_SUGGESTIONS',
+  SYNTAX_HIGHLIGHTING: 'SYNTAX_HIGHLIGHTING',
+  ERROR_DETECTION: 'ERROR_DETECTION',
+  CODE_FORMATTING: 'CODE_FORMATTING',
+  INTELLISENSE: 'INTELLISENSE',
+  CHAT: 'CHAT',
+  WORKFLOW: 'WORKFLOW',
+  RESEARCH: 'RESEARCH',
+  ANALYSIS: 'ANALYSIS',
+  INTEGRATION: 'INTEGRATION',
+};
+
 const TaskStatus = {
   PENDING: 'PENDING',
   IN_PROGRESS: 'IN_PROGRESS',
@@ -77,19 +105,98 @@ const MessageRole = {
   TOOL: 'TOOL',
 };
 
-// Prisma namespace
-const Prisma = {};
+const PipelineStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+};
+
+const RegisteredEntityType = {
+  AGENT: 'AGENT',
+  WORKFLOW: 'WORKFLOW',
+  TOOL: 'TOOL',
+  SERVICE: 'SERVICE',
+  INTEGRATION: 'INTEGRATION',
+  TEMPLATE: 'TEMPLATE',
+  COMPONENT: 'COMPONENT',
+  MODULE: 'MODULE',
+};
+
+const EntityStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  DEPRECATED: 'DEPRECATED',
+  PENDING: 'PENDING',
+  FAILED: 'FAILED',
+};
+
+// Prisma error classes
+class PrismaClientKnownRequestError extends Error {
+  constructor(message, { code, clientVersion, meta }) {
+    super(message);
+    this.code = code;
+    this.clientVersion = clientVersion;
+    this.meta = meta;
+    this.name = 'PrismaClientKnownRequestError';
+  }
+}
+
+class PrismaClientUnknownRequestError extends Error {
+  constructor(message, { clientVersion }) {
+    super(message);
+    this.clientVersion = clientVersion;
+    this.name = 'PrismaClientUnknownRequestError';
+  }
+}
+
+class PrismaClientValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'PrismaClientValidationError';
+  }
+}
+
+// Prisma namespace with types
+const Prisma = {
+  // Input types for models
+  Agent: {},
+  Task: {},
+  User: {},
+  Message: {},
+  Workflow: {},
+  WorkflowExecution: {},
+  TaskStatus,
+  TaskPriority,
+  AgentStatus,
+  AgentType,
+  UserRole,
+  WorkflowStatus,
+  WorkflowExecutionStatus,
+  // JSON null value
+  JsonNull: Symbol.for('prisma.null'),
+  DbNull: Symbol.for('prisma.db_null'),
+  // Error classes
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+};
 
 // $Enums namespace
 const $Enums = {
   UserRole,
   AgentType,
   AgentStatus,
+  AgentCapability,
   TaskStatus,
   TaskPriority,
   WorkflowStatus,
   WorkflowExecutionStatus,
   MessageRole,
+  PipelineStatus,
+  RegisteredEntityType,
+  EntityStatus,
 };
 
 class PrismaClient {
@@ -117,6 +224,7 @@ models.forEach(model => {
   });
 });
 
+// Export everything
 module.exports = {
   PrismaClient,
   Prisma,
@@ -124,27 +232,45 @@ module.exports = {
   UserRole,
   AgentType,
   AgentStatus,
+  AgentCapability,
   TaskStatus,
   TaskPriority,
   WorkflowStatus,
   WorkflowExecutionStatus,
   MessageRole,
+  PipelineStatus,
+  RegisteredEntityType,
+  EntityStatus,
+  // Model type placeholders
   User: {},
   Agent: {},
   Task: {},
   Message: {},
   Workflow: {},
   WorkflowExecution: {},
+  RegisteredEntity: {},
 };
 
+// Named exports
 exports.PrismaClient = PrismaClient;
 exports.Prisma = Prisma;
 exports.$Enums = $Enums;
 exports.UserRole = UserRole;
 exports.AgentType = AgentType;
 exports.AgentStatus = AgentStatus;
+exports.AgentCapability = AgentCapability;
 exports.TaskStatus = TaskStatus;
 exports.TaskPriority = TaskPriority;
 exports.WorkflowStatus = WorkflowStatus;
 exports.WorkflowExecutionStatus = WorkflowExecutionStatus;
 exports.MessageRole = MessageRole;
+exports.PipelineStatus = PipelineStatus;
+exports.RegisteredEntityType = RegisteredEntityType;
+exports.EntityStatus = EntityStatus;
+exports.User = {};
+exports.Agent = {};
+exports.Task = {};
+exports.Message = {};
+exports.Workflow = {};
+exports.WorkflowExecution = {};
+exports.RegisteredEntity = {};

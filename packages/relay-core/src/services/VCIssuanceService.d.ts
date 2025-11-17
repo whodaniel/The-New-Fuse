@@ -7,7 +7,6 @@
  */
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
-import { AgentType, PrismaClient } from '../types/database.js';
 export interface VerifiableCredential {
     '@context': string[];
     id: string;
@@ -28,7 +27,7 @@ export interface CredentialIssuer {
 export interface CredentialSubject {
     id: string;
     agentId: string;
-    agentType: AgentType;
+    agentType: string;
     capabilities: AgentCapability[];
     achievements: AgentAchievement[];
     verifiedSkills: VerifiedSkill[];
@@ -167,11 +166,86 @@ export declare class VCIssuanceService extends EventEmitter {
     private trustedIssuers;
     private revokedCredentials;
     private readonly config;
-    constructor(prisma: PrismaClient, logger: Logger, privateKey?: string);
+    constructor(prisma: any, logger: Logger, privateKey?: string);
     /**
      * Issue a Verifiable Credential for an agent
      */
     issueCredential(request: VCIssuanceRequest): Promise<VerifiableCredential>;
-    $: any;
+    /**
+     * Verify a Verifiable Credential
+     */
+    verifyCredential(credential: VerifiableCredential): Promise<VCVerificationResult>;
+    /**
+     * Revoke a credential
+     */
+    revokeCredential(credentialId: string, reason: string): Promise<boolean>;
+    /**
+     * Gather capability evidence for an agent
+     */
+    private gatherCapabilityEvidence;
+    /**
+     * Assess agent's performance in a specific capability
+     */
+    private assessCapabilityPerformance;
+    /**
+     * Determine proficiency level from performance score
+     */
+    private determineProficiencyLevel;
+    /**
+     * Categorize a capability name
+     */
+    private categorizeCapability;
+    /**
+     * Generate comprehensive performance metrics for an agent
+     */
+    private generatePerformanceMetrics;
+    /**
+     * Get agent achievements
+     */
+    private getAgentAchievements;
+    /**
+     * Get verified skills for an agent
+     */
+    private getVerifiedSkills;
+    /**
+     * Generate cryptographic proof for a credential
+     */
+    private generateProof;
+    /**
+     * Verify credential signature
+     */
+    private verifySignature;
+    /**
+     * Check if credential structure is valid
+     */
+    private isStructurallyValid;
+    /**
+     * Check if issuer is trusted
+     */
+    private isTrustedIssuer;
+    /**
+     * Initialize trusted issuers
+     */
+    private initializeTrustedIssuers;
+    /**
+     * Add a trusted issuer
+     */
+    addTrustedIssuer(issuer: TrustedIssuer): void;
+    /**
+     * Store credential (in practice, this might use IPFS or a credential registry)
+     */
+    private storeCredential;
+    /**
+     * Get all credentials for an agent
+     */
+    getAgentCredentials(agentId: string): Promise<VerifiableCredential[]>;
+    /**
+     * Get trusted issuers
+     */
+    getTrustedIssuers(): TrustedIssuer[];
+    /**
+     * Check if credential is revoked
+     */
+    isCredentialRevoked(credentialId: string): boolean;
 }
 //# sourceMappingURL=VCIssuanceService.d.ts.map

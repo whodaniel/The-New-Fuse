@@ -6,7 +6,7 @@ export {
 // Enums
 UserRole, AgentType, AgentStatus, TaskStatus, TaskPriority, WorkflowStatus, WorkflowExecutionStatus, 
 // Prisma client and namespace
-PrismaClient, Prisma, } from './types';
+PrismaClient, } from './types';
 // Export database module and services
 export * from './database.module';
 export * from './prisma.service';

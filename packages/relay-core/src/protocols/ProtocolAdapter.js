@@ -1,6 +1,5 @@
-"use strict";
 /**
  * Base Protocol Adapter for The New Fuse Relay System
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //# sourceMappingURL=ProtocolAdapter.js.map

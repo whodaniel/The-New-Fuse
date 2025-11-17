@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Unified Bridge for The New Fuse Framework
  *
@@ -8,10 +7,8 @@
  * - agent-bridge.service.js (WebSocket gateway)
  * - vscode-lm-bridge (VSCode language model integration)
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UnifiedBridge = void 0;
-const events_1 = require("events");
-class UnifiedBridge extends events_1.EventEmitter {
+import { EventEmitter } from 'events';
+export class UnifiedBridge extends EventEmitter {
     logger;
     transports = new Map();
     constructor(logger) {
@@ -44,5 +41,4 @@ class UnifiedBridge extends events_1.EventEmitter {
         return false;
     }
 }
-exports.UnifiedBridge = UnifiedBridge;
 //# sourceMappingURL=UnifiedBridge.js.map

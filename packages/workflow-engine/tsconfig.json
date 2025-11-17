@@ -34,7 +34,11 @@
     "types": ["node"]
   },
   "include": ["src"],
-  "references": [],
+  "references": [
+    { "path": "../relay-core" },
+    { "path": "../database" },
+    { "path": "../security" }
+  ],
   "exclude": [
     "node_modules",
     "dist",

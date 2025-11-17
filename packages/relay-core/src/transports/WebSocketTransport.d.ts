@@ -5,8 +5,8 @@
  * Handles real-time communication with agents and extensions.
  */
 import { EventEmitter } from 'events';
-import { Transport, RelayMessage } from '../types';
-import { Logger } from '../utils/Logger';
+import { Transport, RelayMessage } from '../types/index.js';
+import { Logger } from '../utils/Logger.js';
 export interface WebSocketTransportConfig {
     port: number;
     logger: Logger;
@@ -22,10 +22,11 @@ export declare class WebSocketTransport extends EventEmitter implements Transpor
     constructor(config: WebSocketTransportConfig);
     start(): Promise<boolean>;
     stop(): Promise<void>;
+    send(message: RelayMessage): Promise<boolean>;
     onMessage(handler: (message: RelayMessage) => void): void;
     isConnected(): boolean;
     private handleConnection;
-    heartbeatWs: any;
-    send(JSON: any, stringify: any): any;
+    private startHeartbeat;
+    private generateClientId;
 }
 //# sourceMappingURL=WebSocketTransport.d.ts.map

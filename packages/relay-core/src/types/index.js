@@ -1,6 +1,5 @@
-"use strict";
 /**
  * Core types for The New Fuse Relay System
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //# sourceMappingURL=index.js.map
