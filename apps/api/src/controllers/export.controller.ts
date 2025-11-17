@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Res, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { ExportFormat } from '@the-new-fuse/types';
-import { SecureAuthGuard, JwtAuth, RateLimitTier } from '../guards/secure-auth.guard';
+import { SecureAuthGuard, JwtAuth, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
 
 /**
  * Export Service
@@ -80,7 +80,7 @@ class ConversationExportService {
 @Controller('export')
 @UseGuards(SecureAuthGuard)
 @JwtAuth()
-@RateLimitTier(RateLimitTier.API)
+@SetRateLimitTier(RateLimitTier.API)
 export class ExportController {
   /** Export service for handling data conversion */
   private exportService = ConversationExportService;

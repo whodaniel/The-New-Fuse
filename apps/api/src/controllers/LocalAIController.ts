@@ -8,7 +8,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AgentService } from '../services/agent.service';
 // import { LocalAIDetectionService, LocalAIProvider } from '@the-new-fuse/core'; // Commented out due to build errors
 import { AgentCapability } from '@the-new-fuse/types';
-import { SecureAuthGuard, JwtAuth, RateLimitTier } from '../guards/secure-auth.guard';
+import { SecureAuthGuard, JwtAuth, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
 
 interface AuthenticatedRequest {
   user?: { id: string };
@@ -18,7 +18,7 @@ interface AuthenticatedRequest {
 @Controller('api/local-ai')
 @UseGuards(SecureAuthGuard)
 @JwtAuth()
-@RateLimitTier(RateLimitTier.API)
+@SetRateLimitTier(RateLimitTier.API)
 export class LocalAIController {
   private readonly logger = new Logger(LocalAIController.name);
 

@@ -79,13 +79,12 @@ import { SecureAuthGuard } from './guards/secure-auth.guard';
     MonitoringModule, // Wallet Platform Monitoring
   ],
   controllers: [
-    AppController, 
-    A2AController, 
+    AppController,
+    A2AController,
     LLMProviderController,
     SystemController,
     WebSocketController,
-    WorkflowController,
-    SecurityController
+    WorkflowController
   ],
   providers: [
     AppService, 

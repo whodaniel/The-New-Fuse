@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/User';
-import { SecureAuthGuard, RateLimitTier } from '../guards/secure-auth.guard';
+import { SecureAuthGuard, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
 
 /**
  * Health Controller
@@ -47,7 +47,7 @@ import { SecureAuthGuard, RateLimitTier } from '../guards/secure-auth.guard';
 @ApiTags('health')
 @Controller('health')
 @UseGuards(SecureAuthGuard)
-@RateLimitTier(RateLimitTier.HEALTH)
+@SetRateLimitTier(RateLimitTier.HEALTH)
 export class HealthController {
   /**
    * Constructor for HealthController

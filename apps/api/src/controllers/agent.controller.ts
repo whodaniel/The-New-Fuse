@@ -14,7 +14,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { SecureAuthGuard, JwtAuth, RateLimitTier } from '../guards/secure-auth.guard';
+import { SecureAuthGuard, JwtAuth, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
 import { AgentService } from '../services/agent.service';
 import { 
     CreateAgentDto, 
@@ -68,7 +68,7 @@ import { User } from '@the-new-fuse/database';
 @Controller('agents')
 @UseGuards(SecureAuthGuard)
 @JwtAuth()
-@RateLimitTier(RateLimitTier.API)
+@SetRateLimitTier(RateLimitTier.API)
 export class AgentController {
     /**
      * Constructor for AgentController
