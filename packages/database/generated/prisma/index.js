@@ -215,7 +215,8 @@ class PrismaClient {
 // Create proxies for models
 const models = [
   'user', 'agent', 'chat', 'message', 'workflow', 'task', 'pipeline',
-  'authSession', 'codeExecutionSession', 'workflowExecution', 'registeredEntity'
+  'authSession', 'codeExecutionSession', 'workflowExecution', 'registeredEntity',
+  'authEvent', 'syncState', 'syncConflict', 'taskExecution'
 ];
 
 models.forEach(model => {

@@ -435,8 +435,8 @@ export class PrismaClient {
   constructor(options?: any);
   $connect(): Promise<void>;
   $disconnect(): Promise<void>;
-  $executeRaw(query: any, ...values: any[]): Promise<any>;
-  $queryRaw(query: any, ...values: any[]): Promise<any>;
+  $executeRaw<T = any>(query: any, ...values: any[]): Promise<T>;
+  $queryRaw<T = any>(query: any, ...values: any[]): Promise<T>;
   $transaction<R>(fn: (prisma: PrismaClient) => Promise<R>): Promise<R>;
   $on(eventType: string, callback: Function): void;
   
@@ -451,6 +451,10 @@ export class PrismaClient {
   codeExecutionSession: any;
   workflowExecution: any;
   registeredEntity: any;
+  authEvent: any;
+  syncState: any;
+  syncConflict: any;
+  taskExecution: any;
 }
 
 export default PrismaClient;

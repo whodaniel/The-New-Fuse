@@ -164,7 +164,7 @@ export class PerformanceOptimizationService {
     this.telemetry?.startOperation(operationId);
 
     try {
-      const result = this.syncCache.get<T>(key, tenantId);
+      const result = this.syncCache.get(key, tenantId) as T | undefined;
       
       this.telemetry?.endOperation(
         operationId,

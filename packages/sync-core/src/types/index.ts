@@ -102,14 +102,32 @@ export interface SyncHealth {
   lastCheck: Date;
 }
 
-export type SyncResourceType = 
-  | 'agent' 
-  | 'template' 
-  | 'config' 
-  | 'task' 
-  | 'workflow' 
-  | 'user' 
-  | 'file';
+export type SyncResourceType =
+  | 'agent'
+  | 'template'
+  | 'config'
+  | 'task'
+  | 'workflow'
+  | 'user'
+  | 'file'
+  | 'personal_content'
+  | 'content_shared'
+  | 'project_collaboration'
+  | 'content_sharing_revoked'
+  | 'project_collaboration_removed'
+  | 'collaboration_permissions_updated'
+  | 'personal_content_deleted'
+  | 'privacy_boundary'
+  | 'content_isolated'
+  | 'project_configuration'
+  | 'configuration_file'
+  | 'enhanced_handoff_template'
+  | 'handoff_session'
+  | 'handoff_context'
+  | 'handoff_template'
+  | 'handoff_metrics'
+  | 'agent_capability'
+  | 'template_integration';
 
 export type ConflictResolutionStrategy = 
   | 'latest_wins' 

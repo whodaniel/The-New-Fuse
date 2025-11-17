@@ -6,7 +6,7 @@
  * configuration sync, collaborative content sharing, and private data isolation.
  */
 
-import { PrismaClient, UserRole } from '@prisma/client';
+import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';

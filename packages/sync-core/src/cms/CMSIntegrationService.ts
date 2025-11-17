@@ -7,7 +7,7 @@
  * existing user and tenant systems.
  */
 
-import { PrismaClient, User, UserRole } from '@prisma/client';
+import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
@@ -32,10 +32,10 @@ export class CMSIntegrationService {
   private syncOrchestrator: SyncOrchestrator;
   private fileWatcher: EnhancedFileSystemWatcher;
   
-  private personalContentManager: PersonalContentManager;
-  private projectConfigSync: ProjectConfigurationSync;
-  private collaborativeContentService: CollaborativeContentService;
-  private privateDataIsolationService: PrivateDataIsolationService;
+  private personalContentManager!: PersonalContentManager;
+  private projectConfigSync!: ProjectConfigurationSync;
+  private collaborativeContentService!: CollaborativeContentService;
+  private privateDataIsolationService!: PrivateDataIsolationService;
   
   private config: CMSConfig;
   private initialized: boolean = false;

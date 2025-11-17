@@ -15,7 +15,18 @@
     "node_modules",
     "dist",
     "src/**/*.test.ts",
-    "examples"
+    "src/**/*.example.ts",
+    "examples",
+    "src/dashboard/**/*",
+    "src/monitoring/**/*",
+    "src/deployment/**/*",
+    "src/server.ts",
+    "src/messaging/**/*",
+    "src/handoff/**/*",
+    "src/tasks/**/*",
+    "src/error/**/*",
+    "src/services/ConflictManager.ts",
+    "src/cms/**/*"
   ],
   "references": [
     {

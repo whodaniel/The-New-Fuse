@@ -561,7 +561,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   }
 
   private getSyncPriority(dataType: SyncResourceType): number {
-    const priorities: Record<SyncResourceType, number> = {
+    const priorities: Partial<Record<SyncResourceType, number>> = {
       agent: 1,      // Highest priority
       task: 2,
       workflow: 2,
@@ -569,9 +569,10 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       config: 3,
       user: 4,
       file: 5        // Lowest priority
+      // CMS and other resource types default to priority 10
     };
-    
-    return priorities[dataType] || 5;
+
+    return priorities[dataType] || 10;
   }
 
   private determineResolutionStrategy(conflict: SyncConflictData): ConflictResolutionStrategy {
