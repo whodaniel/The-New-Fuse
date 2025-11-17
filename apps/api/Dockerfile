@@ -17,14 +17,11 @@ COPY ../../.npmrc ../../.pnpmrc ./
 COPY ../../scripts ./scripts
 
 # Copy all package.json files for workspace resolution (required by pnpm)
-# Apps
+# Apps (only existing apps)
 COPY package.json ./apps/api/
 COPY ../api-gateway/package.json ./apps/api-gateway/
 COPY ../backend/package.json ./apps/backend/
-COPY ../browser-hub/package.json ./apps/browser-hub/
-COPY ../electron-desktop/package.json ./apps/electron-desktop/
 COPY ../frontend/package.json ./apps/frontend/
-COPY ../theia-ide/package.json ./apps/theia-ide/
 # Packages
 COPY ../../packages/a2a-core/package.json ./packages/a2a-core/
 COPY ../../packages/a2a-react/package.json ./packages/a2a-react/

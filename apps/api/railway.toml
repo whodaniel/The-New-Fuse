@@ -1,7 +1,7 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "apps/api/Dockerfile"
-watchPaths = ["apps/api/**", "packages/**"]
+dockerfilePath = "apps/api/Dockerfile.railway"
+watchPaths = ["apps/api/**", "packages/**", "prisma/**"]
 
 [deploy]
 healthcheckPath = "/health"
