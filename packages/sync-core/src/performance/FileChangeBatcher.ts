@@ -1,4 +1,4 @@
-import { Logger } from '../../../core-monitoring/src/utils/Logger';
+import { Logger } from '@tnf/core-monitoring';
 import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
 
 export interface BatchConfig {

@@ -261,6 +261,50 @@ export interface RegisteredEntity {
   deletedAt?: Date | null;
 }
 
+export interface AuthEvent {
+  id: string;
+  userId: string;
+  type: string;
+  details?: any;
+  createdAt: Date;
+}
+
+export interface SyncState {
+  id: string;
+  resourceType: string;
+  resourceId: string;
+  tenantId?: string | null;
+  version: number;
+  checksum: string;
+  lastSync: Date;
+  syncedBy: string;
+  metadata: any;
+}
+
+export interface SyncConflict {
+  id: string;
+  resourceType: string;
+  resourceId: string;
+  tenantId?: string | null;
+  conflictType: string;
+  localVersion: any;
+  remoteVersion: any;
+  createdAt: Date;
+  resolvedAt?: Date | null;
+  resolvedBy?: string | null;
+  resolution?: any;
+}
+
+export interface TaskExecution {
+  id: string;
+  taskId: string;
+  status: string;
+  output?: any;
+  error?: string | null;
+  startedAt: Date;
+  completedAt?: Date | null;
+}
+
 // Prisma error classes
 export class PrismaClientKnownRequestError extends Error {
   code: string;
@@ -307,6 +351,10 @@ export namespace Prisma {
   export type WorkflowWhereInput = Partial<Workflow> & { [key: string]: any };
   export type WorkflowExecutionWhereInput = Partial<WorkflowExecution> & { [key: string]: any };
   export type RegisteredEntityWhereInput = Partial<RegisteredEntity> & { [key: string]: any };
+  export type AuthEventWhereInput = Partial<AuthEvent> & { [key: string]: any };
+  export type SyncStateWhereInput = Partial<SyncState> & { [key: string]: any };
+  export type SyncConflictWhereInput = Partial<SyncConflict> & { [key: string]: any };
+  export type TaskExecutionWhereInput = Partial<TaskExecution> & { [key: string]: any };
 
   // WhereUniqueInput types
   export type UserWhereUniqueInput = { id: string } | { email: string } | { [key: string]: any };
@@ -316,6 +364,10 @@ export namespace Prisma {
   export type WorkflowWhereUniqueInput = { id: string } | { [key: string]: any };
   export type WorkflowExecutionWhereUniqueInput = { id: string } | { [key: string]: any };
   export type RegisteredEntityWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type AuthEventWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type SyncStateWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type SyncConflictWhereUniqueInput = { id: string } | { [key: string]: any };
+  export type TaskExecutionWhereUniqueInput = { id: string } | { [key: string]: any };
 
   // OrderBy input types
   export type SortOrder = 'asc' | 'desc';
@@ -326,7 +378,11 @@ export namespace Prisma {
   export type WorkflowOrderByWithRelationInput = { [key: string]: SortOrder | any };
   export type WorkflowExecutionOrderByWithRelationInput = { [key: string]: SortOrder | any };
   export type RegisteredEntityOrderByWithRelationInput = { [key: string]: SortOrder | any };
-  
+  export type AuthEventOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type SyncStateOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type SyncConflictOrderByWithRelationInput = { [key: string]: SortOrder | any };
+  export type TaskExecutionOrderByWithRelationInput = { [key: string]: SortOrder | any };
+
   // Create input types
   export type UserCreateInput = Partial<User> & { [key: string]: any };
   export type AgentCreateInput = Partial<Agent> & { [key: string]: any };
@@ -335,7 +391,11 @@ export namespace Prisma {
   export type WorkflowCreateInput = Partial<Workflow> & { [key: string]: any };
   export type WorkflowExecutionCreateInput = Partial<WorkflowExecution> & { [key: string]: any };
   export type RegisteredEntityCreateInput = Partial<RegisteredEntity> & { [key: string]: any };
-  
+  export type AuthEventCreateInput = Partial<AuthEvent> & { [key: string]: any };
+  export type SyncStateCreateInput = Partial<SyncState> & { [key: string]: any };
+  export type SyncConflictCreateInput = Partial<SyncConflict> & { [key: string]: any };
+  export type TaskExecutionCreateInput = Partial<TaskExecution> & { [key: string]: any };
+
   // Update input types
   export type UserUpdateInput = Partial<User> & { [key: string]: any };
   export type AgentUpdateInput = Partial<Agent> & { [key: string]: any };
@@ -344,7 +404,11 @@ export namespace Prisma {
   export type WorkflowUpdateInput = Partial<Workflow> & { [key: string]: any };
   export type WorkflowExecutionUpdateInput = Partial<WorkflowExecution> & { [key: string]: any };
   export type RegisteredEntityUpdateInput = Partial<RegisteredEntity> & { [key: string]: any };
-  
+  export type AuthEventUpdateInput = Partial<AuthEvent> & { [key: string]: any };
+  export type SyncStateUpdateInput = Partial<SyncState> & { [key: string]: any };
+  export type SyncConflictUpdateInput = Partial<SyncConflict> & { [key: string]: any };
+  export type TaskExecutionUpdateInput = Partial<TaskExecution> & { [key: string]: any };
+
   // Unchecked input types
   export type TaskUncheckedUpdateInput = Partial<Task> & { [key: string]: any };
   export type MessageUncheckedCreateInput = Partial<Message> & { [key: string]: any };

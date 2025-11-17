@@ -249,6 +249,10 @@ module.exports = {
   Workflow: {},
   WorkflowExecution: {},
   RegisteredEntity: {},
+  AuthEvent: {},
+  SyncState: {},
+  SyncConflict: {},
+  TaskExecution: {},
 };
 
 // Named exports
@@ -274,3 +278,7 @@ exports.Message = {};
 exports.Workflow = {};
 exports.WorkflowExecution = {};
 exports.RegisteredEntity = {};
+exports.AuthEvent = {};
+exports.SyncState = {};
+exports.SyncConflict = {};
+exports.TaskExecution = {};

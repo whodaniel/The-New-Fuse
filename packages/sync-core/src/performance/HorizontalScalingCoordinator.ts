@@ -10,7 +10,7 @@ interface RedisService {
   lrange(key: string, start: number, stop: number): Promise<string[]>;
   publish(channel: string, message: string): Promise<number>;
 }
-import { Logger } from '../../../core-monitoring/src/utils/Logger';
+import { Logger } from '@tnf/core-monitoring';
 
 export interface ScalingInstance {
   instanceId: string;

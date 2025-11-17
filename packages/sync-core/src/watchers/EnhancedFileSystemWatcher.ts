@@ -9,6 +9,9 @@ import { SyncRedisConfig } from '../config/SyncRedisConfig';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { FileChangeEvent, SyncConflictData } from '../types';
 
+// Re-export FileChangeEvent for convenience
+export { FileChangeEvent };
+
 export interface WatcherConfig {
   paths: string[];
   ignored?: string[];

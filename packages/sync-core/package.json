@@ -25,6 +25,7 @@
   "dependencies": {
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/prompt-templating": "workspace:*",
     "@tnf/core-error-handling": "workspace:*",
     "@tnf/core-monitoring": "workspace:*",
     "@nestjs/common": "^11.0.0",
