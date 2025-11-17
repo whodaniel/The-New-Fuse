@@ -4,10 +4,12 @@
  */
 
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { IdeGatewayController } from './ide-gateway.controller';
 import { ProxyService } from '../proxy/proxy.service';
 
 @Module({
+  imports: [HttpModule],
   controllers: [IdeGatewayController],
   providers: [ProxyService],
 })
