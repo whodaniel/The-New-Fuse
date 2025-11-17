@@ -1,6 +1,8 @@
 export enum MessageType {
   TEXT = 'text',
   COMMAND = 'command',
+  COMMAND_RESULT = 'command_result',
+  TASK_RESULT = 'task_result',
   EVENT = 'event',
   ERROR = 'error',
   STATUS = 'status',
@@ -17,6 +19,7 @@ export interface Message {
   content: string | Record<string, unknown>;
   timestamp: number;
   sender: string;
+  senderAgentId?: string;
   recipient?: string;
   priority?: Priority;
   metadata?: Record<string, unknown>;

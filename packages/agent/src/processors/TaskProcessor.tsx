@@ -24,7 +24,7 @@ export class TaskProcessor extends BaseProcessor {
   private messageValidator: MessageValidator;
   private chatService: InterAgentChatService;
   private agentId: UUID;
-  private activeTasks: Map<UUID, Task>;
+  public activeTasks: Map<UUID, Task>;
   private cancelledTasks: Set<UUID>;
 
   constructor(

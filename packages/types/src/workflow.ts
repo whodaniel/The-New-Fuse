@@ -14,6 +14,7 @@ export interface WorkflowStep {
   type: string;
   config: unknown;
   order: number;
+  dependsOn?: string[];
 }
 
 export interface WorkflowDefinition extends BaseEntity {

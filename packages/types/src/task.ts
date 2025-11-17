@@ -49,6 +49,7 @@ export interface Task {
   metadata: TaskMetadata;
   dependencies?: TaskDependency[];
   userId: string;
+  originatorId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -112,6 +113,7 @@ export interface TaskResult {
     };
   };
   timestamp: Date;
+  [key: string]: unknown;
 }
 
 // Add any additional task-related types here

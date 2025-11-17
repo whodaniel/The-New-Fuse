@@ -139,7 +139,7 @@ export class CommandProcessor extends BaseProcessor {
 
   private async handleCancelTask(command: Command, agentId: UUID): Promise<CommandResult> {
     this.logger.debug(`Handling 'cancel_task' command (ID: ${command.id})`);
-    const taskId = command.parameters?.taskId as UUID;
+    const taskId = command.payload?.taskId as UUID;
     if (!taskId) {
       return {
         id: `result_${command.id}`,
