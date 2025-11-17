@@ -37,12 +37,6 @@ healthcheckTimeout = 300
 restartPolicyMaxRetries = 10
 restartPolicyType = "ON_FAILURE"
 
-# Frontend Service
-[services.frontend.build]
-dockerfilePath = "./Dockerfile"
-watchPaths = ["apps/frontend/**", "packages/**"]
-
-[services.frontend.deploy]
-healthcheckTimeout = 300
-restartPolicyMaxRetries = 10
-restartPolicyType = "ON_FAILURE"
+# Frontend Service - Deployed on Vercel
+# Frontend is deployed separately on Vercel for optimal static/SSR hosting
+# See: https://vercel.com for frontend deployments
