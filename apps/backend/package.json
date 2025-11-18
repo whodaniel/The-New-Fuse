@@ -84,8 +84,13 @@
     "@types/nodemailer": "^7.0.4",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/supertest": "^6.0.3",
+<<<<<<< HEAD
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.47.0",
+=======
     "@typescript-eslint/eslint-plugin": "^8.47.0",
     "@typescript-eslint/parser": "^8.46.1",
+>>>>>>> origin/main
     "cross-env": "^10.1.0",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
