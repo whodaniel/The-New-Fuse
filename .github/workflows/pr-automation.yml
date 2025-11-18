@@ -1,0 +1,326 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-label:
+    name: Auto Label PR
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Auto label based on files changed
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+
+      - name: Label based on size
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            const additions = files.reduce((sum, file) => sum + file.additions, 0);
+            const deletions = files.reduce((sum, file) => sum + file.deletions, 0);
+            const totalChanges = additions + deletions;
+
+            let sizeLabel;
+            if (totalChanges < 10) {
+              sizeLabel = 'size/XS';
+            } else if (totalChanges < 50) {
+              sizeLabel = 'size/S';
+            } else if (totalChanges < 200) {
+              sizeLabel = 'size/M';
+            } else if (totalChanges < 500) {
+              sizeLabel = 'size/L';
+            } else {
+              sizeLabel = 'size/XL';
+            }
+
+            // Remove old size labels
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+
+            for (const label of labels) {
+              if (label.name.startsWith('size/')) {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  name: label.name
+                });
+              }
+            }
+
+            // Add new size label
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [sizeLabel]
+            });
+
+  auto-assign-reviewers:
+    name: Auto Assign Reviewers
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+    steps:
+      - name: Auto assign reviewers
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const author = context.payload.pull_request.user.login;
+
+            // Define reviewer rules
+            const reviewerRules = {
+              'apps/frontend/**': ['frontend-team'],
+              'apps/api/**': ['backend-team'],
+              'apps/backend/**': ['backend-team'],
+              'apps/api-gateway/**': ['backend-team'],
+              'packages/**': ['core-team'],
+              '*.md': ['docs-team']
+            };
+
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            const reviewers = new Set();
+
+            // Match files to reviewers
+            for (const file of files) {
+              for (const [pattern, teams] of Object.entries(reviewerRules)) {
+                const regex = new RegExp(pattern.replace('**', '.*').replace('*', '[^/]*'));
+                if (regex.test(file.filename)) {
+                  teams.forEach(team => reviewers.add(team));
+                }
+              }
+            }
+
+            // Remove author from reviewers
+            reviewers.delete(author);
+
+            if (reviewers.size > 0) {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                team_reviewers: Array.from(reviewers)
+              });
+            }
+
+  pr-title-check:
+    name: Check PR Title
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Validate PR title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          subjectPattern: ^[A-Z].+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern. Please ensure that the subject
+            starts with an uppercase character.
+
+  check-pr-description:
+    name: Check PR Description
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Check description length
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = context.payload.pull_request.body || '';
+
+            if (body.length < 50) {
+              core.setFailed('PR description is too short. Please provide more details about your changes.');
+              return;
+            }
+
+            // Check for required sections
+            const requiredSections = ['## Summary', '## Changes', '## Testing'];
+            const missingSections = requiredSections.filter(section => !body.includes(section));
+
+            if (missingSections.length > 0) {
+              const comment = `### PR Description Missing Sections ⚠️
+
+              Your PR description is missing the following sections:
+              ${missingSections.map(s => `- ${s}`).join('\n')}
+
+              Please update your PR description to include these sections.`;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+  auto-merge-dependabot:
+    name: Auto Merge Dependabot PRs
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.actor == 'dependabot[bot]'
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-approve and merge minor/patch updates
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Label major updates
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr edit "$PR_URL" --add-label "dependencies-major"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  welcome-first-time-contributor:
+    name: Welcome First Time Contributors
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'opened'
+    steps:
+      - name: Check if first time contributor
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const author = context.payload.pull_request.user.login;
+
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              per_page: 100
+            });
+
+            const authorPRs = prs.filter(pr => pr.user.login === author);
+
+            if (authorPRs.length === 1) {
+              const welcomeMessage = `### Welcome to The New Fuse! 🎉
+
+              Thank you for your first contribution, @${author}!
+
+              A few things to note:
+              - Please make sure all tests pass
+              - Ensure your code follows our style guidelines
+              - Add appropriate documentation if needed
+              - Feel free to ask questions in the comments
+
+              A maintainer will review your PR soon. Thank you for contributing!`;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: welcomeMessage
+              });
+            }
+
+  update-pr-status:
+    name: Update PR Status
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Add status comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: checks } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.payload.pull_request.head.sha
+            });
+
+            const totalChecks = checks.check_runs.length;
+            const completedChecks = checks.check_runs.filter(check => check.status === 'completed').length;
+            const successfulChecks = checks.check_runs.filter(check => check.conclusion === 'success').length;
+
+            const statusEmoji = successfulChecks === totalChecks ? '✅' : '⏳';
+
+            console.log(`Checks: ${successfulChecks}/${totalChecks} passed`);
+
+  lint-commit-messages:
+    name: Lint Commit Messages
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install commitlint
+        run: |
+          npm install -g @commitlint/cli @commitlint/config-conventional
+
+      - name: Lint commits
+        run: |
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose

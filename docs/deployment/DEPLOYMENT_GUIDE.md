@@ -1,321 +1,194 @@
-# The New Fuse - Production Deployment Guide
+# The New Fuse - Deployment Guide
 
-## Overview
+Complete guide for deploying The New Fuse application to production using our automated deployment system.
 
-This guide covers the complete deployment process for The New Fuse to production using Docker Hub for container builds and Railway for hosting.
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Prerequisites](#prerequisites)
+- [Deployment Methods](#deployment-methods)
+- [Pre-Deployment Checklist](#pre-deployment-checklist)
+- [Deployment Process](#deployment-process)
+- [Post-Deployment](#post-deployment)
+- [Troubleshooting](#troubleshooting)
+
+## Quick Start
+
+For a standard production deployment:
+
+```bash
+# 1. Validate environment
+./scripts/deployment/validate-deployment.sh
+
+# 2. Run full automated deployment
+./scripts/deployment/deploy-automated.sh
+
+# 3. Verify deployment
+./scripts/deployment/smoke-tests.sh
+```
 
 ## Prerequisites
 
-### Required Accounts
-- [Docker Hub](https://hub.docker.com/) account
-- [Railway](https://railway.app/) account
-- GitHub repository access
+### Required Tools
 
-### Required Secrets
-Configure these secrets in your GitHub repository settings:
+- **Node.js** >= 18.x
+- **pnpm** >= 8.x
+- **Railway CLI** (for Railway deployments)
+- **Git**
+- **jq** (for JSON processing)
 
-#### Docker Hub Secrets
-- `DOCKER_USERNAME`: Your Docker Hub username
-- `DOCKER_PASSWORD`: Your Docker Hub access token
+### Installation
 
-#### Railway Secrets
-- `RAILWAY_TOKEN`: Your Railway API token
-- `RAILWAY_PROJECT_ID`: Your Railway project ID
-- `RAILWAY_API_URL`: Your Railway API service URL
-- `RAILWAY_FRONTEND_URL`: Your Railway frontend service URL
-
-#### Optional Secrets
-- `SLACK_WEBHOOK`: Slack webhook URL for deployment notifications
-
-## Deployment Architecture
-
-```
-GitHub Repository
-    ↓ (Push to main/project-reconstruction)
-GitHub Actions
-    ↓ (Build & Push)
-Docker Hub
-    ↓ (Pull & Deploy)
-Railway Platform
-    ↓ (Serve)
-Production Environment
-```
-
-## Services Overview
-
-### 1. API Service
-- **Image**: `whodaniel/fuse-api`
-- **Port**: 3001
-- **Health Check**: `/health`
-- **Dependencies**: PostgreSQL, Redis
-
-### 2. Frontend Service
-- **Image**: `whodaniel/fuse-frontend`
-- **Port**: 80
-- **Health Check**: `/health`
-- **Dependencies**: API Service
-
-### 3. Database Services
-- **PostgreSQL**: Primary database
-- **Redis**: Caching and session storage
-
-## Step-by-Step Deployment
-
-### Phase 1: Docker Hub Setup
-
-1. **Create Docker Hub Repositories**
-   ```bash
-   # Create repositories on Docker Hub:
-   # - whodaniel/fuse-api
-   # - whodaniel/fuse-frontend
-   ```
-
-2. **Configure GitHub Secrets**
-   - Go to GitHub repository → Settings → Secrets and variables → Actions
-   - Add Docker Hub credentials
-
-3. **Trigger Initial Build**
-   ```bash
-   git push origin project-reconstruction
-   ```
-
-### Phase 2: Railway Setup
-
-1. **Create Railway Project**
-   ```bash
-   # Install Railway CLI
-   curl -fsSL https://railway.app/install.sh | sh
-   
-   # Login and create project
-   railway login
-   railway init
-   ```
-
-2. **Configure Services**
-   ```bash
-   # Add PostgreSQL
-   railway add postgresql
-   
-   # Add Redis
-   railway add redis
-   
-   # Deploy API service
-   railway service create api
-   railway service create frontend
-   ```
-
-3. **Set Environment Variables**
-   ```bash
-   # API Service Variables
-   railway variables set NODE_ENV=production
-   railway variables set PORT=3001
-   railway variables set DATABASE_URL=${{Postgres.DATABASE_URL}}
-   railway variables set REDIS_URL=${{Redis.REDIS_URL}}
-   
-   # Frontend Service Variables
-   railway variables set VITE_API_URL=${{api.RAILWAY_PUBLIC_DOMAIN}}
-   railway variables set VITE_WS_URL=wss://${{api.RAILWAY_PUBLIC_DOMAIN}}
-   ```
-
-### Phase 3: Automated Deployment
-
-1. **GitHub Actions Workflow**
-   - Workflows are automatically triggered on push to main branches
-   - Docker images are built and pushed to Docker Hub
-   - Railway deployment is triggered automatically
-
-2. **Manual Deployment**
-   ```bash
-   # Trigger manual deployment
-   gh workflow run "Deploy to Railway"
-   ```
-
-## Environment Variables
-
-### Required Environment Variables
-
-#### API Service
-```env
-NODE_ENV=production
-PORT=3001
-DATABASE_URL=postgresql://user:password@host:port/database
-REDIS_URL=redis://user:password@host:port
-JWT_SECRET=your-jwt-secret
-ENCRYPTION_KEY=your-32-byte-encryption-key
-```
-
-#### Frontend Service
-```env
-VITE_API_URL=https://your-api-domain.railway.app
-VITE_WS_URL=wss://your-api-domain.railway.app
-```
-
-#### Database Services
-```env
-# PostgreSQL
-POSTGRES_DB=fuse
-POSTGRES_USER=fuse
-POSTGRES_PASSWORD=secure-password
-
-# Redis
-REDIS_PASSWORD=secure-redis-password
-```
-
-## Monitoring and Health Checks
-
-### Health Check Endpoints
-- **API**: `GET /health`
-- **Frontend**: `GET /health`
-
-### Monitoring Stack
-- **Prometheus**: Metrics collection
-- **Grafana**: Visualization dashboards
-- **Jaeger**: Distributed tracing
-
-### Alerts
-- Service health checks every 30 seconds
-- Automatic restart on failure
-- Slack notifications for deployment status
-
-## Security Considerations
-
-### Container Security
-- Multi-stage Docker builds for minimal attack surface
-- Non-root user execution
-- Security scanning with Trivy
-
-### Network Security
-- Private networking between services
-- HTTPS/TLS termination at load balancer
-- Environment variable encryption
-
-### Data Security
-- Encrypted database connections
-- API key encryption (AES-256-GCM)
-- Secure session management
-
-## Scaling Configuration
-
-### Horizontal Scaling
-```yaml
-# Railway scaling configuration
-replicas: 3
-resources:
-  limits:
-    memory: 1Gi
-    cpu: 500m
-  requests:
-    memory: 512Mi
-    cpu: 250m
-```
-
-### Database Scaling
-- PostgreSQL connection pooling
-- Redis clustering for high availability
-- Read replicas for improved performance
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Build Failures**
-   ```bash
-   # Check GitHub Actions logs
-   gh run list --workflow="Docker Hub Build and Push"
-   gh run view [run-id]
-   ```
-
-2. **Deployment Failures**
-   ```bash
-   # Check Railway logs
-   railway logs --service api
-   railway logs --service frontend
-   ```
-
-3. **Health Check Failures**
-   ```bash
-   # Test health endpoints
-   curl -f https://your-api-domain.railway.app/health
-   curl -f https://your-frontend-domain.railway.app/health
-   ```
-
-### Debug Commands
 ```bash
-# Railway CLI debugging
-railway status
-railway ps
-railway variables
+# Install pnpm
+npm install -g pnpm
 
-# Docker debugging
-docker logs container-name
-docker exec -it container-name /bin/sh
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login to Railway
+railway login
+
+# Link to your Railway project
+railway link
 ```
 
-## Rollback Procedures
+### Environment Variables
 
-### Automatic Rollback
-- Failed health checks trigger automatic rollback
-- Previous stable version is restored
+Create environment files for each environment:
 
-### Manual Rollback
 ```bash
-# Railway rollback
-railway rollback --service api
-railway rollback --service frontend
-
-# Docker Hub rollback
-docker pull whodaniel/fuse-api:previous-tag
-railway redeploy --service api
+cp .env.example .env.production
+cp .env.example .env.staging
 ```
 
-## Performance Optimization
+Edit the files and set:
 
-### Docker Optimization
-- Multi-stage builds reduce image size
-- Layer caching improves build times
-- Health checks ensure service availability
+- `DATABASE_URL` - PostgreSQL connection string
+- `REDIS_URL` - Redis connection string
+- `JWT_SECRET` - Secret for JWT tokens
+- `API_PORT`, `FRONTEND_PORT`, etc.
 
-### Railway Optimization
-- Auto-scaling based on CPU/memory usage
-- CDN integration for static assets
-- Database connection pooling
+## Deployment Methods
 
-## Maintenance
+### Method 1: Automated Deployment (Recommended)
 
-### Regular Tasks
-- Monitor resource usage
-- Update dependencies
-- Review security scans
-- Backup database
+Full automated deployment with validation, rollback, and monitoring:
 
-### Scheduled Maintenance
-- Weekly security updates
-- Monthly performance reviews
-- Quarterly disaster recovery tests
+```bash
+./scripts/deployment/deploy-automated.sh
+```
+
+Features:
+-  Pre-deployment validation
+-  Automated testing
+-  Database migrations with backup
+-  Zero-downtime deployment
+-  Automatic rollback on failure
+-  Post-deployment smoke tests
+
+### Method 2: Railway-Specific Deployment
+
+Deploy directly to Railway:
+
+```bash
+# Deploy all services
+./scripts/deployment/railway-deploy.sh all
+
+# Deploy specific service
+./scripts/deployment/railway-deploy.sh deploy api-gateway
+
+# Watch deployment logs
+./scripts/deployment/railway-deploy.sh watch api-gateway
+```
+
+### Method 3: Manual Deployment
+
+For more control over the deployment process:
+
+```bash
+# 1. Validate
+./scripts/deployment/validate-deployment.sh
+
+# 2. Backup database
+./scripts/deployment/db-backup.sh
+
+# 3. Run migrations
+./scripts/deployment/db-migrate.sh
+
+# 4. Build services
+pnpm run build:railway
+
+# 5. Deploy to Railway
+railway up --service api-gateway
+railway up --service backend
+railway up --service frontend
+
+# 6. Verify
+./scripts/deployment/smoke-tests.sh
+```
+
+## Configuration
+
+Edit `.deployment-config` to customize deployment behavior:
+
+```bash
+# Deployment strategy (rolling, blue-green, canary)
+DEPLOYMENT_STRATEGY=rolling
+
+# Auto-rollback on failure
+AUTO_ROLLBACK=true
+
+# Testing
+SKIP_TESTS=false
+ALLOW_TEST_FAILURES=false
+
+# Database
+BACKUP_BEFORE_MIGRATE=true
+COMPRESS_BACKUPS=true
+BACKUP_RETENTION_DAYS=30
+```
+
+## Deployment Strategies
+
+### Rolling Deployment (Default)
+
+Services are updated one at a time:
+
+```bash
+DEPLOYMENT_STRATEGY=rolling ./scripts/deployment/deploy-automated.sh
+```
+
+### Blue-Green Deployment
+
+Deploy to new environment, then switch traffic:
+
+```bash
+DEPLOYMENT_STRATEGY=blue-green ./scripts/deployment/deploy-automated.sh
+```
+
+### Canary Deployment
+
+Gradually shift traffic to new version:
+
+```bash
+DEPLOYMENT_STRATEGY=canary ./scripts/deployment/deploy-automated.sh
+```
+
+## Best Practices
+
+1. **Always validate before deploying**
+2. **Test in staging first**
+3. **Monitor deployments closely**
+4. **Have rollback plan ready**
+5. **Communicate with team**
 
 ## Support
 
-### Documentation
-- [Railway Documentation](https://docs.railway.app/)
-- [Docker Hub Documentation](https://docs.docker.com/docker-hub/)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-
-### Monitoring Dashboards
-- Railway Dashboard: Monitor service health and metrics
-- Grafana: Custom performance dashboards
-- GitHub Actions: Build and deployment status
+- See [ROLLBACK_PROCEDURES.md](./ROLLBACK_PROCEDURES.md)
+- See [EMERGENCY_PROCEDURES.md](./EMERGENCY_PROCEDURES.md)
+- See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 
 ---
 
-## Quick Start Checklist
-
-- [ ] Docker Hub repositories created
-- [ ] GitHub secrets configured
-- [ ] Railway project initialized
-- [ ] Environment variables set
-- [ ] Initial deployment successful
-- [ ] Health checks passing
-- [ ] Monitoring configured
-- [ ] Backup procedures tested
-
-**Deployment Status**: Ready for production release! 🚀
+**Last Updated:** 2024-11-18

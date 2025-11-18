@@ -20,11 +20,36 @@
     "vitest": "^3.2.4",
     "eslint": "^9.38.0"
   },
+  "peerDependencies": {
+    "@sentry/node": "^8.0.0",
+    "winston": "^3.18.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "prom-client": "^15.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@sentry/node": {
+      "optional": true
+    },
+    "winston": {
+      "optional": true
+    },
+    "winston-daily-rotate-file": {
+      "optional": true
+    },
+    "prom-client": {
+      "optional": true
+    }
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./nestjs": {
+      "import": "./dist/nestjs/index.js",
+      "require": "./dist/nestjs/index.js",
+      "types": "./dist/nestjs/index.d.ts"
     }
   }
 }

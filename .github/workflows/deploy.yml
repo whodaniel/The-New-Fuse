@@ -1,0 +1,340 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - production
+          - staging
+        default: production
+      services:
+        description: 'Services to deploy (comma-separated: api,backend,frontend,gateway or all)'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  PNPM_VERSION: 10.22.0
+
+jobs:
+  pre-deploy-checks:
+    name: Pre-Deployment Checks
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
+      deploy_env: ${{ steps.check.outputs.deploy_env }}
+      services: ${{ steps.check.outputs.services }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine deployment environment
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "deploy_env=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "services=${{ github.event.inputs.services }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "deploy_env=production" >> $GITHUB_OUTPUT
+            echo "services=all" >> $GITHUB_OUTPUT
+          else
+            echo "deploy_env=production" >> $GITHUB_OUTPUT
+            echo "services=all" >> $GITHUB_OUTPUT
+          fi
+          echo "should_deploy=true" >> $GITHUB_OUTPUT
+
+      - name: Post deployment info
+        run: |
+          echo "### Deployment Information :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ steps.check.outputs.deploy_env }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Services**: ${{ steps.check.outputs.services }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+
+  build-and-test:
+    name: Build and Test
+    needs: pre-deploy-checks
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  build-images:
+    name: Build Docker Images
+    needs: [pre-deploy-checks, build-and-test]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: api-gateway
+            path: apps/api-gateway
+            port: 3001
+          - name: api
+            path: apps/api
+            port: 3002
+          - name: backend
+            path: apps/backend
+            port: 3003
+          - name: frontend
+            path: apps/frontend
+            port: 3000
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if service should be deployed
+        id: should-deploy
+        run: |
+          SERVICES="${{ needs.pre-deploy-checks.outputs.services }}"
+          SERVICE="${{ matrix.service.name }}"
+
+          if [ "$SERVICES" == "all" ]; then
+            echo "deploy=true" >> $GITHUB_OUTPUT
+          elif echo "$SERVICES" | grep -q "$SERVICE"; then
+            echo "deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Docker Buildx
+        if: steps.should-deploy.outputs.deploy == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        if: steps.should-deploy.outputs.deploy == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        if: steps.should-deploy.outputs.deploy == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/fuse-${{ matrix.service.name }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        if: steps.should-deploy.outputs.deploy == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ matrix.service.path }}/Dockerfile.railway
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            SERVICE_NAME=${{ matrix.service.name }}
+            PORT=${{ matrix.service.port }}
+
+  deploy-to-railway:
+    name: Deploy to Railway
+    needs: [pre-deploy-checks, build-images]
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.pre-deploy-checks.outputs.deploy_env }}
+      url: https://${{ steps.deploy.outputs.url }}
+    strategy:
+      matrix:
+        service: [api-gateway, api, backend, frontend]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if service should be deployed
+        id: should-deploy
+        run: |
+          SERVICES="${{ needs.pre-deploy-checks.outputs.services }}"
+          SERVICE="${{ matrix.service }}"
+
+          if [ "$SERVICES" == "all" ]; then
+            echo "deploy=true" >> $GITHUB_OUTPUT
+          elif echo "$SERVICES" | grep -q "$SERVICE"; then
+            echo "deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install Railway CLI
+        if: steps.should-deploy.outputs.deploy == 'true'
+        run: npm install -g @railway/cli
+
+      - name: Deploy ${{ matrix.service }} to Railway
+        if: steps.should-deploy.outputs.deploy == 'true'
+        id: deploy
+        run: |
+          railway up --service=${{ matrix.service }} --detach
+          DEPLOYMENT_URL=$(railway status --service=${{ matrix.service }} --json | jq -r '.url')
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Wait for deployment
+        if: steps.should-deploy.outputs.deploy == 'true'
+        run: sleep 30
+
+  health-checks:
+    name: Post-Deployment Health Checks
+    needs: [pre-deploy-checks, deploy-to-railway]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: api-gateway
+            health_path: /health
+          - name: api
+            health_path: /health
+          - name: backend
+            health_path: /health
+          - name: frontend
+            health_path: /
+    steps:
+      - name: Check if service was deployed
+        id: should-check
+        run: |
+          SERVICES="${{ needs.pre-deploy-checks.outputs.services }}"
+          SERVICE="${{ matrix.service.name }}"
+
+          if [ "$SERVICES" == "all" ]; then
+            echo "check=true" >> $GITHUB_OUTPUT
+          elif echo "$SERVICES" | grep -q "$SERVICE"; then
+            echo "check=true" >> $GITHUB_OUTPUT
+          else
+            echo "check=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install Railway CLI
+        if: steps.should-check.outputs.check == 'true'
+        run: npm install -g @railway/cli
+
+      - name: Get service URL
+        if: steps.should-check.outputs.check == 'true'
+        id: get-url
+        run: |
+          SERVICE_URL=$(railway status --service=${{ matrix.service.name }} --json | jq -r '.url')
+          echo "service_url=$SERVICE_URL" >> $GITHUB_OUTPUT
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Health check for ${{ matrix.service.name }}
+        if: steps.should-check.outputs.check == 'true'
+        id: health-check
+        run: |
+          MAX_RETRIES=10
+          RETRY_COUNT=0
+          HEALTH_URL="${{ steps.get-url.outputs.service_url }}${{ matrix.service.health_path }}"
+
+          echo "Checking health at: $HEALTH_URL"
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" || echo "000")
+
+            if [ "$HTTP_CODE" -eq 200 ]; then
+              echo "Health check passed for ${{ matrix.service.name }}"
+              exit 0
+            fi
+
+            echo "Health check attempt $((RETRY_COUNT + 1))/$MAX_RETRIES failed with code $HTTP_CODE"
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            sleep 10
+          done
+
+          echo "Health check failed after $MAX_RETRIES attempts"
+          exit 1
+
+      - name: Rollback on failure
+        if: failure() && steps.should-check.outputs.check == 'true'
+        run: |
+          echo "Health check failed, initiating rollback..."
+          railway rollback --service=${{ matrix.service.name }}
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+  post-deployment-tests:
+    name: Post-Deployment Tests
+    needs: [pre-deploy-checks, health-checks]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Run smoke tests
+        run: |
+          # Get service URLs
+          API_URL=$(railway status --service=api --json | jq -r '.url')
+          FRONTEND_URL=$(railway status --service=frontend --json | jq -r '.url')
+
+          echo "Testing API at: $API_URL"
+          echo "Testing Frontend at: $FRONTEND_URL"
+
+          # Basic API tests
+          curl -f "$API_URL/health" || exit 1
+
+          # Basic frontend test
+          curl -f "$FRONTEND_URL" || exit 1
+
+          echo "Smoke tests passed!"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+  notify:
+    name: Send Notifications
+    needs: [pre-deploy-checks, post-deployment-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send Slack notification
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Deployment to ${{ needs.pre-deploy-checks.outputs.deploy_env }} ${{ job.status }}
+            Services: ${{ needs.pre-deploy-checks.outputs.services }}
+            Commit: ${{ github.sha }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Create deployment summary
+        run: |
+          echo "### Deployment Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ needs.pre-deploy-checks.outputs.deploy_env }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Services**: ${{ needs.pre-deploy-checks.outputs.services }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### Health Checks" >> $GITHUB_STEP_SUMMARY
+          echo "- API Gateway: ${{ needs.health-checks.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- API: ${{ needs.health-checks.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: ${{ needs.health-checks.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: ${{ needs.health-checks.result }}" >> $GITHUB_STEP_SUMMARY
