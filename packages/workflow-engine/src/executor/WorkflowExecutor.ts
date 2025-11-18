@@ -610,8 +610,9 @@ export class WorkflowExecutor extends EventEmitter {
    * Helper methods
    */
   private createNodeExecution(node: WorkflowNode, executionId: string): NodeExecution {
+    // SECURITY FIX: Use cryptographically secure random ID generation
     return {
-      id: `node_exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `node_exec_${Date.now()}_${this.generateSecureId()}`,
       nodeId: node.id,
       status: NodeExecutionStatus.PENDING,
       startedAt: new Date(),
@@ -622,6 +623,24 @@ export class WorkflowExecutor extends EventEmitter {
         executionId
       }
     };
+  }
+
+  // SECURITY: Generate cryptographically secure random IDs
+  private generateSecureId(): string {
+    // Use crypto module for secure random generation
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      // Modern browsers and Node.js 15+ support randomUUID
+      return crypto.randomUUID().replace(/-/g, '').substring(0, 9);
+    } else if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      // Fallback for older environments with crypto.getRandomValues
+      const array = new Uint8Array(9);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => byte.toString(36)).join('').substring(0, 9);
+    } else {
+      // Node.js fallback using crypto module
+      const { randomBytes } = require('crypto');
+      return randomBytes(9).toString('hex').substring(0, 9);
+    }
   }
 
   private createExecutionError(error: any, nodeId?: string): ExecutionError {

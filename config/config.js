@@ -40,7 +40,19 @@ const crypto = __importStar(require("crypto"));
 dotenv.config();
 class Config {
     constructor() {
-        this.SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key-here';
+        // SECURITY FIX: Removed hardcoded secret - must be set via environment variable
+        // In development, generate a secure random key if not set
+        if (!process.env.SECRET_KEY) {
+            if (process.env.NODE_ENV === 'production') {
+                throw new Error('SECRET_KEY environment variable must be set in production');
+            }
+            // Generate a secure random key for development
+            this.SECRET_KEY = crypto.randomBytes(32).toString('hex');
+            console.warn('WARNING: Using auto-generated SECRET_KEY for development. Set SECRET_KEY environment variable for production.');
+        } else {
+            this.SECRET_KEY = process.env.SECRET_KEY;
+        }
+
         this.SQLALCHEMY_DATABASE_URI = process.env.DATABASE_URL ||
             'sqlite:///instance/dashboard.db';
         this.SQLALCHEMY_TRACK_MODIFICATIONS = false;
@@ -60,7 +72,17 @@ class Config {
         this.RATELIMIT_STORAGE_URL = `redis://${this.REDIS_HOST}:${this.REDIS_PORT}/${this.REDIS_DB}`;
         this.RATELIMIT_STRATEGY = 'fixed-window';
         this.RATELIMIT_DEFAULT = "200 per day;50 per hour;10 per minute";
-        this.ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || Buffer.from(crypto.randomBytes(32));
+
+        // SECURITY FIX: Require ENCRYPTION_KEY in production, generate secure random in development
+        if (!process.env.ENCRYPTION_KEY) {
+            if (process.env.NODE_ENV === 'production') {
+                throw new Error('ENCRYPTION_KEY environment variable must be set in production');
+            }
+            this.ENCRYPTION_KEY = Buffer.from(crypto.randomBytes(32));
+            console.warn('WARNING: Using auto-generated ENCRYPTION_KEY for development. Set ENCRYPTION_KEY environment variable for production.');
+        } else {
+            this.ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+        }
         this.ACCESS_TOKEN_EXPIRE_MINUTES = parseInt(process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '60', 10);
         this.REFRESH_TOKEN_EXPIRE_DAYS = parseInt(process.env.REFRESH_TOKEN_EXPIRE_DAYS || '7', 10);
         this.JWT_ALGORITHM = "HS256";
@@ -89,6 +111,15 @@ class ProductionConfig extends Config {
     constructor() {
         super(...arguments);
         this.DEBUG = false;
+
+        // SECURITY FIX: Enforce strict security requirements in production
+        if (!process.env.SECRET_KEY) {
+            throw new Error('SECRET_KEY environment variable is required in production');
+        }
+        if (!process.env.ENCRYPTION_KEY) {
+            throw new Error('ENCRYPTION_KEY environment variable is required in production');
+        }
+
         this.SECRET_KEY = process.env.SECRET_KEY;
         this.ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
         this.REQUIRE_EMAIL_VERIFICATION = true;

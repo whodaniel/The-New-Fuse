@@ -16,15 +16,38 @@ export class ChatService {
     private readonly websocketGateway: WebSocketGateway,
   ) {}
 
-  async getRooms(): Promise<ChatRoom[]> {
-    return this.chatRoomRepository.find();
+  async getRooms(
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ rooms: ChatRoom[]; total: number; page: number; limit: number }> {
+    const skip = (page - 1) * limit;
+
+    const [rooms, total] = await Promise.all([
+      this.chatRoomRepository.find({
+        select: ['id', 'name', 'description', 'type', 'isPrivate', 'lastMessageAt', 'isActive'],
+        take: limit,
+        skip,
+        order: { lastMessageAt: 'DESC' },
+      }),
+      this.chatRoomRepository.count(),
+    ]);
+
+    return { rooms, total, page, limit };
   }
 
-  async getRoom(roomId: string): Promise<ChatRoom> {
-    const room = await this.chatRoomRepository.findOne({
+  async getRoom(roomId: string, includeMessages: boolean = false): Promise<ChatRoom> {
+    const options: any = {
       where: { id: roomId },
-      relations: ['messages'],
-    });
+    };
+
+    // Only load messages if explicitly requested
+    if (includeMessages) {
+      options.relations = ['messages'];
+      options.order = { messages: { timestamp: 'DESC' } };
+      options.take = { messages: 50 }; // Limit to recent 50 messages
+    }
+
+    const room = await this.chatRoomRepository.findOne(options);
 
     if (!room) {
       throw new NotFoundException('Chat room not found');

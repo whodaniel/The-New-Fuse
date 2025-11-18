@@ -12,10 +12,22 @@ interface MarkdownOptions {
 function configureDOMPurify() {
   if (typeof window === 'undefined') return;
 
+  // SECURITY: Configure DOMPurify with secure defaults
   DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    // Add security attributes to links
     if (node.tagName === 'A') {
       node.setAttribute('target', '_blank');
       node.setAttribute('rel', 'noopener noreferrer');
+    }
+
+    // Remove any inline event handlers
+    if ('on' in node) {
+      const attributes = Array.from(node.attributes || []);
+      attributes.forEach((attr: Attr) => {
+        if (attr.name.startsWith('on')) {
+          node.removeAttribute(attr.name);
+        }
+      });
     }
   });
 }
@@ -72,8 +84,24 @@ export default function renderMarkdown(
     renderedContent = renderedContent.replace(/<pre><code[^>]*>/g, '<pre><code>');
   }
 
-  // Sanitize the final HTML
-  return DOMPurify.sanitize(renderedContent);
+  // SECURITY: Sanitize the final HTML with strict configuration
+  // This prevents XSS attacks by removing dangerous HTML/JS
+  return DOMPurify.sanitize(renderedContent, {
+    ALLOWED_TAGS: [
+      'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'blockquote', 'code', 'pre', 'ul', 'ol', 'li', 'a', 'img', 'table',
+      'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr'
+    ],
+    ALLOWED_ATTR: [
+      'href', 'src', 'alt', 'title', 'class', 'target', 'rel',
+      'width', 'height', 'align'
+    ],
+    FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed'],
+    FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover'],
+    ALLOW_DATA_ATTR: false,
+    KEEP_CONTENT: true,
+    RETURN_TRUSTED_TYPE: false
+  });
 }
 
 export function extractCodeBlocks(content: string): string[] {

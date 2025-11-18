@@ -1,7 +1,7 @@
-import * as winston from 'winston';
+import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
-import * as fs from 'fs';
-import * as path from 'path';
+import { existsSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
 
 export interface LogMetadata {
   timestamp?: string;

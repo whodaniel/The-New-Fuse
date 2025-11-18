@@ -40,21 +40,42 @@ export class AgentService {
     }
   }
 
-  async findAllAgents(userId?: string, filters?: any): Promise<AgentResponseDto[]> {
+  async findAllAgents(
+    userId?: string,
+    filters?: any,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ data: AgentResponseDto[]; total: number; page: number; limit: number }> {
     try {
+      const skip = (page - 1) * limit;
       const whereClause: Prisma.AgentWhereInput = {
         ...filters,
-        ...(userId && { userId })
+        ...(userId && { userId }),
+        deletedAt: null
       };
 
-      const agents = await this.agentRepository.findMany(whereClause);
-      return agents.map(agent => new AgentResponseDto({
-        ...agent,
-        type: agent.type as AgentType,
-        status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-        lastActive: new Date(),
-      }));
+      const [agents, total] = await Promise.all([
+        this.agentRepository.findMany({
+          ...whereClause,
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' }
+        }),
+        this.agentRepository.count(whereClause)
+      ]);
+
+      return {
+        data: agents.map(agent => new AgentResponseDto({
+          ...agent,
+          type: agent.type as AgentType,
+          status: agent.status as AgentStatus,
+          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+          lastActive: new Date(),
+        })),
+        total,
+        page,
+        limit
+      };
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents: ${error.message}`);
     }
@@ -128,16 +149,26 @@ export class AgentService {
     }
   }
 
-  async findAgentsByType(type: AgentType): Promise<AgentResponseDto[]> {
+  async findAgentsByType(
+    type: AgentType,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
-      const agents = await this.agentRepository.findByType(type);
-      return agents.map(agent => new AgentResponseDto({
-        ...agent,
-        type: agent.type as AgentType,
-        status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-        lastActive: new Date(),
-      }));
+      const skip = (page - 1) * limit;
+      const agents = await this.agentRepository.findByType(type, { skip, take: limit });
+      const total = await this.agentRepository.countByType(type);
+
+      return {
+        data: agents.map(agent => new AgentResponseDto({
+          ...agent,
+          type: agent.type as AgentType,
+          status: agent.status as AgentStatus,
+          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+          lastActive: new Date(),
+        })),
+        total
+      };
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents by type: ${error.message}`);
     }
@@ -158,16 +189,28 @@ export class AgentService {
     }
   }
 
-  async findAgentsByUserId(userId: string): Promise<AgentResponseDto[]> {
+  async findAgentsByUserId(
+    userId: string,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
-      const agents = await this.agentRepository.findByUserId(userId);
-      return agents.map(agent => new AgentResponseDto({
-        ...agent,
-        type: agent.type as AgentType,
-        status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-        lastActive: new Date(),
-      }));
+      const skip = (page - 1) * limit;
+      const [agents, total] = await Promise.all([
+        this.agentRepository.findByUserId(userId, { skip, take: limit }),
+        this.agentRepository.countByUserId(userId)
+      ]);
+
+      return {
+        data: agents.map(agent => new AgentResponseDto({
+          ...agent,
+          type: agent.type as AgentType,
+          status: agent.status as AgentStatus,
+          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+          lastActive: new Date(),
+        })),
+        total
+      };
     } catch (error) {
       throw new BadRequestException(`Failed to fetch user agents: ${error.message}`);
     }
@@ -243,10 +286,17 @@ export class AgentService {
     return this.updateAgentStatus(id, AgentStatus.ERROR);
   }
 
-  async searchAgents(userId: string, query: string): Promise<AgentResponseDto[]> {
+  async searchAgents(
+    userId: string,
+    query: string,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
+      const skip = (page - 1) * limit;
       const whereClause: Prisma.AgentWhereInput = {
         userId,
+        deletedAt: null,
         OR: [
           {
             name: {
@@ -263,14 +313,26 @@ export class AgentService {
         ]
       };
 
-      const agents = await this.agentRepository.findMany(whereClause);
-      return agents.map(agent => new AgentResponseDto({
-        ...agent,
-        type: agent.type as AgentType,
-        status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-        lastActive: new Date(),
-      }));
+      const [agents, total] = await Promise.all([
+        this.agentRepository.findMany({
+          ...whereClause,
+          skip,
+          take: limit,
+          orderBy: { updatedAt: 'desc' }
+        }),
+        this.agentRepository.count(whereClause)
+      ]);
+
+      return {
+        data: agents.map(agent => new AgentResponseDto({
+          ...agent,
+          type: agent.type as AgentType,
+          status: agent.status as AgentStatus,
+          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+          lastActive: new Date(),
+        })),
+        total
+      };
     } catch (error) {
       throw new BadRequestException(`Failed to search agents: ${error.message}`);
     }

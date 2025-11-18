@@ -9,6 +9,13 @@
         "LOG_LEVEL": "info"
       }
     },
+    "resource-registry": {
+      "command": "node",
+      "args": ["packages/resource-registry/dist/mcp/resource-registry-mcp-server.js"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}"
+      }
+    },
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]

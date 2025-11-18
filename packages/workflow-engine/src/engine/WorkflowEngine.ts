@@ -196,8 +196,9 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     triggeredBy: string,
     triggerType: string
   ): Promise<WorkflowExecution> {
-    const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+    // SECURITY FIX: Use cryptographically secure random ID generation
+    const executionId = `exec_${Date.now()}_${this.generateSecureId()}`;
+
     const execution: WorkflowExecution = {
       id: executionId,
       workflowId: workflow.id,
@@ -365,8 +366,9 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     }
 
     // Create node execution
+    // SECURITY FIX: Use cryptographically secure random ID generation
     const nodeExecution: NodeExecution = {
-      id: `node_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `node_${Date.now()}_${this.generateSecureId()}`,
       nodeId: node.id,
       status: NodeExecutionStatus.PENDING,
       startedAt: new Date(),
@@ -928,6 +930,24 @@ export class UnifiedWorkflowEngine extends EventEmitter {
            `Context preservation: ${_context.preserveContext ? 'enabled' : 'disabled'}. ` +
            `Template: ${templateId}. ` +
            `Workflow context: ${JSON.stringify(_context.workflowContext, null, 2)}`;
+  }
+
+  // SECURITY: Generate cryptographically secure random IDs
+  private generateSecureId(): string {
+    // Use crypto module for secure random generation
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      // Modern browsers and Node.js 15+ support randomUUID
+      return crypto.randomUUID().replace(/-/g, '').substring(0, 9);
+    } else if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      // Fallback for older environments with crypto.getRandomValues
+      const array = new Uint8Array(9);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => byte.toString(36)).join('').substring(0, 9);
+    } else {
+      // Node.js fallback using crypto module
+      const { randomBytes } = require('crypto');
+      return randomBytes(9).toString('hex').substring(0, 9);
+    }
   }
 
   /**

@@ -400,25 +400,36 @@ async function executePython(
         continue;
       }
 
+      // SECURITY FIX: Removed eval() - Python simulation should use safe parsing
       // Handle variable assignments
-      if (trimmedLine.includes('=')) {
+      if (trimmedLine.includes('=') && !trimmedLine.includes('==')) {
         const [varName, value] = trimmedLine.split('=').map(s => s.trim());
-        context[varName] = eval(value); // Note: eval is used for simulation only
+        try {
+          // Only allow simple literal assignments (numbers, strings, booleans)
+          context[varName] = JSON.parse(value);
+        } catch {
+          context[varName] = value; // Store as string if not valid JSON
+        }
         continue;
       }
 
       // Handle return statements
       if (trimmedLine.startsWith('return ')) {
         const returnValue = trimmedLine.substring(7).trim();
-        result = eval(returnValue); // Note: eval is used for simulation only
+        try {
+          result = JSON.parse(returnValue);
+        } catch {
+          result = returnValue;
+        }
         break;
       }
 
-      // Handle other expressions
+      // Handle other expressions - use safe evaluation
       try {
-        result = eval(trimmedLine); // Note: eval is used for simulation only
+        result = JSON.parse(trimmedLine);
       } catch (e) {
         // Ignore errors in simulation
+        result = trimmedLine;
       }
     }
 
@@ -466,10 +477,16 @@ async function executeRuby(
         continue;
       }
 
+      // SECURITY FIX: Removed eval() - Ruby simulation should use safe parsing
       // Handle variable assignments
-      if (trimmedLine.includes('=')) {
+      if (trimmedLine.includes('=') && !trimmedLine.includes('==')) {
         const [varName, value] = trimmedLine.split('=').map(s => s.trim());
-        context[varName] = eval(value); // Note: eval is used for simulation only
+        try {
+          // Only allow simple literal assignments (numbers, strings, booleans)
+          context[varName] = JSON.parse(value);
+        } catch {
+          context[varName] = value; // Store as string if not valid JSON
+        }
         continue;
       }
     }
