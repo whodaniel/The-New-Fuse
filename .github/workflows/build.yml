@@ -243,7 +243,7 @@ jobs:
           echo "js_size=$JS_SIZE_MB" >> $GITHUB_OUTPUT
 
       - name: Comment bundle size on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
