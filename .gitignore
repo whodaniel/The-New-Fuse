@@ -62,3 +62,4 @@ lerna-debug.log*
 *.tmp
 *.temp
 .performance-monitoring-files.txt
+secrets-to-remove.txt
