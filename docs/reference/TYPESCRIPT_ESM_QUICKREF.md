@@ -6,7 +6,7 @@ If you encounter TypeScript ESM issues in The New Fuse project, use these comman
 
 ```bash
 # Fix TypeScript ESM issues
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+cd "."
 chmod +x fix-typescript-esm-all.sh
 ./fix-typescript-esm-all.sh
 

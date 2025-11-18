@@ -5,7 +5,7 @@
 
 set -e
 
-PROJECT_ROOT="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+PROJECT_ROOT="."
 cd "$PROJECT_ROOT"
 
 echo "🔍 Analyzing caches to clear..."

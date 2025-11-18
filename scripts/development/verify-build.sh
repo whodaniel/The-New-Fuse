@@ -2,7 +2,7 @@
 # Build script to verify TypeScript fixes
 
 echo "Starting consolidated build..."
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse
+cd .
 
 # Build the api-client package specifically
 echo "Building api-client package..."

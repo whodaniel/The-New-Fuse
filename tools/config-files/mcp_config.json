@@ -100,7 +100,7 @@
   },
   "mcpServers": {
     "the-new-fuse-main": {
-      "command": "/Users/<owner>/.nvm/versions/node/v22.16.0/bin/node",
+      "command": "node",
       "args": ["./src/mcp/server.ts"],
       "env": {
         "MCP_PORT": "3001",

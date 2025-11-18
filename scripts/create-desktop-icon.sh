@@ -5,7 +5,7 @@
 
 DESKTOP_PATH="$HOME/Desktop"
 ICON_NAME="Claude Ping Controller"
-SCRIPT_PATH="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts"
+SCRIPT_PATH="./scripts"
 
 # Create the application bundle structure
 APP_PATH="$DESKTOP_PATH/$ICON_NAME.app"
@@ -77,7 +77,7 @@ if buttonPressed is "Toggle" then
     else
         -- Start ping
         try
-            do shell script "osascript '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/claude-ping-with-send.scpt' > /tmp/claude-ping-send.log 2>&1 &"
+            do shell script "osascript './scripts/claude-ping-with-send.scpt' > /tmp/claude-ping-send.log 2>&1 &"
             display notification "✅ Claude ping started!" with title "Ping Controller" sound name "Glass"
         on error errMsg
             display alert "Failed to start ping: " & errMsg

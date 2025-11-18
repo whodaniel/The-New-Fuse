@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SECURITY_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/security"
+SECURITY_DIR="./packages/security"
 echo "🔧 Fixing issues in the security package..."
 
 # 1. Fix JWT signing in SecurityService.tsx

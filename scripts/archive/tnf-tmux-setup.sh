@@ -3,7 +3,7 @@
 # TNF Relay Tmux Management Script
 # Sets up a complete terminal multiplexer environment for The New Fuse project
 
-PROJECT_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+PROJECT_DIR="."
 SESSION_NAME="tnf-relay"
 
 # Function to start TNF relay session

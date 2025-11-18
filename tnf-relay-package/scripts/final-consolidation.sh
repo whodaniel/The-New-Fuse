@@ -5,21 +5,21 @@ echo "🔍 Starting final consolidation process..."
 
 # Create a timestamp for backups
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/backups/final_consolidation_${TIMESTAMP}"
+BACKUP_DIR="./backups/final_consolidation_${TIMESTAMP}"
 
 # Create backup directory
 echo "📦 Creating backup of current state..."
 mkdir -p "$BACKUP_DIR"
-cp -r "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps" "$BACKUP_DIR/apps"
-cp -r "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages" "$BACKUP_DIR/packages"
-cp -r "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/docs" "$BACKUP_DIR/docs"
-cp -r "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts" "$BACKUP_DIR/scripts"
-cp "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/package.json" "$BACKUP_DIR/package.json"
-cp "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/tsconfig.json" "$BACKUP_DIR/tsconfig.json"
+cp -r "./apps" "$BACKUP_DIR/apps"
+cp -r "./packages" "$BACKUP_DIR/packages"
+cp -r "./docs" "$BACKUP_DIR/docs"
+cp -r "./scripts" "$BACKUP_DIR/scripts"
+cp "./package.json" "$BACKUP_DIR/package.json"
+cp "./tsconfig.json" "$BACKUP_DIR/tsconfig.json"
 echo "✅ Backup created at $BACKUP_DIR"
 
 # Create logs directory
-LOGS_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/logs/final_consolidation_${TIMESTAMP}"
+LOGS_DIR="./logs/final_consolidation_${TIMESTAMP}"
 mkdir -p "$LOGS_DIR"
 
 # Step 1: Analyze component redundancies
@@ -27,8 +27,8 @@ echo "🔍 Step 1: Analyzing component redundancies..."
 
 # Generate a list of duplicate components
 echo "Identifying duplicate components..."
-find "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages" -name "*.tsx" -o -name "*.jsx" | sort > "$LOGS_DIR/all_components.txt"
-find "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps" -name "*.tsx" -o -name "*.jsx" | sort >> "$LOGS_DIR/all_components.txt"
+find "./packages" -name "*.tsx" -o -name "*.jsx" | sort > "$LOGS_DIR/all_components.txt"
+find "./apps" -name "*.tsx" -o -name "*.jsx" | sort >> "$LOGS_DIR/all_components.txt"
 
 # Extract component names and identify duplicates
 cat "$LOGS_DIR/all_components.txt" | xargs basename | sort | uniq -c | sort -nr | grep -v "^\s*1 " > "$LOGS_DIR/duplicate_components.log"
@@ -36,12 +36,12 @@ echo "✅ Duplicate components identified and logged to $LOGS_DIR/duplicate_comp
 
 # Step 2: Analyze import paths
 echo "🔍 Step 2: Analyzing import paths..."
-grep -r "import.*from" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages" > "$LOGS_DIR/import_paths.log"
+grep -r "import.*from" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" "./apps" "./packages" > "$LOGS_DIR/import_paths.log"
 echo "✅ Import paths analyzed and logged to $LOGS_DIR/import_paths.log"
 
 # Step 3: Check for TypeScript errors
 echo "🔍 Step 3: Checking for TypeScript errors..."
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+cd "."
 npx tsc --noEmit > "$LOGS_DIR/typescript_errors.log" 2>&1 || true
 TYPESCRIPT_ERROR_COUNT=$(grep -c "error TS" "$LOGS_DIR/typescript_errors.log" || echo "0")
 echo "Found $TYPESCRIPT_ERROR_COUNT TypeScript errors"
@@ -51,29 +51,29 @@ echo "✅ TypeScript errors logged to $LOGS_DIR/typescript_errors.log"
 echo "🔍 Step 4: Analyzing documentation..."
 
 # Find documentation files
-find "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/docs" -name "*.md" | sort > "$LOGS_DIR/documentation_files.txt"
+find "./docs" -name "*.md" | sort > "$LOGS_DIR/documentation_files.txt"
 
 # Check for outdated references
-grep -r "TODO" --include="*.md" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/docs" > "$LOGS_DIR/documentation_todos.log" || true
-grep -r "FIXME" --include="*.md" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/docs" >> "$LOGS_DIR/documentation_todos.log" || true
+grep -r "TODO" --include="*.md" "./docs" > "$LOGS_DIR/documentation_todos.log" || true
+grep -r "FIXME" --include="*.md" "./docs" >> "$LOGS_DIR/documentation_todos.log" || true
 echo "✅ Documentation analysis completed and logged to $LOGS_DIR/documentation_todos.log"
 
 # Step 5: Run existing consolidation scripts
 echo "🔄 Step 5: Running existing consolidation scripts..."
 
 # Make scripts executable
-chmod +x "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/master-consolidation.sh"
+chmod +x "./scripts/master-consolidation.sh"
 
 # Run master consolidation script
 echo "Running master consolidation script..."
-"/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/master-consolidation.sh" > "$LOGS_DIR/master_consolidation.log" 2>&1
+"./scripts/master-consolidation.sh" > "$LOGS_DIR/master_consolidation.log" 2>&1
 echo "✅ Master consolidation completed"
 
 # Step 6: Generate final consolidation report
 echo "📊 Step 6: Generating final consolidation report..."
 
 # Create report file
-REPORT_FILE="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/docs/FINAL_CONSOLIDATION_REPORT.md"
+REPORT_FILE="./docs/FINAL_CONSOLIDATION_REPORT.md"
 
 cat > "$REPORT_FILE" << EOL
 # Final Consolidation Report
@@ -130,7 +130,7 @@ echo "✅ Final consolidation report generated at $REPORT_FILE"
 echo "📝 Step 7: Updating final consolidation checklist..."
 
 # Create updated checklist file
-CHECKLIST_FILE="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/docs/FINAL_CONSOLIDATION_CHECKLIST_UPDATED.md"
+CHECKLIST_FILE="./docs/FINAL_CONSOLIDATION_CHECKLIST_UPDATED.md"
 
 cat > "$CHECKLIST_FILE" << EOL
 # Final Consolidation Checklist (Updated)
@@ -200,12 +200,12 @@ set -e
 echo "🔄 Restoring from backup..."
 
 # Restore from backup
-cp -r "$BACKUP_DIR/apps" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps"
-cp -r "$BACKUP_DIR/packages" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages"
-cp -r "$BACKUP_DIR/docs" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/docs"
-cp -r "$BACKUP_DIR/scripts" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts"
-cp "$BACKUP_DIR/package.json" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/package.json"
-cp "$BACKUP_DIR/tsconfig.json" "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/tsconfig.json"
+cp -r "$BACKUP_DIR/apps" "./apps"
+cp -r "$BACKUP_DIR/packages" "./packages"
+cp -r "$BACKUP_DIR/docs" "./docs"
+cp -r "$BACKUP_DIR/scripts" "./scripts"
+cp "$BACKUP_DIR/package.json" "./package.json"
+cp "$BACKUP_DIR/tsconfig.json" "./tsconfig.json"
 
 echo "✅ Backup restored successfully!"
 EOL

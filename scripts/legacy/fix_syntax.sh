@@ -3,7 +3,7 @@
 # TypeScript Syntax Fix Script for The New Fuse Project
 # This script fixes common TypeScript syntax issues found in the build errors
 
-PROJECT_PATH="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+PROJECT_PATH="."
 cd "$PROJECT_PATH"
 
 echo "🔧 TypeScript Syntax Fix Script"

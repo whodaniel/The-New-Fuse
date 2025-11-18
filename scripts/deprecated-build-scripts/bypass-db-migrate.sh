@@ -6,7 +6,7 @@
 echo "🔧 Creating a modified turbo.json file to bypass database migration..."
 
 # Path to the turbo.json file
-TURBO_JSON_FILE="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/turbo.json"
+TURBO_JSON_FILE="./turbo.json"
 
 # Create a backup of the original file
 cp "$TURBO_JSON_FILE" "$TURBO_JSON_FILE.backup"

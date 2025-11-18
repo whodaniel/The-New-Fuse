@@ -61,7 +61,7 @@ This script:
 
 1. Navigate to the extension directory:
    ```bash
-   cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension
+   cd ./src/vscode-extension
    ```
 
 2. Run the test script:

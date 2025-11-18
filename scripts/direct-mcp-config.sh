@@ -47,7 +47,7 @@ cat > "$CLAUDE_CONFIG" <<EOF
       ]
     },
     "applescript_execute": {
-      "command": "/Users/<owner>/.nvm/versions/node/v18.20.5/bin/npx",
+      "command": "npx",
       "args": [
         "@peakmojo/applescript-mcp"
       ]
@@ -61,7 +61,7 @@ cat > "$CLAUDE_CONFIG" <<EOF
     "mcp-config-manager": {
       "command": "node",
       "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/mcp-config-manager-server.js"
+        "./scripts/mcp-config-manager-server.js"
       ]
     },
     "filesystem": {

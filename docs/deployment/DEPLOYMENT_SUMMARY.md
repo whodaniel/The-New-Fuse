@@ -50,7 +50,7 @@ Your monorepo is now fully configured for Docker-based deployment to Railway. He
 Perfect if you want to get something running NOW:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # 1. Deploy to Railway
 ./deploy-to-railway.sh
@@ -67,7 +67,7 @@ cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
 Best practice - verify locally before deploying:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # 1. Test Docker builds
 ./test-docker-builds.sh
@@ -96,7 +96,7 @@ Start with just the essentials:
 - Redis
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # Deploy API
 cd apps/api
@@ -318,7 +318,7 @@ Everything is set up and ready to deploy. Choose your path above and get started
 
 **Recommended first step:**
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 ./test-docker-builds.sh
 ```
 

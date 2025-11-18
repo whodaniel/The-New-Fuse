@@ -6,7 +6,7 @@
 
 1. Open your terminal and navigate to the project root directory:
    ```bash
-   cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse
+   cd .
    ```
 
 2. Run the start script to launch VS Code with the extension:

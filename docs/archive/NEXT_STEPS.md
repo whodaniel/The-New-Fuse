@@ -42,7 +42,7 @@ This will open your API in the browser. Copy the URL (it will look like: `https:
 
 Run this command with your API URL:
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 ./configure-env-vars.sh https://your-api-url.railway.app
 ```
 

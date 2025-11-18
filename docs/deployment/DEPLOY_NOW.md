@@ -6,7 +6,7 @@
 
 ### Step 1: Navigate to Your Project
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 ```
 
 ### Step 2: Create Railway Project
@@ -184,7 +184,7 @@ Your current setup will likely use:
 ## Next: Run This Command
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 railway init
 ```
 

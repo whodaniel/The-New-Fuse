@@ -44,7 +44,7 @@ For each service (api, backend, api-gateway, frontend):
 Run from the project root:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # Deploy API
 cd apps/api

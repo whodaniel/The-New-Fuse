@@ -6,8 +6,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const routerPath = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend/src/ComprehensiveRouter.tsx';
-const pagesDir = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend/src/pages';
+const routerPath = './apps/frontend/src/ComprehensiveRouter.tsx';
+const pagesDir = './apps/frontend/src/pages';
 
 console.log('🔍 Starting comprehensive route audit...\n');
 

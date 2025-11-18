@@ -88,7 +88,7 @@ for service_config in "${SERVICES[@]}"; do
     fi
 
     # Return to root
-    cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+    cd "."
 
     echo ""
     sleep 2

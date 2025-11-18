@@ -83,9 +83,9 @@ function fixFile(filePath) {
 
 // Files we want to fix
 const filesToFix = [
-  '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/core/database/repositories/user.repository.tsx',
-  '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/core/di/types.tsx',
-  '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend/src/providers/ThemeProvider.tsx'
+  './src/core/database/repositories/user.repository.tsx',
+  './src/core/di/types.tsx',
+  './apps/frontend/src/providers/ThemeProvider.tsx'
 ];
 
 console.log('🔧 Starting syntax pattern fixes...');

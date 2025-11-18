@@ -32,13 +32,13 @@
 
 ### Chrome Extension Package
 ```bash
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension"
+cd "./chrome-extension"
 zip -r ../the-new-fuse-chrome-extension-$(date +%Y%m%d).zip dist/
 ```
 
 ### Production Build
 ```bash
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+cd "."
 yarn build:all
 ```
 

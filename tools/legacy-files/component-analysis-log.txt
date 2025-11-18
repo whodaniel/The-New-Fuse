@@ -1,6 +1,6 @@
 Component Analysis Log - 2025-04-07T07:36:47.356Z
 
-Project root: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse
+Project root: .
 
 
 Scanning directory: apps/frontend/src

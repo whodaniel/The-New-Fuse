@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Starting The New Fuse Frontend Development Server..."
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
+cd "./apps/frontend"
 
 # Check if yarn is available
 if command -v yarn &> /dev/null; then
