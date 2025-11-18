@@ -2,7 +2,7 @@
  * MCPServer Unit Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPServer } from './MCPServer';
 import { MCPServerConfig } from '../types/server';
 import { MCPRequest } from '../interfaces/IMCPMessage';
@@ -80,7 +80,7 @@ describe('MCPServer', () => {
         name: 'Test Resource',
         description: 'A test resource',
         handler: {
-          read: vi.fn().mockResolvedValue({ content: 'test content' })
+          read: jest.fn().mockResolvedValue({ content: 'test content' })
         }
       };
 
@@ -95,12 +95,12 @@ describe('MCPServer', () => {
       const resource1 = {
         uri: 'test://resource1',
         name: 'Test Resource 1',
-        handler: { read: vi.fn() }
+        handler: { read: jest.fn() }
       };
       const resource2 = {
         uri: 'test://resource1',
         name: 'Test Resource 2',
-        handler: { read: vi.fn() }
+        handler: { read: jest.fn() }
       };
 
       server.registerResource(resource1);
@@ -113,7 +113,7 @@ describe('MCPServer', () => {
       const invalidResource = {
         uri: '',
         name: 'Test Resource',
-        handler: { read: vi.fn() }
+        handler: { read: jest.fn() }
       };
 
       expect(() => server.registerResource(invalidResource))
@@ -132,7 +132,7 @@ describe('MCPServer', () => {
         description: 'A test tool',
         inputSchema: { type: 'object' },
         handler: {
-          execute: vi.fn().mockResolvedValue({ success: true })
+          execute: jest.fn().mockResolvedValue({ success: true })
         }
       };
 
@@ -148,13 +148,13 @@ describe('MCPServer', () => {
         name: 'test-tool',
         description: 'Test Tool 1',
         inputSchema: { type: 'object' },
-        handler: { execute: vi.fn() }
+        handler: { execute: jest.fn() }
       };
       const tool2 = {
         name: 'test-tool',
         description: 'Test Tool 2',
         inputSchema: { type: 'object' },
-        handler: { execute: vi.fn() }
+        handler: { execute: jest.fn() }
       };
 
       server.registerTool(tool1);
@@ -234,7 +234,7 @@ describe('MCPServer', () => {
       const resource = {
         uri: 'test://resource1',
         name: 'Test Resource',
-        handler: { read: vi.fn() }
+        handler: { read: jest.fn() }
       };
       server.registerResource(resource);
 
@@ -257,7 +257,7 @@ describe('MCPServer', () => {
         name: 'test-tool',
         description: 'A test tool',
         inputSchema: { type: 'object' },
-        handler: { execute: vi.fn() }
+        handler: { execute: jest.fn() }
       };
       server.registerTool(tool);
 
@@ -290,7 +290,7 @@ describe('MCPServer', () => {
 
     it('should handle resource read request', async () => {
       const mockHandler = {
-        read: vi.fn().mockResolvedValue({ content: 'test content', mimeType: 'text/plain' })
+        read: jest.fn().mockResolvedValue({ content: 'test content', mimeType: 'text/plain' })
       };
       
       const resource = {
@@ -315,7 +315,7 @@ describe('MCPServer', () => {
 
     it('should handle tool call request', async () => {
       const mockHandler = {
-        execute: vi.fn().mockResolvedValue({ success: true, result: 'tool executed' })
+        execute: jest.fn().mockResolvedValue({ success: true, result: 'tool executed' })
       };
       
       const tool = {

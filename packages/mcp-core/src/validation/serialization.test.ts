@@ -2,7 +2,7 @@
  * Tests for Message Serialization utilities
  */
 
-import { describe, it, expect } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MessageSerializer, SerializationUtils } from './serialization';
 import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
 import { MCPErrorCode } from '../types/error';

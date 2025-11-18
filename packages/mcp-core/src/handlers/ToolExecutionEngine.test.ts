@@ -2,7 +2,7 @@
  * Tests for ToolExecutionEngine
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { ToolExecutionEngine, ToolExecutionOptions } from './ToolExecutionEngine';
 import { ToolHandler, ToolResult, JSONSchema } from '../interfaces/IMCPTool';
 

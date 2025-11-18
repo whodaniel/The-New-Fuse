@@ -10,8 +10,9 @@
     "build:memory-optimized": "BUILD_ENABLE_MONITORING=true tsc --incremental",
     "build:staged": "tsc --incremental --build",
     "dev": "tsc --watch",
-    "test": "echo \"No tests for this package\"",
-    "test:coverage": "vitest --coverage",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --passWithNoTests",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
@@ -25,8 +26,10 @@
     "@tnf/core-error-handling": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
   },
   "exports": {
     ".": {

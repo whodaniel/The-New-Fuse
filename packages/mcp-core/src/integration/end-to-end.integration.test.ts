@@ -6,7 +6,7 @@
  * and real-world usage scenarios.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPServer } from '../server/MCPServer';
 import { MCPSystemFactory } from '../factory/MCPSystemFactory';
 import { MCPRequest, MCPResponse, MCPNotification } from '../types/message';

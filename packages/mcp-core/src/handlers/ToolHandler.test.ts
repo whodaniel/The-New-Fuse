@@ -2,7 +2,7 @@
  * Tests for ToolHandler implementations
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { ToolHandler, FunctionToolHandler, ScriptToolHandler, ApiCallToolHandler } from './ToolHandler';
 import { ToolResult, JSONSchema } from '../interfaces/IMCPTool';
 import { MCPErrorCode } from '../types/error';

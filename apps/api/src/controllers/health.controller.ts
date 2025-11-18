@@ -1,40 +1,42 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/User';
-import { SecureAuthGuard, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
 
 /**
  * Health Controller
- * 
+ *
  * Provides system health monitoring and status checking capabilities.
  * This controller offers lightweight health checks that are optimized
  * for high-frequency monitoring by load balancers, container orchestrators,
  * and monitoring systems.
- * 
+ *
  * The health endpoint is designed for:
  * - Load balancer health checks
  * - Container orchestration health monitoring
  * - Service mesh health verification
  * - Basic system status reporting
  * - Quick connectivity validation
- * 
+ *
  * Health check features:
  * - Database connectivity validation
  * - Fast response times for monitoring systems
  * - Minimal resource usage
  * - Comprehensive error reporting
  * - Time-based status tracking
- * 
+ *
+ * @security PUBLIC - No authentication required
+ * @rateLimiting Minimal rate limiting to allow frequent health checks
+ *
  * @optimization This endpoint is optimized for minimal latency and
  * resource usage to support frequent health checks without impacting
  * system performance.
- * 
+ *
  * @example
  * // Basic health check
  * GET /health
- * 
+ *
  * @example
  * // Kubernetes liveness probe
  * httpGet:
@@ -46,8 +48,6 @@ import { SecureAuthGuard, SetRateLimitTier, RateLimitTier } from '../guards/secu
  */
 @ApiTags('health')
 @Controller('health')
-@UseGuards(SecureAuthGuard)
-@SetRateLimitTier(RateLimitTier.HEALTH)
 export class HealthController {
   /**
    * Constructor for HealthController
@@ -66,29 +66,29 @@ export class HealthController {
   @ApiOperation({ summary: 'Health check endpoint' })
   /**
    * Check system health status
-   * 
+   *
    * Performs a comprehensive but lightweight health check including
    * database connectivity validation. This endpoint is designed to be
    * called frequently by monitoring systems and should respond quickly
    * even under high load.
-   * 
+   *
    * Health checks performed:
    * - Database connectivity test (SELECT 1 query)
    * - Service availability validation
    * - Error condition reporting
-   * 
+   *
    * @returns Promise containing health status information
    * @returns.status - Overall health status ('ok' or 'error')
    * @returns.database - Database connection status ('connected' or 'disconnected')
    * @returns.timestamp - Health check execution timestamp
    * @returns.error - Error message if health check failed
-   * 
+   *
    * @throws No exceptions thrown - all errors are reported in response
-   * 
+   *
    * @api
    * GET /health
-   * @requiresAuth - Bearer token in Authorization header
-   * @rateLimit - High frequency allowed (1000 requests per hour)
+   * @security PUBLIC - No authentication required
+   * @rateLimit - High frequency allowed (unlimited for monitoring)
    * 
    * @monitoring This endpoint is designed for high-frequency monitoring.
    * Response time should be under 100ms for optimal monitoring performance.

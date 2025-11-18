@@ -2,7 +2,7 @@
  * Performance Validator Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { PerformanceValidator } from './PerformanceValidator';
 import { LoadTestScenario } from './LoadTestRunner';
 

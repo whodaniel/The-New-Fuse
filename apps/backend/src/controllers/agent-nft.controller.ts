@@ -9,17 +9,30 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { 
-  AgentNftService, 
-  MintAgentNftDto, 
+import {
+  AgentNftService,
+  MintAgentNftDto,
   FractionalizeAgentDto,
   CreateRevenueStreamDto,
-  DistributeRevenueDto 
+  DistributeRevenueDto
 } from '../services/agent-nft.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+/**
+ * Agent NFT Controller
+ *
+ * Manages NFT operations for agents including minting, fractionalization,
+ * revenue streams, and marketplace interactions. All endpoints require
+ * JWT authentication to ensure only authorized users can perform NFT operations.
+ *
+ * @security JWT - All endpoints require authentication
+ * @see JwtAuthGuard
+ */
 @ApiTags('agent-nft')
 @Controller('agents')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class AgentNftController {
   constructor(private readonly agentNftService: AgentNftService) {}
 

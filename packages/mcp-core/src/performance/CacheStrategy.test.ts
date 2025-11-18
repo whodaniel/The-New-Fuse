@@ -2,7 +2,7 @@
  * Cache Strategy Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { LRUCache, MultiLevelCache, CacheFactory } from './CacheStrategy';
 
 describe('CacheStrategy', () => {

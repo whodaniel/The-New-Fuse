@@ -2,7 +2,7 @@
  * MCPSystemFactory Unit Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPSystemFactory, MCPSystemConfig } from './MCPSystemFactory';
 import { LogLevel } from '../types/common';
 

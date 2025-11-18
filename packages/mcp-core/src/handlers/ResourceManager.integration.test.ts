@@ -2,7 +2,7 @@
  * Integration tests for ResourceManager - focusing on resource access and security
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { ResourceManager, AccessContext } from './ResourceManager';
 import { DatabaseResourceHandler } from './ResourceHandler';
 import { MCPResource, ResourceHandler, ResourceContent } from '../interfaces/IMCPResource';

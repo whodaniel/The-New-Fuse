@@ -26,8 +26,23 @@ import { ResourceAccessControlService, AccessContext } from '../services/resourc
 import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto';
 import { Resource, SearchResult, ResourceAction } from '../types';
 
+// Import authentication guards - use service or user auth to support both
+// JWT tokens (users) and API keys (services/agents)
+import { ServiceOrUserAuthGuard } from '@tnf/api/modules/auth/guards/service-or-user-auth.guard';
+
+/**
+ * Resource Registry Controller
+ *
+ * Manages resource CRUD operations, versioning, and access control.
+ * All endpoints require authentication via JWT token or API key.
+ *
+ * @security ServiceOrUserAuth - Supports both JWT (users) and API key (services)
+ * @see ServiceOrUserAuthGuard
+ */
 @ApiTags('Resources')
 @Controller('api/resources')
+@UseGuards(ServiceOrUserAuthGuard)
+@ApiBearerAuth()
 export class ResourceRegistryController {
   private readonly logger = new Logger(ResourceRegistryController.name);
 
@@ -36,10 +51,21 @@ export class ResourceRegistryController {
     private readonly accessControl: ResourceAccessControlService,
   ) {}
 
+  /**
+   * Create a new resource
+   *
+   * Creates a new resource in the registry. Requires authentication.
+   * Access control is enforced based on user/agent permissions.
+   *
+   * @requires Authentication
+   * @security ServiceOrUserAuth
+   */
   @Post()
   @ApiOperation({ summary: 'Create a new resource' })
   @ApiResponse({ status: 201, description: 'Resource created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Authentication required' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createDto: CreateResourceDto,
@@ -61,9 +87,19 @@ export class ResourceRegistryController {
     return resource;
   }
 
+  /**
+   * Search and list resources
+   *
+   * Retrieves resources based on search criteria. Results are filtered
+   * based on user/agent access permissions.
+   *
+   * @requires Authentication
+   * @security ServiceOrUserAuth
+   */
   @Get()
   @ApiOperation({ summary: 'Search and list resources' })
   @ApiResponse({ status: 200, description: 'Resources retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Authentication required' })
   async search(
     @Query() searchDto: SearchResourceDto,
     @Req() request?: any,

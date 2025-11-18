@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CICDPipeline } from './CICDPipeline';
 import { PipelineExecutor } from './PipelineExecutor';
 import { PipelineValidator } from './PipelineValidator';
@@ -90,8 +89,8 @@ describe('CICDPipeline', () => {
       };
 
       // Mock storage to return pipeline config
-      vi.spyOn(mockStorage, 'getAllPipelineConfigs').mockResolvedValue([mockPipelineConfig]);
-      vi.spyOn(mockStorage, 'storeBuildResult').mockResolvedValue();
+      jest.spyOn(mockStorage, 'getAllPipelineConfigs').mockResolvedValue([mockPipelineConfig]);
+      jest.spyOn(mockStorage, 'storeBuildResult').mockResolvedValue();
 
       const result = await pipeline.triggerBuild(trigger);
 
@@ -116,8 +115,8 @@ describe('CICDPipeline', () => {
       };
 
       // Mock storage to return no pipeline configs
-      vi.spyOn(mockStorage, 'getAllPipelineConfigs').mockResolvedValue([]);
-      vi.spyOn(mockStorage, 'storeBuildResult').mockResolvedValue();
+      jest.spyOn(mockStorage, 'getAllPipelineConfigs').mockResolvedValue([]);
+      jest.spyOn(mockStorage, 'storeBuildResult').mockResolvedValue();
 
       const result = await pipeline.triggerBuild(trigger);
 
@@ -132,13 +131,13 @@ describe('CICDPipeline', () => {
       const pipelineDefinition = createTestPipelineDefinition();
 
       // Mock validator to return valid
-      vi.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
+      jest.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
         valid: true,
         errors: []
       });
 
       // Mock storage
-      vi.spyOn(mockStorage, 'storePipelineResult').mockResolvedValue();
+      jest.spyOn(mockStorage, 'storePipelineResult').mockResolvedValue();
 
       const result = await pipeline.executePipeline(pipelineDefinition);
 
@@ -152,7 +151,7 @@ describe('CICDPipeline', () => {
       const pipelineDefinition = createTestPipelineDefinition();
 
       // Mock validator to return invalid
-      vi.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
+      jest.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
         valid: false,
         errors: ['Invalid pipeline configuration']
       });
@@ -226,13 +225,13 @@ describe('CICDPipeline', () => {
       const pipelineDefinition = createTestPipelineDefinition();
 
       // Mock validator
-      vi.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
+      jest.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
         valid: true,
         errors: []
       });
 
       // Mock storage
-      vi.spyOn(mockStorage, 'storePipelineResult').mockResolvedValue();
+      jest.spyOn(mockStorage, 'storePipelineResult').mockResolvedValue();
 
       // Start pipeline execution (don't await to keep it running)
       const executionPromise = pipeline.executePipeline(pipelineDefinition);

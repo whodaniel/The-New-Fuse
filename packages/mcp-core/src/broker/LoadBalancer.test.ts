@@ -5,7 +5,7 @@
  * all load balancing strategies, service management, and statistics.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { LoadBalancer } from './LoadBalancer';
 import { MCPServiceInfo, LoadBalancingConfig } from '../types';
 import { LoadBalancingStrategy, ServiceStatus } from '../types/common';
@@ -396,7 +396,7 @@ describe('LoadBalancer', () => {
       const sessionId = 'test-session';
       
       // Force selection of service-1
-      vi.spyOn(Math, 'random').mockReturnValue(0); // This will select the first service
+      jest.spyOn(Math, 'random').mockReturnValue(0); // This will select the first service
       const first = loadBalancer.selectService(sessionId);
       
       // Remove the service
@@ -407,7 +407,7 @@ describe('LoadBalancer', () => {
       expect(second).toBeDefined();
       expect(second!.id).not.toBe(first!.id);
       
-      vi.restoreAllMocks();
+      jest.restoreAllMocks();
     });
   });
 

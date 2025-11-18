@@ -6,7 +6,7 @@
  * complex routing scenarios.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MessageRouter } from './MessageRouter';
 import { LoadBalancer } from './LoadBalancer';
 import { EventSubscriptionManager, PatternType } from './EventSubscriptionManager';
@@ -89,7 +89,7 @@ describe('MessageRouter Integration Tests', () => {
     await messageRouter.start();
 
     // Mock the actual message sending methods for testing
-    messageRouter['sendRequestToService'] = vi.fn().mockImplementation(async (request, serviceId, timeout) => {
+    messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async (request, serviceId, timeout) => {
       return {
         jsonrpc: '2.0',
         id: request.id,
@@ -102,7 +102,7 @@ describe('MessageRouter Integration Tests', () => {
       };
     });
 
-    messageRouter['sendNotificationToService'] = vi.fn().mockImplementation(async (notification, serviceId) => {
+    messageRouter['sendNotificationToService'] = jest.fn().mockImplementation(async (notification, serviceId) => {
       // Simulate successful notification delivery
       return Promise.resolve();
     });
@@ -266,7 +266,7 @@ describe('MessageRouter Integration Tests', () => {
     it('should handle partial failures in broadcast gracefully', async () => {
       // Mock one service to fail
       const originalSendNotification = messageRouter['sendNotificationToService'];
-      messageRouter['sendNotificationToService'] = vi.fn().mockImplementation(async (notification, serviceId) => {
+      messageRouter['sendNotificationToService'] = jest.fn().mockImplementation(async (notification, serviceId) => {
         if (serviceId === 'auth-service') {
           throw new Error('Service temporarily unavailable');
         }
@@ -326,7 +326,7 @@ describe('MessageRouter Integration Tests', () => {
     it('should handle load balancing with service failures and recovery', async () => {
       // Mock service failures
       let failureCount = 0;
-      messageRouter['sendRequestToService'] = vi.fn().mockImplementation(async (request, serviceId, timeout) => {
+      messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async (request, serviceId, timeout) => {
         if (serviceId === 'auth-service' && failureCount < 2) {
           failureCount++;
           throw new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service temporarily unavailable');
@@ -564,7 +564,7 @@ describe('MessageRouter Integration Tests', () => {
 
     it('should maintain service isolation during partial failures', async () => {
       // Mock one service to always fail
-      messageRouter['sendRequestToService'] = vi.fn().mockImplementation(async (request, serviceId, timeout) => {
+      messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async (request, serviceId, timeout) => {
         if (serviceId === 'auth-service') {
           throw new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service permanently down');
         }

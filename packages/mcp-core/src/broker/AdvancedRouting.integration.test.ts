@@ -5,7 +5,7 @@
  * event subscription, pattern matching, selective routing, and performance monitoring.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPBroker } from './MCPBroker';
 import { MCPNotification } from '../interfaces/IMCPMessage';
 import { MCPServiceInfo, BrokerConfig } from '../types';
@@ -18,7 +18,7 @@ describe('Advanced Routing Integration', () => {
   let config: Partial<BrokerConfig>;
 
   beforeEach(async () => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
 
     config = {
       name: 'test-advanced-routing-broker',
@@ -226,7 +226,7 @@ describe('Advanced Routing Integration', () => {
 
       // Mock the message router's sendNotificationToService method
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -244,7 +244,7 @@ describe('Advanced Routing Integration', () => {
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -261,7 +261,7 @@ describe('Advanced Routing Integration', () => {
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -278,7 +278,7 @@ describe('Advanced Routing Integration', () => {
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -295,8 +295,8 @@ describe('Advanced Routing Integration', () => {
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await broker.routeNotification(notification);
 
@@ -322,7 +322,7 @@ describe('Advanced Routing Integration', () => {
       );
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       // Matching notification
       const matchingNotification: MCPNotification = {
@@ -398,7 +398,7 @@ describe('Advanced Routing Integration', () => {
       );
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       const complexNotification: MCPNotification = {
         jsonrpc: '2.0',
@@ -465,7 +465,7 @@ describe('Advanced Routing Integration', () => {
       await broker.subscribeToEvents('notification-service', 'system.*', PatternType.WILDCARD);
 
       const mockRouter = broker['messageRouter'];
-      vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       // Send various notifications to generate statistics
       const notifications = [
@@ -492,7 +492,7 @@ describe('Advanced Routing Integration', () => {
       await broker.subscribeToEvents('analytics-service', '*', PatternType.WILDCARD);
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
 
       // Send many notifications
       const startTime = Date.now();
@@ -546,10 +546,10 @@ describe('Advanced Routing Integration', () => {
       await broker.subscribeToEvents('auth-service', 'user.login');
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = vi.spyOn(mockRouter as any, 'sendNotificationToService')
+      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService')
         .mockRejectedValue(new Error('Service unavailable'));
 
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       const notification: MCPNotification = {
         jsonrpc: '2.0',

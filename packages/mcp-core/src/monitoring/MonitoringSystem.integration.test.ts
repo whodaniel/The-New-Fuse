@@ -2,7 +2,7 @@
  * Monitoring System Integration Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MonitoringSystem } from './MonitoringSystem';
 import { MonitoringConfig, AlertSeverity } from '../types/monitoring';
 import { Logger } from '../utils/Logger';
