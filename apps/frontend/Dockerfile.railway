@@ -1,4 +1,4 @@
-# CACHE_BUSTER=5
+# CACHE_BUSTER=6
 
 # Railway Dockerfile for The New Fuse Frontend
 # Built from repository root
@@ -34,7 +34,7 @@ COPY . .
 
 # Re-link workspace packages after copying source files
 # This ensures TypeScript project references work correctly with tsc -b
-RUN pnpm install --offline --frozen-lockfile || true
+RUN pnpm install --prefer-offline --frozen-lockfile --ignore-scripts
 
 # Build all dependencies of frontend first, then build frontend
 ENV NODE_ENV=production
