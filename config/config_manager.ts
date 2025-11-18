@@ -1,10 +1,10 @@
 /**
  * Configuration manager for the AI Communication System.
  */
-import * as path from 'path';
-import * as fs from 'fs';
-import * as dotenv from 'dotenv';
-import * as winston from 'winston';
+import { join, resolve } from 'path';
+import { readFileSync, existsSync } from 'fs';
+import { config as dotenvConfig } from 'dotenv';
+import { createLogger, format, transports } from 'winston';
 import { getConfig } from './env_config.js';
 
 export class ConfigurationManager {

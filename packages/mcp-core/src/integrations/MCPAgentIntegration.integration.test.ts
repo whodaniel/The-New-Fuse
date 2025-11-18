@@ -5,29 +5,29 @@
  * including message routing, capability discovery, and collaboration tracking.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPAgentIntegration } from './MCPAgentIntegration';
 import { AgentStatus } from '../interfaces/IMCPAgentIntegration';
 import type { Agent, IMCPBroker, IMCPClient } from '../interfaces';
 
 // Mock implementations for integration testing
 const mockBroker: IMCPBroker = {
-  registerService: vi.fn(),
-  unregisterService: vi.fn(),
-  discoverServices: vi.fn(),
-  routeRequest: vi.fn(),
-  getServiceHealth: vi.fn()
+  registerService: jest.fn(),
+  unregisterService: jest.fn(),
+  discoverServices: jest.fn(),
+  routeRequest: jest.fn(),
+  getServiceHealth: jest.fn()
 };
 
 const mockClient: IMCPClient = {
-  connect: vi.fn(),
-  disconnect: vi.fn(),
-  sendRequest: vi.fn(),
-  subscribeToNotifications: vi.fn(),
-  listResources: vi.fn(),
-  readResource: vi.fn(),
-  callTool: vi.fn(),
-  getServerCapabilities: vi.fn()
+  connect: jest.fn(),
+  disconnect: jest.fn(),
+  sendRequest: jest.fn(),
+  subscribeToNotifications: jest.fn(),
+  listResources: jest.fn(),
+  readResource: jest.fn(),
+  callTool: jest.fn(),
+  getServerCapabilities: jest.fn()
 };
 
 describe('MCPAgentIntegration Integration Tests', () => {
@@ -37,7 +37,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
 
   beforeEach(async () => {
     // Reset all mocks
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     
     // Setup successful mock responses
     (mockBroker.registerService as Mock).mockResolvedValue(undefined);
@@ -90,7 +90,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
 
   afterEach(async () => {
     // Clean up - no need to unregister with mocked broker
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('Agent Registration and Discovery', () => {

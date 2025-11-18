@@ -2,7 +2,7 @@
  * Tests for MCP Protocol Validator
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPValidator, mcpValidator } from './validator';
 import { MCPErrorCode } from '../types/error';
 

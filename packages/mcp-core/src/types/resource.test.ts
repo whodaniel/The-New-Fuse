@@ -2,7 +2,7 @@
  * Tests for MCP Resource types and validation
  */
 
-import { describe, it, expect } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { 
   ResourceType, 
   ResourceAccessMode, 

@@ -67,6 +67,45 @@ Scopes:
 - `performance` - Performance optimizations
 - `code-quality` - Code quality enhancements
 
+### Claude Skills (Anthropic)
+
+#### `/skill-load` - Load Claude Skills
+Load skills from Anthropic's official skills repository.
+```
+/skill-load all
+/skill-load pdf xlsx mcp-builder
+/skill-load category:document
+```
+
+#### `/skill-search` - Search Available Skills
+Search and discover Claude skills by name, category, or capability.
+```
+/skill-search pdf
+/skill-search category:document-processing
+/skill-search all
+```
+
+#### `/skill-stats` - View Skill Statistics
+Display loaded skills and usage statistics.
+```
+/skill-stats
+/skill-stats detailed
+```
+
+#### Specific Skills
+
+- `/skill-pdf` - PDF manipulation (extract, merge, fill forms)
+- `/skill-xlsx` - Excel spreadsheet creation and analysis
+- `/skill-mcp-builder` - Create high-quality MCP servers
+- `/skill-webapp-testing` - Automated web testing with Playwright
+
+**Available Skill Categories**:
+- Creative & Design (algorithmic-art, canvas-design, theme-factory)
+- Document Processing (pdf, xlsx, pptx, docx)
+- Development & Technical (mcp-builder, webapp-testing)
+- Enterprise & Communication (internal-comms, brand-guidelines)
+- Meta Skills (skill-creator, template-skill)
+
 ## Integration with MCP
 
 These slash commands integrate with The New Fuse MCP server running on port 3100. The MCP server exposes 16 tools across 6 categories:

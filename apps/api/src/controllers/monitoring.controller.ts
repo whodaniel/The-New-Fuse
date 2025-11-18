@@ -1,11 +1,11 @@
 /**
  * Monitoring Controller
- * 
+ *
  * Provides comprehensive system monitoring and observability endpoints for
  * tracking application performance, resource usage, and operational metrics.
  * This controller offers real-time insights into system health and performance
  * to support monitoring, alerting, and capacity planning.
- * 
+ *
  * The controller provides:
  * - Real-time performance metrics collection
  * - Resource usage monitoring (memory, CPU, disk)
@@ -13,36 +13,44 @@
  * - Health check aggregation
  * - Performance trend analysis
  * - Alert threshold monitoring
- * 
+ *
  * All endpoints are optimized for:
  * - High-frequency monitoring (polling every 5-60 seconds)
  * - Low-latency responses for dashboard updates
  * - Efficient data aggregation
  * - Real-time alerting integration
- * 
+ *
+ * @security ADMIN - All endpoints require admin authentication
+ * @rateLimiting Standard rate limiting applied
+ *
  * @example
  * // Get real-time performance metrics
  * GET /monitoring/metrics
- * 
+ *
  * @example
  * // Check memory usage and garbage collection
  * GET /monitoring/memory
- * 
+ *
  * @example
  * // Get system health overview
  * GET /monitoring/health
- * 
+ *
  * @example
  * // Monitor application-specific metrics
  * GET /monitoring/app-metrics
  */
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { SecureAuthGuard, AdminOnly, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
 import * as os from 'os';
 import * as process from 'process';
 
 @ApiTags('monitoring')
 @Controller('monitoring')
+@UseGuards(SecureAuthGuard)
+@AdminOnly()
+@SetRateLimitTier(RateLimitTier.ADMIN)
+@ApiBearerAuth()
 export class MonitoringController {
 
   /**

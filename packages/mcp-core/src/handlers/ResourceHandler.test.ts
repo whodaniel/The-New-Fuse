@@ -2,7 +2,7 @@
  * Tests for ResourceHandler implementations
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { ResourceHandler, FileResourceHandler, DatabaseResourceHandler } from './ResourceHandler';
 import { MCPErrorCode } from '../types/error';
 import { ResourceContent, MCPResource } from '../interfaces/IMCPResource';

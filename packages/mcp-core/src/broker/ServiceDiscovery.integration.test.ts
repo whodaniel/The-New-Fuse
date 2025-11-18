@@ -5,7 +5,7 @@
  * capability matching, and load balancing selection algorithms.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPBroker } from './MCPBroker';
 import { MCPServiceInfo, BrokerConfig } from '../types';
 import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
@@ -17,7 +17,7 @@ describe('Service Discovery Integration', () => {
   let config: Partial<BrokerConfig>;
 
   beforeEach(async () => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
 
     config = {
       name: 'test-discovery-broker',

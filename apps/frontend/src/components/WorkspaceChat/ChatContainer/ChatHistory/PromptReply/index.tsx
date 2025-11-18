@@ -76,6 +76,8 @@ const PromptReply = ({
       <div className="py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
         <div className="flex gap-x-5">
           <WorkspaceProfileImage workspace={workspace} />
+          {/* SECURITY: dangerouslySetInnerHTML is safe here because renderMarkdown()
+              uses DOMPurify to sanitize all HTML and prevent XSS attacks */}
           <span
             className={`overflow-x-scroll break-words no-scroll`}
             dangerouslySetInnerHTML={{ __html: renderMarkdown(reply) }}

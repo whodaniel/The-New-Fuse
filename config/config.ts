@@ -1,9 +1,9 @@
-import * as dotenv from 'dotenv';
+import { config as dotenvConfig } from 'dotenv';
 import { timedelta } from './timedelta.js'; // Assuming you'll create a timedelta.ts
 import { lru_cache } from './lru_cache.js'; // Assuming you'll create a lru_cache.ts
-import * as crypto from 'crypto';
+import { randomBytes } from 'crypto';
 
-dotenv.config();
+dotenvConfig();
 
 class Config {
     // Flask

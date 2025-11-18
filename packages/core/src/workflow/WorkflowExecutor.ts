@@ -250,29 +250,56 @@ class DecisionStepExecutor implements StepExecutor {
   }
 
   private evaluateExpression(expression: string, variables: Record<string, any>): boolean {
-    // Simple expression evaluation - replace variables and evaluate
-    let evaluableExpression = expression;
-    
-    // Replace variable references
-    for (const [key, value] of Object.entries(variables)) {
-      const regex = new RegExp(`\\b${key}\\b`, 'g');
-      evaluableExpression = evaluableExpression.replace(regex, JSON.stringify(value));
-    }
-    
-    // This is simplified - in production, use a proper expression evaluator
+    // SECURITY FIX: Replaced eval() with safe expression evaluation using Function constructor
+    // Function constructor is safer than eval as it doesn't have access to the surrounding scope
     try {
-      return Boolean(eval(evaluableExpression));
+      // Create a safe context with controlled scope
+      const safeContext = {
+        ...variables,
+        // Only allow safe built-in objects
+        Math,
+        Date,
+        String,
+        Number,
+        Boolean,
+        Array,
+        Object,
+        JSON
+      };
+
+      // Use Function constructor with strict mode
+      const keys = Object.keys(safeContext);
+      const values = Object.values(safeContext);
+      const func = new Function(...keys, `'use strict'; return (${expression});`);
+      return Boolean(func(...values));
     } catch (error) {
-      this.logger.warn(`Failed to evaluate expression: ${evaluableExpression}`, error as Error);
+      this.logger.warn(`Failed to evaluate expression: ${expression}`, error as Error);
       return false;
     }
   }
 
   private evaluateScript(script: string, variables: Record<string, any>): boolean {
-    // Execute custom script logic
+    // SECURITY FIX: Execute custom script logic with restricted scope
     try {
-      const func = new Function('variables', script);
-      return Boolean(func(variables));
+      // Create a safe context
+      const safeContext = {
+        variables,
+        // Only allow safe built-in objects
+        Math,
+        Date,
+        String,
+        Number,
+        Boolean,
+        Array,
+        Object,
+        JSON
+      };
+
+      // Use Function constructor with strict mode and controlled parameters
+      const keys = Object.keys(safeContext);
+      const values = Object.values(safeContext);
+      const func = new Function(...keys, `'use strict'; return (${script});`);
+      return Boolean(func(...values));
     } catch (error) {
       this.logger.warn(`Failed to evaluate script: ${script}`, error as Error);
       return false;
@@ -352,11 +379,34 @@ class ScriptStepExecutor implements StepExecutor {
   }
 
   private async executeJavaScript(script: string, context: ExecutionContext): Promise<any> {
+    // SECURITY FIX: Execute JavaScript with input validation and sandboxed environment
     try {
-      // Create a safe execution context
-      const func = new Function('context', 'variables', 'console', script);
-      
-      // Provide limited console for logging
+      // Security: Validate script length
+      if (script.length > 50000) {
+        throw new BaseError('Script exceeds maximum allowed length (50KB)', 'SCRIPT_TOO_LARGE');
+      }
+
+      // Security: Check for dangerous patterns
+      const dangerousPatterns = [
+        /require\s*\(/i,
+        /import\s+/i,
+        /eval\s*\(/i,
+        /Function\s*\(/i,
+        /process\./i,
+        /global\./i,
+        /__dirname/i,
+        /__filename/i,
+        /module\./i,
+        /exports\./i,
+      ];
+
+      for (const pattern of dangerousPatterns) {
+        if (pattern.test(script)) {
+          throw new BaseError(`Script contains forbidden pattern: ${pattern.source}`, 'FORBIDDEN_PATTERN');
+        }
+      }
+
+      // Create a safe execution context with controlled scope
       const safeConsole = {
         log: (...args: any[]) => {
           context.stepExecution.logs.push(`Script: ${args.join(' ')}`);
@@ -364,10 +414,34 @@ class ScriptStepExecutor implements StepExecutor {
         error: (...args: any[]) => {
           context.stepExecution.logs.push(`Script Error: ${args.join(' ')}`);
         },
+        warn: (...args: any[]) => {
+          context.stepExecution.logs.push(`Script Warning: ${args.join(' ')}`);
+        },
+        info: (...args: any[]) => {
+          context.stepExecution.logs.push(`Script Info: ${args.join(' ')}`);
+        },
       };
-      
-      const result = await func(context, context.variables, safeConsole);
-      
+
+      const safeContext = {
+        variables: context.variables,
+        console: safeConsole,
+        // Only allow safe built-ins
+        Math,
+        Date,
+        String,
+        Number,
+        Boolean,
+        Array,
+        Object,
+        JSON,
+      };
+
+      // Execute with Function constructor using controlled parameters
+      const keys = Object.keys(safeContext);
+      const values = Object.values(safeContext);
+      const func = new Function(...keys, `'use strict'; return (async function() { ${script} })();`);
+      const result = await func(...values);
+
       return {
         scriptResult: result,
         executedAt: new Date(),

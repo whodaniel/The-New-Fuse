@@ -7,17 +7,21 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 /**
  * Authentication Controller
- * 
+ *
  * Handles all authentication-related endpoints including login, registration,
  * token refresh, logout, and user profile retrieval. This controller provides
- * secure authentication operations with rate limiting and enhanced security guards.
- * 
- * The controller uses the SecureAuthGuard for most endpoints to provide:
- * - Rate limiting based on user tier
- * - Enhanced security checks
- * - Request validation
- * - Audit logging
- * 
+ * secure authentication operations with appropriate guards per endpoint.
+ *
+ * Guard Strategy:
+ * - Login, Register, Refresh: PUBLIC (no authentication required)
+ * - Logout, Me: PROTECTED (requires authentication)
+ *
+ * Rate limiting is applied per endpoint based on security requirements:
+ * - Public endpoints: Strict rate limiting to prevent abuse
+ * - Protected endpoints: Standard rate limiting
+ *
+ * @security Mixed - Some endpoints are public, others require authentication
+ *
  * @example
  * // Login example
  * POST /auth/login
@@ -25,7 +29,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
  *   "email": "user@example.com",
  *   "password": "password123"
  * }
- * 
+ *
  * @example
  * // Registration example
  * POST /auth/register
@@ -35,7 +39,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
  *   "firstName": "John",
  *   "lastName": "Doe"
  * }
- * 
+ *
  * @example
  * // Token refresh example
  * POST /auth/refresh
@@ -45,8 +49,6 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
  */
 @ApiTags('auth')
 @Controller('auth')
-@UseGuards(SecureAuthGuard)
-@SetRateLimitTier(RateLimitTier.AUTH)
 export class AuthController {
   /**
    * Constructor for AuthController
@@ -60,25 +62,28 @@ export class AuthController {
 
   /**
    * Authenticate user and generate JWT tokens
-   * 
+   *
    * Validates user credentials and returns access and refresh tokens on successful
-   * authentication. This endpoint is protected by SecureAuthGuard with rate limiting
+   * authentication. This endpoint is PUBLIC but has strict rate limiting
    * to prevent brute force attacks.
-   * 
+   *
    * @param loginDto - Login credentials containing email and password
    * @param loginDto.email - User's email address (validated format)
    * @param loginDto.password - User's password (minimum 8 characters)
-   * 
+   *
    * @returns Promise containing authentication tokens and user information
    * @returns.accessToken - JWT access token for API authentication (expires in 15 minutes)
    * @returns.refreshToken - JWT refresh token for obtaining new access tokens (expires in 7 days)
    * @returns.user - User object with non-sensitive information
    * @returns.expiresIn - Token expiration time in seconds
-   * 
+   *
    * @throws BadRequestException - When login credentials are invalid
    * @throws UnauthorizedException - When account is locked or suspended
    * @throws TooManyRequestsException - When rate limit is exceeded
-   * 
+   *
+   * @security PUBLIC - No authentication required
+   * @rateLimiting Strict rate limiting applied
+   *
    * @api
    * POST /auth/login
    * 
@@ -112,28 +117,31 @@ export class AuthController {
 
   /**
    * Register a new user account
-   * 
+   *
    * Creates a new user account with the provided credentials and returns
    * authentication tokens for immediate login. User account is created
    * with a default role and email verification may be required.
-   * 
+   *
    * @param registerDto - Registration data containing user information
    * @param registerDto.email - Unique email address for the new account
    * @param registerDto.password - Strong password (min 8 chars, mixed case, numbers, special chars)
    * @param registerDto.firstName - User's first name (2-50 characters)
    * @param registerDto.lastName - User's last name (2-50 characters)
    * @param registerDto.phone - Optional phone number (E.164 format)
-   * 
+   *
    * @returns Promise containing authentication tokens and new user information
    * @returns.accessToken - JWT access token for API authentication
    * @returns.refreshToken - JWT refresh token for token refresh
    * @returns.user - Newly created user object
    * @returns.message - Registration success message
-   * 
+   *
    * @throws BadRequestException - When registration data is invalid or email already exists
    * @throws ConflictException - When email address is already registered
    * @throws TooManyRequestsException - When rate limit is exceeded
-   * 
+   *
+   * @security PUBLIC - No authentication required
+   * @rateLimiting Moderate rate limiting applied
+   *
    * @api
    * POST /auth/register
    * 
@@ -171,23 +179,26 @@ export class AuthController {
 
   /**
    * Refresh authentication token
-   * 
+   *
    * Validates the provided refresh token and issues a new access token.
    * This endpoint allows users to obtain new access tokens without
    * re-authenticating with their credentials.
-   * 
+   *
    * @param refreshToken - Valid refresh token string
-   * 
+   *
    * @returns Promise containing new access token and user information
    * @returns.accessToken - New JWT access token
    * @returns.refreshToken - New refresh token (rotation for security)
    * @returns.user - Current user information
    * @returns.expiresIn - New token expiration time in seconds
-   * 
+   *
    * @throws UnauthorizedException - When refresh token is invalid or expired
    * @throws ForbiddenException - When refresh token has been revoked
    * @throws TooManyRequestsException - When rate limit is exceeded
-   * 
+   *
+   * @security PUBLIC - No authentication required (refresh token validated)
+   * @rateLimiting Standard rate limiting applied
+   *
    * @api
    * POST /auth/refresh
    * 

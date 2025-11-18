@@ -5,7 +5,7 @@
  * discovery, health monitoring, and message routing functionality.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPBroker } from './MCPBroker';
 import { MCPServiceInfo, BrokerConfig } from '../types';
 import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
@@ -19,7 +19,7 @@ describe('MCPBroker', () => {
 
   beforeEach(() => {
     // Reset all mocks
-    vi.clearAllMocks();
+    jest.clearAllMocks();
 
     // Create mock service info
     mockServiceInfo = {
@@ -115,7 +115,7 @@ describe('MCPBroker', () => {
     });
 
     it('should emit started event when broker starts', async () => {
-      const startedSpy = vi.fn();
+      const startedSpy = jest.fn();
       broker.on('started', startedSpy);
       
       await broker.start();
@@ -124,7 +124,7 @@ describe('MCPBroker', () => {
     });
 
     it('should emit stopped event when broker stops', async () => {
-      const stoppedSpy = vi.fn();
+      const stoppedSpy = jest.fn();
       broker.on('stopped', stoppedSpy);
       
       await broker.start();
@@ -140,7 +140,7 @@ describe('MCPBroker', () => {
     });
 
     it('should register service successfully', async () => {
-      const serviceRegisteredSpy = vi.fn();
+      const serviceRegisteredSpy = jest.fn();
       broker.on('serviceRegistered', serviceRegisteredSpy);
       
       await broker.registerService(mockServiceInfo);
@@ -187,7 +187,7 @@ describe('MCPBroker', () => {
     });
 
     it('should unregister service successfully', async () => {
-      const serviceUnregisteredSpy = vi.fn();
+      const serviceUnregisteredSpy = jest.fn();
       broker.on('serviceUnregistered', serviceUnregisteredSpy);
       
       await broker.unregisterService(mockServiceInfo.id);
@@ -341,7 +341,7 @@ describe('MCPBroker', () => {
     });
 
     it('should update service information', async () => {
-      const serviceUpdatedSpy = vi.fn();
+      const serviceUpdatedSpy = jest.fn();
       broker.on('serviceUpdated', serviceUpdatedSpy);
       
       const updates = { status: ServiceStatus.MAINTENANCE };
@@ -429,7 +429,7 @@ describe('MCPBroker', () => {
     });
 
     it('should handle service health changed events', () => {
-      const healthChangedSpy = vi.fn();
+      const healthChangedSpy = jest.fn();
       broker.on('serviceHealthChanged', healthChangedSpy);
       
       // This would normally be triggered by the health monitor
@@ -438,7 +438,7 @@ describe('MCPBroker', () => {
     });
 
     it('should handle service expired events', () => {
-      const expiredSpy = vi.fn();
+      const expiredSpy = jest.fn();
       broker.on('serviceExpired', expiredSpy);
       
       // This would normally be triggered by the service registry
@@ -447,7 +447,7 @@ describe('MCPBroker', () => {
     });
 
     it('should handle metrics collection events', () => {
-      const metricsCollectedSpy = vi.fn();
+      const metricsCollectedSpy = jest.fn();
       broker.on('metricsCollected', metricsCollectedSpy);
       
       // Metrics collection would be triggered by the interval

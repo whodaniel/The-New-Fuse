@@ -49,6 +49,11 @@ model User {
   readReceipts          ReadReceipt[]
   messageReactions      MessageReaction[]
 
+  // Performance indexes
+  @@index([email, isActive])
+  @@index([role, isActive])
+  @@index([lastLogin])
+  @@index([createdAt])
   @@map("users")
 }
 
@@ -132,6 +137,11 @@ model Agent {
   workflowSteps     WorkflowStep[]
   registration      AgentRegistration?
 
+  // Performance indexes
+  @@index([userId, status, type])
+  @@index([status, updatedAt])
+  @@index([type, createdAt])
+  @@index([userId, deletedAt])
   @@map("agents")
 }
 
@@ -244,6 +254,11 @@ model ChatRoom {
   participants  ChatRoomParticipant[]
   readReceipts  ReadReceipt[]
 
+  // Performance indexes
+  @@index([ownerId, isActive])
+  @@index([type, isActive])
+  @@index([lastMessageAt])
+  @@index([isActive, expiresAt])
   @@map("chat_rooms")
 }
 
@@ -348,6 +363,12 @@ model Message {
   readReceipts    ReadReceipt[]
   messageReactions MessageReaction[]
 
+  // Performance indexes
+  @@index([roomId, timestamp])
+  @@index([senderId, timestamp])
+  @@index([agentId, timestamp])
+  @@index([chatId, timestamp])
+  @@index([roomId, isDeleted, timestamp])
   @@map("messages")
 }
 
@@ -398,7 +419,12 @@ model Workflow {
   // Relationships
   steps           WorkflowStep[]
   executions      WorkflowExecution[]
-  
+
+  // Performance indexes
+  @@index([creatorId, status, updatedAt])
+  @@index([agentId, isActive])
+  @@index([status, lastExecutedAt])
+  @@index([isActive, createdAt])
   @@map("workflows")
 }
 
@@ -1037,4 +1063,219 @@ enum OnboardingEventType {
   TASK_COMPLETED
   ERROR_OCCURRED
   STATUS_CHANGED
+}
+
+// =============================================================================
+// RESOURCE REGISTRY SYSTEM
+// =============================================================================
+
+model Resource {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  @db.Text
+  category    ResourceCategory
+  type        ResourceType
+  content     Json
+  tags        String[] @default([])
+  version     String
+  source      String
+  visibility  ResourceVisibility @default(PUBLIC)
+
+  // Metadata
+  author      String?
+  authorId    String?
+  license     String?
+  homepage    String?
+  repository  String?
+
+  // Search and discovery
+  searchableText String?  @db.Text
+  keywords    String[] @default([])
+
+  // Usage tracking
+  usageCount  Int      @default(0)
+  downloadCount Int    @default(0)
+  favoriteCount Int    @default(0)
+
+  // Status and validation
+  status      ResourceStatus @default(ACTIVE)
+  isVerified  Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+
+  // Relationships
+  dependencies String[] @default([])
+  relatedResources String[] @default([])
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  deprecatedAt DateTime?
+  deletedAt   DateTime?
+
+  // Relationships
+  versions    ResourceVersion[]
+  metadata    ResourceMetadata?
+  accessLogs  ResourceAccessLog[]
+
+  @@index([category])
+  @@index([type])
+  @@index([visibility])
+  @@index([status])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([tags])
+  @@index([keywords])
+  @@fulltext([name, description, searchableText])
+  @@map("resources")
+}
+
+model ResourceVersion {
+  id          String   @id @default(uuid())
+  resourceId  String
+  version     String
+  changelog   String?  @db.Text
+  content     Json
+  isLatest    Boolean  @default(false)
+  isDraft     Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  createdBy   String?
+
+  // Relationships
+  resource    Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, version])
+  @@index([resourceId])
+  @@index([version])
+  @@index([isLatest])
+  @@map("resource_versions")
+}
+
+model ResourceMetadata {
+  id         String @id @default(uuid())
+  resourceId String @unique
+
+  // Extended metadata
+  metadata   Json   @default("{}")
+
+  // Performance metrics
+  performanceMetrics Json?
+
+  // Quality scores
+  qualityScore Float?
+  complexityScore Float?
+
+  // Additional fields
+  estimatedExecutionTime Int?
+  requiredDependencies String[] @default([])
+  optionalDependencies String[] @default([])
+
+  // Environment requirements
+  minimumNodeVersion String?
+  platforms String[] @default([])
+
+  // Configuration
+  configSchema Json?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relationships
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@map("resource_metadata")
+}
+
+model ResourceAccessLog {
+  id          String   @id @default(uuid())
+  resourceId  String
+  accessorId  String?
+  accessorType String
+  action      ResourceAction
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+  timestamp   DateTime @default(now())
+
+  // Relationships
+  resource    Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId])
+  @@index([accessorId])
+  @@index([action])
+  @@index([timestamp])
+  @@map("resource_access_logs")
+}
+
+enum ResourceCategory {
+  CLAUDE_SKILL
+  N8N_WORKFLOW
+  AGENT_TEMPLATE
+  CODE_SNIPPET
+  DOCUMENTATION
+  TOOL
+  INTEGRATION
+  WORKFLOW_TEMPLATE
+  API_ENDPOINT
+  DATABASE_SCHEMA
+  UI_COMPONENT
+  CONFIGURATION
+  SCRIPT
+  PROMPT_TEMPLATE
+  DATA_SOURCE
+}
+
+enum ResourceType {
+  JAVASCRIPT
+  TYPESCRIPT
+  PYTHON
+  SHELL
+  SQL
+  JSON
+  YAML
+  TOML
+  ENV
+  MARKDOWN
+  HTML
+  PDF
+  N8N_JSON
+  ZAPIER_JSON
+  MAKE_JSON
+  TEMPLATE
+  SNIPPET
+  OPENAPI
+  GRAPHQL
+  REST
+  BINARY
+  ARCHIVE
+  CUSTOM
+}
+
+enum ResourceVisibility {
+  PUBLIC
+  AGENTS_ONLY
+  PRIVATE
+  RESTRICTED
+  INTERNAL
+}
+
+enum ResourceStatus {
+  DRAFT
+  ACTIVE
+  DEPRECATED
+  ARCHIVED
+  DELETED
+  PENDING_REVIEW
+}
+
+enum ResourceAction {
+  VIEW
+  DOWNLOAD
+  EXECUTE
+  UPDATE
+  DELETE
+  FORK
+  FAVORITE
+  SHARE
 }

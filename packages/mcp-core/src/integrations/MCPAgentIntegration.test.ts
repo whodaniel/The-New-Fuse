@@ -2,7 +2,7 @@
  * Unit tests for MCPAgentIntegration
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPAgentIntegration } from './MCPAgentIntegration';
 import type { 
   IMCPBroker, 
@@ -13,22 +13,22 @@ import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 // Mock implementations
 const mockBroker: IMCPBroker = {
-  registerService: vi.fn(),
-  unregisterService: vi.fn(),
-  discoverServices: vi.fn(),
-  routeRequest: vi.fn(),
-  getServiceHealth: vi.fn()
+  registerService: jest.fn(),
+  unregisterService: jest.fn(),
+  discoverServices: jest.fn(),
+  routeRequest: jest.fn(),
+  getServiceHealth: jest.fn()
 };
 
 const mockClient: IMCPClient = {
-  connect: vi.fn(),
-  disconnect: vi.fn(),
-  sendRequest: vi.fn(),
-  subscribeToNotifications: vi.fn(),
-  listResources: vi.fn(),
-  readResource: vi.fn(),
-  callTool: vi.fn(),
-  getServerCapabilities: vi.fn()
+  connect: jest.fn(),
+  disconnect: jest.fn(),
+  sendRequest: jest.fn(),
+  subscribeToNotifications: jest.fn(),
+  listResources: jest.fn(),
+  readResource: jest.fn(),
+  callTool: jest.fn(),
+  getServerCapabilities: jest.fn()
 };
 
 describe('MCPAgentIntegration', () => {
@@ -37,7 +37,7 @@ describe('MCPAgentIntegration', () => {
 
   beforeEach(() => {
     // Reset all mocks
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     
     // Create fresh integration instance
     integration = new MCPAgentIntegration(mockBroker, mockClient, {
@@ -65,7 +65,7 @@ describe('MCPAgentIntegration', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('registerAgentAsMCPService', () => {

@@ -220,6 +220,21 @@ export class AgentService {
           capabilities: {
             has: capability
           }
+        },
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          status: true,
+          description: true,
+          systemPrompt: false, // Exclude large text field
+          config: false, // Exclude large JSON field
+          capabilities: true,
+          provider: true,
+          userId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
         }
       });
 
@@ -238,7 +253,23 @@ export class AgentService {
           userId,
           deletedAt: null,
           status: this.mapTypeStatusToPrisma(AgentStatus.ACTIVE)
-        }
+        },
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          status: true,
+          description: true,
+          systemPrompt: false, // Exclude for list view
+          config: false, // Exclude for list view
+          capabilities: true,
+          provider: true,
+          userId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
+        orderBy: { updatedAt: 'desc' }
       });
 
       return agents.map(this.transformPrismaAgent);

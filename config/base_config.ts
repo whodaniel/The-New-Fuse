@@ -1,8 +1,8 @@
 /**
  * Base configuration for the AI Communication System.
  */
-import * as path from 'path';
-import * as crypto from 'crypto';
+import { resolve, join } from 'path';
+import { randomBytes } from 'crypto';
 
 export class BaseConfig {
     /**

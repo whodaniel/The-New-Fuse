@@ -5,7 +5,7 @@
  * request routing, load balancing integration, retry logic, and error handling.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, MockedFunction } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MessageRouter } from './MessageRouter';
 import { LoadBalancer } from './LoadBalancer';
 import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
@@ -122,7 +122,7 @@ describe('MessageRouter', () => {
 
       // Mock the private sendRequestToService method
       const originalSendRequest = messageRouter['sendRequestToService'];
-      messageRouter['sendRequestToService'] = vi.fn().mockImplementation(async (request, serviceId, timeout) => {
+      messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async (request, serviceId, timeout) => {
         const response: MCPResponse = {
           jsonrpc: '2.0',
           id: request.id,
@@ -243,7 +243,7 @@ describe('MessageRouter', () => {
       };
 
       let callCount = 0;
-      messageRouter['sendRequestToService'] = vi.fn().mockImplementation(async () => {
+      messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async () => {
         callCount++;
         if (callCount < 3) {
           throw new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service temporarily unavailable');
@@ -279,7 +279,7 @@ describe('MessageRouter', () => {
       };
 
       let callCount = 0;
-      messageRouter['sendRequestToService'] = vi.fn().mockImplementation(async () => {
+      messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async () => {
         callCount++;
         // Use JSONRPCErrorCode.METHOD_NOT_FOUND which is in the non-retryable list
         throw new MCPErrorClass(JSONRPCErrorCode.METHOD_NOT_FOUND, 'Method not found');
@@ -328,7 +328,7 @@ describe('MessageRouter', () => {
     beforeEach(async () => {
       await messageRouter.start();
 
-      messageRouter['sendNotificationToService'] = vi.fn().mockResolvedValue(undefined);
+      messageRouter['sendNotificationToService'] = jest.fn().mockResolvedValue(undefined);
     });
 
     it('should broadcast notification to all services', async () => {
@@ -378,7 +378,7 @@ describe('MessageRouter', () => {
     beforeEach(async () => {
       await messageRouter.start();
 
-      messageRouter['sendRequestToService'] = vi.fn().mockResolvedValue({
+      messageRouter['sendRequestToService'] = jest.fn().mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test',
         result: {}
@@ -406,7 +406,7 @@ describe('MessageRouter', () => {
     });
 
     it('should track failure metrics correctly', async () => {
-      messageRouter['sendRequestToService'] = vi.fn().mockRejectedValue(
+      messageRouter['sendRequestToService'] = jest.fn().mockRejectedValue(
         new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service error')
       );
 
@@ -480,7 +480,7 @@ describe('MessageRouter', () => {
       expect(messageRouter.getActiveRequestCount()).toBe(0);
 
       // Mock a slow request
-      messageRouter['sendRequestToService'] = vi.fn().mockImplementation(async () => {
+      messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async () => {
         await new Promise(resolve => setTimeout(resolve, 100));
         return { jsonrpc: '2.0', id: 'test', result: {} };
       });
@@ -530,7 +530,7 @@ describe('MessageRouter', () => {
         params: {}
       };
 
-      messageRouter['sendRequestToService'] = vi.fn().mockRejectedValue(
+      messageRouter['sendRequestToService'] = jest.fn().mockRejectedValue(
         new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service error')
       );
 
@@ -544,7 +544,7 @@ describe('MessageRouter', () => {
     beforeEach(async () => {
       await messageRouter.start();
 
-      messageRouter['sendRequestToService'] = vi.fn().mockResolvedValue({
+      messageRouter['sendRequestToService'] = jest.fn().mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test',
         result: {}

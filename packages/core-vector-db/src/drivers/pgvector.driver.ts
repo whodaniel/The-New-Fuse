@@ -43,12 +43,16 @@ export class PgVectorDriver implements IVectorDatabase {
   async createCollection(config: CollectionConfig): Promise<void> {
     const client = await this.pool.connect();
     try {
+      // SECURITY FIX: Sanitize all SQL identifiers to prevent SQL injection
+      const sanitizedName = this.sanitizeIdentifier(config.name);
+      const sanitizedMetric = this.sanitizeIdentifier(config.metric);
+
       const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS "${config.name}" (
+        CREATE TABLE IF NOT EXISTS "${sanitizedName}" (
           id TEXT PRIMARY KEY,
           content TEXT NOT NULL,
           metadata JSONB DEFAULT '{}',
-          embedding vector(${config.dimension}),
+          embedding vector(${parseInt(String(config.dimension), 10)}),
           created_at TIMESTAMP DEFAULT NOW(),
           updated_at TIMESTAMP DEFAULT NOW()
         )
@@ -58,9 +62,9 @@ export class PgVectorDriver implements IVectorDatabase {
 
       // Create vector index for similarity search
       const createIndexQuery = `
-        CREATE INDEX IF NOT EXISTS "${config.name}_embedding_idx" 
-        ON "${config.name}" 
-        USING ivfflat (embedding vector_${config.metric}_ops)
+        CREATE INDEX IF NOT EXISTS "${sanitizedName}_embedding_idx"
+        ON "${sanitizedName}"
+        USING ivfflat (embedding vector_${sanitizedMetric}_ops)
         WITH (lists = 100)
       `;
 
@@ -68,8 +72,8 @@ export class PgVectorDriver implements IVectorDatabase {
 
       // Create metadata index for filtering
       const createMetadataIndexQuery = `
-        CREATE INDEX IF NOT EXISTS "${config.name}_metadata_idx" 
-        ON "${config.name}" 
+        CREATE INDEX IF NOT EXISTS "${sanitizedName}_metadata_idx"
+        ON "${sanitizedName}"
         USING gin (metadata)
       `;
 
@@ -87,7 +91,10 @@ export class PgVectorDriver implements IVectorDatabase {
   async deleteCollection(name: string): Promise<void> {
     const client = await this.pool.connect();
     try {
-      await client.query(`DROP TABLE IF EXISTS "${name}"`);
+      // SECURITY FIX: Validate collection name to prevent SQL injection
+      // Table names cannot be parameterized in PostgreSQL, so we validate the name
+      const sanitizedName = this.sanitizeIdentifier(name);
+      await client.query(`DROP TABLE IF EXISTS "${sanitizedName}"`);
       this.logger.log(`Collection "${name}" deleted successfully`);
     } catch (error) {
       this.logger.error(`Failed to delete collection "${name}"`, error);
@@ -95,6 +102,20 @@ export class PgVectorDriver implements IVectorDatabase {
     } finally {
       client.release();
     }
+  }
+
+  // SECURITY: Sanitize SQL identifiers to prevent SQL injection
+  private sanitizeIdentifier(identifier: string): string {
+    // Only allow alphanumeric characters, underscores, and hyphens
+    const sanitized = identifier.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (sanitized !== identifier || sanitized.length === 0) {
+      throw new Error('Invalid identifier: must contain only alphanumeric characters, underscores, and hyphens');
+    }
+    // Additional length validation
+    if (sanitized.length > 63) {
+      throw new Error('Invalid identifier: maximum length is 63 characters');
+    }
+    return sanitized;
   }
 
   async listCollections(): Promise<string[]> {

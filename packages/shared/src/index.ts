@@ -1,7 +1,13 @@
-// Consolidated exports from shared packages
-export * from './types/index.js';
-export * from './utils/index.js';
-export * from './ui/index.js';
-export * from './constants/index.js';
-export * from './validators/index.js';
-export * from './hooks/index.js';
+/**
+ * @the-new-fuse/shared
+ * Shared utilities, hooks, and components
+ */
+
+// Validation
+export * from './validation';
+
+// Utils
+export * from './utils';
+
+// Hooks
+export * from './hooks';

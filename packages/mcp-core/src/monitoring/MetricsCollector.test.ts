@@ -2,7 +2,7 @@
  * Metrics Collector Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MetricsCollector } from './MetricsCollector';
 import { Logger } from '../utils/Logger';
 

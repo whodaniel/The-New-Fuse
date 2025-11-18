@@ -70,6 +70,7 @@ function SmartNavigation() {
               </Link>
               <Link to="/agents" className="text-gray-500 hover:text-blue-600 transition-colors">AI Agents</Link>
               <Link to="/workflows" className="text-gray-500 hover:text-blue-600 transition-colors">Workflows</Link>
+              <Link to="/resources" className="text-gray-500 hover:text-blue-600 transition-colors">Resources</Link>
               <Link to="/analytics" className="text-gray-500 hover:text-blue-600 transition-colors">Analytics</Link>
             </div>
             
@@ -143,9 +144,17 @@ function SmartNavigation() {
             )}
           </div>
 
+          {/* Resources Marketplace Link */}
+          <Link
+            to="/resources"
+            className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-gradient-to-r from-purple-600 to-pink-600"
+          >
+            📦 Resources
+          </Link>
+
           {/* Tasks Dropdown */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => toggleDropdown('tasks')}
               className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-green-600 flex items-center"
             >

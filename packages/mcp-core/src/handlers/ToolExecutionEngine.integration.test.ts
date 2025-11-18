@@ -2,7 +2,7 @@
  * Integration tests for ToolExecutionEngine security and monitoring features
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { ToolExecutionEngine, ToolExecutionOptions, SecurityViolation } from './ToolExecutionEngine';
 import { ToolHandler, ToolResult, ToolPermissions } from '../interfaces/IMCPTool';
 import { ToolSecurityContext } from './ToolExecutionEngine';

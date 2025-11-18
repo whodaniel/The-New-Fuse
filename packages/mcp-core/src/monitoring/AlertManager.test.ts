@@ -2,7 +2,7 @@
  * Alert Manager Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { AlertManager } from './AlertManager';
 import { AlertSeverity, AlertStatus } from '../types/monitoring';
 import { Logger } from '../utils/Logger';

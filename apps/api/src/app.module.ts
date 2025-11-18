@@ -19,6 +19,7 @@ import { LLMProviderService } from './llm/llm-provider.service';
 import { SystemController } from './controllers/system.controller';
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
+import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
@@ -86,7 +87,8 @@ import { SecureAuthGuard } from './guards/secure-auth.guard';
     LLMProviderController,
     SystemController,
     WebSocketController,
-    WorkflowController
+    WorkflowController,
+    N8nWorkflowsController
   ],
   providers: [
     AppService, 

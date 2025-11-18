@@ -5,7 +5,7 @@
  * including throughput, latency, memory usage, and scalability.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { MCPServer } from '../server/MCPServer';
 import { MCPSystemFactory } from '../factory/MCPSystemFactory';
 import { ResourceManager } from '../handlers/ResourceManager';

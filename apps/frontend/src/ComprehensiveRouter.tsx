@@ -34,6 +34,9 @@ const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardP
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
 const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
 
+// Resources pages
+const ResourcesDashboard = lazy(() => import('./pages/Resources/ResourcesDashboard'));
+
 // Performance loading component
 const LoadingFallback = ({ name }: { name: string }) => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -176,7 +179,10 @@ export default function ComprehensiveRouter() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/sophisticated-hub" element={<SophisticatedTNFHub />} />
-        
+
+        {/* Resources Marketplace */}
+        <Route path="/resources" element={<ResourcesDashboard />} />
+
         {/* All routes using LazyPage for now to avoid import issues */}
         <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
         <Route path="/ai-portal" element={<AIAgentPortal />} />

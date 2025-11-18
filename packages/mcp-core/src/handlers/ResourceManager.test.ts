@@ -2,7 +2,7 @@
  * Tests for ResourceManager
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+// @ts-expect-error - Jest globals are available without import
 import { ResourceManager, ResourceQuery, AccessContext } from './ResourceManager';
 import { MCPResource, ResourceHandler, ResourceContent } from '../interfaces/IMCPResource';
 import { MCPErrorCode } from '../types/error';
@@ -473,7 +473,7 @@ describe('ResourceManager', () => {
     it('should handle discovery errors gracefully', async () => {
       // Mock the discoverResources method to throw an error
       const originalMethod = manager.discoverResources;
-      manager.discoverResources = vi.fn().mockRejectedValue(new Error('Discovery failed'));
+      manager.discoverResources = jest.fn().mockRejectedValue(new Error('Discovery failed'));
 
       await expect(manager.discoverResources({})).rejects.toThrow('Discovery failed');
       

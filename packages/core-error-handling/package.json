@@ -7,7 +7,9 @@
   "scripts": {
     "build": "tsc",
     "build:foundation": "tsc",
-    "test": "echo \"No tests for this package\"",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --passWithNoTests",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
@@ -18,10 +20,12 @@
     "events": "^3.3.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.8.1",
     "eslint": "^9.38.0",
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
   },
   "exports": {
     ".": {
