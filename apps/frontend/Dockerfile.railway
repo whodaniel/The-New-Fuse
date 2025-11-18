@@ -127,7 +127,7 @@ RUN find . -type f \( \
 FROM nginx:alpine AS runner
 
 # Install security updates and required tools
-RUN --mount=type=cache,target=/var/cache/apk \
+RUN --mount=type=cache,id=apk,target=/var/cache/apk \
     apk add --no-cache wget && \
     apk upgrade --no-cache
 
