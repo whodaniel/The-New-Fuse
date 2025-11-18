@@ -1,6 +1,7 @@
 # Deployment Guide: Hybrid Vercel + Railway Setup
 
 This guide covers deploying The New Fuse using a **hybrid approach**:
+
 - **Frontend** → Vercel (optimized for React/static sites)
 - **Backend Services** → Railway (optimized for Docker/databases)
 
@@ -35,12 +36,12 @@ This guide covers deploying The New Fuse using a **hybrid approach**:
 
 ## ✅ Current Status
 
-| Service | Platform | Status | URL |
-|---------|----------|--------|-----|
-| **Frontend** | Vercel | ✅ Deployed | https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/ |
-| **API Gateway** | Railway | 🔧 Setting up | https://api-gateway-production-XXXX.up.railway.app |
-| **Backend** | Railway | 🔧 Setting up | https://backend-production-XXXX.up.railway.app |
-| **API** | Railway | 🔧 Setting up | https://api-production-XXXX.up.railway.app |
+| Service         | Platform | Status        | URL                                                                   |
+| --------------- | -------- | ------------- | --------------------------------------------------------------------- |
+| **Frontend**    | Vercel   | ✅ Deployed   | https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/ |
+| **API Gateway** | Railway  | 🔧 Setting up | https://api-gateway-production-XXXX.up.railway.app                    |
+| **Backend**     | Railway  | 🔧 Setting up | https://backend-production-XXXX.up.railway.app                        |
+| **API**         | Railway  | 🔧 Setting up | https://api-production-XXXX.up.railway.app                            |
 
 ---
 
@@ -49,7 +50,8 @@ This guide covers deploying The New Fuse using a **hybrid approach**:
 ### Prerequisites
 
 1. ✅ Railway account: https://railway.app
-2. ✅ Railway project created: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+2. ✅ Railway project created:
+   https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 3. ✅ GitHub repository connected to Railway
 4. ✅ Monorepo builds at 98% success
 
@@ -58,6 +60,7 @@ This guide covers deploying The New Fuse using a **hybrid approach**:
 In your Railway project dashboard, create **3 services**:
 
 #### 1.1 API Gateway Service
+
 ```bash
 Service Name: api-gateway
 Build Command: (handled by Dockerfile)
@@ -67,6 +70,7 @@ Dockerfile Path: apps/api-gateway/Dockerfile.railway
 ```
 
 #### 1.2 Backend Service
+
 ```bash
 Service Name: backend
 Build Command: (handled by Dockerfile)
@@ -76,6 +80,7 @@ Dockerfile Path: apps/backend/Dockerfile.railway
 ```
 
 #### 1.3 API Service
+
 ```bash
 Service Name: api
 Build Command: (handled by Dockerfile)
@@ -89,6 +94,7 @@ Dockerfile Path: apps/api/Dockerfile.railway
 If your services need databases, add them in Railway:
 
 #### PostgreSQL
+
 ```bash
 1. Click "+ New" → Database → PostgreSQL
 2. Railway will auto-generate connection vars
@@ -96,6 +102,7 @@ If your services need databases, add them in Railway:
 ```
 
 #### Redis
+
 ```bash
 1. Click "+ New" → Database → Redis
 2. Railway will auto-generate connection vars
@@ -188,8 +195,11 @@ BACKEND_URL=https://backend-production-XXXX.up.railway.app
 ## 📦 Vercel Setup Guide
 
 ### Current Status
+
 ✅ **Vercel is already deployed!**
-- Working URL: https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/
+
+- Working URL:
+  https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/
 
 ### Vercel Environment Variables
 
@@ -228,11 +238,13 @@ Ensure your `vercel.json` or project settings have:
 ### Automatic Deployments
 
 #### Vercel (Frontend)
+
 - ✅ **Trigger**: Push to `main` branch
 - ✅ **Build**: Automatic via Vercel GitHub integration
 - ✅ **Preview**: Every PR gets a preview URL
 
 #### Railway (Backend)
+
 - ✅ **Trigger**: Push to `main` branch
 - ✅ **Build**: Automatic via Railway GitHub integration
 - ✅ **Deploy**: All 3 services deploy in parallel
@@ -240,6 +252,7 @@ Ensure your `vercel.json` or project settings have:
 ### Manual Deployment
 
 #### Railway CLI (if needed)
+
 ```bash
 # Install Railway CLI
 npm i -g @railway/cli
@@ -294,6 +307,7 @@ https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/
 **Issue**: Build fails with package errors
 
 **Solution**:
+
 ```bash
 # Check if monorepo builds locally
 pnpm build
@@ -310,6 +324,7 @@ cat railway.toml
 **Issue**: Frontend can't call backend APIs
 
 **Solution**: Add CORS origin in Railway env vars:
+
 ```bash
 CORS_ORIGIN=https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app
 ```
@@ -319,6 +334,7 @@ CORS_ORIGIN=https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app
 **Issue**: Services can't connect to PostgreSQL
 
 **Solution**:
+
 1. Verify `DATABASE_URL` is set in Railway
 2. Check PostgreSQL service is running
 3. Use Railway's internal references: `${{Postgres.DATABASE_URL}}`
@@ -328,6 +344,7 @@ CORS_ORIGIN=https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app
 **Issue**: Railway service crashes on start
 
 **Solution**:
+
 ```bash
 # Check Railway logs
 railway logs --service api-gateway
@@ -346,6 +363,7 @@ docker build -f apps/api-gateway/Dockerfile.railway .
 ### Railway Logs
 
 View logs for each service:
+
 ```bash
 # Via Dashboard
 https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
@@ -359,6 +377,7 @@ railway logs --service api
 ### Vercel Logs
 
 View frontend logs:
+
 ```bash
 # Via Dashboard
 https://vercel.com/dashboard
@@ -372,11 +391,13 @@ vercel logs <deployment-url>
 ## 💰 Cost Estimation
 
 ### Railway (Backend)
+
 - **Free Tier**: $5/month credit
 - **Hobby Plan**: $5/month per service
 - **Estimated**: ~$15-20/month (3 services + database)
 
 ### Vercel (Frontend)
+
 - **Free Tier**: Generous (100GB bandwidth, unlimited deployments)
 - **Pro**: $20/month (if needed for team features)
 - **Estimated**: $0-20/month
@@ -414,7 +435,8 @@ vercel logs <deployment-url>
 
 ## 🔗 Useful Links
 
-- **Railway Project**: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **Railway Project**:
+  https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - **Railway Docs**: https://docs.railway.app
 - **Vercel Dashboard**: https://vercel.com/dashboard
 - **Vercel Docs**: https://vercel.com/docs
@@ -425,6 +447,7 @@ vercel logs <deployment-url>
 ## 📞 Support
 
 If you encounter issues:
+
 1. Check Railway logs first
 2. Review Vercel deployment logs
 3. Test services individually

@@ -1,5 +1,12 @@
 {
-    "recommendations": [
-        "thenewfuse.the-new-fuse"
-    ]
+  "recommendations": [
+    "thenewfuse.the-new-fuse",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "bradlc.vscode-tailwindcss",
+    "prisma.prisma",
+    "orta.vscode-jest",
+    "ms-vscode.vscode-typescript-next"
+  ]
 }

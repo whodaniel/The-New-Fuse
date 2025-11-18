@@ -2,13 +2,16 @@
 
 ## Summary
 
-A comprehensive CI/CD pipeline has been successfully set up for The New Fuse monorepo. This document provides a summary of all components and quick start instructions.
+A comprehensive CI/CD pipeline has been successfully set up for The New Fuse
+monorepo. This document provides a summary of all components and quick start
+instructions.
 
 ## What's Been Created
 
 ### 1. GitHub Actions Workflows
 
 #### Core Workflows
+
 - **`.github/workflows/test.yml`** - Comprehensive test suite
   - Linting (ESLint, Prettier)
   - Type checking (TypeScript)
@@ -106,21 +109,26 @@ pnpm run build
 #### 2. Creating a PR
 
 1. Create PR with conventional commit title:
+
    ```
    feat(frontend): add new user dashboard
    fix(api): resolve authentication bug
    ```
 
 2. Include required sections in description:
+
    ```markdown
    ## Summary
+
    Brief description of changes
 
    ## Changes
+
    - List of changes
    - What was added/modified/removed
 
    ## Testing
+
    - How to test
    - Test cases covered
    ```
@@ -145,11 +153,13 @@ pnpm run build
 Set up required secrets in GitHub (Settings → Secrets and variables → Actions):
 
 **Required**:
+
 ```bash
 RAILWAY_TOKEN      # Railway API token for deployment
 ```
 
 **Recommended**:
+
 ```bash
 CODECOV_TOKEN      # Test coverage reporting
 DOCKER_USERNAME    # Docker Hub username
@@ -160,19 +170,22 @@ TURBO_TOKEN        # Remote caching (speeds up builds)
 TURBO_TEAM         # Turborepo team ID
 ```
 
-See [Secrets Setup Guide](./docs/ci-cd/secrets-setup.md) for detailed instructions.
+See [Secrets Setup Guide](./docs/ci-cd/secrets-setup.md) for detailed
+instructions.
 
 #### 2. Configure Railway
 
 Ensure Railway is configured with:
 
 **Services**:
+
 - api-gateway (Port 3001)
 - api (Port 3002)
 - backend (Port 3003)
 - frontend (Port 3000)
 
 **Environment Variables** (per service):
+
 ```bash
 NODE_ENV=production
 DATABASE_URL=<postgres-url>
@@ -182,6 +195,7 @@ JWT_SECRET=<secret>
 ```
 
 **Health Check Paths**:
+
 - api-gateway: `/health`
 - api: `/health`
 - backend: `/health`
@@ -213,6 +227,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 **Triggers**: test.yml, build.yml, quality.yml, pr-automation.yml
 
 **Runs**:
+
 1. Auto-labeling and reviewer assignment
 2. Lint, type check, tests (15-20 min)
 3. Build verification (15-20 min)
@@ -227,6 +242,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 **Triggers**: test.yml, build.yml, deploy.yml
 
 **Runs**:
+
 1. Full test suite (15-20 min)
 2. Build verification (15-20 min)
 3. Build Docker images (10-15 min)
@@ -240,11 +256,13 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### On Schedule
 
 **Weekly** (Sundays):
+
 - Quality gates run
 - Dependency audit
 - Security scanning
 
 **Daily** (Dependabot):
+
 - Dependency updates
 - Auto-merge if tests pass
 
@@ -253,22 +271,26 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Quality Assurance
 
 ✅ **Multi-stage Testing**
+
 - Unit, integration, and E2E tests
 - Parallel execution (4 test shards)
 - Coverage enforcement (70% minimum)
 
 ✅ **Security Scanning**
+
 - Trivy filesystem scanning
 - npm audit for vulnerabilities
 - Automated security updates
 
 ✅ **Code Quality**
+
 - ESLint and Prettier enforcement
 - TypeScript strict mode
 - SonarCloud analysis
 - Circular dependency detection
 
 ✅ **Performance Monitoring**
+
 - Bundle size tracking (10% limit)
 - Lighthouse CI (80+ score)
 - Response time monitoring
@@ -276,18 +298,21 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Automation
 
 ✅ **PR Management**
+
 - Auto-labeling by changed files
 - Auto-reviewer assignment
 - Size-based labels
 - Conventional commit validation
 
 ✅ **Dependency Management**
+
 - Weekly Dependabot updates
 - Auto-merge minor/patch versions
 - Grouped related updates
 - Security update prioritization
 
 ✅ **Deployment**
+
 - Zero-downtime deployments
 - Automatic health checks
 - Auto-rollback on failure
@@ -296,18 +321,21 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Developer Experience
 
 ✅ **Fast Feedback**
+
 - Parallel test execution
 - Intelligent caching (pnpm, Turbo, Docker)
 - Early failure detection
 - Clear error messages
 
 ✅ **Helpful Comments**
+
 - Bundle size comparisons
 - Coverage reports
 - Build status updates
 - Welcome messages for new contributors
 
 ✅ **Documentation**
+
 - Comprehensive guides
 - Troubleshooting help
 - Architecture diagrams
@@ -318,6 +346,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Caching Strategy
 
 **Three-tier caching**:
+
 1. **pnpm cache**: Dependencies cached across runs
 2. **Turbo cache**: Build outputs cached (local + remote)
 3. **Docker cache**: Layer caching for images
@@ -327,6 +356,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Parallelization
 
 **Concurrent execution**:
+
 - 4 unit test shards (4x faster)
 - All apps build in parallel
 - All services deploy simultaneously
@@ -337,6 +367,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Resource Optimization
 
 **Memory management**:
+
 - Node heap limited to 4GB
 - Build concurrency: 2 max
 - Staged builds for memory constraints
@@ -348,18 +379,21 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Metrics Tracked
 
 **CI/CD Health**:
+
 - Build success rate (target: >95%)
 - Deployment frequency
 - MTTR (target: <30 min)
 - Change failure rate (target: <5%)
 
 **Performance**:
+
 - Test duration (target: <20 min)
 - Build duration (target: <20 min)
 - Cache hit rate (target: >80%)
 - Deployment duration (target: <50 min)
 
 **Quality**:
+
 - Test coverage trends
 - Bundle size trends
 - Lighthouse score trends
@@ -368,16 +402,19 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### Alerts Configured
 
 **Critical** (PagerDuty):
+
 - Production deployment failure
 - Health check failures
 - Service down
 
 **High** (Slack):
+
 - Test failures on main
 - Security vulnerabilities
 - Build failures
 
 **Medium** (Slack):
+
 - Coverage drops
 - Bundle size increases
 - Performance degradation
@@ -387,11 +424,13 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### For All Contributors
 
 1. **Test locally before pushing**
+
    ```bash
    pnpm run test && pnpm run lint && pnpm run build
    ```
 
 2. **Write meaningful commit messages**
+
    ```
    type(scope): description
    ```
@@ -431,16 +470,19 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ### CI Failures
 
 **Tests fail**:
+
 1. Check error message in logs
 2. Run tests locally: `pnpm run test`
 3. See [Troubleshooting Guide](./docs/ci-cd/troubleshooting.md)
 
 **Build fails**:
+
 1. Check build logs
 2. Try locally: `pnpm run build`
 3. Clear cache: `pnpm run clean`
 
 **Deployment fails**:
+
 1. Check Railway logs: `railway logs`
 2. Verify environment variables
 3. Check health endpoints
@@ -482,6 +524,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 ## Resources
 
 ### Documentation
+
 - [Architecture](./docs/ci-cd/architecture.md)
 - [Workflows](./docs/ci-cd/workflows.md)
 - [Deployment](./docs/ci-cd/deployment.md)
@@ -489,12 +532,14 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 - [Monitoring](./docs/ci-cd/monitoring.md)
 
 ### External Resources
+
 - [GitHub Actions Docs](https://docs.github.com/actions)
 - [Railway Docs](https://docs.railway.app)
 - [Turborepo Docs](https://turbo.build/repo/docs)
 - [pnpm Docs](https://pnpm.io)
 
 ### Tools
+
 - [Railway CLI](https://docs.railway.app/develop/cli)
 - [GitHub CLI](https://cli.github.com)
 - [Turbo CLI](https://turbo.build/repo/docs/reference/command-line-reference)
@@ -504,26 +549,31 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 Your CI/CD is working well if:
 
 ✅ **Tests**:
+
 - All tests pass consistently
 - Coverage stays above 70%
 - Tests run in <20 minutes
 
 ✅ **Builds**:
+
 - Builds succeed >95% of time
 - Build time <20 minutes
 - Bundle size stays reasonable
 
 ✅ **Deployments**:
+
 - Deploy multiple times per day
 - Zero-downtime deployments
 - Rollbacks work smoothly
 
 ✅ **Quality**:
+
 - No critical security vulnerabilities
 - Code quality metrics improving
 - Performance scores high
 
 ✅ **Team**:
+
 - Fast PR feedback (<1 hour)
 - Low CI failure rate
 - Developers trust the pipeline

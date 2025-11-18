@@ -1,18 +1,19 @@
 # Docker Optimization Summary
 
-This document provides a quick overview of the Docker optimization work completed for The New Fuse platform.
+This document provides a quick overview of the Docker optimization work
+completed for The New Fuse platform.
 
 ## Quick Stats
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Total Image Size** | 4.35 GB | 1.185 GB | **73% ⬇️** |
-| **Frontend Size** | 450 MB | 55 MB | **88% ⬇️** |
-| **Backend Services** | 1.2-1.4 GB | 350-400 MB | **71% ⬇️** |
-| **Build Time (cached)** | 8-12 min | 2-4 min | **60-70% faster** |
-| **Build Context** | 2.5 GB | 50-100 MB | **90% ⬇️** |
-| **Security CVEs** | 25-38 | 7-13 | **65% ⬇️** |
-| **Monthly Cost Savings** | - | - | **~$1,000** |
+| Metric                   | Before     | After      | Improvement       |
+| ------------------------ | ---------- | ---------- | ----------------- |
+| **Total Image Size**     | 4.35 GB    | 1.185 GB   | **73% ⬇️**        |
+| **Frontend Size**        | 450 MB     | 55 MB      | **88% ⬇️**        |
+| **Backend Services**     | 1.2-1.4 GB | 350-400 MB | **71% ⬇️**        |
+| **Build Time (cached)**  | 8-12 min   | 2-4 min    | **60-70% faster** |
+| **Build Context**        | 2.5 GB     | 50-100 MB  | **90% ⬇️**        |
+| **Security CVEs**        | 25-38      | 7-13       | **65% ⬇️**        |
+| **Monthly Cost Savings** | -          | -          | **~$1,000**       |
 
 ## What Was Done
 
@@ -20,7 +21,8 @@ This document provides a quick overview of the Docker optimization work complete
 
 All Dockerfile.railway files have been completely rewritten with best practices:
 
-- **Multi-stage builds** (6 stages: base-build, base-runtime, deps, prod-deps, builder, runner)
+- **Multi-stage builds** (6 stages: base-build, base-runtime, deps, prod-deps,
+  builder, runner)
 - **BuildKit features** (cache mounts, COPY --link, build contexts)
 - **Separate build/runtime dependencies** (production deps only in final image)
 - **Non-root users** (all services run as dedicated users)
@@ -28,6 +30,7 @@ All Dockerfile.railway files have been completely rewritten with best practices:
 - **Graceful shutdown** (dumb-init for signal handling)
 
 **Updated Files**:
+
 - `/home/user/fuse/Dockerfile.railway` (root - API Gateway)
 - `/home/user/fuse/apps/api-gateway/Dockerfile.railway`
 - `/home/user/fuse/apps/api/Dockerfile.railway`
@@ -37,6 +40,7 @@ All Dockerfile.railway files have been completely rewritten with best practices:
 ### 2. Enhanced .dockerignore
 
 Created comprehensive .dockerignore that excludes:
+
 - Dependencies (node_modules, .pnpm-store)
 - Build artifacts (dist, build, .turbo)
 - Version control (.git, .github)
@@ -51,6 +55,7 @@ Created comprehensive .dockerignore that excludes:
 ### 3. Docker Compose for Local Development
 
 Created `docker-compose.local.yml` with:
+
 - All 4 application services (frontend, api-gateway, api, backend)
 - PostgreSQL database
 - Redis cache
@@ -86,6 +91,7 @@ Created three detailed documentation files:
    - Validation procedures
 
 **New Files**:
+
 - `/home/user/fuse/docs/DOCKER.md`
 - `/home/user/fuse/docs/DOCKER_BEST_PRACTICES.md`
 - `/home/user/fuse/docs/DOCKER_OPTIMIZATION.md`
@@ -237,6 +243,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 ### Short-term (To Do)
 
 1. **Test locally with Docker Compose**
+
    ```bash
    docker-compose -f docker-compose.local.yml up --build
    ```
@@ -246,6 +253,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
    - Ensure BuildKit is enabled on Railway (it is by default)
 
 3. **Set up security scanning in CI/CD**
+
    ```bash
    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
      aquasec/trivy:latest image $IMAGE_NAME
@@ -341,7 +349,8 @@ docker stop test-frontend && docker rm test-frontend
 
 ## Conclusion
 
-The Docker optimization is complete with significant improvements across all metrics:
+The Docker optimization is complete with significant improvements across all
+metrics:
 
 - **73% smaller images**
 - **60-70% faster builds**
@@ -349,4 +358,6 @@ The Docker optimization is complete with significant improvements across all met
 - **65% fewer security vulnerabilities**
 - **Comprehensive documentation**
 
-All files are ready for deployment and local testing. The optimizations provide a solid foundation for efficient, secure, and scalable containerized deployments.
+All files are ready for deployment and local testing. The optimizations provide
+a solid foundation for efficient, secure, and scalable containerized
+deployments.

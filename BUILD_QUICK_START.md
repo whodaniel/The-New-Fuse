@@ -3,6 +3,7 @@
 ## Common Build Commands
 
 ### Full Build
+
 ```bash
 # Clean and build everything
 pnpm run build:production
@@ -15,6 +16,7 @@ pnpm run build:production:verbose
 ```
 
 ### Railway Deployment
+
 ```bash
 # Optimized build for Railway
 pnpm run build:railway
@@ -24,6 +26,7 @@ pnpm run build:railway:verbose
 ```
 
 ### Component Builds
+
 ```bash
 # Build only packages
 pnpm run build:packages
@@ -38,6 +41,7 @@ pnpm run build:backend
 ```
 
 ### Verification
+
 ```bash
 # Verify build outputs
 pnpm run build:verify
@@ -46,13 +50,17 @@ pnpm run build:verify
 ## Quick Troubleshooting
 
 ### Problem: Build fails with "command not found"
+
 **Solution:**
+
 ```bash
 pnpm install --frozen-lockfile
 ```
 
 ### Problem: Build fails with memory error
+
 **Solution:**
+
 ```bash
 pnpm run build:railway
 # or
@@ -60,14 +68,18 @@ pnpm run build:low-memory
 ```
 
 ### Problem: Build succeeds but app doesn't work
+
 **Solution:**
+
 ```bash
 pnpm run build:verify
 pnpm run build:all:clean
 ```
 
 ### Problem: Need to see what's failing
+
 **Solution:**
+
 ```bash
 pnpm run build:production:verbose
 ```
@@ -104,15 +116,15 @@ The build system automatically handles dependencies:
 
 ## When to Use Each Command
 
-| Command | Use Case |
-|---------|----------|
+| Command            | Use Case                              |
+| ------------------ | ------------------------------------- |
 | `build:production` | Full production build with validation |
-| `build:railway` | Deploying to Railway |
-| `build:all` | Quick full build during development |
-| `build:packages` | Only changed package code |
-| `build:api` | Only changed API code |
-| `build:frontend` | Only changed frontend code |
-| `build:verify` | Check if build succeeded |
+| `build:railway`    | Deploying to Railway                  |
+| `build:all`        | Quick full build during development   |
+| `build:packages`   | Only changed package code             |
+| `build:api`        | Only changed API code                 |
+| `build:frontend`   | Only changed frontend code            |
+| `build:verify`     | Check if build succeeded              |
 
 ## More Information
 

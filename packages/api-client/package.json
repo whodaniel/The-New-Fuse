@@ -8,7 +8,12 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf dist",
-    "dev": "tsc -b --watch"
+    "dev": "tsc -b --watch",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@the-new-fuse/api-types": "workspace:*",

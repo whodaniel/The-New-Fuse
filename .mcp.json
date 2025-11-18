@@ -2,10 +2,7 @@
   "mcpServers": {
     "the-new-fuse-main": {
       "command": "node",
-      "args": [
-        "./comprehensive-tnf-relay.js",
-        "--mcp-mode"
-      ],
+      "args": ["./comprehensive-tnf-relay.js", "--mcp-mode"],
       "env": {
         "NODE_ENV": "development",
         "TNF_RELAY_PORT": "3001",
@@ -14,11 +11,7 @@
     },
     "filesystem": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "."
-      ]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
     }
   }
 }

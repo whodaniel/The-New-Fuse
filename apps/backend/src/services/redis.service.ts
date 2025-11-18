@@ -1,34 +1,74 @@
-import { Injectable, Logger } from '@nestjs/common';
-import Redis from 'ioredis';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import Redis, { Cluster } from 'ioredis';
 
 @Injectable()
-export class RedisService {
+export class RedisService implements OnModuleDestroy {
   private readonly logger = new Logger(RedisService.name);
   private client: Redis;
   private subscriber: Redis;
 
   constructor() {
-    this.client = new Redis({
+    // Optimized Redis connection pool configuration
+    const redisConfig = {
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379'),
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_DB || '0'),
-    });
+      // Connection pooling settings
+      maxRetriesPerRequest: 3,
+      enableReadyCheck: true,
+      enableOfflineQueue: true,
+      connectTimeout: 10000,
+      // Connection pool optimization
+      lazyConnect: false,
+      keepAlive: 30000,
+      // Performance settings
+      enableAutoPipelining: true, // Automatic command batching
+      autoResendUnfulfilledCommands: true,
+      retryStrategy: (times: number) => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+      reconnectOnError: (err: Error) => {
+        const targetError = 'READONLY';
+        if (err.message.includes(targetError)) {
+          return true;
+        }
+        return false;
+      },
+    };
+
+    this.client = new Redis(redisConfig);
 
     this.subscriber = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-      db: parseInt(process.env.REDIS_DB || '0'),
+      ...redisConfig,
+      // Subscriber should not use pipelining
+      enableAutoPipelining: false,
     });
 
     this.client.on('connect', () => {
-      this.logger.log('Connected to Redis');
+      this.logger.log('Connected to Redis with optimized connection pool');
+    });
+
+    this.client.on('ready', () => {
+      this.logger.log('Redis client ready');
     });
 
     this.client.on('error', (error) => {
       this.logger.error('Redis connection error:', error);
     });
+
+    this.client.on('reconnecting', () => {
+      this.logger.warn('Reconnecting to Redis...');
+    });
+
+    this.subscriber.on('error', (error) => {
+      this.logger.error('Redis subscriber error:', error);
+    });
+  }
+
+  async onModuleDestroy() {
+    await this.disconnect();
   }
 
   async get(key: string): Promise<string | null> {

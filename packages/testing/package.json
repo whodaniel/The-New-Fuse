@@ -28,7 +28,10 @@
     "pretest": "npm run build",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write \"src/**/*.ts\"",
-    "analyze:performance": "node scripts/analyze-performance.js"
+    "analyze:performance": "node scripts/analyze-performance.js",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",

@@ -4,19 +4,22 @@
 
 ### Issue 1: Docker COPY Command Not Preserving Directory Structure ⚠️ CRITICAL
 
-**Problem:**
-All `Dockerfile.railway` files were using:
+**Problem:** All `Dockerfile.railway` files were using:
+
 ```dockerfile
 COPY packages/*/package.json ./packages/
 ```
 
-This glob pattern does NOT preserve directory structure. Docker copies all matched files into the target directory as a flat list, resulting in:
+This glob pattern does NOT preserve directory structure. Docker copies all
+matched files into the target directory as a flat list, resulting in:
+
 ```
 ./packages/package.json  # All package.json files mixed together
 ./packages/package.json  # Overwriting each other!
 ```
 
 Instead of the required structure:
+
 ```
 ./packages/types/package.json
 ./packages/core/package.json
@@ -25,12 +28,14 @@ Instead of the required structure:
 ```
 
 **Impact:**
+
 - Workspace dependencies cannot be resolved
 - pnpm cannot link internal packages
 - Build fails with "Cannot find module @the-new-fuse/types" errors
 
-**Fix Applied:**
-Changed all Dockerfile.railway files to copy the entire packages directory:
+**Fix Applied:** Changed all Dockerfile.railway files to copy the entire
+packages directory:
+
 ```dockerfile
 # Copy all workspace packages - we need the full directory structure
 # Copying individual package.json files with globs doesn't preserve directories
@@ -38,6 +43,7 @@ COPY packages ./packages
 ```
 
 **Files Fixed:**
+
 - `/home/user/fuse/apps/api-gateway/Dockerfile.railway`
 - `/home/user/fuse/apps/api/Dockerfile.railway`
 - `/home/user/fuse/apps/backend/Dockerfile.railway`
@@ -47,18 +53,19 @@ COPY packages ./packages
 
 ### Issue 2: Package.json Main Field Mismatch ⚠️ CRITICAL
 
-**Problem:**
-The `@the-new-fuse/types` package had inconsistent configuration:
+**Problem:** The `@the-new-fuse/types` package had inconsistent configuration:
+
 - `tsconfig.json` specified `"outDir": "./dist"`
 - `package.json` specified `"main": "index.js"` (no dist/)
 
 This mismatch caused runtime import failures because:
+
 1. TypeScript builds to `dist/index.js`
 2. Node.js looks for `index.js` (at package root)
 3. File not found!
 
-**Fix Applied:**
-Updated `/home/user/fuse/packages/types/package.json`:
+**Fix Applied:** Updated `/home/user/fuse/packages/types/package.json`:
+
 ```json
 {
   "main": "dist/index.js",
@@ -100,19 +107,23 @@ Now matches the tsconfig output directory.
    - `COPY . .`
 
 3. **Re-link workspace packages** (CRITICAL)
+
    ```dockerfile
    RUN pnpm install --prefer-offline --frozen-lockfile --ignore-scripts
    ```
+
    This step is ESSENTIAL because:
    - Source files are now present
    - TypeScript project references need proper linking
    - Workspace dependencies need to resolve to source, not just package.json
 
 4. Build workspace dependencies first
+
    ```dockerfile
    # For api-gateway:
    RUN pnpm --filter @the-new-fuse/api-gateway^... build
    ```
+
    The `^...` syntax means "build all dependencies of this package"
 
 5. Build the target service
@@ -138,25 +149,31 @@ Now matches the tsconfig output directory.
 ## Dependency Chain Analysis
 
 ### API Gateway Dependencies
+
 From `/home/user/fuse/apps/api-gateway/package.json`:
-- `@the-new-fuse/core` (workspace:*)
-- `@the-new-fuse/types` (workspace:*)
+
+- `@the-new-fuse/core` (workspace:\*)
+- `@the-new-fuse/types` (workspace:\*)
 
 ### API Server Dependencies
+
 From `/home/user/fuse/apps/api/package.json`:
-- `@the-new-fuse/a2a-core` (workspace:*)
-- `@the-new-fuse/api-types` (workspace:*)
-- `@the-new-fuse/core` (workspace:*)
-- `@the-new-fuse/database` (workspace:*)
-- `@the-new-fuse/port-management` (workspace:*)
-- `@the-new-fuse/security` (workspace:*)
-- `@the-new-fuse/shared` (workspace:*)
-- `@the-new-fuse/types` (workspace:*)
-- `@the-new-fuse/utils` (workspace:*)
-- `@tnf/relay-core` (workspace:*)
+
+- `@the-new-fuse/a2a-core` (workspace:\*)
+- `@the-new-fuse/api-types` (workspace:\*)
+- `@the-new-fuse/core` (workspace:\*)
+- `@the-new-fuse/database` (workspace:\*)
+- `@the-new-fuse/port-management` (workspace:\*)
+- `@the-new-fuse/security` (workspace:\*)
+- `@the-new-fuse/shared` (workspace:\*)
+- `@the-new-fuse/types` (workspace:\*)
+- `@the-new-fuse/utils` (workspace:\*)
+- `@tnf/relay-core` (workspace:\*)
 
 ### TypeScript Project References
+
 From `/home/user/fuse/apps/api/tsconfig.json`:
+
 - `packages/types`
 - `packages/core`
 - `packages/database`
@@ -167,28 +184,38 @@ From `/home/user/fuse/apps/api/tsconfig.json`:
 ## Transitive Dependencies (Package -> Package)
 
 ### Core Package Dependencies
+
 From `/home/user/fuse/packages/core/package.json`:
-- `@the-new-fuse/database` (workspace:*)
-- `@the-new-fuse/infrastructure` (workspace:*)
+
+- `@the-new-fuse/database` (workspace:\*)
+- `@the-new-fuse/infrastructure` (workspace:\*)
 
 ### Database Package Dependencies
+
 From `/home/user/fuse/packages/database/package.json`:
-- `@the-new-fuse/types` (workspace:*)
+
+- `@the-new-fuse/types` (workspace:\*)
 
 ### Shared Package Dependencies
+
 From `/home/user/fuse/packages/shared/package.json`:
-- `@the-new-fuse/core` (workspace:*)
-- `@the-new-fuse/types` (workspace:*)
-- `@the-new-fuse/utils` (workspace:*)
+
+- `@the-new-fuse/core` (workspace:\*)
+- `@the-new-fuse/types` (workspace:\*)
+- `@the-new-fuse/utils` (workspace:\*)
 
 ### Security Package Dependencies
+
 From `/home/user/fuse/packages/security/package.json`:
-- `@the-new-fuse/database` (workspace:*)
-- `@the-new-fuse/core` (workspace:*)
+
+- `@the-new-fuse/database` (workspace:\*)
+- `@the-new-fuse/core` (workspace:\*)
 
 ### Types Package Dependencies
+
 From `/home/user/fuse/packages/types/package.json`:
-- `@the-new-fuse/prompt-templating` (workspace:*)
+
+- `@the-new-fuse/prompt-templating` (workspace:\*)
 
 ---
 
@@ -197,20 +224,25 @@ From `/home/user/fuse/packages/types/package.json`:
 Based on the dependency graph, packages must be built in this order:
 
 ### Tier 1: Foundation Packages (No workspace dependencies)
+
 - `@the-new-fuse/prompt-templating`
 - `@the-new-fuse/infrastructure`
 
 ### Tier 2: Core Type Packages
+
 - `@the-new-fuse/types` (depends on: prompt-templating)
 
 ### Tier 3: Database and Utils
+
 - `@the-new-fuse/database` (depends on: types)
 - `@the-new-fuse/utils`
 
 ### Tier 4: Core Services
+
 - `@the-new-fuse/core` (depends on: database, infrastructure)
 
 ### Tier 5: Specialized Packages
+
 - `@the-new-fuse/security` (depends on: database, core)
 - `@the-new-fuse/shared` (depends on: core, types, utils)
 - `@the-new-fuse/api-types`
@@ -219,29 +251,34 @@ Based on the dependency graph, packages must be built in this order:
 - `@tnf/relay-core`
 
 ### Tier 6: Applications
+
 - `@the-new-fuse/api-gateway` (depends on: core, types)
 - `@the-new-fuse/api-server` (depends on: many packages)
 - `@the-new-fuse/backend` (depends on: many packages)
 - `@the-new-fuse/frontend-app` (depends on: many packages)
 
-**Good News:** Turbo and pnpm's `--filter package^...` syntax handles this automatically!
+**Good News:** Turbo and pnpm's `--filter package^...` syntax handles this
+automatically!
 
 ---
 
 ## Critical Build Commands Explained
 
 ### `pnpm --filter @package^... build`
+
 - Builds all workspace dependencies of `@package`
 - Does NOT build `@package` itself
 - Follows dependency graph automatically
 - Respects TypeScript project references
 
 ### `pnpm --filter @package build`
+
 - Builds ONLY `@package`
 - Assumes dependencies are already built
 - Should be run AFTER `^...` command
 
 ### `pnpm install --prefer-offline`
+
 - Re-links workspace packages without re-downloading
 - Uses local package cache when possible
 - CRITICAL after copying source files in Docker build
@@ -293,7 +330,7 @@ After deploying, verify:
 - [ ] Railway build logs show successful dependency installation
 - [ ] All workspace packages are linked correctly
 - [ ] TypeScript compilation succeeds for all packages
-- [ ] No "Cannot find module @the-new-fuse/*" errors
+- [ ] No "Cannot find module @the-new-fuse/\*" errors
 - [ ] dist/ directories exist for all packages
 - [ ] Service starts successfully
 - [ ] Health check endpoint responds
@@ -307,6 +344,7 @@ After deploying, verify:
 **Cause:** Package not built or dist/ directory missing
 
 **Solution:**
+
 1. Ensure package.json main field points to dist/
 2. Ensure package is included in build filter
 3. Check that `pnpm --filter service^... build` runs before service build
@@ -361,5 +399,5 @@ Each Railway service should have:
 
 ---
 
-**Status:** All critical issues fixed and documented
-**Last Updated:** 2025-11-18
+**Status:** All critical issues fixed and documented **Last Updated:**
+2025-11-18

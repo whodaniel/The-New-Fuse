@@ -1,0 +1,281 @@
+import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
+import { Logger, Injectable } from '@nestjs/common';
+import { Job } from 'bull';
+import { QueueName } from '../constants/queue-names';
+import { ReportGenerationJobData } from '../interfaces/job-data.interface';
+import { EmailService } from '../../services/email.service';
+
+/**
+ * Report generation job processor
+ * Handles generating various types of reports in the background
+ */
+@Processor(QueueName.REPORT_GENERATION)
+@Injectable()
+export class ReportGenerationProcessor {
+  private readonly logger = new Logger(ReportGenerationProcessor.name);
+
+  constructor(private readonly emailService: EmailService) {}
+
+  /**
+   * Process report generation job
+   */
+  @Process('generate-report')
+  async handleGenerateReport(job: Job<ReportGenerationJobData>) {
+    this.logger.log(
+      `Processing generate-report job ${job.id} for type ${job.data.reportType}`,
+    );
+
+    try {
+      const { reportType, userId, parameters, format, emailOnComplete, email } = job.data;
+
+      // Update progress
+      await job.progress(10);
+
+      this.logger.log(`Generating ${reportType} report for user ${userId}`);
+
+      // Simulate data collection
+      await this.sleep(1000);
+      await job.progress(30);
+
+      // Generate report based on type
+      let reportData: any;
+      switch (reportType) {
+        case 'user-activity':
+          reportData = await this.generateUserActivityReport(parameters);
+          break;
+        case 'agent-performance':
+          reportData = await this.generateAgentPerformanceReport(parameters);
+          break;
+        case 'system-metrics':
+          reportData = await this.generateSystemMetricsReport(parameters);
+          break;
+        case 'revenue':
+          reportData = await this.generateRevenueReport(parameters);
+          break;
+        default:
+          throw new Error(`Unknown report type: ${reportType}`);
+      }
+
+      await job.progress(70);
+
+      // Format report
+      const formattedReport = await this.formatReport(reportData, format || 'json');
+      await job.progress(90);
+
+      // Save report (simulated)
+      const reportUrl = await this.saveReport(formattedReport, reportType, userId);
+
+      // Send email if requested
+      if (emailOnComplete && email) {
+        await this.emailService.sendEmail({
+          to: email,
+          subject: `Your ${reportType} report is ready`,
+          html: `
+            <h1>Report Generation Complete</h1>
+            <p>Your ${reportType} report has been generated successfully.</p>
+            <p><strong>Report Details:</strong></p>
+            <ul>
+              <li>Type: ${reportType}</li>
+              <li>Format: ${format || 'json'}</li>
+              <li>Generated: ${new Date().toISOString()}</li>
+            </ul>
+            <p>Download your report: <a href="${reportUrl}">Click here</a></p>
+          `,
+        });
+      }
+
+      await job.progress(100);
+
+      const result = {
+        reportType,
+        userId,
+        format: format || 'json',
+        reportUrl,
+        recordCount: reportData.recordCount || 0,
+        generatedAt: new Date().toISOString(),
+      };
+
+      this.logger.log(`Report ${reportType} generated successfully for user ${userId}`);
+
+      return result;
+    } catch (error) {
+      this.logger.error(`Report generation failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Process scheduled report generation
+   */
+  @Process('scheduled-report')
+  async handleScheduledReport(job: Job<ReportGenerationJobData & { schedule: string }>) {
+    this.logger.log(
+      `Processing scheduled-report job ${job.id} for type ${job.data.reportType}`,
+    );
+
+    try {
+      // Generate the report using the main handler
+      const result = await this.handleGenerateReport(job);
+
+      return {
+        ...result,
+        scheduled: true,
+        schedule: job.data.schedule,
+      };
+    } catch (error) {
+      this.logger.error(`Scheduled report generation failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate user activity report
+   */
+  private async generateUserActivityReport(parameters: Record<string, any>) {
+    this.logger.debug('Generating user activity report');
+
+    // TODO: Replace with actual database queries
+    return {
+      recordCount: 150,
+      data: {
+        totalUsers: 150,
+        activeUsers: 120,
+        newUsers: 15,
+        averageSessionDuration: 1200,
+      },
+    };
+  }
+
+  /**
+   * Generate agent performance report
+   */
+  private async generateAgentPerformanceReport(parameters: Record<string, any>) {
+    this.logger.debug('Generating agent performance report');
+
+    // TODO: Replace with actual agent metrics
+    return {
+      recordCount: 50,
+      data: {
+        totalAgents: 50,
+        averageExecutionTime: 5000,
+        successRate: 95.5,
+        failureRate: 4.5,
+      },
+    };
+  }
+
+  /**
+   * Generate system metrics report
+   */
+  private async generateSystemMetricsReport(parameters: Record<string, any>) {
+    this.logger.debug('Generating system metrics report');
+
+    // TODO: Replace with actual system metrics
+    return {
+      recordCount: 100,
+      data: {
+        cpuUsage: 45.5,
+        memoryUsage: 60.2,
+        diskUsage: 35.8,
+        networkTraffic: 1024000,
+      },
+    };
+  }
+
+  /**
+   * Generate revenue report
+   */
+  private async generateRevenueReport(parameters: Record<string, any>) {
+    this.logger.debug('Generating revenue report');
+
+    // TODO: Replace with actual revenue data
+    return {
+      recordCount: 75,
+      data: {
+        totalRevenue: 125000,
+        transactions: 75,
+        averageTransactionValue: 1666.67,
+      },
+    };
+  }
+
+  /**
+   * Format report in requested format
+   */
+  private async formatReport(data: any, format: string) {
+    this.logger.debug(`Formatting report as ${format}`);
+
+    // TODO: Implement actual formatting logic
+    switch (format) {
+      case 'json':
+        return JSON.stringify(data, null, 2);
+      case 'csv':
+        return this.convertToCSV(data);
+      case 'pdf':
+        return this.convertToPDF(data);
+      default:
+        return JSON.stringify(data, null, 2);
+    }
+  }
+
+  /**
+   * Convert data to CSV
+   */
+  private convertToCSV(data: any): string {
+    // TODO: Implement actual CSV conversion
+    return 'CSV data placeholder';
+  }
+
+  /**
+   * Convert data to PDF
+   */
+  private convertToPDF(data: any): string {
+    // TODO: Implement actual PDF conversion
+    return 'PDF data placeholder';
+  }
+
+  /**
+   * Save report and return URL
+   */
+  private async saveReport(report: any, reportType: string, userId: string): Promise<string> {
+    // TODO: Implement actual storage (S3, local file system, etc.)
+    const reportId = `${reportType}-${userId}-${Date.now()}`;
+    return `https://storage.thenewfuse.com/reports/${reportId}`;
+  }
+
+  /**
+   * Event handler for active jobs
+   */
+  @OnQueueActive()
+  onActive(job: Job) {
+    this.logger.debug(`Processing report generation job ${job.id} of type ${job.name}`);
+  }
+
+  /**
+   * Event handler for completed jobs
+   */
+  @OnQueueCompleted()
+  onCompleted(job: Job, result: any) {
+    this.logger.log(
+      `Report generation job ${job.id} completed. Type: ${result.reportType}, Records: ${result.recordCount}`,
+    );
+  }
+
+  /**
+   * Event handler for failed jobs
+   */
+  @OnQueueFailed()
+  onFailed(job: Job, error: Error) {
+    this.logger.error(
+      `Report generation job ${job.id} failed after ${job.attemptsMade} attempts. Error: ${error.message}`,
+      error.stack,
+    );
+  }
+
+  /**
+   * Helper method to sleep
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+}

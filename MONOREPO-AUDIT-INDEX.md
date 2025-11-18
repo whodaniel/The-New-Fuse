@@ -2,8 +2,8 @@
 
 This index provides quick access to all monorepo audit documentation and tools.
 
-**Audit Date:** 2025-11-18
-**Status:** 🟡 MODERATE - Requires fixes, but fundamentally sound
+**Audit Date:** 2025-11-18 **Status:** 🟡 MODERATE - Requires fixes, but
+fundamentally sound
 
 ---
 
@@ -39,15 +39,15 @@ This index provides quick access to all monorepo audit documentation and tools.
 
 ### Health Metrics
 
-| Metric | Status | Details |
-|--------|--------|---------|
-| **Total Apps** | 4 active | ✅ All properly configured |
-| **Total Packages** | 48 active | ⚠️ 14 need configuration fixes |
-| **Legacy Directories** | 27 found | 🔴 Should be archived |
-| **Circular Dependencies** | 0 | ✅ Excellent |
-| **Broken References** | 0 | ✅ All valid |
-| **Workspace Config** | Valid | ✅ Properly set up |
-| **Build Pipeline** | Working | ✅ Turbo configured |
+| Metric                    | Status    | Details                        |
+| ------------------------- | --------- | ------------------------------ |
+| **Total Apps**            | 4 active  | ✅ All properly configured     |
+| **Total Packages**        | 48 active | ⚠️ 14 need configuration fixes |
+| **Legacy Directories**    | 27 found  | 🔴 Should be archived          |
+| **Circular Dependencies** | 0         | ✅ Excellent                   |
+| **Broken References**     | 0         | ✅ All valid                   |
+| **Workspace Config**      | Valid     | ✅ Properly set up             |
+| **Build Pipeline**        | Working   | ✅ Turbo configured            |
 
 ### Issue Breakdown
 
@@ -62,9 +62,11 @@ This index provides quick access to all monorepo audit documentation and tools.
 ## 🗂️ Document Reference Guide
 
 ### 1. Quick Start Fixes
+
 **File:** `QUICK-START-FIXES.md`
 
 **Contains:**
+
 - Copy-paste commands to fix all issues
 - Step-by-step verification
 - Rollback instructions
@@ -73,9 +75,11 @@ This index provides quick access to all monorepo audit documentation and tools.
 **Use when:** You want to fix issues quickly without reading full details
 
 ### 2. Monorepo Audit Report
+
 **File:** `monorepo-audit-report.md`
 
 **Contains:**
+
 - Complete monorepo structure analysis
 - All apps and packages cataloged
 - Dependency analysis
@@ -86,9 +90,11 @@ This index provides quick access to all monorepo audit documentation and tools.
 **Use when:** You need comprehensive understanding of current state
 
 ### 3. Dependency Map
+
 **File:** `DEPENDENCY-MAP.md`
 
 **Contains:**
+
 - Visual dependency tree
 - Build layer hierarchy
 - Package categories
@@ -98,9 +104,11 @@ This index provides quick access to all monorepo audit documentation and tools.
 **Use when:** You need to understand package relationships
 
 ### 4. Detailed Fix Plan
+
 **File:** `fix-plan.md`
 
 **Contains:**
+
 - Phase-by-phase fix instructions
 - Manual steps for each issue
 - Verification procedures
@@ -114,16 +122,19 @@ This index provides quick access to all monorepo audit documentation and tools.
 ## 🛠️ Tools & Scripts
 
 ### Analysis Script
+
 **File:** `analyze-monorepo.js`
 
 **Purpose:** Analyzes monorepo structure and finds issues
 
 **Usage:**
+
 ```bash
 node analyze-monorepo.js
 ```
 
 **Output:**
+
 - List of all apps and packages
 - Dependency graph
 - Broken references
@@ -132,11 +143,13 @@ node analyze-monorepo.js
 - Statistics
 
 ### Fix Script
+
 **File:** `scripts/fix-package-exports.js`
 
 **Purpose:** Automatically fixes package export configurations
 
 **Usage:**
+
 ```bash
 # Preview changes (dry run)
 node scripts/fix-package-exports.js --dry-run
@@ -149,6 +162,7 @@ node scripts/fix-package-exports.js --package=backend
 ```
 
 **What it does:**
+
 - Adds missing `main`, `types`, `exports` fields
 - Creates build and test scripts
 - Generates `src/index.ts` if missing
@@ -178,8 +192,7 @@ git add -A
 git commit -m "fix: resolve monorepo configuration issues"
 ```
 
-**Time:** 30-45 minutes
-**Impact:** Fixes all critical issues
+**Time:** 30-45 minutes **Impact:** Fixes all critical issues
 
 ### Short-term (Next 2 Weeks)
 
@@ -187,8 +200,7 @@ git commit -m "fix: resolve monorepo configuration issues"
 - Implement dependency validation in CI/CD
 - Standardize package naming (optional)
 
-**Time:** 8-12 hours
-**Impact:** Improves maintainability
+**Time:** 8-12 hours **Impact:** Improves maintainability
 
 ### Long-term (Next Month)
 
@@ -196,8 +208,7 @@ git commit -m "fix: resolve monorepo configuration issues"
 - Implement Changesets for versioning
 - Optimize build performance
 
-**Time:** 16-24 hours
-**Impact:** Enhanced developer experience
+**Time:** 16-24 hours **Impact:** Enhanced developer experience
 
 ---
 
@@ -248,7 +259,9 @@ git commit -m "fix: resolve monorepo configuration issues"
 ## 🔍 Package Categories
 
 ### Foundation Packages (6)
+
 Most depended-on packages:
+
 - `@the-new-fuse/types` - 18 dependents ⭐
 - `@the-new-fuse/core` - 10 dependents ⭐
 - `@the-new-fuse/utils` - 9 dependents ⭐
@@ -257,22 +270,31 @@ Most depended-on packages:
 - `@the-new-fuse/shared` - 3 dependents
 
 ### API & Communication (7)
+
 - a2a-core, a2a-react, api, api-client, api-types, ap2-protocol, relay-core
 
 ### Frontend/UI (9)
-- ui-consolidated, hooks, prompt-templating, feature-suggestions, feature-tracker
+
+- ui-consolidated, hooks, prompt-templating, feature-suggestions,
+  feature-tracker
 - fairtable-core, fairtable-components, fairtable-adapters, fairtable-utils
 
 ### Build & Infrastructure (5)
-- build-optimization, core-monitoring, core-error-handling, deployment-core, eslint-config
+
+- build-optimization, core-monitoring, core-error-handling, deployment-core,
+  eslint-config
 
 ### Backend Services (7)
-- backend, security, port-management, mcp-core, web-scraping, workflow-engine, sync-core
+
+- backend, security, port-management, mcp-core, web-scraping, workflow-engine,
+  sync-core
 
 ### Testing (5)
+
 - testing, test-utils, integration-tests, client, agent
 
 ### Configuration (9)
+
 - contracts, common, proto-definitions, extension-system, core-vector-db
 - features, integrations, layout, monitoring
 
@@ -296,12 +318,15 @@ Most depended-on packages:
 ### Impact of Changes
 
 **If @the-new-fuse/types changes:**
+
 - 18 packages + 4 apps need rebuild = **22 total packages**
 
 **If @the-new-fuse/core changes:**
+
 - 10 packages + 3 apps need rebuild = **13 total packages**
 
 **If @the-new-fuse/utils changes:**
+
 - 9 packages + 2 apps need rebuild = **11 total packages**
 
 ---
@@ -336,6 +361,7 @@ Most depended-on packages:
 Use this checklist to track progress:
 
 ### Critical Fixes (Priority 1)
+
 - [ ] Run `node scripts/fix-package-exports.js`
 - [ ] Verify all packages have proper exports
 - [ ] Archive incomplete app directories
@@ -345,6 +371,7 @@ Use this checklist to track progress:
 - [ ] Commit changes
 
 ### Important Fixes (Priority 2)
+
 - [ ] Add build scripts to remaining packages
 - [ ] Verify all packages build correctly
 - [ ] Add README.md to each package
@@ -352,6 +379,7 @@ Use this checklist to track progress:
 - [ ] Configure CI/CD pipeline
 
 ### Nice to Have (Priority 3)
+
 - [ ] Standardize package naming
 - [ ] Reorganize into categories
 - [ ] Implement Changesets
@@ -364,28 +392,28 @@ Use this checklist to track progress:
 
 ### Common Questions
 
-**Q: How long will fixes take?**
-A: 30-45 minutes for critical fixes, 32-48 hours for everything
+**Q: How long will fixes take?** A: 30-45 minutes for critical fixes, 32-48
+hours for everything
 
-**Q: Will this break existing functionality?**
-A: No, fixes only add missing configurations
+**Q: Will this break existing functionality?** A: No, fixes only add missing
+configurations
 
-**Q: Can I fix issues incrementally?**
-A: Yes, start with Priority 1, then move to Priority 2
+**Q: Can I fix issues incrementally?** A: Yes, start with Priority 1, then move
+to Priority 2
 
-**Q: What if something goes wrong?**
-A: See rollback instructions in QUICK-START-FIXES.md
+**Q: What if something goes wrong?** A: See rollback instructions in
+QUICK-START-FIXES.md
 
 ### Troubleshooting
 
-**Issue:** Build fails after fixes
-**Solution:** Check [QUICK-START-FIXES.md](./QUICK-START-FIXES.md) troubleshooting section
+**Issue:** Build fails after fixes **Solution:** Check
+[QUICK-START-FIXES.md](./QUICK-START-FIXES.md) troubleshooting section
 
-**Issue:** Package can't be imported
-**Solution:** Verify it has `main`, `types`, and `exports` in package.json
+**Issue:** Package can't be imported **Solution:** Verify it has `main`,
+`types`, and `exports` in package.json
 
-**Issue:** Circular dependency error
-**Solution:** Run `pnpm dlx madge --circular packages/[name]/src`
+**Issue:** Circular dependency error **Solution:** Run
+`pnpm dlx madge --circular packages/[name]/src`
 
 ---
 
@@ -416,26 +444,21 @@ A: See rollback instructions in QUICK-START-FIXES.md
 
 After completing all fixes, the monorepo should have:
 
-✅ 100% of packages with valid configurations
-✅ 0 broken internal references
-✅ 0 circular dependencies
-✅ 0 legacy directories in workspace
-✅ Automated validation in CI/CD
-✅ Pre-commit hooks preventing issues
-✅ Comprehensive documentation
-✅ Clean build pipeline
-✅ Fast iteration speed
+✅ 100% of packages with valid configurations ✅ 0 broken internal references ✅
+0 circular dependencies ✅ 0 legacy directories in workspace ✅ Automated
+validation in CI/CD ✅ Pre-commit hooks preventing issues ✅ Comprehensive
+documentation ✅ Clean build pipeline ✅ Fast iteration speed
 
 ---
 
 ## 📅 Timeline
 
-| Week | Focus | Deliverables |
-|------|-------|--------------|
+| Week   | Focus          | Deliverables                   |
+| ------ | -------------- | ------------------------------ |
 | Week 1 | Critical fixes | All Priority 1 issues resolved |
-| Week 2 | Documentation | README.md for all packages |
-| Week 3 | Automation | CI/CD and pre-commit hooks |
-| Week 4 | Optimization | Build performance improvements |
+| Week 2 | Documentation  | README.md for all packages     |
+| Week 3 | Automation     | CI/CD and pre-commit hooks     |
+| Week 4 | Optimization   | Build performance improvements |
 
 ---
 
@@ -450,6 +473,5 @@ If you find issues with this audit or have suggestions:
 
 ---
 
-**Last Updated:** 2025-11-18
-**Audit Version:** 1.0
-**Next Review:** After implementing Priority 1 & 2 fixes
+**Last Updated:** 2025-11-18 **Audit Version:** 1.0 **Next Review:** After
+implementing Priority 1 & 2 fixes

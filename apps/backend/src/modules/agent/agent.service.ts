@@ -72,13 +72,44 @@ export class AgentService {
     }
   }
 
-  async getAgents(userId: string): Promise<Agent[]> {
+  async getAgents(userId: string, page: number = 1, limit: number = 50): Promise<{ data: Agent[], pagination: any }> {
     try {
-      const agents = await this.prisma.agent.findMany({
-        where: { userId, deletedAt: null }
-      });
+      const skip = (page - 1) * limit;
 
-      return agents.map(this.transformPrismaAgent);
+      const [agents, total] = await Promise.all([
+        this.prisma.agent.findMany({
+          where: { userId, deletedAt: null },
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            status: true,
+            description: true,
+            systemPrompt: true,
+            config: true,
+            capabilities: true,
+            provider: true,
+            userId: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true,
+          },
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+        }),
+        this.prisma.agent.count({ where: { userId, deletedAt: null } }),
+      ]);
+
+      return {
+        data: agents.map(this.transformPrismaAgent),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to get agents: ${errorMessage}`);
@@ -89,7 +120,22 @@ export class AgentService {
   async getAgentById(id: string, userId: string): Promise<Agent> {
     try {
       const agent = await this.prisma.agent.findFirst({
-        where: { id, userId, deletedAt: null }
+        where: { id, userId, deletedAt: null },
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          status: true,
+          description: true,
+          systemPrompt: true,
+          config: true,
+          capabilities: true,
+          provider: true,
+          userId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
       });
 
       if (!agent) {

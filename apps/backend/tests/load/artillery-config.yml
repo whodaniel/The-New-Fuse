@@ -1,0 +1,147 @@
+config:
+  target: "http://localhost:3001"
+  phases:
+    # Warm-up phase
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+
+    # Ramp up phase
+    - duration: 120
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp up load"
+
+    # Sustained load phase
+    - duration: 300
+      arrivalRate: 50
+      name: "Sustained load"
+
+    # Spike test
+    - duration: 60
+      arrivalRate: 100
+      name: "Spike test"
+
+    # Cool down
+    - duration: 60
+      arrivalRate: 10
+      name: "Cool down"
+
+  # Performance thresholds
+  ensure:
+    maxErrorRate: 1          # Max 1% error rate
+    p95: 500                 # 95th percentile < 500ms
+    p99: 1000                # 99th percentile < 1000ms
+
+  # Plugins for enhanced reporting
+  plugins:
+    expect: {}
+    metrics-by-endpoint: {}
+
+  # Variables
+  variables:
+    testEmail: "test@example.com"
+    testPassword: "testpassword"
+
+  # Payload files
+  payload:
+    path: "./test-data.csv"
+    fields:
+      - name
+      - email
+    order: sequence
+    skipHeader: true
+
+scenarios:
+  # Authentication scenario
+  - name: "User Authentication"
+    weight: 10
+    flow:
+      - post:
+          url: "/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: token
+
+  # Get users with pagination
+  - name: "Get Users List"
+    weight: 30
+    flow:
+      - get:
+          url: "/users?page={{ $randomNumber(1, 5) }}&limit=50"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: pagination
+            - hasProperty: data
+
+  # Get agents with pagination
+  - name: "Get Agents List"
+    weight: 25
+    flow:
+      - get:
+          url: "/agents?page={{ $randomNumber(1, 3) }}&limit=50"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: data
+
+  # Get chat history
+  - name: "Get Chat History"
+    weight: 20
+    flow:
+      - get:
+          url: "/chat/history?page={{ $randomNumber(1, 10) }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+
+  # Create agent
+  - name: "Create Agent"
+    weight: 10
+    flow:
+      - post:
+          url: "/agents"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            name: "Test Agent {{ $randomString() }}"
+            type: "ASSISTANT"
+            description: "Artillery load test agent"
+            capabilities:
+              - "CHAT"
+          expect:
+            - statusCode: [200, 201]
+
+  # Update agent
+  - name: "Update Agent"
+    weight: 5
+    flow:
+      # First get an agent
+      - get:
+          url: "/agents?page=1&limit=1"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          capture:
+            - json: "$.data[0].id"
+              as: "agentId"
+
+      # Then update it
+      - put:
+          url: "/agents/{{ agentId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            description: "Updated by Artillery at {{ $timestamp() }}"
+          expect:
+            - statusCode: 200

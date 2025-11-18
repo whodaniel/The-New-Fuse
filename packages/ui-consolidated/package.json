@@ -32,7 +32,11 @@
     "prune": "node scripts/prune.js",
     "prune:dry": "node scripts/prune.js --dry-run",
     "prune:remove": "node scripts/prune.js --remove",
-    "prune:remove:dry": "node scripts/prune.js --dry-run --remove"
+    "prune:remove:dry": "node scripts/prune.js --dry-run --remove",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

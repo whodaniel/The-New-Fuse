@@ -28,6 +28,12 @@ export * from './health/health-check.js';
 // Alerts
 export * from './alerts/alert-manager.js';
 
+// Performance monitoring
+export * from './performance/index.js';
+
+// Dashboards
+export * from './dashboards/performance-dashboard.js';
+
 // NestJS integrations
 export * from './nestjs/monitoring.module.js';
 export * from './nestjs/monitoring.interceptor.js';

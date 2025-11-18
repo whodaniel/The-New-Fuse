@@ -8,8 +8,18 @@
   "scripts": {
     "build": "tsc",
     "build:foundation": "tsc",
-    "test": "echo \"No tests for this package\"",
-    "lint": "eslint src/**/*.ts"
+    "build:watch": "tsc --watch",
+    "dev": "tsc --watch",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --testPathPattern=unit --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "events": "^3.3.0"
@@ -24,7 +34,8 @@
     "@sentry/node": "^8.0.0",
     "winston": "^3.18.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "prom-client": "^15.1.0"
+    "prom-client": "^15.1.0",
+    "web-vitals": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "@sentry/node": {
@@ -37,6 +48,9 @@
       "optional": true
     },
     "prom-client": {
+      "optional": true
+    },
+    "web-vitals": {
       "optional": true
     }
   },

@@ -72,3 +72,63 @@ body {
   color: hsl(var(--foreground));
   background-color: hsl(var(--background));
 }
+
+/* Mobile optimization: Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile optimization: Better tap highlighting */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile optimization: Prevent text size adjustment on orientation change */
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mobile optimization: Better focus visibility for accessibility */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Mobile optimization: Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+}
+
+/* Mobile optimization: Improve touch scrolling on iOS */
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile optimization: Better font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mobile optimization: Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}

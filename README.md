@@ -1,6 +1,7 @@
 # The New Fuse - SaaS Platform
 
-A comprehensive multi-service SaaS platform with AI-powered workflow management, browser automation, and agent orchestration capabilities.
+A comprehensive multi-service SaaS platform with AI-powered workflow management,
+browser automation, and agent orchestration capabilities.
 
 ## Quick Start
 
@@ -59,18 +60,18 @@ graph TD
     B -->|none| C[Core Services Only]
     B -->|local| D[Core + Local Theia]
     B -->|cloud| E[Core + Cloud Theia]
-    
+
     C --> F[API Gateway :3005]
-    C --> G[Backend API :3001] 
+    C --> G[Backend API :3001]
     C --> H[Frontend :3000]
     C --> I[Electron App]
-    
+
     D --> F & G & H & I
     D --> J[Local Theia :3007]
-    
-    E --> F & G & H & I  
+
+    E --> F & G & H & I
     E --> K[Cloud Theia Remote]
-    
+
     F & G & H & I --> L[Ready in ~11s]
     J --> M[Ready in ~20s]
     K --> N[Ready in ~12s]
@@ -115,15 +116,18 @@ graph TD
 ### Service Inventory
 
 #### Frontend Applications
+
 - **Frontend** (`apps/frontend`) - Main React application with Vite
 - **Client** (`apps/client`) - Alternative client application
 
 #### API Services
+
 - **API Server** (`apps/api`) - Core API service
 - **API Gateway** (`apps/api-gateway`) - Request routing and authentication
 - **Backend** (`apps/backend`) - Background services and workers
 
 #### Specialized Services
+
 - **Browser Hub** (`apps/browser-hub`) - Browser automation and management
 - **MCP Servers** (`apps/mcp-servers`) - Model Context Protocol servers
 - **Relay Server** (`apps/relay-server`) - Real-time communication relay
@@ -132,24 +136,28 @@ graph TD
 ## Features
 
 ### Multi-Agent Orchestration
+
 - Agent-to-agent communication
 - Intelligent task delegation
 - Workflow management
 - Shared context and memory
 
 ### Browser Automation
+
 - Chrome extension integration
 - Web scraping capabilities
 - UI automation
 - Visual element interaction
 
 ### AI Integration
+
 - Multiple AI provider support (OpenAI, Anthropic, Google)
 - Model Context Protocol (MCP) integration
 - Streaming responses
 - Tool integration
 
 ### Real-time Capabilities
+
 - WebSocket support
 - Live collaboration
 - Real-time updates
@@ -158,12 +166,14 @@ graph TD
 ## Technology Stack
 
 ### Frontend
+
 - React 18 with TypeScript
 - Vite for fast development
 - Chakra UI components
 - React Query for data fetching
 
 ### Backend
+
 - NestJS framework
 - TypeScript
 - Prisma ORM
@@ -171,6 +181,7 @@ graph TD
 - Redis caching
 
 ### Infrastructure
+
 - Docker containerization
 - Railway deployment ready
 - Nixpacks build system
@@ -257,7 +268,7 @@ pnpm run lint               # Lint all code
 pnpm run type-check         # TypeScript checking
 pnpm run format             # Format code
 
-# Claude Agent Management  
+# Claude Agent Management
 pnpm run claude:agents:sync     # Synchronize .claude agents
 pnpm run claude:agents:register # Register agents in database
 pnpm run claude:agents:search   # Search agent ecosystem
@@ -267,6 +278,7 @@ pnpm run claude:agents:status   # Agent system status
 ### Development Workflow
 
 1. **Setup Environment**:
+
    ```bash
    pnpm install
    pnpm run docker:start
@@ -274,6 +286,7 @@ pnpm run claude:agents:status   # Agent system status
    ```
 
 2. **Start Development**:
+
    ```bash
    pnpm run dev:frontend
    pnpm run dev:backend
@@ -295,13 +308,15 @@ pnpm run claude:agents:status   # Agent system status
 ## 🌐 API Endpoints
 
 ### Service Management
+
 - `GET /api/services/status` - Service health status
 - `GET /api/system/metrics` - System performance metrics
 - `GET /api/system/tools` - Available system tools
 
 ### Agent Management
+
 - `POST /api/agents/register/batch` - Register all .claude agents in database
-- `GET /api/agents/search` - Advanced search with multi-criteria filtering  
+- `GET /api/agents/search` - Advanced search with multi-criteria filtering
 - `GET /api/agents/:id/profile` - Complete agent profile with capabilities
 - `GET /api/agents/:id/similar` - Find similar and complementary agents
 - `GET /api/agents/:id/relationships` - Agent compatibility and workflows
@@ -311,11 +326,13 @@ pnpm run claude:agents:status   # Agent system status
 ## 🧪 Testing
 
 ### Unit Tests
+
 ```bash
 pnpm run test
 ```
 
 ### Integration Tests
+
 ```bash
 # Start services first
 pnpm run docker:start
@@ -326,6 +343,7 @@ pnpm run test:integration
 ```
 
 ### Docker Integration Test
+
 ```bash
 pnpm run docker:test
 ```
@@ -333,21 +351,25 @@ pnpm run docker:test
 ## 📚 Documentation
 
 ### Guides
+
 - [Docker Setup Guide](./docs/guides/docker-setup.md)
 - [Development Workflow](./docs/guides/development-workflow.md)
 - [Database Configuration](./docs/guides/database-configuration.md)
 - [Deployment Guide](./docs/guides/deployment-guide.md)
 
 ### Troubleshooting
+
 - [Docker Services Issues](./docs/troubleshooting/docker-services.md)
 
 ### Architecture
+
 - [System Architecture](./docs/architecture/)
 - [API Documentation](./docs/api/)
 
 ## 🚀 Deployment
 
 ### Development
+
 ```bash
 # With Docker infrastructure
 pnpm run docker:start
@@ -355,6 +377,7 @@ pnpm run dev
 ```
 
 ### Building
+
 ```bash
 # Build for production
 pnpm run build
@@ -364,6 +387,7 @@ docker-compose -f docker-compose.yml up -d
 ```
 
 ### Testing
+
 ```bash
 pnpm run test             # Run all tests
 pnpm run test:unit        # Unit tests
@@ -372,6 +396,7 @@ pnpm run test:e2e         # End-to-end tests
 ```
 
 ### Database
+
 ```bash
 pnpm run db:generate      # Generate Prisma client
 pnpm run db:migrate       # Run migrations
@@ -380,6 +405,7 @@ pnpm run db:reset         # Reset database with seed data
 ```
 
 ### Quality
+
 ```bash
 pnpm run lint             # Lint code
 pnpm run type-check       # TypeScript checking
@@ -387,6 +413,7 @@ pnpm run format           # Format code
 ```
 
 ### Cleaning
+
 ```bash
 pnpm run clean            # Clean build artifacts
 pnpm run clean:cache      # Clear pnpm cache
@@ -409,7 +436,8 @@ cd apps/api && railway up
 cd apps/backend && railway up
 ```
 
-See [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) for detailed deployment instructions.
+See [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) for detailed deployment
+instructions.
 
 ### Docker Deployment
 
@@ -435,6 +463,7 @@ docker-compose up -d
 ### Adding a New Feature
 
 1. Create a new branch
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -442,12 +471,14 @@ docker-compose up -d
 2. Make your changes in the appropriate package/app
 
 3. Test locally
+
    ```bash
    pnpm run test
    pnpm run type-check
    ```
 
 4. Build to verify
+
    ```bash
    pnpm run build
    ```
@@ -475,6 +506,7 @@ pnpm -r run build
 ## Troubleshooting
 
 ### Port Already in Use
+
 ```bash
 # Check what's using the port
 lsof -i :3000
@@ -484,6 +516,7 @@ pnpm run clean:ports
 ```
 
 ### Database Connection Issues
+
 ```bash
 # Verify PostgreSQL is running
 psql -U postgres -c "SELECT version();"
@@ -493,6 +526,7 @@ pnpm run db:reset
 ```
 
 ### Build Failures
+
 ```bash
 # Clean and reinstall
 pnpm run clean:full
@@ -501,6 +535,7 @@ pnpm run build
 ```
 
 ### Type Errors
+
 ```bash
 # Regenerate Prisma client
 pnpm run db:generate
@@ -515,7 +550,8 @@ pnpm run type-check
 - [Railway Deployment](./RAILWAY_DEPLOYMENT.md) - Deployment instructions
 - [API Documentation](./docs/api/) - API reference
 - [Architecture](./docs/architecture/) - System architecture
-- [pnpm Standardization](./PNPM_STANDARDIZATION_REPORT.md) - Package manager info
+- [pnpm Standardization](./PNPM_STANDARDIZATION_REPORT.md) - Package manager
+  info
 
 ## Contributing
 
@@ -548,12 +584,14 @@ pnpm run docker:test
 ## 📋 Requirements
 
 ### System Requirements
+
 - **Node.js**: 18+
 - **Docker**: Latest stable version
 - **Memory**: 4GB+ recommended
 - **Storage**: 2GB+ available space
 
 ### Development Requirements
+
 - **TypeScript**: Latest version
 - **Git**: Version control
 - **Docker Desktop**: For database services
@@ -564,6 +602,7 @@ pnpm run docker:test
 ### Common Issues
 
 **Native Module Build Errors:**
+
 ```bash
 # Automatic fix (recommended)
 pnpm run setup:native-modules
@@ -576,6 +615,7 @@ rm -rf node_modules && pnpm install
 ```
 
 **Docker services won't start:**
+
 ```bash
 # Check Docker status
 docker info
@@ -586,6 +626,7 @@ pnpm run docker:start
 ```
 
 **Port conflicts:**
+
 ```bash
 # Check port usage
 lsof -i :3000
@@ -595,6 +636,7 @@ lsof -i :6380
 ```
 
 **Connection issues:**
+
 ```bash
 # Test connectivity
 pnpm run docker:test
@@ -604,6 +646,7 @@ pnpm run docker:logs
 ```
 
 For detailed troubleshooting, see:
+
 - [Native Modules Guide](./docs/guides/native-modules-guide.md)
 - [Docker Services Troubleshooting](./docs/troubleshooting/docker-services.md)
 
@@ -622,7 +665,8 @@ For detailed troubleshooting, see:
 ## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/whodaniel/fuse/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/whodaniel/fuse/discussions)
+- **Discussions**:
+  [GitHub Discussions](https://github.com/whodaniel/fuse/discussions)
 - **Documentation**: Check the `docs/` directory
 
 ## License
@@ -633,4 +677,5 @@ For detailed troubleshooting, see:
 
 **Ready to launch your SaaS platform!** 🚀
 
-For deployment instructions, see [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)
+For deployment instructions, see
+[RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)

@@ -5,16 +5,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LandingHeader } from '@/components/layout/LandingHeader';
 import { LandingFooter } from '@/components/layout/LandingFooter';
-import { 
-  Bot, 
-  Workflow, 
-  MessageSquare, 
-  Shield, 
-  Zap, 
-  Globe, 
-  Code, 
-  Settings, 
-  Users, 
+import { SEOHead } from '@/components/seo/SEOHead';
+import { usePagePerformance } from '@/hooks/usePagePerformance';
+import {
+  Bot,
+  Workflow,
+  MessageSquare,
+  Shield,
+  Zap,
+  Globe,
+  Code,
+  Settings,
+  Users,
   BarChart3,
   Cpu,
   Network,
@@ -54,9 +56,9 @@ const FeatureCard = ({ icon: Icon, title, description, color = "blue" }: {
   description: string;
   color?: string;
 }) => (
-  <Card className="group hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white">
+  <Card className="group hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white focus-within:ring-4 focus-within:ring-blue-500/20" role="listitem">
     <CardContent className="p-6">
-      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br from-${color}-500 to-${color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br from-${color}-500 to-${color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`} aria-hidden="true">
         <Icon className="h-6 w-6 text-white" />
       </div>
       <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
@@ -82,13 +84,22 @@ const TechStackItem = ({ icon: Icon, name, description }: {
 );
 
 export const Landing = () => {
+  // Track page performance metrics
+  usePagePerformance('Landing Page');
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEOHead
+        title="The New Fuse - AI Collaboration Platform | Workflow Automation & Agent Orchestration"
+        description="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols."
+        keywords={['AI platform', 'workflow automation', 'AI agents', 'agent orchestration', 'MCP protocol', 'A2A protocol', 'enterprise AI', 'AI collaboration', 'intelligent automation']}
+        canonical={typeof window !== 'undefined' ? window.location.origin : ''}
+      />
       <LandingHeader />
-      
-      <main className="flex-grow">
+
+      <main className="flex-grow" role="main">
         {/* Hero Section */}
-        <section className="relative py-20 lg:py-32 bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white overflow-hidden">
+        <section className="relative py-20 lg:py-32 bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white overflow-hidden" aria-labelledby="hero-heading">
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-purple-600/30"></div>
           
@@ -100,12 +111,12 @@ export const Landing = () => {
           
           <div className="relative container mx-auto px-4 text-center">
             <div className="max-w-5xl mx-auto">
-              <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20">
-                <Sparkles className="w-4 h-4 mr-2" />
+              <Badge className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20" aria-label="Platform badge">
+                <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
                 Next-Generation AI Platform
               </Badge>
-              
-              <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+
+              <h1 id="hero-heading" className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
                 The Future of
                 <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
                   AI Collaboration
@@ -116,39 +127,55 @@ export const Landing = () => {
                 Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group">
-                  <Rocket className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12" role="group" aria-label="Call to action buttons">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
+                  aria-label="Start your journey with The New Fuse"
+                >
+                  <Link to="/auth/register">
+                    <Rocket className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
+                    Start Your Journey
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
+                  </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
+                  onClick={() => {
+                    const demoSection = document.getElementById('demo-section');
+                    demoSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  aria-label="Watch demo video"
+                >
                   Watch Demo
                 </Button>
               </div>
               
               {/* Live Stats */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto" role="region" aria-label="Platform statistics">
                 <div className="text-center">
-                  <div className="text-3xl lg:text-4xl font-bold text-yellow-400">
+                  <div className="text-3xl lg:text-4xl font-bold text-yellow-400" aria-label="150 plus AI agents">
                     <AnimatedCounter end={150} />+
                   </div>
                   <div className="text-blue-200 text-sm font-medium">AI Agents</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl lg:text-4xl font-bold text-green-400">
+                  <div className="text-3xl lg:text-4xl font-bold text-green-400" aria-label="2500 plus workflows">
                     <AnimatedCounter end={2500} />+
                   </div>
                   <div className="text-blue-200 text-sm font-medium">Workflows</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl lg:text-4xl font-bold text-purple-400">
+                  <div className="text-3xl lg:text-4xl font-bold text-purple-400" aria-label="50000 plus messages per day">
                     <AnimatedCounter end={50000} />+
                   </div>
                   <div className="text-blue-200 text-sm font-medium">Messages/Day</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl lg:text-4xl font-bold text-orange-400">99.9%</div>
+                  <div className="text-3xl lg:text-4xl font-bold text-orange-400" aria-label="99.9 percent uptime">99.9%</div>
                   <div className="text-blue-200 text-sm font-medium">Uptime</div>
                 </div>
               </div>
@@ -157,19 +184,19 @@ export const Landing = () => {
         </section>
 
         {/* Core Features Section */}
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-gray-50" aria-labelledby="features-heading">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <Badge className="mb-4">Core Platform</Badge>
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              <Badge className="mb-4" aria-label="Core platform features">Core Platform</Badge>
+              <h2 id="features-heading" className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                 Everything You Need for AI Orchestration
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 From agent management to workflow automation, we provide a comprehensive suite of tools for modern AI development.
               </p>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" role="list" aria-label="Core features">
               <FeatureCard
                 icon={Bot}
                 title="AI Agent Management"
@@ -211,40 +238,40 @@ export const Landing = () => {
         </section>
 
         {/* Technical Excellence Section */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-white" aria-labelledby="technical-heading">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
-                <Badge className="mb-4">Technical Excellence</Badge>
-                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                <Badge className="mb-4" aria-label="Technical excellence">Technical Excellence</Badge>
+                <h2 id="technical-heading" className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                   Built for Scale & Performance
                 </h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Our platform is architected with modern best practices, ensuring reliability, scalability, and maintainability at enterprise scale.
                 </p>
                 
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                <ul className="grid grid-cols-1 gap-4" role="list" aria-label="Technical highlights">
+                  <li className="flex items-center space-x-3">
+                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" aria-hidden="true" />
                     <span className="text-gray-700">Microservices Architecture with TypeScript/Node.js</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" aria-hidden="true" />
                     <span className="text-gray-700">PNPM Workspaces Monorepo for Better Organization</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" aria-hidden="true" />
                     <span className="text-gray-700">Prisma ORM with PostgreSQL for Data Management</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" aria-hidden="true" />
                     <span className="text-gray-700">Docker Containerization & Kubernetes Ready</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" aria-hidden="true" />
                     <span className="text-gray-700">Comprehensive Testing & CI/CD Pipelines</span>
-                  </div>
-                </div>
+                  </li>
+                </ul>
               </div>
               
               <div className="space-y-4">
@@ -274,10 +301,10 @@ export const Landing = () => {
         </section>
 
         {/* Integration Ecosystem */}
-        <section className="py-20 bg-gradient-to-br from-gray-900 to-blue-900 text-white">
+        <section className="py-20 bg-gradient-to-br from-gray-900 to-blue-900 text-white" id="demo-section" aria-labelledby="integration-heading">
           <div className="container mx-auto px-4 text-center">
-            <Badge className="mb-4 bg-white/10 text-white border-white/20">Integration Ecosystem</Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+            <Badge className="mb-4 bg-white/10 text-white border-white/20" aria-label="Integration ecosystem">Integration Ecosystem</Badge>
+            <h2 id="integration-heading" className="text-4xl lg:text-5xl font-bold mb-6">
               Seamlessly Integrates with Your Workflow
             </h2>
             <p className="text-xl text-blue-100 mb-12 max-w-3xl mx-auto">
@@ -313,11 +340,11 @@ export const Landing = () => {
         </section>
 
         {/* Use Cases Section */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-white" aria-labelledby="use-cases-heading">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <Badge className="mb-4">Use Cases</Badge>
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              <Badge className="mb-4" aria-label="Use cases">Use Cases</Badge>
+              <h2 id="use-cases-heading" className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                 Powering Innovation Across Industries
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -394,24 +421,35 @@ export const Landing = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+        <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700 text-white" aria-labelledby="cta-heading">
           <div className="container mx-auto px-4 text-center">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              <h2 id="cta-heading" className="text-4xl lg:text-5xl font-bold mb-6">
                 Ready to Transform Your AI Operations?
               </h2>
               <p className="text-xl text-blue-100 mb-10">
                 Join leading organizations that trust The New Fuse for their AI automation needs. Start your journey today with our comprehensive platform.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group">
-                  <Link to="/auth/register" className="flex items-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center" role="group" aria-label="Get started actions">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
+                  aria-label="Get started free with The New Fuse"
+                >
+                  <Link to="/auth/register">
                     Get Started Free
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
+                  aria-label="Access your dashboard"
+                >
                   <Link to="/auth/login">
                     Access Dashboard
                   </Link>

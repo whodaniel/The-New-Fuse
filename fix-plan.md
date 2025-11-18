@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document provides step-by-step instructions for fixing all identified issues in the monorepo audit.
+This document provides step-by-step instructions for fixing all identified
+issues in the monorepo audit.
 
 ---
 
@@ -11,6 +12,7 @@ This document provides step-by-step instructions for fixing all identified issue
 ### Task 1.1: Fix Package Export Configurations
 
 **Affected Packages:**
+
 - `@the-new-fuse/backend`
 - `@the-new-fuse/client`
 - `@the-new-fuse/common`
@@ -70,6 +72,7 @@ EOF
 ```
 
 **Manual Steps:**
+
 1. Open each package.json file
 2. Add the `main`, `types`, and `exports` fields
 3. Ensure the package has a proper `src/index.ts` entry point
@@ -78,6 +81,7 @@ EOF
 ### Task 1.2: Handle Incomplete App Directories
 
 **Option A: Remove (if not needed)**
+
 ```bash
 # Create archive directory
 mkdir -p archive/apps
@@ -98,6 +102,7 @@ git commit -m "chore: archive incomplete app directories"
 For each app directory that should be kept:
 
 1. Create package.json:
+
 ```json
 {
   "name": "@the-new-fuse/[app-name]",
@@ -112,6 +117,7 @@ For each app directory that should be kept:
 ```
 
 2. Create basic structure:
+
 ```bash
 mkdir -p apps/[app-name]/src
 touch apps/[app-name]/src/index.ts
@@ -126,6 +132,7 @@ touch apps/[app-name]/README.md
 ### Task 2.1: Add Build Scripts to Packages
 
 **Affected Packages:**
+
 - `@the-new-fuse/contracts`
 - `eslint-config-custom`
 - `features`
@@ -158,6 +165,7 @@ touch apps/[app-name]/README.md
 **Specific Fixes:**
 
 1. **eslint-config-custom** - No build needed (it's a config package)
+
    ```json
    {
      "scripts": {
@@ -168,6 +176,7 @@ touch apps/[app-name]/README.md
    ```
 
 2. **@the-new-fuse/contracts** - Likely needs building if it contains TypeScript
+
    ```json
    {
      "scripts": {
@@ -257,6 +266,7 @@ git commit -m "chore: archive legacy package directories"
 ### Task 3.1: Standardize Package Naming
 
 **Current State:**
+
 - Mix of `@the-new-fuse/` and `@tnf/` prefixes
 
 **Recommendation:** Standardize on `@tnf/` for all packages
@@ -264,6 +274,7 @@ git commit -m "chore: archive legacy package directories"
 **Migration Plan:**
 
 1. Create mapping of old to new names:
+
 ```
 @the-new-fuse/types → @tnf/types
 @the-new-fuse/core → @tnf/core
@@ -272,6 +283,7 @@ git commit -m "chore: archive legacy package directories"
 ```
 
 2. Use a script to update all references:
+
 ```bash
 # Create rename script
 node scripts/rename-packages.js
@@ -283,6 +295,7 @@ node scripts/rename-packages.js
 6. Run full build to verify
 
 **Note:** This is a large change. Consider:
+
 - Creating a feature branch
 - Doing this in smaller batches
 - Coordinating with team
@@ -299,17 +312,13 @@ For each package, create a README.md:
 
 ## Installation
 
-\`\`\`bash
-pnpm add @tnf/[package-name]
-\`\`\`
+\`\`\`bash pnpm add @tnf/[package-name] \`\`\`
 
 ## Usage
 
-\`\`\`typescript
-import { something } from '@tnf/[package-name]';
+\`\`\`typescript import { something } from '@tnf/[package-name]';
 
-// Example usage
-\`\`\`
+// Example usage \`\`\`
 
 ## API
 
@@ -318,6 +327,7 @@ import { something } from '@tnf/[package-name]';
 Description
 
 **Parameters:**
+
 - `param1` - Description
 - `param2` - Description
 
@@ -331,15 +341,18 @@ Description
 ## Development
 
 \`\`\`bash
+
 # Build
+
 pnpm build
 
 # Test
+
 pnpm test
 
 # Dev mode
-pnpm dev
-\`\`\`
+
+pnpm dev \`\`\`
 
 ## License
 
@@ -361,7 +374,7 @@ const requiredFields = [
   'main',
   'types',
   'scripts.build',
-  'scripts.test'
+  'scripts.test',
 ];
 
 function validatePackage(pkgPath) {
@@ -392,6 +405,7 @@ function validatePackage(pkgPath) {
 ```
 
 Add to package.json:
+
 ```json
 {
   "scripts": {
@@ -457,12 +471,14 @@ jobs:
 ### Task 4.2: Add Pre-commit Hooks
 
 Install husky:
+
 ```bash
 pnpm add -D husky lint-staged
 pnpm husky install
 ```
 
 Create `.husky/pre-commit`:
+
 ```bash
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
@@ -472,16 +488,12 @@ pnpm lint-staged
 ```
 
 Add to package.json:
+
 ```json
 {
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "packages/*/package.json": [
-      "node scripts/validate-package.js"
-    ]
+    "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+    "packages/*/package.json": ["node scripts/validate-package.js"]
   }
 }
 ```
@@ -511,12 +523,14 @@ After completing all fixes:
 If issues occur:
 
 1. **Immediate Rollback:**
+
    ```bash
    git reset --hard HEAD~1
    pnpm install
    ```
 
 2. **Restore Archived Directories:**
+
    ```bash
    mv archive/packages/* packages/
    mv archive/apps/* apps/
@@ -565,15 +579,16 @@ After all fixes are complete, the monorepo should have:
 
 ## Timeline
 
-| Phase | Tasks | Estimated Time | Dependencies |
-|-------|-------|----------------|--------------|
-| Phase 1 | Critical fixes | 4-6 hours | None |
-| Phase 2 | Important fixes | 8-12 hours | Phase 1 |
-| Phase 3 | Optimization | 16-24 hours | Phase 1-2 |
-| Phase 4 | Automation | 4-6 hours | Phase 1-3 |
-| **Total** | **All phases** | **32-48 hours** | - |
+| Phase     | Tasks           | Estimated Time  | Dependencies |
+| --------- | --------------- | --------------- | ------------ |
+| Phase 1   | Critical fixes  | 4-6 hours       | None         |
+| Phase 2   | Important fixes | 8-12 hours      | Phase 1      |
+| Phase 3   | Optimization    | 16-24 hours     | Phase 1-2    |
+| Phase 4   | Automation      | 4-6 hours       | Phase 1-3    |
+| **Total** | **All phases**  | **32-48 hours** | -            |
 
 **Recommended Schedule:**
+
 - Week 1: Phase 1 (Critical)
 - Week 2: Phase 2 (Important)
 - Week 3-4: Phase 3 (Optimization)

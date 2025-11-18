@@ -12,7 +12,10 @@
     "clean": "rimraf dist",
     "type-check": "tsc --noEmit",
     "lint": "eslint src/**/*.ts",
-    "test": "echo 'No tests specified for types package'"
+    "test": "echo 'No tests specified for types package'",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

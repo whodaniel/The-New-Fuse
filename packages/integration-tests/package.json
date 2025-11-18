@@ -17,7 +17,10 @@
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Integration tests build completed with warnings'",
     "clean": "rimraf dist coverage",
     "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix"
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@tnf/relay-core": "workspace:*",
@@ -51,7 +54,10 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
-    "extensionsToTreatAsEsm": [".ts", ".tsx"],
+    "extensionsToTreatAsEsm": [
+      ".ts",
+      ".tsx"
+    ],
     "globals": {
       "ts-jest": {
         "useESM": true,
@@ -59,10 +65,13 @@
       }
     },
     "transform": {
-      "^.+\\.(ts|tsx)$": ["ts-jest", {
-        "useESM": true,
-        "tsconfig": "tsconfig.json"
-      }]
+      "^.+\\.(ts|tsx)$": [
+        "ts-jest",
+        {
+          "useESM": true,
+          "tsconfig": "tsconfig.json"
+        }
+      ]
     },
     "transformIgnorePatterns": [
       "node_modules/(?!(@the-new-fuse|react-dnd|react-dnd-html5-backend)/)"
@@ -70,7 +79,9 @@
     "moduleNameMapper": {
       "^@the-new-fuse/(.*)$": "<rootDir>/../../packages/$1/src"
     },
-    "roots": ["<rootDir>/src"],
+    "roots": [
+      "<rootDir>/src"
+    ],
     "testMatch": [
       "**/__tests__/**/*.ts",
       "**/__tests__/**/*.tsx",
@@ -86,9 +97,15 @@
       "!src/**/*.spec.ts"
     ],
     "coverageDirectory": "coverage",
-    "coverageReporters": ["text", "lcov", "html"],
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
     "testTimeout": 60000,
-    "setupFilesAfterEnv": ["<rootDir>/src/setup/test-setup.ts"]
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setup/test-setup.ts"
+    ]
   },
   "keywords": [
     "integration-tests",

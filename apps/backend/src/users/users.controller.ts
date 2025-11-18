@@ -1,25 +1,28 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Put, 
-  Delete, 
-  Body, 
-  Param, 
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
   UseGuards,
   HttpStatus,
-  HttpCode 
+  HttpCode
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { UpdateProfileDto, ProfileResponseDto } from './dto/profile.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('users')
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -32,9 +35,12 @@ export class UsersController {
 
   @Get()
   @Roles('admin')
-  @ApiOperation({ summary: 'Get all users' })
-  async findAll() {
-    return this.usersService.findAll();
+  @ApiOperation({ summary: 'Get all users with pagination' })
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 50
+  ) {
+    return this.usersService.findAll(Number(page), Number(limit));
   }
 
   @Get(':id')
@@ -58,5 +64,39 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user' })
   async delete(@Param('id') id: string) {
     await this.usersService.delete(id);
+  }
+
+  // User Profile Management Endpoints
+  @Get(':id/profile')
+  @ApiOperation({
+    summary: 'Get user profile',
+    description: 'Retrieve detailed user profile information'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully',
+    type: ProfileResponseDto
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async getProfile(@Param('id') id: string): Promise<ProfileResponseDto> {
+    return this.usersService.getProfile(id);
+  }
+
+  @Put(':id/profile')
+  @ApiOperation({
+    summary: 'Update user profile',
+    description: 'Update user profile information including bio, avatar, and preferences'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile updated successfully',
+    type: ProfileResponseDto
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async updateProfile(
+    @Param('id') id: string,
+    @Body() updateProfileDto: UpdateProfileDto
+  ): Promise<ProfileResponseDto> {
+    return this.usersService.updateProfile(id, updateProfileDto);
   }
 }

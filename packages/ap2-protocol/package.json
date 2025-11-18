@@ -9,7 +9,12 @@
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
-    "test": "echo \"No tests for this package\""
+    "test": "echo \"No tests for this package\"",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",

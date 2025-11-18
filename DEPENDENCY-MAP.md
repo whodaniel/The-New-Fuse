@@ -1,6 +1,7 @@
 # The New Fuse - Complete Dependency Map
 
-This document provides a visual reference of all package dependencies in the monorepo.
+This document provides a visual reference of all package dependencies in the
+monorepo.
 
 ## Legend
 
@@ -178,8 +179,9 @@ Final layer - depends on everything needed:
 ### Core Packages
 
 #### @the-new-fuse/types ⭐ (18 dependents)
-**Category:** Foundation
-**Dependencies:**
+
+**Category:** Foundation **Dependencies:**
+
 - @the-new-fuse/prompt-templating
 
 **Used by:** Nearly every package in the monorepo
@@ -187,35 +189,40 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/core ⭐ (10 dependents)
-**Category:** Foundation
-**Dependencies:**
+
+**Category:** Foundation **Dependencies:**
+
 - @the-new-fuse/database
 - @the-new-fuse/infrastructure
 
-**Used by:** api-server, backend-app, feature-tracker, security, shared, and 5 more
+**Used by:** api-server, backend-app, feature-tracker, security, shared, and 5
+more
 
 ---
 
 #### @the-new-fuse/utils ⭐ (9 dependents)
-**Category:** Foundation
-**Dependencies:** None (pure utilities)
 
-**Used by:** api-server, backend-app, feature-tracker, port-management, shared, ui-consolidated, and 3 more
+**Category:** Foundation **Dependencies:** None (pure utilities)
+
+**Used by:** api-server, backend-app, feature-tracker, port-management, shared,
+ui-consolidated, and 3 more
 
 ---
 
 #### @the-new-fuse/database ⭐ (8 dependents)
-**Category:** Foundation
-**Dependencies:**
+
+**Category:** Foundation **Dependencies:**
+
 - @the-new-fuse/types
 
-**Used by:** api, api-server, backend, backend-app, core, relay-core, security, sync-core
+**Used by:** api, api-server, backend, backend-app, core, relay-core, security,
+sync-core
 
 ---
 
 #### @the-new-fuse/infrastructure (5 dependents)
-**Category:** Infrastructure
-**Dependencies:** None
+
+**Category:** Infrastructure **Dependencies:** None
 
 **Used by:** a2a-core, agent, api, core, sync-core
 
@@ -224,8 +231,9 @@ Final layer - depends on everything needed:
 ### API & Communication Packages
 
 #### @the-new-fuse/a2a-core (3 dependents)
-**Category:** Communication
-**Dependencies:**
+
+**Category:** Communication **Dependencies:**
+
 - @the-new-fuse/ap2-protocol
 - @the-new-fuse/infrastructure
 
@@ -234,8 +242,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/a2a-react
-**Category:** Communication
-**Dependencies:**
+
+**Category:** Communication **Dependencies:**
+
 - @the-new-fuse/a2a-core
 
 **Used by:** frontend-app
@@ -243,8 +252,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/api-types (3 dependents)
-**Category:** API
-**Dependencies:**
+
+**Category:** API **Dependencies:**
+
 - @the-new-fuse/types
 
 **Used by:** agent, api-client, api-server
@@ -252,8 +262,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/api-client
-**Category:** API
-**Dependencies:**
+
+**Category:** API **Dependencies:**
+
 - @the-new-fuse/api-types
 - @the-new-fuse/types
 
@@ -262,8 +273,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @tnf/relay-core (4 dependents)
-**Category:** Infrastructure
-**Dependencies:**
+
+**Category:** Infrastructure **Dependencies:**
+
 - @the-new-fuse/database
 
 **Used by:** api-server, extension-system, integration-tests, workflow-engine
@@ -273,8 +285,9 @@ Final layer - depends on everything needed:
 ### Frontend/UI Packages
 
 #### @the-new-fuse/ui-consolidated
-**Category:** UI
-**Dependencies:**
+
+**Category:** UI **Dependencies:**
+
 - @the-new-fuse/api-client
 - @the-new-fuse/hooks
 - @the-new-fuse/types
@@ -285,8 +298,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/hooks
-**Category:** UI
-**Dependencies:**
+
+**Category:** UI **Dependencies:**
+
 - @the-new-fuse/api-client
 - @the-new-fuse/fairtable-core
 - @the-new-fuse/types
@@ -296,16 +310,17 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/prompt-templating (3 dependents)
-**Category:** UI
-**Dependencies:** None
+
+**Category:** UI **Dependencies:** None
 
 **Used by:** sync-core, types, frontend-app
 
 ---
 
 #### @the-new-fuse/feature-suggestions
-**Category:** UI
-**Dependencies:**
+
+**Category:** UI **Dependencies:**
+
 - @the-new-fuse/feature-tracker
 
 **Used by:** frontend-app
@@ -313,8 +328,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/feature-tracker
-**Category:** UI
-**Dependencies:**
+
+**Category:** UI **Dependencies:**
+
 - @the-new-fuse/core
 - @the-new-fuse/types
 - @the-new-fuse/utils
@@ -326,8 +342,9 @@ Final layer - depends on everything needed:
 ### Build & Tooling Packages
 
 #### @tnf/build-optimization
-**Category:** Build
-**Dependencies:**
+
+**Category:** Build **Dependencies:**
+
 - @tnf/core-monitoring
 - @tnf/core-error-handling
 
@@ -336,16 +353,16 @@ Final layer - depends on everything needed:
 ---
 
 #### @tnf/core-monitoring (3 dependents)
-**Category:** Infrastructure
-**Dependencies:** None
+
+**Category:** Infrastructure **Dependencies:** None
 
 **Used by:** build-optimization, mcp-core, sync-core
 
 ---
 
 #### @tnf/core-error-handling (3 dependents)
-**Category:** Infrastructure
-**Dependencies:** None
+
+**Category:** Infrastructure **Dependencies:** None
 
 **Used by:** build-optimization, mcp-core, sync-core
 
@@ -354,16 +371,17 @@ Final layer - depends on everything needed:
 ### Fairtable Packages
 
 #### @the-new-fuse/fairtable-core
-**Category:** Domain
-**Dependencies:** None
+
+**Category:** Domain **Dependencies:** None
 
 **Used by:** fairtable-adapters, fairtable-components, hooks
 
 ---
 
 #### @the-new-fuse/fairtable-components
-**Category:** Domain
-**Dependencies:**
+
+**Category:** Domain **Dependencies:**
+
 - @the-new-fuse/fairtable-core
 - @the-new-fuse/fairtable-utils
 
@@ -372,8 +390,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/fairtable-adapters
-**Category:** Domain
-**Dependencies:**
+
+**Category:** Domain **Dependencies:**
+
 - @the-new-fuse/fairtable-components
 - @the-new-fuse/fairtable-core
 - @the-new-fuse/fairtable-utils
@@ -381,8 +400,8 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/fairtable-utils
-**Category:** Domain
-**Dependencies:** None
+
+**Category:** Domain **Dependencies:** None
 
 **Used by:** fairtable-adapters, fairtable-components
 
@@ -391,8 +410,9 @@ Final layer - depends on everything needed:
 ### Other Packages
 
 #### @the-new-fuse/security
-**Category:** Security
-**Dependencies:**
+
+**Category:** Security **Dependencies:**
+
 - @the-new-fuse/database
 - @the-new-fuse/core
 
@@ -401,8 +421,9 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/port-management
-**Category:** Infrastructure
-**Dependencies:**
+
+**Category:** Infrastructure **Dependencies:**
+
 - @the-new-fuse/types
 - @the-new-fuse/utils
 
@@ -411,15 +432,17 @@ Final layer - depends on everything needed:
 ---
 
 #### @the-new-fuse/workflow-engine
-**Category:** Domain
-**Dependencies:**
+
+**Category:** Domain **Dependencies:**
+
 - @tnf/relay-core
 
 ---
 
 #### @the-new-fuse/web-scraping
-**Category:** Integration
-**Dependencies:**
+
+**Category:** Integration **Dependencies:**
+
 - @the-new-fuse/mcp-core
 - @the-new-fuse/ap2-protocol
 
@@ -428,7 +451,9 @@ Final layer - depends on everything needed:
 ## Package Categories
 
 ### 🔧 Foundation (6 packages)
+
 Critical packages that most others depend on:
+
 - @the-new-fuse/types (18 deps)
 - @the-new-fuse/core (10 deps)
 - @the-new-fuse/utils (9 deps)
@@ -437,7 +462,9 @@ Critical packages that most others depend on:
 - @the-new-fuse/shared (3 deps)
 
 ### 🔌 API & Backend (7 packages)
+
 Communication and backend services:
+
 - @the-new-fuse/api
 - @the-new-fuse/api-client
 - @the-new-fuse/api-types
@@ -447,7 +474,9 @@ Communication and backend services:
 - @tnf/relay-core
 
 ### 🎨 Frontend/UI (9 packages)
+
 User interface components:
+
 - @the-new-fuse/ui-consolidated
 - @the-new-fuse/hooks
 - @the-new-fuse/prompt-templating
@@ -459,7 +488,9 @@ User interface components:
 - @the-new-fuse/fairtable-utils
 
 ### 🏗️ Infrastructure (5 packages)
+
 Build and development tools:
+
 - @tnf/build-optimization
 - @tnf/core-monitoring
 - @tnf/core-error-handling
@@ -467,7 +498,9 @@ Build and development tools:
 - eslint-config-custom
 
 ### 🔐 Security & Services (7 packages)
+
 Backend services:
+
 - @the-new-fuse/backend
 - @the-new-fuse/security
 - @the-new-fuse/port-management
@@ -477,7 +510,9 @@ Backend services:
 - @the-new-fuse/sync-core
 
 ### 🧪 Testing (5 packages)
+
 Test utilities:
+
 - @the-new-fuse/testing
 - @the-new-fuse/test-utils
 - @the-new-fuse/integration-tests
@@ -485,7 +520,9 @@ Test utilities:
 - @the-new-fuse/agent
 
 ### ⚙️ Configuration (9 packages)
+
 Utilities and config:
+
 - @the-new-fuse/contracts
 - @the-new-fuse/common
 - @the-new-fuse/proto-definitions
@@ -501,15 +538,19 @@ Utilities and config:
 ## Impact Analysis
 
 ### If @the-new-fuse/types changes:
+
 **Rebuild required:** 18 packages + 4 apps = 22 total
 
 ### If @the-new-fuse/core changes:
+
 **Rebuild required:** 10 packages + 3 apps = 13 total
 
 ### If @the-new-fuse/database changes:
+
 **Rebuild required:** 8 packages + 2 apps = 10 total
 
 ### If @the-new-fuse/utils changes:
+
 **Rebuild required:** 9 packages + 2 apps = 11 total
 
 ---

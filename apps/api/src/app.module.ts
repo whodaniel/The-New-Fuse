@@ -29,6 +29,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { Web3authModule } from './web3auth/web3auth.module';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { GraphqlModule } from './graphql/graphql.module';
 
 // Security imports
 import { InputSanitizationService } from './security/input-sanitization.service';
@@ -77,6 +78,7 @@ import { SecureAuthGuard } from './guards/secure-auth.guard';
     Web3authModule, // Web3Auth Integration Module
     SmartAccountModule, // Smart Account (ERC-4337) Module
     MonitoringModule, // Wallet Platform Monitoring
+    GraphqlModule, // GraphQL API Module
   ],
   controllers: [
     AppController,

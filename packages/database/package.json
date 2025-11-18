@@ -16,7 +16,11 @@
     "db:validate": "prisma validate",
     "lint": "eslint src",
     "clean": "rimraf dist",
-    "postinstall": "prisma generate || echo 'Prisma generate failed - using placeholder client'"
+    "postinstall": "prisma generate || echo 'Prisma generate failed - using placeholder client'",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

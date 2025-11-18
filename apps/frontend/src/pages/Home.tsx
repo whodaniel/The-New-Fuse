@@ -1,315 +1,438 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+
+// Stats Section Component
+const StatsSection: React.FC = () => {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const isStatsInView = useInView(statsRef, { once: true, amount: 0.3 });
+
+  const stats = [
+    { value: "12,543+", label: "Active Community Members", delay: 0 },
+    { value: "4,281", label: "AI Agent NFTs Minted", delay: 0.1 },
+    { value: "1,592", label: "Workflows Automated", delay: 0.2 },
+    { value: "99.9%", label: "Platform Uptime", delay: 0.3 }
+  ];
+
+  return (
+    <section
+      ref={statsRef}
+      className="bg-gradient-to-r from-blue-600 to-indigo-600 py-16 sm:py-20"
+      aria-label="Platform statistics"
+    >
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isStatsInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: stat.delay, ease: "easeOut" }}
+            >
+              <motion.div
+                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={isStatsInView ? { scale: 1, opacity: 1 } : {}}
+                transition={{
+                  duration: 0.5,
+                  delay: stat.delay + 0.2,
+                  type: "spring",
+                  stiffness: 200
+                }}
+              >
+                {stat.value}
+              </motion.div>
+              <div className="mt-2 text-sm sm:text-base text-blue-100">{stat.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Features Section Component with Scroll Animations
+const FeaturesSection: React.FC = () => {
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const isFeaturesInView = useInView(featuresRef, { once: true, amount: 0.2 });
+
+  const features = [
+    {
+      icon: "🎨",
+      title: "Visual Workflow Builder",
+      description: "Drag-and-drop interface powered by ReactFlow. Design complex multi-agent workflows without code. Access pre-built templates or create custom automations in minutes.",
+      link: "/workflows/builder",
+      linkText: "Try Builder",
+      bgColor: "bg-blue-50",
+      iconBg: "bg-blue-600",
+      textColor: "text-blue-600",
+      delay: 0
+    },
+    {
+      icon: "💎",
+      title: "Web3 NFT Marketplace",
+      description: "Tokenize AI agents as NFTs. Enable fractional ownership, revenue sharing, and decentralized trading. The first Web3-native AI agent marketplace.",
+      link: "/agents/nft-marketplace",
+      linkText: "Explore Marketplace",
+      bgColor: "bg-purple-50",
+      iconBg: "bg-purple-600",
+      textColor: "text-purple-600",
+      delay: 0.1
+    },
+    {
+      icon: "🤖",
+      title: "Multi-LLM Support",
+      description: "Integrate with GPT-4, Claude, Gemini, Llama, Perplexity, and more. Model-agnostic architecture lets you choose the best AI for each task.",
+      link: "/agents/new",
+      linkText: "Create Agent",
+      bgColor: "bg-green-50",
+      iconBg: "bg-green-600",
+      textColor: "text-green-600",
+      delay: 0.2
+    },
+    {
+      icon: "🔒",
+      title: "Enterprise Security",
+      description: "Role-based access control, workspace isolation, SSO/OAuth integration, API key management, and comprehensive audit logs for compliance.",
+      link: "/admin/system-health",
+      linkText: "Security Dashboard",
+      bgColor: "bg-red-50",
+      iconBg: "bg-red-600",
+      textColor: "text-red-600",
+      delay: 0
+    },
+    {
+      icon: "📊",
+      title: "Real-Time Analytics",
+      description: "Live dashboards showing agent performance, workflow execution, system health, and resource utilization. Make data-driven decisions with comprehensive metrics.",
+      link: "/analytics",
+      linkText: "View Analytics",
+      bgColor: "bg-indigo-50",
+      iconBg: "bg-indigo-600",
+      textColor: "text-indigo-600",
+      delay: 0.1
+    },
+    {
+      icon: "👥",
+      title: "Community Ecosystem",
+      description: "Access 12,543+ community members, workflow template marketplace, discussion forums, and reputation system. Learn from experts and share your innovations.",
+      link: "/community",
+      linkText: "Join Community",
+      bgColor: "bg-yellow-50",
+      iconBg: "bg-yellow-600",
+      textColor: "text-yellow-600",
+      delay: 0.2
+    }
+  ];
+
+  return (
+    <section
+      ref={featuresRef}
+      className="py-20 sm:py-24 lg:py-32 bg-white"
+      aria-labelledby="features-heading"
+    >
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* Section Header */}
+        <motion.div
+          className="mx-auto max-w-2xl text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isFeaturesInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <motion.h2
+            className="text-base font-semibold leading-7 text-blue-600"
+            initial={{ opacity: 0 }}
+            animate={isFeaturesInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            PLATFORM CAPABILITIES
+          </motion.h2>
+          <motion.p
+            id="features-heading"
+            className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isFeaturesInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            Everything You Need to Orchestrate AI at Scale
+          </motion.p>
+          <motion.p
+            className="mt-6 text-lg leading-8 text-gray-600"
+            initial={{ opacity: 0 }}
+            animate={isFeaturesInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            From visual workflow builders to Web3 monetization, we've built the most comprehensive platform for AI agent orchestration.
+          </motion.p>
+        </motion.div>
+
+        {/* Features Grid */}
+        <div className="mx-auto mt-16 sm:mt-20 lg:mt-24 max-w-2xl lg:max-w-none">
+          <dl className="grid max-w-xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                className={`flex flex-col ${feature.bgColor} p-6 sm:p-8 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 group`}
+                initial={{ opacity: 0, y: 40 }}
+                animate={isFeaturesInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.5 + feature.delay,
+                  ease: "easeOut"
+                }}
+                whileHover={{ scale: 1.02, y: -5 }}
+              >
+                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
+                  <motion.div
+                    className={`h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-lg ${feature.iconBg} text-2xl sm:text-3xl shadow-md`}
+                    whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {feature.icon}
+                  </motion.div>
+                  <span>{feature.title}</span>
+                </dt>
+                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                  <p className="flex-auto">{feature.description}</p>
+                  <p className="mt-6">
+                    <Link
+                      to={feature.link}
+                      className={`text-sm font-semibold leading-6 ${feature.textColor} hover:opacity-80 transition-opacity inline-flex items-center gap-1 group-hover:gap-2 transition-all`}
+                    >
+                      {feature.linkText}
+                      <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </Link>
+                  </p>
+                </dd>
+              </motion.div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 // Professional Landing Page - THE NEW FUSE
 // This is the MAIN landing page for thenewfuse.com
 // World-Class Landing Page for The New Fuse AI Agent Orchestration Platform
 export default function HomePage() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const isHeroInView = useInView(heroRef, { once: true, amount: 0.3 });
+  const { scrollYProgress } = useScroll();
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+
   return (
     <div className="bg-white">
-      {/* Hero Section with Gradient Background */}
-      <div className="relative overflow-hidden bg-blue-50 py-16 sm:py-24 lg:py-32">
+      {/* Hero Section with Modern Gradient Background and Animations */}
+      <section
+        ref={heroRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
+        aria-labelledby="hero-heading"
+      >
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
+        </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            {/* Badge */}
-            <div className="mb-8 inline-flex items-center">
-              <span className="inline-flex items-center rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white shadow-lg">
-                <span className="mr-2">🚀</span>
+        <div className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            {/* Badge with animation */}
+            <motion.div
+              className="mb-8 inline-flex items-center"
+              initial={{ opacity: 0, y: -20 }}
+              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-sm hover:shadow-xl transition-shadow duration-300">
+                <motion.span
+                  animate={{ rotate: [0, 15, -15, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                >
+                  🚀
+                </motion.span>
                 World-Class AI Agent Orchestration Platform
               </span>
-            </div>
+            </motion.div>
 
-            {/* Main Heading */}
-            <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-7xl">
-              Orchestrate, Automate,<br />
-              and <span className="text-blue-600">Scale AI Agents</span>
-            </h1>
+            {/* Main Heading with staggered animation */}
+            <motion.h1
+              id="hero-heading"
+              className="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl md:text-7xl lg:text-8xl"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            >
+              <span className="block">Orchestrate, Automate,</span>
+              <motion.span
+                className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
+                initial={{ opacity: 0, x: -20 }}
+                animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              >
+                Scale AI Agents
+              </motion.span>
+            </motion.h1>
 
-            {/* Subtitle */}
-            <p className="mt-8 text-xl leading-8 text-gray-600 max-w-2xl mx-auto">
+            {/* Subtitle with fade-in */}
+            <motion.p
+              className="mt-8 text-lg sm:text-xl lg:text-2xl leading-8 text-gray-600 max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+            >
               The enterprise-grade platform for managing multi-agent workflows, visual automation,
               and Web3-native AI monetization. Built for developers, teams, and organizations who demand excellence.
-            </p>
+            </motion.p>
 
-            {/* CTA Buttons */}
-            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/register"
-                className="w-full sm:w-auto rounded-lg bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-xl hover:bg-blue-700 hover:shadow-2xl transition-all duration-300"
+            {/* CTA Buttons with staggered animation */}
+            <motion.div
+              className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                🚀 Start Free Trial
-              </Link>
-              <Link
-                to="/hub"
-                className="w-full sm:w-auto rounded-lg bg-white px-8 py-4 text-base font-semibold text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:shadow-xl transition-all duration-300"
-              >
-                Launch Modern Hub
-              </Link>
-              <Link
-                to="/workflows/builder"
-                className="w-full sm:w-auto rounded-lg border-2 border-blue-600 px-8 py-4 text-base font-semibold text-blue-600 hover:bg-blue-50 transition-all duration-300"
-              >
-                Try Workflow Builder
-              </Link>
-            </div>
+                <Link
+                  to="/auth/register"
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                >
+                  <span className="relative z-10">Get Started</span>
+                  <motion.svg
+                    className="relative z-10 w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </motion.svg>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </Link>
+              </motion.div>
 
-            {/* Trust Indicators */}
-            <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>No credit card required</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>14-day free trial</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Cancel anytime</span>
-              </div>
-            </div>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Link
+                  to="/workflows/builder"
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-gray-900 shadow-lg ring-2 ring-gray-200 hover:ring-blue-600 hover:text-blue-600 hover:shadow-xl transition-all duration-300"
+                >
+                  <span>View Demo</span>
+                  <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Trust Indicators with fade-in */}
+            <motion.div
+              className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-sm text-gray-600"
+              initial={{ opacity: 0 }}
+              animate={isHeroInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
+            >
+              {[
+                { text: "No credit card required" },
+                { text: "14-day free trial" },
+                { text: "Cancel anytime" }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-center gap-2"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 1 + (index * 0.1) }}
+                >
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span className="whitespace-nowrap">{item.text}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Visual Indicator - Scroll Down */}
+            <motion.div
+              className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.8,
+                delay: 1.5,
+                repeat: Infinity,
+                repeatType: "reverse",
+                repeatDelay: 1
+              }}
+            >
+              <svg
+                className="w-6 h-6 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Platform Stats Section */}
-      <div className="bg-blue-600 py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white">12,543+</div>
-              <div className="mt-2 text-sm text-blue-100">Active Community Members</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white">4,281</div>
-              <div className="mt-2 text-sm text-blue-100">AI Agent NFTs Minted</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white">1,592</div>
-              <div className="mt-2 text-sm text-blue-100">Workflows Automated</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white">99.9%</div>
-              <div className="mt-2 text-sm text-blue-100">Platform Uptime</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Platform Stats Section with Animations */}
+      <StatsSection />
 
       {/* Key Differentiators Section */}
-      <div className="py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-base font-semibold leading-7 text-blue-600">PLATFORM CAPABILITIES</h2>
-            <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-              Everything You Need to Orchestrate AI at Scale
-            </p>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              From visual workflow builders to Web3 monetization, we've built the most comprehensive platform for AI agent orchestration.
-            </p>
-          </div>
-
-          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-12 lg:max-w-none lg:grid-cols-3">
-              {/* Visual Workflow Builder */}
-              <div className="flex flex-col bg-blue-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-blue-600 text-2xl">
-                    🎨
-                  </div>
-                  <span>Visual Workflow Builder</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Drag-and-drop interface powered by ReactFlow. Design complex multi-agent workflows without code.
-                    Access pre-built templates or create custom automations in minutes.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/workflows/builder" className="text-sm font-semibold leading-6 text-blue-600 hover:text-blue-500">
-                      Try Builder <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* Web3 NFT Marketplace */}
-              <div className="flex flex-col bg-purple-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-purple-600 text-2xl">
-                    💎
-                  </div>
-                  <span>Web3 NFT Marketplace</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Tokenize AI agents as NFTs. Enable fractional ownership, revenue sharing, and decentralized trading.
-                    The first Web3-native AI agent marketplace.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/agents/nft-marketplace" className="text-sm font-semibold leading-6 text-purple-600 hover:text-purple-500">
-                      Explore Marketplace <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* Multi-LLM Support */}
-              <div className="flex flex-col bg-green-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-green-600 text-2xl">
-                    🤖
-                  </div>
-                  <span>Multi-LLM Support</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Integrate with GPT-4, Claude, Gemini, Llama, Perplexity, and more.
-                    Model-agnostic architecture lets you choose the best AI for each task.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/agents/new" className="text-sm font-semibold leading-6 text-green-600 hover:text-green-500">
-                      Create Agent <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* Enterprise Security */}
-              <div className="flex flex-col bg-red-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-red-600 text-2xl">
-                    🔒
-                  </div>
-                  <span>Enterprise Security</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Role-based access control, workspace isolation, SSO/OAuth integration, API key management,
-                    and comprehensive audit logs for compliance.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/admin/system-health" className="text-sm font-semibold leading-6 text-red-600 hover:text-red-500">
-                      Security Dashboard <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* Real-Time Monitoring */}
-              <div className="flex flex-col bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-indigo-600 text-2xl">
-                    📊
-                  </div>
-                  <span>Real-Time Analytics</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Live dashboards showing agent performance, workflow execution, system health, and resource utilization.
-                    Make data-driven decisions with comprehensive metrics.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/analytics" className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                      View Analytics <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* Community Ecosystem */}
-              <div className="flex flex-col bg-yellow-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-yellow-600 text-2xl">
-                    👥
-                  </div>
-                  <span>Community Ecosystem</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Access 12,543+ community members, workflow template marketplace, discussion forums,
-                    and reputation system. Learn from experts and share your innovations.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/community" className="text-sm font-semibold leading-6 text-yellow-600 hover:text-yellow-500">
-                      Join Community <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* Workspace Collaboration */}
-              <div className="flex flex-col bg-cyan-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-cyan-600 text-2xl">
-                    🏢
-                  </div>
-                  <span>Team Workspaces</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Multi-tenant workspace architecture with team member management, shared resources,
-                    collaborative workflows, and activity feeds for seamless teamwork.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/workspace/overview" className="text-sm font-semibold leading-6 text-cyan-600 hover:text-cyan-500">
-                      Manage Workspace <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* API-First Architecture */}
-              <div className="flex flex-col bg-violet-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-violet-600 text-2xl">
-                    🔌
-                  </div>
-                  <span>API-First Platform</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Comprehensive REST API, webhook support, MCP server integration, and AI agent portal.
-                    Build custom integrations with our developer-friendly API.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/settings/api" className="text-sm font-semibold leading-6 text-violet-600 hover:text-violet-500">
-                      API Documentation <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-
-              {/* IDE Integration */}
-              <div className="flex flex-col bg-slate-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
-                <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-slate-600 text-2xl">
-                    💻
-                  </div>
-                  <span>Development Tools</span>
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">
-                    Embedded Theia IDE, terminal access, code integration with agents, GitHub connectivity,
-                    and automated testing tools for developer productivity.
-                  </p>
-                  <p className="mt-4">
-                    <Link to="/hub" className="text-sm font-semibold leading-6 text-slate-600 hover:text-slate-500">
-                      Developer Hub <span aria-hidden="true">→</span>
-                    </Link>
-                  </p>
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
+      <FeaturesSection />
 
       {/* Use Cases Section */}
       <div className="bg-gray-50 py-24">

@@ -16,8 +16,7 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-
+    "sourceMap": true
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

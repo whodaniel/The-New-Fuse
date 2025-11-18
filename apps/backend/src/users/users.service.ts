@@ -32,18 +32,79 @@ export class UsersService {
     return this.sanitizeUser(user);
   }
 
-  async findAll() {
-    const users = await this.prisma.user.findMany();
-    return users.map(user => this.sanitizeUser(user));
+  async findAll(page: number = 1, limit: number = 50) {
+    const skip = (page - 1) * limit;
+
+    // Use select to fetch only needed fields for better performance
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          name: true,
+          role: true,
+          roles: true,
+          isActive: true,
+          lastLogin: true,
+          createdAt: true,
+          updatedAt: true,
+          emailVerified: true,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.user.count(),
+    ]);
+
+    return {
+      data: users,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findById(id: string) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    return user ? this.sanitizeUser(user) : null;
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        role: true,
+        roles: true,
+        isActive: true,
+        lastLogin: true,
+        createdAt: true,
+        updatedAt: true,
+        emailVerified: true,
+        preferences: true,
+      },
+    });
+    return user;
   }
 
   async findByEmail(email: string) {
-    return this.prisma.user.findUnique({ where: { email } });
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        role: true,
+        roles: true,
+        isActive: true,
+        hashedPassword: true, // Needed for authentication
+        emailVerified: true,
+      },
+    });
   }
 
   async update(id: string, data: any) {
@@ -71,5 +132,42 @@ export class UsersService {
   sanitizeUser(user: any) {
     const { password, ...sanitizedUser } = user;
     return sanitizedUser;
+  }
+
+  async getProfile(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        // Add profile fields if they exist in your schema
+      }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  }
+
+  async updateProfile(id: string, profileData: any) {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: profileData,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    });
+
+    this.logger.log(`Profile updated for user ${id}`);
+    return user;
   }
 }

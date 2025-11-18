@@ -4,7 +4,11 @@ Generated: 2025-11-18
 
 ## Executive Summary
 
-The New Fuse monorepo contains **4 active apps** and **48 packages** across the workspace. The monorepo is properly configured with pnpm workspaces and Turbo for build orchestration. However, there are **14 critical configuration issues** that need to be addressed, plus **23 legacy/incomplete package directories** that should be cleaned up.
+The New Fuse monorepo contains **4 active apps** and **48 packages** across the
+workspace. The monorepo is properly configured with pnpm workspaces and Turbo
+for build orchestration. However, there are **14 critical configuration issues**
+that need to be addressed, plus **23 legacy/incomplete package directories**
+that should be cleaned up.
 
 ### Health Status: 🟡 MODERATE
 
@@ -21,12 +25,12 @@ The New Fuse monorepo contains **4 active apps** and **48 packages** across the 
 
 ### 1.1 Active Applications (4)
 
-| App Name | Path | Status | Dependencies |
-|----------|------|--------|--------------|
-| `@the-new-fuse/api-server` | `/home/user/fuse/apps/api` | ✅ Active | 10 internal packages |
-| `@the-new-fuse/api-gateway` | `/home/user/fuse/apps/api-gateway` | ✅ Active | 2 internal packages |
-| `@the-new-fuse/backend-app` | `/home/user/fuse/apps/backend` | ✅ Active | 4 internal packages |
-| `@the-new-fuse/frontend-app` | `/home/user/fuse/apps/frontend` | ✅ Active | 8 internal packages |
+| App Name                     | Path                               | Status    | Dependencies         |
+| ---------------------------- | ---------------------------------- | --------- | -------------------- |
+| `@the-new-fuse/api-server`   | `/home/user/fuse/apps/api`         | ✅ Active | 10 internal packages |
+| `@the-new-fuse/api-gateway`  | `/home/user/fuse/apps/api-gateway` | ✅ Active | 2 internal packages  |
+| `@the-new-fuse/backend-app`  | `/home/user/fuse/apps/backend`     | ✅ Active | 4 internal packages  |
+| `@the-new-fuse/frontend-app` | `/home/user/fuse/apps/frontend`    | ✅ Active | 8 internal packages  |
 
 ### 1.2 Inactive/Legacy App Directories (4)
 
@@ -42,6 +46,7 @@ The New Fuse monorepo contains **4 active apps** and **48 packages** across the 
 Organized by category:
 
 #### Foundation/Core Packages (6)
+
 - `@the-new-fuse/types` - **18 dependents** (Most depended-on package)
 - `@the-new-fuse/core` - **10 dependents**
 - `@the-new-fuse/utils` - **9 dependents**
@@ -50,6 +55,7 @@ Organized by category:
 - `@the-new-fuse/shared` - 3 dependents
 
 #### Build & Infrastructure (5)
+
 - `@tnf/build-optimization`
 - `@tnf/core-monitoring` - **3 dependents**
 - `@tnf/core-error-handling` - **3 dependents**
@@ -57,6 +63,7 @@ Organized by category:
 - `eslint-config-custom`
 
 #### API & Communication (7)
+
 - `@the-new-fuse/api`
 - `@the-new-fuse/api-client`
 - `@the-new-fuse/api-types` - **3 dependents**
@@ -66,6 +73,7 @@ Organized by category:
 - `@tnf/relay-core` - **4 dependents**
 
 #### Frontend/UI (9)
+
 - `@the-new-fuse/ui-consolidated`
 - `@the-new-fuse/hooks`
 - `@the-new-fuse/prompt-templating` - **3 dependents**
@@ -77,6 +85,7 @@ Organized by category:
 - `@the-new-fuse/fairtable-utils`
 
 #### Backend/Services (7)
+
 - `@the-new-fuse/backend`
 - `@the-new-fuse/security`
 - `@the-new-fuse/port-management`
@@ -86,6 +95,7 @@ Organized by category:
 - `@the-new-fuse/sync-core`
 
 #### Development/Testing (5)
+
 - `@the-new-fuse/testing`
 - `@the-new-fuse/test-utils`
 - `@the-new-fuse/integration-tests`
@@ -93,6 +103,7 @@ Organized by category:
 - `@the-new-fuse/agent`
 
 #### Utility/Configuration (9)
+
 - `@the-new-fuse/contracts`
 - `@the-new-fuse/common`
 - `@the-new-fuse/proto-definitions`
@@ -140,6 +151,7 @@ These directories exist but lack package.json files:
 ### 2.1 Dependency Graph
 
 #### API Server Dependencies
+
 ```
 @the-new-fuse/api-server
 ├── @the-new-fuse/a2a-core
@@ -163,6 +175,7 @@ These directories exist but lack package.json files:
 ```
 
 #### API Gateway Dependencies
+
 ```
 @the-new-fuse/api-gateway
 ├── @the-new-fuse/core
@@ -170,6 +183,7 @@ These directories exist but lack package.json files:
 ```
 
 #### Backend App Dependencies
+
 ```
 @the-new-fuse/backend-app
 ├── @the-new-fuse/core
@@ -179,6 +193,7 @@ These directories exist but lack package.json files:
 ```
 
 #### Frontend App Dependencies
+
 ```
 @the-new-fuse/frontend-app
 ├── @the-new-fuse/a2a-core
@@ -199,22 +214,23 @@ These directories exist but lack package.json files:
 
 ### 2.2 Most Critical Packages (by Dependents)
 
-| Package | Dependents | Category |
-|---------|------------|----------|
-| `@the-new-fuse/types` | 18 | Foundation |
-| `@the-new-fuse/core` | 10 | Foundation |
-| `@the-new-fuse/utils` | 9 | Foundation |
-| `@the-new-fuse/database` | 8 | Foundation |
-| `@the-new-fuse/infrastructure` | 5 | Infrastructure |
-| `@tnf/relay-core` | 4 | Communication |
-| `@the-new-fuse/a2a-core` | 3 | Communication |
-| `@the-new-fuse/api-types` | 3 | API |
-| `@the-new-fuse/prompt-templating` | 3 | UI |
-| `@tnf/core-monitoring` | 3 | Infrastructure |
+| Package                           | Dependents | Category       |
+| --------------------------------- | ---------- | -------------- |
+| `@the-new-fuse/types`             | 18         | Foundation     |
+| `@the-new-fuse/core`              | 10         | Foundation     |
+| `@the-new-fuse/utils`             | 9          | Foundation     |
+| `@the-new-fuse/database`          | 8          | Foundation     |
+| `@the-new-fuse/infrastructure`    | 5          | Infrastructure |
+| `@tnf/relay-core`                 | 4          | Communication  |
+| `@the-new-fuse/a2a-core`          | 3          | Communication  |
+| `@the-new-fuse/api-types`         | 3          | API            |
+| `@the-new-fuse/prompt-templating` | 3          | UI             |
+| `@tnf/core-monitoring`            | 3          | Infrastructure |
 
 ### 2.3 Circular Dependencies
 
-✅ **No circular dependencies detected** - This is excellent! The dependency graph is properly structured.
+✅ **No circular dependencies detected** - This is excellent! The dependency
+graph is properly structured.
 
 ---
 
@@ -224,7 +240,8 @@ These directories exist but lack package.json files:
 
 #### Missing Export Configurations
 
-The following packages are missing proper `main`/`exports` and/or `types` fields:
+The following packages are missing proper `main`/`exports` and/or `types`
+fields:
 
 1. **@the-new-fuse/backend**
    - ❌ Missing `main` or `exports`
@@ -253,7 +270,8 @@ The following packages are missing proper `main`/`exports` and/or `types` fields
 4. **@the-new-fuse/integration-tests**
    - ❌ Missing `main` or `exports`
    - ❌ Missing `types`
-   - **Note:** Testing packages may not need exports if they're not imported elsewhere
+   - **Note:** Testing packages may not need exports if they're not imported
+     elsewhere
 
 ### 3.2 Medium Priority Issues (Priority 2)
 
@@ -318,12 +336,14 @@ packages:
 ✅ **Status:** Properly configured
 
 The `turbo.json` file defines:
+
 - Build pipeline with proper dependency ordering
 - Memory-optimized build strategies
 - Proper caching configuration
 - Development workflow scripts
 
 **Key Features:**
+
 - `build` task with `^build` dependency (builds dependencies first)
 - Separate `build:foundation`, `build:core`, `build:memory-optimized` strategies
 - Proper cache configuration for all tasks
@@ -338,6 +358,7 @@ The `turbo.json` file defines:
 The monorepo uses a shared `tsconfig.base.json` that individual packages extend.
 
 **Example from @the-new-fuse/types:**
+
 ```json
 {
   "extends": "../../tsconfig.base.json",
@@ -347,9 +368,7 @@ The monorepo uses a shared `tsconfig.base.json` that individual packages extend.
     "composite": true,
     "declaration": true
   },
-  "references": [
-    { "path": "../prompt-templating" }
-  ]
+  "references": [{ "path": "../prompt-templating" }]
 }
 ```
 
@@ -401,13 +420,15 @@ Based on the dependency graph, the optimal build order is:
    - **Action:** Either remove directories or complete package setup
 
 2. **4 packages missing export configurations**
-   - `@the-new-fuse/backend`, `@the-new-fuse/client`, `@the-new-fuse/common`, `@the-new-fuse/integration-tests`
+   - `@the-new-fuse/backend`, `@the-new-fuse/client`, `@the-new-fuse/common`,
+     `@the-new-fuse/integration-tests`
    - **Action:** Add `main`, `module`, `types` fields to package.json
 
 #### 🟡 PRIORITY 2 - Important (Should Fix)
 
 3. **6 packages missing build scripts**
-   - `@the-new-fuse/contracts`, `eslint-config-custom`, `features`, `integrations`, `layout`, `monitoring`
+   - `@the-new-fuse/contracts`, `eslint-config-custom`, `features`,
+     `integrations`, `layout`, `monitoring`
    - **Action:** Add build script or mark as non-buildable packages
 
 4. **23 legacy package directories without package.json**
@@ -427,6 +448,7 @@ Based on the dependency graph, the optimal build order is:
 ### 8.1 Immediate Actions (This Week)
 
 1. **Fix Critical Export Issues**
+
    ```bash
    # For each affected package, add to package.json:
    {
@@ -443,6 +465,7 @@ Based on the dependency graph, the optimal build order is:
    ```
 
 2. **Clean Up Legacy Directories**
+
    ```bash
    # Create an archive directory
    mkdir -p archive/packages archive/apps
@@ -549,21 +572,25 @@ For each package, ensure:
 ## 10. Conclusion
 
 The New Fuse monorepo is **fundamentally well-structured** with:
+
 - ✅ Proper workspace configuration
 - ✅ No circular dependencies
 - ✅ Valid internal package references
 - ✅ Good build orchestration with Turbo
 
 However, it requires **cleanup and standardization**:
+
 - 🔴 14 critical configuration issues
 - 🟡 23 legacy directories to clean up
 - 🟢 Naming consistency improvements needed
 
 **Estimated Time to Fix:**
+
 - Priority 1 issues: 4-6 hours
 - Priority 2 issues: 8-12 hours
 - Priority 3 issues: 16-24 hours
 
 **Total Estimated Effort:** 2-3 days of focused work
 
-Once these issues are addressed, the monorepo will be production-ready with excellent maintainability and developer experience.
+Once these issues are addressed, the monorepo will be production-ready with
+excellent maintainability and developer experience.

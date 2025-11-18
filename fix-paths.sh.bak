@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Fix remaining hardcoded paths
+
+echo "Fixing remaining hardcoded paths..."
+
+find . -type f \( -name "*.md" -o -name "*.sh" -o -name "*.js" -o -name "*.json" -o -name "*.txt" \) \
+  ! -path "./node_modules/*" \
+  ! -path "./.git/*" \
+  ! -path "*/node_modules/*" \
+  ! -name "*.backup" \
+  ! -name "*.bak" \
+  -print0 | while IFS= read -r -d '' file; do
+
+  if grep -q "/Users/<owner>" "$file" 2>/dev/null; then
+    echo "Fixing: $file"
+
+    # Use sed with backup
+    sed -i.bak \
+      -e 's|/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse|.|g' \
+      -e 's|/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse|.|g' \
+      -e 's|/Users/<owner>/\.nvm/versions/node/v[0-9.]*/ bin/node|node|g' \
+      -e 's|/Users/<owner>/\.nvm/versions/node/v[0-9.]*/bin/npx|npx|g' \
+      "$file"
+  fi
+done
+
+echo "Done! Backup files created with .bak extension"

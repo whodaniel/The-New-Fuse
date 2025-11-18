@@ -7,6 +7,7 @@
 ## ⚡ Critical Path (Next 7 Days)
 
 ### 🔴 Day 1-2: Fix sync-core [BLOCKER]
+
 ```bash
 cd /home/user/fuse/packages/sync-core
 
@@ -15,11 +16,13 @@ cd /home/user/fuse/packages/sync-core
 #      Change relative imports to package imports
 #      Export FileChangeEvent interface
 ```
+
 **Impact**: Unblocks 3 more packages → 35/37 building
 
 ---
 
 ### 🟠 Day 3-4: Fix Prisma [CRITICAL]
+
 ```bash
 cd /home/user/fuse/packages/database
 
@@ -34,11 +37,13 @@ docker run --rm -v $(pwd):/app -w /app node:20 npx prisma generate
 pnpm add prisma@latest @prisma/client@latest
 pnpm exec prisma generate
 ```
+
 **Impact**: Real database operations work
 
 ---
 
 ### 🟡 Day 5: Full Build Test
+
 ```bash
 pnpm build  # Target: 37/37 ✅
 pnpm test   # Verify 14,752 tests pass
@@ -47,6 +52,7 @@ pnpm test   # Verify 14,752 tests pass
 ---
 
 ### 🟢 Day 6-7: Deploy to Railway
+
 ```bash
 # 1. Merge to main
 git checkout main
@@ -69,6 +75,7 @@ git push origin main
 ## 📊 Current Status Summary
 
 ### ✅ What's Working
+
 - 32/37 packages building (86.5%)
 - 291 test files, 14,752 test cases
 - Railway configured with 4 Dockerfiles
@@ -76,6 +83,7 @@ git push origin main
 - Comprehensive documentation
 
 ### ⚠️ What Needs Fixing
+
 1. **sync-core package** (5 Prisma models, import paths)
 2. **Prisma binary download** (using placeholder)
 3. **Railway deployment** (not yet live)
@@ -87,6 +95,7 @@ git push origin main
 ## 🎯 Launch Checklist
 
 ### Must Have for MVP
+
 - [ ] sync-core building
 - [ ] Real Prisma client working
 - [ ] User auth (register/login)
@@ -94,12 +103,14 @@ git push origin main
 - [ ] www.thenewfuse.com live with SSL
 
 ### Should Have
+
 - [ ] Basic agent operations
 - [ ] Simple workflow execution
 - [ ] Error monitoring
 - [ ] User guide
 
 ### Nice to Have (Post-Launch)
+
 - [ ] All 396 TODOs resolved
 - [ ] Advanced features
 - [ ] 100% test coverage
@@ -136,33 +147,36 @@ pnpm run dev:no-ide  # Fastest startup
 
 ## 📚 Key Documents
 
-| Document | Purpose |
-|----------|---------|
+| Document                   | Purpose                                        |
+| -------------------------- | ---------------------------------------------- |
 | `PUBLIC_LAUNCH_ROADMAP.md` | Comprehensive 3-phase plan with detailed tasks |
-| `BUILD_STATUS.md` | Current build status and known issues |
-| `DEPLOYMENT_STATUS.md` | Railway configuration and deployment guide |
-| `README.md` | Project overview and development setup |
+| `BUILD_STATUS.md`          | Current build status and known issues          |
+| `DEPLOYMENT_STATUS.md`     | Railway configuration and deployment guide     |
+| `README.md`                | Project overview and development setup         |
 
 ---
 
 ## 🆘 Troubleshooting
 
 ### "sync-core won't build"
-→ Missing Prisma models in schema.prisma
-→ See Task 1 in PUBLIC_LAUNCH_ROADMAP.md
+
+→ Missing Prisma models in schema.prisma → See Task 1 in
+PUBLIC_LAUNCH_ROADMAP.md
 
 ### "Prisma generate fails"
-→ Binary download blocked (403 error)
-→ Try Docker approach or PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1
+
+→ Binary download blocked (403 error) → Try Docker approach or
+PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1
 
 ### "Railway deployment fails"
-→ Check railway.toml exists on main branch
-→ Verify Dockerfile.railway in each app
-→ Check environment variables set
+
+→ Check railway.toml exists on main branch → Verify Dockerfile.railway in each
+app → Check environment variables set
 
 ### "Services can't communicate"
-→ Use Railway internal URLs: ${{SERVICE.RAILWAY_PRIVATE_DOMAIN}}
-→ Verify CORS_ORIGIN includes frontend URL
+
+→ Use Railway internal URLs: ${{SERVICE.RAILWAY_PRIVATE_DOMAIN}} → Verify
+CORS_ORIGIN includes frontend URL
 
 ---
 
@@ -189,5 +203,5 @@ Based on current branch: `claude/fix-monorepo-builds-019rTq29GyFPBTHdttUkdE9w`
 
 ---
 
-**Need detailed instructions?** See `PUBLIC_LAUNCH_ROADMAP.md`
-**Ready to start?** Begin with sync-core package fixes!
+**Need detailed instructions?** See `PUBLIC_LAUNCH_ROADMAP.md` **Ready to
+start?** Begin with sync-core package fixes!

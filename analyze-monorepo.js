@@ -22,9 +22,10 @@ function readPackageJson(dir) {
 // Get all subdirectories
 function getSubdirectories(dir) {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir)
-    .filter(file => fs.statSync(path.join(dir, file)).isDirectory())
-    .filter(file => !file.startsWith('.'));
+  return fs
+    .readdirSync(dir)
+    .filter((file) => fs.statSync(path.join(dir, file)).isDirectory())
+    .filter((file) => !file.startsWith('.'));
 }
 
 // Analyze packages
@@ -33,14 +34,14 @@ const packages = {};
 const issues = [];
 
 console.log('=== ANALYZING APPS ===\n');
-getSubdirectories(appsDir).forEach(appName => {
+getSubdirectories(appsDir).forEach((appName) => {
   const appPath = path.join(appsDir, appName);
   const pkg = readPackageJson(appPath);
   if (pkg) {
     apps[pkg.name] = {
       path: appPath,
       pkg,
-      internalDeps: []
+      internalDeps: [],
     };
     console.log(`✓ ${pkg.name}`);
   } else {
@@ -50,14 +51,14 @@ getSubdirectories(appsDir).forEach(appName => {
 });
 
 console.log('\n=== ANALYZING PACKAGES ===\n');
-getSubdirectories(packagesDir).forEach(pkgName => {
+getSubdirectories(packagesDir).forEach((pkgName) => {
   const pkgPath = path.join(packagesDir, pkgName);
   const pkg = readPackageJson(pkgPath);
   if (pkg) {
     packages[pkg.name] = {
       path: pkgPath,
       pkg,
-      internalDeps: []
+      internalDeps: [],
     };
     console.log(`✓ ${pkg.name}`);
   } else {
@@ -71,8 +72,8 @@ function extractInternalDeps(dependencies) {
   const deps = [];
 
   if (dependencies) {
-    Object.keys(dependencies).forEach(dep => {
-      if (internalPrefixes.some(prefix => dep.startsWith(prefix))) {
+    Object.keys(dependencies).forEach((dep) => {
+      if (internalPrefixes.some((prefix) => dep.startsWith(prefix))) {
         deps.push(dep);
       }
     });
@@ -87,7 +88,7 @@ console.log('\n=== ANALYZING DEPENDENCIES ===\n');
 Object.entries(apps).forEach(([name, info]) => {
   const allDeps = {
     ...info.pkg.dependencies,
-    ...info.pkg.devDependencies
+    ...info.pkg.devDependencies,
   };
   info.internalDeps = extractInternalDeps(allDeps);
 });
@@ -95,7 +96,7 @@ Object.entries(apps).forEach(([name, info]) => {
 Object.entries(packages).forEach(([name, info]) => {
   const allDeps = {
     ...info.pkg.dependencies,
-    ...info.pkg.devDependencies
+    ...info.pkg.devDependencies,
   };
   info.internalDeps = extractInternalDeps(allDeps);
 });
@@ -106,7 +107,7 @@ console.log('=== CHECKING FOR BROKEN REFERENCES ===\n');
 const allPackageNames = new Set([...Object.keys(apps), ...Object.keys(packages)]);
 
 function checkDependencies(name, info, type) {
-  info.internalDeps.forEach(dep => {
+  info.internalDeps.forEach((dep) => {
     if (!allPackageNames.has(dep)) {
       const issue = `${type} "${name}" references non-existent package: ${dep}`;
       issues.push(issue);
@@ -137,7 +138,7 @@ Object.entries(packages).forEach(([name, info]) => {
 
   if (issues_local.length > 0) {
     console.log(`⚠ ${name}:`);
-    issues_local.forEach(i => console.log(`  - ${i}`));
+    issues_local.forEach((i) => console.log(`  - ${i}`));
     issues.push(`${name}: ${issues_local.join(', ')}`);
   } else {
     console.log(`✓ ${name}`);
@@ -174,7 +175,7 @@ Object.entries(apps).forEach(([name, info]) => {
   if (info.internalDeps.length === 0) {
     console.log('  (no internal dependencies)');
   } else {
-    info.internalDeps.forEach(dep => console.log(`  → ${dep}`));
+    info.internalDeps.forEach((dep) => console.log(`  → ${dep}`));
   }
 });
 
@@ -182,7 +183,7 @@ console.log('\n\nPackages and their dependencies:');
 Object.entries(packages).forEach(([name, info]) => {
   if (info.internalDeps.length > 0) {
     console.log(`\n${name}:`);
-    info.internalDeps.forEach(dep => console.log(`  → ${dep}`));
+    info.internalDeps.forEach((dep) => console.log(`  → ${dep}`));
   }
 });
 
@@ -209,7 +210,7 @@ function hasCircularDep(name, visited = new Set(), path = []) {
 }
 
 let circularFound = false;
-[...Object.keys(packages), ...Object.keys(apps)].forEach(name => {
+[...Object.keys(packages), ...Object.keys(apps)].forEach((name) => {
   const circular = hasCircularDep(name);
   if (circular) {
     circularFound = true;
@@ -238,7 +239,7 @@ console.log('\n=== STATISTICS ===\n');
 
 const depCounts = {};
 [...Object.entries(apps), ...Object.entries(packages)].forEach(([name, info]) => {
-  info.internalDeps.forEach(dep => {
+  info.internalDeps.forEach((dep) => {
     depCounts[dep] = (depCounts[dep] || 0) + 1;
   });
 });

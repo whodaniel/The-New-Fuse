@@ -21,12 +21,14 @@ export class AgentController {
   @Get()
   async getAgents(
     @CurrentUser() user: any,
-    @Query('capability') capability?: string
-  ): Promise<Agent[]> {
+    @Query('capability') capability?: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 50
+  ) {
     if (capability) {
       return this.agentService.getAgentsByCapability(capability, user.id);
     }
-    return this.agentService.getAgents(user.id);
+    return this.agentService.getAgents(user.id, Number(page), Number(limit));
   }
 
   @Get('active')

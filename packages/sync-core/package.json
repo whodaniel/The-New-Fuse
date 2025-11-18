@@ -20,7 +20,11 @@
     "deploy": "bash deployment/scripts/deploy-sync-system.sh",
     "deploy:docker": "bash deployment/scripts/deploy-sync-system.sh --mode docker",
     "deploy:k8s": "bash deployment/scripts/deploy-sync-system.sh --mode k8s",
-    "deploy:cleanup": "bash deployment/scripts/deploy-sync-system.sh --cleanup"
+    "deploy:cleanup": "bash deployment/scripts/deploy-sync-system.sh --cleanup",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@the-new-fuse/database": "workspace:*",

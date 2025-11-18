@@ -7,8 +7,15 @@ import { MassModule } from './modules/mass/mass.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { JobsModule } from './jobs/jobs.module';
 import { EventBus } from './events/event-bus.service';
 import { LoggingService } from './services/logging.service';
+import { AgentExecutionsModule } from './modules/agent-executions/agent-executions.module';
+import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
+import { FilesModule } from './modules/files/files.module';
+import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
+import { CacheModule } from './cache/cache.module';
+import { CacheController } from './cache/cache.controller';
 
 // Create a comprehensive module to support all frontend routing expectations
 
@@ -25,9 +32,15 @@ import { LoggingService } from './services/logging.service';
     PrismaModule,
     AuthModule,
     UsersModule,
-    MassModule
+    MassModule,
+    JobsModule,
+    AgentExecutionsModule,
+    WorkflowTemplatesModule,
+    FilesModule,
+    SystemMetricsModule,
+    CacheModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, CacheController],
   providers: [AppService, EventBus, LoggingService],
 })
 export class AppModule {}

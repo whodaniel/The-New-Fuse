@@ -1,6 +1,7 @@
 # Quick Start: Fixing Monorepo Issues
 
-This guide provides the fastest way to fix the critical issues identified in the monorepo audit.
+This guide provides the fastest way to fix the critical issues identified in the
+monorepo audit.
 
 ## TL;DR - Run These Commands
 
@@ -53,13 +54,16 @@ git commit -m "fix: resolve monorepo configuration issues
 ## What These Commands Do
 
 ### Step 1-3: Fix Package Configurations
+
 The `fix-package-exports.js` script automatically:
+
 - Adds missing `main`, `types`, and `exports` fields
 - Adds build and test scripts
 - Creates `src/index.ts` if missing
 - Creates `tsconfig.json` if missing
 
 **Affected packages:**
+
 - `@the-new-fuse/backend`
 - `@the-new-fuse/client`
 - `@the-new-fuse/common`
@@ -70,18 +74,23 @@ The `fix-package-exports.js` script automatically:
 - `monitoring`
 
 ### Step 4: Archive Legacy Directories
+
 Moves 27 incomplete/legacy directories to `archive/` for safekeeping:
+
 - 4 incomplete app directories
 - 23 package directories without package.json
 
 ### Step 5-8: Verify
+
 Ensures everything still works:
+
 - Dependencies install correctly
 - All packages build successfully
 - Tests pass
 - No TypeScript errors
 
 ### Step 9: Commit
+
 Saves your changes with a descriptive commit message.
 
 ---
@@ -117,6 +126,7 @@ node analyze-monorepo.js
 ```
 
 Should show:
+
 - ✅ 0 broken references
 - ✅ 0 circular dependencies
 - ✅ All packages with proper configurations
@@ -246,7 +256,8 @@ chmod +x .husky/pre-commit
 
 ### 3. Set Up CI/CD
 
-Copy the GitHub Actions workflow from `fix-plan.md` to `.github/workflows/validate.yml`
+Copy the GitHub Actions workflow from `fix-plan.md` to
+`.github/workflows/validate.yml`
 
 ---
 
@@ -293,13 +304,9 @@ After running all fixes, verify:
 
 After completion, you should have:
 
-✅ All packages with valid export configurations
-✅ All packages buildable
-✅ No broken internal references
-✅ No circular dependencies
-✅ Clean workspace (no legacy directories)
-✅ All changes committed to git
-✅ CI/CD ready to be set up
+✅ All packages with valid export configurations ✅ All packages buildable ✅ No
+broken internal references ✅ No circular dependencies ✅ Clean workspace (no
+legacy directories) ✅ All changes committed to git ✅ CI/CD ready to be set up
 
 ---
 
@@ -341,4 +348,5 @@ archive/
 └── README.md
 ```
 
-These can be restored if needed, but are removed from the active workspace to reduce clutter.
+These can be restored if needed, but are removed from the active workspace to
+reduce clutter.
