@@ -20,8 +20,9 @@ COPY apps/api-gateway/package.json ./apps/api-gateway/
 COPY apps/backend/package.json ./apps/backend/
 COPY apps/frontend/package.json ./apps/frontend/
 
-# Copy package packages
-COPY packages/*/package.json ./packages/
+# Copy all workspace packages - we need the full directory structure
+# Copying individual package.json files with globs doesn't preserve directories
+COPY packages ./packages
 
 # Install with frozen lockfile, ignore scripts for native modules
 RUN pnpm install --frozen-lockfile --ignore-scripts || pnpm install --no-frozen-lockfile --ignore-scripts

@@ -32,11 +32,10 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 COPY . .
 
-# Build required packages
+# Build packages and API Gateway using Railway-optimized build
 ENV NODE_ENV=production
-RUN pnpm --filter @the-new-fuse/types build || echo "types build failed"
-RUN pnpm --filter @the-new-fuse/core build || echo "core build failed"
-RUN pnpm --filter @the-new-fuse/api-gateway build || echo "API Gateway build failed"
+ENV BUILD_VERBOSE=true
+RUN pnpm run build:railway || (echo "Build failed" && exit 1)
 
 # Stage 3: Production
 FROM base AS runner
