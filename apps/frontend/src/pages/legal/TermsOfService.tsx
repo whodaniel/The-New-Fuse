@@ -79,14 +79,22 @@ const TermsOfService = () => {
             States, without regard to its conflict of law provisions.
           </p>
 
-          <h2>10. Changes to Terms</h2>
+          <h2>10. Copyright and Ownership</h2>
+          <p>
+            © 2025 Daniel Adam Goldberg. All rights reserved. The New Fuse, including all content,
+            software, services, features, functionality, trademarks, and intellectual property are
+            the exclusive property of Daniel Adam Goldberg. Unauthorized use, reproduction, or
+            distribution of any materials is strictly prohibited.
+          </p>
+
+          <h2>11. Changes to Terms</h2>
           <p>
             We reserve the right to modify these terms at any time. We will notify users of any
             changes by posting the new Terms of Service on this page. Your continued use of the
             service after any such changes constitutes your acceptance of the new Terms of Service.
           </p>
 
-          <h2>11. Contact</h2>
+          <h2>12. Contact</h2>
           <p>
             For any questions about these Terms of Service, please contact us at:
             legal@thenewfuse.com

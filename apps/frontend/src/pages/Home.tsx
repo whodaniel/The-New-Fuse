@@ -719,7 +719,7 @@ export default function HomePage() {
           </div>
           <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
             <p className="text-xs leading-5 text-gray-400">
-              &copy; 2025 Daniel Adam Goldberg. All rights reserved. Built with enterprise-grade reliability for AI agent orchestration.
+              &copy; 2025 The New Fuse. All rights reserved. Built with enterprise-grade reliability for AI agent orchestration.
             </p>
           </div>
         </div>

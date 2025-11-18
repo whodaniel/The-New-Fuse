@@ -69,6 +69,12 @@ const PrivacyPolicy = () => {
             We may update this privacy policy from time to time. We will notify you of any changes
             by posting the new privacy policy on this page and updating the "last updated" date.
           </p>
+
+          <h2>9. Copyright Notice</h2>
+          <p>
+            © 2025 Daniel Adam Goldberg. All rights reserved. The New Fuse and all related content,
+            software, and services are the intellectual property of Daniel Adam Goldberg.
+          </p>
         </CardContent>
       </Card>
     </div>);
