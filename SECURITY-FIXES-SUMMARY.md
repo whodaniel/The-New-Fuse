@@ -65,100 +65,87 @@ Added security section blocking:
 
 ---
 
-## ⚠️ CRITICAL MANUAL ACTIONS REQUIRED
+## ⚠️ IMPORTANT: Repository Status
 
-### Step 1: Revoke ALL Exposed Credentials (IMMEDIATELY)
+**NOTE:** Since this repository is currently **private**, the exposed credentials are not publicly accessible and do not require immediate revocation. However, proper secret management practices should still be followed.
 
-#### Google Cloud / Firebase
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Select project: **the-new-fuse-2025**
-3. Navigate to **APIs & Services → Credentials**
-4. **Delete these API keys:**
-   - `REDACTED-FIREBASE-KEY-1`
-   - `REDACTED-FIREBASE-KEY-2` (if found)
-5. Navigate to **IAM & Admin → Service Accounts**
-6. **Delete these service accounts:**
-   - `REDACTED-SERVICE-ACCOUNT-1@example.com`
-   - `REDACTED-SERVICE-ACCOUNT-2@example.com`
+## ✅ RECOMMENDED ACTIONS (For Secret Management)
 
-#### Stripe
-1. Go to [Stripe Dashboard](https://dashboard.stripe.com/)
-2. Navigate to **Developers → API Keys**
-3. **Revoke this key:**
-   - `REDACTED-STRIPE-KEY`
-4. Check for any suspicious transactions/API calls
+### Step 1: Move Existing Keys to Environment Variables
 
-#### OpenRouter (if applicable)
-1. Go to OpenRouter dashboard
-2. **Revoke this key:**
-   - `REDACTED-OPENROUTER-KEY`
+Since the repository is private, you can continue using your existing keys. The important action is to move them from hardcoded locations to proper environment variables:
 
-### Step 2: Generate New Credentials
+#### Create .env.local for Development
 
-#### Firebase / Google Cloud
 ```bash
-# Create new Firebase API key with domain restrictions
-# In GCP Console → APIs & Services → Credentials → Create Credentials → API Key
-# Set restrictions:
-# - Application restrictions: HTTP referrers
-# - Website restrictions: thenewfuse.com, *.thenewfuse.com
-# - API restrictions: Firebase APIs only
+# Copy the template
+cp .env.local.template .env.local
 
-# Create new service account with minimal permissions
-gcloud iam service-accounts create the-new-fuse-prod \
-    --display-name="The New Fuse Production Service Account" \
-    --project=the-new-fuse-2025
-
-# Grant only necessary roles (principle of least privilege)
-gcloud projects add-iam-policy-binding the-new-fuse-2025 \
-    --member="serviceAccount:the-new-fuse-prod@the-new-fuse-2025.iam.gserviceaccount.com" \
-    --role="roles/firebase.admin"
-
-# Download key (DO NOT commit this!)
-gcloud iam service-accounts keys create ~/secure/new-service-account.json \
-    --iam-account=the-new-fuse-prod@the-new-fuse-2025.iam.gserviceaccount.com
+# Edit .env.local and add your actual keys:
+# - Firebase API Key: REDACTED-FIREBASE-KEY-1
+# - Stripe Key: REDACTED-STRIPE-KEY
+# - OpenRouter Key: REDACTED-OPENROUTER-KEY
+# - Service account JSON: Place in ./config/firebase-credentials.json (outside git)
 ```
 
-#### Stripe
-1. Generate new secret key
-2. Note the new publishable key
-3. Update Railway environment variables
+#### For Production (Railway)
+Set these environment variables in the Railway dashboard:
+- `VITE_FIREBASE_API_KEY`
+- `STRIPE_SECRET_KEY`
+- `OPENROUTER_API_KEY`
+- Upload service account JSON as a Railway Secret File
 
-### Step 3: Update Environment Variables
+### Step 2: (Optional) Rotate Credentials When Repository Goes Public
 
-#### Railway Production
+**If/when the repository becomes public**, you should:
+
+1. **Revoke all exposed credentials**:
+   - Firebase API keys in Google Cloud Console
+   - Service accounts in IAM & Admin
+   - Stripe API keys in Stripe Dashboard
+   - OpenRouter API keys
+
+2. **Generate fresh credentials** with proper restrictions
+
+3. **Clean git history** (see Git History Cleanup section below)
+
+### Step 3: Verify Environment Variable Setup
+
+#### Check Railway Production Variables
 ```bash
-# Navigate to Railway dashboard → your project → Variables
-# Add these environment variables:
+# Verify these are set in Railway dashboard → your project → Variables:
 
-# Firebase
-FIREBASE_API_KEY=<new-api-key>
-FIREBASE_AUTH_DOMAIN=the-new-fuse-2025.firebaseapp.com
-FIREBASE_PROJECT_ID=the-new-fuse-2025
-FIREBASE_STORAGE_BUCKET=the-new-fuse-2025.appspot.com
-FIREBASE_MESSAGING_SENDER_ID=1003514421915
-FIREBASE_APP_ID=<your-app-id>
+VITE_FIREBASE_API_KEY=<your-firebase-key>
+VITE_FIREBASE_AUTH_DOMAIN=the-new-fuse-2025.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=the-new-fuse-2025
+VITE_FIREBASE_STORAGE_BUCKET=the-new-fuse-2025.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=1003514421915
+VITE_FIREBASE_APP_ID=<your-app-id>
 
-# Stripe (backend only)
-STRIPE_SECRET_KEY=<new-secret-key>
-STRIPE_PUBLISHABLE_KEY=<new-publishable-key>
+STRIPE_SECRET_KEY=<your-stripe-key>
+STRIPE_PUBLISHABLE_KEY=<your-publishable-key>
 
-# Google Cloud (use Railway Secret Files or Secret Manager)
+OPENROUTER_API_KEY=<your-openrouter-key>
+
+# Service account JSON (use Railway Secret Files)
 GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/service-account.json
 ```
 
-#### Local Development
+#### Verify Local Development Setup
 ```bash
-# Copy example env file
-cp .env.example .env.local
+# 1. Copy the template
+cp .env.local.template .env.local
 
-# Edit .env.local with your development credentials
-# (NEVER commit .env.local - it's in .gitignore)
+# 2. Edit .env.local with your development credentials
+vim .env.local  # or use your preferred editor
+
+# 3. Verify .env.local is NOT tracked by git
+git status  # Should not show .env.local (it's in .gitignore)
 ```
 
-### Step 4: Clean Git History (OPTIONAL but RECOMMENDED)
+### Step 4: Clean Git History (Only if Repository Goes Public)
 
-⚠️ **WARNING:** This rewrites git history and requires force push!
+⚠️ **WARNING:** This is ONLY needed if the repository will become public. This rewrites git history and requires force push!
 
 ```bash
 # Install BFG Repo Cleaner
