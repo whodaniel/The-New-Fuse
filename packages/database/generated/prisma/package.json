@@ -1,5 +1,5 @@
 {
-  "name": "prisma-client-be544057f69eff00bc9506e9a4943289d9b747ae64a8f050e519f6041335a280",
+  "name": "prisma-client-7b06026ae4588fb585a58662baf8aa7bef539ea0362a8db5436f0825ec37dab9",
   "main": "index.js",
   "types": "index.d.ts",
   "browser": "default.js",
@@ -151,7 +151,7 @@
     },
     "./*": "./*"
   },
-  "version": "6.17.1",
+  "version": "6.19.0",
   "sideEffects": false,
   "imports": {
     "#wasm-engine-loader": {
@@ -179,11 +179,5 @@
       },
       "default": "./index.js"
     }
-  },
-  "scripts": {
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   }
 }
