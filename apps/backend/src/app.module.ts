@@ -16,6 +16,7 @@ import { FilesModule } from './modules/files/files.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { CacheModule } from './cache/cache.module';
 import { CacheController } from './cache/cache.controller';
+import { MCPModule } from './modules/mcp/mcp.module';
 
 // Create a comprehensive module to support all frontend routing expectations
 
@@ -39,6 +40,7 @@ import { CacheController } from './cache/cache.controller';
     FilesModule,
     SystemMetricsModule,
     CacheModule,
+    MCPModule, // MCP Integration for agent communication
   ],
   controllers: [AppController, CacheController],
   providers: [AppService, EventBus, LoggingService],

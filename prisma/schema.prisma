@@ -30,16 +30,19 @@ model User {
   deletedAt      DateTime?
   
   // Relationships
-  agents         Agent[]
-  pipelines      Pipeline[]
-  tasks          Task[]
-  workflows      Workflow[]
-  chatRooms      ChatRoom[]
-  messages       Message[]
-  authSessions   AuthSession[]
-  loginAttempts  LoginAttempt[]
-  authEvents     AuthEvent[]
-  
+  agents                Agent[]
+  pipelines             Pipeline[]
+  tasks                 Task[]
+  workflows             Workflow[]
+  chatRooms             ChatRoom[]
+  messages              Message[]
+  authSessions          AuthSession[]
+  loginAttempts         LoginAttempt[]
+  authEvents            AuthEvent[]
+  chatRoomParticipants  ChatRoomParticipant[]
+  readReceipts          ReadReceipt[]
+  messageReactions      MessageReaction[]
+
   @@map("users")
 }
 
@@ -121,7 +124,8 @@ model Agent {
   tasks             Task[]
   workflows         Workflow[]
   workflowSteps     WorkflowStep[]
-  
+  registration      AgentRegistration?
+
   @@map("agents")
 }
 
@@ -209,51 +213,147 @@ model Chat {
 }
 
 model ChatRoom {
-  id            String    @id @default(uuid())
+  id            String                @id @default(uuid())
   name          String
   description   String?
-  isPrivate     Boolean   @default(false)
-  owner         User      @relation(fields: [ownerId], references: [id])
+  topic         String?               // Current discussion topic
+  purpose       String?               // Room purpose/goal
+  type          ChatRoomType          @default(PUBLIC)
+  isPrivate     Boolean               @default(false)
+  isEphemeral   Boolean               @default(false) // Auto-delete after inactivity
+  owner         User                  @relation(fields: [ownerId], references: [id])
   ownerId       String
-  settings      Json?
-  metadata      Json?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  settings      Json?                 // Room settings (auto-summarize, etc.)
+  metadata      Json?                 // Custom metadata
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
   lastMessageAt DateTime?
-  isActive      Boolean   @default(true)
+  isActive      Boolean               @default(true)
+  expiresAt     DateTime?             // For ephemeral rooms
   deletedAt     DateTime?
-  
+  maxParticipants Int                 @default(50)
+
   // Relationships
   messages      Message[]
-  
+  participants  ChatRoomParticipant[]
+  readReceipts  ReadReceipt[]
+
   @@map("chat_rooms")
 }
 
+enum ChatRoomType {
+  PUBLIC          // Open to all
+  PRIVATE         // Invite-only
+  PERSISTENT      // Long-term project rooms
+  EPHEMERAL       // Auto-delete after completion
+  AGENT_ONLY      // Only agents can participate
+  MIXED           // Agents and humans
+}
+
+model ChatRoomParticipant {
+  id              String                    @id @default(uuid())
+  room            ChatRoom                  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId          String
+  user            User?                     @relation(fields: [userId], references: [id])
+  userId          String?
+  agentId         String?                   // For agent participants
+  role            ChatRoomParticipantRole   @default(PARTICIPANT)
+  permissions     String[]                  @default([])
+  isTyping        Boolean                   @default(false)
+  lastTypingAt    DateTime?
+  lastReadAt      DateTime?
+  joinedAt        DateTime                  @default(now())
+  leftAt          DateTime?
+  isMuted         Boolean                   @default(false)
+  notifications   Boolean                   @default(true)
+
+  @@unique([roomId, userId])
+  @@unique([roomId, agentId])
+  @@map("chat_room_participants")
+}
+
+enum ChatRoomParticipantRole {
+  ADMIN           // Full control
+  MODERATOR       // Can moderate messages
+  PARTICIPANT     // Regular participant
+  OBSERVER        // Read-only access
+}
+
+model ReadReceipt {
+  id          String    @id @default(uuid())
+  message     Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId   String
+  room        ChatRoom  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId      String
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      String?
+  agentId     String?   // For agent read receipts
+  readAt      DateTime  @default(now())
+
+  @@unique([messageId, userId])
+  @@unique([messageId, agentId])
+  @@map("read_receipts")
+}
+
+model MessageReaction {
+  id        String   @id @default(uuid())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  agentId   String?  // For agent reactions
+  emoji     String   // Emoji or reaction type
+  createdAt DateTime @default(now())
+
+  @@unique([messageId, userId, emoji])
+  @@unique([messageId, agentId, emoji])
+  @@map("message_reactions")
+}
+
 model Message {
-  id              String      @id @default(uuid())
-  content         String      @db.Text
-  role            MessageRole @default(USER)
-  sender          User?       @relation(fields: [senderId], references: [id])
+  id              String             @id @default(uuid())
+  content         String             @db.Text
+  type            MessageType        @default(TEXT)
+  role            MessageRole        @default(USER)
+  sender          User?              @relation(fields: [senderId], references: [id])
   senderId        String?
-  senderName      String?     // For DTO compatibility - plain string sender
-  agent           Agent?      @relation(fields: [agentId], references: [id])
+  senderName      String?            // For DTO compatibility - plain string sender
+  agent           Agent?             @relation(fields: [agentId], references: [id])
   agentId         String?
-  chat            Chat?       @relation(fields: [chatId], references: [id])
+  chat            Chat?              @relation(fields: [chatId], references: [id])
   chatId          String?
-  room            ChatRoom?   @relation(fields: [roomId], references: [id])
+  room            ChatRoom?          @relation(fields: [roomId], references: [id])
   roomId          String?
-  parentMessage   Message?    @relation("MessageReplies", fields: [parentMessageId], references: [id])
+  parentMessage   Message?           @relation("MessageReplies", fields: [parentMessageId], references: [id])
   parentMessageId String?
-  replies         Message[]   @relation("MessageReplies")
+  replies         Message[]          @relation("MessageReplies")
   metadata        Json?
-  attachments     String[]    @default([])
-  timestamp       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  isEdited        Boolean     @default(false)
-  isDeleted       Boolean     @default(false)
-  reactions       Json?
-  
+  attachments     String[]           @default([])
+  codeSnippet     Json?              // {language, code, syntax}
+  taskAssignment  Json?              // {assignedTo, dueDate, priority}
+  workflowTrigger Json?              // {workflowId, action, params}
+  timestamp       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  isEdited        Boolean            @default(false)
+  isDeleted       Boolean            @default(false)
+  isPinned        Boolean            @default(false)
+
+  // Relationships
+  readReceipts    ReadReceipt[]
+  messageReactions MessageReaction[]
+
   @@map("messages")
+}
+
+enum MessageType {
+  TEXT            // Regular text message
+  CODE            // Code snippet
+  FILE            // File attachment
+  TASK            // Task assignment
+  WORKFLOW        // Workflow trigger
+  SYSTEM          // System notification
+  SUMMARY         // AI-generated summary
+  SUGGESTION      // Agent suggestion
 }
 
 enum MessageRole {
@@ -766,10 +866,169 @@ model SyncConflict {
   resolvedBy   String?
   resolution   Json?
   createdAt    DateTime @default(now())
-  
+
   @@index([resourceType])
   @@index([tenantId])
   @@index([createdAt])
   @@index([resolvedAt])
   @@map("sync_conflicts")
+}
+
+// =============================================================================
+// AGENT REGISTRY SYSTEM
+// =============================================================================
+
+model AgentRegistration {
+  id                   String                  @id @default(uuid())
+  agentId              String                  @unique
+  authToken            String                  @unique
+  registrationData     Json                    // Original registration payload
+  verificationStatus   VerificationStatus      @default(PENDING)
+  onboardingStatus     OnboardingStatus        @default(INITIALIZED)
+  onboardingStep       String?                 // Current step in onboarding
+  onboardingProgress   Int                     @default(0) // 0-100
+  orientationCompleted Boolean                 @default(false)
+  firstConnectedAt     DateTime                @default(now())
+  lastHeartbeat        DateTime                @default(now())
+  heartbeatInterval    Int                     @default(60000) // milliseconds
+  isOnline             Boolean                 @default(false)
+  metadata             Json?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  // Relationships
+  agent                Agent                   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  capabilities         AgentCapabilityRegistry[]
+  metrics              AgentMetrics[]
+  onboardingEvents     AgentOnboardingEvent[]
+
+  @@index([authToken])
+  @@index([verificationStatus])
+  @@index([onboardingStatus])
+  @@index([isOnline])
+  @@index([lastHeartbeat])
+  @@map("agent_registrations")
+}
+
+model AgentCapabilityRegistry {
+  id              String             @id @default(uuid())
+  registrationId  String
+  capabilityName  String
+  capabilityType  String             // 'core', 'extended', 'custom'
+  version         String?
+  description     String?
+  parameters      Json?              // Capability configuration
+  verificationStatus VerificationStatus @default(PENDING)
+  verifiedAt      DateTime?
+  testResults     Json?              // Results from capability testing
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  // Relationships
+  registration    AgentRegistration  @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([capabilityName])
+  @@index([verificationStatus])
+  @@map("agent_capability_registry")
+}
+
+model AgentMetrics {
+  id                  String            @id @default(uuid())
+  registrationId      String
+  metricType          String            // 'task_completion', 'response_time', 'error_rate', etc.
+  value               Float
+  unit                String?
+  timestamp           DateTime          @default(now())
+  tags                Json?             // Additional metadata for metrics
+
+  // Relationships
+  registration        AgentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([metricType])
+  @@index([timestamp])
+  @@map("agent_metrics")
+}
+
+model AgentOnboardingEvent {
+  id              String               @id @default(uuid())
+  registrationId  String
+  eventType       OnboardingEventType
+  eventData       Json?
+  message         String?
+  timestamp       DateTime             @default(now())
+
+  // Relationships
+  registration    AgentRegistration    @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@map("agent_onboarding_events")
+}
+
+model AgentDirectoryEntry {
+  id              String   @id @default(uuid())
+  agentId         String   @unique
+  displayName     String
+  description     String?
+  category        String?  // 'development', 'analytics', 'automation', etc.
+  tags            String[] @default([])
+  isPublic        Boolean  @default(false)
+  isVerified      Boolean  @default(false)
+  rating          Float?   @default(0)
+  usageCount      Int      @default(0)
+  lastActiveAt    DateTime @default(now())
+  featured        Boolean  @default(false)
+  searchableData  String?  @db.Text // Denormalized search data
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublic])
+  @@index([isVerified])
+  @@index([featured])
+  @@index([rating])
+  @@index([lastActiveAt])
+  @@map("agent_directory_entries")
+}
+
+enum VerificationStatus {
+  PENDING
+  IN_PROGRESS
+  VERIFIED
+  FAILED
+  REJECTED
+}
+
+enum OnboardingStatus {
+  INITIALIZED
+  WELCOME_SENT
+  CAPABILITIES_TESTED
+  ORIENTATION_IN_PROGRESS
+  ORIENTATION_COMPLETED
+  INTEGRATION_TESTING
+  READY
+  FAILED
+}
+
+enum OnboardingEventType {
+  REGISTRATION_STARTED
+  WELCOME_MESSAGE_SENT
+  CAPABILITY_DECLARED
+  CAPABILITY_VERIFIED
+  CAPABILITY_FAILED
+  ORIENTATION_STARTED
+  ORIENTATION_STEP_COMPLETED
+  ORIENTATION_COMPLETED
+  INTEGRATION_TEST_STARTED
+  INTEGRATION_TEST_PASSED
+  INTEGRATION_TEST_FAILED
+  TASK_ASSIGNED
+  TASK_COMPLETED
+  ERROR_OCCURRED
+  STATUS_CHANGED
 }

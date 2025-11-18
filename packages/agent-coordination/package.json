@@ -1,7 +1,7 @@
 {
-  "name": "@the-new-fuse/a2a-core",
-  "version": "0.3.0",
-  "description": "Agent-to-Agent (A2A) Protocol v0.3.0 Core Library - Official Linux Foundation Specification",
+  "name": "@the-new-fuse/agent-coordination",
+  "version": "1.0.0",
+  "description": "Redis-based agent-to-agent communication and coordination system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -17,23 +17,23 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist",
-    "prepublishOnly": "npm run build"
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/websockets": "^11.1.6",
-    "@the-new-fuse/ap2-protocol": "workspace:^",
     "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/a2a-core": "workspace:^",
+    "bullmq": "^5.34.2",
     "ioredis": "^5.8.1",
+    "msgpack-lite": "^0.1.26",
     "rxjs": "^7.8.2",
-    "socket.io": "^4.8.1",
     "uuid": "^13.0.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/msgpack-lite": "^0.1.11",
     "@types/node": "^24.8.1",
     "@types/uuid": "^11.0.0",
     "jest": "^30.2.0",
