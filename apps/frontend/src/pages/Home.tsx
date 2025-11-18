@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-// Original Landing Page Design - Restored from http://localhost:3000/#features
-export default function HomePage() {
+// Professional Landing Page - THE NEW FUSE
+// This is the MAIN landing page for thenewfuse.com
+export default function ProfessionalLandingPage() {
   return (
     <div>
       {/* Hero Section */}
