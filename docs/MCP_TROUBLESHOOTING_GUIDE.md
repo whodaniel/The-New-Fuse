@@ -113,7 +113,7 @@ Expected: Server process running under Claude Desktop
 
 #### Project MCP Config
 ```
-/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/claude_desktop_config.json
+./claude_desktop_config.json
 ```
 
 ### Future Prevention

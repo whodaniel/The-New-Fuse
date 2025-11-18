@@ -7,7 +7,7 @@
 ## 📋 PROJECT CONTEXT
 
 **Project:** The New Fuse - AI Agency Platform with Multi-Tenant Architecture
-**Location:** `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse`
+**Location:** `.`
 **Tech Stack:** NestJS, TypeScript, React, MongoDB/PostgreSQL, Redis, Docker
 **Package Manager:** Yarn 4.9.1
 

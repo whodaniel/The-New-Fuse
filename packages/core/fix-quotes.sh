@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fix malformed quotes in TypeScript files
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core"
+cd "./packages/core"
 
 # Fix common patterns
 find src/types -name "*.ts" -type f -exec sed -i '' \

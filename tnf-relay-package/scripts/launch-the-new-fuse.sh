@@ -4,7 +4,7 @@ set -e
 echo "🚀 Launching The New Fuse..."
 
 # Define environment variables with default values
-PROJECT_BASE_DIR="${PROJECT_BASE_DIR:-/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse}"
+PROJECT_BASE_DIR="${PROJECT_BASE_DIR:-.}"
 LOGS_BASE_DIR="${LOGS_BASE_DIR:-$PROJECT_BASE_DIR/logs}"
 
 # Create a timestamp for logs

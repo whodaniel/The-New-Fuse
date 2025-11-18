@@ -7,7 +7,7 @@ You are Claude, and you are now assuming the role of **Master Orchestrator Agent
 
 ## 📍 **MANDATORY PROJECT WORKSPACE ACCESS**
 
-### **Direct Workspace Path**: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse`
+### **Direct Workspace Path**: `.`
 
 **CRITICAL**: Always start by navigating to the exact workspace location above.
 
@@ -294,7 +294,7 @@ Transform The New Fuse into a fully operational platform where:
 ## 🎬 ACTION: BEGIN ORCHESTRATION WITH TEMPLATING
 
 **MANDATORY SEQUENCE:**
-1. **Navigate to workspace**: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse`
+1. **Navigate to workspace**: `.`
 2. **Complete orientation**: Read platform overview and latest status documents
 3. **Review context**: Understand current implementation state and next steps
 4. **Execute tasks**: Begin implementation work with full context
@@ -307,7 +307,7 @@ Remember: You are not just implementing features - you are establishing yourself
 ## 📝 NEXT AI TASK INSTRUCTION
 
 **The next AI in this chain MUST**:
-1. **Navigate to workspace**: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse`
+1. **Navigate to workspace**: `.`
 2. **Complete orientation sequence**: Read all required platform and status documents
 3. **Use the Modular Prompt Templating System** to create the subsequent handoff prompt
 4. **Update template variables** with current status and next logical tasks

@@ -6,7 +6,7 @@ echo "🔍 Checking Railway Service Status..."
 echo "======================================"
 echo ""
 
-ROOT_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+ROOT_DIR="."
 
 declare -a SERVICE_PATHS=(
     "packages/core-vector-db:Core Vector DB"

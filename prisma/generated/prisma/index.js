@@ -929,7 +929,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/prisma/generated/prisma",
+      "value": "./prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -947,7 +947,7 @@ const config = {
       "fullTextSearchPostgres",
       "metrics"
     ],
-    "sourceFilePath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/prisma/schema.prisma",
+    "sourceFilePath": "./prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

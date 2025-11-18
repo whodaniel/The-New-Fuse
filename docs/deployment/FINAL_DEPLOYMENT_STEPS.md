@@ -52,7 +52,7 @@ After this step, you should have 4 services + 2 databases in your Railway dashbo
 Now that services exist, deploy each one from your terminal:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # Deploy API Service
 cd apps/api

@@ -4,20 +4,20 @@ set -e
 echo "🧹 Starting cleanup of redundant scripts..."
 
 # Create a backup of all scripts before deletion
-BACKUP_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/backups/scripts_backup_$(date +%Y%m%d_%H%M%S)"
+BACKUP_DIR="./backups/scripts_backup_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
-cp -r "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts" "$BACKUP_DIR"
+cp -r "./scripts" "$BACKUP_DIR"
 echo "✅ Scripts backed up to $BACKUP_DIR"
 
 # List of scripts that are now redundant due to consolidation
 REDUNDANT_SCRIPTS=(
-  "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/fix-peer-dependencies.sh"
-  "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/fix-firebase-deps.sh"
-  "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/fix-react-deps.sh"
-  "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/fix-metadata-deps.sh"
-  "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/fix-typeorm-deps.sh"
-  "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/fix-dependencies.sh"
-  "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/fix-peer-deps.sh"
+  "./scripts/fix-peer-dependencies.sh"
+  "./scripts/fix-firebase-deps.sh"
+  "./scripts/fix-react-deps.sh"
+  "./scripts/fix-metadata-deps.sh"
+  "./scripts/fix-typeorm-deps.sh"
+  "./scripts/fix-dependencies.sh"
+  "./scripts/fix-peer-deps.sh"
 )
 
 # Remove redundant scripts

@@ -92,7 +92,7 @@ These services require manual creation in Railway dashboard:
 After creating services in dashboard, run:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # Deploy Core Vector DB
 cd packages/core-vector-db

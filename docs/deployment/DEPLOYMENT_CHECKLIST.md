@@ -30,7 +30,7 @@ railway add
 ### Step 2: Deploy API Service
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/api
+cd ./apps/api
 railway up
 ```
 
@@ -46,7 +46,7 @@ railway up
 ### Step 3: Deploy Frontend Service
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend
+cd ./apps/frontend
 railway up
 ```
 

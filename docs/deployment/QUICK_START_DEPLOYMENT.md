@@ -17,7 +17,7 @@ This is a simplified guide to get The New Fuse up and running on Railway quickly
 ### Step 1: Test Locally First (Optional but Recommended)
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # Test all Docker builds
 ./test-docker-builds.sh
@@ -65,7 +65,7 @@ After adding environment variables, Railway will automatically redeploy your ser
 ### 1. Create Railway Project
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 railway init
 ```
 

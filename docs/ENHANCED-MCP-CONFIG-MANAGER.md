@@ -91,14 +91,14 @@ Add the enhanced config manager to your `data/mcp_config.json`:
 {
   "mcpServers": {
     "enhanced-mcp-config-manager": {
-      "command": "/Users/<owner>/.nvm/versions/node/v22.16.0/bin/npx",
+      "command": "npx",
       "args": [
         "tsx",
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/mcp/enhanced-config-manager.ts"
+        "./src/mcp/enhanced-config-manager.ts"
       ],
       "env": {
         "LOG_LEVEL": "info",
-        "CONFIG_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/data/mcp_config.json"
+        "CONFIG_PATH": "./data/mcp_config.json"
       }
     }
   }

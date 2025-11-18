@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fix malformed string literals in TypeScript files
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core"
+cd "./packages/core"
 
 echo "Fixing malformed string literals..."
 

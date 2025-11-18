@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend
+cd ./apps/frontend
 pnpm run dev
 # or
 pnpm run dev

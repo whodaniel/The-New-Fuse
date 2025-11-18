@@ -182,7 +182,7 @@
                         <li>Open Terminal application</li>
                         <li>Copy and paste this command:</li>
                     </ol>
-                    <div class="command-box">cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev</div>
+                    <div class="command-box">cd "$(pwd)" && pnpm run dev</div>
                     <button class="control-btn" onclick="copyCommand()">📋 Copy Command</button>
                     
                     <p style="margin: 15px 0 5px 0; color: rgba(255,255,255,0.9);"><strong>Method 2: Using VS Code</strong></p>
@@ -362,7 +362,7 @@
         
         // Copy terminal command to clipboard
         function copyCommand() {
-            const command = 'cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev';
+            const command = 'cd "$(pwd)" && pnpm run dev';
             navigator.clipboard.writeText(command).then(() => {
                 alert('Command copied to clipboard! Paste it in Terminal.');
             }).catch(() => {
@@ -373,7 +373,7 @@
         // Create start script
         function createStartScript() {
             const scriptContent = `#!/bin/bash
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
+cd "$(pwd)"
 pnpm run dev
 `;
             

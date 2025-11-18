@@ -305,7 +305,7 @@ export class MasterAgentRegistry extends EventEmitter {
         if (!agent) {
             throw new Error(`Agent not found in Master Registry: ${agentId}`);
         }
-        const workspaceAccess = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse';
+        const workspaceAccess = '.';
         const onboardingSteps = [
             {
                 id: 'workspace_verification',

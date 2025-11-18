@@ -411,7 +411,7 @@ BASE_RPC_URL=https://mainnet.base.org
 ### Setup Script
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/crypto-agent-framework
+cd ./packages/crypto-agent-framework
 ./setup.sh
 ```
 

@@ -57,7 +57,7 @@ You MUST push the local changes to GitHub. Railway cannot deploy until the fixes
 Open a NEW regular terminal (not through me) and run:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 
 # Check status
 git status
@@ -81,7 +81,7 @@ git push origin main
 3. Filename: `Dockerfile`
 4. Copy content from local file:
 ```bash
-cat /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/Dockerfile
+cat ./Dockerfile
 ```
 5. Paste into GitHub editor
 6. Commit message: "Add root-level Dockerfile for Railway"

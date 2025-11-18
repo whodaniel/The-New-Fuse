@@ -42,7 +42,7 @@ We've added several new diagnostic tools to help troubleshoot MCP issues:
 
 1. **Register the Commands**:
    ```bash
-   node /Users/<owner>/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse/scripts/initialize-mcp-commands.js
+   node ./scripts/initialize-mcp-commands.js
    ```
 
 2. **Restart VS Code**:

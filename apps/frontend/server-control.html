@@ -108,13 +108,13 @@
                 <li>Open Terminal application</li>
                 <li>Copy and paste this command:</li>
             </ol>
-            <div class="command-box">cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev</div>
+            <div class="command-box">cd "$(pwd)" && pnpm run dev</div>
             <button class="btn" onclick="copyCommand()">📋 Copy Command</button>
             
             <p><strong>Method 2: Using VS Code</strong></p>
             <ol>
                 <li>Open VS Code</li>
-                <li>Open the frontend folder: <code>/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend</code></li>
+                <li>Open the frontend folder: <code>apps/frontend</code></li>
                 <li>Open integrated terminal (Terminal → New Terminal)</li>
                 <li>Run: <code>pnpm run dev</code></li>
             </ol>
@@ -180,7 +180,7 @@
         }
         
         function copyCommand() {
-            const command = 'cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev';
+            const command = 'cd "$(pwd)" && pnpm run dev';
             navigator.clipboard.writeText(command).then(() => {
                 alert('Command copied to clipboard! Paste it in Terminal.');
             }).catch(() => {
@@ -190,7 +190,7 @@
         
         function createStartScript() {
             const scriptContent = \`#!/bin/bash
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
+cd "$(pwd)"
 pnpm run dev
 \`;
             

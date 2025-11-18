@@ -5,7 +5,7 @@
 echo "🔧 Integrating Port Management into The New Fuse"
 echo "================================================="
 
-PROJECT_ROOT="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+PROJECT_ROOT="."
 cd "$PROJECT_ROOT" || exit 1
 
 # 1. Update root package.json to include port management scripts

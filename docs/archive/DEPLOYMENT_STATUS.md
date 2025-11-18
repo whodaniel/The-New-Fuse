@@ -94,7 +94,7 @@ Once you commit the changes to GitHub:
 Once Railway deployment is successful, clean up the repository:
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 ./cleanup-branches.sh
 ```
 

@@ -32,7 +32,7 @@ railway login
 ### Step 2: Create a New Railway Project
 
 ```bash
-cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+cd .
 railway init
 ```
 

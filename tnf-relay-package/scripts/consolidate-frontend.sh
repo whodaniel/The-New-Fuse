@@ -5,10 +5,10 @@ echo "🔄 Starting frontend consolidation process..."
 
 # Create backup of current frontend implementations
 echo "📦 Creating backups of current frontend implementations..."
-BACKUP_DIR="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/backups/frontend_backup_$(date +%Y%m%d_%H%M%S)"
+BACKUP_DIR="./backups/frontend_backup_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
-cp -r "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" "$BACKUP_DIR/apps_frontend"
-cp -r "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/frontend" "$BACKUP_DIR/packages_frontend"
+cp -r "./apps/frontend" "$BACKUP_DIR/apps_frontend"
+cp -r "./packages/frontend" "$BACKUP_DIR/packages_frontend"
 echo "✅ Backups created at $BACKUP_DIR"
 
 # Update the apps/frontend implementation with the best features
@@ -16,7 +16,7 @@ echo "🔨 Consolidating frontend implementations..."
 
 # Ensure the apps/frontend has the latest dependencies
 echo "📦 Updating dependencies in apps/frontend..."
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
+cd "./apps/frontend"
 
 # Update package.json with optimized dependencies
 pnpm add react@18.2.0 react-dom@18.2.0
@@ -29,7 +29,7 @@ pnpm add zustand@latest
 
 # Ensure TypeScript is properly configured
 echo "⚙️ Configuring TypeScript..."
-cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
+cd "./apps/frontend"
 
 # Integrate feature tracker functionality
 echo "🔗 Integrating feature tracker functionality..."
