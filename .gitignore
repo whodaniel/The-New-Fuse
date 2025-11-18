@@ -5,6 +5,25 @@
 # Generated patterns use ** to match any subdirectory depth
 
 # ==============================================================================
+# SECURITY - CREDENTIALS & SECRETS (HIGHEST PRIORITY)
+# ==============================================================================
+**/*credentials*.json
+**/*service-account*.json
+**/*firebase-adminsdk*.json
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/secrets.*
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.template
+**/*.env.local
+**/*.env.production
+**/*.env.development
+
+# ==============================================================================
 # PYTHON
 # ==============================================================================
 **/__pycache__/
