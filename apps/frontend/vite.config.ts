@@ -96,30 +96,132 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
-      sourcemap: !isProduction,
+      sourcemap: !isProduction, // Disable sourcemaps in production for smaller bundles
       minify: isProduction ? 'terser' : false,
       target: 'es2020',
       // Performance optimizations
       cssMinify: isProduction,
-      // Increase chunk size warning limit to identify heavy bundles
-      chunkSizeWarningLimit: 1000,
+      cssCodeSplit: true, // Enable CSS code splitting
+      // Reduce chunk size warning limit to catch large bundles earlier
+      chunkSizeWarningLimit: 500,
+      // Advanced terser options for production
+      terserOptions: isProduction ? {
+        compress: {
+          drop_console: true, // Remove console.* calls in production
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'], // Remove specific console methods
+          passes: 2, // Multiple compression passes for better results
+        },
+        mangle: {
+          safari10: true, // Fix Safari 10+ bugs
+        },
+        format: {
+          comments: false, // Remove all comments
+        },
+      } : undefined,
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
         },
-        // External dependencies that shouldn't be bundled
-        external: isDev ? [] : [
-          // Firebase is large, handle separately
-        ],
+        // Optimize bundle size by eliminating unnecessary code
+        treeshake: {
+          moduleSideEffects: false, // Assume no module side effects for better tree-shaking
+          propertyReadSideEffects: false,
+          tryCatchDeoptimization: false,
+        },
         output: {
           // Use hash-based filenames for better caching
-          assetFileNames: 'assets/[name].[hash][extname]',
-          chunkFileNames: 'assets/[name].[hash].js',
-          entryFileNames: 'assets/[name].[hash].js',
-          manualChunks: {
-            // Core React runtime and routing
-            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          assetFileNames: (assetInfo) => {
+            // Organize assets by type for better caching strategy
+            const info = assetInfo.name.split('.');
+            const ext = info[info.length - 1];
+            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
+              return `assets/images/[name].[hash][extname]`;
+            } else if (/woff2?|ttf|eot/i.test(ext)) {
+              return `assets/fonts/[name].[hash][extname]`;
+            }
+            return `assets/[name].[hash][extname]`;
           },
+          chunkFileNames: 'assets/js/[name].[hash].js',
+          entryFileNames: 'assets/js/[name].[hash].js',
+          // Advanced chunk splitting strategy
+          manualChunks: (id) => {
+            // Core React runtime and routing - loaded on every page
+            if (id.includes('node_modules/react/') ||
+                id.includes('node_modules/react-dom/') ||
+                id.includes('node_modules/react-router-dom/') ||
+                id.includes('node_modules/scheduler/')) {
+              return 'react-vendor';
+            }
+
+            // Firebase - large auth library, separate chunk
+            if (id.includes('node_modules/firebase/') ||
+                id.includes('node_modules/@firebase/')) {
+              return 'firebase';
+            }
+
+            // Monaco Editor - very large code editor, lazy loaded
+            if (id.includes('node_modules/monaco-editor/') ||
+                id.includes('node_modules/@monaco-editor/')) {
+              return 'monaco-editor';
+            }
+
+            // D3 - large visualization library
+            if (id.includes('node_modules/d3')) {
+              return 'd3-vendor';
+            }
+
+            // ReactFlow - flow diagram library
+            if (id.includes('node_modules/reactflow') ||
+                id.includes('node_modules/@reactflow/')) {
+              return 'reactflow';
+            }
+
+            // Charts - recharts for data visualization
+            if (id.includes('node_modules/recharts')) {
+              return 'recharts';
+            }
+
+            // Framer Motion - animation library
+            if (id.includes('node_modules/framer-motion')) {
+              return 'framer-motion';
+            }
+
+            // UI Component libraries
+            if (id.includes('node_modules/@radix-ui/') ||
+                id.includes('node_modules/lucide-react') ||
+                id.includes('node_modules/@heroicons/')) {
+              return 'ui-libs';
+            }
+
+            // State management
+            if (id.includes('node_modules/@reduxjs/') ||
+                id.includes('node_modules/react-redux') ||
+                id.includes('node_modules/zustand') ||
+                id.includes('node_modules/@tanstack/react-query')) {
+              return 'state-management';
+            }
+
+            // Utilities
+            if (id.includes('node_modules/lodash') ||
+                id.includes('node_modules/axios') ||
+                id.includes('node_modules/date-fns') ||
+                id.includes('node_modules/clsx') ||
+                id.includes('node_modules/class-variance-authority')) {
+              return 'utils';
+            }
+
+            // All other node_modules
+            if (id.includes('node_modules/')) {
+              return 'vendor';
+            }
+          },
+          // Optimize chunk loading with smart imports
+          inlineDynamicImports: false,
+          // Better mangling for production
+          compact: isProduction,
+          // Add source mapping URL only in development
+          sourcemapExcludeSources: isProduction,
         },
       },
     },

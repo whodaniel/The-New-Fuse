@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 // Professional Landing Page - THE NEW FUSE
 // This is the MAIN landing page for thenewfuse.com
-export default function ProfessionalLandingPage() {
 // World-Class Landing Page for The New Fuse AI Agent Orchestration Platform
 export default function HomePage() {
   return (
