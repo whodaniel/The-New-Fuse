@@ -1,4 +1,4 @@
-# CACHE_BUSTER=8
+# CACHE_BUSTER=9
 
 # Railway Dockerfile for The New Fuse API Service
 # Built from repository root
@@ -34,7 +34,7 @@ COPY . .
 
 # Re-link workspace packages after copying source files
 # This ensures TypeScript project references work correctly with tsc -b
-RUN pnpm install --offline --frozen-lockfile || true
+RUN pnpm install --prefer-offline --frozen-lockfile --ignore-scripts
 
 # Build all dependencies of API service first, then build API
 ENV NODE_ENV=production
