@@ -19,7 +19,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.9",
     "@nestjs/graphql": "^13.2.0",
-    "@nestjs/apollo": "^13.0.0",
+    "@nestjs/apollo": "^13.2.1",
     "@apollo/server": "^4.10.0",
     "graphql": "^16.8.1",
     "dataloader": "^2.2.2",
