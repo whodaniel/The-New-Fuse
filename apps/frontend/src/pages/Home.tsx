@@ -6,18 +6,13 @@ export default function HomePage() {
   return (
     <div className="bg-white">
       {/* Hero Section with Gradient Background */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-blue-50 via-white to-gray-50 py-16 sm:py-24 lg:py-32">
-        {/* Decorative gradient orbs */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl">
-          <div className="absolute top-0 right-0 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        </div>
+      <div className="relative overflow-hidden bg-blue-50 py-16 sm:py-24 lg:py-32">
 
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             {/* Badge */}
             <div className="mb-8 inline-flex items-center">
-              <span className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-1.5 text-sm font-semibold text-white shadow-lg">
+              <span className="inline-flex items-center rounded-full bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white shadow-lg">
                 <span className="mr-2">🚀</span>
                 World-Class AI Agent Orchestration Platform
               </span>
@@ -26,7 +21,7 @@ export default function HomePage() {
             {/* Main Heading */}
             <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-7xl">
               Orchestrate, Automate,<br />
-              and <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">Scale AI Agents</span>
+              and <span className="text-blue-600">Scale AI Agents</span>
             </h1>
 
             {/* Subtitle */}
@@ -39,7 +34,7 @@ export default function HomePage() {
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/register"
-                className="w-full sm:w-auto rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-4 text-base font-semibold text-white shadow-xl hover:shadow-2xl hover:from-blue-500 hover:to-purple-500 transition-all duration-300 transform hover:-translate-y-0.5"
+                className="w-full sm:w-auto rounded-lg bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-xl hover:bg-blue-700 hover:shadow-2xl transition-all duration-300"
               >
                 🚀 Start Free Trial
               </Link>
@@ -83,7 +78,7 @@ export default function HomePage() {
       </div>
 
       {/* Platform Stats Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-16">
+      <div className="bg-blue-600 py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             <div className="text-center">
@@ -122,7 +117,7 @@ export default function HomePage() {
           <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-12 lg:max-w-none lg:grid-cols-3">
               {/* Visual Workflow Builder */}
-              <div className="flex flex-col bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-blue-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-blue-600 text-2xl">
                     🎨
@@ -143,7 +138,7 @@ export default function HomePage() {
               </div>
 
               {/* Web3 NFT Marketplace */}
-              <div className="flex flex-col bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-purple-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-purple-600 text-2xl">
                     💎
@@ -164,7 +159,7 @@ export default function HomePage() {
               </div>
 
               {/* Multi-LLM Support */}
-              <div className="flex flex-col bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-green-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-green-600 text-2xl">
                     🤖
@@ -185,7 +180,7 @@ export default function HomePage() {
               </div>
 
               {/* Enterprise Security */}
-              <div className="flex flex-col bg-gradient-to-br from-red-50 to-orange-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-red-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-red-600 text-2xl">
                     🔒
@@ -206,7 +201,7 @@ export default function HomePage() {
               </div>
 
               {/* Real-Time Monitoring */}
-              <div className="flex flex-col bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-indigo-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-indigo-600 text-2xl">
                     📊
@@ -227,7 +222,7 @@ export default function HomePage() {
               </div>
 
               {/* Community Ecosystem */}
-              <div className="flex flex-col bg-gradient-to-br from-yellow-50 to-amber-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-yellow-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-yellow-600 text-2xl">
                     👥
@@ -248,7 +243,7 @@ export default function HomePage() {
               </div>
 
               {/* Workspace Collaboration */}
-              <div className="flex flex-col bg-gradient-to-br from-cyan-50 to-sky-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-cyan-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-cyan-600 text-2xl">
                     🏢
@@ -269,7 +264,7 @@ export default function HomePage() {
               </div>
 
               {/* API-First Architecture */}
-              <div className="flex flex-col bg-gradient-to-br from-violet-50 to-purple-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-violet-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-violet-600 text-2xl">
                     🔌
@@ -290,7 +285,7 @@ export default function HomePage() {
               </div>
 
               {/* IDE Integration */}
-              <div className="flex flex-col bg-gradient-to-br from-slate-50 to-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
+              <div className="flex flex-col bg-slate-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow">
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-slate-600 text-2xl">
                     💻
@@ -327,7 +322,7 @@ export default function HomePage() {
           <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">
             {/* Enterprises */}
             <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-lg">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-8 text-center">
+              <div className="bg-blue-600 px-6 py-8 text-center">
                 <div className="text-5xl mb-4">🏢</div>
                 <h3 className="text-2xl font-bold text-white">Enterprise Teams</h3>
               </div>
@@ -369,7 +364,7 @@ export default function HomePage() {
 
             {/* Developers */}
             <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-lg ring-2 ring-blue-600">
-              <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-8 text-center">
+              <div className="bg-green-600 px-6 py-8 text-center">
                 <div className="text-5xl mb-4">💻</div>
                 <h3 className="text-2xl font-bold text-white">Developers</h3>
                 <div className="mt-2 text-sm text-green-100">Most Popular</div>
@@ -412,7 +407,7 @@ export default function HomePage() {
 
             {/* AI Traders */}
             <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-lg">
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-8 text-center">
+              <div className="bg-purple-600 px-6 py-8 text-center">
                 <div className="text-5xl mb-4">💎</div>
                 <h3 className="text-2xl font-bold text-white">AI Traders</h3>
               </div>
@@ -499,12 +494,7 @@ export default function HomePage() {
       </div>
 
       {/* Final CTA Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 py-24">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute left-0 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-400 opacity-20 blur-3xl"></div>
-          <div className="absolute right-0 bottom-0 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-blue-400 opacity-20 blur-3xl"></div>
-        </div>
+      <div className="relative overflow-hidden bg-blue-600 py-24">
 
         <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
           <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
@@ -560,7 +550,7 @@ export default function HomePage() {
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
             <div className="space-y-8">
               <div className="flex items-center">
-                <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="h-10 w-10 bg-blue-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-lg">🚀</span>
                 </div>
                 <span className="ml-3 text-2xl font-bold text-white">The New Fuse</span>
