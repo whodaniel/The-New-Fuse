@@ -1,7 +1,7 @@
 {
   "name": "@the-new-fuse/a2a-core",
-  "version": "1.0.0",
-  "description": "Agent-to-Agent (A2A) Protocol Core Library",
+  "version": "0.3.0",
+  "description": "Agent-to-Agent (A2A) Protocol v0.3.0 Core Library - Official Linux Foundation Specification",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
