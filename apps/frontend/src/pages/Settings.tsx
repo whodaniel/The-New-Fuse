@@ -240,17 +240,20 @@ export default function Settings() {
                 <div className="bg-muted p-4 rounded-md">
                   <p className="text-sm text-muted-foreground mb-2">Your API Key</p>
                   <div className="flex items-center">
-                    <input 
-                      type="password" 
+                    <input
+                      type="password"
                       className="flex-1 px-3 py-2 bg-background border rounded-md mr-2"
-                      value="REDACTED-STRIPE-KEY"
- title="API Key"
+                      value="••••••••••••••••••••••••••••••••"
+                      title="API Key"
                       readOnly
                     />
                     <button className="px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
                       Copy
                     </button>
                   </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    API keys are managed securely. Contact support to regenerate your key.
+                  </p>
                 </div>
                 
                 <div className="flex items-center justify-between">
