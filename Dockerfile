@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:25-alpine AS base
 RUN apk add --no-cache build-base cairo-dev jpeg-dev pango-dev giflib-dev pkgconfig
 RUN npm install -g pnpm@10.20.0
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY . .
 WORKDIR /app/apps/frontend
 RUN pnpm run build
 
-FROM node:22-alpine AS runner
+FROM node:25-alpine AS runner
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=base /app/apps/frontend/dist ./dist

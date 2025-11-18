@@ -14,7 +14,7 @@
 # ============================================================================
 # Stage 1: Base Build Image (with build tools)
 # ============================================================================
-FROM node:22-alpine AS base-build
+FROM node:25-alpine AS base-build
 
 # Install build dependencies in a single layer
 RUN --mount=type=cache,target=/var/cache/apk \
@@ -38,7 +38,7 @@ WORKDIR /app
 # ============================================================================
 # Stage 2: Base Runtime Image (minimal)
 # ============================================================================
-FROM node:22-alpine AS base-runtime
+FROM node:25-alpine AS base-runtime
 
 # Install only runtime dependencies
 RUN --mount=type=cache,target=/var/cache/apk \
