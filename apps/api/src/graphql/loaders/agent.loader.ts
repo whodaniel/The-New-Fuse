@@ -1,14 +1,14 @@
-import * as DataLoader from 'dataloader';
 import { Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import DataLoader from 'dataloader';
+import { In, Repository } from 'typeorm';
 import { Agent } from '../../entities/agent.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AgentLoader {
   constructor(
     @InjectRepository(Agent)
-    private readonly agentRepository: Repository<Agent>,
+    private readonly agentRepository: Repository<Agent>
   ) {}
 
   private readonly batchAgents = new DataLoader<string, Agent>(
@@ -19,7 +19,7 @@ export class AgentLoader {
 
       const agentMap = new Map(agents.map((agent) => [agent.id, agent]));
       return agentIds.map((id) => agentMap.get(id) || null) as Agent[];
-    },
+    }
   );
 
   private readonly batchAgentsByUser = new DataLoader<string, Agent[]>(
@@ -41,7 +41,7 @@ export class AgentLoader {
       });
 
       return userIds.map((userId) => agentsByUser.get(userId) || []);
-    },
+    }
   );
 
   async load(agentId: string): Promise<Agent> {

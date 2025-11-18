@@ -1,9 +1,9 @@
-import * as DataLoader from 'dataloader';
 import { Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
-import { Workflow } from '../../entities/workflow.entity';
+import DataLoader from 'dataloader';
+import { In, Repository } from 'typeorm';
 import { WorkflowStep } from '../../entities/workflow-step.entity';
+import { Workflow } from '../../entities/workflow.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class WorkflowLoader {
@@ -11,7 +11,7 @@ export class WorkflowLoader {
     @InjectRepository(Workflow)
     private readonly workflowRepository: Repository<Workflow>,
     @InjectRepository(WorkflowStep)
-    private readonly workflowStepRepository: Repository<WorkflowStep>,
+    private readonly workflowStepRepository: Repository<WorkflowStep>
   ) {}
 
   private readonly batchWorkflows = new DataLoader<string, Workflow>(
@@ -20,11 +20,9 @@ export class WorkflowLoader {
         where: { id: In([...workflowIds]) },
       });
 
-      const workflowMap = new Map(
-        workflows.map((workflow) => [workflow.id, workflow]),
-      );
+      const workflowMap = new Map(workflows.map((workflow) => [workflow.id, workflow]));
       return workflowIds.map((id) => workflowMap.get(id) || null) as Workflow[];
-    },
+    }
   );
 
   private readonly batchWorkflowsByUser = new DataLoader<string, Workflow[]>(
@@ -46,7 +44,7 @@ export class WorkflowLoader {
       });
 
       return userIds.map((userId) => workflowsByUser.get(userId) || []);
-    },
+    }
   );
 
   private readonly batchStepsByWorkflow = new DataLoader<string, WorkflowStep[]>(
@@ -68,7 +66,7 @@ export class WorkflowLoader {
       });
 
       return workflowIds.map((workflowId) => stepsByWorkflow.get(workflowId) || []);
-    },
+    }
   );
 
   async load(workflowId: string): Promise<Workflow> {
