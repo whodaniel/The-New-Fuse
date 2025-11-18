@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/types" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/core" },
+    { "path": "./packages/a2a-core" },
+    { "path": "./packages/a2a-react" },
+    { "path": "./packages/infrastructure" },
+    { "path": "./packages/prompt-templating" },
+    { "path": "./packages/feature-suggestions" },
+    { "path": "./packages/port-management" },
+    { "path": "./packages/ui-consolidated" }
+  ]
+}

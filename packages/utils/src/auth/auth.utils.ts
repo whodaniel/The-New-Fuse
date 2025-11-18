@@ -1,7 +1,4 @@
-
-export {}
-exports.compareHashes = exports.generateToken = exports.validatePassword = exports.generateVerificationCode = exports.safeCompare = exports.generateBackupCodes = void 0;
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 interface ValidationResult {
     isValid: boolean;
@@ -80,4 +77,3 @@ export const generateToken = (length: number = 32): string => {
 export const compareHashes = (a: string, b: string): boolean => {
     return crypto.timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 };
-//# sourceMappingURL=auth.utils.js.mapexport {};
