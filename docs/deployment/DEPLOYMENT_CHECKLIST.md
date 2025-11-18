@@ -1,232 +1,53 @@
-# Railway Deployment Checklist
+# Deployment Checklist
 
-## ✅ Already Completed
+Use this checklist for every production deployment.
 
-- [x] Railway CLI installed
-- [x] Logged into Railway
-- [x] Project created: `the-new-fuse`
-- [x] Project URL: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
-- [x] Dockerfiles created for all services
-- [x] Railway configuration files updated
+## Pre-Deployment (T-24 hours)
 
-## 🔄 Complete These Steps
+### Code Preparation
+- [ ] All feature branches merged to main
+- [ ] Code review completed and approved
+- [ ] All tests passing locally
+- [ ] No linting errors
+- [ ] Documentation updated
 
-### Step 1: Add PostgreSQL Database
+### Testing
+- [ ] Unit tests pass: `pnpm test`
+- [ ] Integration tests pass
+- [ ] E2E tests pass (if applicable)
+- [ ] Manual testing in staging completed
 
-**Option A - Dashboard (Easiest):**
-1. Open: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
-2. Click "+ New"
-3. Select "Database" → "PostgreSQL"
-4. Wait ~30 seconds for provisioning
+### Database
+- [ ] Database migrations reviewed
+- [ ] Migration tested in staging
+- [ ] Rollback plan documented
 
-**Option B - CLI:**
-```bash
-railway add
-# Select: Database → PostgreSQL
-```
+### Configuration
+- [ ] Environment variables reviewed
+- [ ] Secrets rotated (if needed)
+- [ ] Feature flags configured
 
-- [ ] PostgreSQL database added and running
+## During Deployment
 
-### Step 2: Deploy API Service
+### Start
+- [ ] Run: `./scripts/deployment/deploy-automated.sh`
+- [ ] Monitor deployment logs
 
-```bash
-cd ./apps/api
-railway up
-```
+### Verify
+- [ ] Run: `./scripts/deployment/smoke-tests.sh`
+- [ ] All services running: `railway status`
 
-**What happens:**
-- Code uploads to Railway
-- Docker image builds (10-15 min first time)
-- Service deploys automatically
-- You get a deployment URL
+## Post-Deployment
 
-- [ ] API service deployed successfully
-- [ ] API URL: ___________________________________
+### Immediate (T+0)
+- [ ] Test critical user flows
+- [ ] Monitor error rates
+- [ ] Team notified
 
-### Step 3: Deploy Frontend Service
-
-```bash
-cd ./apps/frontend
-railway up
-```
-
-**What happens:**
-- Frontend code uploads
-- Docker build (5-10 min)
-- Service deploys
-- You get a frontend URL
-
-- [ ] Frontend deployed successfully
-- [ ] Frontend URL: ___________________________________
-
-### Step 4: Configure Environment Variables
-
-**For API Service:**
-
-Go to: Railway Dashboard → API Service → Variables
-
-Add these variables:
-```
-NODE_ENV=production
-PORT=3001
-DATABASE_URL=${{Postgres.DATABASE_URL}}
-JWT_SECRET=<paste generated secret below>
-```
-
-Generate JWT Secret:
-```bash
-openssl rand -base64 32
-```
-Your JWT Secret: ___________________________________
-
-- [ ] API environment variables configured
-
-**For Frontend Service:**
-
-Go to: Railway Dashboard → Frontend Service → Variables
-
-Add these variables:
-```
-NODE_ENV=production
-PORT=3000
-VITE_API_URL=<paste your API URL here>
-```
-
-- [ ] Frontend environment variables configured
-
-### Step 5: Verify Deployment
-
-```bash
-# Check status
-railway status
-
-# View logs
-railway logs --service api
-railway logs --service frontend
-
-# Open dashboard
-railway open
-```
-
-- [ ] Both services showing as "Active"
-- [ ] No errors in logs
-- [ ] Frontend accessible via browser
-- [ ] Frontend can connect to API
-
-## 🎯 Quick Commands Reference
-
-```bash
-# View all services
-railway status
-
-# View API logs
-railway logs --service api
-
-# View Frontend logs
-railway logs --service frontend
-
-# Open Railway Dashboard
-railway open
-
-# Redeploy a service
-cd apps/api && railway up --detach
-
-# Check Railway whoami
-railway whoami
-```
-
-## 🐛 Troubleshooting
-
-### Build fails with dependency errors
-- Check logs: `railway logs --service <name>`
-- Dockerfiles use `--ignore-scripts` to skip native modules
-- Should build successfully in Railway's environment
-
-### Service won't start
-- Verify environment variables are set
-- Check DATABASE_URL format
-- Review startup logs for errors
-
-### Frontend can't reach API
-- Verify VITE_API_URL is set correctly
-- Check API service is deployed and running
-- Verify API has public domain configured
-
-### Database connection fails
-- Ensure PostgreSQL is added and running
-- Verify DATABASE_URL uses Railway template: `${{Postgres.DATABASE_URL}}`
-- Check API service logs for connection errors
-
-## 📊 Expected Timeline
-
-| Task | Time |
-|------|------|
-| Add PostgreSQL | 30 seconds |
-| API Build & Deploy | 10-15 minutes |
-| Frontend Build & Deploy | 5-10 minutes |
-| Configure Variables | 5 minutes |
-| **Total** | **~20-30 minutes** |
-
-## 💰 Cost Estimate
-
-**Free Tier:**
-- 500 execution hours/month
-- Good for testing
-
-**Hobby Plan ($5/month):**
-- Unlimited execution hours
-- Recommended for continuous operation
-
-**Your Usage:**
-- API: ~512MB RAM
-- Frontend: ~256MB RAM
-- PostgreSQL: ~256MB RAM
-- **Total: ~1GB RAM** ✅ Fits in Hobby plan
-
-## ✅ Success Criteria
-
-When deployment is complete, you should have:
-
-- [ ] API service running at a Railway URL
-- [ ] Frontend service running at a Railway URL
-- [ ] PostgreSQL database connected to API
-- [ ] Frontend can load and display UI
-- [ ] API responds to health checks
-- [ ] No errors in service logs
-
-## 🎉 Post-Deployment
-
-After successful deployment:
-
-1. **Custom Domain** (Optional)
-   - Go to Service → Settings → Domains
-   - Add your custom domain
-
-2. **Monitoring**
-   - Railway provides built-in metrics
-   - Check CPU, Memory, and Network usage
-
-3. **CI/CD** (Optional)
-   - Connect GitHub repository
-   - Enable automatic deployments on push
-
-4. **Scaling** (If needed)
-   - Adjust replicas in service settings
-   - Configure auto-scaling rules
-
-## 📚 Resources
-
-- Project Dashboard: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
-- Railway Docs: https://docs.railway.app
-- Deployment Guide: `DEPLOYMENT_GUIDE_RAILWAY.md`
-- Quick Start: `QUICK_START_DEPLOYMENT.md`
+### Extended (T+1 hour)
+- [ ] Performance metrics normal
+- [ ] No user-reported issues
 
 ---
 
-**Current Status:**
-- Project Created: ✅
-- Database: ⏳ (Do this next!)
-- API Deployed: ⏳
-- Frontend Deployed: ⏳
-- Variables Configured: ⏳
-- Live & Running: ⏳
+**Last Updated:** 2024-11-18

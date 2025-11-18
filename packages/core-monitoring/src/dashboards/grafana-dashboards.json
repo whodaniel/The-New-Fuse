@@ -1,0 +1,414 @@
+{
+  "dashboards": [
+    {
+      "id": "service-overview",
+      "title": "Service Health Overview",
+      "description": "Overall health and status of all services",
+      "dashboard": {
+        "annotations": {
+          "list": [
+            {
+              "builtIn": 1,
+              "datasource": "-- Grafana --",
+              "enable": true,
+              "hide": true,
+              "iconColor": "rgba(0, 211, 255, 1)",
+              "name": "Annotations & Alerts",
+              "type": "dashboard"
+            }
+          ]
+        },
+        "editable": true,
+        "gnetId": null,
+        "graphTooltip": 0,
+        "id": null,
+        "links": [],
+        "panels": [
+          {
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 0
+            },
+            "id": 1,
+            "options": {
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showThresholdLabels": false,
+              "showThresholdMarkers": true
+            },
+            "pluginVersion": "8.0.0",
+            "targets": [
+              {
+                "expr": "up",
+                "refId": "A"
+              }
+            ],
+            "title": "Services Up",
+            "type": "gauge"
+          },
+          {
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "tooltip": false,
+                    "viz": false,
+                    "legend": false
+                  },
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": true
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "reqps"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 0
+            },
+            "id": 2,
+            "options": {
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom"
+              },
+              "tooltip": {
+                "mode": "single"
+              }
+            },
+            "targets": [
+              {
+                "expr": "rate(http_requests_total[5m])",
+                "legendFormat": "{{method}} {{route}}",
+                "refId": "A"
+              }
+            ],
+            "title": "Request Rate",
+            "type": "timeseries"
+          }
+        ],
+        "refresh": "10s",
+        "schemaVersion": 27,
+        "style": "dark",
+        "tags": ["overview", "health"],
+        "templating": {
+          "list": []
+        },
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "timepicker": {},
+        "timezone": "",
+        "title": "Service Health Overview",
+        "uid": "service-overview",
+        "version": 1
+      }
+    },
+    {
+      "id": "agent-dashboard",
+      "title": "Agent Activity Dashboard",
+      "description": "Monitor agent creation, activity, and performance",
+      "dashboard": {
+        "panels": [
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 0
+            },
+            "id": 10,
+            "targets": [
+              {
+                "expr": "agents_total{status=\"active\"}",
+                "legendFormat": "Active Agents",
+                "refId": "A"
+              },
+              {
+                "expr": "agents_total{status=\"inactive\"}",
+                "legendFormat": "Inactive Agents",
+                "refId": "B"
+              }
+            ],
+            "title": "Agent Count",
+            "type": "timeseries"
+          },
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 0
+            },
+            "id": 11,
+            "targets": [
+              {
+                "expr": "rate(workflow_executions_total[5m])",
+                "legendFormat": "{{workflow_type}} - {{status}}",
+                "refId": "A"
+              }
+            ],
+            "title": "Workflow Execution Rate",
+            "type": "timeseries"
+          }
+        ],
+        "title": "Agent Activity Dashboard",
+        "uid": "agent-dashboard"
+      }
+    },
+    {
+      "id": "database-performance",
+      "title": "Database Performance",
+      "description": "Monitor database queries and connection pool",
+      "dashboard": {
+        "panels": [
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 0
+            },
+            "id": 20,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, rate(database_query_duration_ms_bucket[5m]))",
+                "legendFormat": "P95 {{operation}}",
+                "refId": "A"
+              },
+              {
+                "expr": "histogram_quantile(0.99, rate(database_query_duration_ms_bucket[5m]))",
+                "legendFormat": "P99 {{operation}}",
+                "refId": "B"
+              }
+            ],
+            "title": "Database Query Latency",
+            "type": "timeseries"
+          },
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 0
+            },
+            "id": 21,
+            "targets": [
+              {
+                "expr": "database_connection_pool{state=\"active\"}",
+                "legendFormat": "Active",
+                "refId": "A"
+              },
+              {
+                "expr": "database_connection_pool{state=\"idle\"}",
+                "legendFormat": "Idle",
+                "refId": "B"
+              },
+              {
+                "expr": "database_connection_pool{state=\"total\"}",
+                "legendFormat": "Total",
+                "refId": "C"
+              }
+            ],
+            "title": "Connection Pool Status",
+            "type": "timeseries"
+          }
+        ],
+        "title": "Database Performance",
+        "uid": "database-performance"
+      }
+    },
+    {
+      "id": "api-performance",
+      "title": "API Performance Metrics",
+      "description": "Monitor API response times and error rates",
+      "dashboard": {
+        "panels": [
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 0
+            },
+            "id": 30,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.50, rate(http_request_duration_ms_bucket[5m]))",
+                "legendFormat": "P50",
+                "refId": "A"
+              },
+              {
+                "expr": "histogram_quantile(0.95, rate(http_request_duration_ms_bucket[5m]))",
+                "legendFormat": "P95",
+                "refId": "B"
+              },
+              {
+                "expr": "histogram_quantile(0.99, rate(http_request_duration_ms_bucket[5m]))",
+                "legendFormat": "P99",
+                "refId": "C"
+              }
+            ],
+            "title": "API Response Time",
+            "type": "timeseries"
+          },
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 0
+            },
+            "id": 31,
+            "targets": [
+              {
+                "expr": "rate(http_request_errors_total[5m]) / rate(http_requests_total[5m]) * 100",
+                "legendFormat": "Error Rate %",
+                "refId": "A"
+              }
+            ],
+            "title": "Error Rate",
+            "type": "timeseries"
+          }
+        ],
+        "title": "API Performance Metrics",
+        "uid": "api-performance"
+      }
+    },
+    {
+      "id": "system-resources",
+      "title": "System Resource Usage",
+      "description": "Monitor CPU, memory, and network usage",
+      "dashboard": {
+        "panels": [
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 0
+            },
+            "id": 40,
+            "targets": [
+              {
+                "expr": "process_cpu_seconds_total",
+                "legendFormat": "CPU Usage",
+                "refId": "A"
+              }
+            ],
+            "title": "CPU Usage",
+            "type": "timeseries"
+          },
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 0
+            },
+            "id": 41,
+            "targets": [
+              {
+                "expr": "process_resident_memory_bytes",
+                "legendFormat": "Memory Usage",
+                "refId": "A"
+              }
+            ],
+            "title": "Memory Usage",
+            "type": "timeseries"
+          },
+          {
+            "datasource": "Prometheus",
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 8
+            },
+            "id": 42,
+            "targets": [
+              {
+                "expr": "websocket_connections{status=\"connected\"}",
+                "legendFormat": "WebSocket Connections",
+                "refId": "A"
+              }
+            ],
+            "title": "Active Connections",
+            "type": "timeseries"
+          }
+        ],
+        "title": "System Resource Usage",
+        "uid": "system-resources"
+      }
+    }
+  ]
+}

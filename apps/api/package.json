@@ -48,6 +48,7 @@
     "ioredis": "^5.8.1",
     "jest": "30.2.0",
     "joi": "^18.0.1",
+    "js-yaml": "^4.1.0",
     "jsdom": "^25.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.20.0",
@@ -84,6 +85,7 @@
   "devDependencies": {
     "@types/jest": "30.0.0",
     "@types/dompurify": "^3.0.5",
+    "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.8.1",
     "@types/yargs": "^17.0.33",

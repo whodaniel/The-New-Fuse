@@ -788,7 +788,9 @@
 # ==============================================================================
 **/.env*
 !**/.env.example
+!**/.env*.example
 !**/.env.template
+!**/.env*.template
 **/*.pem
 **/*.key
 **/*.p12
@@ -801,9 +803,12 @@
 **/.credentials/
 **/auth.json
 **/service-account*.json
+**/firebase-credentials*.json
 **/.gcloud/
 **/.aws/
 **/.azure/
+# Secrets backup file (local only)
+SECRETS-BACKUP.txt
 
 # ==============================================================================
 # BACKUP & ARCHIVE FILES

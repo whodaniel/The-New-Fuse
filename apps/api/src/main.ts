@@ -5,21 +5,25 @@ import { SecurityValidationMiddleware } from './middleware/security-validation.m
 import { CsrfProtectionMiddleware } from './middleware/csrf-protection.middleware';
 import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
 import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-handler.middleware';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as fs from 'fs';
+import * as yaml from 'js-yaml';
+import * as path from 'path';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     // Enable CORS with strict configuration
     cors: {
-      origin: process.env.NODE_ENV === 'production' 
+      origin: process.env.NODE_ENV === 'production'
         ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']
         : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: [
-        'Content-Type', 
-        'Authorization', 
-        'X-Requested-With', 
-        'X-CSRF-Token', 
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'X-CSRF-Token',
         'X-Request-ID',
         'X-Client-IP'
       ],
@@ -43,12 +47,75 @@ async function bootstrap(): Promise<void> {
   app.use(app.get(SecurityValidationMiddleware));
   app.use(app.get(CsrfProtectionMiddleware));
   app.use(app.get(EnhancedSecurityMiddleware));
-  
+
   // Global error handler (should be last)
   app.use(app.get(EnhancedErrorHandlerMiddleware));
 
   // Set global prefix for API routes
   app.setGlobalPrefix('api');
+
+  // Swagger API Documentation Setup
+  if (process.env.ENABLE_API_DOCS !== 'false') {
+    try {
+      // Try to load OpenAPI spec from YAML file
+      const openapiPath = path.join(__dirname, '../../..', 'openapi.yaml');
+
+      let document;
+      if (fs.existsSync(openapiPath)) {
+        const fileContents = fs.readFileSync(openapiPath, 'utf8');
+        document = yaml.load(fileContents) as any;
+        console.log('📚 Loaded OpenAPI specification from openapi.yaml');
+      } else {
+        // Fallback to generating from decorators
+        const config = new DocumentBuilder()
+          .setTitle('The New Fuse API')
+          .setDescription('Comprehensive API for multi-agent orchestration, workflow automation, and blockchain integration')
+          .setVersion('1.0.0')
+          .addBearerAuth(
+            {
+              type: 'http',
+              scheme: 'bearer',
+              bearerFormat: 'JWT',
+              description: 'Enter JWT token',
+            },
+            'BearerAuth',
+          )
+          .addServer('http://localhost:3001/api', 'Development API Server')
+          .addServer('http://localhost:4000/api/v1', 'API Gateway (Development)')
+          .addTag('auth', 'Authentication and authorization endpoints')
+          .addTag('Agents', 'Agent management and orchestration')
+          .addTag('chat', 'Chat rooms and messaging')
+          .addTag('workflows', 'Workflow creation and execution')
+          .addTag('wallets', 'Web3 wallet management')
+          .addTag('transactions', 'Blockchain transaction operations')
+          .addTag('smart-accounts', 'ERC-4337 Smart Account operations')
+          .addTag('mcp', 'Model Context Protocol operations')
+          .build();
+
+        document = SwaggerModule.createDocument(app, config);
+        console.log('📚 Generated OpenAPI specification from code decorators');
+      }
+
+      // Setup Swagger UI
+      SwaggerModule.setup('api-docs', app, document, {
+        swaggerOptions: {
+          persistAuthorization: true,
+          tagsSorter: 'alpha',
+          operationsSorter: 'alpha',
+          docExpansion: 'none',
+          filter: true,
+          tryItOutEnabled: true,
+        },
+        customSiteTitle: 'The New Fuse API Documentation',
+        customfavIcon: 'https://thenewfuse.com/favicon.ico',
+        customCss: '.swagger-ui .topbar { display: none }',
+      });
+
+      console.log('📖 API Documentation available at: http://localhost:3001/api-docs');
+    } catch (error) {
+      console.error('⚠️  Failed to setup API documentation:', error);
+    }
+  }
 
   // Enhanced security headers
   app.use((req, res, next) => {

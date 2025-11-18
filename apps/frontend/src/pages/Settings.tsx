@@ -243,7 +243,7 @@ export default function Settings() {
                     <input
                       type="password"
                       className="flex-1 px-3 py-2 bg-background border rounded-md mr-2"
-                      value="••••••••••••••••••••••••••••••••"
+                      value={import.meta.env.VITE_STRIPE_API_KEY || "Not configured"}
                       title="API Key"
                       readOnly
                     />

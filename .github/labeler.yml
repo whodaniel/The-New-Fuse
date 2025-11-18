@@ -1,0 +1,99 @@
+# Auto-labeling configuration for PR automation
+
+# Frontend changes
+frontend:
+  - apps/frontend/**/*
+  - packages/**/src/components/**/*
+  - packages/ui-consolidated/**/*
+  - packages/a2a-react/**/*
+
+# Backend changes
+backend:
+  - apps/api/**/*
+  - apps/api-gateway/**/*
+  - apps/backend/**/*
+  - packages/api/**/*
+
+# Infrastructure changes
+infrastructure:
+  - docker/**/*
+  - k8s/**/*
+  - infrastructure/**/*
+  - Dockerfile*
+  - docker-compose*.yml
+  - railway.toml
+  - .railway/**/*
+
+# CI/CD changes
+ci:
+  - .github/workflows/**/*
+  - .github/actions/**/*
+  - scripts/**/*.sh
+
+# Documentation
+documentation:
+  - '**/*.md'
+  - docs/**/*
+  - README*
+
+# Database changes
+database:
+  - prisma/**/*
+  - packages/database/**/*
+  - '**/migrations/**/*'
+
+# Testing
+testing:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - packages/testing/**/*
+  - packages/test-utils/**/*
+  - test/**/*
+  - tests/**/*
+
+# Configuration
+config:
+  - '**/*.config.ts'
+  - '**/*.config.js'
+  - '**/*.config.mjs'
+  - '**/*.config.cjs'
+  - tsconfig*.json
+  - .eslintrc*
+  - .prettierrc*
+  - turbo.json
+
+# Security
+security:
+  - packages/security/**/*
+  - packages/core-auth/**/*
+  - '**/security/**/*'
+
+# Dependencies
+dependencies:
+  - package.json
+  - pnpm-lock.yaml
+  - '**/package.json'
+
+# Performance
+performance:
+  - packages/build-optimization/**/*
+  - scripts/memory-optimized-*.cjs
+  - scripts/build-*.cjs
+
+# API changes
+api:
+  - apps/api/**/*
+  - apps/api-gateway/**/*
+  - packages/api-client/**/*
+  - packages/api-types/**/*
+  - openapi.yaml
+
+# UI/UX
+ui-ux:
+  - packages/ui-consolidated/**/*
+  - apps/frontend/src/components/**/*
+  - '**/*.css'
+  - '**/*.scss'
+  - tailwind.config.*
