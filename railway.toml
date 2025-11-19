@@ -10,6 +10,11 @@ buildCommand = "pnpm --filter {service.name} build"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api-gateway" } }
 deploy = { healthcheckPath = "/health" }
 
+# API Service
+[services.api]
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api" } }
+deploy = { healthcheckPath = "/health" }
+
 # Backend Service
 [services.backend]
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/backend" } }
