@@ -21,6 +21,7 @@ COPY --chown=app-user:app-user turbo.json .
 COPY --chown=app-user:app-user pnpm-lock.yaml .
 COPY --chown=app-user:app-user pnpm-workspace.yaml .
 COPY --chown=app-user:app-user package.json .
+COPY --chown=app-user:app-user scripts ./scripts
 
 # Install all dependencies.
 RUN pnpm install --frozen-lockfile
