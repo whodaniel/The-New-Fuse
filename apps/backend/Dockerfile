@@ -6,8 +6,12 @@ WORKDIR /app
 
 # Install pnpm globally
 RUN npm install -g pnpm@10.20.0
+# Set PNPM_HOME and add to PATH for global pnpm commands
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 
-RUN pnpm install -g @nestjs/cli@11.0.10 # Install NestJS CLI globally
+# Install NestJS CLI globally
+RUN pnpm install -g @nestjs/cli@11.0.10
 
 # Copy necessary package manager files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./ 
