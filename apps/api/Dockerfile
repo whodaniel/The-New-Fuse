@@ -39,6 +39,7 @@ COPY --from=builder /app/apps/api/package.json ./apps/api/
 
 # Set production environment
 ENV NODE_ENV=production
+# Assuming API uses port 3001
 ENV PORT=3001
 
 # Health check configuration

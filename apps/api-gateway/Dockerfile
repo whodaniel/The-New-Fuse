@@ -39,7 +39,8 @@ COPY --from=builder /app/apps/api-gateway/package.json ./apps/api-gateway/
 
 # Set production environment
 ENV NODE_ENV=production
-ENV PORT=3002 # Assuming API Gateway uses port 3002
+# Assuming API Gateway uses port 3002
+ENV PORT=3002
 
 # Health check configuration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \

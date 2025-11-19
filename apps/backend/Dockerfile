@@ -39,7 +39,8 @@ COPY --from=builder /app/apps/backend/package.json ./apps/backend/
 
 # Set production environment
 ENV NODE_ENV=production
-ENV PORT=3003 # Assuming Backend uses port 3003
+# Assuming Backend uses port 3003
+ENV PORT=3003
 
 # Health check configuration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \

@@ -39,7 +39,8 @@ COPY --from=builder /app/apps/frontend/package.json ./apps/frontend/
 
 # Set production environment
 ENV NODE_ENV=production
-ENV PORT=3000 # Assuming Frontend uses port 3000
+# Assuming Frontend uses port 3000
+ENV PORT=3000
 
 # Health check configuration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
