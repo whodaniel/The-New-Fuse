@@ -30,7 +30,8 @@ RUN --mount=type=cache,id=apk-build,target=/var/cache/apk \
     pango-dev \
     giflib-dev \
     pkgconfig \
-    openssl
+    openssl \
+    typescript
 
 # Install pnpm globally
 RUN npm install -g pnpm@10.20.0
