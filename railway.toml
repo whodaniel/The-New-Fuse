@@ -15,16 +15,6 @@ healthcheckTimeout = 300
 restartPolicyMaxRetries = 10
 restartPolicyType = "ON_FAILURE"
 
-# API Service
-[services.api.build]
-dockerfilePath = "apps/api/Dockerfile.railway"
-watchPaths = ["apps/api/**", "packages/**", "prisma/**"]
-
-[services.api.deploy]
-healthcheckPath = "/health"
-healthcheckTimeout = 300
-restartPolicyMaxRetries = 10
-restartPolicyType = "ON_FAILURE"
 
 # Backend Service
 [services.backend.build]
