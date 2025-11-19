@@ -7,6 +7,8 @@ WORKDIR /app
 # Install pnpm globally
 RUN npm install -g pnpm@10.20.0
 
+RUN pnpm install -g @nestjs/cli@11.0.10 # Install NestJS CLI globally
+
 # Copy necessary package manager files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./ 
 
@@ -23,7 +25,7 @@ COPY packages ./packages
 RUN pnpm install --frozen-lockfile
 
 # Build the Backend service
-RUN pnpm --filter @the-new-fuse/backend-app run build > build-output.log 2>&1 && cat build-output.log
+RUN nest build apps/backend > build-output.log 2>&1 && cat build-output.log
 
 # Stage 2: Runner
 FROM node:22-alpine AS runner
