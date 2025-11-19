@@ -1,0 +1,25 @@
+# railway.toml for The New Fuse Monorepo
+
+[build]
+builder = "DOCKERFILE"
+buildCommand = "pnpm --filter {service.name} build" # Generic build command for services
+
+# API Gateway Service
+[services.api-gateway]
+build = { dockerfilePath = "apps/api-gateway/Dockerfile.railway" }
+deploy = { healthcheckPath = "/health" }
+
+# API Service
+[services.api]
+build = { dockerfilePath = "apps/api/Dockerfile.railway" }
+deploy = { healthcheckPath = "/health" }
+
+# Backend Service
+[services.backend]
+build = { dockerfilePath = "apps/backend/Dockerfile.railway" }
+deploy = { healthcheckPath = "/health" }
+
+# Frontend Service
+[services.frontend]
+build = { dockerfilePath = "apps/frontend/Dockerfile.railway" }
+deploy = { healthcheckPath = "/health" }
