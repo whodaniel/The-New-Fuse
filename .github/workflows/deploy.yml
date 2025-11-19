@@ -79,16 +79,12 @@ jobs:
         service:
           - name: api-gateway
             path: apps/api-gateway
-            port: 3001
           - name: api
             path: apps/api
-            port: 3002
           - name: backend
             path: apps/backend
-            port: 3003
           - name: frontend
             path: apps/frontend
-            port: 3000
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -137,15 +133,14 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ${{ matrix.service.path }}/Dockerfile.railway
+          file: ./Dockerfile.railway
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            SERVICE_NAME=${{ matrix.service.name }}
-            PORT=${{ matrix.service.port }}
+            SERVICE_PATH=${{ matrix.service.path }}
 
   deploy-to-railway:
     name: Deploy to Railway

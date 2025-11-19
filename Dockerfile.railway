@@ -1,0 +1,62 @@
+ARG NODE_VERSION=22
+ARG PNPM_VERSION=10.22.0
+
+FROM node:${NODE_VERSION}-alpine AS base
+
+RUN npm i -g pnpm@${PNPM_VERSION} turbo
+
+# create a non-root user
+RUN addgroup -S app-user && adduser -S app-user -G app-user
+USER app-user
+
+WORKDIR /app
+
+# The pruned_builder stage will create a pruned workspace containing only the code
+# needed for the target service.
+FROM base as pruned_builder
+ARG SERVICE_PATH
+
+# Copy over the root configuration files.
+COPY --chown=app-user:app-user turbo.json .
+COPY --chown=app-user:app-user pnpm-lock.yaml .
+COPY --chown=app-user:app-user pnpm-workspace.yaml .
+COPY --chown=app-user:app-user package.json .
+
+# Install all dependencies.
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
+# Copy the entire codebase and generate the pruned workspace.
+COPY --chown=app-user:app-user . .
+RUN turbo prune --scope=$SERVICE_PATH --docker
+
+# The builder stage will build the target service.
+FROM base AS builder
+ARG SERVICE_PATH
+
+WORKDIR /app
+
+# Copy the pruned workspace files.
+COPY --from=pruned_builder /app/out/json/ .
+COPY --from=pruned_builder /app/out/pnpm-lock.yaml .
+COPY --from=pruned_builder /app/out/full/ .
+
+# Install dependencies and build the service.
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm --filter $SERVICE_PATH build
+
+# The runner stage will run the target service.
+FROM base AS runner
+ARG SERVICE_PATH
+WORKDIR /app
+
+# Copy the build artifacts and the necessary node_modules.
+COPY --from=builder /app/ .
+
+# The CMD will be set by a run script.
+COPY --chown=app-user:app-user scripts/run-service.sh .
+COPY --chown=app-user:app-user scripts/healthcheck.sh .
+RUN chmod +x ./run-service.sh ./healthcheck.sh
+
+ENV SERVICE_PATH=$SERVICE_PATH
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["./healthcheck.sh"]
+CMD ["./run-service.sh"]

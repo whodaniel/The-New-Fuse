@@ -9,8 +9,11 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  validate-docker-build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [apps/api-gateway, apps/backend, apps/frontend, apps/api]
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -25,4 +28,4 @@ jobs:
           file: ./Dockerfile.railway
           push: false
           build-args: |
-            SERVICE_PATH=apps/api-gateway
+            SERVICE_PATH=${{ matrix.service }}
