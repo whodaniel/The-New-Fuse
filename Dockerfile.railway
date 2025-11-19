@@ -26,9 +26,12 @@ COPY --chown=app-user:app-user scripts ./scripts
 # Install all dependencies.
 RUN pnpm install --frozen-lockfile
 
+ARG SERVICE_NAME
 # Copy the entire codebase and generate the pruned workspace.
 COPY --chown=app-user:app-user . .
-RUN turbo prune --filter=./${SERVICE_PATH} --docker
+# Debug: Echo the SERVICE_NAME to see what's being passed
+RUN echo "Pruning for service: $SERVICE_NAME"
+RUN turbo prune --scope=$SERVICE_NAME --docker
 
 # The builder stage will build the target service.
 FROM base AS builder
