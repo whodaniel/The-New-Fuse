@@ -14,7 +14,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN pnpm install -g @nestjs/cli@11.0.10
 
 # Copy necessary package manager files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./ 
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Copy scripts needed for installation
 COPY scripts ./scripts
@@ -54,4 +54,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 # Start the application
 CMD ["node", "apps/backend/dist/main.js"]
-
