@@ -29,7 +29,9 @@ COPY packages ./packages
 RUN pnpm install --frozen-lockfile
 
 # Build the Backend service
-RUN cd apps/backend && nest build
+RUN \
+  cd apps/backend && \
+  nest build
 
 # Stage 2: Runner
 FROM node:22-alpine AS runner
