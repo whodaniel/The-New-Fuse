@@ -159,7 +159,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Copy production dependencies
 COPY --from=prod-deps --link --chown=apiuser:nodejs /app/node_modules ./node_modules
 COPY --from=prod-deps --link --chown=apiuser:nodejs /app/packages ./packages
-COPY --from=prod-deps --link --chown=apiuser:nodejs /app/package.json ./
+COPY --from=prod-deps --chown=apiuser:nodejs /app/package.json ./
 
 # Copy built application
 COPY --from=builder --link --chown=apiuser:nodejs /app/apps/api/dist ./apps/api/dist
