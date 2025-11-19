@@ -66,7 +66,7 @@ WORKDIR /app
 FROM base-build AS deps
 
 # Copy package manager files first for better caching
-COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --link .npmrc .pnpmrc* ./
 
 # Copy scripts needed for installation
@@ -93,7 +93,7 @@ RUN --mount=type=cache,id=pnpm-store-deps,target=/root/.local/share/pnpm/store \
 FROM base-build AS prod-deps
 
 # Copy package manager files
-COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --link .npmrc .pnpmrc* ./
 COPY --link scripts ./scripts
 
