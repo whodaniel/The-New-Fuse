@@ -17,7 +17,7 @@
 FROM node:25-alpine AS base-build
 
 # Install build dependencies in a single layer
-RUN --mount=type=cache,target=/var/cache/apk \
+RUN --mount=type=cache,id=apk-build,target=/var/cache/apk \
     apk add --no-cache \
     libc6-compat \
     python3 \
@@ -41,7 +41,7 @@ WORKDIR /app
 FROM node:25-alpine AS base-runtime
 
 # Install only runtime dependencies
-RUN --mount=type=cache,target=/var/cache/apk \
+RUN --mount=type=cache,id=apk-runtime,target=/var/cache/apk \
     apk add --no-cache \
     libc6-compat \
     dumb-init \
@@ -79,8 +79,8 @@ COPY --link packages ./packages
 
 # Install dependencies with cache mount for pnpm store
 # This dramatically speeds up builds by caching downloaded packages
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    --mount=type=cache,target=/root/.cache/pnpm \
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+    --mount=type=cache,id=pnpm-cache,target=/root/.cache/pnpm \
     pnpm install --frozen-lockfile --ignore-scripts || \
     pnpm install --no-frozen-lockfile --ignore-scripts
 
@@ -102,8 +102,8 @@ COPY --link apps/frontend/package.json ./apps/frontend/
 COPY --link packages ./packages
 
 # Install ONLY production dependencies
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    --mount=type=cache,target=/root/.cache/pnpm \
+RUN --mount=type=cache,id=pnpm-store-prod,target=/root/.local/share/pnpm/store \
+    --mount=type=cache,id=pnpm-cache-prod,target=/root/.cache/pnpm \
     pnpm install --frozen-lockfile --ignore-scripts --prod || \
     pnpm install --no-frozen-lockfile --ignore-scripts --prod
 
@@ -121,19 +121,19 @@ COPY --link . .
 
 # Re-link workspace packages after copying source files
 # This ensures TypeScript project references work correctly
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    --mount=type=cache,target=/root/.cache/pnpm \
+RUN --mount=type=cache,id=pnpm-store-builder,target=/root/.local/share/pnpm/store \
+    --mount=type=cache,id=pnpm-cache-builder,target=/root/.cache/pnpm \
     pnpm install --prefer-offline --frozen-lockfile --ignore-scripts
 
 # Build environment
 ENV NODE_ENV=production
 
 # Build all workspace dependencies that API Gateway needs
-RUN --mount=type=cache,target=/app/.turbo \
+RUN --mount=type=cache,id=turbo-deps,target=/app/.turbo \
     pnpm --filter @the-new-fuse/api-gateway^... build
 
 # Now build the API Gateway itself
-RUN --mount=type=cache,target=/app/.turbo \
+RUN --mount=type=cache,id=turbo-build,target=/app/.turbo \
     pnpm --filter @the-new-fuse/api-gateway build
 
 # Verify build output
