@@ -23,7 +23,7 @@ COPY --chown=app-user:app-user pnpm-workspace.yaml .
 COPY --chown=app-user:app-user package.json .
 
 # Install all dependencies.
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Copy the entire codebase and generate the pruned workspace.
 COPY --chown=app-user:app-user . .
@@ -41,7 +41,7 @@ COPY --from=pruned_builder /app/out/pnpm-lock.yaml .
 COPY --from=pruned_builder /app/out/full/ .
 
 # Install dependencies and build the service.
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 RUN pnpm --filter $SERVICE_PATH build
 
 # The runner stage will run the target service.
