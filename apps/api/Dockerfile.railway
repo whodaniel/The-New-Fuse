@@ -117,6 +117,7 @@ FROM base-build AS builder
 # Copy dependencies from deps stage
 COPY --from=deps --link /app/node_modules ./node_modules
 COPY --from=deps --link /app/package.json ./package.json
+COPY --from=deps --link /app/package.json ./package.json
 
 # Copy source code
 COPY --link . .
