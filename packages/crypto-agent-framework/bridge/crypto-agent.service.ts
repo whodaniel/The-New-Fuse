@@ -15,6 +15,7 @@ import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
 import axios, { AxiosInstance } from 'axios';
 import * as path from 'path';
+import { isValidPublicUrl } from '../../utils/src/validators';
 
 export interface CryptoAgentTask {
   prompt: string;
@@ -88,6 +89,12 @@ export class CryptoAgentService implements OnModuleInit {
    */
   private async initializeHttpApi(): Promise<void> {
     const apiUrl = process.env.CRYPTO_AGENT_API_URL || 'http://localhost:8000';
+
+    const validationResult = await isValidPublicUrl(apiUrl);
+    if (!validationResult.valid) {
+      this.logger.error(`Invalid CRYPTO_AGENT_API_URL: ${validationResult.reason}`);
+      throw new Error(`Invalid CRYPTO_AGENT_API_URL: ${validationResult.reason}`);
+    }
 
     this.apiClient = axios.create({
       baseURL: apiUrl,

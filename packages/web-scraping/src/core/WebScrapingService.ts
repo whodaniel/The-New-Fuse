@@ -16,6 +16,7 @@ import {
   BrowserSession,
   SecurityPolicy
 } from '../types';
+import { isValidPublicUrl } from '../../../utils/src/validators';
 // Simple error and monitoring implementations for web scraping
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {
@@ -428,12 +429,12 @@ export class WebScrapingService {
    * Validate URL for security
    */
   private async validateUrl(url: string): Promise<void> {
-    const parsed = urlParse(url);
-
-    // Check protocol
-    if (!['http:', 'https:'].includes(parsed.protocol)) {
-      throw new Error(`Protocol not allowed: ${parsed.protocol}`);
+    const validationResult = await isValidPublicUrl(url);
+    if (!validationResult.valid) {
+      throw new Error(validationResult.reason);
     }
+
+    const parsed = urlParse(url);
 
     // Check domain whitelist/blacklist
     if (this.securityPolicy.allowedDomains) {
@@ -453,12 +454,6 @@ export class WebScrapingService {
         throw new Error(`Domain is blocked: ${parsed.hostname}`);
       }
     }
-
-    // Check for private/local IPs
-    const hostname = parsed.hostname;
-    if (this.isPrivateIP(hostname)) {
-      throw new Error(`Private IP addresses not allowed: ${hostname}`);
-    }
   }
 
   /**
@@ -471,25 +466,6 @@ export class WebScrapingService {
 
     const mainType = contentType.split(';')[0].trim().toLowerCase();
     return this.securityPolicy.allowedContentTypes.includes(mainType);
-  }
-
-  /**
-   * Check if hostname is a private IP
-   */
-  private isPrivateIP(hostname: string): boolean {
-    // Simple check for common private IP ranges
-    const privateRanges = [
-      /^127\./, // localhost
-      /^10\./, // 10.0.0.0/8
-      /^172\.(1[6-9]|2[0-9]|3[0-1])\./, // 172.16.0.0/12
-      /^192\.168\./, // 192.168.0.0/16
-      /^169\.254\./, // link-local
-      /^::1$/, // IPv6 localhost
-      /^fc00:/, // IPv6 private
-      /^fe80:/ // IPv6 link-local
-    ];
-
-    return privateRanges.some(range => range.test(hostname));
   }
 
   /**

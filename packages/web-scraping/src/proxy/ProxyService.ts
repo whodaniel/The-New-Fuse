@@ -7,6 +7,7 @@
 
 import axios from 'axios';
 import { ProxyRequest, ProxyResponse, SecurityPolicy } from '../types';
+import { isValidPublicUrl } from '../../../utils/src/validators';
 // Simple error and monitoring implementations for proxy service
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {
@@ -145,43 +146,30 @@ export class ProxyService {
     const { url, method, body } = request;
 
     // Validate URL
-    try {
-      const parsedUrl = new URL(url);
-      
-      // Check protocol
-      if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-        throw new Error(`Protocol not allowed: ${parsedUrl.protocol}`);
-      }
+    const validationResult = await isValidPublicUrl(url);
+    if (!validationResult.valid) {
+      throw new Error(validationResult.reason);
+    }
 
-      // Check for private IPs
-      if (this.isPrivateIP(parsedUrl.hostname)) {
-        throw new Error(`Private IP addresses not allowed: ${parsedUrl.hostname}`);
-      }
+    const parsedUrl = new URL(url);
 
-      // Check domain restrictions
-      if (this.securityPolicy.allowedDomains) {
-        const isAllowed = this.securityPolicy.allowedDomains.some(domain => 
-          parsedUrl.hostname.endsWith(domain)
-        );
-        if (!isAllowed) {
-          throw new Error(`Domain not in allowlist: ${parsedUrl.hostname}`);
-        }
+    // Check domain restrictions
+    if (this.securityPolicy.allowedDomains) {
+      const isAllowed = this.securityPolicy.allowedDomains.some(domain =>
+        parsedUrl.hostname.endsWith(domain)
+      );
+      if (!isAllowed) {
+        throw new Error(`Domain not in allowlist: ${parsedUrl.hostname}`);
       }
+    }
 
-      if (this.securityPolicy.blockedDomains) {
-        const isBlocked = this.securityPolicy.blockedDomains.some(domain => 
-          parsedUrl.hostname.endsWith(domain)
-        );
-        if (isBlocked) {
-          throw new Error(`Domain is blocked: ${parsedUrl.hostname}`);
-        }
+    if (this.securityPolicy.blockedDomains) {
+      const isBlocked = this.securityPolicy.blockedDomains.some(domain =>
+        parsedUrl.hostname.endsWith(domain)
+      );
+      if (isBlocked) {
+        throw new Error(`Domain is blocked: ${parsedUrl.hostname}`);
       }
-
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('Invalid URL')) {
-        throw new Error(`Invalid URL format: ${url}`);
-      }
-      throw error;
     }
 
     // Validate method
@@ -299,24 +287,6 @@ export class ProxyService {
 
     const mainType = contentType.split(';')[0].trim().toLowerCase();
     return this.securityPolicy.allowedContentTypes.includes(mainType);
-  }
-
-  /**
-   * Check if hostname is a private IP
-   */
-  private isPrivateIP(hostname: string): boolean {
-    const privateRanges = [
-      /^127\./, // localhost
-      /^10\./, // 10.0.0.0/8
-      /^172\.(1[6-9]|2[0-9]|3[0-1])\./, // 172.16.0.0/12
-      /^192\.168\./, // 192.168.0.0/16
-      /^169\.254\./, // link-local
-      /^::1$/, // IPv6 localhost
-      /^fc00:/, // IPv6 private
-      /^fe80:/ // IPv6 link-local
-    ];
-
-    return privateRanges.some(range => range.test(hostname));
   }
 
   /**

@@ -18,6 +18,7 @@ import {
   WorkflowImportResponse,
 } from '../types';
 import axios from 'axios';
+import { isValidPublicUrl } from '../../../utils/src/validators';
 
 export class WorkflowService {
   private fetcher: WorkflowFetcher;
@@ -175,6 +176,14 @@ export class WorkflowService {
     request: WorkflowImportRequest
   ): Promise<WorkflowImportResponse> {
     await this.initialize();
+
+    const validationResult = await isValidPublicUrl(request.n8nInstanceUrl);
+    if (!validationResult.valid) {
+      return {
+        success: false,
+        error: `Invalid n8n instance URL: ${validationResult.reason}`,
+      };
+    }
 
     const workflow = this.registry.getWorkflow(request.workflowId);
 
