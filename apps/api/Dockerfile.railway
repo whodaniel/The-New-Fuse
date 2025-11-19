@@ -118,7 +118,6 @@ FROM base-build AS builder
 # Copy dependencies from deps stage
 COPY --from=deps --link /app/node_modules ./node_modules
 COPY --from=deps --link /app/package.json ./package.json
-COPY --from=deps --link /app/package.json ./package.json
 
 # Copy source code
 COPY --link . .
@@ -137,7 +136,7 @@ RUN --mount=type=cache,id=turbo-deps,target=/app/.turbo \
 
 # Now build the API service itself
 RUN --mount=type=cache,id=turbo-build,target=/app/.turbo \
-    pnpm --filter @the-new-fuse/api-server build
+    pnpm --filter @the-new-fuse/api-server run build
 
 # Generate Prisma client if schema exists
 RUN pnpm prisma generate --schema=./prisma/schema.prisma || echo "No Prisma schema found"
