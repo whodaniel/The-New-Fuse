@@ -11,7 +11,7 @@ build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PAT
 deploy = { healthcheckPath = "/health" }
 
 # API Service
-[services.api]
+[services.api-2]
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api" } }
 deploy = { healthcheckPath = "/health" }
 
