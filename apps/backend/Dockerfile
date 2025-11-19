@@ -23,7 +23,7 @@ COPY packages ./packages
 RUN pnpm install --frozen-lockfile
 
 # Build the Backend service
-RUN pnpm --filter @the-new-fuse/backend-app run build -- --loglevel verbose
+RUN pnpm --filter @the-new-fuse/backend-app run build > build-output.log 2>&1 && cat build-output.log
 
 # Stage 2: Runner
 FROM node:22-alpine AS runner
