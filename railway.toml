@@ -7,20 +7,20 @@ buildCommand = "pnpm --filter {service.name} build"
 
 # API Gateway Service
 [services.api-gateway]
-build = { dockerfilePath = "apps/api-gateway/Dockerfile" } # Use generic Dockerfile name
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api-gateway" } }
 deploy = { healthcheckPath = "/health" }
 
 # API Service
 [services.api]
-build = { dockerfilePath = "apps/api/Dockerfile" } # Use generic Dockerfile name
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api" } }
 deploy = { healthcheckPath = "/health" }
 
 # Backend Service
 [services.backend]
-build = { dockerfilePath = "apps/backend/Dockerfile" } # Use generic Dockerfile name
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/backend" } }
 deploy = { healthcheckPath = "/health" }
 
 # Frontend Service
 [services.frontend]
-build = { dockerfilePath = "apps/frontend/Dockerfile" } # Use generic Dockerfile name
-deploy = { healthcheckPath = "/health" }
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/frontend" } }
+deploy = { healthcheckPath = "/" }
