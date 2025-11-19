@@ -7,20 +7,20 @@ buildCommand = "pnpm --filter {service.name} build"
 
 # API Gateway Service
 [services.api-gateway]
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api-gateway" } }
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api-gateway", SERVICE_NAME = "@the-new-fuse/api-gateway" } }
 deploy = { healthcheckPath = "/health" }
 
 # API Service
 [services.api]
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api" } }
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/api", SERVICE_NAME = "@the-new-fuse/api-server" } }
 deploy = { healthcheckPath = "/health" }
 
 # Backend Service
 [services.backend]
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/backend" } }
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
 
 # Frontend Service
 [services.frontend]
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/frontend" } }
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "apps/frontend", SERVICE_NAME = "@the-new-fuse/frontend-app" } }
 deploy = { healthcheckPath = "/" }
