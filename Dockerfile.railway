@@ -28,8 +28,10 @@ RUN pnpm install --frozen-lockfile
 
 # Copy the entire codebase and generate the pruned workspace.
 COPY --chown=app-user:app-user . .
-# Debug: Hardcoding SERVICE_NAME for api service test
-RUN turbo prune --scope=@the-new-fuse/api-server --docker
+ARG SERVICE_NAME
+# Copy the entire codebase and generate the pruned workspace.
+COPY --chown=app-user:app-user . .
+RUN turbo prune --scope=$SERVICE_NAME --docker
 
 # The builder stage will build the target service.
 FROM base AS builder
@@ -41,6 +43,7 @@ WORKDIR /app
 COPY --from=pruned_builder /app/out/json/ .
 COPY --from=pruned_builder /app/out/pnpm-lock.yaml .
 COPY --from=pruned_builder /app/out/full/ .
+COPY --from=pruned_builder /app/scripts ./scripts
 
 # Install dependencies and build the service.
 RUN pnpm install --frozen-lockfile
