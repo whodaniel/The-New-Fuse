@@ -11,7 +11,7 @@ deploy = { healthcheckPath = "/health" }
 
 # API Service
 [services.api]
-build = { dockerfilePath = "apps/api/Dockerfile.railway" }
+build = { dockerfilePath = "apps/api/Dockerfile" }
 deploy = { healthcheckPath = "/health" }
 
 # Backend Service

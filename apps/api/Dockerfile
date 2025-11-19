@@ -1,95 +1,49 @@
-# Multi-stage Dockerfile for The New Fuse API Service
-# Optimized for NestJS application
-# Built from repository root
+# syntax=docker/dockerfile:1.4
 
-# Stage 1: Build dependencies
-FROM node:18-alpine AS deps
-RUN apk add --no-cache libc6-compat python3 make g++
+FROM node:22-alpine AS builder
+
 WORKDIR /app
 
-# Install pnpm
+# Install pnpm globally
 RUN npm install -g pnpm@10.20.0
 
-# Copy root package files
+# Copy necessary package manager files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY .npmrc .pnpmrc ./
 
-# Copy scripts directory (needed for postinstall)
+# Copy scripts needed for installation
 COPY scripts ./scripts
 
-# Copy all package.json files for workspace resolution (required by pnpm)
-# Apps (only existing apps)
+# Copy specific app's package.json
 COPY apps/api/package.json ./apps/api/
-COPY apps/api-gateway/package.json ./apps/api-gateway/
-COPY apps/backend/package.json ./apps/backend/
-COPY apps/frontend/package.json ./apps/frontend/
-# Packages (use wildcard to copy all package.json files)
-COPY packages/*/package.json ./packages/
 
-# Install dependencies (skip postinstall scripts in Docker - they're for native modules not needed in production)
-RUN pnpm install --frozen-lockfile --ignore-scripts
-
-# Stage 2: Build application
-FROM node:18-alpine AS builder
-RUN apk add --no-cache libc6-compat python3 make g++
-WORKDIR /app
-
-# Install pnpm
-RUN npm install -g pnpm@10.20.0
-
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps ./apps
-COPY --from=deps /app/packages ./packages
-
-# Copy source code and config
-COPY turbo.json ./
-COPY tsconfig.base.json ./
-COPY apps/api ./apps/api
+# Copy all workspace packages
 COPY packages ./packages
-COPY prisma ./prisma
 
-# Build packages first, then the API
-ENV NODE_ENV=production
-RUN pnpm --filter @the-new-fuse/types build || true
-RUN pnpm --filter @the-new-fuse/core build || true
-RUN pnpm --filter @the-new-fuse/database build || true
-RUN pnpm --filter @the-new-fuse/api-server build
+# Install dependencies including devDependencies (where typescript would be)
+RUN pnpm install --frozen-lockfile
 
-# Generate Prisma Client
-RUN pnpm prisma generate --schema=./prisma/schema.prisma || echo "Prisma schema not found, skipping"
+# Build the API service
+RUN pnpm --filter @the-new-fuse/api-server run build
 
-# Stage 3: Production runtime
-FROM node:18-alpine AS runner
-RUN apk add --no-cache dumb-init curl
+# Stage 2: Runner
+FROM node:22-alpine AS runner
+
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm@10.20.0
-
-# Copy built application and dependencies
+# Copy built application from builder stage
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/apps/api/package.json ./apps/api/
-COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/api/package.json ./apps/api/
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 apiuser
-RUN chown -R apiuser:nodejs /app
-USER apiuser
-
-EXPOSE 3001
-
+# Set production environment
 ENV NODE_ENV=production
 ENV PORT=3001
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+# Health check configuration
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3001/health || exit 1
 
-# Use dumb-init to handle signals properly
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "apps/api/dist/src/index.js"]
+# Start the application
+CMD ["node", "apps/api/dist/main.js"]
