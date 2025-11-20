@@ -18,9 +18,9 @@ COPY . .
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the target service (SERVICE_PATH should be just the service name like 'api')
-# The actual path in the monorepo is apps/${SERVICE_PATH}
-RUN pnpm --filter=./apps/${SERVICE_PATH} build
+# Build the target service AND its workspace dependencies
+# The ... suffix tells pnpm to also build dependencies
+RUN pnpm --filter=./apps/${SERVICE_PATH}... build
 
 #------------------------------------------------------------------------------
 # Runner stage
@@ -37,6 +37,11 @@ COPY --from=builder /app/apps/${SERVICE_PATH}/dist ./dist
 COPY --from=builder /app/apps/${SERVICE_PATH}/package.json .
 # In a pnpm workspace, dependencies are hoisted to the root node_modules
 COPY --from=builder /app/node_modules ./node_modules
+# Copy built workspace packages so symlinks in node_modules resolve correctly
+COPY --from=builder /app/packages ./packages
+# Copy workspace config files for module resolution
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 # Copy scripts with executable permissions (before switching to non-root user)
 COPY --chmod=755 scripts/run-service.sh .
