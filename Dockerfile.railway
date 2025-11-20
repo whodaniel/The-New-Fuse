@@ -1,6 +1,9 @@
 ARG NODE_VERSION=22
 ARG PNPM_VERSION=10.22.0
 
+#------------------------------------------------------------------------------
+# Base stage
+#------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-alpine AS base
 
 RUN npm i -g pnpm@${PNPM_VERSION} turbo
@@ -11,31 +14,33 @@ USER app-user
 
 WORKDIR /app
 
-# The pruned_builder stage will create a pruned workspace containing only the code
-# needed for the target service.
+#------------------------------------------------------------------------------
+# Pruned builder stage
+#------------------------------------------------------------------------------
 FROM base as pruned_builder
 ARG SERVICE_PATH
+ARG SERVICE_NAME
 
-# Copy over the root configuration files.
+# Copy over the root configuration files and scripts
 COPY --chown=app-user:app-user turbo.json .
 COPY --chown=app-user:app-user pnpm-lock.yaml .
 COPY --chown=app-user:app-user pnpm-workspace.yaml .
 COPY --chown=app-user:app-user package.json .
 COPY --chown=app-user:app-user scripts ./scripts
 
-# Install all dependencies.
+# Install all dependencies to ensure postinstall scripts run correctly
 RUN pnpm install --frozen-lockfile
 
 # Copy the entire codebase and generate the pruned workspace.
 COPY --chown=app-user:app-user . .
-ARG SERVICE_NAME
-# Copy the entire codebase and generate the pruned workspace.
-COPY --chown=app-user:app-user . .
 RUN turbo prune --scope=$SERVICE_NAME --docker
 
-# The builder stage will build the target service.
+#------------------------------------------------------------------------------
+# Builder stage
+#------------------------------------------------------------------------------
 FROM base AS builder
 ARG SERVICE_PATH
+ARG SERVICE_NAME
 
 WORKDIR /app
 
@@ -43,13 +48,15 @@ WORKDIR /app
 COPY --from=pruned_builder /app/out/json/ .
 COPY --from=pruned_builder /app/out/pnpm-lock.yaml .
 COPY --from=pruned_builder /app/out/full/ .
-COPY --from=pruned_builder /app/scripts ./scripts
+COPY --chown=app-user:app-user scripts ./scripts
 
 # Install dependencies and build the service.
 RUN pnpm install --frozen-lockfile
-RUN pnpm --filter $SERVICE_PATH build
+RUN pnpm --filter=$SERVICE_NAME build
 
-# The runner stage will run the target service.
+#------------------------------------------------------------------------------
+# Runner stage
+#------------------------------------------------------------------------------
 FROM base AS runner
 ARG SERVICE_PATH
 WORKDIR /app
