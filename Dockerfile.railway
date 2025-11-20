@@ -6,6 +6,7 @@ ARG SERVICE_PATH
 # Builder stage
 #------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-alpine AS builder
+ARG SERVICE_PATH
 
 RUN npm i -g pnpm@${PNPM_VERSION}
 
@@ -17,8 +18,9 @@ COPY . .
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the target service
-RUN pnpm --filter={./${SERVICE_PATH}} build
+# Build the target service (SERVICE_PATH should be just the service name like 'api')
+# The actual path in the monorepo is apps/${SERVICE_PATH}
+RUN pnpm --filter=./apps/${SERVICE_PATH} build
 
 #------------------------------------------------------------------------------
 # Runner stage
@@ -31,10 +33,11 @@ USER app-user
 WORKDIR /app
 
 # Copy the build artifacts and the necessary node_modules.
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/${SERVICE_PATH}/package.json .
+# Build output is in apps/${SERVICE_PATH}/dist
+COPY --from=builder /app/apps/${SERVICE_PATH}/dist ./dist
+COPY --from=builder /app/apps/${SERVICE_PATH}/package.json .
+# In a pnpm workspace, dependencies are hoisted to the root node_modules
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/${SERVICE_PATH}/node_modules ./node_modules
 
 # The CMD will be set by a run script.
 COPY scripts/run-service.sh .
