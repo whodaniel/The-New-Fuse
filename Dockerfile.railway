@@ -1,44 +1,44 @@
 ARG NODE_VERSION=22
 ARG PNPM_VERSION=10.22.0
-
-#------------------------------------------------------------------------------
-# Base stage
-#------------------------------------------------------------------------------
-FROM node:${NODE_VERSION}-alpine AS base
-RUN npm i -g pnpm@${PNPM_VERSION}
-USER root
-WORKDIR /app
+ARG SERVICE_PATH
 
 #------------------------------------------------------------------------------
 # Builder stage
 #------------------------------------------------------------------------------
-FROM base AS builder
-ARG SERVICE_PATH
-ARG SERVICE_NAME
+FROM node:${NODE_VERSION}-alpine AS builder
+
+RUN npm i -g pnpm@${PNPM_VERSION}
+
+WORKDIR /app
 
 # Copy all source files
 COPY . .
 
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
-# Build the target service
-RUN pnpm --filter=$SERVICE_NAME build
 
-# Create a clean production-only dependency tree
-RUN pnpm deploy --filter=$SERVICE_NAME --prod /prod/deploy
+# Build the target service
+RUN pnpm --filter={./${SERVICE_PATH}} build
 
 #------------------------------------------------------------------------------
 # Runner stage
 #------------------------------------------------------------------------------
-FROM base AS runner
+FROM node:${NODE_VERSION}-alpine AS runner
 ARG SERVICE_PATH
 
-# Copy the built artifacts and the production-only node_modules.
-COPY --from=builder /prod/deploy/ .
+RUN addgroup -S app-user && adduser -S app-user -G app-user
+USER app-user
+WORKDIR /app
+
+# Copy the build artifacts and the necessary node_modules.
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/${SERVICE_PATH}/package.json .
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/${SERVICE_PATH}/node_modules ./node_modules
 
 # The CMD will be set by a run script.
-COPY --chown=root:root scripts/run-service.sh .
-COPY --chown=root:root scripts/healthcheck.sh .
+COPY scripts/run-service.sh .
+COPY scripts/healthcheck.sh .
 RUN chmod +x ./run-service.sh ./healthcheck.sh
 
 ENV SERVICE_PATH=$SERVICE_PATH
