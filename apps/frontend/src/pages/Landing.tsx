@@ -483,5 +483,5 @@ export const Landing = () => {
   );
 };
 
-// Also export as default for backward compatibility
-export default Landing;
+// End of old implementation (kept for backup)
+*/
