@@ -5,35 +5,9 @@ ARG PNPM_VERSION=10.22.0
 # Base stage
 #------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-alpine AS base
-
-RUN npm i -g pnpm@${PNPM_VERSION} turbo
-
-# create a non-root user
-RUN addgroup -S app-user && adduser -S app-user -G app-user
-USER app-user
-
+RUN npm i -g pnpm@${PNPM_VERSION}
+USER root
 WORKDIR /app
-
-#------------------------------------------------------------------------------
-# Pruned builder stage
-#------------------------------------------------------------------------------
-FROM base as pruned_builder
-ARG SERVICE_PATH
-ARG SERVICE_NAME
-
-# Copy over the root configuration files and scripts
-COPY --chown=app-user:app-user turbo.json .
-COPY --chown=app-user:app-user pnpm-lock.yaml .
-COPY --chown=app-user:app-user pnpm-workspace.yaml .
-COPY --chown=app-user:app-user package.json .
-COPY --chown=app-user:app-user scripts ./scripts
-
-# Install all dependencies to ensure postinstall scripts run correctly
-RUN pnpm install --frozen-lockfile
-
-# Copy the entire codebase and generate the pruned workspace.
-COPY --chown=app-user:app-user . .
-RUN turbo prune --scope=$SERVICE_NAME --docker
 
 #------------------------------------------------------------------------------
 # Builder stage
@@ -42,31 +16,29 @@ FROM base AS builder
 ARG SERVICE_PATH
 ARG SERVICE_NAME
 
-WORKDIR /app
+# Copy all source files
+COPY . .
 
-# Copy the pruned workspace files.
-COPY --from=pruned_builder /app/out/json/ .
-COPY --from=pruned_builder /app/out/pnpm-lock.yaml .
-COPY --from=pruned_builder /app/out/full/ .
-COPY --chown=app-user:app-user scripts ./scripts
-
-# Install dependencies and build the service.
+# Install all dependencies
 RUN pnpm install --frozen-lockfile
+# Build the target service
 RUN pnpm --filter=$SERVICE_NAME build
+
+# Create a clean production-only dependency tree
+RUN pnpm deploy --filter=$SERVICE_NAME --prod /prod/deploy
 
 #------------------------------------------------------------------------------
 # Runner stage
 #------------------------------------------------------------------------------
 FROM base AS runner
 ARG SERVICE_PATH
-WORKDIR /app
 
-# Copy the build artifacts and the necessary node_modules.
-COPY --from=builder /app/ .
+# Copy the built artifacts and the production-only node_modules.
+COPY --from=builder /prod/deploy/ .
 
 # The CMD will be set by a run script.
-COPY --chown=app-user:app-user scripts/run-service.sh .
-COPY --chown=app-user:app-user scripts/healthcheck.sh .
+COPY --chown=root:root scripts/run-service.sh .
+COPY --chown=root:root scripts/healthcheck.sh .
 RUN chmod +x ./run-service.sh ./healthcheck.sh
 
 ENV SERVICE_PATH=$SERVICE_PATH
