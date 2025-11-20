@@ -18,7 +18,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Build the target service
-RUN pnpm --filter={./${SERVICE_PATH}} build
+RUN pnpm --filter=${SERVICE_PATH} build
 
 #------------------------------------------------------------------------------
 # Runner stage
@@ -31,10 +31,10 @@ USER app-user
 WORKDIR /app
 
 # Copy the build artifacts and the necessary node_modules.
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/${SERVICE_PATH}/dist ./dist
 COPY --from=builder /app/${SERVICE_PATH}/package.json .
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/${SERVICE_PATH}/node_modules ./node_modules
+# No need to copy individual service node_modules as pnpm hoists to root
 
 # The CMD will be set by a run script.
 COPY scripts/run-service.sh .
