@@ -25,14 +25,15 @@ RUN pnpm --filter "./packages/**" build || true
 # The ... suffix tells pnpm to also build dependencies
 RUN pnpm --filter=./apps/${SERVICE_PATH}... build
 
-# Generate Prisma client for services that have a schema
+# Generate Prisma clients from workspace root to access hoisted dependencies
+# Generate Prisma client for services that have a schema (from workspace root)
 RUN if [ -f "./apps/${SERVICE_PATH}/prisma/schema.prisma" ]; then \
-      cd ./apps/${SERVICE_PATH} && npx prisma generate; \
+      npx prisma generate --schema=./apps/${SERVICE_PATH}/prisma/schema.prisma; \
     fi
 
-# Generate Prisma client for the shared database package
+# Generate Prisma client for the shared database package (from workspace root)
 RUN if [ -f "./packages/database/prisma/schema.prisma" ]; then \
-      cd ./packages/database && npx prisma generate; \
+      npx prisma generate --schema=./packages/database/prisma/schema.prisma; \
     fi
 
 #------------------------------------------------------------------------------
