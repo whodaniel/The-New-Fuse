@@ -29,7 +29,6 @@ FROM node:${NODE_VERSION}-alpine AS runner
 ARG SERVICE_PATH
 
 RUN addgroup -S app-user && adduser -S app-user -G app-user
-USER app-user
 WORKDIR /app
 
 # Copy the build artifacts and the necessary node_modules.
@@ -39,10 +38,12 @@ COPY --from=builder /app/apps/${SERVICE_PATH}/package.json .
 # In a pnpm workspace, dependencies are hoisted to the root node_modules
 COPY --from=builder /app/node_modules ./node_modules
 
-# The CMD will be set by a run script.
-COPY scripts/run-service.sh .
-COPY scripts/healthcheck.sh .
-RUN chmod +x ./run-service.sh ./healthcheck.sh
+# Copy scripts with executable permissions (before switching to non-root user)
+COPY --chmod=755 scripts/run-service.sh .
+COPY --chmod=755 scripts/healthcheck.sh .
+
+# Switch to non-root user for security
+USER app-user
 
 ENV SERVICE_PATH=$SERVICE_PATH
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["./healthcheck.sh"]
