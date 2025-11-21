@@ -19,7 +19,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Build workspace packages first (so they're available to services)
-RUN pnpm --filter "./packages/**" build || true
+RUN pnpm --filter "./packages/**" build
 
 # Explicitly build critical UI package needed by frontend
 RUN pnpm --filter @the-new-fuse/ui-consolidated build || echo "UI consolidated build skipped"
