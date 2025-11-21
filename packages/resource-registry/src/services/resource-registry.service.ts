@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '../../../database/generated/prisma';
 import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto';
 import { Resource, SearchResult, ResourceAction } from '../types';
 import * as semver from 'semver';
@@ -31,7 +31,7 @@ export class ResourceRegistryService {
     // Build searchable text from name, description, tags, and keywords
     const searchableText = this.buildSearchableText(dto);
 
-    const data: Prisma.ResourceCreateInput = {
+    const data: any = {
       name: dto.name,
       description: dto.description,
       category: dto.category,
@@ -55,7 +55,7 @@ export class ResourceRegistryService {
       relatedResources: dto.relatedResources || [],
     };
 
-    const resource = await this.prisma.resource.create({
+    const resource = await (this.prisma as any).resource.create({
       data,
       include: {
         metadata: true,
@@ -64,7 +64,7 @@ export class ResourceRegistryService {
     });
 
     // Create initial version
-    await this.prisma.resourceVersion.create({
+    await (this.prisma as any).resourceVersion.create({
       data: {
         resourceId: resource.id,
         version: dto.version,
@@ -77,7 +77,7 @@ export class ResourceRegistryService {
 
     // Create metadata if provided
     if (dto.metadata) {
-      await this.prisma.resourceMetadata.create({
+      await (this.prisma as any).resourceMetadata.create({
         data: {
           resourceId: resource.id,
           metadata: dto.metadata,
@@ -102,7 +102,7 @@ export class ResourceRegistryService {
    * Find resource by ID
    */
   async findById(id: string): Promise<Resource> {
-    const resource = await this.prisma.resource.findUnique({
+    const resource = await (this.prisma as any).resource.findUnique({
       where: { id },
       include: {
         metadata: true,
@@ -128,11 +128,11 @@ export class ResourceRegistryService {
     const limit = dto.limit || 20;
     const skip = (page - 1) * limit;
 
-    const where: Prisma.ResourceWhereInput = this.buildSearchFilters(dto);
-    const orderBy = this.buildSortOptions(dto);
+    const where: any = this.buildSearchFilters(dto);
+    const orderBy: any = this.buildSortOptions(dto);
 
     const [resources, total] = await Promise.all([
-      this.prisma.resource.findMany({
+      (this.prisma as any).resource.findMany({
         where,
         orderBy,
         skip,
@@ -141,7 +141,7 @@ export class ResourceRegistryService {
           metadata: true,
         },
       }),
-      this.prisma.resource.count({ where }),
+      (this.prisma as any).resource.count({ where }),
     ]);
 
     return {
@@ -168,12 +168,12 @@ export class ResourceRegistryService {
       }
 
       // Create new version
-      await this.prisma.resourceVersion.updateMany({
+      await (this.prisma as any).resourceVersion.updateMany({
         where: { resourceId: id, isLatest: true },
         data: { isLatest: false },
       });
 
-      await this.prisma.resourceVersion.create({
+      await (this.prisma as any).resourceVersion.create({
         data: {
           resourceId: id,
           version: dto.version,
@@ -190,7 +190,7 @@ export class ResourceRegistryService {
       ? this.buildSearchableText({ ...existing, ...dto } as CreateResourceDto)
       : undefined;
 
-    const data: Prisma.ResourceUpdateInput = {
+    const data: any = {
       ...(dto.name && { name: dto.name }),
       ...(dto.description !== undefined && { description: dto.description }),
       ...(dto.category && { category: dto.category }),
@@ -214,7 +214,7 @@ export class ResourceRegistryService {
       ...(dto.relatedResources && { relatedResources: dto.relatedResources }),
     };
 
-    const resource = await this.prisma.resource.update({
+    const resource = await (this.prisma as any).resource.update({
       where: { id },
       data,
       include: {
@@ -228,7 +228,7 @@ export class ResourceRegistryService {
 
     // Update metadata if provided
     if (dto.metadata) {
-      await this.prisma.resourceMetadata.upsert({
+      await (this.prisma as any).resourceMetadata.upsert({
         where: { resourceId: id },
         create: {
           resourceId: id,
@@ -268,7 +268,7 @@ export class ResourceRegistryService {
   async delete(id: string): Promise<void> {
     this.logger.log(`Deleting resource: ${id}`);
 
-    await this.prisma.resource.update({
+    await (this.prisma as any).resource.update({
       where: { id },
       data: {
         status: 'DELETED',
@@ -283,7 +283,7 @@ export class ResourceRegistryService {
    * Get all categories
    */
   async getCategories(): Promise<string[]> {
-    const result = await this.prisma.resource.findMany({
+    const result = await (this.prisma as any).resource.findMany({
       distinct: ['category'],
       select: { category: true },
     });
@@ -301,7 +301,7 @@ export class ResourceRegistryService {
     accessorType: string = 'system',
     metadata?: any,
   ): Promise<void> {
-    await this.prisma.resourceAccessLog.create({
+    await (this.prisma as any).resourceAccessLog.create({
       data: {
         resourceId,
         action,
@@ -313,17 +313,17 @@ export class ResourceRegistryService {
 
     // Update usage counts
     if (action === 'VIEW') {
-      await this.prisma.resource.update({
+      await (this.prisma as any).resource.update({
         where: { id: resourceId },
         data: { usageCount: { increment: 1 } },
       });
     } else if (action === 'DOWNLOAD') {
-      await this.prisma.resource.update({
+      await (this.prisma as any).resource.update({
         where: { id: resourceId },
         data: { downloadCount: { increment: 1 } },
       });
     } else if (action === 'FAVORITE') {
-      await this.prisma.resource.update({
+      await (this.prisma as any).resource.update({
         where: { id: resourceId },
         data: { favoriteCount: { increment: 1 } },
       });
@@ -334,7 +334,7 @@ export class ResourceRegistryService {
    * Get resource versions
    */
   async getVersions(resourceId: string): Promise<any[]> {
-    return this.prisma.resourceVersion.findMany({
+    return (this.prisma as any).resourceVersion.findMany({
       where: { resourceId },
       orderBy: { createdAt: 'desc' },
     });
@@ -344,7 +344,7 @@ export class ResourceRegistryService {
    * Get specific version
    */
   async getVersion(resourceId: string, version: string): Promise<any> {
-    const resourceVersion = await this.prisma.resourceVersion.findUnique({
+    const resourceVersion = await (this.prisma as any).resourceVersion.findUnique({
       where: {
         resourceId_version: {
           resourceId,
@@ -373,8 +373,8 @@ export class ResourceRegistryService {
     return parts.join(' ').toLowerCase();
   }
 
-  private buildSearchFilters(dto: SearchResourceDto): Prisma.ResourceWhereInput {
-    const where: Prisma.ResourceWhereInput = {};
+  private buildSearchFilters(dto: SearchResourceDto): any {
+    const where: any = {};
 
     // Text search
     if (dto.query) {
@@ -450,7 +450,7 @@ export class ResourceRegistryService {
     return where;
   }
 
-  private buildSortOptions(dto: SearchResourceDto): Prisma.ResourceOrderByWithRelationInput {
+  private buildSortOptions(dto: SearchResourceDto): any {
     const sortBy = dto.sortBy || 'createdAt';
     const sortOrder = dto.sortOrder || 'desc';
 

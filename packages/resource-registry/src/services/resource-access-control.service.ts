@@ -68,6 +68,16 @@ export class ResourceAccessControlService {
   }
 
   /**
+   * Assert that accessor can execute/download a resource (throws if not allowed)
+   */
+  assertCanExecute(resource: Resource, context: AccessContext): void {
+    if (!this.canExecute(resource, context)) {
+      this.logger.warn(`Execution denied for resource ${resource.id} to ${context.userId || context.agentId}`);
+      throw new ForbiddenException('You do not have permission to execute this resource');
+    }
+  }
+
+  /**
    * Assert that accessor can view a resource (throws if not allowed)
    */
   assertCanView(resource: Resource, context: AccessContext): void {

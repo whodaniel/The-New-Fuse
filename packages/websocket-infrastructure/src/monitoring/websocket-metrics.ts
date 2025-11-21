@@ -8,14 +8,14 @@ export class WebSocketMonitoring {
   private registry: Registry;
 
   // Metrics
-  private connectionsTotal: Counter;
-  private activeConnections: Gauge;
-  private messagesTotal: Counter;
-  private messageLatency: Histogram;
-  private errorsTotal: Counter;
-  private reconnectionsTotal: Counter;
-  private queueSize: Gauge;
-  private messageProcessingTime: Histogram;
+  private connectionsTotal!: Counter;
+  private activeConnections!: Gauge;
+  private messagesTotal!: Counter;
+  private messageLatency!: Histogram;
+  private errorsTotal!: Counter;
+  private reconnectionsTotal!: Counter;
+  private queueSize!: Gauge;
+  private messageProcessingTime!: Histogram;
 
   constructor(registry?: Registry) {
     this.registry = registry || register;

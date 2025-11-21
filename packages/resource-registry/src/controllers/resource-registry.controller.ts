@@ -28,7 +28,7 @@ import { Resource, SearchResult, ResourceAction } from '../types';
 
 // Import authentication guards - use service or user auth to support both
 // JWT tokens (users) and API keys (services/agents)
-import { ServiceOrUserAuthGuard } from '@tnf/api/modules/auth/guards/service-or-user-auth.guard';
+import { ServiceOrUserAuthGuard } from '../guards/service-or-user-auth.guard';
 
 /**
  * Resource Registry Controller
