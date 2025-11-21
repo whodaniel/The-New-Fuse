@@ -30,8 +30,10 @@ RUN addgroup -S app-user && adduser -S app-user -G app-user
 USER app-user
 WORKDIR /app
 
+RUN mkdir -p /app/apps
+
 # Copy the build artifacts and the necessary node_modules.
-COPY --from=builder /app/${SERVICE_PATH}/dist ./dist
+COPY --from=builder /app/${SERVICE_PATH}/dist ./apps/dist
 COPY --from=builder /app/${SERVICE_PATH}/package.json .
 COPY --from=builder /app/node_modules ./node_modules
 # No need to copy individual service node_modules as pnpm hoists to root
