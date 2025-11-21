@@ -37,7 +37,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     private readonly redisService: UnifiedRedisService
   ) {
     super();
-    this.keyPrefix = config.redis.keyPrefix || 'a2a:';
+    this.keyPrefix = config.redis?.keyPrefix || 'a2a:';
   }
 
   async onModuleInit() {
@@ -161,7 +161,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
       await this.redisService.set(
         agentKey,
         JSON.stringify(validatedRegistration),
-        this.config.redis.ttl || 3600
+        this.config.redis?.ttl || 3600
       );
       
       // Add to agents index
@@ -199,7 +199,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
   async updateAgentStatus(agentId: string, status: AgentStatus): Promise<void> {
     const statusKey = `${this.keyPrefix}agents:${agentId}:status`;
-    await this.redisService.set(statusKey, status, this.config.redis.ttl || 3600);
+    await this.redisService.set(statusKey, status, this.config.redis?.ttl || 3600);
     
     // Publish status change event
     await this.publishSystemEvent('agent:status_changed', { agentId, status });
@@ -338,10 +338,10 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
     // Store conversation
     const conversationKey = `${this.keyPrefix}conversations:${validatedConversation.id}`;
-    await this.redisService.set(
+      await this.redisService.set(
       conversationKey,
       JSON.stringify(validatedConversation),
-      this.config.redis.ttl || 3600
+        this.config.redis?.ttl || 3600
     );
 
     // Add participants to conversation
@@ -374,7 +374,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
       conversation.updatedAt = new Date().toISOString();
       
       // Update conversation
-      await this.redisService.set(conversationKey, JSON.stringify(conversation), this.config.redis.ttl || 3600);
+      await this.redisService.set(conversationKey, JSON.stringify(conversation), this.config.redis?.ttl || 3600);
       
       // Add agent to conversation
       await this.redisService.sadd(`${this.keyPrefix}agents:${agentId}:conversations`, conversationId);
@@ -400,7 +400,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     }
     
     // Update conversation
-    await this.redisService.set(conversationKey, JSON.stringify(conversation), this.config.redis.ttl || 3600);
+    await this.redisService.set(conversationKey, JSON.stringify(conversation), this.config.redis?.ttl || 3600);
     
     // Remove agent from conversation
     await this.redisService.srem(`${this.keyPrefix}agents:${agentId}:conversations`, conversationId);
@@ -454,7 +454,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
       await this.redisService.set(
         heartbeatKey,
         JSON.stringify(validatedHeartbeat),
-        this.config.redis.ttl || 3600
+        this.config.redis?.ttl || 3600
       );
       
       // Publish heartbeat
@@ -491,7 +491,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     await this.redisService.set(
       messageKey,
       JSON.stringify(message),
-      this.config.redis.ttl || 3600
+      this.config.redis?.ttl || 3600
     );
     
     // Add to conversation history if applicable

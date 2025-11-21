@@ -149,7 +149,9 @@ export interface AgentExtension {
 /**
  * Defines optional capabilities supported by an agent.
  */
-export interface AgentCapabilities {
+// NOTE: This name collides with legacy runtime AgentCapabilities used by services.
+// To avoid conflicts, we rename the AgentCard capability shape to A2AAgentCapabilities.
+export interface A2AAgentCapabilities {
   streaming?: boolean;
   pushNotifications?: boolean;
   stateTransitionHistory?: boolean;
@@ -201,7 +203,7 @@ export interface AgentCard {
   provider?: AgentProvider;
   version: string;
   documentationUrl?: string;
-  capabilities: AgentCapabilities;
+  capabilities: A2AAgentCapabilities;
   securitySchemes?: { [scheme: string]: SecurityScheme };
   security?: { [scheme: string]: string[] }[];
   defaultInputModes: string[];
@@ -507,7 +509,7 @@ export interface JSONRPCSuccessResponse extends JSONRPCMessage {
 export interface JSONRPCErrorResponse extends JSONRPCMessage {
   id: number | string | null;
   result?: never;
-  error: JSONRPCError | A2AError;
+  error: JSONRPCError | ProtoA2AError;
 }
 
 // ============================================================================
@@ -681,14 +683,14 @@ export enum A2AErrorCode {
 /**
  * Base A2A Error class
  */
-export class A2AError extends Error implements JSONRPCError {
+export class ProtoA2AError extends Error implements JSONRPCError {
   constructor(
     message: string,
     public code: A2AErrorCode,
     public data?: any
   ) {
     super(message);
-    this.name = 'A2AError';
+    this.name = 'ProtoA2AError';
   }
 
   toJSON(): JSONRPCError {
@@ -700,38 +702,38 @@ export class A2AError extends Error implements JSONRPCError {
   }
 }
 
-export class A2AValidationError extends A2AError {
+export class ProtoA2AValidationError extends ProtoA2AError {
   constructor(message: string, public validationErrors: any) {
     super(message, A2AErrorCode.INVALID_PARAMS, validationErrors);
-    this.name = 'A2AValidationError';
+    this.name = 'ProtoA2AValidationError';
   }
 }
 
-export class A2ATimeoutError extends A2AError {
+export class ProtoA2ATimeoutError extends ProtoA2AError {
   constructor(message: string, data?: any) {
     super(message, A2AErrorCode.TIMEOUT, data);
-    this.name = 'A2ATimeoutError';
+    this.name = 'ProtoA2ATimeoutError';
   }
 }
 
-export class A2AAuthenticationError extends A2AError {
+export class ProtoA2AAuthenticationError extends ProtoA2AError {
   constructor(message: string, data?: any) {
     super(message, A2AErrorCode.AUTHENTICATION_REQUIRED, data);
-    this.name = 'A2AAuthenticationError';
+    this.name = 'ProtoA2AAuthenticationError';
   }
 }
 
-export class A2AAuthorizationError extends A2AError {
+export class ProtoA2AAuthorizationError extends ProtoA2AError {
   constructor(message: string, data?: any) {
     super(message, A2AErrorCode.AUTHORIZATION_FAILED, data);
-    this.name = 'A2AAuthorizationError';
+    this.name = 'ProtoA2AAuthorizationError';
   }
 }
 
-export class A2ATaskNotFoundError extends A2AError {
+export class ProtoA2ATaskNotFoundError extends ProtoA2AError {
   constructor(taskId: string) {
     super(`Task not found: ${taskId}`, A2AErrorCode.TASK_NOT_FOUND, { taskId });
-    this.name = 'A2ATaskNotFoundError';
+    this.name = 'ProtoA2ATaskNotFoundError';
   }
 }
 
@@ -945,4 +947,215 @@ export interface A2AConfig {
     connectionTimeout?: number;
   };
   agentCard?: AgentCard;
+}
+
+// ============================================================================
+// Legacy A2A (v1.0 style) Types used by current services/adapters
+// ============================================================================
+
+// Agent runtime type
+export enum AgentType {
+  COORDINATOR = 'coordinator',
+  WORKER = 'worker',
+  SPECIALIST = 'specialist',
+  MONITOR = 'monitor',
+  GATEWAY = 'gateway',
+}
+
+// Load balancing strategies
+export enum LoadBalancingStrategy {
+  ROUND_ROBIN = 'round_robin',
+  LEAST_LOADED = 'least_loaded',
+  FASTEST_RESPONSE = 'fastest_response',
+  CAPABILITY_MATCH = 'capability_match',
+  GEOGRAPHIC = 'geographic',
+}
+
+// Message shape used by A2A services
+export interface A2AMessage {
+  id: string;
+  fromAgent: string;
+  toAgent: string;
+  type: A2AMessageType;
+  payload: any;
+  priority: A2APriority;
+  timestamp: number;
+  ttl?: number;
+  retryCount?: number;
+  requiresResponse?: boolean;
+  conversationId?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface A2AResponse {
+  messageId: string;
+  success: boolean;
+  data?: any;
+  error?: string;
+  processingTime: number;
+  agentStatus: AgentStatus;
+}
+
+// Runtime capabilities tracked per agent by services
+export interface AgentCapabilities {
+  id: string;
+  type: AgentType;
+  capabilities: string[];
+  maxConcurrentRequests: number;
+  averageResponseTime: number;
+  reliability: number;
+  lastSeen: number;
+  isOnline: boolean;
+}
+
+export interface RoutingRule {
+  messageType: A2AMessageType;
+  priority: A2APriority;
+  preferredAgents: string[];
+  fallbackAgents: string[];
+  loadBalancingStrategy: LoadBalancingStrategy;
+  timeoutMs: number;
+}
+
+// ============================================================================
+// Zod Schemas for legacy types (used by Redis adapter and services)
+// ============================================================================
+
+export const AgentCapabilitySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  version: z.string(),
+  parameters: z.record(z.string(), z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
+});
+
+export const AgentRegistrationSchema = z.object({
+  agentId: z.string(),
+  name: z.string(),
+  type: z.nativeEnum(AgentType),
+  version: z.string(),
+  description: z.string().optional(),
+  capabilities: z.array(z.string()),
+  metadata: z.record(z.string(), z.any()).optional(),
+  endpoints: z
+    .object({
+      websocket: z.string().optional(),
+      http: z.string().optional(),
+      redis: z.string().optional(),
+    })
+    .optional(),
+  authentication: z
+    .object({
+      type: z.enum(['none', 'token', 'certificate']),
+      credentials: z.record(z.string(), z.string()).optional(),
+    })
+    .optional(),
+  maxConcurrentRequests: z.number().optional(),
+  averageResponseTime: z.number().optional(),
+  reliability: z.number().optional(),
+  lastSeen: z.number().optional(),
+  isOnline: z.boolean().optional(),
+});
+
+export const A2AMessageSchema = z.object({
+  id: z.string(),
+  protocolVersion: z.string().default(A2A_PROTOCOL_VERSION),
+  timestamp: z.number(),
+  fromAgent: z.string(),
+  toAgent: z.string(),
+  type: z.nativeEnum(A2AMessageType),
+  payload: z.any(),
+  priority: z.nativeEnum(A2APriority),
+  ttl: z.number().optional(),
+  retryCount: z.number().optional(),
+  requiresResponse: z.boolean().optional(),
+  conversationId: z.string().optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
+});
+
+export const AgentHeartbeatSchema = z.object({
+  agentId: z.string(),
+  timestamp: z.string(),
+  status: z.nativeEnum(AgentStatus),
+  load: z.number().optional(),
+  activeConnections: z.number().optional(),
+  lastActivity: z.string().optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
+});
+
+export const ConversationSchema = z.object({
+  id: z.string(),
+  participants: z.array(z.string()).min(2),
+  initiator: z.string(),
+  topic: z.string().optional(),
+  status: z.enum(['active', 'paused', 'completed', 'failed']),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  metadata: z.record(z.string(), z.any()).optional(),
+});
+
+export type AgentCapability = z.infer<typeof AgentCapabilitySchema>;
+export type AgentRegistration = z.infer<typeof AgentRegistrationSchema>;
+export type A2AMessageZod = z.infer<typeof A2AMessageSchema>;
+export type AgentHeartbeat = z.infer<typeof AgentHeartbeatSchema>;
+export type Conversation = z.infer<typeof ConversationSchema>;
+
+// Interface implemented by Redis/WebSocket adapters
+export interface IA2ACommunicator {
+  registerAgent(registration: AgentRegistration): Promise<void>;
+  unregisterAgent(agentId: string): Promise<void>;
+  updateAgentStatus(agentId: string, status: AgentStatus): Promise<void>;
+  sendMessage(message: A2AMessage): Promise<void>;
+  sendRequest(
+    fromAgent: string,
+    toAgent: string,
+    payload: any,
+    options?: { timeout?: number; priority?: A2APriority; conversationId?: string }
+  ): Promise<A2AMessage>;
+  broadcast(
+    fromAgent: string,
+    payload: any,
+    options?: { channel?: string; topic?: string; priority?: A2APriority }
+  ): Promise<void>;
+  startConversation(initiator: string, participants: string[], topic?: string): Promise<string>;
+  joinConversation(conversationId: string, agentId: string): Promise<void>;
+  leaveConversation(conversationId: string, agentId: string): Promise<void>;
+  discoverAgents(criteria?: { type?: string; capabilities?: string[]; status?: AgentStatus }): Promise<AgentRegistration[]>;
+  sendHeartbeat(heartbeat: AgentHeartbeat): Promise<void>;
+  getAgentHealth(agentId: string): Promise<AgentHeartbeat | null>;
+}
+
+// Error classes (string code variants) expected by adapters
+export class A2AError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public agentId?: string,
+    public messageId?: string
+  ) {
+    super(message);
+    this.name = 'A2AError';
+  }
+}
+
+export class A2AValidationError extends A2AError {
+  constructor(message: string, public validationErrors: any) {
+    super(message, 'VALIDATION_ERROR');
+    this.name = 'A2AValidationError';
+  }
+}
+
+export class A2ATimeoutError extends A2AError {
+  constructor(message: string, agentId?: string) {
+    super(message, 'TIMEOUT_ERROR', agentId);
+    this.name = 'A2ATimeoutError';
+  }
+}
+
+export class A2AConnectionError extends A2AError {
+  constructor(message: string, agentId?: string) {
+    super(message, 'CONNECTION_ERROR', agentId);
+    this.name = 'A2AConnectionError';
+  }
 }
