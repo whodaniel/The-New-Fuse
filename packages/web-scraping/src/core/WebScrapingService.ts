@@ -16,7 +16,7 @@ import {
   BrowserSession,
   SecurityPolicy
 } from '../types';
-import { isValidPublicUrl } from '../../../utils/src/validators';
+import { isValidPublicUrl } from '../../../utils/src/validators.server';
 // Simple error and monitoring implementations for web scraping
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {

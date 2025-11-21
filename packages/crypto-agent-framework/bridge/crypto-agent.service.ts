@@ -15,7 +15,7 @@ import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
 import axios, { AxiosInstance } from 'axios';
 import * as path from 'path';
-import { isValidPublicUrl } from '../../utils/src/validators';
+import { isValidPublicUrl } from '../../utils/src/validators.server';
 
 export interface CryptoAgentTask {
   prompt: string;
