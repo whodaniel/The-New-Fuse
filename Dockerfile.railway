@@ -58,7 +58,7 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 # Verify critical dist folders exist in runner stage
-RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/index.js || echo "ERROR: types dist not found in runner!"
+RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/index.js || (echo "ERROR: types dist not found in runner!" && exit 1)
 RUN echo "Runner stage - verifying types package.json..." && cat packages/types/package.json | grep -E '"main"|"type"'
 
 # Copy scripts with executable permissions (before switching to non-root user)
