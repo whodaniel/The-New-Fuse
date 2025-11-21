@@ -49,14 +49,10 @@ export class SentryService extends EventEmitter {
         tracesSampleRate: config.tracesSampleRate,
         profilesSampleRate: config.profilesSampleRate,
         debug: config.debug,
-        integrations: config.integrations || [
-          new Sentry.Integrations.Http({ tracing: true }),
-          new Sentry.Integrations.OnUncaughtException(),
-          new Sentry.Integrations.OnUnhandledRejection(),
-          new Sentry.Integrations.ContextLines(),
-          new Sentry.Integrations.LinkedErrors(),
-          new Sentry.Integrations.Modules(),
-        ],
+        // In Sentry v8+, default integrations are enabled automatically.
+        // If custom integrations are provided via config, pass them through.
+        // Otherwise, rely on defaults to avoid API differences.
+        ...(config.integrations ? { integrations: config.integrations } : {}),
         beforeSend: config.beforeSend,
         beforeBreadcrumb: config.beforeBreadcrumb,
         ignoreErrors: config.ignoreErrors,
