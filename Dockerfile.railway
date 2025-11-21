@@ -18,7 +18,10 @@ COPY . .
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build workspace packages first (so they're available to services)
+# Build foundational types first to satisfy downstream package builds
+RUN pnpm --filter @the-new-fuse/types build
+
+# Build workspace packages (now that types are available)
 RUN pnpm --filter "./packages/**" build
 
 # Explicitly build critical UI package needed by frontend
