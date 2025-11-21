@@ -17,6 +17,7 @@
     "test:coverage": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
+    "@the-new-fuse/types": "workspace:*",
     "react": "^18.2.0",
     "react-hot-toast": "^2.4.1"
   },
