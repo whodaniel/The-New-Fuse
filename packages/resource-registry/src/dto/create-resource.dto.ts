@@ -6,7 +6,7 @@ export class CreateResourceDto {
   @ApiProperty({ description: 'Resource name' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiPropertyOptional({ description: 'Resource description' })
   @IsString()
@@ -16,12 +16,12 @@ export class CreateResourceDto {
   @ApiProperty({ enum: ResourceCategory, description: 'Resource category' })
   @IsEnum(ResourceCategory)
   @IsNotEmpty()
-  category: ResourceCategory;
+  category!: ResourceCategory;
 
   @ApiProperty({ enum: ResourceType, description: 'Resource type' })
   @IsEnum(ResourceType)
   @IsNotEmpty()
-  type: ResourceType;
+  type!: ResourceType;
 
   @ApiProperty({ description: 'Resource content (flexible JSON structure)' })
   @IsObject()
@@ -40,12 +40,12 @@ export class CreateResourceDto {
   @Matches(/^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?$/, {
     message: 'Version must be a valid semantic version (e.g., 1.0.0)',
   })
-  version: string;
+  version!: string;
 
   @ApiProperty({ description: 'Source identifier (file path, URL, repository)' })
   @IsString()
   @IsNotEmpty()
-  source: string;
+  source!: string;
 
   @ApiPropertyOptional({ enum: ResourceVisibility, description: 'Resource visibility', default: ResourceVisibility.PUBLIC })
   @IsEnum(ResourceVisibility)

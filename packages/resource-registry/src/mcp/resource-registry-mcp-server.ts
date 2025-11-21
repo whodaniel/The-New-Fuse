@@ -8,7 +8,7 @@ import {
 import { ResourceRegistryService } from '../services/resource-registry.service';
 import { ResourceAccessControlService } from '../services/resource-access-control.service';
 import { SearchResourceDto } from '../dto';
-import { ResourceCategory, ResourceType, ResourceVisibility } from '../types';
+import { ResourceCategory, ResourceType, ResourceVisibility, ResourceAction } from '../types';
 
 /**
  * MCP Server for Resource Registry
@@ -75,11 +75,12 @@ export class ResourceRegistryMCPServer {
             throw new Error(`Unknown tool: ${name}`);
         }
       } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
         return {
           content: [
             {
               type: 'text',
-              text: `Error: ${error.message}`,
+              text: `Error: ${message}`,
             },
           ],
           isError: true,
@@ -288,7 +289,7 @@ export class ResourceRegistryMCPServer {
     this.accessControl.assertCanView(resource, context);
 
     // Log access
-    await this.resourceService.logAccess(resource.id, 'VIEW', 'mcp-agent', 'agent');
+    await this.resourceService.logAccess(resource.id, ResourceAction.VIEW, 'mcp-agent', 'agent');
 
     return {
       content: [

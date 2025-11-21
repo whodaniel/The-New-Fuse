@@ -64,6 +64,8 @@ export interface ReconnectionStrategy {
   initialDelay: number;
   maxDelay: number;
   backoffMultiplier: number;
+  calculateDelay(attemptNumber: number): number;
+  shouldRetry(attemptNumber: number): boolean;
 }
 
 export interface WebSocketMetrics {
