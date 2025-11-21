@@ -18,7 +18,7 @@ import {
   WorkflowImportResponse,
 } from '../types';
 import axios from 'axios';
-import { isValidPublicUrl } from '../../../utils/src/validators';
+import { isValidPublicUrl } from '../../../utils/src/validators.server';
 
 export class WorkflowService {
   private fetcher: WorkflowFetcher;

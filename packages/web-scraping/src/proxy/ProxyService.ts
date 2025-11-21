@@ -7,7 +7,7 @@
 
 import axios from 'axios';
 import { ProxyRequest, ProxyResponse, SecurityPolicy } from '../types';
-import { isValidPublicUrl } from '../../../utils/src/validators';
+import { isValidPublicUrl } from '../../../utils/src/validators.server';
 // Simple error and monitoring implementations for proxy service
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {

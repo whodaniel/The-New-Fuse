@@ -292,7 +292,7 @@ router.post('/query/advanced', async (req: Request, res: Response, next: NextFun
     const result = await discoveryRegistry.discoverAgents(query);
 
     // Add capability matches if query includes capability search
-    let matches = undefined;
+    let matches: any = undefined;
     if (query.capability) {
       matches = capabilityMatcher.findCapabilityMatches(result.agents, query.capability, {
         minScore: query.minConfidence,

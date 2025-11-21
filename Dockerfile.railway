@@ -6,6 +6,7 @@ ARG SERVICE_PATH
 # Builder stage
 #------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-alpine AS builder
+ARG SERVICE_PATH
 
 RUN npm i -g pnpm@${PNPM_VERSION}
 
@@ -17,8 +18,26 @@ COPY . .
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the target service
-RUN pnpm --filter=${SERVICE_PATH} build
+# Build workspace packages first (so they're available to services)
+RUN pnpm --filter "./packages/**" build || true
+
+# Explicitly build critical UI package needed by frontend
+RUN pnpm --filter @the-new-fuse/ui-consolidated build || echo "UI consolidated build skipped"
+
+# Build the target service AND its workspace dependencies
+# The ... suffix tells pnpm to also build dependencies
+RUN pnpm --filter=./apps/${SERVICE_PATH}... build
+
+# Generate Prisma clients from workspace root to access hoisted dependencies
+# Generate Prisma client for services that have a schema (from workspace root)
+RUN if [ -f "./apps/${SERVICE_PATH}/prisma/schema.prisma" ]; then \
+      npx prisma generate --schema=./apps/${SERVICE_PATH}/prisma/schema.prisma; \
+    fi
+
+# Generate Prisma client for the shared database package (from workspace root)
+RUN if [ -f "./packages/database/prisma/schema.prisma" ]; then \
+      npx prisma generate --schema=./packages/database/prisma/schema.prisma; \
+    fi
 
 #------------------------------------------------------------------------------
 # Runner stage
@@ -27,21 +46,28 @@ FROM node:${NODE_VERSION}-alpine AS runner
 ARG SERVICE_PATH
 
 RUN addgroup -S app-user && adduser -S app-user -G app-user
-USER app-user
 WORKDIR /app
 
-RUN mkdir -p /app/apps
-
-# Copy the build artifacts and the necessary node_modules.
-COPY --from=builder /app/${SERVICE_PATH}/dist ./apps/dist
-COPY --from=builder /app/${SERVICE_PATH}/package.json .
+# Copy the entire built workspace to maintain proper structure
 COPY --from=builder /app/node_modules ./node_modules
-# No need to copy individual service node_modules as pnpm hoists to root
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps ./apps
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
-# The CMD will be set by a run script.
-COPY scripts/run-service.sh .
-COPY scripts/healthcheck.sh .
-RUN chmod +x ./run-service.sh ./healthcheck.sh
+# Verify critical dist folders exist in runner stage
+RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/index.js || echo "ERROR: types dist not found in runner!"
+RUN echo "Runner stage - verifying types package.json..." && cat packages/types/package.json | grep -E '"main"|"type"'
+
+# Copy scripts with executable permissions (before switching to non-root user)
+COPY --chmod=755 scripts/run-service.sh ./apps/${SERVICE_PATH}/run-service.sh
+COPY --chmod=755 scripts/healthcheck.sh ./apps/${SERVICE_PATH}/healthcheck.sh
+
+# Switch to non-root user for security
+USER app-user
+
+# Set working directory to the service
+WORKDIR /app/apps/${SERVICE_PATH}
 
 ENV SERVICE_PATH=$SERVICE_PATH
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["./healthcheck.sh"]

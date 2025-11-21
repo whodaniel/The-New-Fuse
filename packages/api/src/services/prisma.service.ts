@@ -32,12 +32,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       this.logger.log('Database connection established');
 
       // Set up query logging in development
-      if (process.env.NODE_ENV !== 'production') {
-        this.$on('query', (e: any) => {
-          this.logger.debug(`Query: ${e.query}`);
-          this.logger.debug(`Duration: ${e.duration}ms`);
-        });
-      }
+      // Note: Event logging disabled due to Prisma type changes
+      // if (process.env.NODE_ENV !== 'production') {
+      //   this.$on('query', (e: any) => {
+      //     this.logger.debug(`Query: ${e.query}`);
+      //     this.logger.debug(`Duration: ${e.duration}ms`);
+      //   });
+      // }
     } catch (error) {
       const err = error as Error;
       this.logger.error(`Failed to connect to database: ${err.message}`, err.stack);

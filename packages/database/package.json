@@ -28,7 +28,7 @@
   "dependencies": {
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.2",
-    "@prisma/client": "6.19.0",
+    "@prisma/client": "6.11.0",
     "@the-new-fuse/types": "workspace:*",
     "bcrypt": "^5.1.1",
     "reflect-metadata": "^0.2.2",
@@ -38,7 +38,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^24.8.1",
     "eslint": "^9.38.0",
-    "prisma": "6.19.0",
+    "prisma": "6.11.0",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
