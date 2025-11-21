@@ -484,4 +484,3 @@ export const Landing = () => {
 };
 
 // End of old implementation (kept for backup)
-*/
