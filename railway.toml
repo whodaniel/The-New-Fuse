@@ -21,13 +21,17 @@ build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PAT
 deploy = { healthcheckPath = "/health" }
 
 [services.TheNewFuse]
-# 1. Build Phase: Goes into the folder, installs, and builds.
-#    (This runs in the build environment where it has full permissions)
-buildCommand = "cd apps/frontend && pnpm install && pnpm run build"
+# 1. Build Phase: Uses pnpm filter to target the correct package
+buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
 
-# 2. Start Phase: Just serves the files created in the build phase.
-#    (This runs in the runtime environment)
+# 2. Start Phase: Serves the built files
 startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes http-server dist -p 3000 -a 0.0.0.0\""
 
-# 3. Networking: Matches the port we hardcoded above
+# 3. Networking
+restartPolicyType = "ON_FAILURE"
+
+# Fallback for 'frontend' service name just in case
+[services.frontend]
+buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
+startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes http-server dist -p 3000 -a 0.0.0.0\""
 restartPolicyType = "ON_FAILURE"
