@@ -1,7 +1,10 @@
 import { EventEmitter } from 'events';
-import { AgentInfo, Task, TaskPriority } from '../core/types';
-import { Coordinator } from '../orchestration/Coordinator';
-import { SharedCache } from '../state/SharedCache';
+
+import { TaskPriority } from '../core/types';
+
+import type { AgentInfo, Task } from '../core/types';
+import type { Coordinator } from '../orchestration/Coordinator';
+import type { SharedCache } from '../state/SharedCache';
 
 /**
  * Swarm agent behavior
@@ -75,11 +78,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
         timestamp: new Date(),
       };
 
-      await this.sharedCache.setHashField(
-        'swarm:solutions',
-        solution.id,
-        solution
-      );
+      await this.sharedCache.setHashField('swarm:solutions', solution.id, solution);
     }
   }
 
@@ -95,11 +94,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
       timeout?: number;
     } = {}
   ): Promise<SwarmSolution<T>> {
-    const {
-      maxGenerations = 100,
-      convergenceThreshold = 0.001,
-      timeout = 300000,
-    } = options;
+    const { maxGenerations = 100, convergenceThreshold = 0.001, timeout = 300000 } = options;
 
     this.emit('swarm:optimization:started', {
       maxGenerations,
@@ -110,10 +105,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
     let previousBestFitness = 0;
     let stagnantGenerations = 0;
 
-    while (
-      this.generation < maxGenerations &&
-      Date.now() - startTime < timeout
-    ) {
+    while (this.generation < maxGenerations && Date.now() - startTime < timeout) {
       this.generation++;
 
       this.emit('swarm:generation:started', {
@@ -121,18 +113,12 @@ export class SwarmPattern<T = any> extends EventEmitter {
       });
 
       // Each agent generates and evaluates solutions
-      const generationSolutions = await this.executeGeneration(
-        agents,
-        fitnessFn
-      );
+      const generationSolutions = await this.executeGeneration(agents, fitnessFn);
 
       // Update best solution
       const bestInGeneration = this.findBestSolution(generationSolutions);
 
-      if (
-        !this.bestSolution ||
-        bestInGeneration.fitness > this.bestSolution.fitness
-      ) {
+      if (!this.bestSolution || bestInGeneration.fitness > this.bestSolution.fitness) {
         this.bestSolution = bestInGeneration;
         await this.sharedCache.set('swarm:best-solution', this.bestSolution);
 
@@ -186,22 +172,17 @@ export class SwarmPattern<T = any> extends EventEmitter {
     agents: AgentInfo[],
     fitnessFn: (solution: T) => Promise<number>
   ): Promise<SwarmSolution<T>[]> {
-    const behavior = await this.sharedCache.get<SwarmBehavior>(
-      'swarm:behavior'
-    );
+    const behavior = await this.sharedCache.get<SwarmBehavior>('swarm:behavior');
 
     if (!behavior) {
       throw new Error('Swarm behavior not initialized');
     }
 
-    const tasks = agents.map((agent) =>
-      this.createSolutionTask(agent, behavior, fitnessFn)
-    );
+    const taskPromises = agents.map((agent) => this.createSolutionTask(agent, behavior, fitnessFn));
 
-    // Wait for all agents to complete
-    const solutions = await Promise.all(
-      tasks.map((task) => this.waitForSolution(task))
-    );
+    // Create all tasks, then wait for their solutions
+    const createdTasks = await Promise.all(taskPromises);
+    const solutions = await Promise.all(createdTasks.map((task) => this.waitForSolution(task)));
 
     return solutions;
   }
@@ -220,7 +201,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
     const task = await this.coordinator.submitTask(
       'swarm:generate-solution',
       {
-        agentId: agent.id,
+        sourceAgentId: agent.id,
         generation: this.generation,
         behavior,
         neighborSolutions,
@@ -265,9 +246,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
     agentId: string,
     neighborCount: number = 3
   ): Promise<SwarmSolution<T>[]> {
-    const allSolutions = await this.sharedCache.getHashAll<SwarmSolution<T>>(
-      'swarm:solutions'
-    );
+    const allSolutions = await this.sharedCache.getHashAll<SwarmSolution<T>>('swarm:solutions');
 
     // Get random neighbors (excluding self)
     const neighbors = Object.values(allSolutions)
@@ -283,11 +262,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
    */
   private async shareSolutions(solutions: SwarmSolution<T>[]): Promise<void> {
     for (const solution of solutions) {
-      await this.sharedCache.setHashField(
-        'swarm:solutions',
-        solution.id,
-        solution
-      );
+      await this.sharedCache.setHashField('swarm:solutions', solution.id, solution);
     }
 
     // Keep only best N solutions per agent
@@ -298,9 +273,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
    * Remove old solutions to prevent memory bloat
    */
   private async pruneOldSolutions(keepPerAgent: number): Promise<void> {
-    const allSolutions = await this.sharedCache.getHashAll<SwarmSolution<T>>(
-      'swarm:solutions'
-    );
+    const allSolutions = await this.sharedCache.getHashAll<SwarmSolution<T>>('swarm:solutions');
 
     const solutionsByAgent = new Map<string, SwarmSolution<T>[]>();
 
@@ -311,7 +284,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
     }
 
     // Keep only top N solutions per agent
-    for (const [agentId, solutions] of solutionsByAgent.entries()) {
+    for (const [_agentId, solutions] of solutionsByAgent.entries()) {
       const sorted = solutions.sort((a, b) => b.fitness - a.fitness);
       const toRemove = sorted.slice(keepPerAgent);
 
@@ -325,15 +298,13 @@ export class SwarmPattern<T = any> extends EventEmitter {
    * Find best solution in array
    */
   private findBestSolution(solutions: SwarmSolution<T>[]): SwarmSolution<T> {
-    return solutions.reduce((best, current) =>
-      current.fitness > best.fitness ? current : best
-    );
+    return solutions.reduce((best, current) => (current.fitness > best.fitness ? current : best));
   }
 
   /**
    * Perturb a solution for exploration
    */
-  private perturbSolution(solution: T, exploreRate: number): T {
+  private perturbSolution(solution: T, _exploreRate: number): T {
     // In a real implementation, this would depend on the solution type
     // For now, return a copy of the solution
     return JSON.parse(JSON.stringify(solution));
@@ -398,11 +369,7 @@ export class SwarmPattern<T = any> extends EventEmitter {
           // Share promising solutions
           if (fitness > 0.7) {
             // Threshold for "promising"
-            await this.sharedCache.setHashField(
-              'swarm:search:promising',
-              solution.id,
-              solution
-            );
+            await this.sharedCache.setHashField('swarm:search:promising', solution.id, solution);
           }
         }
       });

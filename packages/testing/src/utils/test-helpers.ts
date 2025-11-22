@@ -180,8 +180,12 @@ export function mockDate(date: Date | string | number): () => void {
     constructor(...args: any[]) {
       if (args.length === 0) {
         super(fixedDate.getTime());
+      } else if (args.length === 1) {
+        // Avoid spread to satisfy TS5+ tuple constraint
+        super(args[0] as any);
       } else {
-        super(...args);
+        // Fallback
+        super(fixedDate.getTime());
       }
     }
 
