@@ -5,8 +5,7 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 
 /**
  * Create a test module with common configuration
@@ -28,7 +27,7 @@ export async function createTestingModule(
 /**
  * Create and initialize a test application
  */
-export async function createTestApp(module: TestingModule): Promise<INestApplication> {
+export async function createTestApp(module: TestingModule): Promise<any> {
   const app = module.createNestApplication();
 
   // Add global pipes, filters, interceptors here
@@ -41,7 +40,7 @@ export async function createTestApp(module: TestingModule): Promise<INestApplica
 /**
  * Close test application and clean up
  */
-export async function closeTestApp(app: INestApplication): Promise<void> {
+export async function closeTestApp(app: any): Promise<void> {
   await app.close();
 }
 
@@ -81,7 +80,7 @@ export function createMockService<T extends Record<string, any>>(
  * HTTP request helpers
  */
 export class TestRequest {
-  constructor(private app: INestApplication) {}
+  constructor(private app: any) {}
 
   get(url: string) {
     return request(this.app.getHttpServer()).get(url);
@@ -146,7 +145,7 @@ export function createMockLogger() {
  * Wait for WebSocket connection
  */
 export async function waitForWebSocket(
-  app: INestApplication,
+  app: any,
   timeout: number = 5000
 ): Promise<void> {
   const startTime = Date.now();

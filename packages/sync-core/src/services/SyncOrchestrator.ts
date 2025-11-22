@@ -470,14 +470,14 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
         resourceType_resourceId_tenantId: {
           resourceType: operation.resourceType,
           resourceId: operation.resourceId,
-          tenantId: operation.tenantId ?? null,
+          tenantId: (operation.tenantId ?? null) as any,
         },
       },
       create: {
         id: operation.id,
         resourceType: operation.resourceType,
         resourceId: operation.resourceId,
-        tenantId: operation.tenantId,
+        tenantId: (operation.tenantId ?? null) as any,
         version: 1,
         checksum,
         lastSync: new Date(),
@@ -509,7 +509,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
         resourceType_resourceId_tenantId: {
           resourceType,
           resourceId,
-          tenantId: tenantId || null,
+          tenantId: (tenantId || null) as any,
         },
       },
     });

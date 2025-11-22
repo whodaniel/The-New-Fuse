@@ -101,12 +101,12 @@ async function bootstrap() {
     .addServer('http://localhost:8080', 'Local API Gateway')
     .build();
 
-  const document = SwaggerModule.createDocument(app, config, {
+  const document = SwaggerModule.createDocument(app as any, config, {
     deepScanRoutes: true,
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   });
 
-  SwaggerModule.setup('docs', app, document, {
+  SwaggerModule.setup('docs', app as any, document, {
     swaggerOptions: {
       persistAuthorization: true,
       tagsSorter: 'alpha',
