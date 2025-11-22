@@ -20,8 +20,6 @@ deploy = { healthcheckPath = "/health" }
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
 
-# Frontend Service
-[services.frontend]
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "frontend", SERVICE_NAME = "@the-new-fuse/frontend-app" } }
-deploy = { healthcheckPath = "/" }
+[services.TheNewFuse]
+# We use the "All-in-One" command here to bypass the broken Dockerfile logic
 startCommand = "/bin/sh -c \"cd apps/frontend && pnpm install && pnpm run build && npx --yes http-server dist -p $PORT -a 0.0.0.0\""
