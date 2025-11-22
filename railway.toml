@@ -21,5 +21,13 @@ build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PAT
 deploy = { healthcheckPath = "/health" }
 
 [services.TheNewFuse]
-# We use the "All-in-One" command here to bypass the broken Dockerfile logic
-startCommand = "/bin/sh -c \"cd apps/frontend && pnpm install && pnpm run build && npx --yes http-server dist -p $PORT -a 0.0.0.0\""
+# 1. Build Phase: Goes into the folder, installs, and builds.
+#    (This runs in the build environment where it has full permissions)
+buildCommand = "cd apps/frontend && pnpm install && pnpm run build"
+
+# 2. Start Phase: Just serves the files created in the build phase.
+#    (This runs in the runtime environment)
+startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes http-server dist -p 3000 -a 0.0.0.0\""
+
+# 3. Networking: Matches the port we hardcoded above
+restartPolicyType = "ON_FAILURE"
