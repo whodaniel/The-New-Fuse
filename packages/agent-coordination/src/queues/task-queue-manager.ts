@@ -1,9 +1,13 @@
 import { Logger } from '@nestjs/common';
-import { Queue, Worker, Job, QueueEvents } from 'bullmq';
-import Redis from 'ioredis';
-import { AgentTask, TaskStatus, QueueConfig, TaskProcessor, RetryOptions } from '../types/coordination.types';
-import { MessageSerializer } from '../serializers/message-serializer';
+import { Queue, QueueEvents, Worker } from 'bullmq';
 import { v4 as uuidv4 } from 'uuid';
+
+import { TaskStatus } from '../types/coordination.types';
+
+import type { Job } from 'bullmq';
+import type Redis from 'ioredis';
+import type { MessageSerializer } from '../serializers/message-serializer';
+import type { AgentTask, QueueConfig, TaskProcessor } from '../types/coordination.types';
 
 /**
  * Task queue manager using BullMQ
@@ -31,13 +35,13 @@ export class TaskQueueManager {
    */
   async createQueue(name: string, config?: Partial<QueueConfig>): Promise<Queue> {
     if (this.queues.has(name)) {
-      return this.queues.get(name)!;
+      return this.queues.get(name) as Queue;
     }
 
     const queueConfig = { ...this.defaultConfig, ...config };
-    
+
     const queue = new Queue(name, {
-      connection: this.redisConnection,
+      connection: this.redisConnection as any,
       defaultJobOptions: {
         attempts: queueConfig.maxRetries || 3,
         backoff: {
@@ -50,13 +54,13 @@ export class TaskQueueManager {
     });
 
     this.queues.set(name, queue);
-    
+
     // Set up queue events
-    const events = new QueueEvents(name, { connection: this.redisConnection });
+    const events = new QueueEvents(name, { connection: this.redisConnection as any });
     this.queueEvents.set(name, events);
 
     this.setupQueueEventHandlers(name, events);
-    
+
     this.logger.log(`Queue created: ${name}`);
     return queue;
   }
@@ -70,40 +74,40 @@ export class TaskQueueManager {
     config?: Partial<QueueConfig>
   ): Promise<void> {
     const queueConfig = { ...this.defaultConfig, ...config };
-    
+
     // Ensure queue exists
     await this.createQueue(queueName, queueConfig);
-    
+
     // Create worker
     const worker = new Worker(
       queueName,
       async (job: Job) => {
         const task = job.data as AgentTask;
-        
+
         try {
           this.logger.debug(`Processing task ${task.id} of type ${task.type}`);
-          
+
           task.status = TaskStatus.IN_PROGRESS;
           task.updatedAt = Date.now();
-          
+
           const result = await processor(task);
-          
+
           task.status = TaskStatus.COMPLETED;
           task.completedAt = Date.now();
           task.result = result;
           task.updatedAt = Date.now();
-          
+
           return result;
         } catch (error) {
           task.status = TaskStatus.FAILED;
           task.error = error instanceof Error ? error.message : String(error);
           task.updatedAt = Date.now();
-          
+
           throw error;
         }
       },
       {
-        connection: this.redisConnection,
+        connection: this.redisConnection as any,
         concurrency: queueConfig.concurrency || 1,
         autorun: true,
       }
@@ -111,7 +115,7 @@ export class TaskQueueManager {
 
     this.workers.set(queueName, worker);
     this.processors.set(queueName, processor);
-    
+
     this.logger.log(`Processor registered for queue: ${queueName}`);
   }
 
@@ -123,26 +127,23 @@ export class TaskQueueManager {
     task: Omit<AgentTask, 'id' | 'status' | 'createdAt' | 'updatedAt' | 'retryCount'>
   ): Promise<AgentTask> {
     const queue = await this.createQueue(queueName);
-    
+
+    // Extract maxRetries to avoid duplication when spreading taskRest
+    const { maxRetries, ...taskRest } = task as any;
     const fullTask: AgentTask = {
+      ...taskRest,
       id: uuidv4(),
       status: TaskStatus.PENDING,
       createdAt: Date.now(),
       updatedAt: Date.now(),
       retryCount: 0,
-      maxRetries: task.maxRetries || 3,
-      ...task,
+      maxRetries: (maxRetries ?? 3) as number,
     };
 
-    await queue.add(
-      task.type,
-      fullTask,
-      {
-        priority: this.mapPriorityToNumber(fullTask.priority),
-        jobId: fullTask.id,
-        timeout: task.timeout,
-      }
-    );
+    await queue.add(task.type, fullTask, {
+      priority: this.mapPriorityToNumber(fullTask.priority),
+      jobId: fullTask.id,
+    });
 
     this.logger.debug(`Task added to queue ${queueName}: ${fullTask.id}`);
     return fullTask;
@@ -153,10 +154,14 @@ export class TaskQueueManager {
    */
   async getTaskStatus(queueName: string, taskId: string): Promise<AgentTask | null> {
     const queue = this.queues.get(queueName);
-    if (!queue) return null;
+    if (!queue) {
+      return null;
+    }
 
     const job = await queue.getJob(taskId);
-    if (!job) return null;
+    if (!job) {
+      return null;
+    }
 
     return job.data as AgentTask;
   }
@@ -166,10 +171,14 @@ export class TaskQueueManager {
    */
   async cancelTask(queueName: string, taskId: string): Promise<boolean> {
     const queue = this.queues.get(queueName);
-    if (!queue) return false;
+    if (!queue) {
+      return false;
+    }
 
     const job = await queue.getJob(taskId);
-    if (!job) return false;
+    if (!job) {
+      return false;
+    }
 
     const task = job.data as AgentTask;
     task.status = TaskStatus.CANCELLED;
@@ -177,7 +186,7 @@ export class TaskQueueManager {
 
     await job.remove();
     this.logger.debug(`Task cancelled: ${taskId}`);
-    
+
     return true;
   }
 
@@ -186,13 +195,17 @@ export class TaskQueueManager {
    */
   async retryTask(queueName: string, taskId: string): Promise<boolean> {
     const queue = this.queues.get(queueName);
-    if (!queue) return false;
+    if (!queue) {
+      return false;
+    }
 
     const job = await queue.getJob(taskId);
-    if (!job) return false;
+    if (!job) {
+      return false;
+    }
 
     const task = job.data as AgentTask;
-    
+
     if (task.retryCount >= task.maxRetries) {
       this.logger.warn(`Task ${taskId} exceeded max retries`);
       return false;
@@ -205,7 +218,7 @@ export class TaskQueueManager {
 
     await job.retry();
     this.logger.debug(`Task retry initiated: ${taskId} (attempt ${task.retryCount})`);
-    
+
     return true;
   }
 
@@ -214,7 +227,9 @@ export class TaskQueueManager {
    */
   async getQueueStats(queueName: string): Promise<any> {
     const queue = this.queues.get(queueName);
-    if (!queue) return null;
+    if (!queue) {
+      return null;
+    }
 
     const [waiting, active, completed, failed, delayed] = await Promise.all([
       queue.getWaitingCount(),
@@ -266,11 +281,13 @@ export class TaskQueueManager {
     status: 'completed' | 'failed' = 'completed'
   ): Promise<number> {
     const queue = this.queues.get(queueName);
-    if (!queue) return 0;
+    if (!queue) {
+      return 0;
+    }
 
     const jobs = await queue.clean(grace, 100, status);
     this.logger.log(`Cleaned ${jobs.length} ${status} jobs from queue: ${queueName}`);
-    
+
     return jobs.length;
   }
 
