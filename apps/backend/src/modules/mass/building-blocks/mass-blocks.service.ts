@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../../lib/prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 export interface MassBlockConfig {
   type: 'aggregate' | 'reflect' | 'debate' | 'custom' | 'tool-use';
