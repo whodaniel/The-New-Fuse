@@ -24,3 +24,4 @@ deploy = { healthcheckPath = "/health" }
 [services.frontend]
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "frontend", SERVICE_NAME = "@the-new-fuse/frontend-app" } }
 deploy = { healthcheckPath = "/" }
+startCommand = "npx --yes http-server dist -p $PORT -a 0.0.0.0 --cors"

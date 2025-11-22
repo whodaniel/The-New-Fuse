@@ -7,7 +7,8 @@ set -e
 
 if [ "$SERVICE_PATH" = "frontend" ]; then
   echo "Starting frontend service..."
-  exec pnpm --filter @the-new-fuse/frontend-app preview --host 0.0.0.0 --port $PORT
+  # Use http-server for production serving of static files (avoids Vite preview permission issues)
+  exec npx --yes http-server dist -p $PORT -a 0.0.0.0 --cors
 else
   echo "Starting backend service: $SERVICE_PATH..."
 
