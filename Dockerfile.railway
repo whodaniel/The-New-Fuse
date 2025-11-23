@@ -22,7 +22,7 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @the-new-fuse/types build
 
 # Build workspace packages (now that types are available)
-# RUN pnpm --filter "./packages/**" build
+RUN pnpm --filter "./packages/**" build
 
 # Explicitly build critical UI package needed by frontend
 RUN pnpm --filter @the-new-fuse/ui-consolidated build || echo "UI consolidated build skipped"
