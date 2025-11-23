@@ -19,7 +19,7 @@ export class LlmInteractionService {
     try {
       // Simulate LLM call
       await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       // Return mock response based on prompt content
       if (prompt.includes('Generate 5 improved variations')) {
         return JSON.stringify([
@@ -30,7 +30,7 @@ export class LlmInteractionService {
           'You are a thorough assistant that considers all aspects of a question.'
         ]);
       }
-      
+
       return `Generated response for: ${prompt.substring(0, 50)}...`;
     } catch (error) {
       this.logger.error('LLM generation failed:', error);
@@ -43,7 +43,7 @@ export class LlmInteractionService {
     // Placeholder implementation
     try {
       await new Promise(resolve => setTimeout(resolve, 200));
-      
+
       return {
         success: true,
         output: `Agent ${agentId} response to: ${JSON.stringify(input)}`,
@@ -74,6 +74,7 @@ export class PromptOptimizerService {
     private readonly prisma: PrismaService,
     @Inject(forwardRef(() => LlmInteractionService))
     private readonly llmService: LlmInteractionService,
+    @Inject(forwardRef(() => EvaluationHarnessService))
     private readonly evaluationHarness: EvaluationHarnessService
   ) {}
 
@@ -105,7 +106,7 @@ export class PromptOptimizerService {
 
       // Get current best prompt
       const currentPrompt = this.getCurrentPrompt(agent);
-      
+
       // Generate candidate prompts using MIPRO-inspired optimization
       const candidatePrompts = await this.generateCandidatePrompts(
         currentPrompt,
@@ -122,7 +123,7 @@ export class PromptOptimizerService {
             dataset.items as any[],
             config
           );
-          
+
           return {
             candidate,
             metrics,
@@ -133,7 +134,7 @@ export class PromptOptimizerService {
 
       // Select best performing candidate
       const bestCandidate = this.selectBestCandidate(evaluationResults);
-      
+
       // Create new prompt version
       const newVersion = await this.createPromptVersion(
         agentId,
@@ -156,7 +157,7 @@ export class PromptOptimizerService {
 
   private getCurrentPrompt(agent: any): PromptDefinition {
     // Get the latest prompt version or use system prompt as base
-    const latestVersion = agent.promptVersions?.sort((a, b) => 
+    const latestVersion = agent.promptVersions?.sort((a, b) =>
       b.versionNumber - a.versionNumber
     )[0];
 
@@ -256,7 +257,7 @@ Return as JSON array of strings.
       }
     } catch (error) {
       this.logger.warn('Failed to generate instruction variations, using manual variations');
-      
+
       // Fallback manual variations
       variations.push(
         {
@@ -289,7 +290,7 @@ Return as JSON array of strings.
     if (baseExemplars.length > 1) {
       // Reduce to top half
       variations.push(baseExemplars.slice(0, Math.ceil(baseExemplars.length / 2)));
-      
+
       // Reverse order
       variations.push([...baseExemplars].reverse());
     }
@@ -309,12 +310,12 @@ Return as JSON array of strings.
     const sorted = evaluationResults.sort((a, b) => {
       const aScore = a.metrics.accuracy || 0;
       const bScore = b.metrics.accuracy || 0;
-      
+
       if (Math.abs(aScore - bScore) < 0.01) {
         // Tie-break by latency (lower is better)
         return (a.metrics.latency || 1000) - (b.metrics.latency || 1000);
       }
-      
+
       return bScore - aScore;
     });
 
@@ -367,7 +368,7 @@ export class EvaluationHarnessService {
       try {
         const result = await this.llmService.executeAgent(agentId, item.input, prompt);
         const score = this.calculateScore(result.output, item.expectedOutput);
-        
+
         results.push({
           score,
           processingTime: result.metadata?.processingTime || 0,
@@ -384,16 +385,16 @@ export class EvaluationHarnessService {
 
     const totalTime = Date.now() - startTime;
     const successfulResults = results.filter(r => r.success);
-    
+
     return {
-      accuracy: successfulResults.length > 0 ? 
+      accuracy: successfulResults.length > 0 ?
         successfulResults.reduce((sum, r) => sum + r.score, 0) / successfulResults.length : 0,
       latency: results.reduce((sum, r) => sum + r.processingTime, 0) / results.length,
       tokenUsage: results.length * 150, // Estimated tokens per request
       cost: results.length * 0.001, // Estimated cost per request
       f1Score: this.calculateF1Score(results),
       precision: successfulResults.length / results.length,
-      recall: successfulResults.length > 0 ? 
+      recall: successfulResults.length > 0 ?
         successfulResults.filter(r => r.score > 0.5).length / successfulResults.length : 0
     };
   }
@@ -413,7 +414,7 @@ export class EvaluationHarnessService {
         // Execute the topology workflow
         const result = await this.executeTopology(topologyId, item.input);
         const score = this.calculateScore(result.output, item.expectedOutput);
-        
+
         results.push({
           score,
           processingTime: result.processingTime || 0,
@@ -429,16 +430,16 @@ export class EvaluationHarnessService {
     }
 
     const successfulResults = results.filter(r => r.success);
-    
+
     return {
-      accuracy: successfulResults.length > 0 ? 
+      accuracy: successfulResults.length > 0 ?
         successfulResults.reduce((sum, r) => sum + r.score, 0) / successfulResults.length : 0,
       latency: results.reduce((sum, r) => sum + r.processingTime, 0) / results.length,
       tokenUsage: results.length * 300, // Higher for topology
       cost: results.length * 0.003,
       f1Score: this.calculateF1Score(results),
       precision: successfulResults.length / results.length,
-      recall: successfulResults.length > 0 ? 
+      recall: successfulResults.length > 0 ?
         successfulResults.filter(r => r.score > 0.5).length / successfulResults.length : 0
     };
   }
@@ -446,7 +447,7 @@ export class EvaluationHarnessService {
   private async executeTopology(topologyId: string, input: any): Promise<any> {
     // Placeholder for topology execution
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     return {
       success: true,
       output: `Topology ${topologyId} result for: ${JSON.stringify(input)}`,
@@ -465,25 +466,25 @@ export class EvaluationHarnessService {
         // Text similarity scoring
         const outputLower = output.toLowerCase();
         const expectedLower = expected.toLowerCase();
-        
+
         if (outputLower === expectedLower) return 1.0;
         if (outputLower.includes(expectedLower) || expectedLower.includes(outputLower)) return 0.8;
-        
+
         // Simple word overlap scoring
         const outputWords = outputLower.split(/\s+/);
         const expectedWords = expectedLower.split(/\s+/);
         const overlap = outputWords.filter(word => expectedWords.includes(word)).length;
-        
+
         return Math.min(overlap / expectedWords.length, 1.0);
       }
-      
+
       if (typeof output === 'number' && typeof expected === 'number') {
         // Numeric scoring with tolerance
         const diff = Math.abs(output - expected);
         const tolerance = Math.abs(expected) * 0.1; // 10% tolerance
         return Math.max(0, 1 - (diff / (tolerance + 1)));
       }
-      
+
       // Default exact match
       return output === expected ? 1.0 : 0.0;
     } catch (error) {
@@ -496,10 +497,10 @@ export class EvaluationHarnessService {
     const truePositives = results.filter(r => r.success && r.score > 0.5).length;
     const falsePositives = results.filter(r => r.success && r.score <= 0.5).length;
     const falseNegatives = results.filter(r => !r.success).length;
-    
+
     const precision = truePositives / (truePositives + falsePositives) || 0;
     const recall = truePositives / (truePositives + falseNegatives) || 0;
-    
+
     return precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
   }
 }
