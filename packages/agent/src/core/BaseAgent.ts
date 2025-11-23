@@ -1,6 +1,6 @@
 import { Redis } from 'ioredis';
 import { EventEmitter } from 'events';
-import { Logger } from '@the-new-fuse/core';
+import { Logger } from '../types/core';
 
 import { BaseBridge, MessageType, Priority } from '../bridges';
 import { ContextManager, ContextType } from '../context/manager';

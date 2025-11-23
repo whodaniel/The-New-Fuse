@@ -1,5 +1,5 @@
 import { BaseService } from '../core/BaseService';
-import { Logger } from '@the-new-fuse/core';
+import { Logger } from '../types/core';
 import { Message, MessageType } from '@the-new-fuse/types';
 const Ajv = require('ajv');
 type ValidateFunction = any;

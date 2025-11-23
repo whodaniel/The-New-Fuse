@@ -1,4 +1,4 @@
-import { Logger } from '@the-new-fuse/core';
+import { Logger } from '../types/core';
 import { Message, MessageType } from '@the-new-fuse/types';
 import { UUID } from '@the-new-fuse/api-types';
 

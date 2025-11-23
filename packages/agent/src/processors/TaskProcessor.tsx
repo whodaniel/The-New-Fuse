@@ -1,5 +1,5 @@
 import { BaseProcessor } from './BaseProcessor';
-import { Logger } from '@the-new-fuse/core';
+import { Logger } from '../types/core';
 import {
   Message,
   MessageType,

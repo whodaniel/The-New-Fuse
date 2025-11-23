@@ -27,9 +27,7 @@
     {
       "path": "../types"
     },
-    {
-      "path": "../core"
-    },
+
     {
       "path": "../utils"
     },

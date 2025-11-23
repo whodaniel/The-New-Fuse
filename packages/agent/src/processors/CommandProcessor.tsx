@@ -1,5 +1,5 @@
 import { BaseProcessor } from './BaseProcessor';
-import { Logger } from '@the-new-fuse/core';
+import { Logger } from '../types/core';
 import { Command, CommandResult, Message, MessageType, UUID } from '@the-new-fuse/types';
 import { InterAgentChatService } from '../services/InterAgentChatService';
 import { RedisService } from '../services/RedisService';

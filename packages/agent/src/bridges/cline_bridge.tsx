@@ -1,4 +1,4 @@
-import { Logger } from '@the-new-fuse/core';
+import { Logger } from '../types/core';
 import { AgentRole } from '@the-new-fuse/types';
 
 // Stub implementations for missing core dependencies

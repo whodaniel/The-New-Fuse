@@ -1,5 +1,5 @@
 import { BaseService } from '../core/BaseService';
-import { Logger } from '@the-new-fuse/core';
+import { Logger } from '../types/core';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface AlertPayload {
