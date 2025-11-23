@@ -18,7 +18,6 @@ import {
   WorkflowImportResponse,
 } from '../types';
 import axios from 'axios';
-import { isValidPublicUrl } from '../../../utils/src/validators.server';
 
 export class WorkflowService {
   private fetcher: WorkflowFetcher;
@@ -176,6 +175,8 @@ export class WorkflowService {
     request: WorkflowImportRequest
   ): Promise<WorkflowImportResponse> {
     await this.initialize();
+
+    const { isValidPublicUrl } = await import('@the-new-fuse/utils/validators.server');
 
     const validationResult = await isValidPublicUrl(request.n8nInstanceUrl);
     if (!validationResult.valid) {
