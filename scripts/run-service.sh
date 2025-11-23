@@ -3,12 +3,17 @@
 set -e
 
 # SERVICE_PATH should be just the service name (e.g., 'api', 'frontend', 'backend')
-# The Dockerfile copies built files to /app/dist
+# The Dockerfile copies built files to /app/apps/${SERVICE_PATH}/dist
+
+echo "Current directory: $(pwd)"
+echo "SERVICE_PATH: ${SERVICE_PATH}"
+echo "Listing current directory:"
+ls -la
 
 if [ "$SERVICE_PATH" = "frontend" ]; then
   echo "Starting frontend service..."
   # Use http-server for production serving of static files (avoids Vite preview permission issues)
-  exec npx --yes http-server dist -p $PORT -a 0.0.0.0 --cors
+  exec npx --yes http-server dist -p ${PORT:-3000} -a 0.0.0.0 --cors
 else
   echo "Starting backend service: $SERVICE_PATH..."
 
@@ -20,5 +25,20 @@ else
     cd /app/apps/$SERVICE_PATH
   fi
 
-  exec node dist/main.js
+  # Try to find main.js in various possible locations
+  if [ -f "dist/main.js" ]; then
+    echo "Found dist/main.js in current directory"
+    exec node dist/main.js
+  elif [ -f "dist/src/main.js" ]; then
+    echo "Found dist/src/main.js in current directory"
+    exec node dist/src/main.js
+  elif [ -f "/app/apps/${SERVICE_PATH}/dist/main.js" ]; then
+    echo "Found main.js at /app/apps/${SERVICE_PATH}/dist/main.js"
+    exec node /app/apps/${SERVICE_PATH}/dist/main.js
+  else
+    echo "ERROR: Cannot find main.js in any expected location"
+    echo "Contents of dist directory:"
+    ls -la dist/ || echo "No dist directory"
+    exit 1
+  fi
 fi
