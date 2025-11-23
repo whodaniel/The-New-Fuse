@@ -29,11 +29,12 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: apps/frontend/Dockerfile.railway
+      dockerfile: Dockerfile.railway
       cache_from:
         - the-new-fuse/frontend:latest
       args:
         - BUILDKIT_INLINE_CACHE=1
+        - SERVICE_PATH=frontend
     image: the-new-fuse/frontend:local
     container_name: tnf-frontend
     ports:
@@ -59,11 +60,12 @@ services:
   api-gateway:
     build:
       context: .
-      dockerfile: apps/api-gateway/Dockerfile.railway
+      dockerfile: Dockerfile.railway
       cache_from:
         - the-new-fuse/api-gateway:latest
       args:
         - BUILDKIT_INLINE_CACHE=1
+        - SERVICE_PATH=api-gateway
     image: the-new-fuse/api-gateway:local
     container_name: tnf-api-gateway
     ports:
@@ -97,11 +99,12 @@ services:
   api:
     build:
       context: .
-      dockerfile: apps/api/Dockerfile.railway
+      dockerfile: Dockerfile.railway
       cache_from:
         - the-new-fuse/api:latest
       args:
         - BUILDKIT_INLINE_CACHE=1
+        - SERVICE_PATH=api
     image: the-new-fuse/api:local
     container_name: tnf-api
     ports:
@@ -135,11 +138,12 @@ services:
   backend:
     build:
       context: .
-      dockerfile: apps/backend/Dockerfile.railway
+      dockerfile: Dockerfile.railway
       cache_from:
         - the-new-fuse/backend:latest
       args:
         - BUILDKIT_INLINE_CACHE=1
+        - SERVICE_PATH=backend
     image: the-new-fuse/backend:local
     container_name: tnf-backend
     ports:

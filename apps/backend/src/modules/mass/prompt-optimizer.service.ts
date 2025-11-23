@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, forwardRef, Inject } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
   MassOptimizationConfig,
@@ -14,6 +14,7 @@ export class PromptOptimizerService {
 
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => LlmInteractionService))
     private readonly llmService: LlmInteractionService,
     private readonly evaluationHarness: EvaluationHarnessService
   ) {}
