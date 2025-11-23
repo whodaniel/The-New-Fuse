@@ -180,7 +180,7 @@ export class PipelinePattern extends EventEmitter {
         if (Array.isArray(results[0])) {
           currentInput = results.flat() as any;
         } else {
-          currentInput = results;
+          currentInput = results as any;
         }
       }
     }

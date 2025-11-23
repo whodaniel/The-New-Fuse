@@ -104,9 +104,11 @@ export class ActivityMonitor extends EventEmitter {
         type: 'task',
         action: 'completed',
         timestamp: new Date(),
-        data: {
-          taskId: task.id,
-          duration: task.completedAt?.getTime() - task.startedAt?.getTime(),
+        data: { 
+          taskId: task.id, 
+          duration: (task.completedAt && task.startedAt) 
+            ? task.completedAt.getTime() - task.startedAt.getTime() 
+            : 0
         },
       });
     });
