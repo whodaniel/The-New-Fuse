@@ -12,15 +12,15 @@ export class AgentPool extends EventEmitter {
 
   constructor(config: AgentPoolConfig) {
     super();
-    this.config = {
+    const defaults = {
       minAgents: 1,
       maxAgents: 10,
       scaleUpThreshold: 0.8,
       scaleDownThreshold: 0.2,
       heartbeatInterval: 5000,
       heartbeatTimeout: 15000,
-      ...config,
     };
+    this.config = { ...defaults, ...config };
   }
 
   /**

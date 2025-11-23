@@ -1,6 +1,6 @@
 import Bull, { Queue, Job, JobOptions } from 'bull';
 import { EventEmitter } from 'events';
-import { Task, TaskPriority, TaskStatus } from './types';
+import { Task, TaskPriority, TaskStatus, QueueStats } from './types';
 
 /**
  * Priority-based task queue using Bull
@@ -157,7 +157,7 @@ export class TaskQueue extends EventEmitter {
     completed: number;
     failed: number;
   }[]> {
-    const stats = [];
+    const stats: QueueStats[] = [];
 
     for (const [priority, queue] of this.queues.entries()) {
       const [waiting, active, completed, failed] = await Promise.all([

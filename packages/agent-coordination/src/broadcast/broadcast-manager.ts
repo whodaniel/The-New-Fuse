@@ -76,7 +76,10 @@ export class BroadcastManager {
 
     if (!this.subscriptions.has(fullChannel)) {
       await this.redisService.subscribe(fullChannel, async (message) => {
-        await this.handleMessage(fullChannel, message.message);
+        const msgContent = typeof message.message === 'string' 
+          ? message.message 
+          : JSON.stringify(message.message);
+        await this.handleMessage(fullChannel, msgContent);
       });
       
       this.subscriptions.add(fullChannel);
@@ -100,7 +103,10 @@ export class BroadcastManager {
 
     if (!this.subscriptions.has(fullPattern)) {
       await this.redisService.psubscribe(fullPattern, async (message) => {
-        await this.handleMessage(message.channel, message.message);
+        const msgContent = typeof message.message === 'string' 
+          ? message.message 
+          : JSON.stringify(message.message);
+        await this.handleMessage(message.channel, msgContent);
       });
       
       this.subscriptions.add(fullPattern);

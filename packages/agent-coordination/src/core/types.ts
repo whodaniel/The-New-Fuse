@@ -159,3 +159,14 @@ export interface AgentPoolConfig {
   heartbeatInterval: number;
   heartbeatTimeout: number;
 }
+
+/**
+ * Queue statistics
+ */
+export interface QueueStats {
+  priority: TaskPriority;
+  waiting: number;
+  active: number;
+  completed: number;
+  failed: number;
+}

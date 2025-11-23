@@ -74,27 +74,31 @@ export async function example1_MapReduceDataProcessing() {
 
   console.log(`\n📊 Processing ${dataset.length} records with 5 agents...\n`);
 
-  // Map function: Calculate user metrics
-  const mapFn = async (records: any[], partition: number) => {
-    console.log(`  Agent processing partition ${partition} (${records.length} records)`);
+  // Map function: Calculate revenue per partition
+  const mapFn = async (input: unknown, partition: number) => {
+    const records = input as any[];
+    const totalPurchases = records.reduce(
+      (sum: number, user: any) => sum + user.purchases,
+      0
+    );
+    const totalRevenue = records.reduce(
+      (sum: number, user: any) => sum + user.revenue,
+      0
+    );
 
-    await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate processing
-
-    const totalPurchases = records.reduce((sum, r) => sum + r.purchases, 0);
-    const totalRevenue = records.reduce((sum, r) => sum + r.revenue, 0);
+    // Simulate processing time
+    await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 200));
 
     return {
       partition,
+      recordCount: records.length,
       totalPurchases,
       totalRevenue,
-      recordCount: records.length,
     };
   };
 
-  // Reduce function: Aggregate all results
+  // Reduce function: Aggregate results
   const reduceFn = async (results: any[]) => {
-    console.log('\n  Aggregating results from all agents...');
-
     const summary = {
       totalUsers: results.reduce((sum, r) => sum + r.recordCount, 0),
       totalPurchases: results.reduce((sum, r) => sum + r.totalPurchases, 0),
@@ -106,7 +110,7 @@ export async function example1_MapReduceDataProcessing() {
   };
 
   // Execute Map-Reduce
-  const result = await mapReduce.execute(dataset, mapFn, reduceFn, { mapConcurrency: 5 });
+  const result = await mapReduce.execute(dataset, mapFn, reduceFn, { mapConcurrency: 5 }) as any;
 
   console.log('\n✅ Map-Reduce Complete!');
   console.log(`   Total Users: ${result.totalUsers}`);
@@ -270,7 +274,7 @@ export async function example2_PipelineDataTransformation() {
   ];
 
   // Execute pipeline
-  const result = await pipeline.execute(rawData, stages);
+  const result = await pipeline.execute(rawData, stages) as any;
 
   console.log('\n✅ Pipeline Complete!');
   console.log(`   Records processed: ${result.records.length}`);
@@ -305,7 +309,7 @@ export async function example3_ConsensusDecisionMaking() {
   });
 
   const coordinator = new Coordinator(redisUrl, agentPool);
-  const consensus = new ConsensusPattern(coordinator, 'majority');
+  const consensus = new ConsensusPattern(coordinator, 'majority' as any);
 
   // Register 5 decision-making agents
   const agents: AgentInfo[] = [];

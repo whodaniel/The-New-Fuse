@@ -135,18 +135,14 @@ export class SharedStateManager {
       renewable: true,
     };
 
-    const acquired = await this.redisService.set(
+    await this.redisService.set(
       lockKey,
       this.serializer.serialize(lock),
       ttl
     );
 
-    if (acquired) {
-      this.logger.debug('Lock acquired: ' + key + ' by ' + agentId);
-      return lock;
-    }
-
-    return null;
+    this.logger.debug('Lock acquired: ' + key + ' by ' + agentId);
+    return lock;
   }
 
   /**
