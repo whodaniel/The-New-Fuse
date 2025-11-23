@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useWorkflowIntegration } from '../hooks/useWorkflowIntegration';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { Agent } from '@the-new-fuse/core/entities/agent.entity';
+import { Agent } from '../types/core/entities/agent.entity';
 
 interface CollaborationSession {
   id: string;

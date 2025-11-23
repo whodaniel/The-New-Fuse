@@ -41,7 +41,6 @@
     "@tanstack/react-query": "^5.90.5",
     "@the-new-fuse/a2a-core": "workspace:*",
     "@the-new-fuse/a2a-react": "workspace:*",
-    "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/feature-suggestions": "workspace:*",
     "@the-new-fuse/port-management": "workspace:*",
     "@the-new-fuse/prompt-templating": "workspace:*",

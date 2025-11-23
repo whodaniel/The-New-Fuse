@@ -1,4 +1,4 @@
-import { EnhancedAgencyService } from '@the-new-fuse/core/services/enhanced-agency.service';
+import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
 export declare class AgencyController {
     private readonly enhancedAgencyService;
     constructor(enhancedAgencyService: EnhancedAgencyService);

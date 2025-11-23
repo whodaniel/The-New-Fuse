@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-// import { AgencyHubModule as CoreAgencyHubModule } from '@the-new-fuse/core';
+// import { AgencyHubModule as CoreAgencyHubModule } from '../../types/core';
 
 // Import existing controllers to maintain compatibility
 import { AgencyController } from './controllers/agency.controller';

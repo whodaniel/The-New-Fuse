@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Task } from '@the-new-fuse/core'; // Assuming Task interface is available from core
+import { Task } from '../../types/core'; // Assuming Task interface is available from core
 import { Calendar as ReactCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';

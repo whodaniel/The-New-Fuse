@@ -11,8 +11,8 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-// import { ServiceCategoryRouterService } from '@the-new-fuse/core/services/service-category-router.service';
-// import { EnhancedAgencyService } from '@the-new-fuse/core/services/enhanced-agency.service';
+// import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';
+// import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
 // import { AuthGuard } from '../../../guards/auth.guard';
 // import { RolesGuard } from '../../../guards/roles.guard';
 // import { Roles } from '../../../decorators/roles.decorator';

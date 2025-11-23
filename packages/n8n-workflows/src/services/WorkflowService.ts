@@ -176,7 +176,7 @@ export class WorkflowService {
   ): Promise<WorkflowImportResponse> {
     await this.initialize();
 
-    const { isValidPublicUrl } = await import('@the-new-fuse/utils/validators.server');
+    const { isValidPublicUrl } = await import('@the-new-fuse/utils/dist/validators.server.js');
 
     const validationResult = await isValidPublicUrl(request.n8nInstanceUrl);
     if (!validationResult.valid) {

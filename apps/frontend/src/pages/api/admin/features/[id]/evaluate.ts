@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { FeatureFlagService } from '@the-new-fuse/core/services/FeatureFlagService';
+import { FeatureFlagService } from '../../../../../types/core/services/FeatureFlagService';
 
 const featureFlagService = new FeatureFlagService();
 

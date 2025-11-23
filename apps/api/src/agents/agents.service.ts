@@ -3,7 +3,7 @@ import { PrismaService } from '@the-new-fuse/database';
 import { ConfigService } from '@nestjs/config';
 import { AgentFactory } from './agent.factory';
 import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
-import { UnifiedMonitoringService } from '@the-new-fuse/core';
+import { UnifiedMonitoringService } from '../types/core';
 
 @Injectable()
 export class AgentsService {

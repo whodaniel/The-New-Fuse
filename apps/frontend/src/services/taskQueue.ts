@@ -1,4 +1,4 @@
-import { TaskQueue } from '@the-new-fuse/core';
+import { TaskQueue } from '../types/core';
 
 export const taskQueue = new TaskQueue({
   redis: {

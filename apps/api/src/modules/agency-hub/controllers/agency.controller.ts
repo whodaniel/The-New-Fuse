@@ -12,7 +12,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-// import { EnhancedAgencyService } from '@the-new-fuse/core';
+// import { EnhancedAgencyService } from '../../../types/core';
 // import { AuthGuard } from '../../guards/auth.guard';
 // import { RolesGuard } from '../../guards/roles.guard';
 // import { Roles } from '../../decorators/roles.decorator';

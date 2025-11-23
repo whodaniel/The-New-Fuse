@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { Logger } from '@nestjs/common';
-// import { claudeCodeCLIAdapter } from '@the-new-fuse/core';
-// import { geminiCLIAdapter } from '@the-new-fuse/core';
+// import { claudeCodeCLIAdapter } from '../types/core';
+// import { geminiCLIAdapter } from '../types/core';
 
 export interface LLMRegistry {
   registerProvider(id: string, config: any): Promise<void>;

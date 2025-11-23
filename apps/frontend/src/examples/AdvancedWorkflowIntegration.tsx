@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { useWorkflowIntegration } from '../hooks/useWorkflowIntegration';
 import { AgentWorkflowManager } from '../components/AgentWorkflowManager';
 import { StatusMonitor } from '../components/StatusMonitor';
-import { DataAnalysisTool } from '@the-new-fuse/core/tools/data-analysis';
-import { VisualizationTool } from '@the-new-fuse/core/tools/visualization';
-import { StatisticalTool } from '@the-new-fuse/core/tools/statistical';
+import { DataAnalysisTool } from '../types/core/tools/data-analysis';
+import { VisualizationTool } from '../types/core/tools/visualization';
+import { StatisticalTool } from '../types/core/tools/statistical';
 
 interface AnalysisConfig {
   dataset: string;

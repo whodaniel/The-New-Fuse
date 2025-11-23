@@ -1,5 +1,5 @@
 import { PrismaService } from '../services/prisma.service';
-import { WorkflowEngine, WorkflowExecutor } from '@the-new-fuse/core';
+import { WorkflowEngine, WorkflowExecutor } from '../types/core';
 import { CreateWorkflowDto, WorkflowInput, WorkflowExecutionStatus, Workflow } from '@the-new-fuse/types';
 export declare class WorkflowService {
     private readonly prisma;

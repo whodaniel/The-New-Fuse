@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AgentSwarmOrchestrationService } from '@the-new-fuse/core/services/agent-swarm-orchestration.service';
+import { AgentSwarmOrchestrationService } from '../../../types/core/services/agent-swarm-orchestration.service';
 export declare class SwarmController {
     private readonly swarmOrchestrationService;
     constructor(swarmOrchestrationService: AgentSwarmOrchestrationService);

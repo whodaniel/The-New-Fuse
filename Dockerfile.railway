@@ -21,11 +21,17 @@ RUN pnpm install --frozen-lockfile
 # Build foundational types first to satisfy downstream package builds
 RUN pnpm --filter @the-new-fuse/types build
 
-# Build workspace packages (now that types are available)
-RUN pnpm --filter "./packages/**" build
-
-# Explicitly build critical UI package needed by frontend
-RUN pnpm --filter @the-new-fuse/ui-consolidated build || echo "UI consolidated build skipped"
+# Build essential workspace packages only (exclude problematic ones)
+# Skip: sync-core, ui-consolidated, integration-tests, web-scraping, core, n8n-workflows
+RUN pnpm --filter @the-new-fuse/database build || echo "Database build skipped (Prisma placeholder active)"
+RUN pnpm --filter @the-new-fuse/api-types build
+RUN pnpm --filter @the-new-fuse/utils build
+RUN pnpm --filter @the-new-fuse/common build
+RUN pnpm --filter @the-new-fuse/infrastructure build
+RUN pnpm --filter @the-new-fuse/core-error-handling build
+RUN pnpm --filter @the-new-fuse/core-monitoring build
+RUN pnpm --filter @the-new-fuse/api-client build
+RUN pnpm --filter @the-new-fuse/security build
 
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies

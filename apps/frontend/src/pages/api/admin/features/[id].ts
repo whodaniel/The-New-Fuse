@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { MongoFeatureFlagService } from '@the-new-fuse/core/services/MongoFeatureFlagService';
+import { MongoFeatureFlagService } from '../../../../types/core/services/MongoFeatureFlagService';
 
 const featureFlagService = new MongoFeatureFlagService();
 

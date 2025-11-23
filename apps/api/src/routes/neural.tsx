@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
-import { AgentLLMService, MemorySystem, PromptService } from '@the-new-fuse/core';
-import { MemoryContent, MemoryQuery } from '@the-new-fuse/core';
+import { AgentLLMService, MemorySystem, PromptService } from '../types/core';
+import { MemoryContent, MemoryQuery } from '../types/core';
 import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('neural')

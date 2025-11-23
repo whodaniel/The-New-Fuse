@@ -1,4 +1,4 @@
-import { createApiGateway } from '@the-new-fuse/core/api';
+import { createApiGateway } from '../types/core/api';
 
 export const apiGateway = createApiGateway({
   rateLimit: {
