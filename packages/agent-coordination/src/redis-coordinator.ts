@@ -1,32 +1,33 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { A2AMessage, AgentStatus, A2APriority } from '@the-new-fuse/a2a-core';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import Redis from 'ioredis';
-import { 
-  RedisCoordinatorConfig,
-  CoordinationChannel,
-  CoordinationMetrics,
-  AgentTask,
-  BroadcastMessage,
-  DirectMessage,
-  SharedState,
-  TaskProcessor,
-  MessageHandler,
-  EventListener,
-  CoordinationEvent,
-  SerializationFormat,
-  QueueConfig,
-} from './types/coordination.types';
-import { MessageSerializer } from './serializers/message-serializer';
-import { PresenceTracker } from './presence/presence-tracker';
-import { TaskQueueManager } from './queues/task-queue-manager';
+import { v4 as uuidv4 } from 'uuid';
+
+import { A2APriority, AgentStatus } from '@the-new-fuse/a2a-core';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+
 import { BroadcastManager } from './broadcast/broadcast-manager';
 import { SharedStateManager } from './coordination/shared-state-manager';
-import { v4 as uuidv4 } from 'uuid';
+import { PresenceTracker } from './presence/presence-tracker';
+import { TaskQueueManager } from './queues/task-queue-manager';
+import { MessageSerializer } from './serializers/message-serializer';
+import {
+  AgentTask,
+  CoordinationChannel,
+  CoordinationEvent,
+  CoordinationMetrics,
+  DirectMessage,
+  EventListener,
+  MessageHandler,
+  QueueConfig,
+  RedisCoordinatorConfig,
+  SerializationFormat,
+  SharedState,
+  TaskProcessor,
+} from './types/coordination.types';
 
 /**
  * Redis-based agent coordination system
- * 
+ *
  * Provides comprehensive agent-to-agent communication and coordination:
  * - Pub/sub channels for real-time messaging
  * - Task distribution with BullMQ
@@ -40,11 +41,11 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   private readonly keyPrefix: string;
   private readonly serializer: MessageSerializer;
   private readonly presenceTracker: PresenceTracker;
-  private readonly taskQueueManager: TaskQueueManager;
+  private taskQueueManager!: TaskQueueManager;
   private readonly broadcastManager: BroadcastManager;
   private readonly sharedStateManager: SharedStateManager;
   private readonly eventListeners: Map<string, Set<EventListener>> = new Map();
-  
+
   private metrics: CoordinationMetrics = {
     messagesPublished: 0,
     messagesReceived: 0,
@@ -64,9 +65,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     private readonly config: RedisCoordinatorConfig = {}
   ) {
     this.keyPrefix = config.keyPrefix || 'agent-coord:';
-    this.serializer = new MessageSerializer(
-      config.serializationFormat || SerializationFormat.JSON
-    );
+    this.serializer = new MessageSerializer(config.serializationFormat || SerializationFormat.JSON);
 
     this.presenceTracker = new PresenceTracker(
       redisService,
@@ -78,17 +77,9 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
       this.serializer
     );
 
-    this.broadcastManager = new BroadcastManager(
-      redisService,
-      this.keyPrefix,
-      this.serializer
-    );
+    this.broadcastManager = new BroadcastManager(redisService, this.keyPrefix, this.serializer);
 
-    this.sharedStateManager = new SharedStateManager(
-      redisService,
-      this.keyPrefix,
-      this.serializer
-    );
+    this.sharedStateManager = new SharedStateManager(redisService, this.keyPrefix, this.serializer);
   }
 
   async onModuleInit(): Promise<void> {
@@ -110,18 +101,18 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
 
     this.presenceTracker.startMonitoring();
     await this.setupEventChannels();
-    
+
     this.logger.log('Redis Coordinator initialized successfully');
   }
 
   async onModuleDestroy(): Promise<void> {
     this.logger.log('Shutting down Redis Coordinator...');
-    
+
     this.presenceTracker.stopMonitoring();
     await this.broadcastManager.clearAll();
     await this.taskQueueManager.close();
     await this.redisConnection.quit();
-    
+
     this.logger.log('Redis Coordinator shut down complete');
   }
 
@@ -132,7 +123,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     await this.presenceTracker.registerAgent(agentId, metadata);
     this.metrics.totalAgents++;
     this.metrics.activeAgents++;
-    
+
     await this.publishEvent({
       type: 'agent:registered',
       agentId,
@@ -147,7 +138,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   async unregisterAgent(agentId: string): Promise<void> {
     await this.presenceTracker.unregisterAgent(agentId);
     this.metrics.activeAgents = Math.max(0, this.metrics.activeAgents - 1);
-    
+
     await this.publishEvent({
       type: 'agent:unregistered',
       agentId,
@@ -175,7 +166,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
    */
   async getActiveAgents(): Promise<string[]> {
     const presences = await this.presenceTracker.getActiveAgents();
-    return presences.map(p => p.agentId);
+    return presences.map((p) => p.agentId);
   }
 
   /**
@@ -204,7 +195,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
 
     const channel = this.keyPrefix + CoordinationChannel.DIRECT_MESSAGE + ':' + toAgent;
     await this.redisService.publish(channel, this.serializer.serialize(message));
-    
+
     this.metrics.messagesPublished++;
     this.logger.debug('Direct message sent from ' + fromAgent + ' to ' + toAgent);
   }
@@ -212,10 +203,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   /**
    * Subscribe to direct messages
    */
-  async subscribeToDirectMessages(
-    agentId: string,
-    handler: MessageHandler
-  ): Promise<void> {
+  async subscribeToDirectMessages(agentId: string, handler: MessageHandler): Promise<void> {
     const channel = CoordinationChannel.DIRECT_MESSAGE;
     await this.broadcastManager.subscribe(channel, handler, agentId);
   }
@@ -236,22 +224,15 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
       channel: CoordinationChannel.BROADCAST,
       ...options,
     });
-    
+
     this.metrics.messagesPublished++;
   }
 
   /**
    * Subscribe to broadcast messages
    */
-  async subscribeToBroadcast(
-    handler: MessageHandler,
-    topic?: string
-  ): Promise<void> {
-    await this.broadcastManager.subscribe(
-      CoordinationChannel.BROADCAST,
-      handler,
-      topic
-    );
+  async subscribeToBroadcast(handler: MessageHandler, topic?: string): Promise<void> {
+    await this.broadcastManager.subscribe(CoordinationChannel.BROADCAST, handler, topic);
   }
 
   /**
@@ -262,16 +243,16 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   ): Promise<AgentTask> {
     const queueName = 'agent-tasks';
     const createdTask = await this.taskQueueManager.addTask(queueName, task);
-    
+
     this.metrics.tasksCreated++;
-    
+
     await this.publishEvent({
       type: 'task:created',
       agentId: task.assignedBy,
       data: createdTask,
       timestamp: Date.now(),
     });
-    
+
     return createdTask;
   }
 
@@ -334,11 +315,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   /**
    * Acquire lock on shared state
    */
-  async acquireStateLock(
-    key: string,
-    agentId: string,
-    ttl?: number
-  ) {
+  async acquireStateLock(key: string, agentId: string, ttl?: number) {
     return await this.sharedStateManager.acquireLock(key, agentId, ttl);
   }
 
@@ -352,10 +329,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   /**
    * Subscribe to coordination events
    */
-  async subscribeToEvents(
-    eventType: string,
-    listener: EventListener
-  ): Promise<void> {
+  async subscribeToEvents(eventType: string, listener: EventListener): Promise<void> {
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, new Set());
     }
@@ -368,7 +342,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   async publishEvent(event: CoordinationEvent): Promise<void> {
     const channel = this.keyPrefix + CoordinationChannel.EVENTS;
     await this.redisService.publish(channel, this.serializer.serialize(event));
-    
+
     const listeners = this.eventListeners.get(event.type);
     if (listeners) {
       for (const listener of listeners) {
@@ -400,13 +374,13 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
    */
   private async setupEventChannels(): Promise<void> {
     const channel = CoordinationChannel.EVENTS;
-    
+
     await this.broadcastManager.subscribe(channel, async (message: any) => {
       this.metrics.messagesReceived++;
-      
+
       const event = message as CoordinationEvent;
       const listeners = this.eventListeners.get(event.type);
-      
+
       if (listeners) {
         for (const listener of listeners) {
           try {

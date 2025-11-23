@@ -4,19 +4,19 @@
  * Demonstrates 5 agents collaborating on complex tasks using various patterns
  */
 
-import { Coordinator } from '../orchestration/Coordinator';
 import { AgentPool } from '../core/AgentPool';
 import { TaskQueue } from '../core/TaskQueue';
-import { MetricsCollector } from '../monitoring/MetricsCollector';
 import { ActivityMonitor } from '../monitoring/ActivityMonitor';
+import { MetricsCollector } from '../monitoring/MetricsCollector';
+import { Coordinator } from '../orchestration/Coordinator';
+import { ConsensusPattern } from '../patterns/ConsensusPattern';
 import { MapReducePattern } from '../patterns/MapReducePattern';
 import { PipelinePattern } from '../patterns/PipelinePattern';
-import { ConsensusPattern } from '../patterns/ConsensusPattern';
 import { SwarmPattern } from '../patterns/SwarmPattern';
-import { SharedCache } from '../state/SharedCache';
 import { DistributedLock } from '../state/DistributedLock';
-import { TaskDecomposer } from '../orchestration/TaskDecomposer';
-import { TaskPriority, AgentCapability } from '../core/types';
+import { SharedCache } from '../state/SharedCache';
+
+import type { AgentInfo } from '../core/types';
 
 /**
  * Example 1: Map-Reduce Pattern
@@ -37,20 +37,16 @@ export async function example1_MapReduceDataProcessing() {
     heartbeatTimeout: 15000,
   });
 
-  const coordinator = new Coordinator(
-    redisUrl,
-    agentPool,
-    {
-      maxConcurrentTasks: 20,
-      taskTimeout: 60000,
-    }
-  );
+  const coordinator = new Coordinator(redisUrl, agentPool, {
+    maxConcurrentTasks: 20,
+    taskTimeout: 60000,
+  });
 
   const sharedCache = new SharedCache(redisUrl);
   const mapReduce = new MapReducePattern(coordinator);
 
   // Register 5 data processing agents
-  const agents = [];
+  const agents: AgentInfo[] = [];
   for (let i = 1; i <= 5; i++) {
     const agent = agentPool.registerAgent({
       name: `DataProcessor-${i}`,
@@ -110,12 +106,7 @@ export async function example1_MapReduceDataProcessing() {
   };
 
   // Execute Map-Reduce
-  const result = await mapReduce.execute(
-    dataset,
-    mapFn,
-    reduceFn,
-    { mapConcurrency: 5 }
-  );
+  const result = await mapReduce.execute(dataset, mapFn, reduceFn, { mapConcurrency: 5 });
 
   console.log('\n✅ Map-Reduce Complete!');
   console.log(`   Total Users: ${result.totalUsers}`);
@@ -317,7 +308,7 @@ export async function example3_ConsensusDecisionMaking() {
   const consensus = new ConsensusPattern(coordinator, 'majority');
 
   // Register 5 decision-making agents
-  const agents = [];
+  const agents: AgentInfo[] = [];
   for (let i = 1; i <= 5; i++) {
     const agent = agentPool.registerAgent({
       name: `DecisionAgent-${i}`,
@@ -342,11 +333,9 @@ export async function example3_ConsensusDecisionMaking() {
   console.log('\n🗳️  Proposing deployment strategy to 5 agents...');
   console.log(`   Strategy: ${JSON.stringify(proposedStrategy, null, 2)}\n`);
 
-  const proposal = await consensus.propose(
-    proposedStrategy,
-    'coordinator',
-    { category: 'deployment' }
-  );
+  const proposal = await consensus.propose(proposedStrategy, 'coordinator', {
+    category: 'deployment',
+  });
 
   // Agents vote on the proposal
   console.log('📊 Collecting votes from agents...\n');
@@ -411,7 +400,7 @@ export async function example4_SwarmOptimization() {
   const swarm = new SwarmPattern(coordinator, sharedCache);
 
   // Register 5 optimizer agents
-  const agents = [];
+  const agents: AgentInfo[] = [];
   for (let i = 1; i <= 5; i++) {
     const agent = agentPool.registerAgent({
       name: `Optimizer-${i}`,
@@ -489,15 +478,10 @@ export async function example5_ComplexWorkflow() {
   const lock = new DistributedLock(redisUrl);
   const metricsCollector = new MetricsCollector();
   const taskQueue = new TaskQueue(redisUrl);
-  const activityMonitor = new ActivityMonitor(
-    coordinator,
-    agentPool,
-    taskQueue,
-    metricsCollector
-  );
+  const activityMonitor = new ActivityMonitor(coordinator, agentPool, taskQueue, metricsCollector);
 
   // Register 5 versatile agents
-  const agents = [];
+  const agents: AgentInfo[] = [];
   for (let i = 1; i <= 5; i++) {
     const agent = agentPool.registerAgent({
       name: `Agent-${i}`,

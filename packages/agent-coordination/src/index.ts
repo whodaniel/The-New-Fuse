@@ -16,14 +16,28 @@ export * from './redis-coordinator';
 export * from './types/coordination.types';
 
 // Legacy components
-export * from './serializers/message-serializer';
-export * from './presence/presence-tracker';
-export * from './queues/task-queue-manager';
 export * from './broadcast/broadcast-manager';
 export * from './coordination/shared-state-manager';
+export * from './presence/presence-tracker';
+export * from './queues/task-queue-manager';
+export * from './serializers/message-serializer';
 
 // Core components
-export * from './core';
+export {
+  AgentCapability,
+  AgentInfo,
+  AgentPool,
+  AgentPoolConfig,
+  CoordinationConfig,
+  PerformanceMetrics as CorePerformanceMetrics,
+  ExecutionMode,
+  Task,
+  TaskAssigner,
+  TaskAssignment,
+  TaskDependency,
+  TaskQueue,
+  TaskResult,
+} from './core';
 
 // Orchestration
 export * from './orchestration';

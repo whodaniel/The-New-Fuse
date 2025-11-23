@@ -1,9 +1,10 @@
 import { EventEmitter } from 'events';
-import { AgentInfo, Task, TaskStatus } from '../core/types';
-import { Coordinator } from '../orchestration/Coordinator';
-import { AgentPool } from '../core/AgentPool';
-import { TaskQueue } from '../core/TaskQueue';
-import { MetricsCollector } from './MetricsCollector';
+
+import type { AgentPool } from '../core/AgentPool';
+import type { TaskQueue } from '../core/TaskQueue';
+import type { AgentInfo, Task } from '../core/types';
+import type { Coordinator } from '../orchestration/Coordinator';
+import type { MetricsCollector } from './MetricsCollector';
 
 /**
  * Agent activity event
@@ -103,7 +104,10 @@ export class ActivityMonitor extends EventEmitter {
         type: 'task',
         action: 'completed',
         timestamp: new Date(),
-        data: { taskId: task.id, duration: task.completedAt?.getTime() - task.startedAt?.getTime() },
+        data: {
+          taskId: task.id,
+          duration: task.completedAt?.getTime() - task.startedAt?.getTime(),
+        },
       });
     });
 
@@ -174,12 +178,16 @@ export class ActivityMonitor extends EventEmitter {
    * Start monitoring
    */
   start(intervalMs: number = 5000): void {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = true;
 
     this.monitoringInterval = setInterval(() => {
-      this.checkSystemHealth();
+      void this.checkSystemHealth().catch((error) => {
+        console.error('System health check failed:', error);
+      });
     }, intervalMs);
 
     this.emit('monitoring:started');
@@ -189,7 +197,9 @@ export class ActivityMonitor extends EventEmitter {
    * Stop monitoring
    */
   stop(): void {
-    if (!this.isMonitoring) return;
+    if (!this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = false;
 
@@ -333,18 +343,14 @@ export class ActivityMonitor extends EventEmitter {
    * Get activity by type
    */
   getActivityByType(type: ActivityEvent['type'], count: number = 50): ActivityEvent[] {
-    return this.activityLog
-      .filter((event) => event.type === type)
-      .slice(-count);
+    return this.activityLog.filter((event) => event.type === type).slice(-count);
   }
 
   /**
    * Get activity by severity
    */
   getActivityBySeverity(severity: ActivityEvent['severity'], count: number = 50): ActivityEvent[] {
-    return this.activityLog
-      .filter((event) => event.severity === severity)
-      .slice(-count);
+    return this.activityLog.filter((event) => event.severity === severity).slice(-count);
   }
 
   /**
