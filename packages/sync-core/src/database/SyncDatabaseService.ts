@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClient, SyncState, SyncConflict } from '@the-new-fuse/database/generated/prisma';
+import { Prisma, PrismaClient, SyncState, SyncConflict } from '@the-new-fuse/database/generated/prisma';
 import { SyncStateData, SyncConflictData, SyncResourceType } from '../types';
 
 /**
@@ -35,7 +35,7 @@ export class SyncDatabaseService {
             checksum: data.checksum,
             lastSync: data.lastSync,
             syncedBy: data.syncedBy,
-            metadata: data.metadata ?? undefined,
+            metadata: (data.metadata ?? Prisma.DbNull) as any,
           },
         });
       } else {
@@ -49,7 +49,7 @@ export class SyncDatabaseService {
             checksum: data.checksum,
             lastSync: data.lastSync,
             syncedBy: data.syncedBy,
-            metadata: data.metadata ?? undefined,
+            metadata: (data.metadata ?? Prisma.DbNull) as any,
           },
         });
       }
