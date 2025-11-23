@@ -8,6 +8,64 @@ import {
   AgentPromptVersion
 } from '@the-new-fuse/types';
 
+// Move LlmInteractionService ABOVE PromptOptimizerService to avoid TDZ issues
+@Injectable()
+export class LlmInteractionService {
+  private readonly logger = new Logger(LlmInteractionService.name);
+
+  async generateText(prompt: string, config: any): Promise<string> {
+    // This would integrate with your existing LLM service
+    // Placeholder implementation
+    try {
+      // Simulate LLM call
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Return mock response based on prompt content
+      if (prompt.includes('Generate 5 improved variations')) {
+        return JSON.stringify([
+          'You are an expert assistant. Provide detailed, accurate responses.',
+          'You are a helpful AI that thinks carefully before responding.',
+          'You are a precise assistant that provides step-by-step solutions.',
+          'You are an analytical AI that breaks down complex problems.',
+          'You are a thorough assistant that considers all aspects of a question.'
+        ]);
+      }
+      
+      return `Generated response for: ${prompt.substring(0, 50)}...`;
+    } catch (error) {
+      this.logger.error('LLM generation failed:', error);
+      throw error;
+    }
+  }
+
+  async executeAgent(agentId: string, input: any, prompt?: PromptDefinition): Promise<any> {
+    // This would execute an agent with given prompt and input
+    // Placeholder implementation
+    try {
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      return {
+        success: true,
+        output: `Agent ${agentId} response to: ${JSON.stringify(input)}`,
+        confidence: Math.random() * 0.4 + 0.6, // 0.6 to 1.0
+        processingTime: Math.random() * 500 + 100, // 100-600ms
+        metadata: {
+          agentId,
+          timestamp: new Date(),
+          promptUsed: prompt ? 'custom' : 'default'
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Agent execution failed for ${agentId}:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+        agentId
+      };
+    }
+  }
+}
+
 @Injectable()
 export class PromptOptimizerService {
   private readonly logger = new Logger(PromptOptimizerService.name);
@@ -287,63 +345,6 @@ Return as JSON array of strings.
         massStage
       }
     });
-  }
-}
-
-@Injectable()
-export class LlmInteractionService {
-  private readonly logger = new Logger(LlmInteractionService.name);
-
-  async generateText(prompt: string, config: any): Promise<string> {
-    // This would integrate with your existing LLM service
-    // Placeholder implementation
-    try {
-      // Simulate LLM call
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Return mock response based on prompt content
-      if (prompt.includes('Generate 5 improved variations')) {
-        return JSON.stringify([
-          'You are an expert assistant. Provide detailed, accurate responses.',
-          'You are a helpful AI that thinks carefully before responding.',
-          'You are a precise assistant that provides step-by-step solutions.',
-          'You are an analytical AI that breaks down complex problems.',
-          'You are a thorough assistant that considers all aspects of a question.'
-        ]);
-      }
-      
-      return `Generated response for: ${prompt.substring(0, 50)}...`;
-    } catch (error) {
-      this.logger.error('LLM generation failed:', error);
-      throw error;
-    }
-  }
-
-  async executeAgent(agentId: string, input: any, prompt?: PromptDefinition): Promise<any> {
-    // This would execute an agent with given prompt and input
-    // Placeholder implementation
-    try {
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      return {
-        success: true,
-        output: `Agent ${agentId} response to: ${JSON.stringify(input)}`,
-        confidence: Math.random() * 0.4 + 0.6, // 0.6 to 1.0
-        processingTime: Math.random() * 500 + 100, // 100-600ms
-        metadata: {
-          agentId,
-          timestamp: new Date(),
-          promptUsed: prompt ? 'custom' : 'default'
-        }
-      };
-    } catch (error) {
-      this.logger.error(`Agent execution failed for ${agentId}:`, error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-        agentId
-      };
-    }
   }
 }
 
