@@ -1,12 +1,13 @@
 generator client {
   provider        = "prisma-client-js"
   output          = "../generated/prisma"
-  previewFeatures = ["fullTextSearchPostgres"]
+  previewFeatures = ["postgresqlExtensions"]
   binaryTargets   = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // =============================================================================
@@ -29,18 +30,18 @@ model User {
   refreshToken   String?
   deletedAt      DateTime?
   emailVerified  Boolean    @default(false)
-  
+
   // Relationships
-  agents         Agent[]
-  pipelines      Pipeline[]
-  tasks          Task[]
-  workflows      Workflow[]
-  chatRooms      ChatRoom[]
-  messages       Message[]
-  authSessions   AuthSession[]
-  loginAttempts  LoginAttempt[]
-  authEvents     AuthEvent[]
-  
+  agents        Agent[]
+  pipelines     Pipeline[]
+  tasks         Task[]
+  workflows     Workflow[]
+  chatRooms     ChatRoom[]
+  messages      Message[]
+  authSessions  AuthSession[]
+  loginAttempts LoginAttempt[]
+  authEvents    AuthEvent[]
+
   @@map("users")
 }
 
@@ -65,7 +66,7 @@ model AuthSession {
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
-  
+
   @@map("auth_sessions")
 }
 
@@ -76,7 +77,7 @@ model LoginAttempt {
   ipAddress  String
   successful Boolean
   createdAt  DateTime @default(now())
-  
+
   @@map("login_attempts")
 }
 
@@ -87,7 +88,7 @@ model AuthEvent {
   type      String
   details   Json?
   createdAt DateTime @default(now())
-  
+
   @@map("auth_events")
 }
 
@@ -96,33 +97,33 @@ model AuthEvent {
 // =============================================================================
 
 model Agent {
-  id                String               @id @default(uuid())
-  name              String
-  type              AgentType
-  status            AgentStatus          @default(INACTIVE)
-  description       String?
-  systemPrompt      String?
-  config            Json?
-  capabilities      AgentCapability[]    @default([])
-  provider          String               @default("default")
-  userId            String
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-  deletedAt         DateTime?
-  
+  id           String            @id @default(uuid())
+  name         String
+  type         AgentType
+  status       AgentStatus       @default(INACTIVE)
+  description  String?
+  systemPrompt String?
+  config       Json?
+  capabilities AgentCapability[] @default([])
+  provider     String            @default("default")
+  userId       String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  deletedAt    DateTime?
+
   // Relationships
-  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  metadata          AgentMetadata?
-  nft               AgentNFT?
-  wallet            Wallet?
-  chats             Chat[]
-  messages          Message[]
-  codeExecutions    CodeExecutionUsage[]
-  pipelines         Pipeline[]
-  tasksAssigned     Task[]               @relation("AgentTasks")
-  workflows         Workflow[]
-  workflowSteps     WorkflowStep[]
-  
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metadata       AgentMetadata?
+  nft            AgentNFT?
+  wallet         Wallet?
+  chats          Chat[]
+  messages       Message[]
+  codeExecutions CodeExecutionUsage[]
+  pipelines      Pipeline[]
+  tasksAssigned  Task[]               @relation("AgentTasks")
+  workflows      Workflow[]
+  workflowSteps  WorkflowStep[]
+
   @@map("agents")
 }
 
@@ -134,10 +135,11 @@ model AgentMetadata {
   config   Json?
 
   // Relationships
-  agent    Agent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
   @@map("agent_metadata")
 }
+
 enum AgentType {
   BASIC
   CHAT
@@ -202,11 +204,11 @@ model Chat {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  
+
   // Relationships
-  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  messages  Message[]
-  
+  agent    Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  messages Message[]
+
   @@map("chats")
 }
 
@@ -224,10 +226,10 @@ model ChatRoom {
   lastMessageAt DateTime?
   isActive      Boolean   @default(true)
   deletedAt     DateTime?
-  
+
   // Relationships
-  messages      Message[]
-  
+  messages Message[]
+
   @@map("chat_rooms")
 }
 
@@ -237,7 +239,7 @@ model Message {
   role            MessageRole @default(USER)
   sender          User?       @relation(fields: [senderId], references: [id])
   senderId        String?
-  senderName      String?     // For DTO compatibility - plain string sender
+  senderName      String? // For DTO compatibility - plain string sender
   agent           Agent?      @relation(fields: [agentId], references: [id])
   agentId         String?
   chat            Chat?       @relation(fields: [chatId], references: [id])
@@ -256,7 +258,7 @@ model Message {
   isEphemeral     Boolean     @default(false)
   expiresAt       DateTime?
   reactions       Json?
-  
+
   @@map("messages")
 }
 
@@ -268,7 +270,7 @@ model ChatMessage {
   expiresAt DateTime    @default(dbgenerated("NOW() + INTERVAL '7 days'"))
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  
+
   @@map("chat_messages")
 }
 
@@ -285,30 +287,30 @@ enum MessageRole {
 // =============================================================================
 
 model Workflow {
-  id              String              @id @default(uuid())
-  name            String
-  description     String?
-  definition      Json?               // Workflow definition JSON
-  status          WorkflowStatus      @default(DRAFT)
-  creator         User?               @relation(fields: [creatorId], references: [id])
-  creatorId       String?
-  agent           Agent?              @relation(fields: [agentId], references: [id])
-  agentId         String?
-  metadata        Json?
-  isActive        Boolean             @default(true)
-  variables       Json?
-  triggers        Json?               @db.Json
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  lastExecutedAt  DateTime?
-  executionCount  Int                 @default(0)
-  statistics      Json?
-  deletedAt       DateTime?
-  
+  id             String         @id @default(uuid())
+  name           String
+  description    String?
+  definition     Json? // Workflow definition JSON
+  status         WorkflowStatus @default(DRAFT)
+  creator        User?          @relation(fields: [creatorId], references: [id])
+  creatorId      String?
+  agent          Agent?         @relation(fields: [agentId], references: [id])
+  agentId        String?
+  metadata       Json?
+  isActive       Boolean        @default(true)
+  variables      Json?
+  triggers       Json?          @db.Json
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  lastExecutedAt DateTime?
+  executionCount Int            @default(0)
+  statistics     Json?
+  deletedAt      DateTime?
+
   // Relationships
-  steps           WorkflowStep[]
-  executions      WorkflowExecution[]
-  
+  steps      WorkflowStep[]
+  executions WorkflowExecution[]
+
   @@map("workflows")
 }
 
@@ -331,7 +333,7 @@ model WorkflowStep {
   updatedAt       DateTime  @updatedAt
   lastExecutedAt  DateTime?
   statistics      Json?
-  
+
   @@map("workflow_steps")
 }
 
@@ -345,7 +347,7 @@ model WorkflowExecution {
   error       String?
   startedAt   DateTime                @default(now())
   completedAt DateTime?
-  
+
   @@map("workflow_executions")
 }
 
@@ -384,10 +386,10 @@ model Pipeline {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   deletedAt     DateTime?
-  
+
   // Relationships
-  tasks         Task[]
-  
+  tasks Task[]
+
   @@map("pipelines")
 }
 
@@ -404,44 +406,44 @@ enum PipelineStatus {
 // =============================================================================
 
 model Task {
-  id            String         @id @default(uuid())
-  title         String?
-  description   String?
-  type          String
-  status        TaskStatus     @default(PENDING)
-  priority      TaskPriority   @default(MEDIUM)
-  data          Json?
-  result        Json?
-  error         String?
-  startTime     DateTime?
-  endTime       DateTime?
-  pipeline      Pipeline?      @relation(fields: [pipelineId], references: [id])
-  pipelineId    String?
-  assignedTo    Agent?         @relation("AgentTasks", fields: [assignedToId], references: [id])
-  assignedToId  String?
-  user          User           @relation(fields: [userId], references: [id])
-  userId        String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  deletedAt     DateTime?
-  metadata      Json?
+  id           String       @id @default(uuid())
+  title        String?
+  description  String?
+  type         String
+  status       TaskStatus   @default(PENDING)
+  priority     TaskPriority @default(MEDIUM)
+  data         Json?
+  result       Json?
+  error        String?
+  startTime    DateTime?
+  endTime      DateTime?
+  pipeline     Pipeline?    @relation(fields: [pipelineId], references: [id])
+  pipelineId   String?
+  assignedTo   Agent?       @relation("AgentTasks", fields: [assignedToId], references: [id])
+  assignedToId String?
+  user         User         @relation(fields: [userId], references: [id])
+  userId       String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+  metadata     Json?
 
   // Relationships
   taskExecutions TaskExecution[]
-  
+
   @@map("tasks")
 }
 
 model TaskExecution {
-  id          String   @id @default(uuid())
-  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  id          String    @id @default(uuid())
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId      String
   status      String
   output      Json?
   error       String?
-  startedAt   DateTime @default(now())
+  startedAt   DateTime  @default(now())
   completedAt DateTime?
-  
+
   @@map("task_executions")
 }
 
@@ -465,27 +467,27 @@ enum TaskPriority {
 // =============================================================================
 
 model CodeExecutionUsage {
-  id              String                @id @default(uuid())
-  agentId         String
-  clientId        String
-  executionId     String                @unique
-  language        CodeExecutionLanguage
-  code            String                @db.Text
-  result          Json?
-  output          Json?
-  error           Json?
-  executionTime   Int                   // in milliseconds
-  memoryUsage     Int                   // in bytes
-  computeUnits    Float
-  cost            Float
-  tier            CodeExecutionTier
-  environment     String
-  status          CodeExecutionStatus
-  createdAt       DateTime              @default(now())
-  completedAt     DateTime?
-  
+  id            String                @id @default(uuid())
+  agentId       String
+  clientId      String
+  executionId   String                @unique
+  language      CodeExecutionLanguage
+  code          String                @db.Text
+  result        Json?
+  output        Json?
+  error         Json?
+  executionTime Int // in milliseconds
+  memoryUsage   Int // in bytes
+  computeUnits  Float
+  cost          Float
+  tier          CodeExecutionTier
+  environment   String
+  status        CodeExecutionStatus
+  createdAt     DateTime              @default(now())
+  completedAt   DateTime?
+
   // Relationships
-  agent           Agent                 @relation(fields: [agentId], references: [id])
+  agent Agent @relation(fields: [agentId], references: [id])
 
   @@index([agentId])
   @@index([clientId])
@@ -497,19 +499,19 @@ model CodeExecutionUsage {
 }
 
 model CodeExecutionSession {
-  id              String                @id @default(uuid())
-  name            String
-  description     String?
-  ownerId         String
-  collaborators   String[]
-  isPublic        Boolean               @default(false)
-  files           Json                  // Array of file objects
-  environment     Json                  // Environment configuration
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  expiresAt       DateTime?
-  storageUsage    Int                   @default(0) // in bytes
-  
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  ownerId       String
+  collaborators String[]
+  isPublic      Boolean   @default(false)
+  files         Json // Array of file objects
+  environment   Json // Environment configuration
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  expiresAt     DateTime?
+  storageUsage  Int       @default(0) // in bytes
+
   @@map("code_execution_sessions")
 }
 
@@ -544,18 +546,18 @@ enum CodeExecutionStatus {
 // =============================================================================
 
 model AgentNFT {
-  id                  String                @id @default(uuid())
-  agentId             String                @unique
-  tokenId             Int                   @unique
+  id                  String   @id @default(uuid())
+  agentId             String   @unique
+  tokenId             Int      @unique
   contractAddress     String
   smartAccountAddress String?
-  isFractionalized    Boolean               @default(false)
-  totalShares         Int                   @default(0)
+  isFractionalized    Boolean  @default(false)
+  totalShares         Int      @default(0)
   metadataUri         String?
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  agent               Agent?                @relation(fields: [agentId], references: [id])
+  agent               Agent?               @relation(fields: [agentId], references: [id])
   fractionalShares    FractionalShare[]
   revenueStreams      RevenueStream[]
   marketplaceListings MarketplaceListing[]
@@ -564,20 +566,20 @@ model AgentNFT {
 }
 
 model FractionalShare {
-  id          String   @id @default(uuid())
-  agentNFTId  String
+  id           String   @id @default(uuid())
+  agentNFTId   String
   ownerAddress String
-  shareAmount Decimal
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  shareAmount  Decimal
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  agentNFT    AgentNFT @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  agentNFT AgentNFT @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
 
   @@map("fractional_shares")
 }
 
 model RevenueStream {
-  id                    String              @id @default(uuid())
+  id                    String   @id @default(uuid())
   agentNFTId            String
   streamName            String
   description           String?
@@ -585,61 +587,61 @@ model RevenueStream {
   totalRevenue          Decimal
   distributedRevenue    Decimal
   distributionThreshold Decimal
-  isActive              Boolean             @default(true)
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
-  agentNFT              AgentNFT            @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
-  distributions         RevenueDistribution[]
+  agentNFT      AgentNFT              @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  distributions RevenueDistribution[]
 
   @@map("revenue_streams")
 }
 
 model RevenueDistribution {
-  id              String        @id @default(uuid())
+  id              String   @id @default(uuid())
   revenueStreamId String
   txHash          String
   totalAmount     Decimal
   distributedTo   Json
   blockNumber     Int
-  createdAt       DateTime      @default(now())
+  createdAt       DateTime @default(now())
 
-  revenueStream   RevenueStream @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)
+  revenueStream RevenueStream @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)
 
   @@map("revenue_distributions")
 }
 
 model MarketplaceListing {
-  id           String            @id @default(uuid())
-  agentNFTId   String
-  listingId    Int               @unique
-  seller       String
-  shareAmount  Decimal
+  id            String            @id @default(uuid())
+  agentNFTId    String
+  listingId     Int               @unique
+  seller        String
+  shareAmount   Decimal
   pricePerShare Decimal
-  totalPrice   Decimal
-  status       MarketplaceStatus @default(ACTIVE)
-  expiresAt    DateTime?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  totalPrice    Decimal
+  status        MarketplaceStatus @default(ACTIVE)
+  expiresAt     DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
-  agentNFT     AgentNFT          @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
-  offers       MarketplaceOffer[]
+  agentNFT AgentNFT           @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  offers   MarketplaceOffer[]
 
   @@map("marketplace_listings")
 }
 
 model MarketplaceOffer {
-  id          String           @id @default(uuid())
+  id          String      @id @default(uuid())
   listingId   String
   buyer       String
   shareAmount Decimal
   offerPrice  Decimal
-  status      OfferStatus      @default(PENDING)
+  status      OfferStatus @default(PENDING)
   expiresAt   DateTime?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  listing     MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listing MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@map("marketplace_offers")
 }
@@ -664,42 +666,42 @@ enum OfferStatus {
 // =============================================================================
 
 model Wallet {
-  id             String        @id @default(uuid())
-  address        String        @unique
-  agentId        String?       @unique
-  type           WalletType    @default(SMART_ACCOUNT)
-  balance        Decimal       @default(0)
-  nonce          Int           @default(0)
-  isActive       Boolean       @default(true)
-  lastActivity   DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id           String     @id @default(uuid())
+  address      String     @unique
+  agentId      String?    @unique
+  type         WalletType @default(SMART_ACCOUNT)
+  balance      Decimal    @default(0)
+  nonce        Int        @default(0)
+  isActive     Boolean    @default(true)
+  lastActivity DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
-  agent          Agent?        @relation(fields: [agentId], references: [id])
-  transactions   Transaction[]
+  agent        Agent?        @relation(fields: [agentId], references: [id])
+  transactions Transaction[]
 
   @@map("wallets")
 }
 
 model Transaction {
-  id           String            @id @default(uuid())
-  hash         String            @unique
-  walletId     String
-  fromAddress  String
-  toAddress    String
-  value        Decimal
-  gasPrice     Decimal
-  gasUsed      Int
-  gasLimit     Int
-  status       TransactionStatus @default(PENDING)
-  blockNumber  Int?
-  blockHash    String?
-  type         TransactionType   @default(TRANSFER)
-  data         Json?
-  createdAt    DateTime          @default(now())
-  confirmedAt  DateTime?
+  id          String            @id @default(uuid())
+  hash        String            @unique
+  walletId    String
+  fromAddress String
+  toAddress   String
+  value       Decimal
+  gasPrice    Decimal
+  gasUsed     Int
+  gasLimit    Int
+  status      TransactionStatus @default(PENDING)
+  blockNumber Int?
+  blockHash   String?
+  type        TransactionType   @default(TRANSFER)
+  data        Json?
+  createdAt   DateTime          @default(now())
+  confirmedAt DateTime?
 
-  wallet       Wallet            @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
 
   @@index([walletId])
   @@index([hash])
@@ -734,24 +736,24 @@ enum TransactionType {
 // =============================================================================
 
 model RegisteredEntity {
-  id            String                @id @default(uuid())
-  name          String
-  type          RegisteredEntityType
-  description   String?
-  metadata      Json?
-  config        Json?
-  status        EntityStatus          @default(ACTIVE)
-  version       String                @default("1.0.0")
-  namespace     String?
-  tags          String[]              @default([])
-  capabilities  String[]              @default([])
-  dependencies  String[]              @default([])
-  isPublic      Boolean               @default(false)
-  ownerId       String?
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
-  deletedAt     DateTime?
-  
+  id           String               @id @default(uuid())
+  name         String
+  type         RegisteredEntityType
+  description  String?
+  metadata     Json?
+  config       Json?
+  status       EntityStatus         @default(ACTIVE)
+  version      String               @default("1.0.0")
+  namespace    String?
+  tags         String[]             @default([])
+  capabilities String[]             @default([])
+  dependencies String[]             @default([])
+  isPublic     Boolean              @default(false)
+  ownerId      String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  deletedAt    DateTime?
+
   @@map("registered_entities")
 }
 
@@ -779,20 +781,20 @@ enum EntityStatus {
 // =============================================================================
 
 model LLMConfig {
-  id            String    @id @default(uuid())
-  name          String
-  provider      String
-  modelName     String
-  apiKey        String    // Should be encrypted in production
-  apiEndpoint   String?
-  isCustom      Boolean   @default(false)
-  enabled       Boolean   @default(true)
-  priority      Int       @default(10)
-  retryConfig   Json?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
-  
+  id          String    @id @default(uuid())
+  name        String
+  provider    String
+  modelName   String
+  apiKey      String // Should be encrypted in production
+  apiEndpoint String?
+  isCustom    Boolean   @default(false)
+  enabled     Boolean   @default(true)
+  priority    Int       @default(10)
+  retryConfig Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
   @@map("llm_configs")
 }
 
@@ -840,17 +842,17 @@ model SyncState {
 }
 
 model SyncConflict {
-  id              String    @id @default(uuid())
-  resourceType    String
-  resourceId      String
-  tenantId        String?
-  conflictType    String
-  localVersion    Json
-  remoteVersion   Json
-  createdAt       DateTime  @default(now())
-  resolvedAt      DateTime?
-  resolvedBy      String?
-  resolution      Json?
+  id            String    @id @default(uuid())
+  resourceType  String
+  resourceId    String
+  tenantId      String?
+  conflictType  String
+  localVersion  Json
+  remoteVersion Json
+  createdAt     DateTime  @default(now())
+  resolvedAt    DateTime?
+  resolvedBy    String?
+  resolution    Json?
 
   @@map("sync_conflicts")
 }
