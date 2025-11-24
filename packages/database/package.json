@@ -29,7 +29,7 @@
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.2",
     "@prisma/adapter-pg": "^7.0.0",
-    "@prisma/client": "6.11.0",
+    "@prisma/client": "^7.0.0",
     "@the-new-fuse/types": "workspace:*",
     "bcrypt": "^5.1.1",
     "pg": "^8.16.3",
