@@ -36,14 +36,17 @@ export class MCPServerService implements OnModuleInit, OnModuleDestroy {
     const config: MCPServerConfig = {
       name: 'the-new-fuse-mcp-server',
       version: '1.0.0',
-      description: 'MCP Server for The New Fuse - AI Agent Orchestration Platform',
+
       host: process.env.MCP_HOST || '0.0.0.0',
       port: parseInt(process.env.MCP_PORT || '3100', 10),
       maxConnections: parseInt(process.env.MCP_MAX_CONNECTIONS || '100', 10),
       timeout: parseInt(process.env.MCP_TIMEOUT || '30000', 10),
-      enableCORS: process.env.MCP_ENABLE_CORS !== 'false',
-      enableMetrics: process.env.MCP_ENABLE_METRICS !== 'false',
+      enableAuth: false,
+      enableTLS: false,
       logLevel: (process.env.MCP_LOG_LEVEL as any) || 'info',
+      options: {
+        enableCORS: process.env.MCP_ENABLE_CORS !== 'false',
+      },
     };
 
     try {
@@ -101,12 +104,14 @@ export class MCPServerService implements OnModuleInit, OnModuleDestroy {
       uri: 'fuse://workflows',
       name: 'workflows',
       description: 'Available workflow templates',
-      handler: async () => {
-        return {
-          uri: 'fuse://workflows',
-          mimeType: 'application/json',
-          text: JSON.stringify(await this.toolRegistry.getWorkflowTemplates()),
-        };
+      handler: {
+        read: async () => {
+          return {
+            uri: 'fuse://workflows',
+            mimeType: 'application/json',
+            content: JSON.stringify(await this.toolRegistry.getWorkflowTemplates()),
+          };
+        },
       },
     });
 
@@ -115,12 +120,14 @@ export class MCPServerService implements OnModuleInit, OnModuleDestroy {
       uri: 'fuse://agents',
       name: 'agents',
       description: 'Available agents and their capabilities',
-      handler: async () => {
-        return {
-          uri: 'fuse://agents',
-          mimeType: 'application/json',
-          text: JSON.stringify(await this.toolRegistry.getAgents()),
-        };
+      handler: {
+        read: async () => {
+          return {
+            uri: 'fuse://agents',
+            mimeType: 'application/json',
+            content: JSON.stringify(await this.toolRegistry.getAgents()),
+          };
+        },
       },
     });
 
@@ -129,12 +136,14 @@ export class MCPServerService implements OnModuleInit, OnModuleDestroy {
       uri: 'fuse://status',
       name: 'status',
       description: 'System status and health information',
-      handler: async () => {
-        return {
-          uri: 'fuse://status',
-          mimeType: 'application/json',
-          text: JSON.stringify(await this.getServerStatus()),
-        };
+      handler: {
+        read: async () => {
+          return {
+            uri: 'fuse://status',
+            mimeType: 'application/json',
+            content: JSON.stringify(await this.getServerStatus()),
+          };
+        },
       },
     });
 
@@ -181,7 +190,7 @@ export class MCPServerService implements OnModuleInit, OnModuleDestroy {
    */
   async getServerStatus(): Promise<any> {
     const info = await this.server.getServerInfo();
-    const health = await this.server.getHealth();
+    const health = info.health;
     const tools = this.toolRegistry.getAllTools();
 
     return {
@@ -191,7 +200,7 @@ export class MCPServerService implements OnModuleInit, OnModuleDestroy {
         total: tools.length,
         groups: this.toolRegistry.getToolGroups(),
       },
-      uptime: info.startTime ? Date.now() - new Date(info.startTime).getTime() : 0,
+      uptime: info.uptime || 0,
     };
   }
 

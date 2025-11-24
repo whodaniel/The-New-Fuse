@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MCPTool } from '@the-new-fuse/mcp-core/types';
+import { MCPTool } from '@the-new-fuse/mcp-core';
 import { WorkflowTemplatesService } from '../workflow-templates/workflow-templates.service';
 
 /**
@@ -79,14 +79,18 @@ export class MCPToolRegistry {
         },
         required: ['name'],
       },
-      handler: async (params: any) => {
-        this.logger.debug(`Creating workflow: ${params.name}`);
-        // Implementation would integrate with workflow service
-        return {
-          success: true,
-          workflowId: `wf_${Date.now()}`,
-          message: `Workflow "${params.name}" created successfully`,
-        };
+      handler: {
+        execute: async (params: any) => {
+          this.logger.debug(`Creating workflow: ${params.name}`);
+          // Implementation would integrate with workflow service
+          return {
+            success: true,
+            result: {
+              workflowId: `wf_${Date.now()}`,
+              message: `Workflow "${params.name}" created successfully`,
+            },
+          };
+        },
       },
     });
 
@@ -112,14 +116,18 @@ export class MCPToolRegistry {
         },
         required: ['workflowId'],
       },
-      handler: async (params: any) => {
-        this.logger.debug(`Executing workflow: ${params.workflowId}`);
-        return {
-          success: true,
-          executionId: `exec_${Date.now()}`,
-          status: params.async ? 'running' : 'completed',
-          result: params.async ? null : { output: 'Workflow execution result' },
-        };
+      handler: {
+        execute: async (params: any) => {
+          this.logger.debug(`Executing workflow: ${params.workflowId}`);
+          return {
+            success: true,
+            result: {
+              executionId: `exec_${Date.now()}`,
+              status: params.async ? 'running' : 'completed',
+              result: params.async ? null : { output: 'Workflow execution result' },
+            },
+          };
+        },
       },
     });
 
@@ -140,26 +148,31 @@ export class MCPToolRegistry {
           },
         },
       },
-      handler: async (params: any) => {
-        const templates = await this.getWorkflowTemplates();
-        let filtered = templates;
+      handler: {
+        execute: async (params: any) => {
+          const templates = await this.getWorkflowTemplates();
+          let filtered = templates;
 
-        if (params.filter) {
-          const filter = params.filter.toLowerCase();
-          filtered = templates.filter((t: any) =>
-            t.name.toLowerCase().includes(filter) ||
-            t.description.toLowerCase().includes(filter)
-          );
-        }
+          if (params.filter) {
+            const filter = params.filter.toLowerCase();
+            filtered = templates.filter((t: any) =>
+              t.name.toLowerCase().includes(filter) ||
+              t.description.toLowerCase().includes(filter)
+            );
+          }
 
-        if (params.limit) {
-          filtered = filtered.slice(0, params.limit);
-        }
+          if (params.limit) {
+            filtered = filtered.slice(0, params.limit);
+          }
 
-        return {
-          workflows: filtered,
-          total: filtered.length,
-        };
+          return {
+            success: true,
+            result: {
+              workflows: filtered,
+              total: filtered.length,
+            },
+          };
+        },
       },
     });
 
@@ -177,14 +190,19 @@ export class MCPToolRegistry {
         },
         required: ['executionId'],
       },
-      handler: async (params: any) => {
-        return {
-          executionId: params.executionId,
-          status: 'completed',
-          progress: 100,
-          startTime: new Date().toISOString(),
-          endTime: new Date().toISOString(),
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              executionId: params.executionId,
+              status: 'completed',
+              progress: 100,
+              startTime: new Date().toISOString(),
+              endTime: new Date().toISOString(),
+            },
+          };
+        },
       },
     });
   }
@@ -224,14 +242,18 @@ export class MCPToolRegistry {
         },
         required: ['title', 'assignedTo'],
       },
-      handler: async (params: any) => {
-        this.logger.debug(`Creating task: ${params.title}`);
-        return {
-          success: true,
-          taskId: `task_${Date.now()}`,
-          status: 'pending',
-          assignedTo: params.assignedTo,
-        };
+      handler: {
+        execute: async (params: any) => {
+          this.logger.debug(`Creating task: ${params.title}`);
+          return {
+            success: true,
+            result: {
+              taskId: `task_${Date.now()}`,
+              status: 'pending',
+              assignedTo: params.assignedTo,
+            },
+          };
+        },
       },
     });
 
@@ -249,14 +271,19 @@ export class MCPToolRegistry {
         },
         required: ['taskId'],
       },
-      handler: async (params: any) => {
-        return {
-          taskId: params.taskId,
-          status: 'in_progress',
-          progress: 50,
-          assignedTo: 'agent_123',
-          createdAt: new Date().toISOString(),
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              taskId: params.taskId,
+              status: 'in_progress',
+              progress: 50,
+              assignedTo: 'agent_123',
+              createdAt: new Date().toISOString(),
+            },
+          };
+        },
       },
     });
 
@@ -286,12 +313,16 @@ export class MCPToolRegistry {
         },
         required: ['taskId'],
       },
-      handler: async (params: any) => {
-        return {
-          success: true,
-          taskId: params.taskId,
-          updated: true,
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              taskId: params.taskId,
+              updated: true,
+            },
+          };
+        },
       },
     });
   }
@@ -332,13 +363,17 @@ export class MCPToolRegistry {
         },
         required: ['targetAgent', 'message'],
       },
-      handler: async (params: any) => {
-        return {
-          success: true,
-          messageId: `msg_${Date.now()}`,
-          deliveredAt: new Date().toISOString(),
-          requiresResponse: params.requiresResponse || false,
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              messageId: `msg_${Date.now()}`,
+              deliveredAt: new Date().toISOString(),
+              requiresResponse: params.requiresResponse || false,
+            },
+          };
+        },
       },
     });
 
@@ -360,10 +395,10 @@ export class MCPToolRegistry {
           },
         },
       },
-      handler: async (params: any) => {
-        const agents = await this.getAgents();
-        return {
-          agents: agents.filter((a: any) => {
+      handler: {
+        execute: async (params: any) => {
+          const agents = await this.getAgents();
+          const filteredAgents = agents.filter((a: any) => {
             if (params.status && params.status !== 'all' && a.status !== params.status) {
               return false;
             }
@@ -371,9 +406,15 @@ export class MCPToolRegistry {
               return false;
             }
             return true;
-          }),
-          total: agents.length,
-        };
+          });
+          return {
+            success: true,
+            result: {
+              agents: filteredAgents,
+              total: filteredAgents.length,
+            },
+          };
+        },
       },
     });
 
@@ -403,13 +444,17 @@ export class MCPToolRegistry {
         },
         required: ['agentId', 'capability'],
       },
-      handler: async (params: any) => {
-        return {
-          success: true,
-          agentId: params.agentId,
-          capability: params.capability,
-          registered: true,
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              agentId: params.agentId,
+              capability: params.capability,
+              registered: true,
+            },
+          };
+        },
       },
     });
   }
@@ -432,12 +477,17 @@ export class MCPToolRegistry {
         },
         required: ['uri'],
       },
-      handler: async (params: any) => {
-        return {
-          uri: params.uri,
-          content: 'Resource content would be here',
-          mimeType: 'application/json',
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              uri: params.uri,
+              content: 'Resource content would be here',
+              mimeType: 'application/json',
+            },
+          };
+        },
       },
     });
 
@@ -454,14 +504,19 @@ export class MCPToolRegistry {
           },
         },
       },
-      handler: async (params: any) => {
-        return {
-          resources: [
-            { uri: 'fuse://workflows', description: 'Workflow templates' },
-            { uri: 'fuse://agents', description: 'Available agents' },
-            { uri: 'fuse://status', description: 'System status' },
-          ],
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              resources: [
+                { uri: 'fuse://workflows', description: 'Workflow templates' },
+                { uri: 'fuse://agents', description: 'Available agents' },
+                { uri: 'fuse://status', description: 'System status' },
+              ],
+            },
+          };
+        },
       },
     });
   }
@@ -493,13 +548,17 @@ export class MCPToolRegistry {
         },
         required: ['message'],
       },
-      handler: async (params: any) => {
-        return {
-          success: true,
-          broadcastId: `broadcast_${Date.now()}`,
-          targetCount: params.targets?.length || 'all',
-          sentAt: new Date().toISOString(),
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              broadcastId: `broadcast_${Date.now()}`,
+              targetCount: params.targets?.length || 'all',
+              sentAt: new Date().toISOString(),
+            },
+          };
+        },
       },
     });
 
@@ -521,12 +580,16 @@ export class MCPToolRegistry {
         },
         required: ['eventType'],
       },
-      handler: async (params: any) => {
-        return {
-          success: true,
-          subscriptionId: `sub_${Date.now()}`,
-          eventType: params.eventType,
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              subscriptionId: `sub_${Date.now()}`,
+              eventType: params.eventType,
+            },
+          };
+        },
       },
     });
   }
@@ -543,17 +606,22 @@ export class MCPToolRegistry {
         type: 'object',
         properties: {},
       },
-      handler: async () => {
-        return {
-          status: 'healthy',
-          uptime: process.uptime(),
-          timestamp: new Date().toISOString(),
-          services: {
-            mcp: 'online',
-            database: 'online',
-            redis: 'online',
-          },
-        };
+      handler: {
+        execute: async () => {
+          return {
+            success: true,
+            result: {
+              status: 'healthy',
+              uptime: process.uptime(),
+              timestamp: new Date().toISOString(),
+              services: {
+                mcp: 'online',
+                database: 'online',
+                redis: 'online',
+              },
+            },
+          };
+        },
       },
     });
 
@@ -570,17 +638,22 @@ export class MCPToolRegistry {
           },
         },
       },
-      handler: async (params: any) => {
-        return {
-          timestamp: new Date().toISOString(),
-          metrics: {
-            activeAgents: 5,
-            runningWorkflows: 3,
-            queuedTasks: 12,
-            memoryUsage: process.memoryUsage(),
-            cpuUsage: process.cpuUsage(),
-          },
-        };
+      handler: {
+        execute: async (params: any) => {
+          return {
+            success: true,
+            result: {
+              timestamp: new Date().toISOString(),
+              metrics: {
+                activeAgents: 5,
+                runningWorkflows: 3,
+                queuedTasks: 12,
+                memoryUsage: process.memoryUsage(),
+                cpuUsage: process.cpuUsage(),
+              },
+            },
+          };
+        },
       },
     });
   }

@@ -10,7 +10,7 @@ export class CreateWorkflowTemplateDto {
   @IsNotEmpty({ message: 'Name is required' })
   @IsString()
   @MaxLength(200)
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'Template description',
@@ -20,7 +20,7 @@ export class CreateWorkflowTemplateDto {
   @IsNotEmpty({ message: 'Description is required' })
   @IsString()
   @MaxLength(1000)
-  description: string;
+  description!: string;
 
   @ApiPropertyOptional({
     description: 'Category/type of workflow',
@@ -42,7 +42,7 @@ export class CreateWorkflowTemplateDto {
   })
   @IsNotEmpty({ message: 'Template configuration is required' })
   @IsObject()
-  template: Record<string, any>;
+  template!: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Tags for categorization',
@@ -113,13 +113,13 @@ export class UpdateWorkflowTemplateDto {
 
 export class WorkflowTemplateResponseDto {
   @ApiProperty({ example: 'tmpl_123456' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'Customer Onboarding Flow' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'Automated workflow for onboarding new customers' })
-  description: string;
+  description!: string;
 
   @ApiPropertyOptional({ example: 'automation' })
   category?: string;
@@ -131,7 +131,7 @@ export class WorkflowTemplateResponseDto {
       edges: []
     }
   })
-  template: Record<string, any>;
+  template!: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Template tags',
@@ -140,17 +140,17 @@ export class WorkflowTemplateResponseDto {
   tags?: string[];
 
   @ApiProperty({ example: 'usr_123' })
-  createdBy: string;
+  createdBy!: string;
 
   @ApiProperty({ example: false })
-  isPublic: boolean;
+  isPublic!: boolean;
 
   @ApiProperty({ example: 25 })
-  usageCount: number;
+  usageCount!: number;
 
   @ApiProperty({ example: '2024-01-01T00:00:00.000Z' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ example: '2024-01-01T00:00:00.000Z' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

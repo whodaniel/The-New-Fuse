@@ -1,6 +1,6 @@
 /**
  * MCP Broker Implementation
- * 
+ *
  * This module implements the core MCP broker functionality including service registry,
  * discovery, health monitoring, and automatic cleanup capabilities.
  */
@@ -8,17 +8,17 @@
 import { EventEmitter } from 'events';
 import { IMCPBroker } from '../interfaces/IMCPBroker';
 import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { 
-  MCPServiceInfo, 
-  ServiceQuery, 
-  ServiceHealth, 
+import {
+  MCPServiceInfo,
+  ServiceQuery,
+  ServiceHealth,
   BrokerConfig,
   RoutingMetrics,
   LoadBalancingStrategy,
   ServiceCompatibilityResult,
   RoutingInfo
 } from '../types';
-import { ServiceStatus, LogLevel } from '../types/common';
+import { ServiceStatus } from '../types/common';
 import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
 import { ServiceRegistry } from './ServiceRegistry';
 import { HealthMonitor } from './HealthMonitor';
@@ -60,7 +60,7 @@ const DEFAULT_BROKER_CONFIG: BrokerConfig = {
 
 /**
  * MCPBroker class implementing the IMCPBroker interface
- * 
+ *
  * Provides comprehensive service registry, discovery, health monitoring,
  * and message routing capabilities for MCP services.
  */
@@ -113,8 +113,6 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
       this.isRunningFlag = true;
       this.emit('started');
-      
-      console.log(`MCP Broker ${this.config.name} v${this.config.version} started`);
     } catch (error) {
       throw new MCPErrorClass(
         JSONRPCErrorCode.INTERNAL_ERROR,
@@ -149,8 +147,6 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
       this.isRunningFlag = false;
       this.emit('stopped');
-      
-      console.log(`MCP Broker ${this.config.name} stopped`);
     } catch (error) {
       throw new MCPErrorClass(
         JSONRPCErrorCode.INTERNAL_ERROR,
@@ -193,7 +189,6 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
       this.loadBalancer.addService(service);
 
       this.emit('serviceRegistered', service);
-      console.log(`Service registered: ${service.name} (${service.id})`);
     } catch (error) {
       throw new MCPErrorClass(
         JSONRPCErrorCode.INTERNAL_ERROR,
@@ -237,7 +232,6 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
       await this.serviceRegistry.unregister(serviceId);
 
       this.emit('serviceUnregistered', service);
-      console.log(`Service unregistered: ${service.name} (${serviceId})`);
     } catch (error) {
       if (error instanceof MCPErrorClass) {
         throw error;
@@ -262,10 +256,10 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
     try {
       const services = await this.serviceRegistry.discover(query);
-      
+
       // Filter by health status if health checking is enabled
       if (this.config.healthCheck.enabled && this.config.loadBalancing.useHealthCheck) {
-        const healthyServices = [];
+        const healthyServices: MCPServiceInfo[] = [];
         for (const service of services) {
           const health = await this.healthMonitor.getServiceHealth(service.id);
           if (health && health.status === ServiceStatus.ONLINE) {
@@ -302,10 +296,10 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
     try {
       const services = await this.serviceRegistry.discoverWithCapabilityMatching(query);
-      
+
       // Filter by health status if health checking is enabled
       if (this.config.healthCheck.enabled && this.config.loadBalancing.useHealthCheck) {
-        const healthyServices = [];
+        const healthyServices: MCPServiceInfo[] = [];
         for (const service of services) {
           const health = await this.healthMonitor.getServiceHealth(service.id);
           if (health && health.status === ServiceStatus.ONLINE) {
@@ -427,9 +421,9 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
       const result = this.serviceRegistry.checkCapabilityCompatibility(serviceA, serviceB);
       // Add compatibility score calculation
-      const compatibilityScore = result.commonCapabilities.length / 
+      const compatibilityScore = result.commonCapabilities.length /
         Math.max(serviceA.capabilities.length, serviceB.capabilities.length, 1);
-      
+
       return {
         ...result,
         compatibilityScore
@@ -556,7 +550,6 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
       this.loadBalancer.updateService(updatedService);
 
       this.emit('serviceUpdated', updatedService);
-      console.log(`Service updated: ${updatedService.name} (${serviceId})`);
     } catch (error) {
       if (error instanceof MCPErrorClass) {
         throw error;
@@ -579,7 +572,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     try {
       const service = await this.serviceRegistry.get(serviceId);
       return service !== null;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -612,8 +605,8 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     serviceId: string,
     pattern: string,
     patternType: PatternType = PatternType.EXACT,
-    filters?: Record<string, any>,
-    metadata?: Record<string, any>
+    filters?: Record<string, unknown>,
+    metadata?: Record<string, unknown>
   ): Promise<string> {
     if (!this.isRunningFlag) {
       throw new MCPErrorClass(
@@ -752,7 +745,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     // Health monitor events
     this.healthMonitor.on('serviceHealthChanged', (serviceId: string, health: ServiceHealth) => {
       this.emit('serviceHealthChanged', serviceId, health);
-      
+
       // Update service status based on health
       if (health.status === ServiceStatus.OFFLINE) {
         this.loadBalancer.markServiceUnhealthy(serviceId);
@@ -766,7 +759,9 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
       this.emit('serviceExpired', serviceId);
       this.loadBalancer.removeService(serviceId);
       if (this.config.healthCheck.enabled) {
-        this.healthMonitor.removeService(serviceId).catch(console.error);
+        void this.healthMonitor.removeService(serviceId).catch(() => {
+          // Silently ignore health monitor removal errors
+        });
       }
     });
   }
@@ -776,12 +771,14 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   private startCleanupTask(): void {
     const intervalMs = this.config.registry.cleanupInterval * 1000;
-    this.cleanupInterval = setInterval(async () => {
-      try {
-        await this.serviceRegistry.cleanup();
-      } catch (error) {
-        console.error('Cleanup task failed:', error);
-      }
+    this.cleanupInterval = setInterval(() => {
+      void (async () => {
+        try {
+          await this.serviceRegistry.cleanup();
+        } catch (_error) {
+          // Silently ignore cleanup errors
+        }
+      })();
     }, intervalMs);
   }
 
@@ -798,8 +795,8 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
       try {
         const metrics = this.getMetrics();
         this.emit('metricsCollected', metrics);
-      } catch (error) {
-        console.error('Metrics collection failed:', error);
+      } catch (_error) {
+        // Silently ignore metrics collection errors
       }
     }, intervalMs);
   }

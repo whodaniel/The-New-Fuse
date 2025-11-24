@@ -7,15 +7,18 @@
     "baseUrl": "./",
     "moduleResolution": "node",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@the-new-fuse/mcp-core": ["../../packages/mcp-core/src"],
+      "@the-new-fuse/mcp-core/*": ["../../packages/mcp-core/src/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"],
+  "include": ["src/**/*", "jest.config.ts"],
+  "exclude": ["node_modules", "dist"],
   "references": [
     { "path": "../../packages/types" },
     { "path": "../../packages/core" },
     { "path": "../../packages/database" },
-    { "path": "../../packages/utils" }
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/mcp-core" }
   ]
 }

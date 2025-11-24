@@ -3,7 +3,7 @@ import { MCPServerService } from './mcp-server.service';
 import { MCPAgentIntegration } from '@the-new-fuse/mcp-core';
 import { MCPBroker } from '@the-new-fuse/mcp-core/broker';
 import { MCPClient } from '@the-new-fuse/mcp-core/client';
-import { Agent, AgentStatus } from '@the-new-fuse/mcp-core';
+import { Agent, AgentStatus, LoadBalancingStrategy } from '@the-new-fuse/mcp-core';
 
 /**
  * MCP-A2A Bridge Service
@@ -20,9 +20,9 @@ import { Agent, AgentStatus } from '@the-new-fuse/mcp-core';
 @Injectable()
 export class MCPA2ABridge {
   private readonly logger = new Logger(MCPA2ABridge.name);
-  private broker: MCPBroker;
-  private client: MCPClient;
-  private agentIntegration: MCPAgentIntegration;
+  private broker!: MCPBroker;
+  private client!: MCPClient;
+  private agentIntegration!: MCPAgentIntegration;
   private registeredAgents = new Map<string, any>();
 
   constructor(private readonly mcpServer: MCPServerService) {
@@ -38,9 +38,16 @@ export class MCPA2ABridge {
       this.broker = new MCPBroker({
         name: 'fuse-mcp-broker',
         version: '1.0.0',
-        maxConnections: 100,
-        healthCheckInterval: 30000,
-        serviceTimeout: 60000,
+        healthCheck: {
+          interval: 30,
+          timeout: 5000,
+          failureThreshold: 3,
+          recoveryThreshold: 2,
+          enabled: true
+        },
+        options: {
+          maxConcurrentRequests: 100
+        }
       });
 
       await this.broker.start();
@@ -50,6 +57,11 @@ export class MCPA2ABridge {
         name: 'fuse-a2a-client',
         version: '1.0.0',
         timeout: 30000,
+        retryPolicy: {
+          maxAttempts: 3,
+          baseDelay: 1000,
+          maxDelay: 5000,
+        },
       });
 
       // Create agent integration
@@ -167,7 +179,7 @@ export class MCPA2ABridge {
         toAgentId,
         message,
         {
-          messageType: options?.messageType || 'request',
+          messageType: (options?.messageType as any) || 'request',
           priority: options?.priority || 'normal',
           timeout: options?.timeout || 30000,
         }

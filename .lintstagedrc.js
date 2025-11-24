@@ -16,7 +16,4 @@ module.exports = {
 
   // Package.json specific handling
   'package.json': ['prettier --write'],
-
-  // Prisma schema
-  '*.prisma': ['prettier --write'],
 };

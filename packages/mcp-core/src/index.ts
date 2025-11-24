@@ -1,6 +1,6 @@
 /**
  * MCP Core Package
- * 
+ *
  * This is the main entry point for the MCP (Model Context Protocol) core package.
  * It provides all the essential interfaces, types, and utilities needed to implement
  * MCP servers, clients, and brokers according to the MCP specification.
@@ -14,11 +14,12 @@ export type {
   MCPResource,
   MCPTool,
   MCPCapability,
-  ResourceHandler,
-  ToolHandler,
   MCPConnection,
-  IConnectionManager
+  IConnectionManager,
+  Agent
 } from './interfaces';
+
+export { AgentStatus } from './interfaces';
 
 // Core message types
 export type {
@@ -97,7 +98,7 @@ export * from './factory';
 // Integration bridges
 export {
   MCPWorkflowIntegration,
-  MCPAgentIntegration, 
+  MCPAgentIntegration,
   MCPServiceMesh,
   WorkflowExecutionMonitor,
   ServiceMeshMonitor,

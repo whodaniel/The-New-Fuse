@@ -3,14 +3,14 @@
  * Extends the base monitoring system with MCP-specific functionality
  */
 
-import { 
-  BaseMonitoringSystem, 
+import {
+  BaseMonitoringSystem,
   BaseMonitoringConfig,
   IMetricsCollector,
   Logger
 } from '@tnf/core-monitoring';
-import { MCPMetricsCollector } from './MCPMetricsCollector.js';
-import { PerformanceMetrics } from '../types/monitoring.js';
+import { MCPMetricsCollector } from './MCPMetricsCollector';
+import { PerformanceMetrics } from '../types/monitoring';
 
 /**
  * MCP monitoring configuration
@@ -27,7 +27,7 @@ export interface MCPMonitoringConfig extends BaseMonitoringConfig {
  * MCP monitoring system implementation
  */
 export class MCPMonitoringSystem extends BaseMonitoringSystem<PerformanceMetrics, MCPMonitoringConfig> {
-  
+
   constructor(logger?: Logger) {
     super(logger || new Logger('MCPMonitoringSystem'));
   }
@@ -55,7 +55,7 @@ export class MCPMonitoringSystem extends BaseMonitoringSystem<PerformanceMetrics
 
     // Helper function to add metric
     const addMetric = (name: string, value: number, labels?: Record<string, string>) => {
-      const labelStr = labels ? 
+      const labelStr = labels ?
         `{${Object.entries(labels).map(([k, v]) => `${k}="${v}"`).join(',')}}` : '';
       lines.push(`mcp_${name}${labelStr} ${value}`);
     };
@@ -106,7 +106,7 @@ export class MCPMonitoringSystem extends BaseMonitoringSystem<PerformanceMetrics
     requests: number;
   }> {
     const metrics = this.getMetricsCollector().getCurrentMetrics();
-    
+
     return {
       connections: metrics.connections.active,
       resources: metrics.resources.total,
