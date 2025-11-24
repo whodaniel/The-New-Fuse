@@ -1,13 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import {
+  AgentPromptVersion,
   MassOptimizationConfig,
   PerformanceMetrics,
   PromptDefinition,
-  AgentPromptVersion
 } from '@the-new-fuse/types';
 import { PrismaService } from '../../prisma/prisma.service';
 
-// Move LlmInteractionService ABOVE PromptOptimizerService to avoid TDZ issues
 @Injectable()
 export class LlmInteractionService {
   private readonly logger = new Logger(LlmInteractionService.name);
@@ -236,6 +235,7 @@ export class PromptOptimizerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly llmService: LlmInteractionService,
+    @Inject(forwardRef(() => EvaluationHarnessService))
     private readonly evaluationHarness: EvaluationHarnessService
   ) {}
 
