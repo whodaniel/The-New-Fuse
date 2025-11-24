@@ -1,9 +1,9 @@
-import { Injectable, Logger, forwardRef, Inject } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
-  AgentPromptVersion,
   MassOptimizationConfig,
   PerformanceMetrics,
   PromptDefinition,
+  AgentPromptVersion
 } from '@the-new-fuse/types';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -78,7 +78,7 @@ export class EvaluationHarnessService {
     _config: MassOptimizationConfig
   ): Promise<PerformanceMetrics> {
     const results = [];
-    const startTime = Date.now();
+    // Removed startTime
 
     for (const item of validationItems) {
       try {
@@ -99,7 +99,7 @@ export class EvaluationHarnessService {
       }
     }
 
-    const _totalTime = Date.now() - startTime;
+    // Removed totalTime
     const successfulResults = results.filter((r) => r.success);
 
     return {
@@ -127,7 +127,7 @@ export class EvaluationHarnessService {
     // This would evaluate an entire topology/workflow
     // Placeholder implementation
     const results = [];
-    const _startTime = Date.now();
+    // Removed _startTime
 
     for (const item of validationItems) {
       try {
@@ -235,9 +235,7 @@ export class PromptOptimizerService {
 
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(forwardRef(() => LlmInteractionService))
     private readonly llmService: LlmInteractionService,
-    @Inject(forwardRef(() => EvaluationHarnessService))
     private readonly evaluationHarness: EvaluationHarnessService
   ) {}
 
@@ -430,7 +428,6 @@ Return as JSON array of strings.
         },
         {
           roleDefinition: `${baseInstruction.roleDefinition} Think step by step.`,
-          taskGuidance: baseInstruction.taskGuidance,
           outputFormat: baseInstruction.outputFormat,
         }
       );
