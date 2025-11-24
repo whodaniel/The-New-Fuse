@@ -234,6 +234,7 @@ export class PromptOptimizerService {
 
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => LlmInteractionService))
     private readonly llmService: LlmInteractionService,
     @Inject(forwardRef(() => EvaluationHarnessService))
     private readonly evaluationHarness: EvaluationHarnessService
