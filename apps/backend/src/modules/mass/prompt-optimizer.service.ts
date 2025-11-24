@@ -78,7 +78,6 @@ export class EvaluationHarnessService {
     _config: MassOptimizationConfig
   ): Promise<PerformanceMetrics> {
     const results = [];
-    const startTime = Date.now();
 
     for (const item of validationItems) {
       try {
@@ -99,7 +98,6 @@ export class EvaluationHarnessService {
       }
     }
 
-    const _totalTime = Date.now() - startTime;
     const successfulResults = results.filter((r) => r.success);
 
     return {
@@ -127,7 +125,6 @@ export class EvaluationHarnessService {
     // This would evaluate an entire topology/workflow
     // Placeholder implementation
     const results = [];
-    const _startTime = Date.now();
 
     for (const item of validationItems) {
       try {
