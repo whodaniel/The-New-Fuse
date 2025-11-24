@@ -1,24 +1,23 @@
-import { Injectable, Logger, forwardRef, Inject } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { Injectable, Logger } from '@nestjs/common';
 import {
+  AgentPromptVersion,
   MassOptimizationConfig,
-  ValidationDataset,
   PerformanceMetrics,
   PromptDefinition,
-  AgentPromptVersion
 } from '@the-new-fuse/types';
+import { PrismaService } from '../../prisma/prisma.service';
 
 // Move LlmInteractionService ABOVE PromptOptimizerService to avoid TDZ issues
 @Injectable()
 export class LlmInteractionService {
   private readonly logger = new Logger(LlmInteractionService.name);
 
-  async generateText(prompt: string, config: any): Promise<string> {
+  async generateText(prompt: string, _config: any): Promise<string> {
     // This would integrate with your existing LLM service
     // Placeholder implementation
     try {
       // Simulate LLM call
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Return mock response based on prompt content
       if (prompt.includes('Generate 5 improved variations')) {
@@ -27,7 +26,7 @@ export class LlmInteractionService {
           'You are a helpful AI that thinks carefully before responding.',
           'You are a precise assistant that provides step-by-step solutions.',
           'You are an analytical AI that breaks down complex problems.',
-          'You are a thorough assistant that considers all aspects of a question.'
+          'You are a thorough assistant that considers all aspects of a question.',
         ]);
       }
 
@@ -42,7 +41,7 @@ export class LlmInteractionService {
     // This would execute an agent with given prompt and input
     // Placeholder implementation
     try {
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       return {
         success: true,
@@ -52,17 +51,181 @@ export class LlmInteractionService {
         metadata: {
           agentId,
           timestamp: new Date(),
-          promptUsed: prompt ? 'custom' : 'default'
-        }
+          promptUsed: prompt ? 'custom' : 'default',
+        },
       };
     } catch (error) {
       this.logger.error(`Agent execution failed for ${agentId}:`, error);
       return {
         success: false,
         error: error instanceof Error ? error.message : String(error),
-        agentId
+        agentId,
       };
     }
+  }
+}
+
+@Injectable()
+export class EvaluationHarnessService {
+  private readonly logger = new Logger(EvaluationHarnessService.name);
+
+  constructor(private readonly llmService: LlmInteractionService) {}
+
+  async evaluatePrompt(
+    agentId: string,
+    prompt: PromptDefinition,
+    validationItems: any[],
+    _config: MassOptimizationConfig
+  ): Promise<PerformanceMetrics> {
+    const results = [];
+    const startTime = Date.now();
+
+    for (const item of validationItems) {
+      try {
+        const result = await this.llmService.executeAgent(agentId, item.input, prompt);
+        const score = this.calculateScore(result.output, item.expectedOutput);
+
+        results.push({
+          score,
+          processingTime: result.metadata?.processingTime || 0,
+          success: result.success,
+        });
+      } catch (_error) {
+        results.push({
+          score: 0,
+          processingTime: 1000,
+          success: false,
+        });
+      }
+    }
+
+    const _totalTime = Date.now() - startTime;
+    const successfulResults = results.filter((r) => r.success);
+
+    return {
+      accuracy:
+        successfulResults.length > 0
+          ? successfulResults.reduce((sum, r) => sum + r.score, 0) / successfulResults.length
+          : 0,
+      latency: results.reduce((sum, r) => sum + r.processingTime, 0) / results.length,
+      tokenUsage: results.length * 150, // Estimated tokens per request
+      cost: results.length * 0.001, // Estimated cost per request
+      f1Score: this.calculateF1Score(results),
+      precision: successfulResults.length / results.length,
+      recall:
+        successfulResults.length > 0
+          ? successfulResults.filter((r) => r.score > 0.5).length / successfulResults.length
+          : 0,
+    };
+  }
+
+  async evaluateTopology(
+    topologyId: string,
+    validationItems: any[],
+    _config: MassOptimizationConfig
+  ): Promise<PerformanceMetrics> {
+    // This would evaluate an entire topology/workflow
+    // Placeholder implementation
+    const results = [];
+    const _startTime = Date.now();
+
+    for (const item of validationItems) {
+      try {
+        // Execute the topology workflow
+        const result = await this.executeTopology(topologyId, item.input);
+        const score = this.calculateScore(result.output, item.expectedOutput);
+
+        results.push({
+          score,
+          processingTime: result.processingTime || 0,
+          success: result.success,
+        });
+      } catch (_error) {
+        results.push({
+          score: 0,
+          processingTime: 2000,
+          success: false,
+        });
+      }
+    }
+
+    const successfulResults = results.filter((r) => r.success);
+
+    return {
+      accuracy:
+        successfulResults.length > 0
+          ? successfulResults.reduce((sum, r) => sum + r.score, 0) / successfulResults.length
+          : 0,
+      latency: results.reduce((sum, r) => sum + r.processingTime, 0) / results.length,
+      tokenUsage: results.length * 300, // Higher for topology
+      cost: results.length * 0.003,
+      f1Score: this.calculateF1Score(results),
+      precision: successfulResults.length / results.length,
+      recall:
+        successfulResults.length > 0
+          ? successfulResults.filter((r) => r.score > 0.5).length / successfulResults.length
+          : 0,
+    };
+  }
+
+  private async executeTopology(topologyId: string, input: any): Promise<any> {
+    // Placeholder for topology execution
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    return {
+      success: true,
+      output: `Topology ${topologyId} result for: ${JSON.stringify(input)}`,
+      processingTime: Math.random() * 1000 + 200,
+      metadata: {
+        topologyId,
+        timestamp: new Date(),
+      },
+    };
+  }
+
+  private calculateScore(output: any, expected: any): number {
+    // Simple scoring logic - in production, this would be more sophisticated
+    try {
+      if (typeof output === 'string' && typeof expected === 'string') {
+        // Text similarity scoring
+        const outputLower = output.toLowerCase();
+        const expectedLower = expected.toLowerCase();
+
+        if (outputLower === expectedLower) return 1.0;
+        if (outputLower.includes(expectedLower) || expectedLower.includes(outputLower)) return 0.8;
+
+        // Simple word overlap scoring
+        const outputWords = outputLower.split(/\s+/);
+        const expectedWords = expectedLower.split(/\s+/);
+        const overlap = outputWords.filter((word) => expectedWords.includes(word)).length;
+
+        return Math.min(overlap / expectedWords.length, 1.0);
+      }
+
+      if (typeof output === 'number' && typeof expected === 'number') {
+        // Numeric scoring with tolerance
+        const diff = Math.abs(output - expected);
+        const tolerance = Math.abs(expected) * 0.1; // 10% tolerance
+        return Math.max(0, 1 - diff / (tolerance + 1));
+      }
+
+      // Default exact match
+      return output === expected ? 1.0 : 0.0;
+    } catch (error) {
+      this.logger.warn('Error calculating score:', error);
+      return 0.0;
+    }
+  }
+
+  private calculateF1Score(results: any[]): number {
+    const truePositives = results.filter((r) => r.success && r.score > 0.5).length;
+    const falsePositives = results.filter((r) => r.success && r.score <= 0.5).length;
+    const falseNegatives = results.filter((r) => !r.success).length;
+
+    const precision = truePositives / (truePositives + falsePositives) || 0;
+    const recall = truePositives / (truePositives + falseNegatives) || 0;
+
+    return precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
   }
 }
 
@@ -72,9 +235,7 @@ export class PromptOptimizerService {
 
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(forwardRef(() => LlmInteractionService))
     private readonly llmService: LlmInteractionService,
-    @Inject(forwardRef(() => EvaluationHarnessService))
     private readonly evaluationHarness: EvaluationHarnessService
   ) {}
 
@@ -88,7 +249,7 @@ export class PromptOptimizerService {
       // Get the agent and its current prompt
       const agent = await this.prisma.agent.findUnique({
         where: { id: agentId },
-        include: { promptVersions: true }
+        include: { promptVersions: true },
       });
 
       if (!agent) {
@@ -97,7 +258,7 @@ export class PromptOptimizerService {
 
       // Get validation dataset
       const dataset = await this.prisma.validationDataset.findUnique({
-        where: { id: config.validationDatasetId }
+        where: { id: config.validationDatasetId },
       });
 
       if (!dataset) {
@@ -127,7 +288,7 @@ export class PromptOptimizerService {
           return {
             candidate,
             metrics,
-            candidateIndex: index
+            candidateIndex: index,
           };
         })
       );
@@ -145,7 +306,7 @@ export class PromptOptimizerService {
 
       this.logger.log(
         `Stage 1 optimization completed for agent ${agentId}. ` +
-        `Best accuracy: ${bestCandidate.metrics.accuracy}`
+          `Best accuracy: ${bestCandidate.metrics.accuracy}`
       );
 
       return newVersion;
@@ -157,8 +318,8 @@ export class PromptOptimizerService {
 
   private getCurrentPrompt(agent: any): PromptDefinition {
     // Get the latest prompt version or use system prompt as base
-    const latestVersion = agent.promptVersions?.sort((a, b) =>
-      b.versionNumber - a.versionNumber
+    const latestVersion = agent.promptVersions?.sort(
+      (a, b) => b.versionNumber - a.versionNumber
     )[0];
 
     if (latestVersion) {
@@ -166,9 +327,9 @@ export class PromptOptimizerService {
         instruction: {
           roleDefinition: latestVersion.instruction,
           taskGuidance: '',
-          outputFormat: ''
+          outputFormat: '',
         },
-        exemplars: latestVersion.exemplars || []
+        exemplars: latestVersion.exemplars || [],
       };
     }
 
@@ -176,9 +337,9 @@ export class PromptOptimizerService {
       instruction: {
         roleDefinition: agent.systemPrompt || 'You are a helpful AI assistant.',
         taskGuidance: 'Complete the given task to the best of your ability.',
-        outputFormat: 'Provide a clear and accurate response.'
+        outputFormat: 'Provide a clear and accurate response.',
       },
-      exemplars: []
+      exemplars: [],
     };
   }
 
@@ -199,7 +360,7 @@ export class PromptOptimizerService {
     for (const instruction of instructionVariations) {
       candidates.push({
         instruction,
-        exemplars: basePrompt.exemplars
+        exemplars: basePrompt.exemplars,
       });
     }
 
@@ -213,7 +374,7 @@ export class PromptOptimizerService {
       for (const exemplars of exemplarVariations) {
         candidates.push({
           instruction: basePrompt.instruction,
-          exemplars
+          exemplars,
         });
       }
     }
@@ -252,10 +413,10 @@ Return as JSON array of strings.
         variations.push({
           roleDefinition: variation,
           taskGuidance: baseInstruction.taskGuidance,
-          outputFormat: baseInstruction.outputFormat
+          outputFormat: baseInstruction.outputFormat,
         });
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn('Failed to generate instruction variations, using manual variations');
 
       // Fallback manual variations
@@ -263,12 +424,12 @@ Return as JSON array of strings.
         {
           roleDefinition: `${baseInstruction.roleDefinition} Be concise and accurate.`,
           taskGuidance: baseInstruction.taskGuidance,
-          outputFormat: baseInstruction.outputFormat
+          outputFormat: baseInstruction.outputFormat,
         },
         {
           roleDefinition: `${baseInstruction.roleDefinition} Think step by step.`,
           taskGuidance: baseInstruction.taskGuidance,
-          outputFormat: baseInstruction.outputFormat
+          outputFormat: baseInstruction.outputFormat,
         }
       );
     }
@@ -278,7 +439,7 @@ Return as JSON array of strings.
 
   private async generateExemplarVariations(
     baseExemplars: any[],
-    config: MassOptimizationConfig
+    _config: MassOptimizationConfig
   ): Promise<any[][]> {
     const variations = [];
 
@@ -296,9 +457,9 @@ Return as JSON array of strings.
     }
 
     // Enhanced exemplars with explanations
-    const enhancedExemplars = baseExemplars.map(exemplar => ({
+    const enhancedExemplars = baseExemplars.map((exemplar) => ({
       ...exemplar,
-      explanation: 'This example demonstrates the correct approach and format.'
+      explanation: 'This example demonstrates the correct approach and format.',
     }));
     variations.push(enhancedExemplars);
 
@@ -331,7 +492,7 @@ Return as JSON array of strings.
     // Get next version number
     const latestVersion = await this.prisma.agentPromptVersion.findFirst({
       where: { agentId },
-      orderBy: { versionNumber: 'desc' }
+      orderBy: { versionNumber: 'desc' },
     });
 
     const nextVersion = (latestVersion?.versionNumber || 0) + 1;
@@ -343,164 +504,8 @@ Return as JSON array of strings.
         instruction: prompt.instruction.roleDefinition,
         exemplars: prompt.exemplars,
         performanceMetrics: metrics as any,
-        massStage
-      }
+        massStage,
+      },
     });
-  }
-}
-
-@Injectable()
-export class EvaluationHarnessService {
-  private readonly logger = new Logger(EvaluationHarnessService.name);
-
-  constructor(private readonly llmService: LlmInteractionService) {}
-
-  async evaluatePrompt(
-    agentId: string,
-    prompt: PromptDefinition,
-    validationItems: any[],
-    config: MassOptimizationConfig
-  ): Promise<PerformanceMetrics> {
-    const results = [];
-    const startTime = Date.now();
-
-    for (const item of validationItems) {
-      try {
-        const result = await this.llmService.executeAgent(agentId, item.input, prompt);
-        const score = this.calculateScore(result.output, item.expectedOutput);
-
-        results.push({
-          score,
-          processingTime: result.metadata?.processingTime || 0,
-          success: result.success
-        });
-      } catch (error) {
-        results.push({
-          score: 0,
-          processingTime: 1000,
-          success: false
-        });
-      }
-    }
-
-    const totalTime = Date.now() - startTime;
-    const successfulResults = results.filter(r => r.success);
-
-    return {
-      accuracy: successfulResults.length > 0 ?
-        successfulResults.reduce((sum, r) => sum + r.score, 0) / successfulResults.length : 0,
-      latency: results.reduce((sum, r) => sum + r.processingTime, 0) / results.length,
-      tokenUsage: results.length * 150, // Estimated tokens per request
-      cost: results.length * 0.001, // Estimated cost per request
-      f1Score: this.calculateF1Score(results),
-      precision: successfulResults.length / results.length,
-      recall: successfulResults.length > 0 ?
-        successfulResults.filter(r => r.score > 0.5).length / successfulResults.length : 0
-    };
-  }
-
-  async evaluateTopology(
-    topologyId: string,
-    validationItems: any[],
-    config: MassOptimizationConfig
-  ): Promise<PerformanceMetrics> {
-    // This would evaluate an entire topology/workflow
-    // Placeholder implementation
-    const results = [];
-    const startTime = Date.now();
-
-    for (const item of validationItems) {
-      try {
-        // Execute the topology workflow
-        const result = await this.executeTopology(topologyId, item.input);
-        const score = this.calculateScore(result.output, item.expectedOutput);
-
-        results.push({
-          score,
-          processingTime: result.processingTime || 0,
-          success: result.success
-        });
-      } catch (error) {
-        results.push({
-          score: 0,
-          processingTime: 2000,
-          success: false
-        });
-      }
-    }
-
-    const successfulResults = results.filter(r => r.success);
-
-    return {
-      accuracy: successfulResults.length > 0 ?
-        successfulResults.reduce((sum, r) => sum + r.score, 0) / successfulResults.length : 0,
-      latency: results.reduce((sum, r) => sum + r.processingTime, 0) / results.length,
-      tokenUsage: results.length * 300, // Higher for topology
-      cost: results.length * 0.003,
-      f1Score: this.calculateF1Score(results),
-      precision: successfulResults.length / results.length,
-      recall: successfulResults.length > 0 ?
-        successfulResults.filter(r => r.score > 0.5).length / successfulResults.length : 0
-    };
-  }
-
-  private async executeTopology(topologyId: string, input: any): Promise<any> {
-    // Placeholder for topology execution
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    return {
-      success: true,
-      output: `Topology ${topologyId} result for: ${JSON.stringify(input)}`,
-      processingTime: Math.random() * 1000 + 200,
-      metadata: {
-        topologyId,
-        timestamp: new Date()
-      }
-    };
-  }
-
-  private calculateScore(output: any, expected: any): number {
-    // Simple scoring logic - in production, this would be more sophisticated
-    try {
-      if (typeof output === 'string' && typeof expected === 'string') {
-        // Text similarity scoring
-        const outputLower = output.toLowerCase();
-        const expectedLower = expected.toLowerCase();
-
-        if (outputLower === expectedLower) return 1.0;
-        if (outputLower.includes(expectedLower) || expectedLower.includes(outputLower)) return 0.8;
-
-        // Simple word overlap scoring
-        const outputWords = outputLower.split(/\s+/);
-        const expectedWords = expectedLower.split(/\s+/);
-        const overlap = outputWords.filter(word => expectedWords.includes(word)).length;
-
-        return Math.min(overlap / expectedWords.length, 1.0);
-      }
-
-      if (typeof output === 'number' && typeof expected === 'number') {
-        // Numeric scoring with tolerance
-        const diff = Math.abs(output - expected);
-        const tolerance = Math.abs(expected) * 0.1; // 10% tolerance
-        return Math.max(0, 1 - (diff / (tolerance + 1)));
-      }
-
-      // Default exact match
-      return output === expected ? 1.0 : 0.0;
-    } catch (error) {
-      this.logger.warn('Error calculating score:', error);
-      return 0.0;
-    }
-  }
-
-  private calculateF1Score(results: any[]): number {
-    const truePositives = results.filter(r => r.success && r.score > 0.5).length;
-    const falsePositives = results.filter(r => r.success && r.score <= 0.5).length;
-    const falseNegatives = results.filter(r => !r.success).length;
-
-    const precision = truePositives / (truePositives + falsePositives) || 0;
-    const recall = truePositives / (truePositives + falseNegatives) || 0;
-
-    return precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
   }
 }

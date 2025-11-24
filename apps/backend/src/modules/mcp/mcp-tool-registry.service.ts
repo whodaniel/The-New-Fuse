@@ -18,9 +18,7 @@ export class MCPToolRegistry {
   private readonly logger = new Logger(MCPToolRegistry.name);
   private tools = new Map<string, MCPTool>();
 
-  constructor(
-    private readonly workflowService: WorkflowTemplatesService,
-  ) {
+  constructor(private readonly workflowService: WorkflowTemplatesService) {
     this.registerAllTools();
   }
 
@@ -155,9 +153,10 @@ export class MCPToolRegistry {
 
           if (params.filter) {
             const filter = params.filter.toLowerCase();
-            filtered = templates.filter((t: any) =>
-              t.name.toLowerCase().includes(filter) ||
-              t.description.toLowerCase().includes(filter)
+            filtered = templates.filter(
+              (t: any) =>
+                t.name.toLowerCase().includes(filter) ||
+                t.description.toLowerCase().includes(filter)
             );
           }
 
@@ -505,7 +504,7 @@ export class MCPToolRegistry {
         },
       },
       handler: {
-        execute: async (params: any) => {
+        execute: async (_params: any) => {
           return {
             success: true,
             result: {
@@ -639,7 +638,7 @@ export class MCPToolRegistry {
         },
       },
       handler: {
-        execute: async (params: any) => {
+        execute: async (_params: any) => {
           return {
             success: true,
             result: {
@@ -696,9 +695,7 @@ export class MCPToolRegistry {
    * Get tools by group
    */
   getToolsByGroup(group: string): MCPTool[] {
-    return Array.from(this.tools.values()).filter(
-      (tool) => tool.name.startsWith(`${group}.`)
-    );
+    return Array.from(this.tools.values()).filter((tool) => tool.name.startsWith(`${group}.`));
   }
 
   /**

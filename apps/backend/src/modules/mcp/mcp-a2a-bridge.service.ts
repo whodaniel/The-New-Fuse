@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MCPServerService } from './mcp-server.service';
-import { MCPAgentIntegration } from '@the-new-fuse/mcp-core';
+import { Agent, AgentStatus, MCPAgentIntegration } from '@the-new-fuse/mcp-core';
 import { MCPBroker } from '@the-new-fuse/mcp-core/broker';
 import { MCPClient } from '@the-new-fuse/mcp-core/client';
-import { Agent, AgentStatus, LoadBalancingStrategy } from '@the-new-fuse/mcp-core';
+import { MCPServerService } from './mcp-server.service';
 
 /**
  * MCP-A2A Bridge Service
@@ -43,11 +42,11 @@ export class MCPA2ABridge {
           timeout: 5000,
           failureThreshold: 3,
           recoveryThreshold: 2,
-          enabled: true
+          enabled: true,
         },
         options: {
-          maxConcurrentRequests: 100
-        }
+          maxConcurrentRequests: 100,
+        },
       });
 
       await this.broker.start();
@@ -186,9 +185,7 @@ export class MCPA2ABridge {
       );
 
       if (result.success) {
-        this.logger.debug(
-          `Message routed from A2A agent ${fromAgentId} to MCP agent ${toAgentId}`
-        );
+        this.logger.debug(`Message routed from A2A agent ${fromAgentId} to MCP agent ${toAgentId}`);
         return {
           success: true,
           messageId: result.messageId,
@@ -222,7 +219,7 @@ export class MCPA2ABridge {
   }> {
     try {
       // Translate MCP message format to A2A format
-      const a2aMessage = this.translateMCPToA2A(mcpMessage);
+      const _a2aMessage = this.translateMCPToA2A(mcpMessage);
 
       // Send via A2A protocol
       // This would integrate with the actual A2A service
@@ -307,9 +304,7 @@ export class MCPA2ABridge {
         purpose
       );
 
-      this.logger.log(
-        `Collaboration ${collaboration.id} started: ${purpose}`
-      );
+      this.logger.log(`Collaboration ${collaboration.id} started: ${purpose}`);
 
       return {
         success: true,
@@ -408,9 +403,7 @@ export class MCPA2ABridge {
   /**
    * Map MCP priority to A2A
    */
-  private mapMCPPriorityToA2A(
-    priority?: string
-  ): 'low' | 'medium' | 'high' | 'urgent' {
+  private mapMCPPriorityToA2A(priority?: string): 'low' | 'medium' | 'high' | 'urgent' {
     const mapping: Record<string, any> = {
       low: 'low',
       normal: 'medium',
@@ -423,9 +416,7 @@ export class MCPA2ABridge {
   /**
    * Map A2A priority to MCP
    */
-  private mapA2APriorityToMCP(
-    priority?: string
-  ): 'low' | 'normal' | 'high' {
+  private mapA2APriorityToMCP(priority?: string): 'low' | 'normal' | 'high' {
     const mapping: Record<string, any> = {
       low: 'low',
       medium: 'normal',
