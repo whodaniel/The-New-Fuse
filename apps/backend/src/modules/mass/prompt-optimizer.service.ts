@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, forwardRef, Inject } from '@nestjs/common';
 import {
   AgentPromptVersion,
   MassOptimizationConfig,
@@ -78,6 +78,7 @@ export class EvaluationHarnessService {
     _config: MassOptimizationConfig
   ): Promise<PerformanceMetrics> {
     const results = [];
+    const startTime = Date.now();
 
     for (const item of validationItems) {
       try {
@@ -98,6 +99,7 @@ export class EvaluationHarnessService {
       }
     }
 
+    const _totalTime = Date.now() - startTime;
     const successfulResults = results.filter((r) => r.success);
 
     return {
@@ -125,6 +127,7 @@ export class EvaluationHarnessService {
     // This would evaluate an entire topology/workflow
     // Placeholder implementation
     const results = [];
+    const _startTime = Date.now();
 
     for (const item of validationItems) {
       try {
@@ -232,7 +235,9 @@ export class PromptOptimizerService {
 
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => LlmInteractionService))
     private readonly llmService: LlmInteractionService,
+    @Inject(forwardRef(() => EvaluationHarnessService))
     private readonly evaluationHarness: EvaluationHarnessService
   ) {}
 
