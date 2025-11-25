@@ -5,13 +5,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError,
+  getPrismaClient,
+  sqltag,
+  empty,
+  join,
+  raw,
+  skip,
   Decimal,
+  Debug,
   objectEnumValues,
   makeStrictEnum,
+  Extensions,
+  warnOnce,
+  defineDmmfProperty,
   Public,
   getRuntime,
-  skip
-} = require('./runtime/index-browser.js')
+  createParam,
+} = require('./runtime/wasm-engine-edge.js')
 
 
 const Prisma = {}
@@ -20,79 +35,35 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.11.0
- * Query Engine version: 9c30299f5a0ea26a96790e13f796dc6094db3173
+ * Prisma Client JS version: 6.17.1
+ * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
  */
 Prisma.prismaVersion = {
-  client: "6.11.0",
-  engine: "9c30299f5a0ea26a96790e13f796dc6094db3173"
+  client: "6.17.1",
+  engine: "272a37d34178c2894197e17273bf937f25acdeac"
 }
 
-Prisma.PrismaClientKnownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)};
-Prisma.PrismaClientUnknownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientRustPanicError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientInitializationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientValidationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
+Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
+Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
+Prisma.PrismaClientInitializationError = PrismaClientInitializationError
+Prisma.PrismaClientValidationError = PrismaClientValidationError
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.empty = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.join = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.raw = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.sql = sqltag
+Prisma.empty = empty
+Prisma.join = join
+Prisma.raw = raw
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.defineExtension = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.getExtensionContext = Extensions.getExtensionContext
+Prisma.defineExtension = Extensions.defineExtension
 
 /**
  * Shorthand utilities for JSON filtering
@@ -109,10 +80,11 @@ Prisma.NullTypes = {
 
 
 
+
+
 /**
  * Enums
  */
-
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -583,251 +555,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
-exports.Prisma.UserOrderByRelevanceFieldEnum = {
-  id: 'id',
-  email: 'email',
-  username: 'username',
-  name: 'name',
-  hashedPassword: 'hashedPassword',
-  refreshToken: 'refreshToken'
-};
-
-exports.Prisma.AuthSessionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  token: 'token'
-};
-
-exports.Prisma.LoginAttemptOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  ipAddress: 'ipAddress'
-};
-
-exports.Prisma.AuthEventOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type'
-};
-
-exports.Prisma.AgentOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  systemPrompt: 'systemPrompt',
-  provider: 'provider',
-  userId: 'userId'
-};
-
-exports.Prisma.AgentMetadataOrderByRelevanceFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  version: 'version'
-};
-
-exports.Prisma.ChatOrderByRelevanceFieldEnum = {
-  id: 'id',
-  title: 'title',
-  agentId: 'agentId',
-  userId: 'userId'
-};
-
-exports.Prisma.ChatRoomOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  ownerId: 'ownerId'
-};
-
-exports.Prisma.MessageOrderByRelevanceFieldEnum = {
-  id: 'id',
-  content: 'content',
-  senderId: 'senderId',
-  senderName: 'senderName',
-  agentId: 'agentId',
-  chatId: 'chatId',
-  roomId: 'roomId',
-  parentMessageId: 'parentMessageId',
-  attachments: 'attachments'
-};
-
-exports.Prisma.ChatMessageOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  content: 'content'
-};
-
-exports.Prisma.WorkflowOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  creatorId: 'creatorId',
-  agentId: 'agentId'
-};
-
-exports.Prisma.WorkflowStepOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  type: 'type',
-  workflowId: 'workflowId',
-  agentId: 'agentId',
-  nextSteps: 'nextSteps'
-};
-
-exports.Prisma.WorkflowExecutionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  workflowId: 'workflowId',
-  error: 'error'
-};
-
-exports.Prisma.PipelineOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  userId: 'userId',
-  agentId: 'agentId'
-};
-
-exports.Prisma.TaskOrderByRelevanceFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  type: 'type',
-  error: 'error',
-  pipelineId: 'pipelineId',
-  assignedToId: 'assignedToId',
-  userId: 'userId'
-};
-
-exports.Prisma.TaskExecutionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  taskId: 'taskId',
-  status: 'status',
-  error: 'error'
-};
-
-exports.Prisma.CodeExecutionUsageOrderByRelevanceFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  clientId: 'clientId',
-  executionId: 'executionId',
-  code: 'code',
-  environment: 'environment'
-};
-
-exports.Prisma.CodeExecutionSessionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  ownerId: 'ownerId',
-  collaborators: 'collaborators'
-};
-
-exports.Prisma.AgentNFTOrderByRelevanceFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  contractAddress: 'contractAddress',
-  smartAccountAddress: 'smartAccountAddress',
-  metadataUri: 'metadataUri'
-};
-
-exports.Prisma.FractionalShareOrderByRelevanceFieldEnum = {
-  id: 'id',
-  agentNFTId: 'agentNFTId',
-  ownerAddress: 'ownerAddress'
-};
-
-exports.Prisma.RevenueStreamOrderByRelevanceFieldEnum = {
-  id: 'id',
-  agentNFTId: 'agentNFTId',
-  streamName: 'streamName',
-  description: 'description',
-  tokenAddress: 'tokenAddress'
-};
-
-exports.Prisma.RevenueDistributionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  revenueStreamId: 'revenueStreamId',
-  txHash: 'txHash'
-};
-
-exports.Prisma.MarketplaceListingOrderByRelevanceFieldEnum = {
-  id: 'id',
-  agentNFTId: 'agentNFTId',
-  seller: 'seller'
-};
-
-exports.Prisma.MarketplaceOfferOrderByRelevanceFieldEnum = {
-  id: 'id',
-  listingId: 'listingId',
-  buyer: 'buyer'
-};
-
-exports.Prisma.WalletOrderByRelevanceFieldEnum = {
-  id: 'id',
-  address: 'address',
-  agentId: 'agentId'
-};
-
-exports.Prisma.TransactionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  hash: 'hash',
-  walletId: 'walletId',
-  fromAddress: 'fromAddress',
-  toAddress: 'toAddress',
-  blockHash: 'blockHash'
-};
-
-exports.Prisma.RegisteredEntityOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  version: 'version',
-  namespace: 'namespace',
-  tags: 'tags',
-  capabilities: 'capabilities',
-  dependencies: 'dependencies',
-  ownerId: 'ownerId'
-};
-
-exports.Prisma.LLMConfigOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  provider: 'provider',
-  modelName: 'modelName',
-  apiKey: 'apiKey',
-  apiEndpoint: 'apiEndpoint'
-};
-
-exports.Prisma.BusinessMetricOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name'
-};
-
-exports.Prisma.ErrorLogOrderByRelevanceFieldEnum = {
-  id: 'id',
-  message: 'message',
-  stack: 'stack'
-};
-
-exports.Prisma.SyncStateOrderByRelevanceFieldEnum = {
-  id: 'id',
-  resourceType: 'resourceType',
-  resourceId: 'resourceId',
-  tenantId: 'tenantId',
-  checksum: 'checksum',
-  syncedBy: 'syncedBy'
-};
-
-exports.Prisma.SyncConflictOrderByRelevanceFieldEnum = {
-  id: 'id',
-  resourceType: 'resourceType',
-  resourceId: 'resourceId',
-  tenantId: 'tenantId',
-  conflictType: 'conflictType',
-  resolvedBy: 'resolvedBy'
-};
 exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -1054,34 +781,92 @@ exports.Prisma.ModelName = {
   SyncState: 'SyncState',
   SyncConflict: 'SyncConflict'
 };
-
 /**
- * This is a stub Prisma Client that will error at runtime if called.
+ * Create the Client
  */
-class PrismaClient {
-  constructor() {
-    return new Proxy(this, {
-      get(target, prop) {
-        let message
-        const runtime = getRuntime()
-        if (runtime.isEdge) {
-          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
-- Use Prisma Accelerate: https://pris.ly/d/accelerate
-- Use Driver Adapters: https://pris.ly/d/driver-adapters
-`;
-        } else {
-          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
-        }
-
-        message += `
-If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
-
-        throw new Error(message)
+const config = {
+  "generator": {
+    "name": "client",
+    "provider": {
+      "fromEnvVar": null,
+      "value": "prisma-client-js"
+    },
+    "output": {
+      "value": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/generated/prisma",
+      "fromEnvVar": null
+    },
+    "config": {
+      "engineType": "library"
+    },
+    "binaryTargets": [
+      {
+        "fromEnvVar": null,
+        "value": "darwin",
+        "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-musl-openssl-3.0.x"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-musl-arm64-openssl-3.0.x"
       }
-    })
+    ],
+    "previewFeatures": [
+      "postgresqlExtensions"
+    ],
+    "sourceFilePath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/prisma/schema.prisma",
+    "isCustomOutput": true
+  },
+  "relativeEnvPaths": {
+    "rootEnvPath": null
+  },
+  "relativePath": "../../prisma",
+  "clientVersion": "6.17.1",
+  "engineVersion": "272a37d34178c2894197e17273bf937f25acdeac",
+  "datasourceNames": [
+    "db"
+  ],
+  "activeProvider": "postgresql",
+  "postinstall": false,
+  "inlineDatasources": {
+    "db": {
+      "url": {
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
+      }
+    }
+  },
+  "inlineSchema": "generator client {\n  provider        = \"prisma-client-js\"\n  output          = \"../generated/prisma\"\n  previewFeatures = [\"postgresqlExtensions\"]\n  binaryTargets   = [\"native\", \"linux-musl-openssl-3.0.x\", \"linux-musl-arm64-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// =============================================================================\n// USER MANAGEMENT\n// =============================================================================\n\nmodel User {\n  id             String     @id @default(uuid())\n  email          String     @unique\n  username       String?    @unique\n  name           String?\n  createdAt      DateTime   @default(now())\n  updatedAt      DateTime   @updatedAt\n  hashedPassword String\n  role           UserRole   @default(USER)\n  roles          UserRole[] @default([USER])\n  isActive       Boolean    @default(true)\n  lastLogin      DateTime?\n  preferences    Json?\n  refreshToken   String?\n  deletedAt      DateTime?\n  emailVerified  Boolean    @default(false)\n\n  // Relationships\n  agents        Agent[]\n  pipelines     Pipeline[]\n  tasks         Task[]\n  workflows     Workflow[]\n  chatRooms     ChatRoom[]\n  messages      Message[]\n  authSessions  AuthSession[]\n  loginAttempts LoginAttempt[]\n  authEvents    AuthEvent[]\n\n  @@map(\"users\")\n}\n\nenum UserRole {\n  USER\n  ADMIN\n  SUPER_ADMIN\n  AGENCY_OWNER\n  AGENCY_ADMIN\n  AGENCY_MANAGER\n  AGENT_OPERATOR\n}\n\n// =============================================================================\n// AUTHENTICATION\n// =============================================================================\n\nmodel AuthSession {\n  id        String   @id @default(uuid())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userId    String\n  token     String   @unique\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@map(\"auth_sessions\")\n}\n\nmodel LoginAttempt {\n  id         String   @id @default(uuid())\n  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userId     String\n  ipAddress  String\n  successful Boolean\n  createdAt  DateTime @default(now())\n\n  @@map(\"login_attempts\")\n}\n\nmodel AuthEvent {\n  id        String   @id @default(uuid())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userId    String\n  type      String\n  details   Json?\n  createdAt DateTime @default(now())\n\n  @@map(\"auth_events\")\n}\n\n// =============================================================================\n// AGENT SYSTEM\n// =============================================================================\n\nmodel Agent {\n  id           String            @id @default(uuid())\n  name         String\n  type         AgentType\n  status       AgentStatus       @default(INACTIVE)\n  description  String?\n  systemPrompt String?\n  config       Json?\n  capabilities AgentCapability[] @default([])\n  provider     String            @default(\"default\")\n  userId       String\n  createdAt    DateTime          @default(now())\n  updatedAt    DateTime          @updatedAt\n  deletedAt    DateTime?\n\n  // Relationships\n  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)\n  metadata       AgentMetadata?\n  nft            AgentNFT?\n  wallet         Wallet?\n  chats          Chat[]\n  messages       Message[]\n  codeExecutions CodeExecutionUsage[]\n  pipelines      Pipeline[]\n  tasksAssigned  Task[]               @relation(\"AgentTasks\")\n  workflows      Workflow[]\n  workflowSteps  WorkflowStep[]\n\n  @@map(\"agents\")\n}\n\nmodel AgentMetadata {\n  id       String @id @default(uuid())\n  agentId  String @unique\n  metadata Json   @default(\"{}\")\n  version  String @default(\"1.0.0\")\n  config   Json?\n\n  // Relationships\n  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)\n\n  @@map(\"agent_metadata\")\n}\n\nenum AgentType {\n  BASIC\n  CHAT\n  WORKFLOW\n  TASK\n  ASSISTANT\n  ANALYSIS\n  CONVERSATIONAL\n  IDE_EXTENSION\n  API\n}\n\nenum AgentStatus {\n  ACTIVE\n  INACTIVE\n  IDLE\n  BUSY\n  ERROR\n  OFFLINE\n  INITIALIZING\n  READY\n  TERMINATED\n}\n\nenum AgentCapability {\n  CODE_GENERATION\n  CODE_REVIEW\n  CODE_REFACTORING\n  CODE_EXECUTION\n  DEBUGGING\n  TESTING\n  DOCUMENTATION\n  ARCHITECTURE_DESIGN\n  OPTIMIZATION\n  SECURITY_AUDIT\n  PROJECT_MANAGEMENT\n  TOOL_USAGE\n  TASK_EXECUTION\n  FILE_MANAGEMENT\n  CODE_COMPLETION\n  CODE_SUGGESTIONS\n  SYNTAX_HIGHLIGHTING\n  ERROR_DETECTION\n  CODE_FORMATTING\n  INTELLISENSE\n  CHAT\n  WORKFLOW\n  RESEARCH\n  ANALYSIS\n  INTEGRATION\n}\n\n// =============================================================================\n// CHAT SYSTEM\n// =============================================================================\n\nmodel Chat {\n  id        String    @id @default(uuid())\n  title     String?\n  agentId   String\n  userId    String?\n  createdAt DateTime  @default(now())\n  updatedAt DateTime  @updatedAt\n  deletedAt DateTime?\n\n  // Relationships\n  agent    Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)\n  messages Message[]\n\n  @@map(\"chats\")\n}\n\nmodel ChatRoom {\n  id            String    @id @default(uuid())\n  name          String\n  description   String?\n  isPrivate     Boolean   @default(false)\n  owner         User      @relation(fields: [ownerId], references: [id])\n  ownerId       String\n  settings      Json?\n  metadata      Json?\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n  lastMessageAt DateTime?\n  isActive      Boolean   @default(true)\n  deletedAt     DateTime?\n\n  // Relationships\n  messages Message[]\n\n  @@map(\"chat_rooms\")\n}\n\nmodel Message {\n  id              String      @id @default(uuid())\n  content         String      @db.Text\n  role            MessageRole @default(USER)\n  sender          User?       @relation(fields: [senderId], references: [id])\n  senderId        String?\n  senderName      String? // For DTO compatibility - plain string sender\n  agent           Agent?      @relation(fields: [agentId], references: [id])\n  agentId         String?\n  chat            Chat?       @relation(fields: [chatId], references: [id])\n  chatId          String?\n  room            ChatRoom?   @relation(fields: [roomId], references: [id])\n  roomId          String?\n  parentMessage   Message?    @relation(\"MessageReplies\", fields: [parentMessageId], references: [id])\n  parentMessageId String?\n  replies         Message[]   @relation(\"MessageReplies\")\n  metadata        Json?\n  attachments     String[]    @default([])\n  timestamp       DateTime    @default(now())\n  updatedAt       DateTime    @updatedAt\n  isEdited        Boolean     @default(false)\n  isDeleted       Boolean     @default(false)\n  isEphemeral     Boolean     @default(false)\n  expiresAt       DateTime?\n  reactions       Json?\n\n  @@map(\"messages\")\n}\n\nmodel ChatMessage {\n  id        String      @id @default(uuid())\n  userId    String\n  role      MessageRole\n  content   String      @db.Text\n  expiresAt DateTime    @default(dbgenerated(\"NOW() + INTERVAL '7 days'\"))\n  createdAt DateTime    @default(now())\n  updatedAt DateTime    @updatedAt\n\n  @@map(\"chat_messages\")\n}\n\nenum MessageRole {\n  USER\n  AGENT\n  SYSTEM\n  ASSISTANT\n  TOOL\n}\n\n// =============================================================================\n// WORKFLOW SYSTEM\n// =============================================================================\n\nmodel Workflow {\n  id             String         @id @default(uuid())\n  name           String\n  description    String?\n  definition     Json? // Workflow definition JSON\n  status         WorkflowStatus @default(DRAFT)\n  creator        User?          @relation(fields: [creatorId], references: [id])\n  creatorId      String?\n  agent          Agent?         @relation(fields: [agentId], references: [id])\n  agentId        String?\n  metadata       Json?\n  isActive       Boolean        @default(true)\n  variables      Json?\n  triggers       Json?          @db.Json\n  createdAt      DateTime       @default(now())\n  updatedAt      DateTime       @updatedAt\n  lastExecutedAt DateTime?\n  executionCount Int            @default(0)\n  statistics     Json?\n  deletedAt      DateTime?\n\n  // Relationships\n  steps      WorkflowStep[]\n  executions WorkflowExecution[]\n\n  @@map(\"workflows\")\n}\n\nmodel WorkflowStep {\n  id              String    @id @default(uuid())\n  name            String\n  type            String\n  config          Json?\n  order           Int       @default(0)\n  workflow        Workflow? @relation(fields: [workflowId], references: [id])\n  workflowId      String?\n  agent           Agent?    @relation(fields: [agentId], references: [id])\n  agentId         String?\n  nextSteps       String[]\n  conditions      Json?\n  transformations Json?\n  metadata        Json?\n  isActive        Boolean   @default(true)\n  createdAt       DateTime  @default(now())\n  updatedAt       DateTime  @updatedAt\n  lastExecutedAt  DateTime?\n  statistics      Json?\n\n  @@map(\"workflow_steps\")\n}\n\nmodel WorkflowExecution {\n  id          String                  @id @default(uuid())\n  workflow    Workflow                @relation(fields: [workflowId], references: [id])\n  workflowId  String\n  status      WorkflowExecutionStatus @default(PENDING)\n  input       Json?\n  output      Json?\n  error       String?\n  startedAt   DateTime                @default(now())\n  completedAt DateTime?\n\n  @@map(\"workflow_executions\")\n}\n\nenum WorkflowStatus {\n  DRAFT\n  PUBLISHED\n  ARCHIVED\n  ACTIVE\n  PAUSED\n  COMPLETED\n  FAILED\n}\n\nenum WorkflowExecutionStatus {\n  PENDING\n  RUNNING\n  COMPLETED\n  FAILED\n  CANCELLED\n}\n\n// =============================================================================\n// PIPELINE SYSTEM\n// =============================================================================\n\nmodel Pipeline {\n  id            String         @id @default(uuid())\n  name          String\n  description   String?\n  configuration Json?\n  status        PipelineStatus @default(DRAFT)\n  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userId        String\n  agent         Agent          @relation(fields: [agentId], references: [id])\n  agentId       String\n  createdAt     DateTime       @default(now())\n  updatedAt     DateTime       @updatedAt\n  deletedAt     DateTime?\n\n  // Relationships\n  tasks Task[]\n\n  @@map(\"pipelines\")\n}\n\nenum PipelineStatus {\n  DRAFT\n  ACTIVE\n  PAUSED\n  COMPLETED\n  FAILED\n}\n\n// =============================================================================\n// TASK SYSTEM\n// =============================================================================\n\nmodel Task {\n  id           String       @id @default(uuid())\n  title        String?\n  description  String?\n  type         String\n  status       TaskStatus   @default(PENDING)\n  priority     TaskPriority @default(MEDIUM)\n  data         Json?\n  result       Json?\n  error        String?\n  startTime    DateTime?\n  endTime      DateTime?\n  pipeline     Pipeline?    @relation(fields: [pipelineId], references: [id])\n  pipelineId   String?\n  assignedTo   Agent?       @relation(\"AgentTasks\", fields: [assignedToId], references: [id])\n  assignedToId String?\n  user         User         @relation(fields: [userId], references: [id])\n  userId       String\n  createdAt    DateTime     @default(now())\n  updatedAt    DateTime     @updatedAt\n  deletedAt    DateTime?\n  metadata     Json?\n\n  // Relationships\n  taskExecutions TaskExecution[]\n\n  @@map(\"tasks\")\n}\n\nmodel TaskExecution {\n  id          String    @id @default(uuid())\n  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)\n  taskId      String\n  status      String\n  output      Json?\n  error       String?\n  startedAt   DateTime  @default(now())\n  completedAt DateTime?\n\n  @@map(\"task_executions\")\n}\n\nenum TaskStatus {\n  PENDING\n  IN_PROGRESS\n  COMPLETED\n  FAILED\n  CANCELLED\n}\n\nenum TaskPriority {\n  LOW\n  MEDIUM\n  HIGH\n  URGENT\n}\n\n// =============================================================================\n// CODE EXECUTION SYSTEM\n// =============================================================================\n\nmodel CodeExecutionUsage {\n  id            String                @id @default(uuid())\n  agentId       String\n  clientId      String\n  executionId   String                @unique\n  language      CodeExecutionLanguage\n  code          String                @db.Text\n  result        Json?\n  output        Json?\n  error         Json?\n  executionTime Int // in milliseconds\n  memoryUsage   Int // in bytes\n  computeUnits  Float\n  cost          Float\n  tier          CodeExecutionTier\n  environment   String\n  status        CodeExecutionStatus\n  createdAt     DateTime              @default(now())\n  completedAt   DateTime?\n\n  // Relationships\n  agent Agent @relation(fields: [agentId], references: [id])\n\n  @@index([agentId])\n  @@index([clientId])\n  @@index([createdAt])\n  @@index([language])\n  @@index([tier])\n  @@index([status])\n  @@map(\"code_execution_usage\")\n}\n\nmodel CodeExecutionSession {\n  id            String    @id @default(uuid())\n  name          String\n  description   String?\n  ownerId       String\n  collaborators String[]\n  isPublic      Boolean   @default(false)\n  files         Json // Array of file objects\n  environment   Json // Environment configuration\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n  expiresAt     DateTime?\n  storageUsage  Int       @default(0) // in bytes\n\n  @@map(\"code_execution_sessions\")\n}\n\nenum CodeExecutionLanguage {\n  JAVASCRIPT\n  TYPESCRIPT\n  PYTHON\n  RUBY\n  SHELL\n  HTML\n  CSS\n}\n\nenum CodeExecutionTier {\n  BASIC\n  STANDARD\n  PREMIUM\n  ENTERPRISE\n}\n\nenum CodeExecutionStatus {\n  PENDING\n  RUNNING\n  COMPLETED\n  FAILED\n  TIMEOUT\n  CANCELLED\n}\n\n// =============================================================================\n// NFT AND MARKETPLACE MODELS\n// =============================================================================\n\nmodel AgentNFT {\n  id                  String   @id @default(uuid())\n  agentId             String   @unique\n  tokenId             Int      @unique\n  contractAddress     String\n  smartAccountAddress String?\n  isFractionalized    Boolean  @default(false)\n  totalShares         Int      @default(0)\n  metadataUri         String?\n  createdAt           DateTime @default(now())\n  updatedAt           DateTime @updatedAt\n\n  agent               Agent?               @relation(fields: [agentId], references: [id])\n  fractionalShares    FractionalShare[]\n  revenueStreams      RevenueStream[]\n  marketplaceListings MarketplaceListing[]\n\n  @@map(\"agent_nfts\")\n}\n\nmodel FractionalShare {\n  id           String   @id @default(uuid())\n  agentNFTId   String\n  ownerAddress String\n  shareAmount  Decimal\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  agentNFT AgentNFT @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)\n\n  @@map(\"fractional_shares\")\n}\n\nmodel RevenueStream {\n  id                    String   @id @default(uuid())\n  agentNFTId            String\n  streamName            String\n  description           String?\n  tokenAddress          String\n  totalRevenue          Decimal\n  distributedRevenue    Decimal\n  distributionThreshold Decimal\n  isActive              Boolean  @default(true)\n  createdAt             DateTime @default(now())\n  updatedAt             DateTime @updatedAt\n\n  agentNFT      AgentNFT              @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)\n  distributions RevenueDistribution[]\n\n  @@map(\"revenue_streams\")\n}\n\nmodel RevenueDistribution {\n  id              String   @id @default(uuid())\n  revenueStreamId String\n  txHash          String\n  totalAmount     Decimal\n  distributedTo   Json\n  blockNumber     Int\n  createdAt       DateTime @default(now())\n\n  revenueStream RevenueStream @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)\n\n  @@map(\"revenue_distributions\")\n}\n\nmodel MarketplaceListing {\n  id            String            @id @default(uuid())\n  agentNFTId    String\n  listingId     Int               @unique\n  seller        String\n  shareAmount   Decimal\n  pricePerShare Decimal\n  totalPrice    Decimal\n  status        MarketplaceStatus @default(ACTIVE)\n  expiresAt     DateTime?\n  createdAt     DateTime          @default(now())\n  updatedAt     DateTime          @updatedAt\n\n  agentNFT AgentNFT           @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)\n  offers   MarketplaceOffer[]\n\n  @@map(\"marketplace_listings\")\n}\n\nmodel MarketplaceOffer {\n  id          String      @id @default(uuid())\n  listingId   String\n  buyer       String\n  shareAmount Decimal\n  offerPrice  Decimal\n  status      OfferStatus @default(PENDING)\n  expiresAt   DateTime?\n  createdAt   DateTime    @default(now())\n  updatedAt   DateTime    @updatedAt\n\n  listing MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)\n\n  @@map(\"marketplace_offers\")\n}\n\nenum MarketplaceStatus {\n  ACTIVE\n  SOLD\n  CANCELLED\n  EXPIRED\n}\n\nenum OfferStatus {\n  PENDING\n  ACCEPTED\n  REJECTED\n  CANCELLED\n  EXPIRED\n}\n\n// =============================================================================\n// WALLET AND TRANSACTION MODELS\n// =============================================================================\n\nmodel Wallet {\n  id           String     @id @default(uuid())\n  address      String     @unique\n  agentId      String?    @unique\n  type         WalletType @default(SMART_ACCOUNT)\n  balance      Decimal    @default(0)\n  nonce        Int        @default(0)\n  isActive     Boolean    @default(true)\n  lastActivity DateTime?\n  createdAt    DateTime   @default(now())\n  updatedAt    DateTime   @updatedAt\n\n  agent        Agent?        @relation(fields: [agentId], references: [id])\n  transactions Transaction[]\n\n  @@map(\"wallets\")\n}\n\nmodel Transaction {\n  id          String            @id @default(uuid())\n  hash        String            @unique\n  walletId    String\n  fromAddress String\n  toAddress   String\n  value       Decimal\n  gasPrice    Decimal\n  gasUsed     Int\n  gasLimit    Int\n  status      TransactionStatus @default(PENDING)\n  blockNumber Int?\n  blockHash   String?\n  type        TransactionType   @default(TRANSFER)\n  data        Json?\n  createdAt   DateTime          @default(now())\n  confirmedAt DateTime?\n\n  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)\n\n  @@index([walletId])\n  @@index([hash])\n  @@index([status])\n  @@index([createdAt])\n  @@map(\"transactions\")\n}\n\nenum WalletType {\n  SMART_ACCOUNT\n  EOA\n  MULTI_SIG\n}\n\nenum TransactionStatus {\n  PENDING\n  CONFIRMED\n  FAILED\n  CANCELLED\n}\n\nenum TransactionType {\n  TRANSFER\n  CONTRACT_CALL\n  CONTRACT_DEPLOYMENT\n  NFT_MINT\n  NFT_TRANSFER\n}\n\n// =============================================================================\n// ENTITY REGISTRY\n// =============================================================================\n\nmodel RegisteredEntity {\n  id           String               @id @default(uuid())\n  name         String\n  type         RegisteredEntityType\n  description  String?\n  metadata     Json?\n  config       Json?\n  status       EntityStatus         @default(ACTIVE)\n  version      String               @default(\"1.0.0\")\n  namespace    String?\n  tags         String[]             @default([])\n  capabilities String[]             @default([])\n  dependencies String[]             @default([])\n  isPublic     Boolean              @default(false)\n  ownerId      String?\n  createdAt    DateTime             @default(now())\n  updatedAt    DateTime             @updatedAt\n  deletedAt    DateTime?\n\n  @@map(\"registered_entities\")\n}\n\nenum RegisteredEntityType {\n  AGENT\n  WORKFLOW\n  TOOL\n  SERVICE\n  INTEGRATION\n  TEMPLATE\n  COMPONENT\n  MODULE\n}\n\nenum EntityStatus {\n  ACTIVE\n  INACTIVE\n  DEPRECATED\n  PENDING\n  FAILED\n}\n\n// =============================================================================\n// LLM CONFIGURATION\n// =============================================================================\n\nmodel LLMConfig {\n  id          String    @id @default(uuid())\n  name        String\n  provider    String\n  modelName   String\n  apiKey      String // Should be encrypted in production\n  apiEndpoint String?\n  isCustom    Boolean   @default(false)\n  enabled     Boolean   @default(true)\n  priority    Int       @default(10)\n  retryConfig Json?\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n  deletedAt   DateTime?\n\n  @@map(\"llm_configs\")\n}\n\n// =============================================================================\n// MONITORING AND METRICS\n// =============================================================================\n\nmodel BusinessMetric {\n  id        String   @id @default(uuid())\n  name      String\n  value     Float\n  tags      Json?\n  createdAt DateTime @default(now())\n\n  @@map(\"business_metrics\")\n}\n\nmodel ErrorLog {\n  id        String   @id @default(uuid())\n  message   String\n  stack     String?\n  context   Json?\n  createdAt DateTime @default(now())\n\n  @@map(\"error_logs\")\n}\n\n// =============================================================================\n// SYNC SYSTEM\n// =============================================================================\n\nmodel SyncState {\n  id           String   @id @default(uuid())\n  resourceType String\n  resourceId   String\n  tenantId     String?\n  version      Int\n  checksum     String\n  lastSync     DateTime\n  syncedBy     String\n  metadata     Json\n\n  @@unique([resourceType, resourceId, tenantId])\n  @@map(\"sync_states\")\n}\n\nmodel SyncConflict {\n  id            String    @id @default(uuid())\n  resourceType  String\n  resourceId    String\n  tenantId      String?\n  conflictType  String\n  localVersion  Json\n  remoteVersion Json\n  createdAt     DateTime  @default(now())\n  resolvedAt    DateTime?\n  resolvedBy    String?\n  resolution    Json?\n\n  @@map(\"sync_conflicts\")\n}\n",
+  "inlineSchemaHash": "cac8a0daa926b4e8951a343ab97105d56a1d2190b0ff6741982a3429d98de87b",
+  "copyEngine": true
+}
+config.dirname = '/'
+
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"hashedPassword\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"roles\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"preferences\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"refreshToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"agents\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToUser\"},{\"name\":\"pipelines\",\"kind\":\"object\",\"type\":\"Pipeline\",\"relationName\":\"PipelineToUser\"},{\"name\":\"tasks\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"TaskToUser\"},{\"name\":\"workflows\",\"kind\":\"object\",\"type\":\"Workflow\",\"relationName\":\"UserToWorkflow\"},{\"name\":\"chatRooms\",\"kind\":\"object\",\"type\":\"ChatRoom\",\"relationName\":\"ChatRoomToUser\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"MessageToUser\"},{\"name\":\"authSessions\",\"kind\":\"object\",\"type\":\"AuthSession\",\"relationName\":\"AuthSessionToUser\"},{\"name\":\"loginAttempts\",\"kind\":\"object\",\"type\":\"LoginAttempt\",\"relationName\":\"LoginAttemptToUser\"},{\"name\":\"authEvents\",\"kind\":\"object\",\"type\":\"AuthEvent\",\"relationName\":\"AuthEventToUser\"}],\"dbName\":\"users\"},\"AuthSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AuthSessionToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"auth_sessions\"},\"LoginAttempt\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"LoginAttemptToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"successful\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"login_attempts\"},\"AuthEvent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AuthEventToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"details\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"auth_events\"},\"Agent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"AgentType\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"AgentStatus\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"systemPrompt\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"config\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"capabilities\",\"kind\":\"enum\",\"type\":\"AgentCapability\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AgentToUser\"},{\"name\":\"metadata\",\"kind\":\"object\",\"type\":\"AgentMetadata\",\"relationName\":\"AgentToAgentMetadata\"},{\"name\":\"nft\",\"kind\":\"object\",\"type\":\"AgentNFT\",\"relationName\":\"AgentToAgentNFT\"},{\"name\":\"wallet\",\"kind\":\"object\",\"type\":\"Wallet\",\"relationName\":\"AgentToWallet\"},{\"name\":\"chats\",\"kind\":\"object\",\"type\":\"Chat\",\"relationName\":\"AgentToChat\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"AgentToMessage\"},{\"name\":\"codeExecutions\",\"kind\":\"object\",\"type\":\"CodeExecutionUsage\",\"relationName\":\"AgentToCodeExecutionUsage\"},{\"name\":\"pipelines\",\"kind\":\"object\",\"type\":\"Pipeline\",\"relationName\":\"AgentToPipeline\"},{\"name\":\"tasksAssigned\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"AgentTasks\"},{\"name\":\"workflows\",\"kind\":\"object\",\"type\":\"Workflow\",\"relationName\":\"AgentToWorkflow\"},{\"name\":\"workflowSteps\",\"kind\":\"object\",\"type\":\"WorkflowStep\",\"relationName\":\"AgentToWorkflowStep\"}],\"dbName\":\"agents\"},\"AgentMetadata\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"version\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"config\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToAgentMetadata\"}],\"dbName\":\"agent_metadata\"},\"Chat\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToChat\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"ChatToMessage\"}],\"dbName\":\"chats\"},\"ChatRoom\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isPrivate\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"owner\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ChatRoomToUser\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"settings\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastMessageAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"ChatRoomToMessage\"}],\"dbName\":\"chat_rooms\"},\"Message\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"MessageRole\"},{\"name\":\"sender\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"MessageToUser\"},{\"name\":\"senderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"senderName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToMessage\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"chat\",\"kind\":\"object\",\"type\":\"Chat\",\"relationName\":\"ChatToMessage\"},{\"name\":\"chatId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"room\",\"kind\":\"object\",\"type\":\"ChatRoom\",\"relationName\":\"ChatRoomToMessage\"},{\"name\":\"roomId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parentMessage\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"MessageReplies\"},{\"name\":\"parentMessageId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"replies\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"MessageReplies\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"attachments\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"timestamp\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isEdited\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isDeleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isEphemeral\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"reactions\",\"kind\":\"scalar\",\"type\":\"Json\"}],\"dbName\":\"messages\"},\"ChatMessage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"MessageRole\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"chat_messages\"},\"Workflow\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"definition\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"WorkflowStatus\"},{\"name\":\"creator\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToWorkflow\"},{\"name\":\"creatorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToWorkflow\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"variables\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"triggers\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastExecutedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"executionCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"statistics\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"steps\",\"kind\":\"object\",\"type\":\"WorkflowStep\",\"relationName\":\"WorkflowToWorkflowStep\"},{\"name\":\"executions\",\"kind\":\"object\",\"type\":\"WorkflowExecution\",\"relationName\":\"WorkflowToWorkflowExecution\"}],\"dbName\":\"workflows\"},\"WorkflowStep\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"config\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"order\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"workflow\",\"kind\":\"object\",\"type\":\"Workflow\",\"relationName\":\"WorkflowToWorkflowStep\"},{\"name\":\"workflowId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToWorkflowStep\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"nextSteps\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"conditions\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"transformations\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastExecutedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"statistics\",\"kind\":\"scalar\",\"type\":\"Json\"}],\"dbName\":\"workflow_steps\"},\"WorkflowExecution\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"workflow\",\"kind\":\"object\",\"type\":\"Workflow\",\"relationName\":\"WorkflowToWorkflowExecution\"},{\"name\":\"workflowId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"WorkflowExecutionStatus\"},{\"name\":\"input\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"output\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"error\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"completedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"workflow_executions\"},\"Pipeline\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"configuration\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PipelineStatus\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PipelineToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToPipeline\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"tasks\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"PipelineToTask\"}],\"dbName\":\"pipelines\"},\"Task\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TaskStatus\"},{\"name\":\"priority\",\"kind\":\"enum\",\"type\":\"TaskPriority\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"result\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"error\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startTime\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endTime\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"pipeline\",\"kind\":\"object\",\"type\":\"Pipeline\",\"relationName\":\"PipelineToTask\"},{\"name\":\"pipelineId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"assignedTo\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentTasks\"},{\"name\":\"assignedToId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TaskToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"taskExecutions\",\"kind\":\"object\",\"type\":\"TaskExecution\",\"relationName\":\"TaskToTaskExecution\"}],\"dbName\":\"tasks\"},\"TaskExecution\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"task\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"TaskToTaskExecution\"},{\"name\":\"taskId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"output\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"error\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"completedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"task_executions\"},\"CodeExecutionUsage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"clientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"executionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"language\",\"kind\":\"enum\",\"type\":\"CodeExecutionLanguage\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"result\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"output\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"error\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"executionTime\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"memoryUsage\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"computeUnits\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"cost\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"tier\",\"kind\":\"enum\",\"type\":\"CodeExecutionTier\"},{\"name\":\"environment\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"CodeExecutionStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"completedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToCodeExecutionUsage\"}],\"dbName\":\"code_execution_usage\"},\"CodeExecutionSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"collaborators\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isPublic\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"files\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"environment\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"storageUsage\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":\"code_execution_sessions\"},\"AgentNFT\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tokenId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"contractAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"smartAccountAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isFractionalized\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"totalShares\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"metadataUri\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToAgentNFT\"},{\"name\":\"fractionalShares\",\"kind\":\"object\",\"type\":\"FractionalShare\",\"relationName\":\"AgentNFTToFractionalShare\"},{\"name\":\"revenueStreams\",\"kind\":\"object\",\"type\":\"RevenueStream\",\"relationName\":\"AgentNFTToRevenueStream\"},{\"name\":\"marketplaceListings\",\"kind\":\"object\",\"type\":\"MarketplaceListing\",\"relationName\":\"AgentNFTToMarketplaceListing\"}],\"dbName\":\"agent_nfts\"},\"FractionalShare\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentNFTId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ownerAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shareAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"agentNFT\",\"kind\":\"object\",\"type\":\"AgentNFT\",\"relationName\":\"AgentNFTToFractionalShare\"}],\"dbName\":\"fractional_shares\"},\"RevenueStream\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentNFTId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"streamName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tokenAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalRevenue\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"distributedRevenue\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"distributionThreshold\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"agentNFT\",\"kind\":\"object\",\"type\":\"AgentNFT\",\"relationName\":\"AgentNFTToRevenueStream\"},{\"name\":\"distributions\",\"kind\":\"object\",\"type\":\"RevenueDistribution\",\"relationName\":\"RevenueDistributionToRevenueStream\"}],\"dbName\":\"revenue_streams\"},\"RevenueDistribution\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"revenueStreamId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"txHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"distributedTo\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"blockNumber\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"revenueStream\",\"kind\":\"object\",\"type\":\"RevenueStream\",\"relationName\":\"RevenueDistributionToRevenueStream\"}],\"dbName\":\"revenue_distributions\"},\"MarketplaceListing\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentNFTId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"listingId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"seller\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shareAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"pricePerShare\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"totalPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"MarketplaceStatus\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"agentNFT\",\"kind\":\"object\",\"type\":\"AgentNFT\",\"relationName\":\"AgentNFTToMarketplaceListing\"},{\"name\":\"offers\",\"kind\":\"object\",\"type\":\"MarketplaceOffer\",\"relationName\":\"MarketplaceListingToMarketplaceOffer\"}],\"dbName\":\"marketplace_listings\"},\"MarketplaceOffer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"listingId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"buyer\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shareAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"offerPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"OfferStatus\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"listing\",\"kind\":\"object\",\"type\":\"MarketplaceListing\",\"relationName\":\"MarketplaceListingToMarketplaceOffer\"}],\"dbName\":\"marketplace_offers\"},\"Wallet\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"agentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"WalletType\"},{\"name\":\"balance\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"nonce\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"lastActivity\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"agent\",\"kind\":\"object\",\"type\":\"Agent\",\"relationName\":\"AgentToWallet\"},{\"name\":\"transactions\",\"kind\":\"object\",\"type\":\"Transaction\",\"relationName\":\"TransactionToWallet\"}],\"dbName\":\"wallets\"},\"Transaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"walletId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fromAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"toAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"gasPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"gasUsed\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"gasLimit\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TransactionStatus\"},{\"name\":\"blockNumber\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"blockHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"TransactionType\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"confirmedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"wallet\",\"kind\":\"object\",\"type\":\"Wallet\",\"relationName\":\"TransactionToWallet\"}],\"dbName\":\"transactions\"},\"RegisteredEntity\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"RegisteredEntityType\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"config\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"EntityStatus\"},{\"name\":\"version\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"namespace\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tags\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"capabilities\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dependencies\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isPublic\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"ownerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"registered_entities\"},\"LLMConfig\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"modelName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"apiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"apiEndpoint\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isCustom\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"priority\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"retryConfig\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"llm_configs\"},\"BusinessMetric\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"tags\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"business_metrics\"},\"ErrorLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stack\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"context\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"error_logs\"},\"SyncState\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resourceType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resourceId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"version\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"checksum\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastSync\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"syncedBy\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"}],\"dbName\":\"sync_states\"},\"SyncConflict\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resourceType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resourceId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"conflictType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"localVersion\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"remoteVersion\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"resolvedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"resolvedBy\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resolution\",\"kind\":\"scalar\",\"type\":\"Json\"}],\"dbName\":\"sync_conflicts\"}},\"enums\":{},\"types\":{}}")
+defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
+config.engineWasm = {
+  getRuntime: async () => require('./query_engine_bg.js'),
+  getQueryEngineWasmModule: async () => {
+    const loader = (await import('#wasm-engine-loader')).default
+    const engine = (await loader).default
+    return engine
   }
 }
+config.compilerWasm = undefined
 
+config.injectableEdgeEnv = () => ({
+  parsed: {
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+  }
+})
+
+if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
+  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
+}
+
+const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-
 Object.assign(exports, Prisma)
+
