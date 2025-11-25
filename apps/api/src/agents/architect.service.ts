@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import { PrismaService } from '../services/prisma.service';
 
 interface ArchitectureDecision {
   id: string;
@@ -59,7 +57,8 @@ export class ArchitectAgentService {
       id: 'arch-001',
       title: 'Optimize Monorepo Package Dependencies',
       type: 'optimization',
-      description: 'Streamline package dependencies to reduce build times and improve development experience',
+      description:
+        'Streamline package dependencies to reduce build times and improve development experience',
       rationale: 'Current monorepo has complex interdependencies that slow down builds',
       benefits: [
         'Faster build times',
@@ -67,10 +66,7 @@ export class ArchitectAgentService {
         'Reduced CI/CD time',
         'Clearer module boundaries',
       ],
-      tradeoffs: [
-        'Initial refactoring effort required',
-        'May need to update import paths',
-      ],
+      tradeoffs: ['Initial refactoring effort required', 'May need to update import paths'],
       effort: 'medium',
       impact: 8,
       dependencies: [],
@@ -93,7 +89,8 @@ export class ArchitectAgentService {
       id: 'arch-002',
       title: 'Implement Multi-Layer Caching Strategy',
       type: 'performance',
-      description: 'Add Redis caching for frequently accessed data and implement in-memory caching for hot paths',
+      description:
+        'Add Redis caching for frequently accessed data and implement in-memory caching for hot paths',
       rationale: 'Current system makes redundant database queries for static data',
       benefits: [
         'Reduced database load',
@@ -117,10 +114,7 @@ export class ArchitectAgentService {
           'Implement cache invalidation',
           'Add monitoring for cache hit/miss rates',
         ],
-        affectedFiles: [
-          'apps/api/src/cache/*',
-          'apps/api/src/services/*',
-        ],
+        affectedFiles: ['apps/api/src/cache/*', 'apps/api/src/services/*'],
         estimatedTime: '3-4 days',
       },
     });
@@ -131,17 +125,14 @@ export class ArchitectAgentService {
       title: 'Enhanced Agent Communication Protocol',
       type: 'feature',
       description: 'Implement pub/sub pattern for agent-to-agent communication',
-      rationale: 'Current point-to-point communication doesn\'t scale well',
+      rationale: "Current point-to-point communication doesn't scale well",
       benefits: [
         'Better agent coordination',
         'Asynchronous communication',
         'Event-driven architecture',
         'Easier to add new agents',
       ],
-      tradeoffs: [
-        'More complex debugging',
-        'Need message broker infrastructure',
-      ],
+      tradeoffs: ['More complex debugging', 'Need message broker infrastructure'],
       effort: 'high',
       impact: 10,
       dependencies: [],
@@ -153,10 +144,7 @@ export class ArchitectAgentService {
           'Add message persistence',
           'Implement dead letter queue',
         ],
-        affectedFiles: [
-          'packages/a2a-core/*',
-          'apps/api/src/agents/*',
-        ],
+        affectedFiles: ['packages/a2a-core/*', 'apps/api/src/agents/*'],
         estimatedTime: '5-7 days',
       },
     });
@@ -174,10 +162,7 @@ export class ArchitectAgentService {
         'Improved code documentation',
         'Safer refactoring',
       ],
-      tradeoffs: [
-        'Initial compilation errors to fix',
-        'More verbose type definitions',
-      ],
+      tradeoffs: ['Initial compilation errors to fix', 'More verbose type definitions'],
       effort: 'high',
       impact: 7,
       dependencies: [],
@@ -200,15 +185,8 @@ export class ArchitectAgentService {
       type: 'scalability',
       description: 'Add versioning to APIs to support backward compatibility',
       rationale: 'No versioning strategy makes it difficult to evolve APIs',
-      benefits: [
-        'Backward compatibility',
-        'Easier API evolution',
-        'Better client experience',
-      ],
-      tradeoffs: [
-        'Multiple versions to maintain',
-        'Increased complexity',
-      ],
+      benefits: ['Backward compatibility', 'Easier API evolution', 'Better client experience'],
+      tradeoffs: ['Multiple versions to maintain', 'Increased complexity'],
       effort: 'medium',
       impact: 6,
       dependencies: [],
@@ -324,7 +302,7 @@ export class ArchitectAgentService {
     this.logger.log(`Creating implementation plan for decision: ${decisionId}`);
 
     const review = await this.reviewArchitecture();
-    const decision = review.decisions.find(d => d.id === decisionId);
+    const decision = review.decisions.find((d) => d.id === decisionId);
 
     if (!decision) {
       this.logger.warn(`Decision not found: ${decisionId}`);
@@ -336,13 +314,15 @@ export class ArchitectAgentService {
     return decision;
   }
 
-  async suggestNewCapabilities(): Promise<Array<{name: string; description: string; value: string}>> {
+  async suggestNewCapabilities(): Promise<
+    Array<{ name: string; description: string; value: string }>
+  > {
     this.logger.log('Suggesting new framework capabilities...');
     const review = await this.reviewArchitecture();
     return review.capabilities;
   }
 
-  private async storeReview(review: ArchitectureReview): Promise<void> {
+  private async storeReview(_review: ArchitectureReview): Promise<void> {
     try {
       this.logger.log('Storing architecture review in database...');
       // Store in database

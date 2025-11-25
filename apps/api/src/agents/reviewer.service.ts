@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { PrismaService } from '../services/prisma.service';
 
 interface CodeReview {
   implementationId: string;
@@ -141,13 +141,17 @@ export class ReviewerAgentService {
             type: 'SQL Injection',
             severity: 'critical',
             description: 'Raw SQL with string interpolation can lead to SQL injection',
-            recommendation: 'Use parameterized queries or Prisma\'s type-safe query builder',
+            recommendation: "Use parameterized queries or Prisma's type-safe query builder",
             cwe: 'CWE-89',
           });
         }
 
         // 2. Hardcoded secrets
-        if (line.match(/password|secret|key|token/i) && line.includes('=') && line.match(/["'][^"']+["']/)) {
+        if (
+          line.match(/password|secret|key|token/i) &&
+          line.includes('=') &&
+          line.match(/["'][^"']+["']/)
+        ) {
           security.push({
             file: filePath,
             line: lineNumber,
@@ -202,8 +206,9 @@ export class ReviewerAgentService {
 
         // 6. Missing error handling
         if (line.includes('await') && !line.includes('try')) {
-          const hasErrorHandling = lines.slice(Math.max(0, index - 5), index + 5)
-            .some(l => l.includes('try') || l.includes('catch'));
+          const hasErrorHandling = lines
+            .slice(Math.max(0, index - 5), index + 5)
+            .some((l) => l.includes('try') || l.includes('catch'));
 
           if (!hasErrorHandling) {
             findings.push({
@@ -218,7 +223,11 @@ export class ReviewerAgentService {
         }
 
         // 7. Console statements
-        if (line.includes('console.') && !filePath.includes('.test.') && !filePath.includes('.spec.')) {
+        if (
+          line.includes('console.') &&
+          !filePath.includes('.test.') &&
+          !filePath.includes('.spec.')
+        ) {
           findings.push({
             file: filePath,
             line: lineNumber,
@@ -309,9 +318,10 @@ export class ReviewerAgentService {
       }
     }
 
-    const percentage = filesModified.length > 0
-      ? ((filesModified.length - missingTests.length) / filesModified.length) * 100
-      : 100;
+    const percentage =
+      filesModified.length > 0
+        ? ((filesModified.length - missingTests.length) / filesModified.length) * 100
+        : 100;
 
     return {
       percentage: Math.round(percentage),
@@ -319,7 +329,9 @@ export class ReviewerAgentService {
     };
   }
 
-  private async calculateQualityMetrics(filesModified: string[]): Promise<CodeReview['qualityMetrics']> {
+  private async calculateQualityMetrics(
+    filesModified: string[]
+  ): Promise<CodeReview['qualityMetrics']> {
     let totalComplexity = 0;
     let totalMaintainability = 0;
     let totalReadability = 0;
@@ -336,11 +348,11 @@ export class ReviewerAgentService {
         const hasTypes = content.includes(': ') && !content.includes(': any');
         const hasDocs = content.includes('/**');
 
-        totalComplexity += Math.min(100, 100 - (avgLineLength / 2));
+        totalComplexity += Math.min(100, 100 - avgLineLength / 2);
         totalMaintainability += hasTypes ? 80 : 40;
         totalReadability += hasDocs ? 90 : 50;
         totalTestability += 70;
-      } catch (error) {
+      } catch (_error) {
         this.logger.warn(`Failed to calculate metrics for ${file}`);
       }
     }
@@ -364,14 +376,14 @@ export class ReviewerAgentService {
     let score = 100;
 
     // Deduct for findings
-    params.findings.forEach(f => {
+    params.findings.forEach((f) => {
       if (f.severity === 'error') score -= 10;
       else if (f.severity === 'warning') score -= 5;
       else score -= 1;
     });
 
     // Deduct for security issues
-    params.securityIssues.forEach(s => {
+    params.securityIssues.forEach((s) => {
       if (s.severity === 'critical') score -= 30;
       else if (s.severity === 'high') score -= 20;
       else if (s.severity === 'medium') score -= 10;
@@ -379,17 +391,17 @@ export class ReviewerAgentService {
     });
 
     // Factor in test coverage (20% weight)
-    score = score * 0.8 + (params.testCoverage.percentage * 0.2);
+    score = score * 0.8 + params.testCoverage.percentage * 0.2;
 
     // Factor in quality metrics (10% weight)
-    const avgQuality = (
-      params.qualityMetrics.complexity +
-      params.qualityMetrics.maintainability +
-      params.qualityMetrics.readability +
-      params.qualityMetrics.testability
-    ) / 4;
+    const avgQuality =
+      (params.qualityMetrics.complexity +
+        params.qualityMetrics.maintainability +
+        params.qualityMetrics.readability +
+        params.qualityMetrics.testability) /
+      4;
 
-    score = score * 0.9 + (avgQuality * 0.1);
+    score = score * 0.9 + avgQuality * 0.1;
 
     return Math.max(0, Math.round(score));
   }
@@ -399,7 +411,7 @@ export class ReviewerAgentService {
     securityIssues: SecurityIssue[],
     testCoverage: CodeReview['testCoverage']
   ): CodeReview['decision'] {
-    const hasCriticalSecurity = securityIssues.some(s => s.severity === 'critical');
+    const hasCriticalSecurity = securityIssues.some((s) => s.severity === 'critical');
 
     if (hasCriticalSecurity) {
       return 'reject';
@@ -429,27 +441,29 @@ export class ReviewerAgentService {
 
     if (params.securityIssues.length > 0) {
       sections.push(`### Security Issues (${params.securityIssues.length})`);
-      params.securityIssues.forEach(issue => {
-        sections.push(`- [${issue.severity.toUpperCase()}] ${issue.description} (${issue.file}:${issue.line})`);
+      params.securityIssues.forEach((issue) => {
+        sections.push(
+          `- [${issue.severity.toUpperCase()}] ${issue.description} (${issue.file}:${issue.line})`
+        );
       });
       sections.push('');
     }
 
     if (params.findings.length > 0) {
       sections.push(`### Code Quality Findings (${params.findings.length})`);
-      const errors = params.findings.filter(f => f.severity === 'error');
-      const warnings = params.findings.filter(f => f.severity === 'warning');
+      const errors = params.findings.filter((f) => f.severity === 'error');
+      const warnings = params.findings.filter((f) => f.severity === 'warning');
 
       if (errors.length > 0) {
         sections.push(`#### Errors (${errors.length})`);
-        errors.slice(0, 5).forEach(f => {
+        errors.slice(0, 5).forEach((f) => {
           sections.push(`- ${f.description} (${f.file}:${f.line})`);
         });
       }
 
       if (warnings.length > 0) {
         sections.push(`#### Warnings (${warnings.length})`);
-        warnings.slice(0, 5).forEach(f => {
+        warnings.slice(0, 5).forEach((f) => {
           sections.push(`- ${f.description} (${f.file}:${f.line})`);
         });
       }
@@ -475,7 +489,7 @@ export class ReviewerAgentService {
   private generateSuggestions(findings: ReviewFinding[]): string[] {
     const suggestions = new Map<string, number>();
 
-    findings.forEach(finding => {
+    findings.forEach((finding) => {
       const key = finding.suggestion;
       suggestions.set(key, (suggestions.get(key) || 0) + 1);
     });
@@ -486,7 +500,7 @@ export class ReviewerAgentService {
       .map(([suggestion, count]) => `${suggestion} (${count} occurrences)`);
   }
 
-  private async storeReview(review: CodeReview): Promise<void> {
+  private async storeReview(_review: CodeReview): Promise<void> {
     try {
       this.logger.log('Storing code review in database...');
       // Store in database

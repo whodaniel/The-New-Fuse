@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaService } from '../services/prisma.service';
 import { AnalyzerAgentService } from './analyzer.service';
 import { ArchitectAgentService } from './architect.service';
 import { ImplementerAgentService } from './implementer.service';
@@ -54,7 +54,7 @@ export class CoordinatorAgentService {
     private readonly analyzer: AnalyzerAgentService,
     private readonly architect: ArchitectAgentService,
     private readonly implementer: ImplementerAgentService,
-    private readonly reviewer: ReviewerAgentService,
+    private readonly reviewer: ReviewerAgentService
   ) {}
 
   async startSelfImprovementCycle(): Promise<ImprovementCycle> {
@@ -118,13 +118,16 @@ export class CoordinatorAgentService {
     const report = await this.analyzer.scanCodebase();
     const analysisDuration = Date.now() - analysisStart;
 
-    this.sendMessage('Analyzer', 'Coordinator',
-      `Analysis complete: Found ${report.issues.length} issues in ${analysisDuration}ms`);
+    this.sendMessage(
+      'Analyzer',
+      'Coordinator',
+      `Analysis complete: Found ${report.issues.length} issues in ${analysisDuration}ms`
+    );
 
     cycle.metrics.totalIssuesFound = report.issues.length;
 
     // Create improvement tasks from top issues
-    report.prioritizedIssues.slice(0, 10).forEach(issue => {
+    report.prioritizedIssues.slice(0, 10).forEach((issue) => {
       cycle.improvements.push({
         id: issue.id,
         title: issue.description,
@@ -140,15 +143,22 @@ export class CoordinatorAgentService {
   private async runArchitecturePhase(cycle: ImprovementCycle): Promise<void> {
     cycle.phase = 'architecture';
     this.addLog('Coordinator', 'Starting architecture review phase...', 'info');
-    this.sendMessage('Coordinator', 'Architect', 'Please review architecture and suggest improvements');
+    this.sendMessage(
+      'Coordinator',
+      'Architect',
+      'Please review architecture and suggest improvements'
+    );
 
     const review = await this.architect.reviewArchitecture();
 
-    this.sendMessage('Architect', 'Coordinator',
-      `Architecture review complete: ${review.decisions.length} decisions, ${review.missingFeatures.length} missing features`);
+    this.sendMessage(
+      'Architect',
+      'Coordinator',
+      `Architecture review complete: ${review.decisions.length} decisions, ${review.missingFeatures.length} missing features`
+    );
 
     // Add architectural improvements to the cycle
-    review.decisions.slice(0, 3).forEach(decision => {
+    review.decisions.slice(0, 3).forEach((decision) => {
       cycle.improvements.push({
         id: decision.id,
         title: decision.title,
@@ -158,7 +168,11 @@ export class CoordinatorAgentService {
       });
     });
 
-    this.addLog('Architect', `Proposed ${review.decisions.length} architecture improvements`, 'info');
+    this.addLog(
+      'Architect',
+      `Proposed ${review.decisions.length} architecture improvements`,
+      'info'
+    );
   }
 
   private async runImplementationPhase(cycle: ImprovementCycle): Promise<void> {
@@ -166,13 +180,10 @@ export class CoordinatorAgentService {
     this.addLog('Coordinator', 'Starting implementation phase...', 'info');
 
     // Implement top 3 improvements
-    const toImplement = cycle.improvements
-      .filter(i => i.status === 'pending')
-      .slice(0, 3);
+    const toImplement = cycle.improvements.filter((i) => i.status === 'pending').slice(0, 3);
 
     for (const improvement of toImplement) {
-      this.sendMessage('Coordinator', 'Implementer',
-        `Please implement: ${improvement.title}`);
+      this.sendMessage('Coordinator', 'Implementer', `Please implement: ${improvement.title}`);
 
       improvement.status = 'in_progress';
 
@@ -191,19 +202,25 @@ export class CoordinatorAgentService {
           cycle.metrics.issuesFixed++;
           cycle.metrics.testsCreated += result.testsCreated.length;
 
-          this.sendMessage('Implementer', 'Coordinator',
-            `Implemented successfully: ${result.filesModified.length} files modified`);
+          this.sendMessage(
+            'Implementer',
+            'Coordinator',
+            `Implemented successfully: ${result.filesModified.length} files modified`
+          );
 
           this.addLog('Implementer', `Fixed: ${improvement.title}`, 'info');
         } else {
-          this.sendMessage('Implementer', 'Coordinator',
-            `Implementation failed: ${result.error}`);
+          this.sendMessage('Implementer', 'Coordinator', `Implementation failed: ${result.error}`);
 
           this.addLog('Implementer', `Failed: ${improvement.title} - ${result.error}`, 'error');
         }
       } catch (error) {
         improvement.status = 'failed';
-        this.addLog('Implementer', `Error implementing ${improvement.title}: ${error.message}`, 'error');
+        this.addLog(
+          'Implementer',
+          `Error implementing ${improvement.title}: ${error.message}`,
+          'error'
+        );
       }
     }
   }
@@ -212,13 +229,16 @@ export class CoordinatorAgentService {
     cycle.phase = 'review';
     this.addLog('Coordinator', 'Starting review phase...', 'info');
 
-    const completedImprovements = cycle.improvements.filter(i => i.status === 'completed');
+    const completedImprovements = cycle.improvements.filter((i) => i.status === 'completed');
 
     for (const improvement of completedImprovements) {
       if (!improvement.result) continue;
 
-      this.sendMessage('Coordinator', 'Reviewer',
-        `Please review implementation: ${improvement.title}`);
+      this.sendMessage(
+        'Coordinator',
+        'Reviewer',
+        `Please review implementation: ${improvement.title}`
+      );
 
       const review = await this.reviewer.reviewImplementation({
         taskId: improvement.id,
@@ -226,17 +246,22 @@ export class CoordinatorAgentService {
         testsCreated: improvement.result.testsCreated || [],
       });
 
-      cycle.metrics.codeReviewScore =
-        (cycle.metrics.codeReviewScore + review.score) / 2;
+      cycle.metrics.codeReviewScore = (cycle.metrics.codeReviewScore + review.score) / 2;
 
       if (review.approved) {
-        this.sendMessage('Reviewer', 'Coordinator',
-          `Approved: ${improvement.title} (score: ${review.score}/100)`);
+        this.sendMessage(
+          'Reviewer',
+          'Coordinator',
+          `Approved: ${improvement.title} (score: ${review.score}/100)`
+        );
 
         this.addLog('Reviewer', `Approved: ${improvement.title}`, 'info');
       } else {
-        this.sendMessage('Reviewer', 'Coordinator',
-          `Rejected: ${improvement.title} - ${review.decision}`);
+        this.sendMessage(
+          'Reviewer',
+          'Coordinator',
+          `Rejected: ${improvement.title} - ${review.decision}`
+        );
 
         this.addLog('Reviewer', `Rejected: ${improvement.title}`, 'warning');
       }
@@ -247,8 +272,9 @@ export class CoordinatorAgentService {
     cycle.phase = 'deployment';
     this.addLog('Coordinator', 'Starting deployment phase...', 'info');
 
-    const approvedImprovements = cycle.improvements
-      .filter(i => i.status === 'completed' && i.result?.success);
+    const approvedImprovements = cycle.improvements.filter(
+      (i) => i.status === 'completed' && i.result?.success
+    );
 
     this.logger.log(`Deploying ${approvedImprovements.length} approved improvements`);
 
@@ -257,8 +283,10 @@ export class CoordinatorAgentService {
       this.addLog('Coordinator', `Deployed: ${improvement.title}`, 'info');
     }
 
-    this.broadcastMessage('Coordinator',
-      `Deployment complete: ${approvedImprovements.length} improvements deployed`);
+    this.broadcastMessage(
+      'Coordinator',
+      `Deployment complete: ${approvedImprovements.length} improvements deployed`
+    );
   }
 
   private addLog(agent: string, message: string, level: 'info' | 'warning' | 'error'): void {
@@ -289,7 +317,7 @@ export class CoordinatorAgentService {
   }
 
   private broadcastMessage(from: string, message: string): void {
-    ['Analyzer', 'Architect', 'Implementer', 'Reviewer'].forEach(agent => {
+    ['Analyzer', 'Architect', 'Implementer', 'Reviewer'].forEach((agent) => {
       this.sendMessage(from, agent, message);
     });
   }
@@ -305,9 +333,9 @@ export class CoordinatorAgentService {
   async getCycleReport(): Promise<{
     summary: string;
     metrics: ImprovementCycle['metrics'];
-    improvements: Array<{title: string; status: string}>;
+    improvements: Array<{ title: string; status: string }>;
     chatLog: ChatMessage[];
-    timeline: Array<{time: Date; event: string}>;
+    timeline: Array<{ time: Date; event: string }>;
   }> {
     if (!this.currentCycle) {
       throw new Error('No active cycle');
@@ -334,13 +362,13 @@ Metrics:
 - Avg Code Review Score: ${cycle.metrics.codeReviewScore.toFixed(1)}/100
 
 Improvements: ${cycle.improvements.length} total
-- Completed: ${cycle.improvements.filter(i => i.status === 'completed').length}
-- In Progress: ${cycle.improvements.filter(i => i.status === 'in_progress').length}
-- Pending: ${cycle.improvements.filter(i => i.status === 'pending').length}
-- Failed: ${cycle.improvements.filter(i => i.status === 'failed').length}
+- Completed: ${cycle.improvements.filter((i) => i.status === 'completed').length}
+- In Progress: ${cycle.improvements.filter((i) => i.status === 'in_progress').length}
+- Pending: ${cycle.improvements.filter((i) => i.status === 'pending').length}
+- Failed: ${cycle.improvements.filter((i) => i.status === 'failed').length}
     `.trim();
 
-    const timeline = cycle.logs.map(log => ({
+    const timeline = cycle.logs.map((log) => ({
       time: log.timestamp,
       event: `[${log.agent}] ${log.message}`,
     }));
@@ -348,7 +376,7 @@ Improvements: ${cycle.improvements.length} total
     return {
       summary,
       metrics: cycle.metrics,
-      improvements: cycle.improvements.map(i => ({
+      improvements: cycle.improvements.map((i) => ({
         title: i.title,
         status: i.status,
       })),
@@ -357,7 +385,7 @@ Improvements: ${cycle.improvements.length} total
     };
   }
 
-  private async storeCycle(cycle: ImprovementCycle): Promise<void> {
+  private async storeCycle(_cycle: ImprovementCycle): Promise<void> {
     try {
       this.logger.log('Storing improvement cycle in database...');
       // Store in database
@@ -405,10 +433,10 @@ Improvements: ${cycle.improvements.length} total
     }
 
     const improvements = this.currentCycle.improvements;
-    const completed = improvements.filter(i => i.status === 'completed').length;
-    const inProgress = improvements.filter(i => i.status === 'in_progress').length;
-    const pending = improvements.filter(i => i.status === 'pending').length;
-    const failed = improvements.filter(i => i.status === 'failed').length;
+    const completed = improvements.filter((i) => i.status === 'completed').length;
+    const inProgress = improvements.filter((i) => i.status === 'in_progress').length;
+    const pending = improvements.filter((i) => i.status === 'pending').length;
+    const failed = improvements.filter((i) => i.status === 'failed').length;
 
     return {
       totalTasks: improvements.length,
@@ -416,9 +444,8 @@ Improvements: ${cycle.improvements.length} total
       inProgress,
       pending,
       failed,
-      percentComplete: improvements.length > 0
-        ? Math.round((completed / improvements.length) * 100)
-        : 0,
+      percentComplete:
+        improvements.length > 0 ? Math.round((completed / improvements.length) * 100) : 0,
     };
   }
 }

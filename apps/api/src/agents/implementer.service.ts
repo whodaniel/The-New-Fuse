@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { exec } from 'child_process';
 import { promisify } from 'util';
+import { PrismaService } from '../services/prisma.service';
 
 const execAsync = promisify(exec);
 
@@ -110,7 +110,11 @@ export class ImplementerAgentService {
     }
   }
 
-  async implementQuickFix(issue: {file: string; description: string; suggestion: string}): Promise<Implementation> {
+  async implementQuickFix(issue: {
+    file: string;
+    description: string;
+    suggestion: string;
+  }): Promise<Implementation> {
     this.logger.log(`Implementing quick fix: ${issue.description}`);
 
     // Create a task from the issue
@@ -127,48 +131,53 @@ export class ImplementerAgentService {
     return this.implementImprovement(task);
   }
 
-  private async generateFixForIssue(issue: {file: string; description: string; suggestion: string}): Promise<ImprovementTask['files']> {
+  private async generateFixForIssue(issue: {
+    file: string;
+    description: string;
+    suggestion: string;
+  }): Promise<ImprovementTask['files']> {
     const filePath = path.join(this.codebaseRoot, issue.file);
 
     try {
       const content = await fs.readFile(filePath, 'utf-8');
-      const lines = content.split('\n');
 
       let fixedContent = content;
 
       // Apply specific fixes based on issue type
       if (issue.description.includes('console.log')) {
         // Replace console.log with logger
-        fixedContent = content.replace(
-          /console\.log\((.*?)\)/g,
-          "this.logger.log($1)"
-        );
+        fixedContent = content.replace(/console\.log\((.*?)\)/g, 'this.logger.log($1)');
       } else if (issue.description.includes('"any"')) {
         // This would require more sophisticated type inference
         // For now, add a comment
-        fixedContent = content.replace(
-          /: any/g,
-          ': any // TODO: Add proper type'
-        );
+        fixedContent = content.replace(/: any/g, ': any // TODO: Add proper type');
       } else if (issue.description.includes('async operation without error handling')) {
         // Wrap in try-catch (simplified)
         // Real implementation would need AST parsing
       }
 
-      return [{
-        path: issue.file,
-        changes: [{
-          type: 'update',
-          content: fixedContent,
-        }],
-      }];
+      return [
+        {
+          path: issue.file,
+          changes: [
+            {
+              type: 'update',
+              content: fixedContent,
+            },
+          ],
+        },
+      ];
     } catch (error) {
       this.logger.error(`Failed to generate fix: ${error.message}`);
       return [];
     }
   }
 
-  async createFeature(feature: {name: string; description: string; specification: string}): Promise<Implementation> {
+  async createFeature(feature: {
+    name: string;
+    description: string;
+    specification: string;
+  }): Promise<Implementation> {
     this.logger.log(`Creating new feature: ${feature.name}`);
 
     const task: ImprovementTask = {
@@ -184,7 +193,11 @@ export class ImplementerAgentService {
     return this.implementImprovement(task);
   }
 
-  private async scaffoldFeature(feature: {name: string; description: string; specification: string}): Promise<ImprovementTask['files']> {
+  private async scaffoldFeature(feature: {
+    name: string;
+    description: string;
+    specification: string;
+  }): Promise<ImprovementTask['files']> {
     const files: ImprovementTask['files'] = [];
 
     // Create service file
@@ -193,10 +206,12 @@ export class ImplementerAgentService {
 
     files.push({
       path: `apps/api/src/services/${serviceName}.service.ts`,
-      changes: [{
-        type: 'create',
-        content: serviceContent,
-      }],
+      changes: [
+        {
+          type: 'create',
+          content: serviceContent,
+        },
+      ],
     });
 
     // Create controller file
@@ -204,19 +219,21 @@ export class ImplementerAgentService {
 
     files.push({
       path: `apps/api/src/controllers/${serviceName}.controller.ts`,
-      changes: [{
-        type: 'create',
-        content: controllerContent,
-      }],
+      changes: [
+        {
+          type: 'create',
+          content: controllerContent,
+        },
+      ],
     });
 
     return files;
   }
 
-  private generateServiceTemplate(feature: {name: string; description: string}): string {
+  private generateServiceTemplate(feature: { name: string; description: string }): string {
     const className = feature.name.replace(/\s+/g, '');
     return `import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaService } from './prisma.service';
 
 /**
  * ${feature.description}
@@ -236,7 +253,7 @@ export class ${className}Service {
 `;
   }
 
-  private generateControllerTemplate(feature: {name: string; description: string}): string {
+  private generateControllerTemplate(feature: { name: string; description: string }): string {
     const className = feature.name.replace(/\s+/g, '');
     const route = feature.name.toLowerCase().replace(/\s+/g, '-');
     return `import { Controller, Post, Get, Logger } from '@nestjs/common';
@@ -256,13 +273,16 @@ export class ${className}Controller {
 `;
   }
 
-  private async generateFeatureTests(feature: {name: string; description: string}): Promise<ImprovementTask['tests']> {
+  private async generateFeatureTests(feature: {
+    name: string;
+    description: string;
+  }): Promise<ImprovementTask['tests']> {
     const className = feature.name.replace(/\s+/g, '');
     const serviceName = feature.name.toLowerCase().replace(/\s+/g, '-');
 
     const testContent = `import { Test, TestingModule } from '@nestjs/testing';
 import { ${className}Service } from './${serviceName}.service';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaService } from './prisma.service';
 
 describe('${className}Service', () => {
   let service: ${className}Service;
@@ -294,10 +314,12 @@ describe('${className}Service', () => {
 });
 `;
 
-    return [{
-      path: `apps/api/src/services/${serviceName}.service.spec.ts`,
-      content: testContent,
-    }];
+    return [
+      {
+        path: `apps/api/src/services/${serviceName}.service.spec.ts`,
+        content: testContent,
+      },
+    ];
   }
 
   private async createFile(filePath: string, content: string): Promise<void> {
@@ -336,16 +358,21 @@ describe('${className}Service', () => {
   }
 
   private generateCommitMessage(task: ImprovementTask): string {
-    const type = task.type === 'bug-fix' ? 'fix' :
-                 task.type === 'feature' ? 'feat' :
-                 task.type === 'refactor' ? 'refactor' :
-                 task.type === 'optimization' ? 'perf' :
-                 'test';
+    const type =
+      task.type === 'bug-fix'
+        ? 'fix'
+        : task.type === 'feature'
+          ? 'feat'
+          : task.type === 'refactor'
+            ? 'refactor'
+            : task.type === 'optimization'
+              ? 'perf'
+              : 'test';
 
     return `${type}: ${task.title}\n\n${task.description}\n\nAuto-generated by Implementer Agent`;
   }
 
-  async createPullRequest(implementation: Implementation): Promise<{url: string}> {
+  async createPullRequest(implementation: Implementation): Promise<{ url: string }> {
     this.logger.log('Creating pull request...');
 
     try {
