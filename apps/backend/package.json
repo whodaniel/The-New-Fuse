@@ -30,7 +30,7 @@
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^11.1.6",
-    "@nestjs/event-emitter": "^2.0.4",
+    "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/schedule": "^4.0.2",
     "@prisma/client": "7.0.1",
