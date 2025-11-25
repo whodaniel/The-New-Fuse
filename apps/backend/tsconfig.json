@@ -7,9 +7,7 @@
     "baseUrl": "./",
     "moduleResolution": "node",
     "paths": {
-      "@/*": ["src/*"],
-      "@the-new-fuse/mcp-core": ["../../packages/mcp-core/src"],
-      "@the-new-fuse/mcp-core/*": ["../../packages/mcp-core/src/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*", "jest.config.ts"],
