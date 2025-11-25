@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "vite build",
+    "prebuild": "pnpm --filter @the-new-fuse/ui-consolidated build",
     "build:watch": "vite build --watch",
     "build:analyze": "vite build && npx vite-bundle-analyzer dist",
     "build:stats": "vite build --mode production && npx vite-bundle-analyzer dist/stats.html",

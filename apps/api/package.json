@@ -71,6 +71,7 @@
     "yargs": "^18.0.0"
   },
   "scripts": {
+    "prebuild": "pnpm --filter @the-new-fuse/n8n-workflows build",
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
     "build:watch": "tsc --watch --skipLibCheck --noEmitOnError false",
     "dev": "nest start --watch",
