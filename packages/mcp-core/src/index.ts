@@ -17,9 +17,9 @@ export type {
   MCPConnection,
   MCPResource,
   MCPTool,
-} from './interfaces/index';
+} from './interfaces/index.js';
 
-export { AgentStatus } from './interfaces/index';
+export { AgentStatus } from './interfaces/index.js';
 
 // Core message types
 export type {
@@ -27,10 +27,10 @@ export type {
   MCPNotification,
   MCPRequest,
   MCPResponse,
-} from './interfaces/IMCPMessage';
+} from './interfaces/IMCPMessage.js';
 
 // Connection types
-export type { ConnectionOptions, ConnectionStatus } from './interfaces/IMCPConnection';
+export type { ConnectionOptions, ConnectionStatus } from './interfaces/IMCPConnection.js';
 
 // Core types
 export type {
@@ -40,7 +40,7 @@ export type {
   MCPServerInfo,
   MCPServiceInfo,
   ServiceStatus,
-} from './types/index';
+} from './types/index.js';
 
 // Tool-related types
 export type {
@@ -53,7 +53,7 @@ export type {
   ToolResult,
   ToolUsageStats,
   ValidationResult,
-} from './interfaces/index';
+} from './interfaces/index.js';
 
 // Error types and classes
 export {
@@ -62,31 +62,31 @@ export {
   JSONRPCErrorCode,
   MCPErrorClass,
   MCPErrorCode,
-} from './types/error';
+} from './types/error.js';
 
 // Validation utilities
-export { MessageSerializer, MessageValidator, SerializationUtils } from './validation/index';
+export { MessageSerializer, MessageValidator, SerializationUtils } from './validation/index.js';
 
 export type {
   DeserializationResult,
   ValidationResult as MessageValidationResult,
   SerializationResult,
-} from './validation/index';
+} from './validation/index.js';
 
 // Handler base classes
-export * from './handlers/index';
+export * from './handlers/index.js';
 
 // Server implementation
-export { MCPServer } from './server/index';
+export { MCPServer } from './server/index.js';
 
 // Client implementation
-export * from './client/index';
+export * from './client/index.js';
 
 // Broker implementation
-export * from './broker/index';
+export * from './broker/index.js';
 
 // Factory for integrated system
-export * from './factory/index';
+export * from './factory/index.js';
 
 // Integration bridges
 export {
@@ -96,13 +96,13 @@ export {
   ServiceMeshMonitor,
   ServiceMeshScaler,
   WorkflowExecutionMonitor,
-} from './integrations/index';
+} from './integrations/index.js';
 
 // Authentication and authorization
-export * from './auth/index';
+export * from './auth/index.js';
 
 // Monitoring and metrics (prefer monitoring over integrations for Alert types)
-export * from './monitoring/index';
+export * from './monitoring/index.js';
 
 // Performance optimization
 export {
@@ -113,7 +113,7 @@ export {
   MultiLevelCache,
   OptimizedConnectionPool,
   PerformanceValidator,
-} from './performance/index';
+} from './performance/index.js';
 
 // Version information
 export const VERSION = '1.0.0';
