@@ -33,7 +33,7 @@
     "@nestjs/event-emitter": "^2.0.4",
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/schedule": "^4.0.2",
-    "@prisma/client": "6.17.1",
+    "@prisma/client": "7.0.1",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
