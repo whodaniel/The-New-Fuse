@@ -6,7 +6,7 @@
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { Logger, LogLevel } from '@tnf/relay-core';
+import { Logger, LogLevel } from '@the-new-fuse/relay-core';
 import { Extension, ExtensionManifest } from './ExtensionTypes';
 
 export class ExtensionRegistry {

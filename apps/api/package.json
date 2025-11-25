@@ -31,7 +31,7 @@
     "@the-new-fuse/shared": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
-    "@tnf/relay-core": "workspace:*",
+    "@the-new-fuse/relay-core": "workspace:*",
     "@prisma/client": "^6.17.1",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.3",

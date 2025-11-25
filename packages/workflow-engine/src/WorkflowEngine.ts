@@ -8,9 +8,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '@tnf/relay-core';
+import { Logger } from '@the-new-fuse/relay-core';
 // import { PrismaClient } from '@prisma/client';
-import { MasterAgentRegistry } from '@tnf/relay-core';
+import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import { WorkflowRepository } from './WorkflowRepository';
 import { WorkflowValidator } from './WorkflowValidator';
 import {

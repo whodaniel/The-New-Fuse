@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { AnalyticsMetrics, BusinessEventType, IntegrationSource } from '@tnf/types';
+import { AnalyticsMetrics, BusinessEventType, IntegrationSource } from '@the-new-fuse/types';
 
 export interface BusinessMetricsState {
   metrics: AnalyticsMetrics | null;

@@ -4,7 +4,7 @@
  * Bridges the MasterAgentRegistry to the interface expected by WorkflowEngineFactory
  */
 
-import { MasterAgentRegistry } from '@tnf/relay-core';
+import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
 
 export interface AgentRegistry {
   agents: Map<string, any>;

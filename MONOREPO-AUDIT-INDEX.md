@@ -309,7 +309,7 @@ Most depended-on packages:
 3. `@the-new-fuse/utils` - 9 dependents
 4. `@the-new-fuse/database` - 8 dependents
 5. `@the-new-fuse/infrastructure` - 5 dependents
-6. `@tnf/relay-core` - 4 dependents
+6. `@the-new-fuse/relay-core` - 4 dependents
 7. `@the-new-fuse/a2a-core` - 3 dependents
 8. `@the-new-fuse/api-types` - 3 dependents
 9. `@the-new-fuse/prompt-templating` - 3 dependents

@@ -28,8 +28,8 @@
       "@the-new-fuse/database/*": ["../database/src/*"],
       "@the-new-fuse/security": ["../security/src"],
       "@the-new-fuse/security/*": ["../security/src/*"],
-      "@tnf/relay-core": ["../relay-core/src"],
-      "@tnf/relay-core/*": ["../relay-core/src/*"]
+      "@the-new-fuse/relay-core": ["../relay-core/src"],
+      "@the-new-fuse/relay-core/*": ["../relay-core/src/*"]
     },
     "types": ["node"]
   },

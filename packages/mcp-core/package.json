@@ -112,7 +112,7 @@
   },
   "optionalDependencies": {
     "@the-new-fuse/types": "workspace:*",
-    "@tnf/relay-core": "workspace:*"
+    "@the-new-fuse/relay-core": "workspace:*"
   },
   "files": [
     "dist",

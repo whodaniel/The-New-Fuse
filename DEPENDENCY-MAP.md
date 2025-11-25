@@ -49,7 +49,7 @@ Depends on Layer 0-1:
 ⭐🔧 @the-new-fuse/utils (9 dependents)
    (no internal dependencies)
 
-🔌 @tnf/relay-core (4 dependents)
+🔌 @the-new-fuse/relay-core (4 dependents)
    └── @the-new-fuse/database
 
 📦 @the-new-fuse/api-types (3 dependents)
@@ -159,7 +159,7 @@ Final layer - depends on everything needed:
    ├── @the-new-fuse/shared
    ├── @the-new-fuse/types
    ├── @the-new-fuse/utils
-   └── @tnf/relay-core
+   └── @the-new-fuse/relay-core
 
 🎯 @the-new-fuse/frontend-app
    ├── @the-new-fuse/a2a-core
@@ -272,7 +272,7 @@ sync-core
 
 ---
 
-#### @tnf/relay-core (4 dependents)
+#### @the-new-fuse/relay-core (4 dependents)
 
 **Category:** Infrastructure **Dependencies:**
 
@@ -435,7 +435,7 @@ sync-core
 
 **Category:** Domain **Dependencies:**
 
-- @tnf/relay-core
+- @the-new-fuse/relay-core
 
 ---
 
@@ -471,7 +471,7 @@ Communication and backend services:
 - @the-new-fuse/a2a-core
 - @the-new-fuse/a2a-react
 - @the-new-fuse/ap2-protocol
-- @tnf/relay-core
+- @the-new-fuse/relay-core
 
 ### 🎨 Frontend/UI (9 packages)
 

@@ -5,7 +5,7 @@
  * well-formed and executable before being saved or run.
  */
 
-import { MasterAgentRegistry } from '@tnf/relay-core';
+import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import {
   WorkflowDefinition,
   WorkflowStep,

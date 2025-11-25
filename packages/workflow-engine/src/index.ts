@@ -34,10 +34,10 @@ export {
  * Provides a convenient way to create and configure the workflow engine
  */
 // import { PrismaClient } from '@prisma/client';
-import { Logger } from '@tnf/relay-core';
+import { Logger } from '@the-new-fuse/relay-core';
 
 // Import actual types from relay-core
-import { MasterAgentRegistry, HeartbeatMonitoringService } from '@tnf/relay-core';
+import { MasterAgentRegistry, HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
 import { UnifiedWorkflowEngine } from './engine/WorkflowEngine';
 import { WorkflowRepository } from './repository/WorkflowRepository';
 import { WorkflowValidator } from './validator/WorkflowValidator';

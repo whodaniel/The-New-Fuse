@@ -70,7 +70,7 @@ Organized by category:
 - `@the-new-fuse/a2a-core` - **3 dependents**
 - `@the-new-fuse/a2a-react`
 - `@the-new-fuse/ap2-protocol`
-- `@tnf/relay-core` - **4 dependents**
+- `@the-new-fuse/relay-core` - **4 dependents**
 
 #### Frontend/UI (9)
 
@@ -170,7 +170,7 @@ These directories exist but lack package.json files:
 ├── @the-new-fuse/shared
 ├── @the-new-fuse/types
 ├── @the-new-fuse/utils
-└── @tnf/relay-core
+└── @the-new-fuse/relay-core
     └── @the-new-fuse/database
 ```
 
@@ -221,7 +221,7 @@ These directories exist but lack package.json files:
 | `@the-new-fuse/utils`             | 9          | Foundation     |
 | `@the-new-fuse/database`          | 8          | Foundation     |
 | `@the-new-fuse/infrastructure`    | 5          | Infrastructure |
-| `@tnf/relay-core`                 | 4          | Communication  |
+| `@the-new-fuse/relay-core`                 | 4          | Communication  |
 | `@the-new-fuse/a2a-core`          | 3          | Communication  |
 | `@the-new-fuse/api-types`         | 3          | API            |
 | `@the-new-fuse/prompt-templating` | 3          | UI             |
@@ -399,7 +399,7 @@ Based on the dependency graph, the optimal build order is:
    - `@the-new-fuse/core` (depends on database, infrastructure)
    - `@the-new-fuse/security` (depends on database, core)
    - `@the-new-fuse/shared` (depends on core, types, utils)
-   - `@tnf/relay-core` (depends on database)
+   - `@the-new-fuse/relay-core` (depends on database)
    - And others...
 
 5. **Application Layer**

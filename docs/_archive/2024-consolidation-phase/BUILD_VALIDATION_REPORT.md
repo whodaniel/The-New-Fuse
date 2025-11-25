@@ -56,7 +56,7 @@ Comprehensive build validation completed on all 54 packages (excluding Theia IDE
 | @the-new-fuse/mcp-core | TypeScript errors | Fix types |
 | @the-new-fuse/workflow-engine | TypeScript errors | Fix types |
 | @the-new-fuse/extension-system | TypeScript errors | Fix types |
-| @tnf/relay-core | TypeScript errors | Fix types |
+| @the-new-fuse/relay-core | TypeScript errors | Fix types |
 
 ---
 
@@ -107,7 +107,7 @@ pnpm exec prisma generate
 - @the-new-fuse/mcp-core
 - @the-new-fuse/workflow-engine
 - @the-new-fuse/extension-system
-- @tnf/relay-core
+- @the-new-fuse/relay-core
 
 **Common Causes:**
 - Missing type definitions

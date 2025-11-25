@@ -5,7 +5,7 @@ import {
   HeartbeatConfig, 
   AgentHeartbeat, 
   StagnationAlert 
-} from '@tnf/relay-core';
+} from '@the-new-fuse/relay-core';
 import { MasterClockService } from '../services/MasterClockService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { ConflictManager } from '../services/ConflictManager';

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { BusinessEventType } from '@tnf/types';
+import { BusinessEventType } from '@the-new-fuse/types';
 
 export interface SSEConnectionOptions {
   eventTypes?: BusinessEventType[];

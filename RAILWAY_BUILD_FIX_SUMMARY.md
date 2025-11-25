@@ -168,7 +168,7 @@ From `/home/user/fuse/apps/api/package.json`:
 - `@the-new-fuse/shared` (workspace:\*)
 - `@the-new-fuse/types` (workspace:\*)
 - `@the-new-fuse/utils` (workspace:\*)
-- `@tnf/relay-core` (workspace:\*)
+- `@the-new-fuse/relay-core` (workspace:\*)
 
 ### TypeScript Project References
 
@@ -248,7 +248,7 @@ Based on the dependency graph, packages must be built in this order:
 - `@the-new-fuse/api-types`
 - `@the-new-fuse/port-management`
 - `@the-new-fuse/a2a-core`
-- `@tnf/relay-core`
+- `@the-new-fuse/relay-core`
 
 ### Tier 6: Applications
 

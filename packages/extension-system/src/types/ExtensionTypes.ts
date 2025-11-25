@@ -7,7 +7,7 @@
 
 // Conditional import to avoid build dependency issues
 // import { WorkflowNode } from '@the-new-fuse/workflow-engine';
-import { MasterAgentRegistry } from '@tnf/relay-core';
+import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
 
 // Local type definition to avoid dependency on workflow-engine build
 export interface WorkflowNode {

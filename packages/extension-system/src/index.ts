@@ -15,7 +15,7 @@ export { ExtensionValidator, type ExtensionValidatorConfig, type SecurityScanRes
 export * from './types/ExtensionTypes';
 
 // Factory for creating extension system
-import { Logger, MasterAgentRegistry } from '@tnf/relay-core';
+import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import { ExtensionManager } from './manager/ExtensionManager';
 import { ExtensionManagerConfig } from './types/ExtensionTypes';
 

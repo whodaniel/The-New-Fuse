@@ -7,7 +7,7 @@ import {
   WebhookDeliveryLog,
   IntegrationSource,
   DeliveryStatus,
-} from '@tnf/types';
+} from '@the-new-fuse/types';
 
 export interface WebhookManagementState {
   configurations: WebhookConfiguration[];

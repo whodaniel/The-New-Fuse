@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@tnf/ui-consolidated';
-import { Button } from '@tnf/ui-consolidated';
-import { Input } from '@tnf/ui-consolidated';
-import { Select } from '@tnf/ui-consolidated';
-import { Textarea } from '@tnf/ui-consolidated';
-import { Alert } from '@tnf/ui-consolidated';
-import { Badge } from '@tnf/ui-consolidated';
+import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import { Button } from '@the-new-fuse/ui-consolidated';
+import { Input } from '@the-new-fuse/ui-consolidated';
+import { Select } from '@the-new-fuse/ui-consolidated';
+import { Textarea } from '@the-new-fuse/ui-consolidated';
+import { Alert } from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@the-new-fuse/ui-consolidated';
 import { 
   Save, 
   X, 
@@ -16,7 +16,7 @@ import {
   CheckCircle,
   Loader2,
 } from 'lucide-react';
-import { IntegrationSource, WebhookRegistrationRequest } from '@tnf/types';
+import { IntegrationSource, WebhookRegistrationRequest } from '@the-new-fuse/types';
 import { useWebhookManagement } from './hooks/useWebhookManagement';
 
 export interface WebhookConfigurationFormProps {

@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@tnf/ui-consolidated';
-import { Button } from '@tnf/ui-consolidated';
-import { Badge } from '@tnf/ui-consolidated';
-import { Input } from '@tnf/ui-consolidated';
-import { Select } from '@tnf/ui-consolidated';
+import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import { Button } from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@the-new-fuse/ui-consolidated';
+import { Input } from '@the-new-fuse/ui-consolidated';
+import { Select } from '@the-new-fuse/ui-consolidated';
 import {
   Search,
   RefreshCw,
@@ -17,7 +17,7 @@ import {
   Users,
   ShoppingCart,
 } from 'lucide-react';
-import { BusinessEventType, IntegrationSource, EventPriority } from '@tnf/types';
+import { BusinessEventType, IntegrationSource, EventPriority } from '@the-new-fuse/types';
 import { useSSEConnection } from './hooks/useSSEConnection';
 
 export interface RealtimeEventStreamProps {

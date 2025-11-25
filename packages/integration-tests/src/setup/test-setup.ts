@@ -5,7 +5,7 @@
  * Includes mocked services and utilities for testing
  */
 
-import { Logger, HeartbeatMonitoringService, MasterAgentRegistry } from '@tnf/relay-core';
+import { Logger, HeartbeatMonitoringService, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 

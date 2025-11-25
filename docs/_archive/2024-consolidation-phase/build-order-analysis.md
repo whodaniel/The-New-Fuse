@@ -13,7 +13,7 @@ Based on the analysis of package.json files, here's the dependency hierarchy:
 
 ### Level 1 (Depends only on Level 0)
 - `@the-new-fuse/types` (depends on: prompt-templating)
-- `@tnf/relay-core` (depends on: database)
+- `@the-new-fuse/relay-core` (depends on: database)
 - `@the-new-fuse/core` (depends on: database, infrastructure)
 
 ### Level 2 (Depends on Level 0-1)

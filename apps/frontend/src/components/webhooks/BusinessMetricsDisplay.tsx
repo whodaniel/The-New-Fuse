@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@tnf/ui-consolidated';
-import { Badge } from '@tnf/ui-consolidated';
+import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@the-new-fuse/ui-consolidated';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -13,7 +13,7 @@ import {
   Clock,
   BarChart3,
 } from 'lucide-react';
-import { BusinessMetrics, BusinessEventType, IntegrationSource } from '@tnf/types';
+import { BusinessMetrics, BusinessEventType, IntegrationSource } from '@the-new-fuse/types';
 
 export interface BusinessMetricsDisplayProps {
   metrics: BusinessMetrics | null;

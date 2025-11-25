@@ -1,5 +1,5 @@
 {
-  "name": "@tnf/relay-core",
+  "name": "@the-new-fuse/relay-core",
   "version": "1.0.0",
   "description": "Unified relay system for The New Fuse framework",
   "main": "dist/index.js",

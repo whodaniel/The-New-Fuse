@@ -4,7 +4,7 @@
  * Responsible for loading the code of an extension from its entry point.
  */
 
-import { Logger, LogLevel } from '@tnf/relay-core';
+import { Logger, LogLevel } from '@the-new-fuse/relay-core';
 import { Extension, ExtensionManifest, ExtensionStatus } from './ExtensionTypes';
 
 export class ExtensionLoader {

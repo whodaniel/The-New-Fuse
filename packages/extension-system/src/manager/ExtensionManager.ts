@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import * as path from 'path';
-import { Logger, MasterAgentRegistry } from '@tnf/relay-core';
+import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 // import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
 import {
   UnifiedExtension,

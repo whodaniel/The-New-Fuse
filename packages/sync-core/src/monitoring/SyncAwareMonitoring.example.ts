@@ -14,7 +14,7 @@ import {
   SyncHealthEscalation,
   UnifiedSyncHealthReport
 } from './index';
-import { HeartbeatMonitoringService } from '@tnf/relay-core';
+import { HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
 import { MasterClockService } from '../services/MasterClockService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { ConflictManager } from '../services/ConflictManager';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@tnf/ui-consolidated';
-import { Button } from '@tnf/ui-consolidated';
-import { Badge } from '@tnf/ui-consolidated';
+import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import { Button } from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@the-new-fuse/ui-consolidated';
 import {
   Settings,
   Play,
@@ -14,7 +14,7 @@ import {
   AlertTriangle,
   MoreVertical,
 } from 'lucide-react';
-import { WebhookConfiguration, IntegrationSource } from '@tnf/types';
+import { WebhookConfiguration, IntegrationSource } from '@the-new-fuse/types';
 import { useWebhookManagement } from './hooks/useWebhookManagement';
 
 export interface IntegrationStatusGridProps {

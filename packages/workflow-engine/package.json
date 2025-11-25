@@ -72,7 +72,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
-    "@tnf/relay-core": "workspace:*",
+    "@the-new-fuse/relay-core": "workspace:*",
     "events": "^3.3.0"
   },
   "devDependencies": {

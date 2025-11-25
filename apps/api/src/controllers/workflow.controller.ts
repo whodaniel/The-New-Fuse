@@ -3,7 +3,7 @@
  */
 
 import { Request, Response } from 'express';
-import { Logger } from '@tnf/relay-core';
+import { Logger } from '@the-new-fuse/relay-core';
 import { PrismaClient } from '@prisma/client';
 
 type DatabaseWhere = Record<string, any>;

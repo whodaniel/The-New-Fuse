@@ -4,7 +4,7 @@
  * Bridges the HeartbeatMonitoringService to the interface expected by WorkflowEngineFactory
  */
 
-import { HeartbeatMonitoringService } from '@tnf/relay-core';
+import { HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
 
 export interface HeartbeatService {
   registerAgent(executionId: string, workflowId: string): void;
