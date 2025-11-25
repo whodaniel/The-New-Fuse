@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@firebase/app-compat": "^0.5.4",
-    "@nestjs/common": "^11.1.6",
+    "@nestjs/common": "^11.1.9",
     "@nestjs/config": "4.0.2",
     "@nestjs/core": "^11.1.9",
     "@nestjs/jwt": "^11.0.1",
