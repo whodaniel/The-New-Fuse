@@ -1,5 +1,5 @@
 {
-  "name": "@tnf/core-monitoring",
+  "name": "@the-new-fuse/core-monitoring",
   "version": "1.0.0",
   "description": "Unified monitoring system for The New Fuse",
   "type": "module",

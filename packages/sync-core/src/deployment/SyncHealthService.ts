@@ -5,7 +5,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { ISystemHealthMonitor, HealthStatus } from '@tnf/core-monitoring';
+import { ISystemHealthMonitor, HealthStatus } from '@the-new-fuse/core-monitoring';
 import { MasterClockService } from '../services/MasterClockService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';

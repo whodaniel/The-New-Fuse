@@ -1,4 +1,4 @@
-# @tnf/core-monitoring
+# @the-new-fuse/core-monitoring
 
 Comprehensive monitoring and observability package for The New Fuse platform.
 
@@ -14,7 +14,7 @@ Comprehensive monitoring and observability package for The New Fuse platform.
 ## Installation
 
 ```bash
-pnpm add @tnf/core-monitoring
+pnpm add @the-new-fuse/core-monitoring
 ```
 
 ### Peer Dependencies
@@ -40,7 +40,7 @@ pnpm add check-disk-space
 ### 1. Initialize Sentry
 
 ```typescript
-import { SentryService, getSentryConfigFromEnv } from '@tnf/core-monitoring';
+import { SentryService, getSentryConfigFromEnv } from '@the-new-fuse/core-monitoring';
 
 const sentryService = new SentryService();
 await sentryService.initialize(getSentryConfigFromEnv('my-service'));
@@ -56,7 +56,7 @@ sentryService.captureException(new Error('Something went wrong'), {
 ### 2. Setup Logging
 
 ```typescript
-import { WinstonLogger } from '@tnf/core-monitoring';
+import { WinstonLogger } from '@the-new-fuse/core-monitoring';
 
 const logger = new WinstonLogger({
   level: 'info',
@@ -81,7 +81,7 @@ logger.error('Failed to connect to database', error, { retry: 3 });
 ### 3. Collect Metrics
 
 ```typescript
-import { PrometheusMetrics } from '@tnf/core-monitoring';
+import { PrometheusMetrics } from '@the-new-fuse/core-monitoring';
 
 const metrics = new PrometheusMetrics({
   enabled: true,
@@ -110,7 +110,7 @@ const metricsText = await metrics.getMetrics();
 ### 4. Setup Health Checks
 
 ```typescript
-import { HealthCheckService, CommonHealthChecks } from '@tnf/core-monitoring';
+import { HealthCheckService, CommonHealthChecks } from '@the-new-fuse/core-monitoring';
 
 const healthCheckService = new HealthCheckService({
   checkInterval: 30000,
@@ -146,7 +146,7 @@ console.log(health);
 ### 5. Configure Alerts
 
 ```typescript
-import { AlertManager, defaultAlertRules } from '@tnf/core-monitoring';
+import { AlertManager, defaultAlertRules } from '@the-new-fuse/core-monitoring';
 
 const alertManager = new AlertManager({
   evaluationInterval: 60000,
@@ -186,7 +186,7 @@ import {
   WinstonLogger,
   PrometheusMetrics,
   HealthCheckService,
-} from '@tnf/core-monitoring';
+} from '@the-new-fuse/core-monitoring';
 
 @Global()
 @Module({
@@ -249,7 +249,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { WinstonLogger, PrometheusMetrics, SentryService } from '@tnf/core-monitoring';
+import { WinstonLogger, PrometheusMetrics, SentryService } from '@the-new-fuse/core-monitoring';
 
 @Injectable()
 export class MonitoringInterceptor implements NestInterceptor {
@@ -290,7 +290,7 @@ export class MonitoringInterceptor implements NestInterceptor {
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
-import { HealthCheckService } from '@tnf/core-monitoring';
+import { HealthCheckService } from '@the-new-fuse/core-monitoring';
 
 @Controller('health')
 export class HealthController {
@@ -316,7 +316,7 @@ export class HealthController {
 
 ```typescript
 import { Controller, Get, Header } from '@nestjs/common';
-import { PrometheusMetrics } from '@tnf/core-monitoring';
+import { PrometheusMetrics } from '@the-new-fuse/core-monitoring';
 
 @Controller('metrics')
 export class MetricsController {

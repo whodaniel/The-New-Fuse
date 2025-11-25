@@ -5,7 +5,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { IMetricsCollector } from '@tnf/core-monitoring';
+import { IMetricsCollector } from '@the-new-fuse/core-monitoring';
 
 export interface SyncMetrics {
   // Operation metrics

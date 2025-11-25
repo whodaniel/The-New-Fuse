@@ -8,7 +8,7 @@ import {
   BaseMonitoringConfig,
   IMetricsCollector,
   Logger
-} from '@tnf/core-monitoring';
+} from '@the-new-fuse/core-monitoring';
 import { BuildMetricsCollector } from './BuildMetricsCollector.js';
 import { DetailedBuildMetrics } from './BuildMetricsCollector.js';
 

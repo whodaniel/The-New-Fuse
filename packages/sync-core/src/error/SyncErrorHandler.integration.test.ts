@@ -6,8 +6,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { IMonitoringSystem, IMetricsCollector } from '@tnf/core-monitoring';
-import { ErrorSeverity, ErrorCategory } from '@tnf/core-error-handling';
+import { IMonitoringSystem, IMetricsCollector } from '@the-new-fuse/core-monitoring';
+import { ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 import { 
   SyncErrorHandler, 
   SyncError, 

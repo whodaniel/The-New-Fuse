@@ -22,8 +22,8 @@
   "dependencies": {
     "@types/node": "^24.8.1",
     "glob": "^11.0.3",
-    "@tnf/core-monitoring": "workspace:*",
-    "@tnf/core-error-handling": "workspace:*"
+    "@the-new-fuse/core-monitoring": "workspace:*",
+    "@the-new-fuse/core-error-handling": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

@@ -8,7 +8,7 @@ import {
   BaseMonitoringConfig,
   IMetricsCollector,
   Logger
-} from '@tnf/core-monitoring';
+} from '@the-new-fuse/core-monitoring';
 import { MCPMetricsCollector } from './MCPMetricsCollector';
 import { PerformanceMetrics } from '../types/monitoring';
 

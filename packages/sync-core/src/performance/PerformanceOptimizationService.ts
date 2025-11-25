@@ -1,4 +1,4 @@
-import { Logger } from '@tnf/core-monitoring';
+import { Logger } from '@the-new-fuse/core-monitoring';
 import { HorizontalScalingCoordinator, ScalingCoordinationConfig } from './HorizontalScalingCoordinator';
 import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher';
 import { SyncLRUCache, CacheConfig } from './SyncLRUCache';

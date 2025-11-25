@@ -1,4 +1,4 @@
-import { Logger } from '@tnf/core-monitoring';
+import { Logger } from '@the-new-fuse/core-monitoring';
 
 export interface CacheEntry<T> {
   key: string;

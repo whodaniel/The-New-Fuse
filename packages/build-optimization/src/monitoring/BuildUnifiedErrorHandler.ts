@@ -13,7 +13,7 @@ import {
   ErrorSeverity,
   ErrorCategory,
   Logger
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 /**
  * Build-specific error interface

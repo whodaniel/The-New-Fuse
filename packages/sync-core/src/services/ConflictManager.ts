@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { PrismaClient, SyncConflict, AuthEvent } from '@the-new-fuse/database/generated/prisma';
-import { BaseErrorHandler, ErrorSeverity, ErrorCategory } from '@tnf/core-error-handling';
+import { BaseErrorHandler, ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { 
   SyncConflictData, 

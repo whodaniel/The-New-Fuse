@@ -1,4 +1,4 @@
-import { Logger } from '@tnf/core-monitoring';
+import { Logger } from '@the-new-fuse/core-monitoring';
 
 // Generic interface for compatibility with existing infrastructure
 interface MetricsService {

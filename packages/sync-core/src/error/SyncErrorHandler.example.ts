@@ -5,7 +5,7 @@
 
 import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { IMonitoringSystem } from '@tnf/core-monitoring';
+import { IMonitoringSystem } from '@the-new-fuse/core-monitoring';
 import { 
   SyncErrorHandler, 
   SyncRetryManager, 

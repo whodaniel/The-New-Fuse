@@ -226,7 +226,7 @@ Integrates with the existing monitoring system via `IMonitoringSystem`:
 
 ### Core Error Handling Integration
 
-Extends the `BaseErrorHandler` from `@tnf/core-error-handling`:
+Extends the `BaseErrorHandler` from `@the-new-fuse/core-error-handling`:
 
 - **Recovery Strategies**: Uses existing recovery strategy patterns
 - **Error Classification**: Leverages existing error classification system

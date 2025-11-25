@@ -892,7 +892,7 @@ import { logger } from '@the-new-fuse/core';
 import {
   SystemError,
   DatabaseError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 try {
   await dbOperation();
@@ -1234,7 +1234,7 @@ For issues and questions:
 
 - `@the-new-fuse/database` - Database integration (Prisma)
 - `@the-new-fuse/core-auth` - Authentication and authorization
-- `@tnf/core-error-handling` - Error handling utilities
+- `@the-new-fuse/core-error-handling` - Error handling utilities
 - `@the-new-fuse/resource-registry` - Resource management
 - `@the-new-fuse/agent-coordination` - Advanced agent coordination
 - `@the-new-fuse/n8n-workflows` - Workflow integrations

@@ -1,4 +1,4 @@
-# @tnf/core-error-handling
+# @the-new-fuse/core-error-handling
 
 Unified error handling system for The New Fuse. Provides comprehensive error classes, error recovery strategies, retry logic, and logging utilities for robust application error management.
 
@@ -24,9 +24,9 @@ The core-error-handling package is a production-ready error management system th
 ## Installation
 
 ```bash
-npm install @tnf/core-error-handling
+npm install @the-new-fuse/core-error-handling
 # or
-pnpm add @tnf/core-error-handling
+pnpm add @the-new-fuse/core-error-handling
 ```
 
 ## Quick Start
@@ -40,7 +40,7 @@ import {
   ValidationError,
   ErrorSeverity,
   ErrorCategory,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Throw a not found error
 throw new NotFoundError('User', 'user-123');
@@ -60,7 +60,7 @@ throw new ApplicationError(
 ### With Error Recovery
 
 ```typescript
-import { RetryLogic } from '@tnf/core-error-handling';
+import { RetryLogic } from '@the-new-fuse/core-error-handling';
 
 const retryLogic = new RetryLogic({
   maxRetries: 3,
@@ -77,7 +77,7 @@ const result = await retryLogic.executeWithRetry(async () => {
 ### With Logger
 
 ```typescript
-import { Logger } from '@tnf/core-error-handling';
+import { Logger } from '@the-new-fuse/core-error-handling';
 
 const logger = new Logger('MyService');
 
@@ -100,7 +100,7 @@ try {
 Base error class with rich metadata.
 
 ```typescript
-import { ApplicationError, ErrorSeverity, ErrorCategory } from '@tnf/core-error-handling';
+import { ApplicationError, ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 
 const error = new ApplicationError(
   'Error message',
@@ -134,7 +134,7 @@ import {
   TimeoutError,
   ConnectionError,
   HttpError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Generic network error
 throw new NetworkError('Network request failed', 1000, {
@@ -161,7 +161,7 @@ import {
   InvalidCredentialsError,
   AuthorizationError,
   InsufficientPermissionsError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Generic authentication error
 throw new AuthenticationError('Authentication failed');
@@ -187,7 +187,7 @@ import {
   RequiredFieldError,
   InvalidFormatError,
   OutOfRangeError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Generic validation error
 throw new ValidationError('Validation failed', 'fieldName', [
@@ -214,7 +214,7 @@ import {
   DuplicateResourceError,
   OperationNotAllowedError,
   RateLimitError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Generic business error
 throw new BusinessError('Business rule violated');
@@ -245,7 +245,7 @@ import {
   ServiceUnavailableError,
   ExternalServiceError,
   FileSystemError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Generic system error
 throw new SystemError('System failure');
@@ -272,7 +272,7 @@ throw new FileSystemError('File not found', '/path/to/file', 'read');
 import {
   IntegrationError,
   ApiIntegrationError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Generic integration error
 throw new IntegrationError('Stripe', 'Payment integration failed');
@@ -288,7 +288,7 @@ import {
   PaymentError,
   PaymentDeclinedError,
   InsufficientFundsError,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 // Generic payment error
 throw new PaymentError('Payment failed', 7000, {
@@ -307,7 +307,7 @@ throw new InsufficientFundsError(100, 50);
 ## Error Codes Reference
 
 ```typescript
-import { ErrorCodes } from '@tnf/core-error-handling';
+import { ErrorCodes } from '@the-new-fuse/core-error-handling';
 
 // Network errors (1000-1999)
 ErrorCodes.NETWORK_ERROR;        // 1000
@@ -357,7 +357,7 @@ ErrorCodes.INSUFFICIENT_FUNDS;   // 7002
 ### Basic Retry
 
 ```typescript
-import { RetryLogic } from '@tnf/core-error-handling';
+import { RetryLogic } from '@the-new-fuse/core-error-handling';
 
 const retry = new RetryLogic({
   maxRetries: 3,
@@ -417,7 +417,7 @@ const retry = new RetryLogic({
 ### Circuit Breaker Pattern
 
 ```typescript
-import { CircuitBreaker } from '@tnf/core-error-handling';
+import { CircuitBreaker } from '@the-new-fuse/core-error-handling';
 
 const breaker = new CircuitBreaker({
   failureThreshold: 5,      // Open after 5 failures
@@ -433,7 +433,7 @@ const result = await breaker.execute(async () => {
 ### Fallback Strategy
 
 ```typescript
-import { FallbackStrategy } from '@tnf/core-error-handling';
+import { FallbackStrategy } from '@the-new-fuse/core-error-handling';
 
 const fallback = new FallbackStrategy();
 
@@ -451,7 +451,7 @@ const result = await fallback.executeWithFallback(
 ### Graceful Degradation
 
 ```typescript
-import { GracefulDegradation } from '@tnf/core-error-handling';
+import { GracefulDegradation } from '@the-new-fuse/core-error-handling';
 
 const degradation = new GracefulDegradation([
   async () => await primaryService.getData(),
@@ -468,7 +468,7 @@ const result = await degradation.execute();
 ### Basic Logging
 
 ```typescript
-import { Logger } from '@tnf/core-error-handling';
+import { Logger } from '@the-new-fuse/core-error-handling';
 
 const logger = new Logger('UserService');
 
@@ -524,7 +524,7 @@ try {
 ### Create Errors Consistently
 
 ```typescript
-import { ErrorFactory } from '@tnf/core-error-handling';
+import { ErrorFactory } from '@the-new-fuse/core-error-handling';
 
 const factory = new ErrorFactory('UserService');
 
@@ -550,7 +550,7 @@ const error = factory.create({
 
 ```typescript
 import { Controller, Get, Param } from '@nestjs/common';
-import { NotFoundError, Logger } from '@tnf/core-error-handling';
+import { NotFoundError, Logger } from '@the-new-fuse/core-error-handling';
 
 @Controller('users')
 export class UsersController {
@@ -578,7 +578,7 @@ import {
   RetryLogic,
   NetworkError,
   Logger,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 
 @Injectable()
 export class ExternalApiService {
@@ -622,7 +622,7 @@ import {
   ArgumentsHost,
   HttpException,
 } from '@nestjs/common';
-import { ApplicationError, Logger } from '@tnf/core-error-handling';
+import { ApplicationError, Logger } from '@the-new-fuse/core-error-handling';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -715,7 +715,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 ### Error Monitoring Integration
 
 ```typescript
-import { Logger, ApplicationError } from '@tnf/core-error-handling';
+import { Logger, ApplicationError } from '@the-new-fuse/core-error-handling';
 
 class ErrorMonitor {
   private readonly logger = new Logger('ErrorMonitor');
@@ -752,7 +752,7 @@ class ErrorMonitor {
 
 ```typescript
 import { Logger as CoreLogger } from '@the-new-fuse/core';
-import { Logger as ErrorLogger } from '@tnf/core-error-handling';
+import { Logger as ErrorLogger } from '@the-new-fuse/core-error-handling';
 
 // Use error handling logger for error-specific logging
 const errorLogger = new ErrorLogger('ErrorService');
@@ -765,7 +765,7 @@ const appLogger = CoreLogger.getInstance();
 
 ```typescript
 import { PrismaService } from '@the-new-fuse/database';
-import { DatabaseError } from '@tnf/core-error-handling';
+import { DatabaseError } from '@the-new-fuse/core-error-handling';
 
 async function queryDatabase() {
   try {
@@ -784,7 +784,7 @@ async function queryDatabase() {
 ### With API Package
 
 ```typescript
-import { ApplicationError } from '@tnf/core-error-handling';
+import { ApplicationError } from '@the-new-fuse/core-error-handling';
 
 // Global error handler automatically converts errors to HTTP responses
 // See GlobalExceptionFilter example above
@@ -873,7 +873,7 @@ try {
 ### Logger Configuration
 
 ```typescript
-import { Logger } from '@tnf/core-error-handling';
+import { Logger } from '@the-new-fuse/core-error-handling';
 
 // Configure log level
 Logger.setLogLevel('debug'); // debug, info, warn, error
@@ -910,7 +910,7 @@ import type {
   IErrorHandler,
   RetryConfig,
   LogLevel,
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 ```
 
 ## Architecture

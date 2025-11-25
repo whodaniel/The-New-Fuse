@@ -7,7 +7,7 @@ import {
   BaseMetricsCollector, 
   BaseMetricsCollectorConfig,
   Logger
-} from '@tnf/core-monitoring';
+} from '@the-new-fuse/core-monitoring';
 import {
   BuildEventData,
   BuildMetrics,

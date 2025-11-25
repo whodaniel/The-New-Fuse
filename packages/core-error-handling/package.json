@@ -1,5 +1,5 @@
 {
-  "name": "@tnf/core-error-handling",
+  "name": "@the-new-fuse/core-error-handling",
   "version": "1.0.0",
   "description": "Unified error handling system for The New Fuse",
   "main": "dist/index.js",

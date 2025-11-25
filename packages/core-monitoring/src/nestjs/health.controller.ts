@@ -81,8 +81,8 @@ export class HealthControllerTemplate {
  */
 export const healthControllerExample = `
 import { Controller, Get } from '@nestjs/common';
-import { HealthCheckService } from '@tnf/core-monitoring';
-import { HealthControllerTemplate } from '@tnf/core-monitoring/nestjs';
+import { HealthCheckService } from '@the-new-fuse/core-monitoring';
+import { HealthControllerTemplate } from '@the-new-fuse/core-monitoring/nestjs';
 
 @Controller('health')
 export class HealthController {

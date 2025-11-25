@@ -470,8 +470,8 @@ import { PrismaService } from '@the-new-fuse/database';
 ### Error Handling
 
 ```typescript
-// Uses @tnf/core-error-handling
-import { AuthenticationError, TokenExpiredError } from '@tnf/core-error-handling';
+// Uses @the-new-fuse/core-error-handling
+import { AuthenticationError, TokenExpiredError } from '@the-new-fuse/core-error-handling';
 
 // Automatically throws appropriate errors
 try {
@@ -729,6 +729,6 @@ For issues and questions:
 ## Related Packages
 
 - `@the-new-fuse/database` - Prisma database client
-- `@tnf/core-error-handling` - Error handling utilities
+- `@the-new-fuse/core-error-handling` - Error handling utilities
 - `@the-new-fuse/core` - Core functionality
 - `@the-new-fuse/api` - REST API implementation

@@ -32,8 +32,8 @@ export class MetricsControllerTemplate {
  */
 export const metricsControllerExample = `
 import { Controller, Get, Header } from '@nestjs/common';
-import { PrometheusMetrics } from '@tnf/core-monitoring';
-import { MetricsControllerTemplate } from '@tnf/core-monitoring/nestjs';
+import { PrometheusMetrics } from '@the-new-fuse/core-monitoring';
+import { MetricsControllerTemplate } from '@the-new-fuse/core-monitoring/nestjs';
 
 @Controller('metrics')
 export class MetricsController {

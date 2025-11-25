@@ -15,12 +15,12 @@ import {
   ErrorSeverity,
   ErrorCategory,
   BaseErrorHandlerConfig
-} from '@tnf/core-error-handling';
+} from '@the-new-fuse/core-error-handling';
 import {
   IMonitoringSystem,
   IMetricsCollector,
   MetricDataPoint
-} from '@tnf/core-monitoring';
+} from '@the-new-fuse/core-monitoring';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 /**

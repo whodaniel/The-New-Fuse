@@ -12,7 +12,7 @@ import {
   CircuitBreakerState 
 } from './SyncRetryManager.js';
 import { SyncError, SyncContext } from './SyncErrorHandler.js';
-import { ErrorSeverity, ErrorCategory } from '@tnf/core-error-handling';
+import { ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 
 describe('SyncRetryManager', () => {
   let retryManager: SyncRetryManager;
