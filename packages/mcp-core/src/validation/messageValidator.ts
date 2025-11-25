@@ -2,7 +2,7 @@
  * Message-specific validation utilities
  */
 
-import { mcpValidator, ValidationResult } from './validator';
+import { mcpValidator, ValidationResult } from './validator.js';
 import { 
   MCPRequest, 
   MCPResponse, 
