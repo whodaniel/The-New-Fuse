@@ -1,125 +1,122 @@
 /**
  * Core MCP Protocol Interfaces
- * 
+ *
  * This module defines the fundamental interfaces for the Model Context Protocol (MCP)
  * implementation, including server, client, and broker interfaces.
  */
 
-export type { IMCPServer } from './IMCPServer';
-export type { IMCPClient } from './IMCPClient';
-export type { IMCPBroker } from './IMCPBroker';
-export type { 
-  JSONRPCMessage, 
-  JSONRPCRequest, 
-  JSONRPCResponse, 
-  JSONRPCNotification, 
+export { AgentStatus } from './IMCPAgentIntegration.js';
+export type {
+  Agent,
+  AgentCapabilityDiscovery,
+  AgentCollaboration,
+  AgentMCPEndpoint,
+  AgentMessageResult,
+  AgentMessageRouting,
+  AgentRegistrationResult,
+  IMCPAgentIntegration,
+} from './IMCPAgentIntegration.js';
+export type { IMCPBroker } from './IMCPBroker.js';
+export type {
+  CapabilityDependency,
+  CapabilityMetadata,
+  CapabilityMetrics,
+  CapabilityRegistry,
+  CapabilityStatus,
+  MCPCapability,
+} from './IMCPCapability.js';
+export type { IMCPClient } from './IMCPClient.js';
+export type {
+  AuthConfig,
+  ConnectionMetrics,
+  ConnectionOptions,
+  ConnectionStatus,
+  IConnectionManager,
+  MCPConnection,
+  TLSConfig,
+} from './IMCPConnection.js';
+export type {
   JSONRPCError,
-  MCPRequest,
-  MCPResponse,
-  MCPNotification,
+  JSONRPCMessage,
+  JSONRPCMessage_Union,
+  JSONRPCNotification,
+  JSONRPCRequest,
+  JSONRPCResponse,
   MCPError,
   MCPMessage,
-  JSONRPCMessage_Union
-} from './IMCPMessage';
-export type { 
-  ResourceHandler, 
-  MCPResource, 
-  ResourceContent, 
-  ResourcePermissions, 
-  ResourceCaching, 
-  ResourceCallback 
-} from './IMCPResource';
-export type { 
-  JSONSchema,
-  ValidationResult,
-  ToolResult,
-  ToolExecutionMetadata,
-  ToolHandler,
-  ToolUsageStats,
-  MCPTool,
-  ToolConfig,
-  ResourceLimits,
-  ToolPermissions,
-  RateLimitConfig
-} from './IMCPTool';
-export type { 
-  MCPCapability, 
-  CapabilityMetadata, 
-  CapabilityDependency, 
-  CapabilityStatus, 
-  CapabilityMetrics, 
-  CapabilityRegistry 
-} from './IMCPCapability';
-export type { 
-  ConnectionStatus,
-  AuthConfig,
-  TLSConfig,
-  ConnectionOptions,
-  ConnectionMetrics,
-  MCPConnection,
-  IConnectionManager
-} from './IMCPConnection';
-export type { 
-  IMessageRouter,
-  EventCallback
-} from './IMessageRouter';
+  MCPNotification,
+  MCPRequest,
+  MCPResponse,
+} from './IMCPMessage.js';
 export type {
-  IMCPWorkflowIntegration,
-  WorkflowStep,
-  WorkflowContext,
-  StepResult,
-  Task,
-  TaskResult,
-  ExecutionStatus,
-  MCPCallback,
-  TaskExecutionStatus,
-  AuthContext,
-  ErrorRecoveryConfig,
-  MonitoringConfig
-} from './IMCPWorkflowIntegration';
+  MCPResource,
+  ResourceCaching,
+  ResourceCallback,
+  ResourceContent,
+  ResourceHandler,
+  ResourcePermissions,
+} from './IMCPResource.js';
+export type { IMCPServer } from './IMCPServer.js';
 export type {
-  IMCPAgentIntegration,
-  Agent,
-  AgentMCPEndpoint,
-  AgentMessageRouting,
-  AgentCollaboration,
-  AgentCapabilityDiscovery,
-  AgentRegistrationResult,
-  AgentMessageResult
-} from './IMCPAgentIntegration';
-export { AgentStatus } from './IMCPAgentIntegration';
-export type {
+  AutoDiscoveryConfig,
+  CircuitBreakerConfig,
   IMCPServiceMesh,
-  ServiceMeshRegistration,
+  ScalingEvent,
+  ScalingPolicy,
   ServiceEndpoint,
   ServiceMeshHealthCheck,
-  ServiceMeshLoadBalancing,
-  CircuitBreakerConfig,
-  ServiceMeshQuery,
-  ServiceMeshMetrics,
-  ServiceScalingConfig,
-  ScalingPolicy,
   ServiceMeshIntegrationResult,
-  AutoDiscoveryConfig,
   ServiceMeshIntegrationStatus,
-  ScalingEvent
-} from './IMCPServiceMesh';
+  ServiceMeshLoadBalancing,
+  ServiceMeshMetrics,
+  ServiceMeshQuery,
+  ServiceMeshRegistration,
+  ServiceScalingConfig,
+} from './IMCPServiceMesh.js';
 export type {
-  IMonitoringSystem,
-  IMetricsCollector,
+  JSONSchema,
+  MCPTool,
+  RateLimitConfig,
+  ResourceLimits,
+  ToolConfig,
+  ToolExecutionMetadata,
+  ToolHandler,
+  ToolPermissions,
+  ToolResult,
+  ToolUsageStats,
+  ValidationResult,
+} from './IMCPTool.js';
+export type {
+  AuthContext,
+  ErrorRecoveryConfig,
+  ExecutionStatus,
+  IMCPWorkflowIntegration,
+  MCPCallback,
+  MonitoringConfig,
+  StepResult,
+  Task,
+  TaskExecutionStatus,
+  TaskResult,
+  WorkflowContext,
+  WorkflowStep,
+} from './IMCPWorkflowIntegration.js';
+export type { EventCallback, IMessageRouter } from './IMessageRouter.js';
+export type {
+  AlertRule,
+  HealthCheck,
+  HealthCheckResult,
   IAlertManager,
-  IDashboardManager,
-  IPerformanceMonitor,
-  ILoadTester,
   ICacheMonitor,
   IConnectionPoolMonitor,
+  IDashboardManager,
+  ILoadTester,
+  IMetricsCollector,
+  IMonitoringSystem,
+  IPerformanceMonitor,
   ISystemHealthMonitor,
-  AlertRule,
   PerformanceReport,
   SystemHealthStatus,
-  HealthCheck,
-  HealthCheckResult
-} from './IMonitoring';
+} from './IMonitoring.js';
 
 // Export AccessControlEntry from one source to avoid conflicts
-export type { AccessControlEntry } from './IMCPResource';
+export type { AccessControlEntry } from './IMCPResource.js';
