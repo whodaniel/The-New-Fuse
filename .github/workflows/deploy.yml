@@ -39,7 +39,7 @@ jobs:
       services: ${{ steps.check.outputs.services }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Determine deployment environment
         id: check
@@ -87,7 +87,7 @@ jobs:
             path: apps/frontend
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Check if service should be deployed
         id: should-deploy
@@ -154,7 +154,7 @@ jobs:
         service: [api-gateway, api, backend, frontend]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Check if service should be deployed
         id: should-deploy
@@ -271,7 +271,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
