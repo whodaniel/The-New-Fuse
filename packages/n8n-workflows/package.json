@@ -38,7 +38,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:watch": "tsc --watch",
     "clean": "rimraf dist",
     "dev": "tsc --watch",
