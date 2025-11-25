@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
 import * as fs from 'fs/promises';
-import * as path from 'path';
 import { glob } from 'glob';
+import * as path from 'path';
+import { PrismaService } from '../services/prisma.service';
 
 interface CodeIssue {
   id: string;
@@ -62,7 +62,8 @@ export class AnalyzerAgentService {
 
     this.logger.log(`Analyzing ${files.length} files...`);
 
-    for (const file of files.slice(0, 50)) { // Limit for performance
+    for (const file of files.slice(0, 50)) {
+      // Limit for performance
       const fileIssues = await this.analyzeFile(file);
       issues.push(...fileIssues);
     }
@@ -107,7 +108,11 @@ export class AnalyzerAgentService {
         // Check for common issues
 
         // 1. Console logs in production code
-        if (line.includes('console.log') && !filePath.includes('.test.') && !filePath.includes('.spec.')) {
+        if (
+          line.includes('console.log') &&
+          !filePath.includes('.test.') &&
+          !filePath.includes('.spec.')
+        ) {
           issues.push({
             id: `${relativePath}:${index}:console`,
             file: relativePath,
@@ -152,7 +157,11 @@ export class AnalyzerAgentService {
         }
 
         // 4. Hardcoded credentials/secrets
-        if (line.match(/apiKey|api_key|secret|password|token/i) && line.includes('=') && line.match(/["'][^"']+["']/)) {
+        if (
+          line.match(/apiKey|api_key|secret|password|token/i) &&
+          line.includes('=') &&
+          line.match(/["'][^"']+["']/)
+        ) {
           issues.push({
             id: `${relativePath}:${index}:hardcoded-secret`,
             file: relativePath,
@@ -221,11 +230,13 @@ export class AnalyzerAgentService {
     return issues;
   }
 
-  private async identifyBottlenecks(files: string[]): Promise<Array<{location: string; description: string; impact: number}>> {
+  private async identifyBottlenecks(
+    files: string[]
+  ): Promise<Array<{ location: string; description: string; impact: number }>> {
     const bottlenecks = [];
 
     // Check for missing indexes in schema
-    const schemaFiles = files.filter(f => f.includes('schema.prisma'));
+    const schemaFiles = files.filter((f) => f.includes('schema.prisma'));
     for (const schema of schemaFiles) {
       bottlenecks.push({
         location: path.relative(this.codebaseRoot, schema),
@@ -235,7 +246,8 @@ export class AnalyzerAgentService {
     }
 
     // Check for N+1 query patterns
-    const serviceFiles = files.filter(f => f.includes('.service.ts'));
+    // const serviceFiles = files.filter(f => f.includes('.service.ts'));
+    const _serviceFiles = files.filter((f) => f.includes('.service.ts'));
     bottlenecks.push({
       location: 'Service files',
       description: 'Potential N+1 query patterns in data fetching',
@@ -245,11 +257,13 @@ export class AnalyzerAgentService {
     return bottlenecks;
   }
 
-  private async findAntiPatterns(issues: CodeIssue[]): Promise<Array<{pattern: string; occurrences: number; locations: string[]}>> {
+  private async findAntiPatterns(
+    issues: CodeIssue[]
+  ): Promise<Array<{ pattern: string; occurrences: number; locations: string[] }>> {
     const patterns = new Map<string, string[]>();
 
     // Group issues by type
-    issues.forEach(issue => {
+    issues.forEach((issue) => {
       if (issue.type === 'anti-pattern' || issue.severity === 'high') {
         const key = issue.description;
         if (!patterns.has(key)) {
@@ -267,10 +281,10 @@ export class AnalyzerAgentService {
   }
 
   private calculateMetrics(issues: CodeIssue[]): AnalysisReport['metrics'] {
-    const criticalIssues = issues.filter(i => i.severity === 'critical').length;
-    const highIssues = issues.filter(i => i.severity === 'high').length;
-    const mediumIssues = issues.filter(i => i.severity === 'medium').length;
-    const lowIssues = issues.filter(i => i.severity === 'low').length;
+    const criticalIssues = issues.filter((i) => i.severity === 'critical').length;
+    const highIssues = issues.filter((i) => i.severity === 'high').length;
+    const mediumIssues = issues.filter((i) => i.severity === 'medium').length;
+    const lowIssues = issues.filter((i) => i.severity === 'low').length;
 
     // Calculate technical debt score (0-100, higher is worse)
     const technicalDebtScore = Math.min(
@@ -279,7 +293,7 @@ export class AnalyzerAgentService {
     );
 
     return {
-      totalFiles: new Set(issues.map(i => i.file)).size,
+      totalFiles: new Set(issues.map((i) => i.file)).size,
       totalIssues: issues.length,
       criticalIssues,
       highIssues,
@@ -304,14 +318,16 @@ export class AnalyzerAgentService {
     };
 
     return issues
-      .map(issue => ({
+      .map((issue) => ({
         ...issue,
-        priority: (severityWeight[issue.severity] * issue.impact * effortWeight[issue.estimatedEffort]) / 100,
+        priority:
+          (severityWeight[issue.severity] * issue.impact * effortWeight[issue.estimatedEffort]) /
+          100,
       }))
       .sort((a, b) => b.priority - a.priority);
   }
 
-  private async storeReport(report: AnalysisReport): Promise<void> {
+  private async storeReport(_report: AnalysisReport): Promise<void> {
     try {
       // Store in database as a workflow task or custom table
       this.logger.log('Storing analysis report in database...');

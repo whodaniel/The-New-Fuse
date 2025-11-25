@@ -1,22 +1,16 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Logger,
-} from '@nestjs/core';
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable, of, from } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
-import { AdvancedCacheManager } from '../services/advanced-cache.manager';
+import { Observable, from } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import {
   CACHEABLE_KEY,
   CACHE_EVICT_KEY,
   CACHE_INVALIDATE_KEY,
-  CacheableOptions,
   CacheEvictOptions,
   CacheInvalidateOptions,
+  CacheableOptions,
 } from '../decorators/cacheable.decorator';
+import { AdvancedCacheManager } from '../services/advanced-cache.manager';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
@@ -24,26 +18,26 @@ export class CacheInterceptor implements NestInterceptor {
 
   constructor(
     private readonly reflector: Reflector,
-    private readonly cacheManager: AdvancedCacheManager,
+    private readonly cacheManager: AdvancedCacheManager
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const cacheableOptions = this.reflector.get<CacheableOptions>(
       CACHEABLE_KEY,
-      context.getHandler(),
+      context.getHandler()
     );
 
     const evictOptions = this.reflector.get<CacheEvictOptions>(
       CACHE_EVICT_KEY,
-      context.getHandler(),
+      context.getHandler()
     );
 
     const invalidateOptions = this.reflector.get<CacheInvalidateOptions>(
       CACHE_INVALIDATE_KEY,
-      context.getHandler(),
+      context.getHandler()
     );
 
-    const request = context.switchToHttp().getRequest();
+    const _request = context.switchToHttp().getRequest();
     const methodArgs = context.getArgs();
 
     // Handle cache eviction before method execution
@@ -68,7 +62,7 @@ export class CacheInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         this.handlePostExecution(evictOptions, invalidateOptions, methodArgs);
-      }),
+      })
     );
   }
 
@@ -76,7 +70,7 @@ export class CacheInterceptor implements NestInterceptor {
     options: CacheableOptions,
     methodArgs: any[],
     next: CallHandler,
-    afterCallback: () => void,
+    afterCallback: () => void
   ): Observable<any> {
     // Check condition
     if (options.condition && !options.condition(...methodArgs)) {
@@ -97,15 +91,15 @@ export class CacheInterceptor implements NestInterceptor {
           ttl: options.ttl,
           prefix: options.prefix,
           tags: options.tags,
-        },
-      ),
+        }
+      )
     );
   }
 
   private handlePostExecution(
     evictOptions: CacheEvictOptions | undefined,
     invalidateOptions: CacheInvalidateOptions | undefined,
-    methodArgs: any[],
+    methodArgs: any[]
   ): void {
     if (evictOptions && evictOptions.when === 'after') {
       this.handleEviction(evictOptions, methodArgs);
@@ -138,7 +132,7 @@ export class CacheInterceptor implements NestInterceptor {
     }
   }
 
-  private handleInvalidation(options: CacheInvalidateOptions, methodArgs: any[]): void {
+  private handleInvalidation(options: CacheInvalidateOptions, _methodArgs: any[]): void {
     try {
       // Invalidate specific keys
       if (options.keys && options.keys.length > 0) {
@@ -165,7 +159,7 @@ export class CacheInterceptor implements NestInterceptor {
 
   private generateCacheKey(
     keyOption: string | ((...args: any[]) => string) | undefined,
-    methodArgs: any[],
+    methodArgs: any[]
   ): string {
     if (typeof keyOption === 'function') {
       return keyOption(...methodArgs);

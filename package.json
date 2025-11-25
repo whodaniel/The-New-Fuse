@@ -16,7 +16,7 @@
     "dev:memory-optimized": "node scripts/memory-optimized-dev.cjs",
     "dev:low-memory": "BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 node scripts/memory-optimized-dev.cjs",
     "prebuild": "node scripts/pre-build-check.cjs",
-    "build": "turbo run build --filter=!@the-new-fuse/web-scraping --filter=!@the-new-fuse/core --filter=!@the-new-fuse/n8n-workflows --filter=!@the-new-fuse/sync-core --filter=!@the-new-fuse/ui-consolidated --filter=!@the-new-fuse/integration-tests",
+    "build": "turbo run build --filter=!@the-new-fuse/web-scraping --filter=!@the-new-fuse/core --filter=!@the-new-fuse/n8n-workflows --filter=!@the-new-fuse/sync-core --filter=!@the-new-fuse/integration-tests",
     "build:types": "turbo run build --filter=@the-new-fuse/types",
     "build:packages": "turbo run build --filter=./packages/*",
     "build:apps": "turbo run build --filter=./apps/*",
