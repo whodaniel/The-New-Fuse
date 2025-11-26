@@ -437,9 +437,9 @@ export class CommonHealthChecks {
 
       try {
         // Note: This requires 'check-disk-space' package
-        const checkDiskSpace = await import('check-disk-space').catch(() => null);
+        const checkDiskSpaceModule = await import('check-disk-space').catch(() => null);
 
-        if (!checkDiskSpace) {
+        if (!checkDiskSpaceModule) {
           return {
             status: 'degraded',
             timestamp: new Date(),
@@ -448,7 +448,10 @@ export class CommonHealthChecks {
           };
         }
 
-        const diskSpace = await checkDiskSpace.default(path);
+        // Handle module resolution differences
+        // Cast to any to avoid TS issue where it thinks default export is the namespace
+        const checkDiskSpace = (checkDiskSpaceModule as any).default;
+        const diskSpace = await checkDiskSpace(path);
         const usedPercent = ((diskSpace.size - diskSpace.free) / diskSpace.size) * 100;
 
         let status: HealthStatus = 'healthy';
