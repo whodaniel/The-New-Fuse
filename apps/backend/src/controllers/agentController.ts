@@ -5,18 +5,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { Agent, CreateAgentDto, UpdateAgentDto } from '@the-new-fuse/types';
 
-interface AuthenticatedRequest extends Request {
-  user: {
-    id: string;
-  };
-}
-
 const prismaService = new PrismaService();
 const configService = new ConfigService();
-const agentService = new AgentService(prismaService);
+const agentService = new AgentService(prismaService, configService);
 
 export const agentController = {
-  createAgent: async (req: AuthenticatedRequest, res: Response) => {
+  createAgent: async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -30,7 +24,7 @@ export const agentController = {
     }
   },
 
-  getAgents: async (req: AuthenticatedRequest, res: Response) => {
+  getAgents: async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -44,7 +38,7 @@ export const agentController = {
     }
   },
 
-  getAgentById: async (req: AuthenticatedRequest, res: Response) => {
+  getAgentById: async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -61,7 +55,7 @@ export const agentController = {
     }
   },
 
-  updateAgent: async (req: AuthenticatedRequest, res: Response) => {
+  updateAgent: async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -78,7 +72,7 @@ export const agentController = {
     }
   },
 
-  deleteAgent: async (req: AuthenticatedRequest, res: Response) => {
+  deleteAgent: async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {

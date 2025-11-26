@@ -53,7 +53,7 @@ export interface StreamStats {
 export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RedisStreamsService.name);
   private redis: any;
-  private subscriber: Redis;
+  private subscriber!: Redis;
   private consumers = new Map<string, boolean>();
   private streamStats = new Map<string, StreamStats>();
   private messageHandlers = new Map<string, (message: StreamMessage) => Promise<void>>();

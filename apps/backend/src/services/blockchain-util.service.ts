@@ -79,7 +79,8 @@ export class BlockchainUtilService {
   ): Promise<GasEstimate> {
     try {
       // Get current gas price
-      const gasPrice = await this.provider.getGasPrice();
+      const feeData = await this.provider.getFeeData();
+      const gasPrice = feeData.gasPrice || 0n; // gasPrice is BigInt
       
       // Estimate base gas
       const gasLimit = options.gasLimit || 
@@ -97,8 +98,8 @@ export class BlockchainUtilService {
       
       // Calculate dynamic fees
       const latestBlock = await this.provider.getBlock('latest');
-      const baseFee = latestBlock?.baseFeePerGas || BigInt(gasPrice); // baseFeePerGas is BigInt
-      const priorityFee = (BigInt(gasPrice) - baseFee) * 50n / 100n; // 50% of spread as priority
+      const baseFee = latestBlock?.baseFeePerGas || gasPrice; // baseFeePerGas is BigInt
+      const priorityFee = (gasPrice - baseFee) * 50n / 100n; // 50% of spread as priority
       const maxPriorityFeePerGas = BigInt(options.maxPriorityFeePerGas || priorityFee);
       const maxFeePerGas = (baseFee * 120n) / 100n + maxPriorityFeePerGas;
       
@@ -168,7 +169,7 @@ export class BlockchainUtilService {
     txHash: string,
     confirmations: number = 1,
     timeout: number = 300000 // 5 minutes
-  ): Promise<ethers.TransactionReceipt> {
+  ): Promise<ethers.TransactionReceipt | null> {
     try {
       this.logger.log(`Waiting for ${confirmations} confirmations for tx: ${txHash}`);
       
@@ -178,8 +179,8 @@ export class BlockchainUtilService {
         timeout
       );
       
-      if (receipt.status === 0) {
-        throw new Error('Transaction failed during execution');
+      if (receipt === null || receipt.status === 0) {
+        throw new Error('Transaction failed during execution or timed out');
       }
       
       this.logger.log(`Transaction confirmed: ${txHash}`);
@@ -316,7 +317,7 @@ export class BlockchainUtilService {
           status: tx.confirmations > 0 ? 'confirmed' : 'pending'
         } : null,
         receipt: receipt ? {
-          transactionHash: receipt.transactionHash,
+          transactionHash: receipt.hash,
           blockNumber: receipt.blockNumber,
           status: receipt.status === 1 ? 'success' : 'failed',
           gasUsed: receipt.gasUsed.toString(),
@@ -334,7 +335,7 @@ export class BlockchainUtilService {
     return this.config;
   }
 
-  getProvider(): providers.JsonRpcProvider {
+  getProvider(): JsonRpcProvider {
     return this.provider;
   }
 }
