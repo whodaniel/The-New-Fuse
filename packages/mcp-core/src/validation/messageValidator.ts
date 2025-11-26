@@ -10,7 +10,7 @@ import {
   MCPMessage
 } from '../interfaces/IMCPMessage';
 import { MessageValidationResult } from '../types/message';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
 
 /**
  * Message validator class for MCP protocol compliance
