@@ -14,7 +14,7 @@ import {
 } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
 import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
-import { AggregateBlock, AgentExecutorService } from './building-blocks/mass-blocks.service';
+import { AggregateBlock, AgentExecutorService, MassBlocksService } from './building-blocks/mass-blocks.service';
 
 @Module({
   imports: [PrismaModule],
@@ -33,6 +33,7 @@ import { AggregateBlock, AgentExecutorService } from './building-blocks/mass-blo
     ToolUseService,
     AggregateBlock,
     AgentExecutorService,
+    MassBlocksService,
   ],
   exports: [
     MassOrchestrationService,
@@ -48,6 +49,7 @@ import { AggregateBlock, AgentExecutorService } from './building-blocks/mass-blo
     ToolUseService,
     AggregateBlock,
     AgentExecutorService,
+    MassBlocksService,
   ],
 })
 export class MassModule {}
