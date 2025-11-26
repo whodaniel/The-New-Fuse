@@ -3,7 +3,7 @@
  */
 
 import Ajv, { JSONSchemaType, ValidateFunction } from 'ajv';
-import { schemas } from './schemas';
+import { schemas } from './schemas.js';
 import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
 
 /**
