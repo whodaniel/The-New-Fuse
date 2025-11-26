@@ -3,7 +3,7 @@
  */
 
 // Re-export error interfaces from the interfaces module
-export type { MCPError } from '../interfaces/IMCPMessage';
+export type { MCPError } from '../interfaces/IMCPMessage.js';
 
 /**
  * Standard JSON-RPC 2.0 error codes

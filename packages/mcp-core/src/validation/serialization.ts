@@ -3,7 +3,7 @@
  */
 
 import { MCPMessage, MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
 import { MessageValidator } from './messageValidator';
 
 /**
