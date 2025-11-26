@@ -38,7 +38,7 @@ interface ExecutionSubscription {
 })
 export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(WorkflowExecutionGateway.name);
   private activeSubscriptions: Map<string, Set<string>> = new Map(); // executionId -> Set of clientIds

@@ -5,25 +5,25 @@ export class MemoryMetricsDto {
     description: 'Total memory in bytes',
     example: 8589934592
   })
-  total: number;
+  total!: number;
 
   @ApiProperty({
     description: 'Used memory in bytes',
     example: 4294967296
   })
-  used: number;
+  used!: number;
 
   @ApiProperty({
     description: 'Free memory in bytes',
     example: 4294967296
   })
-  free: number;
+  free!: number;
 
   @ApiProperty({
     description: 'Memory usage percentage',
     example: 50.5
   })
-  usagePercent: number;
+  usagePercent!: number;
 }
 
 export class CpuMetricsDto {
@@ -31,19 +31,19 @@ export class CpuMetricsDto {
     description: 'Number of CPU cores',
     example: 8
   })
-  cores: number;
+  cores!: number;
 
   @ApiProperty({
     description: 'CPU usage percentage',
     example: 45.2
   })
-  usagePercent: number;
+  usagePercent!: number;
 
   @ApiProperty({
     description: 'CPU load average (1 minute)',
     example: 2.5
   })
-  loadAverage: number;
+  loadAverage!: number;
 }
 
 export class DatabaseMetricsDto {
@@ -51,25 +51,25 @@ export class DatabaseMetricsDto {
     description: 'Database connection status',
     example: 'connected'
   })
-  status: string;
+  status!: string;
 
   @ApiProperty({
     description: 'Number of active connections',
     example: 12
   })
-  activeConnections: number;
+  activeConnections!: number;
 
   @ApiProperty({
     description: 'Total number of queries executed',
     example: 15234
   })
-  totalQueries: number;
+  totalQueries!: number;
 
   @ApiProperty({
     description: 'Average query time in milliseconds',
     example: 25.3
   })
-  avgQueryTime: number;
+  avgQueryTime!: number;
 }
 
 export class ApiMetricsDto {
@@ -77,25 +77,25 @@ export class ApiMetricsDto {
     description: 'Total number of requests',
     example: 100000
   })
-  totalRequests: number;
+  totalRequests!: number;
 
   @ApiProperty({
     description: 'Requests per minute',
     example: 150
   })
-  requestsPerMinute: number;
+  requestsPerMinute!: number;
 
   @ApiProperty({
     description: 'Average response time in milliseconds',
     example: 125.5
   })
-  avgResponseTime: number;
+  avgResponseTime!: number;
 
   @ApiProperty({
     description: 'Error rate percentage',
     example: 0.5
   })
-  errorRate: number;
+  errorRate!: number;
 
   @ApiPropertyOptional({
     description: 'Response status code distribution',
@@ -113,14 +113,14 @@ export class ServiceHealthDto {
     description: 'Service name',
     example: 'database'
   })
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'Service status',
     example: 'healthy',
     enum: ['healthy', 'degraded', 'unhealthy']
   })
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status!: 'healthy' | 'degraded' | 'unhealthy';
 
   @ApiPropertyOptional({
     description: 'Response time in milliseconds',
@@ -147,49 +147,49 @@ export class SystemMetricsResponseDto {
     example: 'healthy',
     enum: ['healthy', 'degraded', 'unhealthy']
   })
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status!: 'healthy' | 'degraded' | 'unhealthy';
 
   @ApiProperty({
     description: 'System uptime in seconds',
     example: 86400
   })
-  uptime: number;
+  uptime!: number;
 
   @ApiProperty({
     description: 'Server timestamp',
     example: '2024-01-01T00:00:00.000Z'
   })
-  timestamp: Date;
+  timestamp!: Date;
 
   @ApiProperty({
     description: 'Memory metrics',
     type: MemoryMetricsDto
   })
-  memory: MemoryMetricsDto;
+  memory!: MemoryMetricsDto;
 
   @ApiProperty({
     description: 'CPU metrics',
     type: CpuMetricsDto
   })
-  cpu: CpuMetricsDto;
+  cpu!: CpuMetricsDto;
 
   @ApiProperty({
     description: 'Database metrics',
     type: DatabaseMetricsDto
   })
-  database: DatabaseMetricsDto;
+  database!: DatabaseMetricsDto;
 
   @ApiProperty({
     description: 'API metrics',
     type: ApiMetricsDto
   })
-  api: ApiMetricsDto;
+  api!: ApiMetricsDto;
 
   @ApiProperty({
     description: 'Service health checks',
     type: [ServiceHealthDto]
   })
-  services: ServiceHealthDto[];
+  services!: ServiceHealthDto[];
 
   @ApiPropertyOptional({
     description: 'Application version',

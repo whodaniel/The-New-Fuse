@@ -14,7 +14,13 @@ import {
 } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
 import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
-import { AggregateBlock, AgentExecutorService, MassBlocksService } from './building-blocks/mass-blocks.service';
+import {
+  AggregateBlock,
+  AgentExecutorService,
+  MassBlocksService,
+  ReflectBlock,
+  DebateBlock
+} from './building-blocks/mass-blocks.service';
 
 @Module({
   imports: [PrismaModule],

@@ -14,7 +14,7 @@ export class AuthService {
       email: prismaUser.email,
       displayName: prismaUser.name,
       avatarUrl: prismaUser.avatar || prismaUser.picture,
-      roles: [prismaUser.role?.toLowerCase() as UserRole] || ['user' as UserRole],
+      roles: [prismaUser.role?.toUpperCase() as UserRole] || ['USER' as UserRole],
       isActive: prismaUser.emailVerified ?? true,
       lastLogin: null,
       authProvider: prismaUser.googleId ? 'google' : 'local',
@@ -26,7 +26,20 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const prismaUser = await this.prismaService.user.findUnique({ 
-      where: { email } 
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        password: true, // Explicitly select the password field
+        googleId: true,
+        avatar: true,
+        picture: true,
+        role: true,
+        emailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+      }
     });
 
     if (!prismaUser || !prismaUser.password) {
@@ -48,7 +61,7 @@ export class AuthService {
         email: data.email,
         password: hashedPassword,
         name: data.name,
-        role: 'user',
+        role: 'USER',
         emailVerified: false
       }
     });
