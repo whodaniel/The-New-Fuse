@@ -4,7 +4,7 @@
 
 import Ajv, { JSONSchemaType, ValidateFunction } from 'ajv';
 import { schemas } from './schemas.js';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
 
 /**
  * Validation result interface
