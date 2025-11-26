@@ -2,7 +2,7 @@ ARG NODE_VERSION=22
 ARG PNPM_VERSION=10.22.0
 ARG SERVICE_PATH
 
-# Cache bust: 2025-05-01-v1
+# Cache bust: 2025-05-01-v2
 #------------------------------------------------------------------------------
 # Builder stage
 #------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ RUN pnpm --filter @the-new-fuse/core-error-handling build
 RUN pnpm --filter @the-new-fuse/core-monitoring build
 RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
+RUN pnpm --filter @the-new-fuse/mcp-core build
 
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies
