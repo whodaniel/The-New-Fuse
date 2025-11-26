@@ -71,11 +71,7 @@ export class ProductionBlockchainService {
 
       // Initialize wallet for transactions
       const privateKey = this.configService.get<string>('PRIVATE_KEY');
-      if (!privateKey) {
-        throw new Error('PRIVATE_KEY environment variable is required for blockchain operations');
-      }
-
-      const wallet = new (require('ethers').Wallet)(privateKey, this.blockchainUtil.getProvider());
+      const wallet = new Wallet(privateKey, this.blockchainUtil.getProvider());
 
       // Get contract instance
       const config = this.blockchainUtil.getConfig();
@@ -116,8 +112,8 @@ export class ProductionBlockchainService {
       }
 
       // Extract token ID from transfer event
-      const transferEvent = receipt.events?.find((e: any) => e.event === 'Transfer');
-      const tokenId = transferEvent?.args?.tokenId?.toNumber();
+      const transferEvent = receipt.logs?.find((log: any) => log.fragment.name === 'Transfer');
+      const tokenId = Number((transferEvent?.args as any)?.tokenId);
 
       if (!tokenId) {
         throw new Error('Failed to extract token ID from transaction');
@@ -128,7 +124,7 @@ export class ProductionBlockchainService {
         data: {
           agentId: request.agentId,
           tokenId: tokenId,
-          contractAddress: agentNftContract.address,
+          contractAddress: agentNftContract.target.toString(),
           smartAccountAddress: request.smartAccountAddress,
           metadataUri: request.metadataUri || this.generateMetadataURI(request.agentId),
           isFractionalized: false,
@@ -271,7 +267,7 @@ export class ProductionBlockchainService {
         throw new Error('PRIVATE_KEY environment variable is required');
       }
 
-      const wallet = new (require('ethers').Wallet)(privateKey, this.blockchainUtil.getProvider());
+      const wallet = new Wallet(privateKey, this.blockchainUtil.getProvider());
       const config = this.blockchainUtil.getConfig();
       const agentNftContract = this.blockchainUtil.getContract(
         config.contracts.agentNft,
@@ -352,7 +348,7 @@ export class ProductionBlockchainService {
       const config = this.blockchainUtil.getConfig();
       const provider = this.blockchainUtil.getProvider();
       
-      const contract = new (require('ethers').Contract)(
+      const contract = new Contract(
         agentNFT.contractAddress,
         this.getAgentNFTABI(),
         provider
@@ -360,8 +356,8 @@ export class ProductionBlockchainService {
 
       // Get owner and on-chain data
       const [owner, onChainAgent] = await Promise.all([
-        contract.ownerOf(agentNFT.tokenId),
-        contract.getAgent(agentNFT.tokenId).catch(() => null)
+        contract.ownerOf(BigInt(agentNFT.tokenId)),
+        contract.getAgent(BigInt(agentNFT.tokenId)).catch(() => null)
       ]);
 
       return {
