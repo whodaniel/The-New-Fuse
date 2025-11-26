@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import nodemailer = require('nodemailer');
+import { createTransporter, Transporter } from 'nodemailer';
 
 export interface EmailOptions {
   to: string;
@@ -12,10 +12,10 @@ export interface EmailOptions {
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter;
+  private transporter: Transporter;
 
   constructor() {
-    this.transporter = nodemailer.createTransporter({
+    this.transporter = createTransporter({
       host: process.env.SMTP_HOST || 'localhost',
       port: parseInt(process.env.SMTP_PORT || '587'),
       secure: process.env.SMTP_SECURE === 'true',
