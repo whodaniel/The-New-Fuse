@@ -34,6 +34,8 @@ import { AggregateBlock, AgentExecutorService, MassBlocksService } from './build
     AggregateBlock,
     AgentExecutorService,
     MassBlocksService,
+    ReflectBlock,
+    DebateBlock,
   ],
   exports: [
     MassOrchestrationService,
@@ -50,6 +52,8 @@ import { AggregateBlock, AgentExecutorService, MassBlocksService } from './build
     AggregateBlock,
     AgentExecutorService,
     MassBlocksService,
+    ReflectBlock,
+    DebateBlock,
   ],
 })
 export class MassModule {}
