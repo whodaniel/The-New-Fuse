@@ -1,7 +1,7 @@
 import express from 'express';
 import { auth } from '../middleware/auth';
 import { AgentService } from '../services/agentService';
-import { PrismaService } from '../lib/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 
 const router = express.Router();

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { AgentService } from '../services/agentService';
-import { PrismaService } from '../lib/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { Agent, CreateAgentDto, UpdateAgentDto } from '@the-new-fuse/types';
 
