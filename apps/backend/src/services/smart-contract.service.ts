@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ethers, providers, constants, utils } from 'ethers';
+import { ethers, JsonRpcProvider, ZeroAddress, Contract, Wallet, BigNumberish, formatEther, parseEther, EventFragment, getAddress } from 'ethers';
 
 // Contract ABIs (would normally be imported from compiled contracts)
 export const AGENT_NFT_ABI = [
@@ -48,12 +48,12 @@ export const SMART_ACCOUNT_FACTORY_ABI = [
 @Injectable()
 export class SmartContractService {
   private readonly logger = new Logger(SmartContractService.name);
-  private provider: providers.JsonRpcProvider;
-  private wallet: ethers.Wallet;
-  private agentNftContract: ethers.Contract;
-  private marketplaceContract: ethers.Contract;
-  private revenueDistributorContract: ethers.Contract;
-  private smartAccountFactoryContract: ethers.Contract;
+  private provider!: JsonRpcProvider;
+  private wallet!: Wallet;
+  private agentNftContract!: Contract;
+  private marketplaceContract!: Contract;
+  private revenueDistributorContract!: Contract;
+  private smartAccountFactoryContract!: Contract;
 
   constructor() {
     this.initializeContracts();
@@ -63,36 +63,36 @@ export class SmartContractService {
     try {
       // Initialize provider based on environment
       const rpcUrl = process.env.RPC_URL || 'http://localhost:8545';
-      this.provider = new providers.JsonRpcProvider(rpcUrl);
+      this.provider = new JsonRpcProvider(rpcUrl);
       
       // Initialize wallet
       const privateKey = process.env.PRIVATE_KEY;
       if (!privateKey) {
         throw new Error('PRIVATE_KEY environment variable is required');
       }
-      this.wallet = new ethers.Wallet(privateKey, this.provider);
+      this.wallet = new Wallet(privateKey, this.provider);
       
       // Initialize contract instances
-      this.agentNftContract = new ethers.Contract(
-        process.env.AGENT_NFT_CONTRACT_ADDRESS || constants.AddressZero,
+      this.agentNftContract = new Contract(
+        process.env.AGENT_NFT_CONTRACT_ADDRESS || ZeroAddress,
         AGENT_NFT_ABI,
         this.wallet
       );
       
-      this.marketplaceContract = new ethers.Contract(
-        process.env.MARKETPLACE_CONTRACT_ADDRESS || constants.AddressZero,
+      this.marketplaceContract = new Contract(
+        process.env.MARKETPLACE_CONTRACT_ADDRESS || ZeroAddress,
         MARKETPLACE_ABI,
         this.wallet
       );
       
-      this.revenueDistributorContract = new ethers.Contract(
-        process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS || constants.AddressZero,
+      this.revenueDistributorContract = new Contract(
+        process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS || ZeroAddress,
         REVENUE_DISTRIBUTOR_ABI,
         this.wallet
       );
       
-      this.smartAccountFactoryContract = new ethers.Contract(
-        process.env.SMART_ACCOUNT_FACTORY_ADDRESS || constants.AddressZero,
+      this.smartAccountFactoryContract = new Contract(
+        process.env.SMART_ACCOUNT_FACTORY_ADDRESS || ZeroAddress,
         SMART_ACCOUNT_FACTORY_ABI,
         this.wallet
       );
@@ -109,8 +109,8 @@ export class SmartContractService {
       const tx = await this.agentNftContract.mint(ownerAddress, metadataUri);
       const receipt = await tx.wait();
       
-      const transferEvent = receipt.events?.find(e => e.event === 'Transfer');
-      const tokenId = transferEvent?.args?.tokenId?.toNumber();
+      const transferEvent = receipt.logs?.find((log: any) => log.fragment.name === 'Transfer');
+      const tokenId = Number((transferEvent?.args as any)?.tokenId);
       
       return {
         tokenId,
@@ -124,7 +124,7 @@ export class SmartContractService {
 
   async updateTokenMetadata(tokenId: number, metadataUri: string): Promise<string> {
     try {
-      const tx = await this.agentNftContract.setTokenURI(tokenId, metadataUri);
+      const tx = await this.agentNftContract.setTokenURI(BigInt(tokenId), metadataUri);
       const receipt = await tx.wait();
       return receipt.transactionHash;
     } catch (error) {
@@ -135,7 +135,7 @@ export class SmartContractService {
 
   async transferFractionalShare(tokenId: number, from: string, to: string, shareAmount: number): Promise<string> {
     try {
-      const tx = await this.agentNftContract.transferFractionalShare(tokenId, from, to, shareAmount);
+      const tx = await this.agentNftContract.transferFractionalShare(BigInt(tokenId), from, to, BigInt(shareAmount));
       const receipt = await tx.wait();
       return receipt.transactionHash;
     } catch (error) {
@@ -148,15 +148,15 @@ export class SmartContractService {
   async listShares(agentTokenId: number, shareAmount: number, pricePerShare: string, duration: number): Promise<{ listingId: number, txHash: string }> {
     try {
       const tx = await this.marketplaceContract.listShares(
-        agentTokenId,
-        shareAmount,
-        utils.parseEther(pricePerShare),
-        duration
+        BigInt(agentTokenId),
+        BigInt(shareAmount),
+        parseEther(pricePerShare),
+        BigInt(duration)
       );
       const receipt = await tx.wait();
       
-      const listEvent = receipt.events?.find(e => e.event === 'SharesListed');
-      const listingId = listEvent?.args?.listingId?.toNumber();
+      const listEvent = receipt.logs?.find((log: any) => log.fragment.name === 'SharesListed');
+      const listingId = Number((listEvent?.args as any)?.listingId);
       
       return {
         listingId,
@@ -170,8 +170,8 @@ export class SmartContractService {
 
   async buyShares(listingId: number, totalPrice: string): Promise<string> {
     try {
-      const tx = await this.marketplaceContract.buyShares(listingId, {
-        value: utils.parseEther(totalPrice)
+      const tx = await this.marketplaceContract.buyShares(BigInt(listingId), {
+        value: parseEther(totalPrice)
       });
       const receipt = await tx.wait();
       return receipt.transactionHash;
@@ -183,13 +183,13 @@ export class SmartContractService {
 
   async makeOffer(listingId: number, shareAmount: number, offerPrice: string): Promise<{ offerId: number, txHash: string }> {
     try {
-      const tx = await this.marketplaceContract.makeOffer(listingId, shareAmount, {
-        value: utils.parseEther(offerPrice)
+      const tx = await this.marketplaceContract.makeOffer(BigInt(listingId), BigInt(shareAmount), {
+        value: parseEther(offerPrice)
       });
       const receipt = await tx.wait();
       
-      const offerEvent = receipt.events?.find(e => e.event === 'OfferMade');
-      const offerId = offerEvent?.args?.offerId?.toNumber();
+      const offerEvent = receipt.logs?.find((log: any) => log.fragment.name === 'OfferMade');
+      const offerId = Number((offerEvent?.args as any)?.offerId);
       
       return {
         offerId,
@@ -216,15 +216,15 @@ export class SmartContractService {
   async createRevenueStream(agentTokenId: number, streamName: string, tokenAddress: string, distributionThreshold: string): Promise<{ streamId: number, txHash: string }> {
     try {
       const tx = await this.revenueDistributorContract.createRevenueStream(
-        agentTokenId,
+        BigInt(agentTokenId),
         streamName,
         tokenAddress,
-        utils.parseEther(distributionThreshold)
+        parseEther(distributionThreshold)
       );
       const receipt = await tx.wait();
       
-      const streamEvent = receipt.events?.find(e => e.event === 'RevenueStreamCreated');
-      const streamId = streamEvent?.args?.streamId?.toNumber();
+      const streamEvent = receipt.logs?.find((log: any) => log.fragment.name === 'RevenueStreamCreated');
+      const streamId = Number((streamEvent?.args as any)?.streamId);
       
       return {
         streamId,
@@ -239,14 +239,14 @@ export class SmartContractService {
   async addRevenue(streamId: number, amount: string, tokenAddress?: string): Promise<string> {
     try {
       let tx;
-      if (tokenAddress === constants.AddressZero || !tokenAddress) {
+      if (tokenAddress === ZeroAddress || !tokenAddress) {
         // ETH payment
-        tx = await this.revenueDistributorContract.addRevenue(streamId, utils.parseEther(amount), {
-          value: utils.parseEther(amount)
+        tx = await this.revenueDistributorContract.addRevenue(BigInt(streamId), parseEther(amount), {
+          value: parseEther(amount)
         });
       } else {
         // ERC20 token payment (would need approval first)
-        tx = await this.revenueDistributorContract.addRevenue(streamId, utils.parseEther(amount));
+        tx = await this.revenueDistributorContract.addRevenue(BigInt(streamId), parseEther(amount));
       }
       
       const receipt = await tx.wait();
@@ -259,14 +259,14 @@ export class SmartContractService {
 
   async distributeRevenue(streamId: number): Promise<{ distributedAmount: string, txHash: string }> {
     try {
-      const tx = await this.revenueDistributorContract.distributeRevenue(streamId);
+      const tx = await this.revenueDistributorContract.distributeRevenue(BigInt(streamId));
       const receipt = await tx.wait();
       
-      const distributeEvent = receipt.events?.find(e => e.event === 'RevenueDistributed');
-      const distributedAmount = distributeEvent?.args?.totalAmount?.toString();
+      const distributeEvent = receipt.logs?.find((log: any) => log.fragment.name === 'RevenueDistributed');
+      const distributedAmount = (distributeEvent?.args as any)?.totalAmount?.toString();
       
       return {
-        distributedAmount: utils.formatEther(distributedAmount || '0'),
+        distributedAmount: formatEther(distributedAmount || '0'),
         txHash: receipt.transactionHash
       };
     } catch (error) {
@@ -278,11 +278,11 @@ export class SmartContractService {
   // Smart Account Factory Methods
   async createSmartAccount(ownerAddress: string, salt: number): Promise<{ accountAddress: string, txHash: string }> {
     try {
-      const tx = await this.smartAccountFactoryContract.createAccount(ownerAddress, salt);
+      const tx = await this.smartAccountFactoryContract.createAccount(ownerAddress, BigInt(salt));
       const receipt = await tx.wait();
       
-      const accountEvent = receipt.events?.find(e => e.event === 'AccountCreated');
-      const accountAddress = accountEvent?.args?.account;
+      const accountEvent = receipt.logs?.find((log: any) => log.fragment.name === 'AccountCreated');
+      const accountAddress = (accountEvent?.args as any)?.account;
       
       return {
         accountAddress,
@@ -296,7 +296,7 @@ export class SmartContractService {
 
   async getSmartAccountAddress(ownerAddress: string, salt: number): Promise<string> {
     try {
-      return await (this.smartAccountFactoryContract as any).getAddress(ownerAddress, salt);
+      return await (this.smartAccountFactoryContract as any).getAddress(ownerAddress, BigInt(salt));
     } catch (error) {
       this.logger.error('Failed to get smart account address:', error);
       throw error;
@@ -306,10 +306,10 @@ export class SmartContractService {
   // Utility Methods
   getContractAddresses() {
     return {
-      agentNft: this.agentNftContract.address,
-      marketplace: this.marketplaceContract.address,
-      revenueDistributor: this.revenueDistributorContract.address,
-      smartAccountFactory: this.smartAccountFactoryContract.address
+      agentNft: this.agentNftContract.target.toString(),
+      marketplace: this.marketplaceContract.target.toString(),
+      revenueDistributor: this.revenueDistributorContract.target.toString(),
+      smartAccountFactory: this.smartAccountFactoryContract.target.toString()
     };
   }
 
