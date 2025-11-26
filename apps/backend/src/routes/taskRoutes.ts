@@ -1,32 +1,12 @@
-import express, { Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from '../types/auth';
+import express, { Request, Response } from 'express';
+import { auth as ensureAuthenticated } from '../middleware/auth';
+import { User } from '../types/auth';
 
 const router = express.Router();
 
-function ensureAuthenticated(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
-  const REQUIRE_AUTH = process.env.REQUIRE_AUTH !== 'false';
-  
-  if (!REQUIRE_AUTH) {
-    if (!req.user) {
-      req.user = {
-        id: 'dev-user',
-        email: 'dev@local',
-        name: 'Dev User',
-      };
-    }
-    return next();
-  }
-  
-  if (!req.user) {
-    res.status(401).json({ error: 'Unauthorized: Authentication required.' });
-    return;
-  }
-  next();
-}
-
-// GET /api/tasks
-router.get('/', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/', ensureAuthenticated, async (req: Request, res: Response) => {
   try {
+    const user = req.user as User;
     res.json({
       success: true,
       data: {
@@ -67,8 +47,7 @@ router.get('/', ensureAuthenticated, async (req: AuthenticatedRequest, res: Resp
   }
 });
 
-// POST /api/tasks
-router.post('/', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/', ensureAuthenticated, async (req: Request, res: Response) => {
   try {
     const { title, description, priority, assignedTo, dueDate } = req.body;
     
@@ -94,8 +73,7 @@ router.post('/', ensureAuthenticated, async (req: AuthenticatedRequest, res: Res
   }
 });
 
-// GET /api/tasks/:id
-router.get('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/:id', ensureAuthenticated, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     
@@ -125,8 +103,7 @@ router.get('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: R
   }
 });
 
-// PUT /api/tasks/:id
-router.put('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id', ensureAuthenticated, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { title, description, status, priority, assignedTo, dueDate } = req.body;
@@ -152,8 +129,7 @@ router.put('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: R
   }
 });
 
-// DELETE /api/tasks/:id
-router.delete('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', ensureAuthenticated, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     

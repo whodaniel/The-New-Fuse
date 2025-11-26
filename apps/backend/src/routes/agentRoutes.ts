@@ -1,20 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { agentController } from '../controllers/agentController';
+import { User } from '../types/auth'; // Import User for mock user typing
 
 const router = express.Router();
 
 // Toggle this flag to enable/disable authentication requirement
 const REQUIRE_AUTH = process.env.REQUIRE_AUTH !== 'false';
 
-interface AuthenticatedRequest extends Request {
-  user: {
-    id: string;
-    email?: string;
-    name?: string;
-  };
-}
-
-function ensureAuthenticated(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+// Use Request from Express, which should be augmented globally
+function ensureAuthenticated(req: Request, res: Response, next: NextFunction): void {
   if (!REQUIRE_AUTH) {
     // In dev mode, inject a mock user if not present
     if (!req.user) {
@@ -22,8 +16,7 @@ function ensureAuthenticated(req: AuthenticatedRequest, res: Response, next: Nex
         id: 'dev-user',
         email: 'dev@local',
         name: 'Dev User',
-        // Add any other fields your app expects on User
-      };
+      } as User; // Explicitly cast to our User type
     }
     return next();
   }
@@ -34,19 +27,19 @@ function ensureAuthenticated(req: AuthenticatedRequest, res: Response, next: Nex
   next();
 }
 
-router.post('/', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/', ensureAuthenticated, async (req: Request, res: Response) => {
   await agentController.createAgent(req, res);
 });
-router.get('/', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/', ensureAuthenticated, async (req: Request, res: Response) => {
   await agentController.getAgents(req, res);
 });
-router.get('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/:id', ensureAuthenticated, async (req: Request, res: Response) => {
   await agentController.getAgentById(req, res);
 });
-router.put('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id', ensureAuthenticated, async (req: Request, res: Response) => {
   await agentController.updateAgent(req, res);
 });
-router.delete('/:id', ensureAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', ensureAuthenticated, async (req: Request, res: Response) => {
   await agentController.deleteAgent(req, res);
 });
 

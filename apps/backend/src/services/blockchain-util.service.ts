@@ -1,21 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ethers, providers, constants } from 'ethers';
+import { ethers, JsonRpcProvider, ZeroAddress, Contract, Wallet, BigNumberish, AbiCoder } from 'ethers';
 
 export interface TransactionOptions {
-  gasLimit?: ethers.BigNumber;
-  maxFeePerGas?: ethers.BigNumber;
-  maxPriorityFeePerGas?: ethers.BigNumber;
-  gasPrice?: ethers.BigNumber;
-  value?: ethers.BigNumber;
+  gasLimit?: BigNumberish;
+  maxFeePerGas?: BigNumberish;
+  maxPriorityFeePerGas?: BigNumberish;
+  gasPrice?: BigNumberish;
+  value?: BigNumberish;
   nonce?: number;
 }
 
 export interface GasEstimate {
-  gasLimit: ethers.BigNumber;
-  gasPrice: ethers.BigNumber;
-  maxFeePerGas: ethers.BigNumber;
-  maxPriorityFeePerGas: ethers.BigNumber;
-  estimatedCost: ethers.BigNumber;
+  gasLimit: BigNumberish;
+  gasPrice: BigNumberish;
+  maxFeePerGas: BigNumberish;
+  maxPriorityFeePerGas: BigNumberish;
+  estimatedCost: BigNumberish;
 }
 
 export interface BlockchainConfig {
@@ -35,8 +35,8 @@ export interface BlockchainConfig {
 @Injectable()
 export class BlockchainUtilService {
   private readonly logger = new Logger(BlockchainUtilService.name);
-  private provider: providers.JsonRpcProvider;
-  private config: BlockchainConfig;
+  private provider: JsonRpcProvider;
+  private config!: BlockchainConfig;
 
   constructor() {
     this.initializeProvider();
@@ -45,7 +45,7 @@ export class BlockchainUtilService {
   private initializeProvider() {
     try {
       const rpcUrl = process.env.RPC_URL || 'https://mainnet.infura.io/v3/YOUR_PROJECT_ID';
-      this.provider = new providers.JsonRpcProvider(rpcUrl);
+      this.provider = new JsonRpcProvider(rpcUrl);
       
       this.config = {
         rpcUrl,
@@ -54,10 +54,10 @@ export class BlockchainUtilService {
         currency: process.env.NATIVE_CURRENCY || 'ETH',
         blockExplorer: process.env.BLOCK_EXPLORER || 'https://etherscan.io',
         contracts: {
-          agentNft: process.env.AGENT_NFT_CONTRACT_ADDRESS || constants.AddressZero,
-          marketplace: process.env.MARKETPLACE_CONTRACT_ADDRESS || constants.AddressZero,
-          revenueDistributor: process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS || constants.AddressZero,
-          smartAccountFactory: process.env.SMART_ACCOUNT_FACTORY_ADDRESS || constants.AddressZero,
+          agentNft: process.env.AGENT_NFT_CONTRACT_ADDRESS || ZeroAddress,
+          marketplace: process.env.MARKETPLACE_CONTRACT_ADDRESS || ZeroAddress,
+          revenueDistributor: process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS || ZeroAddress,
+          smartAccountFactory: process.env.SMART_ACCOUNT_FACTORY_ADDRESS || ZeroAddress,
         }
       };
       
@@ -85,24 +85,25 @@ export class BlockchainUtilService {
       const gasLimit = options.gasLimit || 
         await this.provider.estimateGas({
           to: contractAddress,
-          data: ethers.utils.id(method).substring(0, 10) + 
-            ethers.utils.defaultAbiCoder.encode(params.map(p => 
-              typeof p === 'object' && p._isBigNumber ? 'uint256' : 
-              typeof p === 'string' && ethers.utils.isAddress(p) ? 'address' : 'string'
+          data: ethers.id(method).substring(0, 10) + 
+            new AbiCoder().encode(params.map(p => 
+              typeof p === 'bigint' ? 'uint256' : // Assuming BigInt for uint256
+              typeof p === 'string' && ethers.isAddress(p) ? 'address' : 'string'
             ), params).substring(2)
         });
 
       // Add 20% buffer for safety
-      const safeGasLimit = gasLimit.mul(120).div(100);
+      const safeGasLimit = (BigInt(gasLimit) * 120n) / 100n;
       
       // Calculate dynamic fees
-      const baseFee = await this.provider.getBlock('latest').then(block => block.baseFeePerGas) || gasPrice;
-      const priorityFee = gasPrice.sub(baseFee).mul(50).div(100); // 50% of spread as priority
-      const maxPriorityFeePerGas = options.maxPriorityFeePerGas || priorityFee;
-      const maxFeePerGas = options.maxFeePerGas || baseFee.mul(120).div(100).add(maxPriorityFeePerGas);
+      const latestBlock = await this.provider.getBlock('latest');
+      const baseFee = latestBlock?.baseFeePerGas || BigInt(gasPrice); // baseFeePerGas is BigInt
+      const priorityFee = (BigInt(gasPrice) - baseFee) * 50n / 100n; // 50% of spread as priority
+      const maxPriorityFeePerGas = BigInt(options.maxPriorityFeePerGas || priorityFee);
+      const maxFeePerGas = (baseFee * 120n) / 100n + maxPriorityFeePerGas;
       
       // Calculate estimated cost
-      const estimatedCost = safeGasLimit.mul(maxFeePerGas);
+      const estimatedCost = safeGasLimit * maxFeePerGas;
       
       return {
         gasLimit: safeGasLimit,
@@ -121,14 +122,14 @@ export class BlockchainUtilService {
    * Send a transaction with proper error handling and confirmation
    */
   async sendTransaction(
-    signer: ethers.Wallet,
+    signer: Wallet,
     to: string,
     data: string,
     options: TransactionOptions = {}
   ): Promise<ethers.TransactionResponse> {
     try {
       // Validate inputs
-      if (!ethers.utils.isAddress(to)) {
+      if (!ethers.isAddress(to)) {
         throw new Error('Invalid recipient address');
       }
 
@@ -143,7 +144,7 @@ export class BlockchainUtilService {
         ...options
       };
 
-      this.logger.log(`Sending transaction to ${to} with gas limit ${gasEstimate.gasLimit.toString()}`);
+      this.logger.log(`Sending transaction to ${to} with gas limit ${txOptions.gasLimit?.toString()}`);
 
       // Send transaction
       const tx = await signer.sendTransaction({
@@ -208,8 +209,8 @@ export class BlockchainUtilService {
         },
         gasPrice: {
           wei: gasPrice.toString(),
-          gwei: ethers.utils.formatUnits(gasPrice, 'gwei'),
-          ether: ethers.utils.formatEther(gasPrice)
+          gwei: ethers.formatUnits(gasPrice, 'gwei'),
+          ether: ethers.formatEther(gasPrice)
         },
         block: {
           number: block.number,
@@ -228,7 +229,7 @@ export class BlockchainUtilService {
    * Validate Ethereum address
    */
   isValidAddress(address: string): boolean {
-    return ethers.utils.isAddress(address);
+    return ethers.isAddress(address);
   }
 
   /**
@@ -244,16 +245,16 @@ export class BlockchainUtilService {
   /**
    * Format Wei to human readable format
    */
-  formatWei(wei: ethers.BigNumber | string, decimals: number = 18): string {
-    const value = typeof wei === 'string' ? ethers.BigNumber.from(wei) : wei;
-    return ethers.utils.formatUnits(value, decimals);
+  formatWei(wei: BigNumberish | string, decimals: number = 18): string {
+    const value = typeof wei === 'string' ? ethers.toBigInt(wei) : wei;
+    return ethers.formatUnits(value, decimals);
   }
 
   /**
    * Convert human readable amount to Wei
    */
-  toWei(amount: string | number, decimals: number = 18): ethers.BigNumber {
-    return ethers.utils.parseUnits(amount.toString(), decimals);
+  toWei(amount: string | number, decimals: number = 18): BigNumberish {
+    return ethers.parseUnits(amount.toString(), decimals);
   }
 
   /**
@@ -263,17 +264,17 @@ export class BlockchainUtilService {
     address: string,
     abi: any[],
     signer?: ethers.Signer
-  ): ethers.Contract {
+  ): Contract {
     try {
       if (!this.isValidAddress(address)) {
         throw new Error('Invalid contract address');
       }
       
-      if (address === constants.AddressZero) {
+      if (address === ZeroAddress) {
         throw new Error('Contract address is zero address');
       }
 
-      return new ethers.Contract(address, abi, signer || this.provider);
+      return new Contract(address, abi, signer || this.provider);
     } catch (error) {
       this.logger.error('Failed to create contract instance:', error);
       throw error;

@@ -1,10 +1,6 @@
 import { Controller, Get, Put, Body, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
-import { User } from '../types/auth';
-
-interface AuthenticatedRequest extends Request {
-  user?: User;
-}
+import { User } from '../types/auth'; // Import User for mock user typing
 
 // Optional guard for authentication - can be implemented later
 // @UseGuards(AuthGuard)
@@ -13,10 +9,10 @@ export class WorkspaceController {
 
   // GET /api/workspace/overview
   @Get('overview')
-  async getOverview(@Req() req: AuthenticatedRequest) {
+  async getOverview(@Req() req: Request) {
     try {
       // Mock user for development if not authenticated
-      const user = req.user || {
+      const user = req.user as User || {
         id: 'dev-user',
         email: 'dev@local',
         name: 'Dev User',
@@ -46,7 +42,7 @@ export class WorkspaceController {
 
   // GET /api/workspace/analytics
   @Get('analytics')
-  async getAnalytics(@Req() req: AuthenticatedRequest) {
+  async getAnalytics(@Req() req: Request) {
     try {
       return {
         success: true,
@@ -75,7 +71,7 @@ export class WorkspaceController {
 
   // GET /api/workspace/members
   @Get('members')
-  async getMembers(@Req() req: AuthenticatedRequest) {
+  async getMembers(@Req() req: Request) {
     try {
       return {
         success: true,
@@ -100,7 +96,7 @@ export class WorkspaceController {
 
   // GET /api/workspace/settings
   @Get('settings')
-  async getSettings(@Req() req: AuthenticatedRequest) {
+  async getSettings(@Req() req: Request) {
     try {
       return {
         success: true,
@@ -130,7 +126,7 @@ export class WorkspaceController {
 
   // PUT /api/workspace/settings
   @Put('settings')
-  async updateSettings(@Body() body: any, @Req() req: AuthenticatedRequest) {
+  async updateSettings(@Body() body: any, @Req() req: Request) {
     try {
       const { workspaceName, description, timezone, language, notifications, integrations } = body;
       

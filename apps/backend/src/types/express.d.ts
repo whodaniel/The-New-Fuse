@@ -1,7 +1,8 @@
-import { User } from '@the-new-fuse/types';
+// apps/backend/src/types/express.d.ts
+import { User } from './auth'; // Import your custom User interface
 
-declare namespace Express {
-  interface Request {
-    user?: User;
+declare global {
+  namespace Express {
+    interface User extends User {}
   }
 }
