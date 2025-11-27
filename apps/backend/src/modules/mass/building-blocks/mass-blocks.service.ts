@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 export interface MassBlockConfig {
   type: 'aggregate' | 'reflect' | 'debate' | 'custom' | 'tool-use';
@@ -28,12 +28,12 @@ export class MassBlocksService {
     config: MassBlockConfig
   ): Promise<MassBlockResult> {
     const startTime = Date.now();
-    
+
     try {
       this.logger.log(`Executing ${config.type} block for agent ${agentId}`);
-      
+
       let result;
-      
+
       switch (config.type) {
         case 'aggregate':
           result = await this.executeAggregate(input, config.parameters);
@@ -55,19 +55,21 @@ export class MassBlocksService {
       }
 
       const executionTime = Date.now() - startTime;
-      
+
       return {
         result,
         metadata: {
           executionTime,
           tokensUsed: 0, // Placeholder - would integrate with actual LLM usage
           model: 'gpt-4', // Placeholder
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     } catch (error) {
       this.logger.error(`Failed to execute ${config.type} block:`, error);
-      throw new Error(`Custom block execution failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Custom block execution failed: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -75,7 +77,7 @@ export class MassBlocksService {
     // Placeholder implementation
     return {
       aggregated: input,
-      method: parameters.aggregationMethod || 'average'
+      method: parameters.aggregationMethod || 'average',
     };
   }
 
@@ -83,7 +85,7 @@ export class MassBlocksService {
     // Placeholder implementation
     return {
       reflection: `Reflected on: ${JSON.stringify(input)}`,
-      prompt: parameters.reflectionPrompt
+      prompt: parameters.reflectionPrompt,
     };
   }
 
@@ -92,7 +94,7 @@ export class MassBlocksService {
     return {
       debate: `Debated: ${JSON.stringify(input)}`,
       topic: parameters.debateTopic,
-      participants: parameters.participants
+      participants: parameters.participants,
     };
   }
 
@@ -100,7 +102,7 @@ export class MassBlocksService {
     // Placeholder implementation
     return {
       custom: `Custom execution: ${JSON.stringify(input)}`,
-      logic: parameters.customLogic
+      logic: parameters.customLogic,
     };
   }
 
@@ -108,7 +110,7 @@ export class MassBlocksService {
     // Placeholder implementation
     return {
       toolResult: `Tool ${parameters.toolName} executed with: ${JSON.stringify(input)}`,
-      toolUsed: parameters.toolName
+      toolUsed: parameters.toolName,
     };
   }
 }
@@ -117,11 +119,11 @@ export class MassBlocksService {
 @Injectable()
 export class AggregateBlock {
   constructor(private readonly massBlocksService: MassBlocksService) {}
-  
+
   async execute(input: any[], config: any): Promise<any> {
     return this.massBlocksService.executeBlock('aggregate', input, {
       type: 'aggregate',
-      parameters: config
+      parameters: config,
     });
   }
 }
@@ -129,11 +131,11 @@ export class AggregateBlock {
 @Injectable()
 export class ReflectBlock {
   constructor(private readonly massBlocksService: MassBlocksService) {}
-  
+
   async execute(input: any, config: any): Promise<any> {
     return this.massBlocksService.executeBlock('reflect', input, {
       type: 'reflect',
-      parameters: config
+      parameters: config,
     });
   }
 }
@@ -141,11 +143,11 @@ export class ReflectBlock {
 @Injectable()
 export class DebateBlock {
   constructor(private readonly massBlocksService: MassBlocksService) {}
-  
+
   async execute(input: any, config: any): Promise<any> {
     return this.massBlocksService.executeBlock('debate', input, {
       type: 'debate',
-      parameters: config
+      parameters: config,
     });
   }
 }
@@ -153,11 +155,11 @@ export class DebateBlock {
 @Injectable()
 export class CustomBlock {
   constructor(private readonly massBlocksService: MassBlocksService) {}
-  
+
   async execute(input: any, config: any): Promise<any> {
     return this.massBlocksService.executeBlock('custom', input, {
       type: 'custom',
-      parameters: config
+      parameters: config,
     });
   }
 }
@@ -165,11 +167,11 @@ export class CustomBlock {
 @Injectable()
 export class ToolUseBlock {
   constructor(private readonly massBlocksService: MassBlocksService) {}
-  
+
   async execute(input: any, config: any): Promise<any> {
     return this.massBlocksService.executeBlock('tool-use', input, {
       type: 'tool-use',
-      parameters: config
+      parameters: config,
     });
   }
 }
@@ -177,7 +179,7 @@ export class ToolUseBlock {
 @Injectable()
 export class AgentExecutorService {
   constructor(private readonly massBlocksService: MassBlocksService) {}
-  
+
   async execute(agentId: string, input: any, config: MassBlockConfig): Promise<MassBlockResult> {
     return this.massBlocksService.executeBlock(agentId, input, config);
   }

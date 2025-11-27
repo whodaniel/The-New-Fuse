@@ -76,7 +76,7 @@ export class EvaluationHarnessService {
     validationItems: any[],
     _config: MassOptimizationConfig
   ): Promise<PerformanceMetrics> {
-    const results = [];
+    const results: { score: number; processingTime: number; success: boolean }[] = [];
     // Removed startTime
 
     for (const item of validationItems) {
@@ -125,7 +125,7 @@ export class EvaluationHarnessService {
   ): Promise<PerformanceMetrics> {
     // This would evaluate an entire topology/workflow
     // Placeholder implementation
-    const results = [];
+    const results: { score: number; processingTime: number; success: boolean }[] = [];
     // Removed _startTime
 
     for (const item of validationItems) {
