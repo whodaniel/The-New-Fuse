@@ -15,50 +15,50 @@ export class FileUploadResponseDto {
     description: 'File ID',
     example: 'file_123456'
   })
-  id: string;
+  id!: string;
 
   @ApiProperty({
     description: 'Original filename',
     example: 'document.pdf'
   })
-  filename: string;
+  filename!: string;
 
   @ApiProperty({
     description: 'File MIME type',
     example: 'application/pdf'
   })
-  mimeType: string;
+  mimeType!: string;
 
   @ApiProperty({
     description: 'File size in bytes',
     example: 1024000
   })
-  size: number;
+  size!: number;
 
   @ApiProperty({
     description: 'File category',
     enum: FileCategory,
     example: FileCategory.DOCUMENT
   })
-  category: FileCategory;
+  category!: FileCategory;
 
   @ApiProperty({
     description: 'File URL for download',
     example: 'https://storage.example.com/files/file_123456'
   })
-  url: string;
+  url!: string;
 
   @ApiProperty({
     description: 'User ID who uploaded the file',
     example: 'usr_123'
   })
-  uploadedBy: string;
+  uploadedBy!: string;
 
   @ApiProperty({
     description: 'Upload timestamp',
     example: '2024-01-01T00:00:00.000Z'
   })
-  uploadedAt: Date;
+  uploadedAt!: Date;
 
   @ApiPropertyOptional({
     description: 'File metadata',
@@ -102,7 +102,7 @@ export class FileListResponseDto {
     type: [FileUploadResponseDto],
     description: 'List of files'
   })
-  files: FileUploadResponseDto[];
+  files!: FileUploadResponseDto[];
 
   @ApiProperty({
     description: 'Pagination metadata',
@@ -113,7 +113,7 @@ export class FileListResponseDto {
       totalPages: 5
     }
   })
-  pagination: {
+  pagination!: {
     total: number;
     page: number;
     limit: number;

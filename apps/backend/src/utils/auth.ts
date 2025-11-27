@@ -6,13 +6,13 @@ const prisma = new PrismaClient();
 
 // Generate a JWT token
 export function generateToken(payload: any, expiresIn: string = '24h'): string {
-  const secret = process.env.JWT_SECRET;
+  const secret = process.env.JWT_SECRET || 'default-secret-key';
   return jwt.sign(payload, secret, { expiresIn } as jwt.SignOptions);
 }
 
 // Verify a JWT token
 export function verifyToken(token: string): any {
-  const secret = process.env.JWT_SECRET;
+  const secret = process.env.JWT_SECRET || 'default-secret-key';
   
   try {
     return jwt.verify(token, secret);

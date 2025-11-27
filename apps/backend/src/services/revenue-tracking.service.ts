@@ -67,6 +67,7 @@ export class RevenueTrackingService {
             streamName: `${data.source} Revenue`,
             tokenAddress: data.tokenAddress,
             totalRevenue: '0',
+            distributedRevenue: '0',
             distributionThreshold: parseEther('0.1').toString(), // Default threshold
           }
         });
@@ -87,7 +88,7 @@ export class RevenueTrackingService {
         try {
           await this.smartContractService.addRevenue(
             parseInt(revenueStream.id), // This would need to be the on-chain stream ID
-            utils.formatEther(data.amount),
+            formatEther(data.amount),
             data.tokenAddress
           );
         } catch (error) {
@@ -122,10 +123,10 @@ export class RevenueTrackingService {
         return;
       }
 
-      const totalRevenue = parseEther(revenueStream.totalRevenue);
-      const distributedRevenue = parseEther(revenueStream.distributedRevenue);
+      const totalRevenue = parseEther(revenueStream.totalRevenue.toString());
+      const distributedRevenue = parseEther(revenueStream.distributedRevenue.toString());
       const pendingRevenue = totalRevenue - distributedRevenue;
-      const distributionThreshold = parseEther(revenueStream.distributionThreshold);
+      const distributionThreshold = parseEther(revenueStream.distributionThreshold.toString());
 
       if (pendingRevenue >= distributionThreshold) {
         this.logger.log(`Triggering automatic distribution for stream ${revenueStreamId}`);
@@ -155,9 +156,10 @@ export class RevenueTrackingService {
         throw new Error('Revenue stream not found or not fractionalized');
       }
 
-      const totalRevenue = parseEther(revenueStream.totalRevenue);
-      const distributedRevenue = parseEther(revenueStream.distributedRevenue);
+      const totalRevenue = parseEther(revenueStream.totalRevenue.toString());
+      const distributedRevenue = parseEther(revenueStream.distributedRevenue.toString());
       const pendingRevenue = totalRevenue - distributedRevenue;
+      const distributionThreshold = parseEther(revenueStream.distributionThreshold.toString());
 
       if (pendingRevenue <= 0) {
         throw new Error('No pending revenue to distribute');
@@ -283,9 +285,10 @@ export class RevenueTrackingService {
       });
 
       // Process each revenue event
-      for (const log of logs) {
+      for (const logItem of logs) {
         try {
-          const { streamId, amount } = log.args as any;
+          const log = logItem as any;
+          const { streamId, amount } = log.args;
           
           // Find the agent NFT for this stream
           const revenueStream = await this.prisma.revenueStream.findFirst({
@@ -303,7 +306,7 @@ export class RevenueTrackingService {
           if (revenueStream && revenueStream.agentNFT) {
             // Create revenue event
             const revenueEvent: RevenueEvent = {
-              agentId: revenueStream.agentNFT.agent.id,
+              agentId: revenueStream.agentNFT?.agent?.id || '',
               amount: amount.toString(),
               tokenAddress: revenueStream.tokenAddress,
               source: 'blockchain_event',
@@ -395,11 +398,11 @@ export class RevenueTrackingService {
       });
 
       const totalRevenue = revenueStreams.reduce(
-        (sum, stream) => sum + parseFloat(formatEther(stream.totalRevenue || '0')), 0
+        (sum, stream) => sum + parseFloat(formatEther(BigInt(stream.totalRevenue.toString() || '0'))), 0
       );
 
       const totalDistributed = revenueStreams.reduce(
-        (sum, stream) => sum + parseFloat(formatEther(stream.distributedRevenue || '0')), 0
+        (sum, stream) => sum + parseFloat(formatEther(BigInt(stream.distributedRevenue.toString() || '0'))), 0
       );
 
       const distributionCount = revenueStreams.reduce(

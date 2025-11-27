@@ -212,71 +212,71 @@ export class UpdateMessageDto {
 }
 
 export class ChatRoomResponseDto {
-  id: string;
-  name: string;
+  id!: string;
+  name!: string;
   description?: string;
   topic?: string;
   purpose?: string;
-  type: ChatRoomType;
-  isPrivate: boolean;
-  isEphemeral: boolean;
-  ownerId: string;
+  type!: ChatRoomType;
+  isPrivate!: boolean;
+  isEphemeral!: boolean;
+  ownerId!: string;
   settings?: Record<string, any>;
   metadata?: Record<string, any>;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
   lastMessageAt?: Date;
-  isActive: boolean;
+  isActive!: boolean;
   expiresAt?: Date;
-  maxParticipants: number;
+  maxParticipants!: number;
   participantCount?: number;
   messageCount?: number;
 }
 
 export class MessageResponseDto {
-  id: string;
-  content: string;
-  type: MessageType;
-  role: string;
+  id!: string;
+  content!: string;
+  type!: MessageType;
+  role!: string;
   senderId?: string;
   senderName?: string;
   agentId?: string;
   roomId?: string;
   parentMessageId?: string;
   metadata?: Record<string, any>;
-  attachments: string[];
+  attachments!: string[];
   codeSnippet?: any;
   taskAssignment?: any;
   workflowTrigger?: any;
-  timestamp: Date;
-  updatedAt: Date;
-  isEdited: boolean;
-  isDeleted: boolean;
-  isPinned: boolean;
+  timestamp!: Date;
+  updatedAt!: Date;
+  isEdited!: boolean;
+  isDeleted!: boolean;
+  isPinned!: boolean;
   readCount?: number;
   reactionCount?: number;
 }
 
 export class ParticipantResponseDto {
-  id: string;
-  roomId: string;
+  id!: string;
+  roomId!: string;
   userId?: string;
   agentId?: string;
-  role: ChatRoomParticipantRole;
-  permissions: string[];
-  isTyping: boolean;
+  role!: ChatRoomParticipantRole;
+  permissions!: string[];
+  isTyping!: boolean;
   lastTypingAt?: Date;
   lastReadAt?: Date;
-  joinedAt: Date;
+  joinedAt!: Date;
   leftAt?: Date;
-  isMuted: boolean;
-  notifications: boolean;
+  isMuted!: boolean;
+  notifications!: boolean;
 }
 
 export class SearchMessagesDto {
   @ApiProperty({ description: 'Search query' })
   @IsString()
-  query: string;
+  query!: string;
 
   @ApiPropertyOptional({ description: 'Search in room ID' })
   @IsOptional()

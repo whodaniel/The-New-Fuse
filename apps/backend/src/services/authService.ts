@@ -31,10 +31,7 @@ export class AuthService {
         id: true,
         email: true,
         name: true,
-        password: true, // Explicitly select the password field
-        googleId: true,
-        avatar: true,
-        picture: true,
+        hashedPassword: true, // Explicitly select the password field
         role: true,
         emailVerified: true,
         createdAt: true,
@@ -42,11 +39,11 @@ export class AuthService {
       }
     });
 
-    if (!prismaUser || !prismaUser.password) {
+    if (!prismaUser || !prismaUser.hashedPassword) {
       return null;
     }
 
-    const isValid = await bcrypt.compare(password, prismaUser.password);
+    const isValid = await bcrypt.compare(password, prismaUser.hashedPassword);
     return isValid ? this.transformPrismaUser(prismaUser) : null;
   }
 
@@ -59,7 +56,7 @@ export class AuthService {
     const prismaUser = await this.prismaService.user.create({
       data: {
         email: data.email,
-        password: hashedPassword,
+        hashedPassword: hashedPassword,
         name: data.name,
         role: 'USER',
         emailVerified: false

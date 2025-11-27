@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, Agent } from '@the-new-fuse/database/generated/prisma';
 
 @Injectable()
 export class AgentService {
@@ -43,7 +43,7 @@ export class AgentService {
 
   async createAgentsInTransaction(agents: any[]) {
     return await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const createdAgents = [];
+      const createdAgents: Agent[] = [];
       
       for (const agent of agents) {
         const createdAgent = await tx.agent.create({
@@ -64,7 +64,7 @@ export class AgentService {
         userId
       },
       data: {
-        status
+        status: status as any
       }
     });
     
@@ -87,7 +87,7 @@ export class AgentService {
       where: {
         userId,
         capabilities: {
-          has: capability
+          has: capability as any
         }
       }
     });

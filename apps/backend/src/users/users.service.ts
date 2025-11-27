@@ -41,11 +41,8 @@ export class UsersService {
         select: {
           id: true,
           email: true,
-          username: true,
           name: true,
           role: true,
-          roles: true,
-          isActive: true,
           lastLogin: true,
           createdAt: true,
           updatedAt: true,
@@ -75,12 +72,8 @@ export class UsersService {
       select: {
         id: true,
         email: true,
-        username: true,
         name: true,
         role: true,
-        roles: true,
-        isActive: true,
-        lastLogin: true,
         createdAt: true,
         updatedAt: true,
         emailVerified: true,
@@ -96,12 +89,8 @@ export class UsersService {
       select: {
         id: true,
         email: true,
-        username: true,
         name: true,
         role: true,
-        roles: true,
-        isActive: true,
-        hashedPassword: true, // Needed for authentication
         emailVerified: true,
       },
     });

@@ -42,11 +42,11 @@ export interface AuthenticatedAgent {
 
 @Injectable()
 export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
-  private readonly logger = new Logger(AgentJwtStrategy.name);
+  protected readonly logger = new Logger(AgentJwtStrategy.name);
 
   constructor(
-    private readonly configService: ConfigService,
-    private readonly authService: AuthService
+    protected readonly configService: ConfigService,
+    protected readonly authService: AuthService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -138,7 +138,7 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
   /**
    * Alternative strategy configuration for custom token extraction
    */
-  static createWithCustomExtractor() {
+  static createWithCustomExtractor(): any {
     return class extends AgentJwtStrategy {
       constructor(configService: ConfigService, authService: AuthService) {
         super(configService, authService);

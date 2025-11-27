@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { BlockchainUtilService } from './blockchain-util.service';
+import { Wallet, Contract } from 'ethers';
 
 export interface AgentNFTCreationRequest {
   agentId: string;
@@ -71,6 +72,9 @@ export class ProductionBlockchainService {
 
       // Initialize wallet for transactions
       const privateKey = this.configService.get<string>('PRIVATE_KEY');
+      if (!privateKey) {
+        throw new Error('PRIVATE_KEY not found in configuration');
+      }
       const wallet = new Wallet(privateKey, this.blockchainUtil.getProvider());
 
       // Get contract instance
@@ -83,7 +87,7 @@ export class ProductionBlockchainService {
 
       // Estimate gas for minting
       const gasEstimate = await this.blockchainUtil.estimateGas(
-        agentNftContract.address,
+        agentNftContract.target.toString(),
         'mint',
         [request.ownerAddress, request.metadataUri || this.generateMetadataURI(request.agentId)]
       );
@@ -107,13 +111,13 @@ export class ProductionBlockchainService {
       // Wait for confirmation
       const receipt = await this.blockchainUtil.waitForConfirmation(tx.hash, 1);
 
-      if (receipt.status === 0) {
+      if (!receipt || receipt.status === 0) {
         throw new Error('Transaction failed during execution');
       }
 
       // Extract token ID from transfer event
-      const transferEvent = receipt.logs?.find((log: any) => log.fragment.name === 'Transfer');
-      const tokenId = Number((transferEvent?.args as any)?.tokenId);
+      const transferEvent = receipt.logs?.find((log: any) => log.fragment?.name === 'Transfer');
+      const tokenId = Number((transferEvent as any)?.args?.tokenId);
 
       if (!tokenId) {
         throw new Error('Failed to extract token ID from transaction');
@@ -139,7 +143,7 @@ export class ProductionBlockchainService {
 
       return {
         tokenId,
-        contractAddress: agentNftContract.address,
+        contractAddress: agentNftContract.target.toString(),
         transactionHash: tx.hash,
         blockNumber: receipt.blockNumber,
         gasUsed: receipt.gasUsed.toString(),
@@ -147,7 +151,7 @@ export class ProductionBlockchainService {
         agentNFT
       };
 
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to create Agent NFT: ${error.message}`, error.stack);
       throw new Error(`Failed to create Agent NFT: ${error.message}`);
     }
@@ -277,7 +281,7 @@ export class ProductionBlockchainService {
 
       // Estimate gas
       const gasEstimate = await this.blockchainUtil.estimateGas(
-        agentNftContract.address,
+        agentNftContract.target.toString(),
         'setTokenURI',
         [agentNFT.tokenId, newMetadataUri]
       );
@@ -291,7 +295,7 @@ export class ProductionBlockchainService {
 
       const receipt = await this.blockchainUtil.waitForConfirmation(tx.hash, 1);
 
-      if (receipt.status === 0) {
+      if (!receipt || receipt.status === 0) {
         throw new Error('Metadata update transaction failed');
       }
 
@@ -308,7 +312,7 @@ export class ProductionBlockchainService {
         blockNumber: receipt.blockNumber
       };
 
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to update Agent NFT metadata: ${error.message}`, error.stack);
       throw new Error(`Failed to update metadata: ${error.message}`);
     }
@@ -370,7 +374,7 @@ export class ProductionBlockchainService {
         }
       };
 
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to get Agent NFT details: ${error.message}`, error.stack);
       throw new Error(`Failed to get Agent NFT details: ${error.message}`);
     }
@@ -388,7 +392,7 @@ export class ProductionBlockchainService {
       try {
         const result = await this.createAgentNFT(request);
         results.push(result);
-      } catch (error) {
+      } catch (error: any) {
         this.logger.error(`Failed to process NFT creation for agent ${request.agentId}: ${error.message}`);
         errors.push(`Agent ${request.agentId}: ${error.message}`);
       }
@@ -446,7 +450,7 @@ export class ProductionBlockchainService {
         confirmations: 0
       };
 
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to monitor transaction ${txHash}: ${error.message}`);
       return {
         status: 'failed',

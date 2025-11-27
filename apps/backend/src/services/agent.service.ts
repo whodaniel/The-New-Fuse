@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Agent, AgentStatus } from '@prisma/client';
+import { Agent, AgentStatus } from '@the-new-fuse/database/generated/prisma';
 import { CreateAgentDto, UpdateAgentDto, AgentResponseDto } from '@the-new-fuse/types';
 
 @Injectable()
@@ -82,11 +82,11 @@ export class AgentService {
     return {
       id: agent.id,
       name: agent.name,
-      description: agent.description,
+      description: agent.description || undefined,
       type: agent.type as any, // Type conversion needed between Prisma and types package
       status: agent.status as any, // Type conversion needed between Prisma and types package
       capabilities: agent.capabilities as any, // Type conversion needed between Prisma and types package
-      provider: agent.provider,
+      provider: agent.provider || undefined,
       createdAt: agent.createdAt,
       updatedAt: agent.updatedAt,
     };

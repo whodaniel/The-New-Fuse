@@ -158,7 +158,8 @@ export class AgentNftService {
       const gasLimit = (BigInt(gasEstimate) * 120n) / 100n;
       
       // Get current gas price for production
-      const gasPrice = await this.provider.getGasPrice();
+      // Get current gas price for production
+      const gasPrice = (await this.provider.getFeeData()).gasPrice || 0n;
       const maxFeePerGas = (BigInt(gasPrice) * 120n) / 100n; // 20% increase for priority
       
       // Mint NFT on blockchain with proper error handling
@@ -273,6 +274,7 @@ export class AgentNftService {
         description: data.description,
         tokenAddress: data.tokenAddress,
         totalRevenue: '0',
+        distributedRevenue: '0',
         distributionThreshold: data.distributionThreshold,
       }
     });
@@ -307,7 +309,7 @@ export class AgentNftService {
       // Calculate distribution amounts
       const totalShares = BigInt(revenueStream.agentNFT.totalShares);
       const distributionAmount = ethers.toBigInt(data.amount);
-      const distributions = [];
+      const distributions: Array<{ address: string; amount: string }> = [];
 
       for (const share of revenueStream.agentNFT.fractionalShares) {
         const shareAmountBigInt = BigInt(share.shareAmount.toString()); // Convert Decimal to BigInt
@@ -437,7 +439,8 @@ export class AgentNftService {
       const gasLimit = (BigInt(gasEstimate) * 120n) / 100n; // 20% buffer
 
       // Get current gas price
-      const gasPrice = await this.provider.getGasPrice();
+      // Get current gas price for production
+      const gasPrice = (await this.provider.getFeeData()).gasPrice || 0n;
       const maxFeePerGas = (BigInt(gasPrice) * 120n) / 100n;
 
       // Send transaction with proper error handling

@@ -35,7 +35,7 @@ export interface BlockchainConfig {
 @Injectable()
 export class BlockchainUtilService {
   private readonly logger = new Logger(BlockchainUtilService.name);
-  private provider: JsonRpcProvider;
+  private provider!: JsonRpcProvider;
   private config!: BlockchainConfig;
 
   constructor() {
@@ -196,28 +196,30 @@ export class BlockchainUtilService {
    */
   async getNetworkInfo() {
     try {
-      const [network, gasPrice, block] = await Promise.all([
+      const [network, feeData, block] = await Promise.all([
         this.provider.getNetwork(),
-        this.provider.getGasPrice(),
+        this.provider.getFeeData(), // Use getFeeData for gas price
         this.provider.getBlock('latest')
       ]);
+
+      const gasPrice = feeData.gasPrice; // bigint | null
+      const baseFeePerGas = block?.baseFeePerGas; // bigint | null
 
       return {
         network: {
           chainId: network.chainId,
           name: network.name,
-          ensAddress: network.ensAddress,
         },
         gasPrice: {
-          wei: gasPrice.toString(),
-          gwei: ethers.formatUnits(gasPrice, 'gwei'),
-          ether: ethers.formatEther(gasPrice)
+          wei: gasPrice?.toString() || '0',
+          gwei: ethers.formatUnits(gasPrice || 0n, 'gwei'),
+          ether: ethers.formatEther(gasPrice || 0n)
         },
         block: {
-          number: block.number,
-          timestamp: block.timestamp,
-          baseFeePerGas: block.baseFeePerGas?.toString(),
-          difficulty: block.difficulty.toString()
+          number: block?.number || 0,
+          timestamp: block?.timestamp || 0,
+          baseFeePerGas: baseFeePerGas?.toString() || '0',
+          difficulty: block?.difficulty?.toString() || '0'
         }
       };
     } catch (error) {
@@ -322,7 +324,7 @@ export class BlockchainUtilService {
           status: receipt.status === 1 ? 'success' : 'failed',
           gasUsed: receipt.gasUsed.toString(),
           cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
-          confirmations: receipt.confirmations
+          confirmations: await receipt.confirmations()
         } : null
       };
     } catch (error) {

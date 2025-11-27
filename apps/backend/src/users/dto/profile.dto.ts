@@ -65,17 +65,40 @@ export class UpdateProfileDto {
   preferences?: Record<string, any>;
 }
 
-export interface ProfileResponseDto {
-  id: string;
-  email: string;
-  name: string;
+export class ProfileResponseDto {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  email!: string;
+
+  @ApiProperty({ required: false, nullable: true })
+  name!: string | null;
+
+  @ApiPropertyOptional()
   displayName?: string;
+
+  @ApiPropertyOptional()
   bio?: string;
+
+  @ApiPropertyOptional()
   avatarUrl?: string;
+
+  @ApiPropertyOptional()
   location?: string;
+
+  @ApiPropertyOptional()
   company?: string;
+
+  @ApiPropertyOptional()
   website?: string;
+
+  @ApiPropertyOptional()
   preferences?: Record<string, any>;
-  createdAt: Date;
-  updatedAt: Date;
+
+  @ApiProperty()
+  createdAt!: Date;
+
+  @ApiProperty()
+  updatedAt!: Date;
 }
