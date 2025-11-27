@@ -7,7 +7,7 @@ import { PrismaService } from '../services/prisma.service';
 
 const execAsync = promisify(exec);
 
-interface ImprovementTask {
+export interface ImprovementTask {
   id: string;
   title: string;
   description: string;
@@ -29,7 +29,7 @@ interface ImprovementTask {
   error?: string;
 }
 
-interface Implementation {
+export interface Implementation {
   taskId: string;
   success: boolean;
   filesModified: string[];

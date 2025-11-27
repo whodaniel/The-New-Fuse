@@ -35,7 +35,7 @@ interface ImprovementCycle {
   }>;
 }
 
-interface ChatMessage {
+export interface ChatMessage {
   from: string;
   to: string;
   message: string;

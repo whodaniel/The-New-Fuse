@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 
-interface ArchitectureDecision {
+export interface ArchitectureDecision {
   id: string;
   title: string;
   type: 'refactoring' | 'feature' | 'optimization' | 'security' | 'scalability';
@@ -19,7 +19,7 @@ interface ArchitectureDecision {
   };
 }
 
-interface ArchitectureReview {
+export interface ArchitectureReview {
   timestamp: Date;
   decisions: ArchitectureDecision[];
   missingFeatures: Array<{

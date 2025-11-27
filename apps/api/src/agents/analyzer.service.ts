@@ -4,7 +4,7 @@ import { glob } from 'glob';
 import * as path from 'path';
 import { PrismaService } from '../services/prisma.service';
 
-interface CodeIssue {
+export interface CodeIssue {
   id: string;
   file: string;
   line: number;
@@ -16,7 +16,7 @@ interface CodeIssue {
   estimatedEffort: 'low' | 'medium' | 'high';
 }
 
-interface AnalysisReport {
+export interface AnalysisReport {
   timestamp: Date;
   issues: CodeIssue[];
   prioritizedIssues: CodeIssue[];
