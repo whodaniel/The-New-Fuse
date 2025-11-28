@@ -23,6 +23,7 @@
     "@apollo/server": "^4.10.0",
     "graphql": "^16.8.1",
     "dataloader": "^2.2.2",
+    "@modelcontextprotocol/sdk": "^1.15.0",
     "@the-new-fuse/a2a-core": "workspace:*",
     "@the-new-fuse/api-types": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
