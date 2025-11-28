@@ -1,10 +1,10 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 // import { UnifiedMonitoringService } from '@the-new-fuse/core';
 import { ConfigService } from '@nestjs/config';
-import * as compression from 'compression';
+import compression from 'compression';
 import helmet from 'helmet';
 
 async function bootstrap(): Promise<void> {
@@ -16,18 +16,20 @@ async function bootstrap(): Promise<void> {
   app.use(helmet());
   app.enableCors({
     origin: configService.get('CORS_ORIGINS')?.split(',') || ['http://localhost:3000'],
-    credentials: true
+    credentials: true,
   });
 
   // Performance
   app.use(compression());
 
   // Validation
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-    forbidNonWhitelisted: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    })
+  );
 
   // Swagger Documentation
   const config = new DocumentBuilder()
