@@ -1,11 +1,11 @@
 import { registerAs } from '@nestjs/config';
 
 export interface CacheTTLConfig {
-  short: number;      // 5 minutes
-  medium: number;     // 30 minutes
-  long: number;       // 2 hours
-  veryLong: number;   // 24 hours
-  session: number;    // 7 days
+  short: number; // 5 minutes
+  medium: number; // 30 minutes
+  long: number; // 2 hours
+  veryLong: number; // 24 hours
+  session: number; // 7 days
 }
 
 export interface CacheConfig {
@@ -28,31 +28,58 @@ export interface CacheConfig {
   };
 }
 
-export default registerAs('cache', (): CacheConfig => ({
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    password: process.env.REDIS_PASSWORD,
-    db: parseInt(process.env.REDIS_CACHE_DB || '1', 10), // Use separate DB for cache
-    ttl: parseInt(process.env.REDIS_DEFAULT_TTL || '3600', 10), // 1 hour default
-    maxRetriesPerRequest: 3,
-    enableReadyCheck: true,
-    retryStrategy: (times: number) => {
-      const delay = Math.min(times * 50, 2000);
-      return delay;
+export default registerAs('cache', (): CacheConfig => {
+  let redisConfig = {
+    host: process.env.REDIS_HOST || process.env.REDISHOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || process.env.REDISPORT || '6379', 10),
+    password: process.env.REDIS_PASSWORD || process.env.REDISPASSWORD,
+    db: parseInt(process.env.REDIS_CACHE_DB || '1', 10),
+  };
+
+  if (process.env.REDIS_URL) {
+    try {
+      const parsed = new URL(process.env.REDIS_URL);
+      redisConfig.host = parsed.hostname;
+      redisConfig.port = parseInt(parsed.port, 10);
+      redisConfig.password = parsed.password || undefined;
+      // db might be in pathname, e.g. /0
+      if (parsed.pathname && parsed.pathname.length > 1) {
+        const dbStr = parsed.pathname.substring(1);
+        if (!isNaN(parseInt(dbStr, 10))) {
+          redisConfig.db = parseInt(dbStr, 10);
+        }
+      }
+    } catch (e) {
+      // Fallback to individual env vars if parsing fails
+    }
+  }
+
+  return {
+    redis: {
+      host: redisConfig.host,
+      port: redisConfig.port,
+      password: redisConfig.password,
+      db: redisConfig.db,
+      ttl: parseInt(process.env.REDIS_DEFAULT_TTL || '3600', 10), // 1 hour default
+      maxRetriesPerRequest: 3,
+      enableReadyCheck: true,
+      retryStrategy: (times: number) => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
     },
-  },
-  ttl: {
-    short: parseInt(process.env.CACHE_TTL_SHORT || '300', 10),        // 5 minutes
-    medium: parseInt(process.env.CACHE_TTL_MEDIUM || '1800', 10),     // 30 minutes
-    long: parseInt(process.env.CACHE_TTL_LONG || '7200', 10),         // 2 hours
-    veryLong: parseInt(process.env.CACHE_TTL_VERY_LONG || '86400', 10), // 24 hours
-    session: parseInt(process.env.CACHE_TTL_SESSION || '604800', 10),  // 7 days
-  },
-  keyPrefix: process.env.CACHE_KEY_PREFIX || 'fuse:',
-  monitoring: {
-    enabled: process.env.CACHE_MONITORING_ENABLED === 'true',
-    sampleRate: parseInt(process.env.CACHE_MONITORING_SAMPLE_RATE || '100', 10),
-    metricsInterval: parseInt(process.env.CACHE_METRICS_INTERVAL || '60000', 10), // 1 minute
-  },
-}));
+    ttl: {
+      short: parseInt(process.env.CACHE_TTL_SHORT || '300', 10), // 5 minutes
+      medium: parseInt(process.env.CACHE_TTL_MEDIUM || '1800', 10), // 30 minutes
+      long: parseInt(process.env.CACHE_TTL_LONG || '7200', 10), // 2 hours
+      veryLong: parseInt(process.env.CACHE_TTL_VERY_LONG || '86400', 10), // 24 hours
+      session: parseInt(process.env.CACHE_TTL_SESSION || '604800', 10), // 7 days
+    },
+    keyPrefix: process.env.CACHE_KEY_PREFIX || 'fuse:',
+    monitoring: {
+      enabled: process.env.CACHE_MONITORING_ENABLED === 'true',
+      sampleRate: parseInt(process.env.CACHE_MONITORING_SAMPLE_RATE || '100', 10),
+      metricsInterval: parseInt(process.env.CACHE_METRICS_INTERVAL || '60000', 10), // 1 minute
+    },
+  };
+});
