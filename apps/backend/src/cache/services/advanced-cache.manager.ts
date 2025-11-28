@@ -1,4 +1,4 @@
-import { Injectable, Logger, Inject, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { CacheConfig } from '../config/cache.config';
@@ -27,7 +27,7 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly monitoringService: CacheMonitoringService,
+    private readonly monitoringService: CacheMonitoringService
   ) {
     const cacheConfig = this.configService.get<CacheConfig>('cache');
     this.keyPrefix = cacheConfig?.keyPrefix || 'fuse:';
@@ -37,16 +37,27 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     const cacheConfig = this.configService.get<CacheConfig>('cache');
 
-    this.redisClient = new Redis({
-      host: cacheConfig.redis.host,
-      port: cacheConfig.redis.port,
-      password: cacheConfig.redis.password,
-      db: cacheConfig.redis.db,
-      maxRetriesPerRequest: cacheConfig.redis.maxRetriesPerRequest,
-      enableReadyCheck: cacheConfig.redis.enableReadyCheck,
-      retryStrategy: cacheConfig.redis.retryStrategy,
-      lazyConnect: false,
-    });
+    // Prefer URL when present; otherwise use discrete host/port/password settings
+    if (cacheConfig.redis.url) {
+      this.redisClient = new Redis(cacheConfig.redis.url, {
+        db: cacheConfig.redis.db,
+        maxRetriesPerRequest: cacheConfig.redis.maxRetriesPerRequest,
+        enableReadyCheck: cacheConfig.redis.enableReadyCheck,
+        retryStrategy: cacheConfig.redis.retryStrategy,
+        lazyConnect: false,
+      });
+    } else {
+      this.redisClient = new Redis({
+        host: cacheConfig.redis.host,
+        port: cacheConfig.redis.port,
+        password: cacheConfig.redis.password,
+        db: cacheConfig.redis.db,
+        maxRetriesPerRequest: cacheConfig.redis.maxRetriesPerRequest,
+        enableReadyCheck: cacheConfig.redis.enableReadyCheck,
+        retryStrategy: cacheConfig.redis.retryStrategy,
+        lazyConnect: false,
+      });
+    }
 
     this.redisClient.on('connect', () => {
       this.logger.log('Connected to Redis for caching');
@@ -92,7 +103,7 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
   async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    options: CacheOptions = {},
+    options: CacheOptions = {}
   ): Promise<T> {
     const startTime = Date.now();
     const cacheKey = this.generateKey(key, options.prefix);
@@ -148,11 +159,7 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
   /**
    * Set value in cache
    */
-  async set<T>(
-    key: string,
-    value: T,
-    options: CacheOptions = {},
-  ): Promise<void> {
+  async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
     const cacheKey = this.generateKey(key, options.prefix);
     const ttl = options.ttl || this.defaultTTL;
 
@@ -345,7 +352,7 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
    */
   async mset<T>(
     entries: Array<{ key: string; value: T; ttl?: number }>,
-    options: CacheOptions = {},
+    options: CacheOptions = {}
   ): Promise<void> {
     try {
       const pipeline = this.redisClient.pipeline();
@@ -400,7 +407,6 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
     missRate: number;
   }> {
     try {
-      const info = await this.redisClient.info('stats');
       const memory = await this.redisClient.info('memory');
       const dbSize = await this.redisClient.dbsize();
 

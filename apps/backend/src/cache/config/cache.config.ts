@@ -10,6 +10,8 @@ export interface CacheTTLConfig {
 
 export interface CacheConfig {
   redis: {
+    /** Optional Redis connection URL. If provided, it takes precedence. */
+    url?: string;
     host: string;
     port: number;
     password?: string;
@@ -28,38 +30,26 @@ export interface CacheConfig {
   };
 }
 
-export default registerAs('cache', (): CacheConfig => {
-  let redisConfig = {
-    host: process.env.REDIS_HOST || process.env.REDISHOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || process.env.REDISPORT || '6379', 10),
-    password: process.env.REDIS_PASSWORD || process.env.REDISPASSWORD,
-    db: parseInt(process.env.REDIS_CACHE_DB || '1', 10),
-  };
-
-  if (process.env.REDIS_URL) {
-    try {
-      const parsed = new URL(process.env.REDIS_URL);
-      redisConfig.host = parsed.hostname;
-      redisConfig.port = parseInt(parsed.port, 10);
-      redisConfig.password = parsed.password || undefined;
-      // db might be in pathname, e.g. /0
-      if (parsed.pathname && parsed.pathname.length > 1) {
-        const dbStr = parsed.pathname.substring(1);
-        if (!isNaN(parseInt(dbStr, 10))) {
-          redisConfig.db = parseInt(dbStr, 10);
-        }
-      }
-    } catch (e) {
-      // Fallback to individual env vars if parsing fails
-    }
-  }
-
-  return {
+export default registerAs(
+  'cache',
+  (): CacheConfig => ({
     redis: {
-      host: redisConfig.host,
-      port: redisConfig.port,
-      password: redisConfig.password,
-      db: redisConfig.db,
+      // Prefer a URL if provided (works with ioredis and supports rediss://)
+      url:
+        process.env.REDIS_URL ||
+        process.env.REDIS_TLS_URL ||
+        process.env.REDISS_URL ||
+        process.env.REDIS_CONNECTION_STRING ||
+        undefined,
+      // Fallback to host/port/password if URL not set
+      host:
+        process.env.REDIS_HOST ||
+        process.env.REDIS_HOSTNAME ||
+        process.env.REDISHOST ||
+        'localhost',
+      port: parseInt(process.env.REDIS_PORT || process.env.REDISPORT || '6379', 10),
+      password: process.env.REDIS_PASSWORD || process.env.REDISPASSWORD || undefined,
+      db: parseInt(process.env.REDIS_CACHE_DB || process.env.REDIS_DB || '1', 10), // Use separate DB for cache (fallback to REDIS_DB)
       ttl: parseInt(process.env.REDIS_DEFAULT_TTL || '3600', 10), // 1 hour default
       maxRetriesPerRequest: 3,
       enableReadyCheck: true,
@@ -81,5 +71,5 @@ export default registerAs('cache', (): CacheConfig => {
       sampleRate: parseInt(process.env.CACHE_MONITORING_SAMPLE_RATE || '100', 10),
       metricsInterval: parseInt(process.env.CACHE_METRICS_INTERVAL || '60000', 10), // 1 minute
     },
-  };
-});
+  })
+);

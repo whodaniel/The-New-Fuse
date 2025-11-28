@@ -1,56 +1,63 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import llmProviderConfig from './config/llm-provider.config';
-import securityConfig from './config/security.config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
+import { DatabaseModule } from '@the-new-fuse/database';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
-import { AgentModule } from './modules/agent.module';
-import { ChatModule } from './modules/chat/chat.module';
-import { TaskModule } from './modules/task/task.module';
 import { CacheService } from './cache/cache.service';
-import { WebsocketGateway } from './websocket/websocket.gateway';
-import { LLMProviderController } from './llm/llm-provider.controller';
-import { LLMProviderService } from './llm/llm-provider.service';
+import { getDatabaseConfig } from './config/database.config';
+import llmProviderConfig from './config/llm-provider.config';
+import securityConfig from './config/security.config';
+import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { SystemController } from './controllers/system.controller';
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
-import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
-import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
-import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
-import { TNFMCPModule } from './mcp/TNFMCPModule';
-import { A2ACoreModule, A2AController } from '@the-new-fuse/a2a-core';
-import { DatabaseModule } from '@the-new-fuse/database';
-import { WalletsModule } from './wallets/wallets.module';
-import { TransactionsModule } from './transactions/transactions.module';
-import { Web3authModule } from './web3auth/web3auth.module';
-import { SmartAccountModule } from './smart-accounts/smart-account.module';
-import { MonitoringModule } from './monitoring/monitoring.module';
 import { GraphqlModule } from './graphql/graphql.module';
+import { LLMProviderController } from './llm/llm-provider.controller';
+import { LLMProviderService } from './llm/llm-provider.service';
+import { TNFMCPModule } from './mcp/TNFMCPModule';
+import { AgentModule } from './modules/agent.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
+import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
+import { TaskModule } from './modules/task/task.module';
+import { MonitoringModule } from './monitoring/monitoring.module';
+import { SmartAccountModule } from './smart-accounts/smart-account.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { WalletsModule } from './wallets/wallets.module';
+import { Web3authModule } from './web3auth/web3auth.module';
+import { WebsocketGateway } from './websocket/websocket.gateway';
 
 // Security imports
+import { SecureAuthGuard } from './guards/secure-auth.guard';
+import { SecurityGuard } from './guards/security.guard';
+import { CsrfProtectionMiddleware } from './middleware/csrf-protection.middleware';
+import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-handler.middleware';
+import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
+import { SecurityValidationMiddleware } from './middleware/security-validation.middleware';
+import { ApiEndpointMonitoringService } from './security/api-endpoint-monitoring.service';
+import { EnhancedRateLimitService } from './security/enhanced-rate-limit.service';
 import { InputSanitizationService } from './security/input-sanitization.service';
 import { ResponseSanitizationService } from './security/response-sanitization.service';
-import { SecurityLoggingService } from './security/security-logging.service';
-import { EnhancedRateLimitService } from './security/enhanced-rate-limit.service';
-import { ApiEndpointMonitoringService } from './security/api-endpoint-monitoring.service';
 import { SecurityIntegrationService } from './security/security-integration.service';
-import { SecurityValidationMiddleware } from './middleware/security-validation.middleware';
-import { CsrfProtectionMiddleware } from './middleware/csrf-protection.middleware';
-import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
-import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-handler.middleware';
-import { SecurityGuard } from './guards/security.guard';
-import { SecureAuthGuard } from './guards/secure-auth.guard';
+import { SecurityLoggingService } from './security/security-logging.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [llmProviderConfig, securityConfig],
+    }) as any,
+    // Provide TypeORM DataSource for modules using @InjectRepository/Repository
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
     }) as any,
     // Use Prisma instead of TypeORM
     DatabaseModule as any,
@@ -62,10 +69,12 @@ import { SecureAuthGuard } from './guards/secure-auth.guard';
       }),
       inject: [ConfigService],
     }) as any,
-    ThrottlerModule.forRoot([{
-      ttl: 60000, // 60 seconds in milliseconds
-      limit: 10,
-    }]) as any,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 60 seconds in milliseconds
+        limit: 10,
+      },
+    ]) as any,
     AuthModule,
     AgentModule, // Add our new agent module
     ChatModule,
@@ -88,12 +97,12 @@ import { SecureAuthGuard } from './guards/secure-auth.guard';
     SystemController,
     WebSocketController,
     WorkflowController,
-    N8nWorkflowsController
+    N8nWorkflowsController,
   ],
   providers: [
-    AppService, 
-    CacheService, 
-    WebsocketGateway, 
+    AppService,
+    CacheService,
+    WebsocketGateway,
     LLMProviderService,
     SystemController,
     WebSocketController,
