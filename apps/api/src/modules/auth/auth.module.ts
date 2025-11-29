@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from '@the-new-fuse/database';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from '../../controllers/auth.controller';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../entities/User';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    DatabaseModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({

@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from '@the-new-fuse/database';
 import { TaskService } from './task.service';
-import { Task } from '../../entities/Task';
-import { TaskExecution } from '../../entities/TaskExecution';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task, TaskExecution])],
+  imports: [DatabaseModule],
   providers: [TaskService],
   exports: [TaskService]
 })
