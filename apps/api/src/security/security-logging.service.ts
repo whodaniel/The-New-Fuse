@@ -24,41 +24,78 @@ export class SecurityLoggingService {
   private readonly securityLogger: winston.Logger;
 
   constructor(private configService: ConfigService) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const logDir = isProduction ? '/tmp/logs' : 'logs';
+
     // Main application logger
+    const appTransports: any[] = [
+      new winston.transports.Console({
+        format: winston.format.combine(
+          winston.format.colorize(),
+          winston.format.simple()
+        ),
+      }),
+    ];
+
+    // Only add file logging in development or when writable dir exists
+    if (!isProduction) {
+      try {
+        appTransports.push(
+          new (winston.transports as any).DailyRotateFile({
+            filename: `${logDir}/app-%DATE%.log`,
+            datePattern: 'YYYY-MM-DD',
+            zippedArchive: true,
+            maxSize: '20m',
+            maxFiles: '14d',
+          })
+        );
+      } catch (error) {
+        console.warn('Failed to initialize file logging, using console only:', error);
+      }
+    }
+
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()
       ),
-      transports: [
-        new winston.transports.Console(),
-        new (winston.transports as any).DailyRotateFile({
-          filename: 'logs/app-%DATE%.log',
-          datePattern: 'YYYY-MM-DD',
-          zippedArchive: true,
-          maxSize: '20m',
-          maxFiles: '14d',
-        }),
-      ],
+      transports: appTransports,
     });
 
-    // Dedicated security logger
+    // Dedicated security logger - console only in production
+    const securityTransports: any[] = [
+      new winston.transports.Console({
+        format: winston.format.combine(
+          winston.format.colorize(),
+          winston.format.simple()
+        ),
+      }),
+    ];
+
+    if (!isProduction) {
+      try {
+        securityTransports.push(
+          new (winston.transports as any).DailyRotateFile({
+            filename: `${logDir}/security-%DATE%.log`,
+            datePattern: 'YYYY-MM-DD',
+            zippedArchive: true,
+            maxSize: '20m',
+            maxFiles: '30d',
+          })
+        );
+      } catch (error) {
+        console.warn('Failed to initialize security file logging, using console only:', error);
+      }
+    }
+
     this.securityLogger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()
       ),
-      transports: [
-        new (winston.transports as any).DailyRotateFile({
-          filename: 'logs/security-%DATE%.log',
-          datePattern: 'YYYY-MM-DD',
-          zippedArchive: true,
-          maxSize: '20m',
-          maxFiles: '30d',
-        }),
-      ],
+      transports: securityTransports,
     });
   }
 
