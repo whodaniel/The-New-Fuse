@@ -3,7 +3,7 @@ import { TransactionsService } from './transactions.service';
 import { TransactionsController } from './transactions.controller';
 import { Web3authModule } from '../web3auth/web3auth.module';
 import { SmartAccountModule } from '../smart-accounts/smart-account.module';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 
 @Module({
   imports: [

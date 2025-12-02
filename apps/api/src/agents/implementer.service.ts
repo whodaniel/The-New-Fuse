@@ -233,7 +233,7 @@ export class ImplementerAgentService {
   private generateServiceTemplate(feature: { name: string; description: string }): string {
     const className = feature.name.replace(/\s+/g, '');
     return `import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 
 /**
  * ${feature.description}
@@ -282,7 +282,7 @@ export class ${className}Controller {
 
     const testContent = `import { Test, TestingModule } from '@nestjs/testing';
 import { ${className}Service } from './${serviceName}.service';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 
 describe('${className}Service', () => {
   let service: ${className}Service;

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 import { Agent, AgentStatus, CreateAgentDto, UpdateAgentDto, RegisteredEntity, CreateEntityDto, UpdateEntityDto as FuseUpdateEntityDto } from '@the-new-fuse/types';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Web3authService } from '../web3auth/web3auth.service';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 import { SmartAccountService } from '../smart-accounts/smart-account.service';
 import { createWalletClient, http, parseEther, formatEther, parseAbi, encodeFunctionData, getAddress } from 'viem';
 import { mainnet } from 'viem/chains';
