@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 import { AnalyzerAgentService } from './analyzer.service';
 import { ArchitectAgentService } from './architect.service';
 import { ImplementerAgentService } from './implementer.service';

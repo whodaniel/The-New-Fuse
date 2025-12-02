@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import { glob } from 'glob';
 import * as path from 'path';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 
 export interface CodeIssue {
   id: string;

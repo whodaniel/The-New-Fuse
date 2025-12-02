@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { promisify } from 'util';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 
 const execAsync = promisify(exec);
 

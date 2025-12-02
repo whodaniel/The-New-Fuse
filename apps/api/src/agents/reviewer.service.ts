@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 
 interface CodeReview {
   implementationId: string;

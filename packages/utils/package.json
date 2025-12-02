@@ -10,8 +10,8 @@
       "types": "./dist/index.d.ts"
     },
     "./validators.server": {
-      "import": "./dist/validators.server.js",
-      "types": "./dist/validators.server.d.ts"
+      "import": "./dist/validators-server.js",
+      "types": "./dist/validators-server.d.ts"
     }
   },
   "scripts": {
