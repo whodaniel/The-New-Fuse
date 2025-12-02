@@ -26,6 +26,7 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
     LoginAttempt,
     AuthEvent
   ],
-  synchronize: configService.get('NODE_ENV') === 'development', // Only for development
+  // TODO: Replace with proper migrations - temporarily enabled for production to create missing TypeORM tables
+  synchronize: true, // TEMPORARY: Enable in production to create missing tables
   logging: configService.get('NODE_ENV') === 'development',
 });
