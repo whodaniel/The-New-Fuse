@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { Logger } from '@nestjs/common';
 // import { claudeCodeCLIAdapter } from '../types/core';
@@ -9,7 +9,8 @@ export interface LLMRegistry {
   unregisterProvider(id: string): Promise<void>;
 }
 
-class MockLLMRegistry implements LLMRegistry {
+@Injectable()
+export class MockLLMRegistry implements LLMRegistry {
   async registerProvider(id: string, config: any): Promise<void> {
     // Mock implementation
   }

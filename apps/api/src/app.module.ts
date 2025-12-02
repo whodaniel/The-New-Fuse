@@ -104,6 +104,12 @@ import { SecurityLoggingService } from './security/security-logging.service';
     CacheService,
     WebsocketGateway,
     LLMProviderService,
+    // Provide LLMRegistry implementation for LLMProviderService
+    {
+      provide: 'LLMRegistry',
+      useClass: MockLLMRegistry,
+    },
+    MockLLMRegistry,
     SystemController,
     WebSocketController,
     WorkflowController,
