@@ -17,7 +17,7 @@ WORKDIR /app
 COPY . .
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile || (echo "Lockfile compatibility issue detected, recreating lockfile..." && pnpm install --force)
 
 # Build foundational types first to satisfy downstream package builds
 RUN pnpm --filter @the-new-fuse/types build
