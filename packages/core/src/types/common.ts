@@ -10,7 +10,7 @@ export interface ErrorResponse {
   details?: unknown;
 }
 
-export interface ServiceResponse {
+export interface ServiceResponse<T = any> {
   success: boolean;
   data?: T;
   error?: ErrorResponse;

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { CommunicationService } from './CommunicationService';
 import { CommunicationProtocol } from './CommunicationProtocol';
-import { CommunicationTypes } from './CommunicationTypes';
 
 @Module({
-  providers: [CommunicationService, CommunicationProtocol, CommunicationTypes],
-  exports: [CommunicationService, CommunicationProtocol, CommunicationTypes],
+  providers: [CommunicationService, CommunicationProtocol],
+  exports: [CommunicationService, CommunicationProtocol],
 })
 export class CommunicationModule {}
