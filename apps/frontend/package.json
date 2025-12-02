@@ -95,10 +95,10 @@
     "@heroicons/react": "^2.1.5"
   },
   "peerDependencies": {
-    "@firebase/app": "^0.9.25",
-    "@firebase/app-compat": "^0.2.0",
+    "@firebase/app": "^0.9.25 || ^0.14.0",
+    "@firebase/app-compat": "^0.2.0 || ^0.5.0",
     "@firebase/app-types": "^0.9.0",
-    "monaco-editor": "^0.39.0"
+    "monaco-editor": "^0.39.0 || ^0.54.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
