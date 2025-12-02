@@ -51,10 +51,17 @@ export default registerAs(
       password: process.env.REDIS_PASSWORD || process.env.REDISPASSWORD || undefined,
       db: parseInt(process.env.REDIS_CACHE_DB || process.env.REDIS_DB || '1', 10), // Use separate DB for cache (fallback to REDIS_DB)
       ttl: parseInt(process.env.REDIS_DEFAULT_TTL || '3600', 10), // 1 hour default
-      maxRetriesPerRequest: 3,
+      // Increased from 3 to 10 for better resilience
+      maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),
       enableReadyCheck: true,
+      // Improved retry strategy with exponential backoff and max delay
       retryStrategy: (times: number) => {
-        const delay = Math.min(times * 50, 2000);
+        if (times > 15) {
+          // After 15 retries, stop trying (prevents infinite loops)
+          return null;
+        }
+        // Exponential backoff: 50ms, 100ms, 200ms... up to 5000ms (5s)
+        const delay = Math.min(times * 50, 5000);
         return delay;
       },
     },

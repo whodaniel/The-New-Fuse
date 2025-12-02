@@ -1,9 +1,13 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { QueueName, JobPriority, JOB_ATTEMPTS, JOB_BACKOFF } from '../constants/queue-names';
-import { CleanupJobData, DataSyncJobData, ReportGenerationJobData } from '../interfaces/job-data.interface';
+import { Queue } from 'bull';
+import { JOB_ATTEMPTS, JOB_BACKOFF, JobPriority, QueueName } from '../constants/queue-names';
+import {
+  CleanupJobData,
+  DataSyncJobData,
+  ReportGenerationJobData,
+} from '../interfaces/job-data.interface';
 
 /**
  * Job scheduler service
@@ -16,7 +20,7 @@ export class JobSchedulerService implements OnModuleInit {
   constructor(
     @InjectQueue(QueueName.CLEANUP) private cleanupQueue: Queue,
     @InjectQueue(QueueName.DATA_SYNC) private dataSyncQueue: Queue,
-    @InjectQueue(QueueName.REPORT_GENERATION) private reportQueue: Queue,
+    @InjectQueue(QueueName.REPORT_GENERATION) private reportQueue: Queue
   ) {}
 
   async onModuleInit() {
@@ -307,7 +311,22 @@ export class JobSchedulerService implements OnModuleInit {
         reports: reportCounts,
       });
     } catch (error) {
-      this.logger.error('Health check failed', error);
+      // Enhanced error handling for Redis connection issues
+      if (
+        error.message?.includes('MaxRetriesPerRequestError') ||
+        error.message?.includes('ECONNREFUSED') ||
+        error.message?.includes('Connection is closed')
+      ) {
+        this.logger.warn(
+          'Redis connection issue during health check - this is non-fatal and will be retried',
+          {
+            error: error.message,
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } else {
+        this.logger.error('Health check failed', error);
+      }
     }
   }
 
@@ -322,7 +341,7 @@ export class JobSchedulerService implements OnModuleInit {
       priority?: JobPriority;
       delay?: number;
       repeatCron?: string;
-    },
+    }
   ) {
     let queue: Queue;
 

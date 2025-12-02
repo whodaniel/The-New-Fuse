@@ -792,7 +792,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/generated/prisma",
+      "value": "/project/workspace/fuse/packages/database/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -801,7 +801,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin",
+        "value": "debian-openssl-1.1.x",
         "native": true
       },
       {
@@ -816,7 +816,7 @@ const config = {
     "previewFeatures": [
       "postgresqlExtensions"
     ],
-    "sourceFilePath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/database/prisma/schema.prisma",
+    "sourceFilePath": "/project/workspace/fuse/packages/database/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
