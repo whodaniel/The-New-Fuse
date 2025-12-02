@@ -29,7 +29,7 @@
     "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'"
   },
   "dependencies": {
-    "@firebase/app": "^0.14.4",
+    "@firebase/app": "^0.14.6",
     "@firebase/app-types": "^0.9.3",
     "@firebase/auth": "^1.11.0",
     "@hello-pangea/dnd": "^18.0.1",
