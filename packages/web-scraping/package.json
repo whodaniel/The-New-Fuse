@@ -18,24 +18,24 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@the-new-fuse/mcp-core": "workspace:^",
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/websockets": "^11.0.0",
     "@the-new-fuse/ap2-protocol": "workspace:^",
+    "@the-new-fuse/mcp-core": "workspace:^",
     "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "mime-types": "^2.1.35",
     "node-fetch": "^3.3.2",
     "puppeteer": "^22.0.0",
-    "cheerio": "^1.0.0-rc.12",
-    "url-parse": "^1.5.10",
-    "mime-types": "^2.1.35",
-    "@nestjs/common": "^11.1.6",
-    "@nestjs/websockets": "^11.0.0",
+    "rxjs": "^7.8.1",
     "socket.io": "^4.7.5",
-    "rxjs": "^7.8.1"
+    "url-parse": "^1.5.10"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^24.0.13",
     "@types/url-parse": "^1.4.11",
-    "@types/mime-types": "^2.1.4",
     "eslint": "^8.57.1",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.5",

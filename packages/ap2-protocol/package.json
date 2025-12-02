@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
-    "@nestjs/common": "^11.1.6",
+    "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
     "axios": "^1.12.2",
     "zod": "^4.1.12"

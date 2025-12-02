@@ -62,7 +62,7 @@
   "author": "The New Fuse Team",
   "license": "MIT",
   "dependencies": {
-    "@nestjs/common": "^11.1.6",
+    "@nestjs/common": "^11.1.9",
     "@prisma/client": "^6.17.1",
     "@the-new-fuse/relay-core": "workspace:*",
     "events": "^3.3.0",

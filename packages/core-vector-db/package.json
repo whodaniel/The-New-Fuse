@@ -19,12 +19,12 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.6",
-    "@nestjs/core": "^11.1.6",
-    "@nestjs/microservices": "^11.1.6",
     "@grpc/grpc-js": "^1.14.0",
     "@grpc/proto-loader": "^0.8.0",
     "@modelcontextprotocol/sdk": "^1.20.1",
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/microservices": "^11.1.6",
     "@qdrant/js-client-rest": "^1.15.1",
     "chroma-js": "^3.1.2",
     "openai": "^6.5.0",
@@ -48,7 +48,7 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@the-new-fuse/types": "workspace:*",
-    "@the-new-fuse/proto-definitions": "workspace:*"
+    "@the-new-fuse/proto-definitions": "workspace:*",
+    "@the-new-fuse/types": "workspace:*"
   }
 }
