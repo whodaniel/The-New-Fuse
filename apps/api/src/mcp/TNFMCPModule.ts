@@ -12,8 +12,7 @@ import { TNFMCPController } from './TNFMCPController';
 import { TNFMCPService } from './TNFMCPService';
 
 @Module({
-  imports: [PrismaModule],
-  imports: [TypeOrmModule.forFeature([ChatRoom, Message])],
+  imports: [PrismaModule, TypeOrmModule.forFeature([ChatRoom, Message])],
   providers: [
     TNFMCPService,
     AgentService,
