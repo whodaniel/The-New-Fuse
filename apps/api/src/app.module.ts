@@ -107,6 +107,14 @@ import { SecurityLoggingService } from './security/security-logging.service';
     SystemController,
     WebSocketController,
     WorkflowController,
+    // Mock UnifiedMonitoringService (typed as 'any' in core.ts)
+    {
+      provide: 'UnifiedMonitoringService',
+      useValue: {
+        recordMetric: () => {},
+        captureError: () => {},
+      },
+    },
     // Security services
     InputSanitizationService,
     ResponseSanitizationService,

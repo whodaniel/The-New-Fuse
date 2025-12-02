@@ -1,12 +1,12 @@
+import { Inject, UseGuards } from '@nestjs/common';
 import {
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UseGuards } from '@nestjs/common';
 import { WsAuthGuard } from '../auth/ws-auth.guard'; // Changed from @/auth/ws-auth.guard
 import { CacheService } from '../cache/cache.service'; // Changed from @/cache/cache.service
 import { UnifiedMonitoringService } from '../types/core';
@@ -23,7 +23,8 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
 
   constructor(
     private cache: CacheService,
-    private monitoring: UnifiedMonitoringService,
+    @Inject('UnifiedMonitoringService')
+    private monitoring: UnifiedMonitoringService
   ) {}
 
   async handleConnection(client: Socket) {
@@ -31,11 +32,11 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
       const userId = client.handshake.auth.token;
       await this.cache.set(`socket:${client.id}`, userId);
       await this.cache.sadd(`online_users`, userId);
-      
+
       this.monitoring.recordMetric('websocket.connection', 1, { userId });
-      
+
       this.server.emit('users:online', {
-        count: await this.cache.scard('online_users')
+        count: await this.cache.scard('online_users'),
       });
     } catch (error) {
       this.monitoring.captureError(error);
@@ -47,11 +48,11 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
     const userId = await this.cache.get(`socket:${client.id}`);
     await this.cache.del(`socket:${client.id}`);
     await this.cache.srem('online_users', userId);
-    
+
     this.monitoring.recordMetric('websocket.disconnect', 1, { userId });
-    
+
     this.server.emit('users:online', {
-      count: await this.cache.scard('online_users')
+      count: await this.cache.scard('online_users'),
     });
   }
 
@@ -60,16 +61,16 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
   async handleMessage(client: Socket, payload: any) {
     try {
       const userId = await this.cache.get(`socket:${client.id}`);
-      
+
       // Process and broadcast message
       this.server.to(payload.roomId).emit('agent:message', {
         ...payload,
         timestamp: new Date(),
       });
-      
+
       this.monitoring.recordMetric('websocket.message', 1, {
         userId,
-        agentId: payload.agentId
+        agentId: payload.agentId,
       });
     } catch (error) {
       this.monitoring.captureError(error);
