@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@apollo/server": "^4.10.0",
+    "@apollo/server": "^5.2.0",
     "@firebase/app-compat": "^0.5.4",
     "@modelcontextprotocol/sdk": "^1.15.0",
     "@nestjs/apollo": "^13.2.1",
