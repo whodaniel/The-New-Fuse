@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as DOMPurify from 'dompurify';
+import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class InputSanitizationService {
   constructor(private configService: ConfigService) {
     // Initialize DOMPurify for server-side HTML sanitization
     this.window = new JSDOM('').window;
-    this.domPurify = DOMPurify(this.window);
+    this.domPurify = createDOMPurify(this.window);
   }
 
   /**
