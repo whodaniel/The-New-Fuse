@@ -20,7 +20,7 @@
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "bcrypt": "^6.0.0",
-    "express": "^5.1.0",
+    "express": "^4.22.0",
     "jsonwebtoken": "^9.0.2",
     "uuid": "^13.0.0",
     "zod": "^4.1.12"

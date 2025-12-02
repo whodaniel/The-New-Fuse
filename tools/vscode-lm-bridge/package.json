@@ -25,7 +25,7 @@
   "author": "VS Code LM Bridge",
   "license": "MIT",
   "dependencies": {
-    "express": "^5.1.0",
+    "express": "^4.22.0",
     "cors": "^2.8.5",
     "uuid": "^13.0.0",
     "ws": "^8.18.3"
