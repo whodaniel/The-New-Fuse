@@ -63,6 +63,8 @@ import { SecurityLoggingService } from '../security/security-logging.service';
       }),
       inject: [ConfigService],
     }),
+    // TypeORM repositories for GraphQL resolvers
+    TypeOrmModule.forFeature([User, Agent, Workflow, WorkflowStep]),
     DatabaseModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
