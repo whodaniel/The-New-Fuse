@@ -33,6 +33,7 @@
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/schedule": "^4.0.2",
+    "@nestjs/typeorm": "^11.0.0",
     "@prisma/client": "6.17.1",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/feature-tracker": "workspace:*",
