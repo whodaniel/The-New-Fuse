@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import {
   CreateWorkflowDto,
@@ -14,8 +14,8 @@ export class WorkflowService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly workflowEngine: WorkflowEngine,
-    private readonly workflowExecutor: WorkflowExecutor
+    @Inject('WorkflowEngine') private readonly workflowEngine: WorkflowEngine,
+    @Inject('WorkflowExecutor') private readonly workflowExecutor: WorkflowExecutor,
   ) {}
 
   async createWorkflow(data: CreateWorkflowDto): Promise<Workflow> {
