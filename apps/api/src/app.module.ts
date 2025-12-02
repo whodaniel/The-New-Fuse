@@ -18,7 +18,7 @@ import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
-import { LLMProviderService } from './llm/llm-provider.service';
+import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
 import { AgentModule } from './modules/agent.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -104,14 +104,9 @@ import { SecurityLoggingService } from './security/security-logging.service';
     CacheService,
     WebsocketGateway,
     LLMProviderService,
-    // Provide LLMRegistry implementation for LLMProviderService
-    // Using useValue with instance to avoid compilation issues with useClass
     {
-      provide: 'LLMRegistry',
-      useValue: {
-        registerProvider: async () => {},
-        unregisterProvider: async () => {},
-      },
+      provide: LLM_REGISTRY,
+      useClass: MockLLMRegistry,
     },
     SystemController,
     WebSocketController,

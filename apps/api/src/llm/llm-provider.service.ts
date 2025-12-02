@@ -9,12 +9,14 @@ export interface LLMRegistry {
   unregisterProvider(id: string): Promise<void>;
 }
 
+export const LLM_REGISTRY = 'LLMRegistry';
+
 @Injectable()
 export class MockLLMRegistry implements LLMRegistry {
   async registerProvider(id: string, config: any): Promise<void> {
     // Mock implementation
   }
-  
+
   async unregisterProvider(id: string): Promise<void> {
     // Mock implementation
   }
@@ -43,7 +45,7 @@ export class LLMProviderService {
   private logger = new Logger('LLMProviderService');
 
   constructor(
-    private readonly llmRegistry: LLMRegistry,
+    @Inject(LLM_REGISTRY) private readonly llmRegistry: LLMRegistry,
     private readonly prisma: PrismaService
   ) {}
 
