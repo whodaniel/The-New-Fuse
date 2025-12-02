@@ -105,11 +105,14 @@ import { SecurityLoggingService } from './security/security-logging.service';
     WebsocketGateway,
     LLMProviderService,
     // Provide LLMRegistry implementation for LLMProviderService
+    // Using useValue with instance to avoid compilation issues with useClass
     {
       provide: 'LLMRegistry',
-      useClass: MockLLMRegistry,
+      useValue: {
+        registerProvider: async () => {},
+        unregisterProvider: async () => {},
+      },
     },
-    MockLLMRegistry,
     SystemController,
     WebSocketController,
     WorkflowController,
