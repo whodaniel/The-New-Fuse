@@ -1,5 +1,5 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '@the-new-fuse/database';
 import { WorkflowEngine, WorkflowExecutor } from '../types/core';
 import { CreateWorkflowDto, WorkflowInput, WorkflowExecutionStatus, Workflow } from '@the-new-fuse/types';
 import { Prisma } from '@the-new-fuse/database/generated/prisma';
