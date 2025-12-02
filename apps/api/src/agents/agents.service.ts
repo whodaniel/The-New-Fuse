@@ -1,17 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '@the-new-fuse/database';
+import { UnifiedMonitoringService } from '../types/core';
 import { AgentFactory } from './agent.factory';
 import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
-import { UnifiedMonitoringService } from '../types/core';
 
 @Injectable()
 export class AgentsService {
   constructor(
     private prisma: PrismaService,
     private config: ConfigService,
+    @Inject('UnifiedMonitoringService')
     private monitoring: UnifiedMonitoringService,
-    private agentFactory: AgentFactory,
+    private agentFactory: AgentFactory
   ) {}
 
   async create(userId: string, dto: CreateAgentDto) {
@@ -20,13 +21,13 @@ export class AgentsService {
         data: {
           ...(dto as any),
           userId,
-          config: this.agentFactory.getDefaultConfig(dto.type) as any
-        }
+          config: this.agentFactory.getDefaultConfig(dto.type) as any,
+        },
       });
 
       this.monitoring.recordMetric('agent.created', 1, {
         type: dto.type,
-        userId
+        userId,
       });
 
       return agent;
@@ -42,15 +43,15 @@ export class AgentsService {
       include: {
         chats: {
           take: 1,
-          orderBy: { updatedAt: 'desc' }
-        }
-      }
+          orderBy: { updatedAt: 'desc' },
+        },
+      },
     });
   }
 
   async update(id: string, userId: string, dto: UpdateAgentDto) {
     const agent = await this.prisma.agent.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!agent) {
@@ -63,8 +64,8 @@ export class AgentsService {
         name: dto.name,
         description: dto.description,
         capabilities: dto.capabilities as any,
-        config: dto.config
-      }
+        config: dto.config,
+      },
     });
   }
 }

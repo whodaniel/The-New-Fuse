@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from '@the-new-fuse/database';
+import { SelfImprovementController } from '../controllers/self-improvement.controller';
+import { AgentFactory } from './agent.factory';
+import { AgentsService } from './agents.service';
 import { AnalyzerAgentService } from './analyzer.service';
 import { ArchitectAgentService } from './architect.service';
+import { CoordinatorAgentService } from './coordinator.service';
 import { ImplementerAgentService } from './implementer.service';
 import { ReviewerAgentService } from './reviewer.service';
-import { CoordinatorAgentService } from './coordinator.service';
-import { SelfImprovementController } from '../controllers/self-improvement.controller';
 
 /**
  * Self-Improvement Agents Module
@@ -21,9 +24,20 @@ import { SelfImprovementController } from '../controllers/self-improvement.contr
  * - Reviewer: Reviews code for quality and security
  */
 @Module({
+  imports: [ConfigModule],
   controllers: [SelfImprovementController],
   providers: [
     PrismaService,
+    AgentsService,
+    AgentFactory,
+    // Mock UnifiedMonitoringService since it's typed as 'any'
+    {
+      provide: 'UnifiedMonitoringService',
+      useValue: {
+        recordMetric: () => {},
+        captureError: () => {},
+      },
+    },
     AnalyzerAgentService,
     ArchitectAgentService,
     ImplementerAgentService,
@@ -32,6 +46,8 @@ import { SelfImprovementController } from '../controllers/self-improvement.contr
   ],
   exports: [
     PrismaService,
+    AgentsService,
+    AgentFactory,
     AnalyzerAgentService,
     ArchitectAgentService,
     ImplementerAgentService,
