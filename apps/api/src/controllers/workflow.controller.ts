@@ -3,22 +3,17 @@
  */
 
 import { Request, Response } from 'express';
-import { Controller } from '@nestjs/common';
-import { Logger } from '@tnf/relay-core';
+import { Controller, Logger } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 type DatabaseWhere = Record<string, any>;
 
 @Controller('workflows')
 export class WorkflowController {
-  private logger: Logger;
+  private logger = new Logger(WorkflowController.name);
   private prisma: PrismaClient;
 
-  constructor(
-    logger: Logger,
-    prisma: PrismaClient
-  ) {
-    this.logger = logger;
+  constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
 
