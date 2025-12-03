@@ -47,8 +47,9 @@
 import { Request, Response } from 'express';
 import { Server as SocketIOServer } from 'socket.io';
 import { createServer } from 'http';
-import { Logger } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 
+@Controller('websocket')
 export class WebSocketController {
   /** Logger instance for WebSocket controller operations */
   private logger = new Logger(WebSocketController.name);

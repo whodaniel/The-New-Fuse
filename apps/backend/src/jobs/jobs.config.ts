@@ -1,75 +1,172 @@
 import { BullModuleOptions } from '@nestjs/bull';
+import Redis from 'ioredis';
 import { QueueName } from './constants/queue-names';
 
 /**
- * Bull queue configuration
+ * Parse Redis connection URL if provided, otherwise use individual env vars
+ * Railway and other cloud platforms typically provide REDIS_URL as a connection string
  */
-export const getBullConfig = (): BullModuleOptions => {
-  const redisConfig: any = {};
+const parseRedisConfig = () => {
+  let redisUrl = process.env.REDIS_URL;
 
-  if (process.env.REDIS_URL) {
+  if (redisUrl) {
+    // Trim whitespace and handle accidental duplications
+    redisUrl = redisUrl.trim();
+    
+    // Check if URL was accidentally duplicated (common copy-paste error)
+    const redisPrefix = 'redis://';
+    if (redisUrl.indexOf(redisPrefix) !== redisUrl.lastIndexOf(redisPrefix)) {
+      // URL contains multiple redis:// - take only the first occurrence
+      const firstIndex = redisUrl.indexOf(redisPrefix);
+      const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);
+      redisUrl = redisUrl.substring(0, secondIndex);
+      console.warn('[Bull Config] Detected duplicated REDIS_URL, using first occurrence only');
+    }
+    
+    // Parse connection string (format: redis://[:password@]host:port/db)
     try {
-      const url = new URL(process.env.REDIS_URL);
-      redisConfig.host = url.hostname;
-      redisConfig.port = parseInt(url.port || '6379');
-      redisConfig.password = url.password;
-      redisConfig.username = url.username;
-      // Pathname is usually /<db_number>, e.g., /0
-      const dbStr = url.pathname.slice(1);
-      redisConfig.db = dbStr ? parseInt(dbStr) : 0;
+      const url = new URL(redisUrl);
+      console.log(`[Bull Config] Using REDIS_URL: ${url.hostname}:${url.port || 6379}`);
 
-      console.log(
-        `[Bull Config] Using REDIS_URL: ${url.hostname}:${url.port} (DB: ${redisConfig.db})`
+      // Parse database index from pathname (e.g., /0, /1, /2)
+      // Handle empty pathname or invalid integers gracefully
+      const dbFromPath = url.pathname && url.pathname.length > 1 
+        ? parseInt(url.pathname.slice(1), 10) 
+        : NaN;
+      let db = !isNaN(dbFromPath) ? dbFromPath : 0;
+
+      // Extra safety check
+      if (typeof db !== 'number' || Number.isNaN(db)) {
+        console.warn(`[Bull Config] Parsed DB is invalid (${db}), defaulting to 0`);
+        db = 0;
+      }
+
+      console.log(`[Bull Config] Final parsed config - Host: ${url.hostname}, Port: ${url.port || 6379}, DB: ${db}`);
+
+      return {
+        host: url.hostname,
+        port: parseInt(url.port || '6379', 10),
+        password: url.password || undefined,
+        db,
+      };
+    } catch (error) {
+      console.error(
+        '[Bull Config] Failed to parse REDIS_URL, falling back to individual env vars:',
+        error
       );
-    } catch (e) {
-      console.error('[Bull Config] Invalid REDIS_URL, falling back to individual vars', e);
     }
   }
 
-  if (!redisConfig.host) {
-    redisConfig.host = process.env.REDIS_HOST || 'localhost';
-    redisConfig.port = parseInt(process.env.REDIS_PORT || '6379');
-    redisConfig.password = process.env.REDIS_PASSWORD;
-    redisConfig.db = parseInt(process.env.REDIS_DB || '0');
-  }
-
-  // Final safety check for db
-  if (isNaN(redisConfig.db)) {
-    console.warn(`[Bull Config] Invalid DB value, defaulting to 0`);
-    redisConfig.db = 0;
-  }
+  // Fallback to individual environment variables
+  const host = process.env.REDIS_HOST || 'localhost';
+  const port = parseInt(process.env.REDIS_PORT || '6379', 10);
+  
+  // Parse database index safely - handle empty strings and ensure valid integer
+  const dbEnv = process.env.REDIS_DB || '0';
+  const db = (() => {
+    const parsed = parseInt(dbEnv, 10);
+    return !isNaN(parsed) && parsed >= 0 ? parsed : 0;
+  })();
+  
+  console.log(`[Bull Config] Using individual env vars: ${host}:${port} (db: ${db})`);
 
   return {
-    redis: {
-      ...redisConfig,
-      // Connection retry strategy
-      retryStrategy: (times: number) => {
-        const delay = Math.min(times * 50, 2000);
-        return delay;
-      },
-      // Enable offline queue
-      enableOfflineQueue: true,
-      // Set max retry attempts
-      maxRetriesPerRequest: 3,
+    host,
+    port,
+    password: process.env.REDIS_PASSWORD,
+    db,
+  };
+};
+
+/**
+ * Base Redis connection options for Bull/ioredis
+ * Used as foundation for all client types
+ */
+const getBaseRedisOptions = () => {
+  const connectionConfig = parseRedisConfig();
+
+  return {
+    ...connectionConfig,
+    // Improved retry strategy with exponential backoff
+    retryStrategy: (times: number) => {
+      if (times > 15) {
+        // After 15 retries, stop trying (prevents infinite loops)
+        return null;
+      }
+      // Exponential backoff: 50ms, 100ms, 200ms... up to 5000ms (5s)
+      const delay = Math.min(times * 50, 5000);
+      return delay;
     },
-    // Default job options
-    defaultJobOptions: {
-      removeOnComplete: {
-        age: 24 * 3600, // Keep completed jobs for 24 hours
-        count: 1000, // Keep max 1000 completed jobs
-      },
-      removeOnFail: {
-        age: 7 * 24 * 3600, // Keep failed jobs for 7 days
-      },
-      // Stack trace limit for better debugging
-      stackTraceLimit: 50,
-    },
-    // Prometheus metrics
-    metrics: {
-      maxDataPoints: 100,
+    // Enable offline queue to buffer commands when Redis is temporarily unavailable
+    enableOfflineQueue: true,
+    // Connection timeout
+    connectTimeout: 10000, // 10 seconds
+    // Reconnect on error
+    reconnectOnError: (err: Error) => {
+      const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
+      return targetErrors.some((targetError) => err.message.includes(targetError));
     },
   };
 };
+
+/**
+ * Bull queue configuration with per-client type options
+ *
+ * IMPORTANT: Bull/ioredis has constraints on subscriber and bclient connections:
+ * - enableReadyCheck MUST be false (or omitted)
+ * - maxRetriesPerRequest MUST be null (or omitted)
+ *
+ * See: https://github.com/OptimalBits/bull/issues/1873
+ *
+ * Using createClient factory to provide appropriate options per client type.
+ */
+export const getBullConfig = (): BullModuleOptions => ({
+  createClient: (type, redisOpts) => {
+    const baseOpts = getBaseRedisOptions();
+
+    // Main client can have robust retry and ready-check settings
+    if (type === 'client') {
+      return new Redis({
+        ...baseOpts,
+        maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),
+        enableReadyCheck: true,
+      });
+    }
+
+    // Subscriber and bclient MUST NOT use enableReadyCheck or maxRetriesPerRequest
+    // per Bull constraints (see GitHub issue #1873)
+    if (type === 'subscriber' || type === 'bclient') {
+      return new Redis({
+        ...baseOpts,
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+      });
+    }
+
+    // Fallback for any other client types
+    return new Redis({
+      ...baseOpts,
+      maxRetriesPerRequest: null,
+      enableReadyCheck: false,
+    });
+  },
+  // Default job options
+  defaultJobOptions: {
+    removeOnComplete: {
+      age: 24 * 3600, // Keep completed jobs for 24 hours
+      count: 1000, // Keep max 1000 completed jobs
+    },
+    removeOnFail: {
+      age: 7 * 24 * 3600, // Keep failed jobs for 7 days
+    },
+    // Stack trace limit for better debugging
+    stackTraceLimit: 50,
+  },
+  // Prometheus metrics
+  metrics: {
+    maxDataPoints: 100,
+  },
+});
 
 /**
  * Queue-specific settings

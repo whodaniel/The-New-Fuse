@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@the-new-fuse/database';
 import { UnifiedMonitoringService } from '../types/core';
@@ -10,8 +10,9 @@ export class AgentsService {
   constructor(
     private prisma: PrismaService,
     private config: ConfigService,
+    @Optional()
     @Inject('UnifiedMonitoringService')
-    private monitoring: UnifiedMonitoringService,
+    private monitoring?: UnifiedMonitoringService,
     private agentFactory: AgentFactory
   ) {}
 
@@ -25,14 +26,14 @@ export class AgentsService {
         },
       });
 
-      this.monitoring.recordMetric('agent.created', 1, {
+      this.monitoring?.recordMetric('agent.created', 1, {
         type: dto.type,
         userId,
       });
 
       return agent;
     } catch (error) {
-      this.monitoring.captureError(error, { userId, dto });
+      this.monitoring?.captureError(error, { userId, dto });
       throw error;
     }
   }

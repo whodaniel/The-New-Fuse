@@ -36,11 +36,12 @@
  * POST /api/system/restart
  */
 import { Request, Response } from 'express';
-import { Logger } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 
+@Controller('system')
 export class SystemController {
   /** Logger instance for system controller operations */
   private logger = new Logger(SystemController.name);

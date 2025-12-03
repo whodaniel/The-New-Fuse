@@ -6,12 +6,39 @@ import { RedisConfiguration } from './types';
 export class RedisConfig {
   constructor(private readonly configService: ConfigService) {}
 
-  getConfiguration(): RedisConfiguration {
+  private parseRedisConfig() {
+    const redisUrl = this.configService.get<string>('REDIS_URL');
+    
+    if (redisUrl) {
+      try {
+        const url = new URL(redisUrl);
+        return {
+          host: url.hostname,
+          port: parseInt(url.port) || 6379,
+          password: url.password || undefined,
+          db: parseInt(url.pathname.slice(1)) || 0,
+        };
+      } catch (error) {
+        console.error('[RedisConfig] Failed to parse REDIS_URL, falling back to individual env vars:', error);
+      }
+    }
+    
     return {
       host: this.configService.get<string>('REDIS_HOST', 'localhost'),
       port: this.configService.get<number>('REDIS_PORT', 6379),
       password: this.configService.get<string>('REDIS_PASSWORD'),
       db: this.configService.get<number>('REDIS_DB', 0),
+    };
+  }
+
+  getConfiguration(): RedisConfiguration {
+    const { host, port, password, db } = this.parseRedisConfig();
+    
+    return {
+      host,
+      port,
+      password,
+      db,
       poolSize: this.configService.get<number>('REDIS_POOL_SIZE', 10),
       retryAttempts: this.configService.get<number>('REDIS_RETRY_ATTEMPTS', 3),
       retryDelay: this.configService.get<number>('REDIS_RETRY_DELAY', 1000),

@@ -290,9 +290,9 @@ export class JobSchedulerService implements OnModuleInit {
   }
 
   /**
-   * Health check - runs every 5 minutes
+   * Health check - runs every 30 minutes (reduced from 5 to minimize Redis load)
    */
-  @Cron(CronExpression.EVERY_5_MINUTES, {
+  @Cron(CronExpression.EVERY_30_MINUTES, {
     name: 'job-health-check',
   })
   async performHealthCheck() {

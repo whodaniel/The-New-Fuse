@@ -43,13 +43,10 @@ async function bootstrap(): Promise<void> {
     },
   }));
 
-  // Apply security middleware in order (before error handling)
-  app.use(app.get(SecurityValidationMiddleware));
-  app.use(app.get(CsrfProtectionMiddleware));
-  app.use(app.get(EnhancedSecurityMiddleware));
-
-  // Global error handler (should be last)
-  app.use(app.get(EnhancedErrorHandlerMiddleware));
+  // Note: Security middleware should be applied in module configure() method
+  // Using app.use(app.get()) causes "requires a middleware function" error
+  // These are NestJS providers, not Express middleware functions
+  // They should be applied via MiddlewareConsumer in AppModule
 
   // Set global prefix for API routes
   app.setGlobalPrefix('api');

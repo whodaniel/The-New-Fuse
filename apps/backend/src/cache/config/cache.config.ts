@@ -49,7 +49,12 @@ export default registerAs(
         'localhost',
       port: parseInt(process.env.REDIS_PORT || process.env.REDISPORT || '6379', 10),
       password: process.env.REDIS_PASSWORD || process.env.REDISPASSWORD || undefined,
-      db: parseInt(process.env.REDIS_CACHE_DB || process.env.REDIS_DB || '1', 10), // Use separate DB for cache (fallback to REDIS_DB)
+      // Parse database index safely - handle empty strings and ensure valid integer
+      db: (() => {
+        const dbEnv = process.env.REDIS_CACHE_DB || process.env.REDIS_DB || '1';
+        const parsed = parseInt(dbEnv, 10);
+        return !isNaN(parsed) && parsed >= 0 ? parsed : 1;
+      })(),
       ttl: parseInt(process.env.REDIS_DEFAULT_TTL || '3600', 10), // 1 hour default
       // Increased from 3 to 10 for better resilience
       maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),

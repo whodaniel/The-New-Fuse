@@ -3,22 +3,16 @@
  */
 
 import { Request, Response } from 'express';
-import { Logger } from '@the-new-fuse/relay-core';
-import { PrismaClient } from '@prisma/client';
+import { Controller, Logger } from '@nestjs/common';
+import { PrismaService } from '@the-new-fuse/database';
 
 type DatabaseWhere = Record<string, any>;
 
+@Controller('workflows')
 export class WorkflowController {
-  private logger: Logger;
-  private prisma: PrismaClient;
+  private logger = new Logger(WorkflowController.name);
 
-  constructor(
-    logger: Logger,
-    prisma: PrismaClient
-  ) {
-    this.logger = logger;
-    this.prisma = prisma;
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   // GET /api/workflows
   async getWorkflows(req: Request, res: Response): Promise<void> {
