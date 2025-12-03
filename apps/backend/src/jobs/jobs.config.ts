@@ -3,34 +3,75 @@ import Redis from 'ioredis';
 import { QueueName } from './constants/queue-names';
 
 /**
+ * Parse Redis connection URL if provided, otherwise use individual env vars
+ * Railway and other cloud platforms typically provide REDIS_URL as a connection string
+ */
+const parseRedisConfig = () => {
+  const redisUrl = process.env.REDIS_URL;
+
+  if (redisUrl) {
+    // Parse connection string (format: redis://[:password@]host:port/db)
+    try {
+      const url = new URL(redisUrl);
+      console.log(`[Bull Config] Using REDIS_URL: ${url.hostname}:${url.port || 6379}`);
+
+      return {
+        host: url.hostname,
+        port: parseInt(url.port || '6379', 10),
+        password: url.password || undefined,
+        db: url.pathname ? parseInt(url.pathname.slice(1), 10) : 0,
+      };
+    } catch (error) {
+      console.error(
+        '[Bull Config] Failed to parse REDIS_URL, falling back to individual env vars:',
+        error
+      );
+    }
+  }
+
+  // Fallback to individual environment variables
+  const host = process.env.REDIS_HOST || 'localhost';
+  const port = parseInt(process.env.REDIS_PORT || '6379', 10);
+  console.log(`[Bull Config] Using individual env vars: ${host}:${port}`);
+
+  return {
+    host,
+    port,
+    password: process.env.REDIS_PASSWORD,
+    db: parseInt(process.env.REDIS_DB || '0', 10),
+  };
+};
+
+/**
  * Base Redis connection options for Bull/ioredis
  * Used as foundation for all client types
  */
-const getBaseRedisOptions = () => ({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD,
-  db: parseInt(process.env.REDIS_DB || '0'),
-  // Improved retry strategy with exponential backoff
-  retryStrategy: (times: number) => {
-    if (times > 15) {
-      // After 15 retries, stop trying (prevents infinite loops)
-      return null;
-    }
-    // Exponential backoff: 50ms, 100ms, 200ms... up to 5000ms (5s)
-    const delay = Math.min(times * 50, 5000);
-    return delay;
-  },
-  // Enable offline queue to buffer commands when Redis is temporarily unavailable
-  enableOfflineQueue: true,
-  // Connection timeout
-  connectTimeout: 10000, // 10 seconds
-  // Reconnect on error
-  reconnectOnError: (err: Error) => {
-    const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
-    return targetErrors.some((targetError) => err.message.includes(targetError));
-  },
-});
+const getBaseRedisOptions = () => {
+  const connectionConfig = parseRedisConfig();
+
+  return {
+    ...connectionConfig,
+    // Improved retry strategy with exponential backoff
+    retryStrategy: (times: number) => {
+      if (times > 15) {
+        // After 15 retries, stop trying (prevents infinite loops)
+        return null;
+      }
+      // Exponential backoff: 50ms, 100ms, 200ms... up to 5000ms (5s)
+      const delay = Math.min(times * 50, 5000);
+      return delay;
+    },
+    // Enable offline queue to buffer commands when Redis is temporarily unavailable
+    enableOfflineQueue: true,
+    // Connection timeout
+    connectTimeout: 10000, // 10 seconds
+    // Reconnect on error
+    reconnectOnError: (err: Error) => {
+      const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
+      return targetErrors.some((targetError) => err.message.includes(targetError));
+    },
+  };
+};
 
 /**
  * Bull queue configuration with per-client type options
