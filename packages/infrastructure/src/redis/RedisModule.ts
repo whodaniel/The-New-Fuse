@@ -15,7 +15,7 @@ export class RedisModule {
     return {
       module: RedisModule,
       global: options.isGlobal ?? true,
-      imports: [ConfigModule],
+      imports: [ConfigModule.forRoot({ isGlobal: true })],
       providers: [
         {
           provide: 'REDIS_CONFIG_OPTIONS',
@@ -36,7 +36,7 @@ export class RedisModule {
     return {
       module: RedisModule,
       global: options.isGlobal ?? true,
-      imports: [ConfigModule],
+      imports: [ConfigModule.forRoot({ isGlobal: true })],
       providers: [
         {
           provide: 'REDIS_CONFIG_OPTIONS',
