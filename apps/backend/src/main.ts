@@ -44,6 +44,12 @@ async function bootstrap(): Promise<void> {
   // Monitoring
   // await monitoringService.onModuleInit();
 
-  await (app as any).listen(configService.get('PORT', 3001));
+  const port = configService.get('PORT') || 3001;
+  await app.listen(port);
+  console.log(`🚀 Backend application is running on port ${port}`);
 }
-bootstrap();
+
+bootstrap().catch((error) => {
+  console.error('❌ Failed to start backend application:', error);
+  process.exit(1);
+});
