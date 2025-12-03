@@ -7,16 +7,40 @@ export class RedisConfig {
   constructor(private readonly configService: ConfigService) {}
 
   private parseRedisConfig() {
-    const redisUrl = this.configService.get<string>('REDIS_URL');
+    let redisUrl = this.configService.get<string>('REDIS_URL');
     
     if (redisUrl) {
+      // Trim whitespace
+      redisUrl = redisUrl.trim();
+
+      // Check if URL was accidentally duplicated (e.g., in Railway environment vars)
+      const redisPrefix = 'redis://';
+      const firstIndex = redisUrl.indexOf(redisPrefix);
+      const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);
+
+      if (firstIndex !== -1 && secondIndex !== -1) {
+        // If a duplicated prefix is found, take only the first valid URL
+        redisUrl = redisUrl.substring(0, secondIndex);
+        console.warn(`[RedisConfig] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`);
+      }
+
       try {
         const url = new URL(redisUrl);
+        
+        // Parse database index safely
+        const dbFromPath = url.pathname && url.pathname.length > 1 
+          ? parseInt(url.pathname.slice(1), 10) 
+          : 0;
+        
+        const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+
+        console.log(`[RedisConfig] Using REDIS_URL: ${url.hostname}:${url.port || 6379} (db: ${db})`);
+
         return {
           host: url.hostname,
-          port: parseInt(url.port) || 6379,
+          port: parseInt(url.port || '6379', 10),
           password: url.password || undefined,
-          db: parseInt(url.pathname.slice(1)) || 0,
+          db,
         };
       } catch (error) {
         console.error('[RedisConfig] Failed to parse REDIS_URL, falling back to individual env vars:', error);
