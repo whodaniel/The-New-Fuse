@@ -28,11 +28,18 @@ const parseRedisConfig = () => {
       const url = new URL(redisUrl);
       console.log(`[Bull Config] Using REDIS_URL: ${url.hostname}:${url.port || 6379}`);
 
+      // Parse database index from pathname (e.g., /0, /1, /2)
+      // Handle empty pathname or invalid integers gracefully
+      const dbFromPath = url.pathname && url.pathname.length > 1 
+        ? parseInt(url.pathname.slice(1), 10) 
+        : NaN;
+      const db = !isNaN(dbFromPath) ? dbFromPath : 0;
+
       return {
         host: url.hostname,
         port: parseInt(url.port || '6379', 10),
         password: url.password || undefined,
-        db: url.pathname ? parseInt(url.pathname.slice(1), 10) : 0,
+        db,
       };
     } catch (error) {
       console.error(
