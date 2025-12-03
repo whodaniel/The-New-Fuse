@@ -12,9 +12,25 @@ export class CacheService {
     const redisUrl = configService.get('REDIS_URL');
     
     if (redisUrl) {
-      // Use connection URL (Railway, Heroku, cloud platforms)
-      this.client = new Redis(redisUrl);
-      this.logger.log(`[CacheService] Connecting to Redis via REDIS_URL`);
+      // Parse URL explicitly to avoid ioredis env fallbacks
+      try {
+        const url = new URL(redisUrl);
+        const dbFromPath = url.pathname && url.pathname.length > 1 
+          ? parseInt(url.pathname.slice(1), 10) 
+          : NaN;
+        const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+        
+        this.client = new Redis({
+          host: url.hostname,
+          port: parseInt(url.port || '6379', 10),
+          password: url.password || undefined,
+          db,
+        });
+        this.logger.log(`[CacheService] Connecting to Redis at ${url.hostname}:${url.port || 6379} (db: ${db})`);
+      } catch (error) {
+        this.logger.error(`[CacheService] Failed to parse REDIS_URL: ${error.message}`);
+        throw error;
+      }
     } else {
       // Fallback to individual environment variables
       const host = configService.get('REDIS_HOST') || 'localhost';
