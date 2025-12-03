@@ -33,7 +33,8 @@
     "project": [
       "./tsconfig.json",
       "./apps/*/tsconfig.json",
-      "./packages/*/tsconfig.json"
+      "./packages/*/tsconfig.json",
+      "./packages/*/tsconfig.test.json"
     ]
   },
   "settings": {
@@ -46,7 +47,8 @@
         "project": [
           "./tsconfig.json",
           "./apps/*/tsconfig.json",
-          "./packages/*/tsconfig.json"
+          "./packages/*/tsconfig.json",
+          "./packages/*/tsconfig.test.json"
         ]
       },
       "node": {
