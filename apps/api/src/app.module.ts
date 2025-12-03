@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -104,21 +104,6 @@ import { SecurityLoggingService } from './security/security-logging.service';
     CacheService,
     WebsocketGateway,
     LLMProviderService,
-    {
-      provide: LLM_REGISTRY,
-      useClass: MockLLMRegistry,
-    },
-    SystemController,
-    WebSocketController,
-    WorkflowController,
-    // Mock UnifiedMonitoringService (typed as 'any' in core.ts)
-    {
-      provide: 'UnifiedMonitoringService',
-      useValue: {
-        recordMetric: () => {},
-        captureError: () => {},
-      },
-    },
     // Security services
     InputSanitizationService,
     ResponseSanitizationService,
