@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -141,4 +141,15 @@ import { SecurityLoggingService } from './security/security-logging.service';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        SecurityValidationMiddleware,
+        CsrfProtectionMiddleware,
+        EnhancedSecurityMiddleware,
+        EnhancedErrorHandlerMiddleware
+      )
+      .forRoutes('*');
+  }
+}
