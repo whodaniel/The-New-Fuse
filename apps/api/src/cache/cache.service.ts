@@ -8,7 +8,7 @@ export class CacheService {
   private logger = new Logger(CacheService.name);
 
   constructor(private configService: ConfigService) {
-    const redisUrl = configService.get('REDIS_URL') || 'redis://localhost:6379';
+    const redisUrl = configService.get('REDIS_URL');
     this.client = new Redis(redisUrl);
     this.client.on('error', (err: any) => this.logger.error('Redis error', err));
   }

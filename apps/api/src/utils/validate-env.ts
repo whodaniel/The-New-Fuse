@@ -59,7 +59,6 @@ const ENV_VARS: EnvVarConfig[] = [
   {
     name: 'REDIS_HOST',
     required: false,
-    defaultValue: 'localhost',
     description: 'Redis server host',
   },
   {
@@ -159,7 +158,8 @@ const ENV_VARS: EnvVarConfig[] = [
   {
     name: 'ETHEREUM_RPC_URL',
     required: false,
-    validator: (val) => val.startsWith('http://') || val.startsWith('https://') || val.startsWith('wss://'),
+    validator: (val) =>
+      val.startsWith('http://') || val.startsWith('https://') || val.startsWith('wss://'),
     description: 'Ethereum RPC URL',
   },
 
@@ -280,7 +280,11 @@ const ENV_VARS: EnvVarConfig[] = [
 /**
  * Validates a single environment variable
  */
-function validateEnvVar(config: EnvVarConfig): { valid: boolean; error?: string; warning?: string } {
+function validateEnvVar(config: EnvVarConfig): {
+  valid: boolean;
+  error?: string;
+  warning?: string;
+} {
   const value = process.env[config.name];
 
   // Check if required variable is missing
@@ -342,34 +346,32 @@ export function validateEnvironment(): EnvValidationResult {
   // Production-specific warnings
   if (process.env.NODE_ENV === 'production') {
     if (process.env.JWT_SECRET === 'your-secret-key' || process.env.JWT_SECRET?.length < 32) {
-      errors.push(
-        '❌ JWT_SECRET must be at least 32 characters in production!'
-      );
+      errors.push('❌ JWT_SECRET must be at least 32 characters in production!');
     }
 
-    if (process.env.JWT_REFRESH_SECRET === 'your-jwt-refresh-secret-key' || process.env.JWT_REFRESH_SECRET?.length < 32) {
-      errors.push(
-        '❌ JWT_REFRESH_SECRET must be at least 32 characters in production!'
-      );
+    if (
+      process.env.JWT_REFRESH_SECRET === 'your-jwt-refresh-secret-key' ||
+      process.env.JWT_REFRESH_SECRET?.length < 32
+    ) {
+      errors.push('❌ JWT_REFRESH_SECRET must be at least 32 characters in production!');
     }
 
     if (!process.env.DATABASE_URL?.startsWith('postgres')) {
-      errors.push(
-        '❌ DATABASE_URL must be a valid PostgreSQL connection string in production!'
-      );
+      errors.push('❌ DATABASE_URL must be a valid PostgreSQL connection string in production!');
     }
 
     // Check for allowed origins in production
     if (!process.env.ALLOWED_ORIGINS) {
-      warnings.push(
-        '⚠️  ALLOWED_ORIGINS is not set in production. This may cause CORS issues.'
-      );
+      warnings.push('⚠️  ALLOWED_ORIGINS is not set in production. This may cause CORS issues.');
     }
   }
 
   // Check for Web3Auth completeness
   const hasAnyWeb3Auth = process.env.WEB3AUTH_CLIENT_ID || process.env.WEB3AUTH_JWT_SECRET;
-  const hasCompleteWeb3Auth = process.env.WEB3AUTH_CLIENT_ID && process.env.WEB3AUTH_JWT_SECRET && process.env.ETHEREUM_RPC_URL;
+  const hasCompleteWeb3Auth =
+    process.env.WEB3AUTH_CLIENT_ID &&
+    process.env.WEB3AUTH_JWT_SECRET &&
+    process.env.ETHEREUM_RPC_URL;
 
   if (hasAnyWeb3Auth && !hasCompleteWeb3Auth) {
     warnings.push(
@@ -393,14 +395,14 @@ export function validateEnvironmentOrExit(): void {
   // Print warnings
   if (result.warnings.length > 0) {
     console.log('⚠️  Warnings:\n');
-    result.warnings.forEach(warning => console.log(warning));
+    result.warnings.forEach((warning) => console.log(warning));
     console.log('');
   }
 
   // Print errors and exit if validation failed
   if (!result.isValid) {
     console.error('❌ Environment validation failed!\n');
-    result.errors.forEach(error => console.error(error));
+    result.errors.forEach((error) => console.error(error));
     console.error('\n💡 Tip: Copy .env.example to .env and fill in the required values.\n');
     process.exit(1);
   }
