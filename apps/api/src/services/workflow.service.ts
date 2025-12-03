@@ -1,11 +1,6 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
-import {
-  CreateWorkflowDto,
-  Workflow,
-  WorkflowExecutionStatus,
-  WorkflowInput,
-} from '@the-new-fuse/types';
+import { CreateWorkflowDto, Workflow, WorkflowExecution, WorkflowInput } from '@the-new-fuse/types';
 import { WorkflowEngine, WorkflowExecutor } from '../types/core';
 
 @Injectable()
@@ -15,7 +10,7 @@ export class WorkflowService {
   constructor(
     private readonly prisma: PrismaService,
     @Inject('WorkflowEngine') private readonly workflowEngine: WorkflowEngine,
-    @Inject('WorkflowExecutor') private readonly workflowExecutor: WorkflowExecutor,
+    @Inject('WorkflowExecutor') private readonly workflowExecutor: WorkflowExecutor
   ) {}
 
   async createWorkflow(data: CreateWorkflowDto): Promise<Workflow> {
@@ -86,13 +81,26 @@ export class WorkflowService {
               take: 1,
               orderBy: { startedAt: 'desc' },
             },
+            steps: true, // Include steps to match Workflow interface
           },
         }),
         this.prisma.workflow.count({ where }),
       ]);
 
+      // Map database workflows to Workflow interface
+      const mappedWorkflows = workflows.map((workflow) => ({
+        id: workflow.id,
+        name: workflow.name,
+        description: workflow.description || undefined,
+        status: workflow.status as any,
+        steps: workflow.steps || [], // Ensure steps is always an array
+        createdAt: workflow.createdAt,
+        updatedAt: workflow.updatedAt,
+        creator: workflow.creatorId || undefined,
+      }));
+
       return {
-        workflows: workflows as Workflow[],
+        workflows: mappedWorkflows,
         total,
       };
     } catch (error) {
@@ -101,10 +109,7 @@ export class WorkflowService {
     }
   }
 
-  async executeWorkflow(
-    workflowId: string,
-    input: WorkflowInput = {}
-  ): Promise<WorkflowExecutionStatus> {
+  async executeWorkflow(workflowId: string, input: WorkflowInput = {}): Promise<WorkflowExecution> {
     try {
       this.logger.log(`Executing workflow: ${workflowId}`);
 
@@ -136,16 +141,13 @@ export class WorkflowService {
     }
   }
 
-  async getExecutionStatus(executionId: string): Promise<WorkflowExecutionStatus | null> {
+  async getExecutionStatus(executionId: string): Promise<WorkflowExecution | null> {
     try {
       const execution = await this.prisma.workflowExecution.findUnique({
         where: { id: executionId },
         include: {
           workflow: {
             select: { id: true, name: true },
-          },
-          logs: {
-            orderBy: { timestamp: 'asc' },
           },
         },
       });
@@ -157,15 +159,13 @@ export class WorkflowService {
       return {
         id: execution.id,
         workflowId: execution.workflowId,
-        status: execution.status as any,
-        input: execution.input as any,
-        output: execution.output as any,
+        status: execution.status,
+        input: execution.input,
+        output: execution.output,
         error: execution.error || undefined,
         startedAt: execution.startedAt,
         completedAt: execution.completedAt || undefined,
-        createdAt: execution.createdAt,
-        updatedAt: execution.updatedAt,
-      };
+      } as WorkflowExecution;
     } catch (error) {
       this.logger.error(`Failed to get execution status ${executionId}:`, error);
       throw error;
@@ -179,7 +179,7 @@ export class WorkflowService {
       limit?: number;
       status?: string;
     }
-  ): Promise<{ executions: WorkflowExecutionStatus[]; total: number }> {
+  ): Promise<{ executions: WorkflowExecution[]; total: number }> {
     try {
       const { page = 1, limit = 20, status } = options || {};
       const skip = (page - 1) * limit;
@@ -218,8 +218,6 @@ export class WorkflowService {
         error: execution.error || undefined,
         startedAt: execution.startedAt,
         completedAt: execution.completedAt || undefined,
-        createdAt: execution.createdAt,
-        updatedAt: execution.updatedAt,
       }));
 
       return {
@@ -267,7 +265,7 @@ export class WorkflowService {
     }
   }
 
-  async cancelExecution(executionId: string): Promise<WorkflowExecutionStatus | null> {
+  async cancelExecution(executionId: string): Promise<WorkflowExecution | null> {
     try {
       this.logger.log(`Cancelling execution: ${executionId}`);
 
@@ -297,7 +295,7 @@ export class WorkflowService {
     }
   }
 
-  async pauseExecution(executionId: string): Promise<WorkflowExecutionStatus | null> {
+  async pauseExecution(executionId: string): Promise<WorkflowExecution | null> {
     try {
       this.logger.log(`Pausing execution: ${executionId}`);
 
@@ -327,7 +325,7 @@ export class WorkflowService {
     }
   }
 
-  async resumeExecution(executionId: string): Promise<WorkflowExecutionStatus | null> {
+  async resumeExecution(executionId: string): Promise<WorkflowExecution | null> {
     try {
       this.logger.log(`Resuming execution: ${executionId}`);
 
