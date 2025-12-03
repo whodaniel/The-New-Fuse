@@ -16,7 +16,7 @@ export class A2ACoreModule {
     return {
       module: A2ACoreModule,
       imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
+        ConfigModule,
         RedisModule.forRoot({ isGlobal: true }),
         Ap2ProtocolModule,
       ],
@@ -85,7 +85,7 @@ export class A2ACoreModule {
     return {
       module: A2ACoreModule,
       imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
+        ConfigModule,
         RedisModule.forRoot({ isGlobal: true }),
         ...(options.imports || []),
       ],
