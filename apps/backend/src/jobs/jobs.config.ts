@@ -4,39 +4,72 @@ import { QueueName } from './constants/queue-names';
 /**
  * Bull queue configuration
  */
-export const getBullConfig = (): BullModuleOptions => ({
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    password: process.env.REDIS_PASSWORD,
-    db: parseInt(process.env.REDIS_DB || '0'),
-    // Connection retry strategy
-    retryStrategy: (times: number) => {
-      const delay = Math.min(times * 50, 2000);
-      return delay;
+export const getBullConfig = (): BullModuleOptions => {
+  const redisConfig: any = {};
+
+  if (process.env.REDIS_URL) {
+    try {
+      const url = new URL(process.env.REDIS_URL);
+      redisConfig.host = url.hostname;
+      redisConfig.port = parseInt(url.port || '6379');
+      redisConfig.password = url.password;
+      redisConfig.username = url.username;
+      // Pathname is usually /<db_number>, e.g., /0
+      const dbStr = url.pathname.slice(1);
+      redisConfig.db = dbStr ? parseInt(dbStr) : 0;
+
+      console.log(
+        `[Bull Config] Using REDIS_URL: ${url.hostname}:${url.port} (DB: ${redisConfig.db})`
+      );
+    } catch (e) {
+      console.error('[Bull Config] Invalid REDIS_URL, falling back to individual vars', e);
+    }
+  }
+
+  if (!redisConfig.host) {
+    redisConfig.host = process.env.REDIS_HOST || 'localhost';
+    redisConfig.port = parseInt(process.env.REDIS_PORT || '6379');
+    redisConfig.password = process.env.REDIS_PASSWORD;
+    redisConfig.db = parseInt(process.env.REDIS_DB || '0');
+  }
+
+  // Final safety check for db
+  if (isNaN(redisConfig.db)) {
+    console.warn(`[Bull Config] Invalid DB value, defaulting to 0`);
+    redisConfig.db = 0;
+  }
+
+  return {
+    redis: {
+      ...redisConfig,
+      // Connection retry strategy
+      retryStrategy: (times: number) => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+      // Enable offline queue
+      enableOfflineQueue: true,
+      // Set max retry attempts
+      maxRetriesPerRequest: 3,
     },
-    // Enable offline queue
-    enableOfflineQueue: true,
-    // Set max retry attempts
-    maxRetriesPerRequest: 3,
-  },
-  // Default job options
-  defaultJobOptions: {
-    removeOnComplete: {
-      age: 24 * 3600, // Keep completed jobs for 24 hours
-      count: 1000, // Keep max 1000 completed jobs
+    // Default job options
+    defaultJobOptions: {
+      removeOnComplete: {
+        age: 24 * 3600, // Keep completed jobs for 24 hours
+        count: 1000, // Keep max 1000 completed jobs
+      },
+      removeOnFail: {
+        age: 7 * 24 * 3600, // Keep failed jobs for 7 days
+      },
+      // Stack trace limit for better debugging
+      stackTraceLimit: 50,
     },
-    removeOnFail: {
-      age: 7 * 24 * 3600, // Keep failed jobs for 7 days
+    // Prometheus metrics
+    metrics: {
+      maxDataPoints: 100,
     },
-    // Stack trace limit for better debugging
-    stackTraceLimit: 50,
-  },
-  // Prometheus metrics
-  metrics: {
-    maxDataPoints: 100,
-  },
-});
+  };
+};
 
 /**
  * Queue-specific settings
