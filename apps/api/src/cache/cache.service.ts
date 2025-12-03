@@ -20,15 +20,22 @@ export class CacheService {
       const host = configService.get('REDIS_HOST') || 'localhost';
       const port = configService.get('REDIS_PORT') || 6379;
       const password = configService.get('REDIS_PASSWORD');
-      const db = configService.get('REDIS_DB') || 0;
+      const dbEnv = configService.get('REDIS_DB');
+      
+      // Parse database index safely - handle empty strings, NaN, invalid values
+      let db = 0;
+      if (dbEnv !== undefined && dbEnv !== null && dbEnv !== '') {
+        const parsed = typeof dbEnv === 'string' ? parseInt(dbEnv, 10) : dbEnv;
+        db = !isNaN(parsed) && parsed >= 0 ? parsed : 0;
+      }
       
       this.client = new Redis({
         host,
         port: typeof port === 'string' ? parseInt(port, 10) : port,
         password,
-        db: typeof db === 'string' ? parseInt(db, 10) : db,
+        db,
       });
-      this.logger.log(`[CacheService] Connecting to Redis at ${host}:${port}`);
+      this.logger.log(`[CacheService] Connecting to Redis at ${host}:${port} (db: ${db})`);
     }
     
     this.client.on('error', (err: any) => this.logger.error('Redis error', err));

@@ -52,13 +52,21 @@ const parseRedisConfig = () => {
   // Fallback to individual environment variables
   const host = process.env.REDIS_HOST || 'localhost';
   const port = parseInt(process.env.REDIS_PORT || '6379', 10);
-  console.log(`[Bull Config] Using individual env vars: ${host}:${port}`);
+  
+  // Parse database index safely - handle empty strings and ensure valid integer
+  const dbEnv = process.env.REDIS_DB || '0';
+  const db = (() => {
+    const parsed = parseInt(dbEnv, 10);
+    return !isNaN(parsed) && parsed >= 0 ? parsed : 0;
+  })();
+  
+  console.log(`[Bull Config] Using individual env vars: ${host}:${port} (db: ${db})`);
 
   return {
     host,
     port,
     password: process.env.REDIS_PASSWORD,
-    db: parseInt(process.env.REDIS_DB || '0', 10),
+    db,
   };
 };
 
