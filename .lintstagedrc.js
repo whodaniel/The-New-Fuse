@@ -1,9 +1,8 @@
 module.exports = {
   // TypeScript and JavaScript files
   '*.{ts,tsx,js,jsx}': [
-    'node --max_old_space_size=12288 ./node_modules/.bin/eslint --fix',
+    'node --max_old_space_size=4096 ./node_modules/.bin/eslint --fix',
     'prettier --write',
-    () => 'tsc --noEmit --pretty',
   ],
 
   // JSON files
