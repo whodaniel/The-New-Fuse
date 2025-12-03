@@ -10,15 +10,29 @@ export const getBullConfig = (): BullModuleOptions => ({
     port: parseInt(process.env.REDIS_PORT || '6379'),
     password: process.env.REDIS_PASSWORD,
     db: parseInt(process.env.REDIS_DB || '0'),
-    // Connection retry strategy
+    // Improved retry strategy with exponential backoff (matches cache config)
     retryStrategy: (times: number) => {
-      const delay = Math.min(times * 50, 2000);
+      if (times > 15) {
+        // After 15 retries, stop trying (prevents infinite loops)
+        return null;
+      }
+      // Exponential backoff: 50ms, 100ms, 200ms... up to 5000ms (5s)
+      const delay = Math.min(times * 50, 5000);
       return delay;
     },
-    // Enable offline queue
+    // Enable offline queue to buffer commands when Redis is temporarily unavailable
     enableOfflineQueue: true,
-    // Set max retry attempts
-    maxRetriesPerRequest: 3,
+    // Increased from 3 to 10 for better resilience (matches cache config)
+    maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),
+    // Enable ready check to ensure Redis is ready before accepting commands
+    enableReadyCheck: true,
+    // Connection timeout
+    connectTimeout: 10000, // 10 seconds
+    // Reconnect on error
+    reconnectOnError: (err: Error) => {
+      const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
+      return targetErrors.some((targetError) => err.message.includes(targetError));
+    },
   },
   // Default job options
   defaultJobOptions: {
