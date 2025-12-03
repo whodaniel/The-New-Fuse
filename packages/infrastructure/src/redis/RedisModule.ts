@@ -9,7 +9,9 @@ export interface RedisModuleOptions {
   config?: Partial<RedisConfiguration>;
 }
 
-@Module({})
+@Module({
+  imports: [ConfigModule],
+})
 export class RedisModule {
   static forRoot(options: RedisModuleOptions = {}): DynamicModule {
     return {
