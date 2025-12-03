@@ -1,4 +1,4 @@
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject, Optional, UseGuards } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -23,8 +23,9 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
 
   constructor(
     private cache: CacheService,
+    @Optional()
     @Inject('UnifiedMonitoringService')
-    private monitoring: UnifiedMonitoringService
+    private monitoring?: UnifiedMonitoringService
   ) {}
 
   async handleConnection(client: Socket) {
@@ -33,13 +34,13 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
       await this.cache.set(`socket:${client.id}`, userId);
       await this.cache.sadd(`online_users`, userId);
 
-      this.monitoring.recordMetric('websocket.connection', 1, { userId });
+      this.monitoring?.recordMetric('websocket.connection', 1, { userId });
 
       this.server.emit('users:online', {
         count: await this.cache.scard('online_users'),
       });
     } catch (error) {
-      this.monitoring.captureError(error);
+      this.monitoring?.captureError(error);
       client.disconnect();
     }
   }
@@ -49,7 +50,7 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
     await this.cache.del(`socket:${client.id}`);
     await this.cache.srem('online_users', userId);
 
-    this.monitoring.recordMetric('websocket.disconnect', 1, { userId });
+    this.monitoring?.recordMetric('websocket.disconnect', 1, { userId });
 
     this.server.emit('users:online', {
       count: await this.cache.scard('online_users'),
@@ -68,12 +69,12 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
         timestamp: new Date(),
       });
 
-      this.monitoring.recordMetric('websocket.message', 1, {
+      this.monitoring?.recordMetric('websocket.message', 1, {
         userId,
         agentId: payload.agentId,
       });
     } catch (error) {
-      this.monitoring.captureError(error);
+      this.monitoring?.captureError(error);
       client.emit('error', { message: 'Failed to process message' });
     }
   }
