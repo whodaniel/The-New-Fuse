@@ -1,38 +1,77 @@
 import { BullModuleOptions } from '@nestjs/bull';
+import Redis from 'ioredis';
 import { QueueName } from './constants/queue-names';
 
 /**
- * Bull queue configuration
+ * Base Redis connection options for Bull/ioredis
+ * Used as foundation for all client types
+ */
+const getBaseRedisOptions = () => ({
+  host: process.env.REDIS_HOST || 'localhost',
+  port: parseInt(process.env.REDIS_PORT || '6379'),
+  password: process.env.REDIS_PASSWORD,
+  db: parseInt(process.env.REDIS_DB || '0'),
+  // Improved retry strategy with exponential backoff
+  retryStrategy: (times: number) => {
+    if (times > 15) {
+      // After 15 retries, stop trying (prevents infinite loops)
+      return null;
+    }
+    // Exponential backoff: 50ms, 100ms, 200ms... up to 5000ms (5s)
+    const delay = Math.min(times * 50, 5000);
+    return delay;
+  },
+  // Enable offline queue to buffer commands when Redis is temporarily unavailable
+  enableOfflineQueue: true,
+  // Connection timeout
+  connectTimeout: 10000, // 10 seconds
+  // Reconnect on error
+  reconnectOnError: (err: Error) => {
+    const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
+    return targetErrors.some((targetError) => err.message.includes(targetError));
+  },
+});
+
+/**
+ * Bull queue configuration with per-client type options
+ *
+ * IMPORTANT: Bull/ioredis has constraints on subscriber and bclient connections:
+ * - enableReadyCheck MUST be false (or omitted)
+ * - maxRetriesPerRequest MUST be null (or omitted)
+ *
+ * See: https://github.com/OptimalBits/bull/issues/1873
+ *
+ * Using createClient factory to provide appropriate options per client type.
  */
 export const getBullConfig = (): BullModuleOptions => ({
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    password: process.env.REDIS_PASSWORD,
-    db: parseInt(process.env.REDIS_DB || '0'),
-    // Improved retry strategy with exponential backoff (matches cache config)
-    retryStrategy: (times: number) => {
-      if (times > 15) {
-        // After 15 retries, stop trying (prevents infinite loops)
-        return null;
-      }
-      // Exponential backoff: 50ms, 100ms, 200ms... up to 5000ms (5s)
-      const delay = Math.min(times * 50, 5000);
-      return delay;
-    },
-    // Enable offline queue to buffer commands when Redis is temporarily unavailable
-    enableOfflineQueue: true,
-    // Increased from 3 to 10 for better resilience (matches cache config)
-    maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),
-    // Enable ready check to ensure Redis is ready before accepting commands
-    enableReadyCheck: true,
-    // Connection timeout
-    connectTimeout: 10000, // 10 seconds
-    // Reconnect on error
-    reconnectOnError: (err: Error) => {
-      const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
-      return targetErrors.some((targetError) => err.message.includes(targetError));
-    },
+  createClient: (type, redisOpts) => {
+    const baseOpts = getBaseRedisOptions();
+
+    // Main client can have robust retry and ready-check settings
+    if (type === 'client') {
+      return new Redis({
+        ...baseOpts,
+        maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),
+        enableReadyCheck: true,
+      });
+    }
+
+    // Subscriber and bclient MUST NOT use enableReadyCheck or maxRetriesPerRequest
+    // per Bull constraints (see GitHub issue #1873)
+    if (type === 'subscriber' || type === 'bclient') {
+      return new Redis({
+        ...baseOpts,
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+      });
+    }
+
+    // Fallback for any other client types
+    return new Redis({
+      ...baseOpts,
+      maxRetriesPerRequest: null,
+      enableReadyCheck: false,
+    });
   },
   // Default job options
   defaultJobOptions: {
