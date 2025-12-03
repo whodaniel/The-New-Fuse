@@ -67,8 +67,8 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
     password: dbConfig.password,
     database: dbConfig.database,
     entities: [User, Agent, Pipeline, Task, TaskExecution, AuthSession, LoginAttempt, AuthEvent],
-    // TODO: Replace with proper migrations - temporarily enabled for production to create missing TypeORM tables
-    synchronize: true, // TEMPORARY: Enable in production to create missing tables
+    // Disable synchronize in production to prevent schema conflicts
+    synchronize: configService.get('NODE_ENV') !== 'production',
     logging: configService.get('NODE_ENV') === 'development',
   };
 };

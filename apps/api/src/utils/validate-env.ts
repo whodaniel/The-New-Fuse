@@ -345,13 +345,16 @@ export function validateEnvironment(): EnvValidationResult {
 
   // Production-specific warnings
   if (process.env.NODE_ENV === 'production') {
-    if (process.env.JWT_SECRET === 'your-secret-key' || process.env.JWT_SECRET?.length < 32) {
+    if (
+      process.env.JWT_SECRET === 'your-secret-key' ||
+      (process.env.JWT_SECRET?.length ?? 0) < 32
+    ) {
       errors.push('❌ JWT_SECRET must be at least 32 characters in production!');
     }
 
     if (
       process.env.JWT_REFRESH_SECRET === 'your-jwt-refresh-secret-key' ||
-      process.env.JWT_REFRESH_SECRET?.length < 32
+      (process.env.JWT_REFRESH_SECRET?.length ?? 0) < 32
     ) {
       errors.push('❌ JWT_REFRESH_SECRET must be at least 32 characters in production!');
     }
