@@ -26,9 +26,26 @@ const parseRedisConfig = () => {
     }
 
     try {
-      // ioredis client can directly take a URL string
-      console.log(`[Bull Config] Using REDIS_URL directly for ioredis: ${redisUrl.split('@')[1] ? `redis://***@${redisUrl.split('@')[1]}` : redisUrl}`);
-      return redisUrl; // Pass the URL string directly
+      // Parse connection string manually to ensure we return an object, not a string
+      const url = new URL(redisUrl);
+      console.log(`[Bull Config] Using REDIS_URL: ${url.hostname}:${url.port || 6379}`);
+
+      // Parse database index from pathname (e.g., /0, /1, /2)
+      // Handle empty pathname or invalid integers gracefully
+      const dbFromPath = url.pathname && url.pathname.length > 1 
+        ? parseInt(url.pathname.slice(1), 10) 
+        : 0; // Default to 0 if no path
+      
+      // Strict check for db
+      const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+
+      return {
+        host: url.hostname,
+        port: parseInt(url.port || '6379', 10),
+        password: url.password || undefined,
+        username: url.username || undefined,
+        db,
+      };
     } catch (error) {
       console.error(
         '[Bull Config] Failed to process REDIS_URL string, falling back to individual env vars:',
