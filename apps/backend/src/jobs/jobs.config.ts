@@ -10,46 +10,54 @@ const parseRedisConfig = () => {
   let redisUrl = process.env.REDIS_URL;
 
   if (redisUrl) {
-    // Trim whitespace and handle accidental duplications
+    // Trim whitespace
     redisUrl = redisUrl.trim();
-    
-    // Check if URL was accidentally duplicated (common copy-paste error)
+
+    // Check if URL was accidentally duplicated (e.g., in Railway environment vars)
+    // This is a common copy-paste error where the URL is duplicated in the same environment variable string.
     const redisPrefix = 'redis://';
-    if (redisUrl.indexOf(redisPrefix) !== redisUrl.lastIndexOf(redisPrefix)) {
-      // URL contains multiple redis:// - take only the first occurrence
-      const firstIndex = redisUrl.indexOf(redisPrefix);
-      const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);
+    const firstIndex = redisUrl.indexOf(redisPrefix);
+    const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);
+
+    if (firstIndex !== -1 && secondIndex !== -1) {
+      // If a duplicated prefix is found, take only the first valid URL
       redisUrl = redisUrl.substring(0, secondIndex);
-      console.warn('[Bull Config] Detected duplicated REDIS_URL, using first occurrence only');
+      console.warn(`[Bull Config] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`);
     }
-    
-    // Parse connection string (format: redis://[:password@]host:port/db)
+
     try {
-      const url = new URL(redisUrl);
-      console.log(`[Bull Config] Using REDIS_URL: ${url.hostname}:${url.port || 6379}`);
-
-      // Parse database index from pathname (e.g., /0, /1, /2)
-      // Handle empty pathname or invalid integers gracefully
-      const dbFromPath = url.pathname && url.pathname.length > 1 
-        ? parseInt(url.pathname.slice(1), 10) 
-        : NaN;
-      let db = !isNaN(dbFromPath) ? dbFromPath : 0;
-
-      // Extra safety check
-      if (typeof db !== 'number' || Number.isNaN(db)) {
-        console.warn(`[Bull Config] Parsed DB is invalid (${db}), defaulting to 0`);
-        db = 0;
-      }
-
-      console.log(`[Bull Config] Final parsed config - Host: ${url.hostname}, Port: ${url.port || 6379}, DB: ${db}`);
-
-      return {
-        host: url.hostname,
-        port: parseInt(url.port || '6379', 10),
-        password: url.password || undefined,
-        db,
-      };
+      // ioredis client can directly take a URL string
+      console.log(`[Bull Config] Using REDIS_URL directly for ioredis: ${redisUrl.split('@')[1] ? `redis://***@${redisUrl.split('@')[1]}` : redisUrl}`);
+      return redisUrl; // Pass the URL string directly
     } catch (error) {
+      console.error(
+        '[Bull Config] Failed to process REDIS_URL string, falling back to individual env vars:',
+        error
+      );
+    }
+  }
+
+  // Fallback to individual environment variables
+  const host = process.env.REDIS_HOST || 'localhost';
+  const port = parseInt(process.env.REDIS_PORT || '6379', 10);
+  
+  // Parse database index safely - handle empty strings and ensure valid integer
+  const dbEnv = process.env.REDIS_DB || '0';
+  let db = 0;
+  const parsedDb = parseInt(dbEnv, 10);
+  if (!Number.isNaN(parsedDb) && parsedDb >= 0) {
+    db = parsedDb;
+  }
+  
+  console.log(`[Bull Config] Using individual env vars: ${host}:${port} (db: ${db})`);
+
+  return {
+    host,
+    port,
+    password: process.env.REDIS_PASSWORD,
+    db,
+  };
+};
       console.error(
         '[Bull Config] Failed to parse REDIS_URL, falling back to individual env vars:',
         error
