@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // =============================================================================
@@ -123,6 +122,9 @@ model Agent {
   tasksAssigned  Task[]               @relation("AgentTasks")
   workflows      Workflow[]
   workflowSteps  WorkflowStep[]
+  registrations  AgentRegistration[]
+  directoryEntry AgentDirectoryEntry?
+  promptVersions AgentPromptVersion[]
 
   @@map("agents")
 }
@@ -796,6 +798,112 @@ model LLMConfig {
   deletedAt   DateTime?
 
   @@map("llm_configs")
+}
+
+// =============================================================================
+// AGENT REGISTRY & DISCOVERY
+// =============================================================================
+
+model AgentRegistration {
+  id                 String    @id @default(uuid())
+  agentId            String
+  authToken          String    @unique
+  registrationData   Json
+  verificationStatus String    @default("PENDING")
+  onboardingStatus   String    @default("INITIALIZED")
+  onboardingProgress Float     @default(0)
+  heartbeatInterval  Int       @default(60000)
+  isOnline           Boolean   @default(false)
+  lastHeartbeat      DateTime?
+  metadata           Json?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  agent            Agent                     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  capabilities     AgentCapabilityRegistry[]
+  onboardingEvents AgentOnboardingEvent[]
+
+  @@map("agent_registrations")
+}
+
+model AgentCapabilityRegistry {
+  id                 String   @id @default(uuid())
+  registrationId     String
+  capabilityName     String
+  capabilityType     String
+  version            String
+  description        String?
+  parameters         Json?
+  verificationStatus String   @default("PENDING")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  registration AgentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@map("agent_capability_registry")
+}
+
+model AgentOnboardingEvent {
+  id             String   @id @default(uuid())
+  registrationId String
+  eventType      String
+  message        String
+  eventData      Json?
+  timestamp      DateTime @default(now())
+
+  registration AgentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@map("agent_onboarding_events")
+}
+
+model AgentDirectoryEntry {
+  id             String   @id @default(uuid())
+  agentId        String   @unique
+  displayName    String
+  description    String?
+  category       String
+  tags           String[]
+  isPublic       Boolean  @default(false)
+  isVerified     Boolean  @default(false)
+  rating         Float    @default(0)
+  usageCount     Int      @default(0)
+  searchableData String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("agent_directory_entries")
+}
+
+// =============================================================================
+// PROMPT OPTIMIZATION
+// =============================================================================
+
+model AgentPromptVersion {
+  id                 String   @id @default(uuid())
+  agentId            String
+  versionNumber      Int
+  instruction        String   @db.Text
+  exemplars          Json?
+  performanceMetrics Json?
+  massStage          String?
+  createdAt          DateTime @default(now())
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("agent_prompt_versions")
+}
+
+model ValidationDataset {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  items       Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("validation_datasets")
 }
 
 // =============================================================================
