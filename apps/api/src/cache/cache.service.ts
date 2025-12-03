@@ -9,9 +9,23 @@ export class CacheService {
 
   constructor(private configService: ConfigService) {
     // Parse Redis connection - support both REDIS_URL and individual env vars
-    const redisUrl = configService.get('REDIS_URL');
+    let redisUrl = configService.get('REDIS_URL');
     
     if (redisUrl) {
+      // Trim whitespace
+      redisUrl = redisUrl.trim();
+
+      // Check if URL was accidentally duplicated (e.g., in Railway environment vars)
+      const redisPrefix = 'redis://';
+      const firstIndex = redisUrl.indexOf(redisPrefix);
+      const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);
+
+      if (firstIndex !== -1 && secondIndex !== -1) {
+        // If a duplicated prefix is found, take only the first valid URL
+        redisUrl = redisUrl.substring(0, secondIndex);
+        this.logger.warn(`[CacheService] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`);
+      }
+
       // Parse URL explicitly to avoid ioredis env fallbacks
       try {
         const url = new URL(redisUrl);
