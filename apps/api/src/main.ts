@@ -143,7 +143,12 @@ async function bootstrap(): Promise<void> {
     next();
   });
 
-  await app.listen(3001);
-  console.log('🚀 API Server running on port 3001 with enhanced security');
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`🚀 API Server running on port ${port} with enhanced security`);
 }
-bootstrap();
+
+bootstrap().catch((error) => {
+  console.error('❌ Failed to start API application:', error);
+  process.exit(1);
+});
