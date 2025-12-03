@@ -4,7 +4,14 @@ import { RedisConfiguration } from './types';
 
 @Injectable()
 export class RedisConfig {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {
+    console.log('[RedisConfig] Constructor called');
+    console.log('[RedisConfig] ConfigService injected:', !!configService);
+    if (!configService) {
+      console.error('[RedisConfig] CRITICAL: ConfigService is undefined!');
+      throw new Error('ConfigService was not injected into RedisConfig');
+    }
+  }
 
   private parseRedisConfig() {
     let redisUrl = this.configService.get<string>('REDIS_URL');

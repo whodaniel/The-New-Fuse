@@ -40,7 +40,14 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
   private operationLogs: RedisOperationLog[] = [];
   private readonly MAX_LOG_SIZE = 1000;
 
-  constructor(private readonly redisConfig: RedisConfig) {}
+  constructor(private readonly redisConfig: RedisConfig) {
+    console.log('[UnifiedRedisService] Constructor called');
+    console.log('[UnifiedRedisService] RedisConfig injected:', !!redisConfig);
+    if (!redisConfig) {
+      console.error('[UnifiedRedisService] CRITICAL: RedisConfig is undefined!');
+      throw new Error('RedisConfig was not injected into UnifiedRedisService');
+    }
+  }
 
   async onModuleInit() {
     await this.initializeConnections();
