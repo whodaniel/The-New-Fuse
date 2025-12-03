@@ -7,9 +7,22 @@ import { QueueName } from './constants/queue-names';
  * Railway and other cloud platforms typically provide REDIS_URL as a connection string
  */
 const parseRedisConfig = () => {
-  const redisUrl = process.env.REDIS_URL;
+  let redisUrl = process.env.REDIS_URL;
 
   if (redisUrl) {
+    // Trim whitespace and handle accidental duplications
+    redisUrl = redisUrl.trim();
+    
+    // Check if URL was accidentally duplicated (common copy-paste error)
+    const redisPrefix = 'redis://';
+    if (redisUrl.indexOf(redisPrefix) !== redisUrl.lastIndexOf(redisPrefix)) {
+      // URL contains multiple redis:// - take only the first occurrence
+      const firstIndex = redisUrl.indexOf(redisPrefix);
+      const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);
+      redisUrl = redisUrl.substring(0, secondIndex);
+      console.warn('[Bull Config] Detected duplicated REDIS_URL, using first occurrence only');
+    }
+    
     // Parse connection string (format: redis://[:password@]host:port/db)
     try {
       const url = new URL(redisUrl);

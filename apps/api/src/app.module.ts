@@ -103,6 +103,11 @@ import { SecurityLoggingService } from './security/security-logging.service';
     AppService,
     CacheService,
     WebsocketGateway,
+    // LLM Provider Services
+    {
+      provide: LLM_REGISTRY,
+      useClass: MockLLMRegistry,
+    },
     LLMProviderService,
     // Security services
     InputSanitizationService,
