@@ -33,5 +33,5 @@ restartPolicyType = "ON_FAILURE"
 # Fallback for 'frontend' service name just in case
 [services.frontend]
 buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
-startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes serve dist -l ${PORT:-3000} -s\""
+startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes serve dist -p ${PORT:-3000} -s\""
 restartPolicyType = "ON_FAILURE"
