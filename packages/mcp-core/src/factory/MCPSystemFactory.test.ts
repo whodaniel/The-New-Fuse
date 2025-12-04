@@ -2,9 +2,8 @@
  * MCPSystemFactory Unit Tests
  */
 
-// @ts-expect-error - Jest globals are available without import
 import { MCPSystemFactory, MCPSystemConfig } from './MCPSystemFactory';
-import { LogLevel } from '../types/common';
+import { LogLevel } from '../types';
 
 describe('MCPSystemFactory', () => {
   let system: any;
@@ -18,7 +17,7 @@ describe('MCPSystemFactory', () => {
   describe('Factory Methods', () => {
     it('should create production system with correct defaults', () => {
       system = MCPSystemFactory.createProductionSystem();
-      
+
       expect(system).toBeDefined();
       expect(system.config.server.name).toBe('the-new-fuse-mcp-server');
       expect(system.config.server.port).toBe(3000);
@@ -31,7 +30,7 @@ describe('MCPSystemFactory', () => {
 
     it('should create development system with correct defaults', () => {
       system = MCPSystemFactory.createDevelopmentSystem();
-      
+
       expect(system).toBeDefined();
       expect(system.config.server.name).toBe('the-new-fuse-mcp-dev-server');
       expect(system.config.server.port).toBe(3001);
@@ -44,7 +43,7 @@ describe('MCPSystemFactory', () => {
 
     it('should create testing system with correct defaults', () => {
       system = MCPSystemFactory.createTestingSystem();
-      
+
       expect(system).toBeDefined();
       expect(system.config.server.name).toBe('the-new-fuse-mcp-test-server');
       expect(system.config.server.port).toBe(3999); // Test port
@@ -82,7 +81,7 @@ describe('MCPSystemFactory', () => {
       };
 
       system = MCPSystemFactory.createCustomSystem(customConfig);
-      
+
       expect(system).toBeDefined();
       expect(system.config.server.name).toBe('custom-test-server');
       expect(system.config.server.port).toBe(5000);
@@ -102,7 +101,7 @@ describe('MCPSystemFactory', () => {
       };
 
       system = MCPSystemFactory.createProductionSystem(customConfig);
-      
+
       expect(system.config.server.name).toBe('merged-server');
       expect(system.config.server.port).toBe(4000);
       expect(system.config.server.enableAuth).toBe(true); // From default
@@ -130,23 +129,23 @@ describe('MCPSystemFactory', () => {
 
     it('should start and stop system successfully', async () => {
       expect(system.server.isRunning()).toBe(false);
-      
+
       await system.start();
       expect(system.server.isRunning()).toBe(true);
-      
+
       await system.stop();
       expect(system.server.isRunning()).toBe(false);
     });
 
     it('should throw error when starting already running system', async () => {
       await system.start();
-      
+
       await expect(system.start()).rejects.toThrow('MCP System is already running');
     });
 
     it('should handle stop gracefully when not running', async () => {
       expect(system.server.isRunning()).toBe(false);
-      
+
       // Should not throw
       await system.stop();
       expect(system.server.isRunning()).toBe(false);
@@ -161,7 +160,7 @@ describe('MCPSystemFactory', () => {
 
     it('should provide system health information', async () => {
       const health = await system.getHealth();
-      
+
       expect(health).toBeDefined();
       expect(health.status).toMatch(/healthy|degraded|unhealthy/);
       expect(health.components).toBeDefined();
@@ -172,14 +171,14 @@ describe('MCPSystemFactory', () => {
 
     it('should provide system metrics', async () => {
       const metrics = await system.getMetrics();
-      
+
       expect(metrics).toBeDefined();
       expect(metrics.requests).toBeDefined();
       expect(metrics.resources).toBeDefined();
       expect(metrics.tools).toBeDefined();
       expect(metrics.connections).toBeDefined();
       expect(metrics.timestamp).toBeInstanceOf(Date);
-      
+
       expect(typeof metrics.requests.total).toBe('number');
       expect(typeof metrics.resources.registered).toBe('number');
       expect(typeof metrics.tools.registered).toBe('number');
@@ -207,7 +206,7 @@ describe('MCPSystemFactory', () => {
       };
 
       await system.registerResource(resource);
-      
+
       const resources = system.server.getRegisteredResources();
       expect(resources.length).toBeGreaterThan(0);
       expect(resources.some((r: any) => r.name === 'Test Resource')).toBe(true);
@@ -224,7 +223,7 @@ describe('MCPSystemFactory', () => {
       };
 
       await system.registerTool(tool);
-      
+
       const tools = system.server.getRegisteredTools();
       expect(tools.length).toBeGreaterThan(0);
       expect(tools.some((t: any) => t.name === 'test-tool')).toBe(true);
@@ -239,7 +238,7 @@ describe('MCPSystemFactory', () => {
 
     it('should provide access to system components', () => {
       const components = system.getComponents();
-      
+
       expect(components).toBeDefined();
       expect(components.server).toBeDefined();
       expect(components.server).toBe(system.server);
@@ -248,7 +247,7 @@ describe('MCPSystemFactory', () => {
     it('should include database component when configured', () => {
       // This would be tested with actual Prisma client
       const components = system.getComponents();
-      
+
       // For now, database is not configured in test system
       expect(components.database).toBeUndefined();
     });
@@ -262,14 +261,14 @@ describe('MCPSystemFactory', () => {
 
     it('should register default system resources', () => {
       const resources = system.server.getRegisteredResources();
-      
+
       expect(resources.some((r: any) => r.uri === 'system://info')).toBe(true);
       expect(resources.some((r: any) => r.uri === 'system://config')).toBe(true);
     });
 
     it('should register default system tools', () => {
       const tools = system.server.getRegisteredTools();
-      
+
       expect(tools.some((t: any) => t.name === 'system-health')).toBe(true);
       expect(tools.some((t: any) => t.name === 'system-restart')).toBe(true);
     });

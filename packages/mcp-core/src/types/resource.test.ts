@@ -2,10 +2,9 @@
  * Tests for MCP Resource types and validation
  */
 
-// @ts-expect-error - Jest globals are available without import
-import { 
-  ResourceType, 
-  ResourceAccessMode, 
+import {
+  ResourceType,
+  ResourceAccessMode,
   ResourceStatus,
   ResourceDiscoveryResult,
   ResourceAccessLog,

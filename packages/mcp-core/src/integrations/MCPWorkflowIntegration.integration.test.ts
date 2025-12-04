@@ -1,6 +1,6 @@
 /**
  * Integration tests for MCP Workflow Integration
- * 
+ *
  * Tests end-to-end workflow execution scenarios with real MCP components
  */
 
@@ -8,11 +8,11 @@ import { EventEmitter } from 'events';
 import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration';
 import { WorkflowExecutionMonitor } from './WorkflowExecutionMonitor';
 import { MCPCallbackHandler, CallbackHandlerConfig } from './MCPCallbackHandler';
-import { 
-  WorkflowStep, 
-  WorkflowContext, 
-  Task, 
-  MCPCallback, 
+import {
+  WorkflowStep,
+  WorkflowContext,
+  Task,
+  MCPCallback,
   TaskExecutionStatus,
   ErrorRecoveryConfig,
   MonitoringConfig
@@ -51,7 +51,13 @@ class IntegrationMockMCPClient extends EventEmitter implements IMCPClient {
 
     // Apply delay if configured
     const delay = this.delays.get(request.method) || 0;
+    const timeout = request.meta?.timeout;
+
     if (delay > 0) {
+      if (timeout && delay > timeout) {
+        await this.delay(timeout);
+        throw new Error('Request timeout');
+      }
       await this.delay(delay);
     }
 
@@ -118,7 +124,10 @@ class IntegrationMockMCPBroker extends EventEmitter implements IMCPBroker {
     return Array.from(this.services.values());
   }
 
-  async routeRequest(): Promise<MCPResponse> {
+  async routeRequest(request: MCPRequest, serviceId?: string): Promise<MCPResponse> {
+    if (serviceId && !this.services.has(serviceId)) {
+      throw new Error(`MCP service not found: ${serviceId}`);
+    }
     return { jsonrpc: '2.0', id: 1, result: {} };
   }
 
@@ -184,7 +193,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
     mockBroker = new IntegrationMockMCPBroker();
     monitor = new WorkflowExecutionMonitor(defaultMonitoring, defaultErrorRecovery);
     callbackHandler = new MCPCallbackHandler(defaultCallbackConfig);
-    
+
     config = {
       client: mockClient,
       broker: mockBroker,
@@ -267,7 +276,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           type: 'mcp_tool',
           mcpService: 'compute-service',
           mcpMethod: 'process-csv',
-          parameters: { 
+          parameters: {
             data: '${stepResults.load-data.content}',
             operation: 'sum_rows'
           }
@@ -286,7 +295,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       // Execute first step
       context.currentStepId = 'load-data';
       const step1Result = await integration.executeWorkflowStep(steps[0], context);
-      
+
       expect(step1Result.success).toBe(true);
       expect(step1Result.result.content).toContain('raw,data,values');
 
@@ -296,7 +305,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
 
       // Execute second step
       const step2Result = await integration.executeWorkflowStep(steps[1], context);
-      
+
       expect(step2Result.success).toBe(true);
       expect(step2Result.result.processedData).toHaveLength(2);
 
@@ -305,7 +314,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       expect(callHistory).toHaveLength(2);
       expect(callHistory[0].method).toBe('resources/read');
       expect(callHistory[1].method).toBe('tools/call');
-      
+
       // Verify parameter resolution
       expect(callHistory[1].params.arguments.data).toBe('raw,data,values\n1,2,3\n4,5,6');
     }, 10000);
@@ -418,7 +427,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'monitored',
-        result: { 
+        result: {
           analysisResults: { accuracy: 0.95, features: 42 },
           processingTime: 200
         }
@@ -525,7 +534,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       const completionCallback: MCPCallback = {
         type: 'result',
         executionId: taskResult.executionId,
-        payload: { 
+        payload: {
           finalResults: { accuracy: 0.98, insights: ['pattern1', 'pattern2'] },
           totalProcessingTime: 5000
         },
@@ -548,7 +557,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
 
     it('should handle callback errors and retry mechanisms', async () => {
       const executionId = 'callback-error-test';
-      
+
       // Register a handler that fails initially
       let handlerCallCount = 0;
       integration.registerCallbackHandler(executionId, async (callback) => {
@@ -571,7 +580,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       await integration.handleMCPCallback(callback);
 
       // Wait for retries to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Handler should have been called multiple times
       expect(handlerCallCount).toBeGreaterThan(1);
@@ -651,7 +660,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       mockClient.setDelay('tools/call', 200);
 
       const result = await integration.executeWorkflowStep(step, context);
-      
+
       // Should fail due to timeout, but gracefully
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
@@ -705,7 +714,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
 
       // Should complete in reasonable time
       expect(duration).toBeLessThan(5000);
-      
+
       // Verify throughput
       const throughput = numWorkflows / (duration / 1000);
       expect(throughput).toBeGreaterThan(10); // At least 10 workflows per second

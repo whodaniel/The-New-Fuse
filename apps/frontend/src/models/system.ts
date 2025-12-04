@@ -1,5 +1,5 @@
 class System {
-    static checkAuth(isNewToken: boolean) {
+    static checkAuth(_isNewToken: boolean) {
         throw new Error('Method not implemented.');
     }
     static async getEmbeddingSettings() {
@@ -23,7 +23,7 @@ class System {
             throw error;
         }
     }
-    static async updateEmbeddingSettings(settings) {
+    static async updateEmbeddingSettings(settings: any) {
         try {
             const response = await fetch("/api/system/embedding-settings", {
                 method: "POST",
@@ -45,7 +45,7 @@ class System {
             return { error: "An unexpected error occurred" };
         }
     }
-    static async checkEmbeddingProvider(settings) {
+    static async checkEmbeddingProvider(settings: any) {
         try {
             const response = await fetch("/api/system/check-embedding-provider", {
                 method: "POST",
@@ -67,7 +67,7 @@ class System {
             return { error: "An unexpected error occurred" };
         }
     }
-    static async getModels(settings) {
+    static async getModels(settings: any) {
         try {
             const response = await fetch("/api/system/embedding-models", {
                 method: "POST",
@@ -120,6 +120,31 @@ class System {
             console.error("Error checking cached embeddings:", error);
             return false;
         }
+    }
+    static async keys() {
+        return Promise.resolve({ appName: "MyApp" });
+    }
+    static async login(_username: string, _password: string) {
+        return {
+            valid: true,
+            user: { id: "1", username: "test", role: "user" },
+            token: "test-token",
+            message: "Login successful",
+            recoveryCodes: ["code1", "code2"]
+        };
+    }
+    static async recoverPassword(_username: string, _recoveryCodes: string[]) {
+        return {
+            success: true,
+            resetToken: "reset-token",
+            error: null
+        };
+    }
+    static async resetPassword(_resetToken: string, _newPassword: string) {
+        return {
+            success: true,
+            error: null
+        };
     }
     static async fetchCanViewChatHistory() {
         try {

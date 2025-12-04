@@ -30,8 +30,9 @@ export interface IMCPServer {
   /**
    * Register a tool with the MCP server
    * @param tool The tool to register
+   * @param handler Optional handler for the tool
    */
-  registerTool(tool: MCPTool): void;
+  registerTool(tool: MCPTool, handler?: any): void;
 
   /**
    * Register a capability with the MCP server

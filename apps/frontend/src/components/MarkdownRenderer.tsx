@@ -1,87 +1,119 @@
-"use strict";
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import react_markdown_1 from 'react-markdown';
-import react_syntax_highlighter_1 from 'react-syntax-highlighter';
-import prism_1 from 'react-syntax-highlighter/dist/esm/styles/prism';
-import remark_gfm_1 from 'remark-gfm';
-import remark_math_1 from 'remark-math';
-import rehype_katex_1 from 'rehype-katex';
-require("katex/dist/katex.min.css");
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-const MarkdownRenderer = ({ content }) => {
-    return (<Box style={{ '& > *': { mb: 2 } }}>
-      <react_markdown_1.default remarkPlugins={[remark_gfm_1.default, remark_math_1.default]} rehypePlugins={[rehype_katex_1.default]} components={{
-            code(_a) {
-                var { node, inline, className, children } = _a, props = __rest(_a, ["node", "inline", "className", "children"]);
-                const match = /language-(\w+)/.exec(className || '');
-                return !inline && match ? (<react_syntax_highlighter_1.Prism style={prism_1.materialDark} language={match[1]} PreTag="div" {...props}>
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
+
+interface MarkdownRendererProps {
+  content: string;
+  className?: string;
+}
+
+interface CodeProps {
+  node?: any;
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+  [key: string]: any;
+}
+
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = '' }) => {
+  return (
+    <div className={`markdown-renderer ${className} space-y-2`}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
+        components={{
+          code({ _node, inline, className, children, ...props }: CodeProps) {
+            const match = /language-(\w+)/.exec(className || '');
+            return !inline && match ? (
+              <SyntaxHighlighter
+                style={materialDark}
+                language={match[1]}
+                PreTag="div"
+                {...props}
+              >
                 {String(children).replace(/\n$/, '')}
-              </react_syntax_highlighter_1.Prism>) : (<code className={className} {...props}>
+              </SyntaxHighlighter>
+            ) : (
+              <code className={className} {...props}>
                 {children}
-              </code>);
-            },
-            p: ({ children }) => (<material_1.Typography variant="body1" component="p">
+              </code>
+            );
+          },
+          p: ({ children }: { children?: React.ReactNode }) => (
+            <p className="text-base leading-relaxed">
               {children}
-            </material_1.Typography>),
-            h1: ({ children }) => (<material_1.Typography variant="h4" component="h1" gutterBottom>
+            </p>
+          ),
+          h1: ({ children }: { children?: React.ReactNode }) => (
+            <h1 className="text-2xl font-bold mb-4">
               {children}
-            </material_1.Typography>),
-            h2: ({ children }) => (<material_1.Typography variant="h5" component="h2" gutterBottom>
+            </h1>
+          ),
+          h2: ({ children }: { children?: React.ReactNode }) => (
+            <h2 className="text-xl font-bold mb-3">
               {children}
-            </material_1.Typography>),
-            h3: ({ children }) => (<material_1.Typography variant="h6" component="h3" gutterBottom>
+            </h2>
+          ),
+          h3: ({ children }: { children?: React.ReactNode }) => (
+            <h3 className="text-lg font-bold mb-2">
               {children}
-            </material_1.Typography>),
-            a: ({ href, children }) => (<material_1.Link href={href} target="_blank" rel="noopener noreferrer">
+            </h3>
+          ),
+          a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline"
+            >
               {children}
-            </material_1.Link>),
-            ul: ({ children }) => (<material_1.Box component="ul" sx={{ pl: 2 }}>
+            </a>
+          ),
+          ul: ({ children }: { children?: React.ReactNode }) => (
+            <ul className="pl-4 list-disc">
               {children}
-            </material_1.Box>),
-            ol: ({ children }) => (<material_1.Box component="ol" sx={{ pl: 2 }}>
+            </ul>
+          ),
+          ol: ({ children }: { children?: React.ReactNode }) => (
+            <ol className="pl-4 list-decimal">
               {children}
-            </material_1.Box>),
-            blockquote: ({ children }) => (<material_1.Box component="blockquote" sx={{
-                    borderLeft: 4,
-                    borderColor: 'primary.main',
-                    pl: 2,
-                    py: 1,
-                    my: 2,
-                    bgcolor: 'action.hover',
-                    borderRadius: 1
-                }}>
+            </ol>
+          ),
+          blockquote: ({ children }: { children?: React.ReactNode }) => (
+            <blockquote
+              className="border-l-4 border-blue-500 pl-3 py-2 my-2 bg-gray-50 rounded-md"
+            >
               {children}
-            </material_1.Box>),
-            table: ({ children }) => (<material_1.Box component="table" sx={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    '& th, & td': {
-                        border: 1,
-                        borderColor: 'divider',
-                        p: 1
-                    },
-                    '& th': {
-                        bgcolor: 'action.hover'
-                    }
-                }}>
+            </blockquote>
+          ),
+          table: ({ children }: { children?: React.ReactNode }) => (
+            <table className="w-full border-collapse">
+              <tbody>
+                {children}
+              </tbody>
+            </table>
+          ),
+          th: ({ children }: { children?: React.ReactNode }) => (
+            <th className="border border-gray-200 p-2 bg-gray-50 font-bold">
               {children}
-            </material_1.Box>)
-        }}>
+            </th>
+          ),
+          td: ({ children }: { children?: React.ReactNode }) => (
+            <td className="border border-gray-200 p-2">
+              {children}
+            </td>
+          )
+        }}
+      >
         {content}
-      </react_markdown_1.default>
-    </material_1.Box>);
+      </ReactMarkdown>
+    </div>
+  );
 };
-exports.default = MarkdownRenderer;
-export {};
+
+export default MarkdownRenderer;

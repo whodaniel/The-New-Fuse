@@ -1,0 +1,14 @@
+export var SecurityLevel;
+(function (SecurityLevel) {
+    SecurityLevel["HIGH"] = "high";
+    SecurityLevel["MEDIUM"] = "medium";
+    SecurityLevel["LOW"] = "low";
+})(SecurityLevel || (SecurityLevel = {}));
+export var ThreatType;
+(function (ThreatType) {
+    ThreatType["INJECTION"] = "injection";
+    ThreatType["XSS"] = "xss";
+    ThreatType["SENSITIVE_DATA"] = "sensitive_data";
+    ThreatType["AUTH_BYPASS"] = "auth_bypass";
+    ThreatType["CODE_EXECUTION"] = "code_execution";
+})(ThreatType || (ThreatType = {}));

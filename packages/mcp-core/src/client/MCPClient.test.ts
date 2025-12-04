@@ -8,6 +8,13 @@ import { ConnectionStatus } from '../interfaces/IMCPConnection';
 import { MCPErrorCode } from '../types/error';
 
 // Mock WebSocket
+class MockCloseEvent extends Event {
+  constructor(type: string, public code?: number, public reason?: string) {
+    super(type);
+  }
+}
+(global as any).CloseEvent = MockCloseEvent;
+
 class MockWebSocket {
   static CONNECTING = 0;
   static OPEN = 1;
@@ -141,19 +148,19 @@ describe('MCPClient', () => {
   describe('Connection Management', () => {
     test('should connect to server successfully', async () => {
       const endpoint = 'ws://localhost:8080';
-      
+
       await client.connect(endpoint);
-      
+
       expect(client.isConnected()).toBe(true);
       expect(client.getEndpoint()).toBe(endpoint);
     });
 
     test('should disconnect from server', async () => {
       const endpoint = 'ws://localhost:8080';
-      
+
       await client.connect(endpoint);
       expect(client.isConnected()).toBe(true);
-      
+
       await client.disconnect();
       expect(client.isConnected()).toBe(false);
       expect(client.getEndpoint()).toBe(null);
@@ -174,7 +181,7 @@ describe('MCPClient', () => {
       };
 
       const endpoint = 'ws://invalid:8080';
-      
+
       await expect(client.connect(endpoint)).rejects.toThrow();
       expect(client.isConnected()).toBe(false);
 
@@ -184,13 +191,13 @@ describe('MCPClient', () => {
 
     test('should reuse existing connection', async () => {
       const endpoint = 'ws://localhost:8080';
-      
+
       await client.connect(endpoint);
       const firstConnection = client.getEndpoint();
-      
+
       await client.connect(endpoint); // Should reuse connection
       const secondConnection = client.getEndpoint();
-      
+
       expect(firstConnection).toBe(secondConnection);
     });
   });
@@ -209,7 +216,7 @@ describe('MCPClient', () => {
       };
 
       const response = await client.sendRequest(request);
-      
+
       expect(response.jsonrpc).toBe('2.0');
       expect(response.id).toBe('test-1');
       expect(response.result).toBeDefined();
@@ -228,7 +235,7 @@ describe('MCPClient', () => {
 
     test('should throw error when not connected', async () => {
       await client.disconnect();
-      
+
       const request = {
         jsonrpc: '2.0' as const,
         id: 'test-disconnected',
@@ -247,7 +254,7 @@ describe('MCPClient', () => {
 
     test('should list resources', async () => {
       const resources = await client.listResources();
-      
+
       expect(Array.isArray(resources)).toBe(true);
       expect(resources.length).toBeGreaterThan(0);
       expect(resources[0]).toHaveProperty('uri');
@@ -256,14 +263,14 @@ describe('MCPClient', () => {
 
     test('should list resources with pattern', async () => {
       const resources = await client.listResources('test://*');
-      
+
       expect(Array.isArray(resources)).toBe(true);
     });
 
     test('should read resource content', async () => {
       const uri = 'test://resource1';
       const content = await client.readResource(uri);
-      
+
       expect(content).toHaveProperty('uri', uri);
       expect(content).toHaveProperty('mimeType');
       expect(content).toHaveProperty('content');
@@ -271,13 +278,13 @@ describe('MCPClient', () => {
 
     test('should cache resource content', async () => {
       const uri = 'test://resource1';
-      
+
       // First read
       const content1 = await client.readResource(uri);
-      
+
       // Second read should be from cache
       const content2 = await client.readResource(uri);
-      
+
       expect(content1).toEqual(content2);
     });
   });
@@ -289,7 +296,7 @@ describe('MCPClient', () => {
 
     test('should call tool successfully', async () => {
       const result = await client.callTool('test-tool', { param1: 'value1' });
-      
+
       expect(result).toHaveProperty('success', true);
       expect(result).toHaveProperty('result');
     });
@@ -297,13 +304,13 @@ describe('MCPClient', () => {
     test('should cache tool results', async () => {
       const toolName = 'test-tool';
       const params = { param1: 'value1' };
-      
+
       // First call
       const result1 = await client.callTool(toolName, params);
-      
+
       // Second call should be from cache
       const result2 = await client.callTool(toolName, params);
-      
+
       expect(result1).toEqual(result2);
     });
   });
@@ -315,7 +322,7 @@ describe('MCPClient', () => {
 
     test('should get server capabilities', async () => {
       const capabilities = await client.getServerCapabilities();
-      
+
       expect(Array.isArray(capabilities)).toBe(true);
       expect(capabilities.length).toBeGreaterThan(0);
       expect(capabilities[0]).toHaveProperty('name');
@@ -325,10 +332,10 @@ describe('MCPClient', () => {
     test('should cache server capabilities', async () => {
       // First call
       const capabilities1 = await client.getServerCapabilities();
-      
+
       // Second call should be from cache
       const capabilities2 = await client.getServerCapabilities();
-      
+
       expect(capabilities1).toEqual(capabilities2);
     });
   });
@@ -388,24 +395,24 @@ describe('MCPClient', () => {
   describe('Statistics and Status', () => {
     test('should track statistics', async () => {
       await client.connect('ws://localhost:8080');
-      
+
       const initialStats = client.getStatistics();
       expect(initialStats.totalConnections).toBe(1);
-      
+
       await client.sendRequest({
         jsonrpc: '2.0',
         id: 'stats-test',
         method: 'initialize',
         params: {}
       });
-      
+
       const updatedStats = client.getStatistics();
       expect(updatedStats.totalRequests).toBeGreaterThan(initialStats.totalRequests);
     });
 
     test('should provide client status', async () => {
       const status = client.getStatus();
-      
+
       expect(status.name).toBe(config.name);
       expect(status.connectionStatus).toBe(ConnectionStatus.DISCONNECTED);
       expect(status.statistics).toBeDefined();
@@ -413,7 +420,7 @@ describe('MCPClient', () => {
 
     test('should provide cache statistics', () => {
       const cacheStats = client.getCacheStatistics();
-      
+
       expect(cacheStats).toHaveProperty('totalEntries');
       expect(cacheStats).toHaveProperty('hitCount');
       expect(cacheStats).toHaveProperty('missCount');
@@ -479,24 +486,24 @@ describe('MCPClient', () => {
     test('should cleanup resources properly', async () => {
       await client.connect('ws://localhost:8080');
       expect(client.isConnected()).toBe(true);
-      
+
       await client.cleanup();
-      
+
       expect(client.isConnected()).toBe(false);
       expect(client.getEndpoint()).toBe(null);
     });
 
     test('should clear cache', async () => {
       await client.connect('ws://localhost:8080');
-      
+
       // Add some cached data
       await client.readResource('test://resource1');
-      
+
       let cacheStats = client.getCacheStatistics();
       expect(cacheStats.totalEntries).toBeGreaterThan(0);
-      
+
       client.clearCache();
-      
+
       cacheStats = client.getCacheStatistics();
       expect(cacheStats.totalEntries).toBe(0);
     });

@@ -1,45 +1,69 @@
 
-export {}
-import react_1 from 'react';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import recharts_1 from 'recharts';
-const MetricCard = ({ title, value, unit, history }): any => {
-    const theme = (0, material_1.useTheme)();
-    return (<material_1.Card sx={{ height: '100%' }}>
-      <material_1.CardContent>
-        <material_1.Typography variant="h6" component="div" gutterBottom>
-          {title}
-        </material_1.Typography>
-        <material_1.Typography variant="h4" component="div" color="primary">
-          {value.toFixed(2)} {unit}
-        </material_1.Typography>
-        <Box style={{ height: 100, mt: 2 }}>
-          <recharts_1.ResponsiveContainer width="100%" height="100%">
-            <recharts_1.LineChart data={history}>
-              <recharts_1.CartesianGrid strokeDasharray="3 3"/>
-              <recharts_1.XAxis dataKey="timestamp" tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}/>
-              <recharts_1.YAxis />
-              <recharts_1.Tooltip labelFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}/>
-              <recharts_1.Line type="monotone" dataKey="value" stroke={theme.palette.primary.main} dot={false}/>
-            </recharts_1.LineChart>
-          </recharts_1.ResponsiveContainer>
-        </material_1.Box>
-      </material_1.CardContent>
-    </material_1.Card>);
+import { useEffect, useState, useRef } from 'react';
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line } from 'recharts';
+
+interface MetricCardProps {
+    title: string;
+    value: number;
+    unit: string;
+    history: Array<{ timestamp: number; value: number }>;
+}
+
+const MetricCard = ({ title, value, unit, history }: MetricCardProps) => {
+    return (
+        <div className="h-full">
+            <h3 className="text-lg font-semibold mb-2">
+                {title}
+            </h3>
+            <p className="text-xl text-blue-500">
+                {value?.toFixed(2)} {unit}
+            </p>
+            <div className="h-[100px] mt-2">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={history}>
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <XAxis dataKey="timestamp" tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}/>
+                        <YAxis />
+                        <Tooltip labelFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}/>
+                        <Line type="monotone" dataKey="value" stroke="#1976d2" dot={false}/>
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
+        </div>
+    );
 };
-const PerformanceDashboard = (): any => {
-    const [metrics, setMetrics] = (0, react_1.useState)(null);
-    const [connected, setConnected] = (0, react_1.useState)(false);
-    const [error, setError] = (0, react_1.useState)(null);
-    const ws = (0, react_1.useRef)(null);
-    const [history, setHistory] = (0, react_1.useState)({
+
+interface MetricsData {
+    avg_queue_length: number;
+    avg_message_latency_ms: number;
+    avg_memory_usage_mb: number;
+    avg_cpu_usage_percent: number;
+    uptime_seconds: number;
+    total_errors: number;
+    alerts?: Record<string, { level: string; message: string; value: number }>;
+}
+
+interface HistoryData {
+    queue: Array<{ timestamp: number; value: number }>;
+    latency: Array<{ timestamp: number; value: number }>;
+    memory: Array<{ timestamp: number; value: number }>;
+    cpu: Array<{ timestamp: number; value: number }>;
+}
+
+const PerformanceDashboard = () => {
+    const [metrics, setMetrics] = useState<MetricsData | null>(null);
+    const [connected, setConnected] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const ws = useRef<WebSocket | null>(null);
+    const [history, setHistory] = useState<HistoryData>({
         queue: [],
         latency: [],
         memory: [],
         cpu: [],
     });
-    (0, react_1.useEffect)(() => {
-        const connect = (): any => {
+
+    useEffect(() => {
+        const connect = () => {
             const socket = new WebSocket('ws://localhost:8000/ws/metrics');
             socket.onopen = () => {
                 setConnected(true);
@@ -55,10 +79,10 @@ const PerformanceDashboard = (): any => {
             };
             socket.onmessage = (event) => {
                 try {
-                    const data = JSON.parse(event.data);
+                    const data = JSON.parse(event.data) as MetricsData;
                     setMetrics(data);
                     const timestamp = Date.now();
-                    setHistory((prev: any) => ({
+                    setHistory((prev) => ({
                         queue: [...prev.queue.slice(-50), { timestamp, value: data.avg_queue_length }],
                         latency: [...prev.latency.slice(-50), { timestamp, value: data.avg_message_latency_ms }],
                         memory: [...prev.memory.slice(-50), { timestamp, value: data.avg_memory_usage_mb }],
@@ -71,75 +95,120 @@ const PerformanceDashboard = (): any => {
             };
             ws.current = socket;
         };
+
         connect();
+
         return () => {
             if (ws.current) {
                 ws.current.close();
             }
         };
     }, []);
+
     if (!connected) {
-        return (<material_1.Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-        <material_1.CircularProgress />
-        <material_1.Typography variant="body1" sx={{ ml: 2 }}>
-          Connecting to metrics service...
-        </material_1.Typography>
-      </material_1.Box>);
+        return (
+            <div className="flex justify-center items-center min-h-[200px]">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-blue-600"></div>
+                <p className="ml-2">
+                    Connecting to metrics service...
+                </p>
+            </div>
+        );
     }
+
     if (error) {
-        return (<material_1.Alert severity="error" sx={{ mb: 2 }}>
-        {error}
-      </material_1.Alert>);
+        return (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-2 flex items-center">
+                <div className="flex-shrink-0 w-5 h-5 text-red-600 mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                </div>
+                <p className="text-sm text-red-800">
+                    {error}
+                </p>
+            </div>
+        );
     }
+
     if (!metrics) {
-        return (<material_1.Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-        <material_1.CircularProgress />
-      </material_1.Box>);
+        return (
+            <div className="flex justify-center items-center min-h-[200px]">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-blue-600"></div>
+            </div>
+        );
     }
-    return (<Box style={{ flexGrow: 1, p: 3 }}>
-      
-      {Object.entries(metrics.alerts).map(([key, alert]) => (<material_1.Alert key={key} severity={alert.level} sx={{ mb: 2 }}>
-          {alert.message} (Current value: {alert.value})
-        </material_1.Alert>))}
 
-      <SimpleGrid columns={3}>
-        <GridItem colSpan={12} md={6}>
-          <MetricCard title="Message Queue Length" value={metrics.avg_queue_length} unit="messages" history={history.queue}/>
-        </GridItem>
-        <GridItem colSpan={12} md={6}>
-          <MetricCard title="Message Latency" value={metrics.avg_message_latency_ms} unit="ms" history={history.latency}/>
-        </GridItem>
-        <GridItem colSpan={12} md={6}>
-          <MetricCard title="Memory Usage" value={metrics.avg_memory_usage_mb} unit="MB" history={history.memory}/>
-        </GridItem>
-        <GridItem colSpan={12} md={6}>
-          <MetricCard title="CPU Usage" value={metrics.avg_cpu_usage_percent} unit="%" history={history.cpu}/>
-        </GridItem>
-      </GridItem>
+    return (
+        <div className="flex-grow p-3">
+            {Object.entries(metrics.alerts || {}).map(([key, alert]) => {
+                const alertColor = alert.level === 'error' ? 'red' :
+                                  alert.level === 'warning' ? 'yellow' :
+                                  alert.level === 'success' ? 'green' : 'blue';
+                return (
+                    <div key={key} className={`p-4 bg-${alertColor}-50 border border-${alertColor}-200 rounded-lg mb-2 flex items-center`}>
+                        <div className={`flex-shrink-0 w-5 h-5 text-${alertColor}-600 mr-2`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                {alert.level === 'error' && (
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                )}
+                                {alert.level === 'warning' && (
+                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.086-1.742 3.086H4.42c-1.532 0-2.492-1.75-1.742-3.086l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                )}
+                                {alert.level === 'success' && (
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                )}
+                                {(alert.level === 'info' || alert.level === 'default') && (
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                )}
+                            </svg>
+                        </div>
+                        <p className="text-sm">
+                            {alert.message} (Current value: {alert.value})
+                        </p>
+                    </div>
+                );
+            })}
 
-      <Box style={{ mt: 3 }}>
-        <material_1.Typography variant="h6" gutterBottom>
-          System Status
-        </material_1.Typography>
-        <SimpleGrid columns={2}>
-          <GridItem colSpan={12} md={4}>
-            <material_1.Typography variant="body1">
-              Uptime: {(metrics.uptime_seconds / 3600).toFixed(2)} hours
-            </material_1.Typography>
-          </GridItem>
-          <GridItem colSpan={12} md={4}>
-            <material_1.Typography variant="body1" color={metrics.total_errors > 0 ? 'error' : 'success'}>
-              Total Errors: {metrics.total_errors}
-            </material_1.Typography>
-          </GridItem>
-          <GridItem colSpan={12} md={4}>
-            <material_1.Typography variant="body1" color={connected ? 'success' : 'error'}>
-              Status: {connected ? 'Connected' : 'Disconnected'}
-            </material_1.Typography>
-          </GridItem>
-        </GridItem>
-      </material_1.Box>
-    </material_1.Box>);
+            <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-3">
+                    <MetricCard title="Message Queue Length" value={metrics.avg_queue_length} unit="messages" history={history.queue}/>
+                </div>
+                <div className="col-span-3">
+                    <MetricCard title="Message Latency" value={metrics.avg_message_latency_ms} unit="ms" history={history.latency}/>
+                </div>
+                <div className="col-span-3">
+                    <MetricCard title="Memory Usage" value={metrics.avg_memory_usage_mb} unit="MB" history={history.memory}/>
+                </div>
+                <div className="col-span-3">
+                    <MetricCard title="CPU Usage" value={metrics.avg_cpu_usage_percent} unit="%" history={history.cpu}/>
+                </div>
+            </div>
+
+            <div className="mt-3">
+                <h3 className="text-lg font-semibold mb-2">
+                    System Status
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                        <p>
+                            Uptime: {(metrics.uptime_seconds / 3600).toFixed(2)} hours
+                        </p>
+                    </div>
+                    <div className="col-span-2">
+                        <p className={metrics.total_errors > 0 ? 'text-red-500' : 'text-green-500'}>
+                            Total Errors: {metrics.total_errors}
+                        </p>
+                    </div>
+                    <div className="col-span-2">
+                        <p className={connected ? 'text-green-500' : 'text-red-500'}>
+                            Status: {connected ? 'Connected' : 'Disconnected'}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
-exports.default = PerformanceDashboard;
-export {};
+
+export default PerformanceDashboard;

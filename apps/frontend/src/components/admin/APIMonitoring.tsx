@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAPIMonitoring } from '../../hooks/useAPIMonitoring';
 import { LineChart } from '../Charts/LineChart';
 
 export const APIMonitoring: React.FC = () => {
-  const { 
-    providers, 
-    stats, 
-    costBreakdown, 
+  const {
+    providers,
+    stats,
+    costBreakdown,
     dailyUsage,
     requestRate,
     errorRate,
@@ -16,7 +16,7 @@ export const APIMonitoring: React.FC = () => {
     clearCache,
     loading
   } = useAPIMonitoring();
-  
+
   const [selectedTimeframe, setSelectedTimeframe] = useState('24h');
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('Overview');
@@ -89,7 +89,7 @@ export const APIMonitoring: React.FC = () => {
                 <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Saved ~${stats.cacheSavings.toFixed(2)}</div>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="bg-white rounded-lg shadow dark:bg-gray-800">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -124,14 +124,14 @@ export const APIMonitoring: React.FC = () => {
                 onChange={(e) => setSelectedProvider(e.target.value || null)}
               >
                 <option value="">All providers</option>
-                {providers.map(provider => (
+                {providers.map((provider: any) => (
                   <option key={provider.id} value={provider.id}>
                     {provider.name}
                   </option>
                 ))}
               </select>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white dark:bg-gray-800">
                 <thead className="bg-gray-50 dark:bg-gray-700">
@@ -148,8 +148,8 @@ export const APIMonitoring: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {providers
-                    .filter(p => !selectedProvider || p.id === selectedProvider)
-                    .map(provider => (
+                    .filter((p: any) => !selectedProvider || p.id === selectedProvider)
+                    .map((provider: any) => (
                       <tr key={provider.id}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{provider.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -198,7 +198,7 @@ export const APIMonitoring: React.FC = () => {
                 <option value="30d">Last 30 Days</option>
               </select>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg shadow dark:bg-gray-800">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -214,147 +214,174 @@ export const APIMonitoring: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {costBreakdown.byProvider.map(item => (
+                      {costBreakdown.byProvider.map((item: any) => (
                         <tr key={item.id}>
                           <td className="py-2">{item.name}</td>
                           <td className="py-2">${item.cost.toFixed(2)}</td>
                           <td className="py-2">{item.percentage.toFixed(1)}%</td>
-                        </Tr>
+                        </tr>
                       ))}
-                    </Tbody>
-                  </Table>
+                    </tbody>
+                  </table>
                 </div>
               </div>
-              
-              <Card>
-                <CardHeader>
-                  <Heading size="sm">Daily Usage</Heading>
-                </CardHeader>
-                <CardBody>
-                  <Box h="200px">
-                    <LineChart 
-                      data={dailyUsage} 
-                      xKey="date" 
-                      yKey="cost" 
-                      height={200} 
+
+              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Daily Usage</h3>
+                </div>
+                <div className="p-4">
+                  <div style={{height: '200px'}}>
+                    <LineChart
+                      data={dailyUsage}
+                      xKey="date"
+                      yKey="cost"
+                      height={200}
                     />
-                  </Box>
-                </CardBody>
-              </Card>
-            </SimpleGrid>
-          </TabPanel>
-          
-          <TabPanel>
-            <HStack justifyContent="space-between" mb={4}>
-              <Heading size="md">Cache Performance</Heading>
-              <Button colorScheme="red" size="sm" onClick={clearCache}>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'Cache Management':
+        return (
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Cache Management</h2>
+              <button
+                onClick={clearCache}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
+              >
                 Clear Cache
-              </Button>
-            </HStack>
-            
-            <SimpleGrid columns={{ sm: 1, md: 2 }} spacing={6} mb={6}>
-              <Card>
-                <CardHeader>
-                  <Heading size="sm">Cache Statistics</Heading>
-                </CardHeader>
-                <CardBody>
-                  <StatGroup>
-                    <Stat>
-                      <StatLabel>Hit Rate</StatLabel>
-                      <StatNumber>{stats.cacheHitRate.toFixed(1)}%</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Total Hits</StatLabel>
-                      <StatNumber>{stats.cacheHits.toLocaleString()}</StatNumber>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>Estimated Savings</StatLabel>
-                      <StatNumber>${stats.cacheSavings.toFixed(2)}</StatNumber>
-                    </Stat>
-                  </StatGroup>
-                </CardBody>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <Heading size="sm">Cache Settings</Heading>
-                </CardHeader>
-                <CardBody>
-                  <SimpleGrid columns={1} spacing={4}>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel mb="0">Enable Caching</FormLabel>
-                      <Switch 
-                        isChecked={settings.cacheEnabled} 
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cache Statistics</h3>
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Hit Rate</div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.cacheHitRate.toFixed(1)}%</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Hits</div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.cacheHits.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Estimated Savings</div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">${stats.cacheSavings.toFixed(2)}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cache Settings</h3>
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Caching</label>
+                      <input
+                        type="checkbox"
+                        checked={settings.cacheEnabled}
                         onChange={(e) => updateSettings({ cacheEnabled: e.target.checked })}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
-                    </FormControl>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel mb="0">Enable Semantic Caching</FormLabel>
-                      <Switch 
-                        isChecked={settings.semanticCacheEnabled} 
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Semantic Caching</label>
+                      <input
+                        type="checkbox"
+                        checked={settings.semanticCacheEnabled}
                         onChange={(e) => updateSettings({ semanticCacheEnabled: e.target.checked })}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Cache TTL (seconds)</FormLabel>
-                      <Input 
-                        type="number" 
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cache TTL (seconds)</label>
+                      <input
+                        type="number"
                         value={settings.cacheTTL}
                         onChange={(e) => updateSettings({ cacheTTL: parseInt(e.target.value) })}
+                        className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       />
-                    </FormControl>
-                  </SimpleGrid>
-                </CardBody>
-              </Card>
-            </SimpleGrid>
-          </TabPanel>
-          
-          <TabPanel>
-            <Heading size="md" mb={4}>API Gateway Settings</Heading>
-            
-            <SimpleGrid columns={{ sm: 1, md: 2 }} spacing={6}>
-              <Card>
-                <CardHeader>
-                  <Heading size="sm">General Settings</Heading>
-                </CardHeader>
-                <CardBody>
-                  <SimpleGrid columns={1} spacing={4}>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel mb="0">Enable Cost Tracking</FormLabel>
-                      <Switch 
-                        isChecked={settings.costTrackingEnabled} 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'Settings':
+        return (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">API Gateway Settings</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">General Settings</h3>
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Cost Tracking</label>
+                      <input
+                        type="checkbox"
+                        checked={settings.costTrackingEnabled}
                         onChange={(e) => updateSettings({ costTrackingEnabled: e.target.checked })}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
-                    </FormControl>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel mb="0">Enable Provider Failover</FormLabel>
-                      <Switch 
-                        isChecked={settings.failoverEnabled} 
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Enable Provider Failover</label>
+                      <input
+                        type="checkbox"
+                        checked={settings.failoverEnabled}
                         onChange={(e) => updateSettings({ failoverEnabled: e.target.checked })}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
-                    </FormControl>
-                  </SimpleGrid>
-                </CardBody>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <Heading size="sm">Provider Management</Heading>
-                </CardHeader>
-                <CardBody>
-                  <Alert status="info" mb={4}>
-                    <AlertIcon />
-                    Provider API keys and priority settings can be configured in the Provider Management section.
-                  </Alert>
-                  <Button colorScheme="blue" size="sm">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow dark:bg-gray-800">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Provider Management</h3>
+                </div>
+                <div className="p-4">
+                  <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      Provider API keys and priority settings can be configured in the Provider Management section.
+                    </p>
+                  </div>
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
                     Go to Provider Management
-                  </Button>
-                </CardBody>
-              </Card>
-            </SimpleGrid>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </Box>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="p-6">
+      {renderTabs()}
+      <div className="mt-6">
+        {renderPanel()}
+      </div>
+    </div>
   );
 };

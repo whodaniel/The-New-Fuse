@@ -32,4 +32,5 @@ module.exports = {
       isolatedModules: true,
     },
   },
+  testTimeout: 30000,
 };

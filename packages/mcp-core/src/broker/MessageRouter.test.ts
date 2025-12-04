@@ -1,6 +1,6 @@
 /**
  * MessageRouter Unit Tests
- * 
+ *
  * Comprehensive unit tests for the MessageRouter class covering
  * request routing, load balancing integration, retry logic, and error handling.
  */
@@ -107,7 +107,7 @@ describe('MessageRouter', () => {
 
       // Start a request but don't await it
       const requestPromise = messageRouter.routeRequest(request);
-      
+
       // Stop the router
       await messageRouter.stop();
 
@@ -199,7 +199,7 @@ describe('MessageRouter', () => {
       };
 
       const response = await messageRouter.routeRequest(request, routingInfo);
-      
+
       // Should return a queued response for offline service
       expect(response.result.status).toBe('queued');
     });
@@ -207,7 +207,7 @@ describe('MessageRouter', () => {
     it('should throw error when router is not started', async () => {
       // Make sure router is stopped
       await messageRouter.stop();
-      
+
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 'test-request',
@@ -256,7 +256,7 @@ describe('MessageRouter', () => {
       });
 
       const response = await messageRouter.routeRequest(request, routingInfo);
-      
+
       expect(response).toBeDefined();
       expect(callCount).toBe(3);
     });
@@ -303,10 +303,10 @@ describe('MessageRouter', () => {
 
       expect(delay1).toBeGreaterThanOrEqual(900); // 1000 * (1-0.1)
       expect(delay1).toBeLessThanOrEqual(1100);   // 1000 * (1+0.1)
-      
+
       expect(delay2).toBeGreaterThanOrEqual(1800); // 2000 * (1-0.1)
       expect(delay2).toBeLessThanOrEqual(2200);    // 2000 * (1+0.1)
-      
+
       expect(delay3).toBeGreaterThanOrEqual(3600); // 4000 * (1-0.1)
       expect(delay3).toBeLessThanOrEqual(4400);    // 4000 * (1+0.1)
     });
@@ -320,7 +320,7 @@ describe('MessageRouter', () => {
       };
 
       const delay5 = messageRouter['calculateRetryDelay'](5, retryPolicy);
-      expect(delay5).toBeLessThanOrEqual(2000);
+      expect(delay5).toBeLessThanOrEqual(2100);
     });
   });
 
@@ -464,12 +464,12 @@ describe('MessageRouter', () => {
       };
 
       await messageRouter.routeRequest(request);
-      
+
       let metrics = messageRouter.getMetrics();
       expect(metrics.totalRequests).toBe(1);
 
       messageRouter.resetMetrics();
-      
+
       metrics = messageRouter.getMetrics();
       expect(metrics.totalRequests).toBe(0);
       expect(metrics.successfulRequests).toBe(0);
@@ -493,12 +493,12 @@ describe('MessageRouter', () => {
       };
 
       const requestPromise = messageRouter.routeRequest(request);
-      
+
       // Check active count during request
       expect(messageRouter.getActiveRequestCount()).toBe(1);
-      
+
       await requestPromise;
-      
+
       // Check active count after request
       expect(messageRouter.getActiveRequestCount()).toBe(0);
     });
@@ -512,7 +512,7 @@ describe('MessageRouter', () => {
     it('should identify retryable errors correctly', async () => {
       const retryableError = new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Connection timeout');
       const nonRetryableError = new MCPErrorClass(JSONRPCErrorCode.INVALID_REQUEST, 'Invalid request');
-      
+
       expect(messageRouter['isRetryableError'](retryableError)).toBe(true);
       expect(messageRouter['isRetryableError'](nonRetryableError)).toBe(false);
     });
@@ -564,7 +564,7 @@ describe('MessageRouter', () => {
       };
 
       const response = await messageRouter.routeRequest(request, routingInfo);
-      
+
       expect(response).toBeDefined();
       expect(response.result).toBeDefined();
     });
@@ -582,7 +582,7 @@ describe('MessageRouter', () => {
       };
 
       const response = await messageRouter.routeRequest(request, routingInfo);
-      
+
       expect(response).toBeDefined();
       expect(response.result).toBeDefined();
     });

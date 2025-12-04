@@ -32,15 +32,31 @@ export type {
 // Connection types
 export type { ConnectionOptions, ConnectionStatus } from './interfaces/IMCPConnection.js';
 
-// Core types
+// Resource types
 export type {
-  LoadBalancingStrategy,
-  LogLevel,
-  MCPServerConfig,
-  MCPServerInfo,
-  MCPServiceInfo,
-  ServiceStatus,
-} from './types/index.js';
+  ResourceCaching,
+  ResourceCallback,
+  ResourceContent,
+  ResourcePermissions,
+} from './interfaces/IMCPResource.js';
+
+// Service Mesh types
+export type {
+  AutoDiscoveryConfig,
+  CircuitBreakerConfig,
+  IMCPServiceMesh,
+  ScalingEvent,
+  ScalingPolicy,
+  ServiceEndpoint,
+  ServiceMeshHealthCheck,
+  ServiceMeshIntegrationResult,
+  ServiceMeshIntegrationStatus,
+  ServiceMeshLoadBalancing,
+  ServiceMeshMetrics,
+  ServiceMeshQuery,
+  ServiceMeshRegistration,
+  ServiceScalingConfig,
+} from './interfaces/IMCPServiceMesh.js';
 
 // Tool-related types
 export type {
@@ -53,7 +69,17 @@ export type {
   ToolResult,
   ToolUsageStats,
   ValidationResult,
-} from './interfaces/index.js';
+} from './interfaces/IMCPTool.js';
+
+// Core types
+export type {
+  LoadBalancingStrategy,
+  LogLevel,
+  MCPServerConfig,
+  MCPServerInfo,
+  MCPServiceInfo,
+  ServiceStatus,
+} from './types/index.js';
 
 // Error types and classes
 export {

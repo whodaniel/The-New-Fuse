@@ -1,6 +1,6 @@
 /**
  * Core MCP Types
- * 
+ *
  * This module exports all type definitions used throughout the MCP system.
  */
 
@@ -13,7 +13,8 @@ export type { ResourceType, ResourceAccessMode, ResourceStatus, ResourceDiscover
 export type { ToolType, ToolExecutionStatus, ToolExecutionContext, ToolRegistry, ToolSandboxConfig } from './tool';
 export type { CapabilityCategory, CapabilityLifecycleState, CapabilityCompatibilityLevel, CapabilityDiscoveryResult } from './capability';
 export type { ConnectionType, ConnectionEvent, ConnectionPoolConfig, ConnectionFactory } from './connection';
-export type { JSONRPCErrorCode, MCPErrorCode, ErrorSeverity, ErrorCategory, ErrorHandler, ErrorRecoveryStrategy, ErrorStatistics } from './error';
+export { JSONRPCErrorCode, MCPErrorCode, ErrorSeverity, ErrorCategory } from './error';
+export type { ErrorHandler, ErrorRecoveryStrategy, ErrorStatistics } from './error';
 export type { RetryPolicy, TimeoutConfig, HealthCheckResult, VersionInfo, NotificationCallback, Pagination, SortConfig, FilterConfig } from './common';
 export type { PerformanceMetrics, Alert, AlertSeverity, AlertStatus, TimeSeries, MetricDataPoint, DashboardConfig, DashboardPanel, MonitoringConfig, LoadTestConfig, LoadTestResult, CacheMetrics, ConnectionPoolMetrics } from './monitoring';
 export { LogLevel, ServiceStatus, LoadBalancingStrategy } from './common';

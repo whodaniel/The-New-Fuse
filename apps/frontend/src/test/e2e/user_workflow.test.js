@@ -250,18 +250,18 @@ describe('User Workflow E2E Tests', function () {
                     return [4 /*yield*/, driver.takeScreenshot()];
                 case 14:
                     screenshot = _a.sent();
-                    ', screenshot);;
+                    console.log('Screenshot:', screenshot);
                     throw error_5;
                 case 15: return [2 /*return*/];
             }
         });
     }); }, 45000);
     test('user login and navigation', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var emailInput;
+        var emailInput, error_6, screenshot;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, , 4, 5]);
+                    _a.trys.push([0, 5, , 7]);
                     // Wait for any loading states
                     return [4 /*yield*/, driver.sleep(2000)];
                 case 1:
@@ -278,57 +278,56 @@ describe('User Workflow E2E Tests', function () {
                     return [4 /*yield*/, driver.wait(until.elementIsVisible(emailInput), 10000, 'Email input is not visible')];
                 case 3:
                     _a.sent();
-                    return [3 /*break*/, 5];
-                case 4: return [7 /*endfinally*/];
-                case 5: return [2 /*return*/];
+                    return [4 /*yield*/, emailInput.sendKeys('test@example.com')];
+                case 4:
+                    _a.sent();
+                    return [3 /*break*/, 7];
+                case 5:
+                    error_6 = _a.sent();
+                    console.error('Login flow error:', error_6);
+                    return [4 /*yield*/, driver.takeScreenshot()];
+                case 6:
+                    screenshot = _a.sent();
+                    console.log('Screenshot:', screenshot);
+                    throw error_6;
+                case 7: return [2 /*return*/];
             }
         });
-    }); });
-    yield emailInput.sendKeys('test@example.com');
+    }); }, 45000);
+    test('browser control workflow', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var emailInput, error_7, screenshot;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 5, , 7]);
+                    return [4 /*yield*/, driver.sleep(2000)];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, driver.wait(until.elementLocated(By.css([
+                            '[data-testid="email-input"]',
+                            'input[type="email"]',
+                            '#email',
+                            '.email-input'
+                        ].join(','))), 30000, 'Email input not found after 30 seconds')];
+                case 2:
+                    emailInput = _a.sent();
+                    return [4 /*yield*/, driver.wait(until.elementIsVisible(emailInput), 10000, 'Email input is not visible')];
+                case 3:
+                    _a.sent();
+                    return [4 /*yield*/, emailInput.sendKeys('test@example.com')];
+                case 4:
+                    _a.sent();
+                    return [3 /*break*/, 7];
+                case 5:
+                    error_7 = _a.sent();
+                    console.error('Browser control flow error:', error_7);
+                    return [4 /*yield*/, driver.takeScreenshot()];
+                case 6:
+                    screenshot = _a.sent();
+                    console.log('Screenshot:', screenshot);
+                    throw error_7;
+                case 7: return [2 /*return*/];
+            }
+        });
+    }); }, 45000);
 });
-try { }
-catch (error) {
-    console.error('Login flow error:', error);
-    var screenshot = await driver.takeScreenshot();
-    ', screenshot);;
-    throw error;
-}
-45000;
-;
-test('browser control workflow', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var emailInput;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, , 4, 5]);
-                return [4 /*yield*/, driver.sleep(2000)];
-            case 1:
-                _a.sent();
-                return [4 /*yield*/, driver.wait(until.elementLocated(By.css([
-                        '[data-testid="email-input"]',
-                        'input[type="email"]',
-                        '#email',
-                        '.email-input'
-                    ].join(','))), 30000, 'Email input not found after 30 seconds')];
-            case 2:
-                emailInput = _a.sent();
-                return [4 /*yield*/, driver.wait(until.elementIsVisible(emailInput), 10000, 'Email input is not visible')];
-            case 3:
-                _a.sent();
-                return [3 /*break*/, 5];
-            case 4: return [7 /*endfinally*/];
-            case 5: return [2 /*return*/];
-        }
-    });
-}); });
-await emailInput.sendKeys('test@example.com');
-try { }
-catch (error) {
-    console.error('Browser control flow error:', error);
-    var screenshot = await driver.takeScreenshot();
-    ', screenshot);;
-    throw error;
-}
-45000;
-;
-;

@@ -2,9 +2,8 @@
  * Tests for MCP Tool types and validation
  */
 
-// @ts-expect-error - Jest globals are available without import
-import { 
-  ToolType, 
+import {
+  ToolType,
   ToolExecutionStatus,
   ToolExecutionContext,
   ToolExecutionLog,

@@ -15,7 +15,9 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "isolatedModules": true,
+    "downlevelIteration": true
   },
   "include": ["src/**/*"],
   "exclude": [

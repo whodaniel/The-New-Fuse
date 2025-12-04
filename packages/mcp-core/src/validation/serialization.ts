@@ -3,7 +3,7 @@
  */
 
 import { MCPMessage, MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
 import { MessageValidator } from './messageValidator';
 
 /**
@@ -98,7 +98,7 @@ export class MessageSerializer {
           }
           seen.add(value);
         }
-        
+
         // Apply custom replacer if provided, otherwise use default
         return options.replacer ? options.replacer(key, value) : this.defaultReplacer(key, value);
       };
@@ -124,7 +124,7 @@ export class MessageSerializer {
       };
     } catch (error) {
       const endTime = Date.now();
-      
+
       return {
         success: false,
         error: new MCPErrorClass(
@@ -391,7 +391,7 @@ export class SerializationUtils {
     try {
       // First check if the message can be serialized at all
       JSON.stringify(message);
-      
+
       const serialized = MessageSerializer.serialize(message);
       if (!serialized.success) return false;
 

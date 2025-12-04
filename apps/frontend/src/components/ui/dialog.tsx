@@ -17,6 +17,7 @@ interface DialogHeaderProps {
 
 interface DialogTitleProps {
   children: React.ReactNode;
+  className?: string;
 }
 
 interface DialogDescriptionProps {
@@ -25,10 +26,11 @@ interface DialogDescriptionProps {
 
 interface DialogFooterProps {
   children: React.ReactNode;
+  className?: string;
 }
 
 interface DialogTriggerProps {
-  asChild?: boolean;
+  _asChild?: boolean;
   children: React.ReactNode;
 }
 
@@ -37,8 +39,8 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50" 
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50"
         onClick={() => onOpenChange?.(false)}
       />
       <div className="relative bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
@@ -64,9 +66,9 @@ export function DialogHeader({ children }: DialogHeaderProps) {
   );
 }
 
-export function DialogTitle({ children }: DialogTitleProps) {
+export function DialogTitle({ children, className = "" }: DialogTitleProps) {
   return (
-    <h2 className="text-lg font-semibold text-gray-900">
+    <h2 className={`text-lg font-semibold text-gray-900 ${className}`}>
       {children}
     </h2>
   );
@@ -80,24 +82,24 @@ export function DialogDescription({ children }: DialogDescriptionProps) {
   );
 }
 
-export function DialogFooter({ children }: DialogFooterProps) {
+export function DialogFooter({ children, className = "" }: DialogFooterProps) {
   return (
-    <div className="flex justify-end space-x-2 mt-6 pt-4 border-t border-gray-200">
+    <div className={`flex justify-end space-x-2 mt-6 pt-4 border-t border-gray-200 ${className}`}>
       {children}
     </div>
   );
 }
 
-export function DialogTrigger({ asChild, children }: DialogTriggerProps) {
+export function DialogTrigger({ _asChild, children }: DialogTriggerProps) {
   return <>{children}</>;
 }
 
 interface DialogCloseProps {
-  asChild?: boolean;
+  _asChild?: boolean;
   children: React.ReactNode;
 }
 
-export function DialogClose({ asChild, children }: DialogCloseProps) {
+export function DialogClose({ _asChild, children }: DialogCloseProps) {
   return <>{children}</>;
 }
 

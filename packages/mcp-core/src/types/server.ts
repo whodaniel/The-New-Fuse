@@ -17,17 +17,23 @@ export interface MCPServerConfig {
   /** Server host */
   host: string;
   /** Maximum concurrent connections */
-  maxConnections: number;
+  maxConnections?: number;
   /** Request timeout in milliseconds */
-  timeout: number;
+  timeout?: number;
   /** Enable authentication */
-  enableAuth: boolean;
+  enableAuth?: boolean;
   /** Enable TLS */
-  enableTLS: boolean;
+  enableTLS?: boolean;
   /** Log level */
-  logLevel: LogLevel;
+  logLevel?: LogLevel;
   /** Timeout configuration */
   timeouts?: TimeoutConfig;
+  /** Rate limiting configuration */
+  rateLimiting?: {
+    enabled: boolean;
+    maxRequestsPerMinute: number;
+    burstSize: number;
+  };
   /** Additional server options */
   options?: ServerOptions;
 }

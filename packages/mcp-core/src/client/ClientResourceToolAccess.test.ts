@@ -1,6 +1,6 @@
 /**
  * Tests for client-side resource and tool access functionality
- * 
+ *
  * This test suite focuses specifically on the resource and tool access
  * capabilities of the MCP client, including caching behavior.
  */
@@ -11,6 +11,13 @@ import { MCPResource, ResourceContent } from '../interfaces/IMCPResource';
 import { ToolResult } from '../interfaces/IMCPTool';
 
 // Mock WebSocket for testing
+class MockCloseEvent extends Event {
+  constructor(type: string, public code?: number, public reason?: string) {
+    super(type);
+  }
+}
+(global as any).CloseEvent = MockCloseEvent;
+
 class MockWebSocket {
   static CONNECTING = 0;
   static OPEN = 1;
@@ -28,7 +35,7 @@ class MockWebSocket {
   constructor(public url: string) {
     // Set up default handlers
     this.setupDefaultHandlers();
-    
+
     // Simulate connection after a short delay
     setTimeout(() => {
       this.readyState = MockWebSocket.OPEN;
@@ -80,7 +87,7 @@ class MockWebSocket {
       let filteredResources = resources;
       if (message.params?.pattern) {
         const pattern = message.params.pattern;
-        filteredResources = resources.filter(r => 
+        filteredResources = resources.filter(r =>
           r.uri.includes(pattern) || r.name.includes(pattern)
         );
       }
@@ -95,7 +102,7 @@ class MockWebSocket {
     // Resource read handler
     this.messageHandlers.set('resources/read', (message) => {
       const uri = message.params?.uri;
-      
+
       const contentMap: Record<string, ResourceContent> = {
         'file:///test/document1.txt': {
           uri: 'file:///test/document1.txt',
@@ -157,7 +164,7 @@ class MockWebSocket {
         'calculate': (args) => {
           const { a, b, operation } = args;
           let result: number;
-          
+
           switch (operation) {
             case 'add': result = a + b; break;
             case 'subtract': result = a - b; break;
@@ -169,7 +176,7 @@ class MockWebSocket {
                 error: `Unknown operation: ${operation}`
               };
           }
-          
+
           return {
             success: true,
             result: { calculation: result, operation, operands: [a, b] }
@@ -178,12 +185,12 @@ class MockWebSocket {
         'text-process': (args) => {
           const { text, operation } = args;
           let result: string;
-          
+
           switch (operation) {
             case 'uppercase': result = text.toUpperCase(); break;
             case 'lowercase': result = text.toLowerCase(); break;
             case 'reverse': result = text.split('').reverse().join(''); break;
-            case 'length': 
+            case 'length':
               return {
                 success: true,
                 result: { length: text.length, text }
@@ -194,7 +201,7 @@ class MockWebSocket {
                 error: `Unknown text operation: ${operation}`
               };
           }
-          
+
           return {
             success: true,
             result: { processed: result, original: text, operation }
@@ -257,11 +264,11 @@ class MockWebSocket {
         try {
           const message = JSON.parse(data);
           const handler = this.messageHandlers.get(message.method);
-          
+
           if (handler) {
             const response = handler(message);
-            this.onmessage(new MessageEvent('message', { 
-              data: JSON.stringify(response) 
+            this.onmessage(new MessageEvent('message', {
+              data: JSON.stringify(response)
             }));
           } else {
             // Default error response
@@ -274,8 +281,8 @@ class MockWebSocket {
                 data: { method: message.method }
               }
             };
-            this.onmessage(new MessageEvent('message', { 
-              data: JSON.stringify(errorResponse) 
+            this.onmessage(new MessageEvent('message', {
+              data: JSON.stringify(errorResponse)
             }));
           }
         } catch (error) {
@@ -288,8 +295,8 @@ class MockWebSocket {
               message: 'Parse error'
             }
           };
-          this.onmessage(new MessageEvent('message', { 
-            data: JSON.stringify(errorResponse) 
+          this.onmessage(new MessageEvent('message', {
+            data: JSON.stringify(errorResponse)
           }));
         }
       }
@@ -341,10 +348,10 @@ describe('Client Resource and Tool Access', () => {
 
     test('should list all available resources', async () => {
       const resources = await client.listResources();
-      
+
       expect(Array.isArray(resources)).toBe(true);
       expect(resources.length).toBe(3);
-      
+
       const uris = resources.map(r => r.uri);
       expect(uris).toContain('file:///test/document1.txt');
       expect(uris).toContain('file:///test/document2.json');
@@ -367,7 +374,7 @@ describe('Client Resource and Tool Access', () => {
 
     test('should read text resource content', async () => {
       const content = await client.readResource('file:///test/document1.txt');
-      
+
       expect(content.uri).toBe('file:///test/document1.txt');
       expect(content.mimeType).toBe('text/plain');
       expect(content.content).toContain('This is the content of document 1');
@@ -376,10 +383,10 @@ describe('Client Resource and Tool Access', () => {
 
     test('should read JSON resource content', async () => {
       const content = await client.readResource('file:///test/document2.json');
-      
+
       expect(content.uri).toBe('file:///test/document2.json');
       expect(content.mimeType).toBe('application/json');
-      
+
       const jsonData = JSON.parse(content.content as string);
       expect(jsonData.id).toBe(1);
       expect(jsonData.name).toBe('Test Object');
@@ -388,10 +395,10 @@ describe('Client Resource and Tool Access', () => {
 
     test('should read database resource content', async () => {
       const content = await client.readResource('database://users/table');
-      
+
       expect(content.uri).toBe('database://users/table');
       expect(content.mimeType).toBe('application/x-database-table');
-      
+
       const dbData = JSON.parse(content.content as string);
       expect(dbData.schema).toBeDefined();
       expect(dbData.rows).toHaveLength(2);
@@ -405,20 +412,20 @@ describe('Client Resource and Tool Access', () => {
 
     test('should cache resource content', async () => {
       const uri = 'file:///test/document1.txt';
-      
+
       // First read
       const startTime1 = Date.now();
       const content1 = await client.readResource(uri);
       const duration1 = Date.now() - startTime1;
-      
+
       // Second read (should be cached)
       const startTime2 = Date.now();
       const content2 = await client.readResource(uri);
       const duration2 = Date.now() - startTime2;
-      
+
       expect(content1).toEqual(content2);
       expect(duration2).toBeLessThan(duration1); // Cached read should be faster
-      
+
       // Verify cache statistics
       const cacheStats = client.getCacheStatistics();
       expect(cacheStats.hitCount).toBeGreaterThan(0);
@@ -435,7 +442,7 @@ describe('Client Resource and Tool Access', () => {
       const result = await client.callTool('echo', {
         message: 'Hello from test!'
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.result).toEqual({
         echo: 'Hello from test!'
@@ -501,7 +508,7 @@ describe('Client Resource and Tool Access', () => {
 
     test('should handle tool execution errors', async () => {
       const result = await client.callTool('error-tool', {});
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toBe('Simulated tool error for testing');
     });
@@ -514,21 +521,21 @@ describe('Client Resource and Tool Access', () => {
     test('should cache tool results for deterministic operations', async () => {
       const toolName = 'calculate';
       const params = { a: 15, b: 3, operation: 'multiply' };
-      
+
       // First call
       const startTime1 = Date.now();
       const result1 = await client.callTool(toolName, params);
       const duration1 = Date.now() - startTime1;
-      
+
       // Second call (should be cached)
       const startTime2 = Date.now();
       const result2 = await client.callTool(toolName, params);
       const duration2 = Date.now() - startTime2;
-      
+
       expect(result1).toEqual(result2);
       expect(result2.result.calculation).toBe(45);
-      expect(duration2).toBeLessThan(duration1); // Cached call should be faster
-      
+      expect(duration2).toBeLessThanOrEqual(duration1); // Cached call should be faster or equal (if 0ms)
+
       // Verify cache statistics
       const cacheStats = client.getCacheStatistics();
       expect(cacheStats.hitCount).toBeGreaterThan(0);
@@ -537,15 +544,15 @@ describe('Client Resource and Tool Access', () => {
     test('should not cache failed tool results', async () => {
       const toolName = 'error-tool';
       const params = {};
-      
+
       // First call (should fail)
       const result1 = await client.callTool(toolName, params);
       expect(result1.success).toBe(false);
-      
+
       // Second call (should not be cached, should fail again)
       const result2 = await client.callTool(toolName, params);
       expect(result2.success).toBe(false);
-      
+
       // Both calls should have been made (not cached)
       expect(result1).toEqual(result2);
     });
@@ -563,9 +570,9 @@ describe('Client Resource and Tool Access', () => {
         client.readResource('database://users/table'),
         client.readResource('file:///test/document1.txt'), // Duplicate for caching test
       ];
-      
+
       const results = await Promise.all(promises);
-      
+
       expect(results).toHaveLength(4);
       expect(results[0].uri).toBe('file:///test/document1.txt');
       expect(results[1].uri).toBe('file:///test/document2.json');
@@ -580,9 +587,9 @@ describe('Client Resource and Tool Access', () => {
         client.callTool('text-process', { text: 'test', operation: 'uppercase' }),
         client.callTool('echo', { message: 'concurrent test' })
       ];
-      
+
       const results = await Promise.all(promises);
-      
+
       expect(results).toHaveLength(4);
       expect(results[0].result.calculation).toBe(8);
       expect(results[1].result.calculation).toBe(20);
@@ -598,9 +605,9 @@ describe('Client Resource and Tool Access', () => {
         client.readResource('file:///test/document2.json'),
         client.callTool('calculate', { a: 7, b: 4, operation: 'subtract' })
       ];
-      
+
       const results = await Promise.all(promises);
-      
+
       expect(results).toHaveLength(5);
       expect(Array.isArray(results[0])).toBe(true); // listResources result
       expect(results[1].uri).toBe('file:///test/document1.txt');
@@ -621,9 +628,9 @@ describe('Client Resource and Tool Access', () => {
       await client.readResource('file:///test/document1.txt'); // Cache hit
       await client.callTool('calculate', { a: 1, b: 2, operation: 'add' });
       await client.callTool('calculate', { a: 1, b: 2, operation: 'add' }); // Cache hit
-      
+
       const stats = client.getCacheStatistics();
-      
+
       expect(stats.totalEntries).toBeGreaterThan(0);
       expect(stats.hitCount).toBeGreaterThan(0);
       expect(stats.hitRate).toBeGreaterThan(0);
@@ -634,13 +641,13 @@ describe('Client Resource and Tool Access', () => {
       // Populate cache
       await client.readResource('file:///test/document1.txt');
       await client.callTool('echo', { message: 'cache test' });
-      
+
       let stats = client.getCacheStatistics();
       expect(stats.totalEntries).toBeGreaterThan(0);
-      
+
       // Clear cache
       client.clearCache();
-      
+
       stats = client.getCacheStatistics();
       expect(stats.totalEntries).toBe(0);
     });
@@ -656,23 +663,23 @@ describe('Client Resource and Tool Access', () => {
       });
 
       await shortCacheClient.connect('ws://localhost:8080');
-      
+
       try {
         // First read
         const content1 = await shortCacheClient.readResource('file:///test/document1.txt');
-        
+
         // Wait for cache to expire
         await new Promise(resolve => setTimeout(resolve, 150));
-        
+
         // Second read (cache should be expired)
         const content2 = await shortCacheClient.readResource('file:///test/document1.txt');
-        
+
         expect(content1).toEqual(content2);
-        
+
         // Both reads should have been actual requests (not cached)
         const stats = shortCacheClient.getCacheStatistics();
         expect(stats.missCount).toBeGreaterThanOrEqual(2);
-        
+
       } finally {
         await shortCacheClient.cleanup();
       }

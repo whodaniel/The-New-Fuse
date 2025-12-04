@@ -2,10 +2,9 @@
  * Tests for MCP Capability types and validation
  */
 
-// @ts-expect-error - Jest globals are available without import
-import { 
-  CapabilityCategory, 
-  CapabilityLifecycleState, 
+import {
+  CapabilityCategory,
+  CapabilityLifecycleState,
   CapabilityCompatibilityLevel,
   CapabilityDiscoveryResult,
   CapabilityCompatibilityResult,

@@ -42,7 +42,7 @@ describe('User Workflow E2E Tests', () => {
         kill.on('close', resolve);
       });
     } catch (error) {
-      
+       // Ignore errors if no process is running
     }
 
     // Start the dev server
@@ -58,9 +58,7 @@ describe('User Workflow E2E Tests', () => {
 
     // Wait for server to be ready
     try {
-      
       await waitForServer('http://localhost:5173', 30000);
-      
     } catch (error) {
       console.error('Failed to start dev server:', error);
       throw error;
@@ -90,7 +88,7 @@ describe('User Workflow E2E Tests', () => {
           kill.on('close', resolve);
         });
       } catch (error) {
-        
+         // Ignore errors if no process is running
       }
     }
   });
@@ -104,7 +102,7 @@ describe('User Workflow E2E Tests', () => {
         30000,
         'App root element not found'
       );
-      
+
     } catch (error) {
       console.error('Error loading page:', error);
       const screenshot = await driver.takeScreenshot();
@@ -169,7 +167,7 @@ describe('User Workflow E2E Tests', () => {
     } catch (error) {
       console.error('Registration flow error:', error);
       const screenshot = await driver.takeScreenshot();
-      :', screenshot);
+      console.log('Screenshot:', screenshot);
       throw error;
     }
   }, 45000);
@@ -189,20 +187,18 @@ describe('User Workflow E2E Tests', () => {
         30000,
         'Email input not found after 30 seconds'
       );
-      
+
       await driver.wait(
         until.elementIsVisible(emailInput),
         10000,
         'Email input is not visible'
       );
-      
-      );
-      
+
       await emailInput.sendKeys('test@example.com');
     } catch (error) {
       console.error('Login flow error:', error);
       const screenshot = await driver.takeScreenshot();
-      :', screenshot);
+      console.log('Screenshot:', screenshot);
       throw error;
     }
   }, 45000);
@@ -221,23 +217,19 @@ describe('User Workflow E2E Tests', () => {
         30000,
         'Email input not found after 30 seconds'
       );
-      
+
       await driver.wait(
         until.elementIsVisible(emailInput),
         10000,
         'Email input is not visible'
       );
-      
-      );
-      
+
       await emailInput.sendKeys('test@example.com');
     } catch (error) {
       console.error('Browser control flow error:', error);
       const screenshot = await driver.takeScreenshot();
-      :', screenshot);
+      console.log('Screenshot:', screenshot);
       throw error;
     }
   }, 45000);
 });
-
-export {};

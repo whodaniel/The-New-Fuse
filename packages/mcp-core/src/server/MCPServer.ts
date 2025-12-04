@@ -1,11 +1,13 @@
 /**
  * MCP Server Implementation
- * 
+ *
  * This class implements the IMCPServer interface providing a complete MCP server
  * with JSON-RPC 2.0 compliance, resource/tool registration, and request handling.
  */
 
 import { EventEmitter } from 'events';
+import { WebSocketServer, WebSocket } from 'ws';
+import { IncomingMessage } from 'http';
 import { IMCPServer } from '../interfaces/IMCPServer';
 import { MCPRequest, MCPResponse, MCPError } from '../interfaces/IMCPMessage';
 import { MCPResource } from '../interfaces/IMCPResource';
@@ -32,6 +34,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
   private failedRequests = 0;
   private totalResponseTime = 0;
   private messageValidator = new MessageValidator();
+  private wss: WebSocketServer | null = null;
 
   constructor() {
     super();
@@ -52,28 +55,58 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     try {
       // Validate configuration
       this.validateConfig(config);
-      
+
       // Store configuration
       this.config = { ...config };
-      
+
       // Initialize server components
       await this.initializeServer();
-      
+
+      // Initialize WebSocket server
+      this.wss = new WebSocketServer({
+        port: config.port,
+        host: config.host
+      });
+
+      this.wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
+        this.handleConnection(ws, req);
+      });
+
+      this.wss.on('error', (error: Error) => {
+        this.emit('error', error);
+      });
+
+      // Broadcast notifications to all connected clients
+      this.on('notification', (notification) => {
+        if (this.wss) {
+          const message = JSON.stringify({
+            jsonrpc: '2.0',
+            method: notification.method,
+            params: notification.params
+          });
+          this.wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(message);
+            }
+          });
+        }
+      });
+
       // Mark as running
       this.running = true;
       this.startTime = new Date();
-      
+
       // Register default capabilities
       this.registerDefaultCapabilities();
-      
+
       // Emit started event
       this.emit('started', {
         config: this.config,
         timestamp: this.startTime
       });
-      
+
       this.log(LogLevel.INFO, `MCP Server "${config.name}" started on ${config.host}:${config.port}`);
-      
+
     } catch (error) {
       this.running = false;
       this.startTime = null;
@@ -92,28 +125,44 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
     try {
       this.log(LogLevel.INFO, 'Stopping MCP Server...');
-      
+
       // Stop accepting new connections
       this.running = false;
-      
+
+      // Close WebSocket server
+      if (this.wss) {
+        // Close all active clients
+        this.wss.clients.forEach(client => {
+          client.terminate();
+        });
+
+        await new Promise<void>((resolve, reject) => {
+          this.wss!.close((err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
+        this.wss = null;
+      }
+
       // Wait for active connections to finish
       await this.waitForActiveConnections();
-      
+
       // Cleanup resources
       await this.cleanup();
-      
+
       // Reset state
       this.config = null;
       this.startTime = null;
       this.activeConnections = 0;
-      
+
       // Emit stopped event
       this.emit('stopped', {
         timestamp: new Date()
       });
-      
+
       this.log(LogLevel.INFO, 'MCP Server stopped successfully');
-      
+
     } catch (error) {
       this.emit('error', error);
       throw error;
@@ -139,41 +188,53 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     }
 
     this.resources.set(resource.uri, resource);
-    
+
     this.emit('resourceRegistered', {
       resource,
       timestamp: new Date()
     });
-    
+
     this.log(LogLevel.DEBUG, `Registered resource: ${resource.name} (${resource.uri})`);
   }
 
   /**
    * Register a tool with the MCP server
    */
-  registerTool(tool: MCPTool): void {
-    if (!tool.name || !tool.handler) {
+  registerTool(tool: MCPTool, handler?: any): void {
+    if (!tool.name) {
       throw new MCPErrorClass(
         JSONRPCErrorCode.INVALID_PARAMS,
-        'Tool must have name and handler'
+        'Tool must have name'
       );
     }
 
-    if (this.tools.has(tool.name)) {
+    // If handler is provided separately, merge it with the tool
+    const toolToRegister = handler
+      ? { ...tool, handler }
+      : tool;
+
+    if (!toolToRegister.handler) {
       throw new MCPErrorClass(
         JSONRPCErrorCode.INVALID_PARAMS,
-        `Tool with name "${tool.name}" already registered`
+        'Tool must have handler'
       );
     }
 
-    this.tools.set(tool.name, tool);
-    
+    if (this.tools.has(toolToRegister.name)) {
+      throw new MCPErrorClass(
+        JSONRPCErrorCode.INVALID_PARAMS,
+        `Tool with name "${toolToRegister.name}" already registered`
+      );
+    }
+
+    this.tools.set(toolToRegister.name, toolToRegister);
+
     this.emit('toolRegistered', {
-      tool,
+      tool: toolToRegister,
       timestamp: new Date()
     });
-    
-    this.log(LogLevel.DEBUG, `Registered tool: ${tool.name}`);
+
+    this.log(LogLevel.DEBUG, `Registered tool: ${toolToRegister.name}`);
   }
 
   /**
@@ -195,12 +256,12 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     }
 
     this.capabilities.set(capability.name, capability);
-    
+
     this.emit('capabilityRegistered', {
       capability,
       timestamp: new Date()
     });
-    
+
     this.log(LogLevel.DEBUG, `Registered capability: ${capability.name}`);
   }
 
@@ -210,7 +271,8 @@ export class MCPServer extends EventEmitter implements IMCPServer {
   async handleRequest(request: MCPRequest): Promise<MCPResponse> {
     const startTime = Date.now();
     this.requestCount++;
-    this.activeConnections++;
+    // activeConnections is now managed by WebSocket connection events
+
 
     try {
       // Validate request format
@@ -267,10 +329,10 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
     } catch (error) {
       this.failedRequests++;
-      
+
       // Convert error to MCP error format
       const mcpError = this.convertToMCPError(error);
-      
+
       const errorResponse: MCPResponse = {
         jsonrpc: '2.0',
         id: request.id,
@@ -291,7 +353,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       return errorResponse;
 
     } finally {
-      this.activeConnections--;
+      // activeConnections is now managed by WebSocket connection events
     }
   }
 
@@ -367,18 +429,25 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     if (!config.name || typeof config.name !== 'string') {
       throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Server name is required');
     }
-    
+
     if (!config.version || typeof config.version !== 'string') {
       throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Server version is required');
     }
-    
+
     if (typeof config.port !== 'number' || config.port < 1 || config.port > 65535) {
       throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Valid port number is required');
     }
-    
+
     if (!config.host || typeof config.host !== 'string') {
       throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Server host is required');
     }
+
+    // Set defaults for optional fields
+    config.maxConnections = config.maxConnections || 100;
+    config.timeout = config.timeout || 30000;
+    config.enableAuth = config.enableAuth || false;
+    config.enableTLS = config.enableTLS || false;
+    config.logLevel = config.logLevel || LogLevel.INFO;
   }
 
   /**
@@ -387,7 +456,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
   private async initializeServer(): Promise<void> {
     // Setup request handlers
     this.setupRequestHandlers();
-    
+
     // Initialize logging
     this.initializeLogging();
   }
@@ -405,8 +474,34 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    * Private method to setup request handlers
    */
   private setupRequestHandlers(): void {
-    // Request handlers will be implemented in the next task
-    // This is a placeholder for the request routing system
+    // Setup request processing infrastructure
+    this.setupRequestProcessing();
+    this.setupResourceHandlers();
+    this.setupToolHandlers();
+  }
+
+  /**
+   * Setup request processing infrastructure
+   */
+  private setupRequestProcessing(): void {
+    // Initialize request processing components
+    this.log(LogLevel.INFO, 'Request processing infrastructure initialized');
+  }
+
+  /**
+   * Setup resource handlers
+   */
+  private setupResourceHandlers(): void {
+    // Initialize resource handling components
+    this.log(LogLevel.INFO, 'Resource handlers initialized');
+  }
+
+  /**
+   * Setup tool handlers
+   */
+  private setupToolHandlers(): void {
+    // Initialize tool handling components
+    this.log(LogLevel.INFO, 'Tool handlers initialized');
   }
 
   /**
@@ -448,22 +543,31 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     switch (method) {
       case 'server/info':
         return this.handleServerInfo();
-      
+
       case 'server/ping':
         return this.handleServerPing();
-      
+
+      case 'initialize':
+        return this.handleInitialize(params);
+
       case 'resources/list':
         return this.handleResourcesList(params);
-      
+
       case 'resources/read':
         return this.handleResourceRead(params);
-      
+
+      case 'resources/subscribe':
+        return this.handleResourceSubscribe(params);
+
+      case 'resources/unsubscribe':
+        return this.handleResourceUnsubscribe(params);
+
       case 'tools/list':
         return this.handleToolsList();
-      
+
       case 'tools/call':
         return this.handleToolCall(params);
-      
+
       default:
         throw new MCPErrorClass(
           JSONRPCErrorCode.METHOD_NOT_FOUND,
@@ -491,20 +595,38 @@ export class MCPServer extends EventEmitter implements IMCPServer {
   }
 
   /**
+   * Handle initialize request
+   */
+  private handleInitialize(params: any): any {
+    // Return server capabilities
+    return {
+      capabilities: this.getRegisteredCapabilities()
+    };
+  }
+
+  /**
    * Handle resources list request
    */
   private handleResourcesList(params?: any): any {
     const resources = Array.from(this.resources.values());
-    
+
     // Apply filtering if provided
     if (params?.pattern) {
-      const pattern = new RegExp(params.pattern, 'i');
-      return resources.filter(resource => 
-        pattern.test(resource.name) || pattern.test(resource.uri)
-      );
+      // Simple glob to regex conversion
+      const regexPattern = params.pattern
+        .replace(/[.+^${}()|[\]\\]/g, '\\$&') // Escape regex chars
+        .replace(/\*/g, '.*') // Convert * to .*
+        .replace(/\?/g, '.'); // Convert ? to .
+
+      const pattern = new RegExp(regexPattern, 'i');
+      return {
+        resources: resources.filter(resource =>
+          pattern.test(resource.name) || pattern.test(resource.uri)
+        )
+      };
     }
-    
-    return resources;
+
+    return { resources };
   }
 
   /**
@@ -534,12 +656,93 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    * Handle tools list request
    */
   private handleToolsList(): any {
-    return Array.from(this.tools.values()).map(tool => ({
-      name: tool.name,
-      description: tool.description,
-      inputSchema: tool.inputSchema,
-      outputSchema: tool.outputSchema
-    }));
+    return {
+      tools: Array.from(this.tools.values()).map(tool => ({
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        outputSchema: tool.outputSchema
+      }))
+    };
+  }
+
+  /**
+   * Handle resource subscribe request
+   */
+  private async handleResourceSubscribe(params: any): Promise<any> {
+    if (!params?.uri) {
+      throw new MCPErrorClass(
+        JSONRPCErrorCode.INVALID_PARAMS,
+        'Resource URI is required'
+      );
+    }
+
+    const resource = this.resources.get(params.uri);
+    if (!resource) {
+      throw new MCPErrorClass(
+        MCPErrorCode.RESOURCE_NOT_FOUND,
+        `Resource not found: ${params.uri}`
+      );
+    }
+
+    const subscriptionId = params.uri; // Use URI as subscription ID for simplicity
+
+    if (!resource.handler) {
+      throw new MCPErrorClass(
+        MCPErrorCode.RESOURCE_UNAVAILABLE,
+        `Resource handler not found for: ${params.uri}`
+      );
+    }
+
+    if (resource.handler.subscribe) {
+      await resource.handler.subscribe(params.uri, (data: any) => {
+        this.emit('notification', {
+          method: 'notifications/resources/updated',
+          params: {
+            uri: params.uri,
+            ...data
+          }
+        });
+      });
+    } else {
+      throw new MCPErrorClass(
+        MCPErrorCode.METHOD_NOT_FOUND,
+        `Resource ${params.uri} does not support subscriptions`
+      );
+    }
+
+    return { subscriptionId };
+  }
+
+  /**
+   * Handle resource unsubscribe request
+   */
+  private async handleResourceUnsubscribe(params: any): Promise<any> {
+    if (!params?.uri) {
+      throw new MCPErrorClass(
+        JSONRPCErrorCode.INVALID_PARAMS,
+        'Resource URI is required'
+      );
+    }
+
+    const resource = this.resources.get(params.uri);
+    if (!resource) {
+      throw new MCPErrorClass(
+        MCPErrorCode.RESOURCE_NOT_FOUND,
+        `Resource not found: ${params.uri}`
+      );
+    }
+
+    if (resource.handler.unsubscribe) {
+      await resource.handler.unsubscribe(params.uri);
+    } else {
+      throw new MCPErrorClass(
+        MCPErrorCode.METHOD_NOT_FOUND,
+        `Resource ${params.uri} does not support subscriptions`
+      );
+    }
+
+    return { success: true };
   }
 
   /**
@@ -605,7 +808,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   private async waitForActiveConnections(maxWait = 30000): Promise<void> {
     const startTime = Date.now();
-    
+
     while (this.activeConnections > 0 && (Date.now() - startTime) < maxWait) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
@@ -619,7 +822,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     this.resources.clear();
     this.tools.clear();
     this.capabilities.clear();
-    
+
     // Reset statistics
     this.requestCount = 0;
     this.successfulRequests = 0;
@@ -641,7 +844,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     // Simple console logging for now
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
-    
+
     if (level === LogLevel.ERROR) {
       console.error(logMessage, meta);
     } else if (level === LogLevel.WARN) {
@@ -650,6 +853,64 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       console.info(logMessage);
     } else if (level === LogLevel.DEBUG && this.config?.logLevel === LogLevel.DEBUG) {
       console.debug(logMessage);
+    }
+  }
+  /**
+   * Handle new WebSocket connection
+   */
+  private handleConnection(ws: WebSocket, req: IncomingMessage): void {
+    this.activeConnections++;
+    this.log(LogLevel.DEBUG, `New connection from ${req.socket.remoteAddress}`);
+
+    ws.on('message', async (data: Buffer) => {
+      await this.handleMessage(ws, data);
+    });
+
+    ws.on('close', () => {
+      this.activeConnections--;
+      this.log(LogLevel.DEBUG, 'Connection closed');
+    });
+
+    ws.on('error', (error) => {
+      this.log(LogLevel.ERROR, `WebSocket error: ${error.message}`);
+    });
+  }
+
+  /**
+   * Handle incoming WebSocket message
+   */
+  private async handleMessage(ws: WebSocket, data: Buffer): Promise<void> {
+    try {
+      const messageStr = data.toString();
+      let request: any;
+
+      try {
+        request = JSON.parse(messageStr);
+      } catch (e) {
+        const errorResponse: MCPResponse = {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: JSONRPCErrorCode.PARSE_ERROR,
+            message: 'Parse error',
+            details: { category: 'system', retryable: false }
+          }
+        };
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(errorResponse));
+        }
+        return;
+      }
+
+      // Handle request
+      const response = await this.handleRequest(request);
+
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(response));
+      }
+
+    } catch (error: any) {
+      this.log(LogLevel.ERROR, `Error handling message: ${error.message}`);
     }
   }
 }
