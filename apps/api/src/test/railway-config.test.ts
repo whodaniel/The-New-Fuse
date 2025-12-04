@@ -70,6 +70,14 @@ describe('RailwayConfigService', () => {
         'REDIS_URL must be a valid Redis connection string'
       );
     });
+
+    it('should detect and handle Railway Redis URLs', () => {
+      // Test with a Railway-specific Redis URL
+      jest.spyOn(configService, 'get').mockReturnValueOnce('redis://redis-12345.upstash.io:6379');
+
+      const url = railwayConfigService.getRedisUrl();
+      expect(url).toBe('redis://redis-12345.upstash.io:6379');
+    });
   });
 
   describe('getRailwayConfig', () => {
