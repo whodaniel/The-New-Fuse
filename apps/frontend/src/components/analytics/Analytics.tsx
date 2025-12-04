@@ -56,8 +56,8 @@ const Analytics = () => {
                 <react_chartjs_2_1.Line data={performanceData} options={{ maintainAspectRatio: false }}/>
               </div>
             </Box>
-          </material_1.Grid>
-        </material_1.Grid>)}
+          </GridItem>
+        </GridItem>)}
 
       {activeTab === 1 && (<SimpleGrid columns={3}>
           <GridItem colSpan={12}>
@@ -68,8 +68,8 @@ const Analytics = () => {
                 <react_chartjs_2_1.Bar data={resourceUsageData} options={{ maintainAspectRatio: false }}/>
               </div>
             </Box>
-          </material_1.Grid>
-        </material_1.Grid>)}
+          </GridItem>
+        </GridItem>)}
 
       {activeTab === 2 && (<SimpleGrid columns={3}>
           <GridItem colSpan={12}>
@@ -77,8 +77,8 @@ const Analytics = () => {
               <h2 className="text-xl font-bold mb-4">Knowledge Graph Analysis</h2>
               <components_1.DynamicKnowledgeGraph />
             </Box>
-          </material_1.Grid>
-        </material_1.Grid>)}
+          </GridItem>
+        </GridItem>)}
 
       {activeTab === 3 && (<SimpleGrid columns={3}>
           <GridItem colSpan={12}>
@@ -86,8 +86,8 @@ const Analytics = () => {
               <h2 className="text-xl font-bold mb-4">Task Allocation Analysis</h2>
               <components_1.PredictiveTaskAllocator />
             </Box>
-          </material_1.Grid>
-        </material_1.Grid>)}
+          </GridItem>
+        </GridItem>)}
     </div>);
 };
 exports.default = Analytics;

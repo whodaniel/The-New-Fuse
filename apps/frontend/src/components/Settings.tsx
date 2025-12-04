@@ -50,7 +50,7 @@ const Settings = () => {
               </material_1.ListItem>
             </material_1.List>
           </Box>
-        </material_1.Grid>
+        </GridItem>
 
         <GridItem colSpan={12} md={6}>
           <Box className="p-4">
@@ -66,29 +66,29 @@ const Settings = () => {
               </material_1.Button>
             </div>
           </Box>
-        </material_1.Grid>
+        </GridItem>
 
         <GridItem colSpan={12} md={6}>
           <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">LLM Configuration</h2>
             <components_1.LLMSelector />
           </Box>
-        </material_1.Grid>
+        </GridItem>
 
         <GridItem colSpan={12} md={6}>
           <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">GPU Management</h2>
             <components_1.GPUManager />
           </Box>
-        </material_1.Grid>
+        </GridItem>
 
         <GridItem colSpan={12}>
           <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">Webhook Management</h2>
             <components_1.WebhookManager />
           </Box>
-        </material_1.Grid>
-      </material_1.Grid>
+        </GridItem>
+      </GridItem>
     </div>);
 };
 exports.default = Settings;

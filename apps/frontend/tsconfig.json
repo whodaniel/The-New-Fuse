@@ -40,6 +40,11 @@
     "node_modules",
     "dist",
     "src/lib"
+    ,"src/test/**/*"
+    ,"**/*.test.ts"
+    ,"**/*.test.tsx"
+    ,"**/*.spec.ts"
+    ,"**/*.spec.tsx"
   ],
   "references": [
     { "path": "../../packages/types" },

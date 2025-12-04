@@ -1,0 +1,9 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+export default function Security() {
+    return (_jsxs("div", { className: "space-y-6", children: [_jsxs("div", { children: [_jsx("h3", { className: "text-lg font-medium", children: "Security Settings" }), _jsx("p", { className: "text-sm text-muted-foreground", children: "Manage your account security and authentication settings" })] }), _jsxs(Card, { children: [_jsx(CardHeader, { children: _jsx(CardTitle, { children: "Change Password" }) }), _jsxs(CardContent, { className: "space-y-4", children: [_jsxs("div", { className: "grid gap-2", children: [_jsx(Label, { htmlFor: "current-password", children: "Current Password" }), _jsx(Input, { id: "current-password", type: "password" })] }), _jsxs("div", { className: "grid gap-2", children: [_jsx(Label, { htmlFor: "new-password", children: "New Password" }), _jsx(Input, { id: "new-password", type: "password" })] }), _jsxs("div", { className: "grid gap-2", children: [_jsx(Label, { htmlFor: "confirm-password", children: "Confirm New Password" }), _jsx(Input, { id: "confirm-password", type: "password" })] }), _jsx(Button, { children: "Update Password" })] })] }), _jsxs(Card, { children: [_jsx(CardHeader, { children: _jsx(CardTitle, { children: "Two-Factor Authentication" }) }), _jsx(CardContent, { className: "space-y-4", children: _jsxs("div", { className: "flex items-center justify-between", children: [_jsxs("div", { className: "space-y-0.5", children: [_jsx(Label, { children: "Enable 2FA" }), _jsx("p", { className: "text-sm text-muted-foreground", children: "Add an extra layer of security to your account" })] }), _jsx(Switch, {})] }) })] })] }));
+}

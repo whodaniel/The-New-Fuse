@@ -27,7 +27,7 @@ const AgentHub = () => {
                 </div>))}
             </div>
           </Box>
-        </material_1.Grid>
+        </GridItem>
 
         <GridItem colSpan={12} md={8}>
           <Box className="p-4">
@@ -52,8 +52,8 @@ const AgentHub = () => {
                 <components_1.CreateAgent />
               </div>)}
           </Box>
-        </material_1.Grid>
-      </material_1.Grid>
+        </GridItem>
+      </GridItem>
     </div>);
 };
 exports.default = AgentHub;

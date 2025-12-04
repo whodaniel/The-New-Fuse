@@ -1,0 +1,13 @@
+"use strict";
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DataCard = DataCard;
+import react_1 from 'react';
+function DataCard(_a) {
+    var title = _a.title, subtitle = _a.subtitle, tooltip = _a.tooltip, data = _a.data, isLoading = _a.isLoading, _b = _a.loadingMessage, loadingMessage = _b === void 0 ? 'Loading...' : _b, hasError = _a.hasError, errorMessage = _a.errorMessage, onRefresh = _a.onRefresh, actions = _a.actions, _c = _a.expandable, expandable = _c === void 0 ? false : _c, _d = _a.defaultExpanded, defaultExpanded = _d === void 0 ? true : _d, renderContent = _a.renderContent, sx = _a.sx, className = _a.className;
+    var _e = react_1.default.useState(defaultExpanded), expanded = _e[0], setExpanded = _e[1];
+    var handleExpandClick = function () {
+        setExpanded(!expanded);
+    };
+    return (_jsxs(material_1.Card, { sx: Object.assign({}, sx), className: className, children: [_jsx(material_1.CardHeader, { title: _jsxs(material_1.Box, { display: "flex", alignItems: "center", gap: 1, children: [_jsx(material_1.Typography, { variant: "h6", children: title }), tooltip && (_jsx(material_1.Tooltip, { title: tooltip, children: _jsx(icons_material_1.Info, { fontSize: "small", color: "action" }) }))] }), subheader: subtitle, action: _jsxs(material_1.Box, { display: "flex", alignItems: "center", gap: 1, children: [onRefresh && (_jsx(material_1.Tooltip, { title: "Refresh", children: _jsx(material_1.IconButton, { onClick: onRefresh, size: "small", children: _jsx(icons_material_1.Refresh, {}) }) })), expandable && (_jsx(material_1.Tooltip, { title: expanded ? 'Collapse' : 'Expand', children: _jsx(material_1.IconButton, { onClick: handleExpandClick, size: "small", children: expanded ? _jsx(icons_material_1.ExpandLess, {}) : _jsx(icons_material_1.ExpandMore, {}) }) }))] }) }), _jsxs(material_1.Collapse, { in: !expandable || expanded, children: [_jsx(material_1.CardContent, { children: isLoading ? (_jsxs(material_1.Box, { display: "flex", justifyContent: "center", alignItems: "center", p: 3, children: [_jsx(material_1.CircularProgress, { size: 24 }), _jsx(material_1.Typography, { variant: "body2", color: "textSecondary", ml: 2, children: loadingMessage })] })) : hasError ? (_jsx(material_1.Alert, { severity: "error", sx: { mb: 2 }, children: errorMessage || 'An error occurred' })) : data ? (renderContent(data)) : (_jsx(material_1.Typography, { color: "textSecondary", align: "center", children: "No data available" })) }), actions && (_jsx(material_1.CardActions, { sx: { justifyContent: 'flex-end' }, children: actions }))] })] }));
+}

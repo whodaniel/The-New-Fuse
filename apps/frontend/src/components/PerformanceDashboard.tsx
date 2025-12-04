@@ -105,17 +105,17 @@ const PerformanceDashboard = (): any => {
       <SimpleGrid columns={3}>
         <GridItem colSpan={12} md={6}>
           <MetricCard title="Message Queue Length" value={metrics.avg_queue_length} unit="messages" history={history.queue}/>
-        </material_1.Grid>
+        </GridItem>
         <GridItem colSpan={12} md={6}>
           <MetricCard title="Message Latency" value={metrics.avg_message_latency_ms} unit="ms" history={history.latency}/>
-        </material_1.Grid>
+        </GridItem>
         <GridItem colSpan={12} md={6}>
           <MetricCard title="Memory Usage" value={metrics.avg_memory_usage_mb} unit="MB" history={history.memory}/>
-        </material_1.Grid>
+        </GridItem>
         <GridItem colSpan={12} md={6}>
           <MetricCard title="CPU Usage" value={metrics.avg_cpu_usage_percent} unit="%" history={history.cpu}/>
-        </material_1.Grid>
-      </material_1.Grid>
+        </GridItem>
+      </GridItem>
 
       <Box style={{ mt: 3 }}>
         <material_1.Typography variant="h6" gutterBottom>
@@ -126,18 +126,18 @@ const PerformanceDashboard = (): any => {
             <material_1.Typography variant="body1">
               Uptime: {(metrics.uptime_seconds / 3600).toFixed(2)} hours
             </material_1.Typography>
-          </material_1.Grid>
+          </GridItem>
           <GridItem colSpan={12} md={4}>
             <material_1.Typography variant="body1" color={metrics.total_errors > 0 ? 'error' : 'success'}>
               Total Errors: {metrics.total_errors}
             </material_1.Typography>
-          </material_1.Grid>
+          </GridItem>
           <GridItem colSpan={12} md={4}>
             <material_1.Typography variant="body1" color={connected ? 'success' : 'error'}>
               Status: {connected ? 'Connected' : 'Disconnected'}
             </material_1.Typography>
-          </material_1.Grid>
-        </material_1.Grid>
+          </GridItem>
+        </GridItem>
       </material_1.Box>
     </material_1.Box>);
 };

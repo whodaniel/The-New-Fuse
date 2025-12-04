@@ -56,7 +56,7 @@ function GraphAnalytics(): any {
                             </material_1.Box>)}
                     </material_1.CardContent>
                 </material_1.Card>
-            </material_1.Grid>
+            </GridItem>
             <GridItem colSpan={12} md={6}>
                 <material_1.Card>
                     <material_1.CardContent>
@@ -72,8 +72,8 @@ function GraphAnalytics(): any {
                         </recharts_1.ResponsiveContainer>
                     </material_1.CardContent>
                 </material_1.Card>
-            </material_1.Grid>
-        </material_1.Grid>);
+            </GridItem>
+        </GridItem>);
     const renderEdgeAnalytics = (): any => (<material_1.Card>
             <material_1.CardContent>
                 <material_1.Typography variant="h6" gutterBottom>Edge Analytics</material_1.Typography>

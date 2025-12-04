@@ -93,7 +93,7 @@ function AdvancedAgentConfig(): any {
                                 </material_1.MenuItem>))}
                         </material_1.Select>
                     </material_1.FormControl>
-                </material_1.Grid>
+                </GridItem>
 
                 {selectedAgent && (<GridItem colSpan={12} md={8}>
                         <material_1.Box display="flex" gap={1} mb={2}>
@@ -118,12 +118,12 @@ function AdvancedAgentConfig(): any {
                                     <GridItem colSpan={12} md={6}>
                                         <material_1.Typography gutterBottom>Max Concurrent Tasks</material_1.Typography>
                                         <material_1.Slider value={settings.maxConcurrentTasks} onChange={(_, value) => handleSettingsChange('maxConcurrentTasks', value)} min={1} max={20} marks valueLabelDisplay="auto"/>
-                                    </material_1.Grid>
+                                    </GridItem>
                                     <GridItem colSpan={12} md={6}>
                                         <material_1.Typography gutterBottom>Memory Limit (MB)</material_1.Typography>
                                         <material_1.Slider value={settings.memoryLimit} onChange={(_, value) => handleSettingsChange('memoryLimit', value)} min={128} max={2048} step={128} marks valueLabelDisplay="auto"/>
-                                    </material_1.Grid>
-                                </material_1.Grid>
+                                    </GridItem>
+                                </GridItem>
                             </material_1.AccordionDetails>
                         </material_1.Accordion>
 
@@ -136,12 +136,12 @@ function AdvancedAgentConfig(): any {
                                     <GridItem colSpan={12} md={6}>
                                         <material_1.Typography gutterBottom>Learning Rate</material_1.Typography>
                                         <material_1.Slider value={settings.learningRate} onChange={(_, value) => handleSettingsChange('learningRate', value)} min={0.0001} max={0.01} step={0.0001} marks valueLabelDisplay="auto"/>
-                                    </material_1.Grid>
+                                    </GridItem>
                                     <GridItem colSpan={12} md={6}>
                                         <material_1.Typography gutterBottom>Optimization Level</material_1.Typography>
                                         <material_1.Slider value={settings.optimizationLevel} onChange={(_, value) => handleSettingsChange('optimizationLevel', value)} min={0} max={3} marks valueLabelDisplay="auto"/>
-                                    </material_1.Grid>
-                                </material_1.Grid>
+                                    </GridItem>
+                                </GridItem>
                             </material_1.AccordionDetails>
                         </material_1.Accordion>
 
@@ -159,8 +159,8 @@ function AdvancedAgentConfig(): any {
                                 Apply Settings
                             </material_1.Button>
                         </material_1.Box>
-                    </material_1.Grid>)}
-            </material_1.Grid>
+                    </GridItem>)}
+            </GridItem>
 
             <material_1.Dialog open={showCodeEditor} onClose={() => setShowCodeEditor(false)} maxWidth="md" fullWidth>
                 <material_1.DialogTitle>Custom Agent Code</material_1.DialogTitle>
@@ -187,16 +187,16 @@ function AdvancedAgentConfig(): any {
                         <GridItem colSpan={12}>
                             <material_1.Typography gutterBottom>Input Dimension</material_1.Typography>
                             <material_1.Slider value={settings.neuralConfig.inputDim} onChange={(_, value) => handleNeuralConfigChange('inputDim', value)} min={64} max={1024} step={64} marks valueLabelDisplay="auto"/>
-                        </material_1.Grid>
+                        </GridItem>
                         <GridItem colSpan={12}>
                             <material_1.Typography gutterBottom>Hidden Dimension</material_1.Typography>
                             <material_1.Slider value={settings.neuralConfig.hiddenDim} onChange={(_, value) => handleNeuralConfigChange('hiddenDim', value)} min={128} max={2048} step={128} marks valueLabelDisplay="auto"/>
-                        </material_1.Grid>
+                        </GridItem>
                         <GridItem colSpan={12}>
                             <material_1.Typography gutterBottom>Output Dimension</material_1.Typography>
                             <material_1.Slider value={settings.neuralConfig.outputDim} onChange={(_, value) => handleNeuralConfigChange('outputDim', value)} min={64} max={1024} step={64} marks valueLabelDisplay="auto"/>
-                        </material_1.Grid>
-                    </material_1.Grid>
+                        </GridItem>
+                    </GridItem>
                 </material_1.DialogContent>
                 <material_1.DialogActions>
                     <material_1.Button onClick={() => setShowNeuralConfig(false)}>Cancel</material_1.Button>

@@ -73,7 +73,7 @@ function AgentConfig({ onUpdate }): any {
                 <SimpleGrid columns={2} alignItems="flex-end">
                     <GridItem colSpan={4}>
                         <material_1.TextField fullWidth label="Agent Name" value={newAgentName} onChange={(e) => setNewAgentName(e.target.value)}/>
-                    </material_1.Grid>
+                    </GridItem>
                     <GridItem colSpan={4}>
                         <material_1.FormControl fullWidth>
                             <material_1.InputLabel>Agent Type</material_1.InputLabel>
@@ -84,13 +84,13 @@ function AgentConfig({ onUpdate }): any {
                                 <material_1.MenuItem value="integration_agent">Integration Agent</material_1.MenuItem>
                             </material_1.Select>
                         </material_1.FormControl>
-                    </material_1.Grid>
+                    </GridItem>
                     <GridItem colSpan={4}>
                         <material_1.Button variant="contained" startIcon={<icons_material_1.Add />} onClick={handleAddAgent} disabled={!newAgentName || !newAgentType}>
                             Add Agent
                         </material_1.Button>
-                    </material_1.Grid>
-                </material_1.Grid>
+                    </GridItem>
+                </GridItem>
             </material_1.Box>
 
             <material_1.Typography variant="h6" gutterBottom>
@@ -130,23 +130,23 @@ function AgentConfig({ onUpdate }): any {
                                             <material_1.Typography variant="body2" color="text.secondary">
                                                 CPU: {agent.performance.cpu_usage}%
                                             </material_1.Typography>
-                                        </material_1.Grid>
+                                        </GridItem>
                                         <GridItem colSpan={4}>
                                             <material_1.Typography variant="body2" color="text.secondary">
                                                 Memory: {agent.performance.memory_usage}MB
                                             </material_1.Typography>
-                                        </material_1.Grid>
+                                        </GridItem>
                                         <GridItem colSpan={4}>
                                             <material_1.Typography variant="body2" color="text.secondary">
                                                 Tasks: {agent.tasks.length}
                                             </material_1.Typography>
-                                        </material_1.Grid>
-                                    </material_1.Grid>
+                                        </GridItem>
+                                    </GridItem>
                                 </material_1.Box>
                             </material_1.CardContent>
                         </material_1.Card>
-                    </material_1.Grid>))}
-            </material_1.Grid>
+                    </GridItem>))}
+            </GridItem>
         </material_1.Box>);
 }
 export {};

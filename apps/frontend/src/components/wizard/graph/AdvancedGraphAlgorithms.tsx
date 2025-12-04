@@ -12,7 +12,7 @@ class AdvancedGraphAlgorithms {
     buildAdjacencyMatrix() {
         const n = this.nodes.length;
         const matrix = Array(n).fill(0).map(() => Array(n).fill(0));
-        this.edges.forEach(edg(e: any) => {
+        this.edges.forEach((edge: any) => {
             const sourceIdx = this.nodeIndices.get(edge.source);
             const targetIdx = this.nodeIndices.get(edge.target);
             if (sourceIdx !== undefined && targetIdx !== undefined) {

@@ -12,7 +12,7 @@ class GraphAnalyzer {
         const n = this.nodes.length;
         const matrix = Array(n).fill(0).map(() => Array(n).fill(0));
         const nodeIndices = new Map(this.nodes.map((node, i) => [node.id, i]));
-        this.edges.forEach(edg(e: any) => {
+        this.edges.forEach((edge: any) => {
             const sourceIdx = nodeIndices.get(edge.source);
             const targetIdx = nodeIndices.get(edge.target);
             if (sourceIdx !== undefined && targetIdx !== undefined) {
@@ -97,7 +97,7 @@ class GraphAnalyzer {
             this.nodes.forEach((node, i) => {
                 let sum = 0;
                 const incomingEdges = this.edges.filter((e: any) => e.target === node.id);
-                incomingEdges.forEach(edg(e: any) => {
+                incomingEdges.forEach((edge: any) => {
                     const sourceRank = pageRank.get(edge.source) || 0;
                     const sourceDegree = this.edges.filter((e: any) => e.source === edge.source).length;
                     sum += sourceRank / sourceDegree;

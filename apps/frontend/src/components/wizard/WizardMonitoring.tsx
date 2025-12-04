@@ -82,7 +82,7 @@ function WizardMonitoring(): any {
                         </material_1.Typography>
                     </material_1.CardContent>
                 </material_1.Card>
-            </material_1.Grid>
+            </GridItem>
 
             <GridItem colSpan={12} md={3}>
                 <material_1.Card>
@@ -97,7 +97,7 @@ function WizardMonitoring(): any {
                         </material_1.Typography>
                     </material_1.CardContent>
                 </material_1.Card>
-            </material_1.Grid>
+            </GridItem>
 
             <GridItem colSpan={12} md={3}>
                 <material_1.Card>
@@ -112,7 +112,7 @@ function WizardMonitoring(): any {
                         </material_1.Box>
                     </material_1.CardContent>
                 </material_1.Card>
-            </material_1.Grid>
+            </GridItem>
 
             <GridItem colSpan={12} md={3}>
                 <material_1.Card>
@@ -126,8 +126,8 @@ function WizardMonitoring(): any {
                         </material_1.Typography>
                     </material_1.CardContent>
                 </material_1.Card>
-            </material_1.Grid>
-        </material_1.Grid>);
+            </GridItem>
+        </GridItem>);
     const renderAlerts = (): any => (<material_1.Card>
             <material_1.CardContent>
                 <material_1.Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -180,14 +180,14 @@ function WizardMonitoring(): any {
             <SimpleGrid columns={2}>
                 <GridItem colSpan={12}>
                     {renderMetrics()}
-                </material_1.Grid>
+                </GridItem>
                 <GridItem colSpan={12} md={6}>
                     {renderAlerts()}
-                </material_1.Grid>
+                </GridItem>
                 <GridItem colSpan={12} md={6}>
                     {renderPerformanceLogs()}
-                </material_1.Grid>
-            </material_1.Grid>
+                </GridItem>
+            </GridItem>
 
             <material_1.Dialog open={showSettings} onClose={() => setShowSettings(false)}>
                 <material_1.DialogTitle>Monitoring Settings</material_1.DialogTitle>
@@ -195,14 +195,14 @@ function WizardMonitoring(): any {
                     <SimpleGrid columns={2}>
                         <GridItem colSpan={12}>
                             <material_1.TextField fullWidth label="Alert Threshold (%)" type="number" value={settings.alertThreshold} onChange={(e) => setSettings((prev: any) => (Object.assign(Object.assign({}, prev), { alertThreshold: Number(e.target.value) })))}/>
-                        </material_1.Grid>
+                        </GridItem>
                         <GridItem colSpan={12}>
                             <material_1.TextField fullWidth label="Log Retention (days)" type="number" value={settings.logRetentionDays} onChange={(e) => setSettings((prev: any) => (Object.assign(Object.assign({}, prev), { logRetentionDays: Number(e.target.value) })))}/>
-                        </material_1.Grid>
+                        </GridItem>
                         <GridItem colSpan={12}>
                             <material_1.TextField fullWidth label="Metrics Interval (ms)" type="number" value={settings.metricsInterval} onChange={(e) => setSettings((prev: any) => (Object.assign(Object.assign({}, prev), { metricsInterval: Number(e.target.value) })))}/>
-                        </material_1.Grid>
-                    </material_1.Grid>
+                        </GridItem>
+                    </GridItem>
                 </material_1.DialogContent>
             </material_1.Dialog>
         </material_1.Box>);

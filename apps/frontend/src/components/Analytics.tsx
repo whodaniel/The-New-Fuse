@@ -36,12 +36,12 @@ const Analytics = () => {
         ],
     };
     return (<div className="p-6">
-      <Box{{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
-          <Tab"Performance"/>
-          <Tab"Resources"/>
-          <Tab"Knowledge Graph"/>
-          <Tab"Task Analysis"/>
+          <Tab label="Performance"/>
+          <Tab label="Resources"/>
+          <Tab label="Knowledge Graph"/>
+          <Tab label="Task Analysis"/>
         </Tabs>
       </Box>
 
