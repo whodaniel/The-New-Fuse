@@ -29,9 +29,9 @@ function InfiniteCanvas() {
         setNodes([...nodes, newNode]);
     };
     const handleZoom = (delta) => {
-        setScale(scal(e: any) => Math.max(0.1, Math.min(2, scale + delta * 0.1)));
+        setScale((scale: number) => Math.max(0.1, Math.min(2, scale + delta * 0.1)));
     };
-    const handlePan = (0, react_1.useCallback)((event, info) => {
+    const handlePan = react_1.useCallback((event, info) => {
         setPosition(pos => ({
             x: pos.x + info.delta.x / scale,
             y: pos.y + info.delta.y / scale,

@@ -9,8 +9,8 @@ export const useWorkflowValidation = (): any => {
 
     // Check for disconnected nodes
     nodes.forEach((node: any) => {
-      const hasInputs = edges.some(edg(e: any) => edge.target === node.id);
-      const hasOutputs = edges.some(edg(e: any) => edge.source === node.id);
+      const hasInputs = edges.some((edge: any) => edge.target === node.id);
+      const hasOutputs = edges.some((edge: any) => edge.source === node.id);
 
       if (!hasInputs && !hasOutputs) {
         errors.push(`Node "${node.data.label}" is disconnected`);

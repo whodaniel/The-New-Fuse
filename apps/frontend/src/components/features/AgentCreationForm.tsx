@@ -44,18 +44,18 @@ const AgentCreationForm = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setError(null);
-        setFormData(prevStat(e: any) => (Object.assign(Object.assign({}, prevState), { [name]: value })));
+        setFormData((prevState: any) => (Object.assign(Object.assign({}, prevState), { [name]: value })));
     };
     const handleArrayChange = (e, field) => {
         const { value } = e.target;
         const values = value.split(',').map(item => item.trim());
         setError(null);
-        setFormData(prevStat(e: any) => (Object.assign(Object.assign({}, prevState), { [field]: values })));
+        setFormData((prevState: any) => (Object.assign(Object.assign({}, prevState), { [field]: values })));
     };
     const handleLanguageProficiencyChange = (e, field) => {
         const { value } = e.target;
         setError(null);
-        setFormData(prevStat(e: any) => (Object.assign(Object.assign({}, prevState), { language_proficiency: Object.assign(Object.assign({}, prevState.language_proficiency), { [field]: value }) })));
+        setFormData((prevState: any) => (Object.assign(Object.assign({}, prevState), { language_proficiency: Object.assign(Object.assign({}, prevState.language_proficiency), { [field]: value }) })));
     };
     const handleCapabilityToggle = (capability) => {
         setFormData((prev: any) => (Object.assign(Object.assign({}, prev), { capabilities: prev.capabilities.includes(capability)

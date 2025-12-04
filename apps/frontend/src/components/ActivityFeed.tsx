@@ -132,7 +132,7 @@ export function ActivityFeed() {
     ];
 
     return () => {
-      handlers.forEach(unsubscrib(e: any) => unsubscribe());
+      handlers.forEach((unsubscribe: any) => unsubscribe());
     };
   }, [subscribe]);
 

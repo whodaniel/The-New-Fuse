@@ -42,7 +42,7 @@ export function CollaborativeWorkflow() {
     });
 
     return () => {
-      subscriptions.forEach(unsubscrib(e: any) => unsubscribe());
+      subscriptions.forEach((unsubscribe: any) => unsubscribe());
       send('leave_session');
     };
   }, [subscribe, send]);
