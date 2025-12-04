@@ -22,11 +22,10 @@ deploy = { healthcheckPath = "/health" }
 # Frontend Service (uses Default builder with package.json scripts)
 [services.TheNewFuse]
 # Railway's Default builder will:
-# 1. Auto-detect Node.js project
-# 2. Run: pnpm install
-# 3. Run: pnpm build (from package.json)
-# 4. Run: pnpm start (serves static files with 'serve' package)
-buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
+# 1. Auto-detect Node.js project and run pnpm install  
+# 2. Run buildCommand to create production build in apps/frontend/dist
+# 3. Run startCommand to serve static files with 'serve' package
+buildCommand = "cd apps/frontend && pnpm run build"
 startCommand = "cd apps/frontend && pnpm start"
 restartPolicyType = "ON_FAILURE"
 
