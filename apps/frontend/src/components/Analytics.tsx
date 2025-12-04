@@ -54,7 +54,7 @@ const Analytics = () => {
                 <react_chartjs_2_1.Line data={performanceData} options={{ maintainAspectRatio: false }}/>
               </div>
             </Box>
-          </SimpleGrid>
+          </GridItem>
         </SimpleGrid>)}
 
       {activeTab === 1 && (<SimpleGrid templateColumns={3}>
@@ -66,7 +66,7 @@ const Analytics = () => {
                 <react_chartjs_2_1.Bar data={resourceUsageData} options={{ maintainAspectRatio: false }}/>
               </div>
             </Box>
-          </SimpleGrid>
+          </GridItem>
         </SimpleGrid>)}
 
       {activeTab === 2 && (<SimpleGrid templateColumns={3}>
