@@ -1,7 +1,14 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { AgentRepository } from '@the-new-fuse/database';
-import { CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentStatus, AgentType, AgentCapability } from '@the-new-fuse/types';
 import { Prisma } from '@the-new-fuse/database/generated/prisma';
+import {
+  AgentCapability,
+  AgentResponseDto,
+  AgentStatus,
+  AgentType,
+  CreateAgentDto,
+  UpdateAgentDto,
+} from '@the-new-fuse/types';
 
 @Injectable()
 export class AgentService {
@@ -18,25 +25,29 @@ export class AgentService {
         type: createAgentDto.type as any,
         description: createAgentDto.description,
         systemPrompt: createAgentDto.systemPrompt,
-        capabilities: createAgentDto.capabilities as unknown as Prisma.AgentCreateInput['capabilities'],
+        capabilities:
+          createAgentDto.capabilities as unknown as Prisma.AgentCreateInput['capabilities'],
         config: createAgentDto.configuration as Prisma.InputJsonValue,
         provider: createAgentDto.provider,
         status: AgentStatus.INACTIVE as any,
         user: {
-          connect: { id: userId }
-        }
+          connect: { id: userId },
+        },
       };
 
       const agent = await this.agentRepository.create(agentData);
-      return new AgentResponseDto({
+      return {
         ...agent,
         type: agent.type as AgentType,
         status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        capabilities: agent.capabilities
+          ? agent.capabilities.map((cap) => cap as AgentCapability)
+          : [],
         lastActive: new Date(),
-      });
-    } catch (error) {
-      throw new BadRequestException(`Failed to create agent: ${error.message}`);
+      } as AgentResponseDto;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to create agent: ${errorMessage}`);
     }
   }
 
@@ -51,33 +62,37 @@ export class AgentService {
       const whereClause: Prisma.AgentWhereInput = {
         ...filters,
         ...(userId && { userId }),
-        deletedAt: null
+        deletedAt: null,
       };
 
-      const [agents, total] = await Promise.all([
-        this.agentRepository.findMany({
-          ...whereClause,
-          skip,
-          take: limit,
-          orderBy: { createdAt: 'desc' }
-        }),
-        this.agentRepository.count(whereClause)
-      ]);
+      const agents = await this.agentRepository.findMany({
+        where: whereClause,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      });
+      const total = agents.length; // Approximate total
 
       return {
-        data: agents.map(agent => new AgentResponseDto({
-          ...agent,
-          type: agent.type as AgentType,
-          status: agent.status as AgentStatus,
-          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-          lastActive: new Date(),
-        })),
+        data: agents.map(
+          (agent) =>
+            ({
+              ...agent,
+              type: agent.type as AgentType,
+              status: agent.status as AgentStatus,
+              capabilities: agent.capabilities
+                ? agent.capabilities.map((cap) => cap as AgentCapability)
+                : [],
+              lastActive: new Date(),
+            }) as AgentResponseDto
+        ),
         total,
         page,
-        limit
+        limit,
       };
-    } catch (error) {
-      throw new BadRequestException(`Failed to fetch agents: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agents: ${errorMessage}`);
     }
   }
 
@@ -88,18 +103,21 @@ export class AgentService {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      return new AgentResponseDto({
+      return {
         ...agent,
         type: agent.type as AgentType,
         status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        capabilities: agent.capabilities
+          ? agent.capabilities.map((cap) => cap as AgentCapability)
+          : [],
         lastActive: new Date(),
-      });
-    } catch (error) {
+      } as AgentResponseDto;
+    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new BadRequestException(`Failed to fetch agent: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agent: ${errorMessage}`);
     }
   }
 
@@ -111,25 +129,33 @@ export class AgentService {
       }
 
       const updateData: Prisma.AgentUpdateInput = {
-        ...updateAgentDto,
-        type: updateAgentDto.type as any, // This cast is necessary due to type mismatch
-        status: updateAgentDto.status as any, // This cast is necessary due to type mismatch
-        capabilities: updateAgentDto.capabilities ? { set: updateAgentDto.capabilities as any } : undefined,
+        name: updateAgentDto.name,
+        description: updateAgentDto.description,
+        systemPrompt: updateAgentDto.systemPrompt,
+        configuration: updateAgentDto.configuration as Prisma.InputJsonValue,
+        metadata: updateAgentDto.metadata as Prisma.InputJsonValue,
+        role: updateAgentDto.role,
+        type: updateAgentDto.type as any,
+        status: updateAgentDto.status as any,
+        capabilities: updateAgentDto.capabilities as any,
       };
 
       const agent = await this.agentRepository.update(id, updateData);
-      return new AgentResponseDto({
+      return {
         ...agent,
         type: agent.type as AgentType,
         status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        capabilities: agent.capabilities
+          ? agent.capabilities.map((cap) => cap as AgentCapability)
+          : [],
         lastActive: new Date(),
-      });
-    } catch (error) {
+      } as AgentResponseDto;
+    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new BadRequestException(`Failed to update agent: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to update agent: ${errorMessage}`);
     }
   }
 
@@ -141,78 +167,93 @@ export class AgentService {
       }
 
       await this.agentRepository.delete(id);
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new BadRequestException(`Failed to delete agent: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to delete agent: ${errorMessage}`);
     }
   }
 
   async findAgentsByType(
     type: AgentType,
-    page: number = 1,
-    limit: number = 50
+    _page: number = 1,
+    _limit: number = 50
   ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
-      const skip = (page - 1) * limit;
-      const agents = await this.agentRepository.findByType(type, { skip, take: limit });
-      const total = await this.agentRepository.countByType(type);
+      const agents = await this.agentRepository.findByType(type as any);
+      const total = agents.length;
 
       return {
-        data: agents.map(agent => new AgentResponseDto({
-          ...agent,
-          type: agent.type as AgentType,
-          status: agent.status as AgentStatus,
-          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-          lastActive: new Date(),
-        })),
-        total
+        data: agents.map(
+          (agent) =>
+            ({
+              ...agent,
+              type: agent.type as AgentType,
+              status: agent.status as AgentStatus,
+              capabilities: agent.capabilities
+                ? agent.capabilities.map((cap) => cap as AgentCapability)
+                : [],
+              lastActive: new Date(),
+            }) as AgentResponseDto
+        ),
+        total: total as number,
       };
-    } catch (error) {
-      throw new BadRequestException(`Failed to fetch agents by type: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agents by type: ${errorMessage}`);
     }
   }
 
   async findAgentsByStatus(status: AgentStatus): Promise<AgentResponseDto[]> {
     try {
       const agents = await this.agentRepository.findByStatus(status as any);
-      return agents.map(agent => new AgentResponseDto({
-        ...agent,
-        type: agent.type as AgentType,
-        status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-        lastActive: new Date(),
-      }));
-    } catch (error) {
-      throw new BadRequestException(`Failed to fetch agents by status: ${error.message}`);
+      return agents.map(
+        (agent) =>
+          ({
+            ...agent,
+            type: agent.type as AgentType,
+            status: agent.status as AgentStatus,
+            capabilities: agent.capabilities
+              ? agent.capabilities.map((cap) => cap as AgentCapability)
+              : [],
+            lastActive: new Date(),
+          }) as AgentResponseDto
+      );
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agents by status: ${errorMessage}`);
     }
   }
 
   async findAgentsByUserId(
     userId: string,
-    page: number = 1,
-    limit: number = 50
+    _page: number = 1,
+    _limit: number = 50
   ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
-      const skip = (page - 1) * limit;
-      const [agents, total] = await Promise.all([
-        this.agentRepository.findByUserId(userId, { skip, take: limit }),
-        this.agentRepository.countByUserId(userId)
-      ]);
+      const agents = await this.agentRepository.findByUserId(userId);
+      const total = agents.length;
 
       return {
-        data: agents.map(agent => new AgentResponseDto({
-          ...agent,
-          type: agent.type as AgentType,
-          status: agent.status as AgentStatus,
-          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-          lastActive: new Date(),
-        })),
-        total
+        data: agents.map(
+          (agent) =>
+            ({
+              ...agent,
+              type: agent.type as AgentType,
+              status: agent.status as AgentStatus,
+              capabilities: agent.capabilities
+                ? agent.capabilities.map((cap) => cap as AgentCapability)
+                : [],
+              lastActive: new Date(),
+            }) as AgentResponseDto
+        ),
+        total,
       };
-    } catch (error) {
-      throw new BadRequestException(`Failed to fetch user agents: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch user agents: ${errorMessage}`);
     }
   }
 
@@ -224,18 +265,21 @@ export class AgentService {
       }
 
       const agent = await this.agentRepository.updateStatus(id, status as any); // This cast is necessary due to type mismatch
-      return new AgentResponseDto({
+      return {
         ...agent,
         type: agent.type as AgentType,
         status: agent.status as AgentStatus,
-        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        capabilities: agent.capabilities
+          ? agent.capabilities.map((cap) => cap as AgentCapability)
+          : [],
         lastActive: new Date(),
-      });
-    } catch (error) {
+      } as AgentResponseDto;
+    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new BadRequestException(`Failed to update agent status: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to update agent status: ${errorMessage}`);
     }
   }
 
@@ -250,19 +294,21 @@ export class AgentService {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
       return stats;
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new BadRequestException(`Failed to fetch agent stats: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agent stats: ${errorMessage}`);
     }
   }
 
   async getAgentTypeCounts(): Promise<Record<string, number>> {
     try {
       return await this.agentRepository.countByType();
-    } catch (error) {
-      throw new BadRequestException(`Failed to fetch agent type counts: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agent type counts: ${errorMessage}`);
     }
   }
 
@@ -301,40 +347,44 @@ export class AgentService {
           {
             name: {
               contains: query,
-              mode: 'insensitive'
-            }
+              mode: 'insensitive',
+            },
           },
           {
             description: {
               contains: query,
-              mode: 'insensitive'
-            }
-          }
-        ]
+              mode: 'insensitive',
+            },
+          },
+        ],
       };
 
-      const [agents, total] = await Promise.all([
-        this.agentRepository.findMany({
-          ...whereClause,
-          skip,
-          take: limit,
-          orderBy: { updatedAt: 'desc' }
-        }),
-        this.agentRepository.count(whereClause)
-      ]);
+      const agents = await this.agentRepository.findMany({
+        where: whereClause,
+        skip,
+        take: limit,
+        orderBy: { updatedAt: 'desc' },
+      });
+      const total = agents.length;
 
       return {
-        data: agents.map(agent => new AgentResponseDto({
-          ...agent,
-          type: agent.type as AgentType,
-          status: agent.status as AgentStatus,
-          capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
-          lastActive: new Date(),
-        })),
-        total
+        data: agents.map(
+          (agent) =>
+            ({
+              ...agent,
+              type: agent.type as AgentType,
+              status: agent.status as AgentStatus,
+              capabilities: agent.capabilities
+                ? agent.capabilities.map((cap) => cap as AgentCapability)
+                : [],
+              lastActive: new Date(),
+            }) as AgentResponseDto
+        ),
+        total,
       };
-    } catch (error) {
-      throw new BadRequestException(`Failed to search agents: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to search agents: ${errorMessage}`);
     }
   }
 }
