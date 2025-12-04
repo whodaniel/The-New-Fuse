@@ -26,7 +26,8 @@ export class Web3authService implements OnModuleInit {
       
       const clientId = process.env.WEB3AUTH_CLIENT_ID;
       if (!clientId) {
-        throw new Error('WEB3AUTH_CLIENT_ID environment variable is required');
+        this.logger.warn('WEB3AUTH_CLIENT_ID environment variable is missing. Web3Auth module will be disabled.');
+        return;
       }
 
       // Initialize the Ethereum provider
@@ -50,6 +51,9 @@ export class Web3authService implements OnModuleInit {
 
   async getProvider(verifierId: string): Promise<{ provider: any; account: any; walletClient: any }> {
     try {
+      if (!this.web3auth) {
+        throw new Error('Web3Auth is not initialized. Check WEB3AUTH_CLIENT_ID environment variable.');
+      }
       this.logger.log(`Getting provider for verifierId: ${verifierId}`);
 
       // For server-side operations, we need to use custom JWT or other authentication
