@@ -84,7 +84,7 @@ const Analytics = () => {
               <h2 className="text-xl font-bold mb-4">Task Allocation Analysis</h2>
               <components_1.PredictiveTaskAllocator />
             </Box>
-          </SimpleGrid>
+          </GridItem>
         </SimpleGrid>)}
     </div>);
 };
