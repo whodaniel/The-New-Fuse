@@ -1,0 +1,55 @@
+{
+  "mcpServers": {
+    "tnf-mcp-config-manager": {
+      "command": "node",
+      "args": ["--loader", "tsx/esm", "./src/mcp/tnf-mcp-config-manager.ts"],
+      "env": {
+        "TNF_CORE_PATH": "./data",
+        "LOG_LEVEL": "info"
+      },
+      "description": "The New Fuse MCP Configuration Manager - Universal MCP config management for any client + TNF Agent Builder integration",
+      "managed_by": "tnf-core",
+      "priority": 9,
+      "tags": [
+        "tnf-core",
+        "configuration",
+        "universal",
+        "agent-builder",
+        "passthrough"
+      ],
+      "capabilities": [
+        "Universal MCP client configuration",
+        "TNF Agent Builder integration",
+        "Passthrough configuration generation",
+        "Multi-client support",
+        "TNF registry synchronization",
+        "Configuration validation",
+        "Health monitoring"
+      ]
+    },
+    "unified-config-server": {
+      "command": "npx",
+      "args": ["tsx", "./src/mcp/unified-config-server.ts", "--no-oauth"],
+      "env": {
+        "HTTP_PORT": "3773",
+        "LOG_LEVEL": "info",
+        "CONFIG_PATH": "./data/mcp_config.json"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": ""
+      }
+    },
+    "sequentialthinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    }
+  }
+}
