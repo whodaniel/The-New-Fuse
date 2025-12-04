@@ -706,7 +706,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       });
     } else {
       throw new MCPErrorClass(
-        MCPErrorCode.METHOD_NOT_FOUND,
+        JSONRPCErrorCode.METHOD_NOT_FOUND,
         `Resource ${params.uri} does not support subscriptions`
       );
     }
@@ -737,7 +737,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       await resource.handler.unsubscribe(params.uri);
     } else {
       throw new MCPErrorClass(
-        MCPErrorCode.METHOD_NOT_FOUND,
+        JSONRPCErrorCode.METHOD_NOT_FOUND,
         `Resource ${params.uri} does not support subscriptions`
       );
     }
@@ -889,11 +889,11 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       } catch (e) {
         const errorResponse: MCPResponse = {
           jsonrpc: '2.0',
-          id: null,
+          id: null as any,
           error: {
             code: JSONRPCErrorCode.PARSE_ERROR,
             message: 'Parse error',
-            details: { category: 'system', retryable: false }
+            data: { category: 'system', retryable: false }
           }
         };
         if (ws.readyState === WebSocket.OPEN) {
