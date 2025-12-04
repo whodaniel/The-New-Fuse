@@ -534,7 +534,11 @@ export class SecurityController {
   })
   async sanitizeInput(@Body() requestDto: SecurityTestRequestDto) {
     const { testInput, testData } = requestDto;
-    const results: Record<string, unknown> = {
+    const results: {
+      originalData: Record<string, unknown>;
+      sanitizedData: Record<string, unknown>;
+      sanitizationTypes: Record<string, boolean>;
+    } = {
       originalData: {},
       sanitizedData: {},
       sanitizationTypes: {},
