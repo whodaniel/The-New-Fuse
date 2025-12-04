@@ -45,6 +45,11 @@ export class RailwayConfigService {
       throw new Error('REDIS_URL must be a valid Redis connection string');
     }
 
+    // Railway-specific: Check if URL contains railway domain
+    if (redisUrl.includes('railway')) {
+      console.log('✅ Railway Redis URL detected:', redisUrl);
+    }
+
     return redisUrl;
   }
 
