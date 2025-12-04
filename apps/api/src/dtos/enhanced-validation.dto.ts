@@ -1,26 +1,22 @@
-import { 
-  IsString, 
-  IsEmail, 
-  IsOptional, 
-  IsNumber, 
-  IsBoolean, 
-  MinLength, 
-  MaxLength, 
-  IsArray,
-  IsObject,
-  IsDateString,
-  IsEnum,
-  IsUrl,
-  Matches,
-  IsPhoneNumber,
-  IsIP,
-  ArrayMaxSize,
-  ArrayMinSize,
-  ValidateNested,
-  Validator
-} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsBoolean,
+  IsDateString,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+  IsUrl,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class PaginationDto {
   @ApiPropertyOptional({ minimum: 1, maximum: 100, default: 10 })
@@ -44,7 +40,9 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   @MaxLength(50)
-  @Matches(/^[a-zA-Z_][a-zA-Z0-9_]*$/, { message: 'Sort field must be alphanumeric with underscores only' })
+  @Matches(/^[a-zA-Z_][a-zA-Z0-9_]*$/, {
+    message: 'Sort field must be alphanumeric with underscores only',
+  })
   sortBy?: string = 'createdAt';
 }
 
@@ -69,18 +67,18 @@ export class ContactDto {
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ maxLength: 100 })
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty()
   @IsEmail({}, { message: 'Please provide a valid email address' })
   @MaxLength(254)
-  email: string;
+  email!: string;
 
   @ApiPropertyOptional({ maxLength: 20 })
   @IsOptional()
@@ -91,7 +89,7 @@ export class ContactDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  message: string;
+  message!: string;
 }
 
 export class UserProfileDto {
@@ -99,13 +97,15 @@ export class UserProfileDto {
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  @Matches(/^[a-zA-Z0-9_-]+$/, { message: 'Username can only contain letters, numbers, underscores, and hyphens' })
-  username: string;
+  @Matches(/^[a-zA-Z0-9_-]+$/, {
+    message: 'Username can only contain letters, numbers, underscores, and hyphens',
+  })
+  username!: string;
 
   @ApiProperty()
   @IsEmail({}, { message: 'Please provide a valid email address' })
   @MaxLength(254)
-  email: string;
+  email!: string;
 
   @ApiPropertyOptional({ maxLength: 100 })
   @IsOptional()
@@ -166,31 +166,31 @@ export class AddressDto {
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  street: string;
+  street!: string;
 
   @ApiProperty({ maxLength: 100 })
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  city: string;
+  city!: string;
 
   @ApiProperty({ maxLength: 100 })
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  state: string;
+  state!: string;
 
   @ApiProperty({ maxLength: 20 })
   @IsString()
   @MinLength(2)
   @MaxLength(20)
-  zipCode: string;
+  zipCode!: string;
 
   @ApiProperty({ maxLength: 100 })
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  country: string;
+  country!: string;
 }
 
 export class FileUploadDto {
@@ -198,18 +198,20 @@ export class FileUploadDto {
   @IsString()
   @MinLength(1)
   @MaxLength(255)
-  @Matches(/^[a-zA-Z0-9._-]+$/, { message: 'File name can only contain letters, numbers, dots, underscores, and hyphens' })
-  fileName: string;
+  @Matches(/^[a-zA-Z0-9._-]+$/, {
+    message: 'File name can only contain letters, numbers, dots, underscores, and hyphens',
+  })
+  fileName!: string;
 
   @ApiProperty({ enum: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'] })
   @IsString()
   @IsEnum(['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'])
-  mimeType: string;
+  mimeType!: string;
 
   @ApiProperty({ minimum: 1, maximum: 10485760 }) // 10MB max
   @IsNumber()
   @Type(() => Number)
-  size: number;
+  size!: number;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -229,13 +231,13 @@ export class NotificationDto {
   @IsString()
   @MinLength(1)
   @MaxLength(200)
-  title: string;
+  title!: string;
 
   @ApiProperty({ maxLength: 1000 })
   @IsString()
   @MinLength(1)
   @MaxLength(1000)
-  message: string;
+  message!: string;
 
   @ApiPropertyOptional({ enum: ['info', 'success', 'warning', 'error'] })
   @IsOptional()
@@ -245,7 +247,7 @@ export class NotificationDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export class ApiKeyDto {
@@ -253,8 +255,10 @@ export class ApiKeyDto {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
-  @Matches(/^[a-zA-Z0-9_-]+$/, { message: 'API key name can only contain letters, numbers, underscores, and hyphens' })
-  name: string;
+  @Matches(/^[a-zA-Z0-9_-]+$/, {
+    message: 'API key name can only contain letters, numbers, underscores, and hyphens',
+  })
+  name!: string;
 
   @ApiPropertyOptional({ maxLength: 500 })
   @IsOptional()
@@ -310,16 +314,18 @@ export class WebhookDto {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
-  @Matches(/^[a-zA-Z0-9_-]+$/, { message: 'Webhook name can only contain letters, numbers, underscores, and hyphens' })
-  name: string;
+  @Matches(/^[a-zA-Z0-9_-]+$/, {
+    message: 'Webhook name can only contain letters, numbers, underscores, and hyphens',
+  })
+  name!: string;
 
   @ApiProperty()
   @IsUrl({}, { message: 'Please provide a valid webhook URL' })
-  url: string;
+  url!: string;
 
   @ApiProperty({ enum: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE'] })
   @IsEnum(['POST', 'GET', 'PUT', 'PATCH', 'DELETE'])
-  method: 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE';
+  method!: 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE';
 
   @ApiPropertyOptional({ type: [String] })
   @IsOptional()
@@ -344,14 +350,16 @@ export class FeedbackDto {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
-  @Matches(/^[a-zA-Z0-9_-]+$/, { message: 'Feedback type can only contain letters, numbers, underscores, and hyphens' })
-  type: string;
+  @Matches(/^[a-zA-Z0-9_-]+$/, {
+    message: 'Feedback type can only contain letters, numbers, underscores, and hyphens',
+  })
+  type!: string;
 
   @ApiProperty({ maxLength: 1000 })
   @IsString()
   @MinLength(10)
   @MaxLength(1000)
-  content: string;
+  content!: string;
 
   @ApiPropertyOptional({ minimum: 1, maximum: 5 })
   @IsOptional()
@@ -362,5 +370,5 @@ export class FeedbackDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
