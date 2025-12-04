@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/server": "^5.2.0",
+    "@as-integrations/express5": "^1.1.2",
     "@firebase/app-compat": "^0.5.4",
     "@modelcontextprotocol/sdk": "^1.24.0",
     "@nestjs/apollo": "^13.2.1",
