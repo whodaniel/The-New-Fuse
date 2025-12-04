@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './providers/AuthProvider';
 import MainLayout from './components/layout/MainLayout';
-import { HomePage } from './pages/HomePage';
+import { LandingRedesigned } from './pages/LandingRedesigned';
 import { MemoryInspector } from '@the-new-fuse/ui-consolidated/src/components/MemoryInspector';
 import { MetricsDashboard } from '@the-new-fuse/ui-consolidated/src/components/MetricsDashboard';
 
@@ -101,7 +101,7 @@ export function AppRoutes() {
   return (
     <Routes>
       {/* Public landing page */}
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<LandingRedesigned />} />
 
       {/* Auth routes */}
       <Route path="/auth">
