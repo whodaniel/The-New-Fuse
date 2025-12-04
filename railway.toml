@@ -1,26 +1,28 @@
 # railway.toml for The New Fuse Monorepo
+# NOTE: Do NOT set global [build] section - each service specifies its own builder
 
-[build]
-builder = "DOCKERFILE"
-installCommand = "pnpm install" # Explicitly use pnpm install
-buildCommand = "pnpm --filter {service.name} build"
-
-# API Gateway Service
+# API Gateway Service (uses Docker)
 [services.api-gateway]
+builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "api-gateway", SERVICE_NAME = "@the-new-fuse/api-gateway" } }
 deploy = { healthcheckPath = "/health" }
 
-# API Service
+# API Service (uses Docker)
 [services.api]
+builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" } }
 deploy = { healthcheckPath = "/health" }
 
-# Backend Service
+# Backend Service (uses Docker)
 [services.backend]
+builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
 
+# Frontend Service (uses Nixpacks - buildCommand/startCommand)
 [services.TheNewFuse]
+builder = "NIXPACKS"
+
 # 1. Build Phase: Uses pnpm filter to target the correct package
 buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
 
@@ -30,8 +32,9 @@ startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes serve dist -p ${PORT:
 # 3. Networking
 restartPolicyType = "ON_FAILURE"
 
-# Fallback for 'frontend' service name just in case
+# Fallback for 'frontend' service name just in case (uses Nixpacks)
 [services.frontend]
+builder = "NIXPACKS"
 buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
 startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes serve dist -p ${PORT:-3000} -s\""
 restartPolicyType = "ON_FAILURE"
