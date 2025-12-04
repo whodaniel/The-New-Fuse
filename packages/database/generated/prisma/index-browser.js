@@ -512,80 +512,6 @@ exports.Prisma.LLMConfigScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
-exports.Prisma.AgentRegistrationScalarFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  authToken: 'authToken',
-  registrationData: 'registrationData',
-  verificationStatus: 'verificationStatus',
-  onboardingStatus: 'onboardingStatus',
-  onboardingProgress: 'onboardingProgress',
-  heartbeatInterval: 'heartbeatInterval',
-  isOnline: 'isOnline',
-  lastHeartbeat: 'lastHeartbeat',
-  metadata: 'metadata',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.AgentCapabilityRegistryScalarFieldEnum = {
-  id: 'id',
-  registrationId: 'registrationId',
-  capabilityName: 'capabilityName',
-  capabilityType: 'capabilityType',
-  version: 'version',
-  description: 'description',
-  parameters: 'parameters',
-  verificationStatus: 'verificationStatus',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.AgentOnboardingEventScalarFieldEnum = {
-  id: 'id',
-  registrationId: 'registrationId',
-  eventType: 'eventType',
-  message: 'message',
-  eventData: 'eventData',
-  timestamp: 'timestamp'
-};
-
-exports.Prisma.AgentDirectoryEntryScalarFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  displayName: 'displayName',
-  description: 'description',
-  category: 'category',
-  tags: 'tags',
-  isPublic: 'isPublic',
-  isVerified: 'isVerified',
-  rating: 'rating',
-  usageCount: 'usageCount',
-  searchableData: 'searchableData',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.AgentPromptVersionScalarFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  versionNumber: 'versionNumber',
-  instruction: 'instruction',
-  exemplars: 'exemplars',
-  performanceMetrics: 'performanceMetrics',
-  massStage: 'massStage',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.ValidationDatasetScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  items: 'items',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.BusinessMetricScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -878,12 +804,6 @@ exports.Prisma.ModelName = {
   Transaction: 'Transaction',
   RegisteredEntity: 'RegisteredEntity',
   LLMConfig: 'LLMConfig',
-  AgentRegistration: 'AgentRegistration',
-  AgentCapabilityRegistry: 'AgentCapabilityRegistry',
-  AgentOnboardingEvent: 'AgentOnboardingEvent',
-  AgentDirectoryEntry: 'AgentDirectoryEntry',
-  AgentPromptVersion: 'AgentPromptVersion',
-  ValidationDataset: 'ValidationDataset',
   BusinessMetric: 'BusinessMetric',
   ErrorLog: 'ErrorLog',
   SyncState: 'SyncState',

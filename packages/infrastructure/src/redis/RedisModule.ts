@@ -9,12 +9,15 @@ export interface RedisModuleOptions {
   config?: Partial<RedisConfiguration>;
 }
 
-@Module({})
+@Module({
+  imports: [ConfigModule],
+})
 export class RedisModule {
   static forRoot(options: RedisModuleOptions = {}): DynamicModule {
     return {
       module: RedisModule,
       global: options.isGlobal ?? true,
+      imports: [ConfigModule],
       providers: [
         {
           provide: 'REDIS_CONFIG_OPTIONS',
@@ -35,6 +38,7 @@ export class RedisModule {
     return {
       module: RedisModule,
       global: options.isGlobal ?? true,
+      imports: [ConfigModule],
       providers: [
         {
           provide: 'REDIS_CONFIG_OPTIONS',
