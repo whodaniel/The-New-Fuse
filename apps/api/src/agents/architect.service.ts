@@ -88,7 +88,7 @@ export class ArchitectAgentService {
     decisions.push({
       id: 'arch-002',
       title: 'Implement Multi-Layer Caching Strategy',
-      type: 'performance',
+      type: 'optimization',
       description:
         'Add Redis caching for frequently accessed data and implement in-memory caching for hot paths',
       rationale: 'Current system makes redundant database queries for static data',
@@ -153,7 +153,7 @@ export class ArchitectAgentService {
     decisions.push({
       id: 'arch-004',
       title: 'Strict TypeScript Configuration',
-      type: 'quality',
+      type: 'refactoring',
       description: 'Enable strict mode and eliminate all "any" types',
       rationale: 'Loose typing leads to runtime errors that could be caught at compile time',
       benefits: [
@@ -327,7 +327,8 @@ export class ArchitectAgentService {
       this.logger.log('Storing architecture review in database...');
       // Store in database
     } catch (error) {
-      this.logger.error(`Failed to store review: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to store review: ${errorMessage}`);
     }
   }
 }

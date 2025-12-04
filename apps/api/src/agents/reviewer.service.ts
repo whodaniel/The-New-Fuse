@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { PrismaService } from '@the-new-fuse/database';
 
 interface CodeReview {
   implementationId: string;
@@ -275,7 +275,8 @@ export class ReviewerAgentService {
         }
       });
     } catch (error) {
-      this.logger.error(`Failed to review file ${filePath}: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to review file ${filePath}: ${errorMessage}`);
     }
 
     return { findings, security };
@@ -353,7 +354,8 @@ export class ReviewerAgentService {
         totalReadability += hasDocs ? 90 : 50;
         totalTestability += 70;
       } catch (_error) {
-        this.logger.warn(`Failed to calculate metrics for ${file}`);
+        const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
+        this.logger.warn(`Failed to calculate metrics for ${file}: ${errorMessage}`);
       }
     }
 
@@ -505,7 +507,8 @@ export class ReviewerAgentService {
       this.logger.log('Storing code review in database...');
       // Store in database
     } catch (error) {
-      this.logger.error(`Failed to store review: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to store review: ${errorMessage}`);
     }
   }
 

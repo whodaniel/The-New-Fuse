@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '@the-new-fuse/database';
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { promisify } from 'util';
-import { PrismaService } from '@the-new-fuse/database';
 
 const execAsync = promisify(exec);
 
@@ -97,7 +97,8 @@ export class ImplementerAgentService {
         commitMessage,
       };
     } catch (error) {
-      this.logger.error(`Implementation failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Implementation failed: ${errorMessage}`);
 
       return {
         taskId: task.id,
@@ -105,7 +106,7 @@ export class ImplementerAgentService {
         filesModified,
         testsCreated,
         commitMessage: '',
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
@@ -168,7 +169,8 @@ export class ImplementerAgentService {
         },
       ];
     } catch (error) {
-      this.logger.error(`Failed to generate fix: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to generate fix: ${errorMessage}`);
       return [];
     }
   }
@@ -328,7 +330,8 @@ describe('${className}Service', () => {
       await fs.writeFile(filePath, content, 'utf-8');
       this.logger.log(`Created file: ${filePath}`);
     } catch (error) {
-      this.logger.error(`Failed to create file ${filePath}: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to create file ${filePath}: ${errorMessage}`);
       throw error;
     }
   }
@@ -340,7 +343,8 @@ describe('${className}Service', () => {
       }
       this.logger.log(`Updated file: ${filePath}`);
     } catch (error) {
-      this.logger.error(`Failed to update file ${filePath}: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to update file ${filePath}: ${errorMessage}`);
       throw error;
     }
   }
@@ -352,7 +356,8 @@ describe('${className}Service', () => {
       // For now, we'll simulate test execution
       return true;
     } catch (error) {
-      this.logger.error(`Tests failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Tests failed: ${errorMessage}`);
       return false;
     }
   }
@@ -394,7 +399,8 @@ describe('${className}Service', () => {
         url: `https://github.com/whodaniel/fuse/pull/new/${branchName}`,
       };
     } catch (error) {
-      this.logger.error(`Failed to create PR: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to create PR: ${errorMessage}`);
       throw error;
     }
   }

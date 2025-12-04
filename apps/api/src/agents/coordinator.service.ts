@@ -102,7 +102,8 @@ export class CoordinatorAgentService {
     } catch (error) {
       cycle.status = 'failed';
       cycle.endTime = new Date();
-      this.addLog('Coordinator', `Cycle failed: ${error.message}`, 'error');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.addLog('Coordinator', `Cycle failed: ${errorMessage}`, 'error');
     }
 
     await this.storeCycle(cycle);
@@ -216,9 +217,10 @@ export class CoordinatorAgentService {
         }
       } catch (error) {
         improvement.status = 'failed';
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         this.addLog(
           'Implementer',
-          `Error implementing ${improvement.title}: ${error.message}`,
+          `Error implementing ${improvement.title}: ${errorMessage}`,
           'error'
         );
       }
@@ -390,7 +392,8 @@ Improvements: ${cycle.improvements.length} total
       this.logger.log('Storing improvement cycle in database...');
       // Store in database
     } catch (error) {
-      this.logger.error(`Failed to store cycle: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to store cycle: ${errorMessage}`);
     }
   }
 

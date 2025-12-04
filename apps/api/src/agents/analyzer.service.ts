@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
 import { glob } from 'glob';
 import * as path from 'path';
-import { PrismaService } from '@the-new-fuse/database';
 
 export interface CodeIssue {
   id: string;
@@ -224,7 +224,8 @@ export class AnalyzerAgentService {
         }
       });
     } catch (error) {
-      this.logger.warn(`Failed to analyze ${filePath}: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Failed to analyze ${filePath}: ${errorMessage}`);
     }
 
     return issues;
@@ -333,7 +334,8 @@ export class AnalyzerAgentService {
       this.logger.log('Storing analysis report in database...');
       // This would integrate with the database schema
     } catch (error) {
-      this.logger.error(`Failed to store report: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to store report: ${errorMessage}`);
     }
   }
 
