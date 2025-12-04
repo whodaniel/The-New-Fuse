@@ -2,6 +2,8 @@ import { INestApplication, Injectable, OnModuleInit, OnModuleDestroy, Logger } f
 import { PrismaClient } from '../generated/prisma';
 import { softDeleteMiddleware } from './middleware/soft-delete.middleware';
 
+import { getDatabaseUrl } from './prisma.config';
+
 /**
  * Production-ready Prisma Service with:
  * - Connection retry logic
@@ -31,7 +33,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       // These are handled via DATABASE_URL query parameters, but can be overridden here
       datasources: {
         db: {
-          url: process.env.DATABASE_URL,
+          url: getDatabaseUrl(),
         },
       },
     });

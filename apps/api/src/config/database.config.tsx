@@ -51,7 +51,7 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
   } else {
     // Fallback to individual environment variables
     dbConfig = {
-      host: configService.get('DB_HOST'),
+      host: configService.get('DB_HOST') || 'localhost',
       port: configService.get<number>('DB_PORT', 5432),
       username: configService.get('DB_USERNAME'),
       password: configService.get('DB_PASSWORD'),
