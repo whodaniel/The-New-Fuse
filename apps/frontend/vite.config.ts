@@ -230,6 +230,13 @@ export default defineConfig(({ mode }) => {
       port: parseInt(env.VITE_PORT || env.PORT || '3000'),
       strictPort: false,
       hmr: getHMRConfig(),
+      // Allow production domain for Railway deployment
+      allowedHosts: [
+        'thenewfuse.com',
+        'www.thenewfuse.com',
+        '.railway.app',
+        'localhost',
+      ],
       proxy: isDev ? {
         '/api': {
           target: env.VITE_API_URL || 'http://localhost:3001',
