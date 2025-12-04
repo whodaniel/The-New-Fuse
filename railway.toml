@@ -19,17 +19,13 @@ builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
 
-# Frontend Service (uses Nixpacks - buildCommand/startCommand)
+# Frontend Service (uses Nixpacks with custom config in apps/frontend/nixpacks.toml)
 [services.TheNewFuse]
 builder = "NIXPACKS"
+nixpacksConfigPath = "apps/frontend"
 
-# 1. Build Phase: Uses pnpm filter to target the correct package
-buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
-
-# 2. Start Phase: Serves the built files on Railway's assigned PORT
-startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes serve dist -p ${PORT:-3000} -s\""
-
-# 3. Networking
+# Nixpacks will read nixpacks.toml from apps/frontend/ directory
+# which specifies: build command, start command, and Node.js setup
 restartPolicyType = "ON_FAILURE"
 
 # Fallback for 'frontend' service name just in case (uses Nixpacks)

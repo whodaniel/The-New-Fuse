@@ -8,4 +8,4 @@ cmds = ["pnpm install --frozen-lockfile"]
 cmds = ["pnpm --filter @the-new-fuse/frontend-app build"]
 
 [start]
-cmd = "npx --yes serve dist -p ${PORT:-3000} -s"
+cmd = "npx --yes serve ./dist -p ${PORT:-3000} -s"
