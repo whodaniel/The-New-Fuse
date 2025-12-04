@@ -75,7 +75,7 @@ const Analytics = () => {
               <h2 className="text-xl font-bold mb-4">Knowledge Graph Analysis</h2>
               <components_1.DynamicKnowledgeGraph />
             </Box>
-          </SimpleGrid>
+          </GridItem>
         </SimpleGrid>)}
 
       {activeTab === 3 && (<SimpleGrid templateColumns={3}>
