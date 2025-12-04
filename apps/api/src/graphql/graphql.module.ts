@@ -35,7 +35,9 @@ import { SecurityLoggingService } from '../security/security-logging.service';
       driver: ApolloDriver,
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        autoSchemaFile: join(process.cwd(), 'apps/api/src/graphql/schema.gql'),
+        autoSchemaFile: configService.get('NODE_ENV') === 'production' 
+          ? true 
+          : join(process.cwd(), 'apps/api/src/graphql/schema.gql'),
         sortSchema: true,
         playground: configService.get('NODE_ENV') !== 'production',
         introspection: configService.get('NODE_ENV') !== 'production',
