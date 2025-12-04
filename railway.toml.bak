@@ -1,0 +1,37 @@
+# railway.toml for The New Fuse Monorepo
+
+[build]
+builder = "DOCKERFILE"
+installCommand = "pnpm install" # Explicitly use pnpm install
+buildCommand = "pnpm --filter {service.name} build"
+
+# API Gateway Service
+[services.api-gateway]
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "api-gateway", SERVICE_NAME = "@the-new-fuse/api-gateway" } }
+deploy = { healthcheckPath = "/health" }
+
+# API Service
+[services.api]
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" } }
+deploy = { healthcheckPath = "/health" }
+
+# Backend Service
+[services.backend]
+build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
+deploy = { healthcheckPath = "/health" }
+
+[services.TheNewFuse]
+# 1. Build Phase: Uses pnpm filter to target the correct package
+buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
+
+# 2. Start Phase: Serves the built files with debugging
+startCommand = "/bin/sh -c \"pwd && ls -la && ls -la apps/frontend/ && ls -la apps/frontend/dist/ && cd apps/frontend && npx --yes serve dist -p 3000 -s\""
+
+# 3. Networking
+restartPolicyType = "ON_FAILURE"
+
+# Fallback for 'frontend' service name just in case
+[services.frontend]
+buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
+startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes serve dist -p ${PORT:-3000} -s\""
+restartPolicyType = "ON_FAILURE"
