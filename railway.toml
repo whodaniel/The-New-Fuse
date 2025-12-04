@@ -24,8 +24,8 @@ deploy = { healthcheckPath = "/health" }
 # 1. Build Phase: Uses pnpm filter to target the correct package
 buildCommand = "pnpm --filter @the-new-fuse/frontend-app build"
 
-# 2. Start Phase: Serves the built files
-startCommand = "/bin/sh -c \"cd apps/frontend && npx --yes serve dist -p 3000 -s\""
+# 2. Start Phase: Serves the built files with debugging
+startCommand = "/bin/sh -c \"pwd && ls -la && ls -la apps/frontend/ && ls -la apps/frontend/dist/ && cd apps/frontend && npx --yes serve dist -p 3000 -s\""
 
 # 3. Networking
 restartPolicyType = "ON_FAILURE"
