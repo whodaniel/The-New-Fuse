@@ -5,14 +5,9 @@
  *
  * See: https://pris.ly/d/config-datasource
  */
-
 import { defineConfig } from '@prisma/migrate';
 
 export default defineConfig({
-  datasource: {
-    provider: 'postgresql',
-    // Connection URL for Prisma Migrate
-    // `directUrl` is used for direct database connections with Prisma Migrate.
-    directUrl: process.env.DATABASE_URL,
-  },
+  schema: './schema.prisma',
+  datasources: { db: { url: process.env.DATABASE_URL } },
 });
