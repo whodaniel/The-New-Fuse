@@ -1,23 +1,20 @@
 // Enhanced DI chain logging for Redis configuration debugging
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { SecurityValidationMiddleware } from './middleware/security-validation.middleware';
-import { CsrfProtectionMiddleware } from './middleware/csrf-protection.middleware';
-import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
-import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-handler.middleware';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
+import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     // Enable CORS with strict configuration
     cors: {
-      origin: process.env.NODE_ENV === 'production'
-        ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']
-        : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']
+          : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: [
@@ -26,23 +23,25 @@ async function bootstrap(): Promise<void> {
         'X-Requested-With',
         'X-CSRF-Token',
         'X-Request-ID',
-        'X-Client-IP'
+        'X-Client-IP',
       ],
     },
   });
 
   // Global validation pipe with enhanced options
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    forbidUnknownValues: true,
-    disableErrorMessages: process.env.NODE_ENV === 'production',
-    validationError: {
-      target: false,
-      value: false,
-    },
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+      disableErrorMessages: process.env.NODE_ENV === 'production',
+      validationError: {
+        target: false,
+        value: false,
+      },
+    })
+  );
 
   // Note: Security middleware should be applied in module configure() method
   // Using app.use(app.get()) causes "requires a middleware function" error
@@ -67,7 +66,9 @@ async function bootstrap(): Promise<void> {
         // Fallback to generating from decorators
         const config = new DocumentBuilder()
           .setTitle('The New Fuse API')
-          .setDescription('Comprehensive API for multi-agent orchestration, workflow automation, and blockchain integration')
+          .setDescription(
+            'Comprehensive API for multi-agent orchestration, workflow automation, and blockchain integration'
+          )
           .setVersion('1.0.0')
           .addBearerAuth(
             {
@@ -76,7 +77,7 @@ async function bootstrap(): Promise<void> {
               bearerFormat: 'JWT',
               description: 'Enter JWT token',
             },
-            'BearerAuth',
+            'BearerAuth'
           )
           .addServer('http://localhost:3001/api', 'Development API Server')
           .addServer('http://localhost:4000/api/v1', 'API Gateway (Development)')
@@ -118,17 +119,18 @@ async function bootstrap(): Promise<void> {
   // Enhanced security headers
   app.use((req, res, next) => {
     // Content Security Policy
-    res.setHeader('Content-Security-Policy', 
+    res.setHeader(
+      'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-      "style-src 'self' 'unsafe-inline'; " +
-      "img-src 'self' data: https:; " +
-      "font-src 'self'; " +
-      "connect-src 'self' wss: https:; " +
-      "frame-src 'none'; " +
-      "object-src 'none'; " +
-      "base-uri 'self'; " +
-      "form-action 'self';"
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src 'self' 'unsafe-inline'; " +
+        "img-src 'self' data: https:; " +
+        "font-src 'self'; " +
+        "connect-src 'self' wss: https:; " +
+        "frame-src 'none'; " +
+        "object-src 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self';"
     );
 
     // Additional security headers
@@ -137,15 +139,16 @@ async function bootstrap(): Promise<void> {
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=()');
-    
+
     // Remove server information
     res.removeHeader('X-Powered-By');
-    
+
     next();
   });
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
+  console.log('🔄 Triggering redeploy for DB migration update');
   console.log(`🚀 API Server running on port ${port} with enhanced security`);
 }
 
