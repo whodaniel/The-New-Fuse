@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react';
 import { useInView } from '@/hooks/useInView';
+import React, { Suspense } from 'react';
 
-export const LazyLoader: React.React.FC<{
+export const LazyLoader: React.FC<{
   component: React.LazyExoticComponent<any>;
   fallback?: React.ReactNode;
 }> = ({ component: Component, fallback }) => {

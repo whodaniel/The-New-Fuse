@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface ToastProps {
   id?: string;
@@ -9,7 +9,7 @@ interface ToastProps {
   onClose?: () => void;
 }
 
-export const Toast: React.React.FC<ToastProps> = ({
+export const Toast: React.FC<ToastProps> = ({
   id,
   title,
   description,
@@ -57,7 +57,13 @@ export const Toast: React.React.FC<ToastProps> = ({
 };
 
 interface ToasterProps {
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center';
+  position?:
+    | 'top-left'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-right'
+    | 'top-center'
+    | 'bottom-center';
   toastOptions?: {
     duration?: number;
     style?: React.CSSProperties;
@@ -68,15 +74,15 @@ interface ToasterProps {
   };
 }
 
-export const Toaster: React.React.FC<ToasterProps> = ({
+export const Toaster: React.FC<ToasterProps> = ({
   position = 'bottom-right',
-  toastOptions = {}
+  toastOptions = {},
 }) => {
   // In a real implementation, this would manage a list of toasts
   const [toasts, setToasts] = useState<ToastProps[]>([]);
 
   const removeToast = (id: string) => {
-    setToasts(toasts.filter(toast => toast.id !== id));
+    setToasts(toasts.filter((toast) => toast.id !== id));
   };
 
   const positionClasses = {
@@ -94,7 +100,7 @@ export const Toaster: React.React.FC<ToasterProps> = ({
       role="region"
       aria-label="Notifications"
     >
-      {toasts.map(toast => (
+      {toasts.map((toast) => (
         <Toast
           key={toast.id}
           {...toast}

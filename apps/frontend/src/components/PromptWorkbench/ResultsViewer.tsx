@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
 import {
   Box,
-  VStack,
-  HStack,
-  Text,
   Button,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
+  Code,
   Divider,
-  Badge,
   Flex,
+  HStack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
   useClipboard,
-  Code
+  VStack,
 } from '@chakra-ui/react';
-import { FaDownload, FaCopy, FaCheck } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaCheck, FaCopy, FaDownload } from 'react-icons/fa';
 
 interface Result {
   testCase?: string;
@@ -29,9 +28,9 @@ interface ResultsViewerProps {
   results: Result[];
 }
 
-export const ResultsViewer: React.React.FC<ResultsViewerProps> = ({ results }) => {
+export const ResultsViewer: React.FC<ResultsViewerProps> = ({ results }) => {
   const [selectedResult, setSelectedResult] = useState<number>(0);
-  
+
   if (results.length === 0) {
     return (
       <Box textAlign="center" py={10} borderWidth={1} borderRadius="md" borderStyle="dashed">
@@ -41,7 +40,7 @@ export const ResultsViewer: React.React.FC<ResultsViewerProps> = ({ results }) =
   }
 
   const currentResult = results[selectedResult];
-  
+
   return (
     <VStack spacing={4} align="stretch">
       <Tabs variant="enclosed" colorScheme="blue" defaultIndex={0}>
@@ -50,7 +49,7 @@ export const ResultsViewer: React.React.FC<ResultsViewerProps> = ({ results }) =
           <Tab>Comparison</Tab>
           <Tab>Analytics</Tab>
         </TabList>
-        
+
         <TabPanels>
           <TabPanel>
             <HStack spacing={4} mb={4}>
@@ -58,7 +57,7 @@ export const ResultsViewer: React.React.FC<ResultsViewerProps> = ({ results }) =
                 <Button
                   key={index}
                   size="sm"
-                  variant={selectedResult === index ? "solid" : "outline"}
+                  variant={selectedResult === index ? 'solid' : 'outline'}
                   colorScheme="blue"
                   onClick={() => setSelectedResult(index)}
                 >
@@ -66,47 +65,43 @@ export const ResultsViewer: React.React.FC<ResultsViewerProps> = ({ results }) =
                 </Button>
               ))}
             </HStack>
-            
+
             <Box mb={4}>
-              <Text fontWeight="medium" mb={1}>Generated at</Text>
+              <Text fontWeight="medium" mb={1}>
+                Generated at
+              </Text>
               <Text fontSize="sm" color="gray.600">
                 {new Date(currentResult.timestamp).toLocaleString()}
               </Text>
             </Box>
-            
-            <ResultPanel
-              title="Prompt"
-              content={currentResult.prompt}
-            />
-            
+
+            <ResultPanel title="Prompt" content={currentResult.prompt} />
+
             <Divider my={4} />
-            
-            <ResultPanel
-              title="Completion"
-              content={currentResult.result}
-            />
+
+            <ResultPanel title="Completion" content={currentResult.result} />
           </TabPanel>
-          
+
           <TabPanel>
             <ComparisonView results={results} />
           </TabPanel>
-          
+
           <TabPanel>
             <AnalyticsView results={results} />
           </TabPanel>
         </TabPanels>
       </Tabs>
-      
+
       <Flex justifyContent="flex-end">
         <Button
           leftIcon={<FaDownload />}
           onClick={() => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(
-              JSON.stringify(results, null, 2)
-            );
+            const dataStr =
+              'data:text/json;charset=utf-8,' +
+              encodeURIComponent(JSON.stringify(results, null, 2));
             const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "prompt_results.json");
+            downloadAnchorNode.setAttribute('href', dataStr);
+            downloadAnchorNode.setAttribute('download', 'prompt_results.json');
             document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
@@ -119,18 +114,14 @@ export const ResultsViewer: React.React.FC<ResultsViewerProps> = ({ results }) =
   );
 };
 
-const ResultPanel: React.React.FC<{ title: string; content: string }> = ({ title, content }) => {
+const ResultPanel: React.FC<{ title: string; content: string }> = ({ title, content }) => {
   const { hasCopied, onCopy } = useClipboard(content);
 
   return (
     <Box>
       <HStack justifyContent="space-between" mb={2}>
         <Text fontWeight="medium">{title}</Text>
-        <Button
-          size="xs"
-          leftIcon={hasCopied ? <FaCheck /> : <FaCopy />}
-          onClick={onCopy}
-        >
+        <Button size="xs" leftIcon={hasCopied ? <FaCheck /> : <FaCopy />} onClick={onCopy}>
           {hasCopied ? 'Copied' : 'Copy'}
         </Button>
       </HStack>
@@ -151,7 +142,7 @@ const ResultPanel: React.React.FC<{ title: string; content: string }> = ({ title
   );
 };
 
-const ComparisonView: React.React.FC<{ results: Result[] }> = ({ results }) => {
+const ComparisonView: React.FC<{ results: Result[] }> = ({ results }) => {
   if (results.length <= 1) {
     return (
       <Box textAlign="center" py={4}>
@@ -167,10 +158,18 @@ const ComparisonView: React.React.FC<{ results: Result[] }> = ({ results }) => {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
-              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>Test Case</th>
-              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>Prompt Length</th>
-              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>Completion Length</th>
-              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>Generated At</th>
+              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
+                Test Case
+              </th>
+              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
+                Prompt Length
+              </th>
+              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
+                Completion Length
+              </th>
+              <th style={{ padding: '8px', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
+                Generated At
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -197,7 +196,7 @@ const ComparisonView: React.React.FC<{ results: Result[] }> = ({ results }) => {
   );
 };
 
-const AnalyticsView: React.React.FC<{ results: Result[] }> = ({ results }) => {
+const AnalyticsView: React.FC<{ results: Result[] }> = ({ results }) => {
   const getAverageLength = () => {
     const sum = results.reduce((acc, result) => acc + result.result.length, 0);
     return Math.round(sum / results.length);
@@ -206,25 +205,36 @@ const AnalyticsView: React.React.FC<{ results: Result[] }> = ({ results }) => {
   return (
     <VStack spacing={6} align="stretch">
       <Box>
-        <Text fontWeight="medium" mb={3}>Completion Statistics</Text>
+        <Text fontWeight="medium" mb={3}>
+          Completion Statistics
+        </Text>
         <HStack spacing={6}>
           <Box p={4} borderWidth={1} borderRadius="md" flex={1}>
-            <Text fontSize="sm" color="gray.600">Average Length</Text>
-            <Text fontSize="2xl" fontWeight="bold">{getAverageLength()} chars</Text>
+            <Text fontSize="sm" color="gray.600">
+              Average Length
+            </Text>
+            <Text fontSize="2xl" fontWeight="bold">
+              {getAverageLength()} chars
+            </Text>
           </Box>
           <Box p={4} borderWidth={1} borderRadius="md" flex={1}>
-            <Text fontSize="sm" color="gray.600">Total Completions</Text>
-            <Text fontSize="2xl" fontWeight="bold">{results.length}</Text>
+            <Text fontSize="sm" color="gray.600">
+              Total Completions
+            </Text>
+            <Text fontSize="2xl" fontWeight="bold">
+              {results.length}
+            </Text>
           </Box>
         </HStack>
       </Box>
-      
+
       <Box>
-        <Text fontWeight="medium" mb={3}>Content Analysis</Text>
+        <Text fontWeight="medium" mb={3}>
+          Content Analysis
+        </Text>
         <Code p={4} borderRadius="md" fontSize="sm" whiteSpace="pre-wrap">
-          Content analysis would go here in a production implementation.
-          This would include sentiment analysis, readability metrics,
-          keyword extraction, and other NLP insights.
+          Content analysis would go here in a production implementation. This would include
+          sentiment analysis, readability metrics, keyword extraction, and other NLP insights.
         </Code>
       </Box>
     </VStack>

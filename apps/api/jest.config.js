@@ -5,27 +5,28 @@ module.exports = {
   roots: ['<rootDir>/src/', '<rootDir>/test/'],
   testMatch: ['**/?(*.)+(spec|test).ts'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: '<rootDir>/tsconfig.json',
-    }]
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/tsconfig.json',
+      },
+    ],
   },
+  // Transform ESM packages that Jest cannot handle natively
+  transformIgnorePatterns: ['node_modules/(?!(uuid|nanoid)/)'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@types/(.*)$': '<rootDir>/src/types/$1'
+    '^@types/(.*)$': '<rootDir>/src/types/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.d.ts',
-    '!src/**/index.ts'
-  ],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/**/index.ts'],
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.json',
-      isolatedModules: true
-    }
+      isolatedModules: true,
+    },
   },
   testEnvironmentOptions: {
-    url: 'http://localhost'
-  }
+    url: 'http://localhost',
+  },
 };

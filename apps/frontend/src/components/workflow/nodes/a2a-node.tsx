@@ -1,11 +1,10 @@
-import React, { memo, useState, useEffect } from 'react';
-import { a2aProtocolService } from '@/services/A2AProtocolService';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
 import { BaseNode } from './base-node';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 /**
  * A2A Node Component
@@ -13,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
  * This component represents an Agent-to-Agent communication node in the workflow.
  * It allows configuring communication between agents using the A2A protocol.
  */
-const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
+const A2ANode: React.FC<NodeProps> = memo(({ id, data }) => {
   // Get config from data or initialize with defaults
   const config = data.config || {};
 
@@ -23,8 +22,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...config,
-          agentId
-        }
+          agentId,
+        },
       });
     }
   };
@@ -35,8 +34,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...config,
-          communicationPattern: pattern
-        }
+          communicationPattern: pattern,
+        },
       });
     }
   };
@@ -47,8 +46,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...config,
-          messageType
-        }
+          messageType,
+        },
       });
     }
   };
@@ -59,8 +58,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...config,
-          timeout
-        }
+          timeout,
+        },
       });
     }
   };
@@ -71,8 +70,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...config,
-          retryCount
-        }
+          retryCount,
+        },
       });
     }
   };
@@ -83,8 +82,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...config,
-          priority
-        }
+          priority,
+        },
       });
     }
   };
@@ -95,8 +94,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...config,
-          payloadTemplate
-        }
+          payloadTemplate,
+        },
       });
     }
   };
@@ -104,13 +103,13 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
   // Input and output handles
   const inputHandles = [
     { id: 'input', label: 'Input' },
-    { id: 'context', label: 'Context' }
+    { id: 'context', label: 'Context' },
   ];
 
   const outputHandles = [
     { id: 'result', label: 'Result' },
     { id: 'error', label: 'Error' },
-    { id: 'status', label: 'Status' }
+    { id: 'status', label: 'Status' },
   ];
 
   // Render node content
@@ -126,7 +125,9 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
 
         <TabsContent value="basic" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`agent-select-${id}`} className="text-xs">Target Agent</Label>
+            <Label htmlFor={`agent-select-${id}`} className="text-xs">
+              Target Agent
+            </Label>
             <select
               id={`agent-select-${id}`}
               className="w-full text-xs h-8 rounded-md border border-input"
@@ -135,7 +136,9 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
             >
               <option value="">Select Agent</option>
               {data.agents?.map((agent: any) => (
-                <option key={agent.id} value={agent.id}>{agent.name}</option>
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}
+                </option>
               )) || (
                 <>
                   <option value="agent-1">Code Assistant</option>
@@ -147,7 +150,9 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`pattern-select-${id}`} className="text-xs">Communication Pattern</Label>
+            <Label htmlFor={`pattern-select-${id}`} className="text-xs">
+              Communication Pattern
+            </Label>
             <select
               id={`pattern-select-${id}`}
               className="w-full text-xs h-8 rounded-md border border-input"
@@ -162,7 +167,9 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`message-type-${id}`} className="text-xs">Message Type</Label>
+            <Label htmlFor={`message-type-${id}`} className="text-xs">
+              Message Type
+            </Label>
             <select
               id={`message-type-${id}`}
               className="w-full text-xs h-8 rounded-md border border-input"
@@ -180,7 +187,9 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
 
         <TabsContent value="advanced" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`timeout-${id}`} className="text-xs">Timeout (ms)</Label>
+            <Label htmlFor={`timeout-${id}`} className="text-xs">
+              Timeout (ms)
+            </Label>
             <Input
               id={`timeout-${id}`}
               type="number"
@@ -193,7 +202,9 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`retry-count-${id}`} className="text-xs">Retry Count</Label>
+            <Label htmlFor={`retry-count-${id}`} className="text-xs">
+              Retry Count
+            </Label>
             <Input
               id={`retry-count-${id}`}
               type="number"
@@ -206,7 +217,9 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`priority-${id}`} className="text-xs">Priority</Label>
+            <Label htmlFor={`priority-${id}`} className="text-xs">
+              Priority
+            </Label>
             <select
               id={`priority-${id}`}
               className="w-full text-xs h-8 rounded-md border border-input"
@@ -222,23 +235,29 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
 
         <TabsContent value="payload" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`payload-template-${id}`} className="text-xs">Payload Template</Label>
+            <Label htmlFor={`payload-template-${id}`} className="text-xs">
+              Payload Template
+            </Label>
             <Textarea
               id={`payload-template-${id}`}
               className="h-32 text-xs font-mono resize-none"
               placeholder="Enter payload template in JSON format. Use {{variable}} for dynamic values."
-              value={config.payloadTemplate || '{\n  "data": {{input}},\n  "context": {{context}}\n}'}
+              value={
+                config.payloadTemplate || '{\n  "data": {{input}},\n  "context": {{context}}\n}'
+              }
               onChange={(e: any) => handlePayloadTemplateChange(e.target.value)}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Use {{input}} and {{context}} to reference input values.
+              Use {{ input }} and {{ context }} to reference input values.
             </p>
           </div>
         </TabsContent>
 
         <TabsContent value="protocol" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`protocol-version-${id}`} className="text-xs">Protocol Version</Label>
+            <Label htmlFor={`protocol-version-${id}`} className="text-xs">
+              Protocol Version
+            </Label>
             <select
               id={`protocol-version-${id}`}
               className="w-full text-xs h-8 rounded-md border border-input"
@@ -248,8 +267,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
                   data.onUpdate({
                     config: {
                       ...config,
-                      protocolVersion: e.target.value
-                    }
+                      protocolVersion: e.target.value,
+                    },
                   });
                 }
               }}
@@ -258,14 +277,16 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
               <option value="2.0">A2A Protocol v2.0</option>
             </select>
             <p className="text-xs text-muted-foreground mt-1">
-              {config.protocolVersion === '2.0' ?
-                'v2.0 uses a header/body structure with enhanced metadata.' :
-                'v1.0 uses a flat message structure with basic metadata.'}
+              {config.protocolVersion === '2.0'
+                ? 'v2.0 uses a header/body structure with enhanced metadata.'
+                : 'v1.0 uses a flat message structure with basic metadata.'}
             </p>
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`message-encryption-${id}`} className="text-xs">Message Encryption</Label>
+            <Label htmlFor={`message-encryption-${id}`} className="text-xs">
+              Message Encryption
+            </Label>
             <div className="flex items-center space-x-2">
               <input
                 id={`message-encryption-${id}`}
@@ -276,8 +297,8 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
                     data.onUpdate({
                       config: {
                         ...config,
-                        enableEncryption: e.target.checked
-                      }
+                        enableEncryption: e.target.checked,
+                      },
                     });
                   }
                 }}
@@ -303,7 +324,7 @@ const A2ANode: React.React.FC<NodeProps> = memo(({ id, data }) => {
         ...data,
         name: data.name || 'A2A Communication',
         type: 'a2a',
-        renderContent
+        renderContent,
       }}
       inputHandles={inputHandles}
       outputHandles={outputHandles}

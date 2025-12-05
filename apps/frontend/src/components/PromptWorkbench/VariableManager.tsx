@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
 import {
   Box,
-  VStack,
-  HStack,
-  Text,
-  Input,
   Button,
+  HStack,
   IconButton,
+  Input,
   Table,
-  Thead,
   Tbody,
-  Tr,
-  Th,
   Td,
-  useToast
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useToast,
+  VStack,
 } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 
 interface VariableManagerProps {
@@ -22,7 +22,7 @@ interface VariableManagerProps {
   onChange: (variables: Record<string, string>) => void;
 }
 
-export const VariableManager: React.React.FC<VariableManagerProps> = ({ variables, onChange }) => {
+export const VariableManager: React.FC<VariableManagerProps> = ({ variables, onChange }) => {
   const toast = useToast();
   const [newVarName, setNewVarName] = useState('');
   const [newVarValue, setNewVarValue] = useState('');
@@ -48,10 +48,10 @@ export const VariableManager: React.React.FC<VariableManagerProps> = ({ variable
 
     const updatedVariables = {
       ...variables,
-      [newVarName]: newVarValue
+      [newVarName]: newVarValue,
     };
     onChange(updatedVariables);
-    
+
     // Clear the input fields
     setNewVarName('');
     setNewVarValue('');
@@ -60,7 +60,7 @@ export const VariableManager: React.React.FC<VariableManagerProps> = ({ variable
   const handleUpdateVariable = (name: string, value: string) => {
     const updatedVariables = {
       ...variables,
-      [name]: value
+      [name]: value,
     };
     onChange(updatedVariables);
   };

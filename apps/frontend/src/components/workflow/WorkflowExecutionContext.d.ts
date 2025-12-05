@@ -1,6 +1,6 @@
 import React from 'react';
 interface WorkflowExecutionContextProps {
-    workflowId: string;
+  workflowId: string;
 }
-export declare const WorkflowExecutionContext: React.React.FC<WorkflowExecutionContextProps>;
+export declare const WorkflowExecutionContext: React.FC<WorkflowExecutionContextProps>;
 export default WorkflowExecutionContext;

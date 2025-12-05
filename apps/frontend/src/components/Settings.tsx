@@ -1,95 +1,173 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import components_1 from '../components';
-import { Box, SimpleGrid, GridItem } from '@chakra-ui/react';
-import { Settings } from '@chakra-ui/icons';
-const Settings = () => {
-    const [settings, setSettings] = react_1.default.useState({
-        enableLogging: true,
-        debugMode: false,
-        maxAgents: 10,
-        apiKey: '',
-        webhookUrl: '',
-    });
-    const handleSettingChange = (setting) => (event) => {
-        setSettings(Object.assign(Object.assign({}, settings), { [setting]: event.target.type === 'checkbox'
-                ? event.target.checked
-                : event.target.value }));
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Lock, Settings as SettingsIcon } from 'lucide-react';
+import React, { useState } from 'react';
+
+interface SettingsState {
+  enableLogging: boolean;
+  debugMode: boolean;
+  maxAgents: number;
+  apiKey: string;
+  webhookUrl: string;
+}
+
+export const Settings: React.FC = () => {
+  const [settings, setSettings] = useState<SettingsState>({
+    enableLogging: true,
+    debugMode: false,
+    maxAgents: 10,
+    apiKey: '',
+    webhookUrl: '',
+  });
+
+  const handleToggle = (key: 'enableLogging' | 'debugMode') => (): void => {
+    setSettings((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const handleTextChange =
+    (key: 'apiKey' | 'webhookUrl') =>
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setSettings((prev) => ({
+        ...prev,
+        [key]: event.target.value,
+      }));
     };
-    return (<div className="p-6">
-      <SimpleGrid columns={3}>
 
-        <GridItem colSpan={12} md={6}>
-          <Box className="p-4">
-            <h2 className="text-xl font-bold mb-4 flex items-center">
-              <icons_material_1.Settings className="mr-2"/>
+  const handleMaxAgentsChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setSettings((prev) => ({
+      ...prev,
+      maxAgents: parseInt(event.target.value) || 0,
+    }));
+  };
+
+  const handleVerifyConfig = (): void => {
+    console.log('Verifying configuration:', settings);
+    // Add verification logic here
+  };
+
+  return (
+    <div className="p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* System Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <SettingsIcon className="w-5 h-5" />
               System Settings
-            </h2>
-            <material_1.List>
-              <material_1.ListItem>
-                <material_1.ListItemIcon>
-                  <icons_material_1.Storage />
-                </material_1.ListItemIcon>
-                <material_1.ListItemText primary="Enable Logging" secondary="Record detailed system logs"/>
-                <material_1.Switch edge="end" checked={settings.enableLogging} onChange={handleSettingChange('enableLogging')}/>
-              </material_1.ListItem>
-              <material_1.ListItem>
-                <material_1.ListItemIcon>
-                  <icons_material_1.Memory />
-                </material_1.ListItemIcon>
-                <material_1.ListItemText primary="Debug Mode" secondary="Enable detailed debugging information"/>
-                <material_1.Switch edge="end" checked={settings.debugMode} onChange={handleSettingChange('debugMode')}/>
-              </material_1.ListItem>
-              <material_1.ListItem>
-                <material_1.ListItemIcon>
-                  <icons_material_1.Api />
-                </material_1.ListItemIcon>
-                <material_1.ListItemText primary="Max Concurrent Agents" secondary="Maximum number of agents that can run simultaneously"/>
-                <material_1.TextField type="number" value={settings.maxAgents} onChange={handleSettingChange('maxAgents')} size="small" style={{ width: 100 }}/>
-              </material_1.ListItem>
-            </material_1.List>
-          </Box>
-        </GridItem>
-
-        <GridItem colSpan={12} md={6}>
-          <Box className="p-4">
-            <h2 className="text-xl font-bold mb-4 flex items-center">
-              <icons_material_1.Security className="mr-2"/>
-              API Configuration
-            </h2>
-            <div className="space-y-4">
-              <material_1.TextField fullWidth label="API Key" type="password" value={settings.apiKey} onChange={handleSettingChange('apiKey')}/>
-              <material_1.TextField fullWidth label="Webhook URL" value={settings.webhookUrl} onChange={handleSettingChange('webhookUrl')}/>
-              <material_1.Button variant="contained" color="primary">
-                Verify Configuration
-              </material_1.Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Enable Logging</Label>
+                <p className="text-sm text-gray-500">Record detailed system logs</p>
+              </div>
+              <Switch
+                checked={settings.enableLogging}
+                onCheckedChange={handleToggle('enableLogging')}
+              />
             </div>
-          </Box>
-        </GridItem>
 
-        <GridItem colSpan={12} md={6}>
-          <Box className="p-4">
-            <h2 className="text-xl font-bold mb-4">LLM Configuration</h2>
-            <components_1.LLMSelector />
-          </Box>
-        </GridItem>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Debug Mode</Label>
+                <p className="text-sm text-gray-500">Enable detailed debugging information</p>
+              </div>
+              <Switch checked={settings.debugMode} onCheckedChange={handleToggle('debugMode')} />
+            </div>
 
-        <GridItem colSpan={12} md={6}>
-          <Box className="p-4">
-            <h2 className="text-xl font-bold mb-4">GPU Management</h2>
-            <components_1.GPUManager />
-          </Box>
-        </GridItem>
+            <div className="space-y-2">
+              <Label>Max Concurrent Agents</Label>
+              <p className="text-sm text-gray-500 mb-2">
+                Maximum number of agents that can run simultaneously
+              </p>
+              <Input
+                type="number"
+                value={settings.maxAgents}
+                onChange={handleMaxAgentsChange}
+                className="w-32"
+                min={1}
+                max={100}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-        <GridItem colSpan={12}>
-          <Box className="p-4">
-            <h2 className="text-xl font-bold mb-4">Webhook Management</h2>
-            <components_1.WebhookManager />
-          </Box>
-        </GridItem>
-      </SimpleGrid>
-    </div>);
+        {/* API Configuration */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="w-5 h-5" />
+              API Configuration
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="apiKey">API Key</Label>
+              <Input
+                id="apiKey"
+                type="password"
+                placeholder="Enter your API key"
+                value={settings.apiKey}
+                onChange={handleTextChange('apiKey')}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="webhookUrl">Webhook URL</Label>
+              <Input
+                id="webhookUrl"
+                type="url"
+                placeholder="https://your-webhook-url.com"
+                value={settings.webhookUrl}
+                onChange={handleTextChange('webhookUrl')}
+              />
+            </div>
+
+            <Button onClick={handleVerifyConfig} className="w-full">
+              Verify Configuration
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* LLM Configuration placeholder */}
+        <Card>
+          <CardHeader>
+            <CardTitle>LLM Configuration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-500">LLM selector component will be rendered here</p>
+          </CardContent>
+        </Card>
+
+        {/* GPU Management placeholder */}
+        <Card>
+          <CardHeader>
+            <CardTitle>GPU Management</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-500">GPU manager component will be rendered here</p>
+          </CardContent>
+        </Card>
+
+        {/* Webhook Management placeholder */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Webhook Management</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-500">Webhook manager component will be rendered here</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 };
-exports.default = Settings;
-export {};
+
+export default Settings;

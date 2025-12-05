@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useAgentsWorkflow, useMcpTools } from '@/hooks';
-import { Node } from 'reactflow';
-import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { useAgentsWorkflow, useMcpTools } from '@/hooks';
 import { Save, X } from 'lucide-react';
-
-
+import React, { useEffect, useState } from 'react';
+import { Node } from 'reactflow';
 
 interface NodePropertiesProps {
   node: Node;
 }
 
-export const NodeProperties: React.React.FC<NodePropertiesProps> = ({ node }) => {
+export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
   const { agents } = useAgentsWorkflow();
   const { tools } = useMcpTools();
   const [nodeData, setNodeData] = useState<any>(node.data);
@@ -29,7 +26,7 @@ export const NodeProperties: React.React.FC<NodePropertiesProps> = ({ node }) =>
   const handleChange = (field: string, value: any) => {
     setNodeData((prev: any) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -49,7 +46,7 @@ export const NodeProperties: React.React.FC<NodePropertiesProps> = ({ node }) =>
             onChange={(e) => handleChange('agentId', e.target.value)}
           >
             <option value="">Select an agent</option>
-            {agents.map(agent => (
+            {agents.map((agent) => (
               <option key={agent.id} value={agent.id}>
                 {agent.name}
               </option>
@@ -108,7 +105,7 @@ export const NodeProperties: React.React.FC<NodePropertiesProps> = ({ node }) =>
             onChange={(e) => handleChange('toolId', e.target.value)}
           >
             <option value="">Select a tool</option>
-            {tools.map(tool => (
+            {tools.map((tool) => (
               <option key={tool.id} value={tool.id}>
                 {tool.name}
               </option>
@@ -187,9 +184,7 @@ export const NodeProperties: React.React.FC<NodePropertiesProps> = ({ node }) =>
             }}
             rows={5}
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Define how data is mapped between nodes.
-          </p>
+          <p className="text-xs text-gray-500 mt-1">Define how data is mapped between nodes.</p>
         </div>
       </div>
     );
@@ -224,9 +219,15 @@ export const NodeProperties: React.React.FC<NodePropertiesProps> = ({ node }) =>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full">
-          <TabsTrigger value="general" className="flex-1">General</TabsTrigger>
-          <TabsTrigger value="specific" className="flex-1">Specific</TabsTrigger>
-          <TabsTrigger value="advanced" className="flex-1">Advanced</TabsTrigger>
+          <TabsTrigger value="general" className="flex-1">
+            General
+          </TabsTrigger>
+          <TabsTrigger value="specific" className="flex-1">
+            Specific
+          </TabsTrigger>
+          <TabsTrigger value="advanced" className="flex-1">
+            Advanced
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-4 pt-4">

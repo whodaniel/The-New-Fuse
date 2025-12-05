@@ -1,32 +1,18 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { isMobile } from 'react-device-detect';
-import { Tooltip } from 'react-tooltip';
-import {
-  ChatCircle,
-  Cpu,
-  Database,
-  Gear,
-  Globe,
-  Info,
-  Key,
-  Lock,
-  MagnifyingGlass,
-  Plus,
-  Question,
-  SignOut,
-  User,
-} from '@phosphor-icons/react';
-import System from '@/models/system';
-import paths from '@/utils/paths';
 import { SettingsButton } from '@/components/SettingsButton';
 import { Button } from '@/components/ui/button';
+import System from '@/models/system';
+import paths from '@/utils/paths';
+import { Gear, Question, SignOut } from '@phosphor-icons/react';
+import React, { useState } from 'react';
+import { isMobile } from 'react-device-detect';
+import { Link } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 
 interface FooterProps {
   className?: string;
 }
 
-export const Footer: React.React.FC<FooterProps> = ({ className = '' }) => {
+export const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const [showTooltips, setShowTooltips] = useState(true);
 
   const handleSignOut = async () => {
@@ -78,12 +64,7 @@ export const Footer: React.React.FC<FooterProps> = ({ className = '' }) => {
       </div>
 
       {showTooltips && !isMobile && (
-        <Tooltip
-          id="footer"
-          place="top"
-          effect="solid"
-          className="z-50"
-        />
+        <Tooltip id="footer" place="top" effect="solid" className="z-50" />
       )}
     </footer>
   );

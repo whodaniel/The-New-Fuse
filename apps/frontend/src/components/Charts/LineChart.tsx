@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  LineChart as RechartsLineChart,
+  CartesianGrid,
   Line,
+  LineChart as RechartsLineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
 } from 'recharts';
 
 interface LineChartProps {
@@ -16,12 +16,7 @@ interface LineChartProps {
   height?: number;
 }
 
-export const LineChart: React.React.FC<LineChartProps> = ({
-  data,
-  xKey,
-  yKey,
-  height = 300
-}) => {
+export const LineChart: React.FC<LineChartProps> = ({ data, xKey, yKey, height = 300 }) => {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <RechartsLineChart data={data}>

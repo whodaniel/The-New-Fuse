@@ -1,7 +1,7 @@
-import React from 'react';
 import { ServiceStatusType } from '@the-new-fuse/types';
+import React from 'react';
 interface ServiceStatusProps {
-    status: ServiceStatusType;
+  status: ServiceStatusType;
 }
-export declare const ServiceStatus: React.React.FC<ServiceStatusProps>;
+export declare const ServiceStatus: React.FC<ServiceStatusProps>;
 export {};

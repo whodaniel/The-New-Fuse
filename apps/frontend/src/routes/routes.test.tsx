@@ -1,14 +1,12 @@
-import React from 'react';
+import { AuthProvider } from '@/providers/AuthProvider';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { AppRoutes } from './index';
-import { AuthProvider } from '@/providers/AuthProvider';
 
-const MockProvider: React.React.FC<{ children: React.ReactNode }> = ({ children }) => (
+const MockProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <BrowserRouter>
-    <AuthProvider>
-      {children}
-    </AuthProvider>
+    <AuthProvider>{children}</AuthProvider>
   </BrowserRouter>
 );
 

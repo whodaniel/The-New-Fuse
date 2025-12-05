@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
 import {
-  Box,
-  VStack,
-  HStack,
-  Text,
-  Input,
-  Button,
-  IconButton,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  useToast,
-  Badge,
   Accordion,
-  AccordionItem,
   AccordionButton,
+  AccordionIcon,
+  AccordionItem,
   AccordionPanel,
-  AccordionIcon
+  Badge,
+  Box,
+  Button,
+  HStack,
+  IconButton,
+  Input,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useToast,
+  VStack,
 } from '@chakra-ui/react';
-import { FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 
 interface TestCase {
   id: string;
@@ -35,13 +35,13 @@ interface TestCaseManagerProps {
   onChange: (testCases: TestCase[]) => void;
 }
 
-export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCases, onChange }) => {
+export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onChange }) => {
   const toast = useToast();
   const [newTestCase, setNewTestCase] = useState<TestCase>({
     id: '',
     name: '',
     description: '',
-    variables: {}
+    variables: {},
   });
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [newVarName, setNewVarName] = useState('');
@@ -59,23 +59,23 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
 
     const id = isEditing || `test-${Date.now()}`;
     const updatedTestCases = isEditing
-      ? testCases.map(tc => (tc.id === id ? { ...newTestCase, id } : tc))
+      ? testCases.map((tc) => (tc.id === id ? { ...newTestCase, id } : tc))
       : [...testCases, { ...newTestCase, id }];
 
     onChange(updatedTestCases);
-    
+
     // Reset form
     setNewTestCase({
       id: '',
       name: '',
       description: '',
-      variables: {}
+      variables: {},
     });
     setIsEditing(null);
   };
 
   const handleDeleteTestCase = (id: string) => {
-    onChange(testCases.filter(tc => tc.id !== id));
+    onChange(testCases.filter((tc) => tc.id !== id));
   };
 
   const handleEditTestCase = (testCase: TestCase) => {
@@ -97,10 +97,10 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
       ...newTestCase,
       variables: {
         ...newTestCase.variables,
-        [newVarName]: newVarValue
-      }
+        [newVarName]: newVarValue,
+      },
     });
-    
+
     // Clear inputs
     setNewVarName('');
     setNewVarValue('');
@@ -109,10 +109,10 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
   const handleDeleteVariable = (name: string) => {
     const updatedVariables = { ...newTestCase.variables };
     delete updatedVariables[name];
-    
+
     setNewTestCase({
       ...newTestCase,
-      variables: updatedVariables
+      variables: updatedVariables,
     });
   };
 
@@ -123,21 +123,23 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
           <Text fontWeight="bold" fontSize="lg">
             {isEditing ? 'Edit Test Case' : 'New Test Case'}
           </Text>
-          
+
           <Input
             placeholder="Test Case Name"
             value={newTestCase.name}
             onChange={(e) => setNewTestCase({ ...newTestCase, name: e.target.value })}
           />
-          
+
           <Input
             placeholder="Description (optional)"
             value={newTestCase.description}
             onChange={(e) => setNewTestCase({ ...newTestCase, description: e.target.value })}
           />
-          
+
           <Box>
-            <Text fontWeight="medium" mb={2}>Test Variables</Text>
+            <Text fontWeight="medium" mb={2}>
+              Test Variables
+            </Text>
             <HStack mb={3}>
               <Input
                 placeholder="Variable Name"
@@ -155,7 +157,7 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
                 Add
               </Button>
             </HStack>
-            
+
             <Table size="sm" variant="simple">
               <Thead>
                 <Tr>
@@ -184,29 +186,27 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
                 {Object.keys(newTestCase.variables).length === 0 && (
                   <Tr>
                     <Td colSpan={3} textAlign="center" py={2}>
-                      <Text fontSize="sm" color="gray.500">No variables added</Text>
+                      <Text fontSize="sm" color="gray.500">
+                        No variables added
+                      </Text>
                     </Td>
                   </Tr>
                 )}
               </Tbody>
             </Table>
           </Box>
-          
-          <Button
-            colorScheme="blue"
-            alignSelf="flex-end"
-            onClick={handleAddTestCase}
-          >
+
+          <Button colorScheme="blue" alignSelf="flex-end" onClick={handleAddTestCase}>
             {isEditing ? 'Update Test Case' : 'Add Test Case'}
           </Button>
         </VStack>
       </Box>
-      
+
       <Box>
         <Text fontWeight="bold" fontSize="lg" mb={4}>
           Test Cases ({testCases.length})
         </Text>
-        
+
         <Accordion allowMultiple>
           {testCases.map((testCase) => (
             <AccordionItem key={testCase.id}>
@@ -215,9 +215,7 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
                   <Box flex="1" textAlign="left">
                     <HStack>
                       <Text fontWeight="medium">{testCase.name}</Text>
-                      <Badge>
-                        {Object.keys(testCase.variables).length} variables
-                      </Badge>
+                      <Badge>{Object.keys(testCase.variables).length} variables</Badge>
                     </HStack>
                   </Box>
                   <AccordionIcon />
@@ -230,9 +228,11 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
                       {testCase.description}
                     </Text>
                   )}
-                  
+
                   <Box>
-                    <Text fontWeight="medium" fontSize="sm" mb={1}>Variables:</Text>
+                    <Text fontWeight="medium" fontSize="sm" mb={1}>
+                      Variables:
+                    </Text>
                     <Table size="sm" variant="simple">
                       <Thead>
                         <Tr>
@@ -250,7 +250,7 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
                       </Tbody>
                     </Table>
                   </Box>
-                  
+
                   <HStack justifyContent="flex-end">
                     <Button
                       size="sm"
@@ -273,7 +273,7 @@ export const TestCaseManager: React.React.FC<TestCaseManagerProps> = ({ testCase
             </AccordionItem>
           ))}
         </Accordion>
-        
+
         {testCases.length === 0 && (
           <Box textAlign="center" py={6} borderWidth={1} borderRadius="md" borderStyle="dashed">
             <Text color="gray.500">No test cases added yet</Text>

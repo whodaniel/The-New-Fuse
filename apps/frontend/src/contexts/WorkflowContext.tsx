@@ -1,15 +1,13 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { 
-  Node, 
-  Edge, 
-  useNodesState, 
-  useEdgesState, 
-  addEdge, 
-  Connection, 
-  NodeChange, 
+import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import {
+  addEdge,
+  Connection,
+  Edge,
   EdgeChange,
-  applyNodeChanges,
-  applyEdgeChanges
+  Node,
+  NodeChange,
+  useEdgesState,
+  useNodesState,
 } from 'reactflow';
 
 // Define workflow types
@@ -72,21 +70,21 @@ interface WorkflowProviderProps {
   readOnly?: boolean;
 }
 
-export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
+export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   children,
   initialNodes = [],
   initialEdges = [],
-  readOnly = false
+  readOnly = false,
 }) => {
   // State for nodes and edges
   const [nodes, setNodes, onNodesChange] = useNodesState<WorkflowNode['data']>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<WorkflowEdge['data']>(initialEdges);
-  
+
   // State for selection and read-only mode
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<WorkflowEdge | null>(null);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(readOnly);
-  
+
   // Handle connections between nodes
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -94,7 +92,7 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
     },
     [setEdges]
   );
-  
+
   // Node actions
   const addNode = useCallback(
     (node: WorkflowNode) => {
@@ -102,7 +100,7 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
     },
     [setNodes]
   );
-  
+
   const updateNode = useCallback(
     (id: string, data: any) => {
       setNodes((nds) =>
@@ -110,30 +108,26 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
           if (node.id === id) {
             return {
               ...node,
-              data: { ...node.data, ...data }
+              data: { ...node.data, ...data },
             };
           }
           return node;
         })
       );
-      
+
       // Update selected node if it's the one being updated
       if (selectedNode && selectedNode.id === id) {
-        setSelectedNode((prev) =>
-          prev ? { ...prev, data: { ...prev.data, ...data } } : null
-        );
+        setSelectedNode((prev) => (prev ? { ...prev, data: { ...prev.data, ...data } } : null));
       }
     },
     [setNodes, selectedNode]
   );
-  
+
   const removeNode = useCallback(
     (id: string) => {
       setNodes((nds) => nds.filter((node) => node.id !== id));
-      setEdges((eds) =>
-        eds.filter((edge) => edge.source !== id && edge.target !== id)
-      );
-      
+      setEdges((eds) => eds.filter((edge) => edge.source !== id && edge.target !== id));
+
       // Clear selection if the removed node was selected
       if (selectedNode && selectedNode.id === id) {
         setSelectedNode(null);
@@ -141,12 +135,12 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
     },
     [setNodes, setEdges, selectedNode]
   );
-  
+
   const executeNode = useCallback(
     (id: string) => {
       // Set node status to running
       updateNode(id, { status: 'running' });
-      
+
       // Simulate node execution
       setTimeout(() => {
         // Randomly succeed or fail for demo purposes
@@ -156,7 +150,7 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
     },
     [updateNode]
   );
-  
+
   // Edge actions
   const addEdgeAction = useCallback(
     (edge: WorkflowEdge) => {
@@ -164,7 +158,7 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
     },
     [setEdges]
   );
-  
+
   const updateEdge = useCallback(
     (id: string, data: any) => {
       setEdges((eds) =>
@@ -172,27 +166,25 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
           if (edge.id === id) {
             return {
               ...edge,
-              data: { ...edge.data, ...data }
+              data: { ...edge.data, ...data },
             };
           }
           return edge;
         })
       );
-      
+
       // Update selected edge if it's the one being updated
       if (selectedEdge && selectedEdge.id === id) {
-        setSelectedEdge((prev) =>
-          prev ? { ...prev, data: { ...prev.data, ...data } } : null
-        );
+        setSelectedEdge((prev) => (prev ? { ...prev, data: { ...prev.data, ...data } } : null));
       }
     },
     [setEdges, selectedEdge]
   );
-  
+
   const removeEdge = useCallback(
     (id: string) => {
       setEdges((eds) => eds.filter((edge) => edge.id !== id));
-      
+
       // Clear selection if the removed edge was selected
       if (selectedEdge && selectedEdge.id === id) {
         setSelectedEdge(null);
@@ -200,51 +192,45 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
     },
     [setEdges, selectedEdge]
   );
-  
+
   // Selection actions
-  const selectNode = useCallback(
-    (node: WorkflowNode | null) => {
-      setSelectedNode(node);
-      setSelectedEdge(null);
-    },
-    []
-  );
-  
-  const selectEdge = useCallback(
-    (edge: WorkflowEdge | null) => {
-      setSelectedEdge(edge);
-      setSelectedNode(null);
-    },
-    []
-  );
-  
+  const selectNode = useCallback((node: WorkflowNode | null) => {
+    setSelectedNode(node);
+    setSelectedEdge(null);
+  }, []);
+
+  const selectEdge = useCallback((edge: WorkflowEdge | null) => {
+    setSelectedEdge(edge);
+    setSelectedNode(null);
+  }, []);
+
   const clearSelection = useCallback(() => {
     setSelectedNode(null);
     setSelectedEdge(null);
   }, []);
-  
+
   // Workflow actions
   const executeWorkflow = useCallback(() => {
     // Find start nodes (nodes with no incoming edges)
     const startNodes = nodes.filter((node) => {
       return !edges.some((edge) => edge.target === node.id);
     });
-    
+
     // Execute each start node
     startNodes.forEach((node) => {
       executeNode(node.id);
     });
   }, [nodes, edges, executeNode]);
-  
+
   const saveWorkflow = useCallback(async () => {
     // In a real app, this would save the workflow to the server
     const workflow = {
       nodes,
-      edges
+      edges,
     };
-    
+
     console.log('Saving workflow:', workflow);
-    
+
     // Simulate API call
     return new Promise<string>((resolve) => {
       setTimeout(() => {
@@ -252,12 +238,12 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
       }, 1000);
     });
   }, [nodes, edges]);
-  
+
   const loadWorkflow = useCallback(
     async (id: string) => {
       // In a real app, this would load the workflow from the server
       console.log('Loading workflow:', id);
-      
+
       // Simulate API call
       return new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -267,37 +253,37 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
               id: 'node-1',
               type: 'input',
               position: { x: 100, y: 100 },
-              data: { label: 'Start', type: 'input' }
+              data: { label: 'Start', type: 'input' },
             },
             {
               id: 'node-2',
               type: 'agent',
               position: { x: 300, y: 100 },
-              data: { label: 'Process', type: 'agent' }
+              data: { label: 'Process', type: 'agent' },
             },
             {
               id: 'node-3',
               type: 'output',
               position: { x: 500, y: 100 },
-              data: { label: 'End', type: 'output' }
-            }
+              data: { label: 'End', type: 'output' },
+            },
           ];
-          
+
           const mockEdges: WorkflowEdge[] = [
             {
               id: 'edge-1-2',
               source: 'node-1',
               target: 'node-2',
-              data: { label: '' }
+              data: { label: '' },
             },
             {
               id: 'edge-2-3',
               source: 'node-2',
               target: 'node-3',
-              data: { label: '' }
-            }
+              data: { label: '' },
+            },
           ];
-          
+
           setNodes(mockNodes);
           setEdges(mockEdges);
           resolve();
@@ -306,7 +292,7 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
     },
     [setNodes, setEdges]
   );
-  
+
   // Create context value
   const contextValue: WorkflowContextType = {
     nodes,
@@ -331,15 +317,11 @@ export const WorkflowProvider: React.React.FC<WorkflowProviderProps> = ({
       clearSelection,
       executeWorkflow,
       saveWorkflow,
-      loadWorkflow
-    }
+      loadWorkflow,
+    },
   };
-  
-  return (
-    <WorkflowContext.Provider value={contextValue}>
-      {children}
-    </WorkflowContext.Provider>
-  );
+
+  return <WorkflowContext.Provider value={contextValue}>{children}</WorkflowContext.Provider>;
 };
 
 // Custom hook to use the workflow context

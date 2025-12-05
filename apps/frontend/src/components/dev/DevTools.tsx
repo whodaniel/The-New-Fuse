@@ -1,12 +1,12 @@
-import React from 'react';
 import { useStore } from '@/store';
+import React from 'react';
 import { PerformanceMonitor } from './PerformanceMonitor';
 
 interface DevToolsProps {}
 
-export const DevTools: React.React.FC<DevToolsProps> = () => {
+export const DevTools: React.FC<DevToolsProps> = () => {
   const { isDevelopment } = useStore((state) => state.system);
-  
+
   if (!isDevelopment) return null;
 
   return (
@@ -14,7 +14,7 @@ export const DevTools: React.React.FC<DevToolsProps> = () => {
       <PerformanceMonitor />
       <div className="dev-tools-controls space-y-2">
         <h3 className="font-semibold">Development Tools</h3>
-        <button 
+        <button
           className="px-3 py-1 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           onClick={() => {}} // Fixed: Added empty function body
         >

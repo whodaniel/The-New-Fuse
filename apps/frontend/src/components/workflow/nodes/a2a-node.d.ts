@@ -6,5 +6,5 @@ import { NodeProps } from 'reactflow';
  * This component represents an Agent-to-Agent communication node in the workflow.
  * It allows configuring communication between agents using the A2A protocol.
  */
-declare const A2ANode: React.React.FC<NodeProps>;
+declare const A2ANode: React.FC<NodeProps>;
 export { A2ANode };

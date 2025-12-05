@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { format, formatDistanceToNow } from 'date-fns';
+import { ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { ScrollArea } from './ui/scroll-area';
-import { Card, CardHeader, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
-import { formatDistanceToNow, format } from 'date-fns';
 import { Button } from './ui/button';
+import { Card, CardContent, CardHeader } from './ui/card';
+import { ScrollArea } from './ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { ChevronDown, ChevronUp, Filter, RefreshCw } from 'lucide-react';
 
 interface Activity {
   id: string;
@@ -20,7 +20,7 @@ interface Activity {
   read?: boolean;
 }
 
-const ActivityItem: React.React.FC<Activity & { onToggleExpand?: () => void, expanded?: boolean }> = ({
+const ActivityItem: React.FC<Activity & { onToggleExpand?: () => void; expanded?: boolean }> = ({
   type,
   message,
   timestamp,
@@ -29,21 +29,21 @@ const ActivityItem: React.React.FC<Activity & { onToggleExpand?: () => void, exp
   source,
   read,
   onToggleExpand,
-  expanded
+  expanded,
 }) => {
   const variants = {
     info: 'bg-blue-100 text-blue-800',
     warning: 'bg-yellow-100 text-yellow-800',
     error: 'bg-red-100 text-red-800',
-    success: 'bg-green-100 text-green-800'
+    success: 'bg-green-100 text-green-800',
   };
 
   return (
-    <div className={`flex flex-col p-3 hover:bg-gray-50 rounded-md transition-colors ${!read ? 'border-l-2 border-blue-500' : ''}`}>
+    <div
+      className={`flex flex-col p-3 hover:bg-gray-50 rounded-md transition-colors ${!read ? 'border-l-2 border-blue-500' : ''}`}
+    >
       <div className="flex items-start space-x-4 w-full">
-        <Badge className={variants[type]}>
-          {type.charAt(0).toUpperCase() + type.slice(1)}
-        </Badge>
+        <Badge className={variants[type]}>{type.charAt(0).toUpperCase() + type.slice(1)}</Badge>
 
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start">
@@ -82,9 +82,7 @@ const ActivityItem: React.React.FC<Activity & { onToggleExpand?: () => void, exp
           <pre className="text-xs text-gray-700 overflow-x-auto">
             {JSON.stringify(metadata, null, 2)}
           </pre>
-          <p className="text-xs text-gray-500 mt-2">
-            {format(new Date(timestamp), 'PPpp')}
-          </p>
+          <p className="text-xs text-gray-500 mt-2">{format(new Date(timestamp), 'PPpp')}</p>
         </div>
       )}
     </div>
@@ -113,7 +111,7 @@ export function ActivityFeed() {
           timestamp: new Date().toISOString(),
           category: event.category || 'System',
           source: event.source || 'System',
-          metadata: event.data
+          metadata: event.data,
         };
         setActivities((prev: any) => [activity, ...prev].slice(0, 50));
       }),
@@ -125,10 +123,10 @@ export function ActivityFeed() {
           message: error.message,
           timestamp: new Date().toISOString(),
           category: 'Error',
-          source: 'Application'
+          source: 'Application',
         };
         setActivities((prev: any) => [activity, ...prev].slice(0, 50));
-      })
+      }),
     ];
 
     return () => {
@@ -142,7 +140,7 @@ export function ActivityFeed() {
 
     // Filter by type
     if (filter !== 'all') {
-      filtered = filtered.filter(activity => activity.type === filter);
+      filtered = filtered.filter((activity) => activity.type === filter);
     }
 
     // Filter by time range
@@ -166,7 +164,7 @@ export function ActivityFeed() {
           break;
       }
 
-      filtered = filtered.filter(activity => new Date(activity.timestamp) >= cutoff);
+      filtered = filtered.filter((activity) => new Date(activity.timestamp) >= cutoff);
     }
 
     return filtered;
@@ -176,7 +174,7 @@ export function ActivityFeed() {
   const groupedActivities = useMemo(() => {
     const groups: Record<string, Activity[]> = {};
 
-    filteredActivities.forEach(activity => {
+    filteredActivities.forEach((activity) => {
       const date = new Date(activity.timestamp).toLocaleDateString();
       if (!groups[date]) {
         groups[date] = [];
@@ -195,14 +193,14 @@ export function ActivityFeed() {
       } else {
         newSet.add(id);
         // Mark as read when expanded
-        setReadIds(readIds => new Set([...readIds, id]));
+        setReadIds((readIds) => new Set([...readIds, id]));
       }
       return newSet;
     });
   };
 
   const markAllAsRead = () => {
-    setReadIds(new Set(activities.map(a => a.id)));
+    setReadIds(new Set(activities.map((a) => a.id)));
   };
 
   const clearActivities = () => {
@@ -222,12 +220,7 @@ export function ActivityFeed() {
             <Badge variant="outline" className="ml-2">
               {filteredActivities.length} events
             </Badge>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={markAllAsRead}
-              className="text-xs"
-            >
+            <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-xs">
               Mark all as read
             </Button>
           </div>
@@ -265,12 +258,7 @@ export function ActivityFeed() {
           <div className="flex-grow"></div>
 
           <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs"
-              onClick={clearActivities}
-            >
+            <Button variant="outline" size="sm" className="h-8 text-xs" onClick={clearActivities}>
               Clear
             </Button>
           </div>
@@ -286,9 +274,7 @@ export function ActivityFeed() {
           <TabsContent value="list">
             <ScrollArea className="h-[400px]">
               {filteredActivities.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  No activity to display
-                </div>
+                <div className="text-center text-gray-500 py-8">No activity to display</div>
               ) : (
                 <div className="space-y-1">
                   {filteredActivities.map((activity) => (
@@ -308,9 +294,7 @@ export function ActivityFeed() {
           <TabsContent value="grouped">
             <ScrollArea className="h-[400px]">
               {Object.keys(groupedActivities).length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  No activity to display
-                </div>
+                <div className="text-center text-gray-500 py-8">No activity to display</div>
               ) : (
                 <div className="space-y-4">
                   {Object.entries(groupedActivities).map(([date, dateActivities]) => (
@@ -339,7 +323,13 @@ export function ActivityFeed() {
   );
 }
 
-export function ActivityFeedControls({ setActivities, clearActivities }: { setActivities: (fn: (prev: Activity[]) => Activity[]) => void, clearActivities: () => void }) {
+export function ActivityFeedControls({
+  setActivities,
+  clearActivities,
+}: {
+  setActivities: (fn: (prev: Activity[]) => Activity[]) => void;
+  clearActivities: () => void;
+}) {
   return (
     <div className="flex space-x-2">
       <Button
@@ -352,12 +342,7 @@ export function ActivityFeedControls({ setActivities, clearActivities }: { setAc
         Refresh
       </Button>
 
-      <Button
-        variant="outline"
-        size="sm"
-        className="h-8 text-xs"
-        onClick={clearActivities}
-      >
+      <Button variant="outline" size="sm" className="h-8 text-xs" onClick={clearActivities}>
         Clear
       </Button>
     </div>

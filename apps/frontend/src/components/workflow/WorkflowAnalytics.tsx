@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Loader2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 interface WorkflowAnalyticsProps {
   workflowId: string;
@@ -26,22 +26,22 @@ interface WorkflowMetrics {
   nodeMetrics: NodeMetrics[];
 }
 
-export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ workflowId }) => {
+export const WorkflowAnalytics: React.FC<WorkflowAnalyticsProps> = ({ workflowId }) => {
   const [metrics, setMetrics] = useState<WorkflowMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Fetch metrics
   useEffect(() => {
     const fetchMetrics = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         // In a real app, this would fetch metrics from an API
         // For now, we'll just simulate a delay and return mock data
         await new Promise((resolve: any) => setTimeout(resolve, 1500));
-        
+
         // Mock data
         const mockMetrics: WorkflowMetrics = {
           executionCount: 42,
@@ -56,7 +56,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
               executionCount: 42,
               averageExecutionTime: 50,
               successRate: 1.0,
-              lastExecutionTime: Date.now() - 3600000
+              lastExecutionTime: Date.now() - 3600000,
             },
             {
               nodeId: 'node-2',
@@ -65,7 +65,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
               executionCount: 42,
               averageExecutionTime: 850,
               successRate: 0.95,
-              lastExecutionTime: Date.now() - 3600000
+              lastExecutionTime: Date.now() - 3600000,
             },
             {
               nodeId: 'node-3',
@@ -74,7 +74,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
               executionCount: 40,
               averageExecutionTime: 120,
               successRate: 0.98,
-              lastExecutionTime: Date.now() - 3600000
+              lastExecutionTime: Date.now() - 3600000,
             },
             {
               nodeId: 'node-4',
@@ -83,7 +83,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
               executionCount: 38,
               averageExecutionTime: 950,
               successRate: 0.92,
-              lastExecutionTime: Date.now() - 3600000
+              lastExecutionTime: Date.now() - 3600000,
             },
             {
               nodeId: 'node-5',
@@ -92,11 +92,11 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
               executionCount: 35,
               averageExecutionTime: 30,
               successRate: 1.0,
-              lastExecutionTime: Date.now() - 3600000
-            }
-          ]
+              lastExecutionTime: Date.now() - 3600000,
+            },
+          ],
         };
-        
+
         setMetrics(mockMetrics);
       } catch (err) {
         setError('Failed to fetch metrics');
@@ -105,10 +105,10 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
         setLoading(false);
       }
     };
-    
+
     fetchMetrics();
   }, [workflowId]);
-  
+
   // Format time
   const formatTime = (time: number) => {
     if (time < 1000) {
@@ -119,17 +119,17 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
       return `${(time / 60000).toFixed(1)}m`;
     }
   };
-  
+
   // Format date
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString();
   };
-  
+
   // Format percentage
   const formatPercentage = (value: number) => {
     return `${(value * 100).toFixed(1)}%`;
   };
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -137,7 +137,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
@@ -145,15 +145,11 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
       </div>
     );
   }
-  
+
   if (!metrics) {
-    return (
-      <div className="text-center text-muted-foreground">
-        No metrics available
-      </div>
-    );
+    return <div className="text-center text-muted-foreground">No metrics available</div>;
   }
-  
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -166,7 +162,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
             <div className="text-2xl font-bold">{metrics.executionCount}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Avg. Execution Time</CardTitle>
@@ -176,7 +172,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
             <div className="text-2xl font-bold">{formatTime(metrics.averageExecutionTime)}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
@@ -186,7 +182,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
             <div className="text-2xl font-bold">{formatPercentage(metrics.successRate)}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Last Execution</CardTitle>
@@ -197,14 +193,14 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
           </CardContent>
         </Card>
       </div>
-      
+
       <Tabs defaultValue="execution-time">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="execution-time">Execution Time</TabsTrigger>
           <TabsTrigger value="success-rate">Success Rate</TabsTrigger>
           <TabsTrigger value="execution-count">Execution Count</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="execution-time">
           <Card>
             <CardHeader>
@@ -229,7 +225,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="success-rate">
           <Card>
             <CardHeader>
@@ -245,7 +241,10 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="nodeName" />
-                    <YAxis domain={[0, 1]} label={{ value: 'Success Rate', angle: -90, position: 'insideLeft' }} />
+                    <YAxis
+                      domain={[0, 1]}
+                      label={{ value: 'Success Rate', angle: -90, position: 'insideLeft' }}
+                    />
                     <Tooltip formatter={(value) => formatPercentage(value as number)} />
                     <Bar dataKey="successRate" fill="#82ca9d" name="Success Rate" />
                   </BarChart>
@@ -254,7 +253,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="execution-count">
           <Card>
             <CardHeader>

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { NodeTemplate, Category } from '../../../types/workflow';
+import { Category, NodeTemplate } from '../../../types/workflow';
 
 interface NodeCategoryProps {
   category: Category;
   onDragStart: (event: React.DragEvent<HTMLDivElement>, node: NodeTemplate) => void;
 }
 
-export const NodeCategory: React.React.FC<NodeCategoryProps> = ({ category, onDragStart }) => {
+export const NodeCategory: React.FC<NodeCategoryProps> = ({ category, onDragStart }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (

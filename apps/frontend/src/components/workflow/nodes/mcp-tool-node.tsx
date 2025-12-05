@@ -1,14 +1,20 @@
-import React, { memo, useEffect, useState } from 'react';
-import { NodeProps } from 'reactflow';
-import { BaseNode } from './base-node';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useMcpTools } from '@/hooks/useMcpTools';
 import { MCPServer, MCPTool } from '@/services/MCPService';
+import React, { memo, useEffect, useState } from 'react';
+import { NodeProps } from 'reactflow';
+import { BaseNode } from './base-node';
 
-const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
+const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const { servers, tools, loading } = useMcpTools();
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
@@ -17,12 +23,12 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
   // Load selected server and tool
   useEffect(() => {
     if (data.config?.mcpServer && servers.length > 0) {
-      const server = servers.find(s => s.name === data.config.mcpServer);
+      const server = servers.find((s) => s.name === data.config.mcpServer);
       if (server) {
         setSelectedServer(server);
 
         if (data.config?.mcpTool) {
-          const tool = server.tools.find(t => t.name === data.config.mcpTool);
+          const tool = server.tools.find((t) => t.name === data.config.mcpTool);
           if (tool) {
             setSelectedTool(tool);
             setParamValues(data.config.parameters || {});
@@ -34,7 +40,7 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
 
   // Handle server selection change
   const handleServerChange = (serverName: string) => {
-    const server = servers.find(s => s.name === serverName);
+    const server = servers.find((s) => s.name === serverName);
     setSelectedServer(server || null);
     setSelectedTool(null);
     setParamValues({});
@@ -46,8 +52,8 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
           ...data.config,
           mcpServer: serverName,
           mcpTool: '',
-          parameters: {}
-        }
+          parameters: {},
+        },
       });
     }
   };
@@ -56,7 +62,7 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
   const handleToolChange = (toolName: string) => {
     if (!selectedServer) return;
 
-    const tool = selectedServer.tools.find(t => t.name === toolName);
+    const tool = selectedServer.tools.find((t) => t.name === toolName);
     setSelectedTool(tool || null);
 
     // Initialize default parameter values
@@ -98,8 +104,8 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
         config: {
           ...data.config,
           mcpTool: toolName,
-          parameters: initialParams
-        }
+          parameters: initialParams,
+        },
       });
     }
   };
@@ -108,7 +114,7 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
   const handleParamChange = (paramName: string, value: any) => {
     const updatedParams = {
       ...paramValues,
-      [paramName]: value
+      [paramName]: value,
     };
 
     setParamValues(updatedParams);
@@ -117,8 +123,8 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       data.onUpdate({
         config: {
           ...data.config,
-          parameters: updatedParams
-        }
+          parameters: updatedParams,
+        },
       });
     }
   };
@@ -195,19 +201,19 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
     }
   };
 
-  const inputHandles = [
-    { id: 'default', label: 'Input' }
-  ];
+  const inputHandles = [{ id: 'default', label: 'Input' }];
 
   const outputHandles = [
     { id: 'default', label: 'Output' },
-    { id: 'error', label: 'Error' }
+    { id: 'error', label: 'Error' },
   ];
 
   const renderContent = () => (
     <div className="space-y-3">
       <div>
-        <Label htmlFor={`server-${id}`} className="text-xs">MCP Server</Label>
+        <Label htmlFor={`server-${id}`} className="text-xs">
+          MCP Server
+        </Label>
         <Select
           value={data.config?.mcpServer || ''}
           onValueChange={handleServerChange}
@@ -217,7 +223,7 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
             <SelectValue placeholder="Select server" />
           </SelectTrigger>
           <SelectContent>
-            {servers.map(server => (
+            {servers.map((server) => (
               <SelectItem key={server.id} value={server.name} className="text-xs">
                 {server.name}
               </SelectItem>
@@ -228,16 +234,15 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
 
       {selectedServer && (
         <div>
-          <Label htmlFor={`tool-${id}`} className="text-xs">Tool</Label>
-          <Select
-            value={data.config?.mcpTool || ''}
-            onValueChange={handleToolChange}
-          >
+          <Label htmlFor={`tool-${id}`} className="text-xs">
+            Tool
+          </Label>
+          <Select value={data.config?.mcpTool || ''} onValueChange={handleToolChange}>
             <SelectTrigger id={`tool-${id}`} className="text-xs h-7 mt-1">
               <SelectValue placeholder="Select tool" />
             </SelectTrigger>
             <SelectContent>
-              {selectedServer.tools.map(tool => (
+              {selectedServer.tools.map((tool) => (
                 <SelectItem key={tool.name} value={tool.name} className="text-xs">
                   {tool.name}
                 </SelectItem>
@@ -247,19 +252,21 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
         </div>
       )}
 
-      {selectedTool && selectedTool.parameters && Object.keys(selectedTool.parameters).length > 0 && (
-        <div className="space-y-2">
-          <Label className="text-xs">Parameters</Label>
-          {Object.entries(selectedTool.parameters).map(([paramName, paramConfig]) => (
-            <div key={paramName} className="space-y-1">
-              <Label htmlFor={`param-${id}-${paramName}`} className="text-xs">
-                {paramName} {paramConfig.required && <span className="text-red-500">*</span>}
-              </Label>
-              {renderParamInput(paramName, paramConfig)}
-            </div>
-          ))}
-        </div>
-      )}
+      {selectedTool &&
+        selectedTool.parameters &&
+        Object.keys(selectedTool.parameters).length > 0 && (
+          <div className="space-y-2">
+            <Label className="text-xs">Parameters</Label>
+            {Object.entries(selectedTool.parameters).map(([paramName, paramConfig]) => (
+              <div key={paramName} className="space-y-1">
+                <Label htmlFor={`param-${id}-${paramName}`} className="text-xs">
+                  {paramName} {paramConfig.required && <span className="text-red-500">*</span>}
+                </Label>
+                {renderParamInput(paramName, paramConfig)}
+              </div>
+            ))}
+          </div>
+        )}
     </div>
   );
 
@@ -270,7 +277,7 @@ const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
         ...data,
         name: selectedTool?.name || selectedServer?.name || data.name || 'MCP Tool',
         type: 'mcp-tool',
-        renderContent
+        renderContent,
       }}
       inputHandles={inputHandles}
       outputHandles={outputHandles}

@@ -1,7 +1,6 @@
+import { Box, Grid, Stat, StatHelpText, StatLabel, StatNumber } from '@chakra-ui/react';
 import React from 'react';
-import { Box, Grid, Stat, StatLabel, StatNumber, StatHelpText } from '@chakra-ui/react';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
-import { ServiceMetrics } from '@the-new-fuse/types';
 
 export const SystemMetrics: React.FC = () => {
   const { metrics, loading, error } = useSystemMetrics();
@@ -31,7 +30,7 @@ export const SystemMetrics: React.FC = () => {
   );
 };
 
-const MetricCard: React.React.FC<{
+const MetricCard: React.FC<{
   label: string;
   value: string | number;
   helpText: string;

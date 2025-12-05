@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ThemeProvider as ChakraThemeProvider } from '@chakra-ui/react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { baseTheme, darkTheme } from './themes';
 
 interface ThemeContextType {
@@ -10,7 +10,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState('base');
   const [themeConfig, setThemeConfig] = useState(baseTheme);
 
@@ -30,15 +30,13 @@ export const ThemeProvider: React.React.FC<{ children: React.ReactNode }> = ({ c
   const customizeTheme = (customizations: Record<string, unknown>) => {
     setThemeConfig((prev: any) => ({
       ...prev,
-      ...customizations
+      ...customizations,
     }));
   };
 
   return (
     <ThemeContext.Provider value={{ currentTheme, setTheme, customizeTheme }}>
-      <ChakraThemeProvider theme={themeConfig}>
-        {children}
-      </ChakraThemeProvider>
+      <ChakraThemeProvider theme={themeConfig}>{children}</ChakraThemeProvider>
     </ThemeContext.Provider>
   );
 };

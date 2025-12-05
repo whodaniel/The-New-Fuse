@@ -1,64 +1,66 @@
-import React, { useState, useEffect } from 'react';
-import { useReactFlow } from 'reactflow';
-import { workflowExecutionService, DebugOptions } from '@/services/WorkflowExecutionService';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Pause, SkipForward, Bug, X } from 'lucide-react';
+import { DebugOptions, workflowExecutionService } from '@/services/WorkflowExecutionService';
+import { Bug, Play, SkipForward, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { useReactFlow } from 'reactflow';
 
 interface WorkflowDebuggerProps {
   workflowId: string;
 }
 
-export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workflowId }) => {
+export const WorkflowDebugger: React.FC<WorkflowDebuggerProps> = ({ workflowId }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [debugOptions, setDebugOptions] = useState<DebugOptions>(workflowExecutionService.getDebugOptions());
+  const [debugOptions, setDebugOptions] = useState<DebugOptions>(
+    workflowExecutionService.getDebugOptions()
+  );
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const { getNodes, setNodes } = useReactFlow();
-  
+
   // Update debug options
   const updateDebugOptions = (options: Partial<DebugOptions>) => {
     const newOptions = {
       ...debugOptions,
-      ...options
+      ...options,
     };
-    
+
     setDebugOptions(newOptions);
     workflowExecutionService.setDebugOptions(newOptions);
   };
-  
+
   // Toggle debug mode
   const toggleDebugMode = () => {
     updateDebugOptions({ enabled: !debugOptions.enabled });
   };
-  
+
   // Toggle step-by-step execution
   const toggleStepByStep = () => {
     updateDebugOptions({ stepByStep: !debugOptions.stepByStep });
   };
-  
+
   // Continue execution
   const continueExecution = () => {
     workflowExecutionService.continueExecution();
   };
-  
+
   // Toggle breakpoint for a node
   const toggleBreakpoint = (nodeId: string) => {
     const breakpoints = [...debugOptions.breakpoints];
     const index = breakpoints.indexOf(nodeId);
-    
+
     if (index === -1) {
       breakpoints.push(nodeId);
     } else {
       breakpoints.splice(index, 1);
     }
-    
+
     updateDebugOptions({ breakpoints });
-    
+
     // Update node UI
-    setNodes(nodes => 
+    setNodes((nodes) =>
       nodes.map((node: any) => {
         if (node.id === nodeId) {
           return {
@@ -67,24 +69,24 @@ export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workfl
               ...node.data,
               debug: {
                 ...node.data?.debug,
-                breakpoint: index === -1
-              }
-            }
+                breakpoint: index === -1,
+              },
+            },
           };
         }
         return node;
       })
     );
   };
-  
+
   // Set log level
   const setLogLevel = (level: 'error' | 'warn' | 'info' | 'debug' | 'trace') => {
     updateDebugOptions({ logLevel: level });
   };
-  
+
   // Get nodes for breakpoint selection
   const nodes = getNodes();
-  
+
   return (
     <>
       {/* Debug toggle button */}
@@ -98,7 +100,7 @@ export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workfl
           <Bug className="h-4 w-4" />
         </Button>
       </div>
-      
+
       {/* Debug panel */}
       {isOpen && (
         <Card className="absolute bottom-14 left-4 w-80 shadow-lg">
@@ -116,32 +118,36 @@ export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workfl
               <X className="h-4 w-4" />
             </Button>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label htmlFor="debug-mode" className="text-sm">Debug Mode</Label>
+              <Label htmlFor="debug-mode" className="text-sm">
+                Debug Mode
+              </Label>
               <Switch
                 id="debug-mode"
                 checked={debugOptions.enabled}
                 onCheckedChange={toggleDebugMode}
               />
             </div>
-            
+
             {debugOptions.enabled && (
               <>
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="step-by-step" className="text-sm">Step-by-Step Execution</Label>
+                  <Label htmlFor="step-by-step" className="text-sm">
+                    Step-by-Step Execution
+                  </Label>
                   <Switch
                     id="step-by-step"
                     checked={debugOptions.stepByStep}
                     onCheckedChange={toggleStepByStep}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className="text-sm">Log Level</Label>
                   <div className="grid grid-cols-5 gap-1">
-                    {['error', 'warn', 'info', 'debug', 'trace'].map(level => (
+                    {['error', 'warn', 'info', 'debug', 'trace'].map((level) => (
                       <Button
                         key={level}
                         variant={debugOptions.logLevel === level ? 'default' : 'outline'}
@@ -154,19 +160,21 @@ export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workfl
                     ))}
                   </div>
                 </div>
-                
+
                 <Tabs defaultValue="breakpoints">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="breakpoints">Breakpoints</TabsTrigger>
                     <TabsTrigger value="controls">Controls</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="breakpoints" className="space-y-2">
                     <Label className="text-sm">Set Breakpoints</Label>
                     <div className="max-h-40 overflow-y-auto space-y-1">
                       {nodes.map((node: any) => (
                         <div key={node.id} className="flex items-center justify-between">
-                          <span className="text-xs">{node.data?.name || node.type} ({node.id})</span>
+                          <span className="text-xs">
+                            {node.data?.name || node.type} ({node.id})
+                          </span>
                           <Switch
                             checked={debugOptions.breakpoints.includes(node.id)}
                             onCheckedChange={() => toggleBreakpoint(node.id)}
@@ -175,7 +183,7 @@ export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workfl
                       ))}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="controls" className="space-y-2">
                     <Label className="text-sm">Execution Controls</Label>
                     <div className="flex space-x-2">

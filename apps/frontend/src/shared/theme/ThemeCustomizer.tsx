@@ -1,32 +1,29 @@
+import { ColorPicker, Select, Switch, VStack } from '@chakra-ui/react';
 import React from 'react';
-import { Box, Select, ColorPicker, Switch, VStack } from '@chakra-ui/react';
 import { useTheme } from './ThemeContext';
 
-export const ThemeCustomizer: React.React.FC<{}> = () => {
+export const ThemeCustomizer: React.FC<{}> = () => {
   const { currentTheme, setTheme, customizeTheme } = useTheme();
 
   const handleColorChange = (color: string, type: 'primary' | 'secondary') => {
     customizeTheme({
       colors: {
-        [type]: color
-      }
+        [type]: color,
+      },
     });
   };
 
   const handleFontChange = (fontFamily: string) => {
     customizeTheme({
       fonts: {
-        body: fontFamily
-      }
+        body: fontFamily,
+      },
     });
   };
 
   return (
     <VStack spacing={4} p={4}>
-      <Select
-        value={currentTheme}
-        onChange={(e) => setTheme(e.target.value)}
-      >
+      <Select value={currentTheme} onChange={(e) => setTheme(e.target.value)}>
         <option value="base">Light Theme</option>
         <option value="dark">Dark Theme</option>
         <option value="custom">Custom Theme</option>
@@ -42,10 +39,7 @@ export const ThemeCustomizer: React.React.FC<{}> = () => {
         onChange={(color) => handleColorChange(color, 'secondary')}
       />
 
-      <Select
-        placeholder="Select Font Family"
-        onChange={(e) => handleFontChange(e.target.value)}
-      >
+      <Select placeholder="Select Font Family" onChange={(e) => handleFontChange(e.target.value)}>
         <option value="Inter">Inter</option>
         <option value="Roboto">Roboto</option>
         <option value="Open Sans">Open Sans</option>

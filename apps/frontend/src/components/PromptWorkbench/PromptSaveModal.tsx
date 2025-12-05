@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   Button,
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Textarea,
-  VStack
+  VStack,
 } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { PromptTemplate } from '../../hooks/usePromptTemplates';
 
 interface PromptSaveModalProps {
@@ -23,11 +23,11 @@ interface PromptSaveModalProps {
   initialData?: PromptTemplate;
 }
 
-export const PromptSaveModal: React.React.FC<PromptSaveModalProps> = ({
+export const PromptSaveModal: React.FC<PromptSaveModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  initialData
+  initialData,
 }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -67,7 +67,7 @@ export const PromptSaveModal: React.React.FC<PromptSaveModalProps> = ({
                 onChange={(e) => setName(e.target.value)}
               />
             </FormControl>
-            
+
             <FormControl>
               <FormLabel>Description</FormLabel>
               <Textarea
@@ -77,7 +77,7 @@ export const PromptSaveModal: React.React.FC<PromptSaveModalProps> = ({
                 rows={3}
               />
             </FormControl>
-            
+
             {isUpdate && (
               <FormControl>
                 <FormLabel>Version Comment</FormLabel>
@@ -96,11 +96,7 @@ export const PromptSaveModal: React.React.FC<PromptSaveModalProps> = ({
           <Button variant="ghost" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button 
-            colorScheme="blue" 
-            onClick={handleSave}
-            isDisabled={!name.trim()}
-          >
+          <Button colorScheme="blue" onClick={handleSave} isDisabled={!name.trim()}>
             {isUpdate ? 'Update' : 'Save'}
           </Button>
         </ModalFooter>

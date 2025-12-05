@@ -1,47 +1,44 @@
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
 import { BaseNode } from './base-node';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
 
-const TransformNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
+const TransformNode: React.FC<NodeProps> = memo(({ id, data }) => {
   // Handle transform code change
   const handleTransformCodeChange = (code: string) => {
     if (data.onUpdate) {
       data.onUpdate({
         config: {
           ...data.config,
-          transformCode: code
-        }
+          transformCode: code,
+        },
       });
     }
   };
-  
+
   // Handle transform type change
   const handleTransformTypeChange = (type: string) => {
     if (data.onUpdate) {
       data.onUpdate({
         config: {
           ...data.config,
-          transformType: type
-        }
+          transformType: type,
+        },
       });
     }
   };
-  
-  const inputHandles = [
-    { id: 'default', label: 'Input' }
-  ];
-  
-  const outputHandles = [
-    { id: 'default', label: 'Output' }
-  ];
-  
+
+  const inputHandles = [{ id: 'default', label: 'Input' }];
+
+  const outputHandles = [{ id: 'default', label: 'Output' }];
+
   const renderContent = () => (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor={`transform-type-${id}`} className="text-xs">Transform Type</Label>
+        <Label htmlFor={`transform-type-${id}`} className="text-xs">
+          Transform Type
+        </Label>
         <select
           id={`transform-type-${id}`}
           className="w-full text-xs h-8 rounded-md border border-input"
@@ -53,9 +50,11 @@ const TransformNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
           <option value="template">Template</option>
         </select>
       </div>
-      
+
       <div className="space-y-1">
-        <Label htmlFor={`transform-code-${id}`} className="text-xs">Transform Code</Label>
+        <Label htmlFor={`transform-code-${id}`} className="text-xs">
+          Transform Code
+        </Label>
         <Textarea
           id={`transform-code-${id}`}
           className="h-32 text-xs font-mono resize-none"
@@ -69,7 +68,7 @@ const TransformNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
       </div>
     </div>
   );
-  
+
   return (
     <BaseNode
       id={id}
@@ -77,7 +76,7 @@ const TransformNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
         ...data,
         name: data.name || 'Transform',
         type: 'transform',
-        renderContent
+        renderContent,
       }}
       inputHandles={inputHandles}
       outputHandles={outputHandles}

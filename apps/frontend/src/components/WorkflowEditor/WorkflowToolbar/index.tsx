@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from '../../ui/Button';
-import { ValidationErrors } from './ValidationErrors';
-import { ShareButton } from './ShareButton';
-import { DeployButton } from './DeployButton';
 import { useWorkflowActions } from '../../../hooks/useWorkflowActions';
+import { Button } from '../../ui/Button';
+import { DeployButton } from './DeployButton';
+import { ShareButton } from './ShareButton';
+import { ValidationErrors } from './ValidationErrors';
 
 interface WorkflowToolbarProps {
   onSave: () => void;
@@ -15,7 +15,7 @@ interface WorkflowToolbarProps {
   validationErrors: string[];
 }
 
-export const WorkflowToolbar: React.React.FC<WorkflowToolbarProps> = ({
+export const WorkflowToolbar: React.FC<WorkflowToolbarProps> = ({
   onSave,
   canUndo,
   canRedo,

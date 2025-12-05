@@ -1,41 +1,38 @@
-import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  VStack,
-  Text,
-  Button,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Badge,
+  Box,
+  Button,
   Divider,
   Flex,
   Heading,
-  Spinner,
-  useToast,
-  useDisclosure,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
+  useToast,
+  VStack,
 } from '@chakra-ui/react';
-import { 
-  usePromptTemplates, 
-  PromptTemplateVersion 
-} from '../../hooks/usePromptTemplates';
 import { format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { PromptTemplateVersion, usePromptTemplates } from '../../hooks/usePromptTemplates';
 
 interface VersionHistoryProps {
   templateId: string | null;
 }
 
-export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId }) => {
+export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) => {
   const { getTemplateVersions, loadTemplate } = usePromptTemplates();
   const [versions, setVersions] = useState<PromptTemplateVersion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -53,7 +50,7 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
 
   const loadVersions = async () => {
     if (!templateId) return;
-    
+
     setLoading(true);
     try {
       const versionHistory = await getTemplateVersions(templateId);
@@ -76,14 +73,14 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
 
   const handleRestoreVersion = async (version: PromptTemplateVersion) => {
     if (!templateId) return;
-    
+
     try {
       // Load the current template
       const currentTemplate = await loadTemplate(templateId);
-      
+
       // Update with the version's content
       await loadTemplate(templateId);
-      
+
       toast({
         title: 'Version restored',
         description: `Restored to version from ${format(new Date(version.createdAt), 'PPpp')}`,
@@ -118,7 +115,9 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
     <VStack spacing={4} align="stretch">
       <Flex justifyContent="space-between" alignItems="center">
         <Heading size="md">Version History</Heading>
-        <Button size="sm" onClick={loadVersions}>Refresh</Button>
+        <Button size="sm" onClick={loadVersions}>
+          Refresh
+        </Button>
       </Flex>
 
       {versions.length === 0 ? (
@@ -149,13 +148,15 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
                     <Text>v{versions.length - index}</Text>
                   )}
                 </Td>
-                <Td>
-                  {format(new Date(version.createdAt), 'MMM d, yyyy h:mm a')}
-                </Td>
+                <Td>{format(new Date(version.createdAt), 'MMM d, yyyy h:mm a')}</Td>
                 <Td>{version.createdBy}</Td>
                 <Td>
                   <Text noOfLines={1}>
-                    {version.comment || <Text as="i" color="gray.500">No comment</Text>}
+                    {version.comment || (
+                      <Text as="i" color="gray.500">
+                        No comment
+                      </Text>
+                    )}
                   </Text>
                 </Td>
                 <Td>
@@ -163,7 +164,11 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
                     View
                   </Button>
                   {index > 0 && (
-                    <Button size="xs" colorScheme="blue" onClick={() => handleRestoreVersion(version)}>
+                    <Button
+                      size="xs"
+                      colorScheme="blue"
+                      onClick={() => handleRestoreVersion(version)}
+                    >
                       Restore
                     </Button>
                   )}
@@ -179,7 +184,8 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Version from {selectedVersion ? format(new Date(selectedVersion.createdAt), 'PPpp') : ''}
+            Version from{' '}
+            {selectedVersion ? format(new Date(selectedVersion.createdAt), 'PPpp') : ''}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -191,7 +197,9 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
                 </Box>
                 <Divider />
                 <Box>
-                  <Text fontWeight="bold" mb={2}>Template Content:</Text>
+                  <Text fontWeight="bold" mb={2}>
+                    Template Content:
+                  </Text>
                   <Box
                     p={3}
                     borderWidth={1}
@@ -207,7 +215,9 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
                   </Box>
                 </Box>
                 <Box>
-                  <Text fontWeight="bold" mb={2}>Variables:</Text>
+                  <Text fontWeight="bold" mb={2}>
+                    Variables:
+                  </Text>
                   <Table size="sm">
                     <Thead>
                       <Tr>
@@ -224,7 +234,9 @@ export const VersionHistory: React.React.FC<VersionHistoryProps> = ({ templateId
                       ))}
                       {Object.keys(selectedVersion.variables).length === 0 && (
                         <Tr>
-                          <Td colSpan={2} textAlign="center" py={2}>No variables defined</Td>
+                          <Td colSpan={2} textAlign="center" py={2}>
+                            No variables defined
+                          </Td>
                         </Tr>
                       )}
                     </Tbody>

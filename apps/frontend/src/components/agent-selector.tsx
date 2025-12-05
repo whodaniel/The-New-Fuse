@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Agent, useAgents } from '@/hooks/useAgents';
 
 interface AgentSelectorProps {
@@ -11,16 +11,16 @@ interface AgentSelectorProps {
   selectedAgent?: Agent | null;
 }
 
-export const AgentSelector: React.React.FC<AgentSelectorProps> = ({ onSelect, selectedAgent }) => {
+export const AgentSelector: React.FC<AgentSelectorProps> = ({ onSelect, selectedAgent }) => {
   const { agents, loading, error, fetchAgents } = useAgents();
-  
+
   // Retry loading if there was an error
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
         fetchAgents();
       }, 5000); // Retry after 5 seconds
-      
+
       return () => clearTimeout(timer);
     }
   }, [error, fetchAgents]);
@@ -37,7 +37,7 @@ export const AgentSelector: React.React.FC<AgentSelectorProps> = ({ onSelect, se
         return 'default';
     }
   };
-  
+
   if (loading) {
     return (
       <ScrollArea.Root className="h-[400px]">
@@ -62,13 +62,11 @@ export const AgentSelector: React.React.FC<AgentSelectorProps> = ({ onSelect, se
       </ScrollArea.Root>
     );
   }
-  
+
   if (error) {
     return (
       <Alert variant="destructive">
-        <AlertDescription>
-          Failed to load agents. Retrying...
-        </AlertDescription>
+        <AlertDescription>Failed to load agents. Retrying...</AlertDescription>
       </Alert>
     );
   }
@@ -78,13 +76,11 @@ export const AgentSelector: React.React.FC<AgentSelectorProps> = ({ onSelect, se
       <ScrollArea.Viewport className="h-full w-full">
         <div className="space-y-2 p-2">
           {agents.map((agent) => (
-            <Card 
-              key={agent.id} 
+            <Card
+              key={agent.id}
               className={`cursor-pointer transition-colors ${
-                selectedAgent?.id === agent.id
-                  ? 'bg-primary/10'
-                  : 'hover:bg-accent'
-              }`} 
+                selectedAgent?.id === agent.id ? 'bg-primary/10' : 'hover:bg-accent'
+              }`}
               onClick={() => onSelect(agent)}
             >
               <CardHeader className="p-4">
@@ -92,9 +88,7 @@ export const AgentSelector: React.React.FC<AgentSelectorProps> = ({ onSelect, se
                   <Badge variant={getStatusVariant(agent.status)}>
                     {agent.status || 'unknown'}
                   </Badge>
-                  <CardTitle className="text-sm font-medium">
-                    {agent.name}
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">{agent.name}</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="p-4 pt-0">
@@ -102,14 +96,15 @@ export const AgentSelector: React.React.FC<AgentSelectorProps> = ({ onSelect, se
                   {agent.description || `${agent.type} agent`}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {agent.capabilities ? 
+                  {agent.capabilities ? (
                     agent.capabilities.map((capability) => (
                       <Badge key={capability} variant="outline">
                         {capability}
                       </Badge>
-                    )) : 
+                    ))
+                  ) : (
                     <Badge variant="outline">{agent.type}</Badge>
-                  }
+                  )}
                 </div>
               </CardContent>
             </Card>

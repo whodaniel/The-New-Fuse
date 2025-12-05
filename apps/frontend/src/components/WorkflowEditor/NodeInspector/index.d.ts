@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Node } from '../../../types/workflow';
 interface NodeInspectorProps {
-    node: Node;
-    onUpdate: (changes: any) => void;
+  node: Node;
+  onUpdate: (changes: any) => void;
 }
-export declare const NodeInspector: React.React.FC<NodeInspectorProps>;
+export declare const NodeInspector: React.FC<NodeInspectorProps>;
 export {};

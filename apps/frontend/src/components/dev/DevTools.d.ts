@@ -1,5 +1,4 @@
 import React from 'react';
-interface DevToolsProps {
-}
-export declare const DevTools: React.React.FC<DevToolsProps>;
+interface DevToolsProps {}
+export declare const DevTools: React.FC<DevToolsProps>;
 export {};

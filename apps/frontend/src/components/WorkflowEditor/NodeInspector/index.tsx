@@ -1,17 +1,17 @@
-import React from 'react';
 import { Tab } from '@headlessui/react';
+import React from 'react';
+import type { Node } from '../../../types/workflow';
 import { ConfigurationPanel } from './ConfigurationPanel';
+import { HistoryPanel } from './HistoryPanel';
 import { InputsPanel } from './InputsPanel';
 import { OutputsPanel } from './OutputsPanel';
-import { HistoryPanel } from './HistoryPanel';
-import type { Node } from '../../../types/workflow';
 
 interface NodeInspectorProps {
   node: Node;
   onUpdate: (changes: any) => void;
 }
 
-export const NodeInspector: React.React.FC<NodeInspectorProps> = ({ node, onUpdate }) => {
+export const NodeInspector: React.FC<NodeInspectorProps> = ({ node, onUpdate }) => {
   return (
     <div className="node-inspector w-80 border-l bg-secondary">
       <div className="p-4 border-b">
@@ -24,9 +24,7 @@ export const NodeInspector: React.React.FC<NodeInspectorProps> = ({ node, onUpda
           <Tab className="flex-1 p-2 ui-selected:border-b-2 ui-selected:border-primary">
             Configuration
           </Tab>
-          <Tab className="flex-1 p-2 ui-selected:border-b-2 ui-selected:border-primary">
-            Inputs
-          </Tab>
+          <Tab className="flex-1 p-2 ui-selected:border-b-2 ui-selected:border-primary">Inputs</Tab>
           <Tab className="flex-1 p-2 ui-selected:border-b-2 ui-selected:border-primary">
             Outputs
           </Tab>

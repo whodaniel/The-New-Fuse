@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { Badge } from './ui/badge';
-import { Card, CardHeader, CardContent } from './ui/card';
+import { Card, CardContent, CardHeader } from './ui/card';
 import { Progress } from './ui/progress';
 import { Skeleton } from './ui/skeleton';
 
@@ -17,11 +17,11 @@ interface StatusIndicatorProps {
   status: SystemStatus['status'];
 }
 
-const StatusIndicator: React.React.FC<StatusIndicatorProps> = ({ status }) => {
+const StatusIndicator: React.FC<StatusIndicatorProps> = ({ status }) => {
   const variants = {
     healthy: 'bg-green-500',
     degraded: 'bg-yellow-500',
-    critical: 'bg-red-500'
+    critical: 'bg-red-500',
   };
 
   return (
@@ -79,7 +79,7 @@ export function StatusMonitor() {
             </div>
             <Progress value={systemStatus.cpu} />
           </div>
-          
+
           <div>
             <div className="flex justify-between mb-2">
               <span>Memory Usage</span>
@@ -93,7 +93,7 @@ export function StatusMonitor() {
               <div className="text-2xl font-bold">{systemStatus.activeConnections}</div>
               <div className="text-sm text-gray-600">Active Connections</div>
             </div>
-            
+
             <div className="text-center p-4 bg-gray-100 rounded-lg">
               <div className="text-2xl font-bold">{systemStatus.queueSize}</div>
               <div className="text-sm text-gray-600">Queue Size</div>

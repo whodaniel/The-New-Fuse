@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
+import { motion } from 'framer-motion';
+import React from 'react';
 
 interface TypingIndicatorProps {
   className?: string;
@@ -10,7 +10,7 @@ interface TypingIndicatorProps {
   showLabel?: boolean;
 }
 
-export const TypingIndicator: React.React.FC<TypingIndicatorProps> = ({
+export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
   className,
   size = 'md',
   color = 'bg-gray-400',
@@ -29,11 +29,7 @@ export const TypingIndicator: React.React.FC<TypingIndicatorProps> = ({
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
-            className={cn(
-              sizeClasses[size],
-              color,
-              'rounded-full'
-            )}
+            className={cn(sizeClasses[size], color, 'rounded-full')}
             animate={{
               y: ['0%', '-50%', '0%'],
               opacity: [1, 0.5, 1],
@@ -47,34 +43,18 @@ export const TypingIndicator: React.React.FC<TypingIndicatorProps> = ({
           />
         ))}
       </div>
-      {showLabel && (
-        <span className="text-sm text-gray-500 animate-pulse">
-          {label}
-        </span>
-      )}
+      {showLabel && <span className="text-sm text-gray-500 animate-pulse">{label}</span>}
     </div>
   );
 };
 
 // Usage example:
-export const TypingIndicatorExample: React.React.FC<{}> = () => {
+export const TypingIndicatorExample: React.FC<{}> = () => {
   return (
     <div className="space-y-4">
-      <TypingIndicator 
-        size="sm"
-        color="bg-blue-400"
-      />
-      <TypingIndicator 
-        size="md"
-        color="bg-green-400"
-        showLabel
-        label="Agent is thinking..."
-      />
-      <TypingIndicator 
-        size="lg"
-        color="bg-purple-400"
-        className="p-4 bg-gray-100 rounded-lg"
-      />
+      <TypingIndicator size="sm" color="bg-blue-400" />
+      <TypingIndicator size="md" color="bg-green-400" showLabel label="Agent is thinking..." />
+      <TypingIndicator size="lg" color="bg-purple-400" className="p-4 bg-gray-100 rounded-lg" />
     </div>
   );
 };

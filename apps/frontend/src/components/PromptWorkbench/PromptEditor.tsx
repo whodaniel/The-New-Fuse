@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Box, VStack, Text, HStack, Button, Tooltip } from '@chakra-ui/react';
+import { Box, Button, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
 import MonacoEditor from '@monaco-editor/react';
-import { FaQuestionCircle, FaCode, FaMarkdown } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaCode, FaMarkdown, FaQuestionCircle } from 'react-icons/fa';
 
 interface PromptEditorProps {
   prompt: string;
   onChange: (prompt: string) => void;
 }
 
-export const PromptEditor: React.React.FC<PromptEditorProps> = ({ prompt, onChange }) => {
+export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) => {
   const [editorMode, setEditorMode] = useState<'plain' | 'markdown' | 'json'>('plain');
 
   const handleEditorChange = (value: string | undefined) => {
@@ -17,23 +17,41 @@ export const PromptEditor: React.React.FC<PromptEditorProps> = ({ prompt, onChan
 
   const getLanguage = () => {
     switch (editorMode) {
-      case 'markdown': return 'markdown';
-      case 'json': return 'json';
-      default: return 'plaintext';
+      case 'markdown':
+        return 'markdown';
+      case 'json':
+        return 'json';
+      default:
+        return 'plaintext';
     }
   };
 
   const getPromptTemplateHelp = () => (
     <Box p={3} fontSize="sm">
-      <Text fontWeight="bold" mb={2}>Template Variables</Text>
-      <Text>Use <code>{'{{variable_name}}'}</code> syntax for variables.</Text>
-      <Text mt={2}>Example: <code>Hello, my name is {{name}} and I am {{age}} years old.</code></Text>
-      
-      <Text fontWeight="bold" mt={4} mb={2}>System Instructions</Text>
+      <Text fontWeight="bold" mb={2}>
+        Template Variables
+      </Text>
+      <Text>
+        Use <code>{'{{variable_name}}'}</code> syntax for variables.
+      </Text>
+      <Text mt={2}>
+        Example:{' '}
+        <code>
+          Hello, my name is {{ name }} and I am {{ age }} years old.
+        </code>
+      </Text>
+
+      <Text fontWeight="bold" mt={4} mb={2}>
+        System Instructions
+      </Text>
       <Text>Start with clear system instructions to define assistant behavior:</Text>
-      <Text mt={1}><code>You are a helpful assistant that provides concise answers.</code></Text>
-      
-      <Text fontWeight="bold" mt={4} mb={2}>Formatting Tips</Text>
+      <Text mt={1}>
+        <code>You are a helpful assistant that provides concise answers.</code>
+      </Text>
+
+      <Text fontWeight="bold" mt={4} mb={2}>
+        Formatting Tips
+      </Text>
       <Text>• Use triple backticks for code blocks</Text>
       <Text>• Use bullet points for lists</Text>
       <Text>• Separate instructions clearly with line breaks</Text>
@@ -43,7 +61,9 @@ export const PromptEditor: React.React.FC<PromptEditorProps> = ({ prompt, onChan
   return (
     <VStack spacing={4} align="stretch">
       <HStack justifyContent="space-between">
-        <Text fontSize="lg" fontWeight="medium">Prompt Template</Text>
+        <Text fontSize="lg" fontWeight="medium">
+          Prompt Template
+        </Text>
         <HStack>
           <Tooltip label="Plain Text" hasArrow>
             <Button

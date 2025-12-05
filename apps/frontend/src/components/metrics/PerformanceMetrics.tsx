@@ -1,6 +1,6 @@
-import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React from 'react';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 interface PerformanceMetricsProps {
   data: {
@@ -12,7 +12,7 @@ interface PerformanceMetricsProps {
   }[];
 }
 
-export const PerformanceMetrics: React.React.FC<PerformanceMetricsProps> = ({ data }) => {
+export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
   const latestMetrics = data[data.length - 1];
 
   return (
@@ -48,14 +48,12 @@ export const PerformanceMetrics: React.React.FC<PerformanceMetricsProps> = ({ da
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="timestamp" 
-              tickFormatter={(value) => new Date(value).toLocaleTimeString()} 
+            <XAxis
+              dataKey="timestamp"
+              tickFormatter={(value) => new Date(value).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip 
-              labelFormatter={(value) => new Date(value).toLocaleString()}
-            />
+            <Tooltip labelFormatter={(value) => new Date(value).toLocaleString()} />
             <Bar dataKey="successRate" fill="#82ca9d" name="Success Rate %" />
             <Bar dataKey="errorRate" fill="#ff8042" name="Error Rate %" />
           </BarChart>
