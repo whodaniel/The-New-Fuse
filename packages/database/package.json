@@ -28,8 +28,9 @@
   "dependencies": {
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
-    "@prisma/adapter-pg": "^6.17.1",
-    "@prisma/client": "^6.17.1",
+    "@prisma/adapter-pg": "^7.1.0",
+    "@prisma/client": "^7.1.0",
+    "@prisma/migrate": "^7.1.0",
     "@the-new-fuse/types": "workspace:*",
     "bcrypt": "^5.1.1",
     "pg": "^8.16.3",
@@ -41,7 +42,7 @@
     "@types/node": "^24.8.1",
     "dotenv": "^17.2.3",
     "eslint": "^9.38.0",
-    "prisma": "6.17.1",
+    "prisma": "7.1.0",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

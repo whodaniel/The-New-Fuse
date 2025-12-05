@@ -63,7 +63,7 @@
   "license": "MIT",
   "dependencies": {
     "@nestjs/common": "^11.1.9",
-    "@prisma/client": "^6.17.1",
+    "@prisma/client": "^7.1.0",
     "@the-new-fuse/relay-core": "workspace:*",
     "events": "^3.3.0",
     "fs-extra": "^11.3.2",

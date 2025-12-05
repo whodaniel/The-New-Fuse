@@ -90,7 +90,7 @@
     "health-check": "pnpm run type-check && pnpm run test && pnpm run build"
   },
   "devDependencies": {
-    "@prisma/engines": "6.17.1",
+    "@prisma/engines": "7.1.0",
     "@types/node": "^24.0.13",
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
@@ -112,7 +112,7 @@
     "node-pty": "",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.3.0",
-    "prisma": "6.17.1",
+    "prisma": "7.1.0",
     "rimraf": "^5.0.10",
     "turbo": "^2.5.5",
     "typescript": "^5.5.3"
@@ -130,7 +130,7 @@
     "@nestjs/swagger": "^7.1.17",
     "@nestjs/websockets": "^11.0.0",
     "@phosphor-icons/react": "^2.1.10",
-    "@prisma/client": "6.17.1",
+    "@prisma/client": "7.1.0",
     "@supabase/supabase-js": "^2.78.0",
     "@types/otplib": "^10.0.0",
     "@types/react-speech-recognition": "^3.9.6",

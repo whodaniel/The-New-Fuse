@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "18.0.1",
-    "@prisma/client": "^6.17.1",
+    "@prisma/client": "^7.1.0",
     "@the-new-fuse/feature-tracker": "workspace:*",
     "date-fns": "^4.1.0",
     "react": "^19.2.0",
