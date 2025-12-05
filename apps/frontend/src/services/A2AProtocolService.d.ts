@@ -8,9 +8,9 @@ declare const a2aMessageV1Schema: z.ZodObject<{
     payload: z.ZodAny;
     metadata: z.ZodObject<{
         priority: z.ZodEnum<{
-            medium: "medium";
             high: "high";
             low: "low";
+            medium: "medium";
         }>;
         timeout: z.ZodOptional<z.ZodNumber>;
         retryCount: z.ZodOptional<z.ZodNumber>;
@@ -23,9 +23,9 @@ declare const a2aMessageV2Schema: z.ZodObject<{
         type: z.ZodString;
         version: z.ZodString;
         priority: z.ZodEnum<{
-            medium: "medium";
             high: "high";
             low: "low";
+            medium: "medium";
         }>;
         source: z.ZodString;
         target: z.ZodOptional<z.ZodString>;

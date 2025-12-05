@@ -16,7 +16,13 @@ const ScrapeWebsitesImage = "";
 const GenerateChartsImage = "";
 const GenerateSaveImages = "";
 
-export const defaultSkills = {
+export const defaultSkills: Record<string, {
+  title: string;
+  description: string;
+  component: typeof DefaultSkillPanel;
+  icon: any;
+  image: string;
+}> = {
   "rag-memory": {
     title: "RAG & long-term memory",
     description:
@@ -42,7 +48,14 @@ export const defaultSkills = {
   },
 };
 
-export const configurableSkills = {
+export const configurableSkills: Record<string, {
+  title: string;
+  description?: string;
+  component: any;
+  skill: string;
+  icon?: any;
+  image?: string;
+}> = {
   "save-file-to-browser": {
     title: "Generate & save files to browser",
     description:

@@ -1,6 +1,10 @@
 import LiveSyncToggle from './Features/LiveSync/toggle';
 
-export const configurableFeatures = {
+export const configurableFeatures: Record<string, {
+  title: string;
+  component: any;
+  key: string;
+}> = {
   experimental_live_file_sync: {
     title: "Live Document Sync",
     component: LiveSyncToggle,

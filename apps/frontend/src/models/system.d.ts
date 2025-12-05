@@ -1,5 +1,5 @@
 declare class System {
-    static checkAuth(isNewToken: boolean): void;
+    static checkAuth(_isNewToken: boolean): void;
     static getEmbeddingSettings(): Promise<any>;
     static updateEmbeddingSettings(settings: any): Promise<{
         success: boolean;
@@ -19,23 +19,27 @@ declare class System {
     static hasEmbeddings(): Promise<any>;
     static hasCachedEmbeddings(): Promise<any>;
     static keys(): Promise<{
-        appName: string | null;
+        appName: string;
     }>;
-    static login(username: string, password: string): Promise<{
+    static login(_username: string, _password: string): Promise<{
         valid: boolean;
-        user: any;
-        token: string | null;
+        user: {
+            id: string;
+            username: string;
+            role: string;
+        };
+        token: string;
         message: string;
-        recoveryCodes?: string[] | null;
+        recoveryCodes: string[];
     }>;
-    static recoverPassword(username: string, recoveryCodes: string[]): Promise<{
+    static recoverPassword(_username: string, _recoveryCodes: string[]): Promise<{
         success: boolean;
-        resetToken: string | null;
-        error: string | null;
+        resetToken: string;
+        error: null;
     }>;
-    static resetPassword(resetToken: string, newPassword: string): Promise<{
+    static resetPassword(_resetToken: string, _newPassword: string): Promise<{
         success: boolean;
-        error: string | null;
+        error: null;
     }>;
     static fetchCanViewChatHistory(): Promise<{
         viewable: any;

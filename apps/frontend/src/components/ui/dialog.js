@@ -14,23 +14,23 @@ export function DialogHeader(_a) {
     return (_jsx("div", { className: "mb-4", children: children }));
 }
 export function DialogTitle(_a) {
-    var children = _a.children;
-    return (_jsx("h2", { className: "text-lg font-semibold text-gray-900", children: children }));
+    var children = _a.children, _b = _a.className, className = _b === void 0 ? "" : _b;
+    return (_jsx("h2", { className: "text-lg font-semibold text-gray-900 ".concat(className), children: children }));
 }
 export function DialogDescription(_a) {
     var children = _a.children;
     return (_jsx("p", { className: "text-sm text-gray-600 mt-2", children: children }));
 }
 export function DialogFooter(_a) {
-    var children = _a.children;
-    return (_jsx("div", { className: "flex justify-end space-x-2 mt-6 pt-4 border-t border-gray-200", children: children }));
+    var children = _a.children, _b = _a.className, className = _b === void 0 ? "" : _b;
+    return (_jsx("div", { className: "flex justify-end space-x-2 mt-6 pt-4 border-t border-gray-200 ".concat(className), children: children }));
 }
 export function DialogTrigger(_a) {
-    var asChild = _a.asChild, children = _a.children;
+    var _asChild = _a._asChild, children = _a.children;
     return _jsx(_Fragment, { children: children });
 }
 export function DialogClose(_a) {
-    var asChild = _a.asChild, children = _a.children;
+    var _asChild = _a._asChild, children = _a.children;
     return _jsx(_Fragment, { children: children });
 }
 export default Dialog;

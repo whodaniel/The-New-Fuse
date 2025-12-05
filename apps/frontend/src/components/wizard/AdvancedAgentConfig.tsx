@@ -1,8 +1,7 @@
 export {}
 exports.AdvancedAgentConfig = AdvancedAgentConfig;
 import react_1 from 'react';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
+import { SimpleGrid, GridItem } from '@chakra-ui/react';
 import WizardProvider_1 from './WizardProvider';
 import WizardWebSocket_1 from './WizardWebSocket';
 import react_2 from '@monaco-editor/react';
@@ -123,7 +122,7 @@ function AdvancedAgentConfig(): any {
                                         <material_1.Typography gutterBottom>Memory Limit (MB)</material_1.Typography>
                                         <material_1.Slider value={settings.memoryLimit} onChange={(_, value) => handleSettingsChange('memoryLimit', value)} min={128} max={2048} step={128} marks valueLabelDisplay="auto"/>
                                     </GridItem>
-                                </GridItem>
+                                </SimpleGrid>
                             </material_1.AccordionDetails>
                         </material_1.Accordion>
 
@@ -141,7 +140,7 @@ function AdvancedAgentConfig(): any {
                                         <material_1.Typography gutterBottom>Optimization Level</material_1.Typography>
                                         <material_1.Slider value={settings.optimizationLevel} onChange={(_, value) => handleSettingsChange('optimizationLevel', value)} min={0} max={3} marks valueLabelDisplay="auto"/>
                                     </GridItem>
-                                </GridItem>
+                                </SimpleGrid>
                             </material_1.AccordionDetails>
                         </material_1.Accordion>
 
@@ -160,7 +159,7 @@ function AdvancedAgentConfig(): any {
                             </material_1.Button>
                         </material_1.Box>
                     </GridItem>)}
-            </GridItem>
+            </SimpleGrid>
 
             <material_1.Dialog open={showCodeEditor} onClose={() => setShowCodeEditor(false)} maxWidth="md" fullWidth>
                 <material_1.DialogTitle>Custom Agent Code</material_1.DialogTitle>
@@ -196,7 +195,7 @@ function AdvancedAgentConfig(): any {
                             <material_1.Typography gutterBottom>Output Dimension</material_1.Typography>
                             <material_1.Slider value={settings.neuralConfig.outputDim} onChange={(_, value) => handleNeuralConfigChange('outputDim', value)} min={64} max={1024} step={64} marks valueLabelDisplay="auto"/>
                         </GridItem>
-                    </GridItem>
+                    </SimpleGrid>
                 </material_1.DialogContent>
                 <material_1.DialogActions>
                     <material_1.Button onClick={() => setShowNeuralConfig(false)}>Cancel</material_1.Button>

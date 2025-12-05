@@ -10,10 +10,10 @@ export class AgentsService {
   constructor(
     private prisma: PrismaService,
     private config: ConfigService,
+    private agentFactory: AgentFactory,
     @Optional()
     @Inject('UnifiedMonitoringService')
-    private monitoring?: UnifiedMonitoringService,
-    private agentFactory: AgentFactory
+    private monitoring?: UnifiedMonitoringService
   ) {}
 
   async create(userId: string, dto: CreateAgentDto) {

@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var System = /** @class */ (function () {
     function System() {
     }
-    System.checkAuth = function (isNewToken) {
+    System.checkAuth = function (_isNewToken) {
         throw new Error('Method not implemented.');
     };
     System.getEmbeddingSettings = function () {
@@ -232,6 +232,47 @@ var System = /** @class */ (function () {
                         return [2 /*return*/, false];
                     case 4: return [2 /*return*/];
                 }
+            });
+        });
+    };
+    System.keys = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, Promise.resolve({ appName: "MyApp" })];
+            });
+        });
+    };
+    System.login = function (_username, _password) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, {
+                        valid: true,
+                        user: { id: "1", username: "test", role: "user" },
+                        token: "test-token",
+                        message: "Login successful",
+                        recoveryCodes: ["code1", "code2"]
+                    }];
+            });
+        });
+    };
+    System.recoverPassword = function (_username, _recoveryCodes) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, {
+                        success: true,
+                        resetToken: "reset-token",
+                        error: null
+                    }];
+            });
+        });
+    };
+    System.resetPassword = function (_resetToken, _newPassword) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, {
+                        success: true,
+                        error: null
+                    }];
             });
         });
     };

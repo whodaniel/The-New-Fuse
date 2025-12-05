@@ -20,7 +20,7 @@ import { ClaudeDevTemplateRegistry, ClaudeDevTemplateUtils } from '../services/c
 export class CreateAgentDto {
   name?: string;
   description?: string;
-  template: string;
+  template: string = '';
   configuration?: any;
   permissions?: any;
   metadata?: Record<string, any>;
@@ -35,7 +35,7 @@ export class UpdateAgentDto {
 }
 
 export class ExecuteTaskDto {
-  type: 'code_review' | 'project_setup' | 'debug' | 'documentation' | 'test' | 'refactor' | 'deploy' | 'security' | 'analysis' | 'ui_ux';
+  type: 'code_review' | 'project_setup' | 'debug' | 'documentation' | 'test' | 'refactor' | 'deploy' | 'security' | 'analysis' | 'ui_ux' = 'code_review';
   priority?: 'low' | 'medium' | 'high' | 'critical';
   description?: string;
   parameters?: Record<string, any>;
@@ -43,11 +43,11 @@ export class ExecuteTaskDto {
 }
 
 export class CreateAgentBatchDto {
-  agents: CreateAgentDto[];
+  agents: CreateAgentDto[] = [];
 }
 
 export class TemplateCustomizationDto {
-  templateId: string;
+  templateId: string = '';
   configuration?: any;
   permissions?: any;
   metadata?: Record<string, any>;
@@ -64,7 +64,7 @@ export class ClaudeDevAutomationController {
   ) {}
 
   // Health and Status Endpoints
-  
+
   @Get('health')
   @ApiOperation({ summary: 'Get service health status' })
   @ApiResponse({ status: 200, description: 'Service health status' })
@@ -122,7 +122,7 @@ export class ClaudeDevAutomationController {
       this.validateCreateAgentDto(createAgentDto);
 
       const agent = await this.claudeDevService.createAgent(tenantId, createAgentDto);
-      
+
       return {
         success: true,
         data: agent,
@@ -131,14 +131,14 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error(`Failed to create agent for tenant ${tenantId}`, error);
-      
+
       if ((error as Error).message.includes('Template') && error.message.includes('not found')) {
         throw new HttpException(
           `Invalid template: ${error.message}`,
           HttpStatus.BAD_REQUEST,
         );
       }
-      
+
       throw new HttpException(
         error.message || 'Failed to create agent',
         HttpStatus.BAD_REQUEST,
@@ -159,9 +159,9 @@ export class ClaudeDevAutomationController {
   ) {
     try {
       this.validateTenantId(tenantId);
-      
+
       let agents = await this.claudeDevService.getAgentsByTenant(tenantId);
-      
+
       // Apply filters
       if (status) {
         agents = agents.filter(agent => agent.status === status);
@@ -169,7 +169,7 @@ export class ClaudeDevAutomationController {
       if (template) {
         agents = agents.filter(agent => agent.template === template);
       }
-      
+
       return {
         success: true,
         data: agents,
@@ -198,16 +198,16 @@ export class ClaudeDevAutomationController {
     try {
       this.validateTenantId(tenantId);
       this.validateAgentId(agentId);
-      
+
       const agent = await this.claudeDevService.getAgent(agentId, tenantId);
-      
+
       if (!agent) {
         throw new HttpException(
           `Agent ${agentId} not found for tenant ${tenantId}`,
           HttpStatus.NOT_FOUND,
         );
       }
-      
+
       return {
         success: true,
         data: agent,
@@ -217,7 +217,7 @@ export class ClaudeDevAutomationController {
       if (error instanceof HttpException) {
         throw error;
       }
-      
+
       this.logger.error(`Failed to get agent ${agentId}`, error);
       throw new HttpException(
         'Failed to retrieve agent',
@@ -241,9 +241,9 @@ export class ClaudeDevAutomationController {
       this.validateTenantId(tenantId);
       this.validateAgentId(agentId);
       this.validateExecuteTaskDto(executeTaskDto);
-      
+
       const task = await this.claudeDevService.executeTask(agentId, tenantId, executeTaskDto);
-      
+
       return {
         success: true,
         data: task,
@@ -252,21 +252,21 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error(`Failed to execute task for agent ${agentId}`, error);
-      
+
       if ((error as Error).message.includes('not found')) {
         throw new HttpException(
           error.message,
           HttpStatus.NOT_FOUND,
         );
       }
-      
+
       if (error.message.includes('not active')) {
         throw new HttpException(
           error.message,
           HttpStatus.BAD_REQUEST,
         );
       }
-      
+
       throw new HttpException(
         error.message || 'Failed to execute task',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -291,11 +291,11 @@ export class ClaudeDevAutomationController {
   ) {
     try {
       this.validateTenantId(tenantId);
-      
-      let tasks = agentId 
+
+      let tasks = agentId
         ? await this.claudeDevService.getTasksByAgent(agentId, tenantId)
         : await this.claudeDevService.getTasksByTenant(tenantId);
-      
+
       // Apply filters
       if (status) {
         tasks = tasks.filter(task => task.status === status);
@@ -303,7 +303,7 @@ export class ClaudeDevAutomationController {
       if (type) {
         tasks = tasks.filter(task => task.type === type);
       }
-      
+
       // Apply limit
       if (limit) {
         const limitNum = parseInt(limit, 10);
@@ -311,7 +311,7 @@ export class ClaudeDevAutomationController {
           tasks = tasks.slice(0, limitNum);
         }
       }
-      
+
       return {
         success: true,
         data: tasks,
@@ -338,14 +338,14 @@ export class ClaudeDevAutomationController {
   ) {
     try {
       this.validateTenantId(tenantId);
-      
+
       if (!createAgentBatchDto.agents || createAgentBatchDto.agents.length === 0) {
         throw new HttpException(
           'At least one agent configuration is required',
           HttpStatus.BAD_REQUEST,
         );
       }
-      
+
       // Validate each agent configuration
       createAgentBatchDto.agents.forEach((agentConfig, index) => {
         try {
@@ -357,18 +357,18 @@ export class ClaudeDevAutomationController {
           );
         }
       });
-      
+
       const createdAgents = await this.claudeDevService.createAgentBatch(
         tenantId,
         createAgentBatchDto.agents,
       );
-      
+
       const hasFailures = createdAgents.length < createAgentBatchDto.agents.length;
-      
+
       return {
         success: !hasFailures,
         data: createdAgents,
-        message: hasFailures 
+        message: hasFailures
           ? `Created ${createdAgents.length} of ${createAgentBatchDto.agents.length} agents`
           : 'All agents created successfully',
         requested: createAgentBatchDto.agents.length,
@@ -379,7 +379,7 @@ export class ClaudeDevAutomationController {
       if (error instanceof HttpException) {
         throw error;
       }
-      
+
       this.logger.error(`Failed to create agent batch for tenant ${tenantId}`, error);
       throw new HttpException(
         'Failed to create agent batch',
@@ -401,15 +401,15 @@ export class ClaudeDevAutomationController {
   ) {
     try {
       let templates = ClaudeDevTemplateRegistry.getAllTemplates();
-      
+
       if (category) {
         templates = ClaudeDevTemplateRegistry.getTemplatesByCategory(category);
       }
-      
+
       if (tag) {
         templates = ClaudeDevTemplateRegistry.getTemplatesByTag(tag);
       }
-      
+
       // Return template summaries (without full prompts for brevity)
       const templateSummaries = templates.map(template => ({
         id: template.id,
@@ -422,7 +422,7 @@ export class ClaudeDevAutomationController {
         capabilities: template.capabilities,
         integrations: template.integrations,
       }));
-      
+
       return {
         success: true,
         data: templateSummaries,
@@ -446,14 +446,14 @@ export class ClaudeDevAutomationController {
   async getTemplate(@Param('templateId') templateId: string) {
     try {
       const template = ClaudeDevTemplateRegistry.getTemplate(templateId);
-      
+
       if (!template) {
         throw new HttpException(
           `Template ${templateId} not found`,
           HttpStatus.NOT_FOUND,
         );
       }
-      
+
       return {
         success: true,
         data: template,
@@ -463,7 +463,7 @@ export class ClaudeDevAutomationController {
       if (error instanceof HttpException) {
         throw error;
       }
-      
+
       this.logger.error(`Failed to get template ${templateId}`, error);
       throw new HttpException(
         'Failed to retrieve template',
@@ -490,7 +490,7 @@ export class ClaudeDevAutomationController {
           metadata: customization.metadata,
         },
       );
-      
+
       return {
         success: true,
         data: agentConfig,
@@ -499,14 +499,14 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error(`Failed to customize template ${templateId}`, error);
-      
+
       if ((error as Error).message.includes('not found')) {
         throw new HttpException(
           error.message,
           HttpStatus.NOT_FOUND,
         );
       }
-      
+
       throw new HttpException(
         error.message || 'Failed to customize template',
         HttpStatus.BAD_REQUEST,
@@ -525,10 +525,10 @@ export class ClaudeDevAutomationController {
   ) {
     try {
       this.validateTenantId(tenantId);
-      
+
       const stats = await this.claudeDevService.getStatistics(tenantId);
       const agents = await this.claudeDevService.getAgentsByTenant(tenantId);
-      
+
       // Calculate usage analytics
       const analytics = {
         period,
@@ -554,7 +554,7 @@ export class ClaudeDevAutomationController {
           avgDurationTrend: '-8%',
         },
       };
-      
+
       return {
         success: true,
         data: analytics,
@@ -602,10 +602,10 @@ export class ClaudeDevAutomationController {
 
   private validateExecuteTaskDto(dto: ExecuteTaskDto): void {
     const validTaskTypes = [
-      'code_review', 'project_setup', 'debug', 'documentation', 
+      'code_review', 'project_setup', 'debug', 'documentation',
       'test', 'refactor', 'deploy', 'security', 'analysis', 'ui_ux'
     ];
-    
+
     if (!dto.type || !validTaskTypes.includes(dto.type)) {
       throw new HttpException(
         `Invalid task type. Must be one of: ${validTaskTypes.join(', ')}`,

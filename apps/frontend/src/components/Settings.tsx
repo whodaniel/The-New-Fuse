@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import components_1 from '../components';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
+import { Box, SimpleGrid, GridItem } from '@chakra-ui/react';
+import { Settings } from '@chakra-ui/icons';
 const Settings = () => {
     const [settings, setSettings] = react_1.default.useState({
         enableLogging: true,
@@ -19,7 +19,7 @@ const Settings = () => {
     };
     return (<div className="p-6">
       <SimpleGrid columns={3}>
-        
+
         <GridItem colSpan={12} md={6}>
           <Box className="p-4">
             <h2 className="text-xl font-bold mb-4 flex items-center">
@@ -88,7 +88,7 @@ const Settings = () => {
             <components_1.WebhookManager />
           </Box>
         </GridItem>
-      </GridItem>
+      </SimpleGrid>
     </div>);
 };
 exports.default = Settings;

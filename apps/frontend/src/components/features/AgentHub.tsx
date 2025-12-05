@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import components_1 from '../components';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Box, SimpleGrid, GridItem, Tabs, Tab } from '@chakra-ui/react';
 import store_1 from '../store';
 const AgentHub = () => {
     const { agents, selectedAgent, setSelectedAgent } = (0, store_1.default)();
@@ -12,7 +12,7 @@ const AgentHub = () => {
     };
     return (<div className="p-6">
       <SimpleGrid columns={3}>
-        
+
         <GridItem colSpan={12} md={4}>
           <Box className="p-4">
             <h2 className="text-xl font-bold mb-4">Available Agents</h2>
@@ -38,7 +38,7 @@ const AgentHub = () => {
                 <Tab label="Skills"/>
                 <Tab label="Training"/>
               </Tabs>
-            </material_1.Box>
+            </Box>
 
             {activeTab === 0 && selectedAgent && (<components_1.AgentDetails agent={selectedAgent}/>)}
             {activeTab === 1 && selectedAgent && (<components_1.AgentPersonalityCustomizer agent={selectedAgent}/>)}
@@ -53,7 +53,7 @@ const AgentHub = () => {
               </div>)}
           </Box>
         </GridItem>
-      </GridItem>
+      </SimpleGrid>
     </div>);
 };
 exports.default = AgentHub;

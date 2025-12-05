@@ -1,9 +1,9 @@
 /**
  * Agent JWT Strategy
- * 
+ *
  * This strategy handles JWT authentication specifically for AI agents
  * in The New Fuse multi-agent communication system.
- * 
+ *
  * Agents use a different authentication flow than regular users,
  * with special claims and validation requirements.
  */
@@ -51,9 +51,9 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_AGENT_SECRET', configService.get<string>('JWT_SECRET')),
-      audience: configService.get<string>('JWT_AUDIENCE', 'the-new-fuse'),
-      issuer: configService.get<string>('JWT_ISSUER', 'the-new-fuse'),
+      secretOrKey: configService.get<string>('JWT_AGENT_SECRET') || configService.get<string>('JWT_SECRET') || 'default-secret-change-in-production',
+      audience: configService.get<string>('JWT_AUDIENCE') || 'the-new-fuse',
+      issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
     });
   }
 
@@ -116,7 +116,7 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
-      
+
       this.logger.error(`Agent JWT validation error: ${(error as Error).message}`, (error as Error).stack);
       throw new UnauthorizedException('Agent authentication failed');
     }

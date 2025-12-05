@@ -13,29 +13,31 @@ interface DialogHeaderProps {
 }
 interface DialogTitleProps {
     children: React.ReactNode;
+    className?: string;
 }
 interface DialogDescriptionProps {
     children: React.ReactNode;
 }
 interface DialogFooterProps {
     children: React.ReactNode;
+    className?: string;
 }
 interface DialogTriggerProps {
-    asChild?: boolean;
+    _asChild?: boolean;
     children: React.ReactNode;
 }
 export declare function Dialog({ open, onOpenChange, children }: DialogProps): import("react/jsx-runtime").JSX.Element | null;
 export declare function DialogContent({ className, children }: DialogContentProps): import("react/jsx-runtime").JSX.Element;
 export declare function DialogHeader({ children }: DialogHeaderProps): import("react/jsx-runtime").JSX.Element;
-export declare function DialogTitle({ children }: DialogTitleProps): import("react/jsx-runtime").JSX.Element;
+export declare function DialogTitle({ children, className }: DialogTitleProps): import("react/jsx-runtime").JSX.Element;
 export declare function DialogDescription({ children }: DialogDescriptionProps): import("react/jsx-runtime").JSX.Element;
-export declare function DialogFooter({ children }: DialogFooterProps): import("react/jsx-runtime").JSX.Element;
-export declare function DialogTrigger({ asChild, children }: DialogTriggerProps): import("react/jsx-runtime").JSX.Element;
+export declare function DialogFooter({ children, className }: DialogFooterProps): import("react/jsx-runtime").JSX.Element;
+export declare function DialogTrigger({ _asChild, children }: DialogTriggerProps): import("react/jsx-runtime").JSX.Element;
 interface DialogCloseProps {
-    asChild?: boolean;
+    _asChild?: boolean;
     children: React.ReactNode;
 }
-export declare function DialogClose({ asChild, children }: DialogCloseProps): import("react/jsx-runtime").JSX.Element;
+export declare function DialogClose({ _asChild, children }: DialogCloseProps): import("react/jsx-runtime").JSX.Element;
 export default Dialog;
 export declare const Root: typeof Dialog;
 export declare const Content: typeof DialogContent;

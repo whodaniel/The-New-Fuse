@@ -11,10 +11,10 @@ declare const nodeSchema: z.ZodObject<{
         label: z.ZodOptional<z.ZodString>;
         type: z.ZodString;
         status: z.ZodOptional<z.ZodEnum<{
-            running: "running";
             idle: "idle";
-            failed: "failed";
+            running: "running";
             completed: "completed";
+            failed: "failed";
         }>>;
         config: z.ZodOptional<z.ZodRecord<z.ZodAny, z.core.SomeType>>;
         onUpdate: z.ZodOptional<z.ZodFunction<z.core.$ZodFunctionArgs, z.core.$ZodFunctionOut>>;
@@ -56,10 +56,10 @@ declare const workflowSchema: z.ZodObject<{
             label: z.ZodOptional<z.ZodString>;
             type: z.ZodString;
             status: z.ZodOptional<z.ZodEnum<{
-                running: "running";
                 idle: "idle";
-                failed: "failed";
+                running: "running";
                 completed: "completed";
+                failed: "failed";
             }>>;
             config: z.ZodOptional<z.ZodRecord<z.ZodAny, z.core.SomeType>>;
             onUpdate: z.ZodOptional<z.ZodFunction<z.core.$ZodFunctionArgs, z.core.$ZodFunctionOut>>;
@@ -97,11 +97,11 @@ declare const workflowExecutionSchema: z.ZodObject<{
     id: z.ZodString;
     workflowId: z.ZodString;
     status: z.ZodEnum<{
-        running: "running";
         pending: "pending";
         aborted: "aborted";
-        failed: "failed";
+        running: "running";
         completed: "completed";
+        failed: "failed";
     }>;
     startTime: z.ZodNumber;
     endTime: z.ZodOptional<z.ZodNumber>;
@@ -132,7 +132,7 @@ export declare function validateWorkflow(workflow: any): {
             type: string;
             name?: string | undefined;
             label?: string | undefined;
-            status?: "running" | "idle" | "failed" | "completed" | undefined;
+            status?: "idle" | "running" | "completed" | "failed" | undefined;
             config?: Record<any, unknown> | undefined;
             onUpdate?: z.core.$InferOuterFunctionType<z.core.$ZodFunctionArgs, z.core.$ZodFunctionOut> | undefined;
         };
@@ -174,7 +174,7 @@ export declare function validateWorkflow(workflow: any): {
 export declare function validateWorkflowExecution(execution: any): {
     id: string;
     workflowId: string;
-    status: "running" | "pending" | "aborted" | "failed" | "completed";
+    status: "pending" | "aborted" | "running" | "completed" | "failed";
     startTime: number;
     nodeResults: Record<any, unknown>;
     endTime?: number | undefined;

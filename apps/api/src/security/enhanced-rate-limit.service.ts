@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException, TooManyRequestsException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SecurityLoggingService } from './security-logging.service';
 
@@ -97,7 +97,7 @@ export class EnhancedRateLimitService {
       rateLimitData.burstCount++;
       rateLimitData.count++;
       this.rateLimitStore.set(key, rateLimitData);
-      
+
       return {
         allowed: true,
         remaining: Math.max(0, config.requests - rateLimitData.count),
@@ -117,12 +117,12 @@ export class EnhancedRateLimitService {
         window: config.window,
       });
 
-      throw new TooManyRequestsException({
+      throw new HttpException({
         message: 'Rate limit exceeded',
         limit: config.requests,
         remaining: 0,
         resetTime: rateLimitData.resetTime,
-      });
+      }, HttpStatus.TOO_MANY_REQUESTS);
     }
 
     // Increment counter
@@ -151,9 +151,9 @@ export class EnhancedRateLimitService {
     const key = `blocked:${ip}`;
     const now = Date.now();
     const resetTime = now + duration;
-    
+
     this.rateLimitStore.set(key, { count: 0, resetTime, burstCount: 0 });
-    
+
     this.securityLogging.logRateLimit('ip_blocked', {
       ip,
       reason: `Blocked for ${duration}ms`,
@@ -167,12 +167,12 @@ export class EnhancedRateLimitService {
     const key = `blocked:${ip}`;
     const data = this.rateLimitStore.get(key);
     if (!data) return false;
-    
+
     if (Date.now() > data.resetTime) {
       this.rateLimitStore.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -183,7 +183,7 @@ export class EnhancedRateLimitService {
     const config = this.rateLimitTiers[tier || this.detectTier(request)];
     const key = this.generateKey(request, config.keyGenerator);
     const data = this.rateLimitStore.get(key) || { count: 0, resetTime: Date.now() + config.window, burstCount: 0 };
-    
+
     return {
       tier: tier || this.detectTier(request),
       limit: config.requests,

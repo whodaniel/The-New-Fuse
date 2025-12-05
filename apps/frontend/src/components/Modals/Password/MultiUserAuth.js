@@ -46,15 +46,15 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import System from "../../../models/system";
-import { AUTH_TOKEN, AUTH_USER } from "../../../utils/constants";
+import { LOCAL_STORAGE_KEYS } from "../../../utils/constants";
 import paths from "../../../utils/paths";
-import showToast from "@/utils/toast";
-import { useModal } from "@/hooks/useModal";
-import RecoveryCodeModal from "@/components/Modals/DisplayRecoveryCodeModal";
+import { showErrorToast, showSuccessToast } from "../../../utils/toast";
+import { useModal } from "../../../hooks/useModal";
+import { RecoveryCodeModal } from "../../../components/Modals/DisplayRecoveryCodeModal/DisplayRecoveryCodeModal";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
 var RecoveryForm = function (_a) {
     var onSubmit = _a.onSubmit, setShowRecoveryForm = _a.setShowRecoveryForm;
     var t = useTranslation().t;
@@ -100,13 +100,13 @@ export default function MultiUserAuth() {
     var _j = useState(null), resetToken = _j[0], setResetToken = _j[1];
     useEffect(function () {
         var fetchAppName = function () { return __awaiter(_this, void 0, void 0, function () {
-            var appName;
+            var result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, System.keys()];
                     case 1:
-                        appName = (_a.sent()).appName;
-                        setAppName(appName);
+                        result = _a.sent();
+                        setAppName(result.appName);
                         return [2 /*return*/];
                 }
             });
@@ -128,8 +128,8 @@ export default function MultiUserAuth() {
                             setRecoveryCodes(recoveryCodes);
                             openRecoveryModal();
                         }
-                        window.localStorage.setItem(AUTH_TOKEN, token);
-                        window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
+                        window.localStorage.setItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN, token);
+                        window.localStorage.setItem("AUTH_USER", JSON.stringify(user));
                         window.location.replace(paths.home());
                     }
                     else {
@@ -145,14 +145,15 @@ export default function MultiUserAuth() {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, System.recoverPassword(username, recoveryCodes)];
                 case 1:
-                    _a = (_b.sent()), success = _a.success, resetToken = _a.resetToken, error = _a.error;
+                    _a = _b.sent(), success = _a.success, resetToken = _a.resetToken, error = _a.error;
                     if (success && resetToken) {
                         setResetToken(resetToken);
                         setShowRecoveryForm(false);
                         setShowResetPasswordForm(true);
                     }
                     else {
-                        showToast(error, "error");
+                        if (error)
+                            showErrorToast(error);
                     }
                     return [2 /*return*/];
             }
@@ -164,24 +165,25 @@ export default function MultiUserAuth() {
             switch (_b.label) {
                 case 0:
                     if (newPassword !== confirmPassword) {
-                        showToast("Passwords do not match", "error");
+                        showErrorToast("Passwords do not match");
                         return [2 /*return*/];
                     }
                     if (!resetToken)
                         return [2 /*return*/];
                     return [4 /*yield*/, System.resetPassword(resetToken, newPassword)];
                 case 1:
-                    _a = (_b.sent()), success = _a.success, error = _a.error;
+                    _a = _b.sent(), success = _a.success, error = _a.error;
                     if (success) {
                         setShowResetPasswordForm(false);
-                        showToast("Password reset successfully. You can now log in.", "success");
+                        showSuccessToast("Password reset successfully. You can now log in.");
                     }
                     else {
-                        showToast(error, "error");
+                        if (error)
+                            showErrorToast(error);
                     }
                     return [2 /*return*/];
             }
         });
     }); };
-    return (_jsxs(Dialog, { open: true, onOpenChange: function () { }, children: [_jsx(DialogContent, { className: "w-full max-w-md", children: showRecoveryForm ? (_jsx(RecoveryForm, { onSubmit: handleRecovery, setShowRecoveryForm: setShowRecoveryForm })) : showResetPasswordForm ? (_jsx(ResetPasswordForm, { onSubmit: handleResetPassword })) : (_jsxs(_Fragment, { children: [_jsxs(DialogHeader, { children: [_jsxs(DialogTitle, { className: "flex items-center gap-x-2", children: [_jsx("span", { className: "text-2xl font-bold text-white", children: t("login.multi-user.title") }), _jsx("span", { className: "text-2xl font-bold bg-gradient-to-r from-[#75D6FF] to-[#FFFFFF] bg-clip-text text-transparent", children: appName })] }), _jsx(DialogDescription, { children: t("login.multi-user.description") })] }), _jsxs("form", { onSubmit: handleLogin, className: "space-y-4 py-4", children: [_jsxs("div", { className: "space-y-2", children: [_jsx("label", { htmlFor: "username", children: t("login.multi-user.placeholder-username") }), _jsx(Input, { id: "username", name: "username", type: "text", placeholder: t("login.multi-user.placeholder-username"), value: username, onChange: function (e) { return setUsername(e.target.value); }, required: true })] }), _jsxs("div", { className: "space-y-2", children: [_jsx("label", { htmlFor: "password", children: t("login.multi-user.placeholder-password") }), _jsx(Input, { id: "password", name: "password", type: "password", placeholder: t("login.multi-user.placeholder-password"), value: password, onChange: function (e) { return setPassword(e.target.value); }, required: true })] }), error && _jsx("p", { className: "text-sm text-red-500", children: error }), _jsxs(DialogFooter, { className: "flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center", children: [_jsx(Button, { type: "button", variant: "link", onClick: function () { return setShowRecoveryForm(true); }, className: "p-0 h-auto", children: t("login.password-reset.title") }), _jsx(Button, { type: "submit", children: t("login.multi-user.login-button") })] })] })] })) }), isRecoveryModalOpen && recoveryCodes && (_jsx(RecoveryCodeModal, { newRecoveryCodes: recoveryCodes, closeModal: closeRecoveryModal }))] }));
+    return (_jsxs(Dialog, { open: true, onOpenChange: function () { }, children: [_jsx(DialogContent, { className: "w-full max-w-md", children: showRecoveryForm ? (_jsx(RecoveryForm, { onSubmit: handleRecovery, setShowRecoveryForm: setShowRecoveryForm })) : showResetPasswordForm ? (_jsx(ResetPasswordForm, { onSubmit: handleResetPassword })) : (_jsxs(_Fragment, { children: [_jsxs(DialogHeader, { children: [_jsxs(DialogTitle, { className: "flex items-center gap-x-2", children: [_jsx("span", { className: "text-2xl font-bold text-white", children: t("login.multi-user.title") }), _jsx("span", { className: "text-2xl font-bold bg-gradient-to-r from-[#75D6FF] to-[#FFFFFF] bg-clip-text text-transparent", children: appName })] }), _jsx(DialogDescription, { children: t("login.multi-user.description") })] }), _jsxs("form", { onSubmit: handleLogin, className: "space-y-4 py-4", children: [_jsxs("div", { className: "space-y-2", children: [_jsx("label", { htmlFor: "username", children: t("login.multi-user.placeholder-username") }), _jsx(Input, { id: "username", name: "username", type: "text", placeholder: t("login.multi-user.placeholder-username"), value: username, onChange: function (e) { return setUsername(e.target.value); }, required: true })] }), _jsxs("div", { className: "space-y-2", children: [_jsx("label", { htmlFor: "password", children: t("login.multi-user.placeholder-password") }), _jsx(Input, { id: "password", name: "password", type: "password", placeholder: t("login.multi-user.placeholder-password"), value: password, onChange: function (e) { return setPassword(e.target.value); }, required: true })] }), error && _jsx("p", { className: "text-sm text-red-500", children: error }), _jsxs(DialogFooter, { className: "flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center", children: [_jsx(Button, { type: "button", variant: "link", onClick: function () { return setShowRecoveryForm(true); }, className: "p-0 h-auto", children: t("login.password-reset.title") }), _jsx(Button, { type: "submit", children: t("login.multi-user.login-button") })] })] })] })) }), isRecoveryModalOpen && recoveryCodes && (_jsx(RecoveryCodeModal, { recoveryCodes: recoveryCodes, onDownloadComplete: closeRecoveryModal, onClose: closeRecoveryModal }))] }));
 }

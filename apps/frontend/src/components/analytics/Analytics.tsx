@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import components_1 from '../components';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Box, SimpleGrid, GridItem, Tabs, Tab } from '@chakra-ui/react';
 import react_chartjs_2_1 from 'react-chartjs-2';
 import chart_js_1 from 'chart';
 // Register ChartJS components
@@ -45,7 +45,7 @@ const Analytics = () => {
           <Tab label="Knowledge Graph"/>
           <Tab label="Task Analysis"/>
         </Tabs>
-      </material_1.Box>
+      </Box>
 
       {activeTab === 0 && (<SimpleGrid columns={3}>
           <GridItem colSpan={12}>
@@ -57,7 +57,7 @@ const Analytics = () => {
               </div>
             </Box>
           </GridItem>
-        </GridItem>)}
+        </SimpleGrid>)}
 
       {activeTab === 1 && (<SimpleGrid columns={3}>
           <GridItem colSpan={12}>
@@ -69,7 +69,7 @@ const Analytics = () => {
               </div>
             </Box>
           </GridItem>
-        </GridItem>)}
+        </SimpleGrid>)}
 
       {activeTab === 2 && (<SimpleGrid columns={3}>
           <GridItem colSpan={12}>
@@ -78,7 +78,7 @@ const Analytics = () => {
               <components_1.DynamicKnowledgeGraph />
             </Box>
           </GridItem>
-        </GridItem>)}
+        </SimpleGrid>)}
 
       {activeTab === 3 && (<SimpleGrid columns={3}>
           <GridItem colSpan={12}>
@@ -87,7 +87,7 @@ const Analytics = () => {
               <components_1.PredictiveTaskAllocator />
             </Box>
           </GridItem>
-        </GridItem>)}
+        </SimpleGrid>)}
     </div>);
 };
 exports.default = Analytics;

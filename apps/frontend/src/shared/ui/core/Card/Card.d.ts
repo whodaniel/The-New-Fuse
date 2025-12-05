@@ -1,6 +1,6 @@
 import * as React from "react";
 declare const cardVariants: (props?: ({
-    variant?: "default" | "outline" | "ghost" | "elevated" | null | undefined;
+    variant?: "default" | "ghost" | "outline" | "elevated" | null | undefined;
     size?: "default" | "sm" | "lg" | null | undefined;
 } & import("class-variance-authority/dist/types").ClassProp) | undefined) => string;
 declare const Card: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
