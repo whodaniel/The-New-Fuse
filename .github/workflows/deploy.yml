@@ -196,11 +196,11 @@ jobs:
       matrix:
         service:
           - name: api-gateway
-            health_path: /health
+            health_path: /health # Assuming gateway has a simple health check
           - name: api
-            health_path: /health
+            health_path: /health/deep # Use a deep health check endpoint
           - name: backend
-            health_path: /health
+            health_path: /health/deep # Use a deep health check endpoint
           - name: frontend
             health_path: /
     steps:
@@ -237,7 +237,7 @@ jobs:
         run: |
           MAX_RETRIES=10
           RETRY_COUNT=0
-          HEALTH_URL="${{ steps.get-url.outputs.service_url }}${{ matrix.service.health_path }}"
+          HEALTH_URL="https://${{ steps.get-url.outputs.service_url }}${{ matrix.service.health_path }}"
 
           echo "Checking health at: $HEALTH_URL"
 
