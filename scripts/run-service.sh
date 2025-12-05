@@ -17,12 +17,26 @@ if [ "$SERVICE_PATH" = "frontend" ]; then
 else
   echo "Starting backend service: $SERVICE_PATH..."
 
-  # Run Prisma migrations for api service (has the database package)
+  # Run Prisma migrations for api service (has its own prisma schema)
   if [ "$SERVICE_PATH" = "api" ] && [ -n "$DATABASE_URL" ]; then
     echo "Running Prisma migrations..."
-    cd /app/packages/database
-    npx prisma migrate deploy --schema=./prisma/schema.prisma || echo "Migration failed or already applied"
-    cd /app/apps/$SERVICE_PATH
+    echo "Current directory before migration: $(pwd)"
+    echo "DATABASE_URL is set: ${DATABASE_URL:0:50}..."
+
+    # Check if schema exists in apps/api/prisma
+    if [ -f "/app/apps/api/prisma/schema.prisma" ]; then
+      echo "Found schema at /app/apps/api/prisma/schema.prisma"
+      npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma || echo "Migration failed or already applied"
+    # Fallback to packages/database if it exists there
+    elif [ -f "/app/packages/database/prisma/schema.prisma" ]; then
+      echo "Found schema at /app/packages/database/prisma/schema.prisma"
+      npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma || echo "Migration failed or already applied"
+    else
+      echo "WARNING: No Prisma schema found in expected locations"
+      ls -la /app/apps/api/ || echo "No /app/apps/api directory"
+    fi
+
+    echo "Migration check complete, continuing with service start..."
   fi
 
   # Try to find main.js in various possible locations
