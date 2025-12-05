@@ -1,10 +1,7 @@
 module.exports = {
-  // TypeScript and JavaScript files - ESLint temporarily disabled due to memory issues
-  '*.{ts,tsx,js,jsx}': [
-    // TODO: Re-enable ESLint after fixing memory issues
-    // 'eslint --fix',
-    'prettier --write',
-  ],
+  // For pre-commit: Skip ESLint entirely, only run Prettier
+  // Run full ESLint manually or in CI where there's more memory/time
+  '*.{ts,tsx,js,jsx}': ['prettier --write'],
 
   // JSON files
   '*.json': ['prettier --write'],
