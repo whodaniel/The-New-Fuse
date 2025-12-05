@@ -182,8 +182,8 @@ async function bootstrap() {
     });
   });
 
-  // Listen on provided PORT, default to 8080 to avoid conflict with other services
-  const port = Number(process.env.PORT || 8080);
+  // Listen on provided API_GATEWAY_PORT, default to 8080 to avoid conflict with Frontend (on PORT=3000)
+  const port = Number(process.env.API_GATEWAY_PORT || 8080);
   await app.listen(port, '0.0.0.0');
   console.log(`🚀 API Gateway listening on http://localhost:${port}`);
 }

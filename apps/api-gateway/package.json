@@ -1,6 +1,6 @@
 {
   "name": "@the-new-fuse/api-gateway",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Unified API Gateway for The New Fuse Platform",
   "main": "dist/main.js",
   "scripts": {
