@@ -16,4 +16,4 @@ export * from './tabs';
 export * from './textarea';
 export * from './use-toast';
 // Export specific components from toast to avoid conflicts
-export { Toast, Toaster } from './toast';
+export { Toaster, toast } from './toast';
