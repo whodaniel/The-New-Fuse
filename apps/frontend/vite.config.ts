@@ -1,22 +1,22 @@
-import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
-  
+
   // Smart host detection for HMR
   const getHMRConfig = () => {
     // In development, try to detect the actual host
     if (isDev) {
       const host = env.VITE_HOST || env.HOST || 'localhost';
       const port = parseInt(env.VITE_PORT || env.PORT || '3000');
-      
+
       return {
         host,
         port,
@@ -29,28 +29,31 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react({
-        include: [/\.jsx?$/, /\.tsx?$/]
+        include: [/\.jsx?$/, /\.tsx?$/],
       }),
       tsconfigPaths({
         ignoreConfigErrors: true,
-        projects: [path.resolve(__dirname, 'tsconfig.json')]
+        projects: [path.resolve(__dirname, 'tsconfig.json')],
       }),
       // Generate bundle analysis report in production
-      isProduction && visualizer({
-        filename: 'dist/bundle-analysis.html',
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-      }),
+      isProduction &&
+        visualizer({
+          filename: 'dist/bundle-analysis.html',
+          open: false,
+          gzipSize: true,
+          brotliSize: true,
+        }),
       // Compression plugins for better performance
-      isProduction && compression({
-        algorithm: 'gzip',
-        ext: '.gz',
-      }),
-      isProduction && compression({
-        algorithm: 'brotliCompress',
-        ext: '.br',
-      }),
+      isProduction &&
+        compression({
+          algorithm: 'gzip',
+          ext: '.gz',
+        }),
+      isProduction &&
+        compression({
+          algorithm: 'brotliCompress',
+          ext: '.br',
+        }),
     ].filter(Boolean),
     resolve: {
       alias: {
@@ -59,12 +62,18 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/utils': path.resolve(__dirname, '../../packages/utils/src'),
         '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
-        '@the-new-fuse/feature-suggestions': path.resolve(__dirname, '../../packages/feature-suggestions/src'),
-        '@the-new-fuse/ui-consolidated': path.resolve(__dirname, '../../packages/ui-consolidated/dist'),
+        '@the-new-fuse/feature-suggestions': path.resolve(
+          __dirname,
+          '../../packages/feature-suggestions/src'
+        ),
+        '@the-new-fuse/ui-consolidated': path.resolve(
+          __dirname,
+          '../../packages/ui-consolidated/dist'
+        ),
         '@the-new-fuse/config': path.resolve(__dirname, '../../config'),
         '@the-new-fuse/a2a-react': path.resolve(__dirname, '../../packages/a2a-react/src'),
         '@the-new-fuse/a2a-core': path.resolve(__dirname, '../../packages/a2a-core/src'),
-      }
+      },
     },
     define: {
       // Inject environment variables at build time
@@ -77,21 +86,17 @@ export default defineConfig(({ mode }) => {
         cdnUrl: env.VITE_CDN_URL || '',
         basePath: env.VITE_BASE_PATH || '/',
       }),
+      // Fix "process is not defined" error in browser
+      'process.env': JSON.stringify({
+        NODE_ENV: mode,
+        ...env,
+      }),
     },
     base: env.VITE_BASE_PATH || '/',
     publicDir: 'public',
     optimizeDeps: {
-      include: [
-        'firebase',
-        '@firebase/app',
-        '@firebase/auth'
-      ],
-      exclude: [
-        '@firebase/app-types',
-        '@firebase/app-compat',
-        '@types/d3',
-        '@types/file-saver'
-      ]
+      include: ['firebase', '@firebase/app', '@firebase/auth'],
+      exclude: ['@firebase/app-types', '@firebase/app-compat', '@types/d3', '@types/file-saver'],
     },
     build: {
       outDir: 'dist',
@@ -105,20 +110,22 @@ export default defineConfig(({ mode }) => {
       // Reduce chunk size warning limit to catch large bundles earlier
       chunkSizeWarningLimit: 500,
       // Advanced terser options for production
-      terserOptions: isProduction ? {
-        compress: {
-          drop_console: true, // Remove console.* calls in production
-          drop_debugger: true,
-          pure_funcs: ['console.log', 'console.info', 'console.debug'], // Remove specific console methods
-          passes: 2, // Multiple compression passes for better results
-        },
-        mangle: {
-          safari10: true, // Fix Safari 10+ bugs
-        },
-        format: {
-          comments: false, // Remove all comments
-        },
-      } : undefined,
+      terserOptions: isProduction
+        ? {
+            compress: {
+              drop_console: true, // Remove console.* calls in production
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.debug'], // Remove specific console methods
+              passes: 2, // Multiple compression passes for better results
+            },
+            mangle: {
+              safari10: true, // Fix Safari 10+ bugs
+            },
+            format: {
+              comments: false, // Remove all comments
+            },
+          }
+        : undefined,
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
@@ -147,22 +154,25 @@ export default defineConfig(({ mode }) => {
           // Advanced chunk splitting strategy
           manualChunks: (id) => {
             // Core React runtime and routing - loaded on every page
-            if (id.includes('node_modules/react/') ||
-                id.includes('node_modules/react-dom/') ||
-                id.includes('node_modules/react-router-dom/') ||
-                id.includes('node_modules/scheduler/')) {
+            if (
+              id.includes('node_modules/react/') ||
+              id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/react-router-dom/') ||
+              id.includes('node_modules/scheduler/')
+            ) {
               return 'react-vendor';
             }
 
             // Firebase - large auth library, separate chunk
-            if (id.includes('node_modules/firebase/') ||
-                id.includes('node_modules/@firebase/')) {
+            if (id.includes('node_modules/firebase/') || id.includes('node_modules/@firebase/')) {
               return 'firebase';
             }
 
             // Monaco Editor - very large code editor, lazy loaded
-            if (id.includes('node_modules/monaco-editor/') ||
-                id.includes('node_modules/@monaco-editor/')) {
+            if (
+              id.includes('node_modules/monaco-editor/') ||
+              id.includes('node_modules/@monaco-editor/')
+            ) {
               return 'monaco-editor';
             }
 
@@ -172,8 +182,7 @@ export default defineConfig(({ mode }) => {
             }
 
             // ReactFlow - flow diagram library
-            if (id.includes('node_modules/reactflow') ||
-                id.includes('node_modules/@reactflow/')) {
+            if (id.includes('node_modules/reactflow') || id.includes('node_modules/@reactflow/')) {
               return 'reactflow';
             }
 
@@ -188,26 +197,32 @@ export default defineConfig(({ mode }) => {
             }
 
             // UI Component libraries
-            if (id.includes('node_modules/@radix-ui/') ||
-                id.includes('node_modules/lucide-react') ||
-                id.includes('node_modules/@heroicons/')) {
+            if (
+              id.includes('node_modules/@radix-ui/') ||
+              id.includes('node_modules/lucide-react') ||
+              id.includes('node_modules/@heroicons/')
+            ) {
               return 'ui-libs';
             }
 
             // State management
-            if (id.includes('node_modules/@reduxjs/') ||
-                id.includes('node_modules/react-redux') ||
-                id.includes('node_modules/zustand') ||
-                id.includes('node_modules/@tanstack/react-query')) {
+            if (
+              id.includes('node_modules/@reduxjs/') ||
+              id.includes('node_modules/react-redux') ||
+              id.includes('node_modules/zustand') ||
+              id.includes('node_modules/@tanstack/react-query')
+            ) {
               return 'state-management';
             }
 
             // Utilities
-            if (id.includes('node_modules/lodash') ||
-                id.includes('node_modules/axios') ||
-                id.includes('node_modules/date-fns') ||
-                id.includes('node_modules/clsx') ||
-                id.includes('node_modules/class-variance-authority')) {
+            if (
+              id.includes('node_modules/lodash') ||
+              id.includes('node_modules/axios') ||
+              id.includes('node_modules/date-fns') ||
+              id.includes('node_modules/clsx') ||
+              id.includes('node_modules/class-variance-authority')
+            ) {
               return 'utils';
             }
 
@@ -231,32 +246,32 @@ export default defineConfig(({ mode }) => {
       strictPort: false,
       hmr: getHMRConfig(),
       // Allow production domain for Railway deployment
-      allowedHosts: [
-        'thenewfuse.com',
-        'www.thenewfuse.com',
-        '.railway.app',
-        'localhost',
-      ],
-      proxy: isDev ? {
-        '/api': {
-          target: env.VITE_API_URL || 'http://localhost:3001',
-          changeOrigin: true,
-          secure: false,
-        },
-        '/ws': {
-          target: env.VITE_WS_URL || 'ws://localhost:3001',
-          ws: true,
-          changeOrigin: true,
-        },
-        // Allow Electron file:// webview origins by not relying on Origin header
-        // Vite will proxy requests regardless of missing/unknown Origin
-      } : undefined,
+      allowedHosts: ['thenewfuse.com', 'www.thenewfuse.com', '.railway.app', 'localhost'],
+      proxy: isDev
+        ? {
+            '/api': {
+              target: env.VITE_API_URL || 'http://localhost:3001',
+              changeOrigin: true,
+              secure: false,
+            },
+            '/ws': {
+              target: env.VITE_WS_URL || 'ws://localhost:3001',
+              ws: true,
+              changeOrigin: true,
+            },
+            // Allow Electron file:// webview origins by not relying on Origin header
+            // Vite will proxy requests regardless of missing/unknown Origin
+          }
+        : undefined,
       // Add CORS headers for development and SPA fallback
       configureServer: (server) => {
         server.middlewares.use((req, res, next) => {
           res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins for development
           res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-          res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+          res.setHeader(
+            'Access-Control-Allow-Headers',
+            'Content-Type, Authorization, X-Requested-With'
+          );
           if (req.method === 'OPTIONS') {
             res.writeHead(204);
             res.end();
@@ -264,14 +279,16 @@ export default defineConfig(({ mode }) => {
           }
           next();
         });
-        
+
         // SPA fallback - serve index.html for all non-API routes
         server.middlewares.use((req, res, next) => {
-          if (req.url && 
-              !req.url.startsWith('/api') && 
-              !req.url.startsWith('/ws') && 
-              !req.url.includes('.') && 
-              req.method === 'GET') {
+          if (
+            req.url &&
+            !req.url.startsWith('/api') &&
+            !req.url.startsWith('/ws') &&
+            !req.url.includes('.') &&
+            req.method === 'GET'
+          ) {
             req.url = '/';
           }
           next();
