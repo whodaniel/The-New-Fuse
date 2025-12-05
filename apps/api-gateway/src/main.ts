@@ -4,13 +4,13 @@
  * Provides consistent authentication, versioning, and documentation
  */
 
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -20,9 +20,10 @@ async function bootstrap() {
   // Enable CORS
   // In dev: always allow, including file:// and electron origins (no Origin header)
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://thenewfuse.com', 'https://app.thenewfuse.com']
-      : (origin, callback) => callback(null, true),
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? ['https://thenewfuse.com', 'https://app.thenewfuse.com']
+        : (origin, callback) => callback(null, true),
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key'],
@@ -32,21 +33,20 @@ async function bootstrap() {
   });
 
   // Global validation pipe
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-    disableErrorMessages: process.env.NODE_ENV === 'production',
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      disableErrorMessages: process.env.NODE_ENV === 'production',
+    })
+  );
 
   // Global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Global interceptors
-  app.useGlobalInterceptors(
-    new LoggingInterceptor(),
-    new ResponseInterceptor()
-  );
+  app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
 
   // API versioning - prefix all routes with /v1
   app.setGlobalPrefix('v1');
@@ -58,21 +58,27 @@ async function bootstrap() {
   // Setup unified Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('The New Fuse - Unified API')
-    .setDescription(`
+    .setDescription(
+      `
       Unified API Gateway for The New Fuse Platform.
-      
+
       This gateway consolidates all platform APIs including:
       - Agent Management (Port 3001)
-      - Core Backend Services (Port 3004) 
+      - Core Backend Services (Port 3004)
       - Webhook & SSE Services (Port 3000)
       - MCP Server Management
       - Real-time Communication
-      
+
       All endpoints are now available through this single entry point with
       consistent authentication, versioning, and error handling.
-    `)
+    `
+    )
     .setVersion('1.0.0')
-    .setContact('The New Fuse API Support', 'https://thenewfuse.com/support', 'api-support@thenewfuse.com')
+    .setContact(
+      'The New Fuse API Support',
+      'https://thenewfuse.com/support',
+      'api-support@thenewfuse.com'
+    )
     .setLicense('Proprietary', 'https://thenewfuse.com/license')
     .addTag('auth', 'Authentication and authorization')
     .addTag('agents', 'AI Agent management and operations')
@@ -82,20 +88,26 @@ async function bootstrap() {
     .addTag('sse', 'Server-Sent Events streaming')
     .addTag('mcp', 'Model Context Protocol servers')
     .addTag('health', 'Health checks and monitoring')
-    .addBearerAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'JWT',
-      description: 'JWT token obtained from /auth/login',
-      in: 'header',
-    }, 'JWT-auth')
-    .addApiKey({
-      type: 'apiKey',
-      name: 'x-api-key',
-      in: 'header',
-      description: 'API key for service-to-service communication'
-    }, 'api-key')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'JWT token obtained from /auth/login',
+        in: 'header',
+      },
+      'JWT-auth'
+    )
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-api-key',
+        in: 'header',
+        description: 'API key for service-to-service communication',
+      },
+      'api-key'
+    )
     .addServer('https://api.thenewfuse.com', 'Production server')
     .addServer('https://staging-api.thenewfuse.com', 'Staging server')
     .addServer('http://localhost:8080', 'Local API Gateway')
@@ -115,8 +127,8 @@ async function bootstrap() {
       filter: true,
       showRequestDuration: true,
       syntaxHighlight: {
-        theme: 'monokai'
-      }
+        theme: 'monokai',
+      },
     },
     customCss: `
       .swagger-ui .topbar { display: none }
@@ -144,7 +156,7 @@ async function bootstrap() {
       documentation: '/docs',
       health: '/health',
       api: '/v1',
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
     });
   };
 
@@ -165,16 +177,18 @@ async function bootstrap() {
         agents: 'active',
         webhooks: 'active',
         sse: 'active',
-        mcp: 'active'
-      }
+        mcp: 'active',
+      },
     });
   });
 
-  const port = process.env.PORT || 8080;
-  await app.listen(port);
+  // Listen on provided PORT, default to 8080 to avoid conflict with other services
+  const port = Number(process.env.PORT || 8080);
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 API Gateway listening on http://localhost:${port}`);
 }
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   console.error('Failed to start API Gateway:', err);
   process.exit(1);
 });
