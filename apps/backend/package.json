@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "prebuild": "pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/mcp-core build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build",
-    "build": "nest build --webpack || echo 'Build completed with warnings'",
+    "build": "nest build || echo 'Build completed with warnings'",
     "build:watch": "nest build --watch",
     "dev": "cross-env PORT=3004 ts-node-dev --respawn --transpile-only src/simple-main.ts",
     "start": "nest start",
