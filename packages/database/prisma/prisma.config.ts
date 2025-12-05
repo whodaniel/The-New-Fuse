@@ -12,7 +12,7 @@ export default defineConfig({
   datasource: {
     provider: 'postgresql',
     // Connection URL for Prisma Migrate
-    // This should be moved from schema.prisma to here
-    url: process.env.DATABASE_URL,
+    // `directUrl` is used for direct database connections with Prisma Migrate.
+    directUrl: process.env.DATABASE_URL,
   },
 });
