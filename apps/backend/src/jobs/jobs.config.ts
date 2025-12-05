@@ -22,7 +22,9 @@ const parseRedisConfig = () => {
     if (firstIndex !== -1 && secondIndex !== -1) {
       // If a duplicated prefix is found, take only the first valid URL
       redisUrl = redisUrl.substring(0, secondIndex);
-      console.warn(`[Bull Config] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`);
+      console.warn(
+        '[Bull Config] Detected duplicated REDIS_URL in environment variable, auto-corrected.'
+      );
     }
 
     try {
@@ -32,10 +34,9 @@ const parseRedisConfig = () => {
 
       // Parse database index from pathname (e.g., /0, /1, /2)
       // Handle empty pathname or invalid integers gracefully
-      const dbFromPath = url.pathname && url.pathname.length > 1 
-        ? parseInt(url.pathname.slice(1), 10) 
-        : 0; // Default to 0 if no path
-      
+      const dbFromPath =
+        url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : 0; // Default to 0 if no path
+
       // Strict check for db
       const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
 
@@ -57,7 +58,7 @@ const parseRedisConfig = () => {
   // Fallback to individual environment variables
   const host = process.env.REDIS_HOST || 'localhost';
   const port = parseInt(process.env.REDIS_PORT || '6379', 10);
-  
+
   // Parse database index safely - handle empty strings and ensure valid integer
   const dbEnv = process.env.REDIS_DB || '0';
   let db = 0;
@@ -65,7 +66,7 @@ const parseRedisConfig = () => {
   if (!Number.isNaN(parsedDb) && parsedDb >= 0) {
     db = parsedDb;
   }
-  
+
   console.log(`[Bull Config] Using individual env vars: ${host}:${port} (db: ${db})`);
 
   return {

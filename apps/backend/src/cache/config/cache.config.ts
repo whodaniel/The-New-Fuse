@@ -30,33 +30,34 @@ export interface CacheConfig {
   };
 }
 
-export default registerAs(
-  'cache',
-  (): CacheConfig => {
-    // Parse and clean REDIS_URL - handle duplicated URLs from Railway
-    let redisUrl = process.env.REDIS_URL ||
-      process.env.REDIS_TLS_URL ||
-      process.env.REDISS_URL ||
-      process.env.REDIS_CONNECTION_STRING;
+export default registerAs('cache', (): CacheConfig => {
+  // Parse and clean REDIS_URL - handle duplicated URLs from Railway
+  let redisUrl =
+    process.env.REDIS_URL ||
+    process.env.REDIS_TLS_URL ||
+    process.env.REDISS_URL ||
+    process.env.REDIS_CONNECTION_STRING;
 
-    if (redisUrl) {
-      redisUrl = redisUrl.trim();
+  if (redisUrl) {
+    redisUrl = redisUrl.trim();
 
-      // Check if URL was accidentally duplicated (common in Railway environment vars)
-      const redisPrefix = 'redis://';
-      const redissPrefix = 'rediss://';
-      const prefix = redisUrl.startsWith(redissPrefix) ? redissPrefix : redisPrefix;
-      const firstIndex = redisUrl.indexOf(prefix);
-      const secondIndex = redisUrl.indexOf(prefix, firstIndex + prefix.length);
+    // Check if URL was accidentally duplicated (common in Railway environment vars)
+    const redisPrefix = 'redis://';
+    const redissPrefix = 'rediss://';
+    const prefix = redisUrl.startsWith(redissPrefix) ? redissPrefix : redisPrefix;
+    const firstIndex = redisUrl.indexOf(prefix);
+    const secondIndex = redisUrl.indexOf(prefix, firstIndex + prefix.length);
 
-      if (firstIndex !== -1 && secondIndex !== -1) {
-        // If duplicated prefix found, take only first valid URL
-        redisUrl = redisUrl.substring(0, secondIndex);
-        console.warn(`[Cache Config] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`);
-      }
+    if (firstIndex !== -1 && secondIndex !== -1) {
+      // If duplicated prefix found, take only first valid URL
+      redisUrl = redisUrl.substring(0, secondIndex);
+      console.warn(
+        '[Cache Config] Detected duplicated REDIS_URL in environment variable, auto-corrected.'
+      );
     }
+  }
 
-    return {
+  return {
     redis: {
       // Prefer a URL if provided (works with ioredis and supports rediss://)
       url: redisUrl || undefined,
@@ -102,5 +103,5 @@ export default registerAs(
       sampleRate: parseInt(process.env.CACHE_MONITORING_SAMPLE_RATE || '100', 10),
       metricsInterval: parseInt(process.env.CACHE_METRICS_INTERVAL || '60000', 10), // 1 minute
     },
-  })
-);
+  };
+});
