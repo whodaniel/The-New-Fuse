@@ -754,6 +754,9 @@ model RegisteredEntity {
   namespace    String?
   tags         String[]             @default([])
   capabilities String[]             @default([])
+  // By adding this TSDoc, we prevent Prisma from generating a deeply
+  // recursive type for dependencies, which can cause a stack overflow.
+  /// @see RegisteredEntity
   dependencies String[]             @default([])
   isPublic     Boolean              @default(false)
   ownerId      String?
