@@ -1,6 +1,13 @@
-import { INestApplication, Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import {
+  INestApplication,
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import { PrismaClient } from '../generated/prisma';
-import { softDeleteMiddleware } from './middleware/soft-delete.middleware';
 
 import { getDatabaseUrl } from './prisma.config';
 
@@ -22,20 +29,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private readonly retryDelay = 2000; // 2 seconds
 
   constructor() {
+    // Initialize PrismaClient with PostgreSQL adapter as per Prisma 7+ requirements
+    // See: https://pris.ly/d/prisma7-client-config
+    const databaseUrl = getDatabaseUrl();
+    const pool = new Pool({ connectionString: databaseUrl });
+    const adapter = new PrismaPg(pool);
+
     super({
+      adapter,
       // Production logging configuration
       log: [
         { emit: 'event', level: 'query' },
         { emit: 'event', level: 'error' },
         { emit: 'event', level: 'warn' },
       ],
-      // Connection pool configuration
-      // These are handled via DATABASE_URL query parameters, but can be overridden here
-      datasources: {
-        db: {
-          url: getDatabaseUrl(),
-        },
-      },
     });
 
     this.setupLogging();
@@ -54,12 +61,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     //     );
     //   }
     // });
-
     // Log all errors
     // this.$on('error' as any, (e: any) => {
     //   this.logger.error('Prisma error:', e);
     // });
-
     // Log warnings
     // this.$on('warn' as any, (e: any) => {
     //   this.logger.warn('Prisma warning:', e);
@@ -80,7 +85,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private async connectWithRetry(): Promise<void> {
     while (this.retryAttempts < this.maxRetries) {
       try {
-        this.logger.log(`Attempting database connection (attempt ${this.retryAttempts + 1}/${this.maxRetries})`);
+        this.logger.log(
+          `Attempting database connection (attempt ${this.retryAttempts + 1}/${this.maxRetries})`
+        );
         await this.$connect();
         this.isConnected = true;
         this.logger.log('Successfully connected to database');
@@ -113,22 +120,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     // Consider migrating to Prisma Client Extensions when needed
     // this.$use(softDeleteMiddleware);
     // this.logger.log('Soft delete middleware activated');
-
     // Add query performance monitoring middleware
     // this.$use(async (params, next) => {
     //   const before = Date.now();
     //   const result = await next(params);
     //   const after = Date.now();
-
     //   const duration = after - before;
-
     //   // Log queries taking longer than 500ms
     //   if (duration > 500) {
     //     this.logger.warn(
     //       `Query ${params.model}.${params.action} took ${duration}ms`
     //     );
     //   }
-
     //   return result;
     // });
   }
@@ -150,7 +153,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     // Handle various shutdown signals
     const signals = ['SIGINT', 'SIGTERM', 'SIGUSR2'];
 
-    signals.forEach(signal => {
+    signals.forEach((signal) => {
       process.on(signal, async () => {
         this.logger.log(`Received ${signal}, closing application gracefully...`);
         await app.close();
@@ -318,7 +321,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
     while (attempt < maxAttempts) {
       try {
-        return await this.$transaction(fn as any) as T;
+        return (await this.$transaction(fn as any)) as T;
       } catch (error) {
         attempt++;
 
@@ -334,9 +337,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           throw error;
         }
 
-        this.logger.warn(
-          `Transaction failed (attempt ${attempt}/${maxAttempts}), retrying...`
-        );
+        this.logger.warn(`Transaction failed (attempt ${attempt}/${maxAttempts}), retrying...`);
 
         await this.sleep(100 * attempt); // Progressive backoff
       }
@@ -361,7 +362,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
    * Helper to sleep
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
