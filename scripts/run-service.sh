@@ -28,14 +28,21 @@ else
     # Prioritize shared database package schema
     if [ -f "/app/packages/database/prisma/schema.prisma" ]; then
       echo "Found schema at /app/packages/database/prisma/schema.prisma"
-      npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma || echo "Migration failed or already applied"
+      echo "Listing migrations available:"
+      ls -R /app/packages/database/prisma/migrations
+
+      echo "Executing: npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma"
+      npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma
+
+      echo "Migration completed successfully."
     # Fallback to local schema if shared one not found (unlikely for api)
     elif [ -f "/app/apps/api/prisma/schema.prisma" ]; then
       echo "Found schema at /app/apps/api/prisma/schema.prisma"
-      npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma || echo "Migration failed or already applied"
+      npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma
     else
       echo "WARNING: No Prisma schema found in expected locations"
       ls -la /app/apps/api/ || echo "No /app/apps/api directory"
+      ls -la /app/packages/database/prisma/ || echo "No /app/packages/database/prisma directory"
     fi
 
     echo "Migration check complete, continuing with service start..."
