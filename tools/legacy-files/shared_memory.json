@@ -47,7 +47,8 @@
     "conversation_id": "vscode_interai_001",
     "active_agents": [
       "copilot",
-      "augment"
+      "augment",
+      "gemini"
     ],
     "collaboration_mode": "active",
     "primary_focus": "inter_ai_communication",
