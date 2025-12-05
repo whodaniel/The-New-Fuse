@@ -24,13 +24,15 @@ else
     echo "DATABASE_URL is set: ${DATABASE_URL:0:50}..."
 
     # Check if schema exists in apps/api/prisma
-    if [ -f "/app/apps/api/prisma/schema.prisma" ]; then
-      echo "Found schema at /app/apps/api/prisma/schema.prisma"
-      npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma || echo "Migration failed or already applied"
-    # Fallback to packages/database if it exists there
-    elif [ -f "/app/packages/database/prisma/schema.prisma" ]; then
+    # Run Prisma migrations for api service
+    # Prioritize shared database package schema
+    if [ -f "/app/packages/database/prisma/schema.prisma" ]; then
       echo "Found schema at /app/packages/database/prisma/schema.prisma"
       npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma || echo "Migration failed or already applied"
+    # Fallback to local schema if shared one not found (unlikely for api)
+    elif [ -f "/app/apps/api/prisma/schema.prisma" ]; then
+      echo "Found schema at /app/apps/api/prisma/schema.prisma"
+      npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma || echo "Migration failed or already applied"
     else
       echo "WARNING: No Prisma schema found in expected locations"
       ls -la /app/apps/api/ || echo "No /app/apps/api directory"
