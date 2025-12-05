@@ -7,11 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // The `url` is now for connection pooling (e.g., Prisma Accelerate).
-  // For direct database connections, Prisma Migrate uses the URL from `prisma.config.ts`
-  // and Prisma Client is instantiated with the connection URL directly.
-  // This line can be removed if you are not using a connection pool.
-  url = env("DATABASE_URL") // Kept for client-side compatibility, but ignored by `prisma migrate`
 }
 
 // =============================================================================

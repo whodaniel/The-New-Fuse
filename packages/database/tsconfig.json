@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "module": "commonjs",
-    "types": []
+    "types": ["node"]
   },
   "include": [
     "src/**/*",
