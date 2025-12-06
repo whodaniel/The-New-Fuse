@@ -19,14 +19,12 @@ builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
 
-# Frontend Service (uses Default builder with package.json scripts)
+# Frontend Service (uses Nixpacks builder from monorepo root)
 [services.TheNewFuse]
-# Railway's Default builder will:
-# 1. Auto-detect Node.js project and run pnpm install
-# 2. Run buildCommand to create production build in apps/frontend/dist
-# 3. Run startCommand to serve static files with 'serve' package
-buildCommand = "NODE_ENV=production cd apps/frontend && pnpm run build --mode production"
-startCommand = "cd apps/frontend && NODE_ENV=production pnpm start"
+builder = "NIXPACKS"
+# Build from monorepo root (NOT apps/frontend) so pnpm can access workspace dependencies
+# The rootDirectory should NOT be set in Railway UI
+nixpacksConfigPath = "apps/frontend/nixpacks.toml"
 restartPolicyType = "ON_FAILURE"
 
 # Fallback for 'frontend' service name just in case
