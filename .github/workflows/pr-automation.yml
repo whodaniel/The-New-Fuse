@@ -136,6 +136,52 @@ jobs:
               });
             }
 
+  slash-commands:
+    name: Slash Commands
+    runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Parse command
+        id: command
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = context.payload.comment.body;
+            const command = comment.split(' ')[0].substring(1);
+            const args = comment.split(' ').slice(1).join(' ');
+            core.setOutput('command', command);
+            core.setOutput('args', args);
+
+      - name: React to comment
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes'
+            });
+
+      - name: Handle /handyman command
+        if: steps.command.outputs.command == 'handyman'
+        run: |
+          echo "Running handyman command..."
+          echo "Extend the agent’s abilities by adding new MCP servers in ~/.gemini/settings.json."
+          # This is where you would add the script to modify the settings.json
+
+      - name: Handle /menu_book_spark command
+        if: steps.command.outputs.command == 'menu_book_spark'
+        run: |
+          echo "Running menu_book_spark command..."
+          echo "Create GEMINI.md files to provide specific instructions"
+          # This is where you would add the script to create GEMINI.md files
+
   pr-title-check:
     name: Check PR Title
     runs-on: ubuntu-latest

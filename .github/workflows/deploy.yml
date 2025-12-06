@@ -208,6 +208,23 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
+      - name: Capture deployment logs on failure
+        if: failure() && steps.should-deploy.outputs.deploy == 'true'
+        run: |
+          railway logs --service=${{ matrix.service }} > railway-logs-${{ matrix.service }}.log
+
+      - name: Upload deployment logs on failure
+        if: failure() && steps.should-deploy.outputs.deploy == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: railway-deploy-logs-${{ github.run_id }}
+          path: railway-logs-${{ matrix.service }}.log
+
+  health-checks:
+    name: Post-Deployment Health Checks
+    needs: [pre-deploy-checks, deploy-to-railway]
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
   health-checks:
     name: Post-Deployment Health Checks
     needs: [pre-deploy-checks, deploy-to-railway]
