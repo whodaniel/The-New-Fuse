@@ -46,7 +46,7 @@ const defaultSettings: AgentSettings = {
 };
 
 export function AdvancedAgentConfig(): React.ReactElement {
-  const { state, updateAgents } = useWizard();
+  const { state, updateSessionData } = useWizard();
   const { sendMessage } = useWizardWebSocket();
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [settings, setSettings] = useState<AgentSettings>(defaultSettings);
@@ -56,8 +56,9 @@ export function AdvancedAgentConfig(): React.ReactElement {
 
   useEffect(() => {
     if (selectedAgent && state.session?.data?.active_agents) {
-      const agentsMap = state.session.data.active_agents as Map<string, Agent>;
-      const agent = agentsMap.get(selectedAgent);
+      // Treat active_agents as a Record since it likely comes from JSON
+      const agents = state.session.data.active_agents as Record<string, Agent>;
+      const agent = agents[selectedAgent];
       if (agent?.settings) {
         setSettings(agent.settings);
       }
@@ -85,14 +86,16 @@ export function AdvancedAgentConfig(): React.ReactElement {
     if (!selectedAgent || !state.session?.data?.active_agents) return;
 
     try {
-      const agentsMap = state.session.data.active_agents as Map<string, Agent>;
-      const updatedAgent = agentsMap.get(selectedAgent);
+      const agents = state.session.data.active_agents as Record<string, Agent>;
+      const existingAgent = agents[selectedAgent];
 
-      if (updatedAgent) {
-        updatedAgent.settings = settings;
-        const agents = new Map(agentsMap);
-        agents.set(selectedAgent, updatedAgent);
-        updateAgents(agents as unknown as Map<string, boolean>);
+      if (existingAgent) {
+        const updatedAgent = { ...existingAgent, settings };
+        const newAgents = { ...agents, [selectedAgent]: updatedAgent };
+
+        // Optimistically update session data
+        updateSessionData({ active_agents: newAgents });
+
         sendMessage('agent_settings_update', {
           agentId: selectedAgent,
           settings,
@@ -119,8 +122,8 @@ export function AdvancedAgentConfig(): React.ReactElement {
 
   const getAgentEntries = (): Array<[string, Agent]> => {
     if (!state.session?.data?.active_agents) return [];
-    const agentsMap = state.session.data.active_agents as Map<string, Agent>;
-    return Array.from(agentsMap.entries());
+    const agents = state.session.data.active_agents as Record<string, Agent>;
+    return Object.entries(agents);
   };
 
   return (

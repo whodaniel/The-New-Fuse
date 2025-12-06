@@ -32,13 +32,13 @@ else
       ls -R /app/packages/database/prisma/migrations
 
       echo "Executing: npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma"
-      npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma
+      npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma || echo "Prisma migration failed, proceeding to emergency DB repair..."
 
-      echo "Migration completed successfully."
+      echo "Migration attempt completed."
     # Fallback to local schema if shared one not found (unlikely for api)
     elif [ -f "/app/apps/api/prisma/schema.prisma" ]; then
       echo "Found schema at /app/apps/api/prisma/schema.prisma"
-      npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma
+      npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma || echo "Prisma migration failed, proceeding to emergency DB repair..."
     else
       echo "WARNING: No Prisma schema found in expected locations"
       ls -la /app/apps/api/ || echo "No /app/apps/api directory"
