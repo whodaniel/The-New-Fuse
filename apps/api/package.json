@@ -77,7 +77,7 @@
     "prebuild": "pnpm --filter @the-new-fuse/ap2-protocol build && pnpm --filter @the-new-fuse/a2a-core build && pnpm --filter @the-new-fuse/api-types build && pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/port-management build && pnpm --filter @the-new-fuse/security build && pnpm --filter @the-new-fuse/shared build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build && pnpm --filter @the-new-fuse/relay-core build && pnpm --filter @the-new-fuse/n8n-workflows build",
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
     "build:watch": "tsc --watch --skipLibCheck --noEmitOnError false",
-    "migrate:deploy": "prisma migrate deploy --schema=../../packages/database/prisma/schema.prisma --config=../../packages/database/prisma/prisma.config.mjs",
+    "migrate:deploy": "prisma migrate deploy --schema=../../packages/database/prisma/schema.prisma --config=./prisma.config.js",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
