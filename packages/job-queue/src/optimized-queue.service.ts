@@ -156,13 +156,21 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
 
   private async initializeQueues(): Promise<void> {
     for (const [jobType, config] of Object.entries(this.queueConfigs)) {
+      // Check if REDIS_URL is provided and use it, otherwise fall back to individual parameters
+      const redisUrl = this.configService.get('REDIS_URL');
+      const redisConfig = redisUrl
+        ? { redis: redisUrl } // Use REDIS_URL if available
+        : {
+            redis: {
+              host: this.configService.get('REDIS_HOST', 'localhost'),
+              port: this.configService.get('REDIS_PORT', 6379),
+              password: this.configService.get('REDIS_PASSWORD'),
+              db: this.configService.get('REDIS_QUEUE_DB', 1),
+            }
+          };
+
       const queue = new Bull(config.name, {
-        redis: {
-          host: this.configService.get('REDIS_HOST', 'localhost'),
-          port: this.configService.get('REDIS_PORT', 6379),
-          password: this.configService.get('REDIS_PASSWORD'),
-          db: this.configService.get('REDIS_QUEUE_DB', 1),
-        },
+        ...redisConfig,
         defaultJobOptions: {
           attempts: config.attempts,
           backoff: config.backoff,
@@ -237,7 +245,7 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     };
 
     const job = await queue.add(enhancedJobData, jobOptions);
-    
+
     // Cache job metadata using UnifiedRedisService for fast lookups
     try {
       const jobMetadataKey = `job:metadata:${jobId}`;
@@ -251,7 +259,7 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       this.logger.warn(`Failed to cache job metadata for ${jobId}`, error);
     }
-    
+
     this.logger.log(`Job added: ${job.id} to queue: ${jobType} with priority: ${jobOptions.priority}`);
 
     return job;
@@ -529,7 +537,7 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     try {
       const metricsKey = `queue:events:${jobType}:${event}`;
       const timestamp = Date.now();
-      
+
       // Use UnifiedRedisService to increment event counters
       this.unifiedRedis.incr(metricsKey)
         .then(() => {
@@ -575,7 +583,7 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
       // Store metrics in Redis using UnifiedRedisService
       const metricsKey = `queue:metrics:${jobType}`;
       await this.unifiedRedis.set(metricsKey, JSON.stringify(metrics), 300); // 5 minutes TTL
-      
+
       this.logger.debug(`Collected metrics for queue: ${jobType}`);
     } catch (error) {
       this.logger.error(`Failed to collect metrics for queue: ${jobType}`, error);
