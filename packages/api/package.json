@@ -12,7 +12,7 @@
     "build:js-only": "./scripts/build-js-only.sh",
     "build:production": "NODE_ENV=production tsc --build",
     "build:watch": "tsc --build --watch",
-    "clean": "rimraf dist .turbo",
+    "clean": "rimraf dist .turbo tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit",
     "dev": "nest start --watch",
     "start": "nest start",

@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist .tsbuildinfo tsconfig.tsbuildinfo",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

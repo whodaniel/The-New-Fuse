@@ -15,7 +15,7 @@
     "db:studio": "prisma studio",
     "db:validate": "prisma validate",
     "lint": "eslint src",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "postinstall": "prisma generate || echo 'Prisma generate failed - using placeholder client'",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
