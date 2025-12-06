@@ -172,6 +172,28 @@ groups:
           summary: "Low Redis cache hit rate"
           description: "Redis cache hit rate is below 80% for more than 10 minutes"
 
+      # Redis instance down
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: cache
+        annotations:
+          summary: "Redis instance is down"
+          description: "The Redis instance {{ $labels.instance }} has been down for more than 1 minute."
+
+      # Redis connection errors
+      - alert: RedisConnectionErrors
+        expr: increase(app_redis_connection_errors_total[5m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: "Application is failing to connect to Redis"
+          description: "Service {{ $labels.job }} is reporting Redis connection errors."
+
   - name: container_alerts
     rules:
       # Container high CPU

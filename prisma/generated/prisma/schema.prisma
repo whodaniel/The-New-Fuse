@@ -1,12 +1,11 @@
 generator client {
   provider        = "prisma-client-js"
   output          = "./generated/prisma"
-  previewFeatures = ["driverAdapters", "fullTextSearchPostgres"]
+  previewFeatures = ["driverAdapters", "metrics", "fullTextSearchPostgres"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // =============================================================================
@@ -20,7 +19,7 @@ model User {
   name           String?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
-  hashedPassword String
+  hashedPassword String?
   role           UserRole   @default(USER)
   roles          UserRole[] @default([USER])
   isActive       Boolean    @default(true)
@@ -29,16 +28,31 @@ model User {
   refreshToken   String?
   deletedAt      DateTime?
 
+  // OAuth fields
+  googleId      String?   @unique
+  githubId      String?   @unique
+  picture       String?
+  emailVerified DateTime?
+
   // Relationships
-  agents        Agent[]
-  pipelines     Pipeline[]
-  tasks         Task[]
-  workflows     Workflow[]
-  chatRooms     ChatRoom[]
-  messages      Message[]
-  authSessions  AuthSession[]
-  loginAttempts LoginAttempt[]
-  authEvents    AuthEvent[]
+  agents               Agent[]
+  pipelines            Pipeline[]
+  tasks                Task[]
+  workflows            Workflow[]
+  chatRooms            ChatRoom[]
+  messages             Message[]
+  authSessions         AuthSession[]
+  loginAttempts        LoginAttempt[]
+  authEvents           AuthEvent[]
+  chatRoomParticipants ChatRoomParticipant[]
+  readReceipts         ReadReceipt[]
+  messageReactions     MessageReaction[]
+
+  // Performance indexes
+  @@index([email, isActive])
+  @@index([role, isActive])
+  @@index([lastLogin])
+  @@index([createdAt])
 
   @@map("users")
 }
@@ -112,15 +126,22 @@ model Agent {
   // Relationships
   user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   metadata       AgentMetadata?
-  nft            AgentNFT?
-  wallet         Wallet?
   chats          Chat[]
   messages       Message[]
   codeExecutions CodeExecutionUsage[]
   pipelines      Pipeline[]
-  tasks          Task[]
   workflows      Workflow[]
   workflowSteps  WorkflowStep[]
+  registration   AgentRegistration?
+  nft            AgentNFT?
+  wallet         Wallet?
+  tasks          Task[]
+
+  // Performance indexes
+  @@index([userId, status, type])
+  @@index([status, updatedAt])
+  @@index([type, createdAt])
+  @@index([userId, deletedAt])
 
   @@map("agents")
 }
@@ -208,11 +229,75 @@ model Chat {
   @@map("chats")
 }
 
+model ChatRoomParticipant {
+  id           String                  @id @default(uuid())
+  room         ChatRoom                @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId       String
+  user         User?                   @relation(fields: [userId], references: [id])
+  userId       String?
+  agentId      String?
+  role         ChatRoomParticipantRole @default(PARTICIPANT)
+  permissions  String[]                @default([])
+  isTyping     Boolean                 @default(false)
+  lastTypingAt DateTime?
+  lastReadAt   DateTime?
+  joinedAt     DateTime                @default(now())
+  leftAt       DateTime?
+  isMuted      Boolean                 @default(false)
+  notifications Boolean                 @default(true)
+
+  @@unique([roomId, userId])
+  @@unique([roomId, agentId])
+  @@map("chat_room_participants")
+}
+
+enum ChatRoomParticipantRole {
+  ADMIN
+  MODERATOR
+  PARTICIPANT
+  OBSERVER
+}
+
+model ReadReceipt {
+  id        String   @id @default(uuid())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId String
+  room      ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId    String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  agentId   String?
+  readAt    DateTime @default(now())
+
+  @@unique([messageId, userId])
+  @@unique([messageId, agentId])
+  @@map("read_receipts")
+}
+
+model MessageReaction {
+  id        String   @id @default(uuid())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  agentId   String?
+  emoji     String
+  createdAt DateTime @default(now())
+
+  @@unique([messageId, userId, emoji])
+  @@unique([messageId, agentId, emoji])
+  @@map("message_reactions")
+}
+
 model ChatRoom {
   id            String    @id @default(uuid())
   name          String
   description   String?
-  isPrivate     Boolean   @default(false)
+  topic         String?
+  purpose       String?
+  type          ChatRoomType @default(PUBLIC)
+  isPrivate     Boolean      @default(false)
+  isEphemeral   Boolean      @default(false)
   owner         User      @relation(fields: [ownerId], references: [id])
   ownerId       String
   settings      Json?
@@ -221,12 +306,31 @@ model ChatRoom {
   updatedAt     DateTime  @updatedAt
   lastMessageAt DateTime?
   isActive      Boolean   @default(true)
+  expiresAt     DateTime?
   deletedAt     DateTime?
+  maxParticipants Int       @default(50)
 
   // Relationships
-  messages Message[]
+  messages     Message[]
+  participants ChatRoomParticipant[]
+  readReceipts ReadReceipt[]
+
+  // Performance indexes
+  @@index([ownerId, isActive])
+  @@index([type, isActive])
+  @@index([lastMessageAt])
+  @@index([isActive, expiresAt])
 
   @@map("chat_rooms")
+}
+
+enum ChatRoomType {
+  PUBLIC
+  PRIVATE
+  PERSISTENT
+  EPHEMERAL
+  AGENT_ONLY
+  MIXED
 }
 
 model Message {
@@ -247,11 +351,25 @@ model Message {
   replies         Message[]   @relation("MessageReplies")
   metadata        Json?
   attachments     String[]    @default([])
+  codeSnippet     Json?
+  taskAssignment  Json?
+  workflowTrigger Json?
   timestamp       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   isEdited        Boolean     @default(false)
   isDeleted       Boolean     @default(false)
-  reactions       Json?
+  isPinned        Boolean     @default(false)
+
+  // Relationships
+  readReceipts     ReadReceipt[]
+  messageReactions MessageReaction[]
+
+  // Performance indexes
+  @@index([roomId, timestamp])
+  @@index([senderId, timestamp])
+  @@index([agentId, timestamp])
+  @@index([chatId, timestamp])
+  @@index([roomId, isDeleted, timestamp])
 
   @@map("messages")
 }
@@ -262,6 +380,17 @@ enum MessageRole {
   SYSTEM
   ASSISTANT
   TOOL
+}
+
+enum MessageType {
+  TEXT
+  CODE
+  FILE
+  TASK
+  WORKFLOW
+  SYSTEM
+  SUMMARY
+  SUGGESTION
 }
 
 // =============================================================================
@@ -292,6 +421,12 @@ model Workflow {
   // Relationships
   steps      WorkflowStep[]
   executions WorkflowExecution[]
+
+  // Performance indexes
+  @@index([creatorId, status, updatedAt])
+  @@index([agentId, isActive])
+  @@index([status, lastExecutedAt])
+  @@index([isActive, createdAt])
 
   @@map("workflows")
 }
@@ -397,8 +532,8 @@ model Task {
   error      String?
   startTime  DateTime?
   endTime    DateTime?
-  pipeline   Pipeline     @relation(fields: [pipelineId], references: [id])
-  pipelineId String
+  pipeline   Pipeline? @relation(fields: [pipelineId], references: [id])
+  pipelineId String?
   agent      Agent?       @relation(fields: [agentId], references: [id])
   agentId    String?
   user       User         @relation(fields: [userId], references: [id])
@@ -737,11 +872,11 @@ model LLMConfig {
 // =============================================================================
 
 model SyncState {
-  id           String   @id @default(uuid())
-  resourceType String // 'agent', 'template', 'config', etc.
+  id           String    @id @default(uuid())
+  resourceType String    // 'agent', 'template', 'config', etc.
   resourceId   String
   tenantId     String?
-  version      Int      @default(1)
+  version      Int       @default(1)
   checksum     String
   lastSync     DateTime @default(now())
   syncedBy     String // instance ID
@@ -750,7 +885,7 @@ model SyncState {
   @@index([resourceType])
   @@index([tenantId])
   @@index([lastSync])
-  @@index([resourceType, resourceId, tenantId])
+  @@index([resourceType, resourceId, tenantId], name: "SyncState_resourceType_resourceId_tenantId_key")
   @@map("sync_states")
 }
 
@@ -759,7 +894,7 @@ model SyncConflict {
   resourceType  String
   resourceId    String
   tenantId      String?
-  conflictType  String // 'version', 'checksum', 'concurrent'
+  conflictType  String    // 'version', 'checksum', 'concurrent'
   localVersion  Json
   remoteVersion Json
   resolvedAt    DateTime?
@@ -772,4 +907,352 @@ model SyncConflict {
   @@index([createdAt])
   @@index([resolvedAt])
   @@map("sync_conflicts")
+}
+
+// =============================================================================
+// AGENT REGISTRY SYSTEM
+// =============================================================================
+
+model AgentRegistration {
+  id                   String                  @id @default(uuid())
+  agentId              String                  @unique
+  authToken            String                  @unique
+  registrationData     Json
+  verificationStatus   VerificationStatus      @default(PENDING)
+  onboardingStatus     OnboardingStatus        @default(INITIALIZED)
+  onboardingStep       String?
+  onboardingProgress   Int                     @default(0)
+  orientationCompleted Boolean                 @default(false)
+  firstConnectedAt     DateTime                @default(now())
+  lastHeartbeat        DateTime                @default(now())
+  heartbeatInterval    Int                     @default(60000)
+  isOnline             Boolean                 @default(false)
+  metadata             Json?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  // Relationships
+  agent                Agent                   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  capabilities         AgentCapabilityRegistry[]
+  metrics              AgentMetrics[]
+  onboardingEvents     AgentOnboardingEvent[]
+
+  @@index([authToken])
+  @@index([verificationStatus])
+  @@index([onboardingStatus])
+  @@index([isOnline])
+  @@index([lastHeartbeat])
+  @@map("agent_registrations")
+}
+
+model AgentCapabilityRegistry {
+  id                 String             @id @default(uuid())
+  registrationId     String
+  capabilityName     String
+  capabilityType     String
+  version            String?
+  description        String?
+  parameters         Json?
+  verificationStatus VerificationStatus @default(PENDING)
+  verifiedAt         DateTime?
+  testResults        Json?
+  isActive           Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  // Relationships
+  registration AgentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([capabilityName])
+  @@index([verificationStatus])
+  @@map("agent_capability_registry")
+}
+
+model AgentMetrics {
+  id             String   @id @default(uuid())
+  registrationId String
+  metricType     String
+  value          Float
+  unit           String?
+  timestamp      DateTime @default(now())
+  tags           Json?
+
+  // Relationships
+  registration AgentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([metricType])
+  @@index([timestamp])
+  @@map("agent_metrics")
+}
+
+model AgentOnboardingEvent {
+  id             String              @id @default(uuid())
+  registrationId String
+  eventType      OnboardingEventType
+  eventData      Json?
+  message        String?
+  timestamp      DateTime            @default(now())
+
+  // Relationships
+  registration AgentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@map("agent_onboarding_events")
+}
+
+model AgentDirectoryEntry {
+  id             String   @id @default(uuid())
+  agentId        String   @unique
+  displayName    String
+  description    String?
+  category       String?
+  tags           String[] @default([])
+  isPublic       Boolean  @default(false)
+  isVerified     Boolean  @default(false)
+  rating         Float?   @default(0)
+  usageCount     Int      @default(0)
+  lastActiveAt   DateTime @default(now())
+  featured       Boolean  @default(false)
+  searchableData String?  @db.Text
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublic])
+  @@index([isVerified])
+  @@index([featured])
+  @@index([rating])
+  @@index([lastActiveAt])
+  @@map("agent_directory_entries")
+}
+
+enum VerificationStatus {
+  PENDING
+  IN_PROGRESS
+  VERIFIED
+  FAILED
+  REJECTED
+}
+
+enum OnboardingStatus {
+  INITIALIZED
+  WELCOME_SENT
+  CAPABILITIES_TESTED
+  ORIENTATION_IN_PROGRESS
+  ORIENTATION_COMPLETED
+  INTEGRATION_TESTING
+  READY
+  FAILED
+}
+
+enum OnboardingEventType {
+  REGISTRATION_STARTED
+  WELCOME_MESSAGE_SENT
+  CAPABILITY_DECLARED
+  CAPABILITY_VERIFIED
+  CAPABILITY_FAILED
+  ORIENTATION_STARTED
+  ORIENTATION_STEP_COMPLETED
+  ORIENTATION_COMPLETED
+  INTEGRATION_TEST_STARTED
+  INTEGRATION_TEST_PASSED
+  INTEGRATION_TEST_FAILED
+  TASK_ASSIGNED
+  TASK_COMPLETED
+  ERROR_OCCURRED
+  STATUS_CHANGED
+}
+
+// =============================================================================
+// RESOURCE REGISTRY SYSTEM
+// =============================================================================
+
+model Resource {
+  id               String             @id @default(uuid())
+  name             String
+  description      String?            @db.Text
+  category         ResourceCategory
+  type             ResourceType
+  content          Json
+  tags             String[]           @default([])
+  version          String
+  source           String
+  visibility       ResourceVisibility @default(PUBLIC)
+  author           String?
+  authorId         String?
+  license          String?
+  homepage         String?
+  repository       String?
+  searchableText   String?            @db.Text
+  keywords         String[]           @default([])
+  usageCount       Int                @default(0)
+  downloadCount    Int                @default(0)
+  favoriteCount    Int                @default(0)
+  status           ResourceStatus     @default(ACTIVE)
+  isVerified       Boolean            @default(false)
+  isFeatured       Boolean            @default(false)
+  dependencies     String[]           @default([])
+  relatedResources String[]           @default([])
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  publishedAt      DateTime?
+  deprecatedAt     DateTime?
+  deletedAt        DateTime?
+
+  // Relationships
+  versions   ResourceVersion[]
+  metadata   ResourceMetadata?
+  accessLogs ResourceAccessLog[]
+
+  @@index([category])
+  @@index([type])
+  @@index([visibility])
+  @@index([status])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([tags])
+  @@index([keywords])
+  @@fulltext([name, description, searchableText])
+  @@map("resources")
+}
+
+model ResourceVersion {
+  id         String   @id @default(uuid())
+  resourceId String
+  version    String
+  changelog  String?  @db.Text
+  content    Json
+  isLatest   Boolean  @default(false)
+  isDraft    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  createdBy  String?
+
+  // Relationships
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, version])
+  @@index([resourceId])
+  @@index([version])
+  @@index([isLatest])
+  @@map("resource_versions")
+}
+
+model ResourceMetadata {
+  id                     String   @id @default(uuid())
+  resourceId             String   @unique
+  metadata               Json     @default("{}")
+  performanceMetrics     Json?
+  qualityScore           Float?
+  complexityScore        Float?
+  estimatedExecutionTime Int?
+  requiredDependencies   String[] @default([])
+  optionalDependencies   String[] @default([])
+  minimumNodeVersion     String?
+  platforms              String[] @default([])
+  configSchema           Json?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  // Relationships
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@map("resource_metadata")
+}
+
+model ResourceAccessLog {
+  id           String         @id @default(uuid())
+  resourceId   String
+  accessorId   String?
+  accessorType String
+  action       ResourceAction
+  ipAddress    String?
+  userAgent    String?
+  metadata     Json?
+  timestamp    DateTime       @default(now())
+
+  // Relationships
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId])
+  @@index([accessorId])
+  @@index([action])
+  @@index([timestamp])
+  @@map("resource_access_logs")
+}
+
+enum ResourceCategory {
+  CLAUDE_SKILL
+  N8N_WORKFLOW
+  AGENT_TEMPLATE
+  CODE_SNIPPET
+  DOCUMENTATION
+  TOOL
+  INTEGRATION
+  WORKFLOW_TEMPLATE
+  API_ENDPOINT
+  DATABASE_SCHEMA
+  UI_COMPONENT
+  CONFIGURATION
+  SCRIPT
+  PROMPT_TEMPLATE
+  DATA_SOURCE
+}
+
+enum ResourceType {
+  JAVASCRIPT
+  TYPESCRIPT
+  PYTHON
+  SHELL
+  SQL
+  JSON
+  YAML
+  TOML
+  ENV
+  MARKDOWN
+  HTML
+  PDF
+  N8N_JSON
+  ZAPIER_JSON
+  MAKE_JSON
+  TEMPLATE
+  SNIPPET
+  OPENAPI
+  GRAPHQL
+  REST
+  BINARY
+  ARCHIVE
+  CUSTOM
+}
+
+enum ResourceVisibility {
+  PUBLIC
+  AGENTS_ONLY
+  PRIVATE
+  RESTRICTED
+  INTERNAL
+}
+
+enum ResourceStatus {
+  DRAFT
+  ACTIVE
+  DEPRECATED
+  ARCHIVED
+  DELETED
+  PENDING_REVIEW
+}
+
+enum ResourceAction {
+  VIEW
+  DOWNLOAD
+  EXECUTE
+  UPDATE
+  DELETE
+  FORK
+  FAVORITE
+  SHARE
 }

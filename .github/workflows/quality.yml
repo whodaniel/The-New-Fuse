@@ -366,6 +366,110 @@ jobs:
             fi
           done
 
+  proactive-module-check:
+    name: Proactive Module Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0 # Fetch all history for git diff
+
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.event.pull_request.base.sha }} --depth=1
+
+      - name: Identify problematic files
+        id: find-problems
+        run: |
+          PROBLEMATIC_FILES=""
+          # Get only added or modified .js files
+          CHANGED_FILES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep '\.js$')
+
+          for file in $CHANGED_FILES; do
+            if [ ! -f "$file" ]; then continue; fi
+
+            dir=$(dirname "$file")
+            # Find the nearest package.json
+            pkg_json=$(find "$dir" -maxdepth 5 -name "package.json" -print -quit)
+
+            if [ -n "$pkg_json" ] && grep -q '"type": "module"' "$pkg_json"; then
+              # If it's a module and uses require(), it's a problem
+              if grep -q "require(" "$file"; then
+                PROBLEMATIC_FILES="${PROBLEMATIC_FILES} \n- \`${file}\`"
+              fi
+            fi
+          done
+
+          if [ -n "$PROBLEMATIC_FILES" ]; then
+            echo "problem_found=true" >> $GITHUB_OUTPUT
+            echo "files<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$PROBLEMATIC_FILES" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "problem_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post comment and fail job if problems found
+        if: steps.find-problems.outputs.problem_found == 'true'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const files = `${{ steps.find-problems.outputs.files }}`;
+            const comment = `### 🤖 Proactive Module Check Failed\n\nI've detected a potential ESM/CJS module conflict in this PR. The following files use \`require()\` but appear to be in an ES Module context (due to a nearby \`package.json\` with \`"type": "module"\`):\n${files}\n\n**To fix this, please either:**\n1.  Rename the file(s) to use a \`.cjs\` extension.\n2.  Refactor the file(s) to use ES Module \`import\` syntax instead of \`require()\`.`;
+
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: comment });
+            core.setFailed('Potential module system conflict detected. Please see the comment for details.');
+
+  codebase-steward:
+    name: Codebase Steward
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Check for outdated dependencies
+        id: outdated
+        run: |
+          pnpm outdated --long --json > outdated.json || true
+          echo "report=$(cat outdated.json)" >> $GITHUB_OUTPUT
+
+      - name: Create issue for outdated dependencies
+        if: steps.outdated.outputs.report != '[]'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const report = JSON.parse('${{ steps.outdated.outputs.report }}');
+            if (report.length === 0) return;
+
+            let body = `### 🤖 Codebase Steward Report: Outdated Dependencies\n\nI have identified the following outdated dependencies:\n\n| Package | Current | Wanted | Latest |\n|---|---|---|---|\n`;
+            for (const pkg of report) {
+              body += `| ${pkg.name} | ${pkg.current} | ${pkg.wanted} | ${pkg.latest} |\n`;
+            }
+            body += `\n\nPlease review and create PRs to update these packages.`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Codebase Steward: Outdated Dependencies Found',
+              body: body,
+              labels: ['tech-debt', 'dependencies', 'agent-task']
+            });
+
   quality-summary:
     name: Quality Gates Summary
     needs:

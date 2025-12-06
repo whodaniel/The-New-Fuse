@@ -1,18 +1,11 @@
 /**
- * Prisma Configuration for Migrate
- * This file contains the database connection configuration for Prisma Migrate
- * as required by the new Prisma 7+ configuration approach.
- *
- * See: https://pris.ly/d/config-datasource
+ * Prisma Configuration
+ * This file contains the database connection configuration for Prisma
  */
-
-import { defineConfig } from '@prisma/migrate';
-
-export default defineConfig({
-  datasource: {
-    provider: 'postgresql',
-    // Connection URL for Prisma Migrate
-    // `directUrl` is used for direct database connections with Prisma Migrate.
-    directUrl: process.env.DATABASE_URL,
+export default {
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
   },
-});
+};

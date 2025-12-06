@@ -184,9 +184,46 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: Wait for deployment
+      - name: Wait for deployment to complete
         if: steps.should-deploy.outputs.deploy == 'true'
-        run: sleep 30
+        run: |
+          echo "Waiting for ${{ matrix.service }} to deploy..."
+          railway up --service=${{ matrix.service }} --detach
+
+          for i in {1..30}; do
+            STATUS=$(railway status --service=${{ matrix.service }} --json | jq -r '.status')
+            echo "Current status: $STATUS"
+            if [ "$STATUS" == "SUCCESS" ]; then
+              echo "Deployment successful!"
+              exit 0
+            elif [ "$STATUS" == "FAILED" ] || [ "$STATUS" == "CRASHED" ]; then
+              echo "Deployment failed!"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          echo "Deployment timed out."
+          exit 1
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Capture deployment logs on failure
+        if: failure() && steps.should-deploy.outputs.deploy == 'true'
+        run: |
+          railway logs --service=${{ matrix.service }} > railway-logs-${{ matrix.service }}.log
+
+      - name: Upload deployment logs on failure
+        if: failure() && steps.should-deploy.outputs.deploy == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: railway-deploy-logs-${{ github.run_id }}
+          path: railway-logs-${{ matrix.service }}.log
+
+  health-checks:
+    name: Post-Deployment Health Checks
+    needs: [pre-deploy-checks, deploy-to-railway]
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   health-checks:
     name: Post-Deployment Health Checks
@@ -196,11 +233,11 @@ jobs:
       matrix:
         service:
           - name: api-gateway
-            health_path: /health
+            health_path: /health # Assuming gateway has a simple health check
           - name: api
-            health_path: /health
+            health_path: /health/deep # Use a deep health check endpoint
           - name: backend
-            health_path: /health
+            health_path: /health/deep # Use a deep health check endpoint
           - name: frontend
             health_path: /
     steps:
@@ -237,7 +274,7 @@ jobs:
         run: |
           MAX_RETRIES=10
           RETRY_COUNT=0
-          HEALTH_URL="${{ steps.get-url.outputs.service_url }}${{ matrix.service.health_path }}"
+          HEALTH_URL="https://${{ steps.get-url.outputs.service_url }}${{ matrix.service.health_path }}"
 
           echo "Checking health at: $HEALTH_URL"
 
