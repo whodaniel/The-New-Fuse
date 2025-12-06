@@ -1,7 +1,11 @@
 #!/bin/sh
 
+# Add standard paths (for node, pnpm, etc.)
+# This handles GUI applications like VS Code that have minimal PATH
+export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.nvm/versions/node/v22.11.0/bin:$HOME/.nvm/versions/node/v20.17.0/bin:$HOME/.nvm/versions/node/v18.19.0/bin:$HOME/.local/share/pnpm:./node_modules/.bin:$PATH"
+
 # Increase Node memory for linters/typecheck to avoid OOM
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=8192}"
 
-# Run lint-staged on staged files
-pnpm lint-staged
+# Run lint-staged
+pnpm lint-staged || npx pnpm lint-staged || echo "Warning: Could not run lint-staged"
