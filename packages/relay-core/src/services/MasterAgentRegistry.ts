@@ -1,22 +1,17 @@
 /**
  * Master Agent Registry - Single Source of Truth
- * 
+ *
  * This is THE central nervous system for all agents in The New Fuse framework.
  * Integrates with existing Prisma database, AgentRegistry, and TaskService.
  * Every agent must register here and maintain state through this system.
  */
 
+import { AgentStatus, AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
+import { Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
-import {
-  AgentType,
-  AgentStatus,
-  TaskStatus,
-  TaskPriority,
-} from '@the-new-fuse/database';
-import { Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
-import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
-import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
+import { VCIssuanceRequest, VCIssuanceService } from './VCIssuanceService';
+import { BlockchainConfig, BlockchainService } from './shared/BlockchainService';
 // import { sha256 } from '../../../../src/utils/cryptoUtils';
 // import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry.js';
 // import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager.js';
@@ -86,7 +81,7 @@ export interface MasterAgentProfile {
   systemPrompt?: string;
   configuration?: any;
   userId: string;
-  
+
   // Enhanced capabilities matrix
   capabilities: {
     codeGeneration: boolean;
@@ -108,17 +103,27 @@ export interface MasterAgentProfile {
     handoffTemplating: boolean;
     stagnationRecovery: boolean;
   };
-  
+
   // Platform Information
-  platform: 'vscode' | 'chrome' | 'web' | 'api' | 'terminal' | 'integrated' | 'claude-desktop' | 'jules' | 'copilot' | 'unknown';
+  platform:
+    | 'vscode'
+    | 'chrome'
+    | 'web'
+    | 'api'
+    | 'terminal'
+    | 'integrated'
+    | 'claude-desktop'
+    | 'jules'
+    | 'copilot'
+    | 'unknown';
   location: string; // URL, extension ID, or system path
-  
+
   // Enhanced operational state
   lastSeen: Date;
   lastHeartbeat: Date;
   currentTask?: string;
   currentTaskStarted?: Date;
-  
+
   // Performance metrics (integrates with existing AgentMetadata)
   metrics: {
     totalTasks: number;
@@ -132,20 +137,20 @@ export interface MasterAgentProfile {
     stagnationCount: number;
     escalationCount: number;
   };
-  
+
   // Todo list management (integrates with Task system)
   todoList: MasterAgentTodo[];
-  
+
   // Registration & verification
   registeredAt: Date;
   lastVerified: Date;
   verificationHash: string; // Merkle tree verification
   onboardingCompleted: boolean;
   protocolChecklistCompleted: boolean;
-  
+
   // On-chain integration data
   onChainData: OnChainAgentData;
-  
+
   // Enhanced metadata (integrates with AgentMetadata)
   metadata: {
     version: string;
@@ -236,21 +241,21 @@ export class MasterAgentRegistry extends EventEmitter {
   private prisma: any;
   private legacyRegistry: AgentRegistry;
   private metadataManager: AgentMetadataManager;
-  
+
   // In-memory caches for performance
   private agentProfiles: Map<string, MasterAgentProfile> = new Map();
   private onboardingProtocol: UniversalOnboardingProtocol;
   private merkleTree: AgentMerkleNode | null = null;
   private lastMerkleUpdate: Date = new Date();
-  
+
   // System metrics
   private systemMetrics: SystemWideMetrics;
-  
+
   // Fairtable integration
   private spreadsheetIntegration: SpreadsheetIntegration = {
     enabled: false,
     lastSync: new Date(),
-    syncStatus: 'pending'
+    syncStatus: 'pending',
   };
 
   // Blockchain integration (using shared service)
@@ -262,8 +267,8 @@ export class MasterAgentRegistry extends EventEmitter {
   private wallet: Wallet | null = null;
 
   constructor(
-    prisma: any, 
-    logger: Logger, 
+    prisma: any,
+    logger: Logger,
     blockchainConfig?: BlockchainConfig,
     vcPrivateKey?: string
   ) {
@@ -273,13 +278,13 @@ export class MasterAgentRegistry extends EventEmitter {
     this.legacyRegistry = new AgentRegistry();
     this.metadataManager = new AgentMetadataManager();
     this.onboardingProtocol = {} as UniversalOnboardingProtocol; // Stub
-    
+
     // Initialize blockchain service
     if (blockchainConfig) {
       this.blockchainService = new BlockchainService(blockchainConfig, logger);
       this.initializeBlockchainIntegration();
     }
-    
+
     // Initialize system metrics
     this.systemMetrics = {
       totalAgents: 0,
@@ -293,14 +298,14 @@ export class MasterAgentRegistry extends EventEmitter {
       lastFullVerification: new Date(),
       merkleRootHash: '',
       onboardingCompletionRate: 0,
-      protocolComplianceRate: 0
+      protocolComplianceRate: 0,
     };
-    
+
     // Initialize VCIssuanceService if private key provided
     if (vcPrivateKey) {
       this.vcIssuanceService = new VCIssuanceService(prisma, logger, vcPrivateKey);
     }
-    
+
     this.initializeUniversalOnboardingProtocol();
     this.loadExistingAgents();
     this.startPeriodicVerification();
@@ -324,8 +329,9 @@ export class MasterAgentRegistry extends EventEmitter {
       this.logger.info(`🚀 MASTER REGISTRATION INITIATED: ${profile.name || 'Unknown Agent'}`);
 
       // Generate unique ID if not provided
-      const agentId = profile.id || this.generateAgentId(profile.type || 'BASIC', profile.platform || 'unknown');
-      
+      const agentId =
+        profile.id || this.generateAgentId(profile.type || 'BASIC', profile.platform || 'unknown');
+
       // Create complete profile with defaults
       const completeProfile: MasterAgentProfile = {
         id: agentId,
@@ -356,7 +362,7 @@ export class MasterAgentRegistry extends EventEmitter {
           heartbeatCompliance: false,
           handoffTemplating: false,
           stagnationRecovery: false,
-          ...profile.capabilities
+          ...profile.capabilities,
         },
         lastSeen: new Date(),
         lastHeartbeat: new Date(),
@@ -371,7 +377,7 @@ export class MasterAgentRegistry extends EventEmitter {
           collaboration: 100,
           stagnationCount: 0,
           escalationCount: 0,
-          ...profile.metrics
+          ...profile.metrics,
         },
         todoList: [],
         registeredAt: new Date(),
@@ -386,7 +392,7 @@ export class MasterAgentRegistry extends EventEmitter {
           tbaAddress: undefined,
           mintTransactionHash: undefined,
           mintBlockNumber: undefined,
-          lastOnChainUpdate: undefined
+          lastOnChainUpdate: undefined,
         },
         metadata: {
           version: '1.0.0',
@@ -396,8 +402,8 @@ export class MasterAgentRegistry extends EventEmitter {
           specializations: [],
           limitations: [],
           notes: '',
-          ...profile.metadata
-        }
+          ...profile.metadata,
+        },
       };
 
       // 1. Store in Prisma database (single source of truth)
@@ -420,17 +426,17 @@ export class MasterAgentRegistry extends EventEmitter {
                 capabilities: completeProfile.capabilities,
                 personalityTraits: completeProfile.metadata.personalityTraits,
                 communicationStyle: completeProfile.metadata.communicationStyle,
-                expertiseAreas: completeProfile.metadata.expertiseAreas
+                expertiseAreas: completeProfile.metadata.expertiseAreas,
               },
               config: {
                 platform: completeProfile.platform,
                 location: completeProfile.location,
-                metrics: completeProfile.metrics
-              }
-            }
-          }
+                metrics: completeProfile.metrics,
+              },
+            },
+          },
         },
-        include: { metadata: true }
+        include: { metadata: true },
       });
 
       if (!dbAgent) {
@@ -446,7 +452,7 @@ export class MasterAgentRegistry extends EventEmitter {
         capabilities: this.extractLegacyCapabilities(completeProfile.capabilities),
         registeredAt: completeProfile.registeredAt.toISOString(),
         lastSeen: completeProfile.lastSeen.toISOString(),
-        metadata: completeProfile.metadata
+        metadata: completeProfile.metadata,
       };
       this.legacyRegistry.registerAgent(legacyAgent);
 
@@ -470,14 +476,18 @@ export class MasterAgentRegistry extends EventEmitter {
       }
 
       // 8. Mint Agent NFT on blockchain if enabled
-      if (this.blockchainService && this.blockchainService.isBlockchainConnected() && this.blockchainService.getAgentNFTContract()) {
+      if (
+        this.blockchainService &&
+        this.blockchainService.isBlockchainConnected() &&
+        this.blockchainService.getAgentNFTContract()
+      ) {
         try {
           const onChainData = await this.mintAgentNFT(completeProfile);
           if (onChainData) {
             completeProfile.onChainData = onChainData;
             // Update the in-memory cache
             this.agentProfiles.set(agentId, completeProfile);
-            
+
             // Update database with on-chain data
             await this.prisma.agent.update({
               where: { id: agentId },
@@ -485,23 +495,32 @@ export class MasterAgentRegistry extends EventEmitter {
                 metadata: {
                   update: {
                     config: {
-                      ...(typeof dbAgent.metadata?.config === 'object' && dbAgent.metadata?.config !== null ? dbAgent.metadata.config : {}),
-                      onChainData: JSON.parse(JSON.stringify(onChainData))
-                    }
-                  }
-                }
-              }
+                      ...(typeof dbAgent.metadata?.config === 'object' &&
+                      dbAgent.metadata?.config !== null
+                        ? dbAgent.metadata.config
+                        : {}),
+                      onChainData: JSON.parse(JSON.stringify(onChainData)),
+                    },
+                  },
+                },
+              },
             });
-            
-            this.logger.info(`🔗 Agent ${agentId} minted on blockchain: Token ID ${onChainData.tokenId}`);
+
+            this.logger.info(
+              `🔗 Agent ${agentId} minted on blockchain: Token ID ${onChainData.tokenId}`
+            );
           }
         } catch (error) {
-          this.logger.error(`❌ Blockchain minting failed for ${agentId}: ${error instanceof Error ? error.message : String(error)}`);
+          this.logger.error(
+            `❌ Blockchain minting failed for ${agentId}: ${error instanceof Error ? error.message : String(error)}`
+          );
           // Continue with registration even if blockchain minting fails
         }
       }
 
-      this.logger.info(`✅ MASTER REGISTRATION COMPLETE: ${agentId} (${completeProfile.type} on ${completeProfile.platform})`);
+      this.logger.info(
+        `✅ MASTER REGISTRATION COMPLETE: ${agentId} (${completeProfile.type} on ${completeProfile.platform})`
+      );
       this.emit('agent_master_registered', completeProfile);
 
       return {
@@ -511,17 +530,19 @@ export class MasterAgentRegistry extends EventEmitter {
         protocolChecklistId: 'universal_onboarding_v1',
         todoListInitialized: true,
         verificationHash: completeProfile.verificationHash,
-        spreadsheetRowId
+        spreadsheetRowId,
       };
     } catch (error) {
-      this.logger.error(`❌ MASTER REGISTRATION FAILED: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `❌ MASTER REGISTRATION FAILED: ${error instanceof Error ? error.message : String(error)}`
+      );
       return {
         success: false,
         agentId: profile.id || 'unknown',
         onboardingRequired: true,
         protocolChecklistId: 'universal_onboarding_v1',
         todoListInitialized: false,
-        verificationHash: ''
+        verificationHash: '',
       };
     }
   }
@@ -542,8 +563,9 @@ export class MasterAgentRegistry extends EventEmitter {
       throw new Error(`Agent not found in Master Registry: ${agentId}`);
     }
 
-    const workspaceAccess = '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse';
-    
+    const workspaceAccess =
+      process.env.TNF_WORKSPACE || process.env.WORKSPACE_PATH || process.cwd();
+
     const onboardingSteps: OnboardingChecklistItem[] = [
       {
         id: 'workspace_verification',
@@ -553,8 +575,8 @@ export class MasterAgentRegistry extends EventEmitter {
         status: 'pending',
         orientationMaterials: [
           `${workspaceAccess}/README.md`,
-          `${workspaceAccess}/DOCUMENTATION_INDEX.md`
-        ]
+          `${workspaceAccess}/DOCUMENTATION_INDEX.md`,
+        ],
       },
       {
         id: 'master_registry_integration',
@@ -562,7 +584,7 @@ export class MasterAgentRegistry extends EventEmitter {
         description: 'Confirm agent is properly registered in Master Agent Registry',
         verificationMethod: 'automatic',
         status: 'pending',
-        orientationMaterials: []
+        orientationMaterials: [],
       },
       {
         id: 'relay_system_connection',
@@ -570,9 +592,7 @@ export class MasterAgentRegistry extends EventEmitter {
         description: 'Establish connection to The New Fuse relay communication system',
         verificationMethod: 'automatic',
         status: 'pending',
-        orientationMaterials: [
-          `${workspaceAccess}/packages/relay-core/README.md`
-        ]
+        orientationMaterials: [`${workspaceAccess}/packages/relay-core/README.md`],
       },
       {
         id: 'heartbeat_protocol_setup',
@@ -580,7 +600,7 @@ export class MasterAgentRegistry extends EventEmitter {
         description: 'Initialize heartbeat monitoring and anti-stagnation systems',
         verificationMethod: 'automatic',
         status: 'pending',
-        orientationMaterials: []
+        orientationMaterials: [],
       },
       {
         id: 'handoff_template_training',
@@ -590,8 +610,8 @@ export class MasterAgentRegistry extends EventEmitter {
         status: 'pending',
         orientationMaterials: [
           `${workspaceAccess}/docs/agents-and-protocols/MASTER_ORCHESTRATOR_HANDOFF_PROMPT.md`,
-          `${workspaceAccess}/src/services/AgentHandoffTemplateService.ts`
-        ]
+          `${workspaceAccess}/src/services/AgentHandoffTemplateService.ts`,
+        ],
       },
       {
         id: 'todo_system_integration',
@@ -599,7 +619,7 @@ export class MasterAgentRegistry extends EventEmitter {
         description: 'Initialize and test personal todo list management',
         verificationMethod: 'automatic',
         status: 'pending',
-        orientationMaterials: []
+        orientationMaterials: [],
       },
       {
         id: 'capability_declaration',
@@ -607,7 +627,7 @@ export class MasterAgentRegistry extends EventEmitter {
         description: 'Declare and verify agent capabilities and limitations',
         verificationMethod: 'manual',
         status: 'pending',
-        orientationMaterials: []
+        orientationMaterials: [],
       },
       {
         id: 'protocol_compliance_check',
@@ -615,8 +635,8 @@ export class MasterAgentRegistry extends EventEmitter {
         description: 'Verify compliance with system-wide rolling protocol checklist',
         verificationMethod: 'automatic',
         status: 'pending',
-        orientationMaterials: []
-      }
+        orientationMaterials: [],
+      },
     ];
 
     // Add onboarding steps to agent's todo list
@@ -626,10 +646,10 @@ export class MasterAgentRegistry extends EventEmitter {
         priority: 'high',
         category: 'onboarding',
         estimatedDuration: 5,
-        context: { 
+        context: {
           onboardingStep: step.id,
-          orientationMaterials: step.orientationMaterials
-        }
+          orientationMaterials: step.orientationMaterials,
+        },
       });
     }
 
@@ -639,7 +659,7 @@ export class MasterAgentRegistry extends EventEmitter {
       `${workspaceAccess}/docs/agents-and-protocols/MASTER_ORCHESTRATOR_HANDOFF_PROMPT.md`,
       `${workspaceAccess}/docs/AVAILABLE_AGENTS_REGISTRY.md`,
       `${workspaceAccess}/packages/relay-core/README.md`,
-      `${workspaceAccess}/src/services/AgentHandoffTemplateService.ts`
+      `${workspaceAccess}/src/services/AgentHandoffTemplateService.ts`,
     ];
 
     this.logger.info(`🎓 UNIVERSAL ONBOARDING INITIATED: ${agentId}`);
@@ -650,7 +670,7 @@ export class MasterAgentRegistry extends EventEmitter {
       onboardingSteps,
       estimatedDuration: onboardingSteps.length * 5, // 5 minutes per step
       orientationMaterials: allOrientationMaterials,
-      workspaceAccess
+      workspaceAccess,
     };
   }
 
@@ -665,7 +685,7 @@ export class MasterAgentRegistry extends EventEmitter {
       version: '1.0.0',
       requiredForOperation: true,
       lastUpdated: new Date(),
-      items: [] // Will be populated in startUniversalOnboarding
+      items: [], // Will be populated in startUniversalOnboarding
     };
     this.logger.info('🔧 Universal Onboarding Protocol initialized');
   }
@@ -680,26 +700,26 @@ export class MasterAgentRegistry extends EventEmitter {
         content: '🔐 Complete agent registration and verification in Master Registry',
         priority: 'high',
         category: 'verification',
-        estimatedDuration: 5
+        estimatedDuration: 5,
       },
       {
         content: '🎓 Complete Universal Onboarding Protocol',
-        priority: 'high', 
+        priority: 'high',
         category: 'onboarding',
-        estimatedDuration: 40
+        estimatedDuration: 40,
       },
       {
         content: '✅ Verify system-wide protocol checklist compliance',
         priority: 'high',
         category: 'verification',
-        estimatedDuration: 10
+        estimatedDuration: 10,
       },
       {
         content: '🚀 Establish heartbeat monitoring and anti-stagnation systems',
         priority: 'high',
         category: 'maintenance',
-        estimatedDuration: 5
-      }
+        estimatedDuration: 5,
+      },
     ];
 
     for (const todo of initialTodos) {
@@ -727,7 +747,7 @@ export class MasterAgentRegistry extends EventEmitter {
       dueDate: todoData.dueDate,
       dependencies: todoData.dependencies || [],
       estimatedDuration: todoData.estimatedDuration,
-      context: todoData.context
+      context: todoData.context,
     };
 
     // Store in agent's todo list
@@ -768,7 +788,7 @@ export class MasterAgentRegistry extends EventEmitter {
     todo.integrationId = prismaTask.id;
 
     this.updateSystemMetrics();
-    
+
     this.logger.debug(`📝 Todo added for agent ${agentId}: ${todo.content}`);
     this.emit('agent_todo_added', { agentId, todo });
 
@@ -787,69 +807,69 @@ export class MasterAgentRegistry extends EventEmitter {
       capabilities: profile.capabilities,
       registeredAt: profile.registeredAt.toISOString(),
       onboardingCompleted: profile.onboardingCompleted,
-      protocolChecklistCompleted: profile.protocolChecklistCompleted
+      protocolChecklistCompleted: profile.protocolChecklistCompleted,
     };
-    
+
     return sha256(JSON.stringify(data));
   }
 
   private updateMerkleTree(): void {
     const agentHashes = Array.from(this.agentProfiles.values())
-      .map(agent => ({ hash: agent.verificationHash, agentId: agent.id }))
+      .map((agent) => ({ hash: agent.verificationHash, agentId: agent.id }))
       .sort((a, b) => a.agentId.localeCompare(b.agentId));
-    
+
     this.merkleTree = this.buildAgentMerkleTree(agentHashes);
     this.lastMerkleUpdate = new Date();
     this.systemMetrics.merkleRootHash = this.merkleTree?.hash || '';
-    
+
     this.emit('merkle_tree_updated', {
       rootHash: this.merkleTree?.hash,
       agentCount: agentHashes.length,
-      updatedAt: this.lastMerkleUpdate
+      updatedAt: this.lastMerkleUpdate,
     });
   }
 
-  private buildAgentMerkleTree(nodes: { hash: string, agentId: string }[]): AgentMerkleNode {
+  private buildAgentMerkleTree(nodes: { hash: string; agentId: string }[]): AgentMerkleNode {
     if (nodes.length === 0) {
-      return { 
+      return {
         hash: sha256('empty'),
-        agentId: 'root'
+        agentId: 'root',
       };
     }
-    
+
     if (nodes.length === 1) {
-      return { 
+      return {
         hash: nodes[0].hash,
-        agentId: nodes[0].agentId
+        agentId: nodes[0].agentId,
       };
     }
-    
-    const merkleNodes: AgentMerkleNode[] = nodes.map(n => ({ 
-      hash: n.hash, 
-      agentId: n.agentId 
+
+    const merkleNodes: AgentMerkleNode[] = nodes.map((n) => ({
+      hash: n.hash,
+      agentId: n.agentId,
     }));
-    
+
     while (merkleNodes.length > 1) {
       const newLevel: AgentMerkleNode[] = [];
-      
+
       for (let i = 0; i < merkleNodes.length; i += 2) {
         const left = merkleNodes[i];
         const right = merkleNodes[i + 1] || merkleNodes[i];
-        
+
         const combinedHash = sha256(left.hash + right.hash);
-        
+
         newLevel.push({
           hash: combinedHash,
           agentId: `${left.agentId}_${right.agentId}`,
           left,
-          right
+          right,
         });
       }
-      
+
       merkleNodes.length = 0;
       merkleNodes.push(...newLevel);
     }
-    
+
     return merkleNodes[0];
   }
 
@@ -862,11 +882,13 @@ export class MasterAgentRegistry extends EventEmitter {
       // Check if fairtable adapters are available
       this.spreadsheetIntegration.enabled = true;
       this.logger.info('📊 Fairtable/Spreadsheet integration initialized');
-      
+
       // Create initial sync
       await this.syncAllAgentsToSpreadsheet();
     } catch (error) {
-      this.logger.warn(`📊 Fairtable integration not available: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `📊 Fairtable integration not available: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.spreadsheetIntegration.enabled = false;
     }
   }
@@ -897,10 +919,12 @@ export class MasterAgentRegistry extends EventEmitter {
       // Mock integration - in real implementation would use fairtable-adapters
       const rowId = `row_${agent.id}`;
       this.logger.debug(`📊 Synced agent ${agent.id} to spreadsheet row ${rowId}`);
-      
+
       return rowId;
     } catch (error) {
-      this.logger.error(`📊 Failed to sync agent ${agent.id} to spreadsheet: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `📊 Failed to sync agent ${agent.id} to spreadsheet: ${error instanceof Error ? error.message : String(error)}`
+      );
       return undefined;
     }
   }
@@ -917,8 +941,11 @@ export class MasterAgentRegistry extends EventEmitter {
       this.logger.info('📊 All agents synced to spreadsheet');
     } catch (error) {
       this.spreadsheetIntegration.syncStatus = 'failed';
-      this.spreadsheetIntegration.errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`📊 Failed to sync agents to spreadsheet: ${error instanceof Error ? error.message : String(error)}`);
+      this.spreadsheetIntegration.errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `📊 Failed to sync agents to spreadsheet: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -928,19 +955,28 @@ export class MasterAgentRegistry extends EventEmitter {
    */
   private startPeriodicVerification(): void {
     // System health check every 2 minutes
-    setInterval(() => {
-      this.performSystemHealthCheck();
-    }, 2 * 60 * 1000);
-    
+    setInterval(
+      () => {
+        this.performSystemHealthCheck();
+      },
+      2 * 60 * 1000
+    );
+
     // Full verification every 30 minutes
-    setInterval(() => {
-      this.performFullSystemVerification();
-    }, 30 * 60 * 1000);
+    setInterval(
+      () => {
+        this.performFullSystemVerification();
+      },
+      30 * 60 * 1000
+    );
 
     // Spreadsheet sync every hour
-    setInterval(() => {
-      this.syncAllAgentsToSpreadsheet();
-    }, 60 * 60 * 1000);
+    setInterval(
+      () => {
+        this.syncAllAgentsToSpreadsheet();
+      },
+      60 * 60 * 1000
+    );
   }
 
   private performSystemHealthCheck(): void {
@@ -949,32 +985,34 @@ export class MasterAgentRegistry extends EventEmitter {
     let activeAgents = 0;
     let onlineAgents = 0;
     let stalledAgents = 0;
-    
+
     for (const agent of this.agentProfiles.values()) {
       const timeSinceLastSeen = now.getTime() - agent.lastSeen.getTime();
-      
+
       if (agent.status === 'ACTIVE') {
         activeAgents++;
       }
-      
-      if (timeSinceLastSeen < 5 * 60 * 1000) { // 5 minutes
+
+      if (timeSinceLastSeen < 5 * 60 * 1000) {
+        // 5 minutes
         onlineAgents++;
-      } else if (timeSinceLastSeen > 30 * 60 * 1000) { // 30 minutes
+      } else if (timeSinceLastSeen > 30 * 60 * 1000) {
+        // 30 minutes
         healthScore -= 5;
         if (agent.status !== 'INACTIVE') {
           stalledAgents++;
         }
       }
-      
+
       if (!agent.onboardingCompleted) {
         healthScore -= 2;
       }
-      
+
       if (!agent.protocolChecklistCompleted) {
         healthScore -= 1;
       }
     }
-    
+
     this.systemMetrics = {
       ...this.systemMetrics,
       activeAgents,
@@ -982,30 +1020,34 @@ export class MasterAgentRegistry extends EventEmitter {
       stalledAgents,
       systemHealth: Math.max(0, healthScore),
       onboardingCompletionRate: this.calculateOnboardingCompletionRate(),
-      protocolComplianceRate: this.calculateProtocolComplianceRate()
+      protocolComplianceRate: this.calculateProtocolComplianceRate(),
     };
-    
+
     this.emit('system_health_check_completed', this.systemMetrics);
-    
+
     // Log health issues
     if (healthScore < 90) {
-      this.logger.warn(`⚠️ System health degraded: ${healthScore}% (${stalledAgents} stalled agents)`);
+      this.logger.warn(
+        `⚠️ System health degraded: ${healthScore}% (${stalledAgents} stalled agents)`
+      );
     }
   }
 
   private async performFullSystemVerification(): Promise<void> {
     this.logger.info('🔍 Performing full system verification');
-    
+
     let verifiedAgents = 0;
     for (const agent of this.agentProfiles.values()) {
       const verified = await this.verifyAgentCompliance(agent.id);
       if (verified) verifiedAgents++;
     }
-    
+
     this.updateMerkleTree();
     this.systemMetrics.lastFullVerification = new Date();
-    
-    this.logger.info(`✅ Full verification completed: ${verifiedAgents}/${this.systemMetrics.totalAgents} agents verified`);
+
+    this.logger.info(
+      `✅ Full verification completed: ${verifiedAgents}/${this.systemMetrics.totalAgents} agents verified`
+    );
     this.emit('full_system_verification_completed', this.systemMetrics);
   }
 
@@ -1015,7 +1057,7 @@ export class MasterAgentRegistry extends EventEmitter {
   private async loadExistingAgents(): Promise<void> {
     try {
       const existingAgents = await this.prisma.agent.findMany({
-        include: { metadata: true }
+        include: { metadata: true },
       });
 
       for (const dbAgent of existingAgents) {
@@ -1026,14 +1068,16 @@ export class MasterAgentRegistry extends EventEmitter {
       this.updateSystemMetrics();
       this.logger.info(`📂 Loaded ${existingAgents.length} existing agents from database`);
     } catch (error) {
-      this.logger.error(`Failed to load existing agents: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to load existing agents: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
   private convertDbAgentToMasterProfile(dbAgent: any): MasterAgentProfile {
     const metadata = dbAgent.metadata || {};
     const config = metadata.config || {};
-    
+
     return {
       id: dbAgent.id,
       name: dbAgent.name,
@@ -1058,7 +1102,7 @@ export class MasterAgentRegistry extends EventEmitter {
         reliability: 100,
         collaboration: 100,
         stagnationCount: 0,
-        escalationCount: 0
+        escalationCount: 0,
       },
       todoList: [],
       registeredAt: dbAgent.createdAt,
@@ -1073,7 +1117,7 @@ export class MasterAgentRegistry extends EventEmitter {
         tbaAddress: undefined,
         mintTransactionHash: undefined,
         mintBlockNumber: undefined,
-        lastOnChainUpdate: undefined
+        lastOnChainUpdate: undefined,
       },
       metadata: {
         version: metadata.version || '1.0.0',
@@ -1082,8 +1126,8 @@ export class MasterAgentRegistry extends EventEmitter {
         expertiseAreas: metadata.expertiseAreas || [],
         specializations: [],
         limitations: [],
-        notes: ''
-      }
+        notes: '',
+      },
     };
   }
 
@@ -1096,7 +1140,7 @@ export class MasterAgentRegistry extends EventEmitter {
    * @returns Promise<VerifiableCredential | null>
    */
   async issueAgentCredential(
-    agentId: string, 
+    agentId: string,
     requestedCapabilities: string[] = []
   ): Promise<any | null> {
     try {
@@ -1111,25 +1155,25 @@ export class MasterAgentRegistry extends EventEmitter {
       }
 
       // Use all enabled capabilities if none specified
-      const capabilities = requestedCapabilities.length > 0 
-        ? requestedCapabilities
-        : Object.entries(agent.capabilities)
-            .filter(([_, enabled]) => enabled)
-            .map(([capability, _]) => capability);
+      const capabilities =
+        requestedCapabilities.length > 0
+          ? requestedCapabilities
+          : Object.entries(agent.capabilities)
+              .filter(([_, enabled]) => enabled)
+              .map(([capability, _]) => capability);
 
       const vcRequest: VCIssuanceRequest = {
         agentId,
         requestedCapabilities: capabilities,
-        requesterSignature: 'system_generated' // In practice, this would be a proper signature
+        requesterSignature: 'system_generated', // In practice, this would be a proper signature
       };
 
       const credential = await this.vcIssuanceService.issueCredential(vcRequest);
-      
+
       this.logger.info(`✅ Verifiable Credential issued for agent: ${agentId}`);
       this.emit('credential_issued', { agentId, credentialId: credential.id });
-      
-      return credential;
 
+      return credential;
     } catch (error) {
       this.logger.error(`Failed to issue credential for agent ${agentId}: ${error}`);
       return null;
@@ -1150,7 +1194,6 @@ export class MasterAgentRegistry extends EventEmitter {
 
       const result = await this.vcIssuanceService.verifyCredential(credential);
       return result.isValid;
-
     } catch (error) {
       this.logger.error(`Failed to verify credential: ${error}`);
       return false;
@@ -1180,7 +1223,7 @@ export class MasterAgentRegistry extends EventEmitter {
     if (!this.blockchainService) {
       return {
         healthy: false,
-        details: { error: 'Blockchain service not initialized' }
+        details: { error: 'Blockchain service not initialized' },
       };
     }
 
@@ -1189,82 +1232,82 @@ export class MasterAgentRegistry extends EventEmitter {
 
   private updateSystemMetrics(): void {
     const agents = Array.from(this.agentProfiles.values());
-    const allTodos = agents.flatMap(a => a.todoList);
-    
+    const allTodos = agents.flatMap((a) => a.todoList);
+
     this.systemMetrics = {
       ...this.systemMetrics,
       totalAgents: agents.length,
       totalTodos: allTodos.length,
-      completedTodos: allTodos.filter(t => t.status === 'completed').length,
-      pendingTodos: allTodos.filter(t => t.status === 'pending').length
+      completedTodos: allTodos.filter((t) => t.status === 'completed').length,
+      pendingTodos: allTodos.filter((t) => t.status === 'pending').length,
     };
   }
 
   private calculateOnboardingCompletionRate(): number {
     const agents = Array.from(this.agentProfiles.values());
     if (agents.length === 0) return 100;
-    
-    const completedCount = agents.filter(a => a.onboardingCompleted).length;
+
+    const completedCount = agents.filter((a) => a.onboardingCompleted).length;
     return Math.round((completedCount / agents.length) * 100);
   }
 
   private calculateProtocolComplianceRate(): number {
     const agents = Array.from(this.agentProfiles.values());
     if (agents.length === 0) return 100;
-    
-    const compliantCount = agents.filter(a => a.protocolChecklistCompleted).length;
+
+    const compliantCount = agents.filter((a) => a.protocolChecklistCompleted).length;
     return Math.round((compliantCount / agents.length) * 100);
   }
 
   private async verifyAgentCompliance(agentId: string): Promise<boolean> {
     const agent = this.agentProfiles.get(agentId);
     if (!agent) return false;
-    
+
     // Verify all compliance requirements
     const checks = [
       agent.onboardingCompleted,
       agent.protocolChecklistCompleted,
       agent.capabilities.heartbeatCompliance,
-      agent.todoList.length > 0
+      agent.todoList.length > 0,
     ];
-    
-    const passed = checks.every(check => check);
-    
+
+    const passed = checks.every((check) => check);
+
     if (passed) {
       agent.lastVerified = new Date();
       agent.verificationHash = this.generateVerificationHash(agent);
     }
-    
+
     return passed;
   }
 
   // Type conversion utilities for legacy compatibility
   private convertToLegacyType(type: AgentType): string {
     const mapping: Record<string, string> = {
-      'BASIC': 'LLM',
-      'CHAT': 'LLM',
-      'WORKFLOW': 'ORCHESTRATOR',
-      'TASK': 'TOOL',
-      'ASSISTANT': 'HYBRID',
-      'ANALYSIS': 'ANALYSIS',
-      'CONVERSATIONAL': 'LLM',
-      'IDE_EXTENSION': 'HYBRID',
-      'API': 'TOOL'
+      BASIC: 'LLM',
+      CHAT: 'LLM',
+      WORKFLOW: 'ORCHESTRATOR',
+      TASK: 'TOOL',
+      ASSISTANT: 'HYBRID',
+      ANALYSIS: 'ANALYSIS',
+      CONVERSATIONAL: 'LLM',
+      IDE_EXTENSION: 'HYBRID',
+      API: 'TOOL',
     };
     return mapping[type as string] || 'HYBRID';
   }
 
   private convertToLegacyStatus(status: AgentStatus): string {
     const mapping: Record<string, string> = {
-      'ACTIVE': 'ACTIVE',
-      'INACTIVE': 'INACTIVE',
-      'IDLE': 'INACTIVE',
-      'BUSY': 'BUSY',
-      'ERROR': 'ERROR',
-      'OFFLINE': 'INACTIVE',
-      'INITIALIZING': 'ACTIVE',
-      'READY': 'ACTIVE',
-      'TERMINATED': 'INACTIVE'
+      ACTIVE: 'ACTIVE',
+      INACTIVE: 'INACTIVE',
+      IDLE: 'INACTIVE',
+      BUSY: 'BUSY',
+      ERROR: 'ERROR',
+      OFFLINE: 'INACTIVE',
+      INITIALIZING: 'ACTIVE',
+      READY: 'ACTIVE',
+      TERMINATED: 'INACTIVE',
     };
     return mapping[status as string] || 'INACTIVE';
   }
@@ -1277,22 +1320,22 @@ export class MasterAgentRegistry extends EventEmitter {
 
   private convertTodoStatusToTaskStatus(status: MasterAgentTodo['status']): TaskStatus {
     const mapping = {
-      'pending': 'PENDING',
-      'in_progress': 'IN_PROGRESS',
-      'completed': 'COMPLETED',
-      'failed': 'FAILED',
-      'cancelled': 'CANCELLED'
+      pending: 'PENDING',
+      in_progress: 'IN_PROGRESS',
+      completed: 'COMPLETED',
+      failed: 'FAILED',
+      cancelled: 'CANCELLED',
     };
-    return mapping[status] as TaskStatus || 'PENDING';
+    return (mapping[status] as TaskStatus) || 'PENDING';
   }
 
   private convertTodoPriorityToTaskPriority(priority: MasterAgentTodo['priority']): TaskPriority {
     const mapping = {
-      'low': 'LOW',
-      'medium': 'MEDIUM',
-      'high': 'HIGH'
+      low: 'LOW',
+      medium: 'MEDIUM',
+      high: 'HIGH',
     };
-    return mapping[priority] as TaskPriority || 'MEDIUM';
+    return (mapping[priority] as TaskPriority) || 'MEDIUM';
   }
 
   private generateAgentId(type: string, platform: string): string {
@@ -1338,7 +1381,7 @@ export class MasterAgentRegistry extends EventEmitter {
     try {
       await this.prisma.agent.update({
         where: { id: agentId },
-        data: { status, updatedAt: new Date() }
+        data: { status, updatedAt: new Date() },
       });
       this.logger.debug(`Agent status updated: ${agentId} -> ${status}`);
       return true;
@@ -1351,7 +1394,10 @@ export class MasterAgentRegistry extends EventEmitter {
   /**
    * Update agent capabilities
    */
-  async updateAgentCapabilities(agentId: string, capabilities: Partial<MasterAgentProfile['capabilities']>): Promise<boolean> {
+  async updateAgentCapabilities(
+    agentId: string,
+    capabilities: Partial<MasterAgentProfile['capabilities']>
+  ): Promise<boolean> {
     const agent = this.agentProfiles.get(agentId);
     if (!agent) {
       this.logger.warn(`Agent not found in Master Registry: ${agentId}`);
@@ -1366,20 +1412,20 @@ export class MasterAgentRegistry extends EventEmitter {
     try {
       await this.prisma.agent.update({
         where: { id: agentId },
-        data: { 
+        data: {
           configuration: {
             ...agent.configuration,
-            capabilities: agent.capabilities
+            capabilities: agent.capabilities,
           },
-          updatedAt: new Date() 
-        }
+          updatedAt: new Date(),
+        },
       });
-      
+
       this.logger.debug(`Agent capabilities updated: ${agentId} - ${JSON.stringify(capabilities)}`);
-      
+
       // Emit event for capability update
       this.emit('agentCapabilitiesUpdated', { agentId, capabilities });
-      
+
       return true;
     } catch (error) {
       this.logger.error(`Failed to update agent capabilities in database: ${error}`);
@@ -1405,17 +1451,20 @@ export class MasterAgentRegistry extends EventEmitter {
   /**
    * Add task to agent - missing method for tests
    */
-  async addTaskToAgent(agentId: string, taskData: {
-    content: string;
-    priority?: 'low' | 'medium' | 'high';
-    category?: string;
-    estimatedDuration?: number;
-  }): Promise<string> {
+  async addTaskToAgent(
+    agentId: string,
+    taskData: {
+      content: string;
+      priority?: 'low' | 'medium' | 'high';
+      category?: string;
+      estimatedDuration?: number;
+    }
+  ): Promise<string> {
     return this.addAgentTodo(agentId, {
       content: taskData.content,
       priority: taskData.priority || 'medium',
       category: (taskData.category as any) || 'task',
-      estimatedDuration: taskData.estimatedDuration
+      estimatedDuration: taskData.estimatedDuration,
     });
   }
 
@@ -1423,7 +1472,7 @@ export class MasterAgentRegistry extends EventEmitter {
    * BLOCKCHAIN INTEGRATION METHODS
    * On-chain identity and economic primitives
    */
-  
+
   private async initializeBlockchainIntegration(): Promise<void> {
     if (!this.blockchainConfig?.enabled) {
       this.logger.info('🔗 Blockchain integration disabled');
@@ -1448,37 +1497,41 @@ export class MasterAgentRegistry extends EventEmitter {
       if (config.contractAddress && wallet) {
         const agentNFTABI = [
           // Core minting function
-          "function mintAgent(address owner, string calldata agentId, string calldata initialMetadata, string calldata legalContractURI, string calldata agentType) external returns (uint256)",
-          
+          'function mintAgent(address owner, string calldata agentId, string calldata initialMetadata, string calldata legalContractURI, string calldata agentType) external returns (uint256)',
+
           // Metadata update functions
-          "function updateMetadata(uint256 tokenId, string calldata newMetadataURI) external",
-          "function updateAgentStatus(uint256 tokenId, bool isActive) external",
-          "function setTBAAddress(uint256 tokenId, address tbaAddress) external",
-          
+          'function updateMetadata(uint256 tokenId, string calldata newMetadataURI) external',
+          'function updateAgentStatus(uint256 tokenId, bool isActive) external',
+          'function setTBAAddress(uint256 tokenId, address tbaAddress) external',
+
           // View functions
-          "function getAgentMetadata(uint256 tokenId) external view returns (tuple)",
-          "function getTokenIdByAgentId(string calldata agentId) external view returns (uint256)",
-          "function getCurrentTokenId() external view returns (uint256)",
-          
+          'function getAgentMetadata(uint256 tokenId) external view returns (tuple)',
+          'function getTokenIdByAgentId(string calldata agentId) external view returns (uint256)',
+          'function getCurrentTokenId() external view returns (uint256)',
+
           // Events
-          "event AgentMinted(uint256 indexed tokenId, string indexed agentId, address indexed creator, address tbaAddress, string legalContractURI)"
+          'event AgentMinted(uint256 indexed tokenId, string indexed agentId, address indexed creator, address tbaAddress, string legalContractURI)',
         ];
-        
+
         this.blockchainService.registerContract(
           'AgentNFTContract',
           config.contractAddress,
           agentNFTABI
         );
-        
+
         // Test connection
         const agentNFTContract = this.blockchainService.getContract('AgentNFTContract');
         if (agentNFTContract) {
           const currentTokenId = await agentNFTContract.getCurrentTokenId();
-          this.logger.info(`🔗 Blockchain integration initialized - Current Token ID: ${currentTokenId}`);
+          this.logger.info(
+            `🔗 Blockchain integration initialized - Current Token ID: ${currentTokenId}`
+          );
         }
       }
     } catch (error) {
-      this.logger.error(`❌ Blockchain initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `❌ Blockchain initialization failed: ${error instanceof Error ? error.message : String(error)}`
+      );
       if (this.blockchainConfig) {
         this.blockchainConfig.enabled = false;
       }
@@ -1501,17 +1554,17 @@ export class MasterAgentRegistry extends EventEmitter {
 
       // Set gas configuration
       const gasPrice = parseUnits(blockchainConfig.maxGasPrice, 'gwei');
-      
+
       // Mint the Agent NFT
       const tx = await agentNFTContract.mintAgent(
         wallet.address, // Owner (for now, same as minter)
-        profile.id,          // Agent ID
-        metadataURI,         // Metadata URI
-        legalContractURI,    // Legal contract URI
-        profile.type,        // Agent type
+        profile.id, // Agent ID
+        metadataURI, // Metadata URI
+        legalContractURI, // Legal contract URI
+        profile.type, // Agent type
         {
           gasLimit: blockchainConfig.gasLimit,
-          gasPrice: gasPrice
+          gasPrice: gasPrice,
         }
       );
 
@@ -1519,7 +1572,7 @@ export class MasterAgentRegistry extends EventEmitter {
 
       // Wait for transaction confirmation
       const receipt = await tx.wait();
-      
+
       // Parse the AgentMinted event to get token ID
       const mintEvent = receipt.events?.find((e: any) => e.event === 'AgentMinted');
       const tokenId = mintEvent?.args?.tokenId?.toNumber();
@@ -1541,14 +1594,18 @@ export class MasterAgentRegistry extends EventEmitter {
         tbaAddress: tbaAddress,
         mintTransactionHash: tx.hash,
         mintBlockNumber: receipt.blockNumber,
-        lastOnChainUpdate: new Date()
+        lastOnChainUpdate: new Date(),
       };
 
-      this.logger.info(`✅ Agent NFT minted successfully - Token ID: ${tokenId}, TBA: ${tbaAddress}`);
-      
+      this.logger.info(
+        `✅ Agent NFT minted successfully - Token ID: ${tokenId}, TBA: ${tbaAddress}`
+      );
+
       return onChainData;
     } catch (error) {
-      this.logger.error(`❌ Agent NFT minting failed: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `❌ Agent NFT minting failed: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw error;
     }
   }
@@ -1571,24 +1628,22 @@ export class MasterAgentRegistry extends EventEmitter {
     }
 
     try {
-      const tx = await agentNFTContract.updateMetadata(
-        agent.onChainData.tokenId,
-        newMetadataURI,
-        {
-          gasLimit: blockchainConfig.gasLimit,
-          gasPrice: parseUnits(blockchainConfig.maxGasPrice, 'gwei')
-        }
-      );
+      const tx = await agentNFTContract.updateMetadata(agent.onChainData.tokenId, newMetadataURI, {
+        gasLimit: blockchainConfig.gasLimit,
+        gasPrice: parseUnits(blockchainConfig.maxGasPrice, 'gwei'),
+      });
 
       await tx.wait();
-      
+
       agent.onChainData.lastOnChainUpdate = new Date();
       this.agentProfiles.set(agentId, agent);
-      
+
       this.logger.info(`🔗 Updated on-chain metadata for agent ${agentId}`);
       return true;
     } catch (error) {
-      this.logger.error(`❌ Failed to update on-chain metadata for ${agentId}: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `❌ Failed to update on-chain metadata for ${agentId}: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -1633,7 +1688,7 @@ export class MasterAgentRegistry extends EventEmitter {
     spreadsheetIntegration: SpreadsheetIntegration;
   } {
     const agents = Array.from(this.agentProfiles.values());
-    const allTodos = agents.flatMap(a => a.todoList);
+    const allTodos = agents.flatMap((a) => a.todoList);
     const now = new Date();
 
     return {
@@ -1646,61 +1701,64 @@ export class MasterAgentRegistry extends EventEmitter {
         recentActivity: agents
           .sort((a, b) => b.lastSeen.getTime() - a.lastSeen.getTime())
           .slice(0, 10)
-          .map(a => ({ agentId: a.id, lastSeen: a.lastSeen, status: a.status }))
+          .map((a) => ({ agentId: a.id, lastSeen: a.lastSeen, status: a.status })),
       },
       todoSummary: {
         totalTodos: allTodos.length,
         byStatus: this.groupTodosByStatus(allTodos),
-        overdueTodos: allTodos.filter(t => t.dueDate && t.dueDate < now && t.status !== 'completed').length,
-        highPriorityPending: allTodos.filter(t => t.priority === 'high' && t.status === 'pending').length
+        overdueTodos: allTodos.filter(
+          (t) => t.dueDate && t.dueDate < now && t.status !== 'completed'
+        ).length,
+        highPriorityPending: allTodos.filter((t) => t.priority === 'high' && t.status === 'pending')
+          .length,
       },
       complianceReport: {
         onboardingCompletionRate: this.systemMetrics.onboardingCompletionRate,
         protocolComplianceRate: this.systemMetrics.protocolComplianceRate,
         verificationStatus: this.systemMetrics.merkleRootHash ? 'verified' : 'pending',
-        lastFullVerification: this.systemMetrics.lastFullVerification
+        lastFullVerification: this.systemMetrics.lastFullVerification,
       },
-      spreadsheetIntegration: this.spreadsheetIntegration
+      spreadsheetIntegration: this.spreadsheetIntegration,
     };
   }
 
   private groupAgentsByStatus(agents: MasterAgentProfile[]): Record<string, number> {
     const groups: Record<string, number> = {
-      'ACTIVE': 0,
-      'INACTIVE': 0,
-      'IDLE': 0,
-      'BUSY': 0,
-      'ERROR': 0,
-      'OFFLINE': 0,
-      'INITIALIZING': 0,
-      'READY': 0,
-      'TERMINATED': 0
+      ACTIVE: 0,
+      INACTIVE: 0,
+      IDLE: 0,
+      BUSY: 0,
+      ERROR: 0,
+      OFFLINE: 0,
+      INITIALIZING: 0,
+      READY: 0,
+      TERMINATED: 0,
     };
-    
+
     for (const agent of agents) {
       groups[agent.status]++;
     }
-    
+
     return groups;
   }
 
   private groupAgentsByPlatform(agents: MasterAgentProfile[]): Record<string, number> {
     const groups: Record<string, number> = {};
-    
+
     for (const agent of agents) {
       groups[agent.platform] = (groups[agent.platform] || 0) + 1;
     }
-    
+
     return groups;
   }
 
   private groupTodosByStatus(todos: MasterAgentTodo[]): Record<string, number> {
     const groups: Record<string, number> = {};
-    
+
     for (const todo of todos) {
       groups[todo.status] = (groups[todo.status] || 0) + 1;
     }
-    
+
     return groups;
   }
 }

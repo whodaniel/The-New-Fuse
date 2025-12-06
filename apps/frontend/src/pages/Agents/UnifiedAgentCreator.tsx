@@ -1,43 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import {
-  Bot,
-  Sparkles,
-  Users,
-  Settings,
-  ArrowRight,
   ArrowLeft,
-  Save,
-  Wand2,
-  MessageSquare,
-  Brain,
-  Lightbulb,
-  Target,
-  Plus,
+  Bot,
   Copy,
-  RefreshCw,
-  Zap,
-  Terminal,
+  Cpu,
   Monitor,
-  Cpu
+  Plus,
+  RefreshCw,
+  Save,
+  Settings,
+  Sparkles,
+  Terminal,
+  Users,
+  Wand2,
+  Zap,
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Import existing forms and services
 import { NewAgentForm, agentFormSchema } from '@/components/forms/NewAgentForm';
-import { chatApiService } from '@/services/chatApi';
-import { agentService } from '@/services/agent';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/components/ui/toast';
+import { agentService } from '@/services/agent';
+import { chatApiService } from '@/services/chatApi';
 import { AgentType } from '@/types/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 // Terminal window management interface
 export interface TerminalAgentWindow {
@@ -76,11 +70,20 @@ export const UnifiedAgentCreator: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
-  
+
   // Determine initial path based on URL params or state
-  const [currentPath, setCurrentPath] = useState<'choose' | 'quick' | 'advanced' | 'ai-assisted' | 'from-chat' | 'terminal-claude' | 'terminal-native' | 'terminal-integrated'>('choose');
+  const [currentPath, setCurrentPath] = useState<
+    | 'choose'
+    | 'quick'
+    | 'advanced'
+    | 'ai-assisted'
+    | 'from-chat'
+    | 'terminal-claude'
+    | 'terminal-native'
+    | 'terminal-integrated'
+  >('choose');
   const [step, setStep] = useState(1);
-  
+
   // Advanced form setup
   const advancedForm = useForm({
     resolver: zodResolver(agentFormSchema),
@@ -125,13 +128,13 @@ export const UnifiedAgentCreator: React.FC = () => {
       config: {},
     },
   });
-  
+
   // AI-assisted creation state
   const [conversationGoal, setConversationGoal] = useState<ConversationGoal>({
     description: '',
     context: '',
     agentCount: 3,
-    complexity: 'moderate'
+    complexity: 'moderate',
   });
   const [agentSuggestions, setAgentSuggestions] = useState<AgentSuggestion[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -142,7 +145,7 @@ export const UnifiedAgentCreator: React.FC = () => {
     name: '',
     description: '',
     type: 'assistant',
-    role: 'general'
+    role: 'general',
   });
 
   // Chat context data (from URL params or state)
@@ -154,7 +157,9 @@ export const UnifiedAgentCreator: React.FC = () => {
 
   // Terminal window management state
   const [terminalWindows, setTerminalWindows] = useState<TerminalAgentWindow[]>([]);
-  const [selectedTerminalType, setSelectedTerminalType] = useState<'claude-code' | 'native' | 'integrated'>('claude-code');
+  const [selectedTerminalType, setSelectedTerminalType] = useState<
+    'claude-code' | 'native' | 'integrated'
+  >('claude-code');
 
   // Initialize based on how user arrived at this page
   useEffect(() => {
@@ -162,17 +167,17 @@ export const UnifiedAgentCreator: React.FC = () => {
     const fromChat = params.get('from') === 'chat';
     const hasGoal = params.get('goal');
     const quickMode = params.get('quick') === 'true';
-    
+
     if (fromChat) {
       setCurrentPath('from-chat');
       setChatContext({
         conversationHistory: params.get('history') || '',
         missingAgentType: params.get('needed') || '',
-        suggestedName: params.get('name') || ''
+        suggestedName: params.get('name') || '',
       });
     } else if (hasGoal) {
       setCurrentPath('ai-assisted');
-      setConversationGoal(prev => ({ ...prev, description: hasGoal }));
+      setConversationGoal((prev) => ({ ...prev, description: hasGoal }));
     } else if (quickMode) {
       setCurrentPath('quick');
     } else {
@@ -194,32 +199,35 @@ export const UnifiedAgentCreator: React.FC = () => {
       // Fallback suggestions
       setAgentSuggestions([
         {
-          name: "Strategic Planner",
-          type: "specialist",
-          description: "Helps plan and organize complex tasks",
-          systemPrompt: "You are a strategic planning expert who helps break down complex goals into actionable steps.",
-          capabilities: ["Planning", "Analysis", "Organization"],
-          personalityTraits: ["Methodical", "Detail-oriented"],
-          role: "Planning and coordination"
+          name: 'Strategic Planner',
+          type: 'specialist',
+          description: 'Helps plan and organize complex tasks',
+          systemPrompt:
+            'You are a strategic planning expert who helps break down complex goals into actionable steps.',
+          capabilities: ['Planning', 'Analysis', 'Organization'],
+          personalityTraits: ['Methodical', 'Detail-oriented'],
+          role: 'Planning and coordination',
         },
         {
-          name: "Creative Thinker", 
-          type: "assistant",
-          description: "Generates innovative ideas and solutions",
-          systemPrompt: "You are a creative problem-solver who thinks outside the box and generates innovative solutions.",
-          capabilities: ["Ideation", "Problem-solving", "Innovation"],
-          personalityTraits: ["Creative", "Optimistic"],
-          role: "Idea generation and creative solutions"
+          name: 'Creative Thinker',
+          type: 'assistant',
+          description: 'Generates innovative ideas and solutions',
+          systemPrompt:
+            'You are a creative problem-solver who thinks outside the box and generates innovative solutions.',
+          capabilities: ['Ideation', 'Problem-solving', 'Innovation'],
+          personalityTraits: ['Creative', 'Optimistic'],
+          role: 'Idea generation and creative solutions',
         },
         {
-          name: "Research Analyst",
-          type: "specialist", 
-          description: "Conducts thorough research and analysis",
-          systemPrompt: "You are a research expert who gathers information, analyzes data, and provides insights.",
-          capabilities: ["Research", "Analysis", "Data interpretation"],
-          personalityTraits: ["Analytical", "Thorough"],
-          role: "Information gathering and analysis"
-        }
+          name: 'Research Analyst',
+          type: 'specialist',
+          description: 'Conducts thorough research and analysis',
+          systemPrompt:
+            'You are a research expert who gathers information, analyzes data, and provides insights.',
+          capabilities: ['Research', 'Analysis', 'Data interpretation'],
+          personalityTraits: ['Analytical', 'Thorough'],
+          role: 'Information gathering and analysis',
+        },
       ]);
       setStep(2);
     } finally {
@@ -230,107 +238,135 @@ export const UnifiedAgentCreator: React.FC = () => {
   // Generate contextual suggestions based on user input
   const generateContextualSuggestions = (goal: ConversationGoal): AgentSuggestion[] => {
     const { description, context, agentCount } = goal;
-    const isMarketingGoal = description.toLowerCase().includes('marketing') || description.toLowerCase().includes('campaign');
-    const isProductGoal = description.toLowerCase().includes('product') || description.toLowerCase().includes('launch');
-    
+    const isMarketingGoal =
+      description.toLowerCase().includes('marketing') ||
+      description.toLowerCase().includes('campaign');
+    const isProductGoal =
+      description.toLowerCase().includes('product') || description.toLowerCase().includes('launch');
+
     let suggestions: AgentSuggestion[] = [];
 
     if (isMarketingGoal && isProductGoal) {
       suggestions = [
         {
-          name: "Marketing Strategist",
-          type: "specialist",
-          description: "Develops comprehensive marketing strategies and campaign plans",
-          systemPrompt: "You are a marketing strategy expert specializing in product launches and campaign development. Focus on data-driven strategies and ROI optimization.",
-          capabilities: ["Strategy Development", "Market Analysis", "Campaign Planning", "ROI Optimization"],
-          personalityTraits: ["Strategic", "Data-driven", "Results-oriented"],
-          role: "Lead marketing strategy and campaign oversight"
+          name: 'Marketing Strategist',
+          type: 'specialist',
+          description: 'Develops comprehensive marketing strategies and campaign plans',
+          systemPrompt:
+            'You are a marketing strategy expert specializing in product launches and campaign development. Focus on data-driven strategies and ROI optimization.',
+          capabilities: [
+            'Strategy Development',
+            'Market Analysis',
+            'Campaign Planning',
+            'ROI Optimization',
+          ],
+          personalityTraits: ['Strategic', 'Data-driven', 'Results-oriented'],
+          role: 'Lead marketing strategy and campaign oversight',
         },
         {
-          name: "Content Creator",
-          type: "assistant",
-          description: "Creates engaging content across digital channels",
-          systemPrompt: "You are a creative content specialist who develops compelling marketing materials, copy, and digital content that resonates with target audiences.",
-          capabilities: ["Content Creation", "Copywriting", "Digital Marketing", "Brand Messaging"],
-          personalityTraits: ["Creative", "Persuasive", "Brand-focused"],
-          role: "Content development and creative execution"
+          name: 'Content Creator',
+          type: 'assistant',
+          description: 'Creates engaging content across digital channels',
+          systemPrompt:
+            'You are a creative content specialist who develops compelling marketing materials, copy, and digital content that resonates with target audiences.',
+          capabilities: ['Content Creation', 'Copywriting', 'Digital Marketing', 'Brand Messaging'],
+          personalityTraits: ['Creative', 'Persuasive', 'Brand-focused'],
+          role: 'Content development and creative execution',
         },
         {
-          name: "Market Research Analyst",
-          type: "specialist",
-          description: "Conducts market research and competitive analysis",
-          systemPrompt: "You are a market research expert who analyzes market trends, competitor strategies, and customer insights to inform marketing decisions.",
-          capabilities: ["Market Research", "Competitive Analysis", "Data Analysis", "Customer Insights"],
-          personalityTraits: ["Analytical", "Detail-oriented", "Insightful"],
-          role: "Market intelligence and research support"
+          name: 'Market Research Analyst',
+          type: 'specialist',
+          description: 'Conducts market research and competitive analysis',
+          systemPrompt:
+            'You are a market research expert who analyzes market trends, competitor strategies, and customer insights to inform marketing decisions.',
+          capabilities: [
+            'Market Research',
+            'Competitive Analysis',
+            'Data Analysis',
+            'Customer Insights',
+          ],
+          personalityTraits: ['Analytical', 'Detail-oriented', 'Insightful'],
+          role: 'Market intelligence and research support',
         },
         {
-          name: "Digital Marketing Specialist",
-          type: "assistant",
-          description: "Manages digital channels and online campaigns",
-          systemPrompt: "You are a digital marketing expert specializing in online channels, social media, and digital advertising campaigns.",
-          capabilities: ["Digital Advertising", "Social Media", "SEO/SEM", "Analytics"],
-          personalityTraits: ["Tech-savvy", "Adaptive", "Performance-focused"],
-          role: "Digital channel management and optimization"
+          name: 'Digital Marketing Specialist',
+          type: 'assistant',
+          description: 'Manages digital channels and online campaigns',
+          systemPrompt:
+            'You are a digital marketing expert specializing in online channels, social media, and digital advertising campaigns.',
+          capabilities: ['Digital Advertising', 'Social Media', 'SEO/SEM', 'Analytics'],
+          personalityTraits: ['Tech-savvy', 'Adaptive', 'Performance-focused'],
+          role: 'Digital channel management and optimization',
         },
         {
-          name: "Campaign Manager",
-          type: "specialist",
-          description: "Coordinates campaign execution and timeline management",
-          systemPrompt: "You are a project management expert who ensures marketing campaigns are executed on time, within budget, and meet quality standards.",
-          capabilities: ["Project Management", "Timeline Coordination", "Budget Management", "Quality Assurance"],
-          personalityTraits: ["Organized", "Reliable", "Communicative"],
-          role: "Campaign coordination and project management"
-        }
+          name: 'Campaign Manager',
+          type: 'specialist',
+          description: 'Coordinates campaign execution and timeline management',
+          systemPrompt:
+            'You are a project management expert who ensures marketing campaigns are executed on time, within budget, and meet quality standards.',
+          capabilities: [
+            'Project Management',
+            'Timeline Coordination',
+            'Budget Management',
+            'Quality Assurance',
+          ],
+          personalityTraits: ['Organized', 'Reliable', 'Communicative'],
+          role: 'Campaign coordination and project management',
+        },
       ];
     } else {
       // Default suggestions for other types of goals
       suggestions = [
         {
-          name: "Strategic Planner",
-          type: "specialist",
-          description: "Helps plan and organize complex tasks",
-          systemPrompt: "You are a strategic planning expert who helps break down complex goals into actionable steps.",
-          capabilities: ["Planning", "Analysis", "Organization"],
-          personalityTraits: ["Methodical", "Detail-oriented"],
-          role: "Planning and coordination"
+          name: 'Strategic Planner',
+          type: 'specialist',
+          description: 'Helps plan and organize complex tasks',
+          systemPrompt:
+            'You are a strategic planning expert who helps break down complex goals into actionable steps.',
+          capabilities: ['Planning', 'Analysis', 'Organization'],
+          personalityTraits: ['Methodical', 'Detail-oriented'],
+          role: 'Planning and coordination',
         },
         {
-          name: "Creative Thinker", 
-          type: "assistant",
-          description: "Generates innovative ideas and solutions",
-          systemPrompt: "You are a creative problem-solver who thinks outside the box and generates innovative solutions.",
-          capabilities: ["Ideation", "Problem-solving", "Innovation"],
-          personalityTraits: ["Creative", "Optimistic"],
-          role: "Idea generation and creative solutions"
+          name: 'Creative Thinker',
+          type: 'assistant',
+          description: 'Generates innovative ideas and solutions',
+          systemPrompt:
+            'You are a creative problem-solver who thinks outside the box and generates innovative solutions.',
+          capabilities: ['Ideation', 'Problem-solving', 'Innovation'],
+          personalityTraits: ['Creative', 'Optimistic'],
+          role: 'Idea generation and creative solutions',
         },
         {
-          name: "Research Analyst",
-          type: "specialist", 
-          description: "Conducts thorough research and analysis",
-          systemPrompt: "You are a research expert who gathers information, analyzes data, and provides insights.",
-          capabilities: ["Research", "Analysis", "Data interpretation"],
-          personalityTraits: ["Analytical", "Thorough"],
-          role: "Information gathering and analysis"
+          name: 'Research Analyst',
+          type: 'specialist',
+          description: 'Conducts thorough research and analysis',
+          systemPrompt:
+            'You are a research expert who gathers information, analyzes data, and provides insights.',
+          capabilities: ['Research', 'Analysis', 'Data interpretation'],
+          personalityTraits: ['Analytical', 'Thorough'],
+          role: 'Information gathering and analysis',
         },
         {
-          name: "Implementation Specialist",
-          type: "assistant",
-          description: "Focuses on executing plans and managing tasks",
-          systemPrompt: "You are an implementation expert who excels at turning plans into action and managing execution details.",
-          capabilities: ["Task Management", "Execution", "Quality Control"],
-          personalityTraits: ["Practical", "Reliable", "Action-oriented"],
-          role: "Plan execution and task management"
+          name: 'Implementation Specialist',
+          type: 'assistant',
+          description: 'Focuses on executing plans and managing tasks',
+          systemPrompt:
+            'You are an implementation expert who excels at turning plans into action and managing execution details.',
+          capabilities: ['Task Management', 'Execution', 'Quality Control'],
+          personalityTraits: ['Practical', 'Reliable', 'Action-oriented'],
+          role: 'Plan execution and task management',
         },
         {
-          name: "Communication Coordinator",
-          type: "assistant",
-          description: "Manages communication and stakeholder coordination",
-          systemPrompt: "You are a communication expert who ensures clear information flow and effective stakeholder coordination.",
-          capabilities: ["Communication", "Coordination", "Stakeholder Management"],
-          personalityTraits: ["Diplomatic", "Clear", "Collaborative"],
-          role: "Communication and coordination"
-        }
+          name: 'Communication Coordinator',
+          type: 'assistant',
+          description: 'Manages communication and stakeholder coordination',
+          systemPrompt:
+            'You are a communication expert who ensures clear information flow and effective stakeholder coordination.',
+          capabilities: ['Communication', 'Coordination', 'Stakeholder Management'],
+          personalityTraits: ['Diplomatic', 'Clear', 'Collaborative'],
+          role: 'Communication and coordination',
+        },
       ];
     }
 
@@ -340,7 +376,7 @@ export const UnifiedAgentCreator: React.FC = () => {
 
   const handleCreateSelectedAgents = async () => {
     const selectedAgents = agentSuggestions.filter((_, index) => selectedSuggestions.has(index));
-    
+
     try {
       for (const agent of selectedAgents) {
         await agentService.createAgent({
@@ -352,16 +388,16 @@ export const UnifiedAgentCreator: React.FC = () => {
           metadata: {
             personalityTraits: agent.personalityTraits,
             role: agent.role,
-            conversationGoal: conversationGoal.description
-          }
+            conversationGoal: conversationGoal.description,
+          },
         });
       }
-      
+
       // Create conversation rules if multiple agents
       if (selectedAgents.length > 1) {
         await createConversationRules(selectedAgents);
       }
-      
+
       navigate('/chat?automated=true&goal=' + encodeURIComponent(conversationGoal.description));
     } catch (error) {
       console.error('Error creating agents:', error);
@@ -372,9 +408,12 @@ export const UnifiedAgentCreator: React.FC = () => {
   const handleQuickCreate = async () => {
     try {
       // Map quick form data to agent creation DTO
-      const agentType = quickFormData.type === 'assistant' ? AgentType.BASE : 
-                       quickFormData.type === 'specialist' ? AgentType.ENHANCED : 
-                       AgentType.BASE;
+      const agentType =
+        quickFormData.type === 'assistant'
+          ? AgentType.BASE
+          : quickFormData.type === 'specialist'
+            ? AgentType.ENHANCED
+            : AgentType.BASE;
 
       await agentService.createAgent({
         name: quickFormData.name,
@@ -384,8 +423,8 @@ export const UnifiedAgentCreator: React.FC = () => {
         metadata: {
           personalityTraits: getDefaultPersonalityForRole(quickFormData.role),
           communicationStyle: 'friendly',
-          expertiseAreas: [quickFormData.role]
-        }
+          expertiseAreas: [quickFormData.role],
+        },
       });
 
       addToast('Agent created successfully!', 'success');
@@ -427,8 +466,8 @@ export const UnifiedAgentCreator: React.FC = () => {
         metadata: {
           personalityTraits: ['Helpful', 'Contextual'],
           communicationStyle: 'friendly',
-          expertiseAreas: [chatContext.missingAgentType || 'general']
-        }
+          expertiseAreas: [chatContext.missingAgentType || 'general'],
+        },
       });
 
       addToast('Agent created and added to chat!', 'success');
@@ -467,7 +506,12 @@ export const UnifiedAgentCreator: React.FC = () => {
 
     switch (role) {
       case 'coding':
-        return { ...baseCapabilities, code_generation: true, code_review: true, bug_analysis: true };
+        return {
+          ...baseCapabilities,
+          code_generation: true,
+          code_review: true,
+          bug_analysis: true,
+        };
       case 'writing':
         return { ...baseCapabilities, documentation: true, natural_language_processing: true };
       case 'analysis':
@@ -483,19 +527,25 @@ export const UnifiedAgentCreator: React.FC = () => {
 
   const getDefaultPersonalityForRole = (role: string) => {
     switch (role) {
-      case 'coding': return ['Technical', 'Precise', 'Problem-solving'];
-      case 'writing': return ['Creative', 'Articulate', 'Detail-oriented'];
-      case 'analysis': return ['Analytical', 'Methodical', 'Data-driven'];
-      case 'research': return ['Curious', 'Thorough', 'Investigative'];
-      case 'support': return ['Helpful', 'Patient', 'Solution-focused'];
-      default: return ['Friendly', 'Helpful', 'Adaptable'];
+      case 'coding':
+        return ['Technical', 'Precise', 'Problem-solving'];
+      case 'writing':
+        return ['Creative', 'Articulate', 'Detail-oriented'];
+      case 'analysis':
+        return ['Analytical', 'Methodical', 'Data-driven'];
+      case 'research':
+        return ['Curious', 'Thorough', 'Investigative'];
+      case 'support':
+        return ['Helpful', 'Patient', 'Solution-focused'];
+      default:
+        return ['Friendly', 'Helpful', 'Adaptable'];
     }
   };
 
   const getCapabilitiesFromChatContext = (context: any) => {
     // Analyze chat context to determine needed capabilities
     const capabilities = getDefaultCapabilitiesForRole('general');
-    
+
     if (context.missingAgentType?.includes('code')) {
       capabilities.code_generation = true;
       capabilities.code_review = true;
@@ -507,7 +557,7 @@ export const UnifiedAgentCreator: React.FC = () => {
       capabilities.web_automation = true;
       capabilities.knowledge_graph = true;
     }
-    
+
     return capabilities;
   };
 
@@ -529,12 +579,12 @@ export const UnifiedAgentCreator: React.FC = () => {
           relayEndpoint: 'ws://localhost:8080/relay',
           capabilities: agentConfig.capabilities || {},
           environment: {
-            TNF_WORKSPACE: '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse',
+            TNF_WORKSPACE: process.env.TNF_WORKSPACE || process.env.WORKSPACE_PATH || '/app',
             TNF_AGENT_ID: agentId,
             TNF_RELAY_ENDPOINT: 'ws://localhost:8080/relay',
-            TNF_MASTER_REGISTRY: 'true'
-          }
-        })
+            TNF_MASTER_REGISTRY: 'true',
+          },
+        }),
       });
 
       const terminalData = await response.json();
@@ -550,11 +600,11 @@ export const UnifiedAgentCreator: React.FC = () => {
         relayConnection: {
           connected: false,
           endpoint: 'ws://localhost:8080/relay',
-          lastHeartbeat: new Date()
-        }
+          lastHeartbeat: new Date(),
+        },
       };
 
-      setTerminalWindows(prev => [...prev, terminalWindow]);
+      setTerminalWindows((prev) => [...prev, terminalWindow]);
 
       // Start monitoring terminal window status
       monitorTerminalWindow(windowId);
@@ -576,20 +626,22 @@ export const UnifiedAgentCreator: React.FC = () => {
         const response = await fetch(`/api/relay/terminal-status/${windowId}`);
         const status = await response.json();
 
-        setTerminalWindows(prev => prev.map(window => 
-          window.windowId === windowId 
-            ? {
-                ...window,
-                status: status.isActive ? 'active' : 'idle',
-                lastActivity: new Date(status.lastActivity),
-                relayConnection: {
-                  connected: status.relayConnected,
-                  endpoint: status.relayEndpoint,
-                  lastHeartbeat: new Date(status.lastHeartbeat)
+        setTerminalWindows((prev) =>
+          prev.map((window) =>
+            window.windowId === windowId
+              ? {
+                  ...window,
+                  status: status.isActive ? 'active' : 'idle',
+                  lastActivity: new Date(status.lastActivity),
+                  relayConnection: {
+                    connected: status.relayConnected,
+                    endpoint: status.relayEndpoint,
+                    lastHeartbeat: new Date(status.lastHeartbeat),
+                  },
                 }
-              }
-            : window
-        ));
+              : window
+          )
+        );
 
         // Stop monitoring if terminal is closed
         if (status.status === 'closed') {
@@ -602,7 +654,11 @@ export const UnifiedAgentCreator: React.FC = () => {
   };
 
   // Register terminal agent with Master Agent Registry
-  const registerTerminalAgentWithRegistry = async (agentId: string, terminalWindow: TerminalAgentWindow, agentConfig: any) => {
+  const registerTerminalAgentWithRegistry = async (
+    agentId: string,
+    terminalWindow: TerminalAgentWindow,
+    agentConfig: any
+  ) => {
     try {
       const masterRegistryPayload = {
         id: agentId,
@@ -615,21 +671,21 @@ export const UnifiedAgentCreator: React.FC = () => {
           terminalAccess: true,
           relayIntegration: true,
           heartbeatCompliance: true,
-          handoffTemplating: true
+          handoffTemplating: true,
         },
         metadata: {
           ...agentConfig.metadata,
           terminalWindowId: terminalWindow.windowId,
           processId: terminalWindow.processId,
           relayEndpoint: terminalWindow.relayConnection?.endpoint,
-          spawnedAt: terminalWindow.createdAt.toISOString()
-        }
+          spawnedAt: terminalWindow.createdAt.toISOString(),
+        },
       };
 
       await fetch('/api/relay/master-registry/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(masterRegistryPayload)
+        body: JSON.stringify(masterRegistryPayload),
       });
 
       addToast(`Terminal agent ${agentId} registered with Master Agent Registry`, 'success');
@@ -651,11 +707,14 @@ export const UnifiedAgentCreator: React.FC = () => {
         name: agentData.name,
         type: agentData.type,
         capabilities: agentData.capabilities,
-        metadata: agentData.metadata
+        metadata: agentData.metadata,
       });
 
-      addToast(`Terminal agent created and spawned successfully! Window ID: ${terminalWindow.windowId}`, 'success');
-      
+      addToast(
+        `Terminal agent created and spawned successfully! Window ID: ${terminalWindow.windowId}`,
+        'success'
+      );
+
       // Navigate to agent management with terminal info
       navigate(`/agents/${dbAgent.id}?terminal=${terminalWindow.windowId}`);
     } catch (error) {
@@ -669,10 +728,10 @@ export const UnifiedAgentCreator: React.FC = () => {
     for (let i = 0; i < agents.length; i++) {
       const sourceAgent = agents[i];
       const targetAgent = agents[(i + 1) % agents.length];
-      
+
       await chatApiService.createConversationRule({
         sourceId: sourceAgent.name, // In real implementation, use agent ID
-        targetId: targetAgent.name
+        targetId: targetAgent.name,
       });
     }
   };
@@ -681,57 +740,79 @@ export const UnifiedAgentCreator: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4">Create AI Agents</h1>
-        <p className="text-lg text-muted-foreground mb-8">Choose how you'd like to create your agents</p>
+        <p className="text-lg text-muted-foreground mb-8">
+          Choose how you'd like to create your agents
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Quick Creation */}
-        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setCurrentPath('quick')}>
+        <Card
+          className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+          onClick={() => setCurrentPath('quick')}
+        >
           <div className="text-center space-y-4">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto">
               <Bot className="h-6 w-6 text-blue-600" />
             </div>
             <h3 className="text-lg font-semibold">Quick Create</h3>
-            <p className="text-sm text-muted-foreground">Create a basic agent quickly with essential settings</p>
+            <p className="text-sm text-muted-foreground">
+              Create a basic agent quickly with essential settings
+            </p>
             <Badge variant="secondary">Beginner</Badge>
           </div>
         </Card>
 
         {/* Advanced Creation */}
-        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setCurrentPath('advanced')}>
+        <Card
+          className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+          onClick={() => setCurrentPath('advanced')}
+        >
           <div className="text-center space-y-4">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto">
               <Settings className="h-6 w-6 text-purple-600" />
             </div>
             <h3 className="text-lg font-semibold">Advanced Create</h3>
-            <p className="text-sm text-muted-foreground">Full control with personality, capabilities, and advanced settings</p>
+            <p className="text-sm text-muted-foreground">
+              Full control with personality, capabilities, and advanced settings
+            </p>
             <Badge variant="secondary">Expert</Badge>
           </div>
         </Card>
 
         {/* AI-Assisted Creation */}
-        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setCurrentPath('ai-assisted')}>
+        <Card
+          className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+          onClick={() => setCurrentPath('ai-assisted')}
+        >
           <div className="text-center space-y-4">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto">
               <Sparkles className="h-6 w-6 text-green-600" />
             </div>
             <h3 className="text-lg font-semibold">AI Assistant</h3>
-            <p className="text-sm text-muted-foreground">Let AI suggest and create agents based on your goals</p>
+            <p className="text-sm text-muted-foreground">
+              Let AI suggest and create agents based on your goals
+            </p>
             <Badge variant="secondary">Smart</Badge>
           </div>
         </Card>
 
         {/* Multi-Agent Teams */}
-        <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => {
-          setCurrentPath('ai-assisted');
-          setConversationGoal(prev => ({ ...prev, agentCount: 5, complexity: 'complex' }));
-        }}>
+        <Card
+          className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+          onClick={() => {
+            setCurrentPath('ai-assisted');
+            setConversationGoal((prev) => ({ ...prev, agentCount: 5, complexity: 'complex' }));
+          }}
+        >
           <div className="text-center space-y-4">
             <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto">
               <Users className="h-6 w-6 text-orange-600" />
             </div>
             <h3 className="text-lg font-semibold">Agent Teams</h3>
-            <p className="text-sm text-muted-foreground">Create multiple agents that work together automatically</p>
+            <p className="text-sm text-muted-foreground">
+              Create multiple agents that work together automatically
+            </p>
             <Badge variant="secondary">Advanced</Badge>
           </div>
         </Card>
@@ -743,41 +824,62 @@ export const UnifiedAgentCreator: React.FC = () => {
         <p className="text-center text-muted-foreground mb-6">
           Create agents that run in dedicated terminal windows with relay integration
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Claude Code CLI Agent */}
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200" onClick={() => setCurrentPath('terminal-claude')}>
+          <Card
+            className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200"
+            onClick={() => setCurrentPath('terminal-claude')}
+          >
             <div className="text-center space-y-4">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto">
                 <Bot className="h-6 w-6 text-blue-600" />
               </div>
               <h3 className="text-lg font-semibold">Claude Code CLI</h3>
-              <p className="text-sm text-muted-foreground">Spawn agent in Claude Code CLI terminal with relay integration</p>
-              <Badge variant="outline" className="bg-blue-50">Claude Integration</Badge>
+              <p className="text-sm text-muted-foreground">
+                Spawn agent in Claude Code CLI terminal with relay integration
+              </p>
+              <Badge variant="outline" className="bg-blue-50">
+                Claude Integration
+              </Badge>
             </div>
           </Card>
 
           {/* Native Terminal Agent */}
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 border-green-200" onClick={() => setCurrentPath('terminal-native')}>
+          <Card
+            className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 border-green-200"
+            onClick={() => setCurrentPath('terminal-native')}
+          >
             <div className="text-center space-y-4">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto">
                 <Copy className="h-6 w-6 text-green-600" />
               </div>
               <h3 className="text-lg font-semibold">Native Terminal</h3>
-              <p className="text-sm text-muted-foreground">Create agent in native terminal with The New Fuse bridge</p>
-              <Badge variant="outline" className="bg-green-50">Terminal Bridge</Badge>
+              <p className="text-sm text-muted-foreground">
+                Create agent in native terminal with The New Fuse bridge
+              </p>
+              <Badge variant="outline" className="bg-green-50">
+                Terminal Bridge
+              </Badge>
             </div>
           </Card>
 
           {/* Integrated Terminal Agent */}
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 border-purple-200" onClick={() => setCurrentPath('terminal-integrated')}>
+          <Card
+            className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 border-purple-200"
+            onClick={() => setCurrentPath('terminal-integrated')}
+          >
             <div className="text-center space-y-4">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto">
                 <Zap className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="text-lg font-semibold">Integrated Agent</h3>
-              <p className="text-sm text-muted-foreground">Embed agent within The New Fuse ecosystem</p>
-              <Badge variant="outline" className="bg-purple-50">Full Integration</Badge>
+              <p className="text-sm text-muted-foreground">
+                Embed agent within The New Fuse ecosystem
+              </p>
+              <Badge variant="outline" className="bg-purple-50">
+                Full Integration
+              </Badge>
             </div>
           </Card>
         </div>
@@ -809,7 +911,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., Code Helper"
             />
           </div>
@@ -818,7 +920,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
+              }
               placeholder="What does this agent do?"
               rows={3}
             />
@@ -828,7 +932,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Type</label>
             <Select
               value={quickFormData.type}
-              onChange={(value) => setQuickFormData(prev => ({ ...prev, type: value }))}
+              onChange={(value) => setQuickFormData((prev) => ({ ...prev, type: value }))}
             >
               <option value="assistant">General Assistant</option>
               <option value="specialist">Specialist</option>
@@ -840,7 +944,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Primary Role</label>
             <Select
               value={quickFormData.role}
-              onChange={(value) => setQuickFormData(prev => ({ ...prev, role: value }))}
+              onChange={(value) => setQuickFormData((prev) => ({ ...prev, role: value }))}
             >
               <option value="general">General Help</option>
               <option value="coding">Code Assistance</option>
@@ -858,7 +962,7 @@ export const UnifiedAgentCreator: React.FC = () => {
               <Settings className="h-4 w-4 mr-2" />
               Need More Options?
             </Button>
-            <Button 
+            <Button
               onClick={handleQuickCreate}
               disabled={!quickFormData.name.trim() || !quickFormData.description.trim()}
             >
@@ -879,7 +983,9 @@ export const UnifiedAgentCreator: React.FC = () => {
           Back
         </Button>
         <h1 className="text-3xl font-bold mt-4">AI-Assisted Agent Creation</h1>
-        <p className="text-muted-foreground">Describe your goal and let AI create the perfect team</p>
+        <p className="text-muted-foreground">
+          Describe your goal and let AI create the perfect team
+        </p>
       </div>
 
       {step === 1 && (
@@ -889,17 +995,23 @@ export const UnifiedAgentCreator: React.FC = () => {
               <label className="block text-sm font-medium mb-2">What's your goal?</label>
               <Textarea
                 value={conversationGoal.description}
-                onChange={(e) => setConversationGoal(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setConversationGoal((prev) => ({ ...prev, description: e.target.value }))
+                }
                 placeholder="e.g., Plan a product launch, Analyze market data, Create content strategy..."
                 rows={3}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Additional Context (Optional)</label>
+              <label className="block text-sm font-medium mb-2">
+                Additional Context (Optional)
+              </label>
               <Textarea
                 value={conversationGoal.context}
-                onChange={(e) => setConversationGoal(prev => ({ ...prev, context: e.target.value }))}
+                onChange={(e) =>
+                  setConversationGoal((prev) => ({ ...prev, context: e.target.value }))
+                }
                 placeholder="Any specific requirements, constraints, or details..."
                 rows={2}
               />
@@ -910,7 +1022,9 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <label className="block text-sm font-medium mb-2">Number of Agents</label>
                 <Select
                   value={conversationGoal.agentCount.toString()}
-                  onChange={(value) => setConversationGoal(prev => ({ ...prev, agentCount: parseInt(value) }))}
+                  onChange={(value) =>
+                    setConversationGoal((prev) => ({ ...prev, agentCount: parseInt(value) }))
+                  }
                 >
                   <option value="2">2 Agents</option>
                   <option value="3">3 Agents</option>
@@ -923,7 +1037,9 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <label className="block text-sm font-medium mb-2">Complexity Level</label>
                 <Select
                   value={conversationGoal.complexity}
-                  onChange={(value) => setConversationGoal(prev => ({ ...prev, complexity: value as any }))}
+                  onChange={(value) =>
+                    setConversationGoal((prev) => ({ ...prev, complexity: value as any }))
+                  }
                 >
                   <option value="simple">Simple</option>
                   <option value="moderate">Moderate</option>
@@ -932,8 +1048,8 @@ export const UnifiedAgentCreator: React.FC = () => {
               </div>
             </div>
 
-            <Button 
-              onClick={generateAgentSuggestions} 
+            <Button
+              onClick={generateAgentSuggestions}
               disabled={!conversationGoal.description.trim() || isGenerating}
               className="w-full"
             >
@@ -958,7 +1074,8 @@ export const UnifiedAgentCreator: React.FC = () => {
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">AI-Generated Agent Team</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Select the agents you'd like to create. They'll be configured to work together automatically.
+              Select the agents you'd like to create. They'll be configured to work together
+              automatically.
             </p>
 
             <div className="space-y-4">
@@ -966,8 +1083,8 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <div
                   key={index}
                   className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                    selectedSuggestions.has(index) 
-                      ? 'border-blue-500 bg-blue-50' 
+                    selectedSuggestions.has(index)
+                      ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => {
@@ -986,7 +1103,9 @@ export const UnifiedAgentCreator: React.FC = () => {
                       <p className="text-sm text-muted-foreground mb-2">{suggestion.description}</p>
                       <div className="flex flex-wrap gap-1 mb-2">
                         {suggestion.capabilities.map((cap, i) => (
-                          <Badge key={i} variant="secondary" className="text-xs">{cap}</Badge>
+                          <Badge key={i} variant="secondary" className="text-xs">
+                            {cap}
+                          </Badge>
                         ))}
                       </div>
                       <p className="text-xs text-muted-foreground">Role: {suggestion.role}</p>
@@ -1010,11 +1129,15 @@ export const UnifiedAgentCreator: React.FC = () => {
                 Modify Goal
               </Button>
               <div className="space-x-2">
-                <Button variant="outline" onClick={generateAgentSuggestions} disabled={isGenerating}>
+                <Button
+                  variant="outline"
+                  onClick={generateAgentSuggestions}
+                  disabled={isGenerating}
+                >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Regenerate
                 </Button>
-                <Button 
+                <Button
                   onClick={handleCreateSelectedAgents}
                   disabled={selectedSuggestions.size === 0}
                 >
@@ -1046,7 +1169,8 @@ export const UnifiedAgentCreator: React.FC = () => {
             <div className="p-4 bg-blue-50 rounded-lg">
               <h3 className="font-medium text-blue-900">Suggested Agent Type</h3>
               <p className="text-sm text-blue-700">
-                Based on your conversation, you might need: <strong>{chatContext.missingAgentType}</strong>
+                Based on your conversation, you might need:{' '}
+                <strong>{chatContext.missingAgentType}</strong>
               </p>
             </div>
           )}
@@ -1055,7 +1179,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={chatContext.suggestedName || ''}
-              onChange={(e) => setChatContext(prev => ({ ...prev, suggestedName: e.target.value }))}
+              onChange={(e) =>
+                setChatContext((prev) => ({ ...prev, suggestedName: e.target.value }))
+              }
               placeholder="Name for your new agent"
             />
           </div>
@@ -1080,10 +1206,7 @@ export const UnifiedAgentCreator: React.FC = () => {
               <Settings className="h-4 w-4 mr-2" />
               Advanced Options
             </Button>
-            <Button 
-              onClick={handleFromChatCreate}
-              disabled={!chatContext.suggestedName?.trim()}
-            >
+            <Button onClick={handleFromChatCreate} disabled={!chatContext.suggestedName?.trim()}>
               <Plus className="h-4 w-4 mr-2" />
               Create & Add to Chat
             </Button>
@@ -1102,17 +1225,20 @@ export const UnifiedAgentCreator: React.FC = () => {
             Back
           </Button>
           <h1 className="text-3xl font-bold mt-4">Advanced Agent Creation</h1>
-          <p className="text-muted-foreground">Full control over agent capabilities and personality</p>
+          <p className="text-muted-foreground">
+            Full control over agent capabilities and personality
+          </p>
         </div>
 
         <Card className="p-6">
           <div className="mb-6">
             <h3 className="text-lg font-semibold">Advanced Configuration</h3>
             <p className="text-sm text-muted-foreground">
-              Configure all aspects of your agent including capabilities, personality, and reasoning strategies.
+              Configure all aspects of your agent including capabilities, personality, and reasoning
+              strategies.
             </p>
           </div>
-          
+
           <div className="max-w-2xl">
             <NewAgentForm form={advancedForm} onSubmit={handleAdvancedSubmit} />
           </div>
@@ -1130,7 +1256,9 @@ export const UnifiedAgentCreator: React.FC = () => {
           Back
         </Button>
         <h1 className="text-3xl font-bold mt-4">Claude Code CLI Agent</h1>
-        <p className="text-muted-foreground">Create an agent that operates through Claude Code CLI with full relay integration</p>
+        <p className="text-muted-foreground">
+          Create an agent that operates through Claude Code CLI with full relay integration
+        </p>
       </div>
 
       <Card className="p-6">
@@ -1141,7 +1269,8 @@ export const UnifiedAgentCreator: React.FC = () => {
               <h3 className="font-semibold text-blue-900">Claude Code CLI Integration</h3>
             </div>
             <p className="text-blue-700 text-sm">
-              This agent will be spawned in a new Claude Code CLI terminal window with direct relay connection to The New Fuse framework.
+              This agent will be spawned in a new Claude Code CLI terminal window with direct relay
+              connection to The New Fuse framework.
             </p>
           </div>
 
@@ -1149,7 +1278,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., Claude CLI Assistant"
             />
           </div>
@@ -1158,7 +1287,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
+              }
               placeholder="Describe what this Claude Code CLI agent will do..."
               rows={3}
             />
@@ -1173,15 +1304,15 @@ export const UnifiedAgentCreator: React.FC = () => {
                 file_operations: 'File Operations',
                 git_operations: 'Git Operations',
                 terminal_access: 'Terminal Access',
-                project_analysis: 'Project Analysis'
+                project_analysis: 'Project Analysis',
               }).map(([key, label]) => (
                 <div key={key} className="flex items-center space-x-2">
                   <Checkbox
                     checked={quickFormData.capabilities?.[key] || false}
-                    onCheckedChange={(checked) => 
-                      setQuickFormData(prev => ({
+                    onCheckedChange={(checked) =>
+                      setQuickFormData((prev) => ({
                         ...prev,
-                        capabilities: { ...prev.capabilities, [key]: checked }
+                        capabilities: { ...prev.capabilities, [key]: checked },
                       }))
                     }
                   />
@@ -1200,7 +1331,10 @@ export const UnifiedAgentCreator: React.FC = () => {
               The agent will be launched with environment variables for relay integration:
             </p>
             <div className="space-y-1 text-xs font-mono bg-amber-100 p-2 rounded">
-              <div>TNF_AGENT_ID: {quickFormData.name.toLowerCase().replace(/\s+/g, '-') || 'claude-cli-agent'}</div>
+              <div>
+                TNF_AGENT_ID:{' '}
+                {quickFormData.name.toLowerCase().replace(/\s+/g, '-') || 'claude-cli-agent'}
+              </div>
               <div>TNF_RELAY_ENDPOINT: ws://localhost:8080/relay</div>
               <div>TNF_MASTER_REGISTRY: true</div>
             </div>
@@ -1210,13 +1344,15 @@ export const UnifiedAgentCreator: React.FC = () => {
             <Button variant="outline" onClick={() => setCurrentPath('choose')}>
               Cancel
             </Button>
-            <Button 
-              onClick={() => handleTerminalAgentCreation({
-                ...quickFormData,
-                type: 'ASSISTANT',
-                platform: 'claude-cli',
-                metadata: { terminalType: 'claude-cli', relayIntegration: true }
-              })}
+            <Button
+              onClick={() =>
+                handleTerminalAgentCreation({
+                  ...quickFormData,
+                  type: 'ASSISTANT',
+                  platform: 'claude-cli',
+                  metadata: { terminalType: 'claude-cli', relayIntegration: true },
+                })
+              }
               disabled={!quickFormData.name.trim() || !quickFormData.description.trim()}
             >
               <Terminal className="h-4 w-4 mr-2" />
@@ -1236,7 +1372,9 @@ export const UnifiedAgentCreator: React.FC = () => {
           Back
         </Button>
         <h1 className="text-3xl font-bold mt-4">Native Terminal Agent</h1>
-        <p className="text-muted-foreground">Create an agent that operates through native terminal with The New Fuse bridge</p>
+        <p className="text-muted-foreground">
+          Create an agent that operates through native terminal with The New Fuse bridge
+        </p>
       </div>
 
       <Card className="p-6">
@@ -1247,7 +1385,8 @@ export const UnifiedAgentCreator: React.FC = () => {
               <h3 className="font-semibold text-green-900">Terminal Bridge Integration</h3>
             </div>
             <p className="text-green-700 text-sm">
-              This agent will operate through the native terminal with The New Fuse terminal bridge for autonomous communication.
+              This agent will operate through the native terminal with The New Fuse terminal bridge
+              for autonomous communication.
             </p>
           </div>
 
@@ -1255,7 +1394,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., Terminal Bridge Agent"
             />
           </div>
@@ -1264,7 +1403,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
+              }
               placeholder="Describe what this terminal agent will do..."
               rows={3}
             />
@@ -1279,15 +1420,15 @@ export const UnifiedAgentCreator: React.FC = () => {
                 process_management: 'Process Management',
                 system_monitoring: 'System Monitoring',
                 script_execution: 'Script Execution',
-                log_analysis: 'Log Analysis'
+                log_analysis: 'Log Analysis',
               }).map(([key, label]) => (
                 <div key={key} className="flex items-center space-x-2">
                   <Checkbox
                     checked={quickFormData.capabilities?.[key] || false}
-                    onCheckedChange={(checked) => 
-                      setQuickFormData(prev => ({
+                    onCheckedChange={(checked) =>
+                      setQuickFormData((prev) => ({
                         ...prev,
-                        capabilities: { ...prev.capabilities, [key]: checked }
+                        capabilities: { ...prev.capabilities, [key]: checked },
                       }))
                     }
                   />
@@ -1316,13 +1457,15 @@ export const UnifiedAgentCreator: React.FC = () => {
             <Button variant="outline" onClick={() => setCurrentPath('choose')}>
               Cancel
             </Button>
-            <Button 
-              onClick={() => handleTerminalAgentCreation({
-                ...quickFormData,
-                type: 'ASSISTANT',
-                platform: 'terminal',
-                metadata: { terminalType: 'native', bridgeIntegration: true }
-              })}
+            <Button
+              onClick={() =>
+                handleTerminalAgentCreation({
+                  ...quickFormData,
+                  type: 'ASSISTANT',
+                  platform: 'terminal',
+                  metadata: { terminalType: 'native', bridgeIntegration: true },
+                })
+              }
               disabled={!quickFormData.name.trim() || !quickFormData.description.trim()}
             >
               <Monitor className="h-4 w-4 mr-2" />
@@ -1342,7 +1485,9 @@ export const UnifiedAgentCreator: React.FC = () => {
           Back
         </Button>
         <h1 className="text-3xl font-bold mt-4">Integrated Terminal Agent</h1>
-        <p className="text-muted-foreground">Create a fully integrated agent within The New Fuse ecosystem</p>
+        <p className="text-muted-foreground">
+          Create a fully integrated agent within The New Fuse ecosystem
+        </p>
       </div>
 
       <Card className="p-6">
@@ -1353,7 +1498,8 @@ export const UnifiedAgentCreator: React.FC = () => {
               <h3 className="font-semibold text-purple-900">Full TNF Integration</h3>
             </div>
             <p className="text-purple-700 text-sm">
-              This agent will be fully embedded within The New Fuse ecosystem with complete relay, registry, and orchestrator integration.
+              This agent will be fully embedded within The New Fuse ecosystem with complete relay,
+              registry, and orchestrator integration.
             </p>
           </div>
 
@@ -1361,7 +1507,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., TNF Integrated Agent"
             />
           </div>
@@ -1370,7 +1516,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) => setQuickFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
+              }
               placeholder="Describe what this integrated agent will do..."
               rows={3}
             />
@@ -1387,15 +1535,15 @@ export const UnifiedAgentCreator: React.FC = () => {
                 stagnation_recovery: 'Stagnation Recovery',
                 workflow_execution: 'Workflow Execution',
                 agent_coordination: 'Agent Coordination',
-                real_time_chat: 'Real-time Chat'
+                real_time_chat: 'Real-time Chat',
               }).map(([key, label]) => (
                 <div key={key} className="flex items-center space-x-2">
                   <Checkbox
                     checked={quickFormData.capabilities?.[key] || false}
-                    onCheckedChange={(checked) => 
-                      setQuickFormData(prev => ({
+                    onCheckedChange={(checked) =>
+                      setQuickFormData((prev) => ({
                         ...prev,
-                        capabilities: { ...prev.capabilities, [key]: checked }
+                        capabilities: { ...prev.capabilities, [key]: checked },
                       }))
                     }
                   />
@@ -1426,18 +1574,20 @@ export const UnifiedAgentCreator: React.FC = () => {
             <Button variant="outline" onClick={() => setCurrentPath('choose')}>
               Cancel
             </Button>
-            <Button 
-              onClick={() => handleTerminalAgentCreation({
-                ...quickFormData,
-                type: 'ASSISTANT',
-                platform: 'integrated',
-                metadata: { 
-                  terminalType: 'integrated', 
-                  fullIntegration: true,
-                  masterRegistryCompliant: true,
-                  protocolCompliant: true
-                }
-              })}
+            <Button
+              onClick={() =>
+                handleTerminalAgentCreation({
+                  ...quickFormData,
+                  type: 'ASSISTANT',
+                  platform: 'integrated',
+                  metadata: {
+                    terminalType: 'integrated',
+                    fullIntegration: true,
+                    masterRegistryCompliant: true,
+                    protocolCompliant: true,
+                  },
+                })
+              }
               disabled={!quickFormData.name.trim() || !quickFormData.description.trim()}
             >
               <Zap className="h-4 w-4 mr-2" />
@@ -1464,11 +1614,7 @@ export const UnifiedAgentCreator: React.FC = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-background p-6">
-      {renderCurrentPath()}
-    </div>
-  );
+  return <div className="min-h-screen bg-background p-6">{renderCurrentPath()}</div>;
 };
 
 export default UnifiedAgentCreator;
