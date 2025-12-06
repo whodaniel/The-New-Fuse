@@ -19,13 +19,15 @@ builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
 
-# Frontend Service (uses Nixpacks builder from monorepo root)
+# Frontend Service (uses Dockerfile to properly handle monorepo)
+# IMPORTANT: Make sure "Root Directory" is NOT set in Railway UI
 [services.TheNewFuse]
-builder = "NIXPACKS"
-# Build from monorepo root (NOT apps/frontend) so pnpm can access workspace dependencies
-# The rootDirectory should NOT be set in Railway UI
-nixpacksConfigPath = "apps/frontend/nixpacks.toml"
-restartPolicyType = "ON_FAILURE"
+builder = "DOCKERFILE"
+[services.TheNewFuse.build]
+dockerfilePath = "apps/frontend/Dockerfile"
+# Build context is from repository root (not a subdirectory)
+# This allows access to workspace files like pnpm-lock.yaml
+watchPaths = ["apps/frontend/**", "packages/**"]
 
 # Fallback for 'frontend' service name just in case
 [services.frontend]
