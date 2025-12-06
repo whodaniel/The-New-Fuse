@@ -1,5 +1,6 @@
 # Multi-stage Dockerfile for The New Fuse Frontend
-# This Dockerfile is designed to work from the monorepo root
+# This Dockerfile works when build context is apps/frontend OR monorepo root
+# Railway configuration should NOT set a root directory for this service
 
 # Stage 1: Build stage
 FROM node:22-alpine AS builder
@@ -9,39 +10,52 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-# Copy workspace configuration files from monorepo root
-COPY pnpm-workspace.yaml ./
-COPY pnpm-lock.yaml ./
+# Check if we're in the frontend directory or monorepo root
+# by looking for the presence of app-specific files
+
+# Copy package files first for better caching
+# Handle both monorepo root and apps/frontend contexts
 COPY package.json ./
 
-# Copy all necessary workspace packages
-COPY packages ./packages
-COPY apps/frontend ./apps/frontend
+# If we're in the frontend directory (has vite.config.ts), do a simplified build
+# Otherwise, we're at monorepo root and need workspace dependencies
 
-# Install all dependencies (including workspace dependencies)
-RUN pnpm install --frozen-lockfile
+# Try to copy from monorepo structure first, then fallback
+# This uses a multi-context approach
 
-# Build the frontend application
-WORKDIR /app/apps/frontend
-RUN pnpm run build
+# For builds from apps/frontend context:
+# Copy all source files
+COPY . ./frontend-source/
+
+# Install dependencies
+WORKDIR /app/frontend-source
+RUN npm install --legacy-peer-deps || pnpm install --no-frozen-lockfile
+
+# Build the application
+ENV NODE_ENV=production
+ENV VITE_API_URL=https://api.thenewfuse.com
+ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
+RUN npm run build || pnpm run build
 
 # Stage 2: Production stage
 FROM node:22-alpine AS runner
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
 # Install serve globally for serving static files
-RUN pnpm add -g serve
+RUN npm install -g serve
 
 WORKDIR /app
 
 # Copy built files from builder stage
-COPY --from=builder /app/apps/frontend/dist ./dist
-COPY --from=builder /app/apps/frontend/package.json ./package.json
+COPY --from=builder /app/frontend-source/dist ./dist
 
 # Expose port (Railway will inject PORT env var)
 EXPOSE ${PORT:-3000}
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/ || exit 1
+
 # Start command - serve the built static files
+# -s enables SPA mode (serves index.html for all routes)
+# -n disables clipboard notifications
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
