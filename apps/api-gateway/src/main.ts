@@ -48,10 +48,10 @@ async function bootstrap() {
   // Global interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
 
-  // API versioning - prefix all routes with /v1
-  app.setGlobalPrefix('v1');
+  // API versioning - use URI versioning with prefix
   app.enableVersioning({
     type: VersioningType.URI,
+    prefix: 'v',
     defaultVersion: '1',
   });
 

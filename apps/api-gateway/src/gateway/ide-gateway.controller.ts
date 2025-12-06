@@ -3,18 +3,9 @@
  * Unified endpoint for Theia IDE operations
  */
 
-import {
-  Controller,
-  Get,
-  All,
-  Headers,
-  Res,
-  Req,
-  HttpStatus,
-  Version,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Response, Request } from 'express';
+import { All, Controller, Get, Headers, HttpStatus, Req, Res, Version } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
 @Controller('ide')
@@ -27,17 +18,9 @@ export class IdeGatewayController {
   @ApiOperation({ summary: 'Check IDE health status' })
   @ApiResponse({ status: 200, description: 'IDE is healthy' })
   @ApiResponse({ status: 503, description: 'IDE is unavailable' })
-  async getHealth(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async getHealth(@Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
-      const response = await this.proxyService.proxyRequest(
-        'theia-ide',
-        '/health',
-        'GET',
-        headers,
-      );
+      const response = await this.proxyService.proxyRequest('theia-ide', '/health', 'GET', headers);
 
       return res.status(response.status).json(response.data);
     } catch (error) {
@@ -53,16 +36,13 @@ export class IdeGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'Get IDE status and capabilities' })
   @ApiResponse({ status: 200, description: 'IDE status retrieved successfully' })
-  async getStatus(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async getStatus(@Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
       const response = await this.proxyService.proxyRequest(
         'theia-ide',
         '/services',
         'GET',
-        headers,
+        headers
       );
 
       return res.status(response.status).json({
@@ -92,10 +72,7 @@ export class IdeGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'Get IDE configuration' })
   @ApiResponse({ status: 200, description: 'IDE configuration retrieved successfully' })
-  async getConfig(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async getConfig(@Headers() headers: Record<string, string>, @Res() res: Response) {
     // Return IDE configuration
     return res.status(HttpStatus.OK).json({
       port: 3007,
@@ -123,26 +100,20 @@ export class IdeGatewayController {
         },
         mcp: {
           enabled: true,
-          servers: [
-            'filesystem',
-            'git',
-            'sqlite',
-            'web-search',
-            'github',
-          ],
+          servers: ['filesystem', 'git', 'sqlite', 'web-search', 'github'],
         },
       },
     });
   }
 
-  @All('*')
+  @All('{*path}')
   @Version('1')
   @ApiOperation({ summary: 'Proxy all other requests to IDE' })
   @ApiResponse({ status: 200, description: 'Request proxied successfully' })
   async proxyToIde(
     @Req() req: Request,
     @Res() res: Response,
-    @Headers() headers: Record<string, string>,
+    @Headers() headers: Record<string, string>
   ) {
     try {
       const path = req.path.replace('/v1/ide', '');
@@ -151,7 +122,7 @@ export class IdeGatewayController {
         path || '/',
         req.method,
         headers,
-        req.body,
+        req.body
       );
 
       return res.status(response.status).send(response.data);
