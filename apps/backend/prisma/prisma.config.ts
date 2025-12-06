@@ -6,7 +6,7 @@
  * See: https://pris.ly/d/config-datasource
  */
 
-import { defineConfig } from '@prisma/migrate';
+import { defineConfig } from 'prisma/config';
 
 export default defineConfig({
   datasource: {
