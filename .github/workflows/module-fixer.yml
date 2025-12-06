@@ -98,7 +98,7 @@ jobs:
       - name: Enable auto-merge for the PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ steps.fix-module-system-error.outputs.pr_url }} # This assumes the 'gh pr create' step will have an output with the PR URL
+          PR_URL: ${{ needs.fix-module-system-error.outputs.pr_url }}
         run: |
           if [ -z "$PR_URL" ]; then
             echo "Pull Request URL not found. Cannot enable auto-merge."

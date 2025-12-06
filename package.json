@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "postinstall": "node scripts/postinstall.cjs",
+    "prebuild": "node tools/scripts/patch-theia-webpack.cjs",
     "fix:native-modules": "bash scripts/fix-native-modules.sh",
     "setup:native-modules": "node scripts/setup-native-modules.cjs",
     "prepare": "husky",
@@ -13,7 +14,6 @@
     "dev:gateway": "turbo run dev --filter=@the-new-fuse/api-gateway",
     "dev:frontend": "turbo run dev --filter=@the-new-fuse/frontend-app",
     "dev:backend": "turbo run dev --filter=@the-new-fuse/backend-app",
-    "dev:memory-optimized": "node scripts/memory-optimized-dev.cjs",
     "dev:low-memory": "BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 node scripts/memory-optimized-dev.cjs",
     "prebuild": "node scripts/pre-build-check.cjs",
     "build": "turbo run build --filter=!@the-new-fuse/web-scraping --filter=!@the-new-fuse/core --filter=!@the-new-fuse/n8n-workflows --filter=!@the-new-fuse/sync-core --filter=!@the-new-fuse/integration-tests",
