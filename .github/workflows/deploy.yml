@@ -184,9 +184,29 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: Wait for deployment
+      - name: Wait for deployment to complete
         if: steps.should-deploy.outputs.deploy == 'true'
-        run: sleep 30
+        run: |
+          echo "Waiting for ${{ matrix.service }} to deploy..."
+          railway up --service=${{ matrix.service }} --detach
+
+          for i in {1..30}; do
+            STATUS=$(railway status --service=${{ matrix.service }} --json | jq -r '.status')
+            echo "Current status: $STATUS"
+            if [ "$STATUS" == "SUCCESS" ]; then
+              echo "Deployment successful!"
+              exit 0
+            elif [ "$STATUS" == "FAILED" ] || [ "$STATUS" == "CRASHED" ]; then
+              echo "Deployment failed!"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          echo "Deployment timed out."
+          exit 1
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   health-checks:
     name: Post-Deployment Health Checks
