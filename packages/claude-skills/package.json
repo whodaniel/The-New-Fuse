@@ -40,7 +40,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist coverage *.tsbuildinfo",
+    "clean": "rimraf dist coverage *.tsbuildinfo tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",

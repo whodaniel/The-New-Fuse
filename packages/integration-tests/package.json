@@ -15,7 +15,7 @@
     "test:workflow-builder:coverage": "jest --testPathPattern=workflow-builder --coverage",
     "test:all": "jest && pnpm run test:workflow-builder",
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Integration tests build completed with warnings'",
-    "clean": "rimraf dist coverage",
+    "clean": "rimraf dist coverage tsconfig.tsbuildinfo",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",

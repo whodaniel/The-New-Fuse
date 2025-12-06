@@ -86,7 +86,11 @@
     "audit:routes": "node scripts/route-audit.js",
     "audit:security": "pnpm audit",
     "audit:circular": "pnpm dlx madge --circular apps/api/src",
-    "health-check": "pnpm run type-check && pnpm run test && pnpm run build"
+    "audit:clean-scripts": "node scripts/audit-clean-scripts.cjs",
+    "validate:build": "node scripts/validate-build.cjs",
+    "validate:clean-scripts": "node scripts/validate-clean-scripts.cjs",
+    "health-check": "pnpm run type-check && pnpm run test && pnpm run build",
+    "health-check:full": "pnpm run validate:clean-scripts && pnpm run type-check && pnpm run test && pnpm run validate:build"
   },
   "devDependencies": {
     "@prisma/engines": "7.1.0",

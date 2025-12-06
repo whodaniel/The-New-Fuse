@@ -10,7 +10,7 @@
     "dev": "tsc -p tsconfig.clean.json --watch",
     "build:watch": "tsc -p tsconfig.clean.json --watch",
     "build:production": "NODE_ENV=production tsc -p tsconfig.clean.json",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "type-check": "tsc -p tsconfig.clean.json --noEmit",
     "test": "jest",
     "test:unit": "jest --testNamePattern=unit",

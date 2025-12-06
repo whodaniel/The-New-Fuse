@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint src",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "start": "node dist/server.js",
     "start:dev": "tsx watch src/server.ts",
     "test": "jest --passWithNoTests",

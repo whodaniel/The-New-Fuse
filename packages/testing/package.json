@@ -9,7 +9,7 @@
     "test": "jest",
     "test:perf": "jest --config=jest.performance.config.js",
     "test:perf:ci": "jest --config=jest.performance.config.js --ci --reporters=default --reporters=jest-junit",
-    "clean": "rimraf dist coverage test-results playwright-report",
+    "clean": "rimraf dist coverage test-results playwright-report tsconfig.tsbuildinfo",
     "test:contracts": "jest --testPathPattern=src/contract",
     "watch": "tsc -w",
     "test:e2e": "playwright test",

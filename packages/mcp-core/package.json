@@ -66,7 +66,7 @@
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
     "build:production": "NODE_ENV=production tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist coverage test-results *.tsbuildinfo",
+    "clean": "rimraf dist coverage test-results *.tsbuildinfo tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",

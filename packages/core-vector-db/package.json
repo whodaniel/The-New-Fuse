@@ -12,7 +12,7 @@
     "dev:grpc": "pnpm run build && pnpm run start:grpc",
     "test": "echo \"No tests found for @the-new-fuse/core-vector-db\" && exit 0",
     "lint": "eslint src/**/*.ts",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
