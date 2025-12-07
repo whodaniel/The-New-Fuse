@@ -69,7 +69,7 @@ else
 
     # Emergency DB Repair Script - Ensures explicit table creation regardless of migration state
     echo "Generating DB repair script..."
-    cat > db-repair.js << 'EOF'
+    cat > /tmp/db-repair.js << 'EOF'
 const { Client } = require('pg');
 const client = new Client({ connectionString: process.env.DATABASE_URL });
 
@@ -177,7 +177,7 @@ repair();
 EOF
 
     echo "Executing DB Repair..."
-    node db-repair.js
+    node /tmp/db-repair.js
 
     echo "Migration check complete, continuing with service start..."
   fi
