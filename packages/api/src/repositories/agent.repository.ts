@@ -4,8 +4,9 @@
  */
 
 import { Injectable } from '@nestjs/common';
+import { AgentCapability } from '@the-new-fuse/types';
+import { IBaseRepository } from '../services/base.service';
 import { PrismaService } from '../services/prisma.service';
-import { AgentCapability } from '@the-new-fuse/types/src/core/enums';
 import { AgentStatus } from '../types/agent';
 // Create local type definition until types package issue is resolved
 export interface Agent {
@@ -25,7 +26,6 @@ export interface Agent {
   updatedAt: Date;
   deletedAt?: Date;
 }
-import { IBaseRepository } from '../services/base.service';
 
 // Enums should be imported from types package to maintain consistency
 // This is a temporary definition that should be moved to the types package
@@ -33,26 +33,26 @@ export enum AgentType {
   ASSISTANT = 'assistant',
   WORKER = 'worker',
   SUPERVISOR = 'supervisor',
-  SPECIALIST = 'specialist'
+  SPECIALIST = 'specialist',
 }
 
 @Injectable()
 export class AgentRepository implements IBaseRepository<Agent> {
   protected readonly modelName: string = 'agent';
-  
+
   constructor(private prisma: PrismaService) {}
 
   async findAll(filter?: Record<string, any>): Promise<Agent[]> {
     const where = this.buildWhereClause(filter);
     const agents = await this.prisma.agent.findMany({
-      where
+      where,
     });
     return agents as unknown as Agent[];
   }
 
   async findById(id: string): Promise<Agent | null> {
     const agent = await this.prisma.agent.findUnique({
-      where: { id }
+      where: { id },
     });
     return agent as unknown as Agent;
   }
@@ -60,7 +60,7 @@ export class AgentRepository implements IBaseRepository<Agent> {
   async findOne(filter: Record<string, any>): Promise<Agent | null> {
     const where = this.buildWhereClause(filter);
     const agent = await this.prisma.agent.findFirst({
-      where
+      where,
     });
     return agent as unknown as Agent;
   }
@@ -71,7 +71,7 @@ export class AgentRepository implements IBaseRepository<Agent> {
 
   async create(data: Partial<Agent>): Promise<Agent> {
     const agent = await this.prisma.agent.create({
-      data: data as any
+      data: data as any,
     });
     return agent as unknown as Agent;
   }
@@ -79,14 +79,14 @@ export class AgentRepository implements IBaseRepository<Agent> {
   async update(id: string, data: Partial<Agent>): Promise<Agent | null> {
     const agent = await this.prisma.agent.update({
       where: { id },
-      data: data as any
+      data: data as any,
     });
     return agent as unknown as Agent;
   }
 
   async delete(id: string): Promise<boolean> {
     await this.prisma.agent.delete({
-      where: { id }
+      where: { id },
     });
     return true;
   }
@@ -94,7 +94,7 @@ export class AgentRepository implements IBaseRepository<Agent> {
   async count(filter?: Record<string, any>): Promise<number> {
     const where = this.buildWhereClause(filter);
     return this.prisma.agent.count({
-      where
+      where,
     });
   }
 
@@ -104,21 +104,21 @@ export class AgentRepository implements IBaseRepository<Agent> {
    */
   private buildWhereClause(filter?: Record<string, any>): any {
     if (!filter) return {};
-    
+
     // Create a safe copy of the filter
     const safeFilter: Record<string, any> = {};
-    
+
     // Handle special case for userId which might not be in the prisma schema
     if (filter.userId) {
       safeFilter.userId = filter.userId;
     }
-    
+
     // Copy other standard filter properties
     if (filter.id) safeFilter.id = filter.id;
     if (filter.name) safeFilter.name = filter.name;
     if (filter.type) safeFilter.type = filter.type;
     if (filter.status) safeFilter.status = filter.status;
-    
+
     return safeFilter;
   }
 }

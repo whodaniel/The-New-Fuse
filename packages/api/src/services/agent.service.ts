@@ -1,22 +1,22 @@
-import { v4 as uuidv4 } from 'uuid';
-import { Agent, AgentStatus } from '../types/agent';
-import { BaseService } from './base.service';
-import { toError } from '../utils/error';
 import { Injectable } from '@nestjs/common';
+import { AgentCapability } from '@the-new-fuse/types';
 import { AgentRepository } from '../repositories/agent.repository';
+import { Agent, AgentStatus } from '../types/agent';
+import { toError } from '../utils/error';
+import { BaseService } from './base.service';
 // Mock LocalAIDetectionService to avoid cross-package import issues
-class LocalAIDetectionService {
-  async detectAndCreateAgents(userId: string): Promise<any[]> {
+// Mock LocalAIDetectionService to avoid cross-package import issues
+export class LocalAIDetectionService {
+  async detectAndCreateAgents(_userId: string): Promise<any[]> {
     // Mock implementation
     return [];
   }
-  
-  async getAvailableProviders(): Promise<string[]> {
+
+  async getAvailableProviders(): Promise<any[]> {
     // Mock implementation
     return [];
   }
 }
-import { AgentCapability } from '@the-new-fuse/types/src/core/enums';
 
 @Injectable()
 export class AgentService extends BaseService<Agent> {
@@ -24,7 +24,7 @@ export class AgentService extends BaseService<Agent> {
 
   constructor(
     private readonly agentRepository: AgentRepository,
-    private readonly localAIDetectionService: LocalAIDetectionService,
+    private readonly localAIDetectionService: LocalAIDetectionService
   ) {
     super('AgentService');
     this.repository = agentRepository;
@@ -65,7 +65,7 @@ export class AgentService extends BaseService<Agent> {
   async getAgents(userId: string): Promise<Agent[]> {
     try {
       const agents = await this.agentRepository.findAll({ userId });
-      return agents.map(agent => this.transform(agent));
+      return agents.map((agent) => this.transform(agent));
     } catch (error) {
       const err = toError(error);
       return this.handleError(err, 'getAgents');
@@ -78,7 +78,7 @@ export class AgentService extends BaseService<Agent> {
   async findAll(): Promise<Agent[]> {
     try {
       const agents = await this.agentRepository.findAll({});
-      return agents.map(agent => this.transform(agent));
+      return agents.map((agent) => this.transform(agent));
     } catch (error) {
       const err = toError(error);
       return this.handleError(err, 'findAll');
@@ -110,9 +110,10 @@ export class AgentService extends BaseService<Agent> {
       const agentData = {
         ...data,
         userId,
-        capabilities: data.capabilities?.map(cap => 
-          typeof cap === 'string' ? cap as AgentCapability : cap
-        ) || []
+        capabilities:
+          data.capabilities?.map((cap) =>
+            typeof cap === 'string' ? (cap as AgentCapability) : cap
+          ) || [],
       };
       const newAgent = await this.agentRepository.create(agentData);
       return this.transform(newAgent);
@@ -134,9 +135,9 @@ export class AgentService extends BaseService<Agent> {
       // Convert capabilities from string[] to AgentCapability[] if needed
       const agentData = {
         ...data,
-        capabilities: data.capabilities?.map(cap => 
-          typeof cap === 'string' ? cap as AgentCapability : cap
-        )
+        capabilities: data.capabilities?.map((cap) =>
+          typeof cap === 'string' ? (cap as AgentCapability) : cap
+        ),
       };
       const updatedAgent = await this.agentRepository.update(id, agentData);
       return this.transform(updatedAgent);
@@ -169,7 +170,7 @@ export class AgentService extends BaseService<Agent> {
   async getAgentsByCapability(capability: AgentCapability, userId: string): Promise<Agent[]> {
     try {
       const agents = await this.getAgents(userId);
-      return agents.filter(agent => {
+      return agents.filter((agent) => {
         if (!agent.capabilities) return false;
         return agent.capabilities.includes(capability);
       });
@@ -184,30 +185,33 @@ export class AgentService extends BaseService<Agent> {
    */
   async detectAndRegisterLocalAIs(userId: string): Promise<Agent[]> {
     this.logger.log(`🔍 Detecting local AIs for user: ${userId}`);
-    
+
     const detectedAgents = await this.localAIDetectionService.detectAndCreateAgents(userId);
     const registeredAgents: Agent[] = [];
 
     for (const agentDto of detectedAgents) {
       try {
         const existingAgents = await this.agentRepository.findAll({ userId });
-        const exists = existingAgents.some(agent => 
-          agent.configuration?.provider === agentDto.provider
+        const exists = existingAgents.some(
+          (agent) => agent.configuration?.provider === agentDto.provider
         );
 
         if (!exists) {
           const agentData = {
             ...agentDto,
-            capabilities: Array.isArray(agentDto.capabilities) 
+            capabilities: Array.isArray(agentDto.capabilities)
               ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
-                  Object.values(AgentCapability).includes(cap as AgentCapability))
+                  Object.values(AgentCapability).includes(cap as AgentCapability)
+                )
               : [],
-            metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 
-              ? agentDto.metadata as Record<string, unknown>
-              : {},
-            configuration: agentDto.configuration && typeof agentDto.configuration === 'object'
-              ? agentDto.configuration as Record<string, unknown>
-              : {}
+            metadata:
+              agentDto.metadata && typeof agentDto.metadata === 'object'
+                ? (agentDto.metadata as Record<string, unknown>)
+                : {},
+            configuration:
+              agentDto.configuration && typeof agentDto.configuration === 'object'
+                ? (agentDto.configuration as Record<string, unknown>)
+                : {},
           };
           const agent = await this.createAgent(agentData, userId);
           registeredAgents.push(agent);
@@ -216,7 +220,9 @@ export class AgentService extends BaseService<Agent> {
           this.logger.debug(`⚠️ Local AI agent already exists: ${agentDto.name}`);
         }
       } catch (error) {
-        this.logger.error(`❌ Failed to register ${agentDto.name}: ${error instanceof Error ? error.message : String(error)}`);
+        this.logger.error(
+          `❌ Failed to register ${agentDto.name}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
 
@@ -229,9 +235,9 @@ export class AgentService extends BaseService<Agent> {
   async getLocalAIAgents(userId: string): Promise<Agent[]> {
     try {
       const agents = await this.agentRepository.findAll({ userId });
-      return agents.filter(agent => 
-        agent.configuration?.localAI === true
-      ).map(agent => this.transform(agent));
+      return agents
+        .filter((agent) => agent.configuration?.localAI === true)
+        .map((agent) => this.transform(agent));
     } catch (error) {
       const err = toError(error);
       return this.handleError(err, 'getLocalAIAgents');
@@ -243,21 +249,21 @@ export class AgentService extends BaseService<Agent> {
    */
   async refreshLocalAIAgents(userId: string): Promise<Agent[]> {
     this.logger.log(`🔄 Refreshing local AI agents for user: ${userId}`);
-    
+
     try {
       const availableProviders = await this.localAIDetectionService.getAvailableProviders();
       const availableProviderNames = availableProviders.map((p: any) => p.name);
-      
+
       const existingAgents = await this.agentRepository.findAll({ userId });
-      const localAIAgents = existingAgents.filter(agent => agent.configuration?.localAI === true);
-      
+      const localAIAgents = existingAgents.filter((agent) => agent.configuration?.localAI === true);
+
       for (const agent of localAIAgents) {
         if (!availableProviderNames.includes(agent.configuration?.provider)) {
           await this.deleteAgent(agent.id, userId);
           this.logger.log(`🗑️ Removed unavailable AI agent: ${agent.name}`);
         }
       }
-      
+
       return this.detectAndRegisterLocalAIs(userId);
     } catch (error) {
       const err = toError(error);
@@ -270,7 +276,7 @@ export class AgentService extends BaseService<Agent> {
    */
   async createSystemLocalAIAgents(): Promise<Agent[]> {
     this.logger.log('🚀 Creating default system agents for local AIs...');
-    
+
     try {
       const systemAgents = await this.localAIDetectionService.detectAndCreateAgents('system');
       const registeredAgents: Agent[] = [];
@@ -278,16 +284,19 @@ export class AgentService extends BaseService<Agent> {
       for (const agentDto of systemAgents) {
         const agentData = {
           ...agentDto,
-          capabilities: Array.isArray(agentDto.capabilities) 
+          capabilities: Array.isArray(agentDto.capabilities)
             ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
-                Object.values(AgentCapability).includes(cap as AgentCapability))
+                Object.values(AgentCapability).includes(cap as AgentCapability)
+              )
             : [],
-          metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 
-            ? agentDto.metadata as Record<string, unknown>
-            : {},
-          configuration: agentDto.configuration && typeof agentDto.configuration === 'object'
-            ? agentDto.configuration as Record<string, unknown>
-            : {}
+          metadata:
+            agentDto.metadata && typeof agentDto.metadata === 'object'
+              ? (agentDto.metadata as Record<string, unknown>)
+              : {},
+          configuration:
+            agentDto.configuration && typeof agentDto.configuration === 'object'
+              ? (agentDto.configuration as Record<string, unknown>)
+              : {},
         };
         const agent = await this.createAgent(agentData, 'system');
         registeredAgents.push(agent);
