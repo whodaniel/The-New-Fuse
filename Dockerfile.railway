@@ -35,6 +35,8 @@ RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/mcp-core build
 RUN pnpm --filter @the-new-fuse/ui-consolidated build
+RUN pnpm --filter @the-new-fuse/port-management build
+RUN pnpm --filter @the-new-fuse/prompt-templating build
 
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies
