@@ -1,20 +1,20 @@
-import React from 'react';
 import {
   Brain,
-  Network,
-  Workflow,
-  Users,
   Chrome,
-  Zap,
-  Shield,
   Code,
-  GitBranch,
-  MessageSquare,
   Cpu,
+  GitBranch,
   Globe,
+  MessageSquare,
+  Network,
+  Shield,
+  Users,
+  Workflow,
+  Zap,
 } from 'lucide-react';
-import { FeaturesSection } from './FeaturesSection';
+import React from 'react';
 import { FeatureCard } from './FeatureCard';
+import { FeaturesSection } from './FeaturesSection';
 
 export const FeatureShowcase: React.FC = () => {
   return (
@@ -31,7 +31,7 @@ export const FeatureShowcase: React.FC = () => {
           icon={Brain}
           title="AI-Powered Agent Collaboration"
           description="Deploy multiple specialized AI agents that work together seamlessly. Each agent brings unique capabilities and expertise to solve complex problems collaboratively."
-          imageSrc="https://placehold.co/600x400/667eea/ffffff/png?text=AI+Agents+Working+Together"
+          imageSrc="/assets/images/landing/ai-agents.png"
           imageAlt="AI agents collaborating"
           accent="purple"
           delay={0}
@@ -42,7 +42,7 @@ export const FeatureShowcase: React.FC = () => {
           icon={Network}
           title="MCP Protocol Integration"
           description="Built on the Model Context Protocol for seamless integration with any AI model. Connect, extend, and customize your AI infrastructure with industry-standard protocols."
-          imageSrc="https://placehold.co/600x400/3b82f6/ffffff/png?text=MCP+Protocol+Network"
+          imageSrc="/assets/images/landing/mcp-network.png"
           imageAlt="MCP Protocol Network"
           accent="blue"
           delay={0.1}
@@ -53,8 +53,6 @@ export const FeatureShowcase: React.FC = () => {
           icon={Workflow}
           title="Real-Time Workflow Engine"
           description="Design, execute, and monitor complex workflows in real-time. Visual workflow builder with drag-and-drop interface and live execution monitoring."
-          imageSrc="https://placehold.co/600x400/10b981/ffffff/png?text=Workflow+Engine+Dashboard"
-          imageAlt="Workflow Engine"
           accent="green"
           delay={0.2}
         />
@@ -64,8 +62,6 @@ export const FeatureShowcase: React.FC = () => {
           icon={Users}
           title="Live Collaboration Features"
           description="Real-time collaboration with your team and AI agents. See updates instantly, share contexts, and work together on complex projects with synchronized state."
-          imageSrc="https://placehold.co/600x400/f59e0b/ffffff/png?text=Team+Collaboration"
-          imageAlt="Live Collaboration"
           accent="orange"
           delay={0.3}
         />
@@ -75,8 +71,6 @@ export const FeatureShowcase: React.FC = () => {
           icon={Chrome}
           title="Chrome Extension Capabilities"
           description="Bring AI assistance directly into your browser. Capture context, automate web tasks, and integrate seamlessly with your daily workflow."
-          imageSrc="https://placehold.co/600x400/ec4899/ffffff/png?text=Browser+Extension"
-          imageAlt="Chrome Extension"
           accent="pink"
           delay={0.4}
         />
@@ -86,8 +80,6 @@ export const FeatureShowcase: React.FC = () => {
           icon={Zap}
           title="Lightning Fast Performance"
           description="Optimized for speed with edge computing, intelligent caching, and efficient resource management. Get instant responses and real-time updates."
-          imageSrc="https://placehold.co/600x400/8b5cf6/ffffff/png?text=Performance+Metrics"
-          imageAlt="Performance Dashboard"
           accent="purple"
           delay={0.5}
         />
@@ -166,8 +158,6 @@ export const FeatureShowcase: React.FC = () => {
           icon={Network}
           title="API-First Architecture"
           description="RESTful APIs, GraphQL support, and WebSocket connections for real-time updates. Build custom integrations with comprehensive documentation and SDKs."
-          imageSrc="https://placehold.co/600x400/6366f1/ffffff/png?text=API+Documentation"
-          imageAlt="API Architecture"
           accent="blue"
           delay={0}
         />
@@ -176,8 +166,6 @@ export const FeatureShowcase: React.FC = () => {
           icon={Code}
           title="Extensible Plugin System"
           description="Create custom plugins and extensions to add new capabilities. Share your plugins with the community or keep them private for your team."
-          imageSrc="https://placehold.co/600x400/14b8a6/ffffff/png?text=Plugin+Marketplace"
-          imageAlt="Plugin System"
           accent="green"
           delay={0.1}
         />
