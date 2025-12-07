@@ -23,7 +23,7 @@ RUN pnpm install --frozen-lockfile || (echo "Lockfile compatibility issue detect
 RUN pnpm --filter @the-new-fuse/types build
 
 # Build essential workspace packages only (exclude problematic ones)
-# Skip: sync-core, ui-consolidated, integration-tests, web-scraping, core, n8n-workflows
+# Skip: sync-core, integration-tests, web-scraping, core, n8n-workflows
 RUN pnpm --filter @the-new-fuse/database build || echo "Database build skipped (Prisma placeholder active)"
 RUN pnpm --filter @the-new-fuse/api-types build
 RUN pnpm --filter @the-new-fuse/utils build
@@ -34,6 +34,7 @@ RUN pnpm --filter @the-new-fuse/core-monitoring build
 RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/mcp-core build
+RUN pnpm --filter @the-new-fuse/ui-consolidated build
 
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies
