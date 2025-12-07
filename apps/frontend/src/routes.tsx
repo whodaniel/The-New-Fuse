@@ -1,6 +1,7 @@
-import { MemoryInspector, MetricsDashboard } from '@the-new-fuse/ui-consolidated';
 import React, { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import MemoryInspector from '../../../packages/ui-consolidated/src/components/features/memory-inspector/MemoryInspector';
+import { MetricsDashboard } from '../../../packages/ui-consolidated/src/components/features/metrics-dashboard/MetricsDashboard';
 import MainLayout from './components/layout/MainLayout';
 import { LandingRedesigned } from './pages/LandingRedesigned';
 import { useAuth } from './providers/AuthProvider';

@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { cn } from '../lib/utils';
+import React, { useEffect, useRef } from 'react';
+import { cn } from '../../lib/utils';
 
 interface MonacoEditorProps {
   value: string;
@@ -20,7 +20,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
   height = '400px',
   width = '100%',
   className,
-  options = {}
+  options = {},
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const monacoRef = useRef<any>(null);
@@ -30,12 +30,12 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
     // Dynamic import to avoid SSR issues
     const loadMonaco = async () => {
       if (!editorRef.current) return;
-      
+
       try {
         // Use dynamic import for monaco-editor
         const monaco = await import('monaco-editor');
         monacoRef.current = monaco;
-        
+
         // Basic options
         const defaultOptions = {
           value,
@@ -46,12 +46,12 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
           readOnly,
           theme: 'vs-dark',
           fontSize: 14,
-          ...options
+          ...options,
         };
-        
+
         // Create editor
         editorInstanceRef.current = monaco.editor.create(editorRef.current, defaultOptions);
-        
+
         // Add change event listener
         if (onChange) {
           editorInstanceRef.current.onDidChangeModelContent(() => {
@@ -62,9 +62,9 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
         console.error('Error loading Monaco Editor:', error);
       }
     };
-    
+
     loadMonaco();
-    
+
     // Cleanup
     return () => {
       if (editorInstanceRef.current) {
@@ -72,7 +72,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
       }
     };
   }, []);
-  
+
   // Update value if it changes externally
   useEffect(() => {
     if (editorInstanceRef.current) {
@@ -84,9 +84,9 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({
   }, [value]);
 
   return (
-    <div 
+    <div
       ref={editorRef}
-      className={cn("border border-gray-300 rounded-md overflow-hidden", className)} 
+      className={cn('border border-gray-300 rounded-md overflow-hidden', className)}
       style={{ height, width }}
     />
   );
