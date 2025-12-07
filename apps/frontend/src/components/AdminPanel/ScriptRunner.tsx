@@ -1,5 +1,13 @@
-import { useToast } from '@/components/ui/use-toast';
-import { Box, Button, FormControl, FormLabel, Select, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Select,
+  Text,
+  VStack,
+  useToast,
+} from '@chakra-ui/react';
 import React from 'react';
 import { useSocket } from '../../hooks/useSocket';
 
@@ -19,7 +27,7 @@ export const ScriptRunner: React.FC = () => {
   const [selectedScript, setSelectedScript] = React.useState('');
   const [isRunning, setIsRunning] = React.useState(false);
   const socket = useSocket();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const runScript = async () => {
     if (!selectedScript) return;
@@ -33,7 +41,9 @@ export const ScriptRunner: React.FC = () => {
       toast({
         title: 'Script Output',
         description: data.message,
-        variant: data.type === 'error' ? 'destructive' : 'default',
+        status: data.type === 'error' ? 'error' : 'info',
+        duration: 3000,
+        isClosable: true,
       });
     });
 
@@ -42,6 +52,9 @@ export const ScriptRunner: React.FC = () => {
       toast({
         title: 'Script Complete',
         description: 'The script has finished running.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
       });
     });
 
