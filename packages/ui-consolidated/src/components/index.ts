@@ -25,3 +25,7 @@ export * from './Container';
 export * from './Layout';
 export * from './Sidebar';
 export * from './Split';
+
+// Feature Components
+export * from './features/memory-inspector/MemoryInspector';
+export * from './features/metrics-dashboard/MetricsDashboard';
