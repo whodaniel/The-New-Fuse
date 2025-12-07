@@ -1,37 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Flex, 
-  Heading, 
-  Button, 
-  VStack, 
-  HStack,
-  Text,
+import {
   Badge,
+  Box,
+  Button,
   Card,
-  CardHeader,
   CardBody,
-  SimpleGrid,
+  CardHeader,
+  Flex,
+  Heading,
+  HStack,
   IconButton,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
+  MenuList,
+  SimpleGrid,
+  Spinner,
+  Text,
   useToast,
-  Spinner
+  VStack,
 } from '@chakra-ui/react';
-import { 
-  FiPlus, 
-  FiGrid, 
-  FiColumns, 
-  FiCalendar, 
-  FiMoreVertical,
+import React, { useEffect, useState } from 'react';
+
+import {
+  FiActivity,
+  FiCalendar,
+  FiColumns,
   FiDatabase,
-  FiUsers,
+  FiGrid,
+  FiMoreVertical,
+  FiPlus,
   FiTrendingUp,
-  FiActivity
+  FiUsers,
 } from 'react-icons/fi';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // TODO: Import when packages are properly configured
 // import { GridView, KanbanView, TableView } from '@the-new-fuse/fairtable-components';
 // import { formulaEvaluator } from '@the-new-fuse/fairtable-core';
@@ -52,7 +53,7 @@ const FairtableDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedView, setSelectedView] = useState<'grid' | 'kanban' | 'timeline'>('grid');
   const navigate = useNavigate();
-  const toast = useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     loadTables();
@@ -62,8 +63,8 @@ const FairtableDashboard: React.FC = () => {
     try {
       setLoading(true);
       // Simulate API call - replace with actual API integration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const mockTables: Table[] = [
         {
           id: '1',
@@ -73,7 +74,7 @@ const FairtableDashboard: React.FC = () => {
           lastModified: '2024-01-15',
           collaborators: 5,
           viewType: 'kanban',
-          status: 'active'
+          status: 'active',
         },
         {
           id: '2',
@@ -83,7 +84,7 @@ const FairtableDashboard: React.FC = () => {
           lastModified: '2024-01-14',
           collaborators: 3,
           viewType: 'grid',
-          status: 'active'
+          status: 'active',
         },
         {
           id: '3',
@@ -93,7 +94,7 @@ const FairtableDashboard: React.FC = () => {
           lastModified: '2024-01-13',
           collaborators: 4,
           viewType: 'timeline',
-          status: 'active'
+          status: 'active',
         },
         {
           id: '4',
@@ -103,18 +104,16 @@ const FairtableDashboard: React.FC = () => {
           lastModified: '2024-01-12',
           collaborators: 2,
           viewType: 'grid',
-          status: 'draft'
-        }
+          status: 'draft',
+        },
       ];
-      
+
       setTables(mockTables);
     } catch (error) {
       toast({
         title: 'Error loading tables',
-        description: 'Failed to load Fairtable data',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
+        description: error instanceof Error ? error.message : 'Failed to load Fairtable data',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -125,9 +124,7 @@ const FairtableDashboard: React.FC = () => {
     toast({
       title: 'Create New Table',
       description: 'Table creation functionality will be implemented soon',
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
+      variant: 'info',
     });
   };
 
@@ -138,19 +135,27 @@ const FairtableDashboard: React.FC = () => {
 
   const getViewIcon = (viewType: string) => {
     switch (viewType) {
-      case 'grid': return <FiGrid />;
-      case 'kanban': return <FiColumns />;
-      case 'timeline': return <FiCalendar />;
-      default: return <FiGrid />;
+      case 'grid':
+        return <FiGrid />;
+      case 'kanban':
+        return <FiColumns />;
+      case 'timeline':
+        return <FiCalendar />;
+      default:
+        return <FiGrid />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'green';
-      case 'draft': return 'yellow';
-      case 'archived': return 'gray';
-      default: return 'gray';
+      case 'active':
+        return 'green';
+      case 'draft':
+        return 'yellow';
+      case 'archived':
+        return 'gray';
+      default:
+        return 'gray';
     }
   };
 
@@ -172,17 +177,11 @@ const FairtableDashboard: React.FC = () => {
           <Heading size="lg" color="gray.800">
             Fairtable Dashboard
           </Heading>
-          <Text color="gray.600">
-            Manage your databases, tables, and collaborative workspaces
-          </Text>
+          <Text color="gray.600">Manage your databases, tables, and collaborative workspaces</Text>
         </VStack>
-        
+
         <HStack>
-          <Button
-            leftIcon={<FiPlus />}
-            colorScheme="blue"
-            onClick={createNewTable}
-          >
+          <Button leftIcon={<FiPlus />} colorScheme="blue" onClick={createNewTable}>
             Create Table
           </Button>
         </HStack>
@@ -193,12 +192,7 @@ const FairtableDashboard: React.FC = () => {
         <Card>
           <CardBody>
             <HStack>
-              <Box
-                p={3}
-                bg="blue.100"
-                borderRadius="lg"
-                color="blue.600"
-              >
+              <Box p={3} bg="blue.100" borderRadius="lg" color="blue.600">
                 <FiDatabase size="24" />
               </Box>
               <VStack align="start" spacing={0}>
@@ -216,12 +210,7 @@ const FairtableDashboard: React.FC = () => {
         <Card>
           <CardBody>
             <HStack>
-              <Box
-                p={3}
-                bg="green.100"
-                borderRadius="lg"
-                color="green.600"
-              >
+              <Box p={3} bg="green.100" borderRadius="lg" color="green.600">
                 <FiActivity size="24" />
               </Box>
               <VStack align="start" spacing={0}>
@@ -239,12 +228,7 @@ const FairtableDashboard: React.FC = () => {
         <Card>
           <CardBody>
             <HStack>
-              <Box
-                p={3}
-                bg="purple.100"
-                borderRadius="lg"
-                color="purple.600"
-              >
+              <Box p={3} bg="purple.100" borderRadius="lg" color="purple.600">
                 <FiUsers size="24" />
               </Box>
               <VStack align="start" spacing={0}>
@@ -262,12 +246,7 @@ const FairtableDashboard: React.FC = () => {
         <Card>
           <CardBody>
             <HStack>
-              <Box
-                p={3}
-                bg="orange.100"
-                borderRadius="lg"
-                color="orange.600"
-              >
+              <Box p={3} bg="orange.100" borderRadius="lg" color="orange.600">
                 <FiTrendingUp size="24" />
               </Box>
               <VStack align="start" spacing={0}>
@@ -324,13 +303,13 @@ const FairtableDashboard: React.FC = () => {
 
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
           {tables.map((table) => (
-            <Card 
-              key={table.id} 
-              cursor="pointer" 
-              _hover={{ 
-                transform: 'translateY(-2px)', 
+            <Card
+              key={table.id}
+              cursor="pointer"
+              _hover={{
+                transform: 'translateY(-2px)',
                 boxShadow: 'lg',
-                borderColor: 'blue.200'
+                borderColor: 'blue.200',
               }}
               transition="all 0.2s"
               onClick={() => openTable(table)}
@@ -342,10 +321,7 @@ const FairtableDashboard: React.FC = () => {
                       <Text fontWeight="semibold" fontSize="lg">
                         {table.name}
                       </Text>
-                      <Badge 
-                        colorScheme={getStatusColor(table.status)}
-                        size="sm"
-                      >
+                      <Badge colorScheme={getStatusColor(table.status)} size="sm">
                         {table.status}
                       </Badge>
                     </HStack>
@@ -353,7 +329,7 @@ const FairtableDashboard: React.FC = () => {
                       {table.description}
                     </Text>
                   </VStack>
-                  
+
                   <Menu>
                     <MenuButton
                       as={IconButton}
@@ -364,19 +340,10 @@ const FairtableDashboard: React.FC = () => {
                       onClick={(e) => e.stopPropagation()}
                     />
                     <MenuList>
-                      <MenuItem onClick={(e) => e.stopPropagation()}>
-                        Edit Table
-                      </MenuItem>
-                      <MenuItem onClick={(e) => e.stopPropagation()}>
-                        Duplicate
-                      </MenuItem>
-                      <MenuItem onClick={(e) => e.stopPropagation()}>
-                        Export Data
-                      </MenuItem>
-                      <MenuItem 
-                        onClick={(e) => e.stopPropagation()}
-                        color="red.500"
-                      >
+                      <MenuItem onClick={(e) => e.stopPropagation()}>Edit Table</MenuItem>
+                      <MenuItem onClick={(e) => e.stopPropagation()}>Duplicate</MenuItem>
+                      <MenuItem onClick={(e) => e.stopPropagation()}>Export Data</MenuItem>
+                      <MenuItem onClick={(e) => e.stopPropagation()} color="red.500">
                         Delete Table
                       </MenuItem>
                     </MenuList>
@@ -388,9 +355,7 @@ const FairtableDashboard: React.FC = () => {
                 <VStack align="start" spacing={3}>
                   <HStack justify="space-between" w="full">
                     <HStack>
-                      <Box color="blue.500">
-                        {getViewIcon(table.viewType)}
-                      </Box>
+                      <Box color="blue.500">{getViewIcon(table.viewType)}</Box>
                       <Text fontSize="sm" color="gray.600" textTransform="capitalize">
                         {table.viewType} View
                       </Text>
@@ -426,11 +391,7 @@ const FairtableDashboard: React.FC = () => {
               <Text color="gray.500" textAlign="center">
                 No tables found. Create your first table to get started.
               </Text>
-              <Button 
-                colorScheme="blue" 
-                leftIcon={<FiPlus />}
-                onClick={createNewTable}
-              >
+              <Button colorScheme="blue" leftIcon={<FiPlus />} onClick={createNewTable}>
                 Create Your First Table
               </Button>
             </VStack>
