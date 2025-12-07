@@ -1,4 +1,4 @@
-import { MemoryInspector } from '@the-new-fuse/ui-consolidated/src/components/features/memory-inspector/MemoryInspector';
+import MemoryInspector from '@the-new-fuse/ui-consolidated/src/components/features/memory-inspector/MemoryInspector';
 import { MetricsDashboard } from '@the-new-fuse/ui-consolidated/src/components/features/metrics-dashboard/MetricsDashboard';
 import React, { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
@@ -27,7 +27,7 @@ const NFTMarketplace = lazy(() => import('./pages/web3/NFTMarketplace'));
 
 // Workflow Components
 // Workflow Components
-const WorkflowBuilder = lazy(() => import('./pages/Workflows/WorkflowBuilder'));
+const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/WorkflowBuilder'));
 
 // Admin & Security Components
 const UserManagement = lazy(() => import('./pages/Admin/UserManagement'));
