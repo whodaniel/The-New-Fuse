@@ -1,5 +1,6 @@
+import { useToast } from '@/components/ui/use-toast';
+import { Box, Button, FormControl, FormLabel, Select, Text, VStack } from '@chakra-ui/react';
 import React from 'react';
-import { Box, Button, Select, Text, useToast, VStack, FormControl, FormLabel } from '@chakra-ui/react';
 import { useSocket } from '../../hooks/useSocket';
 
 const AVAILABLE_SCRIPTS = {
@@ -11,18 +12,18 @@ const AVAILABLE_SCRIPTS = {
   'db:seed': 'Seed Database',
   'db:reset': 'Reset Database',
   clean: 'Clean Build',
-  docs: 'Generate Docs'
+  docs: 'Generate Docs',
 };
 
 export const ScriptRunner: React.FC = () => {
   const [selectedScript, setSelectedScript] = React.useState('');
   const [isRunning, setIsRunning] = React.useState(false);
   const socket = useSocket();
-  const toast = useToast();
+  const { toast } = useToast();
 
   const runScript = async () => {
     if (!selectedScript) return;
-    
+
     setIsRunning(true);
     socket.emit('admin:run-script', { script: selectedScript });
   };
@@ -32,8 +33,7 @@ export const ScriptRunner: React.FC = () => {
       toast({
         title: 'Script Output',
         description: data.message,
-        status: data.type,
-        duration: 3000,
+        variant: data.type === 'error' ? 'destructive' : 'default',
       });
     });
 
@@ -41,8 +41,7 @@ export const ScriptRunner: React.FC = () => {
       setIsRunning(false);
       toast({
         title: 'Script Complete',
-        status: 'success',
-        duration: 3000,
+        description: 'The script has finished running.',
       });
     });
 
@@ -54,7 +53,9 @@ export const ScriptRunner: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Text fontSize="xl" mb={4}>Script Runner</Text>
+      <Text fontSize="xl" mb={4}>
+        Script Runner
+      </Text>
       <VStack spacing={4}>
         <FormControl>
           <FormLabel htmlFor="script-select">Select Script</FormLabel>
@@ -69,7 +70,9 @@ export const ScriptRunner: React.FC = () => {
             required
           >
             {Object.entries(AVAILABLE_SCRIPTS).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </Select>
         </FormControl>
