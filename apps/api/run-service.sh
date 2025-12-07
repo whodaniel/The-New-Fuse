@@ -97,7 +97,7 @@ else
     REPAIR_SCRIPT=$(mktemp)
     echo "Generating DB repair script at $REPAIR_SCRIPT..."
     cat > "$REPAIR_SCRIPT" << 'EOF'
-const { Client } = require('pg');
+const { Client } = require(require.resolve('pg', { paths: [process.cwd()] }));
 const client = new Client({ connectionString: process.env.DATABASE_URL });
 
 async function repair() {
