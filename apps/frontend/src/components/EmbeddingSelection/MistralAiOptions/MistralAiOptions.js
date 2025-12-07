@@ -1,9 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useState } from 'react';
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { COMMON_STYLES } from "@/types/embedding";
-export function MistralAiOptions(_a) {
-    var settings = _a.settings;
-    var _b = useState(false), showAdvanced = _b[0], setShowAdvanced = _b[1];
-    return (_jsx("div", { className: COMMON_STYLES.container, children: _jsxs("div", { className: COMMON_STYLES.inputsContainer, children: [_jsx("div", { className: COMMON_STYLES.inputWrapper, children: _jsxs("label", { className: COMMON_STYLES.label, children: ["Mistral API Key", _jsx("input", { type: "password", className: COMMON_STYLES.input, value: settings.MistralAiApiKey || '', placeholder: "Enter your Mistral API key" })] }) }), _jsxs("button", { className: COMMON_STYLES.advancedButton, onClick: function () { return setShowAdvanced(!showAdvanced); }, children: ["Advanced Options", showAdvanced ? (_jsx(ChevronUp, { className: COMMON_STYLES.caretIcon })) : (_jsx(ChevronDown, { className: COMMON_STYLES.caretIcon }))] }), showAdvanced && (_jsxs(_Fragment, { children: [_jsx("div", { className: COMMON_STYLES.inputWrapper, children: _jsxs("label", { className: COMMON_STYLES.labelWithOptional, children: ["Model Preference", _jsx("span", { className: COMMON_STYLES.optionalText, children: "(Optional)" }), _jsx("input", { type: "text", className: COMMON_STYLES.input, value: settings.EmbeddingModelPref || '', placeholder: "Embedding model to use" })] }) }), _jsx("div", { className: COMMON_STYLES.inputWrapper, children: _jsxs("label", { className: COMMON_STYLES.labelWithOptional, children: ["Max Chunk Length", _jsx("span", { className: COMMON_STYLES.optionalText, children: "(Optional)" }), _jsx("input", { type: "number", className: COMMON_STYLES.input, value: settings.EmbeddingModelMaxChunkLength || '', placeholder: "Maximum chunk length for embeddings" })] }) })] }))] }) }));
-}
