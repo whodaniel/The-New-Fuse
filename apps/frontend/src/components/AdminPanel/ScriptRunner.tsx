@@ -37,7 +37,7 @@ export const ScriptRunner: React.FC = () => {
   };
 
   React.useEffect(() => {
-    socket.on('script:output', (data) => {
+    socket.on('script:output', (data: { message: string; type: string }) => {
       toast({
         title: 'Script Output',
         description: data.message,

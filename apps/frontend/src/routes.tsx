@@ -1,7 +1,5 @@
 import React, { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import MemoryInspector from '../../../packages/ui-consolidated/src/components/features/memory-inspector/MemoryInspector';
-import { MetricsDashboard } from '../../../packages/ui-consolidated/src/components/features/metrics-dashboard/MetricsDashboard';
 import MainLayout from './components/layout/MainLayout';
 import { LandingRedesigned } from './pages/LandingRedesigned';
 import { useAuth } from './providers/AuthProvider';
@@ -34,6 +32,10 @@ const UserManagement = lazy(() => import('./pages/Admin/UserManagement'));
 const SecurityDashboard = lazy(() => import('./pages/Admin/SecurityDashboard'));
 const SystemMonitoring = lazy(() => import('./pages/Admin/SystemMonitoring'));
 const FeatureFlags = lazy(() => import('./pages/Admin/FeatureFlags'));
+
+// Memory & Metrics Components
+const MemoryInspector = lazy(() => import('./pages/MemoryInspector'));
+const MetricsDashboard = lazy(() => import('./pages/MetricsDashboard'));
 
 // Loading component
 const Loading = () => (
@@ -174,7 +176,9 @@ export function AppRoutes() {
           path="/memory/:agentId"
           element={
             <ProtectedRoute>
-              <MemoryInspector agentId="default" />
+              <Suspense fallback={<Loading />}>
+                <MemoryInspector />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -182,7 +186,9 @@ export function AppRoutes() {
           path="/metrics"
           element={
             <ProtectedRoute>
-              <MetricsDashboard />
+              <Suspense fallback={<Loading />}>
+                <MetricsDashboard />
+              </Suspense>
             </ProtectedRoute>
           }
         />

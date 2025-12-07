@@ -1,11 +1,4 @@
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useToast } from '@/components/ui/use-toast';
-import {
   Badge,
   Box,
   Button,
@@ -16,9 +9,14 @@ import {
   Heading,
   HStack,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   SimpleGrid,
   Spinner,
   Text,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
@@ -55,7 +53,7 @@ const FairtableDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedView, setSelectedView] = useState<'grid' | 'kanban' | 'timeline'>('grid');
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const toast = useToast();
 
   useEffect(() => {
     loadTables();
@@ -332,34 +330,33 @@ const FairtableDashboard: React.FC = () => {
                     </Text>
                   </VStack>
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <IconButton
-                        aria-label="Options"
-                        icon={<FiMoreVertical />}
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                  <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      aria-label="Options"
+                      icon={<FiMoreVertical />}
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                    />
+                    <MenuList>
+                      <MenuItem onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                         Edit Table
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                      </MenuItem>
+                      <MenuItem onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                         Duplicate
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                      </MenuItem>
+                      <MenuItem onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                         Export Data
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-red-500"
+                      </MenuItem>
+                      <MenuItem
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        color="red.500"
                       >
                         Delete Table
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
                 </Flex>
               </CardHeader>
 

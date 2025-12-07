@@ -1,34 +1,47 @@
-export {}
-import react_1 from 'react';
-import socket_io_client_1 from 'socket.io-client';
-import useAuth_1 from './useAuth';
-const useSocket = (): any => {
-    const [socket, setSocket] = (0, react_1.useState)(null);
-    const { user } = (0, useAuth_1.default)();
-    (0, react_1.useEffect)(() => {
-        if (user) {
-            const newSocket = (0, socket_io_client_1.io)('http://localhost:3000', {
-                query: { userId: user.id },
-            });
-            newSocket.on('connect', () => {
-                
-            });
-            newSocket.on('connect_error', (error) => {
-                console.error('Socket connection error:', error);
-            });
-            newSocket.on('reconnect_attempt', (attemptNumber) => {
-                
-            });
-            newSocket.on('reconnect_error', (error) => {
-                console.error('Reconnect error:', error);
-            });
-            setSocket(newSocket);
-            return () => {
-                newSocket.disconnect();
-            };
-        }
-    }, [user]);
-    return socket;
+import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
+import { useAuth } from '../providers/AuthProvider';
+
+interface SocketWithEvents extends Socket {
+  emit: (event: string, data?: unknown) => Socket;
+  on: (event: string, callback: (...args: unknown[]) => void) => Socket;
+  off: (event: string, callback?: (...args: unknown[]) => void) => Socket;
+}
+
+// Null socket for when not connected
+const nullSocket: SocketWithEvents = {
+  emit: () => nullSocket,
+  on: () => nullSocket,
+  off: () => nullSocket,
+} as SocketWithEvents;
+
+export const useSocket = (): SocketWithEvents => {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      const newSocket = io(process.env.VITE_API_URL || 'http://localhost:3000', {
+        query: { userId: user.id },
+      });
+
+      newSocket.on('connect', () => {
+        console.log('Socket connected');
+      });
+
+      newSocket.on('connect_error', (error) => {
+        console.error('Socket connection error:', error);
+      });
+
+      setSocket(newSocket);
+
+      return () => {
+        newSocket.disconnect();
+      };
+    }
+  }, [user]);
+
+  return socket || nullSocket;
 };
-exports.default = useSocket;
-export {};
+
+export default useSocket;
