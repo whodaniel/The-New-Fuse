@@ -10,7 +10,7 @@ import { useAuth } from './providers/AuthProvider';
 const Dashboard = lazy(() => import('./pages/dashboard/index'));
 const AIPortal = lazy(() => import('./pages/AIAgentPortal'));
 const Workflows = lazy(() => import('./pages/Workflows'));
-const Analytics = lazy(() => import('./pages/Analytics'));
+const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Login = lazy(() => import('./pages/auth/Login'));
 const Register = lazy(() => import('./pages/auth/Register'));
