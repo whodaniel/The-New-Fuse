@@ -1,4 +1,4 @@
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
@@ -28,9 +28,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      react({
-        include: [/\.jsx?$/, /\.tsx?$/],
-      }),
+      react(),
       tsconfigPaths({
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
