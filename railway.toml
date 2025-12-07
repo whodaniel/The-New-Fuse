@@ -23,6 +23,7 @@ deploy = { healthcheckPath = "/health" }
 
 # Frontend Service (uses Dockerfile.frontend from monorepo root)
 # IMPORTANT: Make sure "Root Directory" is NOT set in Railway UI
+# This service MUST use Docker to properly build and serve production files
 [services.TheNewFuse]
 builder = "DOCKERFILE"
 [services.TheNewFuse.build]
@@ -30,9 +31,25 @@ dockerfilePath = "Dockerfile.frontend"
 # Build context is from repository root (not a subdirectory)
 # This allows access to workspace files like pnpm-lock.yaml
 watchPaths = ["apps/frontend/**", "packages/**"]
+[services.TheNewFuse.deploy]
+healthcheckPath = "/"
 
-# Fallback for 'frontend' service name just in case
+# Fallback for 'frontend' or "Frontend Application" service name
+# Ensure production mode - NEVER run dev server in production
 [services.frontend]
-buildCommand = "NODE_ENV=production pnpm --filter @the-new-fuse/frontend-app build --mode production"
-startCommand = "cd apps/frontend && NODE_ENV=production pnpm start"
-restartPolicyType = "ON_FAILURE"
+builder = "DOCKERFILE"
+[services.frontend.build]
+dockerfilePath = "Dockerfile.frontend"
+watchPaths = ["apps/frontend/**", "packages/**"]
+[services.frontend.deploy]
+healthcheckPath = "/"
+
+# Another fallback for "Frontend Application" service name (with space)
+[services."Frontend Application"]
+builder = "DOCKERFILE"
+[services."Frontend Application".build]
+dockerfilePath = "Dockerfile.frontend"
+watchPaths = ["apps/frontend/**", "packages/**"]
+[services."Frontend Application".deploy]
+healthcheckPath = "/"
+
