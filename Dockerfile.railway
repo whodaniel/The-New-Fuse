@@ -63,7 +63,9 @@ RUN if [ -f "./packages/database/prisma/schema.prisma" ]; then \
 FROM node:${NODE_VERSION}-alpine AS runner
 ARG SERVICE_PATH
 
-RUN npm i -g pnpm@${PNPM_VERSION}
+RUN npm i -g pnpm@${PNPM_VERSION} && apk add --no-cache netcat-openbsd
+
+
 
 RUN addgroup -S app-user && adduser -S app-user -G app-user
 WORKDIR /app
