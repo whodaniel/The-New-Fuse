@@ -5,6 +5,7 @@ import {
   defaultTestimonials,
   defaultTrustBadges,
   EmailSignupForm,
+  FeatureShowcase,
   HeroCTAWithTrust,
   SecondaryCTA,
   SocialProofSection,
