@@ -1,4 +1,4 @@
-import { MemoryInspector } from '@the-new-fuse/ui-consolidated/src/components/MemoryInspector';
+import MemoryInspector from '@the-new-fuse/ui-consolidated/src/components/MemoryInspector';
 import { MetricsDashboard } from '@the-new-fuse/ui-consolidated/src/components/MetricsDashboard';
 import React, { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
@@ -30,10 +30,10 @@ const NFTMarketplace = lazy(() => import('./pages/web3/NFTMarketplace'));
 const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/WorkflowBuilder'));
 
 // Admin & Security Components
-const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
-const SecurityDashboard = lazy(() => import('./pages/admin/SecurityDashboard'));
-const SystemMonitoring = lazy(() => import('./pages/admin/SystemMonitoring'));
-const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
+const UserManagement = lazy(() => import('./pages/Admin/UserManagement'));
+const SecurityDashboard = lazy(() => import('./pages/Admin/SecurityDashboard'));
+const SystemMonitoring = lazy(() => import('./pages/Admin/SystemMonitoring'));
+const FeatureFlags = lazy(() => import('./pages/Admin/FeatureFlags'));
 
 // Loading component
 const Loading = () => (
@@ -171,10 +171,10 @@ export function AppRoutes() {
           }
         />
         <Route
-          path="/memory"
+          path="/memory/:agentId"
           element={
             <ProtectedRoute>
-              <MemoryInspector />
+              <MemoryInspector agentId="default" />
             </ProtectedRoute>
           }
         />
