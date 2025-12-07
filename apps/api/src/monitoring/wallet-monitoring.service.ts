@@ -4,7 +4,12 @@ import { PrismaService } from '@the-new-fuse/database';
 import { TransactionStatus } from '@the-new-fuse/database/generated/prisma';
 
 export interface SecurityAlert {
-  type: 'HIGH_RISK_TRANSACTION' | 'WEB3AUTH_FAILURE' | 'AGENT_ANOMALY' | 'BUNDLER_ERROR' | 'PAYMASTER_ERROR';
+  type:
+    | 'HIGH_RISK_TRANSACTION'
+    | 'WEB3AUTH_FAILURE'
+    | 'AGENT_ANOMALY'
+    | 'BUNDLER_ERROR'
+    | 'PAYMASTER_ERROR';
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   message: string;
   metadata?: any;
@@ -31,17 +36,17 @@ export class WalletMonitoringService {
   async createAlert(alert: Omit<SecurityAlert, 'timestamp'>) {
     const securityAlert: SecurityAlert = {
       ...alert,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     this.alerts.push(securityAlert);
-    
+
     // Log structured alert
     this.logger.warn('Security Alert', {
       type: alert.type,
       severity: alert.severity,
       message: alert.message,
-      metadata: alert.metadata
+      metadata: alert.metadata,
     });
 
     // Send to external monitoring service if configured
@@ -57,25 +62,24 @@ export class WalletMonitoringService {
   async monitorSystemHealth() {
     try {
       const health = await this.getSystemHealth();
-      
+
       this.logger.log('System Health Check', {
         web3authStatus: health.web3authStatus,
         bundlerStatus: health.bundlerStatus,
         paymasterBalance: health.paymasterBalance,
         activeAgents: health.activeAgents,
-        pendingTransactions: health.pendingTransactions
+        pendingTransactions: health.pendingTransactions,
       });
 
       // Check for anomalies
       await this.checkForAnomalies(health);
-
     } catch (error) {
       this.logger.error('Health check failed:', error);
       await this.createAlert({
         type: 'WEB3AUTH_FAILURE',
         severity: 'HIGH',
         message: 'System health check failed',
-        metadata: { error: error.message }
+        metadata: { error: error.message },
       });
     }
   }
@@ -85,16 +89,15 @@ export class WalletMonitoringService {
     try {
       // Check for unusual agent activity patterns
       const suspiciousAgents = await this.detectSuspiciousAgentActivity();
-      
+
       for (const agent of suspiciousAgents) {
         await this.createAlert({
           type: 'AGENT_ANOMALY',
           severity: 'MEDIUM',
           message: `Anomalous activity detected for agent ${agent.verifierId}`,
-          metadata: agent
+          metadata: agent,
         });
       }
-
     } catch (error) {
       this.logger.error('Agent activity monitoring failed:', error);
     }
@@ -105,16 +108,15 @@ export class WalletMonitoringService {
     try {
       // Check for stuck transactions
       const stuckTransactions = await this.findStuckTransactions();
-      
+
       if (stuckTransactions.length > 0) {
         await this.createAlert({
           type: 'BUNDLER_ERROR',
           severity: 'MEDIUM',
           message: `${stuckTransactions.length} transactions stuck in pending state`,
-          metadata: { transactionIds: stuckTransactions.map(tx => tx.id) }
+          metadata: { transactionIds: stuckTransactions.map((tx) => tx.id) },
         });
       }
-
     } catch (error) {
       this.logger.error('Transaction monitoring failed:', error);
     }
@@ -123,29 +125,29 @@ export class WalletMonitoringService {
   private async getSystemHealth(): Promise<SystemHealth> {
     // Get active agents count
     const activeAgents = await this.prisma.wallet.count({
-      where: { type: 'SMART_ACCOUNT' }
+      where: { type: 'SMART_ACCOUNT' },
     });
 
     // Get pending transactions
     const pendingTransactions = await this.prisma.transaction.count({
-      where: { status: 'PENDING' }
+      where: { status: 'PENDING' },
     });
 
     // Get 24h transaction count
     const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const last24hTransactions = await this.prisma.transaction.count({
       where: {
-        createdAt: { gte: last24h }
-      }
+        createdAt: { gte: last24h },
+      },
     });
 
     // Calculate average gas used
     const gasStats = await this.prisma.transaction.aggregate({
       where: {
         createdAt: { gte: last24h },
-        status: 'COMPLETED' as TransactionStatus
+        status: TransactionStatus.CONFIRMED,
       },
-      _avg: { value: true }
+      _avg: { value: true },
     });
 
     return {
@@ -155,7 +157,7 @@ export class WalletMonitoringService {
       activeAgents,
       pendingTransactions,
       last24hTransactions,
-      averageGasUsed: Number(gasStats._avg.value) || 0
+      averageGasUsed: Number(gasStats._avg.value) || 0,
     };
   }
 
@@ -163,18 +165,18 @@ export class WalletMonitoringService {
     try {
       // Check Web3Auth service responsiveness
       const web3AuthUrl = process.env.WEB3AUTH_URL || 'https://auth.web3auth.io';
-      
+
       const startTime = Date.now();
       const response = await fetch(`${web3AuthUrl}/health`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        signal: AbortSignal.timeout(5000) // 5 second timeout
+        signal: AbortSignal.timeout(5000), // 5 second timeout
       });
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       if (response.ok && responseTime < 2000) {
         return 'healthy';
       } else if (responseTime < 5000) {
@@ -201,8 +203,8 @@ export class WalletMonitoringService {
           jsonrpc: '2.0',
           id: 1,
           method: 'eth_chainId',
-          params: []
-        })
+          params: [],
+        }),
       });
 
       return response.ok ? 'healthy' : 'degraded';
@@ -216,7 +218,7 @@ export class WalletMonitoringService {
       // Check paymaster balance on-chain using EntryPoint contract
       const entryPointAddress = process.env.ENTRY_POINT_ADDRESS;
       const paymasterAddress = process.env.TNF_PAYMASTER_ADDRESS;
-      
+
       if (!entryPointAddress || !paymasterAddress) {
         throw new Error('EntryPoint or Paymaster address not configured');
       }
@@ -224,22 +226,22 @@ export class WalletMonitoringService {
       // Create public client for reading
       const { createPublicClient, http } = await import('viem');
       const { mainnet } = await import('viem/chains');
-      
+
       const publicClient = createPublicClient({
         chain: mainnet,
-        transport: http()
+        transport: http(),
       });
 
       // Query paymaster deposit from EntryPoint
       const entryPointAbi = [
-        'function getDeposit(address account) external view returns (uint256)'
+        'function getDeposit(address account) external view returns (uint256)',
       ];
-      
+
       const deposit = await publicClient.readContract({
         address: entryPointAddress as `0x${string}`,
         abi: entryPointAbi,
         functionName: 'getDeposit',
-        args: [paymasterAddress as `0x${string}`]
+        args: [paymasterAddress as `0x${string}`],
       });
 
       // Convert from wei to ether
@@ -253,44 +255,46 @@ export class WalletMonitoringService {
 
   private async detectSuspiciousAgentActivity() {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    
+
     // Find agents with unusually high transaction volume
     const highVolumeAgents = await this.prisma.wallet.findMany({
       where: {
         type: 'SMART_ACCOUNT',
         transactions: {
           some: {
-            createdAt: { gte: oneHourAgo }
-          }
-        }
+            createdAt: { gte: oneHourAgo },
+          },
+        },
       },
       include: {
         transactions: {
           where: {
-            createdAt: { gte: oneHourAgo }
-          }
+            createdAt: { gte: oneHourAgo },
+          },
         },
-        agent: { include: { user: true } }
-      }
+        agent: { include: { user: true } },
+      },
     });
 
-    return highVolumeAgents.filter(agent => 
-      agent.transactions.length > 50 // More than 50 transactions per hour
-    ).map(agent => ({
-      verifierId: agent.agent?.user?.username || 'unknown',
-      transactionCount: agent.transactions.length,
-      totalValue: agent.transactions.reduce((sum, tx) => sum + Number(tx.value), 0)
-    }));
+    return highVolumeAgents
+      .filter(
+        (agent) => agent.transactions.length > 50 // More than 50 transactions per hour
+      )
+      .map((agent) => ({
+        verifierId: agent.agent?.user?.username || 'unknown',
+        transactionCount: agent.transactions.length,
+        totalValue: agent.transactions.reduce((sum, tx) => sum + Number(tx.value), 0),
+      }));
   }
 
   private async findStuckTransactions() {
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-    
+
     return this.prisma.transaction.findMany({
       where: {
         status: 'PENDING',
-        createdAt: { lt: fifteenMinutesAgo }
-      }
+        createdAt: { lt: fifteenMinutesAgo },
+      },
     });
   }
 
@@ -301,7 +305,7 @@ export class WalletMonitoringService {
         type: 'PAYMASTER_ERROR',
         severity: 'CRITICAL',
         message: 'Paymaster balance critically low',
-        metadata: { balance: health.paymasterBalance }
+        metadata: { balance: health.paymasterBalance },
       });
     }
 
@@ -311,7 +315,7 @@ export class WalletMonitoringService {
         type: 'BUNDLER_ERROR',
         severity: 'HIGH',
         message: 'High number of pending transactions detected',
-        metadata: { count: health.pendingTransactions }
+        metadata: { count: health.pendingTransactions },
       });
     }
 
@@ -320,7 +324,7 @@ export class WalletMonitoringService {
       await this.createAlert({
         type: 'WEB3AUTH_FAILURE',
         severity: 'CRITICAL',
-        message: 'Web3Auth service is down'
+        message: 'Web3Auth service is down',
       });
     }
 
@@ -328,7 +332,7 @@ export class WalletMonitoringService {
       await this.createAlert({
         type: 'BUNDLER_ERROR',
         severity: 'CRITICAL',
-        message: 'Bundler service is down'
+        message: 'Bundler service is down',
       });
     }
   }
@@ -348,8 +352,8 @@ export class WalletMonitoringService {
           alert_type: alert.type,
           severity: alert.severity,
           message: alert.message,
-          metadata: alert.metadata
-        })
+          metadata: alert.metadata,
+        }),
       });
     } catch (error) {
       this.logger.error('Failed to send alert to monitoring service:', error);
@@ -363,12 +367,12 @@ export class WalletMonitoringService {
         // Auto-fund paymaster if configured
         await this.autoFundPaymaster();
         break;
-        
+
       case 'WEB3AUTH_FAILURE':
         // Switch to backup Web3Auth instance if available
         await this.switchToBackupWeb3Auth();
         break;
-        
+
       default:
         this.logger.error('Critical alert requiring manual intervention:', alert);
     }
@@ -403,17 +407,17 @@ export class WalletMonitoringService {
   async getSystemMetrics() {
     const health = await this.getSystemHealth();
     const recentAlerts = this.getRecentAlerts(10);
-    
+
     return {
       health,
       recentAlerts,
       alertStats: {
         total: this.alerts.length,
-        critical: this.alerts.filter(a => a.severity === 'CRITICAL').length,
-        high: this.alerts.filter(a => a.severity === 'HIGH').length,
-        medium: this.alerts.filter(a => a.severity === 'MEDIUM').length,
-        low: this.alerts.filter(a => a.severity === 'LOW').length
-      }
+        critical: this.alerts.filter((a) => a.severity === 'CRITICAL').length,
+        high: this.alerts.filter((a) => a.severity === 'HIGH').length,
+        medium: this.alerts.filter((a) => a.severity === 'MEDIUM').length,
+        low: this.alerts.filter((a) => a.severity === 'LOW').length,
+      },
     };
   }
 }

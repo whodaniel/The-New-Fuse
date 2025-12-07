@@ -15,7 +15,7 @@
     "./hooks": "./src/hooks/index.ts"
   },
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc --build",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
