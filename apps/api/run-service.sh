@@ -97,7 +97,12 @@ else
     REPAIR_SCRIPT=$(mktemp)
     echo "Generating DB repair script at $REPAIR_SCRIPT..."
     cat > "$REPAIR_SCRIPT" << 'EOF'
-const { Client } = require(require.resolve('pg', { paths: [process.cwd()] }));
+const { createRequire } = require('module');
+// Create a require function that resolves modules from the project root (process.cwd())
+// We add a trailing slash to force it to treat it as a directory
+const requireApp = createRequire(process.cwd() + '/');
+const { Client } = requireApp('pg');
+
 const client = new Client({ connectionString: process.env.DATABASE_URL });
 
 async function repair() {
