@@ -31,8 +31,30 @@ else
       echo "Listing migrations available:"
       ls -R /app/packages/database/prisma/migrations
 
-      echo "Executing: npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma"
-      npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma || echo "Prisma migration failed, proceeding to emergency DB repair..."
+      # Extract host and port from DATABASE_URL for health check
+      # Simple regex to get host:port (assumes postgres://user:pass@HOST:PORT/db format)
+      DB_HOST=$(echo $DATABASE_URL | sed -n 's|.*@\([^:/]*\).*|\1|p')
+      DB_PORT=$(echo $DATABASE_URL | sed -n 's|.*:\([0-9]*\)\/.*|\1|p')
+
+      if [ -z "$DB_PORT" ]; then DB_PORT=5432; fi
+
+      if [ -n "$DB_HOST" ]; then
+        echo "Waiting for database at $DB_HOST:$DB_PORT..."
+        i=0
+        while ! nc -z $DB_HOST $DB_PORT; do
+          i=$((i+1))
+          if [ $i -ge 30 ]; then
+             echo "Timeout waiting for database"
+             break
+          fi
+          echo "Waiting for database... ($i/30)"
+          sleep 2
+        done
+        echo "Database is reachable or timeout reached."
+      fi
+
+      echo "Executing: npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma --config=/app/apps/api/prisma.config.ts"
+      npx prisma migrate deploy --schema=/app/packages/database/prisma/schema.prisma --config=/app/apps/api/prisma.config.ts || echo "Prisma migration failed, proceeding to emergency DB repair..."
 
       echo "Migration attempt completed."
     # Fallback to local schema if shared one not found (unlikely for api)

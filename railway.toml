@@ -12,6 +12,8 @@ deploy = { healthcheckPath = "/health" }
 builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" } }
 deploy = { healthcheckPath = "/health" }
+startCommand = "./run-service.sh"
+restartPolicyType = "ON_FAILURE"
 
 # Backend Service (uses Docker)
 [services.backend]
