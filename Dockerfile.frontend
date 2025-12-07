@@ -39,7 +39,7 @@ WORKDIR /app/apps/frontend
 ENV NODE_ENV=production
 ENV VITE_API_URL=https://api.thenewfuse.com
 ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
-RUN pnpm run build
+RUN echo "Building with NODE_ENV=$NODE_ENV" && pnpm run build -- --mode production
 
 #------------------------------------------------------------------------------
 # Runner stage - Production image
