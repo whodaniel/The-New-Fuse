@@ -27,7 +27,7 @@ const NFTMarketplace = lazy(() => import('./pages/web3/NFTMarketplace'));
 
 // Workflow Components
 // Workflow Components
-const WorkflowBuilder = lazy(() => import('./pages/workflows/WorkflowBuilder'));
+const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/WorkflowBuilder'));
 
 // Admin & Security Components
 const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
