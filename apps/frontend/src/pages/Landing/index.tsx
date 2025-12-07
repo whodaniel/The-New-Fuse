@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Zap, Network, Shield, Rocket, GitBranch, BarChart3 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import MobileNav from '../../components/MobileNav';
 import {
-  HeroCTAWithTrust,
-  SecondaryCTA,
-  EmailSignupForm,
-  DemoRequestButton,
-  SocialProofSection,
   defaultStats,
   defaultTestimonials,
   defaultTrustBadges,
-  FeaturesSection,
-  FeatureCard,
+  EmailSignupForm,
+  HeroCTAWithTrust,
+  SecondaryCTA,
+  SocialProofSection,
 } from '../../components/landing';
 
 export default function LandingPage() {
@@ -46,18 +41,19 @@ export default function LandingPage() {
             {/* Hero Content */}
             <div className="flex-1 text-center lg:text-left animate-slide-in-up">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 md:mb-6 leading-tight">
-                Welcome to{' '}
-                <span className="text-primary">The New Fuse</span>
+                Welcome to <span className="text-primary">The New Fuse</span>
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto lg:mx-0">
-                Discover a new way to collaborate and manage your workspaces
-                efficiently. Build powerful AI-driven workflows with ease.
+                Discover a new way to collaborate and manage your workspaces efficiently. Build
+                powerful AI-driven workflows with ease.
               </p>
               {/* CTA Buttons - Enhanced with new components */}
               <div className="flex justify-center lg:justify-start">
                 <HeroCTAWithTrust
                   onGetStarted={() => navigate('/login')}
-                  onWatchDemo={() => {/* Demo handler */}}
+                  onWatchDemo={() => {
+                    /* Demo handler */
+                  }}
                   stats={{ users: '10,000+', rating: '4.9/5' }}
                 />
               </div>
@@ -81,9 +77,7 @@ export default function LandingPage() {
                       />
                     </svg>
                   </div>
-                  <p className="text-muted-foreground text-sm md:text-base">
-                    Powered by AI
-                  </p>
+                  <p className="text-muted-foreground text-sm md:text-base">Powered by AI</p>
                 </div>
               </div>
             </div>
@@ -92,55 +86,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section - Enhanced with new components */}
-      <FeaturesSection
-        id="features"
-        title="Powerful Features"
-        subtitle="Everything you need to build and deploy AI-powered applications"
-        columns={3}
-      >
-        <FeatureCard
-          icon={Network}
-          title="Multi-Agent System"
-          description="Deploy multiple AI agents that work together seamlessly"
-          accent="blue"
-          delay={0}
-        />
-        <FeatureCard
-          icon={Zap}
-          title="Lightning Fast"
-          description="Optimized performance for real-time AI interactions"
-          accent="purple"
-          delay={0.1}
-        />
-        <FeatureCard
-          icon={Shield}
-          title="Secure by Default"
-          description="Enterprise-grade security with end-to-end encryption"
-          accent="green"
-          delay={0.2}
-        />
-        <FeatureCard
-          icon={GitBranch}
-          title="Workflow Builder"
-          description="Visual workflow editor for complex automation tasks"
-          accent="orange"
-          delay={0}
-        />
-        <FeatureCard
-          icon={BarChart3}
-          title="Real-time Analytics"
-          description="Monitor and optimize your AI agents with detailed insights"
-          accent="blue"
-          delay={0.1}
-        />
-        <FeatureCard
-          icon={Rocket}
-          title="Cloud Integration"
-          description="Seamlessly integrate with your favorite cloud services"
-          accent="pink"
-          delay={0.2}
-        />
-      </FeaturesSection>
+      <FeatureShowcase />
 
       {/* Social Proof Section */}
       <SocialProofSection
@@ -163,9 +109,8 @@ export default function LandingPage() {
                 Built for the Future
               </h2>
               <p className="text-base md:text-lg text-muted-foreground mb-6">
-                The New Fuse combines cutting-edge AI technology with an
-                intuitive interface to help you build, deploy, and manage
-                intelligent automation workflows.
+                The New Fuse combines cutting-edge AI technology with an intuitive interface to help
+                you build, deploy, and manage intelligent automation workflows.
               </p>
               <ul className="space-y-3">
                 {[
@@ -198,10 +143,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section
-        id="pricing"
-        className="py-16 px-4 sm:px-6 md:py-24 bg-muted/30"
-      >
+      <section id="pricing" className="py-16 px-4 sm:px-6 md:py-24 bg-muted/30">
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
@@ -217,12 +159,7 @@ export default function LandingPage() {
               {
                 name: 'Starter',
                 price: 'Free',
-                features: [
-                  '3 AI Agents',
-                  'Basic Workflows',
-                  'Community Support',
-                  '1GB Storage',
-                ],
+                features: ['3 AI Agents', 'Basic Workflows', 'Community Support', '1GB Storage'],
               },
               {
                 name: 'Pro',
@@ -249,17 +186,11 @@ export default function LandingPage() {
               <div
                 key={index}
                 className={`bg-background rounded-lg p-6 md:p-8 shadow-lg hover:shadow-xl transition-all duration-300 border ${
-                  plan.highlighted
-                    ? 'border-primary scale-105'
-                    : 'border-border'
+                  plan.highlighted ? 'border-primary scale-105' : 'border-border'
                 }`}
               >
-                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">
-                  {plan.name}
-                </h3>
-                <p className="text-3xl md:text-4xl font-bold text-primary mb-6">
-                  {plan.price}
-                </p>
+                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
+                <p className="text-3xl md:text-4xl font-bold text-primary mb-6">{plan.price}</p>
                 <ul className="space-y-3 mb-6">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2">
@@ -276,9 +207,7 @@ export default function LandingPage() {
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      <span className="text-base text-foreground">
-                        {feature}
-                      </span>
+                      <span className="text-base text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -332,17 +261,13 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-7xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-4">
-                The New Fuse
-              </h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">The New Fuse</h3>
               <p className="text-base text-muted-foreground">
                 Building the future of AI-powered automation.
               </p>
             </div>
             <div>
-              <h4 className="text-base font-semibold text-foreground mb-4">
-                Product
-              </h4>
+              <h4 className="text-base font-semibold text-foreground mb-4">Product</h4>
               <ul className="space-y-2">
                 <li>
                   <a
@@ -363,9 +288,7 @@ export default function LandingPage() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base font-semibold text-foreground mb-4">
-                Company
-              </h4>
+              <h4 className="text-base font-semibold text-foreground mb-4">Company</h4>
               <ul className="space-y-2">
                 <li>
                   <a
@@ -386,9 +309,7 @@ export default function LandingPage() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base font-semibold text-foreground mb-4">
-                Legal
-              </h4>
+              <h4 className="text-base font-semibold text-foreground mb-4">Legal</h4>
               <ul className="space-y-2">
                 <li>
                   <a
