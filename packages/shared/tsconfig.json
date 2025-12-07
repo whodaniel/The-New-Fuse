@@ -10,19 +10,16 @@
     "outDir": "dist",
     "rootDir": "src",
     "declaration": true,
+    "composite": true,
     "allowJs": true,
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "paths": {
-      "@the-new-fuse/*": [
-        "../../packages/*/src"
-      ]
+      "@the-new-fuse/*": ["../../packages/*/src"]
     },
     "types": []
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",
