@@ -264,10 +264,12 @@ const ErrorState = ({
   );
 };
 
-// Export all layout components
+// Export default
+export default StandardLayout;
+
+// Export named components
 export {
   BreadcrumbNavigation,
-  StandardLayout as default,
   EmptyState,
   EnhancedHeader,
   EnhancedSidebar,
