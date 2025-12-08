@@ -98,7 +98,11 @@ class ChatApiService {
     }
   }
 
-  async generateAgentResponse(chatId: string, prompt: string, agentId: string): Promise<string | null> {
+  async generateAgentResponse(
+    chatId: string,
+    prompt: string,
+    agentId: string
+  ): Promise<string | null> {
     try {
       const response = await apiRequest(`${this.baseUrl}/${chatId}/generate-response`, {
         method: 'POST',
@@ -124,7 +128,9 @@ class ChatApiService {
     }
   }
 
-  async createConversationRule(ruleData: Omit<ConversationRule, 'id'>): Promise<ConversationRule | null> {
+  async createConversationRule(
+    ruleData: Omit<ConversationRule, 'id'>
+  ): Promise<ConversationRule | null> {
     try {
       const response = await apiRequest(`${this.baseUrl}/rules`, {
         method: 'POST',
@@ -175,18 +181,16 @@ class ChatApiService {
   }
 
   // Mock AI API calls for development
-  async callTextApi(prompt: string, systemPrompt = "You are a helpful assistant."): Promise<string> {
+  async callTextApi(
+    prompt: string,
+    systemPrompt = 'You are a helpful assistant.'
+  ): Promise<string> {
     try {
-      // Replace with actual AI service integration
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      
-      const responses = [
-        `Based on your prompt: "${prompt.substring(0, 50)}...", here's my response.`,
-        `I understand you're asking about: ${prompt.substring(0, 40)}. Let me help with that.`,
-        `That's an interesting question. Regarding "${prompt.substring(0, 45)}...", I think...`,
-      ];
-      
-      return responses[Math.floor(Math.random() * responses.length)];
+      const response = await apiRequest<{ text: string }>(`${this.baseUrl}/text-completion`, {
+        method: 'POST',
+        data: { prompt, systemPrompt },
+      });
+      return response.data?.text || 'No response received.';
     } catch (error) {
       console.error('Error calling text API:', error);
       throw error;
@@ -195,11 +199,11 @@ class ChatApiService {
 
   async callImageApi(prompt: string): Promise<string> {
     try {
-      // Mock image generation - replace with actual service
-      await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
-      
-      // Return a placeholder image data
-      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA2VjE4TTYgMTJIMTgiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+';
+      const response = await apiRequest<{ imageUrl: string }>(`${this.baseUrl}/image-generation`, {
+        method: 'POST',
+        data: { prompt },
+      });
+      return response.data?.imageUrl || '';
     } catch (error) {
       console.error('Error calling image API:', error);
       throw error;

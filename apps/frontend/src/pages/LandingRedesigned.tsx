@@ -11,21 +11,14 @@ import {
   ArrowRight,
   BarChart3,
   Bot,
-  Box,
   CheckCircle,
   Chrome,
   Clock,
-  Cloud,
   Code,
-  Cpu,
   Database,
-  GitBranch,
-  Github,
-  Globe,
   Layers,
   MessageSquare,
   Network,
-  Play,
   Puzzle,
   Rocket,
   Shield,
@@ -153,19 +146,17 @@ export const LandingRedesigned = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="The New Fuse - Revolutionary AI Collaboration Platform | MCP & A2A Protocol"
-        description="Transform your workflow with The New Fuse - the most advanced AI agent orchestration platform. Build, deploy, and manage intelligent agents with MCP protocol, workflow automation, and real-time collaboration."
+        title="The New Fuse - The Operating System for AI Collaboration"
+        description="Unified AI orchestration platform featuring Master Command Center, Native MCP Protocol, and Autonomous Agent coordination. Build, deploy, and evolve your AI infrastructure."
         keywords={[
           'AI platform',
-          'AI agents',
-          'workflow automation',
-          'agent orchestration',
-          'MCP protocol',
-          'A2A protocol',
           'AI collaboration',
-          'intelligent automation',
-          'enterprise AI',
-          'AI development platform',
+          'VS Code Extension',
+          'Master Command Center',
+          'MCP Protocol',
+          'Autonomous Agents',
+          'Self-evolving AI',
+          'Agent Orchestration',
         ]}
         canonical={typeof window !== 'undefined' ? window.location.origin : ''}
       />
@@ -185,7 +176,7 @@ export const LandingRedesigned = () => {
               <div className="flex justify-center mb-8 animate-fade-in-up">
                 <Badge className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 text-sm font-semibold shadow-lg">
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Powered by MCP & A2A Protocols
+                  Native MCP & Agent-to-Agent Protocol
                 </Badge>
               </div>
 
@@ -194,16 +185,17 @@ export const LandingRedesigned = () => {
                 id="hero-heading"
                 className="text-6xl lg:text-8xl font-black mb-8 animate-fade-in-up animation-delay-200"
               >
-                <span className="block text-gray-900">The Future of</span>
+                <span className="block text-gray-900">The Operating System for</span>
                 <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  AI Orchestration
+                  AI Collaboration
                 </span>
               </h1>
 
               {/* Subheadline */}
               <p className="text-xl lg:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
-                Build intelligent workflows, orchestrate AI agents, and automate complex tasks with
-                the most powerful AI collaboration platform ever created.
+                A unified control plane for your entire AI workforce. Orchestrate multi-model
+                agents, automate complex workflows, and leverage the Master Command Center right
+                from your IDE.
               </p>
 
               {/* CTA Buttons */}
@@ -215,21 +207,9 @@ export const LandingRedesigned = () => {
                 >
                   <Link to="/auth/register">
                     <Rocket className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                    Start Building Free
+                    Launch Command Center
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 px-10 py-7 text-lg font-semibold group transition-all duration-300"
-                  onClick={() => {
-                    const videoSection = document.getElementById('demo-video');
-                    videoSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  <Play className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
-                  Watch Demo
                 </Button>
               </div>
 
@@ -237,31 +217,31 @@ export const LandingRedesigned = () => {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto animate-fade-in-up animation-delay-800">
                 {[
                   {
-                    value: 10000,
+                    value: 250,
                     suffix: '+',
-                    label: 'Active Users',
-                    icon: Users,
+                    label: 'Pre-built Agents',
+                    icon: Bot,
                     color: 'from-blue-500 to-blue-600',
                   },
                   {
-                    value: 250,
+                    value: 50,
                     suffix: '+',
-                    label: 'AI Agents',
-                    icon: Bot,
+                    label: 'MCP Integrations',
+                    icon: Network,
                     color: 'from-purple-500 to-purple-600',
                   },
                   {
-                    value: 5000,
-                    suffix: '+',
-                    label: 'Workflows',
-                    icon: Workflow,
+                    value: 1000,
+                    suffix: 'ms',
+                    label: 'Sync Latency',
+                    icon: Activity,
                     color: 'from-green-500 to-green-600',
                   },
                   {
-                    value: 99.9,
+                    value: 99.99,
                     suffix: '%',
-                    label: 'Uptime',
-                    icon: Activity,
+                    label: 'System Uptime',
+                    icon: Shield,
                     color: 'from-orange-500 to-orange-600',
                   },
                 ].map((stat, idx) => (
@@ -299,53 +279,53 @@ export const LandingRedesigned = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
-                Platform Overview
+                Core Architecture
               </Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-                One Platform, Infinite Possibilities
+                Modular, Standardized, Powerful
               </h2>
               <p className="text-xl text-gray-600">
-                From AI agent management to workflow automation, The New Fuse provides everything
-                you need to build the future of intelligent automation.
+                Built on the Model Context Protocol standards, providing a unified interface for any
+                AI model, tool, or data source.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
               <ModernFeatureCard
                 icon={Bot}
-                title="AI Agent Marketplace"
-                description="Discover, deploy, and manage 250+ pre-built AI agents. Each agent specializes in specific tasks, from code generation to data analysis."
+                title="Unified Agent Ecosystem"
+                description="Access a registry of specialized agents. From autonomous coding agents to specialized data analysts, all communicating via standard A2A protocols."
                 gradient="bg-gradient-to-br from-blue-500 to-blue-600"
               />
               <ModernFeatureCard
                 icon={Network}
-                title="MCP Protocol Native"
-                description="Built on Model Context Protocol for seamless integration with any AI model. Connect Claude, GPT-4, Gemini, and custom models effortlessly."
+                title="Native MCP Support"
+                description="The first platform built entirely on the Model Context Protocol. Seamlessly connect local resources, databases, and APIs to your agents context."
                 gradient="bg-gradient-to-br from-purple-500 to-purple-600"
               />
               <ModernFeatureCard
-                icon={Workflow}
-                title="Visual Workflow Builder"
-                description="Design complex automation pipelines with drag-and-drop simplicity. Real-time execution monitoring and debugging included."
-                gradient="bg-gradient-to-br from-green-500 to-green-600"
+                icon={Terminal}
+                title="Master Command Center"
+                description="Your VS Code becomes mission control. Execute workflows, monitor agent swarms, and debug responses directly from your IDE."
+                gradient="bg-gradient-to-br from-indigo-500 to-indigo-600"
               />
               <ModernFeatureCard
                 icon={MessageSquare}
-                title="Agent-to-Agent Communication"
-                description="Implements Google's A2A protocol for intelligent multi-agent coordination. Agents collaborate automatically to solve complex problems."
+                title="Multi-Model Orchestration"
+                description="Route tasks to the best model for the job. Parallelize requests across leading foundation models and custom LLMs for optimal performance."
                 gradient="bg-gradient-to-br from-orange-500 to-orange-600"
               />
               <ModernFeatureCard
-                icon={Chrome}
-                title="Browser Automation"
-                description="Chrome extension with powerful automation capabilities. Capture context, automate web tasks, and integrate with any website."
-                gradient="bg-gradient-to-br from-pink-500 to-pink-600"
+                icon={Workflow}
+                title="Autonomous Workflows"
+                description="Define expected outcomes and let the system self-organize. Agents dynamically form teams to solve complexity."
+                gradient="bg-gradient-to-br from-green-500 to-green-600"
               />
               <ModernFeatureCard
-                icon={Terminal}
-                title="VS Code Integration"
-                description="Native IDE extension for seamless development. Code generation, debugging, and AI assistance right in your editor."
-                gradient="bg-gradient-to-br from-indigo-500 to-indigo-600"
+                icon={Chrome}
+                title="Universal Context Bridge"
+                description="Connect browser sessions, local files, and external docs into a single shared context window for all your agents."
+                gradient="bg-gradient-to-br from-pink-500 to-pink-600"
               />
             </div>
           </div>
@@ -356,14 +336,14 @@ export const LandingRedesigned = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200">
-                Why Choose Us
+                System Capabilities
               </Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-                Built Different from the Ground Up
+                Engineered for Evolution
               </h2>
               <p className="text-xl text-gray-600">
-                We didn't just build another AI tool. We created the operating system for AI
-                collaboration.
+                A platform that learns and adapts. The more you use it, the smarter your agent
+                workforce becomes.
               </p>
             </div>
 
@@ -371,28 +351,31 @@ export const LandingRedesigned = () => {
               {[
                 {
                   icon: Zap,
-                  title: 'Lightning-Fast Performance',
+                  title: 'WebSocket Real-Time Sync',
                   description:
-                    'Sub-100ms response times with intelligent caching and edge computing',
-                  stats: ['<100ms latency', 'Global CDN', '99.9% uptime'],
+                    'Instant state synchronization between your IDE, browser, and backend services via optimized WebSocket streams.',
+                  stats: ['<50ms sync', 'Redis Pub/Sub', 'Event-Driven'],
                 },
                 {
                   icon: Shield,
-                  title: 'Enterprise-Grade Security',
-                  description: 'SOC 2 compliant with end-to-end encryption and RBAC',
-                  stats: ['SOC 2 Type II', 'E2E encryption', 'GDPR compliant'],
+                  title: 'Secure Context Isolation',
+                  description:
+                    'Enterprise-grade sandboxing ensures agent actions are contained and authorized.',
+                  stats: ['Docker Sandboxing', 'RBAC', 'Audit Logging'],
                 },
                 {
                   icon: Code,
-                  title: 'Developer-First Design',
-                  description: 'Comprehensive APIs, SDKs, and documentation for rapid integration',
-                  stats: ['REST & GraphQL APIs', 'TypeScript SDKs', '100% documented'],
+                  title: 'Extensible via Plugins',
+                  description:
+                    'Add new capabilities using standard TypeScript plugins. Publish to the private or public marketplace.',
+                  stats: ['TypeScript API', 'Hot Module Reload', 'NPM Compatible'],
                 },
                 {
                   icon: Layers,
-                  title: 'Modular Architecture',
-                  description: 'Microservices-based design that scales with your needs',
-                  stats: ['Docker ready', 'Kubernetes native', 'Horizontal scaling'],
+                  title: 'Docker-First Deployment',
+                  description:
+                    'Spin up the entire stack with a single command. Production parity from local dev to cloud.',
+                  stats: ['Docker Compose', 'K8s Ready', 'Zero-Config'],
                 },
               ].map((item, idx) => (
                 <Card
@@ -433,146 +416,86 @@ export const LandingRedesigned = () => {
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-green-100 text-green-700 border-green-200">Use Cases</Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-                Transforming Industries Worldwide
+                From Scripting to Self-Evolving Systems
               </h2>
               <p className="text-xl text-gray-600">
-                From startups to enterprises, see how teams leverage The New Fuse to automate their
-                workflows.
+                Empower your teams to move beyond simple chatbots to fully autonomous agent fleets.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
               <UseCaseCard
                 icon={Code}
-                title="Software Development"
-                description="Automate your entire development lifecycle"
+                title="Self-Evolving Development"
+                description="Agents that improve their own codebases"
                 features={[
-                  'Automated code review and testing',
-                  'CI/CD pipeline orchestration',
-                  'Bug detection and fixing',
-                  'Documentation generation',
+                  'Automated refactoring loops',
+                  'Test-driven self-correction',
+                  'Documentation auto-updates',
+                  'Dependency auditing',
                 ]}
                 color="from-blue-500 to-blue-600"
               />
               <UseCaseCard
                 icon={Users}
-                title="Customer Support"
-                description="Scale your support with intelligent agents"
+                title="Collaborative Swarms"
+                description="Diverse agent teams solving complex problems"
                 features={[
-                  '24/7 automated responses',
-                  'Multi-language support',
-                  'Ticket routing and prioritization',
-                  'Knowledge base integration',
+                  'Role-based task distribution',
+                  'Consensus mechanisms',
+                  'Shared memory context',
+                  'Conflict resolution',
                 ]}
                 color="from-green-500 to-green-600"
               />
               <UseCaseCard
                 icon={BarChart3}
-                title="Data Analytics"
-                description="Transform raw data into actionable insights"
+                title="Intelligent Analysis"
+                description="Deep insights from unstructured data"
                 features={[
-                  'Automated data processing',
-                  'Real-time analytics dashboards',
-                  'Predictive modeling',
-                  'Custom report generation',
+                  'Multi-modal data processing',
+                  'Trend prediction agents',
+                  'Anomaly detection',
+                  'Automated reporting',
                 ]}
                 color="from-purple-500 to-purple-600"
               />
               <UseCaseCard
                 icon={Target}
-                title="Marketing Automation"
-                description="Personalize at scale with AI agents"
+                title="Personalized Engagement"
+                description="1:1 interactions at infinite scale"
                 features={[
-                  'Content generation',
-                  'Campaign optimization',
-                  'Social media management',
-                  'Lead scoring and nurturing',
+                  'Context-aware conversations',
+                  'Behavioral adaptation',
+                  'Sentiment analysis',
+                  'Proactive engagement',
                 ]}
                 color="from-pink-500 to-pink-600"
               />
               <UseCaseCard
                 icon={Database}
-                title="Data Engineering"
-                description="Build robust data pipelines"
+                title="Knowledge Synthesis"
+                description="Turn information into wisdom"
                 features={[
-                  'ETL workflow automation',
-                  'Data quality monitoring',
-                  'Schema management',
-                  'Real-time data sync',
+                  'Cross-source verification',
+                  'Ontology mapping',
+                  'Recursive summarization',
+                  'Knowledge graph building',
                 ]}
                 color="from-indigo-500 to-indigo-600"
               />
               <UseCaseCard
                 icon={Puzzle}
-                title="Business Operations"
-                description="Streamline operations across departments"
+                title="System Integration"
+                description="Glue for the API economy"
                 features={[
-                  'Process automation',
-                  'Document processing',
-                  'Approval workflows',
-                  'Resource allocation',
+                  'Auto-generated API clients',
+                  'Protocol translation',
+                  'Error recovery',
+                  'Rate limit optimization',
                 ]}
                 color="from-orange-500 to-orange-600"
               />
-            </div>
-          </div>
-        </section>
-
-        {/* Technology Stack - New Section */}
-        <section
-          className="py-24 bg-gradient-to-br from-gray-900 to-blue-900 text-white relative overflow-hidden"
-          id="demo-video"
-        >
-          <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-
-          <div className="container mx-auto px-4 relative">
-            <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-white/10 text-white border-white/20">Tech Stack</Badge>
-              <h2 className="text-4xl lg:text-5xl font-black mb-6">Built with Modern Technology</h2>
-              <p className="text-xl text-blue-100">
-                Enterprise-grade infrastructure powered by cutting-edge technologies
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {[
-                { icon: Code, name: 'TypeScript', desc: 'Type-safe development' },
-                { icon: Box, name: 'React 19', desc: 'Modern UI framework' },
-                { icon: Terminal, name: 'NestJS', desc: 'Scalable backend' },
-                { icon: Database, name: 'PostgreSQL', desc: 'Reliable database' },
-                { icon: Cloud, name: 'Docker', desc: 'Containerization' },
-                { icon: GitBranch, name: 'Git', desc: 'Version control' },
-                { icon: Cpu, name: 'Redis', desc: 'High-speed caching' },
-                { icon: Globe, name: 'Railway', desc: 'Cloud deployment' },
-              ].map((tech, idx) => (
-                <Card
-                  key={idx}
-                  className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 group backdrop-blur"
-                >
-                  <CardContent className="p-6 text-center">
-                    <tech.icon className="h-10 w-10 mx-auto mb-3 text-blue-400 group-hover:scale-110 transition-transform" />
-                    <div className="font-bold text-white mb-1">{tech.name}</div>
-                    <div className="text-sm text-blue-200">{tech.desc}</div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <div className="mt-16 text-center">
-              <p className="text-blue-100 mb-6 text-lg">
-                Open source and extensible. Built by developers, for developers.
-              </p>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="border-white/30 text-white hover:bg-white/10 px-8 py-6 text-lg"
-              >
-                <Link to="https://github.com/whodaniel/fuse" target="_blank">
-                  <Github className="mr-2 h-5 w-5" />
-                  View on GitHub
-                </Link>
-              </Button>
             </div>
           </div>
         </section>
@@ -582,13 +505,13 @@ export const LandingRedesigned = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-yellow-100 text-yellow-700 border-yellow-200">
-                Trusted By
+                Community
               </Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
-                Join Thousands of Teams Building with AI
+                Developers Love The New Fuse
               </h2>
               <p className="text-xl text-gray-600">
-                From startups to Fortune 500 companies, teams worldwide trust The New Fuse
+                Join the thousands of engineers building the next generation of AI software.
               </p>
             </div>
 
@@ -596,23 +519,23 @@ export const LandingRedesigned = () => {
               {[
                 {
                   quote:
-                    'The New Fuse transformed how we build and deploy AI agents. What took weeks now takes hours.',
-                  author: 'Sarah Chen',
-                  role: 'CTO, TechStartup Inc',
+                    'Finally, an AI platform that fits into my actual workflow. The VS Code extension is a game changer.',
+                  author: 'Alex Chen',
+                  role: 'Senior Staff Engineer',
                   rating: 5,
                 },
                 {
                   quote:
-                    "Best AI orchestration platform we've used. The MCP integration is seamless and powerful.",
-                  author: 'Michael Rodriguez',
-                  role: 'Lead Developer, DataCorp',
+                    "The MCP integration allows us to swap models without rewriting code. It's properly future-proof.",
+                  author: 'Sarah Johnson',
+                  role: 'AI Architect',
                   rating: 5,
                 },
                 {
                   quote:
-                    'Incredible developer experience. The VS Code extension alone saved us countless hours.',
-                  author: 'Emily Watson',
-                  role: 'Engineering Manager, CloudSolutions',
+                    'From local Docker dev to Railway production in minutes. The DX is unparalleled.',
+                  author: 'David Kim',
+                  role: 'Founder, AI Startup',
                   rating: 5,
                 },
               ].map((testimonial, idx) => (
@@ -647,10 +570,11 @@ export const LandingRedesigned = () => {
 
           <div className="container mx-auto px-4 relative">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-5xl lg:text-7xl font-black mb-8">Ready to Build the Future?</h2>
+              <h2 className="text-5xl lg:text-7xl font-black mb-8">
+                Deploy Your First Agent Squad
+              </h2>
               <p className="text-2xl text-blue-100 mb-12 leading-relaxed">
-                Join 10,000+ developers already building with The New Fuse. Start free, scale as you
-                grow.
+                Stop writing boilerplate glue code. Start orchestrating intelligent systems today.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
@@ -678,23 +602,23 @@ export const LandingRedesigned = () => {
                 <div>
                   <div className="flex items-center justify-center mb-2">
                     <CheckCircle className="h-6 w-6 text-green-400 mr-2" />
-                    <span className="text-lg font-bold">No Credit Card</span>
+                    <span className="text-lg font-bold">Open Source Core</span>
                   </div>
-                  <p className="text-blue-100 text-sm">Start building immediately</p>
+                  <p className="text-blue-100 text-sm">MIT Licensed</p>
                 </div>
                 <div>
                   <div className="flex items-center justify-center mb-2">
                     <Clock className="h-6 w-6 text-green-400 mr-2" />
-                    <span className="text-lg font-bold">5-Minute Setup</span>
+                    <span className="text-lg font-bold">1-Click Deploy</span>
                   </div>
-                  <p className="text-blue-100 text-sm">Deploy your first agent fast</p>
+                  <p className="text-blue-100 text-sm">Docker & Railway ready</p>
                 </div>
                 <div>
                   <div className="flex items-center justify-center mb-2">
                     <TrendingUp className="h-6 w-6 text-green-400 mr-2" />
-                    <span className="text-lg font-bold">Scale Infinitely</span>
+                    <span className="text-lg font-bold">Self-Hosting</span>
                   </div>
-                  <p className="text-blue-100 text-sm">Grow without limits</p>
+                  <p className="text-blue-100 text-sm">Keep your data private</p>
                 </div>
               </div>
             </div>

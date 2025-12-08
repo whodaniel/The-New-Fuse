@@ -14,23 +14,23 @@ import { WorkflowApiService } from '../api/workflow';
 // Define workflow types
 export type NodeStatus = 'idle' | 'running' | 'completed' | 'error';
 
-export interface WorkflowNode extends Node {
+export type WorkflowNode = Node & {
   data: {
     label: string;
     type: string;
     status?: NodeStatus;
     [key: string]: any;
   };
-}
+};
 
-export interface WorkflowEdge extends Edge {
+export type WorkflowEdge = Edge & {
   data?: {
     label?: string;
     type?: string;
     animated?: boolean;
     [key: string]: any;
   };
-}
+};
 
 // Define context types
 interface WorkflowContextType {
@@ -235,17 +235,17 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       const workflowData = {
         name: 'Untitled Workflow',
         description: 'Workflow created from context',
-        nodes: nodes.map(node => ({
+        nodes: nodes.map((node) => ({
           id: node.id,
           type: node.type,
           position: node.position,
-          data: node.data
+          data: node.data,
         })),
-        edges: edges.map(edge => ({
+        edges: edges.map((edge) => ({
           id: edge.id,
           source: edge.source,
           target: edge.target,
-          data: edge.data
+          data: edge.data,
         })),
       };
 
@@ -280,7 +280,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
             data: {
               label: node.data?.label || node.label || 'Untitled',
               type: node.data?.type || node.type,
-              ...node.data
+              ...node.data,
             },
           }));
 

@@ -1,30 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import {
-  Users,
-  Building,
-  Heart,
-  AlertTriangle,
   AlertCircle,
-  Circle,
-  Flag,
-  Plug,
-  Settings,
-  User,
-  RefreshCw,
-  Bot,
-  Plus,
-  Hammer,
+  AlertTriangle,
   BarChart,
-  Siren,
+  Bot,
+  Building,
+  Circle,
   ClipboardList,
+  Flag,
+  Hammer,
+  Heart,
+  Plug,
+  Plus,
+  RefreshCw,
   Shield,
-  Activity,
+  Siren,
+  User,
+  Users,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-// ... (Metrics interface and component start equal)
+interface SystemMetrics {
+  totalUsers: number;
+  activeUsers: number;
+  totalWorkspaces: number;
+  activeWorkspaces: number;
+  totalAgents: number;
+  runningAgents: number;
+  systemUptime: string;
+  serverHealth: 'healthy' | 'warning' | 'critical';
+  memoryUsage: number;
+  cpuUsage: number;
+}
 
-// ... (inside AdminPanel component)
+export default function AdminPanel() {
+  const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Mock data - replace with API call
+  useEffect(() => {
+    setTimeout(() => {
+      setMetrics({
+        totalUsers: 147,
+        activeUsers: 23,
+        totalWorkspaces: 12,
+        activeWorkspaces: 8,
+        totalAgents: 34,
+        runningAgents: 12,
+        systemUptime: '15 days, 4 hours',
+        serverHealth: 'healthy',
+        memoryUsage: 68,
+        cpuUsage: 34,
+      });
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  const getHealthBadge = (health: SystemMetrics['serverHealth']) => {
+    switch (health) {
+      case 'healthy':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'warning':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getHealthIcon = (health: SystemMetrics['serverHealth']) => {
+    switch (health) {
+      case 'healthy':
+        return <Heart className="h-5 w-5 text-green-500" />;
+      case 'warning':
+        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+      case 'critical':
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
+      default:
+        return <Circle className="h-5 w-5 text-gray-500" />;
+    }
+  };
+
+  const getUsageColor = (usage: number) => {
+    if (usage < 50) return 'bg-green-500';
+    if (usage < 80) return 'bg-yellow-500';
+    return 'bg-red-500';
+  };
 
   const adminSections = [
     {
@@ -32,43 +94,43 @@ import {
       description: 'Manage users, roles, and permissions',
       icon: <Users className="h-6 w-6" />,
       link: '/admin/users',
-      color: 'bg-blue-500'
+      color: 'bg-blue-500',
     },
     {
       title: 'Agent Skills',
       description: 'Configure agent capabilities',
       icon: <Bot className="h-6 w-6" />,
-      link: '/admin/agent-skills', // Was Workspaces (Broken)
-      color: 'bg-green-500'
+      link: '/admin/agent-skills',
+      color: 'bg-green-500',
     },
     {
       title: 'System Health',
       description: 'Monitor system performance and status',
       icon: <Heart className="h-6 w-6" />,
       link: '/admin/system-health',
-      color: 'bg-emerald-500'
+      color: 'bg-emerald-500',
     },
     {
       title: 'Feature Flags',
       description: 'Enable/disable features and experiments',
       icon: <Flag className="h-6 w-6" />,
-      link: '/admin/features', // Fixed path
-      color: 'bg-purple-500'
+      link: '/admin/features',
+      color: 'bg-purple-500',
     },
     {
       title: 'Port Management',
       description: 'Manage application ports and services',
       icon: <Plug className="h-6 w-6" />,
       link: '/admin/port-management',
-      color: 'bg-orange-500'
+      color: 'bg-orange-500',
     },
     {
       title: 'Security Dashboard',
       description: 'Security status and encryption',
       icon: <Shield className="h-6 w-6" />,
-      link: '/admin/security', // Was Admin Settings (Broken)
-      color: 'bg-red-500'
-    }
+      link: '/admin/security',
+      color: 'bg-red-500',
+    },
   ];
 
   if (loading) {
@@ -87,7 +149,9 @@ import {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center"><User className="h-8 w-8 mr-2" /> Admin Panel</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+              <User className="h-8 w-8 mr-2" /> Admin Panel
+            </h1>
             <p className="text-gray-600">System administration and management dashboard</p>
           </div>
           <div className="flex items-center space-x-4">
@@ -116,7 +180,9 @@ import {
                   <p className="text-sm text-gray-600">Total Users</p>
                   <p className="text-xs text-green-600">{metrics.activeUsers} active now</p>
                 </div>
-                <div className="text-3xl"><Users className="h-8 w-8 text-gray-400" /></div>
+                <div className="text-3xl">
+                  <Users className="h-8 w-8 text-gray-400" />
+                </div>
               </div>
             </div>
 
@@ -127,7 +193,9 @@ import {
                   <p className="text-sm text-gray-600">Total Workspaces</p>
                   <p className="text-xs text-green-600">{metrics.activeWorkspaces} active</p>
                 </div>
-                <div className="text-3xl"><Building className="h-8 w-8 text-gray-400" /></div>
+                <div className="text-3xl">
+                  <Building className="h-8 w-8 text-gray-400" />
+                </div>
               </div>
             </div>
 
@@ -138,7 +206,9 @@ import {
                   <p className="text-sm text-gray-600">Total Agents</p>
                   <p className="text-xs text-green-600">{metrics.runningAgents} running</p>
                 </div>
-                <div className="text-3xl"><Bot className="h-8 w-8 text-gray-400" /></div>
+                <div className="text-3xl">
+                  <Bot className="h-8 w-8 text-gray-400" />
+                </div>
               </div>
             </div>
 
@@ -146,8 +216,11 @@ import {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">System Health</p>
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full border ${getHealthBadge(metrics.serverHealth)} flex items-center`}>
-                    {getHealthIcon(metrics.serverHealth)} <span className="ml-1">{metrics.serverHealth}</span>
+                  <span
+                    className={`px-3 py-1 text-sm font-medium rounded-full border ${getHealthBadge(metrics.serverHealth)} flex items-center`}
+                  >
+                    {getHealthIcon(metrics.serverHealth)}{' '}
+                    <span className="ml-1">{metrics.serverHealth}</span>
                   </span>
                   <p className="text-xs text-gray-500 mt-1">Uptime: {metrics.systemUptime}</p>
                 </div>
@@ -194,37 +267,49 @@ import {
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <button className="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2"><Plus className="h-8 w-8" /></div>
+            <div className="text-2xl mb-2">
+              <Plus className="h-8 w-8" />
+            </div>
             <div className="font-medium">Create User</div>
             <div className="text-sm opacity-90">Add a new user to the system</div>
           </button>
 
           <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2"><Hammer className="h-8 w-8" /></div>
+            <div className="text-2xl mb-2">
+              <Hammer className="h-8 w-8" />
+            </div>
             <div className="font-medium">Create Workspace</div>
             <div className="text-sm opacity-90">Set up a new workspace</div>
           </button>
 
           <button className="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2"><Bot className="h-8 w-8" /></div>
+            <div className="text-2xl mb-2">
+              <Bot className="h-8 w-8" />
+            </div>
             <div className="font-medium">Deploy Agent</div>
             <div className="text-sm opacity-90">Deploy a new AI agent</div>
           </button>
 
           <button className="bg-orange-600 text-white p-4 rounded-lg hover:bg-orange-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2"><BarChart className="h-8 w-8" /></div>
+            <div className="text-2xl mb-2">
+              <BarChart className="h-8 w-8" />
+            </div>
             <div className="font-medium">View Reports</div>
             <div className="text-sm opacity-90">Generate system reports</div>
           </button>
 
           <button className="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2"><Siren className="h-8 w-8" /></div>
+            <div className="text-2xl mb-2">
+              <Siren className="h-8 w-8" />
+            </div>
             <div className="font-medium">System Alerts</div>
             <div className="text-sm opacity-90">Check system alerts</div>
           </button>
 
           <button className="bg-gray-600 text-white p-4 rounded-lg hover:bg-gray-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2"><ClipboardList className="h-8 w-8" /></div>
+            <div className="text-2xl mb-2">
+              <ClipboardList className="h-8 w-8" />
+            </div>
             <div className="font-medium">Audit Logs</div>
             <div className="text-sm opacity-90">Review system activity</div>
           </button>

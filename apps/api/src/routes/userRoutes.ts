@@ -1,5 +1,10 @@
 import express, { Router } from 'express';
-import { getUserProfile, updateUserProfile } from '../controllers/userController';
+import {
+  deleteUser,
+  getUserProfile,
+  getUsers,
+  updateUserProfile,
+} from '../controllers/userController';
 // import { authenticateToken } from '../middleware/auth'; // Assuming auth middleware exists or will be added
 
 const router: Router = express.Router();
@@ -10,6 +15,10 @@ const router: Router = express.Router();
  *   name: User Profile
  *   description: User profile management
  */
+
+// User Management Routes
+router.get('/', getUsers);
+router.delete('/:id', deleteUser);
 
 /**
  * @swagger
@@ -46,7 +55,7 @@ const router: Router = express.Router();
  *         description: Unauthorized
  *       404:
  *         description: User profile not found
- */
+ * */
 router.get('/profile', /* authenticateToken, */ getUserProfile); // Placeholder for auth middleware
 
 /**
@@ -110,7 +119,7 @@ router.get('/profile', /* authenticateToken, */ getUserProfile); // Placeholder 
  *         description: Unauthorized
  *       404:
  *         description: User profile not found
- */
+ * */
 router.put('/profile', /* authenticateToken, */ updateUserProfile); // Placeholder for auth middleware
 
 export default router;

@@ -1,12 +1,12 @@
-quired/**
+quired; /**
  * Form Field Components - Reusable form inputs with validation
  * Replaces corrupted Material-UI version with Tailwind + Custom Design System
  */
 
-import React, { useState, ReactNode } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
-import { Eye, EyeOff, X, Plus } from 'lucide-react';
+import { Eye, EyeOff, Plus, X } from 'lucide-react';
+import { ReactNode, useState } from 'react';
 
 // Text Field
 interface FormTextFieldProps {
@@ -278,6 +278,7 @@ export function FormSwitchField({
       </div>
       <button
         type="button"
+        name={name}
         onClick={() => !disabled && onChange(!value)}
         disabled={disabled}
         className={cn(
@@ -299,7 +300,7 @@ export function FormSwitchField({
 
 // Slider Field
 interface FormSliderFieldProps {
-  name: string;
+  _name?: string; // Made optional and renamed to follow ESLint unused args pattern
   label: string;
   value: number;
   min?: number;
@@ -314,7 +315,7 @@ interface FormSliderFieldProps {
 }
 
 export function FormSliderField({
-  name,
+  _name, // Renamed to follow ESLint unused args pattern
   label,
   value,
   min = 0,
@@ -358,7 +359,7 @@ export function FormSliderField({
 
 // Array Field (for dynamic lists)
 interface FormArrayFieldProps<T = any> {
-  name: string;
+  _name?: string; // Made optional and renamed to follow ESLint unused args pattern
   label: string;
   value: T[];
   renderField: (item: T, index: number) => ReactNode;
@@ -373,7 +374,7 @@ interface FormArrayFieldProps<T = any> {
 }
 
 export function FormArrayField<T = any>({
-  name,
+  _name, // Renamed to follow ESLint unused args pattern
   label,
   value,
   renderField,
@@ -392,10 +393,6 @@ export function FormArrayField<T = any>({
 
   const handleRemove = (index: number) => {
     onChange(value.filter((_, i) => i !== index));
-  };
-
-  const handleChange = (index: number, newValue: T) => {
-    onChange(value.map((v, i) => (i === index ? newValue : v)));
   };
 
   return (
