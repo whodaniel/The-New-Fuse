@@ -267,7 +267,7 @@ const ErrorState = ({
 // Export default
 export default StandardLayout;
 
-// Export named components
+// Export named components (excluding StandardLayout to avoid duplicate export)
 export {
   BreadcrumbNavigation,
   EmptyState,
