@@ -94,7 +94,6 @@ const ModernFeatureCard = ({
   title: string;
   description: string;
   gradient: string;
-  gradient: string;
 }) => (
   <GlassCard gradient={gradient}>
     <GlassCardContent className="p-8">
