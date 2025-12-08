@@ -3,10 +3,7 @@
     "tnf-mcp-config-manager": {
       "command": "node",
       "args": ["--loader", "tsx/esm", "./src/mcp/tnf-mcp-config-manager.ts"],
-      "env": {
-        "TNF_CORE_PATH": "./data",
-        "LOG_LEVEL": "info"
-      },
+      "env": { "TNF_CORE_PATH": "./data", "LOG_LEVEL": "info" },
       "description": "The New Fuse MCP Configuration Manager - Universal MCP config management for any client + TNF Agent Builder integration",
       "managed_by": "tnf-core",
       "priority": 9,
@@ -39,9 +36,7 @@
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp"],
-      "env": {
-        "DEFAULT_MINIMUM_TOKENS": ""
-      }
+      "env": { "DEFAULT_MINIMUM_TOKENS": "" }
     },
     "sequentialthinking": {
       "command": "npx",
@@ -49,7 +44,8 @@
     },
     "puppeteer": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "alwaysAllow": [""]
     }
   }
 }
