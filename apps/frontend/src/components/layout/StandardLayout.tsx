@@ -5,7 +5,7 @@
 
 import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
-import { useTheme } from '../../../../contexts/ThemeContext';
+import { useTheme } from '../../../ThemeContext';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';

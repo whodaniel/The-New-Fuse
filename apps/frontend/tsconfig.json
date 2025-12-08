@@ -1,7 +1,6 @@
 {
   "extends": "../../packages/tsconfig.base.json",
   "compilerOptions": {
-
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
@@ -39,12 +38,11 @@
   "exclude": [
     "node_modules",
     "dist",
-    "src/lib"
-    ,"src/test/**/*"
-    ,"**/*.test.ts"
-    ,"**/*.test.tsx"
-    ,"**/*.spec.ts"
-    ,"**/*.spec.tsx"
+    "src/test/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ],
   "references": [
     { "path": "../../packages/types" },
