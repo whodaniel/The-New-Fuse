@@ -31,10 +31,17 @@ const StandardLayout = ({
   showFooter = true,
   containerClass = 'max-w-7xl mx-auto',
 }: StandardLayoutProps) => {
-  const { theme } = useTheme();
+  // Safely get theme, defaulting to 'light' if ThemeProvider is not available
+  let themeMode: 'light' | 'dark' | 'system' = 'light';
+  try {
+    const themeContext = useTheme();
+    themeMode = themeContext?.theme?.mode || 'light';
+  } catch {
+    // ThemeProvider not available, use default theme
+  }
 
   return (
-    <div className={`min-h-screen bg-background ${theme === 'dark' ? 'dark' : ''}`}>
+    <div className={`min-h-screen bg-background ${themeMode === 'dark' ? 'dark' : ''}`}>
       {/* Header */}
       {showHeader && <Header />}
 

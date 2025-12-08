@@ -98,7 +98,15 @@ export default defineConfig(({ mode }) => {
     base: env.VITE_BASE_PATH || '/',
     publicDir: 'public',
     optimizeDeps: {
-      include: ['firebase', '@firebase/app', '@firebase/auth'],
+      include: [
+        'firebase',
+        '@firebase/app',
+        '@firebase/auth',
+        'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
+        'react',
+        'react-dom',
+        'react-router-dom',
+      ],
       exclude: [
         '@firebase/app-types',
         '@firebase/app-compat',
@@ -113,6 +121,9 @@ export default defineConfig(({ mode }) => {
         'os',
         'util',
       ],
+      esbuildOptions: {
+        target: 'es2020',
+      },
     },
     build: {
       outDir: 'dist',
@@ -207,8 +218,11 @@ export default defineConfig(({ mode }) => {
               return 'recharts';
             }
 
-            // Framer Motion - animation library
-            if (id.includes('node_modules/framer-motion')) {
+            // Framer Motion - animation library (isolate completely to prevent circular deps)
+            if (
+              id.includes('node_modules/framer-motion') ||
+              id.includes('node_modules/@motionone/')
+            ) {
               return 'framer-motion';
             }
 

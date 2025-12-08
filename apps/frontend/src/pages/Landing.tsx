@@ -6,7 +6,6 @@
 
 import { StandardLayout } from '@/components/layout/StandardLayout';
 import { SEOHead } from '@/components/seo/SEOHead';
-import { useTheme } from '@/contexts/ThemeContext';
 import { usePagePerformance } from '@/hooks/usePagePerformance';
 import { Badge, Button, Card, CardContent } from '@the-new-fuse/ui-consolidated';
 import {
@@ -121,7 +120,6 @@ const TechStackItem = ({
 export const Landing = () => {
   // Track page performance metrics
   usePagePerformance('Landing Page');
-  const { theme } = useTheme();
 
   // Standardized breadcrumbs for consistency
   const breadcrumbs = [
@@ -159,7 +157,7 @@ export const Landing = () => {
         <main className="flex-grow" role="main">
           {/* Hero Section - Using design system gradients and components */}
           <section
-            className={`relative py-20 lg:py-32 gradient-primary text-white overflow-hidden ${theme === 'dark' ? 'dark-gradient' : ''}`}
+            className="relative py-20 lg:py-32 gradient-primary text-white overflow-hidden"
             aria-labelledby="hero-heading"
           >
             <div className="absolute inset-0 bg-black/20"></div>
