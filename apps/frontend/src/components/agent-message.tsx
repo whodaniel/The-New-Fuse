@@ -1,7 +1,7 @@
 import React from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
-import { Card } from './ui/card';
 import { cn } from '../lib/utils';
+import { Avatar } from './ui/avatar';
+import { Card } from './ui/card';
 
 interface Agent {
   id: string;
@@ -53,13 +53,7 @@ const AgentMessage: React.FC<AgentMessageProps> = ({ agent, message, isCurrentUs
 
   return (
     <Card className={messageClasses}>
-      <Avatar className="h-8 w-8">
-        {agent.avatar ? (
-          <AvatarImage src={agent.avatar} alt={agent.name} />
-        ) : (
-          <AvatarFallback>{agent.name[0].toUpperCase()}</AvatarFallback>
-        )}
-      </Avatar>
+      <Avatar name={agent.name} src={agent.avatar} size="sm" className="h-8 w-8" />
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-medium text-sm">{agent.name}</span>
