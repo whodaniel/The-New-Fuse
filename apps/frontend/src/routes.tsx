@@ -117,7 +117,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const LandingRedesigned = lazy(() => import('./pages/LandingRedesigned'));
+const LandingRedesigned = lazy(() => import('./pages/Landing'));
 
 export function AppRoutes() {
   return (
