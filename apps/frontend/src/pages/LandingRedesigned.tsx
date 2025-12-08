@@ -1,47 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { LandingFooter } from '@/components/layout/LandingFooter';
+import { LandingHeader } from '@/components/layout/LandingHeader';
+import { SEOHead } from '@/components/seo/SEOHead';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { LandingHeader } from '@/components/layout/LandingHeader';
-import { LandingFooter } from '@/components/layout/LandingFooter';
-import { SEOHead } from '@/components/seo/SEOHead';
 import { usePagePerformance } from '@/hooks/usePagePerformance';
+import { GlassCard, GlassCardContent } from '@the-new-fuse/ui-consolidated';
 import {
-  Bot,
-  Workflow,
-  MessageSquare,
-  Shield,
-  Zap,
-  Globe,
-  Code,
-  Settings,
-  Users,
-  BarChart3,
-  Cpu,
-  Network,
-  Terminal,
-  Github,
-  Chrome,
-  ArrowRight,
-  CheckCircle,
-  Star,
-  Sparkles,
-  Target,
-  Rocket,
-  Brain,
-  Play,
-  Clock,
-  TrendingUp,
-  Layers,
-  Box,
-  GitBranch,
-  Database,
-  Cloud,
-  Lock,
   Activity,
-  Puzzle
+  ArrowRight,
+  BarChart3,
+  Bot,
+  Box,
+  CheckCircle,
+  Chrome,
+  Clock,
+  Cloud,
+  Code,
+  Cpu,
+  Database,
+  GitBranch,
+  Github,
+  Globe,
+  Layers,
+  MessageSquare,
+  Network,
+  Play,
+  Puzzle,
+  Rocket,
+  Shield,
+  Sparkles,
+  Star,
+  Target,
+  Terminal,
+  TrendingUp,
+  Users,
+  Workflow,
+  Zap,
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 // Animated gradient background
 const AnimatedBackground = () => (
@@ -53,7 +51,15 @@ const AnimatedBackground = () => (
 );
 
 // Animated counter component
-const AnimatedCounter = ({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) => {
+const AnimatedCounter = ({
+  end,
+  duration = 2000,
+  suffix = '',
+}: {
+  end: number;
+  duration?: number;
+  suffix?: string;
+}) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -69,7 +75,12 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = '' }: { end: number; d
     requestAnimationFrame(animate);
   }, [end, duration]);
 
-  return <span>{count.toLocaleString()}{suffix}</span>;
+  return (
+    <span>
+      {count.toLocaleString()}
+      {suffix}
+    </span>
+  );
 };
 
 // Feature card with hover effects
@@ -77,25 +88,29 @@ const ModernFeatureCard = ({
   icon: Icon,
   title,
   description,
-  gradient
+  gradient,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
   gradient: string;
+  gradient: string;
 }) => (
-  <Card className="group relative overflow-hidden border-0 bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-    <div className={`absolute inset-0 ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-    <CardContent className="p-8">
+  <GlassCard gradient={gradient}>
+    <GlassCardContent className="p-8">
       <div className="relative">
-        <div className={`w-14 h-14 rounded-2xl ${gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+        <div
+          className={`w-14 h-14 rounded-2xl ${gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}
+        >
           <Icon className="h-7 w-7 text-white" />
         </div>
-        <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">{title}</h3>
+        <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">
+          {title}
+        </h3>
         <p className="text-gray-600 leading-relaxed">{description}</p>
       </div>
-    </CardContent>
-  </Card>
+    </GlassCardContent>
+  </GlassCard>
 );
 
 // Use case card
@@ -104,7 +119,7 @@ const UseCaseCard = ({
   title,
   description,
   features,
-  color
+  color,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
@@ -114,7 +129,9 @@ const UseCaseCard = ({
 }) => (
   <Card className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200 bg-gradient-to-br from-white to-gray-50">
     <CardContent className="p-6">
-      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+      <div
+        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+      >
         <Icon className="h-6 w-6 text-white" />
       </div>
       <h3 className="text-lg font-bold mb-2 text-gray-900">{title}</h3>
@@ -139,16 +156,30 @@ export const LandingRedesigned = () => {
       <SEOHead
         title="The New Fuse - Revolutionary AI Collaboration Platform | MCP & A2A Protocol"
         description="Transform your workflow with The New Fuse - the most advanced AI agent orchestration platform. Build, deploy, and manage intelligent agents with MCP protocol, workflow automation, and real-time collaboration."
-        keywords={['AI platform', 'AI agents', 'workflow automation', 'agent orchestration', 'MCP protocol', 'A2A protocol', 'AI collaboration', 'intelligent automation', 'enterprise AI', 'AI development platform']}
+        keywords={[
+          'AI platform',
+          'AI agents',
+          'workflow automation',
+          'agent orchestration',
+          'MCP protocol',
+          'A2A protocol',
+          'AI collaboration',
+          'intelligent automation',
+          'enterprise AI',
+          'AI development platform',
+        ]}
         canonical={typeof window !== 'undefined' ? window.location.origin : ''}
       />
       <LandingHeader />
 
       <main className="flex-grow" role="main">
         {/* Hero Section - Completely Redesigned */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden" aria-labelledby="hero-heading">
+        <section
+          className="relative min-h-screen flex items-center justify-center overflow-hidden"
+          aria-labelledby="hero-heading"
+        >
           <AnimatedBackground />
-          
+
           <div className="relative container mx-auto px-4 py-20">
             <div className="max-w-6xl mx-auto text-center">
               {/* Badge */}
@@ -172,7 +203,8 @@ export const LandingRedesigned = () => {
 
               {/* Subheadline */}
               <p className="text-xl lg:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
-                Build intelligent workflows, orchestrate AI agents, and automate complex tasks with the most powerful AI collaboration platform ever created.
+                Build intelligent workflows, orchestrate AI agents, and automate complex tasks with
+                the most powerful AI collaboration platform ever created.
               </p>
 
               {/* CTA Buttons */}
@@ -205,16 +237,42 @@ export const LandingRedesigned = () => {
               {/* Live Stats - Redesigned */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto animate-fade-in-up animation-delay-800">
                 {[
-                  { value: 10000, suffix: '+', label: 'Active Users', icon: Users, color: 'from-blue-500 to-blue-600' },
-                  { value: 250, suffix: '+', label: 'AI Agents', icon: Bot, color: 'from-purple-500 to-purple-600' },
-                  { value: 5000, suffix: '+', label: 'Workflows', icon: Workflow, color: 'from-green-500 to-green-600' },
-                  { value: 99.9, suffix: '%', label: 'Uptime', icon: Activity, color: 'from-orange-500 to-orange-600' }
+                  {
+                    value: 10000,
+                    suffix: '+',
+                    label: 'Active Users',
+                    icon: Users,
+                    color: 'from-blue-500 to-blue-600',
+                  },
+                  {
+                    value: 250,
+                    suffix: '+',
+                    label: 'AI Agents',
+                    icon: Bot,
+                    color: 'from-purple-500 to-purple-600',
+                  },
+                  {
+                    value: 5000,
+                    suffix: '+',
+                    label: 'Workflows',
+                    icon: Workflow,
+                    color: 'from-green-500 to-green-600',
+                  },
+                  {
+                    value: 99.9,
+                    suffix: '%',
+                    label: 'Uptime',
+                    icon: Activity,
+                    color: 'from-orange-500 to-orange-600',
+                  },
                 ].map((stat, idx) => (
                   <div key={idx} className="relative group">
                     <div className="absolute inset-0 bg-gradient-to-r {stat.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity" />
                     <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
                       <CardContent className="p-6 text-center">
-                        <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${stat.color} flex items-center justify-center mx-auto mb-3`}>
+                        <div
+                          className={`w-12 h-12 rounded-full bg-gradient-to-r ${stat.color} flex items-center justify-center mx-auto mb-3`}
+                        >
                           <stat.icon className="h-6 w-6 text-white" />
                         </div>
                         <div className="text-3xl font-black text-gray-900 mb-1">
@@ -241,12 +299,15 @@ export const LandingRedesigned = () => {
         <section className="py-24 bg-white relative overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">Platform Overview</Badge>
+              <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
+                Platform Overview
+              </Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
                 One Platform, Infinite Possibilities
               </h2>
               <p className="text-xl text-gray-600">
-                From AI agent management to workflow automation, The New Fuse provides everything you need to build the future of intelligent automation.
+                From AI agent management to workflow automation, The New Fuse provides everything
+                you need to build the future of intelligent automation.
               </p>
             </div>
 
@@ -295,12 +356,15 @@ export const LandingRedesigned = () => {
         <section className="py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200">Why Choose Us</Badge>
+              <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200">
+                Why Choose Us
+              </Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
                 Built Different from the Ground Up
               </h2>
               <p className="text-xl text-gray-600">
-                We didn't just build another AI tool. We created the operating system for AI collaboration.
+                We didn't just build another AI tool. We created the operating system for AI
+                collaboration.
               </p>
             </div>
 
@@ -309,29 +373,33 @@ export const LandingRedesigned = () => {
                 {
                   icon: Zap,
                   title: 'Lightning-Fast Performance',
-                  description: 'Sub-100ms response times with intelligent caching and edge computing',
-                  stats: ['<100ms latency', 'Global CDN', '99.9% uptime']
+                  description:
+                    'Sub-100ms response times with intelligent caching and edge computing',
+                  stats: ['<100ms latency', 'Global CDN', '99.9% uptime'],
                 },
                 {
                   icon: Shield,
                   title: 'Enterprise-Grade Security',
                   description: 'SOC 2 compliant with end-to-end encryption and RBAC',
-                  stats: ['SOC 2 Type II', 'E2E encryption', 'GDPR compliant']
+                  stats: ['SOC 2 Type II', 'E2E encryption', 'GDPR compliant'],
                 },
                 {
                   icon: Code,
                   title: 'Developer-First Design',
                   description: 'Comprehensive APIs, SDKs, and documentation for rapid integration',
-                  stats: ['REST & GraphQL APIs', 'TypeScript SDKs', '100% documented']
+                  stats: ['REST & GraphQL APIs', 'TypeScript SDKs', '100% documented'],
                 },
                 {
                   icon: Layers,
                   title: 'Modular Architecture',
                   description: 'Microservices-based design that scales with your needs',
-                  stats: ['Docker ready', 'Kubernetes native', 'Horizontal scaling']
-                }
+                  stats: ['Docker ready', 'Kubernetes native', 'Horizontal scaling'],
+                },
               ].map((item, idx) => (
-                <Card key={idx} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/90 backdrop-blur group">
+                <Card
+                  key={idx}
+                  className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/90 backdrop-blur group"
+                >
                   <CardContent className="p-8">
                     <div className="flex items-start space-x-4">
                       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -342,7 +410,11 @@ export const LandingRedesigned = () => {
                         <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
                         <div className="flex flex-wrap gap-2">
                           {item.stats.map((stat, i) => (
-                            <Badge key={i} variant="secondary" className="bg-blue-100 text-blue-700">
+                            <Badge
+                              key={i}
+                              variant="secondary"
+                              className="bg-blue-100 text-blue-700"
+                            >
                               {stat}
                             </Badge>
                           ))}
@@ -365,7 +437,8 @@ export const LandingRedesigned = () => {
                 Transforming Industries Worldwide
               </h2>
               <p className="text-xl text-gray-600">
-                From startups to enterprises, see how teams leverage The New Fuse to automate their workflows.
+                From startups to enterprises, see how teams leverage The New Fuse to automate their
+                workflows.
               </p>
             </div>
 
@@ -378,7 +451,7 @@ export const LandingRedesigned = () => {
                   'Automated code review and testing',
                   'CI/CD pipeline orchestration',
                   'Bug detection and fixing',
-                  'Documentation generation'
+                  'Documentation generation',
                 ]}
                 color="from-blue-500 to-blue-600"
               />
@@ -390,7 +463,7 @@ export const LandingRedesigned = () => {
                   '24/7 automated responses',
                   'Multi-language support',
                   'Ticket routing and prioritization',
-                  'Knowledge base integration'
+                  'Knowledge base integration',
                 ]}
                 color="from-green-500 to-green-600"
               />
@@ -402,7 +475,7 @@ export const LandingRedesigned = () => {
                   'Automated data processing',
                   'Real-time analytics dashboards',
                   'Predictive modeling',
-                  'Custom report generation'
+                  'Custom report generation',
                 ]}
                 color="from-purple-500 to-purple-600"
               />
@@ -414,7 +487,7 @@ export const LandingRedesigned = () => {
                   'Content generation',
                   'Campaign optimization',
                   'Social media management',
-                  'Lead scoring and nurturing'
+                  'Lead scoring and nurturing',
                 ]}
                 color="from-pink-500 to-pink-600"
               />
@@ -426,7 +499,7 @@ export const LandingRedesigned = () => {
                   'ETL workflow automation',
                   'Data quality monitoring',
                   'Schema management',
-                  'Real-time data sync'
+                  'Real-time data sync',
                 ]}
                 color="from-indigo-500 to-indigo-600"
               />
@@ -438,7 +511,7 @@ export const LandingRedesigned = () => {
                   'Process automation',
                   'Document processing',
                   'Approval workflows',
-                  'Resource allocation'
+                  'Resource allocation',
                 ]}
                 color="from-orange-500 to-orange-600"
               />
@@ -447,15 +520,16 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Technology Stack - New Section */}
-        <section className="py-24 bg-gradient-to-br from-gray-900 to-blue-900 text-white relative overflow-hidden" id="demo-video">
+        <section
+          className="py-24 bg-gradient-to-br from-gray-900 to-blue-900 text-white relative overflow-hidden"
+          id="demo-video"
+        >
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-          
+
           <div className="container mx-auto px-4 relative">
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-white/10 text-white border-white/20">Tech Stack</Badge>
-              <h2 className="text-4xl lg:text-5xl font-black mb-6">
-                Built with Modern Technology
-              </h2>
+              <h2 className="text-4xl lg:text-5xl font-black mb-6">Built with Modern Technology</h2>
               <p className="text-xl text-blue-100">
                 Enterprise-grade infrastructure powered by cutting-edge technologies
               </p>
@@ -470,9 +544,12 @@ export const LandingRedesigned = () => {
                 { icon: Cloud, name: 'Docker', desc: 'Containerization' },
                 { icon: GitBranch, name: 'Git', desc: 'Version control' },
                 { icon: Cpu, name: 'Redis', desc: 'High-speed caching' },
-                { icon: Globe, name: 'Railway', desc: 'Cloud deployment' }
+                { icon: Globe, name: 'Railway', desc: 'Cloud deployment' },
               ].map((tech, idx) => (
-                <Card key={idx} className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 group backdrop-blur">
+                <Card
+                  key={idx}
+                  className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300 group backdrop-blur"
+                >
                   <CardContent className="p-6 text-center">
                     <tech.icon className="h-10 w-10 mx-auto mb-3 text-blue-400 group-hover:scale-110 transition-transform" />
                     <div className="font-bold text-white mb-1">{tech.name}</div>
@@ -505,7 +582,9 @@ export const LandingRedesigned = () => {
         <section className="py-24 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-yellow-100 text-yellow-700 border-yellow-200">Trusted By</Badge>
+              <Badge className="mb-4 bg-yellow-100 text-yellow-700 border-yellow-200">
+                Trusted By
+              </Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
                 Join Thousands of Teams Building with AI
               </h2>
@@ -517,32 +596,40 @@ export const LandingRedesigned = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[
                 {
-                  quote: "The New Fuse transformed how we build and deploy AI agents. What took weeks now takes hours.",
-                  author: "Sarah Chen",
-                  role: "CTO, TechStartup Inc",
-                  rating: 5
+                  quote:
+                    'The New Fuse transformed how we build and deploy AI agents. What took weeks now takes hours.',
+                  author: 'Sarah Chen',
+                  role: 'CTO, TechStartup Inc',
+                  rating: 5,
                 },
                 {
-                  quote: "Best AI orchestration platform we've used. The MCP integration is seamless and powerful.",
-                  author: "Michael Rodriguez",
-                  role: "Lead Developer, DataCorp",
-                  rating: 5
+                  quote:
+                    "Best AI orchestration platform we've used. The MCP integration is seamless and powerful.",
+                  author: 'Michael Rodriguez',
+                  role: 'Lead Developer, DataCorp',
+                  rating: 5,
                 },
                 {
-                  quote: "Incredible developer experience. The VS Code extension alone saved us countless hours.",
-                  author: "Emily Watson",
-                  role: "Engineering Manager, CloudSolutions",
-                  rating: 5
-                }
+                  quote:
+                    'Incredible developer experience. The VS Code extension alone saved us countless hours.',
+                  author: 'Emily Watson',
+                  role: 'Engineering Manager, CloudSolutions',
+                  rating: 5,
+                },
               ].map((testimonial, idx) => (
-                <Card key={idx} className="border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300">
+                <Card
+                  key={idx}
+                  className="border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300"
+                >
                   <CardContent className="p-8">
                     <div className="flex mb-4">
                       {[...Array(testimonial.rating)].map((_, i) => (
                         <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                       ))}
                     </div>
-                    <p className="text-gray-700 mb-6 italic leading-relaxed">"{testimonial.quote}"</p>
+                    <p className="text-gray-700 mb-6 italic leading-relaxed">
+                      "{testimonial.quote}"
+                    </p>
                     <div>
                       <div className="font-bold text-gray-900">{testimonial.author}</div>
                       <div className="text-sm text-gray-600">{testimonial.role}</div>
@@ -558,16 +645,15 @@ export const LandingRedesigned = () => {
         <section className="py-32 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-black/20" />
           <AnimatedBackground />
-          
+
           <div className="container mx-auto px-4 relative">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-5xl lg:text-7xl font-black mb-8">
-                Ready to Build the Future?
-              </h2>
+              <h2 className="text-5xl lg:text-7xl font-black mb-8">Ready to Build the Future?</h2>
               <p className="text-2xl text-blue-100 mb-12 leading-relaxed">
-                Join 10,000+ developers already building with The New Fuse. Start free, scale as you grow.
+                Join 10,000+ developers already building with The New Fuse. Start free, scale as you
+                grow.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
                 <Button
                   asChild
@@ -585,9 +671,7 @@ export const LandingRedesigned = () => {
                   variant="outline"
                   className="border-2 border-white/30 text-white hover:bg-white/10 px-12 py-8 text-xl font-semibold backdrop-blur"
                 >
-                  <Link to="/auth/login">
-                    Sign In
-                  </Link>
+                  <Link to="/auth/login">Sign In</Link>
                 </Button>
               </div>
 
@@ -618,7 +702,7 @@ export const LandingRedesigned = () => {
           </div>
         </section>
       </main>
-      
+
       <LandingFooter />
     </div>
   );

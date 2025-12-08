@@ -117,13 +117,20 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const LandingRevolutionary = lazy(() => import('./pages/landing-v2/index'));
+const LandingRedesigned = lazy(() => import('./pages/LandingRedesigned'));
 
 export function AppRoutes() {
   return (
     <Routes>
       {/* Public landing page */}
-      <Route path="/" element={<LandingRevolutionary />} />
+      <Route
+        path="/"
+        element={
+          <Suspense fallback={<Loading />}>
+            <LandingRedesigned />
+          </Suspense>
+        }
+      />
 
       {/* Auth routes */}
       <Route path="/auth">

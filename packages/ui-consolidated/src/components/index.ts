@@ -29,3 +29,6 @@ export * from './Split';
 // Feature Components
 export * from './features/memory-inspector/MemoryInspector';
 export * from './features/metrics-dashboard/MetricsDashboard';
+
+export * from './GlassCard';
+export * from './MagneticButton';
