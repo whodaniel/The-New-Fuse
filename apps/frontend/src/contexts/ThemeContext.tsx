@@ -1,25 +1,51 @@
-import React, { createContext, useState, useContext } from 'react';
-const ThemeContext = createContext(null);
-const defaultTheme = {
-    mode: 'system',
-    primaryColor: '#0070f3',
-    secondaryColor: '#00b4d8',
+import { createContext, ReactNode, useContext, useState } from 'react';
+
+// Define the theme context types
+interface Theme {
+  mode: 'light' | 'dark' | 'system';
+  primaryColor: string;
+  secondaryColor: string;
+}
+
+interface ThemeContextType {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  toggleMode: () => void;
+}
+
+// Create the context with proper typing
+const ThemeContext = createContext<ThemeContextType | null>(null);
+
+// Default theme values
+const defaultTheme: Theme = {
+  mode: 'system',
+  primaryColor: '#0070f3',
+  secondaryColor: '#00b4d8',
 };
-export function ThemeProvider({ children }): any {
-    const [theme, setTheme] = useState(defaultTheme);
-    const toggleMode = (): any => {
-        setTheme((prev) => (Object.assign(Object.assign({}, prev), { mode: prev.mode === 'light' ? 'dark' : 'light' })));
-    };
-    return (<ThemeContext.Provider value={{ theme, setTheme, toggleMode }}>
+
+// Theme Provider component with proper TypeScript typing
+export function ThemeProvider({ children }: { children: ReactNode }): JSX.Element {
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+
+  const toggleMode = (): void => {
+    setTheme((prev) => ({
+      ...prev,
+      mode: prev.mode === 'light' ? 'dark' : 'light',
+    }));
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, toggleMode }}>
       {children}
-    </ThemeContext.Provider>);
+    </ThemeContext.Provider>
+  );
 }
-export function useTheme(): any {
-    const context = useContext(ThemeContext);
-    if (!context) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
-    return context;
+
+// Custom hook for using theme context with proper error handling
+export function useTheme(): ThemeContextType {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
 }
-// Re-export the theme context from the core package
-export { ThemeProvider, useTheme } from '@features/theme/ThemeContext';
