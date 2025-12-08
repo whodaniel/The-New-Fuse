@@ -4,11 +4,10 @@
  */
 
 import { useTheme } from '@/contexts/ThemeContext';
+import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
-import { BreadcrumbNavigation } from './BreadcrumbNavigation';
 import { Footer } from './Footer';
 import { Header } from './Header';
-import { PageHeader } from './PageHeader';
 import { Sidebar } from './Sidebar';
 
 interface StandardLayoutProps {
@@ -198,7 +197,7 @@ export const PageHeader = ({ title, subtitle, actions }: PageHeaderProps) => {
 interface GridProps {
   children: ReactNode;
   cols?: number | number[];
-  gap?: number;
+  _gap?: number;
   className?: string;
 }
 
