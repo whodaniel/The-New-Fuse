@@ -3,9 +3,9 @@
  * This layout provides consistent structure across all application pages
  */
 
+import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
-import { useTheme } from '../../../ThemeContext';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
@@ -267,7 +267,7 @@ const ErrorState = ({
 // Export default
 export default StandardLayout;
 
-// Export named components (excluding StandardLayout to avoid duplicate export)
+// Export named components (including StandardLayout for compatibility)
 export {
   BreadcrumbNavigation,
   EmptyState,
@@ -277,4 +277,5 @@ export {
   LoadingState,
   PageHeader,
   ResponsiveGrid,
+  StandardLayout,
 };
