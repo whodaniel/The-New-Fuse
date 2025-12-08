@@ -7,7 +7,7 @@ import PerformanceMonitor, {
 import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
-import { AppRoutes } from './routes';
+import ComprehensiveRouter from './ComprehensiveRouter';
 
 const queryClient = new QueryClient();
 
@@ -17,7 +17,7 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      <AppRoutes />
+      <ComprehensiveRouter />
       {showMonitor && <PerformanceMonitor position="bottom-right" compact={true} />}
     </>
   );

@@ -1,5 +1,4 @@
 import { LandingFooter } from '@/components/layout/LandingFooter';
-import { LandingHeader } from '@/components/layout/LandingHeader';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -160,7 +159,6 @@ export const LandingRedesigned = () => {
         ]}
         canonical={typeof window !== 'undefined' ? window.location.origin : ''}
       />
-      <LandingHeader />
 
       <main className="flex-grow" role="main">
         {/* Hero Section - Completely Redesigned */}

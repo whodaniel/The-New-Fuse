@@ -4,21 +4,21 @@
  */
 
 import React from 'react';
-import { Handle, Position } from 'reactflow';
 import {
-  FiUser,
+  FiAlertCircle,
+  FiCheckCircle,
+  FiClock,
   FiCpu,
   FiGitBranch,
   FiGrid,
-  FiCheckCircle,
-  FiPlay,
   FiPause,
-  FiAlertCircle,
-  FiClock,
-  FiUsers
+  FiPlay,
+  FiUser,
+  FiUsers,
 } from 'react-icons/fi';
-import { Tooltip } from '../../components/ui/tooltip';
+import { Handle, Position } from 'reactflow';
 import { Badge } from '../../components/ui/design-system';
+import { Tooltip } from '../../components/ui/tooltip';
 
 // Base Node Component
 interface BaseNodeProps {
@@ -77,13 +77,9 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
               <FiCpu className="w-3 h-3" />
             </div>
             <div className="flex flex-col flex-1">
-              <div className="text-sm font-bold text-purple-900">
-                {data.label}
-              </div>
+              <div className="text-sm font-bold text-purple-900">{data.label}</div>
               {data.agentName && (
-                <div className="text-xs text-purple-600">
-                  Agent: {data.agentName}
-                </div>
+                <div className="text-xs text-purple-600">Agent: {data.agentName}</div>
               )}
             </div>
             {data.status && (
@@ -96,9 +92,7 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
           </div>
 
           {data.description && (
-            <div className="text-xs text-gray-600 line-clamp-2">
-              {data.description}
-            </div>
+            <div className="text-xs text-gray-600 line-clamp-2">{data.description}</div>
           )}
 
           {data.status === 'running' && data.progress !== undefined && (
@@ -119,16 +113,14 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
           {data.estimatedTime && (
             <div className="flex items-center gap-1">
               <FiClock className="w-3 h-3 text-gray-500" />
-              <div className="text-xs text-gray-600">
-                ~{data.estimatedTime}min
-              </div>
+              <div className="text-xs text-gray-600">~{data.estimatedTime}min</div>
             </div>
           )}
         </div>
       </div>
 
       <Handle type="source" position={Position.Bottom} style={{ background: '#805AD5' }} />
-    </Card>
+    </div>
   );
 };
 
@@ -143,18 +135,14 @@ export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => 
       <div className="p-3">
         <div className="flex flex-col gap-2 items-center">
           <FiGitBranch className="w-5 h-5 text-orange-600" />
-          <div className="text-sm font-bold text-orange-900 text-center">
-            {data.label}
-          </div>
+          <div className="text-sm font-bold text-orange-900 text-center">{data.label}</div>
           {data.condition && (
             <Badge variant="warning" size="sm" className="text-center">
               {data.condition}
             </Badge>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">
-              {data.description}
-            </div>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
           )}
         </div>
       </div>
@@ -166,11 +154,7 @@ export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => 
         id="true"
         style={{ background: '#48BB78', top: '30%' }}
       />
-      <div
-        className="absolute right-[-35px] top-[25%] text-xs text-green-600 font-bold"
-      >
-        True
-      </div>
+      <div className="absolute right-[-35px] top-[25%] text-xs text-green-600 font-bold">True</div>
 
       <Handle
         type="source"
@@ -178,11 +162,7 @@ export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => 
         id="false"
         style={{ background: '#F56565', top: '70%' }}
       />
-      <div
-        className="absolute right-[-38px] top-[65%] text-xs text-red-600 font-bold"
-      >
-        False
-      </div>
+      <div className="absolute right-[-38px] top-[65%] text-xs text-red-600 font-bold">False</div>
     </div>
   );
 };
@@ -198,18 +178,14 @@ export const ParallelNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
       <div className="p-3">
         <div className="flex flex-col gap-2 items-center">
           <FiGrid className="w-5 h-5 text-cyan-600" />
-          <div className="text-sm font-bold text-cyan-900 text-center">
-            {data.label}
-          </div>
+          <div className="text-sm font-bold text-cyan-900 text-center">{data.label}</div>
           {data.parallelTasks && (
             <Badge variant="primary" size="sm">
               {data.parallelTasks} parallel tasks
             </Badge>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">
-              {data.description}
-            </div>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
           )}
           {data.status === 'running' && (
             <div className="flex items-center gap-1">
@@ -254,15 +230,11 @@ export const HumanApprovalNode: React.FC<BaseNodeProps> = ({ data, selected }) =
       <div className="p-3">
         <div className="flex flex-col gap-2 items-center">
           <FiUser className="w-5 h-5 text-pink-600" />
-          <div className="text-sm font-bold text-pink-900 text-center">
-            {data.label}
-          </div>
+          <div className="text-sm font-bold text-pink-900 text-center">{data.label}</div>
           {data.approvers && (
             <div className="flex items-center gap-1">
               <FiUsers className="w-3 h-3 text-pink-500" />
-              <div className="text-xs text-pink-600">
-                {data.approvers} approver(s)
-              </div>
+              <div className="text-xs text-pink-600">{data.approvers} approver(s)</div>
             </div>
           )}
           {data.status === 'waiting' && (
@@ -276,9 +248,7 @@ export const HumanApprovalNode: React.FC<BaseNodeProps> = ({ data, selected }) =
             </Badge>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">
-              {data.description}
-            </div>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
           )}
         </div>
       </div>
@@ -299,9 +269,7 @@ export const MultiAgentNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
       <div className="p-3">
         <div className="flex flex-col gap-2 items-center">
           <FiUsers className="w-5 h-5 text-teal-600" />
-          <div className="text-sm font-bold text-teal-900 text-center">
-            {data.label}
-          </div>
+          <div className="text-sm font-bold text-teal-900 text-center">{data.label}</div>
           {data.agents && (
             <div className="flex flex-wrap gap-1">
               {data.agents.slice(0, 3).map((agent: string, idx: number) => (
@@ -317,14 +285,10 @@ export const MultiAgentNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
             </div>
           )}
           {data.description && (
-            <div className="text-xs text-gray-600 text-center line-clamp-2">
-              {data.description}
-            </div>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">{data.description}</div>
           )}
           {data.status === 'running' && data.activeAgent && (
-            <div className="text-xs text-teal-600">
-              Active: {data.activeAgent}
-            </div>
+            <div className="text-xs text-teal-600">Active: {data.activeAgent}</div>
           )}
         </div>
       </div>

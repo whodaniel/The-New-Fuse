@@ -19,7 +19,7 @@ const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
 const AgentsPage = lazy(() => import('./pages/Agents/AgentsPage'));
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows'));
-const WorkflowBuilder = lazy(() => import('./pages/Workflows/Builder'));
+const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/index'));
@@ -77,6 +77,7 @@ const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 
 // Landing components
 const LandingIndexPage = lazy(() => import('./pages/Landing'));
+const LandingRedesignedPage = lazy(() => import('./pages/LandingRedesigned'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 
 // Workspace components
@@ -118,9 +119,9 @@ const SimpleLandingPage = lazy(() => import('./pages/SimpleLanding'));
 
 // Enhanced workflow pages
 const WorkflowsEnhancedPage = lazy(() => import('./pages/WorkflowsEnhanced'));
-const WorkflowDetailPage = lazy(() => import('./pages/Workflows/Detail'));
-const WorkflowExecutionPage = lazy(() => import('./pages/Workflows/Execution'));
-const WorkflowTemplatesPage = lazy(() => import('./pages/Workflows/Templates'));
+const WorkflowDetailPage = lazy(() => import('./pages/workflow-pages/Detail'));
+const WorkflowExecutionPage = lazy(() => import('./pages/workflow-pages/Execution'));
+const WorkflowTemplatesPage = lazy(() => import('./pages/workflow-pages/Templates'));
 
 // Preview pages
 const OnboardingPreviewPage = lazy(() => import('./pages/preview/OnboardingPreview'));
@@ -183,8 +184,8 @@ export default function ComprehensiveRouter() {
       <Suspense fallback={<LoadingFallback name="Page" />}>
         <Routes>
           {/* Core Routes */}
-          <Route path="/" element={<LandingIndexPage />} />
-          <Route path="/home" element={<LandingIndexPage />} />
+          <Route path="/" element={<LandingRedesignedPage />} />
+          <Route path="/home" element={<LandingRedesignedPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sophisticated-hub" element={<SophisticatedTNFHub />} />
 
