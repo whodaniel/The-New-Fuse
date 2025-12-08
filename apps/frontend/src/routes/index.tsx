@@ -26,6 +26,14 @@ const PrivacyPolicy = React.lazy(() => import('@/pages/legal/PrivacyPolicy'));
 const TermsOfService = React.lazy(() => import('@/pages/legal/TermsOfService'));
 const OnboardingPreview = React.lazy(() => import('@/pages/preview/OnboardingPreview'));
 
+// Informational pages
+const Pricing = React.lazy(() => import('@/pages/Pricing'));
+const Docs = React.lazy(() => import('@/pages/Docs'));
+const Support = React.lazy(() => import('@/pages/Support'));
+const Integrations = React.lazy(() => import('@/pages/Integrations'));
+const Features = React.lazy(() => import('@/pages/Features'));
+const Blog = React.lazy(() => import('@/pages/Blog'));
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -97,6 +105,56 @@ export function AppRoutes() {
         element={
           <Suspense fallback={<Loading />}>
             <GraphDemo />
+          </Suspense>
+        }
+      />
+
+      {/* Informational pages - publicly accessible */}
+      <Route
+        path="pricing"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Pricing />
+          </Suspense>
+        }
+      />
+      <Route
+        path="docs"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Docs />
+          </Suspense>
+        }
+      />
+      <Route
+        path="support"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Support />
+          </Suspense>
+        }
+      />
+      <Route
+        path="integrations"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Integrations />
+          </Suspense>
+        }
+      />
+      <Route
+        path="features"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Features />
+          </Suspense>
+        }
+      />
+      <Route
+        path="blog"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Blog />
           </Suspense>
         }
       />
