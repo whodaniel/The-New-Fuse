@@ -136,7 +136,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "@vitejs/plugin-react-swc": "^4.1.0",
     "@vitest/coverage-v8": "latest",
-    "@vitest/ui": "^4.0.13",
+    "@vitest/ui": "^4.0.15",
     "autoprefixer": "^10.4.21",
     "browserslist": "^4.27.0",
     "eslint": "^9.39.1",
