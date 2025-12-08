@@ -1,3 +1,6 @@
+/* Import landing page animations */
+@import './landing-animations.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

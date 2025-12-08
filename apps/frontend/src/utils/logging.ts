@@ -1,50 +1,43 @@
-export {}
-exports.setupLogging = setupLogging;
-exports.getLogger = getLogger;
-import fs from 'fs';
-import path from 'path';
-import winston from 'winston';
-require("winston-daily-rotate-file");
-const DEFAULT_CONFIG = {
-    level: 'info',
-    format: '${timestamp} - ${service} - ${level}: ${message}',
-    file: 'logs/app.log',
-    maxSize: 10 * 1024 * 1024,
-    maxFiles: 5
+/**
+ * Browser-compatible logging utilities
+ *
+ * NOTE: This file was rewritten to remove Node.js-only dependencies (winston, fs, path)
+ * that were causing the React app to crash in the browser.
+ *
+ * For actual logging, use:
+ * - LoggingService from '../services/logging' (browser-compatible singleton)
+ * - Logger from './logger' (browser-compatible structured logger)
+ */
+
+export interface LoggingConfig {
+  level: string;
+  format: string;
+  file?: string;
+  maxSize?: number;
+  maxFiles?: number;
+}
+
+const DEFAULT_CONFIG: LoggingConfig = {
+  level: 'info',
+  format: '${timestamp} - ${service} - ${level}: ${message}',
 };
-function setupLogging(app, config = {}): any {
-    const logConfig = Object.assign(Object.assign(Object.assign({}, DEFAULT_CONFIG), config), { level: (process.env.LOG_LEVEL || config.level || DEFAULT_CONFIG.level).toLowerCase(), format: process.env.LOG_FORMAT || config.format || DEFAULT_CONFIG.format, file: process.env.LOG_FILE || config.file || DEFAULT_CONFIG.file });
-    const logDir = path.dirname(logConfig.file);
-    if (!fs.existsSync(logDir)) {
-        fs.mkdirSync(logDir, { recursive: true });
-    }
-    const logger = winston.createLogger({
-        level: logConfig.level,
-        format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
-        defaultMeta: { service: 'app' },
-        transports: [
-            new winston.transports.Console({
-                format: winston.format.combine(winston.format.colorize(), winston.format.printf(({ timestamp, level, message, service }) => {
-                    return logConfig.format
-                        .replace('${timestamp}', timestamp)
-                        .replace('${service}', service)
-                        .replace('${level}', level)
-                        .replace('${message}', message);
-                }))
-            }),
-            new winston.transports.DailyRotateFile({
-                filename: logConfig.file,
-                datePattern: 'YYYY-MM-DD',
-                maxSize: logConfig.maxSize,
-                maxFiles: logConfig.maxFiles,
-                format: winston.format.combine(winston.format.timestamp(), winston.format.json())
-            })
-        ]
-    });
-    app.locals.logger = logger;
-    logger.info(`Logging configured with level: ${logConfig.level}`);
+
+/**
+ * Browser-compatible setup function
+ * In browser context, this is a no-op since we use console logging
+ */
+export function setupLogging(_app: any, config: Partial<LoggingConfig> = {}): void {
+  const logConfig = { ...DEFAULT_CONFIG, ...config };
+  console.info(`[Logging] Configured with level: ${logConfig.level}`);
 }
-function getLogger(app): any {
-    return app.locals.logger;
+
+/**
+ * Browser-compatible logger getter
+ * Returns a console-based logger
+ */
+export function getLogger(_app?: any): Console {
+  return console;
 }
-export {};
+
+// Export empty object for compatibility with any destructuring imports
+export default {};

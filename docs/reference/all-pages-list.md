@@ -1,93 +1,140 @@
-# All Pages in The New Fuse
+# 📄 Complete Page Inventory
 
-This document provides a comprehensive list of all pages found in the codebase, organized by categories.
+**Source of Truth**: File System Audit + Router Configuration **Date**:
+2025-12-08
 
-## Main Pages
+## 1. Public / Marketing
 
-- LandingPage (`./packages/frontend/src/pages/LandingPage.tsx`)
-- Dashboard (`./packages/frontend/src/pages/Dashboard.tsx`)
-- Login (`./packages/frontend/src/pages/Login.tsx`)
-- Home (`./apps/frontend/src/pages/Home.tsx`)
-- NotFound (404) (`./apps/frontend/src/pages/404.tsx`)
-- Unauthorized (`./apps/frontend/src/pages/Unauthorized.tsx`)
+- `/` - **Landing Page V2 (New)**
+  (`apps/frontend/src/pages/landing-v2/index.tsx`)
+- `/landing` - Legacy Landing (`apps/frontend/src/pages/Landing.tsx`)
+- `/landing-page` - Legacy Landing Alt
+  (`apps/frontend/src/pages/LandingPage.tsx`)
+- `/simple-landing` - Minimal Landing
+  (`apps/frontend/src/pages/SimpleLanding.tsx`)
 
-## Auth Pages
+## 2. Authentication
 
-- Login (`./apps/frontend/src/pages/auth/Login.tsx`)
-- Register (`./apps/frontend/src/pages/auth/Register.tsx`)
-- ForgotPassword (`./apps/frontend/src/pages/auth/ForgotPassword.tsx`)
-- ResetPassword (`./apps/frontend/src/pages/auth/ResetPassword.tsx`)
-- SSO (`./apps/frontend/src/pages/auth/SSO.tsx`)
-- GoogleCallback (`./apps/frontend/src/pages/auth/GoogleCallback.tsx`)
-- OAuthCallback (`./apps/frontend/src/pages/auth/OAuthCallback.tsx`)
+- `/auth/login` - Login (`apps/frontend/src/pages/auth/Login.tsx`)
+- `/auth/register` - Register (`apps/frontend/src/pages/auth/Register.tsx`)
+- `/auth/forgot-password` - Forgot Password
+  (`apps/frontend/src/pages/auth/ForgotPassword.tsx`)
+- `/auth/sso` - SSO (`apps/frontend/src/pages/auth/SSO.tsx`)
+- `/auth/google-callback` - OAuth Callback
+  (`apps/frontend/src/pages/auth/GoogleCallback.tsx`)
 
-## Workspace Pages
+## 3. Core App (Dashboard)
 
-- WorkspaceLayout (`./apps/frontend/src/pages/workspace/WorkspaceLayout.tsx`)
-- Overview (`./apps/frontend/src/pages/workspace/Overview.tsx`)
-- Members (`./apps/frontend/src/pages/workspace/Members.tsx`)
-- Analytics (`./apps/frontend/src/pages/workspace/Analytics.tsx`)
-- Settings (`./apps/frontend/src/pages/workspace/Settings.tsx`)
+- `/dashboard` - Dashboard Home (`apps/frontend/src/pages/dashboard/index.tsx`)
+- `/dashboard/analytics` - Analytics
+  (`apps/frontend/src/pages/dashboard/Analytics.tsx`)
+- `/dashboard/settings` - Dashboard Settings
+  (`apps/frontend/src/pages/dashboard/Settings.tsx`)
+- `/analytics` - Main Analytics
+  (`apps/frontend/src/pages/dashboard/Analytics.tsx`)
+- `/ai-portal` - AI Portal (`apps/frontend/src/pages/AIAgentPortal/index.tsx`)
+- `/settings` - Global Settings (`apps/frontend/src/pages/Settings.tsx`)
+  - Includes: `/settings/appearance`, `/settings/security`, `/settings/api`
 
-## Admin Pages
+## 4. Agents & Chat
 
-- Dashboard (`./apps/frontend/src/pages/Admin/Dashboard.tsx`)
-- Users (`./apps/frontend/src/pages/Admin/Users.tsx`)
-- Workspaces (`./apps/frontend/src/pages/Admin/Workspaces.tsx`)
-- SystemHealth (`./apps/frontend/src/pages/Admin/SystemHealth.tsx`)
-- Settings (`./apps/frontend/src/pages/Admin/Settings.tsx`)
+- `/agents` - All Agents (`apps/frontend/src/pages/Agents/AgentsPage.tsx`)
+- `/agents/new` - Create Agent
+  (`apps/frontend/src/pages/Agents/UnifiedAgentCreator.tsx`)
+- `/agents/:id` - Agent Detail (`apps/frontend/src/pages/Agents/Detail.tsx`)
+- `/chat` - Basic Chat (`apps/frontend/src/pages/chat/ChatPage.tsx`)
+- `/multi-agent-chat` - Advanced Chat
+  (`apps/frontend/src/pages/MultiAgentChat.tsx`)
+- `/memory/:agentId` - Memory Inspector
+  (`apps/frontend/src/pages/MemoryInspector.tsx`)
 
-## Settings Pages
+## 5. Workflows
 
-- General (`./apps/frontend/src/pages/settings/General.tsx`)
-- Appearance (`./apps/frontend/src/pages/GeneralSettings/Appearance/index.jsx`)
-- API (`./apps/frontend/src/pages/GeneralSettings/ApiKeys/index.jsx`)
-- Security (`./apps/frontend/src/pages/GeneralSettings/Security/index.jsx`)
-- Notifications (`./apps/frontend/src/pages/settings/Notifications.tsx`)
+- `/workflows` - Workflows List (`apps/frontend/src/pages/Workflows.tsx`)
+- `/workflows/builder` - Visual Builder
+  (`apps/frontend/src/pages/workflow-pages/WorkflowBuilder.tsx`)
+- `/workflows/templates` - Templates
+  (`apps/frontend/src/pages/workflow-pages/Templates.tsx`)
+- `/workflows/execution` - Execution Monitor
+  (`apps/frontend/src/pages/workflow-pages/Execution.tsx`)
+- `/workflows/:id` - Workflow Detail
+  (`apps/frontend/src/pages/workflow-pages/Detail.tsx`)
 
-## Feature Pages
+## 6. Workspace & Teams
 
-- AIAgentPortal (`./apps/frontend/src/pages/AIAgentPortal/index.tsx`)
-- FlowPage (`./apps/frontend/src/components/flow/FlowPage.tsx`)
-- TimelineDemo (`./apps/frontend/src/pages/TimelineDemo.tsx`)
-- GraphDemo (`./apps/frontend/src/pages/graph-demo.tsx`)
+- `/workspace/overview` - Overview
+  (`apps/frontend/src/pages/workspace/Overview.tsx`)
+- `/workspace/analytics` - Team Analytics
+  (`apps/frontend/src/pages/workspace/WorkspaceAnalytics.tsx`)
+- `/workspace/members` - Members
+  (`apps/frontend/src/pages/workspace/Members.tsx`)
+- `/workspace/chat` - Team Chat
+  (`apps/frontend/src/pages/WorkspaceChat/index.tsx`)
 
-## Onboarding Flow Pages
+## 7. Tasks
 
-- Home (`./apps/frontend/src/pages/OnboardingFlow/Steps/Home/index.jsx`)
-- UserSetup (`./apps/frontend/src/pages/OnboardingFlow/Steps/UserSetup/index.jsx`)
-- CreateWorkspace (`./apps/frontend/src/pages/OnboardingFlow/Steps/CreateWorkspace/index.jsx`)
-- LLMPreference (`./apps/frontend/src/pages/OnboardingFlow/Steps/LLMPreference/index.jsx`)
-- DataHandling (`./apps/frontend/src/pages/OnboardingFlow/Steps/DataHandling/index.jsx`)
-- Survey (`./apps/frontend/src/pages/OnboardingFlow/Steps/Survey/index.jsx`)
+- `/tasks` - Task List (`apps/frontend/src/pages/Tasks/TasksPage.tsx`)
+- `/tasks/new` - New Task (`apps/frontend/src/pages/Tasks/New.tsx`)
+- `/tasks/:id` - Task Detail (`apps/frontend/src/pages/Tasks/Detail.tsx`)
+- `/tasks/:id/edit` - Edit Task (`apps/frontend/src/pages/Tasks/Edit.tsx`)
 
-## Component Pages
+## 8. Suggestions
 
-- EnhancedTimelineView (`./apps/frontend/src/features/timeline/components/EnhancedTimelineView.tsx`)
-- KnowledgeGraphViewer (`./apps/frontend/src/components/wizard/KnowledgeGraphViewer.tsx`)
-- WorkflowStepViewer (`./packages/ui-components/src/features/workflow/components/WorkflowStepViewer.tsx`)
-- PageHeader (`./packages/layout/components/PageHeader.tsx`)
+- `/suggestions` - Suggestions (`apps/frontend/src/pages/Suggestions/index.tsx`)
+- `/suggestions/new` - New Suggestion
+  (`apps/frontend/src/pages/Suggestions/New.tsx`)
+- `/suggestions/:id` - Detail (`apps/frontend/src/pages/Suggestions/Detail.tsx`)
 
-## General Settings Pages
+## 9. Admin Console
 
-- EmbeddingPreference (`./apps/frontend/src/pages/GeneralSettings/EmbeddingPreference/index.tsx`)
-- PrivacyAndData (`./apps/frontend/src/pages/GeneralSettings/PrivacyAndData/index.jsx`)
-- CommunityHub (`./apps/frontend/src/pages/GeneralSettings/CommunityHub/Trending/index.jsx`)
-- TranscriptionPreference (`./apps/frontend/src/pages/GeneralSettings/TranscriptionPreference/index.jsx`)
-- BrowserExtensionApiKey (`./apps/frontend/src/pages/GeneralSettings/BrowserExtensionApiKey/index.jsx`)
-- EmbedChats (`./apps/frontend/src/pages/GeneralSettings/EmbedChats/index.jsx`)
-- AudioPreference (`./apps/frontend/src/pages/GeneralSettings/AudioPreference/index.jsx`)
-- VectorDatabase (`./apps/frontend/src/pages/GeneralSettings/VectorDatabase/index.jsx`)
-- LLMPreference (`./apps/frontend/src/pages/GeneralSettings/LLMPreference/index.jsx`)
-- Chats (`./apps/frontend/src/pages/GeneralSettings/Chats/index.jsx`)
-- EmbedConfigs (`./apps/frontend/src/pages/GeneralSettings/EmbedConfigs/index.jsx`)
+- `/admin` - Admin Panel (`apps/frontend/src/pages/Admin/index.tsx`)
+- `/admin/users` - User Mgmt
+  (`apps/frontend/src/pages/Admin/UserManagement.tsx`)
+- `/admin/security` - Security
+  (`apps/frontend/src/pages/Admin/SecurityDashboard.tsx`)
+- `/admin/monitoring` - Monitoring
+  (`apps/frontend/src/pages/Admin/SystemMonitoring.tsx`)
+- `/admin/features` - Feature Flags
+  (`apps/frontend/src/pages/Admin/FeatureFlags.tsx`)
+- `/admin/port-management` - Port Mgmt
+  (`apps/frontend/src/pages/Admin/PortManagement.tsx`)
+- `/admin/system-health` - Health
+  (`apps/frontend/src/pages/Admin/SystemHealth.tsx`)
+- `/admin/agent-skills` - Skills
+  (`apps/frontend/src/pages/Admin/Agents/skills.tsx`)
+- `/admin/web-search` - Search Config
+  (`apps/frontend/src/pages/Admin/Agents/WebSearchSelection/index.tsx`)
 
-## Note
+## 10. Web3
 
-This list excludes backup files and focuses on the main application structure. The total number of unique pages in the application is significant, with:
-- 89 files with Page/View/Screen in their names
-- 200 page component definitions
-- 238 route definitions
-- 1412 pages in standard directories
+- `/nft/marketplace` - Marketplace
+  (`apps/frontend/src/pages/web3/NFTMarketplace.tsx`)
 
-For a complete list of all pages, refer to the detailed analysis results in the `page-analysis-results` directory.
+## 11. Resources & Libraries
+
+- `/resources` - Dashboard
+  (`apps/frontend/src/pages/Resources/ResourcesDashboard.tsx`)
+- `/profile` - User Profile
+  (`apps/frontend/src/components/profile/UserProfilePage.tsx`)
+
+## 12. Dev & Debug Tools
+
+- `/components-showcase` - UI Library
+  (`apps/frontend/src/pages/ComponentsShowcase.tsx`)
+- `/frontend-showcase` - Frontend Features
+  (`apps/frontend/src/pages/FrontendShowcase.tsx`)
+- `/build-info` - Build Info (`apps/frontend/src/pages/BuildInfo.tsx`)
+- `/debug` - Debug Info (`apps/frontend/src/pages/Debug.tsx`)
+- `/debug-routing` - Route Tester (`apps/frontend/src/pages/DebugRouting.tsx`)
+- `/test` - Test Page (`apps/frontend/src/pages/Test/index.tsx`)
+- `/timeline-demo` - Timeline (`apps/frontend/src/pages/timeline-demo.tsx`)
+- `/graph-demo` - Graph (`apps/frontend/src/pages/graph-demo.tsx`)
+
+## 13. System Pages
+
+- `/404` - Not Found (`apps/frontend/src/pages/404.tsx`)
+- `/unauthorized` - Unauthorized (`apps/frontend/src/pages/Unauthorized.tsx`)
+- `/onboarding` - Onboarding Flow
+  (`apps/frontend/src/pages/OnboardingFlow/index.tsx`)
+- `/legal/privacy` - Privacy (`apps/frontend/src/pages/legal/PrivacyPolicy.tsx`)
+- `/legal/terms` - Terms (`apps/frontend/src/pages/legal/TermsOfService.tsx`)

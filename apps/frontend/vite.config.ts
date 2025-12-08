@@ -56,9 +56,10 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
-        '@the-new-fuse/core': path.resolve(__dirname, '../../packages/core/src'),
+        // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code
+        // @the-new-fuse/utils is aliased to a browser-safe shim
+        '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
-        '@the-new-fuse/utils': path.resolve(__dirname, '../../packages/utils/src'),
         '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
         '@the-new-fuse/feature-suggestions': path.resolve(
           __dirname,
@@ -71,6 +72,10 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/config': path.resolve(__dirname, '../../config'),
         '@the-new-fuse/a2a-react': path.resolve(__dirname, '../../packages/a2a-react/src'),
         '@the-new-fuse/a2a-core': path.resolve(__dirname, '../../packages/a2a-core/src'),
+        // Stub Node.js-only modules for browser compatibility
+        winston: path.resolve(__dirname, 'src/stubs/winston.ts'),
+        'winston-daily-rotate-file': path.resolve(__dirname, 'src/stubs/winston.ts'),
+        ioredis: path.resolve(__dirname, 'src/stubs/empty.ts'),
       },
     },
     define: {
@@ -94,7 +99,20 @@ export default defineConfig(({ mode }) => {
     publicDir: 'public',
     optimizeDeps: {
       include: ['firebase', '@firebase/app', '@firebase/auth'],
-      exclude: ['@firebase/app-types', '@firebase/app-compat', '@types/d3', '@types/file-saver'],
+      exclude: [
+        '@firebase/app-types',
+        '@firebase/app-compat',
+        '@types/d3',
+        '@types/file-saver',
+        // Exclude Node.js-only modules that break browser
+        'winston',
+        'winston-daily-rotate-file',
+        'ioredis',
+        'fs',
+        'path',
+        'os',
+        'util',
+      ],
     },
     build: {
       outDir: 'dist',
