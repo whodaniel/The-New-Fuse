@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.1.9",
-    "@nestjs/websockets": "^11.0.0",
+    "@nestjs/websockets": "^11.1.9",
     "@the-new-fuse/ap2-protocol": "workspace:^",
     "@the-new-fuse/mcp-core": "workspace:^",
     "axios": "^1.6.2",

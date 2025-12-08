@@ -19,7 +19,7 @@
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.9",
-    "@nestjs/throttler": "^6.4.0",
+    "@nestjs/throttler": "^6.5.0",
     "@the-new-fuse/types": "workspace:*",
     "compression": "^1.8.1",
     "express": "^4.22.0",
