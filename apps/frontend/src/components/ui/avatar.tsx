@@ -2,8 +2,8 @@
  * Avatar Component - Chakra-compatible Avatar for The New Fuse
  */
 
-import React, { useState, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import React, { useState, type ReactNode } from 'react';
 
 interface AvatarProps {
   name?: string;
@@ -53,7 +53,9 @@ export const Avatar = ({ name, src, size = 'md', children, className }: AvatarPr
         />
       )}
       {showInitials && (
-        <span className="font-medium text-neutral-700 dark:text-neutral-300">{getInitials(name)}</span>
+        <span className="font-medium text-neutral-700 dark:text-neutral-300">
+          {getInitials(name)}
+        </span>
       )}
       {children}
     </div>
@@ -118,6 +120,49 @@ export const AvatarGroup = ({
           <span className="text-xs font-medium">+{remaining}</span>
         </Avatar>
       )}
+    </div>
+  );
+};
+
+// Composition-based Avatar components for compatibility
+export const AvatarImage = ({
+  src,
+  alt,
+  className,
+}: {
+  src?: string;
+  alt?: string;
+  className?: string;
+}) => {
+  const [imageError, setImageError] = useState(false);
+
+  if (!src || imageError) return null;
+
+  return (
+    <img
+      src={src}
+      alt={alt || 'Avatar'}
+      onError={() => setImageError(true)}
+      className={cn('h-full w-full object-cover', className)}
+    />
+  );
+};
+
+export const AvatarFallback = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={cn(
+        'flex h-full w-full items-center justify-center bg-neutral-200 dark:bg-neutral-700',
+        className
+      )}
+    >
+      <span className="font-medium text-neutral-700 dark:text-neutral-300">{children}</span>
     </div>
   );
 };
