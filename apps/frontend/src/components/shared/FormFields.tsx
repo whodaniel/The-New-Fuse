@@ -3,10 +3,10 @@
  * Replaces corrupted Material-UI version with Tailwind + Custom Design System
  */
 
-import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
 import { Eye, EyeOff, Plus, X } from 'lucide-react';
 import { ReactNode, useState } from 'react';
+import { cn } from '../../lib/utils';
+import { Slider } from '../ui/slider';
 
 // Text Field
 interface FormTextFieldProps {

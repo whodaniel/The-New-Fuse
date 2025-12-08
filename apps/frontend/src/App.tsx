@@ -42,8 +42,9 @@ export function App() {
         );
         console.log(
           '- Navigation timing:',
-          performance.getEntriesByType('navigation')[0]?.loadEventEnd
-            ? `${(performance.getEntriesByType('navigation')[0].loadEventEnd / 1000).toFixed(2)}s`
+          (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)
+            ?.loadEventEnd
+            ? `${((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming).loadEventEnd / 1000).toFixed(2)}s`
             : 'N/A'
         );
       }, 2000);
