@@ -246,14 +246,15 @@ export default defineConfig(({ mode }) => {
               return 'ui-libs';
             }
 
-            // State management
-            if (
-              id.includes('node_modules/@reduxjs/') ||
-              id.includes('node_modules/react-redux') ||
-              id.includes('node_modules/zustand') ||
-              id.includes('node_modules/@tanstack/react-query')
-            ) {
-              return 'state-management';
+            // State management - split into separate chunks to avoid conflicts
+            if (id.includes('node_modules/@reduxjs/') || id.includes('node_modules/react-redux')) {
+              return 'redux-vendor';
+            }
+            if (id.includes('node_modules/zustand')) {
+              return 'zustand-vendor';
+            }
+            if (id.includes('node_modules/@tanstack/react-query')) {
+              return 'react-query-vendor';
             }
 
             // Utilities
