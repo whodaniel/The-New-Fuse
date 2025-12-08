@@ -37,6 +37,11 @@ ENV VITE_API_URL=https://api.thenewfuse.com
 ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
 RUN npm run build || pnpm run build
 
+# Normalize dist directory location
+# If running from monorepo root, build output is in apps/frontend/dist
+# If running from app root, build output is in dist - this logic handles both cases
+RUN if [ -d "apps/frontend/dist" ]; then rm -rf dist && mv apps/frontend/dist ./dist; fi
+
 # Stage 2: Production stage
 FROM node:22-alpine AS runner
 
