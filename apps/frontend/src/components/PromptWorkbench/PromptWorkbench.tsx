@@ -1,22 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Flex,
-  VStack,
-  HStack,
-  Heading,
-  Text,
-  Button,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  useToast,
-  Divider,
-  useDisclosure,
-  Select
-} from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { PromptEditor } from './PromptEditor';
 import { VariableManager } from './VariableManager';
 import { TestCaseManager } from './TestCaseManager';
@@ -25,19 +7,21 @@ import { VersionHistory } from './VersionHistory';
 import { PromptSaveModal } from './PromptSaveModal';
 import { usePromptTemplates } from '../../hooks/usePromptTemplates';
 import { useModels } from '../../hooks/useModels';
+import { Button, Tabs } from '../ui/design-system';
 
 export const PromptWorkbench: React.FC = () => {
-  const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { templates, saveTemplate, loadTemplate } = usePromptTemplates();
+  const { templates, saveTemplate } = usePromptTemplates();
   const { models, selectedModel, setSelectedModel, generateCompletion } = useModels();
-  
+
   const [prompt, setPrompt] = useState<string>('');
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [testCases, setTestCases] = useState<any[]>([]);
   const [results, setResults] = useState<any[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+
+  // Removed unused loadTemplate destructuring if implied by handleTemplateSelect logic
 
   const handlePromptChange = (newPrompt: string) => {
     setPrompt(newPrompt);
@@ -61,11 +45,7 @@ export const PromptWorkbench: React.FC = () => {
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      toast({
-        title: 'Empty prompt',
-        description: 'Please enter a prompt template',
-        status: 'warning',
-      });
+      alert('Please enter a prompt template');
       return;
     }
 
@@ -79,7 +59,7 @@ export const PromptWorkbench: React.FC = () => {
         for (const testCase of testCases) {
           const testVars = { ...variables, ...testCase.variables };
           const compiledPrompt = compilePrompt(prompt, testVars);
-          
+
           const result = await generateCompletion(compiledPrompt);
           newResults.push({
             testCase: testCase.name,
@@ -99,24 +79,18 @@ export const PromptWorkbench: React.FC = () => {
           timestamp: new Date().toISOString()
         }]);
       }
-      
-      toast({
-        title: 'Generation complete',
-        status: 'success',
-      });
+
+      // toast success replaced with console or custom notification if available
+      console.log('Generation complete');
     } catch (error) {
-      toast({
-        title: 'Generation failed',
-        description: (error as Error).message,
-        status: 'error',
-      });
+      alert(`Generation failed: ${(error as Error).message}`);
     } finally {
       setIsGenerating(false);
     }
   };
 
   const handleSave = () => {
-    onOpen();
+    setIsSaveModalOpen(true);
   };
 
   const handleTemplateSelect = (templateId: string) => {
@@ -127,89 +101,94 @@ export const PromptWorkbench: React.FC = () => {
         setVariables(template.variables || {});
         setTestCases(template.testCases || []);
         setActiveTemplate(templateId);
-        toast({
-          title: 'Template loaded',
-          description: `Loaded "${template.name}"`,
-          status: 'info',
-        });
+        console.log(`Loaded "${template.name}"`);
       }
     } else {
       setActiveTemplate(null);
     }
   };
 
+  const tabs = [
+    {
+      id: 'edit',
+      title: 'Edit Prompt',
+      content: <PromptEditor prompt={prompt} onChange={handlePromptChange} />
+    },
+    {
+      id: 'variables',
+      title: 'Variables',
+      content: <VariableManager variables={variables} onChange={handleVariablesChange} />
+    },
+    {
+      id: 'test-cases',
+      title: 'Test Cases',
+      content: <TestCaseManager testCases={testCases} onChange={handleTestCasesChange} />
+    },
+    {
+      id: 'results',
+      title: 'Results',
+      content: <ResultsViewer results={results} />
+    },
+    {
+      id: 'history',
+      title: 'Version History',
+      content: <VersionHistory templateId={activeTemplate} />
+    }
+  ];
+
   return (
-    <Box p={4}>
-      <Flex justifyContent="space-between" alignItems="center" mb={4}>
-        <Heading size="lg">Prompt Engineering Workbench</Heading>
-        <HStack>
-          <Select 
-            placeholder="Select model"
+    <div className="p-4 space-y-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+        <h2 className="text-2xl font-bold text-gray-900">Prompt Engineering Workbench</h2>
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <select
+            className="input w-full md:w-[200px]"
             value={selectedModel}
             onChange={(e) => setSelectedModel(e.target.value)}
-            w="200px"
           >
+            <option value="" disabled>Select model</option>
             {models.map(model => (
               <option key={model.id} value={model.id}>{model.name}</option>
             ))}
-          </Select>
-          <Select
-            placeholder="Load template"
+          </select>
+
+          <select
+            className="input w-full md:w-[250px]"
             value={activeTemplate || ""}
             onChange={(e) => handleTemplateSelect(e.target.value)}
-            w="250px"
           >
+            <option value="">Load template...</option>
             {templates.map((template: any) => (
               <option key={template.id} value={template.id}>{template.name}</option>
             ))}
-          </Select>
-          <Button 
-            colorScheme="blue"
+          </select>
+
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={handleSave}
           >
             Save Template
           </Button>
+
           <Button
-            colorScheme="green"
+            className="bg-green-600 hover:bg-green-700 text-white"
             onClick={handleGenerate}
-            isLoading={isGenerating}
+            disabled={isGenerating}
           >
-            Generate
+            {isGenerating ? 'Generating...' : 'Generate'}
           </Button>
-        </HStack>
-      </Flex>
+        </div>
+      </div>
 
-      <Tabs variant="enclosed">
-        <TabList>
-          <Tab>Edit Prompt</Tab>
-          <Tab>Variables</Tab>
-          <Tab>Test Cases</Tab>
-          <Tab>Results</Tab>
-          <Tab>Version History</Tab>
-        </TabList>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-4">
+          <Tabs tabs={tabs} />
+        </div>
+      </div>
 
-        <TabPanels>
-          <TabPanel>
-            <PromptEditor prompt={prompt} onChange={handlePromptChange} />
-          </TabPanel>
-          <TabPanel>
-            <VariableManager variables={variables} onChange={handleVariablesChange} />
-          </TabPanel>
-          <TabPanel>
-            <TestCaseManager testCases={testCases} onChange={handleTestCasesChange} />
-          </TabPanel>
-          <TabPanel>
-            <ResultsViewer results={results} />
-          </TabPanel>
-          <TabPanel>
-            <VersionHistory templateId={activeTemplate} />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-
-      <PromptSaveModal 
-        isOpen={isOpen} 
-        onClose={onClose} 
+      <PromptSaveModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
         onSave={(name, description) => {
           saveTemplate({
             id: activeTemplate || undefined,
@@ -219,13 +198,10 @@ export const PromptWorkbench: React.FC = () => {
             variables,
             testCases
           });
-          toast({
-            title: 'Template saved',
-            status: 'success',
-          });
+          console.log('Template saved');
         }}
         initialData={activeTemplate ? templates.find(t => t.id === activeTemplate) : undefined}
       />
-    </Box>
+    </div>
   );
 };

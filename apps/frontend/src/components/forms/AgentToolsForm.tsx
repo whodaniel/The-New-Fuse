@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Checkbox, FormControl, FormLabel, Stack, Heading, Box, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon } from '@chakra-ui/react';
+import { FaChevronDown } from 'react-icons/fa';
 import { AgentToolType } from '@the-new-fuse/types/src/agent';
 
 interface AgentToolsFormProps {
@@ -8,12 +8,24 @@ interface AgentToolsFormProps {
 }
 
 export const AgentToolsForm: React.FC<AgentToolsFormProps> = ({ selectedTools, onChange }) => {
+  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set([0]));
+
   const handleToolToggle = (tool: AgentToolType) => {
     if (selectedTools.includes(tool)) {
       onChange(selectedTools.filter(t => t !== tool));
     } else {
       onChange([...selectedTools, tool]);
     }
+  };
+
+  const toggleCategory = (idx: number) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(idx)) {
+      newExpanded.delete(idx);
+    } else {
+      newExpanded.add(idx);
+    }
+    setExpandedCategories(newExpanded);
   };
 
   const toolCategories = [
@@ -70,41 +82,44 @@ export const AgentToolsForm: React.FC<AgentToolsFormProps> = ({ selectedTools, o
   ];
 
   return (
-    <Box>
-      <Heading size="md" mb={4}>Agent Tools</Heading>
-      <Text mb={4}>Select the tools this agent can use:</Text>
-      
-      <Accordion allowMultiple defaultIndex={[0]}>
+    <div>
+      <h2 className="text-xl font-semibold mb-4">Agent Tools</h2>
+      <p className="mb-4">Select the tools this agent can use:</p>
+
+      <div className="flex flex-col gap-2">
         {toolCategories.map((category, idx) => (
-          <AccordionItem key={idx}>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left" fontWeight="medium">
-                  {category.name}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              <Stack spacing={2}>
+          <div key={idx} className="border border-gray-200 rounded-md">
+            <button
+              onClick={() => toggleCategory(idx)}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+            >
+              <span className="font-medium">{category.name}</span>
+              <FaChevronDown
+                className={`transition-transform ${expandedCategories.has(idx) ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {expandedCategories.has(idx) && (
+              <div className="p-4 border-t border-gray-200 flex flex-col gap-2">
                 {category.tools.map((tool) => (
-                  <FormControl key={tool.id}>
-                    <Checkbox 
-                      isChecked={selectedTools.includes(tool.id)}
+                  <label key={tool.id} className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedTools.includes(tool.id)}
                       onChange={() => handleToolToggle(tool.id)}
-                    >
-                      <Box>
-                        <Text fontWeight="medium">{tool.label}</Text>
-                        <Text fontSize="sm" color="gray.600">{tool.description}</Text>
-                      </Box>
-                    </Checkbox>
-                  </FormControl>
+                      className="mt-1 w-4 h-4"
+                    />
+                    <div>
+                      <p className="font-medium">{tool.label}</p>
+                      <p className="text-sm text-gray-600">{tool.description}</p>
+                    </div>
+                  </label>
                 ))}
-              </Stack>
-            </AccordionPanel>
-          </AccordionItem>
+              </div>
+            )}
+          </div>
         ))}
-      </Accordion>
-    </Box>
+      </div>
+    </div>
   );
 };

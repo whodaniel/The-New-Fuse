@@ -1,274 +1,470 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import ReactFlow, {
+  ReactFlowProvider,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
+  Panel,
+  Background,
+  Controls,
+  ConnectionMode,
+  Node,
+  Edge
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import * as d3 from 'd3';
+import dagre from 'dagre';
+import {
+  ZoomIn,
+  ZoomOut,
+  Maximize,
+  Settings,
+  Search,
+  GitBranch,
+  Waypoints,
+  Network,
+  X,
+  Check
+} from 'lucide-react';
+import { DataCard } from '../../shared/DataCard';
 
-export {}
-exports.GraphVisualizer = GraphVisualizer;
-import react_1 from 'react';
-import reactflow_1 from 'reactflow';
-require("reactflow/dist/style.css");
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
-import DataCard_1 from '../../shared/DataCard';
-import dagre_1 from 'dagre';
 const layoutAlgorithms = {
-    force: (nodes, edges) => {
-        const simulation = d3.forceSimulation(nodes)
-            .force('link', d3.forceLink(edges).id((d) => d.id))
-            .force('charge', d3.forceManyBody())
-            .force('center', d3.forceCenter(0, 0));
-        for (let i = 0; i < 300; ++i)
-            simulation.tick();
-        return { nodes, edges };
-    },
-    dagre: (nodes, edges) => {
-        const g = new dagre_1.default.graphlib.Graph();
-        g.setGraph({ rankdir: 'TB', nodesep: 70, ranksep: 70 });
-        g.setDefaultEdgeLabel(() => ({}));
-        nodes.forEach((node) => {
-            g.setNode(node.id, { width: 150, height: 40 });
-        });
-        edges.forEach((edge) => {
-            g.setEdge(edge.source, edge.target);
-        });
-        dagre_1.default.layout(g);
-        return {
-            nodes: nodes.map((node) => {
-                const nodeWithPosition = g.node(node.id);
-                return Object.assign(Object.assign({}, node), { position: {
-                        x: nodeWithPosition.x,
-                        y: nodeWithPosition.y
-                    } });
-            }),
-            edges
-        };
-    },
-    circular: (nodes, edges) => {
-        const radius = Math.max(nodes.length * 30, 200);
-        const angleStep = (2 * Math.PI) / nodes.length;
-        return {
-            nodes: nodes.map((node, i) => (Object.assign(Object.assign({}, node), { position: {
-                    x: radius * Math.cos(angleStep * i),
-                    y: radius * Math.sin(angleStep * i)
-                } }))),
-            edges
-        };
-    }
-};
-const clusterAlgorithms = {
-    louvain: (nodes, edges) => {
-        return { clusters: [], clusterMap: new Map() };
-    },
-    kMeans: (nodes, k) => {
-        return { clusters: [], clusterMap: new Map() };
-    }
-};
-const pathAlgorithms = {
-    dijkstra: (nodes, edges, start, end) => {
-        return [];
-    },
-    aStar: (nodes, edges, start, end) => {
-        return [];
-    }
-};
-function GraphVisualizer({ nodes: initialNodes, edges: initialEdges, config: initialConfig, onNodeClick, onEdgeClick, onLayoutChange, onConfigChange }): any {
-    const [nodes, setNodes, onNodesChange] = (0, reactflow_1.useNodesState)([]);
-    const [edges, setEdges, onEdgesChange] = (0, reactflow_1.useEdgesState)([]);
-    const [config, setConfig] = (0, react_1.useState)({
-        layout: { type: 'force' },
-        physics: {
-            enabled: true,
-            stabilization: true,
-            repulsion: 100,
-            springLength: 100
-        },
-        interaction: {
-            dragNodes: true,
-            dragView: true,
-            zoomView: true,
-            selectable: true,
-            multiselect: true
-        },
-        styles: {
-            node: {},
-            edge: {},
-            selected: {}
-        }
+  force: (nodes: Node[], edges: Edge[]) => {
+    const simulation = d3.forceSimulation(nodes as any)
+      .force('link', d3.forceLink(edges as any).id((d: any) => d.id))
+      .force('charge', d3.forceManyBody())
+      .force('center', d3.forceCenter(0, 0));
+
+    // Run simulation for a fixed number of ticks
+    for (let i = 0; i < 300; ++i) simulation.tick();
+
+    return { nodes, edges };
+  },
+  dagre: (nodes: Node[], edges: Edge[]) => {
+    const g = new dagre.graphlib.Graph();
+    g.setGraph({ rankdir: 'TB', nodesep: 70, ranksep: 70 });
+    g.setDefaultEdgeLabel(() => ({}));
+
+    nodes.forEach((node) => {
+      g.setNode(node.id, { width: 150, height: 40 });
     });
-    const [selectedNodes, setSelectedNodes] = (0, react_1.useState)([]);
-    const [selectedEdges, setSelectedEdges] = (0, react_1.useState)([]);
-    const [searchTerm, setSearchTerm] = (0, react_1.useState)('');
-    const [showSettings, setShowSettings] = (0, react_1.useState)(false);
-    const [pathfindingMode, setPathfindingMode] = (0, react_1.useState)(false);
-    const [startNode, setStartNode] = (0, react_1.useState)(null);
-    const [endNode, setEndNode] = (0, react_1.useState)(null);
-    const [clusteringEnabled, setClusteringEnabled] = (0, react_1.useState)(false);
-    const [clusterAlgorithm, setClusterAlgorithm] = (0, react_1.useState)('louvain');
-    const [menuAnchor, setMenuAnchor] = (0, react_1.useState)(null);
-    const { fitView, zoomIn, zoomOut } = (0, reactflow_1.useReactFlow)();
-    (0, react_1.useEffect)(() => {
-        if (initialNodes && initialEdges) {
-            applyLayout(config.layout.type, initialNodes, initialEdges);
-        }
-    }, [initialNodes, initialEdges]);
-    const applyLayout = (0, react_1.useCallback)((layoutType, nodes, edges) => {
-        const layout = layoutAlgorithms[layoutType];
-        if (layout) {
-            const { nodes: layoutedNodes, edges: layoutedEdges } = layout(nodes, edges);
-            setNodes(layoutedNodes);
-            setEdges(layoutedEdges);
-            onLayoutChange === null || onLayoutChange === void 0 ? void 0 : onLayoutChange(layoutType);
-            fitView();
-        }
-    }, [setNodes, setEdges, fitView, onLayoutChange]);
-    const applyClustering = (0, react_1.useCallback)(() => {
-        const { clusters, clusterMap } = clusterAlgorithms[clusterAlgorithm](nodes, edges);
-        setNodes(nodes.map((node: any) => (Object.assign(Object.assign({}, node), { data: Object.assign(Object.assign({}, node.data), { cluster: clusterMap.get(node.id) }), style: Object.assign(Object.assign({}, node.style), { backgroundColor: `hsl(${(clusterMap.get(node.id) || 0) * 137.5}, 50%, 50%)` }) }))));
-    }, [nodes, edges, clusterAlgorithm]);
-    const findPath = (0, react_1.useCallback)(() => {
-        if (!startNode || !endNode)
-            return;
-        const path = pathAlgorithms.aStar(nodes, edges, startNode, endNode);
-        setEdges(edges.map((edge: any) => (Object.assign(Object.assign({}, edge), { style: Object.assign(Object.assign({}, edge.style), { stroke: path.includes(edge.id) ? '#ff0000' : '#000000', strokeWidth: path.includes(edge.id) ? 3 : 1 }) }))));
-    }, [nodes, edges, startNode, endNode]);
-    const handleSearch = (0, react_1.useCallback)(() => {
-        if (!searchTerm) {
-            setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: undefined }))));
-            return;
-        }
-        setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: Object.assign(Object.assign({}, node.style), { opacity: node.data.label.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.2 }) }))));
-    }, [searchTerm]);
-    const handleNodeClick = (0, react_1.useCallback)((event, node) => {
-        if (pathfindingMode) {
-            if (!startNode) {
-                setStartNode(node.id);
-            }
-            else if (!endNode) {
-                setEndNode(node.id);
-                findPath();
-            }
-        }
-        else {
-            onNodeClick === null || onNodeClick === void 0 ? void 0 : onNodeClick(node);
-        }
-    }, [pathfindingMode, startNode, endNode, findPath, onNodeClick]);
-    return (<reactflow_1.ReactFlowProvider>
-            <Box style={{ height: '100%', position: 'relative' }}>
-                <DataCard_1.DataCard title="Knowledge Graph" tooltip="Interactive visualization of the knowledge graph" data={{ nodes, edges }} isLoading={false} renderContent={() => (<Box style={{ height: 600 }}>
-                            <reactflow_1.default nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onNodeClick={handleNodeClick} onEdgeClick={(_, edge) => onEdgeClick === null || onEdgeClick === void 0 ? void 0 : onEdgeClick(edge)} connectionMode={reactflow_1.ConnectionMode.LOOSE} fitView>
-                                <reactflow_1.Background />
-                                <reactflow_1.Controls />
-                                <reactflow_1.Panel position="top-left">
-                                    <material_1.Box display="flex" gap={1}>
-                                        <material_1.Tooltip title="Zoom In">
-                                            <material_1.IconButton onClick={() => zoomIn()}>
-                                                <icons_material_1.ZoomIn />
-                                            </material_1.IconButton>
-                                        </material_1.Tooltip>
-                                        <material_1.Tooltip title="Zoom Out">
-                                            <material_1.IconButton onClick={() => zoomOut()}>
-                                                <icons_material_1.ZoomOut />
-                                            </material_1.IconButton>
-                                        </material_1.Tooltip>
-                                        <material_1.Tooltip title="Fit View">
-                                            <material_1.IconButton onClick={() => fitView()}>
-                                                <icons_material_1.CenterFocusStrong />
-                                            </material_1.IconButton>
-                                        </material_1.Tooltip>
-                                        <material_1.Tooltip title="Layout Options">
-                                            <material_1.IconButton onClick={(e) => setMenuAnchor(e.currentTarget)}>
-                                                <icons_material_1.AccountTree />
-                                            </material_1.IconButton>
-                                        </material_1.Tooltip>
-                                        <material_1.Tooltip title="Settings">
-                                            <material_1.IconButton onClick={() => setShowSettings(true)}>
-                                                <icons_material_1.Settings />
-                                            </material_1.IconButton>
-                                        </material_1.Tooltip>
-                                    </material_1.Box>
-                                </reactflow_1.Panel>
 
-                                <reactflow_1.Panel position="top-right">
-                                    <material_1.Box display="flex" gap={1}>
-                                        <material_1.TextField size="small" placeholder="Search nodes..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyUp={(e) => e.key === 'Enter' && handleSearch()} InputProps={{
-                endAdornment: (<material_1.IconButton size="small" onClick={handleSearch}>
-                                                        <icons_material_1.Search />
-                                                    </material_1.IconButton>)
-            }}/>
-                                    </material_1.Box>
-                                </reactflow_1.Panel>
+    edges.forEach((edge) => {
+      g.setEdge(edge.source, edge.target);
+    });
 
-                                <reactflow_1.Panel position="bottom-left">
-                                    <material_1.Box display="flex" gap={1}>
-                                        <material_1.Button variant="contained" size="small" startIcon={<icons_material_1.Route />} onClick={() => setPathfindingMode(!pathfindingMode)} color={pathfindingMode ? 'primary' : 'inherit'}>
-                                            Path Finding
-                                        </material_1.Button>
-                                        <material_1.Button variant="contained" size="small" startIcon={<icons_material_1.Hub />} onClick={() => {
-                setClusteringEnabled(!clusteringEnabled);
-                if (!clusteringEnabled) {
-                    applyClustering();
-                }
-            }} color={clusteringEnabled ? 'primary' : 'inherit'}>
-                                            Clustering
-                                        </material_1.Button>
-                                    </material_1.Box>
-                                </reactflow_1.Panel>
-                            </reactflow_1.default>
-                        </material_1.Box>)}/>
+    dagre.layout(g);
 
-                <material_1.Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
-                    <material_1.MenuItem onClick={() => {
-            applyLayout('force', nodes, edges);
-            setMenuAnchor(null);
-        }}>
-                        <material_1.ListItemIcon><icons_material_1.AccountTree /></material_1.ListItemIcon>
-                        <material_1.ListItemText>Force Layout</material_1.ListItemText>
-                    </material_1.MenuItem>
-                    <material_1.MenuItem onClick={() => {
-            applyLayout('dagre', nodes, edges);
-            setMenuAnchor(null);
-        }}>
-                        <material_1.ListItemIcon><icons_material_1.AccountTree /></material_1.ListItemIcon>
-                        <material_1.ListItemText>Hierarchical Layout</material_1.ListItemText>
-                    </material_1.MenuItem>
-                    <material_1.MenuItem onClick={() => {
-            applyLayout('circular', nodes, edges);
-            setMenuAnchor(null);
-        }}>
-                        <material_1.ListItemIcon><icons_material_1.AccountTree /></material_1.ListItemIcon>
-                        <material_1.ListItemText>Circular Layout</material_1.ListItemText>
-                    </material_1.MenuItem>
-                </material_1.Menu>
+    return {
+      nodes: nodes.map((node) => {
+        const nodeWithPosition = g.node(node.id);
+        return {
+          ...node,
+          position: {
+            x: nodeWithPosition.x,
+            y: nodeWithPosition.y
+          }
+        };
+      }),
+      edges
+    };
+  },
+  circular: (nodes: Node[], edges: Edge[]) => {
+    const radius = Math.max(nodes.length * 30, 200);
+    const angleStep = (2 * Math.PI) / nodes.length;
 
-                <material_1.Dialog open={showSettings} onClose={() => setShowSettings(false)} maxWidth="sm" fullWidth>
-                    <material_1.DialogTitle>Graph Settings</material_1.DialogTitle>
-                    <material_1.DialogContent>
-                        <material_1.Box display="flex" flexDirection="column" gap={2}>
-                            <material_1.Typography variant="h6">Physics</material_1.Typography>
-                            <material_1.FormControlLabel control={<material_1.Switch checked={config.physics.enabled} onChange={(e) => setConfig((prev: any) => (Object.assign(Object.assign({}, prev), { physics: Object.assign(Object.assign({}, prev.physics), { enabled: e.target.checked }) })))}/>} label="Enable Physics"/>
-                            <material_1.Typography>Repulsion Force</material_1.Typography>
-                            <material_1.Slider value={config.physics.repulsion} onChange={(_, value) => setConfig((prev: any) => (Object.assign(Object.assign({}, prev), { physics: Object.assign(Object.assign({}, prev.physics), { repulsion: value }) })))} min={0} max={1000} step={10}/>
-                            <material_1.Typography>Spring Length</material_1.Typography>
-                            <material_1.Slider value={config.physics.springLength} onChange={(_, value) => setConfig((prev: any) => (Object.assign(Object.assign({}, prev), { physics: Object.assign(Object.assign({}, prev.physics), { springLength: value }) })))} min={0} max={500} step={10}/>
+    return {
+      nodes: nodes.map((node, i) => ({
+        ...node,
+        position: {
+          x: radius * Math.cos(angleStep * i),
+          y: radius * Math.sin(angleStep * i)
+        }
+      })),
+      edges
+    };
+  }
+};
 
-                            <material_1.Typography variant="h6">Clustering</material_1.Typography>
-                            <material_1.FormControl fullWidth>
-                                <material_1.InputLabel>Algorithm</material_1.InputLabel>
-                                <material_1.Select value={clusterAlgorithm} onChange={(e) => setClusterAlgorithm(e.target.value)}>
-                                    <material_1.MenuItem value="louvain">Louvain</material_1.MenuItem>
-                                    <material_1.MenuItem value="kMeans">K-Means</material_1.MenuItem>
-                                </material_1.Select>
-                            </material_1.FormControl>
-                        </material_1.Box>
-                    </material_1.DialogContent>
-                    <material_1.DialogActions>
-                        <material_1.Button onClick={() => setShowSettings(false)}>Cancel</material_1.Button>
-                        <material_1.Button onClick={() => {
-            onConfigChange === null || onConfigChange === void 0 ? void 0 : onConfigChange(config);
-            setShowSettings(false);
-        }} variant="contained">
-                            Apply
-                        </material_1.Button>
-                    </material_1.DialogActions>
-                </material_1.Dialog>
-            </material_1.Box>
-        </reactflow_1.ReactFlowProvider>);
+const clusterAlgorithms = {
+  louvain: (nodes: Node[], edges: Edge[]) => {
+    // Placeholder logic matching original structure
+    return { clusters: [], clusterMap: new Map() };
+  },
+  kMeans: (nodes: Node[], k: number) => {
+    // Placeholder logic matching original structure
+    return { clusters: [], clusterMap: new Map() };
+  }
+};
+
+const pathAlgorithms = {
+  dijkstra: (nodes: Node[], edges: Edge[], start: string, end: string) => {
+    return [];
+  },
+  aStar: (nodes: Node[], edges: Edge[], start: string, end: string) => {
+    return [];
+  }
+};
+
+// Interface for props
+interface GraphVisualizerProps {
+    nodes?: Node[];
+    edges?: Edge[];
+    config?: any;
+    onNodeClick?: (event: React.MouseEvent, node: Node) => void;
+    onEdgeClick?: (event: React.MouseEvent, edge: Edge) => void;
+    onLayoutChange?: (layoutType: string) => void;
+    onConfigChange?: (config: any) => void;
 }
-export {};
+
+export function GraphVisualizer({
+  nodes: initialNodes,
+  edges: initialEdges,
+  config: initialConfig,
+  onNodeClick,
+  onEdgeClick,
+  onLayoutChange,
+  onConfigChange
+}: GraphVisualizerProps) {
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [config, setConfig] = useState(initialConfig || {
+    layout: { type: 'force' },
+    physics: {
+      enabled: true,
+      stabilization: true,
+      repulsion: 100,
+      springLength: 100
+    },
+    interaction: {
+      dragNodes: true,
+      dragView: true,
+      zoomView: true,
+      selectable: true,
+      multiselect: true
+    },
+    styles: {
+      node: {},
+      edge: {},
+      selected: {}
+    }
+  });
+
+  const [selectedNodes, setSelectedNodes] = useState([]);
+  const [selectedEdges, setSelectedEdges] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+  const [showLayoutMenu, setShowLayoutMenu] = useState(false);
+  const [pathfindingMode, setPathfindingMode] = useState(false);
+  const [startNode, setStartNode] = useState<string | null>(null);
+  const [endNode, setEndNode] = useState<string | null>(null);
+  const [clusteringEnabled, setClusteringEnabled] = useState(false);
+  const [clusterAlgorithm, setClusterAlgorithm] = useState('louvain');
+
+  const { fitView, zoomIn, zoomOut } = useReactFlow();
+
+  useEffect(() => {
+    if (initialNodes && initialEdges) {
+      applyLayout(config.layout.type, initialNodes, initialEdges);
+    }
+  }, [initialNodes, initialEdges]);
+
+  const applyLayout = useCallback((layoutType: string, nodes: Node[], edges: Edge[]) => {
+    const layout = (layoutAlgorithms as any)[layoutType];
+    if (layout) {
+      const { nodes: layoutedNodes, edges: layoutedEdges } = layout(nodes, edges);
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
+      onLayoutChange?.(layoutType);
+
+      // Delay fitView slightly to allow render
+      setTimeout(() => fitView(), 10);
+    }
+  }, [setNodes, setEdges, fitView, onLayoutChange]);
+
+  const applyClustering = useCallback(() => {
+    const { clusters, clusterMap } = (clusterAlgorithms as any)[clusterAlgorithm](nodes, edges);
+    setNodes(nodes.map((node: any) => ({
+        ...node,
+        data: { ...node.data, cluster: clusterMap.get(node.id) },
+        style: {
+            ...node.style,
+            backgroundColor: `hsl(${(clusterMap.get(node.id) || 0) * 137.5}, 50%, 50%)`
+        }
+    })));
+  }, [nodes, edges, clusterAlgorithm, setNodes]);
+
+  const findPath = useCallback(() => {
+    if (!startNode || !endNode) return;
+    const path = pathAlgorithms.aStar(nodes, edges, startNode, endNode);
+    setEdges(edges.map((edge: any) => ({
+        ...edge,
+        style: {
+            ...edge.style,
+            stroke: path.includes(edge.id) ? '#ff0000' : '#000000',
+            strokeWidth: path.includes(edge.id) ? 3 : 1
+        }
+    })));
+  }, [nodes, edges, startNode, endNode, setEdges]);
+
+  const handleSearch = useCallback(() => {
+    if (!searchTerm) {
+      setNodes(nodes => nodes.map((node: any) => ({ ...node, style: undefined })));
+      return;
+    }
+    setNodes(nodes =>
+      nodes.map((node: any) => ({
+        ...node,
+        style: {
+          ...node.style,
+          opacity: node.data.label.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.2
+        }
+      }))
+    );
+  }, [searchTerm, setNodes]);
+
+  const handleNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    if (pathfindingMode) {
+      if (!startNode) {
+        setStartNode(node.id);
+      } else if (!endNode) {
+        setEndNode(node.id);
+        findPath();
+      }
+    } else {
+      onNodeClick?.(event, node);
+    }
+  }, [pathfindingMode, startNode, endNode, findPath, onNodeClick]);
+
+  return (
+    <div className="h-full relative">
+      <DataCard
+        title="Knowledge Graph"
+        tooltip="Interactive visualization of the knowledge graph"
+        data={{ nodes, edges }}
+        isLoading={false}
+        renderContent={() => (
+          <div className="h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden relative">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onNodeClick={handleNodeClick}
+              onEdgeClick={onEdgeClick}
+              connectionMode={ConnectionMode.LOOSE}
+              fitView
+            >
+              <Background />
+              <Controls />
+
+              {/* Top Left Toolbar */}
+              <Panel position="top-left" className="bg-white dark:bg-gray-800 p-1.5 rounded-md shadow-md border border-gray-200 dark:border-gray-600 flex gap-1">
+                 <button className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200" onClick={() => zoomIn()} title="Zoom In">
+                    <ZoomIn className="w-4 h-4" />
+                 </button>
+                 <button className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200" onClick={() => zoomOut()} title="Zoom Out">
+                    <ZoomOut className="w-4 h-4" />
+                 </button>
+                 <button className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200" onClick={() => fitView()} title="Fit View">
+                    <Maximize className="w-4 h-4" />
+                 </button>
+
+                 <div className="relative">
+                    <button
+                        className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
+                        onClick={() => setShowLayoutMenu(!showLayoutMenu)}
+                        title="Layout Options"
+                    >
+                        <Network className="w-4 h-4" />
+                    </button>
+
+                    {showLayoutMenu && (
+                        <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                            {[
+                                { id: 'force', label: 'Force Layout' },
+                                { id: 'dagre', label: 'Hierarchical Layout' },
+                                { id: 'circular', label: 'Circular Layout' }
+                            ].map((opt) => (
+                                <button
+                                    key={opt.id}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    onClick={() => {
+                                        applyLayout(opt.id, nodes, edges);
+                                        setShowLayoutMenu(false);
+                                    }}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                 </div>
+
+                 <button className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200" onClick={() => setShowSettings(true)} title="Settings">
+                    <Settings className="w-4 h-4" />
+                 </button>
+              </Panel>
+
+              {/* Top Right Search */}
+              <Panel position="top-right" className="bg-white dark:bg-gray-800 p-1 rounded-md shadow-md border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center">
+                    <input
+                        type="text"
+                        className="px-2 py-1 text-sm bg-transparent border-none focus:outline-none w-40 dark:text-white"
+                        placeholder="Search nodes..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyUp={(e) => e.key === 'Enter' && handleSearch()}
+                    />
+                    <button className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400" onClick={handleSearch}>
+                        <Search className="w-4 h-4" />
+                    </button>
+                </div>
+              </Panel>
+
+              {/* Bottom Left Controls */}
+              <Panel position="bottom-left" className="flex gap-2">
+                 <button
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-sm border transaction-colors flex items-center gap-1.5
+                        ${pathfindingMode
+                            ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
+                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                    onClick={() => setPathfindingMode(!pathfindingMode)}
+                 >
+                    <GitBranch className="w-4 h-4" />
+                    Path Finding
+                 </button>
+                 <button
+                     className={`px-3 py-1.5 text-sm font-medium rounded-md shadow-sm border transaction-colors flex items-center gap-1.5
+                        ${clusteringEnabled
+                            ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
+                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                    onClick={() => {
+                        setClusteringEnabled(!clusteringEnabled);
+                        if (!clusteringEnabled) {
+                            applyClustering();
+                        }
+                    }}
+                 >
+                    <Waypoints className="w-4 h-4" />
+                    Clustering
+                 </button>
+              </Panel>
+
+            </ReactFlow>
+          </div>
+        )}
+      />
+
+       {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Graph Settings</h3>
+              <button
+                onClick={() => setShowSettings(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+                {/* Physics */}
+                <div className="space-y-4">
+                     <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">Physics</h4>
+
+                     <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="enablePhysics"
+                            checked={config.physics.enabled}
+                            onChange={(e) => setConfig(prev => ({ ...prev, physics: { ...prev.physics, enabled: e.target.checked }}))}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="enablePhysics" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                            Enable Physics
+                        </label>
+                     </div>
+
+                     <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Repulsion Force: {config.physics.repulsion}</label>
+                        <input
+                            type="range"
+                            min="0"
+                            max="1000"
+                            step="10"
+                            value={config.physics.repulsion}
+                            onChange={(e) => setConfig(prev => ({ ...prev, physics: { ...prev.physics, repulsion: Number(e.target.value) }}))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                        />
+                     </div>
+
+                     <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Spring Length: {config.physics.springLength}</label>
+                        <input
+                            type="range"
+                            min="0"
+                            max="500"
+                            step="10"
+                            value={config.physics.springLength}
+                            onChange={(e) => setConfig(prev => ({ ...prev, physics: { ...prev.physics, springLength: Number(e.target.value) }}))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                        />
+                     </div>
+                </div>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
+                     <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">Clustering</h4>
+                     <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Algorithm</label>
+                        <select
+                            value={clusterAlgorithm}
+                            onChange={(e) => setClusterAlgorithm(e.target.value)}
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-900 dark:border-gray-600 dark:text-white"
+                        >
+                            <option value="louvain">Louvain</option>
+                            <option value="kMeans">K-Means</option>
+                        </select>
+                     </div>
+                </div>
+            </div>
+
+            <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-700">
+               <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                onClick={() => {
+                    onConfigChange?.(config);
+                    setShowSettings(false);
+                }}
+              >
+                Apply
+              </button>
+              <button
+                type="button"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                onClick={() => setShowSettings(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Wrap with provider to ensure useReactFlow works
+export const GraphVisualizerWrapper = (props: GraphVisualizerProps) => (
+    <ReactFlowProvider>
+        <GraphVisualizer {...props} />
+    </ReactFlowProvider>
+);
+
+export default GraphVisualizerWrapper;

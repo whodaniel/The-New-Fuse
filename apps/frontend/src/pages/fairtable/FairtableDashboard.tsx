@@ -1,38 +1,17 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Flex,
-  Heading,
-  HStack,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  SimpleGrid,
-  Spinner,
-  Text,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-
 import {
-  FiActivity,
-  FiCalendar,
-  FiColumns,
-  FiDatabase,
-  FiGrid,
-  FiMoreVertical,
-  FiPlus,
-  FiTrendingUp,
-  FiUsers,
-} from 'react-icons/fi';
+  Activity,
+  Calendar,
+  Columns,
+  Database,
+  Grid,
+  MoreVertical,
+  Plus,
+  TrendingUp,
+  Users
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { WorkspaceApiService } from '../../api/workspace';
 // TODO: Import when packages are properly configured
 // import { GridView, KanbanView, TableView } from '@the-new-fuse/fairtable-components';
 // import { formulaEvaluator } from '@the-new-fuse/fairtable-core';
@@ -53,7 +32,6 @@ const FairtableDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedView, setSelectedView] = useState<'grid' | 'kanban' | 'timeline'>('grid');
   const navigate = useNavigate();
-  const toast = useToast();
 
   useEffect(() => {
     loadTables();
@@ -62,70 +40,71 @@ const FairtableDashboard: React.FC = () => {
   const loadTables = async () => {
     try {
       setLoading(true);
-      // Simulate API call - replace with actual API integration
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Use actual API service to load workspace data
+      const workspaceService = new WorkspaceApiService();
+      const response = await workspaceService.getCurrentWorkspace();
 
-      const mockTables: Table[] = [
-        {
-          id: '1',
-          name: 'Project Management',
-          description: 'Track all development projects and their status',
-          recordCount: 45,
-          lastModified: '2024-01-15',
-          collaborators: 5,
-          viewType: 'kanban',
-          status: 'active',
-        },
-        {
-          id: '2',
-          name: 'Customer Database',
-          description: 'Comprehensive customer information and interactions',
-          recordCount: 234,
-          lastModified: '2024-01-14',
-          collaborators: 3,
-          viewType: 'grid',
-          status: 'active',
-        },
-        {
-          id: '3',
-          name: 'Content Calendar',
-          description: 'Editorial calendar for content planning and scheduling',
-          recordCount: 67,
-          lastModified: '2024-01-13',
-          collaborators: 4,
-          viewType: 'timeline',
-          status: 'active',
-        },
-        {
-          id: '4',
-          name: 'Inventory Tracking',
-          description: 'Product inventory and stock management',
-          recordCount: 89,
-          lastModified: '2024-01-12',
-          collaborators: 2,
-          viewType: 'grid',
-          status: 'draft',
-        },
-      ];
+      if (response.success && response.data) {
+        // For now, use mock data until the actual API endpoint is implemented
+        // In a real implementation, this would use response.data.tables or similar
+        const mockTables: Table[] = [
+          {
+            id: '1',
+            name: 'Project Management',
+            description: 'Track all development projects and their status',
+            recordCount: 45,
+            lastModified: '2024-01-15',
+            collaborators: 5,
+            viewType: 'kanban',
+            status: 'active',
+          },
+          {
+            id: '2',
+            name: 'Customer Database',
+            description: 'Comprehensive customer information and interactions',
+            recordCount: 234,
+            lastModified: '2024-01-14',
+            collaborators: 3,
+            viewType: 'grid',
+            status: 'active',
+          },
+          {
+            id: '3',
+            name: 'Content Calendar',
+            description: 'Editorial calendar for content planning and scheduling',
+            recordCount: 67,
+            lastModified: '2024-01-13',
+            collaborators: 4,
+            viewType: 'timeline',
+            status: 'active',
+          },
+          {
+            id: '4',
+            name: 'Inventory Tracking',
+            description: 'Product inventory and stock management',
+            recordCount: 89,
+            lastModified: '2024-01-12',
+            collaborators: 2,
+            viewType: 'grid',
+            status: 'draft',
+          },
+        ];
 
-      setTables(mockTables);
+        setTables(mockTables);
+      } else {
+        throw new Error(response.error || 'Failed to load workspace data');
+      }
     } catch (error) {
-      toast({
-        title: 'Error loading tables',
-        description: error instanceof Error ? error.message : 'Failed to load Fairtable data',
-        variant: 'destructive',
-      });
+      console.error('Error loading tables', error);
+      // You might want to add a notification system here
     } finally {
       setLoading(false);
     }
   };
 
   const createNewTable = () => {
-    toast({
-      title: 'Create New Table',
-      description: 'Table creation functionality will be implemented soon',
-      variant: 'info',
-    });
+    console.log('Create table clicked');
+    // Implement creation logic
   };
 
   const openTable = (table: Table) => {
@@ -136,278 +115,187 @@ const FairtableDashboard: React.FC = () => {
   const getViewIcon = (viewType: string) => {
     switch (viewType) {
       case 'grid':
-        return <FiGrid />;
+        return <Grid className="w-4 h-4" />;
       case 'kanban':
-        return <FiColumns />;
+        return <Columns className="w-4 h-4" />;
       case 'timeline':
-        return <FiCalendar />;
+        return <Calendar className="w-4 h-4" />;
       default:
-        return <FiGrid />;
+        return <Grid className="w-4 h-4" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'green';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
       case 'draft':
-        return 'yellow';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
       case 'archived':
-        return 'gray';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
       default:
-        return 'gray';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" h="50vh">
-        <VStack>
-          <Spinner size="xl" color="blue.500" />
-          <Text>Loading Fairtable Dashboard...</Text>
-        </VStack>
-      </Flex>
+      <div className="flex justify-center items-center h-[50vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading Fairtable Dashboard...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box p={6}>
-      <Flex justify="space-between" align="center" mb={6}>
-        <VStack align="start" spacing={1}>
-          <Heading size="lg" color="gray.800">
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             Fairtable Dashboard
-          </Heading>
-          <Text color="gray.600">Manage your databases, tables, and collaborative workspaces</Text>
-        </VStack>
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage your databases, tables, and collaborative workspaces</p>
+        </div>
 
-        <HStack>
-          <Button leftIcon={<FiPlus />} colorScheme="blue" onClick={createNewTable}>
-            Create Table
-          </Button>
-        </HStack>
-      </Flex>
+        <button
+          onClick={createNewTable}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          Create Table
+        </button>
+      </div>
 
       {/* Statistics Cards */}
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={6} mb={8}>
-        <Card>
-          <CardBody>
-            <HStack>
-              <Box p={3} bg="blue.100" borderRadius="lg" color="blue.600">
-                <FiDatabase size="24" />
-              </Box>
-              <VStack align="start" spacing={0}>
-                <Text fontSize="2xl" fontWeight="bold">
-                  {tables.length}
-                </Text>
-                <Text color="gray.600" fontSize="sm">
-                  Active Tables
-                </Text>
-              </VStack>
-            </HStack>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <HStack>
-              <Box p={3} bg="green.100" borderRadius="lg" color="green.600">
-                <FiActivity size="24" />
-              </Box>
-              <VStack align="start" spacing={0}>
-                <Text fontSize="2xl" fontWeight="bold">
-                  {tables.reduce((sum, table) => sum + table.recordCount, 0)}
-                </Text>
-                <Text color="gray.600" fontSize="sm">
-                  Total Records
-                </Text>
-              </VStack>
-            </HStack>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <HStack>
-              <Box p={3} bg="purple.100" borderRadius="lg" color="purple.600">
-                <FiUsers size="24" />
-              </Box>
-              <VStack align="start" spacing={0}>
-                <Text fontSize="2xl" fontWeight="bold">
-                  {tables.reduce((sum, table) => sum + table.collaborators, 0)}
-                </Text>
-                <Text color="gray.600" fontSize="sm">
-                  Collaborators
-                </Text>
-              </VStack>
-            </HStack>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <HStack>
-              <Box p={3} bg="orange.100" borderRadius="lg" color="orange.600">
-                <FiTrendingUp size="24" />
-              </Box>
-              <VStack align="start" spacing={0}>
-                <Text fontSize="2xl" fontWeight="bold">
-                  94%
-                </Text>
-                <Text color="gray.600" fontSize="sm">
-                  Uptime
-                </Text>
-              </VStack>
-            </HStack>
-          </CardBody>
-        </Card>
-      </SimpleGrid>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {[
+          { icon: Database, bg: 'bg-blue-100', color: 'text-blue-600', label: 'Active Tables', value: tables.length },
+          { icon: Activity, bg: 'bg-green-100', color: 'text-green-600', label: 'Total Records', value: tables.reduce((sum, table) => sum + table.recordCount, 0) },
+          { icon: Users, bg: 'bg-purple-100', color: 'text-purple-600', label: 'Collaborators', value: tables.reduce((sum, table) => sum + table.collaborators, 0) },
+          { icon: TrendingUp, bg: 'bg-orange-100', color: 'text-orange-600', label: 'Uptime', value: '94%' },
+        ].map((stat, idx) => (
+          <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
+            <div className={`p-3 rounded-lg ${stat.bg} ${stat.color} dark:bg-opacity-20`}>
+              <stat.icon className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Tables Grid */}
-      <Box>
-        <Flex justify="space-between" align="center" mb={4}>
-          <Heading size="md" color="gray.700">
+      <div>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             Your Tables
-          </Heading>
-          <HStack>
-            <Text fontSize="sm" color="gray.500">
+          </h2>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               View as:
-            </Text>
-            <HStack spacing={1}>
-              <IconButton
-                aria-label="Grid view"
-                icon={<FiGrid />}
-                size="sm"
-                variant={selectedView === 'grid' ? 'solid' : 'ghost'}
-                colorScheme="blue"
-                onClick={() => setSelectedView('grid')}
-              />
-              <IconButton
-                aria-label="Kanban view"
-                icon={<FiColumns />}
-                size="sm"
-                variant={selectedView === 'kanban' ? 'solid' : 'ghost'}
-                colorScheme="blue"
-                onClick={() => setSelectedView('kanban')}
-              />
-              <IconButton
-                aria-label="Timeline view"
-                icon={<FiCalendar />}
-                size="sm"
-                variant={selectedView === 'timeline' ? 'solid' : 'ghost'}
-                colorScheme="blue"
-                onClick={() => setSelectedView('timeline')}
-              />
-            </HStack>
-          </HStack>
-        </Flex>
+            </span>
+            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+              {[
+                { id: 'grid', icon: Grid },
+                { id: 'kanban', icon: Columns },
+                { id: 'timeline', icon: Calendar }
+              ].map((view) => (
+                <button
+                  key={view.id}
+                  onClick={() => setSelectedView(view.id as any)}
+                  className={`p-1.5 rounded-md transition-all ${
+                    selectedView === view.id
+                      ? 'bg-white dark:bg-gray-600 text-blue-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  }`}
+                  aria-label={`${view.id} view`}
+                >
+                  <view.icon className="w-4 h-4" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
 
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tables.map((table) => (
-            <Card
+            <div
               key={table.id}
-              cursor="pointer"
-              _hover={{
-                transform: 'translateY(-2px)',
-                boxShadow: 'lg',
-                borderColor: 'blue.200',
-              }}
-              transition="all 0.2s"
               onClick={() => openTable(table)}
+              className="group bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all cursor-pointer p-5 flex flex-col gap-4"
             >
-              <CardHeader pb={2}>
-                <Flex justify="space-between" align="start">
-                  <VStack align="start" spacing={1} flex={1}>
-                    <HStack>
-                      <Text fontWeight="semibold" fontSize="lg">
-                        {table.name}
-                      </Text>
-                      <Badge colorScheme={getStatusColor(table.status)} size="sm">
-                        {table.status}
-                      </Badge>
-                    </HStack>
-                    <Text color="gray.600" fontSize="sm">
-                      {table.description}
-                    </Text>
-                  </VStack>
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-1 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                      {table.name}
+                    </h3>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(table.status)}`}>
+                      {table.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    {table.description}
+                  </p>
+                </div>
 
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label="Options"
-                      icon={<FiMoreVertical />}
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                    />
-                    <MenuList>
-                      <MenuItem onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-                        Edit Table
-                      </MenuItem>
-                      <MenuItem onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-                        Duplicate
-                      </MenuItem>
-                      <MenuItem onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-                        Export Data
-                      </MenuItem>
-                      <MenuItem
-                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                        color="red.500"
-                      >
-                        Delete Table
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Flex>
-              </CardHeader>
+                <button
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('More options clicked');
+                  }}
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
+              </div>
 
-              <CardBody pt={2}>
-                <VStack align="start" spacing={3}>
-                  <HStack justify="space-between" w="full">
-                    <HStack>
-                      <Box color="blue.500">{getViewIcon(table.viewType)}</Box>
-                      <Text fontSize="sm" color="gray.600" textTransform="capitalize">
-                        {table.viewType} View
-                      </Text>
-                    </HStack>
-                    <Text fontSize="sm" color="gray.500">
-                      {table.recordCount} records
-                    </Text>
-                  </HStack>
+              <div className="space-y-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                    {getViewIcon(table.viewType)}
+                    <span className="capitalize">{table.viewType} View</span>
+                  </div>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {table.recordCount} records
+                  </span>
+                </div>
 
-                  <HStack justify="space-between" w="full">
-                    <HStack>
-                      <FiUsers size="14" />
-                      <Text fontSize="sm" color="gray.600">
-                        {table.collaborators} collaborators
-                      </Text>
-                    </HStack>
-                    <Text fontSize="sm" color="gray.500">
-                      Updated {table.lastModified}
-                    </Text>
-                  </HStack>
-                </VStack>
-              </CardBody>
-            </Card>
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                    <Users className="w-3.5 h-3.5" />
+                    <span>{table.collaborators} collaborators</span>
+                  </div>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Updated {table.lastModified}
+                  </span>
+                </div>
+              </div>
+            </div>
           ))}
-        </SimpleGrid>
-      </Box>
+        </div>
+      </div>
 
       {tables.length === 0 && (
-        <Card>
-          <CardBody>
-            <VStack py={8} spacing={4}>
-              <FiDatabase size="48" color="gray.300" />
-              <Text color="gray.500" textAlign="center">
-                No tables found. Create your first table to get started.
-              </Text>
-              <Button colorScheme="blue" leftIcon={<FiPlus />} onClick={createNewTable}>
-                Create Your First Table
-              </Button>
-            </VStack>
-          </CardBody>
-        </Card>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 flex flex-col items-center justify-center text-center">
+          <Database className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
+            No tables found. Create your first table to get started.
+          </p>
+          <button
+            onClick={createNewTable}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <Plus className="w-5 h-5" />
+            Create Your First Table
+          </button>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 

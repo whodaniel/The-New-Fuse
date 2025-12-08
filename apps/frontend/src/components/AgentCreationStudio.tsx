@@ -1,7 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { Box, Text, VStack, HStack, Button, Input, Select, SliderTrack, SliderFilledTrack, SliderThumb, Slider as ChakraSlider, useColorMode, } from '@chakra-ui/react';
-const AgentCreationStudio = ({ onSubmit }) => {
-    const { colorMode } = useColorMode();
+import { Button } from './ui/design-system';
+
+interface AgentCreationStudioProps {
+  onSubmit: (data: any) => void;
+}
+
+const AgentCreationStudio: React.FC<AgentCreationStudioProps> = ({ onSubmit }) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [agentData, setAgentData] = useState({
         name: '',
@@ -14,87 +18,137 @@ const AgentCreationStudio = ({ onSubmit }) => {
             agreeableness: 0.5,
             neuroticism: 0.5,
         },
-        skills: [],
+        skills: [] as string[],
         avatar: '',
     });
-    const handleFieldChange = useCallback((field, value) => {
-        setAgentData((prev) => (Object.assign(Object.assign({}, prev), { [field]: value })));
+
+    const handleFieldChange = useCallback((field: string, value: any) => {
+        setAgentData((prev) => ({ ...prev, [field]: value }));
     }, []);
-    const handleSkillChange = useCallback((skill, value) => {
-        setAgentData((prev) => (Object.assign(Object.assign({}, prev), { skills: [...(prev.skills || []), skill] })));
+
+    const handleSkillChange = useCallback((skill: string, value: any) => {
+      // Logic from original code seemed to be adding a skill with a specific name?
+      // Re-implementing original logic roughly:
+      setAgentData((prev) => ({ ...prev, skills: [...(prev.skills || []), skill] }));
     }, []);
-    const handleTraitChange = useCallback((trait, value) => {
-        setAgentData((prev) => (Object.assign(Object.assign({}, prev), { personality: prev.personality ? Object.assign(Object.assign({}, prev.personality), { [trait]: value }) : undefined })));
+
+    const handleTraitChange = useCallback((trait: string, value: number) => {
+        setAgentData((prev) => ({
+            ...prev,
+            personality: { ...prev.personality, [trait]: value }
+        }));
     }, []);
-    const handleSubmit = useCallback((e) => {
+
+    const handleSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         if (agentData.name && agentData.type && agentData.status) {
             onSubmit(agentData);
         }
     }, [agentData, onSubmit]);
-    const renderStep = (step) => {
-        var _a;
+
+    const renderStep = (step: number) => {
         switch (step) {
             case 0:
-                return (<VStack gap={4}>
-            <Box>
-              <Text mb={2}>Name</Text>
-              <Input value={agentData.name} onChange={(e) => handleFieldChange('name', e.target.value)}/>
-            </Box>
-            <Box>
-              <Text mb={2}>Type</Text>
-              <Select value={agentData.type} onChange={(e) => handleFieldChange('type', e.target.value)} placeholder="Select agent type">
-                <option value="humanoid">Humanoid</option>
-                <option value="robotic">Robotic</option>
-                <option value="abstract">Abstract</option>
-              </Select>
-            </Box>
-          </VStack>);
+                return (
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <p className="mb-2 font-medium">Name</p>
+                      <input
+                        className="input w-full"
+                        value={agentData.name}
+                        onChange={(e) => handleFieldChange('name', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <p className="mb-2 font-medium">Type</p>
+                      <select
+                        className="input w-full"
+                        value={agentData.type}
+                        onChange={(e) => handleFieldChange('type', e.target.value)}
+                      >
+                        <option value="humanoid">Humanoid</option>
+                        <option value="robotic">Robotic</option>
+                        <option value="abstract">Abstract</option>
+                      </select>
+                    </div>
+                  </div>
+                );
             case 1:
-                return (<VStack gap={4}>
-            {Object.entries(agentData.personality || {}).map(([trait, value]) => (<Box key={trait} width="100%">
-                <Text mb={2}>{trait}</Text>
-                <ChakraSlider value={value} onChange={(val) => handleTraitChange(trait, val)} min={0} max={1} step={0.1}>
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </ChakraSlider>
-              </Box>))}
-          </VStack>);
+                return (
+                  <div className="flex flex-col gap-4">
+                    {Object.entries(agentData.personality || {}).map(([trait, value]) => (
+                      <div key={trait} className="w-full">
+                        <div className="flex justify-between mb-2">
+                          <p className="font-medium capitalize">{trait}</p>
+                          <span className="text-sm text-gray-500">{value}</span>
+                        </div>
+                        <input
+                          type="range"
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          value={value}
+                          onChange={(e) => handleTraitChange(trait, parseFloat(e.target.value))}
+                          min={0}
+                          max={1}
+                          step={0.1}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                );
             case 2:
-                return (<VStack gap={4}>
-            {(_a = agentData.skills) === null || _a === void 0 ? void 0 : _a.map((skill, index) => (<HStack key={index} width="100%">
-                <Text>{skill}</Text>
-                <Button onClick={() => setAgentData((prev) => {
-                            var _a;
-                            return (Object.assign(Object.assign({}, prev), { skills: (_a = prev.skills) === null || _a === void 0 ? void 0 : _a.filter((_, i) => i !== index) }));
-                        })}>
-                  Remove
-                </Button>
-              </HStack>))}
-            <Button onClick={() => { var _a; return handleSkillChange(`Skill ${(((_a = agentData.skills) === null || _a === void 0 ? void 0 : _a.length) || 0) + 1}`, 0); }}>
-              Add Skill
-            </Button>
-          </VStack>);
+                return (
+                  <div className="flex flex-col gap-4">
+                    {agentData.skills?.map((skill, index) => (
+                      <div key={index} className="flex justify-between items-center w-full p-2 bg-gray-50 rounded border border-gray-200">
+                        <span className="font-medium">{skill}</span>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => setAgentData((prev) => ({
+                            ...prev,
+                            skills: prev.skills?.filter((_, i) => i !== index)
+                          }))}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      onClick={() => handleSkillChange(`Skill ${(agentData.skills?.length || 0) + 1}`, 0)}
+                    >
+                      Add Skill
+                    </Button>
+                  </div>
+                );
             default:
                 return null;
         }
     };
-    return (<Box p={4} borderWidth="1px" borderRadius="lg">
-      <form onSubmit={handleSubmit}>
-        {renderStep(currentStep)}
-        <HStack mt={4} gap={4}>
-          {currentStep > 0 && (<Button onClick={() => setCurrentStep((prev) => prev - 1)}>
-              Previous
-            </Button>)}
-          {currentStep < 2 ? (<Button onClick={() => setCurrentStep((prev) => prev + 1)}>
-              Next
-            </Button>) : (<Button type="submit" colorScheme="blue">
-              Create Agent
-            </Button>)}
-        </HStack>
-      </form>
-    </Box>);
+
+    return (
+      <div className="p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+        <form onSubmit={handleSubmit}>
+          {renderStep(currentStep)}
+          <div className="flex gap-4 mt-6">
+            {currentStep > 0 && (
+              <Button type="button" variant="outline" onClick={() => setCurrentStep((prev) => prev - 1)}>
+                Previous
+              </Button>
+            )}
+            {currentStep < 2 ? (
+              <Button type="button" onClick={() => setCurrentStep((prev) => prev + 1)}>
+                Next
+              </Button>
+            ) : (
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
+                Create Agent
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
+    );
 };
+
 export default AgentCreationStudio;

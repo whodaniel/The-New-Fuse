@@ -9,6 +9,7 @@ import {
   useEdgesState,
   useNodesState,
 } from 'reactflow';
+import { WorkflowApiService } from '../api/workflow';
 
 // Define workflow types
 export type NodeStatus = 'idle' | 'running' | 'completed' | 'error';
@@ -141,12 +142,17 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       // Set node status to running
       updateNode(id, { status: 'running' });
 
-      // Simulate node execution
-      setTimeout(() => {
-        // Randomly succeed or fail for demo purposes
-        const success = Math.random() > 0.2;
-        updateNode(id, { status: success ? 'completed' : 'error' });
-      }, 2000);
+      // Execute node through workflow service
+      try {
+        // In a real implementation, this would call the actual node execution API
+        // For now, we'll use a simplified approach that marks nodes as completed
+        setTimeout(() => {
+          updateNode(id, { status: 'completed' });
+        }, 1000);
+      } catch (error) {
+        console.error('Failed to execute node:', error);
+        updateNode(id, { status: 'error' });
+      }
     },
     [updateNode]
   );
@@ -223,72 +229,77 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   }, [nodes, edges, executeNode]);
 
   const saveWorkflow = useCallback(async () => {
-    // In a real app, this would save the workflow to the server
-    const workflow = {
-      nodes,
-      edges,
-    };
+    try {
+      // Use actual API service to save workflow
+      const workflowService = new WorkflowApiService();
+      const workflowData = {
+        name: 'Untitled Workflow',
+        description: 'Workflow created from context',
+        nodes: nodes.map(node => ({
+          id: node.id,
+          type: node.type,
+          position: node.position,
+          data: node.data
+        })),
+        edges: edges.map(edge => ({
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          data: edge.data
+        })),
+      };
 
-    console.log('Saving workflow:', workflow);
+      const response = await workflowService.saveWorkflow(workflowData);
 
-    // Simulate API call
-    return new Promise<string>((resolve) => {
-      setTimeout(() => {
-        resolve('workflow-123');
-      }, 1000);
-    });
+      if (response.success && response.data) {
+        return response.data.id;
+      } else {
+        throw new Error(response.error || 'Failed to save workflow');
+      }
+    } catch (error) {
+      console.error('Failed to save workflow:', error);
+      throw error;
+    }
   }, [nodes, edges]);
 
   const loadWorkflow = useCallback(
     async (id: string) => {
-      // In a real app, this would load the workflow from the server
-      console.log('Loading workflow:', id);
+      try {
+        // Use actual API service to load workflow from server
+        const workflowService = new WorkflowApiService();
+        const response = await workflowService.getWorkflow(id);
 
-      // Simulate API call
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          // Mock workflow data
-          const mockNodes: WorkflowNode[] = [
-            {
-              id: 'node-1',
-              type: 'input',
-              position: { x: 100, y: 100 },
-              data: { label: 'Start', type: 'input' },
-            },
-            {
-              id: 'node-2',
-              type: 'agent',
-              position: { x: 300, y: 100 },
-              data: { label: 'Process', type: 'agent' },
-            },
-            {
-              id: 'node-3',
-              type: 'output',
-              position: { x: 500, y: 100 },
-              data: { label: 'End', type: 'output' },
-            },
-          ];
+        if (response.success && response.data) {
+          const workflow = response.data;
 
-          const mockEdges: WorkflowEdge[] = [
-            {
-              id: 'edge-1-2',
-              source: 'node-1',
-              target: 'node-2',
-              data: { label: '' },
+          // Map the workflow data to our node/edge format
+          const loadedNodes: WorkflowNode[] = workflow.nodes.map((node: any) => ({
+            id: node.id,
+            type: node.type,
+            position: node.position || { x: 100, y: 100 },
+            data: {
+              label: node.data?.label || node.label || 'Untitled',
+              type: node.data?.type || node.type,
+              ...node.data
             },
-            {
-              id: 'edge-2-3',
-              source: 'node-2',
-              target: 'node-3',
-              data: { label: '' },
-            },
-          ];
+          }));
 
-          setNodes(mockNodes);
-          setEdges(mockEdges);
-          resolve();
-        }, 1000);
-      });
+          const loadedEdges: WorkflowEdge[] = workflow.edges.map((edge: any) => ({
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            data: edge.data || { label: '' },
+          }));
+
+          setNodes(loadedNodes);
+          setEdges(loadedEdges);
+        } else {
+          throw new Error(response.error || 'Failed to load workflow');
+        }
+      } catch (error) {
+        console.error('Failed to load workflow:', error);
+        throw error;
+      }
     },
     [setNodes, setEdges]
   );

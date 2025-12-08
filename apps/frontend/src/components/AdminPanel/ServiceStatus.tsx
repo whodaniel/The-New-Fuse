@@ -1,21 +1,21 @@
-import { Badge } from '@chakra-ui/react';
-import { ServiceStatusType } from '@the-new-fuse/types';
 import React from 'react';
+import { Badge } from '@/components/ui/design-system';
+import { ServiceStatusType } from '@the-new-fuse/types';
 
 interface ServiceStatusProps {
   status: ServiceStatusType;
 }
 
 export const ServiceStatus: React.FC<ServiceStatusProps> = ({ status }) => {
-  const colorScheme =
-    {
-      ACTIVE: 'green',
-      INACTIVE: 'gray',
-      MAINTENANCE: 'yellow',
-      ERROR: 'red',
-      PENDING: 'blue',
-      PAUSED: 'orange',
-    }[status] || 'gray';
+  const variantMap: Record<ServiceStatusType, 'success' | 'secondary' | 'warning' | 'danger' | 'primary'> = {
+    ACTIVE: 'success',
+    INACTIVE: 'secondary',
+    MAINTENANCE: 'warning',
+    ERROR: 'danger',
+    PENDING: 'primary',
+    PAUSED: 'warning',
+  };
 
-  return <Badge colorScheme={colorScheme}>{status.toLowerCase()}</Badge>;
+  return <Badge variant={variantMap[status] || 'secondary'}>{status.toLowerCase()}</Badge>;
 };
+

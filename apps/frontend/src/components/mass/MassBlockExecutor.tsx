@@ -1,36 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  VStack,
-  HStack,
-  Text,
-  Button,
-  Badge,
-  Card,
-  CardHeader,
-  CardBody,
-  Heading,
-  Select,
-  NumberInput,
-  NumberInputField,
-  Textarea,
-  Switch,
-  FormControl,
-  FormLabel,
-  Icon,
-  Divider,
-  useToast,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Code,
-  Pre
-} from '@chakra-ui/react';
-import { FiUsers, FiMessageSquare, FiRefreshCw, FiTool, FiZap, FiPlay } from 'react-icons/fi';
+import { FiUsers, FiMessageSquare, FiRefreshCw, FiTool, FiZap, FiPlay, FiChevronDown, FiChevronRight } from 'react-icons/fi';
 import { useMassExecution } from '../../hooks/useMassExecution';
 import { MassBlockType } from '@the-new-fuse/types';
+import { Button } from '../../ui/design-system';
 
 interface MassBlockExecutorProps {
   availableAgents: Array<{ id: string; name: string; type: string }>;
@@ -46,21 +18,19 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
   const [input, setInput] = useState('');
   const [blockConfig, setBlockConfig] = useState<any>({});
   const [executionResult, setExecutionResult] = useState<any>(null);
+  const [openConfig, setOpenConfig] = useState<Record<string, boolean>>({});
 
-  const toast = useToast();
   const { executeAggregate, executeReflect, executeDebate, loading, error } = useMassExecution();
 
   useEffect(() => {
     if (error) {
-      toast({
-        title: 'Execution Error',
-        description: error,
-        status: 'error',
-        duration: 5000,
-        isClosable: true
-      });
+      alert(`Execution Error: ${error}`);
     }
-  }, [error, toast]);
+  }, [error]);
+
+  const toggleConfig = (key: string) => {
+    setOpenConfig(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const blockTypes = [
     {
@@ -68,46 +38,41 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
       name: 'Aggregate',
       description: 'Parallel execution with result aggregation',
       icon: FiUsers,
-      color: 'blue'
+      color: 'text-blue-500 bg-blue-50 border-blue-200 hover:border-blue-300'
     },
     {
       type: 'reflect' as MassBlockType,
       name: 'Reflect',
       description: 'Iterative refinement through reflection',
       icon: FiRefreshCw,
-      color: 'green'
+      color: 'text-green-500 bg-green-50 border-green-200 hover:border-green-300'
     },
     {
       type: 'debate' as MassBlockType,
       name: 'Debate',
       description: 'Multi-agent debate for robust decisions',
       icon: FiMessageSquare,
-      color: 'purple'
+      color: 'text-purple-500 bg-purple-50 border-purple-200 hover:border-purple-300'
     },
     {
       type: 'custom' as MassBlockType,
       name: 'Custom',
       description: 'Task-specific custom agents',
       icon: FiZap,
-      color: 'orange'
+      color: 'text-orange-500 bg-orange-50 border-orange-200 hover:border-orange-300'
     },
     {
       type: 'tool_use' as MassBlockType,
       name: 'Tool Use',
       description: 'External tool integration',
       icon: FiTool,
-      color: 'teal'
+      color: 'text-teal-500 bg-teal-50 border-teal-200 hover:border-teal-300'
     }
   ];
 
   const handleExecute = async () => {
     if (!input.trim() || selectedAgents.length === 0) {
-      toast({
-        title: 'Invalid Input',
-        description: 'Please provide input and select at least one agent',
-        status: 'warning',
-        duration: 3000
-      });
+      alert('Invalid Input: Please provide input and select at least one agent');
       return;
     }
 
@@ -128,12 +93,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
 
         case 'reflect':
           if (selectedAgents.length < 2) {
-            toast({
-              title: 'Insufficient Agents',
-              description: 'Reflect block requires at least 2 agents (predictor and reflector)',
-              status: 'warning',
-              duration: 3000
-            });
+            alert('Reflect block requires at least 2 agents (predictor and reflector)');
             return;
           }
           result = await executeReflect(
@@ -148,12 +108,7 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
 
         case 'debate':
           if (selectedAgents.length < 2) {
-            toast({
-              title: 'Insufficient Agents',
-              description: 'Debate block requires at least 2 agents',
-              status: 'warning',
-              duration: 3000
-            });
+            alert('Debate block requires at least 2 agents');
             return;
           }
           result = await executeDebate(
@@ -167,24 +122,14 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
           break;
 
         default:
-          toast({
-            title: 'Not Implemented',
-            description: `${selectedBlock} block execution not yet implemented`,
-            status: 'info',
-            duration: 3000
-          });
+          alert(`${selectedBlock} block execution not yet implemented`);
           return;
       }
 
       setExecutionResult(result);
       onExecutionComplete?.(result);
 
-      toast({
-        title: 'Execution Complete',
-        description: `${selectedBlock} block executed successfully`,
-        status: 'success',
-        duration: 3000
-      });
+      // alert(`${selectedBlock} block executed successfully`);
     } catch (err) {
       console.error('Execution failed:', err);
     }
@@ -194,90 +139,88 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
     switch (selectedBlock) {
       case 'aggregate':
         return (
-          <VStack spacing={3}>
-            <FormControl>
-              <FormLabel fontSize="sm">Aggregation Strategy</FormLabel>
-              <Select
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Aggregation Strategy</label>
+              <select
                 value={blockConfig.aggregationStrategy || 'majority_vote'}
                 onChange={(e) => setBlockConfig({ ...blockConfig, aggregationStrategy: e.target.value })}
+                className="input w-full"
               >
                 <option value="majority_vote">Majority Vote</option>
                 <option value="weighted_average">Weighted Average</option>
                 <option value="consensus">Consensus</option>
-              </Select>
-            </FormControl>
+              </select>
+            </div>
 
-            <FormControl display="flex" alignItems="center">
-              <FormLabel fontSize="sm" mb={0}>
-                Parallel Execution
-              </FormLabel>
-              <Switch
-                isChecked={blockConfig.parallelExecution !== false}
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">Parallel Execution</label>
+              <input
+                type="checkbox"
+                checked={blockConfig.parallelExecution !== false}
                 onChange={(e) => setBlockConfig({ ...blockConfig, parallelExecution: e.target.checked })}
+                className="toggle"
               />
-            </FormControl>
-          </VStack>
+            </div>
+          </div>
         );
 
       case 'reflect':
         return (
-          <VStack spacing={3}>
-            <FormControl>
-              <FormLabel fontSize="sm">Max Rounds</FormLabel>
-              <NumberInput
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Max Rounds</label>
+              <input
+                type="number"
                 value={blockConfig.maxRounds || 3}
-                onChange={(_, num) => setBlockConfig({ ...blockConfig, maxRounds: num || 3 })}
+                onChange={(e) => setBlockConfig({ ...blockConfig, maxRounds: parseInt(e.target.value) || 3 })}
                 min={1}
                 max={10}
-              >
-                <NumberInputField />
-              </NumberInput>
-            </FormControl>
+                className="input w-full"
+              />
+            </div>
 
-            <Box w="full" p={3} bg="blue.50" borderRadius="md">
-              <Text fontSize="sm" color="blue.800">
-                💡 First selected agent will be the predictor, second will be the reflector
-              </Text>
-            </Box>
-          </VStack>
+            <div className="p-3 bg-blue-50 text-blue-800 rounded-md text-sm border border-blue-200">
+              💡 First selected agent will be the predictor, second will be the reflector
+            </div>
+          </div>
         );
 
       case 'debate':
         return (
-          <VStack spacing={3}>
-            <FormControl>
-              <FormLabel fontSize="sm">Debate Rounds</FormLabel>
-              <NumberInput
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Debate Rounds</label>
+              <input
+                type="number"
                 value={blockConfig.debateRounds || 3}
-                onChange={(_, num) => setBlockConfig({ ...blockConfig, debateRounds: num || 3 })}
+                onChange={(e) => setBlockConfig({ ...blockConfig, debateRounds: parseInt(e.target.value) || 3 })}
                 min={1}
                 max={10}
-              >
-                <NumberInputField />
-              </NumberInput>
-            </FormControl>
+                className="input w-full"
+              />
+            </div>
 
-            <FormControl>
-              <FormLabel fontSize="sm">Voting Strategy</FormLabel>
-              <Select
+            <div>
+              <label className="block text-sm font-medium mb-1">Voting Strategy</label>
+              <select
                 value={blockConfig.votingStrategy || 'majority'}
                 onChange={(e) => setBlockConfig({ ...blockConfig, votingStrategy: e.target.value })}
+                className="input w-full"
               >
                 <option value="majority">Majority</option>
                 <option value="weighted">Weighted</option>
                 <option value="consensus">Consensus</option>
-              </Select>
-            </FormControl>
-          </VStack>
+              </select>
+            </div>
+          </div>
         );
 
       default:
         return (
-          <Box p={3} bg="gray.50" borderRadius="md">
-            <Text fontSize="sm" color="gray.600">
-              Configuration for {selectedBlock} block coming soon...
-            </Text>
-          </Box>
+          <div className="p-3 bg-gray-50 text-gray-600 rounded-md text-sm border border-gray-200">
+            Configuration for {selectedBlock} block coming soon...
+          </div>
         );
     }
   };
@@ -285,259 +228,252 @@ export const MassBlockExecutor: React.FC<MassBlockExecutorProps> = ({
   const selectedBlockInfo = blockTypes.find(bt => bt.type === selectedBlock);
 
   return (
-    <Card>
-      <CardHeader>
-        <HStack>
-          <Icon as={FiZap} color="purple.500" />
-          <Heading size="md">MASS Block Executor</Heading>
-          <Badge colorScheme="purple" variant="subtle">Interactive Testing</Badge>
-        </HStack>
-      </CardHeader>
+    <div className="border border-gray-200 rounded-lg shadow-sm bg-white">
+      <div className="p-4 border-b border-gray-200 flex items-center gap-2">
+        <FiZap className="text-purple-500" />
+        <h2 className="text-lg font-semibold">MASS Block Executor</h2>
+        <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-medium border border-purple-200">
+          Interactive Testing
+        </span>
+      </div>
 
-      <CardBody>
-        <VStack spacing={6}>
-          {/* Block Type Selection */}
-          <Box w="full">
-            <Text mb={3} fontSize="sm" fontWeight="medium">
-              Select MASS Building Block
-            </Text>
-            <VStack spacing={2}>
-              {blockTypes.map((blockType) => (
-                <Box
-                  key={blockType.type}
-                  w="full"
-                  p={3}
-                  borderWidth={2}
-                  borderRadius="md"
-                  borderColor={selectedBlock === blockType.type ? `${blockType.color}.500` : 'gray.200'}
-                  bg={selectedBlock === blockType.type ? `${blockType.color}.50` : 'white'}
-                  cursor="pointer"
-                  onClick={() => {
-                    setSelectedBlock(blockType.type);
-                    setBlockConfig({});
-                    setExecutionResult(null);
-                  }}
-                  transition="all 0.2s"
-                  _hover={{ borderColor: `${blockType.color}.300` }}
-                >
-                  <HStack justify="space-between">
-                    <HStack>
-                      <Icon as={blockType.icon} color={`${blockType.color}.500`} />
-                      <VStack align="start" spacing={0}>
-                        <Text fontWeight="medium">{blockType.name}</Text>
-                        <Text fontSize="sm" color="gray.600">
-                          {blockType.description}
-                        </Text>
-                      </VStack>
-                    </HStack>
-                    {selectedBlock === blockType.type && (
-                      <Badge colorScheme={blockType.color}>Selected</Badge>
-                    )}
-                  </HStack>
-                </Box>
-              ))}
-            </VStack>
-          </Box>
+      <div className="p-6 flex flex-col gap-6">
+        {/* Block Type Selection */}
+        <div className="w-full">
+          <p className="text-sm font-medium mb-3">
+            Select MASS Building Block
+          </p>
+          <div className="flex flex-col gap-2">
+            {blockTypes.map((blockType) => (
+              <div
+                key={blockType.type}
+                className={`w-full p-3 border-2 rounded-md cursor-pointer transition-all flex items-center justify-between ${
+                  selectedBlock === blockType.type
+                    ? blockType.color
+                    : 'border-gray-200 bg-white hover:border-gray-300'
+                }`}
+                onClick={() => {
+                  setSelectedBlock(blockType.type);
+                  setBlockConfig({});
+                  setExecutionResult(null);
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <blockType.icon className={selectedBlock === blockType.type ? 'text-inherit' : 'text-gray-400'} />
+                  <div>
+                    <p className="font-medium">{blockType.name}</p>
+                    <p className="text-sm opacity-80">
+                      {blockType.description}
+                    </p>
+                  </div>
+                </div>
+                {selectedBlock === blockType.type && (
+                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/20">Selected</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
-          <Divider />
+        <div className="border-t border-gray-200" />
 
-          {/* Agent Selection */}
-          <Box w="full">
-            <Text mb={3} fontSize="sm" fontWeight="medium">
-              Select Agents ({selectedAgents.length} selected)
-            </Text>
-            <VStack spacing={2} maxH="200px" overflowY="auto">
-              {availableAgents.map((agent) => (
-                <Box
+        {/* Agent Selection */}
+        <div className="w-full">
+          <p className="text-sm font-medium mb-3">
+            Select Agents ({selectedAgents.length} selected)
+          </p>
+          <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto pr-2">
+            {availableAgents.map((agent) => {
+              const isSelected = selectedAgents.includes(agent.id);
+              return (
+                <div
                   key={agent.id}
-                  w="full"
-                  p={3}
-                  borderWidth={1}
-                  borderRadius="md"
-                  borderColor={selectedAgents.includes(agent.id) ? 'blue.500' : 'gray.200'}
-                  bg={selectedAgents.includes(agent.id) ? 'blue.50' : 'white'}
-                  cursor="pointer"
+                  className={`w-full p-3 border rounded-md cursor-pointer transition-colors flex items-center justify-between ${
+                    isSelected
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 bg-white hover:bg-gray-50'
+                  }`}
                   onClick={() => {
-                    if (selectedAgents.includes(agent.id)) {
+                    if (isSelected) {
                       setSelectedAgents(selectedAgents.filter(id => id !== agent.id));
                     } else {
                       setSelectedAgents([...selectedAgents, agent.id]);
                     }
                   }}
                 >
-                  <HStack justify="space-between">
-                    <VStack align="start" spacing={0}>
-                      <Text fontWeight="medium">{agent.name}</Text>
-                      <Text fontSize="sm" color="gray.600">{agent.type}</Text>
-                    </VStack>
-                    {selectedAgents.includes(agent.id) && (
-                      <Badge colorScheme="blue">Selected</Badge>
-                    )}
-                  </HStack>
-                </Box>
-              ))}
-            </VStack>
-          </Box>
+                  <div>
+                    <p className="font-medium">{agent.name}</p>
+                    <p className="text-sm text-gray-600">{agent.type}</p>
+                  </div>
+                  {isSelected && (
+                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">Selected</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
-          <Divider />
+        <div className="border-t border-gray-200" />
 
-          {/* Block Configuration */}
-          {selectedBlockInfo && (
-            <Box w="full">
-              <HStack mb={3}>
-                <Icon as={selectedBlockInfo.icon} color={`${selectedBlockInfo.color}.500`} />
-                <Text fontSize="sm" fontWeight="medium">
-                  {selectedBlockInfo.name} Configuration
-                </Text>
-              </HStack>
-              {renderBlockConfiguration()}
-            </Box>
-          )}
+        {/* Block Configuration */}
+        {selectedBlockInfo && (
+          <div className="w-full">
+            <div className="flex items-center gap-2 mb-3">
+              <selectedBlockInfo.icon className="text-gray-500" />
+              <p className="text-sm font-medium">
+                {selectedBlockInfo.name} Configuration
+              </p>
+            </div>
+            {renderBlockConfiguration()}
+          </div>
+        )}
 
-          <Divider />
+        <div className="border-t border-gray-200" />
 
-          {/* Input */}
-          <Box w="full">
-            <Text mb={3} fontSize="sm" fontWeight="medium">
-              Input for Processing
-            </Text>
-            <Textarea
-              placeholder="Enter the input that will be processed by the selected agents..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              rows={4}
-            />
-          </Box>
+        {/* Input */}
+        <div className="w-full">
+          <p className="text-sm font-medium mb-3">
+            Input for Processing
+          </p>
+          <textarea
+            placeholder="Enter the input that will be processed by the selected agents..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="input w-full h-32"
+            rows={4}
+          />
+        </div>
 
-          {/* Execute Button */}
-          <Button
-            leftIcon={<FiPlay />}
-            colorScheme={selectedBlockInfo?.color || 'blue'}
-            size="lg"
-            w="full"
-            onClick={handleExecute}
-            isLoading={loading}
-            loadingText="Executing..."
-            isDisabled={!input.trim() || selectedAgents.length === 0}
-          >
-            Execute {selectedBlockInfo?.name} Block
-          </Button>
+        {/* Execute Button */}
+        <Button
+          onClick={handleExecute}
+          disabled={loading || !input.trim() || selectedAgents.length === 0}
+          className={`w-full flex items-center justify-center gap-2 py-3 ${selectedBlockInfo?.color.split(' ')[0].replace('text-', 'bg-').replace('500', '600')} text-white hover:opacity-90`}
+        >
+          {loading ? 'Executing...' : <><FiPlay /> Execute {selectedBlockInfo?.name} Block</>}
+        </Button>
 
-          {/* Execution Results */}
-          {executionResult && (
-            <Box w="full">
-              <Divider mb={4} />
-              <Heading size="sm" mb={3}>Execution Results</Heading>
-              
-              <Accordion allowToggle>
-                <AccordionItem>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      <HStack>
-                        <Icon as={FiZap} color="green.500" />
-                        <Text fontWeight="medium">Final Result</Text>
-                        <Badge colorScheme="green">Success</Badge>
-                      </HStack>
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Box p={3} bg="gray.50" borderRadius="md">
-                      <Pre fontSize="sm" whiteSpace="pre-wrap">
-                        {typeof executionResult.result === 'string' 
-                          ? executionResult.result 
+        {/* Execution Results */}
+        {executionResult && (
+          <div className="w-full">
+            <div className="border-t border-gray-200 mb-4" />
+            <h3 className="text-lg font-semibold mb-3">Execution Results</h3>
+
+            <div className="flex flex-col gap-2">
+              {/* Final Result Accordion */}
+              <div className="border border-gray-200 rounded-md overflow-hidden">
+                <button
+                  onClick={() => toggleConfig('finalResult')}
+                  className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <FiZap className="text-green-500" />
+                    <span className="font-medium">Final Result</span>
+                    <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded font-medium">Success</span>
+                  </div>
+                  {openConfig.finalResult ? <FiChevronDown /> : <FiChevronRight />}
+                </button>
+                {openConfig.finalResult && (
+                  <div className="p-4 bg-white border-t border-gray-200">
+                    <div className="p-3 bg-gray-50 rounded-md border border-gray-200 overflow-x-auto">
+                      <pre className="text-sm whitespace-pre-wrap font-mono">
+                        {typeof executionResult.result === 'string'
+                          ? executionResult.result
                           : JSON.stringify(executionResult.result, null, 2)}
-                      </Pre>
-                    </Box>
-                  </AccordionPanel>
-                </AccordionItem>
-
-                {executionResult.reflectionHistory && (
-                  <AccordionItem>
-                    <AccordionButton>
-                      <Box flex="1" textAlign="left">
-                        <HStack>
-                          <Icon as={FiRefreshCw} color="blue.500" />
-                          <Text fontWeight="medium">Reflection History</Text>
-                          <Badge colorScheme="blue">{executionResult.reflectionHistory.length} rounds</Badge>
-                        </HStack>
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <VStack spacing={3} align="stretch">
-                        {executionResult.reflectionHistory.map((round: any, index: number) => (
-                          <Box key={index} p={3} bg="blue.50" borderRadius="md">
-                            <Text fontSize="sm" fontWeight="medium" mb={2}>
-                              Round {index + 1}
-                            </Text>
-                            <Code fontSize="sm" p={2} display="block" whiteSpace="pre-wrap">
-                              {JSON.stringify(round, null, 2)}
-                            </Code>
-                          </Box>
-                        ))}
-                      </VStack>
-                    </AccordionPanel>
-                  </AccordionItem>
+                      </pre>
+                    </div>
+                  </div>
                 )}
+              </div>
 
-                {executionResult.debateHistory && (
-                  <AccordionItem>
-                    <AccordionButton>
-                      <Box flex="1" textAlign="left">
-                        <HStack>
-                          <Icon as={FiMessageSquare} color="purple.500" />
-                          <Text fontWeight="medium">Debate History</Text>
-                          <Badge colorScheme="purple">{executionResult.debateHistory.length} rounds</Badge>
-                        </HStack>
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <VStack spacing={3} align="stretch">
-                        {executionResult.debateHistory.map((round: any, index: number) => (
-                          <Box key={index} p={3} bg="purple.50" borderRadius="md">
-                            <Text fontSize="sm" fontWeight="medium" mb={2}>
-                              Debate Round {index + 1}
-                            </Text>
-                            <Code fontSize="sm" p={2} display="block" whiteSpace="pre-wrap">
-                              {JSON.stringify(round, null, 2)}
-                            </Code>
-                          </Box>
-                        ))}
-                      </VStack>
-                    </AccordionPanel>
-                  </AccordionItem>
+              {/* Reflection History */}
+              {executionResult.reflectionHistory && (
+                <div className="border border-gray-200 rounded-md overflow-hidden">
+                  <button
+                    onClick={() => toggleConfig('reflectionHistory')}
+                    className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FiRefreshCw className="text-blue-500" />
+                      <span className="font-medium">Reflection History</span>
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded font-medium">{executionResult.reflectionHistory.length} rounds</span>
+                    </div>
+                    {openConfig.reflectionHistory ? <FiChevronDown /> : <FiChevronRight />}
+                  </button>
+                  {openConfig.reflectionHistory && (
+                    <div className="p-4 bg-white border-t border-gray-200 flex flex-col gap-3">
+                      {executionResult.reflectionHistory.map((round: any, index: number) => (
+                        <div key={index} className="p-3 bg-blue-50 rounded-md border border-blue-100">
+                          <p className="text-sm font-medium mb-2">Round {index + 1}</p>
+                          <pre className="text-sm whitespace-pre-wrap font-mono bg-white p-2 rounded border border-blue-100">
+                            {JSON.stringify(round, null, 2)}
+                          </pre>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Debate History */}
+              {executionResult.debateHistory && (
+                <div className="border border-gray-200 rounded-md overflow-hidden">
+                  <button
+                    onClick={() => toggleConfig('debateHistory')}
+                    className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FiMessageSquare className="text-purple-500" />
+                      <span className="font-medium">Debate History</span>
+                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded font-medium">{executionResult.debateHistory.length} rounds</span>
+                    </div>
+                    {openConfig.debateHistory ? <FiChevronDown /> : <FiChevronRight />}
+                  </button>
+                  {openConfig.debateHistory && (
+                    <div className="p-4 bg-white border-t border-gray-200 flex flex-col gap-3">
+                      {executionResult.debateHistory.map((round: any, index: number) => (
+                        <div key={index} className="p-3 bg-purple-50 rounded-md border border-purple-100">
+                          <p className="text-sm font-medium mb-2">Debate Round {index + 1}</p>
+                          <pre className="text-sm whitespace-pre-wrap font-mono bg-white p-2 rounded border border-purple-100">
+                            {JSON.stringify(round, null, 2)}
+                          </pre>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Execution Metrics */}
+              <div className="border border-gray-200 rounded-md overflow-hidden">
+                <button
+                  onClick={() => toggleConfig('metrics')}
+                  className="w-full p-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <FiTool className="text-orange-500" />
+                    <span className="font-medium">Execution Metrics</span>
+                  </div>
+                  {openConfig.metrics ? <FiChevronDown /> : <FiChevronRight />}
+                </button>
+                {openConfig.metrics && (
+                  <div className="p-4 bg-white border-t border-gray-200">
+                    <div className="p-3 bg-orange-50 rounded-md border border-orange-100 flex flex-col gap-2">
+                      {executionResult.executionMetrics && Object.entries(executionResult.executionMetrics).map(([key, value]) => (
+                        <div key={key} className="flex justify-between text-sm">
+                          <span className="font-medium text-gray-700">{key}:</span>
+                          <span className="font-mono bg-white px-1 rounded border border-orange-100">{String(value)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
-
-                <AccordionItem>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      <HStack>
-                        <Icon as={FiTool} color="orange.500" />
-                        <Text fontWeight="medium">Execution Metrics</Text>
-                      </HStack>
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Box p={3} bg="orange.50" borderRadius="md">
-                      <VStack align="stretch" spacing={2}>
-                        {executionResult.executionMetrics && Object.entries(executionResult.executionMetrics).map(([key, value]) => (
-                          <HStack key={key} justify="space-between">
-                            <Text fontSize="sm" fontWeight="medium">{key}:</Text>
-                            <Code fontSize="sm">{String(value)}</Code>
-                          </HStack>
-                        ))}
-                      </VStack>
-                    </Box>
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
-            </Box>
-          )}
-        </VStack>
-      </CardBody>
-    </Card>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

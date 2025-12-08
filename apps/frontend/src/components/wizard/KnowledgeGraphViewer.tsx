@@ -1,185 +1,326 @@
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.KnowledgeGraphViewer = KnowledgeGraphViewer;
-import react_1 from 'react';
-import reactflow_1 from 'reactflow';
-require("reactflow/dist/style.css");
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
-import WizardProvider_1 from './WizardProvider';
+import React, { useState, useEffect, useCallback } from 'react';
+import ReactFlow, {
+  Background,
+  Controls,
+  useNodesState,
+  useEdgesState,
+  MarkerType,
+  ConnectionMode,
+  Node,
+  Edge
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import {
+  Search,
+  Plus,
+  Trash2,
+  X
+} from 'lucide-react';
+import { useWizard } from './WizardProvider';
+
 const nodeTypes = {
-    concept: ConceptNode,
-    relation: RelationNode,
-    entity: EntityNode
+  concept: ConceptNode,
+  relation: RelationNode,
+  entity: EntityNode
 };
-function KnowledgeGraphViewer() {
-    const { state } = (0, WizardProvider_1.useWizard)();
-    const [nodes, setNodes, onNodesChange] = (0, reactflow_1.useNodesState)([]);
-    const [edges, setEdges, onEdgesChange] = (0, reactflow_1.useEdgesState)([]);
-    const [loading, setLoading] = (0, react_1.useState)(true);
-    const [autoLayout, setAutoLayout] = (0, react_1.useState)(true);
-    const [searchTerm, setSearchTerm] = (0, react_1.useState)('');
-    const [selectedNode, setSelectedNode] = (0, react_1.useState)(null);
-    (0, react_1.useEffect)(() => {
-        var _a;
-        if ((_a = state.session) === null || _a === void 0 ? void 0 : _a.knowledge_graph) {
-            loadGraphData(state.session.knowledge_graph);
-        }
-    }, [state.session]);
-    const loadGraphData = async (graph) => {
-        setLoading(true);
-        try {
-            const graphData = await graph.exportGraph();
-            const formattedNodes = formatNodes(graphData.nodes);
-            const formattedEdges = formatEdges(graphData.edges);
-            if (autoLayout) {
-                const layoutedElements = applyForceLayout(formattedNodes, formattedEdges);
-                setNodes(layoutedElements.nodes);
-                setEdges(layoutedElements.edges);
-            }
-            else {
-                setNodes(formattedNodes);
-                setEdges(formattedEdges);
-            }
-        }
-        catch (error) {
-            console.error('Error loading graph data:', error);
-        }
-        finally {
-            setLoading(false);
-        }
-    };
-    const formatNodes = (knowledgeNodes) => {
-        return knowledgeNodes.map((node: any) => ({
-            id: node.id,
-            type: node.type,
-            position: node.position,
-            data: Object.assign({ label: node.label }, node.data)
-        }));
-    };
-    const formatEdges = (knowledgeEdges) => {
-        return knowledgeEdges.map((edge: any) => ({
-            id: edge.id,
-            source: edge.source,
-            target: edge.target,
-            label: edge.label,
-            type: edge.type,
-            markerEnd: {
-                type: reactflow_1.MarkerType.ArrowClosed
-            },
-            style: { stroke: '#555' }
-        }));
-    };
-    const applyForceLayout = (nodes, edges) => {
-        const nodeSpacing = 150;
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        nodes.forEach((node, index) => {
-            const angle = (2 * Math.PI * index) / nodes.length;
-            node.position = {
-                x: centerX + Math.cos(angle) * nodeSpacing,
-                y: centerY + Math.sin(angle) * nodeSpacing
-            };
-        });
-        return { nodes, edges };
-    };
-    const handleNodeClick = (event, node) => {
-        setSelectedNode(node);
-    };
-    const handleAddNode = () => {
-        const newNode = {
-            id: `node-${Date.now()}`,
-            type: 'concept',
-            position: { x: 100, y: 100 },
-            data: { label: 'New Concept' }
-        };
-        setNodes([...nodes, newNode]);
-    };
-    const handleSearch = (0, react_1.useCallback)(() => {
-        if (!searchTerm) {
-            setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: undefined }))));
-            return;
-        }
-        setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: node.data.label.toLowerCase().includes(searchTerm.toLowerCase())
-                ? { background: '#ff8', border: '2px solid #aa5' }
-                : { opacity: 0.3 } }))));
-    }, [searchTerm]);
-    if (loading) {
-        return (<material_1.Box display="flex" justifyContent="center" alignItems="center" height="400px">
-                <material_1.CircularProgress />
-            </material_1.Box>);
+
+export function KnowledgeGraphViewer() {
+  const { state } = useWizard();
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [loading, setLoading] = useState(true);
+  const [autoLayout, setAutoLayout] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+
+  useEffect(() => {
+    if (state.session?.knowledge_graph) {
+      loadGraphData(state.session.knowledge_graph);
     }
-    return (<Box elevation={3} sx={{ height: '600px', position: 'relative' }}>
-            <material_1.Box position="absolute" top={16} left={16} zIndex={5} display="flex" gap={2}>
-                <material_1.TextField size="small" placeholder="Search nodes..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyUp={(e) => e.key === 'Enter' && handleSearch()}/>
-                <material_1.Button variant="contained" size="small" startIcon={<icons_material_1.Add />} onClick={handleAddNode}>
-                    Add Node
-                </material_1.Button>
-                <material_1.FormControlLabel control={<material_1.Switch checked={autoLayout} onChange={(e) => setAutoLayout(e.target.checked)} size="small"/>} label="Auto Layout"/>
-            </material_1.Box>
+  }, [state.session]);
 
-            <reactflow_1.default nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onNodeClick={handleNodeClick} nodeTypes={nodeTypes} connectionMode={reactflow_1.ConnectionMode.LOOSE} fitView>
-                <reactflow_1.Background />
-                <reactflow_1.Controls />
-            </reactflow_1.default>
+  const loadGraphData = async (graph: any) => {
+    setLoading(true);
+    try {
+      const graphData = await graph.exportGraph();
+      const formattedNodes = formatNodes(graphData.nodes);
+      const formattedEdges = formatEdges(graphData.edges);
 
-            {selectedNode && (<NodeDetailsPanel node={selectedNode} onClose={() => setSelectedNode(null)} onUpdate={(updatedData) => {
-                setNodes(nodes.map(n => n.id === selectedNode.id
-                    ? Object.assign(Object.assign({}, n), { data: Object.assign(Object.assign({}, n.data), updatedData) }) : n));
-                setSelectedNode(null);
-            }}/>)}
-        </Box>);
-}
-function ConceptNode({ data }) {
-    return (<div className="concept-node">
-            <div className="header">{data.label}</div>
-            <div className="body">{data.description}</div>
-        </div>);
-}
-function RelationNode({ data }) {
-    return (<div className="relation-node">
-            <div className="header">{data.label}</div>
-            <div className="type">{data.relationType}</div>
-        </div>);
-}
-function EntityNode({ data }) {
-    return (<div className="entity-node">
-            <div className="header">{data.label}</div>
-            <div className="properties">
-                {Object.entries(data.properties || {}).map(([key, value]) => (<div key={key} className="property">
-                        {key}: {String(value)}
-                    </div>))}
-            </div>
-        </div>);
-}
-function NodeDetailsPanel({ node, onClose, onUpdate }) {
-    const [editData, setEditData] = (0, react_1.useState)(node.data);
-    return (<Box sx={{
-            position: 'absolute',
-            right: 16,
-            top: 16,
-            width: 300,
-            p: 2,
-            zIndex: 10
-        }}>
-            <material_1.Typography variant="h6" gutterBottom>
-                Node Details
-                <material_1.IconButton size="small" onClick={onClose} sx={{ float: 'right' }}>
-                    <icons_material_1.Delete />
-                </material_1.IconButton>
-            </material_1.Typography>
+      if (autoLayout) {
+        const layoutedElements = applyForceLayout(formattedNodes, formattedEdges);
+        setNodes(layoutedElements.nodes);
+        setEdges(layoutedElements.edges);
+      } else {
+        setNodes(formattedNodes);
+        setEdges(formattedEdges);
+      }
+    } catch (error) {
+      console.error('Error loading graph data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <material_1.TextField fullWidth label="Label" value={editData.label} onChange={(e) => setEditData(Object.assign(Object.assign({}, editData), { label: e.target.value }))} margin="normal" size="small"/>
+  const formatNodes = (knowledgeNodes: any[]) => {
+    return knowledgeNodes.map((node: any) => ({
+      id: node.id,
+      type: node.type,
+      position: node.position,
+      data: { label: node.label, ...node.data }
+    }));
+  };
 
-            <material_1.TextField fullWidth label="Description" value={editData.description || ''} onChange={(e) => setEditData(Object.assign(Object.assign({}, editData), { description: e.target.value }))} margin="normal" size="small" multiline rows={3}/>
+  const formatEdges = (knowledgeEdges: any[]) => {
+    return knowledgeEdges.map((edge: any) => ({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      label: edge.label,
+      type: edge.type,
+      markerEnd: {
+        type: MarkerType.ArrowClosed
+      },
+      style: { stroke: '#555' }
+    }));
+  };
 
-            <material_1.Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
-                <material_1.Button variant="outlined" onClick={onClose}>
-                    Cancel
-                </material_1.Button>
-                <material_1.Button variant="contained" onClick={() => onUpdate(editData)}>
-                    Update
-                </material_1.Button>
-            </material_1.Box>
-        </Box>);
+  const applyForceLayout = (nodes: any[], edges: any[]) => {
+    const nodeSpacing = 150;
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    nodes.forEach((node, index) => {
+      const angle = (2 * Math.PI * index) / nodes.length;
+      node.position = {
+        x: centerX + Math.cos(angle) * nodeSpacing,
+        y: centerY + Math.sin(angle) * nodeSpacing
+      };
+    });
+
+    return { nodes, edges };
+  };
+
+  const handleNodeClick = (event: React.MouseEvent, node: Node) => {
+    setSelectedNode(node);
+  };
+
+  const handleAddNode = () => {
+    const newNode: Node = {
+      id: `node-${Date.now()}`,
+      type: 'concept',
+      position: { x: 100, y: 100 },
+      data: { label: 'New Concept' }
+    };
+    setNodes([...nodes, newNode]);
+  };
+
+  const handleSearch = useCallback(() => {
+    if (!searchTerm) {
+      setNodes((nodes) =>
+        nodes.map((node) => ({
+          ...node,
+          style: undefined
+        }))
+      );
+      return;
+    }
+
+    setNodes((nodes) =>
+      nodes.map((node) => ({
+        ...node,
+        style: node.data.label.toLowerCase().includes(searchTerm.toLowerCase())
+          ? { background: '#ff8', border: '2px solid #aa5' }
+          : { opacity: 0.3 }
+      }))
+    );
+  }, [searchTerm, setNodes, nodes]); // Added nodes to deps to match original logic approx, though this might re-trigger too much. original didn't have deps array issue shown fully.
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-[600px] relative border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-900 overflow-hidden">
+      <div className="absolute top-4 left-4 z-[5] flex gap-2 items-center">
+        <div className="relative">
+          <input
+            type="text"
+            className="pl-3 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
+            placeholder="Search nodes..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyUp={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <button
+            onClick={handleSearch}
+            className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+        </div>
+        <button
+          onClick={handleAddNode}
+          className="flex items-center px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-4 h-4 mr-1" />
+          Add Node
+        </button>
+        <div className="flex items-center bg-white dark:bg-gray-800 px-2 py-1.5 rounded-md border border-gray-300 dark:border-gray-600">
+          <label className="flex items-center text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={autoLayout}
+              onChange={(e) => setAutoLayout(e.target.checked)}
+              className="mr-2 rounded text-blue-600 focus:ring-blue-500"
+            />
+            Auto Layout
+          </label>
+        </div>
+      </div>
+
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onNodeClick={handleNodeClick}
+        nodeTypes={nodeTypes}
+        connectionMode={ConnectionMode.LOOSE}
+        fitView
+      >
+        <Background />
+        <Controls />
+      </ReactFlow>
+
+      {selectedNode && (
+        <NodeDetailsPanel
+          node={selectedNode}
+          onClose={() => setSelectedNode(null)}
+          onUpdate={(updatedData: any) => {
+            setNodes((nodes) =>
+              nodes.map((n) =>
+                n.id === selectedNode.id ? { ...n, data: { ...n.data, ...updatedData } } : n
+              )
+            );
+            setSelectedNode(null);
+          }}
+        />
+      )}
+    </div>
+  );
 }
-export {};
+
+function ConceptNode({ data }: { data: any }) {
+  return (
+    <div className="bg-white dark:bg-gray-800 border-2 border-blue-500 rounded-md p-2 min-w-[150px] shadow-sm">
+      <div className="font-bold text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-1 mb-1">
+        {data.label}
+      </div>
+      <div className="text-xs text-gray-600 dark:text-gray-400">
+        {data.description || 'Concept'}
+      </div>
+    </div>
+  );
+}
+
+function RelationNode({ data }: { data: any }) {
+  return (
+    <div className="bg-white dark:bg-gray-800 border-2 border-green-500 rounded-full px-4 py-2 min-w-[100px] shadow-sm">
+      <div className="font-bold text-sm text-center text-gray-900 dark:text-white">
+        {data.label}
+      </div>
+      <div className="text-xs text-center text-gray-600 dark:text-gray-400">
+        {data.relationType}
+      </div>
+    </div>
+  );
+}
+
+function EntityNode({ data }: { data: any }) {
+  return (
+    <div className="bg-white dark:bg-gray-800 border-2 border-purple-500 rounded-md p-2 min-w-[150px] shadow-sm">
+      <div className="font-bold text-sm text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-1 mb-1">
+        {data.label}
+      </div>
+      <div className="text-xs space-y-1">
+        {Object.entries(data.properties || {}).map(([key, value]) => (
+          <div key={key} className="text-gray-600 dark:text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="font-semibold">{key}:</span> {String(value)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NodeDetailsPanel({
+  node,
+  onClose,
+  onUpdate
+}: {
+  node: Node;
+  onClose: () => void;
+  onUpdate: (data: any) => void;
+}) {
+  const [editData, setEditData] = useState(node.data);
+
+  return (
+    <div className="absolute right-4 top-4 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 z-10">
+      <div className="flex justify-between items-center mb-4">
+        <h6 className="text-lg font-semibold text-gray-900 dark:text-white">Node Details</h6>
+        <button
+          onClick={onClose}
+          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Label
+          </label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            value={editData.label}
+            onChange={(e) => setEditData({ ...editData, label: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Description
+          </label>
+          <textarea
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            rows={3}
+            value={editData.description || ''}
+            onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+          />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <button
+            onClick={onClose}
+            className="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onUpdate(editData)}
+            className="px-3 py-1.5 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+

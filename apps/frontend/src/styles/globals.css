@@ -1,3 +1,6 @@
+/* Import comprehensive design system */
+@import './design-system.css';
+
 /* Import landing page animations */
 @import './landing-animations.css';
 

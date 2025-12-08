@@ -1,31 +1,16 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Spinner,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useDisclosure,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
-import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
+import { Button, Badge, LoadingSpinner } from '@/components/ui/design-system';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+} from '@/components/ui/modal';
+import { useToast } from '@/hooks/useToast';
+import { format } from 'date-fns';
 import { PromptTemplateVersion, usePromptTemplates } from '../../hooks/usePromptTemplates';
 
 interface VersionHistoryProps {
@@ -37,8 +22,8 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
   const [versions, setVersions] = useState<PromptTemplateVersion[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<PromptTemplateVersion | null>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (templateId) {
@@ -55,11 +40,11 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
     try {
       const versionHistory = await getTemplateVersions(templateId);
       setVersions(versionHistory);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error loading version history',
         description: error.message,
-        status: 'error',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -68,119 +53,127 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
 
   const handleViewVersion = (version: PromptTemplateVersion) => {
     setSelectedVersion(version);
-    onOpen();
+    setIsOpen(true);
   };
 
   const handleRestoreVersion = async (version: PromptTemplateVersion) => {
     if (!templateId) return;
 
     try {
-      // Load the current template
-      const currentTemplate = await loadTemplate(templateId);
-
-      // Update with the version's content
       await loadTemplate(templateId);
 
       toast({
         title: 'Version restored',
         description: `Restored to version from ${format(new Date(version.createdAt), 'PPpp')}`,
-        status: 'success',
+        variant: 'success',
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error restoring version',
         description: error.message,
-        status: 'error',
+        variant: 'destructive',
       });
     }
   };
 
   if (!templateId) {
     return (
-      <Box textAlign="center" py={10}>
-        <Text color="gray.500">Please select a template to view version history.</Text>
-      </Box>
+      <div className="text-center py-10">
+        <p className="text-neutral-500">Please select a template to view version history.</p>
+      </div>
     );
   }
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" height="300px">
-        <Spinner size="xl" />
-      </Flex>
+      <div className="flex justify-center items-center h-[300px]">
+        <LoadingSpinner />
+      </div>
     );
   }
 
   return (
-    <VStack spacing={4} align="stretch">
-      <Flex justifyContent="space-between" alignItems="center">
-        <Heading size="md">Version History</Heading>
-        <Button size="sm" onClick={loadVersions}>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Version History</h3>
+        <Button size="sm" variant="outline" onClick={loadVersions}>
           Refresh
         </Button>
-      </Flex>
+      </div>
 
       {versions.length === 0 ? (
-        <Box textAlign="center" py={8} borderWidth={1} borderRadius="md" borderStyle="dashed">
-          <Text color="gray.500">No version history available.</Text>
-          <Text fontSize="sm" color="gray.400" mt={2}>
+        <div className="text-center py-8 border border-dashed border-neutral-300 dark:border-neutral-600 rounded-md">
+          <p className="text-neutral-500">No version history available.</p>
+          <p className="text-sm text-neutral-400 mt-2">
             Version history will be created when you update this template.
-          </Text>
-        </Box>
+          </p>
+        </div>
       ) : (
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Version</Th>
-              <Th>Created</Th>
-              <Th>By</Th>
-              <Th>Comment</Th>
-              <Th>Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {versions.map((version, index) => (
-              <Tr key={version.id}>
-                <Td>
-                  {index === 0 ? (
-                    <Badge colorScheme="green">Latest</Badge>
-                  ) : (
-                    <Text>v{versions.length - index}</Text>
-                  )}
-                </Td>
-                <Td>{format(new Date(version.createdAt), 'MMM d, yyyy h:mm a')}</Td>
-                <Td>{version.createdBy}</Td>
-                <Td>
-                  <Text noOfLines={1}>
-                    {version.comment || (
-                      <Text as="i" color="gray.500">
-                        No comment
-                      </Text>
+        <div className="overflow-x-auto bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
+          <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+            <thead className="bg-neutral-50 dark:bg-neutral-900">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                  Version
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                  Created
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                  By
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                  Comment
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+              {versions.map((version, index) => (
+                <tr key={version.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {index === 0 ? (
+                      <Badge variant="success">Latest</Badge>
+                    ) : (
+                      <span className="text-sm">v{versions.length - index}</span>
                     )}
-                  </Text>
-                </Td>
-                <Td>
-                  <Button size="xs" mr={2} onClick={() => handleViewVersion(version)}>
-                    View
-                  </Button>
-                  {index > 0 && (
-                    <Button
-                      size="xs"
-                      colorScheme="blue"
-                      onClick={() => handleRestoreVersion(version)}
-                    >
-                      Restore
-                    </Button>
-                  )}
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {format(new Date(version.createdAt), 'MMM d, yyyy h:mm a')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{version.createdBy}</td>
+                  <td className="px-6 py-4 text-sm">
+                    <div className="max-w-xs truncate">
+                      {version.comment || <span className="italic text-neutral-500">No comment</span>}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <div className="flex gap-2">
+                      <Button size="xs" variant="outline" onClick={() => handleViewVersion(version)}>
+                        View
+                      </Button>
+                      {index > 0 && (
+                        <Button
+                          size="xs"
+                          variant="primary"
+                          onClick={() => handleRestoreVersion(version)}
+                        >
+                          Restore
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* Version Detail Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -190,73 +183,59 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
           <ModalCloseButton />
           <ModalBody>
             {selectedVersion && (
-              <VStack spacing={4} align="stretch">
-                <Box>
-                  <Text fontWeight="bold">Comment:</Text>
-                  <Text>{selectedVersion.comment || 'No comment'}</Text>
-                </Box>
-                <Divider />
-                <Box>
-                  <Text fontWeight="bold" mb={2}>
-                    Template Content:
-                  </Text>
-                  <Box
-                    p={3}
-                    borderWidth={1}
-                    borderRadius="md"
-                    fontFamily="mono"
-                    fontSize="sm"
-                    whiteSpace="pre-wrap"
-                    bg="gray.50"
-                    maxH="300px"
-                    overflowY="auto"
-                  >
+              <div className="flex flex-col gap-4">
+                <div>
+                  <p className="font-bold mb-1">Comment:</p>
+                  <p>{selectedVersion.comment || 'No comment'}</p>
+                </div>
+                <hr className="border-neutral-200 dark:border-neutral-700" />
+                <div>
+                  <p className="font-bold mb-2">Template Content:</p>
+                  <div className="p-3 border border-neutral-200 dark:border-neutral-700 rounded-md font-mono text-sm whitespace-pre-wrap bg-neutral-50 dark:bg-neutral-900 max-h-[300px] overflow-y-auto">
                     {selectedVersion.content}
-                  </Box>
-                </Box>
-                <Box>
-                  <Text fontWeight="bold" mb={2}>
-                    Variables:
-                  </Text>
-                  <Table size="sm">
-                    <Thead>
-                      <Tr>
-                        <Th>Name</Th>
-                        <Th>Default Value</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
+                  </div>
+                </div>
+                <div>
+                  <p className="font-bold mb-2">Variables:</p>
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-neutral-200 dark:border-neutral-700">
+                        <th className="text-left py-2">Name</th>
+                        <th className="text-left py-2">Default Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {Object.entries(selectedVersion.variables).map(([key, value]) => (
-                        <Tr key={key}>
-                          <Td>{key}</Td>
-                          <Td>{value}</Td>
-                        </Tr>
+                        <tr key={key} className="border-b border-neutral-200 dark:border-neutral-700">
+                          <td className="py-2">{key}</td>
+                          <td className="py-2">{value}</td>
+                        </tr>
                       ))}
                       {Object.keys(selectedVersion.variables).length === 0 && (
-                        <Tr>
-                          <Td colSpan={2} textAlign="center" py={2}>
+                        <tr>
+                          <td colSpan={2} className="text-center py-2 text-neutral-500">
                             No variables defined
-                          </Td>
-                        </Tr>
+                          </td>
+                        </tr>
                       )}
-                    </Tbody>
-                  </Table>
-                </Box>
-              </VStack>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button variant="ghost" onClick={() => setIsOpen(false)} className="mr-3">
               Close
             </Button>
             {selectedVersion && (
-              <Button colorScheme="blue" onClick={() => handleRestoreVersion(selectedVersion)}>
+              <Button variant="primary" onClick={() => handleRestoreVersion(selectedVersion)}>
                 Restore This Version
               </Button>
             )}
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </VStack>
+    </div>
   );
 };

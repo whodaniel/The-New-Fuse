@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Button, VStack, HStack, Code, Alert, AlertIcon, Progress, Badge } from '@chakra-ui/react';
-import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
+import { FiCheckCircle, FiAlertTriangle } from 'react-icons/fi';
+import { Badge, ProgressBar, Alert, Button } from '../ui/design-system';
 
 interface AIAgentOnboardingProps {
   agentId?: string;
@@ -45,12 +45,12 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setAgentData(prev => ({
+
+      setAgentData((prev: any) => ({
         ...prev,
         registrationComplete: true
       }));
-      
+
       setStep('capabilities');
     } catch (err) {
       setError('Failed to register agent. Please try again.');
@@ -80,8 +80,8 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
         const success = Math.random() > 0.3;
         setCapabilityTests(prev => {
           const updated = [...prev];
-          updated[i] = { 
-            ...updated[i], 
+          updated[i] = {
+            ...updated[i],
             status: success ? 'success' : 'failed',
             result: success ? { score: Math.floor(Math.random() * 100) } : { error: 'Test failed' }
           };
@@ -90,7 +90,7 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
 
         // If successful, add to agent capabilities
         if (success) {
-          setAgentData(prev => ({
+          setAgentData((prev: any) => ({
             ...prev,
             capabilities: [...prev.capabilities, capabilityTests[i].name]
           }));
@@ -112,13 +112,13 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setAgentData(prev => ({
+
+      setAgentData((prev: any) => ({
         ...prev,
         communicationChannels: ['http', 'websocket', 'event-stream'],
         communicationSetupComplete: true
       }));
-      
+
       setStep('complete');
     } catch (err) {
       setError('Failed to setup communication channels. Please try again.');
@@ -132,186 +132,190 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
   };
 
   return (
-    <Box maxW="800px" mx="auto" p={6}>
-      <Heading mb={6}>AI Agent Onboarding</Heading>
-      
-      <Progress value={(
-        step === 'detection' ? 20 :
-        step === 'registration' ? 40 :
-        step === 'capabilities' ? 60 :
-        step === 'communication' ? 80 :
-        100
-      )} mb={8} />
+    <div className="max-w-[800px] mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+      <h2 className="text-2xl font-bold mb-6">AI Agent Onboarding</h2>
+
+      <div className="mb-8">
+        <ProgressBar value={(
+          step === 'detection' ? 20 :
+          step === 'registration' ? 40 :
+          step === 'capabilities' ? 60 :
+          step === 'communication' ? 80 :
+          100
+        )} />
+      </div>
 
       {error && (
-        <Alert status="error" mb={4}>
-          <AlertIcon />
-          {error}
-        </Alert>
+        <div className="mb-4">
+          <Alert variant="danger">
+            <p>{error}</p>
+          </Alert>
+        </div>
       )}
 
       {step === 'detection' && (
-        <Box>
-          <Heading size="md" mb={4}>Detecting Agent Type</Heading>
-          <Text mb={4}>Analyzing connection patterns and headers...</Text>
-          <Progress size="sm" isIndeterminate />
-        </Box>
+        <div>
+          <h3 className="text-lg font-bold mb-4">Detecting Agent Type</h3>
+          <p className="mb-4 text-gray-600">Analyzing connection patterns and headers...</p>
+          <div className="flex justify-center py-4">
+             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        </div>
       )}
 
       {step === 'registration' && (
-        <Box>
-          <Heading size="md" mb={4}>Agent Registration</Heading>
-          <Text mb={4}>Register your AI agent with The New Fuse platform.</Text>
-          
-          <VStack align="start" spacing={4} mb={6}>
-            <Box>
-              <Text fontWeight="bold">Agent ID</Text>
-              <Code p={2}>{agentData.id}</Code>
-            </Box>
-            
-            <Box>
-              <Text fontWeight="bold">Registration Endpoint</Text>
-              <Code p={2}>/api/onboarding/ai-agent-registration</Code>
-            </Box>
-            
-            <Box>
-              <Text fontWeight="bold">Required Headers</Text>
-              <Code p={2} display="block" whiteSpace="pre">
+        <div>
+          <h3 className="text-lg font-bold mb-4">Agent Registration</h3>
+          <p className="mb-4 text-gray-600">Register your AI agent with The New Fuse platform.</p>
+
+          <div className="flex flex-col gap-4 mb-6">
+            <div>
+              <p className="font-bold">Agent ID</p>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono">{agentData.id}</code>
+            </div>
+
+            <div>
+              <p className="font-bold">Registration Endpoint</p>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono">/api/onboarding/ai-agent-registration</code>
+            </div>
+
+            <div>
+              <p className="font-bold">Required Headers</p>
+              <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap">
 {`Content-Type: application/json
 X-Agent-ID: ${agentData.id}
 X-Agent-Type: ai_agent`}
-              </Code>
-            </Box>
-          </VStack>
-          
-          <Button 
-            colorScheme="blue" 
+              </pre>
+            </div>
+          </div>
+
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={handleRegistration}
-            isLoading={loading}
+            disabled={loading}
           >
-            Complete Registration
+            {loading ? 'Registering...' : 'Complete Registration'}
           </Button>
-        </Box>
+        </div>
       )}
 
       {step === 'capabilities' && (
-        <Box>
-          <Heading size="md" mb={4}>Capability Assessment</Heading>
-          <Text mb={4}>Let's test your agent's capabilities to determine what tools it can use.</Text>
-          
-          <VStack align="start" spacing={4} mb={6}>
+        <div>
+          <h3 className="text-lg font-bold mb-4">Capability Assessment</h3>
+          <p className="mb-4 text-gray-600">Let's test your agent's capabilities to determine what tools it can use.</p>
+
+          <div className="flex flex-col gap-4 mb-6">
             {capabilityTests.map((test, index) => (
-              <HStack key={index} w="100%" justify="space-between">
-                <Text>{test.name}</Text>
-                <HStack>
-                  {test.status === 'pending' && <Badge>Pending</Badge>}
-                  {test.status === 'running' && <Badge colorScheme="blue">Running</Badge>}
+              <div key={index} className="flex justify-between items-center w-full p-2 bg-gray-50 rounded border border-gray-100">
+                <span className="font-medium">{test.name}</span>
+                <div className="flex items-center gap-2">
+                  {test.status === 'pending' && <Badge variant="secondary">Pending</Badge>}
+                  {test.status === 'running' && <Badge variant="primary">Running</Badge>}
                   {test.status === 'success' && (
-                    <HStack>
-                      <Badge colorScheme="green">Success</Badge>
-                      <CheckCircleIcon color="green.500" />
-                    </HStack>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="success">Success</Badge>
+                      <FiCheckCircle className="text-green-500" />
+                    </div>
                   )}
                   {test.status === 'failed' && (
-                    <HStack>
-                      <Badge colorScheme="red">Failed</Badge>
-                      <WarningIcon color="red.500" />
-                    </HStack>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="danger">Failed</Badge>
+                      <FiAlertTriangle className="text-red-500" />
+                    </div>
                   )}
-                </HStack>
-              </HStack>
+                </div>
+              </div>
             ))}
-          </VStack>
-          
-          <Button 
-            colorScheme="blue" 
+          </div>
+
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={runCapabilityTests}
-            isLoading={loading}
-            isDisabled={capabilityTests.some(test => test.status === 'running')}
+            disabled={loading || capabilityTests.some(test => test.status === 'running')}
           >
-            Run Capability Tests
+            {loading ? 'Running Tests...' : 'Run Capability Tests'}
           </Button>
-        </Box>
+        </div>
       )}
 
       {step === 'communication' && (
-        <Box>
-          <Heading size="md" mb={4}>Communication Setup</Heading>
-          <Text mb={4}>Set up communication channels between your agent and The New Fuse platform.</Text>
-          
-          <VStack align="start" spacing={4} mb={6}>
-            <Box>
-              <Text fontWeight="bold">Available Channels</Text>
-              <HStack mt={2}>
-                <Badge colorScheme="green">HTTP</Badge>
-                <Badge colorScheme="blue">WebSocket</Badge>
-                <Badge colorScheme="purple">Event Stream</Badge>
-              </HStack>
-            </Box>
-            
-            <Box>
-              <Text fontWeight="bold">Communication Endpoints</Text>
-              <Code p={2} display="block" whiteSpace="pre">
+        <div>
+          <h3 className="text-lg font-bold mb-4">Communication Setup</h3>
+          <p className="mb-4 text-gray-600">Set up communication channels between your agent and The New Fuse platform.</p>
+
+          <div className="flex flex-col gap-4 mb-6">
+            <div>
+              <p className="font-bold">Available Channels</p>
+              <div className="flex gap-2 mt-2">
+                <Badge variant="success">HTTP</Badge>
+                <Badge variant="primary">WebSocket</Badge>
+                <Badge variant="default">Event Stream</Badge>
+              </div>
+            </div>
+
+            <div>
+              <p className="font-bold">Communication Endpoints</p>
+              <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap">
 {`HTTP: /api/agents/${agentData.id}/messages
 WebSocket: ws://your-domain.com/api/agents/${agentData.id}/ws
 Event Stream: /api/agents/${agentData.id}/events`}
-              </Code>
-            </Box>
-            
-            <Box>
-              <Text fontWeight="bold">Authentication</Text>
-              <Text>Use the agent token provided during registration for all communications.</Text>
-            </Box>
-          </VStack>
-          
-          <Button 
-            colorScheme="blue" 
+              </pre>
+            </div>
+
+            <div>
+              <p className="font-bold">Authentication</p>
+              <p className="text-sm text-gray-600 mt-1">Use the agent token provided during registration for all communications.</p>
+            </div>
+          </div>
+
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={setupCommunication}
-            isLoading={loading}
+            disabled={loading}
           >
-            Setup Communication Channels
+            {loading ? 'Setting up...' : 'Setup Communication Channels'}
           </Button>
-        </Box>
+        </div>
       )}
 
       {step === 'complete' && (
-        <Box>
-          <Heading size="md" mb={4}>Onboarding Complete</Heading>
-          <Text mb={4}>Your AI agent has been successfully onboarded to The New Fuse platform.</Text>
-          
-          <VStack align="start" spacing={4} mb={6}>
-            <Box>
-              <Text fontWeight="bold">Agent ID</Text>
-              <Code p={2}>{agentData.id}</Code>
-            </Box>
-            
-            <Box>
-              <Text fontWeight="bold">Capabilities</Text>
-              <HStack mt={2} flexWrap="wrap">
-                {agentData.capabilities.map((cap, idx) => (
-                  <Badge key={idx} colorScheme="green" m={1}>{cap}</Badge>
+        <div>
+          <h3 className="text-lg font-bold mb-4">Onboarding Complete</h3>
+          <p className="mb-4 text-gray-600">Your AI agent has been successfully onboarded to The New Fuse platform.</p>
+
+          <div className="flex flex-col gap-4 mb-6">
+            <div>
+              <p className="font-bold">Agent ID</p>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono">{agentData.id}</code>
+            </div>
+
+            <div>
+              <p className="font-bold">Capabilities</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {agentData.capabilities.map((cap: string, idx: number) => (
+                  <Badge key={idx} variant="success">{cap}</Badge>
                 ))}
-              </HStack>
-            </Box>
-            
-            <Box>
-              <Text fontWeight="bold">Communication Channels</Text>
-              <HStack mt={2}>
-                {agentData.communicationChannels.map((channel, idx) => (
-                  <Badge key={idx} colorScheme="blue">{channel}</Badge>
+              </div>
+            </div>
+
+            <div>
+              <p className="font-bold">Communication Channels</p>
+              <div className="flex gap-2 mt-2">
+                {agentData.communicationChannels.map((channel: string, idx: number) => (
+                  <Badge key={idx} variant="primary">{channel}</Badge>
                 ))}
-              </HStack>
-            </Box>
-          </VStack>
-          
-          <Button 
-            colorScheme="green" 
+              </div>
+            </div>
+          </div>
+
+          <Button
+            className="bg-green-600 hover:bg-green-700 text-white"
             onClick={finalizeOnboarding}
           >
             Start Using The New Fuse
           </Button>
-        </Box>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };

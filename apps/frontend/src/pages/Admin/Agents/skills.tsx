@@ -1,61 +1,71 @@
-import AgentSQLConnectorSelection from './SQLConnectorSelection';
-import AgentWebSearchSelection from './WebSearchSelection';
-import GenericSkillPanel from './GenericSkillPanel';
-import DefaultSkillPanel from './DefaultSkillPanel';
-import { Brain, File, Search, BarChart, FileSearch } from "lucide-react";
-import RAGImage from "@/media/agents/rag-memory.png";
-import SummarizeImage from "@/media/agents/view-summarize.png";
-import ScrapeWebsitesImage from "@/media/agents/scrape-websites.png";
-import GenerateChartsImage from "@/media/agents/generate-charts.png";
-import GenerateSaveImages from "@/media/agents/generate-save-files.png";
-export const defaultSkills = {
-    "rag-memory": {
-        title: "RAG & long-term memory",
-        description: 'Allow the agent to leverage your local documents to answer a query or ask the agent to "remember" pieces of content for long-term memory retrieval.',
-        component: DefaultSkillPanel,
-        icon: Brain,
-        image: RAGImage,
-    },
-    "view-summarize": {
-        title: "View & summarize documents",
-        description: "Allow the agent to list and summarize the content of workspace files currently embedded.",
-        component: DefaultSkillPanel,
-        icon: File,
-        image: SummarizeImage,
-    },
-    "scrape-websites": {
-        title: "Scrape websites",
-        description: "Allow the agent to visit and scrape the content of websites.",
-        component: DefaultSkillPanel,
-        icon: Search,
-        image: ScrapeWebsitesImage,
-    },
-};
-export const configurableSkills = {
-    "save-file-to-browser": {
-        title: "Generate & save files to browser",
-        description: "Enable the default agent to generate and write to files that can be saved to your computer.",
-        component: GenericSkillPanel,
-        skill: "save-file-to-browser",
-        icon: FileSearch,
-        image: GenerateSaveImages,
-    },
-    "create-chart": {
-        title: "Generate charts",
-        description: "Enable the default agent to generate various types of charts from data provided or given in chat.",
-        component: GenericSkillPanel,
-        skill: "create-chart",
-        icon: BarChart,
-        image: GenerateChartsImage,
-    },
-    "web-browsing": {
-        title: "Web Search",
-        component: AgentWebSearchSelection,
-        skill: "web-browsing",
-    },
-    "sql-agent": {
-        title: "SQL Connector",
-        component: AgentSQLConnectorSelection,
-        skill: "sql-agent",
-    },
-};
+import React from 'react';
+import { defaultSkills, configurableSkills } from './skills-data';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export default function AgentSkillsPage() {
+  const handleToggle = (key: string, enabled: boolean) => {
+    console.log(`Toggled ${key} to ${enabled}`);
+  };
+
+  const handleSelect = (key: string, value: string) => {
+    console.log(`Selected ${value} for ${key}`);
+  };
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Agent Skills</h1>
+        <p className="text-gray-600">Configure capabilities and integrations for your agents.</p>
+      </div>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Core Capabilities</h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Object.entries(defaultSkills).map(([key, skill]) => {
+            const Component = skill.component;
+            return (
+              <Component
+                key={key}
+                title={skill.title}
+                description={skill.description}
+                enabled={true}
+                onToggle={(enabled) => handleToggle(key, enabled)}
+              />
+            );
+          })}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Integrations & Tools</h2>
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+          {Object.entries(configurableSkills).map(([key, skill]) => {
+            const Component = skill.component;
+
+            // Render logic based on skill type
+            if (key === 'web-browsing' || key === 'sql-agent') {
+               return (
+                  <Card key={key} className="h-full">
+                      <CardHeader>
+                          <CardTitle>{skill.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <Component onSelect={(val: string) => handleSelect(key, val)} />
+                      </CardContent>
+                  </Card>
+               );
+            }
+
+            return (
+              <Component
+                key={key}
+                title={skill.title}
+                description={skill.description}
+              />
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+}

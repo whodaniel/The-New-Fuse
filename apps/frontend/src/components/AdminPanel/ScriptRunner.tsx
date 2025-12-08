@@ -1,15 +1,7 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Select,
-  Text,
-  VStack,
-  useToast,
-} from '@chakra-ui/react';
 import React from 'react';
+import { Button } from '@/components/ui/design-system';
 import { useSocket } from '../../hooks/useSocket';
+import { useToast } from '@/hooks/useToast';
 
 const AVAILABLE_SCRIPTS = {
   dev: 'Start Development',
@@ -27,7 +19,7 @@ export const ScriptRunner: React.FC = () => {
   const [selectedScript, setSelectedScript] = React.useState('');
   const [isRunning, setIsRunning] = React.useState(false);
   const socket = useSocket();
-  const toast = useToast();
+  const { toast } = useToast();
 
   const runScript = async () => {
     if (!selectedScript) return;
@@ -41,9 +33,8 @@ export const ScriptRunner: React.FC = () => {
       toast({
         title: 'Script Output',
         description: data.message,
-        status: data.type === 'error' ? 'error' : 'info',
+        variant: data.type === 'error' ? 'destructive' : 'default',
         duration: 3000,
-        isClosable: true,
       });
     });
 
@@ -52,9 +43,8 @@ export const ScriptRunner: React.FC = () => {
       toast({
         title: 'Script Complete',
         description: 'The script has finished running.',
-        status: 'success',
+        variant: 'success',
         duration: 3000,
-        isClosable: true,
       });
     });
 
@@ -65,39 +55,40 @@ export const ScriptRunner: React.FC = () => {
   }, [socket, toast]);
 
   return (
-    <Box p={4}>
-      <Text fontSize="xl" mb={4}>
-        Script Runner
-      </Text>
-      <VStack spacing={4}>
-        <FormControl>
-          <FormLabel htmlFor="script-select">Select Script</FormLabel>
-          <Select
+    <div className="p-4">
+      <h2 className="text-xl font-semibold mb-4">Script Runner</h2>
+      <div className="flex flex-col gap-4">
+        <div>
+          <label htmlFor="script-select" className="block text-sm font-medium mb-2">
+            Select Script
+          </label>
+          <select
             id="script-select"
-            placeholder="Select a script to run"
             value={selectedScript}
             onChange={(e) => setSelectedScript(e.target.value)}
-            name="script-select"
+            className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800"
             aria-label="Select a script to run"
             title="Choose a script from the list to execute"
             required
           >
+            <option value="">Select a script to run</option>
             {Object.entries(AVAILABLE_SCRIPTS).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
-          </Select>
-        </FormControl>
+          </select>
+        </div>
         <Button
-          colorScheme="blue"
-          isLoading={isRunning}
+          variant="primary"
           onClick={runScript}
-          isDisabled={!selectedScript}
+          disabled={!selectedScript || isRunning}
+          className={isRunning ? 'opacity-50 cursor-not-allowed' : ''}
         >
-          Run Script
+          {isRunning ? 'Running...' : 'Run Script'}
         </Button>
-      </VStack>
-    </Box>
+      </div>
+    </div>
   );
 };
+

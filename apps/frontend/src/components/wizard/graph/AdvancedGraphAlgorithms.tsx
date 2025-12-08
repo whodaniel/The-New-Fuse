@@ -1,14 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdvancedGraphAlgorithms = void 0;
-class AdvancedGraphAlgorithms {
-    constructor(nodes, edges) {
+
+export class AdvancedGraphAlgorithms {
+    nodes: any[];
+    edges: any[];
+    nodeIndices: Map<string, number>;
+    adjacencyMatrix: number[][];
+    laplacianMatrix: number[][];
+
+    constructor(nodes: any[], edges: any[]) {
         this.nodes = nodes;
         this.edges = edges;
         this.nodeIndices = new Map(nodes.map((node, i) => [node.id, i]));
         this.adjacencyMatrix = this.buildAdjacencyMatrix();
         this.laplacianMatrix = this.buildLaplacianMatrix();
     }
+
     buildAdjacencyMatrix() {
         const n = this.nodes.length;
         const matrix = Array(n).fill(0).map(() => Array(n).fill(0));
@@ -22,6 +27,7 @@ class AdvancedGraphAlgorithms {
         });
         return matrix;
     }
+
     buildLaplacianMatrix() {
         const n = this.nodes.length;
         const matrix = Array(n).fill(0).map(() => Array(n).fill(0));
@@ -36,7 +42,8 @@ class AdvancedGraphAlgorithms {
         }
         return matrix;
     }
-    powerIteration(matrix, iterations = 100) {
+
+    powerIteration(matrix: number[][], iterations = 100) {
         const n = matrix.length;
         let vector = Array(n).fill(1 / Math.sqrt(n));
         let eigenvalue = 0;
@@ -58,10 +65,13 @@ class AdvancedGraphAlgorithms {
         }
         return [vector, eigenvalue];
     }
+
     calculateEigenvectorCentrality() {
-        const [eigenvector] = this.powerIteration(this.adjacencyMatrix);
-        return new Map(this.nodes.map((node, i) => [node.id, eigenvector[i]]));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [eigenvector, _] = this.powerIteration(this.adjacencyMatrix);
+        return new Map(this.nodes.map((node, i) => [node.id, (eigenvector as number[])[i]]));
     }
+
     calculateKatzCentrality(alpha = 0.1) {
         const n = this.nodes.length;
         const beta = 1;
@@ -88,12 +98,13 @@ class AdvancedGraphAlgorithms {
         }
         return new Map(this.nodes.map((node, i) => [node.id, katz[i]]));
     }
+
     calculateSpectralProperties() {
         // Calculate first few eigenvalues and eigenvectors
         const numEigenvalues = Math.min(5, this.nodes.length);
         const eigenvalues = [];
         const eigenvectors = [];
-        let matrix = this.adjacencyMatrix.map(row => [...row]);
+        const matrix = this.adjacencyMatrix.map(row => [...row]);
         for (let i = 0; i < numEigenvalues; i++) {
             const [eigenvector, eigenvalue] = this.powerIteration(matrix);
             eigenvalues.push(eigenvalue);
@@ -101,11 +112,12 @@ class AdvancedGraphAlgorithms {
             // Deflate matrix for next eigenvalue
             for (let j = 0; j < matrix.length; j++) {
                 for (let k = 0; k < matrix.length; k++) {
-                    matrix[j][k] -= eigenvalue * eigenvector[j] * eigenvector[k];
+                    matrix[j][k] -= (eigenvalue as number) * (eigenvector as number[])[j] * (eigenvector as number[])[k];
                 }
             }
         }
         // Calculate Laplacian spectrum
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, laplacianEigenvalue] = this.powerIteration(this.laplacianMatrix);
         const laplacianSpectrum = [laplacianEigenvalue];
         return {
@@ -114,6 +126,7 @@ class AdvancedGraphAlgorithms {
             laplacianSpectrum
         };
     }
+
     detectStructuralHoles() {
         const constraints = new Map();
         this.nodes.forEach((node: any) => {
@@ -125,8 +138,8 @@ class AdvancedGraphAlgorithms {
                 return;
             }
             let constraint = 0;
-            neighbors.forEach(neighbor1 => {
-                neighbors.forEach(neighbor2 => {
+            neighbors.forEach((neighbor1: any) => {
+                neighbors.forEach((neighbor2: any) => {
                     if (neighbor1 !== neighbor2) {
                         const hasConnection = this.edges.some((e: any) => (e.source === neighbor1 && e.target === neighbor2) ||
                             (e.source === neighbor2 && e.target === neighbor1));
@@ -140,6 +153,7 @@ class AdvancedGraphAlgorithms {
         });
         return constraints;
     }
+
     findCorePeriphery() {
         const degrees = new Map();
         this.nodes.forEach((node: any) => {
@@ -160,6 +174,7 @@ class AdvancedGraphAlgorithms {
         });
         return { core, periphery };
     }
+
     calculateAllMetrics() {
         const eigenvectorCentrality = this.calculateEigenvectorCentrality();
         const katzCentrality = this.calculateKatzCentrality();
@@ -222,6 +237,3 @@ class AdvancedGraphAlgorithms {
         };
     }
 }
-exports.AdvancedGraphAlgorithms = AdvancedGraphAlgorithms;
-
-export {};

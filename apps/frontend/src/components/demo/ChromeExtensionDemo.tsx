@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Card, CardBody, Box, Text, Button, Fade } from '@chakra-ui/react';
-import { Extension, Close } from 'lucide-react';
+import { Extension, X } from 'lucide-react';
+import { Button } from '../../ui/design-system';
 
 import { PopupContainer } from "../ui/popup";
 
@@ -21,72 +21,51 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
 
   if (!isOpen) {
     return (
-      <Card m={2} maxW="400px">
-        <CardBody>
-          <Box display="flex" alignItems="center" gap={2} mb={2}>
-            <Extension color="blue.500" />
-            <Text fontSize="xl" fontWeight="bold">Chrome Extension UI Demo</Text>
-          </Box>
-          <Text color="gray.600" mb={4}>
+      <div className="m-2 max-w-[400px] border border-gray-200 rounded-lg shadow-sm bg-white overflow-hidden">
+        <div className="p-5">
+          <div className="flex items-center gap-2 mb-2">
+            <Extension className="text-blue-500" />
+            <p className="text-xl font-bold">Chrome Extension UI Demo</p>
+          </div>
+          <p className="text-gray-600 mb-4">
             Experience the recovered Chrome extension interface integrated into
             the main application.
-          </Text>
+          </p>
           <Button
-            colorScheme="blue"
             onClick={() => setIsOpen(true)}
-            leftIcon={<Extension />}
+            className="flex items-center gap-2"
           >
-            Open Extension Interface
+            <Extension size={16} /> Open Extension Interface
           </Button>
-        </CardBody>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Fade in={isOpen}>
-      <Box
-        position="fixed"
-        top="20px"
-        right="20px"
-        zIndex="9999"
-        boxShadow="2xl"
-        borderRadius="lg"
-        overflow="hidden"
-        bg="white"
-      >
-        {/* Close Button */}
-        <Box
-          position="absolute"
-          top="8px"
-          right="8px"
-          zIndex="10000"
+    <div className={`fixed top-5 right-5 z-[9999] shadow-2xl rounded-lg overflow-hidden bg-white transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      {/* Close Button */}
+      <div className="absolute top-2 right-2 z-[10000]">
+        <button
+          onClick={() => setIsOpen(false)}
+          className="p-1 rounded bg-black/10 hover:bg-black/20 transition-colors"
         >
-          <Button
-            size="sm"
-            onClick={() => setIsOpen(false)}
-            minW="auto"
-            p="2px"
-            bg="rgba(0,0,0,0.1)"
-            _hover={{ bg: "rgba(0,0,0,0.2)" }}
-          >
-            <Close size="16px" />
-          </Button>
-        </Box>
+          <X size={16} />
+        </button>
+      </div>
 
-        {/* Popup Container */}
-        <PopupContainer
-          isMainApp={true}
-          initialDarkMode={isDarkMode}
-          onThemeChange={handleThemeChange}
-          containerStyle={{
-            width: "420px",
-            height: "620px",
-            maxHeight: "90vh",
-          }}
-        />
-      </Box>
-    </Fade>
+      {/* Popup Container */}
+      <PopupContainer
+        isMainApp={true}
+        initialDarkMode={isDarkMode}
+        onThemeChange={handleThemeChange}
+        containerStyle={{
+          width: "420px",
+          height: "620px",
+          maxHeight: "90vh",
+        }}
+      />
+    </div>
   );
 };
 

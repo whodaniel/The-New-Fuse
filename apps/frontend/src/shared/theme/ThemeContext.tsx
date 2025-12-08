@@ -1,6 +1,4 @@
-import { ThemeProvider as ChakraThemeProvider } from '@chakra-ui/react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { baseTheme, darkTheme } from './themes';
 
 interface ThemeContextType {
   currentTheme: string;
@@ -12,31 +10,42 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState('base');
-  const [themeConfig, setThemeConfig] = useState(baseTheme);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('preferred-theme');
     if (savedTheme) {
       setCurrentTheme(savedTheme);
+      // Apply theme to document
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
   }, []);
 
   const setTheme = (theme: string) => {
     setCurrentTheme(theme);
     localStorage.setItem('preferred-theme', theme);
-    setThemeConfig(theme === 'dark' ? darkTheme : baseTheme);
+
+    // Apply theme to document
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   };
 
   const customizeTheme = (customizations: Record<string, unknown>) => {
-    setThemeConfig((prev: any) => ({
-      ...prev,
-      ...customizations,
-    }));
+    // Apply custom CSS variables
+    Object.entries(customizations).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(`--${key}`, String(value));
+    });
   };
 
   return (
     <ThemeContext.Provider value={{ currentTheme, setTheme, customizeTheme }}>
-      <ChakraThemeProvider theme={themeConfig}>{children}</ChakraThemeProvider>
+      {children}
     </ThemeContext.Provider>
   );
 };

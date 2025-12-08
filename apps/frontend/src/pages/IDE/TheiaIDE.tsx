@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Alert, AlertIcon, AlertTitle, AlertDescription, Spinner, VStack, HStack, Button, Text } from '@chakra-ui/react';
+import { AlertCircle, ExternalLink, RotateCw } from 'lucide-react';
 
 interface IdeStatus {
   status: 'loading' | 'ready' | 'error';
@@ -56,115 +56,77 @@ const TheiaIDE: React.FC = () => {
 
   if (ideStatus.status === 'loading') {
     return (
-      <Box
-        w="100%"
-        h="calc(100vh - 64px)"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        bg="gray.50"
-      >
-        <VStack spacing={4}>
-          <Spinner size="xl" color="blue.500" thickness="4px" />
-          <Text fontSize="lg" color="gray.600">
+      <div className="w-full h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 border-t-2 border-blue-500/30"></div>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             Loading Theia IDE...
-          </Text>
-        </VStack>
-      </Box>
+          </p>
+        </div>
+      </div>
     );
   }
 
   if (ideStatus.status === 'error') {
     return (
-      <Box
-        w="100%"
-        h="calc(100vh - 64px)"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        bg="gray.50"
-        p={6}
-      >
-        <Alert
-          status="error"
-          variant="subtle"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          textAlign="center"
-          maxW="2xl"
-          borderRadius="lg"
-          p={8}
-        >
-          <AlertIcon boxSize="40px" mr={0} />
-          <AlertTitle mt={4} mb={2} fontSize="2xl">
+      <div className="w-full h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900/50 p-6">
+        <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-red-200 dark:border-red-800 p-8 flex flex-col items-center text-center">
+          <div className="p-4 bg-red-100 dark:bg-red-900/20 rounded-full mb-4">
+            <AlertCircle className="w-10 h-10 text-red-600 dark:text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             IDE Unavailable
-          </AlertTitle>
-          <AlertDescription maxWidth="lg" mb={4}>
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-lg">
             {ideStatus.message}
-          </AlertDescription>
-          <HStack spacing={4} mt={4}>
-            <Button colorScheme="blue" onClick={handleRefresh}>
+          </p>
+          <div className="flex gap-4">
+            <button
+              onClick={handleRefresh}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <RotateCw className="w-4 h-4" />
               Retry Connection
-            </Button>
-            <Button variant="outline" onClick={handleOpenInNewTab}>
+            </button>
+            <button
+              onClick={handleOpenInNewTab}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+              <ExternalLink className="w-4 h-4" />
               Open in New Tab
-            </Button>
-          </HStack>
-        </Alert>
-      </Box>
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box
-      w="100%"
-      h="calc(100vh - 64px)"
-      position="relative"
-      overflow="hidden"
-    >
+    <div className="w-full h-[calc(100vh-64px)] relative overflow-hidden flex flex-col">
       {/* IDE Header */}
-      <Box
-        bg="gray.800"
-        color="white"
-        px={4}
-        py={2}
-        borderBottom="1px"
-        borderColor="gray.700"
-      >
-        <HStack justify="space-between">
-          <HStack spacing={4}>
-            <Text fontSize="lg" fontWeight="bold">
-              Theia IDE
-            </Text>
-            <Text fontSize="sm" color="gray.400">
-              v2.0.0 | Theia 1.65.2
-            </Text>
-          </HStack>
-          <HStack spacing={2}>
-            <Button
-              size="sm"
-              variant="ghost"
-              colorScheme="whiteAlpha"
-              onClick={handleOpenInNewTab}
-            >
-              Open in New Tab
-            </Button>
-          </HStack>
-        </HStack>
-      </Box>
+      <div className="bg-gray-800 text-white px-4 py-2 border-b border-gray-700 flex justify-between items-center shrink-0">
+        <div className="flex items-center gap-4">
+          <span className="text-lg font-bold">Theia IDE</span>
+          <span className="text-sm text-gray-400">v2.0.0 | Theia 1.65.2</span>
+        </div>
+        <div>
+          <button
+            onClick={handleOpenInNewTab}
+            className="text-sm px-3 py-1.5 text-gray-300 hover:text-white hover:bg-white/10 rounded transition-colors flex items-center gap-2"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Open in New Tab
+          </button>
+        </div>
+      </div>
 
       {/* IDE Iframe */}
-      <Box
-        as="iframe"
+      <iframe
         src={ideUrl}
-        w="100%"
-        h="calc(100% - 48px)"
-        border="none"
-        bg="white"
+        className="w-full flex-1 border-none bg-white"
         title="Theia IDE"
       />
-    </Box>
+    </div>
   );
 };
 

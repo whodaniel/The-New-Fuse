@@ -1,274 +1,430 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DataTable = DataTable;
-import react_1 from 'react';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
-function DataTable({ columns: initialColumns, data, isLoading, loadingMessage, hasError, errorMessage, defaultSort, onSort, onFilter, onRowClick, onRowSelect, actions = {}, onAction, rowsPerPageOptions = [10, 25, 50, 100], defaultPageSize = 10, stickyHeader = true, dense = false, selectable = false, searchable = true, sx, className }) {
-    const [columns, setColumns] = (0, react_1.useState)(initialColumns);
-    const [page, setPage] = (0, react_1.useState)(0);
-    const [rowsPerPage, setRowsPerPage] = (0, react_1.useState)(defaultPageSize);
-    const [sortBy, setSortBy] = (0, react_1.useState)((defaultSort === null || defaultSort === void 0 ? void 0 : defaultSort.column) || '');
-    const [sortDirection, setSortDirection] = (0, react_1.useState)((defaultSort === null || defaultSort === void 0 ? void 0 : defaultSort.direction) || 'asc');
-    const [filters, setFilters] = (0, react_1.useState)([]);
-    const [searchTerm, setSearchTerm] = (0, react_1.useState)('');
-    const [selectedRows, setSelectedRows] = (0, react_1.useState)([]);
-    const [columnMenuAnchor, setColumnMenuAnchor] = (0, react_1.useState)(null);
-    const [filterMenuAnchor, setFilterMenuAnchor] = (0, react_1.useState)(null);
-    const [showFilterDialog, setShowFilterDialog] = (0, react_1.useState)(false);
-    const [currentFilter, setCurrentFilter] = (0, react_1.useState)({});
-    const processedData = (0, react_1.useMemo)(() => {
-        let result = [...(data || [])];
-        if (searchTerm) {
-            result = result.filter(row => Object.entries(row).some(([key, value]) => {
-                const column = columns.find(col => col.id === key);
-                return (column === null || column === void 0 ? void 0 : column.filterable) !== false &&
-                    String(value).toLowerCase().includes(searchTerm.toLowerCase());
-            }));
-        }
-        filters.forEach(filter => {
-            result = result.filter(row => {
-                const value = row[filter.column];
-                switch (filter.operator) {
-                    case 'equals':
-                        return value === filter.value;
-                    case 'contains':
-                        return String(value).toLowerCase().includes(String(filter.value).toLowerCase());
-                    case 'greater':
-                        return value > filter.value;
-                    case 'less':
-                        return value < filter.value;
-                    case 'between':
-                        const [min, max] = filter.value;
-                        return value >= min && value <= max;
-                    default:
-                        return true;
-                }
-            });
-        });
-        if (sortBy) {
-            result.sort((a, b) => {
-                const aValue = a[sortBy];
-                const bValue = b[sortBy];
-                const column = columns.find(col => col.id === sortBy);
-                if (column === null || column === void 0 ? void 0 : column.numeric) {
-                    return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-                }
-                return sortDirection === 'asc'
-                    ? String(aValue).localeCompare(String(bValue))
-                    : String(bValue).localeCompare(String(aValue));
-            });
-        }
-        return result;
-    }, [data, searchTerm, filters, sortBy, sortDirection, columns]);
-    const handleSort = (column) => {
-        const isAsc = sortBy === column && sortDirection === 'asc';
-        const newDirection = isAsc ? 'desc' : 'asc';
-        setSortBy(column);
-        setSortDirection(newDirection);
-        onSort === null || onSort === void 0 ? void 0 : onSort(column, newDirection);
-    };
-    const handleFilter = (filter) => {
-        setFilters((prev: any) => [...prev, filter]);
-        setShowFilterDialog(false);
-        setCurrentFilter({});
-        onFilter === null || onFilter === void 0 ? void 0 : onFilter(filters);
-    };
-    const handleRemoveFilter = (index) => {
-        setFilters((prev: any) => prev.filter((_, i) => i !== index));
-    };
-    const handlePageChange = (_, newPage) => {
-        setPage(newPage);
-    };
-    const handleRowsPerPageChange = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-    const handleSelectAll = (event) => {
-        if (event.target.checked) {
-            setSelectedRows(processedData);
-            onRowSelect === null || onRowSelect === void 0 ? void 0 : onRowSelect(processedData);
-        }
-        else {
-            setSelectedRows([]);
-            onRowSelect === null || onRowSelect === void 0 ? void 0 : onRowSelect([]);
-        }
-    };
-    const handleSelectRow = (row) => {
-        const selectedIndex = selectedRows.findIndex(r => r.id === row.id);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = [...selectedRows, row];
-        }
-        else {
-            newSelected = selectedRows.filter(r => r.id !== row.id);
-        }
-        setSelectedRows(newSelected);
-        onRowSelect === null || onRowSelect === void 0 ? void 0 : onRowSelect(newSelected);
-    };
-    const handleAction = (action) => {
-        onAction === null || onAction === void 0 ? void 0 : onAction(action, selectedRows);
-    };
-    const handleExport = () => {
-        const csv = [
-            columns.filter(col => !col.hidden).map(col => col.label),
-            ...processedData.map(row => columns
-                .filter(col => !col.hidden)
-                .map(col => {
-                const value = row[col.id];
-                return col.format ? col.format(value) : value;
-            }))
-        ].map(row => row.join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'export.csv';
-        a.click();
-        window.URL.revokeObjectURL(url);
-    };
-    return (<Box sx={Object.assign({ width: '100%' }, sx)} className={className}>
-            <material_1.Toolbar sx={{ pl: 2, pr: 1 }}>
-                <material_1.Typography sx={{ flex: '1 1 100%' }} variant="h6" component="div">
-                    {selectedRows.length > 0 ? (`${selectedRows.length} selected`) : ('Data Table')}
-                </material_1.Typography>
+/**
+ * DataTable Component - Advanced data table with sorting, filtering, pagination
+ * Replaces corrupted Material-UI version with Tailwind + Custom Design System
+ */
 
-                {searchable && (<material_1.TextField size="small" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} InputProps={{
-                startAdornment: <icons_material_1.Search fontSize="small" sx={{ mr: 1 }}/>
-            }} sx={{ mr: 2 }}/>)}
+import React, { useState, useMemo, ReactNode } from 'react';
+import { Button } from '@/components/ui/design-system';
+import { Tooltip } from '@/components/ui/tooltip';
+import { Menu, MenuButton, MenuList, MenuItem } from '@/components/ui/menu';
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  RefreshCw,
+  Download,
+  Filter,
+  Columns,
+  ChevronUp,
+  ChevronDown,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-                <material_1.Box display="flex" gap={1}>
-                    {actions.add && (<material_1.Tooltip title="Add">
-                            <material_1.IconButton onClick={() => handleAction('add')}>
-                                <icons_material_1.Add />
-                            </material_1.IconButton>
-                        </material_1.Tooltip>)}
-                    {actions.edit && selectedRows.length === 1 && (<material_1.Tooltip title="Edit">
-                            <material_1.IconButton onClick={() => handleAction('edit')}>
-                                <icons_material_1.Edit />
-                            </material_1.IconButton>
-                        </material_1.Tooltip>)}
-                    {actions.delete && selectedRows.length > 0 && (<material_1.Tooltip title="Delete">
-                            <material_1.IconButton onClick={() => handleAction('delete')}>
-                                <icons_material_1.Delete />
-                            </material_1.IconButton>
-                        </material_1.Tooltip>)}
-                    {actions.refresh && (<material_1.Tooltip title="Refresh">
-                            <material_1.IconButton onClick={() => handleAction('refresh')}>
-                                <icons_material_1.Refresh />
-                            </material_1.IconButton>
-                        </material_1.Tooltip>)}
-                    {actions.export && (<material_1.Tooltip title="Export">
-                            <material_1.IconButton onClick={handleExport}>
-                                <icons_material_1.Download />
-                            </material_1.IconButton>
-                        </material_1.Tooltip>)}
-                    <material_1.Tooltip title="Filter">
-                        <material_1.IconButton onClick={(e) => setFilterMenuAnchor(e.currentTarget)}>
-                            <icons_material_1.FilterList />
-                        </material_1.IconButton>
-                    </material_1.Tooltip>
-                    <material_1.Tooltip title="Columns">
-                        <material_1.IconButton onClick={(e) => setColumnMenuAnchor(e.currentTarget)}>
-                            <icons_material_1.ViewColumn />
-                        </material_1.IconButton>
-                    </material_1.Tooltip>
-                </material_1.Box>
-            </material_1.Toolbar>
-
-            {filters.length > 0 && (<material_1.Box p={1} display="flex" gap={1} flexWrap="wrap">
-                    {filters.map((filter, index) => (<material_1.Chip key={index} label={`${filter.column} ${filter.operator} ${filter.value}`} onDelete={() => handleRemoveFilter(index)}/>))}
-                </material_1.Box>)}
-
-            <TableContainer sx={{ maxHeight: stickyHeader ? 440 : undefined }}>
-                <Table stickyHeader={stickyHeader} size={dense ? 'small' : 'medium'}>
-                    <TableHead>
-                        <TableRow>
-                            {selectable && (<TableCell padding="checkbox">
-                                    <material_1.Checkbox indeterminate={selectedRows.length > 0 && selectedRows.length < processedData.length} checked={processedData.length > 0 && selectedRows.length === processedData.length} onChange={handleSelectAll}/>
-                                </TableCell>)}
-                            {columns.filter(col => !col.hidden).map(column => (<TableCell key={column.id} align={column.align || (column.numeric ? 'right' : 'left')} style={{ width: column.width }}>
-                                    {column.sortable !== false ? (<TableSortLabel active={sortBy === column.id} direction={sortBy === column.id ? sortDirection : 'asc'} onClick={() => handleSort(column.id)}>
-                                            {column.label}
-                                        </TableSortLabel>) : (column.label)}
-                                </TableCell>))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {isLoading ? (<TableRow>
-                                <TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
-                                    {loadingMessage || 'Loading...'}
-                                </TableCell>
-                            </TableRow>) : hasError ? (<TableRow>
-                                <TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
-                                    {errorMessage || 'An error occurred'}
-                                </TableCell>
-                            </TableRow>) : processedData.length === 0 ? (<TableRow>
-                                <TableCell colSpan={columns.length + (selectable ? 1 : 0)} align="center">
-                                    No data available
-                                </TableCell>
-                            </TableRow>) : (processedData
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row, index) => (<TableRow hover key={row.id} onClick={() => onRowClick === null || onRowClick === void 0 ? void 0 : onRowClick(row)} selected={selectedRows.some(r => r.id === row.id)} sx={{ cursor: onRowClick ? 'pointer' : undefined }}>
-                                        {selectable && (<TableCell padding="checkbox">
-                                                <material_1.Checkbox checked={selectedRows.some(r => r.id === row.id)} onChange={() => handleSelectRow(row)} onClick={(e) => e.stopPropagation()}/>
-                                            </TableCell>)}
-                                        {columns.filter(col => !col.hidden).map(column => (<TableCell key={column.id} align={column.align || (column.numeric ? 'right' : 'left')}>
-                                                {column.format
-                    ? column.format(row[column.id])
-                    : row[column.id]}
-                                            </TableCell>))}
-                                    </TableRow>)))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            <TablePagination rowsPerPageOptions={rowsPerPageOptions} component="div" count={processedData.length} rowsPerPage={rowsPerPage} page={page} onPageChange={handlePageChange} onRowsPerPageChange={handleRowsPerPageChange}/>
-
-            <material_1.Menu anchorEl={columnMenuAnchor} open={Boolean(columnMenuAnchor)} onClose={() => setColumnMenuAnchor(null)}>
-                {columns.map(column => (<material_1.MenuItem key={column.id}>
-                        <material_1.FormControlLabel control={<material_1.Checkbox checked={!column.hidden} onChange={() => {
-                    setColumns((prev: any) => prev.map(col => col.id === column.id
-                        ? Object.assign(Object.assign({}, col), { hidden: !col.hidden }) : col));
-                }}/>} label={column.label}/>
-                    </material_1.MenuItem>))}
-            </material_1.Menu>
-
-            <material_1.Menu anchorEl={filterMenuAnchor} open={Boolean(filterMenuAnchor)} onClose={() => setFilterMenuAnchor(null)}>
-                {columns
-            .filter(col => col.filterable !== false)
-            .map(column => (<material_1.MenuItem key={column.id} onClick={() => {
-                setCurrentFilter({ column: column.id });
-                setShowFilterDialog(true);
-                setFilterMenuAnchor(null);
-            }}>
-                            {column.label}
-                        </material_1.MenuItem>))}
-            </material_1.Menu>
-
-            <material_1.Dialog open={showFilterDialog} onClose={() => setShowFilterDialog(false)} maxWidth="xs" fullWidth>
-                <material_1.DialogTitle>Add Filter</material_1.DialogTitle>
-                <material_1.DialogContent>
-                    <material_1.Box display="flex" flexDirection="column" gap={2} mt={1}>
-                        <FormControl fullWidth>
-                            <material_1.TextField select label="Operator" value={currentFilter.operator || ''} onChange={(e) => setCurrentFilter((prev: any) => (Object.assign(Object.assign({}, prev), { operator: e.target.value })))}>
-                                <material_1.MenuItem value="equals">Equals</material_1.MenuItem>
-                                <material_1.MenuItem value="contains">Contains</material_1.MenuItem>
-                                <material_1.MenuItem value="greater">Greater Than</material_1.MenuItem>
-                                <material_1.MenuItem value="less">Less Than</material_1.MenuItem>
-                                <material_1.MenuItem value="between">Between</material_1.MenuItem>
-                            </material_1.TextField>
-                        </FormControl>
-                        <material_1.TextField label="Value" value={currentFilter.value || ''} onChange={(e) => setCurrentFilter((prev: any) => (Object.assign(Object.assign({}, prev), { value: e.target.value })))}/>
-                    </material_1.Box>
-                </material_1.DialogContent>
-                <material_1.DialogActions>
-                    <material_1.Button onClick={() => setShowFilterDialog(false)}>Cancel</material_1.Button>
-                    <material_1.Button onClick={() => handleFilter(currentFilter)} variant="contained" disabled={!currentFilter.column || !currentFilter.operator || !currentFilter.value}>
-                        Add Filter
-                    </material_1.Button>
-                </material_1.DialogActions>
-            </material_1.Dialog>
-        </Box>);
+export interface Column<T = any> {
+  id: string;
+  label: string;
+  width?: string;
+  align?: 'left' | 'center' | 'right';
+  numeric?: boolean;
+  sortable?: boolean;
+  filterable?: boolean;
+  hidden?: boolean;
+  format?: (value: any) => ReactNode;
 }
-export {};
+
+interface DataTableProps<T = any> {
+  columns: Column<T>[];
+  data: T[];
+  isLoading?: boolean;
+  loadingMessage?: string;
+  hasError?: boolean;
+  errorMessage?: string;
+  defaultSort?: { column: string; direction: 'asc' | 'desc' };
+  onSort?: (column: string, direction: 'asc' | 'desc') => void;
+  onFilter?: (filters: any[]) => void;
+  onRowClick?: (row: T) => void;
+  onRowSelect?: (rows: T[]) => void;
+  actions?: {
+    add?: boolean;
+    edit?: boolean;
+    delete?: boolean;
+    refresh?: boolean;
+    export?: boolean;
+  };
+  onAction?: (action: string, selectedRows: T[]) => void;
+  rowsPerPageOptions?: number[];
+  defaultPageSize?: number;
+  stickyHeader?: boolean;
+  dense?: boolean;
+  selectable?: boolean;
+  searchable?: boolean;
+  className?: string;
+}
+
+export function DataTable<T extends { id: string | number }>({
+  columns: initialColumns,
+  data = [],
+  isLoading = false,
+  loadingMessage = 'Loading...',
+  hasError = false,
+  errorMessage,
+  defaultSort,
+  onSort,
+  onFilter,
+  onRowClick,
+  onRowSelect,
+  actions = {},
+  onAction,
+  rowsPerPageOptions = [10, 25, 50, 100],
+  defaultPageSize = 10,
+  stickyHeader = true,
+  dense = false,
+  selectable = false,
+  searchable = true,
+  className,
+}: DataTableProps<T>) {
+  const [columns, setColumns] = useState(initialColumns);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(defaultPageSize);
+  const [sortBy, setSortBy] = useState(defaultSort?.column || '');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(defaultSort?.direction || 'asc');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRows, setSelectedRows] = useState<T[]>([]);
+
+  // Process data (search, filter, sort)
+  const processedData = useMemo(() => {
+    let result = [...data];
+
+    // Search
+    if (searchTerm) {
+      result = result.filter((row) =>
+        Object.entries(row).some(([key, value]) => {
+          const column = columns.find((col) => col.id === key);
+          return (
+            column?.filterable !== false &&
+            String(value).toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        })
+      );
+    }
+
+    // Sort
+    if (sortBy) {
+      result.sort((a, b) => {
+        const aValue = (a as any)[sortBy];
+        const bValue = (b as any)[sortBy];
+        const column = columns.find((col) => col.id === sortBy);
+
+        if (column?.numeric) {
+          return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+        }
+
+        return sortDirection === 'asc'
+          ? String(aValue).localeCompare(String(bValue))
+          : String(bValue).localeCompare(String(aValue));
+      });
+    }
+
+    return result;
+  }, [data, searchTerm, sortBy, sortDirection, columns]);
+
+  const handleSort = (column: string) => {
+    const isAsc = sortBy === column && sortDirection === 'asc';
+    const newDirection: 'asc' | 'desc' = isAsc ? 'desc' : 'asc';
+    setSortBy(column);
+    setSortDirection(newDirection);
+    onSort?.(column, newDirection);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(processedData);
+      onRowSelect?.(processedData);
+    } else {
+      setSelectedRows([]);
+      onRowSelect?.([]);
+    }
+  };
+
+  const handleSelectRow = (row: T) => {
+    const selectedIndex = selectedRows.findIndex((r) => r.id === row.id);
+    let newSelected: T[] = [];
+
+    if (selectedIndex === -1) {
+      newSelected = [...selectedRows, row];
+    } else {
+      newSelected = selectedRows.filter((r) => r.id !== row.id);
+    }
+
+    setSelectedRows(newSelected);
+    onRowSelect?.(newSelected);
+  };
+
+  const handleExport = () => {
+    const csv = [
+      columns.filter((col) => !col.hidden).map((col) => col.label),
+      ...processedData.map((row) =>
+        columns
+          .filter((col) => !col.hidden)
+          .map((col) => {
+            const value = (row as any)[col.id];
+            return col.format ? col.format(value) : value;
+          })
+      ),
+    ]
+      .map((row) => row.join(','))
+      .join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'export.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const paginatedData = processedData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  return (
+    <div className={cn('w-full', className)}>
+      {/* Toolbar */}
+      <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
+        <div className="text-lg font-semibold">
+          {selectedRows.length > 0 ? `${selectedRows.length} selected` : 'Data Table'}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {searchable && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800 text-sm"
+              />
+            </div>
+          )}
+
+          {actions.add && (
+            <Tooltip label="Add">
+              <button
+                onClick={() => onAction?.('add', selectedRows)}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
+
+          {actions.edit && selectedRows.length === 1 && (
+            <Tooltip label="Edit">
+              <button
+                onClick={() => onAction?.('edit', selectedRows)}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+              >
+                <Edit className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
+
+          {actions.delete && selectedRows.length > 0 && (
+            <Tooltip label="Delete">
+              <button
+                onClick={() => onAction?.('delete', selectedRows)}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded text-danger-600"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
+
+          {actions.refresh && (
+            <Tooltip label="Refresh">
+              <button
+                onClick={() => onAction?.('refresh', selectedRows)}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
+
+          {actions.export && (
+            <Tooltip label="Export">
+              <button
+                onClick={handleExport}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded"
+              >
+                <Download className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className={cn('overflow-x-auto', stickyHeader && 'max-h-[440px] overflow-y-auto')}>
+        <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+          <thead className={cn('bg-neutral-50 dark:bg-neutral-900', stickyHeader && 'sticky top-0 z-10')}>
+            <tr>
+              {selectable && (
+                <th className="px-6 py-3 text-left">
+                  <input
+                    type="checkbox"
+                    checked={processedData.length > 0 && selectedRows.length === processedData.length}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="rounded"
+                  />
+                </th>
+              )}
+              {columns
+                .filter((col) => !col.hidden)
+                .map((column) => (
+                  <th
+                    key={column.id}
+                    className={cn(
+                      'px-6 py-3 text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider',
+                      column.align === 'right' && 'text-right',
+                      column.align === 'center' && 'text-center',
+                      column.sortable !== false && 'cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                    )}
+                    style={{ width: column.width }}
+                    onClick={() => column.sortable !== false && handleSort(column.id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      {column.label}
+                      {sortBy === column.id && (
+                        sortDirection === 'asc' ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )
+                      )}
+                    </div>
+                  </th>
+                ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+            {isLoading ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (selectable ? 1 : 0)}
+                  className="px-6 py-8 text-center text-neutral-500"
+                >
+                  {loadingMessage}
+                </td>
+              </tr>
+            ) : hasError ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (selectable ? 1 : 0)}
+                  className="px-6 py-8 text-center text-danger-600"
+                >
+                  {errorMessage || 'An error occurred'}
+                </td>
+              </tr>
+            ) : paginatedData.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (selectable ? 1 : 0)}
+                  className="px-6 py-8 text-center text-neutral-500"
+                >
+                  No data available
+                </td>
+              </tr>
+            ) : (
+              paginatedData.map((row) => (
+                <tr
+                  key={row.id}
+                  onClick={() => onRowClick?.(row)}
+                  className={cn(
+                    'hover:bg-neutral-50 dark:hover:bg-neutral-700',
+                    onRowClick && 'cursor-pointer',
+                    selectedRows.some((r) => r.id === row.id) && 'bg-primary-50 dark:bg-primary-900/20'
+                  )}
+                >
+                  {selectable && (
+                    <td className="px-6 py-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.some((r) => r.id === row.id)}
+                        onChange={() => handleSelectRow(row)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="rounded"
+                      />
+                    </td>
+                  )}
+                  {columns
+                    .filter((col) => !col.hidden)
+                    .map((column) => (
+                      <td
+                        key={column.id}
+                        className={cn(
+                          dense ? 'px-4 py-2' : 'px-6 py-4',
+                          'text-sm text-neutral-900 dark:text-neutral-100',
+                          column.align === 'right' && 'text-right',
+                          column.align === 'center' && 'text-center'
+                        )}
+                      >
+                        {column.format ? column.format((row as any)[column.id]) : (row as any)[column.id]}
+                      </td>
+                    ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between p-4 border-t border-neutral-200 dark:border-neutral-700">
+        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+          Showing {page * rowsPerPage + 1} to {Math.min((page + 1) * rowsPerPage, processedData.length)} of{' '}
+          {processedData.length} results
+        </div>
+        <div className="flex items-center gap-4">
+          <select
+            value={rowsPerPage}
+            onChange={(e) => {
+              setRowsPerPage(Number(e.target.value));
+              setPage(0);
+            }}
+            className="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded-md bg-white dark:bg-neutral-800 text-sm"
+          >
+            {rowsPerPageOptions.map((option) => (
+              <option key={option} value={option}>
+                {option} per page
+              </option>
+            ))}
+          </select>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setPage(page - 1)}
+              disabled={page === 0}
+            >
+              Previous
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setPage(page + 1)}
+              disabled={(page + 1) * rowsPerPage >= processedData.length}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

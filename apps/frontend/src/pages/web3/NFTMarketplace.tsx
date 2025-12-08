@@ -1,36 +1,6 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Divider,
-  Flex,
-  Heading,
-  HStack,
-  Image,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Select,
-  SimpleGrid,
-  Spinner,
-  Stat,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
-  Text,
-  useDisclosure,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
-import { BrowserProvider, formatEther, parseEther } from 'ethers';
 import React, { useEffect, useState } from 'react';
-import { FiEye, FiHeart, FiSearch, FiShoppingCart, FiTrendingUp } from 'react-icons/fi';
+import { BrowserProvider, formatEther, parseEther } from 'ethers';
+import { Eye, Heart, Search, ShoppingCart, TrendingUp, X } from 'lucide-react';
 
 // Type declarations for Web3
 declare global {
@@ -62,8 +32,7 @@ const NFTMarketplace: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedNFT, setSelectedNFT] = useState<NFTItem | null>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     loadNFTs();
@@ -112,8 +81,6 @@ const NFTMarketplace: React.FC = () => {
 
         setNfts(nftItems);
       } else {
-        // Mock data fallback if API fails (for demo purposes)
-        // ... (removed mock data to keep it concise, but strictly logic flow should be robust)
         throw new Error(data.error || 'Failed to load NFTs');
       }
     } catch (error) {
@@ -137,13 +104,8 @@ const NFTMarketplace: React.FC = () => {
       }));
       setNfts(mockNFTs); // Set mock data instead of erroring out completely
 
-      toast({
-        title: 'Loaded Demo Data',
-        description: 'Using simulated NFT data (API unavailable)',
-        status: 'info',
-        duration: 3000,
-        isClosable: true,
-      });
+      // Toast notification logic would go here
+      console.log('Loaded Demo Data');
     } finally {
       setLoading(false);
     }
@@ -151,7 +113,12 @@ const NFTMarketplace: React.FC = () => {
 
   const openNFTDetail = (nft: NFTItem) => {
     setSelectedNFT(nft);
-    onOpen();
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedNFT(null);
   };
 
   const purchaseNFT = async (nft: NFTItem) => {
@@ -160,13 +127,7 @@ const NFTMarketplace: React.FC = () => {
         throw new Error('No Ethereum wallet detected. Please install MetaMask.');
       }
 
-      toast({
-        title: 'Connecting to Wallet',
-        description: 'Please approve the connection in your wallet',
-        status: 'info',
-        duration: 2000,
-        isClosable: true,
-      });
+      console.log('Connecting to Wallet');
 
       // Request wallet connection
       await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -175,13 +136,7 @@ const NFTMarketplace: React.FC = () => {
       const provider = new BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
 
-      toast({
-        title: 'Processing Purchase',
-        description: `Initiating purchase of ${nft.name} for ${nft.price} ${nft.currency}`,
-        status: 'info',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.log(`Initiating purchase of ${nft.name} for ${nft.price} ${nft.currency}`);
 
       // Call backend API to initiate purchase
       const response = await fetch('/api/agents/nft/purchase', {
@@ -215,55 +170,37 @@ const NFTMarketplace: React.FC = () => {
           maxPriorityFeePerGas: purchaseData.maxPriorityFeePerGas,
         });
 
-        toast({
-          title: 'Transaction Sent',
-          description: `Transaction hash: ${tx.hash}`,
-          status: 'info',
-          duration: 5000,
-          isClosable: true,
-        });
+        console.log(`Transaction hash: ${tx.hash}`);
 
         // Wait for confirmation
         const receipt = await tx.wait();
 
-        if (receipt.status === 1) {
-          toast({
-            title: 'Purchase Successful!',
-            description: `Successfully purchased ${nft.name}`,
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
+        if (receipt && receipt.status === 1) {
+          console.log(`Successfully purchased ${nft.name}`);
         } else {
           throw new Error('Transaction failed');
         }
       }
 
-      onClose();
+      closeModal();
     } catch (error) {
       console.error('Purchase error:', error);
-      toast({
-        title: 'Purchase Failed',
-        description: error instanceof Error ? error.message : 'Unknown error occurred',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      // Toast error
     }
   };
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
       case 'Common':
-        return 'gray';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
       case 'Rare':
-        return 'blue';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
       case 'Epic':
-        return 'purple';
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
       case 'Legendary':
-        return 'orange';
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
       default:
-        return 'gray';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
@@ -277,277 +214,233 @@ const NFTMarketplace: React.FC = () => {
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" h="50vh">
-        <VStack>
-          <Spinner size="xl" color="purple.500" />
-          <Text>Loading NFT Marketplace...</Text>
-        </VStack>
-      </Flex>
+      <div className="flex justify-center items-center h-[50vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading NFT Marketplace...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box p={6}>
-      <Flex justify="space-between" align="center" mb={6}>
-        <VStack align="start" spacing={1}>
-          <Heading size="lg" color="gray.800">
+    <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             NFT Marketplace
-          </Heading>
-          <Text color="gray.600">Discover, collect, and trade AI agents and platform assets</Text>
-        </VStack>
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">Discover, collect, and trade AI agents and platform assets</p>
+        </div>
 
-        <Button colorScheme="purple">Create NFT</Button>
-      </Flex>
+        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+          Create NFT
+        </button>
+      </div>
 
       {/* Marketplace Stats */}
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={6} mb={8}>
-        <Card>
-          <CardBody>
-            <Stat>
-              <StatLabel fontSize="sm" color="gray.600">
-                Total Volume
-              </StatLabel>
-              <StatNumber fontSize="2xl">1,247 ETH</StatNumber>
-              <StatHelpText>
-                <HStack>
-                  <FiTrendingUp color="green" />
-                  <Text color="green.500">+12.3%</Text>
-                </HStack>
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <Stat>
-              <StatLabel fontSize="sm" color="gray.600">
-                Floor Price
-              </StatLabel>
-              <StatNumber fontSize="2xl">0.8 ETH</StatNumber>
-              <StatHelpText>
-                <Text color="gray.500">Lowest available</Text>
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <Stat>
-              <StatLabel fontSize="sm" color="gray.600">
-                Active Listings
-              </StatLabel>
-              <StatNumber fontSize="2xl">{nfts.filter((nft) => nft.isForSale).length}</StatNumber>
-              <StatHelpText>
-                <Text color="gray.500">Currently for sale</Text>
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <Stat>
-              <StatLabel fontSize="sm" color="gray.600">
-                Unique Owners
-              </StatLabel>
-              <StatNumber fontSize="2xl">3,456</StatNumber>
-              <StatHelpText>
-                <Text color="gray.500">Community members</Text>
-              </StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-      </SimpleGrid>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {[
+          { label: 'Total Volume', value: '1,247 ETH', help: '+12.3%', helpColor: 'text-green-500', icon: TrendingUp },
+          { label: 'Floor Price', value: '0.8 ETH', help: 'Lowest available', helpColor: 'text-gray-500', icon: null },
+          { label: 'Active Listings', value: nfts.filter((nft) => nft.isForSale).length, help: 'Currently for sale', helpColor: 'text-gray-500', icon: null },
+          { label: 'Unique Owners', value: '3,456', help: 'Community members', helpColor: 'text-gray-500', icon: null },
+        ].map((stat, idx) => (
+          <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{stat.label}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</p>
+            <div className="flex items-center gap-1 text-sm">
+              {stat.icon && <stat.icon className={`w-4 h-4 ${stat.helpColor}`} />}
+              <span className={stat.helpColor}>{stat.help}</span>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Search and Filters */}
-      <Card mb={6}>
-        <CardBody>
-          <Flex gap={4} wrap="wrap">
-            <HStack flex={1} minW="200px">
-              <FiSearch />
-              <Input
-                placeholder="Search NFTs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </HStack>
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+        <div className="flex gap-4 flex-wrap">
+          <div className="flex-1 min-w-[200px] relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search NFTs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+            />
+          </div>
 
-            <Select
-              w="auto"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="all">All Categories</option>
-              <option value="AI Agents">AI Agents</option>
-              <option value="Workflows">Workflows</option>
-              <option value="Platform">Platform</option>
-              <option value="Data">Data</option>
-            </Select>
-          </Flex>
-        </CardBody>
-      </Card>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer"
+          >
+            <option value="all">All Categories</option>
+            <option value="AI Agents">AI Agents</option>
+            <option value="Workflows">Workflows</option>
+            <option value="Platform">Platform</option>
+            <option value="Data">Data</option>
+          </select>
+        </div>
+      </div>
 
       {/* NFT Grid */}
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} gap={6}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredNFTs.map((nft) => (
-          <Card
+          <div
             key={nft.id}
-            cursor="pointer"
-            _hover={{
-              transform: 'translateY(-4px)',
-              boxShadow: 'xl',
-              borderColor: 'purple.200',
-            }}
-            transition="all 0.3s"
             onClick={() => openNFTDetail(nft)}
+            className="group bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300"
           >
-            <Box position="relative">
-              <Image
+            <div className="relative h-[250px] overflow-hidden">
+              <img
                 src={nft.image}
                 alt={nft.name}
-                w="full"
-                h="250px"
-                objectFit="cover"
-                borderTopRadius="lg"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <Badge position="absolute" top={2} right={2} colorScheme={getRarityColor(nft.rarity)}>
+              <span className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold ${getRarityColor(nft.rarity)}`}>
                 {nft.rarity}
-              </Badge>
-            </Box>
+              </span>
+            </div>
 
-            <CardBody>
-              <VStack align="start" spacing={3}>
-                <VStack align="start" spacing={1} w="full">
-                  <Text fontWeight="bold" fontSize="lg" noOfLines={1}>
-                    {nft.name}
-                  </Text>
-                  <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                    {nft.description}
-                  </Text>
-                </VStack>
+            <div className="p-4 flex flex-col gap-3">
+              <div>
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate" title={nft.name}>
+                  {nft.name}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2" title={nft.description}>
+                  {nft.description}
+                </p>
+              </div>
 
-                <HStack justify="space-between" w="full">
-                  <VStack align="start" spacing={0}>
-                    <Text fontSize="xs" color="gray.500">
-                      Price
-                    </Text>
-                    <Text fontWeight="bold" color="purple.600">
-                      {nft.price} {nft.currency}
-                    </Text>
-                  </VStack>
+              <div className="flex justify-between items-end">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Price</p>
+                  <p className="font-bold text-purple-600 dark:text-purple-400">
+                    {nft.price} {nft.currency}
+                  </p>
+                </div>
 
-                  <HStack spacing={3} fontSize="sm" color="gray.500">
-                    <HStack>
-                      <FiHeart />
-                      <Text>{nft.likes}</Text>
-                    </HStack>
-                    <HStack>
-                      <FiEye />
-                      <Text>{nft.views}</Text>
-                    </HStack>
-                  </HStack>
-                </HStack>
+                <div className="flex gap-3 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-1">
+                    <Heart className="w-3.5 h-3.5" />
+                    <span>{nft.likes}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>{nft.views}</span>
+                  </div>
+                </div>
+              </div>
 
-                <Divider />
+              <div className="h-px bg-gray-100 dark:bg-gray-700 my-1"></div>
 
-                <HStack justify="space-between" w="full" fontSize="xs">
-                  <Text color="gray.500">
-                    Creator: {nft.creator.slice(0, 6)}...{nft.creator.slice(-4)}
-                  </Text>
-                  <Badge size="sm" colorScheme="blue">
-                    {nft.blockchain}
-                  </Badge>
-                </HStack>
-              </VStack>
-            </CardBody>
-          </Card>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                  Creator: {nft.creator.slice(0, 6)}...{nft.creator.slice(-4)}
+                </span>
+                <span className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 px-1.5 py-0.5 rounded">
+                  {nft.blockchain}
+                </span>
+              </div>
+            </div>
+          </div>
         ))}
-      </SimpleGrid>
+      </div>
 
       {/* NFT Detail Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{selectedNFT?.name}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            {selectedNFT && (
-              <VStack spacing={6} align="stretch">
-                <Image
+      {isModalOpen && selectedNFT && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={(e) => {
+            if (e.target === e.currentTarget) closeModal();
+        }}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-800 z-10">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white truncate pr-4">
+                {selectedNFT.name}
+              </h2>
+              <button
+                onClick={closeModal}
+                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="aspect-video w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-900">
+                <img
                   src={selectedNFT.image}
                   alt={selectedNFT.name}
-                  w="full"
-                  h="300px"
-                  objectFit="cover"
-                  borderRadius="lg"
+                  className="w-full h-full object-contain"
                 />
+              </div>
 
-                <VStack align="start" spacing={3}>
-                  <Text>{selectedNFT.description}</Text>
+              <div className="space-y-4">
+                <p className="text-gray-700 dark:text-gray-300">
+                  {selectedNFT.description}
+                </p>
 
-                  <SimpleGrid columns={2} gap={4} w="full">
-                    <VStack align="start">
-                      <Text fontSize="sm" color="gray.600">
-                        Creator
-                      </Text>
-                      <Text fontSize="sm" fontFamily="mono">
-                        {selectedNFT.creator}
-                      </Text>
-                    </VStack>
-                    <VStack align="start">
-                      <Text fontSize="sm" color="gray.600">
-                        Owner
-                      </Text>
-                      <Text fontSize="sm" fontFamily="mono">
-                        {selectedNFT.owner}
-                      </Text>
-                    </VStack>
-                    <VStack align="start">
-                      <Text fontSize="sm" color="gray.600">
-                        Blockchain
-                      </Text>
-                      <Badge colorScheme="blue">{selectedNFT.blockchain}</Badge>
-                    </VStack>
-                    <VStack align="start">
-                      <Text fontSize="sm" color="gray.600">
-                        Rarity
-                      </Text>
-                      <Badge colorScheme={getRarityColor(selectedNFT.rarity)}>
-                        {selectedNFT.rarity}
-                      </Badge>
-                    </VStack>
-                  </SimpleGrid>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Creator</p>
+                    <p className="font-mono text-sm text-gray-900 dark:text-white truncate" title={selectedNFT.creator}>
+                      {selectedNFT.creator}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Owner</p>
+                    <p className="font-mono text-sm text-gray-900 dark:text-white truncate" title={selectedNFT.owner}>
+                      {selectedNFT.owner}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Blockchain</p>
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded text-xs font-semibold">
+                      {selectedNFT.blockchain}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Rarity</p>
+                    <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${getRarityColor(selectedNFT.rarity)}`}>
+                      {selectedNFT.rarity}
+                    </span>
+                  </div>
+                </div>
 
-                  <Divider />
+                <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
 
-                  <Flex justify="space-between" align="center" w="full">
-                    <VStack align="start" spacing={0}>
-                      <Text fontSize="sm" color="gray.600">
-                        Current Price
-                      </Text>
-                      <Text fontSize="2xl" fontWeight="bold" color="purple.600">
-                        {selectedNFT.price} {selectedNFT.currency}
-                      </Text>
-                    </VStack>
+                <div className="flex justify-between items-center pt-2">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Current Price</p>
+                    <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                      {selectedNFT.price} {selectedNFT.currency}
+                    </p>
+                  </div>
 
-                    <Button
-                      colorScheme="purple"
-                      leftIcon={<FiShoppingCart />}
-                      onClick={() => purchaseNFT(selectedNFT)}
-                      isDisabled={!selectedNFT.isForSale}
-                    >
-                      {selectedNFT.isForSale ? 'Buy Now' : 'Not For Sale'}
-                    </Button>
-                  </Flex>
-                </VStack>
-              </VStack>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Box>
+                  <button
+                    onClick={() => purchaseNFT(selectedNFT)}
+                    disabled={!selectedNFT.isForSale}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white transition-colors ${
+                       selectedNFT.isForSale
+                        ? 'bg-purple-600 hover:bg-purple-700'
+                        : 'bg-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {selectedNFT.isForSale ? (
+                        <>
+                            <ShoppingCart className="w-5 h-5" />
+                            Buy Now
+                        </>
+                    ) : 'Not For Sale'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -2,38 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 import { OnboardingAnalytics } from './OnboardingAnalytics';
 import {
-  Box,
-  VStack,
-  HStack,
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  Heading,
-  Text,
-  FormControl,
-  FormLabel,
-  Select,
-  Divider,
-  useColorModeValue,
-  Flex,
-  Badge,
-  IconButton,
-  Tooltip,
-  useToast,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Spinner,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton
-} from '@chakra-ui/react';
-import {
   RefreshCw,
   Maximize2,
   Minimize2,
@@ -131,7 +99,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
       {/* Custom notification display */}
       {notification && (
         <div className={`mb-4 p-4 rounded-md border ${
-          notification.type === 'success' 
+          notification.type === 'success'
             ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
             : notification.type === 'error'
             ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
@@ -177,7 +145,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
             aria-label="Refresh preview"
             title="Refresh Preview"
           >
-            <FiRefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
 
           <button
@@ -186,7 +154,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
             aria-label="Toggle fullscreen"
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           >
-            {isFullscreen ? <FiMinimize2 className="w-4 h-4" /> : <FiMaximize2 className="w-4 h-4" />}
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
         </div>
       </div>
@@ -199,7 +167,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800">
           <div className="flex items-start justify-between">
             <div className="flex items-start">
-              <FiAlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2 mt-0.5" />
               <div>
                 <h4 className="font-semibold text-red-800 dark:text-red-200">Preview Error!</h4>
                 <p className="text-red-700 dark:text-red-300">{previewError}</p>
@@ -272,7 +240,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                 ) : previewError ? (
                   <div className="flex justify-center items-center h-full p-8">
                     <div className="text-center">
-                      <FiAlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                      <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
                       <p className="text-red-500 font-semibold mb-2">Failed to load preview</p>
                       <p className="text-gray-600 dark:text-gray-400 mb-4">
                         Please fix the configuration errors and try again.
@@ -300,7 +268,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                   disabled={isLoading}
                   className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
                 >
-                  <FiRefreshCw className="w-4 h-4 mr-2" />
+                  <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh Preview
                 </button>
 
@@ -345,11 +313,11 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                       <div className="flex items-start">
                         <div className="flex-shrink-0 mr-3">
                           {validationResults.status === 'success' ? (
-                            <FiCheckCircle className="w-6 h-6 text-green-500" />
+                            <CheckCircle className="w-6 h-6 text-green-500" />
                           ) : validationResults.status === 'warning' ? (
-                            <FiInfo className="w-6 h-6 text-yellow-500" />
+                            <Info className="w-6 h-6 text-yellow-500" />
                           ) : (
-                            <FiAlertCircle className="w-6 h-6 text-red-500" />
+                            <AlertCircle className="w-6 h-6 text-red-500" />
                           )}
                         </div>
                         <div className="flex-1">
@@ -393,7 +361,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                   <div className="space-y-4">
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1 mr-3">
-                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                        <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Keep it simple</p>
@@ -405,7 +373,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
 
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1 mr-3">
-                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                        <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Clear instructions</p>
@@ -417,7 +385,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
 
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1 mr-3">
-                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                        <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Visual cues</p>
@@ -429,7 +397,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
 
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1 mr-3">
-                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                        <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Progress indicators</p>
@@ -441,7 +409,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
 
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1 mr-3">
-                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                        <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Skip options</p>

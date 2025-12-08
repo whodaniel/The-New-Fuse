@@ -1,28 +1,53 @@
 import React, { useState } from 'react';
-import { Box, Input, Button, Text, VStack } from '@chakra-ui/react';
-export const AgentSkillMarketplace = ({ agentId }) => {
+import { Button } from './ui/design-system';
+
+interface AgentSkillMarketplaceProps {
+  agentId: string;
+}
+
+export const AgentSkillMarketplace: React.FC<AgentSkillMarketplaceProps> = ({ agentId }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [skills] = useState([
         { id: '1', name: 'Natural Language Processing', description: 'Advanced text processing and understanding', level: 1 },
         { id: '2', name: 'Computer Vision', description: 'Image and video analysis', level: 1 },
         { id: '3', name: 'Data Analysis', description: 'Statistical analysis and data processing', level: 1 },
     ]);
-    const handleInstallSkill = (skillId) => {
-        
+
+    const handleInstallSkill = (skillId: string) => {
+        // Implementation for installing skill
+        console.log(`Installing skill ${skillId} for agent ${agentId}`);
     };
+
     const filteredSkills = skills.filter(skill => skill.name.toLowerCase().includes(searchTerm.toLowerCase()));
-    return (<Box p={4}>
-      <Input placeholder="Search skills..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4}/>
-      <VStack spacing={2} align="stretch">
-        {filteredSkills.map(skill => (<Box key={skill.id} p={4} borderWidth="1px" borderRadius="md" display="flex" justifyContent="space-between" alignItems="center">
-            <Box>
-              <Text fontWeight="bold">{skill.name}</Text>
-              <Text fontSize="sm" color="gray.600">{skill.description}</Text>
-            </Box>
-            <Button colorScheme="blue" size="sm" onClick={() => handleInstallSkill(skill.id)}>
-              Install
-            </Button>
-          </Box>))}
-      </VStack>
-    </Box>);
+
+    return (
+      <div className="p-4">
+        <input
+          placeholder="Search skills..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="input w-full mb-4"
+        />
+        <div className="flex flex-col gap-2">
+          {filteredSkills.map(skill => (
+            <div
+              key={skill.id}
+              className="p-4 border border-gray-200 rounded-md flex justify-between items-center bg-white shadow-sm"
+            >
+              <div>
+                <p className="font-bold text-gray-900">{skill.name}</p>
+                <p className="text-sm text-gray-600">{skill.description}</p>
+              </div>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => handleInstallSkill(skill.id)}
+              >
+                Install
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
 };

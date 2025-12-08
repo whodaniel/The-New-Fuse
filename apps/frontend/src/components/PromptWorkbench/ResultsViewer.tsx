@@ -1,21 +1,18 @@
-import {
-  Box,
-  Button,
-  Code,
-  Divider,
-  Flex,
-  HStack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  useClipboard,
-  VStack,
-} from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { FaCheck, FaCopy, FaDownload } from 'react-icons/fa';
+import { Button } from '../ui/design-system';
+
+const useClipboard = (text: string) => {
+  const [hasCopied, setHasCopied] = useState(false);
+
+  const onCopy = () => {
+    navigator.clipboard.writeText(text);
+    setHasCopied(true);
+    setTimeout(() => setHasCopied(false), 2000);
+  };
+
+  return { hasCopied, onCopy };
+};
 
 interface Result {
   testCase?: string;
@@ -30,71 +27,78 @@ interface ResultsViewerProps {
 
 export const ResultsViewer: React.FC<ResultsViewerProps> = ({ results }) => {
   const [selectedResult, setSelectedResult] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   if (results.length === 0) {
     return (
-      <Box textAlign="center" py={10} borderWidth={1} borderRadius="md" borderStyle="dashed">
-        <Text color="gray.500">No results to display. Run a generation first.</Text>
-      </Box>
+      <div className="text-center py-10 border border-dashed border-gray-300 rounded-md">
+        <p className="text-gray-500">No results to display. Run a generation first.</p>
+      </div>
     );
   }
 
   const currentResult = results[selectedResult];
 
+  const tabs = ['Results', 'Comparison', 'Analytics'];
+
   return (
-    <VStack spacing={4} align="stretch">
-      <Tabs variant="enclosed" colorScheme="blue" defaultIndex={0}>
-        <TabList>
-          <Tab>Results</Tab>
-          <Tab>Comparison</Tab>
-          <Tab>Analytics</Tab>
-        </TabList>
+    <div className="flex flex-col gap-4">
+      <div className="border border-gray-200 rounded-md">
+        <div className="flex border-b border-gray-200">
+          {tabs.map((tab, index) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(index)}
+              className={`px-4 py-2 font-medium transition-colors ${
+                activeTab === index
+                  ? 'border-b-2 border-blue-500 text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
-        <TabPanels>
-          <TabPanel>
-            <HStack spacing={4} mb={4}>
-              {results.map((result, index) => (
-                <Button
-                  key={index}
-                  size="sm"
-                  variant={selectedResult === index ? 'solid' : 'outline'}
-                  colorScheme="blue"
-                  onClick={() => setSelectedResult(index)}
-                >
-                  {result.testCase || `Result ${index + 1}`}
-                </Button>
-              ))}
-            </HStack>
+        <div className="p-4">
+          {activeTab === 0 && (
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-2 flex-wrap">
+                {results.map((result, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => setSelectedResult(index)}
+                    variant={selectedResult === index ? 'primary' : 'outline'}
+                    className="text-sm"
+                  >
+                    {result.testCase || `Result ${index + 1}`}
+                  </Button>
+                ))}
+              </div>
 
-            <Box mb={4}>
-              <Text fontWeight="medium" mb={1}>
-                Generated at
-              </Text>
-              <Text fontSize="sm" color="gray.600">
-                {new Date(currentResult.timestamp).toLocaleString()}
-              </Text>
-            </Box>
+              <div className="mb-4">
+                <p className="font-medium mb-1">Generated at</p>
+                <p className="text-sm text-gray-600">
+                  {new Date(currentResult.timestamp).toLocaleString()}
+                </p>
+              </div>
 
-            <ResultPanel title="Prompt" content={currentResult.prompt} />
+              <ResultPanel title="Prompt" content={currentResult.prompt} />
 
-            <Divider my={4} />
+              <div className="border-t border-gray-200 my-4" />
 
-            <ResultPanel title="Completion" content={currentResult.result} />
-          </TabPanel>
+              <ResultPanel title="Completion" content={currentResult.result} />
+            </div>
+          )}
 
-          <TabPanel>
-            <ComparisonView results={results} />
-          </TabPanel>
+          {activeTab === 1 && <ComparisonView results={results} />}
 
-          <TabPanel>
-            <AnalyticsView results={results} />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+          {activeTab === 2 && <AnalyticsView results={results} />}
+        </div>
+      </div>
 
-      <Flex justifyContent="flex-end">
+      <div className="flex justify-end">
         <Button
-          leftIcon={<FaDownload />}
           onClick={() => {
             const dataStr =
               'data:text/json;charset=utf-8,' +
@@ -106,11 +110,12 @@ export const ResultsViewer: React.FC<ResultsViewerProps> = ({ results }) => {
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
           }}
+          className="flex items-center gap-2"
         >
-          Export Results
+          <FaDownload /> Export Results
         </Button>
-      </Flex>
-    </VStack>
+      </div>
+    </div>
   );
 };
 
@@ -118,43 +123,33 @@ const ResultPanel: React.FC<{ title: string; content: string }> = ({ title, cont
   const { hasCopied, onCopy } = useClipboard(content);
 
   return (
-    <Box>
-      <HStack justifyContent="space-between" mb={2}>
-        <Text fontWeight="medium">{title}</Text>
-        <Button size="xs" leftIcon={hasCopied ? <FaCheck /> : <FaCopy />} onClick={onCopy}>
-          {hasCopied ? 'Copied' : 'Copy'}
+    <div>
+      <div className="flex justify-between items-center mb-2">
+        <p className="font-medium">{title}</p>
+        <Button onClick={onCopy} className="text-xs flex items-center gap-1">
+          {hasCopied ? <><FaCheck /> Copied</> : <><FaCopy /> Copy</>}
         </Button>
-      </HStack>
-      <Box
-        p={3}
-        borderWidth={1}
-        borderRadius="md"
-        fontFamily="mono"
-        fontSize="sm"
-        whiteSpace="pre-wrap"
-        maxH="300px"
-        overflowY="auto"
-        bg="gray.50"
-      >
+      </div>
+      <div className="p-3 border border-gray-200 rounded-md font-mono text-sm whitespace-pre-wrap max-h-[300px] overflow-y-auto bg-gray-50">
         {content}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 
 const ComparisonView: React.FC<{ results: Result[] }> = ({ results }) => {
   if (results.length <= 1) {
     return (
-      <Box textAlign="center" py={4}>
-        <Text color="gray.500">Need at least two results to compare.</Text>
-      </Box>
+      <div className="text-center py-4">
+        <p className="text-gray-500">Need at least two results to compare.</p>
+      </div>
     );
   }
 
   return (
-    <VStack spacing={4} align="stretch">
-      <Text fontWeight="medium">Test Case Comparison</Text>
-      <Box overflowX="auto">
+    <div className="flex flex-col gap-4">
+      <p className="font-medium">Test Case Comparison</p>
+      <div className="overflow-x-auto">
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -191,8 +186,8 @@ const ComparisonView: React.FC<{ results: Result[] }> = ({ results }) => {
             ))}
           </tbody>
         </table>
-      </Box>
-    </VStack>
+      </div>
+    </div>
   );
 };
 
@@ -203,40 +198,28 @@ const AnalyticsView: React.FC<{ results: Result[] }> = ({ results }) => {
   };
 
   return (
-    <VStack spacing={6} align="stretch">
-      <Box>
-        <Text fontWeight="medium" mb={3}>
-          Completion Statistics
-        </Text>
-        <HStack spacing={6}>
-          <Box p={4} borderWidth={1} borderRadius="md" flex={1}>
-            <Text fontSize="sm" color="gray.600">
-              Average Length
-            </Text>
-            <Text fontSize="2xl" fontWeight="bold">
-              {getAverageLength()} chars
-            </Text>
-          </Box>
-          <Box p={4} borderWidth={1} borderRadius="md" flex={1}>
-            <Text fontSize="sm" color="gray.600">
-              Total Completions
-            </Text>
-            <Text fontSize="2xl" fontWeight="bold">
-              {results.length}
-            </Text>
-          </Box>
-        </HStack>
-      </Box>
+    <div className="flex flex-col gap-6">
+      <div>
+        <p className="font-medium mb-3">Completion Statistics</p>
+        <div className="flex gap-6">
+          <div className="p-4 border border-gray-200 rounded-md flex-1">
+            <p className="text-sm text-gray-600">Average Length</p>
+            <p className="text-2xl font-bold">{getAverageLength()} chars</p>
+          </div>
+          <div className="p-4 border border-gray-200 rounded-md flex-1">
+            <p className="text-sm text-gray-600">Total Completions</p>
+            <p className="text-2xl font-bold">{results.length}</p>
+          </div>
+        </div>
+      </div>
 
-      <Box>
-        <Text fontWeight="medium" mb={3}>
-          Content Analysis
-        </Text>
-        <Code p={4} borderRadius="md" fontSize="sm" whiteSpace="pre-wrap">
+      <div>
+        <p className="font-medium mb-3">Content Analysis</p>
+        <pre className="p-4 rounded-md text-sm whitespace-pre-wrap bg-gray-100 border border-gray-200">
           Content analysis would go here in a production implementation. This would include
           sentiment analysis, readability metrics, keyword extraction, and other NLP insights.
-        </Code>
-      </Box>
-    </VStack>
+        </pre>
+      </div>
+    </div>
   );
 };

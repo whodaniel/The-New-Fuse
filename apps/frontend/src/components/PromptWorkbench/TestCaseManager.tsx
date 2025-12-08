@@ -1,27 +1,6 @@
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Badge,
-  Box,
-  Button,
-  HStack,
-  IconButton,
-  Input,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaTrash, FaChevronDown } from 'react-icons/fa';
+import { Button } from '../ui/design-system';
 
 interface TestCase {
   id: string;
@@ -36,7 +15,6 @@ interface TestCaseManagerProps {
 }
 
 export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onChange }) => {
-  const toast = useToast();
   const [newTestCase, setNewTestCase] = useState<TestCase>({
     id: '',
     name: '',
@@ -46,14 +24,16 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [newVarName, setNewVarName] = useState('');
   const [newVarValue, setNewVarValue] = useState('');
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  const showToast = (title: string, type: 'warning' | 'success' = 'warning') => {
+    // Simple toast implementation - you can enhance this
+    alert(title);
+  };
 
   const handleAddTestCase = () => {
     if (!newTestCase.name.trim()) {
-      toast({
-        title: 'Test case name required',
-        status: 'warning',
-        duration: 2000,
-      });
+      showToast('Test case name required', 'warning');
       return;
     }
 
@@ -85,11 +65,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
 
   const handleAddVariable = () => {
     if (!newVarName.trim()) {
-      toast({
-        title: 'Variable name required',
-        status: 'warning',
-        duration: 2000,
-      });
+      showToast('Variable name required', 'warning');
       return;
     }
 
@@ -116,170 +92,180 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
     });
   };
 
-  return (
-    <VStack spacing={6} align="stretch">
-      <Box p={4} borderWidth={1} borderRadius="md">
-        <VStack spacing={4} align="stretch">
-          <Text fontWeight="bold" fontSize="lg">
-            {isEditing ? 'Edit Test Case' : 'New Test Case'}
-          </Text>
+  const toggleExpanded = (id: string) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedItems(newExpanded);
+  };
 
-          <Input
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="p-4 border border-gray-200 rounded-md">
+        <div className="flex flex-col gap-4">
+          <p className="font-bold text-lg">
+            {isEditing ? 'Edit Test Case' : 'New Test Case'}
+          </p>
+
+          <input
+            type="text"
             placeholder="Test Case Name"
             value={newTestCase.name}
             onChange={(e) => setNewTestCase({ ...newTestCase, name: e.target.value })}
+            className="input"
           />
 
-          <Input
+          <input
+            type="text"
             placeholder="Description (optional)"
             value={newTestCase.description}
             onChange={(e) => setNewTestCase({ ...newTestCase, description: e.target.value })}
+            className="input"
           />
 
-          <Box>
-            <Text fontWeight="medium" mb={2}>
-              Test Variables
-            </Text>
-            <HStack mb={3}>
-              <Input
+          <div>
+            <p className="font-medium mb-2">Test Variables</p>
+            <div className="flex gap-2 mb-3">
+              <input
+                type="text"
                 placeholder="Variable Name"
-                size="sm"
                 value={newVarName}
                 onChange={(e) => setNewVarName(e.target.value)}
+                className="input text-sm"
               />
-              <Input
+              <input
+                type="text"
                 placeholder="Value"
-                size="sm"
                 value={newVarValue}
                 onChange={(e) => setNewVarValue(e.target.value)}
+                className="input text-sm"
               />
-              <Button size="sm" leftIcon={<FaPlus />} onClick={handleAddVariable}>
-                Add
+              <Button onClick={handleAddVariable} className="flex items-center gap-2">
+                <FaPlus /> Add
               </Button>
-            </HStack>
+            </div>
 
-            <Table size="sm" variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>Variable</Th>
-                  <Th>Value</Th>
-                  <Th width="50px">Actions</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-2 px-3">Variable</th>
+                  <th className="text-left py-2 px-3">Value</th>
+                  <th className="text-left py-2 px-3 w-[50px]">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
                 {Object.entries(newTestCase.variables).map(([name, value]) => (
-                  <Tr key={name}>
-                    <Td>{name}</Td>
-                    <Td>{value}</Td>
-                    <Td>
-                      <IconButton
-                        aria-label="Delete variable"
-                        icon={<FaTrash />}
-                        size="xs"
-                        colorScheme="red"
-                        variant="ghost"
+                  <tr key={name} className="border-b border-gray-100">
+                    <td className="py-2 px-3">{name}</td>
+                    <td className="py-2 px-3">{value}</td>
+                    <td className="py-2 px-3">
+                      <button
                         onClick={() => handleDeleteVariable(name)}
-                      />
-                    </Td>
-                  </Tr>
+                        className="text-red-500 hover:text-red-700 p-1"
+                        aria-label="Delete variable"
+                      >
+                        <FaTrash size={12} />
+                      </button>
+                    </td>
+                  </tr>
                 ))}
                 {Object.keys(newTestCase.variables).length === 0 && (
-                  <Tr>
-                    <Td colSpan={3} textAlign="center" py={2}>
-                      <Text fontSize="sm" color="gray.500">
-                        No variables added
-                      </Text>
-                    </Td>
-                  </Tr>
+                  <tr>
+                    <td colSpan={3} className="text-center py-2 text-sm text-gray-500">
+                      No variables added
+                    </td>
+                  </tr>
                 )}
-              </Tbody>
-            </Table>
-          </Box>
+              </tbody>
+            </table>
+          </div>
 
-          <Button colorScheme="blue" alignSelf="flex-end" onClick={handleAddTestCase}>
+          <Button onClick={handleAddTestCase} className="self-end">
             {isEditing ? 'Update Test Case' : 'Add Test Case'}
           </Button>
-        </VStack>
-      </Box>
+        </div>
+      </div>
 
-      <Box>
-        <Text fontWeight="bold" fontSize="lg" mb={4}>
+      <div>
+        <p className="font-bold text-lg mb-4">
           Test Cases ({testCases.length})
-        </Text>
+        </p>
 
-        <Accordion allowMultiple>
+        <div className="flex flex-col gap-2">
           {testCases.map((testCase) => (
-            <AccordionItem key={testCase.id}>
-              <h2>
-                <AccordionButton>
-                  <Box flex="1" textAlign="left">
-                    <HStack>
-                      <Text fontWeight="medium">{testCase.name}</Text>
-                      <Badge>{Object.keys(testCase.variables).length} variables</Badge>
-                    </HStack>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <VStack align="stretch" spacing={3}>
+            <div key={testCase.id} className="border border-gray-200 rounded-md">
+              <button
+                onClick={() => toggleExpanded(testCase.id)}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="font-medium">{testCase.name}</span>
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                    {Object.keys(testCase.variables).length} variables
+                  </span>
+                </div>
+                <FaChevronDown
+                  className={`transition-transform ${expandedItems.has(testCase.id) ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {expandedItems.has(testCase.id) && (
+                <div className="p-4 border-t border-gray-200 flex flex-col gap-3">
                   {testCase.description && (
-                    <Text fontSize="sm" color="gray.600">
-                      {testCase.description}
-                    </Text>
+                    <p className="text-sm text-gray-600">{testCase.description}</p>
                   )}
 
-                  <Box>
-                    <Text fontWeight="medium" fontSize="sm" mb={1}>
-                      Variables:
-                    </Text>
-                    <Table size="sm" variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Name</Th>
-                          <Th>Value</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
+                  <div>
+                    <p className="font-medium text-sm mb-1">Variables:</p>
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left py-2 px-3">Name</th>
+                          <th className="text-left py-2 px-3">Value</th>
+                        </tr>
+                      </thead>
+                      <tbody>
                         {Object.entries(testCase.variables).map(([name, value]) => (
-                          <Tr key={name}>
-                            <Td>{name}</Td>
-                            <Td>{value}</Td>
-                          </Tr>
+                          <tr key={name} className="border-b border-gray-100">
+                            <td className="py-2 px-3">{name}</td>
+                            <td className="py-2 px-3">{value}</td>
+                          </tr>
                         ))}
-                      </Tbody>
-                    </Table>
-                  </Box>
+                      </tbody>
+                    </table>
+                  </div>
 
-                  <HStack justifyContent="flex-end">
+                  <div className="flex justify-end gap-2">
                     <Button
-                      size="sm"
-                      leftIcon={<FaEdit />}
                       onClick={() => handleEditTestCase(testCase)}
+                      variant="outline"
+                      className="flex items-center gap-2"
                     >
-                      Edit
+                      <FaEdit /> Edit
                     </Button>
                     <Button
-                      size="sm"
-                      colorScheme="red"
-                      leftIcon={<FaTrash />}
                       onClick={() => handleDeleteTestCase(testCase.id)}
+                      variant="outline"
+                      className="flex items-center gap-2 text-red-600 border-red-600 hover:bg-red-50"
                     >
-                      Delete
+                      <FaTrash /> Delete
                     </Button>
-                  </HStack>
-                </VStack>
-              </AccordionPanel>
-            </AccordionItem>
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
-        </Accordion>
+        </div>
 
         {testCases.length === 0 && (
-          <Box textAlign="center" py={6} borderWidth={1} borderRadius="md" borderStyle="dashed">
-            <Text color="gray.500">No test cases added yet</Text>
-          </Box>
+          <div className="text-center py-6 border border-dashed border-gray-300 rounded-md">
+            <p className="text-gray-500">No test cases added yet</p>
+          </div>
         )}
-      </Box>
-    </VStack>
+      </div>
+    </div>
   );
 };

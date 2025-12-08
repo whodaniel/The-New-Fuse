@@ -123,6 +123,9 @@ export default defineConfig(({ mode }) => {
       ],
       esbuildOptions: {
         target: 'es2020',
+        // Ensure proper module resolution for framer-motion
+        mainFields: ['module', 'main'],
+        conditions: ['import', 'module', 'default'],
       },
     },
     build: {
@@ -159,7 +162,13 @@ export default defineConfig(({ mode }) => {
         },
         // Optimize bundle size by eliminating unnecessary code
         treeshake: {
-          moduleSideEffects: false, // Assume no module side effects for better tree-shaking
+          moduleSideEffects: (id) => {
+            // Preserve side effects for framer-motion to prevent initialization errors
+            if (id && (id.includes('framer-motion') || id.includes('@motionone'))) {
+              return true;
+            }
+            return false;
+          },
           propertyReadSideEffects: false,
           tryCatchDeoptimization: false,
         },
@@ -219,10 +228,12 @@ export default defineConfig(({ mode }) => {
             }
 
             // Framer Motion - animation library (isolate completely to prevent circular deps)
-            if (
-              id.includes('node_modules/framer-motion') ||
-              id.includes('node_modules/@motionone/')
-            ) {
+            // Bundle it as a single chunk with all its dependencies
+            if (id.includes('node_modules/framer-motion')) {
+              return 'framer-motion';
+            }
+            // Keep @motionone separate to avoid mixing with framer-motion
+            if (id.includes('node_modules/@motionone/')) {
               return 'framer-motion';
             }
 

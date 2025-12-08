@@ -18,75 +18,13 @@ import {
   BarChart,
   Siren,
   ClipboardList,
+  Shield,
+  Activity,
 } from 'lucide-react';
 
-interface SystemMetrics {
-  totalUsers: number;
-  activeUsers: number;
-  totalWorkspaces: number;
-  activeWorkspaces: number;
-  totalAgents: number;
-  runningAgents: number;
-  systemUptime: string;
-  serverHealth: 'healthy' | 'warning' | 'critical';
-  memoryUsage: number;
-  cpuUsage: number;
-}
+// ... (Metrics interface and component start equal)
 
-export default function AdminPanel() {
-  const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Mock data - replace with API call
-  useEffect(() => {
-    setTimeout(() => {
-      setMetrics({
-        totalUsers: 147,
-        activeUsers: 23,
-        totalWorkspaces: 12,
-        activeWorkspaces: 8,
-        totalAgents: 34,
-        runningAgents: 12,
-        systemUptime: '15 days, 4 hours',
-        serverHealth: 'healthy',
-        memoryUsage: 68,
-        cpuUsage: 34
-      });
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  const getHealthBadge = (health: SystemMetrics['serverHealth']) => {
-    switch (health) {
-      case 'healthy':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'warning':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'critical':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getHealthIcon = (health: SystemMetrics['serverHealth']) => {
-    switch (health) {
-      case 'healthy':
-        return <Heart className="h-5 w-5 text-green-500" />;
-      case 'warning':
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
-      case 'critical':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <Circle className="h-5 w-5 text-gray-500" />;
-    }
-  };
-
-  const getUsageColor = (usage: number) => {
-    if (usage < 50) return 'bg-green-500';
-    if (usage < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
+// ... (inside AdminPanel component)
 
   const adminSections = [
     {
@@ -97,10 +35,10 @@ export default function AdminPanel() {
       color: 'bg-blue-500'
     },
     {
-      title: 'Workspace Management',
-      description: 'Manage workspaces and organizations',
-      icon: <Building className="h-6 w-6" />,
-      link: '/admin/workspaces',
+      title: 'Agent Skills',
+      description: 'Configure agent capabilities',
+      icon: <Bot className="h-6 w-6" />,
+      link: '/admin/agent-skills', // Was Workspaces (Broken)
       color: 'bg-green-500'
     },
     {
@@ -114,7 +52,7 @@ export default function AdminPanel() {
       title: 'Feature Flags',
       description: 'Enable/disable features and experiments',
       icon: <Flag className="h-6 w-6" />,
-      link: '/admin/feature-flags',
+      link: '/admin/features', // Fixed path
       color: 'bg-purple-500'
     },
     {
@@ -125,11 +63,11 @@ export default function AdminPanel() {
       color: 'bg-orange-500'
     },
     {
-      title: 'Admin Settings',
-      description: 'Configure admin panel preferences',
-      icon: <Settings className="h-6 w-6" />,
-      link: '/admin/settings',
-      color: 'bg-gray-500'
+      title: 'Security Dashboard',
+      description: 'Security status and encryption',
+      icon: <Shield className="h-6 w-6" />,
+      link: '/admin/security', // Was Admin Settings (Broken)
+      color: 'bg-red-500'
     }
   ];
 
@@ -181,7 +119,7 @@ export default function AdminPanel() {
                 <div className="text-3xl"><Users className="h-8 w-8 text-gray-400" /></div>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -227,7 +165,7 @@ export default function AdminPanel() {
                 <span className="text-sm font-medium">{metrics.memoryUsage}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full transition-all duration-300 ${getUsageColor(metrics.memoryUsage)}`}
                   style={{ width: `${metrics.memoryUsage}%` }}
                 ></div>
@@ -241,7 +179,7 @@ export default function AdminPanel() {
                 <span className="text-sm font-medium">{metrics.cpuUsage}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full transition-all duration-300 ${getUsageColor(metrics.cpuUsage)}`}
                   style={{ width: `${metrics.cpuUsage}%` }}
                 ></div>
@@ -260,31 +198,31 @@ export default function AdminPanel() {
             <div className="font-medium">Create User</div>
             <div className="text-sm opacity-90">Add a new user to the system</div>
           </button>
-          
+
           <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors text-left flex flex-col">
             <div className="text-2xl mb-2"><Hammer className="h-8 w-8" /></div>
             <div className="font-medium">Create Workspace</div>
             <div className="text-sm opacity-90">Set up a new workspace</div>
           </button>
-          
+
           <button className="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 transition-colors text-left flex flex-col">
             <div className="text-2xl mb-2"><Bot className="h-8 w-8" /></div>
             <div className="font-medium">Deploy Agent</div>
             <div className="text-sm opacity-90">Deploy a new AI agent</div>
           </button>
-          
+
           <button className="bg-orange-600 text-white p-4 rounded-lg hover:bg-orange-700 transition-colors text-left flex flex-col">
             <div className="text-2xl mb-2"><BarChart className="h-8 w-8" /></div>
             <div className="font-medium">View Reports</div>
             <div className="text-sm opacity-90">Generate system reports</div>
           </button>
-          
+
           <button className="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition-colors text-left flex flex-col">
             <div className="text-2xl mb-2"><Siren className="h-8 w-8" /></div>
             <div className="font-medium">System Alerts</div>
             <div className="text-sm opacity-90">Check system alerts</div>
           </button>
-          
+
           <button className="bg-gray-600 text-white p-4 rounded-lg hover:bg-gray-700 transition-colors text-left flex flex-col">
             <div className="text-2xl mb-2"><ClipboardList className="h-8 w-8" /></div>
             <div className="font-medium">Audit Logs</div>
@@ -327,7 +265,7 @@ export default function AdminPanel() {
               <p className="text-xs text-gray-500">alice@example.com • 5 minutes ago</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl">🤖</div>
             <div className="flex-1">
@@ -335,7 +273,7 @@ export default function AdminPanel() {
               <p className="text-xs text-gray-500">ChatBot v2.1 • 12 minutes ago</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl">🏢</div>
             <div className="flex-1">
@@ -343,7 +281,7 @@ export default function AdminPanel() {
               <p className="text-xs text-gray-500">Marketing Team • 1 hour ago</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl">⚙️</div>
             <div className="flex-1">
@@ -352,7 +290,7 @@ export default function AdminPanel() {
             </div>
           </div>
         </div>
-        
+
         <div className="mt-4 text-center">
           <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
             View All Activity →

@@ -1,51 +1,137 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DataCard = DataCard;
-import react_1 from 'react';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { Search, Settings, Home, User, Menu as MenuIcon } from '@chakra-ui/icons';
-function DataCard({ title, subtitle, tooltip, data, isLoading, loadingMessage = 'Loading...', hasError, errorMessage, onRefresh, actions, expandable = false, defaultExpanded = true, renderContent, sx, className }) {
-    const [expanded, setExpanded] = react_1.default.useState(defaultExpanded);
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
-    return (<material_1.Card sx={Object.assign({}, sx)} className={className}>
-            <material_1.CardHeader title={<material_1.Box display="flex" alignItems="center" gap={1}>
-                        <material_1.Typography variant="h6">{title}</material_1.Typography>
-                        {tooltip && (<material_1.Tooltip title={tooltip}>
-                                <icons_material_1.Info fontSize="small" color="action"/>
-                            </material_1.Tooltip>)}
-                    </material_1.Box>} subheader={subtitle} action={<material_1.Box display="flex" alignItems="center" gap={1}>
-                        {onRefresh && (<material_1.Tooltip title="Refresh">
-                                <material_1.IconButton onClick={onRefresh} size="small">
-                                    <icons_material_1.Refresh />
-                                </material_1.IconButton>
-                            </material_1.Tooltip>)}
-                        {expandable && (<material_1.Tooltip title={expanded ? 'Collapse' : 'Expand'}>
-                                <material_1.IconButton onClick={handleExpandClick} size="small">
-                                    {expanded ? <icons_material_1.ExpandLess /> : <icons_material_1.ExpandMore />}
-                                </material_1.IconButton>
-                            </material_1.Tooltip>)}
-                    </material_1.Box>}/>
+/**
+ * DataCard Component - Reusable card for displaying data with loading/error states
+ * Replaces corrupted Material-UI version with Tailwind + Custom Design System
+ */
 
-            <material_1.Collapse in={!expandable || expanded}>
-                <material_1.CardContent>
-                    {isLoading ? (<material_1.Box display="flex" justifyContent="center" alignItems="center" p={3}>
-                            <material_1.CircularProgress size={24}/>
-                            <material_1.Typography variant="body2" color="textSecondary" ml={2}>
-                                {loadingMessage}
-                            </material_1.Typography>
-                        </material_1.Box>) : hasError ? (<material_1.Alert severity="error" sx={{ mb: 2 }}>
-                            {errorMessage || 'An error occurred'}
-                        </material_1.Alert>) : data ? (renderContent(data)) : (<material_1.Typography color="textSecondary" align="center">
-                            No data available
-                        </material_1.Typography>)}
-                </material_1.CardContent>
+import React, { useState, ReactNode } from 'react';
+import { Card, LoadingSpinner, Alert, Button } from '@/components/ui/design-system';
+import { Tooltip } from '@/components/ui/tooltip';
+import { ChevronDown, ChevronUp, RefreshCw, Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-                {actions && (<material_1.CardActions sx={{ justifyContent: 'flex-end' }}>
-                        {actions}
-                    </material_1.CardActions>)}
-            </material_1.Collapse>
-        </material_1.Card>);
+interface DataCardProps<T = any> {
+  title: string;
+  subtitle?: string;
+  tooltip?: string;
+  data?: T;
+  isLoading?: boolean;
+  loadingMessage?: string;
+  hasError?: boolean;
+  errorMessage?: string;
+  onRefresh?: () => void;
+  actions?: ReactNode;
+  expandable?: boolean;
+  defaultExpanded?: boolean;
+  renderContent: (data: T) => ReactNode;
+  className?: string;
 }
-export {};
+
+export function DataCard<T = any>({
+  title,
+  subtitle,
+  tooltip,
+  data,
+  isLoading = false,
+  loadingMessage = 'Loading...',
+  hasError = false,
+  errorMessage,
+  onRefresh,
+  actions,
+  expandable = false,
+  defaultExpanded = true,
+  renderContent,
+  className,
+}: DataCardProps<T>) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  return (
+    <Card className={cn('overflow-hidden', className)}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
+        <div className="flex items-center gap-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                {title}
+              </h3>
+              {tooltip && (
+                <Tooltip label={tooltip}>
+                  <Info className="h-4 w-4 text-neutral-500" />
+                </Tooltip>
+              )}
+            </div>
+            {subtitle && (
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                {subtitle}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {onRefresh && (
+            <Tooltip label="Refresh">
+              <button
+                onClick={onRefresh}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors"
+                aria-label="Refresh"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
+          {expandable && (
+            <Tooltip label={expanded ? 'Collapse' : 'Expand'}>
+              <button
+                onClick={handleExpandClick}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors"
+                aria-label={expanded ? 'Collapse' : 'Expand'}
+              >
+                {expanded ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </button>
+            </Tooltip>
+          )}
+        </div>
+      </div>
+
+      {/* Content */}
+      {(!expandable || expanded) && (
+        <div className="p-4">
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <LoadingSpinner />
+              <span className="ml-3 text-sm text-neutral-600 dark:text-neutral-400">
+                {loadingMessage}
+              </span>
+            </div>
+          ) : hasError ? (
+            <Alert variant="destructive" className="mb-4">
+              {errorMessage || 'An error occurred'}
+            </Alert>
+          ) : data ? (
+            renderContent(data)
+          ) : (
+            <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">
+              No data available
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Actions */}
+      {actions && (
+        <div className="flex justify-end gap-2 p-4 border-t border-neutral-200 dark:border-neutral-700">
+          {actions}
+        </div>
+      )}
+    </Card>
+  );
+}

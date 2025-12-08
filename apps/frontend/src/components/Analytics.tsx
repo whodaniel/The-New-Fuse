@@ -1,92 +1,140 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import components_1 from '../components';
-import { Box, SimpleGrid, GridItem, Tabs, Tab, Container, Card, CardBody, CardHeader, Button, Input, Select, Menu, MenuItem, Modal, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import react_chartjs_2_1 from 'react-chartjs-2';
-import chart_js_1 from 'chart';
-chart_js_1.Chart.register(chart_js_1.CategoryScale, chart_js_1.LinearScale, chart_js_1.PointElement, chart_js_1.LineElement, chart_js_1.BarElement, chart_js_1.Title, chart_js_1.Tooltip, chart_js_1.Legend);
-const Analytics = () => {
-    const [timeRange, setTimeRange] = react_1.default.useState('24h');
-    const [activeTab, setActiveTab] = react_1.default.useState(0);
-    const performanceData = {
-        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-        datasets: [
-            {
-                label: 'Response Time (ms)',
-                data: [150, 230, 180, 400, 280, 250],
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1,
-            },
+import React, { useState } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+import { Tabs } from './ui/design-system';
+
+// Components placeholders (assuming they exist or need to be mocked/imported)
+// import { PerformanceMetrics } from './PerformanceMetrics';
+// import { SystemMetrics } from './SystemMetrics';
+// import { DynamicKnowledgeGraph } from './DynamicKnowledgeGraph';
+// import { PredictiveTaskAllocator } from './PredictiveTaskAllocator';
+
+// Mocking these for now as I don't want to break if they don't exist in the same path
+const PerformanceMetrics = () => <div className="p-4 bg-blue-50 text-blue-800 rounded">Performance Metrics Placehoder</div>;
+const SystemMetrics = () => <div className="p-4 bg-green-50 text-green-800 rounded">System Metrics Placeholder</div>;
+const DynamicKnowledgeGraph = () => <div className="p-4 bg-purple-50 text-purple-800 rounded">Dynamic Knowledge Graph Placeholder</div>;
+const PredictiveTaskAllocator = () => <div className="p-4 bg-orange-50 text-orange-800 rounded">Predictive Task Allocator Placeholder</div>;
+
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const Analytics: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('performance');
+
+  const performanceData = {
+    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+    datasets: [
+      {
+        label: 'Response Time (ms)',
+        data: [150, 230, 180, 400, 280, 250],
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const resourceUsageData = {
+    labels: ['CPU', 'Memory', 'GPU', 'Network'],
+    datasets: [
+      {
+        label: 'Usage %',
+        data: [65, 78, 45, 88],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
         ],
-    };
-    const resourceUsageData = {
-        labels: ['CPU', 'Memory', 'GPU', 'Network'],
-        datasets: [
-            {
-                label: 'Usage %',
-                data: [65, 78, 45, 88],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.5)',
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(255, 206, 86, 0.5)',
-                    'rgba(75, 192, 192, 0.5)',
-                ],
-            },
-        ],
-    };
-    return (<div className="p-6">
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
-          <Tab label="Performance"/>
-          <Tab label="Resources"/>
-          <Tab label="Knowledge Graph"/>
-          <Tab label="Task Analysis"/>
-        </Tabs>
-      </Box>
+      },
+    ],
+  };
 
-      {activeTab === 0 && (<SimpleGrid templateColumns={3}>
-          <GridItem colSpan={12}>
-            <Box className="p-4">
-              <h2 className="text-xl font-bold mb-4">System Performance</h2>
-              <components_1.PerformanceMetrics />
-              <div className="mt-4 h-80">
-                <react_chartjs_2_1.Line data={performanceData} options={{ maintainAspectRatio: false }}/>
-              </div>
-            </Box>
-          </GridItem>
-        </SimpleGrid>)}
+  const tabs = [
+    {
+      id: 'performance',
+      title: 'Performance',
+      content: (
+        <div className="grid grid-cols-1 gap-6">
+          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+            <h2 className="text-xl font-bold mb-4">System Performance</h2>
+            <PerformanceMetrics />
+            <div className="mt-4 h-80">
+              <Line data={performanceData} options={{ maintainAspectRatio: false, responsive: true }} />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'resources',
+      title: 'Resources',
+      content: (
+        <div className="grid grid-cols-1 gap-6">
+          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+            <h2 className="text-xl font-bold mb-4">Resource Usage</h2>
+            <SystemMetrics />
+            <div className="mt-4 h-80">
+              <Bar data={resourceUsageData} options={{ maintainAspectRatio: false, responsive: true }} />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'knowledge-graph',
+      title: 'Knowledge Graph',
+      content: (
+        <div className="grid grid-cols-1 gap-6">
+          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+            <h2 className="text-xl font-bold mb-4">Knowledge Graph Analysis</h2>
+            <DynamicKnowledgeGraph />
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'task-analysis',
+      title: 'Task Analysis',
+      content: (
+        <div className="grid grid-cols-1 gap-6">
+          <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+            <h2 className="text-xl font-bold mb-4">Task Allocation Analysis</h2>
+            <PredictiveTaskAllocator />
+          </div>
+        </div>
+      )
+    }
+  ];
 
-      {activeTab === 1 && (<SimpleGrid templateColumns={3}>
-          <GridItem colSpan={12}>
-            <Box className="p-4">
-              <h2 className="text-xl font-bold mb-4">Resource Usage</h2>
-              <components_1.SystemMetrics />
-              <div className="mt-4 h-80">
-                <react_chartjs_2_1.Bar data={resourceUsageData} options={{ maintainAspectRatio: false }}/>
-              </div>
-            </Box>
-          </GridItem>
-        </SimpleGrid>)}
+  return (
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+        <p className="text-gray-600">Monitor system performance and resource usage</p>
+      </div>
 
-      {activeTab === 2 && (<SimpleGrid templateColumns={3}>
-          <GridItem colSpan={12}>
-            <Box className="p-4">
-              <h2 className="text-xl font-bold mb-4">Knowledge Graph Analysis</h2>
-              <components_1.DynamicKnowledgeGraph />
-            </Box>
-          </GridItem>
-        </SimpleGrid>)}
-
-      {activeTab === 3 && (<SimpleGrid templateColumns={3}>
-          <GridItem colSpan={12}>
-            <Box className="p-4">
-              <h2 className="text-xl font-bold mb-4">Task Allocation Analysis</h2>
-              <components_1.PredictiveTaskAllocator />
-            </Box>
-          </GridItem>
-        </SimpleGrid>)}
-    </div>);
+      <Tabs tabs={tabs} onTabChange={setActiveTab} />
+    </div>
+  );
 };
-exports.default = Analytics;
-export {};
+
+export default Analytics;

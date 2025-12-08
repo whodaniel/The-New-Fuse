@@ -1,21 +1,6 @@
-import {
-  Box,
-  Button,
-  HStack,
-  IconButton,
-  Input,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import { Button } from '../ui/design-system';
 
 interface VariableManagerProps {
   variables: Record<string, string>;
@@ -23,26 +8,21 @@ interface VariableManagerProps {
 }
 
 export const VariableManager: React.FC<VariableManagerProps> = ({ variables, onChange }) => {
-  const toast = useToast();
   const [newVarName, setNewVarName] = useState('');
   const [newVarValue, setNewVarValue] = useState('');
 
+  const showToast = (title: string) => {
+    alert(title); // Simple toast - can be enhanced
+  };
+
   const handleAddVariable = () => {
     if (!newVarName.trim()) {
-      toast({
-        title: 'Variable name required',
-        status: 'warning',
-        duration: 2000,
-      });
+      showToast('Variable name required');
       return;
     }
 
     if (variables.hasOwnProperty(newVarName)) {
-      toast({
-        title: 'Variable already exists',
-        status: 'warning',
-        duration: 2000,
-      });
+      showToast('Variable already exists');
       return;
     }
 
@@ -72,69 +52,71 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ variables, onC
   };
 
   return (
-    <VStack spacing={4} align="stretch">
-      <HStack>
-        <Input
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-2">
+        <input
+          type="text"
           placeholder="Variable Name"
           value={newVarName}
           onChange={(e) => setNewVarName(e.target.value)}
+          className="input flex-1"
         />
-        <Input
+        <input
+          type="text"
           placeholder="Value"
           value={newVarValue}
           onChange={(e) => setNewVarValue(e.target.value)}
+          className="input flex-1"
         />
-        <Button leftIcon={<FaPlus />} colorScheme="blue" onClick={handleAddVariable}>
-          Add
+        <Button onClick={handleAddVariable} className="flex items-center gap-2">
+          <FaPlus /> Add
         </Button>
-      </HStack>
+      </div>
 
-      <Box border="1px" borderColor="gray.200" borderRadius="md" overflow="hidden">
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Variable</Th>
-              <Th>Value</Th>
-              <Th width="80px">Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+      <div className="border border-gray-200 rounded-md overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr className="border-b border-gray-200">
+              <th className="text-left py-2 px-3 font-medium">Variable</th>
+              <th className="text-left py-2 px-3 font-medium">Value</th>
+              <th className="text-left py-2 px-3 font-medium w-[80px]">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
             {Object.entries(variables).map(([name, value]) => (
-              <Tr key={name}>
-                <Td>
-                  <Text fontWeight="medium">{name}</Text>
-                </Td>
-                <Td>
-                  <Input
+              <tr key={name} className="border-b border-gray-100">
+                <td className="py-2 px-3">
+                  <p className="font-medium">{name}</p>
+                </td>
+                <td className="py-2 px-3">
+                  <input
+                    type="text"
                     value={value}
                     onChange={(e) => handleUpdateVariable(name, e.target.value)}
-                    size="sm"
+                    className="input text-sm w-full"
                   />
-                </Td>
-                <Td>
-                  <IconButton
-                    aria-label="Delete variable"
-                    icon={<FaTrash />}
-                    size="sm"
-                    colorScheme="red"
-                    variant="ghost"
+                </td>
+                <td className="py-2 px-3">
+                  <button
                     onClick={() => handleDeleteVariable(name)}
-                  />
-                </Td>
-              </Tr>
+                    className="text-red-500 hover:text-red-700 p-2"
+                    aria-label="Delete variable"
+                  >
+                    <FaTrash />
+                  </button>
+                </td>
+              </tr>
             ))}
             {Object.keys(variables).length === 0 && (
-              <Tr>
-                <Td colSpan={3}>
-                  <Text textAlign="center" py={4} color="gray.500">
-                    No variables defined
-                  </Text>
-                </Td>
-              </Tr>
+              <tr>
+                <td colSpan={3} className="text-center py-4 text-gray-500">
+                  No variables defined
+                </td>
+              </tr>
             )}
-          </Tbody>
-        </Table>
-      </Box>
-    </VStack>
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };

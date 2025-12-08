@@ -5,7 +5,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ChakraProvider } from '@chakra-ui/react';
 import EnhancedWorkflowBuilder from '../pages/Workflows/EnhancedWorkflowBuilder';
 
 // Mock ReactFlow
@@ -28,9 +27,7 @@ global.fetch = jest.fn();
 
 const renderWorkflowBuilder = () => {
   return render(
-    <ChakraProvider>
       <EnhancedWorkflowBuilder />
-    </ChakraProvider>
   );
 };
 

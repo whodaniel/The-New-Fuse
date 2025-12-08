@@ -1,13 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GraphAnalyzer = void 0;
-class GraphAnalyzer {
-    constructor(nodes, edges) {
+
+export class GraphAnalyzer {
+    nodes: any[];
+    edges: any[];
+    adjacencyMatrix: number[][];
+    nodeMetrics: Map<string, any>;
+
+    constructor(nodes: any[], edges: any[]) {
         this.nodes = nodes;
         this.edges = edges;
         this.adjacencyMatrix = this.buildAdjacencyMatrix();
         this.nodeMetrics = new Map();
     }
+
     buildAdjacencyMatrix() {
         const n = this.nodes.length;
         const matrix = Array(n).fill(0).map(() => Array(n).fill(0));
@@ -22,6 +26,7 @@ class GraphAnalyzer {
         });
         return matrix;
     }
+
     calculateDegrees() {
         const degrees = new Map();
         this.nodes.forEach((node: any) => {
@@ -35,6 +40,7 @@ class GraphAnalyzer {
         });
         return degrees;
     }
+
     calculateBetweennessCentrality() {
         const betweenness = new Map();
         const n = this.nodes.length;
@@ -50,7 +56,7 @@ class GraphAnalyzer {
                     const intermediateNodes = new Set(paths.flat());
                     intermediateNodes.delete(i);
                     intermediateNodes.delete(j);
-                    intermediateNodes.forEach(nodeIdx => {
+                    intermediateNodes.forEach((nodeIdx: any) => {
                         const nodeId = this.nodes[nodeIdx].id;
                         const pathsThroughNode = paths.filter(path => path.includes(nodeIdx));
                         betweenness.set(nodeId, betweenness.get(nodeId) + pathsThroughNode.length / paths.length);
@@ -67,6 +73,7 @@ class GraphAnalyzer {
         }
         return betweenness;
     }
+
     calculateClosenessCentrality() {
         const closeness = new Map();
         const n = this.nodes.length;
@@ -87,6 +94,7 @@ class GraphAnalyzer {
         });
         return closeness;
     }
+
     calculatePageRank(damping = 0.85, iterations = 100) {
         const n = this.nodes.length;
         let pageRank = new Map();
@@ -108,18 +116,19 @@ class GraphAnalyzer {
         }
         return pageRank;
     }
+
     detectCommunities() {
         // Implement Louvain method for community detection
         const communities = new Map();
         let currentCommunity = 0;
         const visited = new Set();
-        const dfs = (nodeId) => {
+        const dfs = (nodeId: any) => {
             visited.add(nodeId);
             communities.set(nodeId, currentCommunity);
             const neighbors = this.edges
                 .filter((e: any) => e.source === nodeId || e.target === nodeId)
                 .map((e: any) => e.source === nodeId ? e.target : e.source);
-            neighbors.forEach(neighbor => {
+            neighbors.forEach((neighbor: any) => {
                 if (!visited.has(neighbor)) {
                     dfs(neighbor);
                 }
@@ -133,9 +142,10 @@ class GraphAnalyzer {
         });
         return communities;
     }
-    findAllShortestPaths(start, end) {
-        const paths = [];
-        const queue = [{ path: [start], node: start }];
+
+    findAllShortestPaths(start: number, end: number) {
+        const paths: any[] = [];
+        const queue: any[] = [{ path: [start], node: start }];
         const shortestLength = this.findShortestPath(start, end).length;
         while (queue.length > 0) {
             const { path, node } = queue.shift();
@@ -156,9 +166,10 @@ class GraphAnalyzer {
         }
         return paths;
     }
-    findShortestPath(start, end) {
+
+    findShortestPath(start: number, end: number) {
         const visited = new Set();
-        const queue = [{ path: [start], node: start }];
+        const queue: any[] = [{ path: [start], node: start }];
         while (queue.length > 0) {
             const { path, node } = queue.shift();
             if (node === end)
@@ -177,6 +188,7 @@ class GraphAnalyzer {
         }
         return [start];
     }
+
     analyzeGraph() {
         const degrees = this.calculateDegrees();
         const betweenness = this.calculateBetweennessCentrality();
@@ -199,7 +211,8 @@ class GraphAnalyzer {
         });
         return this.nodeMetrics;
     }
-    calculateLocalClusteringCoefficient(nodeId) {
+
+    calculateLocalClusteringCoefficient(nodeId: any) {
         const neighbors = this.edges
             .filter((e: any) => e.source === nodeId || e.target === nodeId)
             .map((e: any) => e.source === nodeId ? e.target : e.source);
@@ -218,6 +231,3 @@ class GraphAnalyzer {
         return connections / possibleConnections;
     }
 }
-exports.GraphAnalyzer = GraphAnalyzer;
-
-export {};

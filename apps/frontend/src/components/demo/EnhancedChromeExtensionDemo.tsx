@@ -1,177 +1,159 @@
 import React, { useState } from "react";
-import { Container, Card, CardBody, Box, Text, Button, Tabs, TabList, Tab, TabPanels, TabPanel, Input, Textarea } from '@chakra-ui/react';
-import { Extension, Close, ExternalLink, Code, ArrowRightLeft } from 'lucide-react';
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      {...other}
-    >
-      {value === index && <Box p={4}>{children}</Box>}
-    </div>
-  );
-}
+import { Extension, ExternalLink, Code as CodeIcon, ArrowRightLeft } from 'lucide-react';
+import { Button } from '../../ui/design-system';
 
 const EnhancedChromeExtensionDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
-
-  const handleThemeChange = (darkMode: boolean) => {
-    setIsDarkMode(darkMode);
-  };
+  const tabs = ['Interface', 'Code Integration', 'Data Flow', 'Settings'];
 
   return (
-    <Container maxW="1200px" mx="auto" p={4}>
+    <div className="max-w-[1200px] mx-auto p-4 flex flex-col gap-4">
       {/* Header */}
-      <Card mb={4} bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" color="white">
-        <CardBody>
-          <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Box display="flex" alignItems="center" gap={3}>
+      <div className="bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-lg shadow-md overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <Extension size={32} />
-              <Box>
-                <Text fontSize="2xl" fontWeight="bold">Enhanced Chrome Extension</Text>
-                <Text opacity={0.9}>Advanced UI Components & Features</Text>
-              </Box>
-            </Box>
+              <div>
+                <p className="text-2xl font-bold">Enhanced Chrome Extension</p>
+                <p className="opacity-90">Advanced UI Components & Features</p>
+              </div>
+            </div>
             <Button
-              size="sm"
-              colorScheme="whiteAlpha"
               variant="outline"
+              className="text-white border-white/50 hover:bg-white/10 flex items-center gap-2"
               onClick={() => setShowPopup(!showPopup)}
-              leftIcon={<ExternalLink />}
             >
-              Launch Extension
+              <ExternalLink size={16} /> Launch Extension
             </Button>
-          </Box>
-        </CardBody>
-      </Card>
+          </div>
+        </div>
+      </div>
 
       {/* Feature Tabs */}
-      <Card>
-        <CardBody>
-          <Tabs index={activeTab} onChange={setActiveTab}>
-            <TabList>
-              <Tab>Interface</Tab>
-              <Tab>Code Integration</Tab>
-              <Tab>Data Flow</Tab>
-              <Tab>Settings</Tab>
-            </TabList>
+      <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="p-6">
+          <div className="border-b border-gray-200 mb-6">
+            <div className="flex gap-1">
+              {tabs.map((tab, index) => (
+                <button
+                  key={tab}
+                  className={`px-4 py-2 font-medium text-sm transition-colors border-b-2 ${
+                    activeTab === index
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                  }`}
+                  onClick={() => setActiveTab(index)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
 
-            <TabPanels>
-              <TabPanel>
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Extension Interface</Text>
-                  <Text color="gray.600" mb={4}>
-                    The extension provides a streamlined interface for Chrome browser integration
-                    with real-time communication and feature management.
-                  </Text>
-                  <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap={4}>
-                    <Card>
-                      <CardBody>
-                        <Box display="flex" alignItems="center" gap={2} mb={2}>
-                          <Extension size={20} />
-                          <Text fontWeight="medium">Core Features</Text>
-                        </Box>
-                        <Text fontSize="sm" color="gray.600">
-                          Element selection, DOM manipulation, and browser state management.
-                        </Text>
-                      </CardBody>
-                    </Card>
-                    <Card>
-                      <CardBody>
-                        <Box display="flex" alignItems="center" gap={2} mb={2}>
-                          <Code size={20} />
-                          <Text fontWeight="medium">Developer Tools</Text>
-                        </Box>
-                        <Text fontSize="sm" color="gray.600">
-                          Advanced debugging and development features for power users.
-                        </Text>
-                      </CardBody>
-                    </Card>
-                  </Box>
-                </Box>
-              </TabPanel>
+          <div>
+            {activeTab === 0 && (
+              <div>
+                <p className="text-lg font-semibold mb-3">Extension Interface</p>
+                <p className="text-gray-600 mb-4">
+                  The extension provides a streamlined interface for Chrome browser integration
+                  with real-time communication and feature management.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="border border-gray-200 rounded-md p-4 bg-white shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Extension size={20} className="text-blue-500" />
+                      <p className="font-medium">Core Features</p>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Element selection, DOM manipulation, and browser state management.
+                    </p>
+                  </div>
+                  <div className="border border-gray-200 rounded-md p-4 bg-white shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CodeIcon size={20} className="text-purple-500" />
+                      <p className="font-medium">Developer Tools</p>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Advanced debugging and development features for power users.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-              <TabPanel>
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Code Integration</Text>
-                  <Text color="gray.600" mb={4}>
-                    Seamless integration with your development workflow and codebase.
-                  </Text>
-                  <Box mb={4}>
-                    <Text fontSize="sm" fontWeight="medium" mb={2}>API Endpoint Configuration</Text>
-                    <Input placeholder="https://api.example.com/endpoint" size="sm" />
-                  </Box>
-                  <Box mb={4}>
-                    <Text fontSize="sm" fontWeight="medium" mb={2}>Custom Scripts</Text>
-                    <Textarea 
-                      placeholder="Enter custom JavaScript or configuration..." 
-                      size="sm" 
-                      rows={4}
-                    />
-                  </Box>
-                </Box>
-              </TabPanel>
+            {activeTab === 1 && (
+              <div>
+                <p className="text-lg font-semibold mb-3">Code Integration</p>
+                <p className="text-gray-600 mb-4">
+                  Seamless integration with your development workflow and codebase.
+                </p>
+                <div className="mb-4">
+                  <p className="text-sm font-medium mb-2">API Endpoint Configuration</p>
+                  <input
+                    type="text"
+                    placeholder="https://api.example.com/endpoint"
+                    className="input w-full text-sm"
+                  />
+                </div>
+                <div className="mb-4">
+                  <p className="text-sm font-medium mb-2">Custom Scripts</p>
+                  <textarea
+                    placeholder="Enter custom JavaScript or configuration..."
+                    className="input w-full text-sm h-32 font-mono"
+                    rows={4}
+                  />
+                </div>
+              </div>
+            )}
 
-              <TabPanel>
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Data Flow Management</Text>
-                  <Text color="gray.600" mb={4}>
-                    Real-time data synchronization and state management across components.
-                  </Text>
-                  <Box display="flex" alignItems="center" gap={4} p={4} bg="gray.50" borderRadius="md">
-                    <ArrowRightLeft size={24} color="blue.500" />
-                    <Box>
-                      <Text fontWeight="medium">Connected Services</Text>
-                      <Text fontSize="sm" color="gray.600">4 active integrations</Text>
-                    </Box>
-                  </Box>
-                </Box>
-              </TabPanel>
+            {activeTab === 2 && (
+              <div>
+                <p className="text-lg font-semibold mb-3">Data Flow Management</p>
+                <p className="text-gray-600 mb-4">
+                  Real-time data synchronization and state management across components.
+                </p>
+                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-md border border-gray-100">
+                  <ArrowRightLeft size={24} className="text-blue-500" />
+                  <div>
+                    <p className="font-medium">Connected Services</p>
+                    <p className="text-sm text-gray-600">4 active integrations</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-              <TabPanel>
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={3}>Settings & Configuration</Text>
-                  <Text color="gray.600" mb={4}>
-                    Customize extension behavior and preferences.
-                  </Text>
-                  <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4}>
-                    <Box>
-                      <Text fontSize="sm" fontWeight="medium" mb={2}>Theme</Text>
-                      <Button size="sm" variant="outline">
-                        {isDarkMode ? 'Dark' : 'Light'} Mode
-                      </Button>
-                    </Box>
-                    <Box>
-                      <Text fontSize="sm" fontWeight="medium" mb={2}>Notifications</Text>
-                      <Button size="sm" colorScheme="blue">Enable</Button>
-                    </Box>
-                    <Box>
-                      <Text fontSize="sm" fontWeight="medium" mb={2}>Auto-update</Text>
-                      <Button size="sm" colorScheme="green">Active</Button>
-                    </Box>
-                  </Box>
-                </Box>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </CardBody>
-      </Card>
-    </Container>
+            {activeTab === 3 && (
+              <div>
+                <p className="text-lg font-semibold mb-3">Settings & Configuration</p>
+                <p className="text-gray-600 mb-4">
+                  Customize extension behavior and preferences.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-sm font-medium mb-2">Theme</p>
+                    <Button variant="outline" className="w-full text-sm">
+                      {isDarkMode ? 'Dark' : 'Light'} Mode
+                    </Button>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium mb-2">Notifications</p>
+                    <Button className="w-full text-sm bg-blue-600 hover:bg-blue-700 text-white">Enable</Button>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium mb-2">Auto-update</p>
+                    <Button className="w-full text-sm bg-green-600 hover:bg-green-700 text-white">Active</Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,67 +1,76 @@
 import React from 'react';
-import {
-  Box,
-  // Removed unused Button import
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Switch,
-  useToast
-} from '@chakra-ui/react';
 import { useRoles } from '../../hooks/useRoles';
 import { Permission } from '@the-new-fuse/types';
+import { useToast } from '@/hooks/useToast';
 
 export const RoleManager: React.FC = () => {
   const { roles, permissions, updateRolePermissions } = useRoles();
-  const toast = useToast();
+  const { toast } = useToast();
 
   const handlePermissionToggle = async (roleId: string, permission: Permission) => {
     try {
       await updateRolePermissions(roleId, permission);
       toast({
         title: 'Permission updated',
-        status: 'success',
+        variant: 'success',
         duration: 3000,
       });
     } catch (error) {
       toast({
         title: 'Error updating permission',
-        status: 'error',
+        variant: 'destructive',
         duration: 3000,
       });
     }
   };
 
   return (
-    <Box overflowX="auto">
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Role</Th>
-            {permissions.map(perm => (
-              <Th key={perm}>{perm}</Th>
+    <div className="overflow-x-auto bg-white dark:bg-neutral-800 rounded-lg shadow-sm">
+      <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+        <thead className="bg-neutral-50 dark:bg-neutral-900">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+              Role
+            </th>
+            {permissions.map((perm) => (
+              <th
+                key={perm}
+                className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider"
+              >
+                {perm}
+              </th>
             ))}
-          </Tr>
-        </Thead>
-        <Tbody>
+          </tr>
+        </thead>
+        <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
           {roles.map((role: any) => (
-            <Tr key={role.id}>
-              <Td>{role.name}</Td>
-              {permissions.map(perm => (
-                <Td key={`${role.id}-${perm}`}>
-                  <Switch
-                    isChecked={role.permissions.includes(perm)}
-                    onChange={() => handlePermissionToggle(role.id, perm)}
-                  />
-                </Td>
+            <tr key={role.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                {role.name}
+              </td>
+              {permissions.map((perm) => (
+                <td key={`${role.id}-${perm}`} className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    onClick={() => handlePermissionToggle(role.id, perm)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                      role.permissions.includes(perm)
+                        ? 'bg-primary-600'
+                        : 'bg-neutral-200 dark:bg-neutral-700'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        role.permissions.includes(perm) ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </td>
               ))}
-            </Tr>
+            </tr>
           ))}
-        </Tbody>
-      </Table>
-    </Box>
+        </tbody>
+      </table>
+    </div>
   );
 };
+

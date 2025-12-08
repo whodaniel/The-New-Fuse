@@ -1,13 +1,19 @@
 import React from 'react';
-import { Box, Text, Card, CardBody } from '@chakra-ui/react';
+import { Card } from '@/components/ui/design-system';
+import { Users } from 'lucide-react';
+
 const UserManagement = () => (
-  <Box p={6}>
-    <Card>
-      <CardBody>
-        <Text fontSize="lg" fontWeight="bold" mb={4}>User Management</Text>
-        <Text color="gray.600">User management interface will be implemented here</Text>
-      </CardBody>
+  <div className="p-6 max-w-7xl mx-auto">
+    <Card className="flex flex-col items-center justify-center p-12 text-center min-h-[400px]">
+      <div className="rounded-full bg-blue-50 p-6 mb-6">
+        <Users className="h-12 w-12 text-blue-500" />
+      </div>
+      <h2 className="text-2xl font-bold mb-2">User Management</h2>
+      <p className="text-gray-500 max-w-md">
+        User management capabilities are currently being built. You will be able to manage users, roles, and permissions here soon.
+      </p>
     </Card>
-  </Box>
+  </div>
 );
+
 export default UserManagement;

@@ -15,32 +15,15 @@ import ReactFlow, {
 // ReactFlow styles will be imported via the build system
 import {
   Badge,
-  Box,
   Button,
   Card,
-  CardBody,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  Textarea,
-  useDisclosure,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
+  CardContent,
+} from '../../components/ui';
+import { Drawer } from '../../components/ui/drawer';
+import { useToast } from '../../hooks/useToast';
+import { FormLabel } from '../../components/ui/form';
+import { Input } from '../../components/ui/input';
+import { Textarea } from '../../components/ui/textarea';
 import {
   FiCalendar,
   FiCloud,
@@ -54,65 +37,66 @@ import {
   FiSave,
   FiUser,
 } from 'react-icons/fi';
+import { WorkflowApiService } from '../../api/workflow';
 
 // Custom Node Types
 const nodeTypes = {
   trigger: ({ data }: any) => (
-    <Card bg="green.50" borderColor="green.200" borderWidth={2}>
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Box color="green.600">{data.icon}</Box>
-          <Text fontSize="sm" fontWeight="bold">
+    <Card className="bg-green-50 border-2 border-green-200">
+      <CardContent className="p-3">
+        <div className="flex flex-col gap-2">
+          <div className="text-green-600">{data.icon}</div>
+          <p className="text-sm font-bold">
             {data.label}
-          </Text>
-        </VStack>
-      </CardBody>
+          </p>
+        </div>
+      </CardContent>
     </Card>
   ),
   action: ({ data }: any) => (
-    <Card bg="blue.50" borderColor="blue.200" borderWidth={2}>
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Box color="blue.600">{data.icon}</Box>
-          <Text fontSize="sm" fontWeight="bold">
+    <Card className="bg-blue-50 border-2 border-blue-200">
+      <CardContent className="p-3">
+        <div className="flex flex-col gap-2">
+          <div className="text-blue-600">{data.icon}</div>
+          <p className="text-sm font-bold">
             {data.label}
-          </Text>
+          </p>
           {data.status && (
-            <Badge size="sm" colorScheme={data.status === 'completed' ? 'green' : 'yellow'}>
+            <Badge variant={data.status === 'completed' ? 'default' : 'secondary'}>
               {data.status}
             </Badge>
           )}
-        </VStack>
-      </CardBody>
+        </div>
+      </CardContent>
     </Card>
   ),
   condition: ({ data }: any) => (
-    <Card bg="orange.50" borderColor="orange.200" borderWidth={2}>
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Box color="orange.600">{data.icon}</Box>
-          <Text fontSize="sm" fontWeight="bold">
+    <Card className="bg-orange-50 border-2 border-orange-200">
+      <CardContent className="p-3">
+        <div className="flex flex-col gap-2">
+          <div className="text-orange-600">{data.icon}</div>
+          <p className="text-sm font-bold">
             {data.label}
-          </Text>
-        </VStack>
-      </CardBody>
+          </p>
+        </div>
+      </CardContent>
     </Card>
   ),
   ai: ({ data }: any) => (
-    <Card bg="purple.50" borderColor="purple.200" borderWidth={2}>
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Box color="purple.600">{data.icon}</Box>
-          <Text fontSize="sm" fontWeight="bold">
+    <Card className="bg-purple-50 border-2 border-purple-200">
+      <CardContent className="p-3">
+        <div className="flex flex-col gap-2">
+          <div className="text-purple-600">{data.icon}</div>
+          <p className="text-sm font-bold">
             {data.label}
-          </Text>
+          </p>
           {data.model && (
-            <Badge size="sm" colorScheme="purple">
+            <Badge variant="secondary">
               {data.model}
             </Badge>
           )}
-        </VStack>
-      </CardBody>
+        </div>
+      </CardContent>
     </Card>
   ),
 };
@@ -203,25 +187,11 @@ const WorkflowBuilder: React.FC = () => {
   const [workflowDescription, setWorkflowDescription] = useState('');
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionResults, setExecutionResults] = useState<any[]>([]);
+  const [isNodePanelOpen, setIsNodePanelOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
-  const {
-    isOpen: isNodePanelOpen,
-    onOpen: onNodePanelOpen,
-    onClose: onNodePanelClose,
-  } = useDisclosure();
-  const {
-    isOpen: isSettingsOpen,
-    onOpen: onSettingsOpen,
-    onClose: onSettingsClose,
-  } = useDisclosure();
-  const {
-    isOpen: isSaveModalOpen,
-    onOpen: onSaveModalOpen,
-    onClose: onSaveModalClose,
-  } = useDisclosure();
-
-  const toast = useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Load existing workflow if editing
@@ -229,13 +199,50 @@ const WorkflowBuilder: React.FC = () => {
   }, []);
 
   const loadWorkflow = async () => {
-    // Simulate loading existing workflow
+    // Load existing workflow if editing
     const urlParams = new URLSearchParams(window.location.search);
     const workflowId = urlParams.get('id');
 
     if (workflowId) {
-      // Load workflow from API
-      console.log('Loading workflow:', workflowId);
+      try {
+        // Use actual API service to load workflow
+        const workflowService = new WorkflowApiService();
+        const response = await workflowService.getWorkflow(workflowId);
+
+        if (response.success && response.data) {
+          const workflow = response.data;
+
+          // Map the workflow data to our node/edge format
+          const loadedNodes = workflow.nodes.map((node: any) => ({
+            id: node.id,
+            type: node.type,
+            position: node.position || { x: 100, y: 100 },
+            data: {
+              label: node.data?.label || node.label || 'Untitled',
+              type: node.data?.type || node.type,
+              ...node.data
+            },
+          }));
+
+          const loadedEdges = workflow.edges.map((edge: any) => ({
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            data: edge.data || { label: '' },
+          }));
+
+          setNodes(loadedNodes);
+          setEdges(loadedEdges);
+        }
+      } catch (error) {
+        console.error('Failed to load workflow:', error);
+        toast({
+          title: 'Load Error',
+          description: 'Failed to load the workflow',
+          variant: 'destructive',
+          duration: 3000,
+        });
+      }
     }
   };
 
@@ -258,14 +265,13 @@ const WorkflowBuilder: React.FC = () => {
     };
 
     setNodes((nds) => [...nds, newNode]);
-    onNodePanelClose();
+    setIsNodePanelOpen(false);
 
     toast({
       title: 'Node Added',
       description: `${nodeTemplate.label} has been added to the workflow`,
-      status: 'success',
+      variant: 'success',
       duration: 2000,
-      isClosable: true,
     });
   };
 
@@ -274,51 +280,45 @@ const WorkflowBuilder: React.FC = () => {
       toast({
         title: 'Empty Workflow',
         description: 'Add some nodes to execute the workflow',
-        status: 'warning',
+        variant: 'warning',
         duration: 3000,
-        isClosable: true,
       });
       return;
     }
 
     setIsExecuting(true);
     try {
-      // Simulate workflow execution
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-
-        // Update node status
-        setNodes((nds) =>
-          nds.map((n) =>
-            n.id === node.id ? { ...n, data: { ...n.data, status: 'executing' } } : n
-          )
-        );
-
-        // Simulate processing time
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Mark as completed
-        setNodes((nds) =>
-          nds.map((n) =>
-            n.id === node.id ? { ...n, data: { ...n.data, status: 'completed' } } : n
-          )
-        );
-      }
-
-      toast({
-        title: 'Workflow Executed',
-        description: 'All workflow steps completed successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
+      // Use actual API service for workflow execution
+      const workflowService = new WorkflowApiService();
+      const response = await workflowService.executeWorkflow('current-workflow-id', {
+        nodes: nodes,
+        edges: edges
       });
+
+      if (response.success && response.data) {
+        // Update all nodes to completed status
+        setNodes((nds) =>
+          nds.map((n) => ({
+            ...n,
+            data: { ...n.data, status: 'completed' }
+          }))
+        );
+
+        toast({
+          title: 'Workflow Executed',
+          description: `Workflow execution started: ${response.data.id}`,
+          variant: 'success',
+          duration: 3000,
+        });
+      } else {
+        throw new Error(response.error || 'Failed to execute workflow');
+      }
     } catch (error) {
       toast({
         title: 'Execution Error',
-        description: 'An error occurred during workflow execution',
-        status: 'error',
+        description: error instanceof Error ? error.message : 'An error occurred during workflow execution',
+        variant: 'destructive',
         duration: 3000,
-        isClosable: true,
       });
     } finally {
       setIsExecuting(false);
@@ -332,40 +332,41 @@ const WorkflowBuilder: React.FC = () => {
         description: workflowDescription,
         nodes: nodes,
         edges: edges,
-        version: '1.0.0',
-        lastModified: new Date().toISOString(),
       };
 
-      // Simulate API save
-      console.log('Saving workflow:', workflowData);
+      // Use actual API service for workflow save
+      const workflowService = new WorkflowApiService();
+      const response = await workflowService.saveWorkflow(workflowData);
 
-      toast({
-        title: 'Workflow Saved',
-        description: `"${workflowName}" has been saved successfully`,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-
-      onSaveModalClose();
+      if (response.success && response.data) {
+        toast({
+          title: 'Workflow Saved',
+          description: `"${workflowName}" has been saved successfully`,
+          variant: 'success',
+          duration: 3000,
+        });
+      } else {
+        throw new Error(response.error || 'Failed to save workflow');
+      }
     } catch (error) {
       toast({
         title: 'Save Error',
-        description: 'Failed to save the workflow',
-        status: 'error',
+        description: error instanceof Error ? error.message : 'Failed to save the workflow',
+        variant: 'destructive',
         duration: 3000,
-        isClosable: true,
       });
+    } finally {
+      setIsSaveModalOpen(false);
     }
   };
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
-    onSettingsOpen();
+    setIsSettingsOpen(true);
   };
 
   return (
-    <Box h="100vh" w="100%" position="relative">
+    <div className="h-screen w-full relative">
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
@@ -379,191 +380,216 @@ const WorkflowBuilder: React.FC = () => {
         >
           <Controls />
           <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
+          <Background gap={12} size={1} />
 
           {/* Top Panel */}
           <Panel position="top-left">
             <Card>
-              <CardBody>
-                <HStack spacing={4}>
-                  <VStack align="start" spacing={0}>
-                    <Text fontSize="lg" fontWeight="bold">
+              <CardContent>
+                <div className="flex gap-4">
+                  <div className="flex flex-col gap-0">
+                    <h3 className="text-lg font-bold">
                       {workflowName}
-                    </Text>
-                    <Text fontSize="sm" color="gray.600">
+                    </h3>
+                    <p className="text-sm text-gray-600">
                       {nodes.length} nodes, {edges.length} connections
-                    </Text>
-                  </VStack>
+                    </p>
+                  </div>
 
-                  <HStack>
+                  <div className="flex gap-2">
                     <Button
                       size="sm"
-                      leftIcon={<FiPlus />}
-                      onClick={onNodePanelOpen}
-                      colorScheme="blue"
+                      onClick={() => setIsNodePanelOpen(true)}
+                      variant="primary"
                     >
+                      <FiPlus className="mr-2" />
                       Add Node
                     </Button>
 
                     <Button
                       size="sm"
-                      leftIcon={<FiPlay />}
                       onClick={executeWorkflow}
-                      colorScheme="green"
-                      isLoading={isExecuting}
-                      loadingText="Executing"
+                      variant="success"
+                      disabled={isExecuting}
                     >
-                      Execute
+                      <FiPlay className="mr-2" />
+                      {isExecuting ? 'Executing' : 'Execute'}
                     </Button>
 
                     <Button
                       size="sm"
-                      leftIcon={<FiSave />}
-                      onClick={onSaveModalOpen}
-                      colorScheme="purple"
+                      onClick={() => setIsSaveModalOpen(true)}
+                      variant="primary"
                     >
+                      <FiSave className="mr-2" />
                       Save
                     </Button>
-                  </HStack>
-                </HStack>
-              </CardBody>
+                  </div>
+                </div>
+              </CardContent>
             </Card>
           </Panel>
         </ReactFlow>
       </ReactFlowProvider>
 
       {/* Node Library Drawer */}
-      <Drawer isOpen={isNodePanelOpen} placement="right" onClose={onNodePanelClose} size="md">
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>Workflow Nodes</DrawerHeader>
-          <DrawerBody>
-            <VStack spacing={4} align="stretch">
-              <Text fontSize="sm" color="gray.600">
-                Drag and drop nodes onto the canvas to build your workflow
-              </Text>
+      <Drawer
+        isOpen={isNodePanelOpen}
+        onClose={() => setIsNodePanelOpen(false)}
+        placement="right"
+        size="md"
+        title="Workflow Nodes"
+      >
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-gray-600">
+            Drag and drop nodes onto the canvas to build your workflow
+          </p>
 
-              {/* Group nodes by category */}
-              {['Triggers', 'AI', 'Data', 'Communication', 'Logic', 'Human'].map((category) => {
-                const categoryNodes = availableNodes.filter((node) => node.category === category);
-                if (categoryNodes.length === 0) return null;
+          {/* Group nodes by category */}
+          {['Triggers', 'AI', 'Data', 'Communication', 'Logic', 'Human'].map((category) => {
+            const categoryNodes = availableNodes.filter((node) => node.category === category);
+            if (categoryNodes.length === 0) return null;
 
-                return (
-                  <VStack key={category} align="stretch" spacing={2}>
-                    <Text
-                      fontWeight="bold"
-                      color="gray.700"
-                      fontSize="sm"
-                      textTransform="uppercase"
-                    >
-                      {category}
-                    </Text>
+            return (
+              <div key={category} className="flex flex-col gap-2">
+                <h4
+                  className="font-bold text-gray-700 text-sm uppercase"
+                >
+                  {category}
+                </h4>
 
-                    {categoryNodes.map((node) => (
-                      <Card
-                        key={node.id}
-                        cursor="pointer"
-                        _hover={{ borderColor: 'blue.300' }}
-                        onClick={() => addNode(node)}
-                      >
-                        <CardBody p={3}>
-                          <HStack>
-                            <Box color="blue.600">{node.icon}</Box>
-                            <VStack align="start" spacing={0} flex={1}>
-                              <Text fontSize="sm" fontWeight="bold">
-                                {node.label}
-                              </Text>
-                              <Text fontSize="xs" color="gray.600">
-                                {node.description}
-                              </Text>
-                            </VStack>
-                          </HStack>
-                        </CardBody>
-                      </Card>
-                    ))}
-                  </VStack>
-                );
-              })}
-            </VStack>
-          </DrawerBody>
-        </DrawerContent>
+                {categoryNodes.map((node) => (
+                  <Card
+                    key={node.id}
+                    className="cursor-pointer hover:border-blue-300"
+                    onClick={() => addNode(node)}
+                  >
+                    <CardContent className="p-3">
+                      <div className="flex gap-2">
+                        <div className="text-blue-600">{node.icon}</div>
+                        <div className="flex flex-col gap-0 flex-1">
+                          <p className="text-sm font-bold">
+                            {node.label}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {node.description}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            );
+          })}
+        </div>
       </Drawer>
 
       {/* Node Settings Modal */}
-      <Modal isOpen={isSettingsOpen} onClose={onSettingsClose} size="lg">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Node Settings</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            {selectedNode && (
-              <VStack spacing={4} align="stretch">
-                <Text fontSize="lg" fontWeight="bold">
-                  {selectedNode.data.label}
-                </Text>
-                <Text color="gray.600">{selectedNode.data.description}</Text>
+      {isSettingsOpen && (
+        <div className="fixed inset-0 z-modal overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsSettingsOpen(false)}
+          />
 
-                <FormControl>
-                  <FormLabel>Node Name</FormLabel>
-                  <Input defaultValue={selectedNode.data.label} />
-                </FormControl>
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all">
+              <div className="border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
+                <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+                  Node Settings
+                </h3>
+              </div>
 
-                <FormControl>
-                  <FormLabel>Configuration</FormLabel>
-                  <Textarea
-                    placeholder="Enter node configuration (JSON)"
-                    rows={6}
-                    fontFamily="mono"
-                    fontSize="sm"
-                  />
-                </FormControl>
+              <div className="px-6 py-4">
+                {selectedNode && (
+                  <div className="flex flex-col gap-4">
+                    <h4 className="text-lg font-bold">
+                      {selectedNode.data.label}
+                    </h4>
+                    <p className="text-gray-600">{selectedNode.data.description}</p>
 
-                <Button colorScheme="blue">Update Node</Button>
-              </VStack>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+                    <div className="flex flex-col gap-2">
+                      <FormLabel>Node Name</FormLabel>
+                      <Input defaultValue={selectedNode.data.label} />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <FormLabel>Configuration</FormLabel>
+                      <Textarea
+                        placeholder="Enter node configuration (JSON)"
+                        rows={6}
+                        className="font-mono text-sm"
+                      />
+                    </div>
+
+                    <Button variant="primary">Update Node</Button>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-t border-neutral-200 dark:border-neutral-700 px-6 py-4">
+                <button onClick={() => setIsSettingsOpen(false)} className="btn btn-outline btn-sm">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Save Workflow Modal */}
-      <Modal isOpen={isSaveModalOpen} onClose={onSaveModalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Save Workflow</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <VStack spacing={4} align="stretch">
-              <FormControl>
-                <FormLabel>Workflow Name</FormLabel>
-                <Input
-                  value={workflowName}
-                  onChange={(e) => setWorkflowName(e.target.value)}
-                  placeholder="Enter workflow name"
-                />
-              </FormControl>
+      {isSaveModalOpen && (
+        <div className="fixed inset-0 z-modal overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsSaveModalOpen(false)}
+          />
 
-              <FormControl>
-                <FormLabel>Description</FormLabel>
-                <Textarea
-                  value={workflowDescription}
-                  onChange={(e) => setWorkflowDescription(e.target.value)}
-                  placeholder="Describe what this workflow does"
-                  rows={3}
-                />
-              </FormControl>
-
-              <HStack justify="flex-end" spacing={3}>
-                <Button onClick={onSaveModalClose}>Cancel</Button>
-                <Button colorScheme="purple" onClick={saveWorkflow}>
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all">
+              <div className="border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
+                <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
                   Save Workflow
-                </Button>
-              </HStack>
-            </VStack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Box>
+                </h3>
+              </div>
+
+              <div className="px-6 py-4">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <FormLabel>Workflow Name</FormLabel>
+                    <Input
+                      value={workflowName}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWorkflowName(e.target.value)}
+                      placeholder="Enter workflow name"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <FormLabel>Description</FormLabel>
+                    <Textarea
+                      value={workflowDescription}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setWorkflowDescription(e.target.value)}
+                      placeholder="Describe what this workflow does"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-3">
+                    <Button onClick={() => setIsSaveModalOpen(false)} variant="outline">
+                      Cancel
+                    </Button>
+                    <Button variant="primary" onClick={saveWorkflow}>
+                      Save Workflow
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

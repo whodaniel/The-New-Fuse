@@ -1,6 +1,5 @@
-import { Box, Button, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
-import MonacoEditor from '@monaco-editor/react';
 import React, { useState } from 'react';
+import MonacoEditor from '@monaco-editor/react';
 import { FaCode, FaMarkdown, FaQuestionCircle } from 'react-icons/fa';
 
 interface PromptEditorProps {
@@ -26,84 +25,90 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
     }
   };
 
-  const getPromptTemplateHelp = () => (
-    <Box p={3} fontSize="sm">
-      <Text fontWeight="bold" mb={2}>
-        Template Variables
-      </Text>
-      <Text>
-        Use <code>{'{{variable_name}}'}</code> syntax for variables.
-      </Text>
-      <Text mt={2}>
-        Example:{' '}
-        <code>
-          Hello, my name is {{ name }} and I am {{ age }} years old.
-        </code>
-      </Text>
-
-      <Text fontWeight="bold" mt={4} mb={2}>
-        System Instructions
-      </Text>
-      <Text>Start with clear system instructions to define assistant behavior:</Text>
-      <Text mt={1}>
-        <code>You are a helpful assistant that provides concise answers.</code>
-      </Text>
-
-      <Text fontWeight="bold" mt={4} mb={2}>
-        Formatting Tips
-      </Text>
-      <Text>• Use triple backticks for code blocks</Text>
-      <Text>• Use bullet points for lists</Text>
-      <Text>• Separate instructions clearly with line breaks</Text>
-    </Box>
-  );
-
   return (
-    <VStack spacing={4} align="stretch">
-      <HStack justifyContent="space-between">
-        <Text fontSize="lg" fontWeight="medium">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium text-gray-900">
           Prompt Template
-        </Text>
-        <HStack>
-          <Tooltip label="Plain Text" hasArrow>
-            <Button
-              size="sm"
-              variant={editorMode === 'plain' ? 'solid' : 'outline'}
-              onClick={() => setEditorMode('plain')}
-              aria-label="Plain Text Mode"
-            >
-              <Text>Text</Text>
-            </Button>
-          </Tooltip>
-          <Tooltip label="Markdown" hasArrow>
-            <Button
-              size="sm"
-              variant={editorMode === 'markdown' ? 'solid' : 'outline'}
-              onClick={() => setEditorMode('markdown')}
-              aria-label="Markdown Mode"
-            >
-              <FaMarkdown />
-            </Button>
-          </Tooltip>
-          <Tooltip label="JSON" hasArrow>
-            <Button
-              size="sm"
-              variant={editorMode === 'json' ? 'solid' : 'outline'}
-              onClick={() => setEditorMode('json')}
-              aria-label="JSON Mode"
-            >
-              <FaCode />
-            </Button>
-          </Tooltip>
-          <Tooltip label="Prompt Template Help" hasArrow placement="top">
-            <Button size="sm" variant="ghost" aria-label="Help">
-              <FaQuestionCircle />
-            </Button>
-          </Tooltip>
-        </HStack>
-      </HStack>
+        </h3>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setEditorMode('plain')}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              editorMode === 'plain'
+                ? 'bg-gray-800 text-white'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}
+            title="Plain Text"
+          >
+            Text
+          </button>
 
-      <Box border="1px" borderColor="gray.200" borderRadius="md" h="60vh">
+          <button
+            onClick={() => setEditorMode('markdown')}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              editorMode === 'markdown'
+                ? 'bg-gray-800 text-white'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}
+            title="Markdown"
+          >
+            <FaMarkdown size={16} />
+          </button>
+
+          <button
+            onClick={() => setEditorMode('json')}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              editorMode === 'json'
+                ? 'bg-gray-800 text-white'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}
+            title="JSON"
+          >
+            <FaCode size={16} />
+          </button>
+
+          <div className="relative group">
+            <button
+              className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Help"
+            >
+              <FaQuestionCircle size={18} />
+            </button>
+
+            <div className="absolute right-0 top-full mt-2 w-72 p-4 bg-white border border-gray-200 rounded-lg shadow-xl z-10 hidden group-hover:block text-sm">
+               <div className="space-y-4">
+                 <div>
+                   <p className="font-bold mb-1">Template Variables</p>
+                   <p className="text-gray-600 mb-2">Use <code>{'{{variable_name}}'}</code> syntax for variables.</p>
+                   <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
+                     Hello, my name is {'{{ name }}'} and I am {'{{ age }}'} years old.
+                   </div>
+                 </div>
+
+                 <div>
+                   <p className="font-bold mb-1">System Instructions</p>
+                   <p className="text-gray-600 mb-2">Start with clear system instructions:</p>
+                   <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
+                     You are a helpful assistant that provides concise answers.
+                   </div>
+                 </div>
+
+                 <div>
+                    <p className="font-bold mb-1">Formatting Tips</p>
+                    <ul className="text-gray-600 list-disc list-inside">
+                      <li>Use triple backticks for code blocks</li>
+                      <li>Use bullet points for lists</li>
+                      <li>Separate instructions clearly</li>
+                    </ul>
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-[60vh] border border-gray-200 rounded-md overflow-hidden bg-white">
         <MonacoEditor
           height="100%"
           language={getLanguage()}
@@ -118,7 +123,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
             scrollBeyondLastLine: false,
           }}
         />
-      </Box>
-    </VStack>
+      </div>
+    </div>
   );
 };

@@ -6,19 +6,6 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
 import {
-  Box,
-  VStack,
-  HStack,
-  Text,
-  Badge,
-  Icon,
-  Card,
-  CardBody,
-  Avatar,
-  Progress,
-  Tooltip
-} from '@chakra-ui/react';
-import {
   FiUser,
   FiCpu,
   FiGitBranch,
@@ -30,6 +17,8 @@ import {
   FiClock,
   FiUsers
 } from 'react-icons/fi';
+import { Tooltip } from '../../components/ui/tooltip';
+import { Badge } from '../../components/ui/design-system';
 
 // Base Node Component
 interface BaseNodeProps {
@@ -76,68 +65,67 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   };
 
   return (
-    <Card
-      bg="purple.50"
-      borderColor={selected ? 'purple.500' : 'purple.200'}
-      borderWidth={selected ? 3 : 2}
-      boxShadow={selected ? 'lg' : 'md'}
-      minW="200px"
-      maxW="300px"
+    <div
+      className={`bg-purple-50 border-2 rounded-md shadow-md min-w-[200px] max-w-[300px] ${selected ? 'border-purple-500 shadow-lg' : 'border-purple-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#805AD5' }} />
 
-      <CardBody p={3}>
-        <VStack spacing={2} align="stretch">
-          <HStack>
-            <Avatar size="xs" bg="purple.500" icon={<Icon as={FiCpu} />} />
-            <VStack align="start" spacing={0} flex={1}>
-              <Text fontSize="sm" fontWeight="bold" color="purple.900">
+      <div className="p-3">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs">
+              <FiCpu className="w-3 h-3" />
+            </div>
+            <div className="flex flex-col flex-1">
+              <div className="text-sm font-bold text-purple-900">
                 {data.label}
-              </Text>
+              </div>
               {data.agentName && (
-                <Text fontSize="xs" color="purple.600">
+                <div className="text-xs text-purple-600">
                   Agent: {data.agentName}
-                </Text>
+                </div>
               )}
-            </VStack>
+            </div>
             {data.status && (
               <Tooltip label={data.status}>
-                <Icon as={getStatusIcon()} color={`${getStatusColor()}.500`} />
+                <div className={`text-${getStatusColor()}-500`}>
+                  {React.createElement(getStatusIcon(), { className: 'w-4 h-4' })}
+                </div>
               </Tooltip>
             )}
-          </HStack>
+          </div>
 
           {data.description && (
-            <Text fontSize="xs" color="gray.600" noOfLines={2}>
+            <div className="text-xs text-gray-600 line-clamp-2">
               {data.description}
-            </Text>
+            </div>
           )}
 
           {data.status === 'running' && data.progress !== undefined && (
-            <Box>
-              <HStack justify="space-between" mb={1}>
-                <Text fontSize="xs" color="gray.600">Progress</Text>
-                <Text fontSize="xs" color="gray.600">{data.progress}%</Text>
-              </HStack>
-              <Progress
-                value={data.progress}
-                size="xs"
-                colorScheme={getStatusColor()}
-                borderRadius="full"
-              />
-            </Box>
+            <div>
+              <div className="flex justify-between mb-1">
+                <div className="text-xs text-gray-600">Progress</div>
+                <div className="text-xs text-gray-600">{data.progress}%</div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1">
+                <div
+                  className={`bg-${getStatusColor()}-500 h-1 rounded-full`}
+                  style={{ width: `${data.progress}%` }}
+                />
+              </div>
+            </div>
           )}
 
           {data.estimatedTime && (
-            <HStack>
-              <Icon as={FiClock} color="gray.500" boxSize={3} />
-              <Text fontSize="xs" color="gray.600">
+            <div className="flex items-center gap-1">
+              <FiClock className="w-3 h-3 text-gray-500" />
+              <div className="text-xs text-gray-600">
                 ~{data.estimatedTime}min
-              </Text>
-            </HStack>
+              </div>
+            </div>
           )}
-        </VStack>
-      </CardBody>
+        </div>
+      </div>
 
       <Handle type="source" position={Position.Bottom} style={{ background: '#805AD5' }} />
     </Card>
@@ -147,34 +135,29 @@ export const AgentTaskNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
 // Conditional Logic Node
 export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
-    <Card
-      bg="orange.50"
-      borderColor={selected ? 'orange.500' : 'orange.200'}
-      borderWidth={selected ? 3 : 2}
-      boxShadow={selected ? 'lg' : 'md'}
-      minW="180px"
-      style={{ position: 'relative' }}
+    <div
+      className={`bg-orange-50 border-2 rounded-md shadow-md min-w-[180px] ${selected ? 'border-orange-500 shadow-lg' : 'border-orange-200'} relative`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#DD6B20' }} />
 
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Icon as={FiGitBranch} color="orange.600" boxSize={5} />
-          <Text fontSize="sm" fontWeight="bold" color="orange.900" textAlign="center">
+      <div className="p-3">
+        <div className="flex flex-col gap-2 items-center">
+          <FiGitBranch className="w-5 h-5 text-orange-600" />
+          <div className="text-sm font-bold text-orange-900 text-center">
             {data.label}
-          </Text>
+          </div>
           {data.condition && (
-            <Badge colorScheme="orange" fontSize="xs" textAlign="center">
+            <Badge variant="warning" size="sm" className="text-center">
               {data.condition}
             </Badge>
           )}
           {data.description && (
-            <Text fontSize="xs" color="gray.600" textAlign="center" noOfLines={2}>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">
               {data.description}
-            </Text>
+            </div>
           )}
-        </VStack>
-      </CardBody>
+        </div>
+      </div>
 
       {/* Multiple output handles for true/false branches */}
       <Handle
@@ -183,16 +166,11 @@ export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => 
         id="true"
         style={{ background: '#48BB78', top: '30%' }}
       />
-      <Text
-        fontSize="xs"
-        position="absolute"
-        right="-35px"
-        top="25%"
-        color="green.600"
-        fontWeight="bold"
+      <div
+        className="absolute right-[-35px] top-[25%] text-xs text-green-600 font-bold"
       >
         True
-      </Text>
+      </div>
 
       <Handle
         type="source"
@@ -200,56 +178,47 @@ export const ConditionalNode: React.FC<BaseNodeProps> = ({ data, selected }) => 
         id="false"
         style={{ background: '#F56565', top: '70%' }}
       />
-      <Text
-        fontSize="xs"
-        position="absolute"
-        right="-38px"
-        top="65%"
-        color="red.600"
-        fontWeight="bold"
+      <div
+        className="absolute right-[-38px] top-[65%] text-xs text-red-600 font-bold"
       >
         False
-      </Text>
-    </Card>
+      </div>
+    </div>
   );
 };
 
 // Parallel Execution Node
 export const ParallelNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
-    <Card
-      bg="cyan.50"
-      borderColor={selected ? 'cyan.500' : 'cyan.200'}
-      borderWidth={selected ? 3 : 2}
-      boxShadow={selected ? 'lg' : 'md'}
-      minW="200px"
+    <div
+      className={`bg-cyan-50 border-2 rounded-md shadow-md min-w-[200px] ${selected ? 'border-cyan-500 shadow-lg' : 'border-cyan-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#0BC5EA' }} />
 
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Icon as={FiGrid} color="cyan.600" boxSize={5} />
-          <Text fontSize="sm" fontWeight="bold" color="cyan.900" textAlign="center">
+      <div className="p-3">
+        <div className="flex flex-col gap-2 items-center">
+          <FiGrid className="w-5 h-5 text-cyan-600" />
+          <div className="text-sm font-bold text-cyan-900 text-center">
             {data.label}
-          </Text>
+          </div>
           {data.parallelTasks && (
-            <Badge colorScheme="cyan">
+            <Badge variant="primary" size="sm">
               {data.parallelTasks} parallel tasks
             </Badge>
           )}
           {data.description && (
-            <Text fontSize="xs" color="gray.600" textAlign="center" noOfLines={2}>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">
               {data.description}
-            </Text>
+            </div>
           )}
           {data.status === 'running' && (
-            <HStack spacing={1}>
-              <Box w="8px" h="8px" borderRadius="full" bg="cyan.500" />
-              <Text fontSize="xs" color="cyan.600">Executing in parallel</Text>
-            </HStack>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
+              <div className="text-xs text-cyan-600">Executing in parallel</div>
+            </div>
           )}
-        </VStack>
-      </CardBody>
+        </div>
+      </div>
 
       {/* Multiple output handles for parallel branches */}
       <Handle
@@ -270,106 +239,98 @@ export const ParallelNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
         id="output-3"
         style={{ background: '#0BC5EA', left: '75%' }}
       />
-    </Card>
+    </div>
   );
 };
 
 // Human Approval Node
 export const HumanApprovalNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
-    <Card
-      bg="pink.50"
-      borderColor={selected ? 'pink.500' : 'pink.200'}
-      borderWidth={selected ? 3 : 2}
-      boxShadow={selected ? 'lg' : 'md'}
-      minW="200px"
+    <div
+      className={`bg-pink-50 border-2 rounded-md shadow-md min-w-[200px] ${selected ? 'border-pink-500 shadow-lg' : 'border-pink-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#D53F8C' }} />
 
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Icon as={FiUser} color="pink.600" boxSize={5} />
-          <Text fontSize="sm" fontWeight="bold" color="pink.900" textAlign="center">
+      <div className="p-3">
+        <div className="flex flex-col gap-2 items-center">
+          <FiUser className="w-5 h-5 text-pink-600" />
+          <div className="text-sm font-bold text-pink-900 text-center">
             {data.label}
-          </Text>
+          </div>
           {data.approvers && (
-            <HStack>
-              <Icon as={FiUsers} color="pink.500" boxSize={3} />
-              <Text fontSize="xs" color="pink.600">
+            <div className="flex items-center gap-1">
+              <FiUsers className="w-3 h-3 text-pink-500" />
+              <div className="text-xs text-pink-600">
                 {data.approvers} approver(s)
-              </Text>
-            </HStack>
+              </div>
+            </div>
           )}
           {data.status === 'waiting' && (
-            <Badge colorScheme="yellow" fontSize="xs">
+            <Badge variant="warning" size="sm">
               Waiting for approval
             </Badge>
           )}
           {data.status === 'completed' && (
-            <Badge colorScheme="green" fontSize="xs">
+            <Badge variant="success" size="sm">
               ✓ Approved
             </Badge>
           )}
           {data.description && (
-            <Text fontSize="xs" color="gray.600" textAlign="center" noOfLines={2}>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">
               {data.description}
-            </Text>
+            </div>
           )}
-        </VStack>
-      </CardBody>
+        </div>
+      </div>
 
       <Handle type="source" position={Position.Bottom} style={{ background: '#D53F8C' }} />
-    </Card>
+    </div>
   );
 };
 
 // Multi-Agent Coordination Node
 export const MultiAgentNode: React.FC<BaseNodeProps> = ({ data, selected }) => {
   return (
-    <Card
-      bg="teal.50"
-      borderColor={selected ? 'teal.500' : 'teal.200'}
-      borderWidth={selected ? 3 : 2}
-      boxShadow={selected ? 'lg' : 'md'}
-      minW="220px"
+    <div
+      className={`bg-teal-50 border-2 rounded-md shadow-md min-w-[220px] ${selected ? 'border-teal-500 shadow-lg' : 'border-teal-200'}`}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#319795' }} />
 
-      <CardBody p={3}>
-        <VStack spacing={2}>
-          <Icon as={FiUsers} color="teal.600" boxSize={5} />
-          <Text fontSize="sm" fontWeight="bold" color="teal.900" textAlign="center">
+      <div className="p-3">
+        <div className="flex flex-col gap-2 items-center">
+          <FiUsers className="w-5 h-5 text-teal-600" />
+          <div className="text-sm font-bold text-teal-900 text-center">
             {data.label}
-          </Text>
+          </div>
           {data.agents && (
-            <HStack spacing={1} flexWrap="wrap">
+            <div className="flex flex-wrap gap-1">
               {data.agents.slice(0, 3).map((agent: string, idx: number) => (
-                <Badge key={idx} colorScheme="teal" fontSize="xs">
+                <Badge key={idx} variant="primary" size="sm">
                   {agent}
                 </Badge>
               ))}
               {data.agents.length > 3 && (
-                <Badge colorScheme="teal" fontSize="xs">
+                <Badge variant="primary" size="sm">
                   +{data.agents.length - 3}
                 </Badge>
               )}
-            </HStack>
+            </div>
           )}
           {data.description && (
-            <Text fontSize="xs" color="gray.600" textAlign="center" noOfLines={2}>
+            <div className="text-xs text-gray-600 text-center line-clamp-2">
               {data.description}
-            </Text>
+            </div>
           )}
           {data.status === 'running' && data.activeAgent && (
-            <Text fontSize="xs" color="teal.600">
+            <div className="text-xs text-teal-600">
               Active: {data.activeAgent}
-            </Text>
+            </div>
           )}
-        </VStack>
-      </CardBody>
+        </div>
+      </div>
 
       <Handle type="source" position={Position.Bottom} style={{ background: '#319795' }} />
-    </Card>
+    </div>
   );
 };
 

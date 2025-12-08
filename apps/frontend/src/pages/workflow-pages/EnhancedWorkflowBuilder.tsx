@@ -12,44 +12,28 @@
 import {
   Alert,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
   Badge,
-  Box,
   Button,
   Card,
-  CardBody,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-  FormControl,
-  FormLabel,
-  HStack,
-  IconButton,
-  Input,
+  CardContent,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Progress,
-  Select,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  Textarea,
-  Tooltip,
-  useDisclosure,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
+  ProgressBar,
+  LoadingSpinner,
+} from '../../components/ui/design-system';
+import { Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, DrawerCloseButton } from '../../components/ui/drawer';
+import { Tooltip } from '../../components/ui/tooltip';
+import { useDisclosure } from '../../components/ui/disclosure';
+import { useToast } from '../../components/ui/toast';
+import { FormControl, FormLabel } from '../../components/ui/form';
+import { Input } from '../../components/ui/input';
+import { Select } from '../../components/ui/select';
+import { Textarea } from '../../components/ui/textarea';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FiDownload, FiEye, FiPlay, FiPlus, FiSave, FiXCircle } from 'react-icons/fi';
 import ReactFlow, {
@@ -313,23 +297,21 @@ const EnhancedWorkflowBuilder: React.FC = () => {
     setNodes((nds) => [...nds, newNode]);
     onNodeLibraryClose();
 
-    toast({
+    toast.addToast({
       title: 'Node Added',
       description: `${template.label} has been added to the workflow`,
-      status: 'success',
+      variant: 'success',
       duration: 2000,
-      isClosable: true,
     });
   };
 
   const executeWorkflow = async () => {
     if (nodes.length === 0) {
-      toast({
+      toast.addToast({
         title: 'Empty Workflow',
         description: 'Add some nodes to execute the workflow',
-        status: 'warning',
+        variant: 'warning',
         duration: 3000,
-        isClosable: true,
       });
       return;
     }
@@ -342,19 +324,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
 
     try {
       // Call backend API to execute workflow
-      const workflowData = {
-        name: workflowName,
-        description: workflowDescription,
-        nodes: nodes.map((node) => ({
-          id: node.id,
-          type: node.type,
-          data: node.data,
-        })),
-        edges: edges.map((edge) => ({
-          source: edge.source,
-          target: edge.target,
-        })),
-      };
+      // Simulate execution with progress updates
 
       // Simulate execution with progress updates
       for (let i = 0; i < nodes.length; i++) {
@@ -419,12 +389,11 @@ const EnhancedWorkflowBuilder: React.FC = () => {
         ],
       }));
 
-      toast({
+      toast.addToast({
         title: 'Workflow Executed',
         description: 'All workflow steps completed successfully',
-        status: 'success',
+        variant: 'success',
         duration: 3000,
-        isClosable: true,
       });
 
       onExecutionLogOpen();
@@ -442,12 +411,11 @@ const EnhancedWorkflowBuilder: React.FC = () => {
         ],
       }));
 
-      toast({
+      toast.addToast({
         title: 'Execution Error',
         description: 'An error occurred during workflow execution',
-        status: 'error',
+        variant: 'destructive',
         duration: 3000,
-        isClosable: true,
       });
     }
   };
@@ -471,24 +439,22 @@ const EnhancedWorkflowBuilder: React.FC = () => {
       });
 
       if (response.ok) {
-        toast({
+        toast.addToast({
           title: 'Workflow Saved',
           description: `"${workflowName}" has been saved successfully`,
-          status: 'success',
+          variant: 'success',
           duration: 3000,
-          isClosable: true,
         });
         onSaveModalClose();
       } else {
         throw new Error('Failed to save workflow');
       }
-    } catch (error) {
-      toast({
+    } catch (error: any) {
+      toast.addToast({
         title: 'Save Error',
         description: 'Failed to save the workflow',
-        status: 'error',
+        variant: 'destructive',
         duration: 3000,
-        isClosable: true,
       });
     }
   };
@@ -515,12 +481,11 @@ const EnhancedWorkflowBuilder: React.FC = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    toast({
+    toast.addToast({
       title: 'Workflow Exported',
       description: 'Workflow has been exported successfully',
-      status: 'success',
+      variant: 'success',
       duration: 2000,
-      isClosable: true,
     });
   };
 
@@ -539,10 +504,10 @@ const EnhancedWorkflowBuilder: React.FC = () => {
       progress: 0,
       logs: [],
     });
-    toast({
+    toast.addToast({
       title: 'Workflow Reset',
       description: 'Canvas has been cleared',
-      status: 'info',
+      variant: 'info',
       duration: 2000,
     });
   };
@@ -560,7 +525,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
   }, []);
 
   return (
-    <Box h="100vh" w="100%" position="relative" bg="gray.50">
+    <div className="h-screen w-full relative bg-gray-50">
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
@@ -576,56 +541,54 @@ const EnhancedWorkflowBuilder: React.FC = () => {
         >
           <Controls />
           <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
+          <Background gap={12} size={1} />
 
           {/* Top Control Panel */}
           <Panel position="top-left">
             <Card shadow="lg">
-              <CardBody>
-                <VStack align="start" spacing={3}>
-                  <HStack spacing={4}>
-                    <VStack align="start" spacing={0}>
-                      <Text fontSize="lg" fontWeight="bold">
+              <CardContent>
+                <div className="flex flex-col items-start gap-3">
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-start gap-0">
+                      <h3 className="text-lg font-bold">
                         {workflowName}
-                      </Text>
-                      <Text fontSize="xs" color="gray.600">
+                      </h3>
+                      <p className="text-xs text-gray-600">
                         {nodes.length} nodes, {edges.length} connections
-                      </Text>
-                    </VStack>
+                      </p>
+                    </div>
 
                     {executionState.isExecuting && (
-                      <Badge colorScheme="blue" fontSize="sm">
+                      <Badge variant="primary" size="sm">
                         Executing {executionState.progress.toFixed(0)}%
                       </Badge>
                     )}
-                  </HStack>
+                  </div>
 
                   {executionState.isExecuting && (
-                    <Progress
+                    <ProgressBar
                       value={executionState.progress}
-                      size="sm"
-                      colorScheme="blue"
-                      width="200px"
-                      borderRadius="full"
+                      className="w-[200px] rounded-full"
                     />
                   )}
-                </VStack>
-              </CardBody>
+                </div>
+              </CardContent>
             </Card>
           </Panel>
 
           {/* Action Buttons Panel */}
           <Panel position="top-right">
             <Card shadow="lg">
-              <CardBody>
-                <HStack spacing={2}>
+              <CardContent>
+                <div className="flex items-center gap-2">
                   <Tooltip label="Add Node">
                     <Button
                       size="sm"
-                      leftIcon={<FiPlus />}
                       onClick={onNodeLibraryOpen}
-                      colorScheme="blue"
+                      variant="primary"
+                      className="flex items-center gap-2"
                     >
+                      <FiPlus className="h-4 w-4" />
                       Add Node
                     </Button>
                   </Tooltip>
@@ -633,57 +596,70 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                   <Tooltip label="Execute Workflow">
                     <Button
                       size="sm"
-                      leftIcon={<FiPlay />}
                       onClick={executeWorkflow}
-                      colorScheme="green"
-                      isLoading={executionState.isExecuting}
-                      loadingText="Running"
+                      variant="success"
+                      className="flex items-center gap-2"
+                      disabled={executionState.isExecuting}
                     >
-                      Execute
+                      {executionState.isExecuting ? (
+                        <>
+                          <LoadingSpinner size="sm" />
+                          Running
+                        </>
+                      ) : (
+                        <>
+                          <FiPlay className="h-4 w-4" />
+                          Execute
+                        </>
+                      )}
                     </Button>
                   </Tooltip>
 
                   <Tooltip label="Save Workflow">
-                    <IconButton
-                      aria-label="Save"
-                      size="sm"
-                      icon={<FiSave />}
+                    <Button
+                      size="icon"
                       onClick={onSaveModalOpen}
-                      colorScheme="purple"
-                    />
+                      variant="secondary"
+                      className="h-8 w-8"
+                    >
+                      <FiSave className="h-4 w-4" />
+                    </Button>
                   </Tooltip>
 
                   <Tooltip label="Export Workflow">
-                    <IconButton
-                      aria-label="Export"
-                      size="sm"
-                      icon={<FiDownload />}
+                    <Button
+                      size="icon"
                       onClick={exportWorkflow}
-                      colorScheme="teal"
-                    />
+                      variant="outline"
+                      className="h-8 w-8"
+                    >
+                      <FiDownload className="h-4 w-4" />
+                    </Button>
                   </Tooltip>
 
                   <Tooltip label="View Logs">
-                    <IconButton
-                      aria-label="Logs"
-                      size="sm"
-                      icon={<FiEye />}
+                    <Button
+                      size="icon"
                       onClick={onExecutionLogOpen}
-                    />
+                      variant="ghost"
+                      className="h-8 w-8"
+                    >
+                      <FiEye className="h-4 w-4" />
+                    </Button>
                   </Tooltip>
 
                   <Tooltip label="Reset Workflow">
-                    <IconButton
-                      aria-label="Reset"
-                      size="sm"
-                      icon={<FiXCircle />}
+                    <Button
+                      size="icon"
                       onClick={resetWorkflow}
-                      colorScheme="red"
-                      variant="outline"
-                    />
+                      variant="danger"
+                      className="h-8 w-8"
+                    >
+                      <FiXCircle className="h-4 w-4" />
+                    </Button>
                   </Tooltip>
-                </HStack>
-              </CardBody>
+                </div>
+              </CardContent>
             </Card>
           </Panel>
         </ReactFlow>
@@ -696,46 +672,46 @@ const EnhancedWorkflowBuilder: React.FC = () => {
           <DrawerCloseButton />
           <DrawerHeader>Node Library</DrawerHeader>
           <DrawerBody>
-            <Tabs colorScheme="blue">
-              <TabList>
-                {Object.keys(groupedTemplates).map((category) => (
-                  <Tab key={category}>{category}</Tab>
-                ))}
-              </TabList>
+            <div className="flex border-b border-neutral-200 dark:border-neutral-700">
+              {Object.keys(groupedTemplates).map((category) => (
+                <button
+                  key={category}
+                  className="px-4 py-2 text-sm font-medium transition-colors border-b-2 border-primary text-primary"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
 
-              <TabPanels>
-                {Object.entries(groupedTemplates).map(([category, templates]) => (
-                  <TabPanel key={category}>
-                    <VStack spacing={3} align="stretch">
-                      {templates.map((template) => (
-                        <Card
-                          key={template.id}
-                          cursor="pointer"
-                          _hover={{ borderColor: 'blue.400', shadow: 'md' }}
-                          onClick={() => addNodeToWorkflow(template)}
-                          borderWidth={2}
-                          borderColor="gray.200"
-                        >
-                          <CardBody p={3}>
-                            <VStack align="start" spacing={1}>
-                              <Text fontSize="sm" fontWeight="bold">
-                                {template.label}
-                              </Text>
-                              <Text fontSize="xs" color="gray.600">
-                                {template.description}
-                              </Text>
-                              <Badge colorScheme="blue" fontSize="xs">
-                                {template.type}
-                              </Badge>
-                            </VStack>
-                          </CardBody>
-                        </Card>
-                      ))}
-                    </VStack>
-                  </TabPanel>
-                ))}
-              </TabPanels>
-            </Tabs>
+            <div className="mt-4">
+              {Object.entries(groupedTemplates).map(([category, templates]) => (
+                <div key={category} className="mt-4">
+                  <div className="flex flex-col gap-3">
+                    {templates.map((template) => (
+                      <Card
+                        key={template.id}
+                        className="cursor-pointer hover:border-blue-400 hover:shadow-md"
+                        onClick={() => addNodeToWorkflow(template)}
+                      >
+                        <CardContent className="p-3">
+                          <div className="flex flex-col items-start gap-1">
+                            <h4 className="text-sm font-bold">
+                              {template.label}
+                            </h4>
+                            <p className="text-xs text-gray-600">
+                              {template.description}
+                            </p>
+                            <Badge variant="primary" size="sm">
+                              {template.type}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
@@ -746,14 +722,14 @@ const EnhancedWorkflowBuilder: React.FC = () => {
         <ModalContent>
           <ModalHeader>Node Configuration</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
+          <ModalBody className="pb-6">
             {selectedNode && (
-              <VStack spacing={4} align="stretch">
+              <div className="flex flex-col gap-4">
                 <FormControl>
                   <FormLabel>Node Name</FormLabel>
                   <Input
                     value={selectedNode.data.label}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setNodes((nds) =>
                         nds.map((n) =>
                           n.id === selectedNode.id
@@ -769,7 +745,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                   <FormLabel>Description</FormLabel>
                   <Textarea
                     value={selectedNode.data.description || ''}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                       setNodes((nds) =>
                         nds.map((n) =>
                           n.id === selectedNode.id
@@ -786,10 +762,9 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                   <FormControl>
                     <FormLabel>Select Agent</FormLabel>
                     <Select
-                      placeholder="Choose an agent"
                       value={selectedNode.data.agentId || ''}
-                      onChange={(e) => {
-                        const agent = availableAgents.find((a) => a.id === e.target.value);
+                      onChange={(value: string) => {
+                        const agent = availableAgents.find((a) => a.id === value);
                         setNodes((nds) =>
                           nds.map((n) =>
                             n.id === selectedNode.id
@@ -797,7 +772,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                                   ...n,
                                   data: {
                                     ...n.data,
-                                    agentId: e.target.value,
+                                    agentId: value,
                                     agentName: agent?.name,
                                   },
                                 }
@@ -815,10 +790,10 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                   </FormControl>
                 )}
 
-                <Button colorScheme="blue" onClick={onNodeSettingsClose}>
+                <Button variant="primary" onClick={onNodeSettingsClose}>
                   Save Changes
                 </Button>
-              </VStack>
+              </div>
             )}
           </ModalBody>
         </ModalContent>
@@ -830,13 +805,13 @@ const EnhancedWorkflowBuilder: React.FC = () => {
         <ModalContent>
           <ModalHeader>Save Workflow</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
-            <VStack spacing={4} align="stretch">
+          <ModalBody className="pb-6">
+            <div className="flex flex-col gap-4">
               <FormControl>
                 <FormLabel>Workflow Name</FormLabel>
                 <Input
                   value={workflowName}
-                  onChange={(e) => setWorkflowName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWorkflowName(e.target.value)}
                   placeholder="Enter workflow name"
                 />
               </FormControl>
@@ -845,19 +820,21 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                 <FormLabel>Description</FormLabel>
                 <Textarea
                   value={workflowDescription}
-                  onChange={(e) => setWorkflowDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setWorkflowDescription(e.target.value)}
                   placeholder="Describe what this workflow does"
                   rows={3}
                 />
               </FormControl>
 
-              <HStack justify="flex-end" spacing={3}>
-                <Button onClick={onSaveModalClose}>Cancel</Button>
-                <Button colorScheme="purple" onClick={saveWorkflow}>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={onSaveModalClose}>
+                  Cancel
+                </Button>
+                <Button variant="primary" onClick={saveWorkflow}>
                   Save Workflow
                 </Button>
-              </HStack>
-            </VStack>
+              </div>
+            </div>
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -869,33 +846,33 @@ const EnhancedWorkflowBuilder: React.FC = () => {
           <DrawerCloseButton />
           <DrawerHeader>Execution Logs</DrawerHeader>
           <DrawerBody>
-            <VStack spacing={2} align="stretch">
+            <div className="flex flex-col gap-2">
               {executionState.logs.map((log, index) => (
                 <Alert
                   key={index}
-                  status={
-                    log.level === 'error' ? 'error' : log.level === 'success' ? 'success' : 'info'
+                  variant={
+                    log.level === 'error' ? 'danger' : log.level === 'success' ? 'success' : 'primary'
                   }
-                  variant="left-accent"
-                  borderRadius="md"
+                  className="rounded-md"
                 >
-                  <AlertIcon />
-                  <Box flex="1">
-                    <AlertTitle fontSize="sm">{log.timestamp.toLocaleTimeString()}</AlertTitle>
-                    <AlertDescription fontSize="xs">{log.message}</AlertDescription>
-                  </Box>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <AlertTitle className="text-sm">{log.timestamp.toLocaleTimeString()}</AlertTitle>
+                      <AlertDescription className="text-xs">{log.message}</AlertDescription>
+                    </div>
+                  </div>
                 </Alert>
               ))}
               {executionState.logs.length === 0 && (
-                <Text color="gray.500" textAlign="center" py={8}>
+                <p className="text-gray-500 text-center py-8">
                   No execution logs yet. Run a workflow to see logs.
-                </Text>
+                </p>
               )}
-            </VStack>
+            </div>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-    </Box>
+    </div>
   );
 };
 

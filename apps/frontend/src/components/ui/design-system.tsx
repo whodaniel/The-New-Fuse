@@ -3,7 +3,7 @@
  * This file provides reusable, consistent UI components that implement the design system
  */
 
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import React, { ButtonHTMLAttributes, forwardRef, HTMLAttributes, ReactNode } from 'react';
 
@@ -467,7 +467,7 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
 }
 
 const Modal = ({ isOpen, onClose, children, title, size = 'md' }: ModalProps) => {
@@ -478,6 +478,12 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }: ModalProps) =>
     md: 'max-w-md',
     lg: 'max-w-lg',
     xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-5xl',
+    '6xl': 'max-w-6xl',
+    full: 'max-w-full',
   };
 
   return (
@@ -514,6 +520,92 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }: ModalProps) =>
     </div>
   );
 };
+
+// Chakra-compatible Modal subcomponents for easier migration
+const ModalOverlay = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity', className)}
+      {...props}
+    />
+  )
+);
+ModalOverlay.displayName = 'ModalOverlay';
+
+const ModalContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { size?: ModalProps['size'] }>(
+  ({ className, size = 'md', ...props }, ref) => {
+    const sizeClasses = {
+      sm: 'max-w-sm',
+      md: 'max-w-md',
+      lg: 'max-w-lg',
+      xl: 'max-w-xl',
+      '2xl': 'max-w-2xl',
+      '3xl': 'max-w-3xl',
+      '4xl': 'max-w-4xl',
+      '5xl': 'max-w-5xl',
+      '6xl': 'max-w-6xl',
+      full: 'max-w-full',
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'relative w-full transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all',
+          sizeClasses[size],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+ModalContent.displayName = 'ModalContent';
+
+const ModalHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('border-b border-neutral-200 dark:border-neutral-700 px-6 py-4', className)}
+      {...props}
+    />
+  )
+);
+ModalHeader.displayName = 'ModalHeader';
+
+const ModalBody = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn('px-6 py-4', className)} {...props} />
+  )
+);
+ModalBody.displayName = 'ModalBody';
+
+const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('border-t border-neutral-200 dark:border-neutral-700 px-6 py-4 flex gap-2 justify-end', className)}
+      {...props}
+    />
+  )
+);
+ModalFooter.displayName = 'ModalFooter';
+
+const ModalCloseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(
+  ({ className, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={cn('absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors', className)}
+      {...props}
+    >
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  )
+);
+ModalCloseButton.displayName = 'ModalCloseButton';
 
 // Tabs Component
 interface Tab {
@@ -578,6 +670,12 @@ export {
   GlassCard,
   LoadingSpinner,
   Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
   ProgressBar,
   StatCard,
   Tabs,
