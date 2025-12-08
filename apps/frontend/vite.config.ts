@@ -111,9 +111,9 @@ export default defineConfig(({ mode }) => {
       terserOptions: isProduction
         ? {
             compress: {
-              drop_console: true, // Remove console.* calls in production
+              drop_console: false, // Enable console.* calls for debugging
               drop_debugger: true,
-              pure_funcs: ['console.log', 'console.info', 'console.debug'], // Remove specific console methods
+              // pure_funcs: ['console.log', 'console.info', 'console.debug'], // Remove specific console methods
               passes: 2, // Multiple compression passes for better results
             },
             mangle: {
