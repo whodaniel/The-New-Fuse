@@ -21,7 +21,7 @@ interface StandardLayoutProps {
   containerClass?: string;
 }
 
-export const StandardLayout = ({
+const StandardLayout = ({
   children,
   title,
   subtitle,
@@ -76,7 +76,7 @@ export const StandardLayout = ({
 };
 
 // Enhanced Sidebar Component
-export const EnhancedSidebar = () => {
+const EnhancedSidebar = () => {
   return (
     <div className="h-full bg-sidebar border-r border-border flex flex-col">
       <div className="p-4 border-b border-border">
@@ -126,7 +126,7 @@ const SidebarItem = ({ icon, label, path, active = false }: SidebarItemProps) =>
 };
 
 // Enhanced Header Component
-export const EnhancedHeader = () => {
+const EnhancedHeader = () => {
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -158,7 +158,7 @@ interface BreadcrumbNavigationProps {
   items: BreadcrumbItem[];
 }
 
-export const BreadcrumbNavigation = ({ items }: BreadcrumbNavigationProps) => {
+const BreadcrumbNavigation = ({ items }: BreadcrumbNavigationProps) => {
   return (
     <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
       {items.map((item, index) => (
@@ -180,7 +180,7 @@ interface PageHeaderProps {
   actions?: ReactNode;
 }
 
-export const PageHeader = ({ title, subtitle, actions }: PageHeaderProps) => {
+const PageHeader = ({ title, subtitle, actions }: PageHeaderProps) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -201,12 +201,7 @@ interface GridProps {
   className?: string;
 }
 
-export const ResponsiveGrid = ({
-  children,
-  cols = [1, 2, 3, 4],
-  _gap = 6,
-  className,
-}: GridProps) => {
+const ResponsiveGrid = ({ children, cols = [1, 2, 3, 4], _gap = 6, className }: GridProps) => {
   const gridClasses = Array.isArray(cols)
     ? `grid-cols-1 sm:grid-cols-${cols[1]} md:grid-cols-${cols[2]} lg:grid-cols-${cols[3]}`
     : `grid-cols-1 sm:grid-cols-${cols} md:grid-cols-${cols} lg:grid-cols-${cols}`;
@@ -222,7 +217,7 @@ interface EmptyStateProps {
   actions?: ReactNode;
 }
 
-export const EmptyState = ({ title, description, icon, actions }: EmptyStateProps) => {
+const EmptyState = ({ title, description, icon, actions }: EmptyStateProps) => {
   return (
     <div className="text-center py-12">
       <div className="mx-auto mb-4 h-12 w-12 text-muted-foreground">{icon || '📦'}</div>
@@ -234,7 +229,7 @@ export const EmptyState = ({ title, description, icon, actions }: EmptyStateProp
 };
 
 // Loading State Component
-export const LoadingState = () => {
+const LoadingState = () => {
   return (
     <div className="flex flex-col items-center justify-center py-12 space-y-4">
       <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
@@ -250,7 +245,7 @@ interface ErrorStateProps {
   retryAction?: () => void;
 }
 
-export const ErrorState = ({
+const ErrorState = ({
   title = 'Error',
   message = 'Something went wrong',
   retryAction,
