@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { auth } from '@/lib/firebase';
+import axios from 'axios';
 
 // Create an axios instance with default config
 const api = axios.create({
@@ -12,13 +12,22 @@ const api = axios.create({
 // Add a request interceptor to add the auth token to every request
 api.interceptors.request.use(
   async (config) => {
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        const token = await user.getIdToken();
+    // Only attempt to get auth token if Firebase is initialized
+    if (auth) {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const token = await user.getIdToken();
+          config.headers.Authorization = `Bearer ${token}`;
+        } catch (error) {
+          console.error('Error getting auth token:', error);
+        }
+      }
+    } else {
+      // If Firebase is not available, check for token in localStorage (fallback)
+      const token = localStorage.getItem('authToken');
+      if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-      } catch (error) {
-        console.error('Error getting auth token:', error);
       }
     }
     return config;
@@ -35,17 +44,17 @@ api.interceptors.response.use(
   },
   (error) => {
     const { response } = error;
-    
+
     if (response && response.status === 401) {
       // Handle unauthorized access
       console.error('Unauthorized access. Please log in again.');
       // You could trigger a logout or redirect to login here
     }
-    
+
     if (response && response.status === 500) {
       console.error('Server error. Please try again later.');
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -58,17 +67,17 @@ export const apiService = {
     const response = await api.get<T>(url, { params });
     return response.data;
   },
-  
+
   post: async <T>(url: string, data: any) => {
     const response = await api.post<T>(url, data);
     return response.data;
   },
-  
+
   put: async <T>(url: string, data: any) => {
     const response = await api.put<T>(url, data);
     return response.data;
   },
-  
+
   delete: async <T>(url: string) => {
     const response = await api.delete<T>(url);
     return response.data;

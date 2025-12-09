@@ -297,11 +297,13 @@ const WorkflowTemplates: React.FC = () => {
                           Use Template
                         </Button>
 
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link to={`/workflows/templates/${template.id}`}>
-                            Preview
-                            <ArrowRight className="h-4 w-4 ml-2" />
-                          </Link>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleUseTemplate(template.id)}
+                        >
+                          Preview
+                          <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                       </CardFooter>
                     </Card>

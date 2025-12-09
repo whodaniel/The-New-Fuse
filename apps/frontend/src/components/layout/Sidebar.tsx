@@ -1,5 +1,6 @@
 import {
   BarChart2,
+  Bot,
   BrainCircuit,
   Briefcase,
   CheckSquare,
@@ -56,6 +57,12 @@ export function Sidebar({ className = '' }: SidebarProps) {
       name: 'AI Portal',
       path: '/ai-portal',
       icon: <BrainCircuit className="h-5 w-5" />,
+      requiresAuth: true,
+    },
+    {
+      name: 'Agents',
+      path: '/agents',
+      icon: <Bot className="h-5 w-5" />,
       requiresAuth: true,
     },
     {

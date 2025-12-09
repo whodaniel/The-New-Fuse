@@ -1,39 +1,23 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import {
-  Save,
-  X,
-  ChevronLeft,
-  Plus,
-  Calendar,
-  Clock,
-  Tag,
-  Paperclip
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-// Mock data for agents
-const mockAgents = [
-  { id: 1, name: 'CodeAssistant', avatar: 'CA' },
-  { id: 2, name: 'DataAnalyzer', avatar: 'DA' },
-  { id: 3, name: 'ContentWriter', avatar: 'CW' },
-  { id: 4, name: 'BugHunter', avatar: 'BH' },
-  { id: 5, name: 'APIIntegrator', avatar: 'AI' }
-];
+// Mock data removed in favor of real API call
 
 /**
  * New Task page component
  */
 const NewTask: React.FC = () => {
   const navigate = useNavigate();
-  
+
   // Form state
   const [formData, setFormData] = useState({
     title: '',
@@ -45,18 +29,42 @@ const NewTask: React.FC = () => {
     dueDate: '',
     estimatedHours: '',
     tags: [] as string[],
-    newTag: ''
+    newTag: '',
   });
-  
+
+  const [agents, setAgents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await fetch('/api/agents');
+        if (response.ok) {
+          const data = await response.json();
+          // Adjust based on your API response structure (e.g. data.agents or just data)
+          setAgents(Array.isArray(data) ? data : data.agents || []);
+        }
+      } catch (error) {
+        console.error('Error fetching agents:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgents();
+  }, []);
+
   // Handle input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
-  
+
   // Handle tag input
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && formData.newTag.trim()) {
@@ -65,20 +73,20 @@ const NewTask: React.FC = () => {
         setFormData((prev: any) => ({
           ...prev,
           tags: [...prev.tags, prev.newTag.trim()],
-          newTag: ''
+          newTag: '',
         }));
       }
     }
   };
-  
+
   // Remove tag
   const removeTag = (tagToRemove: string) => {
     setFormData((prev: any) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
-  
+
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,20 +95,15 @@ const NewTask: React.FC = () => {
     // For now, just navigate back to the tasks list
     navigate('/tasks');
   };
-  
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
-      
+
       <main className="flex-1 p-6 overflow-auto">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-6">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/tasks')}
-              className="mr-4"
-            >
+            <Button variant="ghost" size="sm" onClick={() => navigate('/tasks')} className="mr-4">
               <ChevronLeft className="h-4 w-4 mr-1" />
               Back
             </Button>
@@ -109,7 +112,7 @@ const NewTask: React.FC = () => {
               <p className="text-muted-foreground">Create a new task for an agent</p>
             </div>
           </div>
-          
+
           <form onSubmit={handleSubmit}>
             <Card className="mb-6">
               <div className="p-6">
@@ -126,7 +129,7 @@ const NewTask: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="description">Description</Label>
                     <Textarea
@@ -139,7 +142,7 @@ const NewTask: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="status">Status</Label>
@@ -156,7 +159,7 @@ const NewTask: React.FC = () => {
                         <option value="completed">Completed</option>
                       </Select>
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="priority">Priority</Label>
                       <Select
@@ -173,7 +176,7 @@ const NewTask: React.FC = () => {
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="category">Category</Label>
@@ -194,7 +197,7 @@ const NewTask: React.FC = () => {
                         <option value="other">Other</option>
                       </Select>
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="assignedTo">Assign To</Label>
                       <Select
@@ -205,7 +208,9 @@ const NewTask: React.FC = () => {
                         required
                       >
                         <option value="">Select an agent</option>
-                        {mockAgents.map(agent => (
+                        <option value="">Select an agent</option>
+                        {loading && <option disabled>Loading...</option>}
+                        {agents.map((agent) => (
                           <option key={agent.id} value={agent.id.toString()}>
                             {agent.name}
                           </option>
@@ -213,7 +218,7 @@ const NewTask: React.FC = () => {
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="dueDate" className="flex items-center">
@@ -229,7 +234,7 @@ const NewTask: React.FC = () => {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="estimatedHours" className="flex items-center">
                         <Clock className="h-4 w-4 mr-1" />
@@ -247,7 +252,7 @@ const NewTask: React.FC = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="newTag" className="flex items-center">
                       <Tag className="h-4 w-4 mr-1" />
@@ -267,15 +272,20 @@ const NewTask: React.FC = () => {
                         type="button"
                         variant="outline"
                         onClick={() => {
-                          if (formData.newTag.trim() && !formData.tags.includes(formData.newTag.trim())) {
+                          if (
+                            formData.newTag.trim() &&
+                            !formData.tags.includes(formData.newTag.trim())
+                          ) {
                             setFormData((prev: any) => ({
                               ...prev,
                               tags: [...prev.tags, prev.newTag.trim()],
-                              newTag: ''
+                              newTag: '',
                             }));
                           }
                         }}
-                        disabled={!formData.newTag.trim() || formData.tags.includes(formData.newTag.trim())}
+                        disabled={
+                          !formData.newTag.trim() || formData.tags.includes(formData.newTag.trim())
+                        }
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
@@ -297,18 +307,14 @@ const NewTask: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <div>
                     <Label className="flex items-center">
                       <Paperclip className="h-4 w-4 mr-1" />
                       Attachments
                     </Label>
                     <div className="mt-2">
-                      <Input
-                        type="file"
-                        multiple
-                        className="cursor-pointer"
-                      />
+                      <Input type="file" multiple className="cursor-pointer" />
                       <p className="text-xs text-muted-foreground mt-1">
                         You can upload multiple files. Maximum file size: 10MB.
                       </p>
@@ -317,13 +323,9 @@ const NewTask: React.FC = () => {
                 </div>
               </div>
             </Card>
-            
+
             <div className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/tasks')}
-              >
+              <Button type="button" variant="outline" onClick={() => navigate('/tasks')}>
                 <X className="h-4 w-4 mr-2" />
                 Cancel
               </Button>

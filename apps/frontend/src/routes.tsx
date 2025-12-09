@@ -341,6 +341,16 @@ export function AppRoutes() {
           }
         />
         <Route
+          path="/agents/unified-creator"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<Loading />}>
+                <UnifiedAgentCreator />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/agents/:id"
           element={
             <ProtectedRoute>
@@ -542,6 +552,16 @@ export function AppRoutes() {
         {/* Workflows Extended */}
         <Route
           path="/workflows/templates"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<Loading />}>
+                <WorkflowTemplates />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/workflows/templates/:id"
           element={
             <ProtectedRoute>
               <Suspense fallback={<Loading />}>

@@ -81,8 +81,6 @@ const LandingRedesignedPage = lazy(() => import('./pages/LandingRedesigned'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 
 // Workspace components
-const WorkspaceOverviewPage = lazy(() => import('./pages/workspace/Overview'));
-const WorkspaceMembersPage = lazy(() => import('./pages/workspace/Members'));
 
 // Task components
 const TaskDetailPage = lazy(() => import('./pages/Tasks/Detail'));
@@ -101,7 +99,11 @@ const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
 // Admin pages that exist
 const AdminOnboardingPage = lazy(() => import('./pages/Admin/Onboarding'));
 const AdminDashboardPage = lazy(() => import('./pages/Admin/Dashboard'));
-const ExperimentalFeaturesPage = lazy(() => import('./pages/Admin/ExperimentalFeatures/features'));
+const ExperimentalFeaturesPage = lazy(() =>
+  import('./pages/Admin/ExperimentalFeatures/features').then((module) => ({
+    default: module.default,
+  }))
+);
 
 // Legal pages
 const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
@@ -114,7 +116,9 @@ const WorkspaceIndexPage = lazy(() => import('./pages/workspace'));
 // Additional component pages
 const ComponentsNavPage = lazy(() => import('./pages/ComponentsNav'));
 const HomePage = lazy(() => import('./pages/Home'));
-const LandingPageAlt = lazy(() => import('./pages/LandingPage'));
+const LandingPageAlt = lazy(() =>
+  import('./pages/LandingPage').then((module) => ({ default: module.default }))
+);
 const SimpleLandingPage = lazy(() => import('./pages/SimpleLanding'));
 
 // Enhanced workflow pages
@@ -151,7 +155,6 @@ const GeneralSettings = lazy(() => import('./pages/GeneralSettings'));
 const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
 const AgentDashboard = lazy(() => import('./pages/dashboard/AgentDashboard'));
-const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
 const DashboardSettings = lazy(() => import('./pages/dashboard/DashboardSettings'));
 const CommunityHub = lazy(() => import('./pages/Community/CommunityHub'));
 const LayoutExamples = lazy(() => import('./pages/Layout/LayoutExamples'));
@@ -272,7 +275,7 @@ export default function ComprehensiveRouter() {
 
           {/* Enhanced Dashboard Routes */}
           <Route path="/dashboard/agents" element={<AgentDashboard />} />
-          <Route path="/dashboard/agents/new" element={<CreateAgent />} />
+          <Route path="/dashboard/agents/new" element={<UnifiedAgentCreator />} />
           <Route path="/dashboard/agents/:id" element={<AgentDetail />} />
 
           {/* Enhanced Settings Routes */}
@@ -338,7 +341,17 @@ export default function ComprehensiveRouter() {
           {/* Remaining Specialized Settings Routes */}
           <Route path="/workspace-settings/llm-selection" element={<WorkspaceLLMSelectionPage />} />
           <Route path="/workspace-settings/chat-model" element={<WorkspaceLLMSelectionPage />} />
-          <Route path="/workspace-settings/agent-model" element={<AgentModelSelectionPage />} />
+          <Route
+            path="/workspace-settings/agent-model"
+            element={
+              <AgentModelSelectionPage
+                agentModel="default"
+                provider="default"
+                workspace="default"
+                setHasChanges={() => {}}
+              />
+            }
+          />
 
           {/* Agent-Specific Routes */}
           <Route path="/agents/unified-creator" element={<UnifiedAgentCreator />} />
