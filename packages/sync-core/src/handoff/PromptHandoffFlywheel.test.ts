@@ -5,32 +5,33 @@
  * 4.1, 4.2, 4.3, 4.4, 4.5
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import { PromptHandoffFlywheel, HandoffContext, HandoffTemplate, AgentCapability } from './PromptHandoffFlywheel';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { MasterClockService } from '../services/MasterClockService';
 import { ConflictManager } from '../services/ConflictManager';
 
 // Mock dependencies
-vi.mock('../services/SyncOrchestrator');
-vi.mock('../services/MasterClockService');
-vi.mock('../services/ConflictManager');
+jest.mock('../services/SyncOrchestrator');
+jest.mock('../services/MasterClockService');
+jest.mock('../services/ConflictManager');
 
 describe('PromptHandoffFlywheel', () => {
   let flywheel: PromptHandoffFlywheel;
-  let mockSyncOrchestrator: vi.Mocked<SyncOrchestrator>;
-  let mockMasterClock: vi.Mocked<MasterClockService>;
-  let mockConflictManager: vi.Mocked<ConflictManager>;
+  let mockSyncOrchestrator: jest.Mocked<SyncOrchestrator>;
+  let mockMasterClock: jest.Mocked<MasterClockService>;
+  let mockConflictManager: jest.Mocked<ConflictManager>;
 
   beforeEach(() => {
     mockSyncOrchestrator = {
-      syncGlobalData: vi.fn().mockResolvedValue(undefined),
-      syncAgentState: vi.fn().mockResolvedValue({ success: true }),
-      on: vi.fn()
+      syncGlobalData: jest.fn().mockResolvedValue(undefined),
+      syncAgentState: jest.fn().mockResolvedValue({ success: true }),
+      on: jest.fn()
     } as any;
 
     mockMasterClock = {
-      now: vi.fn().mockResolvedValue(new Date('2024-01-01T00:00:00Z'))
+      now: jest.fn().mockResolvedValue(new Date('2024-01-01T00:00:00Z'))
     } as any;
 
     mockConflictManager = {} as any;
@@ -43,7 +44,7 @@ describe('PromptHandoffFlywheel', () => {
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe('Requirement 4.1: Complete execution context and history preservation', () => {
@@ -151,7 +152,7 @@ describe('PromptHandoffFlywheel', () => {
       };
 
       // Mock the template exists
-      vi.spyOn(flywheel as any, 'handoffTemplates', 'get').mockReturnValue(
+      jest.spyOn(flywheel as any, 'handoffTemplates', 'get').mockReturnValue(
         new Map([['template-1', template]])
       );
 
@@ -185,7 +186,7 @@ describe('PromptHandoffFlywheel', () => {
       await flywheel.updateAgentStatus('agent-3', 'available', 40);
 
       // Mock selectOptimalAgent method
-      const selectOptimalAgent = vi.spyOn(flywheel as any, 'selectOptimalAgent');
+      const selectOptimalAgent = jest.spyOn(flywheel as any, 'selectOptimalAgent');
       selectOptimalAgent.mockResolvedValue('agent-1'); // Lowest load
 
       const result = await (flywheel as any).selectOptimalAgent(
@@ -218,7 +219,7 @@ describe('PromptHandoffFlywheel', () => {
     });
 
     it('should rebalance queues when overloaded', async () => {
-      const rebalanceQueues = vi.spyOn(flywheel as any, 'rebalanceQueues');
+      const rebalanceQueues = jest.spyOn(flywheel as any, 'rebalanceQueues');
       rebalanceQueues.mockResolvedValue(undefined);
 
       // Trigger rebalancing
@@ -251,7 +252,7 @@ describe('PromptHandoffFlywheel', () => {
       const error = new Error('Test error');
       
       // Mock setTimeout to capture delay
-      const mockSetTimeout = vi.spyOn(global, 'setTimeout');
+      const mockSetTimeout = jest.spyOn(global, 'setTimeout');
       mockSetTimeout.mockImplementation((callback, delay) => {
         expect(delay).toBe(2000); // 1000 * 2^1
         return {} as any;
@@ -285,7 +286,7 @@ describe('PromptHandoffFlywheel', () => {
       };
 
       const error = new Error('Test error');
-      const emitSpy = vi.spyOn(flywheel, 'emit');
+      const emitSpy = jest.spyOn(flywheel, 'emit');
 
       await (flywheel as any).handleHandoffFailure(mockContext, error);
 
@@ -348,7 +349,7 @@ describe('PromptHandoffFlywheel', () => {
       };
 
       // Mock template retrieval
-      vi.spyOn(flywheel as any, 'handoffTemplates', 'get').mockReturnValue(
+      jest.spyOn(flywheel as any, 'handoffTemplates', 'get').mockReturnValue(
         new Map([['template-1', mockTemplate]])
       );
 
@@ -424,7 +425,7 @@ describe('PromptHandoffFlywheel', () => {
     it('should register and update agent capabilities', async () => {
       await flywheel.registerAgent('agent-1', ['general', 'analysis']);
       
-      const emitSpy = vi.spyOn(flywheel, 'emit');
+      const emitSpy = jest.spyOn(flywheel, 'emit');
       
       await flywheel.updateAgentStatus('agent-1', 'busy', 50);
 

@@ -8,8 +8,8 @@ import {
   IMetricsCollector, 
   TimeSeries, 
   MetricDataPoint 
-} from '../interfaces/IMonitoring.js';
-import { Logger } from '../utils/Logger.js';
+} from '../interfaces/IMonitoring';
+import { Logger } from '../utils/Logger';
 
 /**
  * Base metrics collector configuration

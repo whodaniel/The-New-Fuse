@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher';
 import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
 

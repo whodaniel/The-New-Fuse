@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';

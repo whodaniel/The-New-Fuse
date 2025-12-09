@@ -442,14 +442,17 @@ app.use((error, req, res, _next) => {
 async function startServer() {
   await initializeModels();
   
-  server.listen(PORT, () => {
-    process.stdout.write(`VS Code LM Bridge Server running on http://localhost:${PORT}\n`);
-    process.stdout.write(`OpenAI-compatible endpoint: http://localhost:${PORT}/v1/chat/completions\n`);
-    process.stdout.write(`Dynamic models endpoint: http://localhost:${PORT}/v1/models\n`);
-    process.stdout.write(`Health check: http://localhost:${PORT}/health\n`);
-    process.stdout.write(`Loaded ${availableModels.length} models dynamically\n`);
-    process.stdout.write('Bridge will query VS Code Copilot for additional models when connected\n');
-  });
+  // Only listen if not running in test mode
+  if (process.env.NODE_ENV !== 'test') {
+    server.listen(PORT, () => {
+      process.stdout.write(`VS Code LM Bridge Server running on http://localhost:${PORT}\n`);
+      process.stdout.write(`OpenAI-compatible endpoint: http://localhost:${PORT}/v1/chat/completions\n`);
+      process.stdout.write(`Dynamic models endpoint: http://localhost:${PORT}/v1/models\n`);
+      process.stdout.write(`Health check: http://localhost:${PORT}/health\n`);
+      process.stdout.write(`Loaded ${availableModels.length} models dynamically\n`);
+      process.stdout.write('Bridge will query VS Code Copilot for additional models when connected\n');
+    });
+  }
 }
 
 startServer().catch((error) => {

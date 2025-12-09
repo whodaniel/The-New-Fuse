@@ -1,28 +1,29 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import { EventEmitter } from 'events';
 import { MasterClockService, MasterClockConfig, ClockDriftReport } from './MasterClockService.js';
 
 // Create mock implementations
 const createMockRedisService = () => ({
-  subscribe: vi.fn().mockResolvedValue(undefined),
-  unsubscribe: vi.fn().mockResolvedValue(undefined),
-  publish: vi.fn().mockResolvedValue(1),
-  hset: vi.fn().mockResolvedValue(undefined),
-  on: vi.fn(),
-  emit: vi.fn()
+  subscribe: jest.fn().mockResolvedValue(undefined),
+  unsubscribe: jest.fn().mockResolvedValue(undefined),
+  publish: jest.fn().mockResolvedValue(1),
+  hset: jest.fn().mockResolvedValue(undefined),
+  on: jest.fn(),
+  emit: jest.fn()
 });
 
 const createMockHeartbeatService = () => ({
-  on: vi.fn(),
-  emit: vi.fn()
+  on: jest.fn(),
+  emit: jest.fn()
 });
 
 const createMockMetricsService = () => ({
-  collectMetric: vi.fn().mockResolvedValue(undefined),
-  getMetrics: vi.fn().mockResolvedValue({}),
-  getSystemMetrics: vi.fn().mockResolvedValue({}),
-  getApplicationMetrics: vi.fn().mockResolvedValue({}),
-  generateReport: vi.fn().mockResolvedValue({})
+  collectMetric: jest.fn().mockResolvedValue(undefined),
+  getMetrics: jest.fn().mockResolvedValue({}),
+  getSystemMetrics: jest.fn().mockResolvedValue({}),
+  getApplicationMetrics: jest.fn().mockResolvedValue({}),
+  generateReport: jest.fn().mockResolvedValue({})
 });
 
 describe('MasterClockService', () => {
@@ -65,12 +66,12 @@ describe('MasterClockService', () => {
     if (masterClockService) {
       await masterClockService.shutdown();
     }
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe('Initialization', () => {
     it('should initialize successfully with all integrations', async () => {
-      const initSpy = vi.spyOn(masterClockService, 'emit');
+      const initSpy = jest.spyOn(masterClockService, 'emit');
       
       await masterClockService.initialize();
       
@@ -237,7 +238,7 @@ describe('MasterClockService', () => {
     });
 
     it('should update health status based on drift', async () => {
-      const healthStatusSpy = vi.spyOn(masterClockService, 'emit');
+      const healthStatusSpy = jest.spyOn(masterClockService, 'emit');
       
       await masterClockService.detectDrift();
       
@@ -412,7 +413,7 @@ describe('MasterClockService', () => {
     });
 
     it('should force immediate synchronization', async () => {
-      const forceSyncSpy = vi.spyOn(masterClockService, 'emit');
+      const forceSyncSpy = jest.spyOn(masterClockService, 'emit');
       
       await masterClockService.forceSync();
       
@@ -434,7 +435,7 @@ describe('MasterClockService', () => {
     it('should shutdown gracefully', async () => {
       await masterClockService.initialize();
       
-      const shutdownSpy = vi.spyOn(masterClockService, 'emit');
+      const shutdownSpy = jest.spyOn(masterClockService, 'emit');
       
       await masterClockService.shutdown();
       

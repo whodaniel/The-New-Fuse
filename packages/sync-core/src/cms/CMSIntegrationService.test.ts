@@ -6,7 +6,8 @@
  * collaborative content sharing, and private data isolation.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { CMSIntegrationService } from './CMSIntegrationService';
 import { RedisService } from '../config/SyncRedisConfig';
@@ -22,36 +23,36 @@ import {
 // Mock dependencies
 const mockPrisma = {
   user: {
-    findUnique: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn()
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn()
   },
   authEvent: {
-    create: vi.fn()
+    create: jest.fn()
   },
-  $executeRaw: vi.fn(),
-  $queryRaw: vi.fn()
+  $executeRaw: jest.fn(),
+  $queryRaw: jest.fn()
 } as unknown as PrismaClient;
 
 const mockRedis = {
-  get: vi.fn(),
-  set: vi.fn(),
-  setex: vi.fn(),
-  del: vi.fn(),
-  keys: vi.fn(),
-  publish: vi.fn(),
-  subscribe: vi.fn()
+  get: jest.fn(),
+  set: jest.fn(),
+  setex: jest.fn(),
+  del: jest.fn(),
+  keys: jest.fn(),
+  publish: jest.fn(),
+  subscribe: jest.fn()
 } as unknown as RedisService;
 
 const mockSyncOrchestrator = {
-  syncTenantData: vi.fn(),
-  syncGlobalData: vi.fn()
+  syncTenantData: jest.fn(),
+  syncGlobalData: jest.fn()
 } as unknown as SyncOrchestrator;
 
 const mockFileWatcher = {
-  onFileChange: vi.fn(),
-  watchTenantFiles: vi.fn(),
-  watchGlobalFiles: vi.fn()
+  onFileChange: jest.fn(),
+  watchTenantFiles: jest.fn(),
+  watchGlobalFiles: jest.fn()
 } as unknown as EnhancedFileSystemWatcher;
 
 describe('CMSIntegrationService', () => {
@@ -59,7 +60,7 @@ describe('CMSIntegrationService', () => {
   let testConfig: CMSConfig;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     
     testConfig = {
       enablePersonalContent: true,
@@ -81,19 +82,19 @@ describe('CMSIntegrationService', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('Initialization', () => {
     it('should initialize CMS integration service successfully', async () => {
       // Mock database table creation
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
       
       // Mock Redis subscription
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
       
       // Mock file watcher setup
-      mockFileWatcher.onFileChange = vi.fn();
+      mockFileWatcher.onFileChange = jest.fn();
 
       await cmsService.initialize();
 
@@ -114,7 +115,7 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle initialization errors gracefully', async () => {
-      mockPrisma.$executeRaw = vi.fn().mockRejectedValue(new Error('Database error'));
+      mockPrisma.$executeRaw = jest.fn().mockRejectedValue(new Error('Database error'));
 
       await expect(cmsService.initialize()).rejects.toThrow('Database error');
     });
@@ -123,9 +124,9 @@ describe('CMSIntegrationService', () => {
   describe('Personal Content Management', () => {
     beforeEach(async () => {
       // Mock successful initialization
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
     });
@@ -147,7 +148,7 @@ describe('CMSIntegrationService', () => {
       };
 
       // Mock user validation
-      mockPrisma.user.findUnique = vi.fn().mockResolvedValue({
+      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         roles: [UserRole.USER],
@@ -155,10 +156,10 @@ describe('CMSIntegrationService', () => {
       });
 
       // Mock content creation
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = vi.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = vi.fn().mockResolvedValue(undefined);
-      mockRedis.publish = vi.fn().mockResolvedValue(undefined);
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
+      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
 
       const result = await cmsService.createPersonalContent(userId, contentData);
 
@@ -199,7 +200,7 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = vi.fn().mockResolvedValue({
+      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         isActive: true
@@ -225,7 +226,7 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = vi.fn().mockResolvedValue({
+      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         isActive: true
@@ -238,9 +239,9 @@ describe('CMSIntegrationService', () => {
 
   describe('Project Configuration Sync', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
     });
@@ -262,18 +263,18 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = vi.fn().mockResolvedValue({
+      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         roles: [UserRole.USER],
         isActive: true
       });
 
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = vi.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = vi.fn().mockResolvedValue(undefined);
-      mockRedis.publish = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.watchTenantFiles = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
+      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.watchTenantFiles = jest.fn();
 
       const result = await cmsService.createProjectConfiguration(userId, projectData);
 
@@ -313,7 +314,7 @@ describe('CMSIntegrationService', () => {
         }
       };
 
-      mockPrisma.user.findUnique = vi.fn().mockResolvedValue({
+      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: UserRole.USER,
         isActive: true
@@ -326,9 +327,9 @@ describe('CMSIntegrationService', () => {
 
   describe('Collaborative Content Sharing', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
     });
@@ -340,7 +341,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ, Permission.WRITE];
 
       // Mock content exists and is owned by user
-      mockPrisma.$queryRaw = vi.fn().mockResolvedValue([{
+      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
         id: contentId,
         owner_id: ownerId,
         privacy: 'shared',
@@ -349,11 +350,11 @@ describe('CMSIntegrationService', () => {
         sharing_settings: '{"isPublic": false, "permissions": []}'
       }]);
 
-      mockRedis.get = vi.fn().mockResolvedValue(null);
-      mockRedis.setex = vi.fn().mockResolvedValue(undefined);
+      mockRedis.get = jest.fn().mockResolvedValue(null);
+      mockRedis.setex = jest.fn().mockResolvedValue(undefined);
 
       // Mock target user exists
-      mockPrisma.user.findUnique = vi.fn()
+      mockPrisma.user.findUnique = jest.fn()
         .mockResolvedValueOnce({ // For content validation
           id: ownerId,
           role: UserRole.USER,
@@ -366,10 +367,10 @@ describe('CMSIntegrationService', () => {
           isActive: true
         });
 
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = vi.fn().mockResolvedValue(undefined);
-      mockRedis.publish = vi.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = vi.fn().mockResolvedValue(undefined);
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
+      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       await cmsService.shareContent(ownerId, contentId, targetUserId, permissions);
 
@@ -399,7 +400,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ];
 
       // Mock private content
-      mockPrisma.$queryRaw = vi.fn().mockResolvedValue([{
+      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
         id: contentId,
         owner_id: ownerId,
         privacy: 'private',
@@ -408,9 +409,9 @@ describe('CMSIntegrationService', () => {
         sharing_settings: '{"isPublic": false, "permissions": []}'
       }]);
 
-      mockRedis.get = vi.fn().mockResolvedValue(null);
+      mockRedis.get = jest.fn().mockResolvedValue(null);
 
-      mockPrisma.user.findUnique = vi.fn()
+      mockPrisma.user.findUnique = jest.fn()
         .mockResolvedValueOnce({
           id: ownerId,
           role: UserRole.USER,
@@ -434,7 +435,7 @@ describe('CMSIntegrationService', () => {
       const permissions = [Permission.READ, Permission.WRITE];
 
       // Mock project exists and is owned by user
-      mockPrisma.$queryRaw = vi.fn().mockResolvedValue([{
+      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
         id: projectId,
         owner_id: ownerId,
         name: 'Test Project',
@@ -443,9 +444,9 @@ describe('CMSIntegrationService', () => {
         sync_settings: '{}'
       }]);
 
-      mockRedis.get = vi.fn().mockResolvedValue(null);
+      mockRedis.get = jest.fn().mockResolvedValue(null);
 
-      mockPrisma.user.findUnique = vi.fn()
+      mockPrisma.user.findUnique = jest.fn()
         .mockResolvedValueOnce({ // For project validation
           id: ownerId,
           role: UserRole.ADMIN,
@@ -462,10 +463,10 @@ describe('CMSIntegrationService', () => {
           roles: [UserRole.ADMIN]
         });
 
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockSyncOrchestrator.syncTenantData = vi.fn().mockResolvedValue(undefined);
-      mockRedis.publish = vi.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = vi.fn().mockResolvedValue(undefined);
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
+      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       await cmsService.addProjectCollaborator(ownerId, projectId, collaboratorUserId, role, permissions);
 
@@ -491,9 +492,9 @@ describe('CMSIntegrationService', () => {
 
   describe('Privacy and Data Isolation', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
     });
@@ -502,7 +503,7 @@ describe('CMSIntegrationService', () => {
       const tenantId = 'tenant-123';
 
       // Mock audit queries
-      mockPrisma.$queryRaw = vi.fn()
+      mockPrisma.$queryRaw = jest.fn()
         .mockResolvedValueOnce([{ // Personal content audit
           total_content: 10,
           private_content: 8,
@@ -524,9 +525,9 @@ describe('CMSIntegrationService', () => {
         .mockResolvedValueOnce([]) // Orphaned data
         .mockResolvedValueOnce([]); // Weak privacy settings
 
-      mockRedis.get = vi.fn().mockResolvedValue(null);
-      mockRedis.setex = vi.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = vi.fn().mockResolvedValue(undefined);
+      mockRedis.get = jest.fn().mockResolvedValue(null);
+      mockRedis.setex = jest.fn().mockResolvedValue(undefined);
+      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       const auditResult = await cmsService.auditPrivacyCompliance(tenantId);
 
@@ -566,9 +567,9 @@ describe('CMSIntegrationService', () => {
 
   describe('User Content Retrieval', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
     });
@@ -577,7 +578,7 @@ describe('CMSIntegrationService', () => {
       const userId = 'user-123';
 
       // Mock personal content
-      mockPrisma.$queryRaw = vi.fn()
+      mockPrisma.$queryRaw = jest.fn()
         .mockResolvedValueOnce([{ // Personal content
           id: 'content-1',
           type: 'document',
@@ -624,8 +625,8 @@ describe('CMSIntegrationService', () => {
           version: 1
         }]);
 
-      mockRedis.get = vi.fn().mockResolvedValue(null);
-      mockRedis.setex = vi.fn().mockResolvedValue(undefined);
+      mockRedis.get = jest.fn().mockResolvedValue(null);
+      mockRedis.setex = jest.fn().mockResolvedValue(undefined);
 
       const result = await cmsService.getUserContent(userId);
 
@@ -655,9 +656,9 @@ describe('CMSIntegrationService', () => {
 
   describe('CMS Data Synchronization', () => {
     beforeEach(async () => {
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
     });
@@ -666,7 +667,7 @@ describe('CMSIntegrationService', () => {
       const userId = 'user-123';
 
       // Mock user's collaborative projects
-      mockPrisma.$queryRaw = vi.fn().mockResolvedValue([{
+      mockPrisma.$queryRaw = jest.fn().mockResolvedValue([{
         id: 'project-1',
         name: 'Test Project',
         description: 'A test project',
@@ -681,9 +682,9 @@ describe('CMSIntegrationService', () => {
         version: 1
       }]);
 
-      mockSyncOrchestrator.syncTenantData = vi.fn().mockResolvedValue(undefined);
-      mockRedis.publish = vi.fn().mockResolvedValue(undefined);
-      mockPrisma.authEvent.create = vi.fn().mockResolvedValue(undefined);
+      mockSyncOrchestrator.syncTenantData = jest.fn().mockResolvedValue(undefined);
+      mockRedis.publish = jest.fn().mockResolvedValue(undefined);
+      mockPrisma.authEvent.create = jest.fn().mockResolvedValue(undefined);
 
       await cmsService.syncUserCMSData(userId);
 
@@ -700,7 +701,7 @@ describe('CMSIntegrationService', () => {
     it('should handle sync errors gracefully', async () => {
       const userId = 'user-123';
 
-      mockPrisma.$queryRaw = vi.fn().mockRejectedValue(new Error('Database error'));
+      mockPrisma.$queryRaw = jest.fn().mockRejectedValue(new Error('Database error'));
 
       await expect(cmsService.syncUserCMSData(userId)).rejects.toThrow('Database error');
     });
@@ -731,14 +732,14 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle invalid user scenarios', async () => {
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
 
       // Mock user not found
-      mockPrisma.user.findUnique = vi.fn().mockResolvedValue(null);
+      mockPrisma.user.findUnique = jest.fn().mockResolvedValue(null);
 
       await expect(cmsService.createPersonalContent('invalid-user', {
         type: ContentType.DOCUMENT,
@@ -756,14 +757,14 @@ describe('CMSIntegrationService', () => {
     });
 
     it('should handle inactive user scenarios', async () => {
-      mockPrisma.$executeRaw = vi.fn().mockResolvedValue(undefined);
-      mockRedis.subscribe = vi.fn().mockResolvedValue(undefined);
-      mockFileWatcher.onFileChange = vi.fn();
+      mockPrisma.$executeRaw = jest.fn().mockResolvedValue(undefined);
+      mockRedis.subscribe = jest.fn().mockResolvedValue(undefined);
+      mockFileWatcher.onFileChange = jest.fn();
       
       await cmsService.initialize();
 
       // Mock inactive user
-      mockPrisma.user.findUnique = vi.fn().mockResolvedValue({
+      mockPrisma.user.findUnique = jest.fn().mockResolvedValue({
         id: 'user-123',
         role: UserRole.USER,
         isActive: false

@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+const vi = jest;
 import { PrismaClient } from '@the-new-fuse/database/generated/prisma';
 import { SyncDatabaseService } from './SyncDatabaseService';
 
@@ -9,21 +10,21 @@ describe('SyncDatabaseService', () => {
   beforeEach(() => {
     prisma = {
       syncState: {
-        findFirst: vi.fn(),
-        create: vi.fn(),
-        update: vi.fn(),
-        findMany: vi.fn(),
-        delete: vi.fn(),
-        count: vi.fn(),
+        findFirst: jest.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+        findMany: jest.fn(),
+        delete: jest.fn(),
+        count: jest.fn(),
       },
       syncConflict: {
-        create: vi.fn(),
-        update: vi.fn(),
-        findMany: vi.fn(),
-        deleteMany: vi.fn(),
-        count: vi.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+        findMany: jest.fn(),
+        deleteMany: jest.fn(),
+        count: jest.fn(),
       },
-      $queryRaw: vi.fn(),
+      $queryRaw: jest.fn(),
     } as any;
 
     service = new SyncDatabaseService(prisma);
@@ -47,8 +48,8 @@ describe('SyncDatabaseService', () => {
         metadata: null,
       };
 
-      vi.mocked(prisma.syncState.findFirst).mockResolvedValue(null);
-      vi.mocked(prisma.syncState.create).mockResolvedValue(mockSyncState);
+      jest.mocked(prisma.syncState.findFirst).mockResolvedValue(null);
+      jest.mocked(prisma.syncState.create).mockResolvedValue(mockSyncState);
 
       const result = await service.upsertSyncState({
         resourceType: 'agent',
@@ -86,7 +87,7 @@ describe('SyncDatabaseService', () => {
         metadata: null,
       };
 
-      vi.mocked(prisma.syncState.findFirst).mockResolvedValue(mockSyncState);
+      jest.mocked(prisma.syncState.findFirst).mockResolvedValue(mockSyncState);
 
       const result = await service.getSyncState('agent', 'agent-123', 'tenant-1');
 
@@ -117,7 +118,7 @@ describe('SyncDatabaseService', () => {
         createdAt: new Date(),
       };
 
-      vi.mocked(prisma.syncConflict.create).mockResolvedValue(mockConflict);
+      jest.mocked(prisma.syncConflict.create).mockResolvedValue(mockConflict);
 
       const result = await service.createSyncConflict({
         resourceType: 'agent',
@@ -142,7 +143,7 @@ describe('SyncDatabaseService', () => {
 
   describe('healthCheck', () => {
     it('should return healthy status when database is accessible', async () => {
-      vi.mocked(prisma.$queryRaw).mockResolvedValue([{ '?column?': 1 }]);
+      jest.mocked(prisma.$queryRaw).mockResolvedValue([{ '?column?': 1 }]);
 
       const result = await service.healthCheck();
 
@@ -152,7 +153,7 @@ describe('SyncDatabaseService', () => {
     });
 
     it('should return unhealthy status when database is not accessible', async () => {
-      vi.mocked(prisma.$queryRaw).mockRejectedValue(new Error('Connection failed'));
+      jest.mocked(prisma.$queryRaw).mockRejectedValue(new Error('Connection failed'));
 
       const result = await service.healthCheck();
 

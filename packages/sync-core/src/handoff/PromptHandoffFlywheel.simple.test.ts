@@ -4,7 +4,8 @@
  * Basic functionality tests without complex mocking
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+const vi = jest;
 import { PromptHandoffFlywheel, HandoffTemplate } from './PromptHandoffFlywheel';
 
 // Simple mock implementations
