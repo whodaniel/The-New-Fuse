@@ -1,22 +1,23 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import { PerformanceOptimizationService, PerformanceConfig } from './PerformanceOptimizationService';
 import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
 
 // Mock dependencies
 const mockRedisService = {
-  setex: vi.fn(),
-  get: vi.fn(),
-  sadd: vi.fn(),
-  smembers: vi.fn(),
-  srem: vi.fn(),
-  del: vi.fn(),
-  lpush: vi.fn(),
-  lrange: vi.fn(),
-  publish: vi.fn()
+  setex: jest.fn(),
+  get: jest.fn(),
+  sadd: jest.fn(),
+  smembers: jest.fn(),
+  srem: jest.fn(),
+  del: jest.fn(),
+  lpush: jest.fn(),
+  lrange: jest.fn(),
+  publish: jest.fn()
 };
 
 const mockMetricsService = {
-  recordMetric: vi.fn()
+  recordMetric: jest.fn()
 };
 
 describe('PerformanceOptimizationService', () => {
@@ -66,7 +67,7 @@ describe('PerformanceOptimizationService', () => {
 
   afterEach(async () => {
     await service.shutdown();
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe('initialization', () => {

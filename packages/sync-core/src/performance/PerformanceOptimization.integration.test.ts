@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import { PerformanceOptimizationService } from './PerformanceOptimizationService';
 import { HorizontalScalingCoordinator } from './HorizontalScalingCoordinator';
 import { FileChangeBatcher } from './FileChangeBatcher';
@@ -8,19 +9,19 @@ import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
 
 // Mock Redis for integration testing
 const mockRedis = {
-  setex: vi.fn().mockResolvedValue('OK'),
-  get: vi.fn().mockResolvedValue(null),
-  sadd: vi.fn().mockResolvedValue(1),
-  smembers: vi.fn().mockResolvedValue([]),
-  srem: vi.fn().mockResolvedValue(1),
-  del: vi.fn().mockResolvedValue(1),
-  lpush: vi.fn().mockResolvedValue(1),
-  lrange: vi.fn().mockResolvedValue([]),
-  publish: vi.fn().mockResolvedValue(1)
+  setex: jest.fn().mockResolvedValue('OK'),
+  get: jest.fn().mockResolvedValue(null),
+  sadd: jest.fn().mockResolvedValue(1),
+  smembers: jest.fn().mockResolvedValue([]),
+  srem: jest.fn().mockResolvedValue(1),
+  del: jest.fn().mockResolvedValue(1),
+  lpush: jest.fn().mockResolvedValue(1),
+  lrange: jest.fn().mockResolvedValue([]),
+  publish: jest.fn().mockResolvedValue(1)
 };
 
 const mockMetrics = {
-  recordMetric: vi.fn()
+  recordMetric: jest.fn()
 };
 
 describe('Performance Optimization Integration', () => {
@@ -71,7 +72,7 @@ describe('Performance Optimization Integration', () => {
 
   afterEach(async () => {
     await service.shutdown();
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe('end-to-end file processing', () => {

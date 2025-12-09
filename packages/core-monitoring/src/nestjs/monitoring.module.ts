@@ -54,8 +54,8 @@ export class MonitoringModuleFactory {
           provide: 'SentryService',
           useFactory: async () => {
             if (options.sentry?.enabled) {
-              const { SentryService } = await import('../sentry/sentry-integrations.js');
-              const { getSentryConfigFromEnv, beforeSendFilter } = await import('../sentry/sentry-config.js');
+              const { SentryService } = await import('../sentry/sentry-integrations');
+              const { getSentryConfigFromEnv, beforeSendFilter } = await import('../sentry/sentry-config');
 
               const service = new SentryService();
               const config = {
@@ -74,7 +74,7 @@ export class MonitoringModuleFactory {
           provide: 'LoggingService',
           useFactory: async () => {
             if (options.logging?.enabled) {
-              const { WinstonLogger } = await import('../logging/winston-logger.js');
+              const { WinstonLogger } = await import('../logging/winston-logger');
 
               const logger = new WinstonLogger({
                 level: options.logging.level as any,
@@ -97,7 +97,7 @@ export class MonitoringModuleFactory {
           provide: 'MetricsService',
           useFactory: async () => {
             if (options.metrics?.enabled) {
-              const { PrometheusMetrics } = await import('../metrics/prometheus-metrics.js');
+              const { PrometheusMetrics } = await import('../metrics/prometheus-metrics');
 
               const metrics = new PrometheusMetrics({
                 enabled: true,
@@ -115,7 +115,7 @@ export class MonitoringModuleFactory {
           provide: 'HealthCheckService',
           useFactory: async () => {
             if (options.healthCheck?.enabled) {
-              const { HealthCheckService } = await import('../health/health-check.js');
+              const { HealthCheckService } = await import('../health/health-check');
 
               return new HealthCheckService({
                 checkInterval: options.healthCheck.checkInterval,

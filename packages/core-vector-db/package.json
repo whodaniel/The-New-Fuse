@@ -10,7 +10,7 @@
     "start": "node dist/main.js",
     "start:grpc": "node dist/main.js",
     "dev:grpc": "pnpm run build && pnpm run start:grpc",
-    "test": "echo \"No tests found for @the-new-fuse/core-vector-db\" && exit 0",
+    "test": "jest",
     "lint": "eslint src/**/*.ts",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
@@ -46,6 +46,14 @@
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.5",
     "typescript": "^5.9.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts"
+    ]
   },
   "peerDependencies": {
     "@the-new-fuse/proto-definitions": "workspace:*",

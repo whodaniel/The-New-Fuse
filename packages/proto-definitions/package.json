@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.0",
-    "@grpc/proto-loader": "^0.8.0"
+    "@grpc/proto-loader": "^0.8.0",
+    "google-protobuf": "^4.0.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
@@ -30,6 +31,14 @@
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.5",
     "typescript": "^5.9.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts"
+    ]
   },
   "peerDependencies": {
     "@the-new-fuse/types": "workspace:*"

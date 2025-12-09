@@ -5,7 +5,8 @@
  * they work together correctly with mocked dependencies.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+const vi = jest;
 import { 
   ContentType, 
   PrivacyLevel, 

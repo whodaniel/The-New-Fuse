@@ -1,4 +1,5 @@
-import { beforeAll, afterAll } from 'vitest';
+import { beforeAll, afterAll, jest } from '@jest/globals';
+const vi = jest;
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';

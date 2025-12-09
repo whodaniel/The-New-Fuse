@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
@@ -8,9 +9,9 @@ import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { FileChangeEvent } from '../types';
 
 // Mock dependencies
-vi.mock('fs/promises');
-vi.mock('../config/SyncRedisConfig');
-vi.mock('../database/SyncDatabaseService');
+jest.mock('fs/promises');
+jest.mock('../config/SyncRedisConfig');
+jest.mock('../database/SyncDatabaseService');
 
 describe('EnhancedFileSystemWatcher', () => {
   let watcher: EnhancedFileSystemWatcher;
@@ -26,15 +27,15 @@ describe('EnhancedFileSystemWatcher', () => {
 
     // Create mock instances
     redisConfig = {
-      validateTenantId: vi.fn().mockReturnValue(true),
-      sanitizeResourceId: vi.fn().mockImplementation((id) => id),
+      validateTenantId: jest.fn().mockReturnValue(true),
+      sanitizeResourceId: jest.fn().mockImplementation((id) => id),
     } as any;
 
     dbService = {
-      upsertSyncState: vi.fn().mockResolvedValue({}),
-      getSyncState: vi.fn().mockResolvedValue(null),
-      deleteSyncState: vi.fn().mockResolvedValue(undefined),
-      createSyncConflict: vi.fn().mockResolvedValue({}),
+      upsertSyncState: jest.fn().mockResolvedValue({}),
+      getSyncState: jest.fn().mockResolvedValue(null),
+      deleteSyncState: jest.fn().mockResolvedValue(undefined),
+      createSyncConflict: jest.fn().mockResolvedValue({}),
     } as any;
 
     watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);
@@ -66,7 +67,7 @@ describe('EnhancedFileSystemWatcher', () => {
     });
 
     it('should reject invalid tenant ID', async () => {
-      vi.mocked(redisConfig.validateTenantId).mockReturnValue(false);
+      jest.mocked(redisConfig.validateTenantId).mockReturnValue(false);
       
       const config: WatcherConfig = {
         paths: [tempDir],
@@ -108,7 +109,7 @@ describe('EnhancedFileSystemWatcher', () => {
     });
 
     it('should reject invalid tenant ID for watching', async () => {
-      vi.mocked(redisConfig.validateTenantId).mockReturnValue(false);
+      jest.mocked(redisConfig.validateTenantId).mockReturnValue(false);
       
       const tenantId = 'invalid@tenant';
       const patterns = [path.join(tempDir, '**/*')];
@@ -257,7 +258,7 @@ describe('EnhancedFileSystemWatcher', () => {
 
     it('should detect checksum conflicts', async () => {
       // Mock existing sync state with different checksum
-      vi.mocked(dbService.getSyncState).mockResolvedValue({
+      jest.mocked(dbService.getSyncState).mockResolvedValue({
         id: 'test-id',
         resourceType: 'file',
         resourceId: testFile,
@@ -277,7 +278,7 @@ describe('EnhancedFileSystemWatcher', () => {
     });
 
     it('should handle conflict detection errors gracefully', async () => {
-      vi.mocked(dbService.getSyncState).mockRejectedValue(new Error('Database error'));
+      jest.mocked(dbService.getSyncState).mockRejectedValue(new Error('Database error'));
 
       const conflicts = await watcher.detectConflicts(testFile);
       

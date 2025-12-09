@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+const vi = jest;
 import { ConfigService } from '@nestjs/config';
 import { SyncRedisConfig } from './SyncRedisConfig';
 
@@ -8,7 +9,7 @@ describe('SyncRedisConfig', () => {
 
   beforeEach(() => {
     configService = {
-      get: vi.fn((key: string, defaultValue?: any) => {
+      get: jest.fn((key: string, defaultValue?: any) => {
         const values: Record<string, any> = {
           'REDIS_KEY_PREFIX': 'tnf',
           'SYNC_LOCK_TTL': 30,
