@@ -21,13 +21,13 @@ builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
 
-# Frontend Service (uses Dockerfile.frontend from monorepo root)
+# Frontend Service (uses root Dockerfile)
 # IMPORTANT: Make sure "Root Directory" is NOT set in Railway UI
 # This service MUST use Docker to properly build and serve production files
 [services.TheNewFuse]
 builder = "DOCKERFILE"
 [services.TheNewFuse.build]
-dockerfilePath = "Dockerfile.frontend"
+dockerfilePath = "Dockerfile"
 # Build context is from repository root (not a subdirectory)
 # This allows access to workspace files like pnpm-lock.yaml
 watchPaths = ["apps/frontend/**", "packages/**"]
@@ -39,7 +39,7 @@ healthcheckPath = "/"
 [services.frontend]
 builder = "DOCKERFILE"
 [services.frontend.build]
-dockerfilePath = "Dockerfile.frontend"
+dockerfilePath = "Dockerfile"
 watchPaths = ["apps/frontend/**", "packages/**"]
 [services.frontend.deploy]
 healthcheckPath = "/"
@@ -48,8 +48,7 @@ healthcheckPath = "/"
 [services."Frontend Application"]
 builder = "DOCKERFILE"
 [services."Frontend Application".build]
-dockerfilePath = "Dockerfile.frontend"
+dockerfilePath = "Dockerfile"
 watchPaths = ["apps/frontend/**", "packages/**"]
 [services."Frontend Application".deploy]
 healthcheckPath = "/"
-
