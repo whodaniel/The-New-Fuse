@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { dynamicImportManager } from '../utils/dynamicImport';
+import React, { useEffect, useState } from 'react';
 import { performanceMonitor } from '../utils/performanceMonitor';
 
 interface BundleInfo {
@@ -59,7 +58,7 @@ const BundleAnalyzer: React.FC = () => {
         gzipSize: 38 * 1024,
         loadingTime: 95,
         chunkType: 'route',
-        dependencies: ['@chakra-ui/react', 'recharts'],
+        dependencies: ['@the-new-fuse/ui-consolidated', 'recharts'],
         lastLoaded: Date.now() - 2000,
       },
       {
@@ -95,27 +94,30 @@ const BundleAnalyzer: React.FC = () => {
   // Analyze bundles
   const analyzeBundles = async () => {
     setIsAnalyzing(true);
-    
+
     try {
       // Get current performance data
       const performanceData = performanceMonitor.generateReport();
       const bundleData = getBundleData();
-      
+
       // Calculate totals
       const totalSize = bundleData.reduce((sum, bundle) => sum + bundle.size, 0);
       const totalGzipSize = bundleData.reduce((sum, bundle) => sum + (bundle.gzipSize || 0), 0);
-      
+
       // Find heaviest and fastest/slowest loading
       const heaviestChunks = [...bundleData].sort((a, b) => b.size - a.size).slice(0, 3);
-      const loadingTimes = bundleData.map(b => b.loadTime).filter(t => t > 0);
-      const averageLoadTime = loadingTimes.length > 0 
-        ? loadingTimes.reduce((sum, time) => sum + time, 0) / loadingTimes.length 
-        : 0;
-      const slowestLoading = bundleData.reduce((prev, current) => 
-        (prev.loadTime > current.loadTime) ? prev : current, bundleData[0]
+      const loadingTimes = bundleData.map((b) => b.loadTime).filter((t) => t > 0);
+      const averageLoadTime =
+        loadingTimes.length > 0
+          ? loadingTimes.reduce((sum, time) => sum + time, 0) / loadingTimes.length
+          : 0;
+      const slowestLoading = bundleData.reduce(
+        (prev, current) => (prev.loadTime > current.loadTime ? prev : current),
+        bundleData[0]
       );
-      const fastestLoading = bundleData.reduce((prev, current) => 
-        (prev.loadTime < current.loadTime) ? prev : current, bundleData[0]
+      const fastestLoading = bundleData.reduce(
+        (prev, current) => (prev.loadTime < current.loadTime ? prev : current),
+        bundleData[0]
       );
 
       // Generate recommendations
@@ -124,22 +126,30 @@ const BundleAnalyzer: React.FC = () => {
       const totalGzipMB = totalGzipSize / 1024 / 1024;
 
       if (totalSizeMB > 5) {
-        recommendations.push(`Total bundle size is ${totalSizeMB.toFixed(1)}MB. Consider further code splitting.`);
+        recommendations.push(
+          `Total bundle size is ${totalSizeMB.toFixed(1)}MB. Consider further code splitting.`
+        );
       }
 
       if (totalGzipMB > 1) {
-        recommendations.push(`Compressed size is ${totalGzipMB.toFixed(1)}MB. Consider removing unused dependencies.`);
+        recommendations.push(
+          `Compressed size is ${totalGzipMB.toFixed(1)}MB. Consider removing unused dependencies.`
+        );
       }
 
-      heaviestChunks.forEach(chunk => {
+      heaviestChunks.forEach((chunk) => {
         if (chunk.size > 500 * 1024) {
-          recommendations.push(`${chunk.name} is ${(chunk.size / 1024 / 1024).toFixed(1)}MB. Consider lazy loading or tree shaking.`);
+          recommendations.push(
+            `${chunk.name} is ${(chunk.size / 1024 / 1024).toFixed(1)}MB. Consider lazy loading or tree shaking.`
+          );
         }
       });
 
-      bundleData.forEach(chunk => {
+      bundleData.forEach((chunk) => {
         if (chunk.loadingTime > 500) {
-          recommendations.push(`${chunk.name} loads in ${chunk.loadingTime}ms. Consider preloading or reducing dependencies.`);
+          recommendations.push(
+            `${chunk.name} loads in ${chunk.loadingTime}ms. Consider preloading or reducing dependencies.`
+          );
         }
       });
 
@@ -167,13 +177,13 @@ const BundleAnalyzer: React.FC = () => {
   // Filter and sort chunks
   const getFilteredAndSortedChunks = () => {
     if (!analysis) return [];
-    
+
     let chunks = analysis.chunks;
-    
+
     if (filterType !== 'all') {
-      chunks = chunks.filter(chunk => chunk.chunkType === filterType);
+      chunks = chunks.filter((chunk) => chunk.chunkType === filterType);
     }
-    
+
     return [...chunks].sort((a, b) => {
       switch (sortBy) {
         case 'size':
@@ -244,14 +254,14 @@ const BundleAnalyzer: React.FC = () => {
           <p className="text-2xl font-bold text-gray-900">{formatBytes(analysis.totalSize)}</p>
           <p className="text-sm text-gray-500">{formatBytes(analysis.totalGzipSize)} gzipped</p>
         </div>
-        
+
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500 mb-2">Average Load Time</h3>
           <p className="text-2xl font-bold text-gray-900">
             {formatTime(analysis.loadingPerformance.averageLoadTime)}
           </p>
         </div>
-        
+
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500 mb-2">Slowest Loading</h3>
           <p className="text-lg font-bold text-gray-900">
@@ -261,7 +271,7 @@ const BundleAnalyzer: React.FC = () => {
             {formatTime(analysis.loadingPerformance.slowestLoading?.loadingTime || 0)}
           </p>
         </div>
-        
+
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500 mb-2">Total Chunks</h3>
           <p className="text-2xl font-bold text-gray-900">{analysis.chunks.length}</p>
@@ -275,7 +285,9 @@ const BundleAnalyzer: React.FC = () => {
           <h3 className="text-lg font-semibold text-yellow-800 mb-4">💡 Recommendations</h3>
           <ul className="space-y-2">
             {analysis.recommendations.map((rec, index) => (
-              <li key={index} className="text-yellow-700">• {rec}</li>
+              <li key={index} className="text-yellow-700">
+                • {rec}
+              </li>
             ))}
           </ul>
         </div>
@@ -298,7 +310,7 @@ const BundleAnalyzer: React.FC = () => {
               <option value="utility">Utility</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
             <select
@@ -311,7 +323,7 @@ const BundleAnalyzer: React.FC = () => {
               <option value="name">Name</option>
             </select>
           </div>
-          
+
           <button
             onClick={analyzeBundles}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -357,12 +369,17 @@ const BundleAnalyzer: React.FC = () => {
                     <div className="text-sm font-medium text-gray-900">{chunk.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      chunk.chunkType === 'vendor' ? 'bg-purple-100 text-purple-800' :
-                      chunk.chunkType === 'route' ? 'bg-blue-100 text-blue-800' :
-                      chunk.chunkType === 'component' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        chunk.chunkType === 'vendor'
+                          ? 'bg-purple-100 text-purple-800'
+                          : chunk.chunkType === 'route'
+                            ? 'bg-blue-100 text-blue-800'
+                            : chunk.chunkType === 'component'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {chunk.chunkType}
                     </span>
                   </td>

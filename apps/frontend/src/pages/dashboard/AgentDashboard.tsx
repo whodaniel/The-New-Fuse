@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Plus,
-  Search,
+import {
+  AlertTriangle,
+  BarChart,
+  CheckCircle,
+  Clock,
+  Cloud,
+  Cog,
+  Cpu,
   Filter,
   MoreVertical,
-  Play,
   Pause,
-  StopCircle,
   Pencil,
-  Trash2,
-  BarChart,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  Cpu,
-  Cloud,
+  Play,
+  Plus,
+  Search,
   User,
-  Cog,
-  Pencil
+  XCircle,
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface Agent {
@@ -59,7 +56,8 @@ const AgentDashboard: React.FC = () => {
     {
       id: '1',
       name: 'Customer Support Bot',
-      description: 'Handles customer inquiries and support tickets with natural language processing.',
+      description:
+        'Handles customer inquiries and support tickets with natural language processing.',
       type: 'conversational',
       status: 'active',
       lastActive: '2024-01-15T10:30:00Z',
@@ -75,8 +73,8 @@ const AgentDashboard: React.FC = () => {
         tasksToday: 45,
         tasksThisWeek: 312,
         errorRate: 5.5,
-        uptime: 99.2
-      }
+        uptime: 99.2,
+      },
     },
     {
       id: '2',
@@ -97,8 +95,8 @@ const AgentDashboard: React.FC = () => {
         tasksToday: 12,
         tasksThisWeek: 89,
         errorRate: 1.9,
-        uptime: 97.8
-      }
+        uptime: 97.8,
+      },
     },
     {
       id: '3',
@@ -119,8 +117,8 @@ const AgentDashboard: React.FC = () => {
         tasksToday: 0,
         tasksThisWeek: 67,
         errorRate: 8.8,
-        uptime: 95.4
-      }
+        uptime: 95.4,
+      },
     },
     {
       id: '4',
@@ -141,9 +139,9 @@ const AgentDashboard: React.FC = () => {
         tasksToday: 8,
         tasksThisWeek: 156,
         errorRate: 10.3,
-        uptime: 87.2
-      }
-    }
+        uptime: 87.2,
+      },
+    },
   ];
 
   useEffect(() => {
@@ -205,10 +203,12 @@ const AgentDashboard: React.FC = () => {
       case 'local':
         return <Cpu className="w-4 h-4" />;
       case 'hybrid':
-        return <div className="flex space-x-1">
-          <Cloud className="w-3 h-3" />
-          <Cpu className="w-3 h-3" />
-        </div>;
+        return (
+          <div className="flex space-x-1">
+            <Cloud className="w-3 h-3" />
+            <Cpu className="w-3 h-3" />
+          </div>
+        );
       default:
         return <Cpu className="w-4 h-4" />;
     }
@@ -218,7 +218,7 @@ const AgentDashboard: React.FC = () => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    
+
     if (diffInMinutes < 60) {
       return `${diffInMinutes}m ago`;
     } else if (diffInMinutes < 1440) {
@@ -228,13 +228,14 @@ const AgentDashboard: React.FC = () => {
     }
   };
 
-  const filteredAgents = agents.filter(agent => {
-    const matchesSearch = agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredAgents = agents.filter((agent) => {
+    const matchesSearch =
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = statusFilter === 'all' || agent.status === statusFilter;
     const matchesType = typeFilter === 'all' || agent.type === typeFilter;
-    
+
     return matchesSearch && matchesStatus && matchesType;
   });
 
@@ -257,9 +258,9 @@ const AgentDashboard: React.FC = () => {
   const handleAgentAction = async (agentId: string, action: string) => {
     try {
       const response = await fetch(`/api/dashboard/agents/${agentId}/${action}`, {
-        method: 'POST'
+        method: 'POST',
       });
-      
+
       if (response.ok) {
         fetchAgents(); // Refresh the list
       }
@@ -286,9 +287,7 @@ const AgentDashboard: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Agent Dashboard
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Agent Dashboard</h1>
               <p className="mt-2 text-gray-600 dark:text-gray-300">
                 Monitor and manage your AI agents
               </p>
@@ -297,7 +296,7 @@ const AgentDashboard: React.FC = () => {
               to="/dashboard/agents/new"
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              <PlusIcon className="w-5 h-5 mr-2" />
+              <Plus className="w-5 h-5 mr-2" />
               Create Agent
             </Link>
           </div>
@@ -308,7 +307,7 @@ const AgentDashboard: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                <CpuChipIcon className="w-6 h-6 text-blue-600" />
+                <Cpu className="w-6 h-6 text-blue-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Agents</p>
@@ -316,39 +315,44 @@ const AgentDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                <CheckCircleIcon className="w-6 h-6 text-green-600" />
+                <CheckCircle className="w-6 h-6 text-green-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {agents.filter(a => a.status === 'active').length}
+                  {agents.filter((a) => a.status === 'active').length}
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-                <ChartBarIcon className="w-6 h-6 text-yellow-600" />
+                <BarChart className="w-6 h-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Success Rate</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Avg Success Rate
+                </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {agents.length > 0 ? Math.round(agents.reduce((sum, a) => sum + a.successRate, 0) / agents.length) : 0}%
+                  {agents.length > 0
+                    ? Math.round(agents.reduce((sum, a) => sum + a.successRate, 0) / agents.length)
+                    : 0}
+                  %
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                <ClockIcon className="w-6 h-6 text-purple-600" />
+                <Clock className="w-6 h-6 text-purple-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tasks Today</p>
@@ -365,7 +369,7 @@ const AgentDashboard: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search agents..."
@@ -375,7 +379,7 @@ const AgentDashboard: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="flex gap-2">
               <select
                 value={statusFilter}
@@ -389,7 +393,7 @@ const AgentDashboard: React.FC = () => {
                 <option value="error">Error</option>
                 <option value="training">Training</option>
               </select>
-              
+
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
@@ -402,7 +406,7 @@ const AgentDashboard: React.FC = () => {
                 <option value="data-analysis">Data Analysis</option>
                 <option value="content-generation">Content Generation</option>
               </select>
-              
+
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -415,13 +419,13 @@ const AgentDashboard: React.FC = () => {
                 <option value="successRate">Success Rate</option>
                 <option value="totalTasks">Total Tasks</option>
               </select>
-              
+
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 title="Toggle Filters"
               >
-                <FunnelIcon className="w-5 h-5" />
+                <Filter className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -430,7 +434,10 @@ const AgentDashboard: React.FC = () => {
         {/* Agents Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {sortedAgents.map((agent) => (
-            <div key={agent.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+            <div
+              key={agent.id}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
+            >
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -450,13 +457,13 @@ const AgentDashboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="relative">
-                    <button 
+                    <button
                       className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                       title="Agent Options"
                     >
-                      <EllipsisVerticalIcon className="w-5 h-5 text-gray-500" />
+                      <MoreVertical className="w-5 h-5 text-gray-500" />
                     </button>
                   </div>
                 </div>
@@ -517,7 +524,7 @@ const AgentDashboard: React.FC = () => {
                     {getDeploymentIcon(agent.deployment)}
                     <span>{agent.model}</span>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     {agent.status === 'active' && (
                       <button
@@ -528,7 +535,7 @@ const AgentDashboard: React.FC = () => {
                         <Pause className="w-4 h-4" />
                       </button>
                     )}
-                    
+
                     {agent.status === 'inactive' && (
                       <button
                         onClick={() => handleAgentAction(agent.id, 'start')}
@@ -538,15 +545,15 @@ const AgentDashboard: React.FC = () => {
                         <Play className="w-4 h-4" />
                       </button>
                     )}
-                    
+
                     <Link
                       to={`/dashboard/agents/${agent.id}`}
                       className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
                       title="View Details"
                     >
-                      <ChartBar className="w-4 h-4" />
+                      <BarChart className="w-4 h-4" />
                     </Link>
-                    
+
                     <button
                       onClick={() => handleAgentAction(agent.id, 'edit')}
                       className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
@@ -569,21 +576,20 @@ const AgentDashboard: React.FC = () => {
         {/* Empty State */}
         {sortedAgents.length === 0 && (
           <div className="text-center py-12">
-            <CpuChipIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <Cpu className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               No agents found
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
               {searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
                 ? 'Try adjusting your search or filters'
-                : 'Get started by creating your first AI agent'
-              }
+                : 'Get started by creating your first AI agent'}
             </p>
             <Link
               to="/dashboard/agents/new"
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              <PlusIcon className="w-5 h-5 mr-2" />
+              <Plus className="w-5 h-5 mr-2" />
               Create Agent
             </Link>
           </div>

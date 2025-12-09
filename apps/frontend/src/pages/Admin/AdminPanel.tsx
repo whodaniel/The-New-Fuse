@@ -1,4 +1,7 @@
+import { Badge } from '@/components/ui/badge';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import {
+  Activity,
   AlertCircle,
   AlertTriangle,
   BarChart,
@@ -6,6 +9,7 @@ import {
   Building,
   Circle,
   ClipboardList,
+  Cpu,
   Flag,
   Hammer,
   Heart,
@@ -59,13 +63,17 @@ export default function AdminPanel() {
   const getHealthBadge = (health: SystemMetrics['serverHealth']) => {
     switch (health) {
       case 'healthy':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return (
+          <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Healthy</Badge>
+        );
       case 'warning':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return (
+          <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">Warning</Badge>
+        );
       case 'critical':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return <Badge className="bg-red-500/10 text-red-500 border-red-500/20">Critical</Badge>;
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return <Badge variant="outline">{health}</Badge>;
     }
   };
 
@@ -94,77 +102,70 @@ export default function AdminPanel() {
       description: 'Manage users, roles, and permissions',
       icon: <Users className="h-6 w-6" />,
       link: '/admin/users',
-      color: 'bg-blue-500',
+      gradient: 'blue',
     },
     {
       title: 'Agent Skills',
       description: 'Configure agent capabilities',
       icon: <Bot className="h-6 w-6" />,
       link: '/admin/agent-skills',
-      color: 'bg-green-500',
+      gradient: 'green',
     },
     {
       title: 'System Health',
       description: 'Monitor system performance and status',
       icon: <Heart className="h-6 w-6" />,
       link: '/admin/system-health',
-      color: 'bg-emerald-500',
+      gradient: 'emerald',
     },
     {
       title: 'Feature Flags',
       description: 'Enable/disable features and experiments',
       icon: <Flag className="h-6 w-6" />,
       link: '/admin/features',
-      color: 'bg-purple-500',
+      gradient: 'purple',
     },
     {
       title: 'Port Management',
       description: 'Manage application ports and services',
       icon: <Plug className="h-6 w-6" />,
       link: '/admin/port-management',
-      color: 'bg-orange-500',
+      gradient: 'orange',
     },
     {
       title: 'Security Dashboard',
       description: 'Security status and encryption',
       icon: <Shield className="h-6 w-6" />,
       link: '/admin/security',
-      color: 'bg-red-500',
+      gradient: 'red',
     },
   ];
 
   if (loading) {
     return (
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
-              <User className="h-8 w-8 mr-2" /> Admin Panel
-            </h1>
-            <p className="text-gray-600">System administration and management dashboard</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
+            <User className="h-8 w-8 mr-2" /> Admin Panel
+          </h1>
+          <p className="text-gray-400">System administration and management dashboard</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="text-sm text-gray-400 hidden md:block">
+            Last updated: {new Date().toLocaleTimeString()}
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-500">
-              Last updated: {new Date().toLocaleTimeString()}
-            </div>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-            >
-              <RefreshCw className="h-4 w-4 mr-2" /> Refresh
-            </button>
-          </div>
+          <PremiumButton onClick={() => window.location.reload()} variant="glass" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+          </PremiumButton>
         </div>
       </div>
 
@@ -172,216 +173,218 @@ export default function AdminPanel() {
       {metrics && (
         <>
           {/* Status Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <GlassCard gradient="blue" className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{metrics.totalUsers}</p>
-                  <p className="text-sm text-gray-600">Total Users</p>
-                  <p className="text-xs text-green-600">{metrics.activeUsers} active now</p>
+                  <p className="text-2xl font-bold text-white">{metrics.totalUsers}</p>
+                  <p className="text-sm text-blue-200">Total Users</p>
+                  <p className="text-xs text-blue-300 mt-1">{metrics.activeUsers} active now</p>
                 </div>
-                <div className="text-3xl">
-                  <Users className="h-8 w-8 text-gray-400" />
-                </div>
+                <Users className="h-8 w-8 text-blue-300 opacity-50" />
               </div>
-            </div>
+            </GlassCard>
 
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <GlassCard gradient="purple" className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{metrics.totalWorkspaces}</p>
-                  <p className="text-sm text-gray-600">Total Workspaces</p>
-                  <p className="text-xs text-green-600">{metrics.activeWorkspaces} active</p>
+                  <p className="text-2xl font-bold text-white">{metrics.totalWorkspaces}</p>
+                  <p className="text-sm text-purple-200">Total Workspaces</p>
+                  <p className="text-xs text-purple-300 mt-1">{metrics.activeWorkspaces} active</p>
                 </div>
-                <div className="text-3xl">
-                  <Building className="h-8 w-8 text-gray-400" />
-                </div>
+                <Building className="h-8 w-8 text-purple-300 opacity-50" />
               </div>
-            </div>
+            </GlassCard>
 
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <GlassCard gradient="green" className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{metrics.totalAgents}</p>
-                  <p className="text-sm text-gray-600">Total Agents</p>
-                  <p className="text-xs text-green-600">{metrics.runningAgents} running</p>
+                  <p className="text-2xl font-bold text-white">{metrics.totalAgents}</p>
+                  <p className="text-sm text-green-200">Total Agents</p>
+                  <p className="text-xs text-green-300 mt-1">{metrics.runningAgents} running</p>
                 </div>
-                <div className="text-3xl">
-                  <Bot className="h-8 w-8 text-gray-400" />
-                </div>
+                <Bot className="h-8 w-8 text-green-300 opacity-50" />
               </div>
-            </div>
+            </GlassCard>
 
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <GlassCard className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">System Health</p>
-                  <span
-                    className={`px-3 py-1 text-sm font-medium rounded-full border ${getHealthBadge(metrics.serverHealth)} flex items-center`}
-                  >
-                    {getHealthIcon(metrics.serverHealth)}{' '}
-                    <span className="ml-1">{metrics.serverHealth}</span>
-                  </span>
-                  <p className="text-xs text-gray-500 mt-1">Uptime: {metrics.systemUptime}</p>
+                  <p className="text-sm text-gray-400 mb-1">System Health</p>
+                  <div className="flex items-center gap-2">
+                    {getHealthIcon(metrics.serverHealth)}
+                    {getHealthBadge(metrics.serverHealth)}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Uptime: {metrics.systemUptime}</p>
                 </div>
-                <div className="text-3xl">{getHealthIcon(metrics.serverHealth)}</div>
               </div>
-            </div>
+            </GlassCard>
           </div>
 
           {/* Resource Usage */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Memory Usage</h3>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Used</span>
-                <span className="text-sm font-medium">{metrics.memoryUsage}%</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <GlassCard className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Memory Usage</h3>
+                <Cpu className="h-5 w-5 text-gray-400" />
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-400">Used</span>
+                <span className="text-sm font-medium text-white">{metrics.memoryUsage}%</span>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all duration-300 ${getUsageColor(metrics.memoryUsage)}`}
                   style={{ width: `${metrics.memoryUsage}%` }}
                 ></div>
               </div>
-            </div>
+            </GlassCard>
 
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">CPU Usage</h3>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Used</span>
-                <span className="text-sm font-medium">{metrics.cpuUsage}%</span>
+            <GlassCard className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">CPU Usage</h3>
+                <Activity className="h-5 w-5 text-gray-400" />
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-400">Used</span>
+                <span className="text-sm font-medium text-white">{metrics.cpuUsage}%</span>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all duration-300 ${getUsageColor(metrics.cpuUsage)}`}
                   style={{ width: `${metrics.cpuUsage}%` }}
                 ></div>
               </div>
-            </div>
+            </GlassCard>
           </div>
         </>
       )}
 
       {/* Quick Actions */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <div>
+        <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button className="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2">
-              <Plus className="h-8 w-8" />
+          <PremiumButton variant="gradient" className="h-auto p-4 flex flex-col items-start gap-2">
+            <div className="text-2xl mb-1">
+              <Plus className="h-6 w-6" />
             </div>
             <div className="font-medium">Create User</div>
-            <div className="text-sm opacity-90">Add a new user to the system</div>
-          </button>
+            <div className="text-sm opacity-80 text-left font-normal">
+              Add a new user to the system
+            </div>
+          </PremiumButton>
 
-          <button className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2">
-              <Hammer className="h-8 w-8" />
+          <PremiumButton variant="secondary" className="h-auto p-4 flex flex-col items-start gap-2">
+            <div className="text-2xl mb-1 text-green-400">
+              <Hammer className="h-6 w-6" />
             </div>
             <div className="font-medium">Create Workspace</div>
-            <div className="text-sm opacity-90">Set up a new workspace</div>
-          </button>
+            <div className="text-sm opacity-80 text-left font-normal">Set up a new workspace</div>
+          </PremiumButton>
 
-          <button className="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2">
-              <Bot className="h-8 w-8" />
+          <PremiumButton variant="secondary" className="h-auto p-4 flex flex-col items-start gap-2">
+            <div className="text-2xl mb-1 text-purple-400">
+              <Bot className="h-6 w-6" />
             </div>
             <div className="font-medium">Deploy Agent</div>
-            <div className="text-sm opacity-90">Deploy a new AI agent</div>
-          </button>
+            <div className="text-sm opacity-80 text-left font-normal">Deploy a new AI agent</div>
+          </PremiumButton>
 
-          <button className="bg-orange-600 text-white p-4 rounded-lg hover:bg-orange-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2">
-              <BarChart className="h-8 w-8" />
+          <PremiumButton variant="secondary" className="h-auto p-4 flex flex-col items-start gap-2">
+            <div className="text-2xl mb-1 text-orange-400">
+              <BarChart className="h-6 w-6" />
             </div>
             <div className="font-medium">View Reports</div>
-            <div className="text-sm opacity-90">Generate system reports</div>
-          </button>
+            <div className="text-sm opacity-80 text-left font-normal">Generate system reports</div>
+          </PremiumButton>
 
-          <button className="bg-red-600 text-white p-4 rounded-lg hover:bg-red-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2">
-              <Siren className="h-8 w-8" />
+          <PremiumButton variant="secondary" className="h-auto p-4 flex flex-col items-start gap-2">
+            <div className="text-2xl mb-1 text-red-400">
+              <Siren className="h-6 w-6" />
             </div>
             <div className="font-medium">System Alerts</div>
-            <div className="text-sm opacity-90">Check system alerts</div>
-          </button>
+            <div className="text-sm opacity-80 text-left font-normal">Check system alerts</div>
+          </PremiumButton>
 
-          <button className="bg-gray-600 text-white p-4 rounded-lg hover:bg-gray-700 transition-colors text-left flex flex-col">
-            <div className="text-2xl mb-2">
-              <ClipboardList className="h-8 w-8" />
+          <PremiumButton variant="glass" className="h-auto p-4 flex flex-col items-start gap-2">
+            <div className="text-2xl mb-1 text-gray-400">
+              <ClipboardList className="h-6 w-6" />
             </div>
             <div className="font-medium">Audit Logs</div>
-            <div className="text-sm opacity-90">Review system activity</div>
-          </button>
+            <div className="text-sm opacity-80 text-left font-normal">Review system activity</div>
+          </PremiumButton>
         </div>
       </div>
 
       {/* Admin Sections */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Administration</h2>
+      <div>
+        <h2 className="text-xl font-semibold text-white mb-4">Administration</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {adminSections.map((section, index) => (
-            <Link
-              key={index}
-              to={section.link}
-              className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow group"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-lg ${section.color} text-white text-2xl`}>
-                  {section.icon}
+            <Link key={index} to={section.link}>
+              <GlassCard hoverEffect className="h-full group cursor-pointer">
+                <div className="flex items-center justify-between mb-4">
+                  <div
+                    className={`p-3 rounded-lg bg-${section.gradient}-500/10 text-${section.gradient}-400 group-hover:bg-${section.gradient}-500/20 transition-all`}
+                  >
+                    {section.icon}
+                  </div>
+                  <div className="text-gray-500 group-hover:text-white transition-colors">→</div>
                 </div>
-                <div className="text-gray-400 group-hover:text-gray-600 transition-colors">→</div>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{section.title}</h3>
-              <p className="text-sm text-gray-600">{section.description}</p>
+                <h3 className="text-lg font-semibold text-white mb-2">{section.title}</h3>
+                <p className="text-sm text-gray-400">{section.description}</p>
+              </GlassCard>
             </Link>
           ))}
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
+      <GlassCard className="p-6">
+        <h2 className="text-xl font-semibold text-white mb-4">Recent Activity</h2>
         <div className="space-y-4">
-          <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl">👤</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">New user registered</p>
-              <p className="text-xs text-gray-500">alice@example.com • 5 minutes ago</p>
+          {[
+            {
+              icon: '👤',
+              title: 'New user registered',
+              desc: 'alice@example.com',
+              time: '5 minutes ago',
+            },
+            {
+              icon: '🤖',
+              title: 'Agent deployment completed',
+              desc: 'ChatBot v2.1',
+              time: '12 minutes ago',
+            },
+            { icon: '🏢', title: 'Workspace created', desc: 'Marketing Team', time: '1 hour ago' },
+            {
+              icon: '⚙️',
+              title: 'System configuration updated',
+              desc: 'Feature flags modified',
+              time: '2 hours ago',
+            },
+          ].map((activity, i) => (
+            <div
+              key={i}
+              className="flex items-center space-x-4 p-3 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
+            >
+              <div className="text-2xl">{activity.icon}</div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-white">{activity.title}</p>
+                <p className="text-xs text-gray-400">
+                  {activity.desc} • {activity.time}
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl">🤖</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Agent deployment completed</p>
-              <p className="text-xs text-gray-500">ChatBot v2.1 • 12 minutes ago</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl">🏢</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Workspace created</p>
-              <p className="text-xs text-gray-500">Marketing Team • 1 hour ago</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl">⚙️</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">System configuration updated</p>
-              <p className="text-xs text-gray-500">Feature flags modified • 2 hours ago</p>
-            </div>
-          </div>
+          ))}
         </div>
 
         <div className="mt-4 text-center">
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+          <button className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">
             View All Activity →
           </button>
         </div>
-      </div>
+      </GlassCard>
     </div>
   );
 }

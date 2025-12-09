@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlertCircle,
+  CheckCircle,
+  ClipboardList,
+  Clock,
+  Filter,
+  MoreVertical,
+  Search,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  assignee: string;
-  assigneeAvatar?: string;
-  dueDate: string;
-  createdAt: string;
-  updatedAt: string;
-  tags: string[];
-  progress: number;
-  workspaceId: string;
-  workspaceName: string;
-}
+// ... (interfaces)
+
+// ... imports ...
 
 export default function TasksPage() {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
@@ -45,12 +46,13 @@ export default function TasksPage() {
           tags: ['backend', 'security', 'authentication'],
           progress: 65,
           workspaceId: 'ws1',
-          workspaceName: 'Development Team'
+          workspaceName: 'Development Team',
         },
         {
           id: '2',
           title: 'Design new landing page',
-          description: 'Create a modern, responsive landing page design with improved conversion rates',
+          description:
+            'Create a modern, responsive landing page design with improved conversion rates',
           status: 'pending',
           priority: 'medium',
           assignee: 'Jane Smith',
@@ -61,7 +63,7 @@ export default function TasksPage() {
           tags: ['design', 'frontend', 'ui/ux'],
           progress: 0,
           workspaceId: 'ws2',
-          workspaceName: 'Design Team'
+          workspaceName: 'Design Team',
         },
         {
           id: '3',
@@ -77,40 +79,8 @@ export default function TasksPage() {
           tags: ['devops', 'automation', 'deployment'],
           progress: 100,
           workspaceId: 'ws1',
-          workspaceName: 'Development Team'
+          workspaceName: 'Development Team',
         },
-        {
-          id: '4',
-          title: 'Write API documentation',
-          description: 'Document all API endpoints with examples and schema definitions',
-          status: 'in-progress',
-          priority: 'medium',
-          assignee: 'Alice Johnson',
-          assigneeAvatar: '👩‍💻',
-          dueDate: '2024-01-30T00:00:00Z',
-          createdAt: '2024-01-08T00:00:00Z',
-          updatedAt: '2024-01-16T00:00:00Z',
-          tags: ['documentation', 'api', 'backend'],
-          progress: 40,
-          workspaceId: 'ws1',
-          workspaceName: 'Development Team'
-        },
-        {
-          id: '5',
-          title: 'Conduct user research',
-          description: 'Interview 20 users to understand pain points and feature requests',
-          status: 'pending',
-          priority: 'urgent',
-          assignee: 'Carol Brown',
-          assigneeAvatar: '👩‍🎨',
-          dueDate: '2024-01-18T00:00:00Z',
-          createdAt: '2024-01-14T00:00:00Z',
-          updatedAt: '2024-01-16T00:00:00Z',
-          tags: ['research', 'user-experience', 'product'],
-          progress: 10,
-          workspaceId: 'ws3',
-          workspaceName: 'Product Team'
-        }
       ]);
       setLoading(false);
     }, 1000);
@@ -119,57 +89,44 @@ export default function TasksPage() {
   const getStatusBadge = (status: Task['status']) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return (
+          <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">Pending</Badge>
+        );
       case 'in-progress':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return (
+          <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20">In Progress</Badge>
+        );
       case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return (
+          <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Completed</Badge>
+        );
       case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return <Badge className="bg-red-500/10 text-red-500 border-red-500/20">Cancelled</Badge>;
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityBadge = (priority: Task['priority']) => {
-    switch (priority) {
-      case 'urgent':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'high':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low':
-        return 'bg-green-100 text-green-800 border-green-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return <Badge variant="outline">{status}</Badge>;
     }
   };
 
   const getPriorityIcon = (priority: Task['priority']) => {
     switch (priority) {
-      case 'urgent': return '🔴';
-      case 'high': return '🟠';
-      case 'medium': return '🟡';
-      case 'low': return '🟢';
-      default: return '⚫';
+      case 'urgent':
+        return <AlertCircle className="w-4 h-4 text-red-500" />;
+      case 'high':
+        return <AlertCircle className="w-4 h-4 text-orange-500" />;
+      case 'medium':
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      case 'low':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      default:
+        return <Clock className="w-4 h-4 text-gray-400" />;
     }
   };
 
-  const getStatusIcon = (status: Task['status']) => {
-    switch (status) {
-      case 'pending': return '⏳';
-      case 'in-progress': return '⚡';
-      case 'completed': return '✅';
-      case 'cancelled': return '❌';
-      default: return '⚫';
-    }
-  };
-
-  const filteredTasks = tasks.filter(task => {
-    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         task.assignee.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.assignee.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
     const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter;
     return matchesSearch && matchesStatus && matchesPriority;
@@ -191,310 +148,296 @@ export default function TasksPage() {
     }
   });
 
-  const tasksByStatus = {
-    pending: sortedTasks.filter(t => t.status === 'pending'),
-    'in-progress': sortedTasks.filter(t => t.status === 'in-progress'),
-    completed: sortedTasks.filter(t => t.status === 'completed'),
-    cancelled: sortedTasks.filter(t => t.status === 'cancelled')
-  };
-
-  const handleTaskAction = (taskId: string, action: string) => {
-    console.log(`Performing ${action} on task ${taskId}`);
-    // TODO: Implement API calls for task actions
-  };
-
   if (loading) {
     return (
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">📋 Tasks Management</h1>
-            <p className="text-gray-600">Organize and track all your tasks and project work</p>
-          </div>
-          <div className="flex space-x-3">
-            <Link
-              to="/tasks/new"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              + Create Task
-            </Link>
-            <Link
-              to="/workflows"
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              🔄 Workflows
-            </Link>
-          </div>
-        </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        {/* ... */}
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-blue-600 mr-3">📋</div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{tasks.length}</p>
-              <p className="text-sm text-gray-600">Total Tasks</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-yellow-600 mr-3">⏳</div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{tasks.filter(t => t.status === 'pending').length}</p>
-              <p className="text-sm text-gray-600">Pending</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-blue-600 mr-3">⚡</div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{tasks.filter(t => t.status === 'in-progress').length}</p>
-              <p className="text-sm text-gray-600">In Progress</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-green-600 mr-3">✅</div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{tasks.filter(t => t.status === 'completed').length}</p>
-              <p className="text-sm text-gray-600">Completed</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* ... */}
 
-      {/* Filters and View Toggle */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-          <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-            <div>
-              <input
-                type="text"
-                placeholder="Search tasks..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full md:w-64 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex space-x-2">
+      {/* Search and Filters */}
+      <GlassCard className="p-4">
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+            <Input
+              placeholder="Search tasks..."
+              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <div className="relative">
               <select
+                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="all" className="bg-gray-900">
+                  All Status
+                </option>
+                <option value="pending" className="bg-gray-900">
+                  Pending
+                </option>
+                <option value="in-progress" className="bg-gray-900">
+                  In Progress
+                </option>
+                <option value="completed" className="bg-gray-900">
+                  Completed
+                </option>
+                <option value="cancelled" className="bg-gray-900">
+                  Cancelled
+                </option>
               </select>
+              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+            </div>
+
+            <div className="relative">
               <select
+                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="all">All Priority</option>
-                <option value="urgent">Urgent</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
+                <option value="all" className="bg-gray-900">
+                  All Priority
+                </option>
+                <option value="urgent" className="bg-gray-900">
+                  Urgent
+                </option>
+                <option value="high" className="bg-gray-900">
+                  High
+                </option>
+                <option value="medium" className="bg-gray-900">
+                  Medium
+                </option>
+                <option value="low" className="bg-gray-900">
+                  Low
+                </option>
               </select>
+              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+            </div>
+
+            <div className="relative">
               <select
+                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="dueDate">Due Date</option>
-                <option value="priority">Priority</option>
-                <option value="progress">Progress</option>
-                <option value="title">Title</option>
+                <option value="dueDate" className="bg-gray-900">
+                  Due Date
+                </option>
+                <option value="priority" className="bg-gray-900">
+                  Priority
+                </option>
+                <option value="progress" className="bg-gray-900">
+                  Progress
+                </option>
+                <option value="title" className="bg-gray-900">
+                  Title
+                </option>
               </select>
+              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+            </div>
+
+            <div className="bg-white/5 rounded-lg p-1 flex border border-white/10">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-3 py-1 rounded transition-colors text-sm ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                List
+              </button>
+              <button
+                onClick={() => setViewMode('kanban')}
+                className={`px-3 py-1 rounded transition-colors text-sm ${viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                Kanban
+              </button>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">View:</span>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`px-3 py-2 rounded-lg transition-colors ${
-                viewMode === 'list' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              📋 List
-            </button>
-            <button
-              onClick={() => setViewMode('kanban')}
-              className={`px-3 py-2 rounded-lg transition-colors ${
-                viewMode === 'kanban' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              📊 Kanban
-            </button>
-          </div>
         </div>
-      </div>
+      </GlassCard>
 
-      {/* Tasks Content */}
+      {/* Task List/Grid */}
       {viewMode === 'list' ? (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <GlassCard className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-white/5 border-b border-white/10">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignee</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Task
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Priority
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Assignee
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Progress
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {sortedTasks.map((task) => (
-                  <tr key={task.id} className="hover:bg-gray-50">
+              <tbody className="divide-y divide-white/5">
+                {sortedTasks.map((task, index) => (
+                  <motion.tr
+                    key={task.id}
+                    className="hover:bg-white/5 transition-colors group"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
                     <td className="px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{task.title}</div>
-                        <div className="text-sm text-gray-500 truncate max-w-xs">{task.description}</div>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {task.tags.slice(0, 3).map((tag, index) => (
-                            <span key={index} className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
+                      <div className="text-sm font-medium text-white">{task.title}</div>
+                      <div className="text-xs text-gray-500 truncate max-w-xs">
+                        {task.description}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusBadge(task.status)}`}>
-                        {getStatusIcon(task.status)} {task.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getPriorityBadge(task.priority)}`}>
-                        {getPriorityIcon(task.priority)} {task.priority}
-                      </span>
+                    <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(task.status)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2">
+                      {getPriorityIcon(task.priority)}
+                      <span className="text-sm text-gray-300 capitalize">{task.priority}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="text-xl mr-2">{task.assigneeAvatar}</div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{task.assignee}</div>
-                          <div className="text-xs text-gray-500">{task.workspaceName}</div>
-                        </div>
+                        <span className="text-xl mr-2">{task.assigneeAvatar}</span>
+                        <span className="text-sm text-gray-300">{task.assignee}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 bg-white/10 rounded-full h-1.5">
+                          <div
+                            className="bg-blue-500 h-1.5 rounded-full"
                             style={{ width: `${task.progress}%` }}
-                          ></div>
+                          />
                         </div>
-                        <span className="text-sm text-gray-600">{task.progress}%</span>
+                        <span className="text-xs text-gray-400">{task.progress}%</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(task.dueDate).toLocaleDateString()}
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <button className="text-gray-500 hover:text-white transition-colors p-1 rounded hover:bg-white/10">
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
-                        <Link
-                          to={`/tasks/${task.id}`}
-                          className="text-blue-600 hover:text-blue-900 px-2 py-1 text-xs"
-                        >
-                          View
-                        </Link>
-                        <Link
-                          to={`/tasks/${task.id}/edit`}
-                          className="text-green-600 hover:text-green-900 px-2 py-1 text-xs"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => handleTaskAction(task.id, 'delete')}
-                          className="text-red-600 hover:text-red-900 px-2 py-1 text-xs"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        </GlassCard>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Object.entries(tasksByStatus).map(([status, statusTasks]) => (
-            <div key={status} className="bg-white rounded-lg shadow-lg p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900 capitalize">
-                  {getStatusIcon(status as Task['status'])} {status.replace('-', ' ')}
-                </h3>
-                <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                  {statusTasks.length}
-                </span>
-              </div>
-              <div className="space-y-3">
-                {statusTasks.map((task) => (
-                  <div key={task.id} className="bg-gray-50 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer">
-                    <div className="font-medium text-sm text-gray-900 mb-1">{task.title}</div>
-                    <div className="text-xs text-gray-500 mb-2 line-clamp-2">{task.description}</div>
-                    <div className="flex items-center justify-between">
-                      <span className={`px-2 py-1 text-xs rounded-full ${getPriorityBadge(task.priority)}`}>
-                        {getPriorityIcon(task.priority)}
-                      </span>
-                      <div className="text-xs text-gray-500">{task.assigneeAvatar}</div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 overflow-x-auto pb-4 h-full">
+          {(['pending', 'in-progress', 'completed', 'cancelled'] as const).map((status) => {
+            const statusTasks = sortedTasks.filter((t) => t.status === status);
+            return (
+              <div key={status} className="flex flex-col gap-4 min-w-[280px]">
+                <div className="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/10">
+                  <h3 className="text-sm font-bold capitalize text-gray-200">
+                    {status.replace('-', ' ')}
+                  </h3>
+                  <Badge variant="outline" className="bg-black/20 border-white/10 text-xs">
+                    {statusTasks.length}
+                  </Badge>
+                </div>
+                <div className="flex flex-col gap-3 h-full">
+                  <AnimatePresence>
+                    {statusTasks.map((task, index) => (
+                      <motion.div
+                        key={task.id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <GlassCard
+                          className="p-4 hover:border-blue-500/50 transition-colors cursor-pointer group hover:bg-white/10"
+                          onClick={() => navigate(`/tasks/${task.id}`)}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            {getPriorityIcon(task.priority)}
+                            <button className="text-gray-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <h4 className="text-sm font-semibold text-white mb-1 line-clamp-2">
+                            {task.title}
+                          </h4>
+                          <p className="text-xs text-gray-400 mb-3 line-clamp-2">
+                            {task.description}
+                          </p>
+
+                          <div className="flex items-center justify-between mt-auto">
+                            <div className="flex items-center -space-x-2">
+                              <div
+                                className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-xs border border-gray-800"
+                                title={task.assignee}
+                              >
+                                {task.assigneeAvatar}
+                              </div>
+                            </div>
+                            {task.dueDate && (
+                              <div className="flex items-center text-xs text-gray-500">
+                                <Clock className="w-3 h-3 mr-1" />
+                                {new Date(task.dueDate).toLocaleDateString(undefined, {
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="mt-3">
+                            <div className="w-full bg-white/10 rounded-full h-1">
+                              <div
+                                className={`h-1 rounded-full ${task.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
+                                style={{ width: `${task.progress}%` }}
+                              />
+                            </div>
+                          </div>
+                        </GlassCard>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                  {statusTasks.length === 0 && (
+                    <div className="text-center py-8 border-2 border-dashed border-white/5 rounded-lg">
+                      <p className="text-xs text-gray-600">No tasks</p>
                     </div>
-                    <div className="mt-2 w-full bg-gray-200 rounded-full h-1">
-                      <div 
-                        className="bg-blue-600 h-1 rounded-full" 
-                        style={{ width: `${task.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {sortedTasks.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">📋</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No tasks found</h3>
-          <p className="text-gray-500 mb-4">Try adjusting your search or filter criteria.</p>
-          <Link
-            to="/tasks/new"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Create Your First Task
-          </Link>
-        </div>
+        <GlassCard className="text-center py-16">
+          <ClipboardList className="mx-auto h-16 w-16 text-gray-600 mb-4" />
+          <h3 className="text-xl font-bold text-white mb-2">No tasks found</h3>
+          <p className="text-gray-400 mb-6">Create a task to get started.</p>
+          <PremiumButton variant="gradient" glow onClick={() => navigate('/tasks/new')}>
+            Create Task
+          </PremiumButton>
+        </GlassCard>
       )}
     </div>
   );
