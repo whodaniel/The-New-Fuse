@@ -83,7 +83,7 @@ export default function NewAgentPage() {
 
     // Simulate API call
     setTimeout(() => {
-      // eslint-disable-next-line no-console
+
       console.log('Forging champion:', formData);
       setIsCreating(false);
       navigate('/agents');
