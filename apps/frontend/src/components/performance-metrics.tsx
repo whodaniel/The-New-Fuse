@@ -1,40 +1,48 @@
-"use strict";
 'use client';
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PerformanceMetrics = PerformanceMetrics;
-import react_1 from 'react';
-import card_1 from '@/components/ui/card';
-import recharts_1 from 'recharts';
-import websocket_1 from '../services/websocket';
-function PerformanceMetrics() {
-    const [performanceData, setPerformanceData] = (0, react_1.useState)([]);
-    (0, react_1.useEffect)(() => {
-        const handlePerformanceUpdate = (data) => {
+import React, { useState, useEffect } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { webSocketService } from '../services/websocket';
+
+interface PerformanceData {
+    timestamp: number;
+    cpuUsage: number;
+    memoryUsage: number;
+    activeAgents: number;
+}
+
+export function PerformanceMetrics() {
+    const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
+
+    useEffect(() => {
+        const handlePerformanceUpdate = (data: PerformanceData) => {
             setPerformanceData(prevData => [...prevData.slice(-19), data]);
         };
-        websocket_1.webSocketService.on('performanceUpdate', handlePerformanceUpdate);
+        webSocketService.on('performanceUpdate', handlePerformanceUpdate);
         return () => {
-            websocket_1.webSocketService.off('performanceUpdate', handlePerformanceUpdate);
+            webSocketService.off('performanceUpdate', handlePerformanceUpdate);
         };
     }, []);
-    return (<card_1.Card className="w-full h-[300px]">
-      <card_1.CardHeader>
-        <card_1.CardTitle>Performance Metrics</card_1.CardTitle>
-      </card_1.CardHeader>
-      <card_1.CardContent>
-        <recharts_1.ResponsiveContainer width="100%" height="100%">
-          <recharts_1.LineChart data={performanceData}>
-            <recharts_1.CartesianGrid strokeDasharray="3 3"/>
-            <recharts_1.XAxis dataKey="timestamp" tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}/>
-            <recharts_1.YAxis yAxisId="left"/>
-            <recharts_1.YAxis yAxisId="right" orientation="right"/>
-            <recharts_1.Tooltip labelFormatter={(timestamp) => new Date(timestamp).toLocaleString()}/>
-            <recharts_1.Line yAxisId="left" type="monotone" dataKey="cpuUsage" stroke="#8884d8" name="CPU Usage (%)"/>
-            <recharts_1.Line yAxisId="left" type="monotone" dataKey="memoryUsage" stroke="#82ca9d" name="Memory Usage (%)"/>
-            <recharts_1.Line yAxisId="right" type="monotone" dataKey="activeAgents" stroke="#ffc658" name="Active Agents"/>
-          </recharts_1.LineChart>
-        </recharts_1.ResponsiveContainer>
-      </card_1.CardContent>
-    </card_1.Card>);
+
+    return (
+        <Card className="w-full h-[300px]">
+            <CardHeader>
+                <CardTitle>Performance Metrics</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={performanceData}>
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <XAxis dataKey="timestamp" tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}/>
+                        <YAxis yAxisId="left"/>
+                        <YAxis yAxisId="right" orientation="right"/>
+                        <Tooltip labelFormatter={(timestamp) => new Date(timestamp).toLocaleString()}/>
+                        <Line yAxisId="left" type="monotone" dataKey="cpuUsage" stroke="#8884d8" name="CPU Usage (%)"/>
+                        <Line yAxisId="left" type="monotone" dataKey="memoryUsage" stroke="#82ca9d" name="Memory Usage (%)"/>
+                        <Line yAxisId="right" type="monotone" dataKey="activeAgents" stroke="#ffc658" name="Active Agents"/>
+                    </LineChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+    );
 }
-export {};

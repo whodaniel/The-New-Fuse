@@ -1,38 +1,42 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Dashboard;
-import react_1 from 'react';
-import route_context_1 from '../contexts/route-context';
-import card_1 from '../components/ui/card';
-import components_1 from '../components';
-function Dashboard() {
-    const { setPageTitle } = (0, route_context_1.useRoute)();
-    (0, react_1.useEffect)(() => {
-        setPageTitle('Dashboard');
-    }, [setPageTitle]);
-    return (<div className="grid gap-6">
-      
-      <card_1.Card className="p-6">
-        <components_1.AgentCollaborationDashboard />
-      </card_1.Card>
+import React, { useEffect } from 'react';
+import { useRoute } from '../route-context';
+import { Card } from '@/components/ui/card';
+import { AgentCollaborationDashboard } from '../agent-collaboration-dashboard';
+import { SystemMetrics } from '../system-metrics';
+import { PerformanceMetrics } from '../performance-metrics';
+import { TaskBoard } from '../task-board';
+import { AgentNetwork } from '../agent-network';
+
+export default function Dashboard() {
+  const { setPageTitle } = useRoute();
+
+  useEffect(() => {
+    setPageTitle('Dashboard');
+  }, [setPageTitle]);
+
+  return (
+    <div className="grid gap-6">
+      <Card className="p-6">
+        <AgentCollaborationDashboard />
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <card_1.Card className="p-6">
-          <components_1.SystemMetrics />
-        </card_1.Card>
-        <card_1.Card className="p-6">
-          <components_1.PerformanceMetrics />
-        </card_1.Card>
+        <Card className="p-6">
+          <SystemMetrics />
+        </Card>
+        <Card className="p-6">
+          <PerformanceMetrics />
+        </Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <card_1.Card className="p-6 md:col-span-2">
-          <components_1.TaskBoard />
-        </card_1.Card>
-        <card_1.Card className="p-6">
-          <components_1.AgentNetwork />
-        </card_1.Card>
+        <Card className="p-6 md:col-span-2">
+          <TaskBoard />
+        </Card>
+        <Card className="p-6">
+          <AgentNetwork agents={[]} tasks={[]} onNodeClick={() => {}} />
+        </Card>
       </div>
-    </div>);
+    </div>
+  );
 }
-export {};
