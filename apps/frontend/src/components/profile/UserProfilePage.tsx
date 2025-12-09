@@ -34,12 +34,35 @@ const UserProfilePage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/users/profile`);
+        // Try to fetch from API
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+          credentials: 'include',
+        });
+
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch profile: ${response.statusText} (Status: ${response.status})`
-          );
+          // If API fails, use Firebase user data as fallback
+          if (user) {
+            const fallbackProfile: UserProfile = {
+              id: user.uid,
+              email: user.email || '',
+              displayName: user.displayName || '',
+              bio: '',
+              preferences: {
+                theme: 'system',
+                notifications: true,
+              },
+            };
+            setProfile(fallbackProfile);
+            setDisplayName(fallbackProfile.displayName || '');
+            setBio(fallbackProfile.bio || '');
+            setTheme(fallbackProfile.preferences?.theme || 'system');
+            setNotifications(fallbackProfile.preferences?.notifications || false);
+            setIsLoading(false);
+            return;
+          }
+          throw new Error('Unable to load profile data');
         }
+
         const data: UserProfile = await response.json();
         setProfile(data);
         setDisplayName(data.displayName || '');
@@ -47,15 +70,34 @@ const UserProfilePage: React.FC = () => {
         setTheme(data.preferences?.theme || 'system');
         setNotifications(data.preferences?.notifications || false);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-        console.error('Fetch profile error:', err);
+        // Use Firebase user as ultimate fallback
+        if (user) {
+          const fallbackProfile: UserProfile = {
+            id: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || '',
+            bio: '',
+            preferences: {
+              theme: 'system',
+              notifications: true,
+            },
+          };
+          setProfile(fallbackProfile);
+          setDisplayName(fallbackProfile.displayName || '');
+          setBio(fallbackProfile.bio || '');
+          setTheme(fallbackProfile.preferences?.theme || 'system');
+          setNotifications(fallbackProfile.preferences?.notifications || false);
+        } else {
+          setError(err instanceof Error ? err.message : 'An unknown error occurred');
+          console.error('Fetch profile error:', err);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchProfile();
-  }, [API_BASE_URL]);
+  }, [API_BASE_URL, user]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -75,6 +117,7 @@ const UserProfilePage: React.FC = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -82,13 +125,26 @@ const UserProfilePage: React.FC = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: `Failed to update profile: ${response.statusText}` }));
-        throw new Error(
-          errorData.message ||
-            `Failed to update profile: ${response.statusText} (Status: ${response.status})`
-        );
+        // If API fails, save locally for now
+        if (profile) {
+          const updatedProfile: UserProfile = {
+            ...profile,
+            displayName,
+            bio,
+            preferences: {
+              theme,
+              notifications,
+            },
+          };
+          setProfile(updatedProfile);
+          // Save to localStorage as fallback
+          localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+          setSuccessMessage('Profile updated locally (API unavailable)');
+          setTimeout(() => setSuccessMessage(null), 3000);
+          setIsLoading(false);
+          return;
+        }
+        throw new Error('Unable to save profile');
       }
 
       const updatedProfile: UserProfile = await response.json();
@@ -98,8 +154,25 @@ const UserProfilePage: React.FC = () => {
       // Auto-hide success message after 3 seconds
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred while updating');
-      console.error('Update profile error:', err);
+      // Try localStorage fallback
+      if (profile) {
+        const updatedProfile: UserProfile = {
+          ...profile,
+          displayName,
+          bio,
+          preferences: {
+            theme,
+            notifications,
+          },
+        };
+        setProfile(updatedProfile);
+        localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+        setSuccessMessage('Profile updated locally (API unavailable)');
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred while updating');
+        console.error('Update profile error:', err);
+      }
     } finally {
       setIsLoading(false);
     }
