@@ -333,27 +333,59 @@ class WorkflowService {
     executionId: string,
     callback: (execution: WorkflowExecution) => void
   ): () => void {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/api/workflows/executions/${executionId}/subscribe`;
+    // Determine WebSocket URL
+    let wsUrl: string;
+    const wsEnvUrl = import.meta.env.VITE_WS_URL;
 
-    const ws = new WebSocket(wsUrl);
+    if (wsEnvUrl && (wsEnvUrl.startsWith('ws://') || wsEnvUrl.startsWith('wss://'))) {
+      // Use configured WS URL
+      const baseUrl = wsEnvUrl.replace(/\/$/, '');
+      wsUrl = `${baseUrl}/api/workflows/executions/${executionId}/subscribe`;
+    } else {
+      // Fallback to current host (relative) and upgrade protocol
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.host;
+      wsUrl = `${protocol}//${host}/api/workflows/executions/${executionId}/subscribe`;
+    }
 
-    ws.onmessage = (event) => {
-      try {
-        const execution = JSON.parse(event.data);
-        callback(this.transformExecution(execution));
-      } catch (error) {
-        console.error('Failed to parse execution update:', error);
-      }
-    };
+    // Connect to WebSocket
+    // Note: In development with Vite, this might go through the proxy configured in vite.config.ts
+    // In production, it expects the backend to be served at /api or the WS URL to be exact.
+    let ws: WebSocket | null = null;
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    try {
+      ws = new WebSocket(wsUrl);
+
+      ws.onmessage = (event) => {
+        try {
+          const execution = JSON.parse(event.data);
+          callback(this.transformExecution(execution));
+        } catch (error) {
+          console.error('Failed to parse execution update:', error);
+        }
+      };
+
+      ws.onerror = (error) => {
+        // Suppress noisy errors in console if it's just a connection refusal (common in dev/demos)
+        // console.warn('WebSocket connection error - real-time updates may be unavailable:', error);
+      };
+
+      ws.onopen = () => {
+        // console.log('WebSocket connected');
+      };
+
+      ws.onclose = () => {
+        // console.log('WebSocket disconnected');
+      };
+    } catch (e) {
+      console.warn('Could not establish WebSocket connection', e);
+    }
 
     // Return cleanup function
     return () => {
-      ws.close();
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
     };
   }
 

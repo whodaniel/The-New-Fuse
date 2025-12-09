@@ -16,7 +16,7 @@ const firebaseConfig = {
 
 // Try to override with environment variables if available
 try {
-  if (typeof import !== 'undefined' && import.meta && import.meta.env) {
+  if (import.meta && import.meta.env) {
     firebaseConfig.apiKey = import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfig.apiKey;
     firebaseConfig.authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfig.authDomain;
     firebaseConfig.projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfig.projectId;
