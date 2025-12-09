@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/layout/Sidebar';
 import { ActionCard, GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
+import { useAuth } from '@/providers/AuthProvider';
 import {
   Activity,
   BarChart3,
@@ -18,7 +19,6 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../providers/AuthProvider';
 
 interface DashboardStats {
   activeAgents: number;

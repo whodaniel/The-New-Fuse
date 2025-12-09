@@ -83,7 +83,6 @@ export default function NewAgentPage() {
 
     // Simulate API call
     setTimeout(() => {
-
       console.log('Forging champion:', formData);
       setIsCreating(false);
       navigate('/agents');
@@ -358,25 +357,47 @@ export default function NewAgentPage() {
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={() => navigate('/agents')}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={!formData.name || !formData.type || !formData.description || isCreating}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              {isCreating ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating...
-                </>
-              ) : (
-                'Create Agent'
-              )}
-            </Button>
+          {/* Navigation */}
+          <div className="flex justify-between pt-4">
+            {currentStep > 0 ? (
+              <PremiumButton type="button" variant="glass" onClick={prevStep}>
+                Previous
+              </PremiumButton>
+            ) : (
+              <PremiumButton type="button" variant="ghost" onClick={() => navigate('/agents')}>
+                Cancel
+              </PremiumButton>
+            )}
+
+            {currentStep < steps.length - 1 ? (
+              <PremiumButton
+                type="button"
+                variant="gradient"
+                onClick={nextStep}
+                disabled={!canProceedToNext()}
+              >
+                Next Step
+              </PremiumButton>
+            ) : (
+              <PremiumButton
+                type="submit"
+                variant="gradient"
+                glow
+                disabled={!canProceedToNext() || isCreating}
+              >
+                {isCreating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Forging Champion...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Forge Champion
+                  </>
+                )}
+              </PremiumButton>
+            )}
           </div>
         </form>
       </div>

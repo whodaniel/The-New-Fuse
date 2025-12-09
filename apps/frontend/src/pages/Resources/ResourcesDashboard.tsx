@@ -3,7 +3,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { resourcesService } from '@/services/resources.service';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { BookOpen, Box, Code, FolderDown, Play, Video } from 'lucide-react';
+import {
+  BookOpen,
+  Bot,
+  Box,
+  Code,
+  FolderDown,
+  Play,
+  Search,
+  Video,
+  Workflow,
+  Zap,
+} from 'lucide-react';
 import { useState } from 'react';
 import AgentTemplatesBrowser from './AgentTemplatesBrowser';
 import ResourceSearch from './ResourceSearch';
@@ -134,33 +145,33 @@ export default function ResourcesDashboard() {
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6 bg-black/20 p-1">
               <TabsTrigger
                 value="skills"
-                className="text-base data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all"
+                className="text-base data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all flex items-center gap-2"
               >
-                <span className="mr-2">⚡</span>
+                <Zap className="w-4 h-4" />
                 <span className="hidden md:inline">Claude Skills</span>
                 <span className="md:hidden">Skills</span>
               </TabsTrigger>
               <TabsTrigger
                 value="workflows"
-                className="text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all"
+                className="text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all flex items-center gap-2"
               >
-                <span className="mr-2">🔄</span>
+                <Workflow className="w-4 h-4" />
                 <span className="hidden md:inline">n8n Workflows</span>
                 <span className="md:hidden">Workflows</span>
               </TabsTrigger>
               <TabsTrigger
                 value="templates"
-                className="text-base data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all"
+                className="text-base data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all flex items-center gap-2"
               >
-                <span className="mr-2">🤖</span>
+                <Bot className="w-4 h-4" />
                 <span className="hidden md:inline">Agent Templates</span>
                 <span className="md:hidden">Templates</span>
               </TabsTrigger>
               <TabsTrigger
                 value="all"
-                className="text-base data-[state=active]:bg-gray-700 data-[state=active]:text-white transition-all"
+                className="text-base data-[state=active]:bg-gray-700 data-[state=active]:text-white transition-all flex items-center gap-2"
               >
-                <span className="mr-2">🔍</span>
+                <Search className="w-4 h-4" />
                 <span className="hidden md:inline">All Resources</span>
                 <span className="md:hidden">All</span>
               </TabsTrigger>

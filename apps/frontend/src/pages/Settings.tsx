@@ -1,333 +1,531 @@
+import {
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+  ToggleSwitch,
+} from '@/components/ui/premium';
+import { useTheme } from '@/hooks/useTheme';
+import { useAuth } from '@/providers/AuthProvider';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Bell,
+  Check,
+  Copy,
+  Globe,
+  Key,
+  Loader2,
+  Moon,
+  Palette,
+  RefreshCw,
+  Save,
+  Settings2,
+  Shield,
+  Sun,
+  Trash2,
+  User,
+  Zap,
+} from 'lucide-react';
 import { useState } from 'react';
-import { useTheme } from '../hooks/useTheme';
-import { useAuth } from '../providers/AuthProvider';
+
+type TabType = 'general' | 'account' | 'appearance' | 'notifications' | 'api';
+
+interface NavItem {
+  id: TabType;
+  label: string;
+  icon: React.ElementType;
+  description: string;
+}
+
+const navItems: NavItem[] = [
+  { id: 'general', label: 'General', icon: Settings2, description: 'Language and region settings' },
+  { id: 'account', label: 'Account', icon: User, description: 'Profile and security' },
+  { id: 'appearance', label: 'Appearance', icon: Palette, description: 'Theme and display' },
+  { id: 'notifications', label: 'Notifications', icon: Bell, description: 'Alerts and updates' },
+  { id: 'api', label: 'API Keys', icon: Key, description: 'Developer access' },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+};
+
+const contentVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: 'easeOut' },
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    transition: { duration: 0.2 },
+  },
+};
 
 export default function Settings() {
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState<TabType>('general');
+  const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Toggle states for notifications
+  const [emailNotif, setEmailNotif] = useState(true);
+  const [pushNotif, setPushNotif] = useState(true);
+  const [agentNotif, setAgentNotif] = useState(true);
+  const [apiAccess, setApiAccess] = useState(true);
+  const [autoSave, setAutoSave] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setSaving(false);
+  };
+
+  const handleCopyApiKey = () => {
+    navigator.clipboard.writeText(import.meta.env.VITE_STRIPE_API_KEY || 'mock-api-key-xxxx');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Settings</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
+      </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-64 bg-card p-4 rounded-lg shadow-sm border">
-          <nav className="space-y-1">
-            <button
-              onClick={() => setActiveTab('general')}
-              className={`w-full text-left px-3 py-2 rounded-md ${
-                activeTab === 'general' ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
-              }`}
-            >
-              General
-            </button>
-            <button
-              onClick={() => setActiveTab('account')}
-              className={`w-full text-left px-3 py-2 rounded-md ${
-                activeTab === 'account' ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
-              }`}
-            >
-              Account
-            </button>
-            <button
-              onClick={() => setActiveTab('appearance')}
-              className={`w-full text-left px-3 py-2 rounded-md ${
-                activeTab === 'appearance'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-accent'
-              }`}
-            >
-              Appearance
-            </button>
-            <button
-              onClick={() => setActiveTab('notifications')}
-              className={`w-full text-left px-3 py-2 rounded-md ${
-                activeTab === 'notifications'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-accent'
-              }`}
-            >
-              Notifications
-            </button>
-            <button
-              onClick={() => setActiveTab('api')}
-              className={`w-full text-left px-3 py-2 rounded-md ${
-                activeTab === 'api' ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
-              }`}
-            >
-              API Keys
-            </button>
-          </nav>
-        </div>
+      <div className="relative z-10 p-8 max-w-6xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-3">
+            <Settings2 className="w-10 h-10 text-purple-400" />
+            Settings
+          </h1>
+          <p className="text-gray-400 mt-2">
+            Configure your workspace preferences and account settings
+          </p>
+        </motion.div>
 
-        <div className="flex-1 bg-card p-6 rounded-lg shadow-sm border">
-          {activeTab === 'general' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">General Settings</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1" id="language-label">
-                    Language
-                  </label>
-                  <select
-                    className="w-full px-3 py-2 bg-background border rounded-md"
-                    aria-labelledby="language-label"
-                  >
-                    <option>English</option>
-                    <option>Spanish</option>
-                    <option>French</option>
-                    <option>German</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1" id="timezone-label">
-                    Time Zone
-                  </label>
-                  <select
-                    className="w-full px-3 py-2 bg-background border rounded-md"
-                    aria-labelledby="timezone-label"
-                  >
-                    <option>UTC (Coordinated Universal Time)</option>
-                    <option>EST (Eastern Standard Time)</option>
-                    <option>PST (Pacific Standard Time)</option>
-                    <option>GMT (Greenwich Mean Time)</option>
-                  </select>
-                </div>
-
-                <div className="flex items-center">
-                  <input type="checkbox" id="autoSave" className="mr-2" />
-                  <label htmlFor="autoSave">Enable auto-save</label>
-                </div>
-
-                <div className="pt-4">
-                  <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-                    Save Changes
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'account' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Account Settings</h2>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary text-xl">{user?.displayName?.[0] || 'U'}</span>
-                  </div>
-                  <div>
-                    <p className="font-medium">{user?.displayName || 'User'}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {user?.email || 'user@example.com'}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Display Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 bg-background border rounded-md"
-                    title="Display Name"
-                    defaultValue={user?.displayName || ''}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Email</label>
-                  <input
-                    type="email"
-                    className="w-full px-3 py-2 bg-background border rounded-md"
-                    title="Email"
-                    defaultValue={user?.email || ''}
-                  />
-                </div>
-
-                <div className="pt-4">
-                  <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 mr-2">
-                    Update Profile
-                  </button>
-                  <button className="px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90">
-                    Delete Account
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'appearance' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Appearance Settings</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Theme</label>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div
-                      className={`border rounded-md p-4 flex items-center justify-center cursor-pointer bg-background ${theme === 'light' ? 'ring-2 ring-primary' : ''}`}
-                      onClick={() => setTheme('light')}
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Sidebar Navigation */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="w-full md:w-72"
+          >
+            <GlassCard>
+              <nav className="space-y-1 p-2">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <motion.button
+                      key={item.id}
+                      variants={itemVariants}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 ${
+                        activeTab === item.id
+                          ? 'bg-gradient-to-r from-purple-500/30 to-blue-500/30 border border-purple-500/30 text-white'
+                          : 'hover:bg-white/5 text-gray-400 hover:text-white'
+                      }`}
                     >
-                      <span>Light</span>
-                    </div>
-                    <div
-                      className={`border rounded-md p-4 flex items-center justify-center cursor-pointer bg-gray-900 text-white ${theme === 'default' ? 'ring-2 ring-primary' : ''}`}
-                      onClick={() => setTheme('default')}
-                    >
-                      <span>Dark</span>
-                    </div>
-                    <div className="border rounded-md p-4 flex items-center justify-center cursor-pointer bg-gradient-to-r from-gray-100 to-gray-900 text-gray-700 opacity-50 cursor-not-allowed">
-                      <span>System</span>
-                    </div>
-                  </div>
-                </div>
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          activeTab === item.id
+                            ? 'bg-gradient-to-br from-purple-500 to-blue-500'
+                            : 'bg-white/5'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{item.label}</p>
+                        <p className="text-xs text-gray-500">{item.description}</p>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </nav>
+            </GlassCard>
+          </motion.div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1" id="fontsize-label">
-                    Font Size
-                  </label>
-                  <select
-                    className="w-full px-3 py-2 bg-background border rounded-md"
-                    aria-labelledby="fontsize-label"
+          {/* Content Area */}
+          <div className="flex-1">
+            <AnimatePresence mode="wait">
+              {activeTab === 'general' && (
+                <motion.div
+                  key="general"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <GlassCard
+                    icon={Globe}
+                    title="General Settings"
+                    subtitle="Language, timezone, and preferences"
+                    gradient="blue"
                   >
-                    <option>Small</option>
-                    <option selected>Medium</option>
-                    <option>Large</option>
-                  </select>
-                </div>
+                    <div className="space-y-6 mt-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          <Globe className="w-4 h-4 inline mr-2" />
+                          Language
+                        </label>
+                        <PremiumSelect defaultValue="english">
+                          <option value="english">English</option>
+                          <option value="spanish">Spanish</option>
+                          <option value="french">French</option>
+                          <option value="german">German</option>
+                        </PremiumSelect>
+                      </div>
 
-                <div className="pt-4">
-                  <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-                    Save Changes
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          <Zap className="w-4 h-4 inline mr-2" />
+                          Time Zone
+                        </label>
+                        <PremiumSelect defaultValue="utc">
+                          <option value="utc">UTC (Coordinated Universal Time)</option>
+                          <option value="est">EST (Eastern Standard Time)</option>
+                          <option value="pst">PST (Pacific Standard Time)</option>
+                          <option value="gmt">GMT (Greenwich Mean Time)</option>
+                        </PremiumSelect>
+                      </div>
 
-          {activeTab === 'notifications' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Email Notifications</p>
-                    <p className="text-sm text-muted-foreground">
-                      Receive email notifications for important updates
-                    </p>
-                  </div>
-                  <div className="relative inline-block w-12 h-6 rounded-full bg-muted">
-                    <input
-                      type="checkbox"
-                      id="emailNotif"
-                      className="sr-only"
-                      aria-label="Toggle email notifications"
-                    />
-                    <span className="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
-                  </div>
-                </div>
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                        <div>
+                          <p className="font-medium text-white">Enable Auto-save</p>
+                          <p className="text-sm text-gray-400">
+                            Automatically save changes as you make them
+                          </p>
+                        </div>
+                        <ToggleSwitch checked={autoSave} onChange={setAutoSave} />
+                      </div>
 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Push Notifications</p>
-                    <p className="text-sm text-muted-foreground">
-                      Receive push notifications in your browser
-                    </p>
-                  </div>
-                  <div className="relative inline-block w-12 h-6 rounded-full bg-primary">
-                    <input
-                      type="checkbox"
-                      id="pushNotif"
-                      className="sr-only"
-                      checked
-                      aria-label="Toggle push notifications"
-                    />
-                    <span className="absolute left-7 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
-                  </div>
-                </div>
+                      <div className="pt-4">
+                        <PremiumButton
+                          onClick={handleSave}
+                          disabled={saving}
+                          icon={saving ? Loader2 : Save}
+                          className={saving ? 'animate-pulse' : ''}
+                        >
+                          {saving ? 'Saving...' : 'Save Changes'}
+                        </PremiumButton>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              )}
 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Agent Activity Alerts</p>
-                    <p className="text-sm text-muted-foreground">
-                      Get notified when agents complete tasks
-                    </p>
-                  </div>
-                  <div className="relative inline-block w-12 h-6 rounded-full bg-primary">
-                    <input
-                      type="checkbox"
-                      id="agentNotif"
-                      className="sr-only"
-                      checked
-                      aria-label="Toggle agent activity alerts"
-                    />
-                    <span className="absolute left-7 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
-                  </div>
-                </div>
+              {activeTab === 'account' && (
+                <motion.div
+                  key="account"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <GlassCard
+                    icon={User}
+                    title="Account Settings"
+                    subtitle="Manage your profile and security"
+                    gradient="purple"
+                  >
+                    <div className="space-y-6 mt-6">
+                      {/* Profile Section */}
+                      <div className="flex items-center gap-4 p-4 bg-black/20 rounded-xl border border-white/5">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
+                          <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                            {user?.displayName?.[0] || 'U'}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-xl font-semibold text-white">
+                            {user?.displayName || 'User'}
+                          </p>
+                          <p className="text-gray-400">{user?.email || 'user@example.com'}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="px-2 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
+                              <Shield className="w-3 h-3 inline mr-1" />
+                              Verified
+                            </span>
+                          </div>
+                        </div>
+                      </div>
 
-                <div className="pt-4">
-                  <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-                    Save Changes
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Display Name
+                        </label>
+                        <PremiumInput
+                          type="text"
+                          defaultValue={user?.displayName || ''}
+                          placeholder="Enter your display name"
+                        />
+                      </div>
 
-          {activeTab === 'api' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">API Keys</h2>
-              <div className="space-y-4">
-                <div className="bg-muted p-4 rounded-md">
-                  <p className="text-sm text-muted-foreground mb-2">Your API Key</p>
-                  <div className="flex items-center">
-                    <input
-                      type="password"
-                      className="flex-1 px-3 py-2 bg-background border rounded-md mr-2"
-                      value={import.meta.env.VITE_STRIPE_API_KEY || 'Not configured'}
-                      title="API Key"
-                      readOnly
-                    />
-                    <button className="px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-                      Copy
-                    </button>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    API keys are managed securely. Contact support to regenerate your key.
-                  </p>
-                </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Email Address
+                        </label>
+                        <PremiumInput
+                          type="email"
+                          defaultValue={user?.email || ''}
+                          placeholder="Enter your email"
+                        />
+                      </div>
 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">API Access</p>
-                    <p className="text-sm text-muted-foreground">
-                      Enable API access for external applications
-                    </p>
-                  </div>
-                  <div className="relative inline-block w-12 h-6 rounded-full bg-primary">
-                    <input
-                      type="checkbox"
-                      id="apiAccess"
-                      className="sr-only"
-                      checked
-                      aria-label="Toggle API access"
-                    />
-                    <span className="absolute left-7 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
-                  </div>
-                </div>
+                      <div className="flex gap-3 pt-4">
+                        <PremiumButton onClick={handleSave} disabled={saving} icon={Save}>
+                          {saving ? 'Updating...' : 'Update Profile'}
+                        </PremiumButton>
+                        <PremiumButton variant="ghost" icon={Trash2}>
+                          Delete Account
+                        </PremiumButton>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              )}
 
-                <div className="pt-4">
-                  <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 mr-2">
-                    Generate New Key
-                  </button>
-                  <button className="px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90">
-                    Revoke All Keys
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+              {activeTab === 'appearance' && (
+                <motion.div
+                  key="appearance"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <GlassCard
+                    icon={Palette}
+                    title="Appearance Settings"
+                    subtitle="Customize how the platform looks"
+                    gradient="orange"
+                  >
+                    <div className="space-y-6 mt-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-4">
+                          Theme Mode
+                        </label>
+                        <div className="grid grid-cols-3 gap-4">
+                          <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setTheme('light')}
+                            className={`p-6 rounded-xl cursor-pointer transition-all border-2 ${
+                              theme === 'light'
+                                ? 'border-purple-500 bg-white/10'
+                                : 'border-white/10 bg-black/20 hover:bg-white/5'
+                            }`}
+                          >
+                            <div className="flex flex-col items-center gap-3">
+                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                                <Sun className="w-6 h-6 text-white" />
+                              </div>
+                              <span className="text-white font-medium">Light</span>
+                            </div>
+                          </motion.div>
+
+                          <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setTheme('default')}
+                            className={`p-6 rounded-xl cursor-pointer transition-all border-2 ${
+                              theme === 'default'
+                                ? 'border-purple-500 bg-white/10'
+                                : 'border-white/10 bg-black/20 hover:bg-white/5'
+                            }`}
+                          >
+                            <div className="flex flex-col items-center gap-3">
+                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-blue-700 flex items-center justify-center">
+                                <Moon className="w-6 h-6 text-white" />
+                              </div>
+                              <span className="text-white font-medium">Dark</span>
+                            </div>
+                          </motion.div>
+
+                          <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            className="p-6 rounded-xl border-2 border-white/10 bg-black/20 opacity-50 cursor-not-allowed"
+                          >
+                            <div className="flex flex-col items-center gap-3">
+                              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+                                <Settings2 className="w-6 h-6 text-white" />
+                              </div>
+                              <span className="text-gray-400 font-medium">System</span>
+                              <span className="text-xs text-gray-500">Coming soon</span>
+                            </div>
+                          </motion.div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Font Size
+                        </label>
+                        <PremiumSelect defaultValue="medium">
+                          <option value="small">Small</option>
+                          <option value="medium">Medium</option>
+                          <option value="large">Large</option>
+                        </PremiumSelect>
+                      </div>
+
+                      <div className="pt-4">
+                        <PremiumButton onClick={handleSave} disabled={saving} icon={Save}>
+                          Save Changes
+                        </PremiumButton>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              )}
+
+              {activeTab === 'notifications' && (
+                <motion.div
+                  key="notifications"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <GlassCard
+                    icon={Bell}
+                    title="Notification Settings"
+                    subtitle="Control how you receive alerts"
+                    gradient="green"
+                  >
+                    <div className="space-y-4 mt-6">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                        <div>
+                          <p className="font-medium text-white">Email Notifications</p>
+                          <p className="text-sm text-gray-400">
+                            Receive email notifications for important updates
+                          </p>
+                        </div>
+                        <ToggleSwitch checked={emailNotif} onChange={setEmailNotif} />
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                        <div>
+                          <p className="font-medium text-white">Push Notifications</p>
+                          <p className="text-sm text-gray-400">
+                            Receive push notifications in your browser
+                          </p>
+                        </div>
+                        <ToggleSwitch checked={pushNotif} onChange={setPushNotif} />
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                        <div>
+                          <p className="font-medium text-white">Agent Activity Alerts</p>
+                          <p className="text-sm text-gray-400">
+                            Get notified when agents complete tasks
+                          </p>
+                        </div>
+                        <ToggleSwitch checked={agentNotif} onChange={setAgentNotif} />
+                      </div>
+
+                      <div className="pt-4">
+                        <PremiumButton onClick={handleSave} disabled={saving} icon={Save}>
+                          Save Changes
+                        </PremiumButton>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              )}
+
+              {activeTab === 'api' && (
+                <motion.div
+                  key="api"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <GlassCard
+                    icon={Key}
+                    title="API Keys"
+                    subtitle="Manage your API access and keys"
+                    gradient="cyan"
+                  >
+                    <div className="space-y-6 mt-6">
+                      <div className="p-4 bg-black/30 rounded-xl border border-white/5">
+                        <p className="text-sm text-gray-400 mb-3 flex items-center gap-2">
+                          <Key className="w-4 h-4" />
+                          Your API Key
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <PremiumInput
+                            type="password"
+                            value="••••••••••••••••••••••••"
+                            readOnly
+                            className="flex-1"
+                          />
+                          <PremiumButton
+                            variant="glass"
+                            size="sm"
+                            onClick={handleCopyApiKey}
+                            icon={copied ? Check : Copy}
+                          >
+                            {copied ? 'Copied!' : 'Copy'}
+                          </PremiumButton>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
+                          <Shield className="w-3 h-3" />
+                          API keys are stored securely. Contact support to regenerate your key.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                        <div>
+                          <p className="font-medium text-white">API Access</p>
+                          <p className="text-sm text-gray-400">
+                            Enable API access for external applications
+                          </p>
+                        </div>
+                        <ToggleSwitch checked={apiAccess} onChange={setApiAccess} />
+                      </div>
+
+                      <div className="flex gap-3 pt-4">
+                        <PremiumButton onClick={handleSave} icon={RefreshCw}>
+                          Generate New Key
+                        </PremiumButton>
+                        <PremiumButton variant="ghost" icon={Trash2}>
+                          Revoke All Keys
+                        </PremiumButton>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>

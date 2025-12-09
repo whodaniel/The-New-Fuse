@@ -1,14 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  LineChart, Line, AreaChart, Area, PieChart, Pie, Cell
-} from 'recharts';
+import { GlassCard, PremiumButton, PremiumSelect, StatsCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Download, Loader } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Activity,
+  BarChart3,
+  Bot,
+  Clock,
+  DollarSign,
+  Download,
+  Layers,
+  Loader2,
+  RefreshCw,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Zap,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 interface AnalyticsData {
   overview: {
@@ -64,7 +90,52 @@ interface AnalyticsData {
   };
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+const COLORS = ['#8B5CF6', '#06B6D4', '#F59E0B', '#EF4444', '#10B981', '#EC4899'];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: 'easeOut' },
+  },
+};
+
+// Custom dark-themed tooltip for charts
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number; color: string }>;
+  label?: string;
+}) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-slate-800/90 backdrop-blur-md border border-white/10 rounded-lg p-3 shadow-xl">
+        <p className="text-gray-300 text-sm font-medium mb-2">{label}</p>
+        {payload.map((entry: { name: string; value: number; color: string }, index: number) => (
+          <p key={index} className="text-sm" style={{ color: entry.color }}>
+            {entry.name}:{' '}
+            {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 const Analytics = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -80,13 +151,13 @@ const Analytics = () => {
   const fetchAnalyticsData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch from multiple endpoints
       await Promise.all([
         fetch(`/api/analytics/default/overview?timeframe=${timeRange}`),
         fetch(`/api/analytics/default/performance?timeframe=${timeRange}`),
         fetch(`/api/analytics/default/providers/performance?timeframe=${timeRange}`),
-        fetch(`/api/analytics/default/quality-trends?timeframe=${timeRange}`)
+        fetch(`/api/analytics/default/quality-trends?timeframe=${timeRange}`),
       ]);
 
       // Mock data for now - replace with actual API responses
@@ -97,7 +168,7 @@ const Analytics = () => {
           totalInteractions: 15420,
           successRate: 98.5,
           averageResponseTime: 245,
-          totalWorkflows: 156
+          totalWorkflows: 156,
         },
         performance: {
           timeRange: '7d',
@@ -106,8 +177,8 @@ const Analytics = () => {
             requests: Math.floor(Math.random() * 1000) + 500,
             responses: Math.floor(Math.random() * 900) + 450,
             errors: Math.floor(Math.random() * 50) + 5,
-            avgResponseTime: Math.floor(Math.random() * 200) + 100
-          }))
+            avgResponseTime: Math.floor(Math.random() * 200) + 100,
+          })),
         },
         agentMetrics: [
           {
@@ -116,7 +187,7 @@ const Analytics = () => {
             totalTasks: 342,
             successRate: 99.2,
             avgResponseTime: 156,
-            lastActive: '2 minutes ago'
+            lastActive: '2 minutes ago',
           },
           {
             agentId: 'agent-2',
@@ -124,7 +195,7 @@ const Analytics = () => {
             totalTasks: 289,
             successRate: 97.8,
             avgResponseTime: 203,
-            lastActive: '5 minutes ago'
+            lastActive: '5 minutes ago',
           },
           {
             agentId: 'agent-3',
@@ -132,14 +203,14 @@ const Analytics = () => {
             totalTasks: 198,
             successRate: 98.5,
             avgResponseTime: 189,
-            lastActive: '12 minutes ago'
-          }
+            lastActive: '12 minutes ago',
+          },
         ],
         qualityTrends: Array.from({ length: 30 }, (_, i) => ({
           date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString(),
           qualityScore: Math.floor(Math.random() * 10) + 90,
           userSatisfaction: Math.floor(Math.random() * 10) + 85,
-          errorRate: Math.floor(Math.random() * 5) + 1
+          errorRate: Math.floor(Math.random() * 5) + 1,
         })),
         providerPerformance: [
           {
@@ -147,44 +218,44 @@ const Analytics = () => {
             totalRequests: 5420,
             successRate: 99.1,
             avgLatency: 145,
-            costPerRequest: 0.002
+            costPerRequest: 0.002,
           },
           {
             provider: 'Anthropic',
             totalRequests: 3892,
             successRate: 98.7,
             avgLatency: 203,
-            costPerRequest: 0.003
+            costPerRequest: 0.003,
           },
           {
             provider: 'Google',
             totalRequests: 2108,
             successRate: 97.9,
             avgLatency: 189,
-            costPerRequest: 0.0015
-          }
+            costPerRequest: 0.0015,
+          },
         ],
         costAnalysis: {
-          totalCost: 2847.50,
+          totalCost: 2847.5,
           costByProvider: [
-            { provider: 'OpenAI', cost: 1247.50, percentage: 43.8 },
-            { provider: 'Anthropic', cost: 892.30, percentage: 31.3 },
-            { provider: 'Google', cost: 707.70, percentage: 24.9 }
+            { provider: 'OpenAI', cost: 1247.5, percentage: 43.8 },
+            { provider: 'Anthropic', cost: 892.3, percentage: 31.3 },
+            { provider: 'Google', cost: 707.7, percentage: 24.9 },
           ],
           dailyCosts: Array.from({ length: 30 }, (_, i) => ({
             date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString(),
-            cost: Math.floor(Math.random() * 100) + 50
-          }))
-        }
+            cost: Math.floor(Math.random() * 100) + 50,
+          })),
+        },
       };
 
       setData(mockData);
     } catch (error) {
       console.error('Error fetching analytics:', error);
       toast({
-        title: "Error",
-        description: "Failed to load analytics data",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to load analytics data',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -199,7 +270,9 @@ const Analytics = () => {
 
   const handleExport = async () => {
     try {
-      const response = await fetch(`/api/analytics/default/export?timeframe=${timeRange}&format=json`);
+      const response = await fetch(
+        `/api/analytics/default/export?timeframe=${timeRange}&format=json`
+      );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -207,287 +280,557 @@ const Analytics = () => {
       a.download = `analytics-${timeRange}-${new Date().toISOString()}.json`;
       a.click();
       window.URL.revokeObjectURL(url);
-      
+
       toast({
-        title: "Success",
-        description: "Analytics data exported successfully"
+        title: 'Success',
+        description: 'Analytics data exported successfully',
       });
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to export analytics data",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to export analytics data',
+        variant: 'destructive',
       });
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader className="animate-spin h-8 w-8 text-primary" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        >
+          <Loader2 className="w-12 h-12 text-purple-500" />
+        </motion.div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Failed to load analytics data</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <GlassCard className="max-w-md">
+          <div className="p-8 text-center">
+            <Zap className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <p className="text-gray-400">Failed to load analytics data</p>
+            <PremiumButton onClick={handleRefresh} className="mt-4" icon={RefreshCw}>
+              Retry
+            </PremiumButton>
+          </div>
+        </GlassCard>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold">Analytics & Performance</h2>
-          <p className="text-muted-foreground">Monitor your system performance and usage metrics</p>
-        </div>
-        <div className="flex gap-2">
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select time range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="24h">Last 24 hours</SelectItem>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
-              <SelectItem value="90d">Last 90 days</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[50%] left-[30%] w-[30%] h-[30%] bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" />
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="agents">Agents</TabsTrigger>
-          <TabsTrigger value="quality">Quality</TabsTrigger>
-          <TabsTrigger value="costs">Costs</TabsTrigger>
-        </TabsList>
-
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle>Total Agents</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{data.overview.totalAgents}</div>
-                <p className="text-xs text-muted-foreground">
-                  {data.overview.activeAgents} active
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Total Interactions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{data.overview.totalInteractions.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">
-                  Avg response: {data.overview.averageResponseTime}ms
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Success Rate</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{data.overview.successRate}%</div>
-                <p className="text-xs text-muted-foreground">
-                  Across all agents
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Total Workflows</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{data.overview.totalWorkflows}</div>
-                <p className="text-xs text-muted-foreground">
-                  Executed successfully
-                </p>
-              </CardContent>
-            </Card>
+      <div className="relative z-10 p-8 max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4"
+        >
+          <div>
+            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-3">
+              <BarChart3 className="w-10 h-10 text-purple-400" />
+              Analytics & Performance
+            </h2>
+            <p className="text-gray-400 text-lg mt-2 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-yellow-400" />
+              Monitor your system performance and usage metrics
+            </p>
           </div>
-        </TabsContent>
-
-        {/* Performance Tab */}
-        <TabsContent value="performance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance Metrics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={data.performance.dataPoints}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="timestamp" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="requests" stroke="#8884d8" name="Requests" />
-                  <Line type="monotone" dataKey="responses" stroke="#82ca9d" name="Responses" />
-                  <Line type="monotone" dataKey="errors" stroke="#ff7300" name="Errors" />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Agents Tab */}
-        <TabsContent value="agents" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Agent Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-2">Agent Name</th>
-                      <th className="text-left p-2">Total Tasks</th>
-                      <th className="text-left p-2">Success Rate</th>
-                      <th className="text-left p-2">Avg Response Time</th>
-                      <th className="text-left p-2">Last Active</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.agentMetrics.map((agent) => (
-                      <tr key={agent.agentId} className="border-b">
-                        <td className="p-2">{agent.agentName}</td>
-                        <td className="p-2">{agent.totalTasks}</td>
-                        <td className="p-2">{agent.successRate}%</td>
-                        <td className="p-2">{agent.avgResponseTime}ms</td>
-                        <td className="p-2">{agent.lastActive}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Quality Tab */}
-        <TabsContent value="quality" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Quality Trends</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={data.qualityTrends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Area type="monotone" dataKey="qualityScore" stackId="1" stroke="#8884d8" fill="#8884d8" name="Quality Score" />
-                    <Area type="monotone" dataKey="userSatisfaction" stackId="1" stroke="#82ca9d" fill="#82ca9d" name="User Satisfaction" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Error Rate</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={data.qualityTrends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="errorRate" fill="#ff7300" name="Error Rate %" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
+          <div className="flex gap-3 flex-wrap">
+            <PremiumSelect
+              value={timeRange}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTimeRange(e.target.value)}
+              className="w-[180px]"
+            >
+              <option value="24h">Last 24 hours</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="90d">Last 90 days</option>
+            </PremiumSelect>
+            <PremiumButton
+              variant="glass"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              icon={RefreshCw}
+              className={refreshing ? 'animate-spin' : ''}
+            >
+              Refresh
+            </PremiumButton>
+            <PremiumButton onClick={handleExport} icon={Download}>
+              Export
+            </PremiumButton>
           </div>
-        </TabsContent>
+        </motion.div>
 
-        {/* Costs Tab */}
-        <TabsContent value="costs" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cost by Provider</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={data.costAnalysis.costByProvider}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ provider, percentage }) => `${provider} ${percentage}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="cost"
-                    >
-                      {data.costAnalysis.costByProvider.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
+        <Tabs defaultValue="overview" className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <TabsList className="bg-white/5 backdrop-blur-md border border-white/10 p-1 rounded-xl">
+              <TabsTrigger
+                value="overview"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="performance"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Performance
+              </TabsTrigger>
+              <TabsTrigger
+                value="agents"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+              >
+                <Bot className="w-4 h-4 mr-2" />
+                Agents
+              </TabsTrigger>
+              <TabsTrigger
+                value="quality"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                Quality
+              </TabsTrigger>
+              <TabsTrigger
+                value="costs"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+              >
+                <DollarSign className="w-4 h-4 mr-2" />
+                Costs
+              </TabsTrigger>
+            </TabsList>
+          </motion.div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Daily Costs</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={data.costAnalysis.dailyCosts}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="cost" fill="#8884d8" name="Daily Cost ($)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
+          <AnimatePresence mode="wait">
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-6">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+              >
+                <motion.div variants={itemVariants}>
+                  <StatsCard
+                    label="Total Agents"
+                    value={data.overview.totalAgents}
+                    change={`${data.overview.activeAgents} active`}
+                    changeType="positive"
+                    icon={Bot}
+                    gradient="blue"
+                  />
+                </motion.div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Cost Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">${data.costAnalysis.totalCost.toLocaleString()}</div>
-              <p className="text-sm text-muted-foreground">Total cost for selected period</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                <motion.div variants={itemVariants}>
+                  <StatsCard
+                    label="Total Interactions"
+                    value={data.overview.totalInteractions.toLocaleString()}
+                    change={`${data.overview.averageResponseTime}ms avg response`}
+                    changeType="neutral"
+                    icon={Activity}
+                    gradient="purple"
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <StatsCard
+                    label="Success Rate"
+                    value={`${data.overview.successRate}%`}
+                    change="Across all agents"
+                    changeType="positive"
+                    icon={Target}
+                    gradient="green"
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <StatsCard
+                    label="Total Workflows"
+                    value={data.overview.totalWorkflows}
+                    change="Executed successfully"
+                    changeType="positive"
+                    icon={Layers}
+                    gradient="orange"
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <StatsCard
+                    label="Avg Response Time"
+                    value={`${data.overview.averageResponseTime}ms`}
+                    change="Fleet performance"
+                    changeType="positive"
+                    icon={Clock}
+                    gradient="cyan"
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <StatsCard
+                    label="Active Rate"
+                    value={`${Math.round((data.overview.activeAgents / data.overview.totalAgents) * 100)}%`}
+                    change="Agent utilization"
+                    changeType="positive"
+                    icon={Zap}
+                    gradient="pink"
+                  />
+                </motion.div>
+              </motion.div>
+            </TabsContent>
+
+            {/* Performance Tab */}
+            <TabsContent value="performance" className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <GlassCard
+                  icon={TrendingUp}
+                  title="Performance Metrics"
+                  subtitle="Request and response trends over time"
+                  gradient="purple"
+                >
+                  <div className="h-[400px] mt-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={data.performance.dataPoints}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <XAxis dataKey="timestamp" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                        <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend wrapperStyle={{ color: '#9CA3AF' }} />
+                        <Line
+                          type="monotone"
+                          dataKey="requests"
+                          stroke="#8B5CF6"
+                          strokeWidth={3}
+                          dot={{ fill: '#8B5CF6', strokeWidth: 2 }}
+                          name="Requests"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="responses"
+                          stroke="#10B981"
+                          strokeWidth={3}
+                          dot={{ fill: '#10B981', strokeWidth: 2 }}
+                          name="Responses"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="errors"
+                          stroke="#EF4444"
+                          strokeWidth={2}
+                          dot={{ fill: '#EF4444', strokeWidth: 2 }}
+                          name="Errors"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            </TabsContent>
+
+            {/* Agents Tab */}
+            <TabsContent value="agents" className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <GlassCard
+                  icon={Bot}
+                  title="Agent Performance"
+                  subtitle="Individual agent metrics and activity"
+                  gradient="blue"
+                >
+                  <div className="overflow-x-auto mt-4">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-white/10">
+                          <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Agent Name
+                          </th>
+                          <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Total Tasks
+                          </th>
+                          <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Success Rate
+                          </th>
+                          <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Avg Response
+                          </th>
+                          <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Last Active
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {data.agentMetrics.map(
+                          (
+                            agent: {
+                              agentId: string;
+                              agentName: string;
+                              totalTasks: number;
+                              successRate: number;
+                              avgResponseTime: number;
+                              lastActive: string;
+                            },
+                            index: number
+                          ) => (
+                            <motion.tr
+                              key={agent.agentId}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.1 }}
+                              className="hover:bg-white/5 transition-colors"
+                            >
+                              <td className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+                                    <Bot className="w-5 h-5 text-purple-400" />
+                                  </div>
+                                  <span className="text-white font-medium">{agent.agentName}</span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-gray-300">
+                                {agent.totalTasks.toLocaleString()}
+                              </td>
+                              <td className="p-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-16 bg-white/10 rounded-full h-2">
+                                    <div
+                                      className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2 rounded-full"
+                                      style={{ width: `${agent.successRate}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-emerald-400 font-medium">
+                                    {agent.successRate}%
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-gray-300">{agent.avgResponseTime}ms</td>
+                              <td className="p-4 text-gray-400 flex items-center gap-1">
+                                <Clock className="w-4 h-4" />
+                                {agent.lastActive}
+                              </td>
+                            </motion.tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            </TabsContent>
+
+            {/* Quality Tab */}
+            <TabsContent value="quality" className="space-y-6">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid gap-6 md:grid-cols-2"
+              >
+                <motion.div variants={itemVariants}>
+                  <GlassCard
+                    icon={Target}
+                    title="Quality Trends"
+                    subtitle="Quality score and user satisfaction over time"
+                    gradient="green"
+                  >
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={data.qualityTrends}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                          <XAxis dataKey="date" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                          <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend wrapperStyle={{ color: '#9CA3AF' }} />
+                          <Area
+                            type="monotone"
+                            dataKey="qualityScore"
+                            stackId="1"
+                            stroke="#8B5CF6"
+                            fill="url(#qualityGradient)"
+                            name="Quality Score"
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="userSatisfaction"
+                            stackId="2"
+                            stroke="#10B981"
+                            fill="url(#satisfactionGradient)"
+                            name="User Satisfaction"
+                          />
+                          <defs>
+                            <linearGradient id="qualityGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4} />
+                              <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="satisfactionGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
+                              <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <GlassCard
+                    icon={Zap}
+                    title="Error Rate"
+                    subtitle="Error occurrences over time"
+                    gradient="orange"
+                  >
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data.qualityTrends}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                          <XAxis dataKey="date" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                          <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Bar
+                            dataKey="errorRate"
+                            fill="#EF4444"
+                            name="Error Rate %"
+                            radius={[4, 4, 0, 0]}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              </motion.div>
+            </TabsContent>
+
+            {/* Costs Tab */}
+            <TabsContent value="costs" className="space-y-6">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid gap-6 md:grid-cols-2"
+              >
+                <motion.div variants={itemVariants}>
+                  <GlassCard
+                    icon={DollarSign}
+                    title="Cost by Provider"
+                    subtitle="Distribution of costs across providers"
+                    gradient="purple"
+                  >
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={data.costAnalysis.costByProvider}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({
+                              provider,
+                              percentage,
+                            }: {
+                              provider: string;
+                              percentage: number;
+                            }) => `${provider} ${percentage}%`}
+                            outerRadius={80}
+                            innerRadius={40}
+                            fill="#8884d8"
+                            dataKey="cost"
+                            strokeWidth={2}
+                            stroke="rgba(0,0,0,0.3)"
+                          >
+                            {data.costAnalysis.costByProvider.map(
+                              (
+                                _entry: { provider: string; cost: number; percentage: number },
+                                index: number
+                              ) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                              )
+                            )}
+                          </Pie>
+                          <Tooltip content={<CustomTooltip />} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <GlassCard
+                    icon={TrendingUp}
+                    title="Daily Costs"
+                    subtitle="Cost trends over the selected period"
+                    gradient="cyan"
+                  >
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data.costAnalysis.dailyCosts}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                          <XAxis dataKey="date" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                          <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Bar
+                            dataKey="cost"
+                            fill="url(#costGradient)"
+                            name="Daily Cost ($)"
+                            radius={[4, 4, 0, 0]}
+                          />
+                          <defs>
+                            <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#06B6D4" stopOpacity={0.8} />
+                            </linearGradient>
+                          </defs>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <GlassCard gradient="purple">
+                  <div className="flex items-center justify-between p-2">
+                    <div>
+                      <p className="text-gray-400 text-sm">Total Cost for Selected Period</p>
+                      <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 mt-1">
+                        ${data.costAnalysis.totalCost.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center border border-green-500/20">
+                      <DollarSign className="w-8 h-8 text-green-400" />
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            </TabsContent>
+          </AnimatePresence>
+        </Tabs>
+      </div>
     </div>
   );
 };

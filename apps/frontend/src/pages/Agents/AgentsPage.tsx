@@ -1,5 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import {
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+  StatsCard,
+} from '@/components/ui/premium';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Activity,
+  BarChart3,
+  Bot,
+  Brain,
+  Clock,
+  Edit3,
+  Eye,
+  Grid3X3,
+  LayoutList,
+  MessageSquare,
+  Play,
+  Plus,
+  Rocket,
+  Search,
+  Settings2,
+  Sparkles,
+  Square,
+  TrendingUp,
+  Users,
+  Zap,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface Agent {
   id: string;
@@ -20,7 +51,27 @@ interface Agent {
   owner: string;
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: 'easeOut' },
+  },
+};
+
 export default function AgentsPage() {
+  const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -49,7 +100,7 @@ export default function AgentsPage() {
           version: '2.1.0',
           workspaceId: 'ws1',
           workspaceName: 'Customer Success',
-          owner: 'Alice Johnson'
+          owner: 'Alice Johnson',
         },
         {
           id: '2',
@@ -67,7 +118,7 @@ export default function AgentsPage() {
           version: '1.5.2',
           workspaceId: 'ws2',
           workspaceName: 'Analytics Team',
-          owner: 'Bob Wilson'
+          owner: 'Bob Wilson',
         },
         {
           id: '3',
@@ -85,7 +136,7 @@ export default function AgentsPage() {
           version: '1.0.1',
           workspaceId: 'ws3',
           workspaceName: 'Operations',
-          owner: 'Carol Brown'
+          owner: 'Carol Brown',
         },
         {
           id: '4',
@@ -103,7 +154,7 @@ export default function AgentsPage() {
           version: '1.8.0',
           workspaceId: 'ws1',
           workspaceName: 'Development',
-          owner: 'David Lee'
+          owner: 'David Lee',
         },
         {
           id: '5',
@@ -121,7 +172,7 @@ export default function AgentsPage() {
           version: '1.2.3',
           workspaceId: 'ws4',
           workspaceName: 'Sales Team',
-          owner: 'Eve Martinez'
+          owner: 'Eve Martinez',
         },
         {
           id: '6',
@@ -139,73 +190,114 @@ export default function AgentsPage() {
           version: '0.9.5',
           workspaceId: 'ws5',
           workspaceName: 'Marketing',
-          owner: 'Frank Garcia'
-        }
+          owner: 'Frank Garcia',
+        },
       ]);
       setLoading(false);
     }, 1000);
   }, []);
 
-  const getStatusBadge = (status: Agent['status']) => {
+  const getStatusConfig = (status: Agent['status']) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return {
+          bgClass: 'bg-emerald-500/10',
+          textClass: 'text-emerald-400',
+          borderClass: 'border-emerald-500/20',
+          icon: Activity,
+          label: 'Active',
+        };
       case 'inactive':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return {
+          bgClass: 'bg-slate-500/10',
+          textClass: 'text-slate-400',
+          borderClass: 'border-slate-500/20',
+          icon: Square,
+          label: 'Inactive',
+        };
       case 'training':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return {
+          bgClass: 'bg-blue-500/10',
+          textClass: 'text-blue-400',
+          borderClass: 'border-blue-500/20',
+          icon: Sparkles,
+          label: 'Training',
+        };
       case 'error':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return {
+          bgClass: 'bg-red-500/10',
+          textClass: 'text-red-400',
+          borderClass: 'border-red-500/20',
+          icon: Zap,
+          label: 'Error',
+        };
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return {
+          bgClass: 'bg-slate-500/10',
+          textClass: 'text-slate-400',
+          borderClass: 'border-slate-500/20',
+          icon: Square,
+          label: 'Unknown',
+        };
     }
   };
 
-  const getTypeBadge = (type: Agent['type']) => {
+  const getTypeConfig = (type: Agent['type']) => {
     switch (type) {
       case 'chat':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return {
+          bgClass: 'bg-purple-500/10',
+          textClass: 'text-purple-400',
+          borderClass: 'border-purple-500/20',
+          icon: MessageSquare,
+          label: 'Chat',
+        };
       case 'task':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return {
+          bgClass: 'bg-blue-500/10',
+          textClass: 'text-blue-400',
+          borderClass: 'border-blue-500/20',
+          icon: Zap,
+          label: 'Task',
+        };
       case 'analysis':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return {
+          bgClass: 'bg-orange-500/10',
+          textClass: 'text-orange-400',
+          borderClass: 'border-orange-500/20',
+          icon: BarChart3,
+          label: 'Analysis',
+        };
       case 'automation':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return {
+          bgClass: 'bg-cyan-500/10',
+          textClass: 'text-cyan-400',
+          borderClass: 'border-cyan-500/20',
+          icon: Settings2,
+          label: 'Automation',
+        };
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return {
+          bgClass: 'bg-slate-500/10',
+          textClass: 'text-slate-400',
+          borderClass: 'border-slate-500/20',
+          icon: Bot,
+          label: 'Unknown',
+        };
     }
   };
 
-  const getStatusIcon = (status: Agent['status']) => {
-    switch (status) {
-      case 'active': return '🟢';
-      case 'inactive': return '⚫';
-      case 'training': return '🔵';
-      case 'error': return '🔴';
-      default: return '⚪';
-    }
-  };
-
-  const getTypeIcon = (type: Agent['type']) => {
-    switch (type) {
-      case 'chat': return '💬';
-      case 'task': return '⚡';
-      case 'analysis': return '📊';
-      case 'automation': return '🤖';
-      default: return '🔧';
-    }
-  };
-
-  const filteredAgents = agents.filter(agent => {
-    const matchesSearch = agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.owner.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAgents = agents.filter((agent: Agent) => {
+    const matchesSearch =
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.owner.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'all' || agent.type === typeFilter;
     const matchesStatus = statusFilter === 'all' || agent.status === statusFilter;
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const sortedAgents = [...filteredAgents].sort((a, b) => {
+  const sortedAgents = [...filteredAgents].sort((a: Agent, b: Agent) => {
     switch (sortBy) {
       case 'lastActive':
         return new Date(b.lastActive).getTime() - new Date(a.lastActive).getTime();
@@ -221,381 +313,520 @@ export default function AgentsPage() {
   });
 
   const handleAgentAction = (agentId: string, action: string) => {
-    // Instead of logging to console, we'll update state or call an API
     setLoading(true);
-    
-    // Simulate API call
+
     setTimeout(() => {
-      // Update the agent status based on action
-      setAgents(prev => prev.map(agent => 
-        agent.id === agentId && action === 'start' 
-          ? {...agent, status: 'active' as const} 
-          : agent.id === agentId && action === 'stop'
-          ? {...agent, status: 'inactive' as const}
-          : agent
-      ));
-      
+      setAgents((prev: Agent[]) =>
+        prev.map((agent: Agent) =>
+          agent.id === agentId && action === 'start'
+            ? { ...agent, status: 'active' as const }
+            : agent.id === agentId && action === 'stop'
+              ? { ...agent, status: 'inactive' as const }
+              : agent
+        )
+      );
+
       setLoading(false);
     }, 500);
-    
-    // TODO: Implement actual API calls for agent actions
   };
+
+  // Calculate stats
+  const totalAgents = agents.length;
+  const activeAgents = agents.filter((a: Agent) => a.status === 'active').length;
+  const totalMessages = agents.reduce((sum: number, a: Agent) => sum + a.messagesCount, 0);
+  const avgSuccessRate =
+    agents.length > 0
+      ? (agents.reduce((sum: number, a: Agent) => sum + a.successRate, 0) / agents.length).toFixed(
+          1
+        )
+      : '0';
 
   if (loading) {
     return (
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full"
+        />
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">🤖 AI Agents</h1>
-            <p className="text-gray-600">Manage and monitor all your AI agents across workspaces</p>
-          </div>
-          <div className="flex space-x-3">
-            <Link
-              to="/agents/new"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              + Create Agent
-            </Link>
-            <Link
-              to="/dashboard/agents"
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              📊 Dashboard
-            </Link>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-pink-600/10 rounded-full blur-[100px] animate-pulse" />
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-blue-600 mr-3">🤖</div>
+      <div className="relative z-10 p-8 max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-2xl font-bold text-gray-900">{agents.length}</p>
-              <p className="text-sm text-gray-600">Total Agents</p>
+              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-2 flex items-center gap-3">
+                <Bot className="w-10 h-10 text-purple-400" />
+                AI Agent Fleet
+              </h1>
+              <p className="text-gray-400 text-lg flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-yellow-400" />
+                Command and orchestrate your intelligent agents across all workspaces
+              </p>
             </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-green-600 mr-3">🟢</div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{agents.filter(a => a.status === 'active').length}</p>
-              <p className="text-sm text-gray-600">Active Agents</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-orange-600 mr-3">💬</div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{agents.reduce((sum, a) => sum + a.messagesCount, 0).toLocaleString()}</p>
-              <p className="text-sm text-gray-600">Total Messages</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center">
-            <div className="text-2xl text-purple-600 mr-3">📈</div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{(agents.reduce((sum, a) => sum + a.successRate, 0) / agents.length).toFixed(1)}%</p>
-              <p className="text-sm text-gray-600">Avg Success Rate</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters and View Toggle */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-          <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-            <div>
-              <input
-                type="text"
-                placeholder="Search agents..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full md:w-64 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex space-x-2">
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                aria-label="Filter by type"
-                title="Filter by type"
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <div className="flex gap-3">
+              <PremiumButton
+                onClick={() => navigate('/agents/new')}
+                icon={Plus}
+                iconPosition="left"
+                size="md"
               >
-                <option value="all">All Types</option>
-                <option value="chat">Chat</option>
-                <option value="task">Task</option>
-                <option value="analysis">Analysis</option>
-                <option value="automation">Automation</option>
- </select>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                aria-label="Filter by status"
-                title="Filter by status"
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                Deploy Agent
+              </PremiumButton>
+              <PremiumButton
+                variant="outline"
+                onClick={() => navigate('/dashboard/agents')}
+                icon={BarChart3}
+                iconPosition="left"
+                size="md"
               >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
- </select>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                aria-label="Sort agents by"
-                title="Sort agents by"
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="name">Name</option>
-                <option value="successRate">Success Rate</option>
-                <option value="messagesCount">Messages</option>
-              </select>
+                Analytics
+              </PremiumButton>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">View:</span>
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`px-3 py-2 rounded-lg transition-colors ${
-                viewMode === 'grid' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              ⬜ Grid
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`px-3 py-2 rounded-lg transition-colors ${
-                viewMode === 'list' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              📋 List
-            </button>
-          </div>
-        </div>
-      </div>
+        </motion.div>
 
-      {/* Agents Content */}
-      {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedAgents.map((agent) => (
-            <div key={agent.id} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
-                    <div className="text-2xl mr-3">{getTypeIcon(agent.type)}</div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{agent.name}</h3>
-                      <p className="text-sm text-gray-500">v{agent.version}</p>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2">
-                    <span className={`px-2 py-1 text-xs rounded-full border ${getStatusBadge(agent.status)}`}>
-                      {getStatusIcon(agent.status)}
-                    </span>
-                    <span className={`px-2 py-1 text-xs rounded-full border ${getTypeBadge(agent.type)}`}>
-                      {agent.type}
-                    </span>
-                  </div>
+        {/* Stats Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
+        >
+          <motion.div variants={itemVariants}>
+            <StatsCard
+              label="Total Agents"
+              value={totalAgents}
+              change="+3 this week"
+              changeType="positive"
+              icon={Bot}
+              gradient="blue"
+            />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <StatsCard
+              label="Active Agents"
+              value={activeAgents}
+              change="Online and operational"
+              changeType="positive"
+              icon={Activity}
+              gradient="green"
+            />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <StatsCard
+              label="Total Messages"
+              value={totalMessages.toLocaleString()}
+              change="+15% this month"
+              changeType="positive"
+              icon={MessageSquare}
+              gradient="purple"
+            />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <StatsCard
+              label="Avg Success Rate"
+              value={`${avgSuccessRate}%`}
+              change="Fleet performance"
+              changeType="positive"
+              icon={TrendingUp}
+              gradient="orange"
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Filters and View Toggle */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <GlassCard className="mb-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-center gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <PremiumInput
+                    placeholder="Search agents..."
+                    value={searchTerm}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setSearchTerm(e.target.value)
+                    }
+                    className="pl-10 w-64"
+                  />
                 </div>
-
-                {/* Description */}
-                <p className="text-sm text-gray-600 mb-4">{agent.description}</p>
-
-                {/* Model & Owner */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-xs text-gray-500">Model</p>
-                    <p className="text-sm font-medium">{agent.model}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Owner</p>
-                    <p className="text-sm font-medium">{agent.owner}</p>
-                  </div>
-                </div>
-
-                {/* Capabilities */}
-                <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-2">Capabilities</p>
-                  <div className="flex flex-wrap gap-1">
-                    {agent.capabilities.slice(0, 3).map((capability, index) => (
-                      <span key={index} className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">
-                        {capability}
-                      </span>
-                    ))}
-                    {agent.capabilities.length > 3 && (
-                      <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">
-                        +{agent.capabilities.length - 3} more
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Metrics */}
-                <div className="grid grid-cols-3 gap-4 mb-4 text-center">
-                  <div>
-                    <p className="text-xs text-gray-500">Messages</p>
-                    <p className="text-sm font-bold text-blue-600">{agent.messagesCount.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Success Rate</p>
-                    <p className="text-sm font-bold text-green-600">{agent.successRate}%</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Avg Response</p>
-                    <p className="text-sm font-bold text-purple-600">{agent.avgResponseTime}s</p>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex space-x-2">
-                  <Link
-                    to={`/agents/${agent.id}`}
-                    className="flex-1 bg-blue-600 text-white text-center py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                <div className="flex gap-2">
+                  <PremiumSelect
+                    value={typeFilter}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      setTypeFilter(e.target.value)
+                    }
                   >
-                    View Details
-                  </Link>
-                  <button
-                    onClick={() => handleAgentAction(agent.id, agent.status === 'active' ? 'stop' : 'start')}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${
-                      agent.status === 'active'
-                        ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                        : 'bg-green-100 text-green-600 hover:bg-green-200'
-                    }`}
+                    <option value="all">All Types</option>
+                    <option value="chat">Chat</option>
+                    <option value="task">Task</option>
+                    <option value="analysis">Analysis</option>
+                    <option value="automation">Automation</option>
+                  </PremiumSelect>
+                  <PremiumSelect
+                    value={statusFilter}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      setStatusFilter(e.target.value)
+                    }
                   >
-                    {agent.status === 'active' ? 'Stop' : 'Start'}
-                  </button>
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="training">Training</option>
+                    <option value="error">Error</option>
+                  </PremiumSelect>
+                  <PremiumSelect
+                    value={sortBy}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      setSortBy(e.target.value)
+                    }
+                  >
+                    <option value="lastActive">Last Active</option>
+                    <option value="name">Name</option>
+                    <option value="successRate">Success Rate</option>
+                    <option value="messagesCount">Messages</option>
+                  </PremiumSelect>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400">View:</span>
+                <PremiumButton
+                  variant={viewMode === 'grid' ? 'gradient' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  icon={Grid3X3}
+                >
+                  Grid
+                </PremiumButton>
+                <PremiumButton
+                  variant={viewMode === 'list' ? 'gradient' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  icon={LayoutList}
+                >
+                  List
+                </PremiumButton>
+              </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agent</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Messages</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Success Rate</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {sortedAgents.map((agent) => (
-                  <tr key={agent.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <div className="text-xl mr-3">{getTypeIcon(agent.type)}</div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{agent.name}</div>
-                          <div className="text-sm text-gray-500">{agent.description}</div>
-                          <div className="text-xs text-gray-400">Owner: {agent.owner}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getTypeBadge(agent.type)}`}>
-                        {agent.type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusBadge(agent.status)}`}>
-                        {getStatusIcon(agent.status)} {agent.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {agent.model}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {agent.messagesCount.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-green-600 h-2 rounded-full" 
-                            style={{ width: `${agent.successRate}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm text-gray-600">{agent.successRate}%</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(agent.lastActive).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
-                        <Link
-                          to={`/agents/${agent.id}`}
-                          className="text-blue-600 hover:text-blue-900 px-2 py-1 text-xs"
-                        >
-                          View
-                        </Link>
-                        <button
-                          onClick={() => handleAgentAction(agent.id, 'edit')}
-                          className="text-green-600 hover:text-green-900 px-2 py-1 text-xs"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleAgentAction(agent.id, agent.status === 'active' ? 'stop' : 'start')}
-                          className={`px-2 py-1 text-xs ${
-                            agent.status === 'active' 
-                              ? 'text-red-600 hover:text-red-900' 
-                              : 'text-green-600 hover:text-green-900'
-                          }`}
-                        >
-                          {agent.status === 'active' ? 'Stop' : 'Start'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+          </GlassCard>
+        </motion.div>
 
-      {sortedAgents.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">🤖</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No agents found</h3>
-          <p className="text-gray-500 mb-4">Try adjusting your search or filter criteria.</p>
-          <Link
-            to="/agents/new"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        {/* Agents Content */}
+        <AnimatePresence mode="wait">
+          {viewMode === 'grid' ? (
+            <motion.div
+              key="grid"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {sortedAgents.map((agent: Agent) => {
+                const statusConfig = getStatusConfig(agent.status);
+                const typeConfig = getTypeConfig(agent.type);
+                const TypeIcon = typeConfig.icon;
+                const StatusIcon = statusConfig.icon;
+
+                return (
+                  <motion.div key={agent.id} variants={itemVariants}>
+                    <GlassCard hoverEffect className="h-full">
+                      <div className="p-6">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+                              <TypeIcon className={`w-6 h-6 ${typeConfig.textClass}`} />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-white">{agent.name}</h3>
+                              <p className="text-xs text-gray-500">v{agent.version}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <Badge
+                              className={`${statusConfig.bgClass} ${statusConfig.textClass} border ${statusConfig.borderClass}`}
+                            >
+                              <StatusIcon className="w-3 h-3 mr-1" />
+                              {statusConfig.label}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-sm text-gray-400 mb-4 line-clamp-2">
+                          {agent.description}
+                        </p>
+
+                        {/* Model & Owner */}
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div className="bg-black/20 rounded-lg p-3 border border-white/5">
+                            <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                              <Brain className="w-3 h-3" /> Model
+                            </p>
+                            <p className="text-sm font-medium text-white">{agent.model}</p>
+                          </div>
+                          <div className="bg-black/20 rounded-lg p-3 border border-white/5">
+                            <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                              <Users className="w-3 h-3" /> Owner
+                            </p>
+                            <p className="text-sm font-medium text-white truncate">{agent.owner}</p>
+                          </div>
+                        </div>
+
+                        {/* Capabilities */}
+                        <div className="mb-4">
+                          <p className="text-xs text-gray-500 mb-2">Capabilities</p>
+                          <div className="flex flex-wrap gap-1">
+                            {agent.capabilities
+                              .slice(0, 3)
+                              .map((capability: string, index: number) => (
+                                <span
+                                  key={index}
+                                  className="px-2 py-1 text-xs bg-white/5 text-gray-300 rounded-lg border border-white/10"
+                                >
+                                  {capability}
+                                </span>
+                              ))}
+                            {agent.capabilities.length > 3 && (
+                              <span className="px-2 py-1 text-xs bg-purple-500/10 text-purple-400 rounded-lg border border-purple-500/20">
+                                +{agent.capabilities.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Metrics */}
+                        <div className="grid grid-cols-3 gap-2 mb-4">
+                          <div className="text-center bg-black/20 rounded-lg p-2 border border-white/5">
+                            <p className="text-xs text-gray-500">Messages</p>
+                            <p className="text-sm font-bold text-blue-400">
+                              {agent.messagesCount.toLocaleString()}
+                            </p>
+                          </div>
+                          <div className="text-center bg-black/20 rounded-lg p-2 border border-white/5">
+                            <p className="text-xs text-gray-500">Success</p>
+                            <p className="text-sm font-bold text-emerald-400">
+                              {agent.successRate}%
+                            </p>
+                          </div>
+                          <div className="text-center bg-black/20 rounded-lg p-2 border border-white/5">
+                            <p className="text-xs text-gray-500">Response</p>
+                            <p className="text-sm font-bold text-purple-400">
+                              {agent.avgResponseTime}s
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                          <Link to={`/agents/${agent.id}`} className="flex-1">
+                            <PremiumButton
+                              variant="gradient"
+                              size="sm"
+                              className="w-full"
+                              icon={Eye}
+                            >
+                              View Details
+                            </PremiumButton>
+                          </Link>
+                          <PremiumButton
+                            variant={agent.status === 'active' ? 'ghost' : 'glass'}
+                            size="sm"
+                            onClick={() =>
+                              handleAgentAction(
+                                agent.id,
+                                agent.status === 'active' ? 'stop' : 'start'
+                              )
+                            }
+                            icon={agent.status === 'active' ? Square : Play}
+                          >
+                            {agent.status === 'active' ? 'Stop' : 'Start'}
+                          </PremiumButton>
+                        </div>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="list"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <GlassCard>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="border-b border-white/10">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Agent
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Type
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Model
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Messages
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Success Rate
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Last Active
+                        </th>
+                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {sortedAgents.map((agent: Agent) => {
+                        const statusConfig = getStatusConfig(agent.status);
+                        const typeConfig = getTypeConfig(agent.type);
+                        const TypeIcon = typeConfig.icon;
+                        const StatusIcon = statusConfig.icon;
+
+                        return (
+                          <motion.tr
+                            key={agent.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="hover:bg-white/5 transition-colors"
+                          >
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+                                  <TypeIcon className={`w-5 h-5 ${typeConfig.textClass}`} />
+                                </div>
+                                <div>
+                                  <div className="text-sm font-medium text-white">{agent.name}</div>
+                                  <div className="text-xs text-gray-500 line-clamp-1 max-w-[200px]">
+                                    {agent.description}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <Badge
+                                className={`${typeConfig.bgClass} ${typeConfig.textClass} border ${typeConfig.borderClass}`}
+                              >
+                                {typeConfig.label}
+                              </Badge>
+                            </td>
+                            <td className="px-6 py-4">
+                              <Badge
+                                className={`${statusConfig.bgClass} ${statusConfig.textClass} border ${statusConfig.borderClass}`}
+                              >
+                                <StatusIcon className="w-3 h-3 mr-1" />
+                                {statusConfig.label}
+                              </Badge>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-300">{agent.model}</td>
+                            <td className="px-6 py-4 text-sm text-gray-300">
+                              {agent.messagesCount.toLocaleString()}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <div className="w-16 bg-white/10 rounded-full h-2">
+                                  <div
+                                    className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2 rounded-full"
+                                    style={{ width: `${agent.successRate}%` }}
+                                  />
+                                </div>
+                                <span className="text-sm text-emerald-400">
+                                  {agent.successRate}%
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-400 flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {new Date(agent.lastActive).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex justify-end gap-2">
+                                <Link to={`/agents/${agent.id}`}>
+                                  <PremiumButton variant="ghost" size="sm" icon={Eye} />
+                                </Link>
+                                <PremiumButton variant="ghost" size="sm" icon={Edit3} />
+                                <PremiumButton
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    handleAgentAction(
+                                      agent.id,
+                                      agent.status === 'active' ? 'stop' : 'start'
+                                    )
+                                  }
+                                  icon={agent.status === 'active' ? Square : Play}
+                                />
+                              </div>
+                            </td>
+                          </motion.tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </GlassCard>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Empty State */}
+        {sortedAgents.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-16"
           >
-            Create Your First Agent
-          </Link>
-        </div>
-      )}
+            <GlassCard className="max-w-md mx-auto">
+              <div className="p-8">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10">
+                  <Bot className="w-10 h-10 text-purple-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No agents found</h3>
+                <p className="text-gray-400 mb-6">
+                  Try adjusting your search or filter criteria, or deploy your first AI agent.
+                </p>
+                <PremiumButton onClick={() => navigate('/agents/new')} icon={Rocket}>
+                  Deploy Your First Agent
+                </PremiumButton>
+              </div>
+            </GlassCard>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

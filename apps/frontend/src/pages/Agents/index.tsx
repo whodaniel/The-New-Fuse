@@ -174,7 +174,7 @@ const Agents: React.FC = () => {
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
               >
-                {agentTypes.map((type: any) => (
+                {agentTypes.map((type: string) => (
                   <option key={type} value={type} className="bg-gray-900">
                     {type}
                   </option>

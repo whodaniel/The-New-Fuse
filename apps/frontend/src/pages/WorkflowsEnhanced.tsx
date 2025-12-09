@@ -1,7 +1,30 @@
-import React, { useState, useCallback } from 'react';
-import { WorkflowCanvas } from '../components/WorkflowBuilder/WorkflowCanvas';
-// import { ModularPromptTemplatingSystem, PromptTemplateServiceImpl, PromptTemplate } from '@the-new-fuse/prompt-templating';
-import { showNotification } from '../utils/notifications';
+import { Badge } from '@/components/ui/badge';
+import {
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+  ToggleSwitch,
+} from '@/components/ui/premium';
+import { WorkflowCanvas } from '@/components/WorkflowBuilder/WorkflowCanvas';
+import { showNotification } from '@/utils/notifications';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  BarChart3,
+  Braces,
+  Check,
+  Clock,
+  FileText,
+  Layers,
+  Play,
+  Plus,
+  Settings,
+  Sparkles,
+  TrendingUp,
+  X,
+  Zap,
+} from 'lucide-react';
+import React, { useCallback, useState } from 'react';
 
 // Temporary types until prompt-templating package is properly built
 interface PromptTemplate {
@@ -10,309 +33,481 @@ interface PromptTemplate {
   description?: string;
 }
 
+interface WorkflowSettings {
+  defaultModel: string;
+  executionTimeout: number;
+  maxConcurrentExecutions: number;
+  enableVersionTracking: boolean;
+  autoSaveTemplates: boolean;
+  showUsageAnalytics: boolean;
+}
+
+const tabs = [
+  { id: 0, label: 'Workflow Canvas', icon: Layers },
+  { id: 1, label: 'Prompt Templates', icon: FileText },
+  { id: 2, label: 'Analytics', icon: BarChart3 },
+  { id: 3, label: 'Settings', icon: Settings },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3 },
+  },
+};
+
 export const WorkflowsPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState<PromptTemplate | null>(null);
+  const [settings, setSettings] = useState<WorkflowSettings>({
+    defaultModel: 'gpt-4',
+    executionTimeout: 300,
+    maxConcurrentExecutions: 5,
+    enableVersionTracking: true,
+    autoSaveTemplates: true,
+    showUsageAnalytics: true,
+  });
 
   // Handle opening prompt template editor
   const handleOpenTemplateEditor = useCallback(() => {
     setIsOpen(true);
   }, []);
 
-  // Handle template selection (placeholder for future use)
+  // Handle template selection
   const handleTemplateSelect = useCallback((template: PromptTemplate) => {
     setSelectedTemplate(template);
     showNotification({
       title: 'Template selected',
       message: `"${template.name}" has been selected`,
-      type: 'success'
+      type: 'success',
     });
   }, []);
 
+  // Handle closing modal
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   return (
-    <div className="p-6 h-screen">
-      <div className="flex flex-col h-full">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[50%] left-[50%] w-[30%] h-[30%] bg-cyan-600/10 rounded-full blur-[100px] animate-pulse" />
+      </div>
+
+      <div className="relative z-10 p-6 h-screen flex flex-col">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2">Workflow Builder</h1>
-          <p className="text-gray-600">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-6"
+        >
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-3 mb-2">
+            <Layers className="w-8 h-8 text-purple-400" />
+            Workflow Builder
+          </h1>
+          <p className="text-gray-400">
             Design and execute multi-step AI workflows with drag-and-drop components
           </p>
-        </div>
+        </motion.div>
 
         {/* Main Content */}
-        <div className="flex flex-1 overflow-hidden">
-          <div className="w-full h-full">
-            {/* Tab Navigation */}
-            <div className="flex border-b border-gray-200 mb-4">
-              <button
-                className={`px-4 py-2 text-sm font-medium ${
-                  activeTab === 0
-                    ? 'border-b-2 border-purple-500 text-purple-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab(0)}
-              >
-                Workflow Canvas
-              </button>
-              <button
-                className={`px-4 py-2 text-sm font-medium ${
-                  activeTab === 1
-                    ? 'border-b-2 border-purple-500 text-purple-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab(1)}
-              >
-                Prompt Templates
-              </button>
-              <button
-                className={`px-4 py-2 text-sm font-medium ${
-                  activeTab === 2
-                    ? 'border-b-2 border-purple-500 text-purple-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab(2)}
-              >
-                Analytics
-              </button>
-              <button
-                className={`px-4 py-2 text-sm font-medium ${
-                  activeTab === 3
-                    ? 'border-b-2 border-purple-500 text-purple-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab(3)}
-              >
-                Settings
-              </button>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Tab Navigation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mb-4"
+          >
+            <div className="flex gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 w-fit">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 ${
+                      isActive
+                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
+          </motion.div>
 
-            {/* Tab Content */}
-            <div className="flex-1 h-full">
-              {/* Workflow Canvas Tab */}
-              {activeTab === 0 && (
-                <div className="flex flex-col h-full">
-                  {/* Canvas Toolbar */}
-                  <div className="p-4 border-b border-gray-200">
-                    <div className="flex items-center space-x-4">
-                      <button
-                        onClick={handleOpenTemplateEditor}
-                        className="px-4 py-2 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700"
-                      >
-                        Create Prompt Template
-                      </button>
-                      {selectedTemplate && (
-                        <div>
-                          <span className="text-sm text-gray-600">
-                            Selected template: <strong>{selectedTemplate.name}</strong>
-                          </span>
-                        </div>
-                      )}
-                    </div>
+          {/* Tab Content */}
+          <AnimatePresence mode="wait">
+            {/* Workflow Canvas Tab */}
+            {activeTab === 0 && (
+              <motion.div
+                key="canvas"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex-1 flex flex-col"
+              >
+                {/* Canvas Toolbar */}
+                <GlassCard className="mb-4">
+                  <div className="p-4 flex items-center gap-4">
+                    <PremiumButton
+                      onClick={handleOpenTemplateEditor}
+                      icon={Plus}
+                      iconPosition="left"
+                    >
+                      Create Prompt Template
+                    </PremiumButton>
+                    <PremiumButton variant="glass" icon={Play}>
+                      Run Workflow
+                    </PremiumButton>
+                    {selectedTemplate && (
+                      <div className="flex items-center gap-2 ml-4">
+                        <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                          <FileText className="w-3 h-3 mr-1" />
+                          {selectedTemplate.name}
+                        </Badge>
+                        <button
+                          onClick={() => setSelectedTemplate(null)}
+                          className="text-gray-400 hover:text-white"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
+                </GlassCard>
 
-                  {/* Workflow Canvas */}
-                  <div className="flex-1">
-                    <WorkflowCanvas />
-                  </div>
+                {/* Workflow Canvas */}
+                <div className="flex-1 bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
+                  <WorkflowCanvas />
                 </div>
-              )}
+              </motion.div>
+            )}
 
-              {/* Prompt Templates Tab */}
-              {activeTab === 1 && (
-                <div className="h-full">
-                  <div className="p-6 text-gray-500">
-                    <p>Prompt template system will be integrated once the @the-new-fuse/prompt-templating package is available.</p>
-                    <button
-                      onClick={() => handleTemplateSelect({ id: '1', name: 'Sample Template', description: 'A sample template' })}
-                      className="mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+            {/* Prompt Templates Tab */}
+            {activeTab === 1 && (
+              <motion.div
+                key="templates"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0 }}
+                className="flex-1"
+              >
+                <GlassCard
+                  icon={FileText}
+                  title="Prompt Templates"
+                  subtitle="Create and manage reusable prompt templates"
+                  gradient="purple"
+                >
+                  <motion.div variants={itemVariants} className="p-4">
+                    <p className="text-gray-400 mb-4">
+                      Prompt template system will be integrated once the
+                      @the-new-fuse/prompt-templating package is available.
+                    </p>
+                    <PremiumButton
+                      variant="glass"
+                      onClick={() =>
+                        handleTemplateSelect({
+                          id: '1',
+                          name: 'Sample Template',
+                          description: 'A sample template',
+                        })
+                      }
+                      icon={Sparkles}
                     >
                       Test Template Selection
-                    </button>
-                  </div>
-                </div>
-              )}
+                    </PremiumButton>
+                  </motion.div>
+                </GlassCard>
+              </motion.div>
+            )}
 
-              {/* Analytics Tab */}
-              {activeTab === 2 && (
-                <div className="p-6">
-                  <div className="space-y-6">
-                    <h2 className="text-lg font-semibold">Workflow Analytics</h2>
-                    
-                    <div className="p-6 border border-gray-200 rounded-lg">
-                      <h3 className="text-md font-medium mb-4">Execution Statistics</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-blue-50 p-4 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600">127</div>
-                          <div className="text-sm text-blue-600">Total Executions</div>
-                        </div>
-                        <div className="bg-green-50 p-4 rounded-lg">
-                          <div className="text-2xl font-bold text-green-600">94.2%</div>
-                          <div className="text-sm text-green-600">Success Rate</div>
-                        </div>
-                        <div className="bg-purple-50 p-4 rounded-lg">
-                          <div className="text-2xl font-bold text-purple-600">1,250ms</div>
-                          <div className="text-sm text-purple-600">Avg Response Time</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-6 border border-gray-200 rounded-lg">
-                      <h3 className="text-md font-medium mb-4">Popular Node Types</h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span>Prompt Template</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-32 bg-gray-200 rounded-full h-2">
-                              <div className="bg-purple-600 h-2 rounded-full" style={{ width: '85%' }}></div>
-                            </div>
-                            <span className="text-sm text-gray-500">85%</span>
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>LLM Completion</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-32 bg-gray-200 rounded-full h-2">
-                              <div className="bg-blue-600 h-2 rounded-full" style={{ width: '72%' }}></div>
-                            </div>
-                            <span className="text-sm text-gray-500">72%</span>
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>Data Transform</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-32 bg-gray-200 rounded-full h-2">
-                              <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '58%' }}></div>
-                            </div>
-                            <span className="text-sm text-gray-500">58%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Settings Tab */}
-              {activeTab === 3 && (
-                <div className="p-6">
-                  <div className="space-y-6">
-                    <h2 className="text-lg font-semibold">Workflow Settings</h2>
-                    
-                    <div className="p-6 border border-gray-200 rounded-lg">
-                      <h3 className="text-md font-medium mb-4">Default Configuration</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Default LLM Model
-                          </label>
-                          <select 
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                            title="Select default LLM model"
-                          >
-                            <option value="">Choose a model</option>
-                            <option>GPT-4</option>
-                            <option>GPT-3.5 Turbo</option>
-                            <option>Claude-3 Sonnet</option>
-                            <option>Claude-3 Haiku</option>
-                          </select>
+            {/* Analytics Tab */}
+            {activeTab === 2 && (
+              <motion.div
+                key="analytics"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0 }}
+                className="flex-1 space-y-6 overflow-y-auto"
+              >
+                <GlassCard
+                  icon={BarChart3}
+                  title="Execution Statistics"
+                  subtitle="Overview of workflow performance"
+                  gradient="blue"
+                >
+                  <motion.div
+                    variants={itemVariants}
+                    className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4"
+                  >
+                    <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                          <Zap className="w-5 h-5 text-blue-400" />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Execution Timeout (seconds)
-                          </label>
-                          <input 
-                            type="number" 
-                            defaultValue={300}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                            title="Set execution timeout in seconds"
-                            placeholder="300"
-                          />
+                          <div className="text-2xl font-bold text-white">127</div>
+                          <div className="text-sm text-blue-400">Total Executions</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                          <Check className="w-5 h-5 text-emerald-400" />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Max Concurrent Executions
-                          </label>
-                          <input 
-                            type="number" 
-                            defaultValue={5}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                            title="Set maximum concurrent executions"
-                            placeholder="5"
-                          />
+                          <div className="text-2xl font-bold text-white">94.2%</div>
+                          <div className="text-sm text-emerald-400">Success Rate</div>
                         </div>
                       </div>
                     </div>
+                    <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                          <Clock className="w-5 h-5 text-purple-400" />
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-white">1,250ms</div>
+                          <div className="text-sm text-purple-400">Avg Response Time</div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </GlassCard>
 
-                    <div className="p-6 border border-gray-200 rounded-lg">
-                      <h3 className="text-md font-medium mb-4">Prompt Template Settings</h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span>Enable version tracking</span>
-                          <input 
-                            type="checkbox" 
-                            defaultChecked 
-                            className="form-checkbox"
-                            title="Enable or disable version tracking for templates"
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span>Auto-save templates</span>
-                          <input 
-                            type="checkbox" 
-                            defaultChecked 
-                            className="form-checkbox"
-                            title="Enable or disable auto-saving of templates"
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span>Show usage analytics</span>
-                          <input 
-                            type="checkbox" 
-                            defaultChecked 
-                            className="form-checkbox"
-                            title="Enable or disable usage analytics for templates"
-                          />
+                <GlassCard
+                  icon={TrendingUp}
+                  title="Popular Node Types"
+                  subtitle="Most used components in workflows"
+                  gradient="green"
+                >
+                  <motion.div variants={itemVariants} className="p-4 space-y-4">
+                    {[
+                      { name: 'Prompt Template', percentage: 85, color: 'purple' },
+                      { name: 'LLM Completion', percentage: 72, color: 'blue' },
+                      { name: 'Data Transform', percentage: 58, color: 'amber' },
+                    ].map((item) => (
+                      <div key={item.name} className="flex justify-between items-center">
+                        <span className="text-gray-300">{item.name}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 bg-white/10 rounded-full h-2">
+                            <div
+                              className={`bg-${item.color}-500 h-2 rounded-full transition-all duration-500`}
+                              style={{ width: `${item.percentage}%` }}
+                            />
+                          </div>
+                          <span className="text-sm text-gray-400 w-12">{item.percentage}%</span>
                         </div>
                       </div>
+                    ))}
+                  </motion.div>
+                </GlassCard>
+              </motion.div>
+            )}
+
+            {/* Settings Tab */}
+            {activeTab === 3 && (
+              <motion.div
+                key="settings"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0 }}
+                className="flex-1 space-y-6 overflow-y-auto"
+              >
+                <GlassCard
+                  icon={Settings}
+                  title="Default Configuration"
+                  subtitle="Configure workflow execution defaults"
+                  gradient="orange"
+                >
+                  <motion.div variants={itemVariants} className="p-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <Braces className="w-4 h-4 inline mr-2" />
+                        Default LLM Model
+                      </label>
+                      <PremiumSelect
+                        value={settings.defaultModel}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                          setSettings({ ...settings, defaultModel: e.target.value })
+                        }
+                      >
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="claude-3-sonnet">Claude-3 Sonnet</option>
+                        <option value="claude-3-haiku">Claude-3 Haiku</option>
+                      </PremiumSelect>
                     </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <Clock className="w-4 h-4 inline mr-2" />
+                        Execution Timeout (seconds)
+                      </label>
+                      <PremiumInput
+                        type="number"
+                        value={settings.executionTimeout}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setSettings({
+                            ...settings,
+                            executionTimeout: parseInt(e.target.value) || 300,
+                          })
+                        }
+                        min={10}
+                        max={3600}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <Zap className="w-4 h-4 inline mr-2" />
+                        Max Concurrent Executions
+                      </label>
+                      <PremiumInput
+                        type="number"
+                        value={settings.maxConcurrentExecutions}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setSettings({
+                            ...settings,
+                            maxConcurrentExecutions: parseInt(e.target.value) || 5,
+                          })
+                        }
+                        min={1}
+                        max={50}
+                      />
+                    </div>
+                  </motion.div>
+                </GlassCard>
+
+                <GlassCard
+                  icon={FileText}
+                  title="Prompt Template Settings"
+                  subtitle="Configure template behavior"
+                  gradient="purple"
+                >
+                  <motion.div variants={itemVariants} className="p-4 space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                      <div>
+                        <p className="font-medium text-white">Enable version tracking</p>
+                        <p className="text-sm text-gray-400">
+                          Track changes to templates over time
+                        </p>
+                      </div>
+                      <ToggleSwitch
+                        checked={settings.enableVersionTracking}
+                        onChange={(checked: boolean) =>
+                          setSettings({ ...settings, enableVersionTracking: checked })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                      <div>
+                        <p className="font-medium text-white">Auto-save templates</p>
+                        <p className="text-sm text-gray-400">
+                          Automatically save changes as you type
+                        </p>
+                      </div>
+                      <ToggleSwitch
+                        checked={settings.autoSaveTemplates}
+                        onChange={(checked: boolean) =>
+                          setSettings({ ...settings, autoSaveTemplates: checked })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                      <div>
+                        <p className="font-medium text-white">Show usage analytics</p>
+                        <p className="text-sm text-gray-400">
+                          Display usage statistics for templates
+                        </p>
+                      </div>
+                      <ToggleSwitch
+                        checked={settings.showUsageAnalytics}
+                        onChange={(checked: boolean) =>
+                          setSettings({ ...settings, showUsageAnalytics: checked })
+                        }
+                      />
+                    </div>
+                  </motion.div>
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* Prompt Template Editor Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsOpen(false)}></div>
-          <div className="relative bg-white rounded-lg shadow-xl max-w-[90vw] max-h-[90vh] w-full mx-4">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-semibold">Prompt Template Editor</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-                title="Close modal"
-                aria-label="Close modal"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-0 overflow-hidden">
-              <div className="h-[70vh]">
-                <div className="p-6 text-gray-500">
-                  <p>Prompt template editor UI will be integrated once the @the-new-fuse/prompt-templating package is available.</p>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={handleCloseModal}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative max-w-[90vw] max-h-[90vh] w-full mx-4"
+            >
+              <GlassCard className="overflow-hidden">
+                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-400" />
+                    Prompt Template Editor
+                  </h2>
+                  <button
+                    onClick={handleCloseModal}
+                    className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+                    aria-label="Close modal"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+                <div className="p-6 h-[70vh] overflow-auto">
+                  <div className="text-gray-400">
+                    <p>
+                      Prompt template editor UI will be integrated once the
+                      @the-new-fuse/prompt-templating package is available.
+                    </p>
+                  </div>
+                </div>
+              </GlassCard>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

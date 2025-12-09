@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
-import { 
+import { Badge } from '@/components/ui/badge';
+import {
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumTextarea,
+  ToggleSwitch,
+} from '@/components/ui/premium';
+import { useToast } from '@/hooks/useToast';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
   ArrowLeft,
+  ArrowRight,
+  BarChart3,
+  Bot,
   Check,
-  X,
-  Info,
-  Cpu,
   Cloud,
-  User,
-  Cog,
-  BarChart,
-  Pencil,
-  Play,
-  FileText,
   Code,
-  Globe
+  Cog,
+  Cpu,
+  FileText,
+  Globe,
+  Info,
+  Loader2,
+  MessageSquare,
+  Pencil,
+  Rocket,
+  Save,
+  Sparkles,
+  User,
+  X,
+  Zap,
 } from 'lucide-react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface AgentConfig {
@@ -38,11 +55,51 @@ interface AgentConfig {
   timeoutSeconds: number;
 }
 
+interface Step {
+  id: number;
+  name: string;
+  icon: React.ElementType;
+}
+
+interface AgentType {
+  id: 'conversational' | 'task-automation' | 'data-analysis' | 'content-generation';
+  name: string;
+  description: string;
+  icon: React.ElementType;
+  gradient: string;
+}
+
+interface Model {
+  id: string;
+  name: string;
+  provider: string;
+  description: string;
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3 },
+  },
+};
+
 const CreateAgent: React.FC = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [saving, setSaving] = useState(false);
-  
+  const [tagInput, setTagInput] = useState('');
+
   const [config, setConfig] = useState<AgentConfig>({
     name: '',
     description: '',
@@ -61,57 +118,77 @@ const CreateAgent: React.FC = () => {
     enableLogging: true,
     enableMetrics: true,
     rateLimitPerMinute: 60,
-    timeoutSeconds: 30
+    timeoutSeconds: 30,
   });
 
-  const steps = [
+  const steps: Step[] = [
     { id: 1, name: 'Basic Info', icon: Info },
     { id: 2, name: 'Configuration', icon: Cog },
     { id: 3, name: 'Capabilities', icon: Cpu },
     { id: 4, name: 'Advanced', icon: Code },
-    { id: 5, name: 'Review', icon: Check }
+    { id: 5, name: 'Review', icon: Check },
   ];
 
-  const agentTypes = [
+  const agentTypes: AgentType[] = [
     {
       id: 'conversational',
       name: 'Conversational',
       description: 'Chat-based agents for customer support, Q&A, and general conversation',
-      icon: User,
-      color: 'blue'
+      icon: MessageSquare,
+      gradient: 'from-blue-500 to-cyan-500',
     },
     {
       id: 'task-automation',
       name: 'Task Automation',
       description: 'Agents that automate workflows, processes, and repetitive tasks',
       icon: Cog,
-      color: 'green'
+      gradient: 'from-green-500 to-emerald-500',
     },
     {
       id: 'data-analysis',
       name: 'Data Analysis',
       description: 'Agents specialized in analyzing data, generating reports, and insights',
-      icon: BarChart,
-      color: 'purple'
+      icon: BarChart3,
+      gradient: 'from-purple-500 to-violet-500',
     },
     {
       id: 'content-generation',
       name: 'Content Generation',
       description: 'Agents for creating content, writing, and creative tasks',
       icon: Pencil,
-      color: 'orange'
-    }
+      gradient: 'from-orange-500 to-amber-500',
+    },
   ];
 
-  const availableModels = [
+  const availableModels: Model[] = [
     { id: 'gpt-4', name: 'GPT-4', provider: 'OpenAI', description: 'Most capable model' },
-    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI', description: 'Fast and efficient' },
-    { id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'Anthropic', description: 'Excellent reasoning' },
-    { id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', provider: 'Anthropic', description: 'Balanced performance' },
-    { id: 'gemini-pro', name: 'Gemini Pro', provider: 'Google', description: 'Multimodal capabilities' }
+    {
+      id: 'gpt-3.5-turbo',
+      name: 'GPT-3.5 Turbo',
+      provider: 'OpenAI',
+      description: 'Fast and efficient',
+    },
+    {
+      id: 'claude-3-opus',
+      name: 'Claude 3 Opus',
+      provider: 'Anthropic',
+      description: 'Excellent reasoning',
+    },
+    {
+      id: 'claude-3-sonnet',
+      name: 'Claude 3 Sonnet',
+      provider: 'Anthropic',
+      description: 'Balanced performance',
+    },
+    {
+      id: 'gemini-pro',
+      name: 'Gemini Pro',
+      provider: 'Google',
+      description: 'Multimodal capabilities',
+    },
   ];
 
-  const availableCapabilities = [
+  const availableCapabilities: string[] = [
     'Text Generation',
     'Code Generation',
     'Data Analysis',
@@ -123,31 +200,33 @@ const CreateAgent: React.FC = () => {
     'Email Sending',
     'Scheduling',
     'Translation',
-    'Summarization'
+    'Summarization',
   ];
 
   const handleCapabilityToggle = (capability: string) => {
-    setConfig(prev => ({
+    setConfig((prev) => ({
       ...prev,
       capabilities: prev.capabilities.includes(capability)
-        ? prev.capabilities.filter(c => c !== capability)
-        : [...prev.capabilities, capability]
+        ? prev.capabilities.filter((c: string) => c !== capability)
+        : [...prev.capabilities, capability],
     }));
   };
 
-  const handleTagAdd = (tag: string) => {
+  const handleTagAdd = () => {
+    const tag = tagInput.trim();
     if (tag && !config.tags.includes(tag)) {
-      setConfig(prev => ({
+      setConfig((prev) => ({
         ...prev,
-        tags: [...prev.tags, tag]
+        tags: [...prev.tags, tag],
       }));
+      setTagInput('');
     }
   };
 
   const handleTagRemove = (tag: string) => {
-    setConfig(prev => ({
+    setConfig((prev) => ({
       ...prev,
-      tags: prev.tags.filter(t => t !== tag)
+      tags: prev.tags.filter((t: string) => t !== tag),
     }));
   };
 
@@ -157,482 +236,37 @@ const CreateAgent: React.FC = () => {
       const response = await fetch('/api/dashboard/agents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config)
+        body: JSON.stringify(config),
       });
-      
+
       if (response.ok) {
         const agent = await response.json();
+        toast({
+          title: 'Agent Created!',
+          description: `${config.name} has been successfully deployed.`,
+        });
         navigate(`/dashboard/agents/${agent.id}`);
+      } else {
+        throw new Error('Failed to create agent');
       }
     } catch (error) {
       console.error('Failed to create agent:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create agent. Please try again.',
+        variant: 'destructive',
+      });
     } finally {
       setSaving(false);
     }
   };
 
-  const renderStepContent = () => {
+  const isStepValid = (): boolean => {
     switch (currentStep) {
       case 1:
-        return (
-          <div className="space-y-6">
-            <div>
-              <label htmlFor="agentName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Agent Name *
-              </label>
-              <input
-                type="text"
-                id="agentName"
-                value={config.name}
-                onChange={(e) => setConfig({ ...config, name: e.target.value })}
-                placeholder="Enter a descriptive name for your agent"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="agentDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Description *
-              </label>
-              <textarea
-                id="agentDescription"
-                value={config.description}
-                onChange={(e) => setConfig({ ...config, description: e.target.value })}
-                placeholder="Describe what this agent does and its purpose"
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                Agent Type *
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {agentTypes.map((type) => (
-                  <div
-                    key={type.id}
-                    className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                      config.type === type.id
-                        ? `border-${type.color}-500 bg-${type.color}-50 dark:bg-${type.color}-900/20`
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }`}
-                    onClick={() => setConfig({ ...config, type: type.id as any })}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className={`p-2 bg-${type.color}-100 dark:bg-${type.color}-900 rounded-lg`}>
-                        <type.icon className={`w-6 h-6 text-${type.color}-600`} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {type.name}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          {type.description}
-                        </p>
-                      </div>
-                      {config.type === type.id && (
-                        <Check className={`w-5 h-5 text-${type.color}-600`} />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
+        return Boolean(config.name.trim() && config.description.trim() && config.type);
       case 2:
-        return (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                Language Model *
-              </label>
-              <div className="space-y-3">
-                {availableModels.map((model) => (
-                  <div
-                    key={model.id}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                      config.model === model.id
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }`}
-                    onClick={() => setConfig({ ...config, model: model.id })}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {model.name}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          {model.provider} • {model.description}
-                        </p>
-                      </div>
-                      {config.model === model.id && (
-                        <CheckIcon className="w-5 h-5 text-blue-600" />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                Deployment Type *
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                    config.deployment === 'cloud'
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                  }`}
-                  onClick={() => setConfig({ ...config, deployment: 'cloud' })}
-                >
-                  <div className="text-center">
-                    <CloudIcon className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-                    <h3 className="font-medium text-gray-900 dark:text-white">Cloud</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      Hosted and managed
-                    </p>
-                  </div>
-                </div>
-                
-                <div
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                    config.deployment === 'local'
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                  }`}
-                  onClick={() => setConfig({ ...config, deployment: 'local' })}
-                >
-                  <div className="text-center">
-                    <CpuChipIcon className="w-8 h-8 mx-auto mb-2 text-green-600" />
-                    <h3 className="font-medium text-gray-900 dark:text-white">Local</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      Self-hosted
-                    </p>
-                  </div>
-                </div>
-                
-                <div
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                    config.deployment === 'hybrid'
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                  }`}
-                  onClick={() => setConfig({ ...config, deployment: 'hybrid' })}
-                >
-                  <div className="text-center">
-                    <GlobeAltIcon className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                    <h3 className="font-medium text-gray-900 dark:text-white">Hybrid</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      Mixed deployment
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="systemPrompt" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                System Prompt
-              </label>
-              <textarea
-                id="systemPrompt"
-                value={config.systemPrompt}
-                onChange={(e) => setConfig({ ...config, systemPrompt: e.target.value })}
-                placeholder="Define the agent's behavior, personality, and instructions..."
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                Agent Capabilities
-              </label>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Select the capabilities your agent should have access to.
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {availableCapabilities.map((capability) => (
-                  <label
-                    key={capability}
-                    className="flex items-center space-x-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={config.capabilities.includes(capability)}
-                      onChange={() => handleCapabilityToggle(capability)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {capability}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {config.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm rounded-full"
-                  >
-                    {tag}
-                    <button
-                      onClick={() => handleTagRemove(tag)}
-                      className="ml-2 text-blue-600 hover:text-blue-800"
-                      title="Remove tag"
-                    >
-                      <XMarkIcon className="w-4 h-4" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <input
-                type="text"
-                id="tags"
-                placeholder="Add tags (press Enter)"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleTagAdd(e.currentTarget.value);
-                    e.currentTarget.value = '';
-                  }
-                }}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-          </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="temperature" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Temperature: {config.temperature}
-                </label>
-                <input
-                  type="range"
-                  id="temperature"
-                  min="0"
-                  max="2"
-                  step="0.1"
-                  value={config.temperature}
-                  onChange={(e) => setConfig({ ...config, temperature: parseFloat(e.target.value) })}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  <span>Focused</span>
-                  <span>Creative</span>
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="maxTokens" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Max Tokens
-                </label>
-                <input
-                  type="number"
-                  id="maxTokens"
-                  min="1"
-                  max="8192"
-                  value={config.maxTokens}
-                  onChange={(e) => setConfig({ ...config, maxTokens: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="topP" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Top P: {config.topP}
-                </label>
-                <input
-                  type="range"
-                  id="topP"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={config.topP}
-                  onChange={(e) => setConfig({ ...config, topP: parseFloat(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="rateLimitPerMinute" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Rate Limit (per minute)
-                </label>
-                <input
-                  type="number"
-                  id="rateLimitPerMinute"
-                  min="1"
-                  max="1000"
-                  value={config.rateLimitPerMinute}
-                  onChange={(e) => setConfig({ ...config, rateLimitPerMinute: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={config.isPublic}
-                  onChange={(e) => setConfig({ ...config, isPublic: e.target.checked })}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  Make this agent publicly available
-                </span>
-              </label>
-
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={config.enableLogging}
-                  onChange={(e) => setConfig({ ...config, enableLogging: e.target.checked })}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  Enable conversation logging
-                </span>
-              </label>
-
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={config.enableMetrics}
-                  onChange={(e) => setConfig({ ...config, enableMetrics: e.target.checked })}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  Enable performance metrics
-                </span>
-              </label>
-            </div>
-          </div>
-        );
-
-      case 5:
-        return (
-          <div className="space-y-6">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Agent Summary
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Basic Information</h4>
-                  <dl className="space-y-2 text-sm">
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Name:</dt>
-                      <dd className="text-gray-900 dark:text-white">{config.name}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Type:</dt>
-                      <dd className="text-gray-900 dark:text-white capitalize">{config.type.replace('-', ' ')}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Model:</dt>
-                      <dd className="text-gray-900 dark:text-white">{config.model}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Deployment:</dt>
-                      <dd className="text-gray-900 dark:text-white capitalize">{config.deployment}</dd>
-                    </div>
-                  </dl>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Configuration</h4>
-                  <dl className="space-y-2 text-sm">
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Temperature:</dt>
-                      <dd className="text-gray-900 dark:text-white">{config.temperature}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Max Tokens:</dt>
-                      <dd className="text-gray-900 dark:text-white">{config.maxTokens}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Rate Limit:</dt>
-                      <dd className="text-gray-900 dark:text-white">{config.rateLimitPerMinute}/min</dd>
-                    </div>
-                    <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Public:</dt>
-                      <dd className="text-gray-900 dark:text-white">{config.isPublic ? 'Yes' : 'No'}</dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-              
-              {config.capabilities.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-900 mb-2">Capabilities</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {config.capabilities.map((capability) => (
-                      <span
-                        key={capability}
-                        className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
-                      >
-                        {capability}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {config.tags.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-900 mb-2">Tags</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {config.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  const isStepValid = () => {
-    switch (currentStep) {
-      case 1:
-        return config.name.trim() && config.description.trim() && config.type;
-      case 2:
-        return config.model && config.deployment;
+        return Boolean(config.model && config.deployment);
       case 3:
       case 4:
       case 5:
@@ -642,103 +276,618 @@ const CreateAgent: React.FC = () => {
     }
   };
 
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Bot className="w-4 h-4 inline mr-2" />
+                Agent Name *
+              </label>
+              <PremiumInput
+                type="text"
+                value={config.name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setConfig({ ...config, name: e.target.value })
+                }
+                placeholder="Enter a descriptive name for your agent"
+              />
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <FileText className="w-4 h-4 inline mr-2" />
+                Description *
+              </label>
+              <PremiumTextarea
+                value={config.description}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setConfig({ ...config, description: e.target.value })
+                }
+                placeholder="Describe what this agent does and its purpose"
+                rows={3}
+              />
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-4">
+                <Sparkles className="w-4 h-4 inline mr-2" />
+                Agent Type *
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {agentTypes.map((type) => {
+                  const Icon = type.icon;
+                  const isSelected = config.type === type.id;
+                  return (
+                    <motion.div
+                      key={type.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setConfig({ ...config, type: type.id })}
+                      className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                        isSelected
+                          ? 'border-purple-500 bg-purple-500/10'
+                          : 'border-white/10 bg-black/20 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`p-3 rounded-xl bg-gradient-to-br ${type.gradient} bg-opacity-20`}
+                        >
+                          <Icon className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-medium text-white">{type.name}</h3>
+                          <p className="text-sm text-gray-400 mt-1">{type.description}</p>
+                        </div>
+                        {isSelected && (
+                          <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.div>
+        );
+
+      case 2:
+        return (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-4">
+                <Cpu className="w-4 h-4 inline mr-2" />
+                Language Model *
+              </label>
+              <div className="space-y-3">
+                {availableModels.map((model) => {
+                  const isSelected = config.model === model.id;
+                  return (
+                    <motion.div
+                      key={model.id}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      onClick={() => setConfig({ ...config, model: model.id })}
+                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                        isSelected
+                          ? 'border-blue-500 bg-blue-500/10'
+                          : 'border-white/10 bg-black/20 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-medium text-white">{model.name}</h3>
+                          <p className="text-sm text-gray-400">
+                            {model.provider} • {model.description}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-4">
+                <Globe className="w-4 h-4 inline mr-2" />
+                Deployment Type *
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { id: 'cloud', icon: Cloud, label: 'Cloud', desc: 'Hosted and managed' },
+                  { id: 'local', icon: Cpu, label: 'Local', desc: 'Self-hosted' },
+                  { id: 'hybrid', icon: Globe, label: 'Hybrid', desc: 'Mixed deployment' },
+                ].map(({ id, icon: Icon, label, desc }) => {
+                  const isSelected = config.deployment === id;
+                  return (
+                    <motion.div
+                      key={id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() =>
+                        setConfig({ ...config, deployment: id as 'cloud' | 'local' | 'hybrid' })
+                      }
+                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all text-center ${
+                        isSelected
+                          ? 'border-purple-500 bg-purple-500/10'
+                          : 'border-white/10 bg-black/20 hover:border-white/20'
+                      }`}
+                    >
+                      <Icon className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+                      <h3 className="font-medium text-white">{label}</h3>
+                      <p className="text-sm text-gray-400 mt-1">{desc}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <User className="w-4 h-4 inline mr-2" />
+                System Prompt
+              </label>
+              <PremiumTextarea
+                value={config.systemPrompt}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setConfig({ ...config, systemPrompt: e.target.value })
+                }
+                placeholder="Define the agent's behavior, personality, and instructions..."
+                rows={4}
+              />
+            </motion.div>
+          </motion.div>
+        );
+
+      case 3:
+        return (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Zap className="w-4 h-4 inline mr-2" />
+                Agent Capabilities
+              </label>
+              <p className="text-sm text-gray-400 mb-4">
+                Select the capabilities your agent should have access to.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {availableCapabilities.map((capability) => {
+                  const isSelected = config.capabilities.includes(capability);
+                  return (
+                    <motion.label
+                      key={capability}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
+                          : 'border-white/10 bg-black/20 hover:border-white/20 text-gray-300'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleCapabilityToggle(capability)}
+                        className="sr-only"
+                      />
+                      {isSelected ? (
+                        <Check className="w-4 h-4 text-emerald-400" />
+                      ) : (
+                        <div className="w-4 h-4 rounded border border-white/20" />
+                      )}
+                      <span className="text-sm">{capability}</span>
+                    </motion.label>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Tags</label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {config.tags.map((tag: string) => (
+                  <Badge
+                    key={tag}
+                    className="bg-purple-500/20 text-purple-400 border-purple-500/30 px-3 py-1"
+                  >
+                    {tag}
+                    <button onClick={() => handleTagRemove(tag)} className="ml-2 hover:text-white">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <PremiumInput
+                  type="text"
+                  value={tagInput}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTagInput(e.target.value)}
+                  placeholder="Add tags (press Enter)"
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleTagAdd();
+                    }
+                  }}
+                  className="flex-1"
+                />
+                <PremiumButton variant="glass" size="sm" onClick={handleTagAdd}>
+                  Add
+                </PremiumButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        );
+
+      case 4:
+        return (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Temperature: <span className="text-purple-400">{config.temperature}</span>
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  value={config.temperature}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setConfig({ ...config, temperature: parseFloat(e.target.value) })
+                  }
+                  className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>Focused</span>
+                  <span>Creative</span>
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Max Tokens</label>
+                <PremiumInput
+                  type="number"
+                  min={1}
+                  max={8192}
+                  value={config.maxTokens}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setConfig({ ...config, maxTokens: parseInt(e.target.value) || 2048 })
+                  }
+                />
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Top P: <span className="text-purple-400">{config.topP}</span>
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={config.topP}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setConfig({ ...config, topP: parseFloat(e.target.value) })
+                  }
+                  className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                />
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Rate Limit (per minute)
+                </label>
+                <PremiumInput
+                  type="number"
+                  min={1}
+                  max={1000}
+                  value={config.rateLimitPerMinute}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setConfig({ ...config, rateLimitPerMinute: parseInt(e.target.value) || 60 })
+                  }
+                />
+              </motion.div>
+            </div>
+
+            <motion.div variants={itemVariants} className="space-y-4 pt-4">
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                <div>
+                  <p className="font-medium text-white">Make this agent publicly available</p>
+                  <p className="text-sm text-gray-400">Others can discover and use this agent</p>
+                </div>
+                <ToggleSwitch
+                  checked={config.isPublic}
+                  onChange={(checked: boolean) => setConfig({ ...config, isPublic: checked })}
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                <div>
+                  <p className="font-medium text-white">Enable conversation logging</p>
+                  <p className="text-sm text-gray-400">Store conversation history for analysis</p>
+                </div>
+                <ToggleSwitch
+                  checked={config.enableLogging}
+                  onChange={(checked: boolean) => setConfig({ ...config, enableLogging: checked })}
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                <div>
+                  <p className="font-medium text-white">Enable performance metrics</p>
+                  <p className="text-sm text-gray-400">Track response times and usage stats</p>
+                </div>
+                <ToggleSwitch
+                  checked={config.enableMetrics}
+                  onChange={(checked: boolean) => setConfig({ ...config, enableMetrics: checked })}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        );
+
+      case 5:
+        return (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            <GlassCard gradient="purple">
+              <div className="p-4">
+                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                  <Rocket className="w-5 h-5 text-purple-400" />
+                  Agent Summary
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium text-gray-300 mb-3">Basic Information</h4>
+                    <dl className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Name:</dt>
+                        <dd className="text-white font-medium">{config.name || '-'}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Type:</dt>
+                        <dd className="text-white capitalize">{config.type.replace('-', ' ')}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Model:</dt>
+                        <dd className="text-white">{config.model}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Deployment:</dt>
+                        <dd className="text-white capitalize">{config.deployment}</dd>
+                      </div>
+                    </dl>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-gray-300 mb-3">Configuration</h4>
+                    <dl className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Temperature:</dt>
+                        <dd className="text-white">{config.temperature}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Max Tokens:</dt>
+                        <dd className="text-white">{config.maxTokens}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Rate Limit:</dt>
+                        <dd className="text-white">{config.rateLimitPerMinute}/min</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-gray-500">Public:</dt>
+                        <dd className="text-white">{config.isPublic ? 'Yes' : 'No'}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+
+                {config.capabilities.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="font-medium text-gray-300 mb-3">Capabilities</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {config.capabilities.map((capability: string) => (
+                        <Badge
+                          key={capability}
+                          className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                        >
+                          {capability}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {config.tags.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium text-gray-300 mb-3">Tags</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {config.tags.map((tag: string) => (
+                        <Badge
+                          key={tag}
+                          className="bg-purple-500/20 text-purple-400 border-purple-500/30"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </GlassCard>
+          </motion.div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-4 mb-6">
             <Link
               to="/dashboard/agents"
-              className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+              className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
             >
-              <ArrowLeftIcon className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 flex items-center gap-2">
+                <Bot className="w-8 h-8 text-purple-400" />
                 Create New Agent
               </h1>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-400">
                 Step {currentStep} of {steps.length}
               </p>
             </div>
           </div>
 
           {/* Progress Steps */}
-          <div className="flex items-center space-x-4">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors ${
-                    currentStep > step.id
-                      ? 'bg-green-500 border-green-500 text-white'
-                      : currentStep === step.id
-                      ? 'bg-blue-500 border-blue-500 text-white'
-                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500'
-                  }`}
-                >
-                  {currentStep > step.id ? (
-                    <CheckIcon className="w-5 h-5" />
-                  ) : (
-                    <step.icon className="w-5 h-5" />
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              const isCompleted = currentStep > step.id;
+              const isCurrent = currentStep === step.id;
+
+              return (
+                <React.Fragment key={step.id}>
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center gap-2"
+                  >
+                    <div
+                      className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+                        isCompleted
+                          ? 'bg-emerald-500 border-emerald-500 text-white'
+                          : isCurrent
+                            ? 'bg-purple-500 border-purple-500 text-white'
+                            : 'bg-black/20 border-white/20 text-gray-500'
+                      }`}
+                    >
+                      {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
+                    </div>
+                    <span
+                      className={`text-sm font-medium whitespace-nowrap ${
+                        isCurrent || isCompleted ? 'text-white' : 'text-gray-500'
+                      }`}
+                    >
+                      {step.name}
+                    </span>
+                  </motion.div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`w-8 h-0.5 ${isCompleted ? 'bg-emerald-500' : 'bg-white/10'}`}
+                    />
                   )}
-                </div>
-                <span
-                  className={`ml-2 text-sm font-medium ${
-                    currentStep >= step.id
-                      ? 'text-gray-900 dark:text-white'
-                      : 'text-gray-500 dark:text-gray-400'
-                  }`}
-                >
-                  {step.name}
-                </span>
-                {index < steps.length - 1 && (
-                  <div className="w-8 h-px bg-gray-300 dark:bg-gray-600 mx-4" />
-                )}
-              </div>
-            ))}
+                </React.Fragment>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Step Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 mb-8">
-          {renderStepContent()}
-        </div>
+        <GlassCard className="mb-8">
+          <div className="p-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {renderStepContent()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </GlassCard>
 
         {/* Navigation */}
         <div className="flex items-center justify-between">
-          <button
+          <PremiumButton
+            variant="ghost"
             onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
             disabled={currentStep === 1}
-            className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            icon={ArrowLeft}
           >
             Previous
-          </button>
+          </PremiumButton>
 
-          <div className="flex space-x-3">
+          <div className="flex gap-3">
             {currentStep < steps.length ? (
-              <button
+              <PremiumButton
                 onClick={() => setCurrentStep(currentStep + 1)}
                 disabled={!isStepValid()}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                icon={ArrowRight}
+                iconPosition="right"
               >
                 Next
-              </button>
+              </PremiumButton>
             ) : (
-              <button
+              <PremiumButton
+                variant="gradient"
+                glow
                 onClick={handleSave}
                 disabled={saving}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 flex items-center justify-center"
+                icon={saving ? Loader2 : Save}
+                className={saving ? 'animate-pulse' : ''}
               >
-                {saving ? (
-                  <>
-                    <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                    Saving...
-                  </>
-                ) : (
-                  'Save Agent'
-                )}
-              </button>
+                {saving ? 'Deploying...' : 'Deploy Agent'}
+              </PremiumButton>
             )}
           </div>
         </div>
