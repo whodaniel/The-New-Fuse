@@ -5,13 +5,14 @@ import { GoogleAuthProvider } from 'firebase/auth';
 import { signInWithPopup } from 'firebase/auth';
 
 // Fallback Firebase configuration for development
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyA1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6',
-  authDomain: 'thenewfuse.firebaseapp.com',
-  projectId: 'thenewfuse',
-  storageBucket: 'thenewfuse.appspot.com',
-  messagingSenderId: '1234567890',
-  appId: '1:1234567890:web:abcdef123456'
+  apiKey: 'AIzaSyC4h4qMlMj0kSrvIlwdooJ9uiZn0XqoA8o',
+  authDomain: 'the-new-fuse-2025.firebaseapp.com',
+  projectId: 'the-new-fuse-2025',
+  storageBucket: 'the-new-fuse-2025.firebasestorage.app',
+  messagingSenderId: '241337102384',
+  appId: '1:241337102384:web:232e153c82083f9e00fdf5'
 };
 
 // Try to override with environment variables if available
