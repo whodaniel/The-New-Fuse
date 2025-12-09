@@ -416,6 +416,14 @@ export default function ComprehensiveRouter() {
             element={<LazyPage name="Package Workflows" path="/package/workflows" />}
           />
           <Route
+            path="/profile"
+            element={
+              <Suspense fallback={<LoadingFallback name="User Profile" />}>
+                <UserProfilePage />
+              </Suspense>
+            }
+          />
+          <Route
             path="/user/profile"
             element={
               <Suspense fallback={<LoadingFallback name="User Profile" />}>
