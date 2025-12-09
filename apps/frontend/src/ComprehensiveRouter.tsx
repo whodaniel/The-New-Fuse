@@ -35,6 +35,7 @@ const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
 const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
+const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
 
 // Resources pages
 const ResourcesDashboard = lazy(() => import('./pages/Resources/ResourcesDashboard'));
@@ -191,6 +192,14 @@ export default function ComprehensiveRouter() {
           <Route path="/home" element={<LandingRedesignedPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sophisticated-hub" element={<SophisticatedTNFHub />} />
+          <Route
+            path="/hub"
+            element={
+              <Suspense fallback={<LoadingFallback name="Hub" />}>
+                <ModernHub />
+              </Suspense>
+            }
+          />
 
           {/* Resources Marketplace */}
           <Route path="/resources" element={<ResourcesDashboard />} />
