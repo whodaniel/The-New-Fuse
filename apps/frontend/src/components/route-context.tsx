@@ -7,7 +7,11 @@ interface RouteContextType {
 
 const RouteContext = createContext<RouteContextType | undefined>(undefined);
 
-export function RouteProvider({ children }: { children: ReactNode }) {
+interface RouteProviderProps {
+  children: ReactNode;
+}
+
+export function RouteProvider({ children }: RouteProviderProps) {
   const [pageTitle, setPageTitle] = useState('Dashboard');
 
   return (
