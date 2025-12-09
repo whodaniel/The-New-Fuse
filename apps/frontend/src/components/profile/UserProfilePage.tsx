@@ -1,170 +1,394 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import { Bell, Camera, Lock, Mail, Palette, Save, Shield, User } from 'lucide-react';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { useAuth } from '../../providers/AuthProvider';
 
 // This should match the UserProfile type in apps/api/src/services/userService.ts
 interface UserProfile {
-    id: string;
-    email: string;
-    displayName?: string;
-    bio?: string;
-    preferences?: {
-        theme?: 'light' | 'dark' | 'system';
-        notifications?: boolean;
-    };
+  id: string;
+  email: string;
+  displayName?: string;
+  bio?: string;
+  preferences?: {
+    theme?: 'light' | 'dark' | 'system';
+    notifications?: boolean;
+  };
 }
 
 const UserProfilePage: React.FC = () => {
-    const [profile, setProfile] = useState<UserProfile | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { user } = useAuth();
 
-    // Form state
-    const [displayName, setDisplayName] = useState<string>('');
-    const [bio, setBio] = useState<string>('');
-    const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
-    const [notifications, setNotifications] = useState<boolean>(false);
+  // Form state
+  const [displayName, setDisplayName] = useState<string>('');
+  const [bio, setBio] = useState<string>('');
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const [notifications, setNotifications] = useState<boolean>(false);
 
-    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003'; // Using Vite environment variables
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003';
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                // In a real app, the request would be authenticated
-                const response = await fetch(`${API_BASE_URL}/api/users/profile`); // Using GET
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch profile: ${response.statusText} (Status: ${response.status})`);
-                }
-                const data: UserProfile = await response.json();
-                setProfile(data);
-                // Initialize form fields
-                setDisplayName(data.displayName || '');
-                setBio(data.bio || '');
-                setTheme(data.preferences?.theme || 'system');
-                setNotifications(data.preferences?.notifications || false);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An unknown error occurred');
-                console.error("Fetch profile error:", err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchProfile();
-    }, [API_BASE_URL]);
-
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError(null);
-        setSuccessMessage(null);
-        setIsLoading(true);
-
-        const updatedProfileData = {
-            displayName,
-            bio,
-            preferences: {
-                theme,
-                notifications,
-            },
-        };
-
-        try {
-            // In a real app, the request would be authenticated
-            const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Add Authorization header if needed: 'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(updatedProfileData),
-            });
-
-            if (!response.ok) {
-                 const errorData = await response.json().catch(() => ({ message: `Failed to update profile: ${response.statusText}` }));
-                throw new Error(errorData.message || `Failed to update profile: ${response.statusText} (Status: ${response.status})`);
-            }
-
-            const updatedProfile: UserProfile = await response.json();
-            setProfile(updatedProfile);
-            setSuccessMessage('Profile updated successfully!');
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'An unknown error occurred while updating');
-            console.error("Update profile error:", err);
-        } finally {
-            setIsLoading(false);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`);
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch profile: ${response.statusText} (Status: ${response.status})`
+          );
         }
+        const data: UserProfile = await response.json();
+        setProfile(data);
+        setDisplayName(data.displayName || '');
+        setBio(data.bio || '');
+        setTheme(data.preferences?.theme || 'system');
+        setNotifications(data.preferences?.notifications || false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        console.error('Fetch profile error:', err);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    if (isLoading && !profile) { // Show loading only on initial load
-        return <p>Loading profile...</p>;
-    }
+    fetchProfile();
+  }, [API_BASE_URL]);
 
-    if (error && !profile) { // Show error if initial load failed
-        return <p style={{ color: 'red' }}>Error loading profile: {error}</p>;
-    }
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setSuccessMessage(null);
+    setIsLoading(true);
 
-    if (!profile) {
-        return <p>No profile data available.</p>;
-    }
+    const updatedProfileData = {
+      displayName,
+      bio,
+      preferences: {
+        theme,
+        notifications,
+      },
+    };
 
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedProfileData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: `Failed to update profile: ${response.statusText}` }));
+        throw new Error(
+          errorData.message ||
+            `Failed to update profile: ${response.statusText} (Status: ${response.status})`
+        );
+      }
+
+      const updatedProfile: UserProfile = await response.json();
+      setProfile(updatedProfile);
+      setSuccessMessage('Profile updated successfully!');
+
+      // Auto-hide success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred while updating');
+      console.error('Update profile error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading && !profile) {
     return (
-        <div>
-            <h1>User Profile</h1>
-            <p><strong>Email:</strong> {profile.email}</p>
-            
-            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="displayName">Display Name:</label>
-                    <input
-                        type="text"
-                        id="displayName"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                        disabled={isLoading}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="bio">Bio:</label>
-                    <textarea
-                        id="bio"
-                        value={bio}
-                        onChange={(e) => setBio(e.target.value)}
-                        disabled={isLoading}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="theme">Theme:</label>
-                    <select
-                        id="theme"
-                        value={theme}
-                        onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
-                        disabled={isLoading}
-                    >
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="system">System</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="notifications">Enable Notifications:</label>
-                    <input
-                        type="checkbox"
-                        id="notifications"
-                        checked={notifications}
-                        onChange={(e) => setNotifications(e.target.checked)}
-                        disabled={isLoading}
-                    />
-                </div>
-                <button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Saving...' : 'Save Profile'}
-                </button>
-            </form>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8">
+          <div className="flex items-center gap-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            <p className="text-white text-lg">Loading your profile...</p>
+          </div>
         </div>
+      </div>
     );
+  }
+
+  if (error && !profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 max-w-md">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-8 h-8 text-red-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Error Loading Profile</h2>
+            <p className="text-red-200">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden py-12 px-4">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px]" />
+        <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-pink-600/10 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="max-w-4xl mx-auto z-10 relative">
+        {/* Profile Header Card */}
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 mb-6 slide-in">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            {/* Avatar */}
+            <div className="relative group">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1">
+                <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-white text-4xl font-bold">
+                  {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                </div>
+              </div>
+              <button className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-lg">
+                <Camera className="w-5 h-5 text-white" />
+              </button>
+            </div>
+
+            {/* User Info */}
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-3xl font-bold text-white mb-1">{user?.displayName || 'User'}</h1>
+              <p className="text-gray-300 flex items-center gap-2 justify-center md:justify-start">
+                <Mail className="w-4 h-4" />
+                {user?.email || profile?.email}
+              </p>
+              <div className="mt-3 flex gap-2 justify-center md:justify-start">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-200 border border-blue-400/30">
+                  Premium User
+                </span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-200 border border-green-400/30">
+                  Verified
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Messages */}
+        {error && (
+          <div className="backdrop-blur-xl bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mb-6 slide-in text-red-200 flex items-center gap-2">
+            <Shield className="w-5 h-5" />
+            {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="backdrop-blur-xl bg-green-500/10 border border-green-500/20 rounded-lg px-4 py-3 mb-6 scale-in text-green-200 flex items-center gap-2">
+            <Save className="w-5 h-5" />
+            {successMessage}
+          </div>
+        )}
+
+        {/* Profile Settings Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Personal Information Section */}
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 fade-in">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Personal Information</h2>
+                <p className="text-sm text-gray-400">Update your profile details</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label
+                  htmlFor="displayName"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  Display Name
+                </label>
+                <input
+                  id="displayName"
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  disabled={isLoading}
+                  className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  placeholder="Enter your display name"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="bio" className="block text-sm font-medium text-gray-300 mb-2">
+                  Bio
+                </label>
+                <textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  disabled={isLoading}
+                  rows={4}
+                  className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  placeholder="Tell us about yourself..."
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Preferences Section */}
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 fade-in animation-delay-100">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                <Palette className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Preferences</h2>
+                <p className="text-sm text-gray-400">Customize your experience</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="theme" className="block text-sm font-medium text-gray-300 mb-2">
+                  Theme
+                </label>
+                <select
+                  id="theme"
+                  value={theme}
+                  onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
+                  disabled={isLoading}
+                  className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="light" className="bg-slate-800">
+                    Light
+                  </option>
+                  <option value="dark" className="bg-slate-800">
+                    Dark
+                  </option>
+                  <option value="system" className="bg-slate-800">
+                    System
+                  </option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                    <Bell className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <label htmlFor="notifications" className="block text-sm font-medium text-white">
+                      Enable Notifications
+                    </label>
+                    <p className="text-xs text-gray-400">Receive updates about your account</p>
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    id="notifications"
+                    type="checkbox"
+                    checked={notifications}
+                    onChange={(e) => setNotifications(e.target.checked)}
+                    disabled={isLoading}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Security Section (Placeholder) */}
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 fade-in animation-delay-200">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
+                <Lock className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Security</h2>
+                <p className="text-sm text-gray-400">Manage your account security</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
+              >
+                <span className="text-white font-medium">Change Password</span>
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                className="w-full flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
+              >
+                <span className="text-white font-medium">Two-Factor Authentication</span>
+                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-500/20 text-green-200 border border-green-400/30">
+                  Enabled
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`flex-1 flex justify-center items-center gap-2 py-3 px-6 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Save Changes
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setDisplayName(profile?.displayName || '');
+                setBio(profile?.bio || '');
+                setTheme(profile?.preferences?.theme || 'system');
+                setNotifications(profile?.preferences?.notifications || false);
+              }}
+              disabled={isLoading}
+              className="px-6 py-3 border border-white/10 rounded-lg shadow-sm bg-white/5 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default UserProfilePage;
