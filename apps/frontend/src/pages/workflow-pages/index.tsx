@@ -1,13 +1,4 @@
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -25,11 +16,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import {
+  ActionCard,
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumTextarea,
+} from '@/components/ui/premium';
 import { useWorkflow } from '@/hooks';
-import { Calendar, Clock, Edit, MoreHorizontal, Play, Plus, Search, Trash2 } from 'lucide-react';
+import {
+  Activity,
+  Calendar,
+  Clock,
+  Edit,
+  MoreHorizontal,
+  Play,
+  Plus,
+  Search,
+  Trash2,
+  Zap,
+} from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -81,36 +88,40 @@ const WorkflowsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <Sidebar />
 
       <main className="flex-1 overflow-auto">
-        <div className="container mx-auto py-6 space-y-6">
-          <div className="flex justify-between items-center">
+        <div className="container mx-auto py-6 space-y-6 animate-fade-in">
+          <div className="flex justify-between items-center animate-slide-in-down">
             <div>
-              <h1 className="text-3xl font-bold">Workflows</h1>
-              <p className="text-muted-foreground">Create and manage your workflows</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Intelligence Orchestration
+              </h1>
+              <p className="text-slate-300 mt-2">Create and manage your intelligent workflows</p>
             </div>
 
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Workflow
-                </Button>
+                <PremiumButton size="lg" variant="gradient">
+                  <Zap className="h-4 w-4 mr-2" />
+                  Orchestrate New Intelligence
+                </PremiumButton>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-slate-900 border-slate-700">
                 <DialogHeader>
-                  <DialogTitle>Create New Workflow</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-2xl text-white">Create New Workflow</DialogTitle>
+                  <DialogDescription className="text-slate-400">
                     Create a new workflow to automate your tasks.
                   </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
+                    <Label htmlFor="name" className="text-white">
+                      Name
+                    </Label>
+                    <PremiumInput
                       id="name"
                       value={newWorkflowName}
                       onChange={(e) => setNewWorkflowName(e.target.value)}
@@ -119,8 +130,10 @@ const WorkflowsPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
+                    <Label htmlFor="description" className="text-white">
+                      Description
+                    </Label>
+                    <PremiumTextarea
                       id="description"
                       value={newWorkflowDescription}
                       onChange={(e) => setNewWorkflowDescription(e.target.value)}
@@ -131,93 +144,93 @@ const WorkflowsPage: React.FC = () => {
                 </div>
 
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                  <PremiumButton variant="secondary" onClick={() => setIsCreateDialogOpen(false)}>
                     Cancel
-                  </Button>
-                  <Button onClick={handleCreateWorkflow}>Create</Button>
+                  </PremiumButton>
+                  <PremiumButton variant="gradient" onClick={handleCreateWorkflow}>
+                    Create
+                  </PremiumButton>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search workflows..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+          <GlassCard className="animate-slide-in-up">
+            <div className="flex items-center space-x-2">
+              <div className="relative flex-1">
+                <PremiumInput
+                  icon={<Search className="h-4 w-4" />}
+                  placeholder="Search workflows..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
+          </GlassCard>
 
           {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
+            <GlassCard className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+            </GlassCard>
           ) : error ? (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-              {error.message}
-            </div>
+            <GlassCard className="bg-red-500/10 border-red-500/30">
+              <div className="text-red-300 px-4 py-3">{error.message}</div>
+            </GlassCard>
           ) : filteredWorkflows.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <div className="text-muted-foreground mb-4">
+            <GlassCard className="flex flex-col items-center justify-center h-64 text-center">
+              <div className="text-slate-400 mb-4">
                 {searchQuery ? 'No workflows match your search' : 'No workflows yet'}
               </div>
               {!searchQuery && (
-                <Button onClick={() => setIsCreateDialogOpen(true)}>
+                <PremiumButton onClick={() => setIsCreateDialogOpen(true)} variant="gradient">
                   <Plus className="h-4 w-4 mr-2" />
                   Create your first workflow
-                </Button>
+                </PremiumButton>
               )}
-            </div>
+            </GlassCard>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-in-up">
               {filteredWorkflows.map((workflow) => (
-                <Card key={workflow.id} className="overflow-hidden">
-                  <CardHeader className="pb-2">
-                    <CardTitle>{workflow.name}</CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {workflow.description || 'No description'}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="pb-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4 mr-1" />
+                <ActionCard
+                  key={workflow.id}
+                  title={workflow.name}
+                  description={workflow.description || 'No description'}
+                  icon={<Activity className="w-5 h-5" />}
+                  gradient="from-purple-500 to-pink-500"
+                >
+                  <div className="space-y-3 mt-4">
+                    <div className="flex items-center text-sm text-slate-400">
+                      <Calendar className="h-4 w-4 mr-2" />
                       <span>Created: {formatDate(workflow.createdAt)}</span>
                     </div>
-                    <div className="flex items-center text-sm text-muted-foreground mt-1">
-                      <Clock className="h-4 w-4 mr-1" />
+                    <div className="flex items-center text-sm text-slate-400">
+                      <Clock className="h-4 w-4 mr-2" />
                       <span>Updated: {formatDate(workflow.updatedAt)}</span>
                     </div>
-                  </CardContent>
 
-                  <CardFooter className="flex justify-between">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to={`/workflows/builder?id=${workflow.id}`}>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Link>
-                    </Button>
+                    <div className="flex gap-2 pt-2">
+                      <PremiumButton variant="secondary" size="sm" className="flex-1" asChild>
+                        <Link to={`/workflows/builder?id=${workflow.id}`}>
+                          <Edit className="h-4 w-4 mr-1" />
+                          Edit
+                        </Link>
+                      </PremiumButton>
 
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
-                        <Play className="h-4 w-4 mr-2" />
+                      <PremiumButton variant="gradient" size="sm" className="flex-1">
+                        <Play className="h-4 w-4 mr-1" />
                         Run
-                      </Button>
+                      </PremiumButton>
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <PremiumButton variant="ghost" size="sm" className="h-8 w-8 p-0">
                             <MoreHorizontal className="h-4 w-4" />
-                          </Button>
+                          </PremiumButton>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
+                        <DropdownMenuContent align="end" className="bg-slate-900 border-slate-700">
+                          <DropdownMenuLabel className="text-white">Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator className="bg-slate-700" />
+                          <DropdownMenuItem className="text-slate-300 hover:bg-slate-800">
                             <Link
                               to={`/workflows/builder?id=${workflow.id}`}
                               className="flex items-center w-full"
@@ -226,17 +239,17 @@ const WorkflowsPage: React.FC = () => {
                               Edit
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="text-slate-300 hover:bg-slate-800">
                             <Play className="h-4 w-4 mr-2" />
                             Run
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="text-slate-300 hover:bg-slate-800">
                             <Calendar className="h-4 w-4 mr-2" />
                             View History
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuSeparator className="bg-slate-700" />
                           <DropdownMenuItem
-                            className="text-red-600"
+                            className="text-red-400 hover:bg-red-500/10"
                             onClick={() => deleteWorkflow(workflow.id)}
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
@@ -245,8 +258,8 @@ const WorkflowsPage: React.FC = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                  </CardFooter>
-                </Card>
+                  </div>
+                </ActionCard>
               ))}
             </div>
           )}

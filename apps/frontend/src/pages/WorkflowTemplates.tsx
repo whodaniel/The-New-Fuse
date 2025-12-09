@@ -1,4 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import {
+  ActionCard,
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+} from '@/components/ui/premium';
+import { Filter, Search, Sparkles } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface WorkflowTemplate {
   id: string;
@@ -51,7 +59,7 @@ export default function WorkflowTemplates() {
       complexity: 'Intermediate',
       estimatedTime: '2-4 hours',
       agentCount: 3,
-      isPopular: true
+      isPopular: true,
     },
     {
       id: '2',
@@ -62,7 +70,7 @@ export default function WorkflowTemplates() {
       complexity: 'Advanced',
       estimatedTime: '1-2 hours',
       agentCount: 4,
-      isPopular: true
+      isPopular: true,
     },
     {
       id: '3',
@@ -73,7 +81,7 @@ export default function WorkflowTemplates() {
       complexity: 'Simple',
       estimatedTime: '30 minutes',
       agentCount: 2,
-      isPopular: false
+      isPopular: false,
     },
     {
       id: '4',
@@ -84,17 +92,18 @@ export default function WorkflowTemplates() {
       complexity: 'Advanced',
       estimatedTime: '3-5 hours',
       agentCount: 5,
-      isPopular: true
-    }
+      isPopular: true,
+    },
   ];
 
   const categories = ['all', 'Analytics', 'Customer Service', 'Content', 'Development'];
 
-  const filteredTemplates = templates.filter(template => {
+  const filteredTemplates = templates.filter((template) => {
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
-    const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         template.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSearch =
+      template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      template.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -106,7 +115,7 @@ export default function WorkflowTemplates() {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (response.ok) {
         const newWorkflow = await response.json();
         // Redirect to workflow editor or show success message
@@ -126,77 +135,91 @@ export default function WorkflowTemplates() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Workflow Templates</h1>
-        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-          Create Custom Template
-        </button>
-      </div>
-
-      {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Search templates..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
+        {/* Header Section */}
+        <div className="flex items-center justify-between animate-slide-in-down">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Workflow Templates
+            </h1>
+            <p className="text-slate-300 mt-2">
+              Pre-built intelligence patterns for rapid deployment
+            </p>
+          </div>
+          <PremiumButton size="lg" variant="gradient">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Create Custom Template
+          </PremiumButton>
         </div>
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-          title="Filter by category"
-        >
-          {categories.map(category => (
-            <option key={category} value={category}>
-              {category === 'all' ? 'All Categories' : category}
-            </option>
-          ))}
-        </select>
-      </div>
 
-      {/* Popular Templates */}
-      {selectedCategory === 'all' && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Popular Templates</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.filter(t => t.isPopular).map((template) => (
-              <TemplateCard
-                key={template.id}
-                template={template}
-                onUse={handleUseTemplate}
-                isPopular={true}
+        {/* Search and Filter */}
+        <GlassCard className="animate-slide-in-up">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <PremiumInput
+                icon={<Search className="w-4 h-4" />}
+                placeholder="Search templates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
+            </div>
+            <div className="sm:w-64">
+              <PremiumSelect
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                icon={<Filter className="w-4 h-4" />}
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category === 'all' ? 'All Categories' : category}
+                  </option>
+                ))}
+              </PremiumSelect>
+            </div>
+          </div>
+        </GlassCard>
+
+        {/* Popular Templates */}
+        {selectedCategory === 'all' && (
+          <div className="space-y-4 animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-yellow-400" />
+              Popular Templates
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {templates
+                .filter((t) => t.isPopular)
+                .map((template) => (
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    onUse={handleUseTemplate}
+                    isPopular={true}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* All Templates */}
+        <div className="space-y-4 animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
+          <h2 className="text-2xl font-bold text-white">
+            {selectedCategory === 'all' ? 'All Templates' : `${selectedCategory} Templates`}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTemplates.map((template) => (
+              <TemplateCard key={template.id} template={template} onUse={handleUseTemplate} />
             ))}
           </div>
         </div>
-      )}
 
-      {/* All Templates */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">
-          {selectedCategory === 'all' ? 'All Templates' : `${selectedCategory} Templates`}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTemplates.map((template) => (
-            <TemplateCard
-              key={template.id}
-              template={template}
-              onUse={handleUseTemplate}
-            />
-          ))}
-        </div>
+        {filteredTemplates.length === 0 && (
+          <GlassCard className="text-center py-12">
+            <p className="text-slate-400">No templates found matching your criteria.</p>
+          </GlassCard>
+        )}
       </div>
-
-      {filteredTemplates.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No templates found matching your criteria.</p>
-        </div>
-      )}
     </div>
   );
 }
@@ -208,59 +231,69 @@ interface TemplateCardProps {
 }
 
 function TemplateCard({ template, onUse, isPopular = false }: TemplateCardProps) {
-  const complexityColors = {
-    Simple: 'bg-green-100 text-green-800',
-    Intermediate: 'bg-yellow-100 text-yellow-800',
-    Advanced: 'bg-red-100 text-red-800'
+  const complexityConfig = {
+    Simple: { gradient: 'from-green-500 to-emerald-500', text: 'text-green-300' },
+    Intermediate: { gradient: 'from-yellow-500 to-orange-500', text: 'text-yellow-300' },
+    Advanced: { gradient: 'from-red-500 to-pink-500', text: 'text-red-300' },
   };
 
+  const config = complexityConfig[template.complexity];
+
   return (
-    <div className="bg-card p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow relative">
+    <ActionCard
+      title={template.name}
+      description={template.description}
+      icon={<Sparkles className="w-5 h-5" />}
+      gradient={config.gradient}
+      className="relative"
+    >
       {isPopular && (
-        <div className="absolute top-2 right-2">
-          <span className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full">
+        <div className="absolute top-4 right-4">
+          <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full">
             Popular
           </span>
         </div>
       )}
-      
-      <div className="space-y-4">
-        <div>
-          <h3 className="font-semibold text-lg">{template.name}</h3>
-          <p className="text-muted-foreground text-sm mt-1">{template.description}</p>
-        </div>
 
+      <div className="space-y-4 mt-4">
         <div className="flex flex-wrap gap-2">
-          {template.tags.map(tag => (
-            <span key={tag} className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
+          {template.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-2 py-1 text-xs bg-white/10 text-slate-300 rounded border border-white/20"
+            >
               {tag}
             </span>
           ))}
         </div>
 
         <div className="flex items-center justify-between text-sm">
-          <span className={`px-2 py-1 text-xs rounded ${complexityColors[template.complexity]}`}>
+          <span
+            className={`px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r ${config.gradient}/20 ${config.text} border border-${config.gradient.split(' ')[0].replace('from-', '')}/30`}
+          >
             {template.complexity}
           </span>
-          <span className="text-muted-foreground">{template.agentCount} agents</span>
+          <span className="text-slate-400">{template.agentCount} agents</span>
         </div>
 
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Est. time: {template.estimatedTime}</span>
+          <span className="text-slate-400">Est. time: {template.estimatedTime}</span>
         </div>
 
         <div className="flex gap-2 pt-2">
-          <button
+          <PremiumButton
             onClick={() => onUse(template.id)}
-            className="flex-1 px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 text-sm"
+            variant="gradient"
+            size="sm"
+            className="flex-1"
           >
             Use Template
-          </button>
-          <button className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-sm">
+          </PremiumButton>
+          <PremiumButton variant="secondary" size="sm">
             Preview
-          </button>
+          </PremiumButton>
         </div>
       </div>
-    </div>
+    </ActionCard>
   );
 }

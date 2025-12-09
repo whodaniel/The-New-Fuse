@@ -1,7 +1,21 @@
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Activity, BarChart3, Bot, Plus, Settings, Users } from 'lucide-react';
+import { ActionCard, GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
+import {
+  Activity,
+  BarChart3,
+  Clock,
+  Cpu,
+  Database,
+  Gauge,
+  Globe,
+  Layers,
+  Plus,
+  Rocket,
+  Settings,
+  TrendingUp,
+  Users,
+  Zap,
+} from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../providers/AuthProvider';
@@ -20,8 +34,28 @@ interface QuickAction {
   description: string;
   icon: React.ElementType;
   action: () => void;
-  color: string;
+  gradient: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan';
 }
+
+// Animated Counter Component for stats
+const AnimatedCounter = ({ end, duration = 2000 }: { end: number; duration?: number }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime: number;
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setCount(Math.floor(progress * end));
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    requestAnimationFrame(animate);
+  }, [end, duration]);
+
+  return <span>{count.toLocaleString()}</span>;
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -79,46 +113,47 @@ const Dashboard = () => {
 
   const quickActions: QuickAction[] = [
     {
-      title: 'Create New Agent',
-      description: 'Build a new AI agent with custom capabilities',
-      icon: Bot,
+      title: 'Deploy New Agent',
+      description:
+        'Launch intelligent AI agents with advanced capabilities and seamless integration',
+      icon: Rocket,
       action: () => navigate('/agents/new'),
-      color: 'bg-blue-500',
+      gradient: 'blue',
     },
     {
-      title: 'View Analytics',
-      description: 'Monitor your system performance and usage metrics',
+      title: 'Performance Intelligence',
+      description: 'Access real-time analytics and performance insights that drive optimization',
       icon: BarChart3,
       action: () => navigate('/dashboard/analytics'),
-      color: 'bg-green-500',
+      gradient: 'green',
     },
     {
-      title: 'System Monitoring',
-      description: 'Real-time system health and performance monitoring',
+      title: 'Mission Control',
+      description: 'Monitor system health, resource utilization, and orchestration metrics live',
       icon: Activity,
       action: () => navigate('/dashboard/monitoring'),
-      color: 'bg-purple-500',
+      gradient: 'purple',
     },
     {
-      title: 'Manage Team',
-      description: 'Add or remove team members and manage permissions',
+      title: 'Team Operations',
+      description: 'Coordinate your team with advanced access control and collaboration tools',
       icon: Users,
       action: () => navigate('/workspace/members'),
-      color: 'bg-orange-500',
+      gradient: 'orange',
     },
     {
-      title: 'Agent Management',
-      description: 'View and manage all your AI agents',
-      icon: Bot,
+      title: 'Agent Fleet Command',
+      description: 'Command and control your entire AI agent ecosystem from one unified hub',
+      icon: Layers,
       action: () => navigate('/agents'),
-      color: 'bg-indigo-500',
+      gradient: 'cyan',
     },
     {
-      title: 'Settings',
-      description: 'Configure your account and system preferences',
+      title: 'System Configuration',
+      description: 'Fine-tune your platform with enterprise-grade settings and preferences',
       icon: Settings,
       action: () => navigate('/dashboard/settings'),
-      color: 'bg-gray-500',
+      gradient: 'pink',
     },
   ];
 
@@ -129,147 +164,245 @@ const Dashboard = () => {
   // };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-pink-600/10 rounded-full blur-[100px] animate-pulse" />
+      </div>
+
       <Sidebar />
 
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 p-6 overflow-auto relative z-10">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-8">
+          {/* Header - Commanding and Powerful */}
+          <div className="flex justify-between items-center mb-8 fade-in">
             <div>
-              <h1 className="text-3xl font-bold">Welcome back, {user?.displayName || 'User'}!</h1>
-              <p className="text-muted-foreground">
-                Here's what's happening with your agents and system
+              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                Welcome back, Commander {user?.displayName || 'User'}!
+              </h1>
+              <p className="text-gray-300 text-lg mt-2 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-400" />
+                Your AI fleet is orchestrating success across all systems
               </p>
             </div>
-            <div className="flex gap-2">
-              <Button onClick={() => navigate('/agents/new')}>
-                <Plus className="mr-2 h-4 w-4" /> New Agent
-              </Button>
-              <Button variant="outline" onClick={logout}>
+            <div className="flex gap-3">
+              <PremiumButton
+                onClick={() => navigate('/agents/new')}
+                icon={Plus}
+                iconPosition="left"
+                size="md"
+              >
+                Deploy Agent
+              </PremiumButton>
+              <PremiumButton variant="outline" onClick={logout} size="md">
                 Logout
-              </Button>
+              </PremiumButton>
             </div>
           </div>
 
-          {/* Stats Grid */}
+          {/* Stats Grid - Premium StatsCard with Animated Counters */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2 text-sm text-muted-foreground">Active Agents</h3>
-              <p className="text-3xl font-bold">{loading ? '...' : stats.activeAgents}</p>
-              <p className="text-xs text-muted-foreground">+2 from last week</p>
-            </Card>
+            <div className="fade-in" style={{ animationDelay: '0ms' }}>
+              <StatsCard
+                label="AI Agents Orchestrating"
+                value={loading ? '...' : <AnimatedCounter end={stats.activeAgents} />}
+                change="+2 agents deployed"
+                changeType="positive"
+                icon={Rocket}
+                gradient="blue"
+              />
+            </div>
 
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2 text-sm text-muted-foreground">
-                Total Interactions
-              </h3>
-              <p className="text-3xl font-bold">{loading ? '...' : stats.totalInteractions}</p>
-              <p className="text-xs text-muted-foreground">+15% from last month</p>
-            </Card>
+            <div className="fade-in" style={{ animationDelay: '100ms' }}>
+              <StatsCard
+                label="Total Orchestrations"
+                value={loading ? '...' : <AnimatedCounter end={stats.totalInteractions} />}
+                change="+15% velocity increase"
+                changeType="positive"
+                icon={TrendingUp}
+                gradient="purple"
+              />
+            </div>
 
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2 text-sm text-muted-foreground">Success Rate</h3>
-              <p className="text-3xl font-bold">{loading ? '...' : stats.successRate}%</p>
-              <p className="text-xs text-muted-foreground">+0.5% from last week</p>
-            </Card>
+            <div className="fade-in" style={{ animationDelay: '200ms' }}>
+              <StatsCard
+                label="Success Rate"
+                value={loading ? '...' : `${stats.successRate}%`}
+                change="+0.5% optimization"
+                changeType="positive"
+                icon={Zap}
+                gradient="green"
+              />
+            </div>
 
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2 text-sm text-muted-foreground">Total Users</h3>
-              <p className="text-3xl font-bold">{loading ? '...' : stats.totalUsers}</p>
-              <p className="text-xs text-muted-foreground">+8% from last month</p>
-            </Card>
+            <div className="fade-in" style={{ animationDelay: '300ms' }}>
+              <StatsCard
+                label="Active Commanders"
+                value={loading ? '...' : <AnimatedCounter end={stats.totalUsers} />}
+                change="+8% team growth"
+                changeType="positive"
+                icon={Users}
+                gradient="orange"
+              />
+            </div>
 
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2 text-sm text-muted-foreground">System Load</h3>
-              <p className="text-3xl font-bold">{loading ? '...' : stats.systemLoad}%</p>
-              <p className="text-xs text-muted-foreground">Normal</p>
-            </Card>
+            <div className="fade-in" style={{ animationDelay: '400ms' }}>
+              <StatsCard
+                label="System Performance"
+                value={loading ? '...' : `${stats.systemLoad}%`}
+                change="Optimal efficiency"
+                changeType="neutral"
+                icon={Gauge}
+                gradient="cyan"
+              />
+            </div>
 
-            <Card className="p-6">
-              <h3 className="font-semibold mb-2 text-sm text-muted-foreground">Uptime</h3>
-              <p className="text-2xl font-bold">{loading ? '...' : stats.uptime}</p>
-              <p className="text-xs text-muted-foreground">Continuous</p>
-            </Card>
+            <div className="fade-in" style={{ animationDelay: '500ms' }}>
+              <StatsCard
+                label="System Uptime"
+                value={loading ? '...' : stats.uptime}
+                change="Continuous operation"
+                changeType="positive"
+                icon={Clock}
+                gradient="pink"
+              />
+            </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
+          {/* Quick Actions - ActionCard Components */}
+          <div className="mb-8 fade-in" style={{ animationDelay: '600ms' }}>
+            <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+              <Globe className="w-8 h-8 text-blue-400" />
+              Command Center Operations
+            </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {quickActions.map((action) => (
-                <Card
+              {quickActions.map((action, index) => (
+                <div
                   key={action.title}
-                  className="p-6 cursor-pointer hover:bg-accent transition-colors hover:shadow-lg"
-                  onClick={action.action}
+                  className="fade-in"
+                  style={{ animationDelay: `${700 + index * 100}ms` }}
                 >
-                  <div className="flex items-center mb-4">
-                    <div className={`p-3 rounded-lg ${action.color} bg-opacity-10`}>
-                      <action.icon className={`h-6 w-6 ${action.color.replace('bg-', 'text-')}`} />
-                    </div>
-                  </div>
-                  <h3 className="font-semibold mb-2">{action.title}</h3>
-                  <p className="text-sm text-muted-foreground">{action.description}</p>
-                </Card>
+                  <ActionCard
+                    title={action.title}
+                    description={action.description}
+                    icon={action.icon}
+                    gradient={action.gradient}
+                    onClick={action.action}
+                  />
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Recent Activity */}
+          {/* Recent Activity & System Health */}
           <div className="grid lg:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Recent Agent Activity</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                  <div>
-                    <p className="font-medium">Agent Alpha</p>
-                    <p className="text-sm text-muted-foreground">
-                      Completed workflow: Data Analysis
-                    </p>
+            <div className="fade-in" style={{ animationDelay: '1300ms' }}>
+              <GlassCard
+                icon={Activity}
+                title="Live Agent Operations"
+                subtitle="Real-time orchestration events"
+                gradient="blue"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-all duration-200">
+                    <div>
+                      <p className="font-semibold text-white">Agent Alpha</p>
+                      <p className="text-sm text-gray-400">
+                        Completed mission: Advanced Data Analysis
+                      </p>
+                    </div>
+                    <span className="text-xs text-gray-500">2 min ago</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">2 min ago</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                  <div>
-                    <p className="font-medium">Agent Beta</p>
-                    <p className="text-sm text-muted-foreground">Started task: Report Generation</p>
+                  <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-all duration-200">
+                    <div>
+                      <p className="font-semibold text-white">Agent Beta</p>
+                      <p className="text-sm text-gray-400">
+                        Initiated task: Strategic Report Generation
+                      </p>
+                    </div>
+                    <span className="text-xs text-gray-500">5 min ago</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">5 min ago</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                  <div>
-                    <p className="font-medium">Agent Gamma</p>
-                    <p className="text-sm text-muted-foreground">Updated configuration</p>
+                  <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-all duration-200">
+                    <div>
+                      <p className="font-semibold text-white">Agent Gamma</p>
+                      <p className="text-sm text-gray-400">Optimized system configuration</p>
+                    </div>
+                    <span className="text-xs text-gray-500">12 min ago</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">12 min ago</span>
                 </div>
-              </div>
-            </Card>
+              </GlassCard>
+            </div>
 
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">System Health</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Database</span>
-                  <span className="text-sm font-medium text-green-600">Healthy</span>
+            <div className="fade-in" style={{ animationDelay: '1400ms' }}>
+              <GlassCard
+                icon={Cpu}
+                title="Infrastructure Status"
+                subtitle="All systems operating at peak performance"
+                gradient="green"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                      <Database className="w-5 h-5 text-green-400" />
+                      <span className="text-white font-medium">Database Cluster</span>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-300 border border-green-400/30">
+                      Optimal
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                      <Cpu className="w-5 h-5 text-green-400" />
+                      <span className="text-white font-medium">Cache Layer</span>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-300 border border-green-400/30">
+                      Optimal
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                      <Activity className="w-5 h-5 text-green-400" />
+                      <span className="text-white font-medium">Message Queue</span>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-300 border border-green-400/30">
+                      Optimal
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-5 h-5 text-green-400" />
+                      <span className="text-white font-medium">WebSocket Network</span>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-300 border border-green-400/30">
+                      Optimal
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Cache</span>
-                  <span className="text-sm font-medium text-green-600">Healthy</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Queue</span>
-                  <span className="text-sm font-medium text-green-600">Healthy</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">WebSocket</span>
-                  <span className="text-sm font-medium text-green-600">Healthy</span>
-                </div>
-              </div>
-            </Card>
+              </GlassCard>
+            </div>
           </div>
         </div>
       </main>
+
+      {/* CSS for animations */}
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .fade-in {
+          animation: fadeIn 0.6s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };

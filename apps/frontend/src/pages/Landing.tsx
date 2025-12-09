@@ -6,10 +6,12 @@
 
 import { StandardLayout } from '@/components/layout/StandardLayout';
 import { SEOHead } from '@/components/seo/SEOHead';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { usePagePerformance } from '@/hooks/usePagePerformance';
-import { Badge, Button, Card, CardContent } from '@the-new-fuse/ui-consolidated';
+import { Badge, Card, CardContent } from '@the-new-fuse/ui-consolidated';
 import {
   ArrowRight,
+  Award,
   BarChart3,
   Bot,
   CheckCircle,
@@ -19,14 +21,16 @@ import {
   Github,
   Globe,
   MessageSquare,
+  Music,
   Network,
-  Rocket,
+  Quote,
   Settings,
   Shield,
   Sparkles,
   Star,
   Target,
   Terminal,
+  TrendingUp,
   Users,
   Workflow,
   Zap,
@@ -175,23 +179,23 @@ export const Landing = () => {
                   className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20 fade-in"
                   aria-label="Platform badge"
                 >
-                  <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
-                  Next-Generation AI Platform
+                  <Music className="w-4 h-4 mr-2" aria-hidden="true" />
+                  The Operating System for AI Orchestration
                 </Badge>
 
                 <h1
                   id="hero-heading"
                   className="text-5xl lg:text-7xl font-bold mb-6 leading-tight fade-in"
                 >
-                  The Future of
+                  Orchestrate AI Agents
                   <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                    AI Collaboration
+                    Like a Symphony
                   </span>
                 </h1>
 
                 <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto leading-relaxed fade-in animation-delay-100">
-                  Orchestrate intelligent workflows, enable seamless agent communication, and unlock
-                  the full potential of AI automation with The New Fuse.
+                  Deploy, manage, and scale AI agent workflows with the precision of a maestro.
+                  Command your AI empire and watch it perform in perfect harmony.
                 </p>
 
                 <div
@@ -199,37 +203,32 @@ export const Landing = () => {
                   role="group"
                   aria-label="Call to action buttons"
                 >
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="primary"
-                    className="px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
-                    aria-label="Start your journey with The New Fuse"
-                  >
-                    <Link to="/auth/register">
-                      <Rocket
-                        className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
-                        aria-hidden="true"
-                      />
-                      Start Your Journey
+                  <Link to="/auth/register">
+                    <PremiumButton
+                      size="lg"
+                      variant="primary"
+                      icon={Music}
+                      iconPosition="left"
+                      className="px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl group"
+                    >
+                      Start Orchestrating Free
                       <ArrowRight
                         className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
                         aria-hidden="true"
                       />
-                    </Link>
-                  </Button>
-                  <Button
+                    </PremiumButton>
+                  </Link>
+                  <PremiumButton
                     size="lg"
                     variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
+                    className="px-8 py-4 text-lg"
                     onClick={() => {
-                      const demoSection = document.getElementById('demo-section');
+                      const demoSection = document.getElementById('features-section');
                       demoSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }}
-                    aria-label="Watch demo video"
                   >
-                    Watch Demo
-                  </Button>
+                    Discover the Power
+                  </PremiumButton>
                 </div>
 
                 {/* Live Stats - Using design system colors and components */}
@@ -280,11 +279,16 @@ export const Landing = () => {
           </section>
 
           {/* Core Features Section - Using design system grid and components */}
-          <section className="py-20 bg-background" aria-labelledby="features-heading">
+          <section
+            id="features-section"
+            className="py-20 bg-background"
+            aria-labelledby="features-heading"
+          >
             <div className="container mx-auto px-4">
               <div className="text-center mb-16">
                 <Badge className="mb-4" aria-label="Core platform features">
-                  Core Platform
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Core Capabilities
                 </Badge>
                 <h2
                   id="features-heading"
@@ -293,8 +297,8 @@ export const Landing = () => {
                   Everything You Need for AI Orchestration
                 </h2>
                 <p className="text-xl text-muted-foreground max-w-3xl mx-auto fade-in animation-delay-100">
-                  From agent management to workflow automation, we provide a comprehensive suite of
-                  tools for modern AI development.
+                  Transform how you work with AI. Each feature is designed to amplify your
+                  capabilities and turn complexity into elegant simplicity.
                 </p>
               </div>
 
@@ -305,38 +309,38 @@ export const Landing = () => {
               >
                 <FeatureCard
                   icon={Bot}
-                  title="AI Agent Management"
-                  description="Register, discover, and orchestrate AI agents with advanced capability advertising and dynamic skill matching."
+                  title="Command an AI Army"
+                  description="Deploy specialized AI agents, each a master at its craft. Orchestrate them with precision as they work together to accomplish extraordinary tasks."
                   color="primary"
                 />
                 <FeatureCard
                   icon={Workflow}
-                  title="Workflow Automation"
-                  description="Build sophisticated automation pipelines with drag-and-drop workflow designer and real-time monitoring."
+                  title="Workflows That Dance"
+                  description="Choreograph complex workflows that move to your business rhythm. Watch automation pipelines flow like perfectly timed performances."
                   color="success"
                 />
                 <FeatureCard
-                  icon={MessageSquare}
-                  title="Agent Communication"
-                  description="Implements Google's A2A protocol and Model Context Protocol (MCP) for seamless inter-agent messaging."
-                  color="purple"
-                />
-                <FeatureCard
-                  icon={Shield}
-                  title="Enterprise Security"
-                  description="Role-based access control, audit logging, and enterprise-grade security for mission-critical deployments."
-                  color="danger"
-                />
-                <FeatureCard
                   icon={BarChart3}
-                  title="Advanced Analytics"
-                  description="Real-time monitoring, performance metrics, and intelligent insights for optimal system performance."
+                  title="Real-Time Vision"
+                  description="Watch your AI empire work in real-time with crystal-clear insights. See performance metrics that matter, when they matter."
                   color="indigo"
                 />
                 <FeatureCard
+                  icon={Shield}
+                  title="Fort Knox Security"
+                  description="Enterprise-grade protection that never sleeps. Role-based control and audit trails ensure your AI operations are always secure."
+                  color="danger"
+                />
+                <FeatureCard
+                  icon={MessageSquare}
+                  title="Seamless Communication"
+                  description="Agents that speak fluently through Google's A2A and MCP protocols. Enable conversations that drive real business value."
+                  color="purple"
+                />
+                <FeatureCard
                   icon={Settings}
-                  title="Developer Tools"
-                  description="VS Code extension, Chrome extension, and comprehensive APIs for seamless development experience."
+                  title="Tools Made for Maestros"
+                  description="VS Code and Chrome extensions that feel like magic. Comprehensive APIs that empower you to build anything you imagine."
                   color="orange"
                 />
               </div>
@@ -596,65 +600,192 @@ export const Landing = () => {
             </div>
           </section>
 
-          {/* CTA Section - Using design system buttons and components */}
-          <section className="py-20 gradient-primary text-white" aria-labelledby="cta-heading">
-            <div className="container mx-auto px-4 text-center">
+          {/* Social Proof Section - Testimonials and Metrics */}
+          <section
+            className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+            aria-labelledby="social-proof-heading"
+          >
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <Badge className="mb-4" aria-label="Social proof">
+                  <Award className="w-4 h-4 mr-2" />
+                  Trusted by Innovators
+                </Badge>
+                <h2
+                  id="social-proof-heading"
+                  className="text-4xl lg:text-5xl font-bold text-foreground mb-6 fade-in"
+                >
+                  Join the AI Orchestration Revolution
+                </h2>
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto fade-in animation-delay-100">
+                  Organizations worldwide are transforming their AI operations with The New Fuse
+                </p>
+              </div>
+
+              {/* Metrics Grid using GlassCard components */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 fade-in animation-delay-200">
+                <GlassCard gradient="blue" className="text-center">
+                  <div className="flex flex-col items-center">
+                    <TrendingUp className="w-10 h-10 text-blue-400 mb-3" />
+                    <div className="text-4xl font-bold text-white mb-2">500%</div>
+                    <div className="text-sm text-gray-300">Average Productivity Increase</div>
+                  </div>
+                </GlassCard>
+                <GlassCard gradient="green" className="text-center">
+                  <div className="flex flex-col items-center">
+                    <Zap className="w-10 h-10 text-green-400 mb-3" />
+                    <div className="text-4xl font-bold text-white mb-2">10x</div>
+                    <div className="text-sm text-gray-300">Faster Workflow Deployment</div>
+                  </div>
+                </GlassCard>
+                <GlassCard gradient="purple" className="text-center">
+                  <div className="flex flex-col items-center">
+                    <Users className="w-10 h-10 text-purple-400 mb-3" />
+                    <div className="text-4xl font-bold text-white mb-2">10,000+</div>
+                    <div className="text-sm text-gray-300">Active Developers</div>
+                  </div>
+                </GlassCard>
+                <GlassCard gradient="orange" className="text-center">
+                  <div className="flex flex-col items-center">
+                    <Star className="w-10 h-10 text-orange-400 mb-3" />
+                    <div className="text-4xl font-bold text-white mb-2">99.9%</div>
+                    <div className="text-sm text-gray-300">Customer Satisfaction</div>
+                  </div>
+                </GlassCard>
+              </div>
+
+              {/* Testimonials */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in animation-delay-300">
+                <GlassCard gradient="cyan" className="relative">
+                  <Quote className="w-8 h-8 text-cyan-400 mb-4 opacity-50" />
+                  <p className="text-white text-lg mb-4 leading-relaxed">
+                    "The New Fuse transformed how we deploy AI agents. What used to take weeks now
+                    takes hours."
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                      SJ
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">Sarah Johnson</div>
+                      <div className="text-gray-400 text-sm">CTO, TechCorp</div>
+                    </div>
+                  </div>
+                </GlassCard>
+
+                <GlassCard gradient="purple" className="relative">
+                  <Quote className="w-8 h-8 text-purple-400 mb-4 opacity-50" />
+                  <p className="text-white text-lg mb-4 leading-relaxed">
+                    "Finally, an AI orchestration platform that feels like conducting a symphony
+                    instead of herding cats."
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg">
+                      MC
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">Michael Chen</div>
+                      <div className="text-gray-400 text-sm">Lead Architect, DataFlow</div>
+                    </div>
+                  </div>
+                </GlassCard>
+
+                <GlassCard gradient="green" className="relative">
+                  <Quote className="w-8 h-8 text-green-400 mb-4 opacity-50" />
+                  <p className="text-white text-lg mb-4 leading-relaxed">
+                    "Real-time monitoring and insights have given us unprecedented visibility into
+                    our AI operations."
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-bold text-lg">
+                      EP
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">Emily Park</div>
+                      <div className="text-gray-400 text-sm">VP Engineering, CloudScale</div>
+                    </div>
+                  </div>
+                </GlassCard>
+              </div>
+            </div>
+          </section>
+
+          {/* CTA Section - Using premium components */}
+          <section
+            className="py-20 gradient-primary text-white relative overflow-hidden"
+            aria-labelledby="cta-heading"
+          >
+            {/* Animated background elements */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-full blur-3xl animate-pulse"></div>
+              <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-gradient-to-tr from-purple-400/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+            </div>
+
+            <div className="relative container mx-auto px-4 text-center">
               <div className="max-w-4xl mx-auto">
                 <h2 id="cta-heading" className="text-4xl lg:text-5xl font-bold mb-6 fade-in">
-                  Ready to Transform Your AI Operations?
+                  Ready to Conduct Your AI Symphony?
                 </h2>
                 <p className="text-xl text-blue-100 mb-10 fade-in animation-delay-100">
-                  Join leading organizations that trust The New Fuse for their AI automation needs.
-                  Start your journey today with our comprehensive platform.
+                  Join the maestros who are already orchestrating AI at scale. Transform your
+                  operations from chaotic to symphonic—starting today, completely free.
                 </p>
 
                 <div
-                  className="flex flex-col sm:flex-row gap-4 justify-center items-center fade-in animation-delay-200"
+                  className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 fade-in animation-delay-200"
                   role="group"
                   aria-label="Get started actions"
                 >
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="primary"
-                    className="bg-white text-primary-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
-                    aria-label="Get started free with The New Fuse"
-                  >
-                    <Link to="/auth/register">
-                      Get Started Free
+                  <Link to="/auth/register">
+                    <PremiumButton
+                      size="lg"
+                      variant="primary"
+                      icon={Music}
+                      iconPosition="left"
+                      className="bg-white text-primary-600 hover:bg-blue-50 px-10 py-5 text-xl font-bold shadow-2xl hover:shadow-3xl group"
+                    >
+                      Begin Your AI Symphony
                       <ArrowRight
-                        className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
+                        className="ml-2 h-6 w-6 group-hover:translate-x-1 transition-transform duration-300"
                         aria-hidden="true"
                       />
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
-                    aria-label="Access your dashboard"
-                  >
-                    <Link to="/auth/login">Access Dashboard</Link>
-                  </Button>
+                    </PremiumButton>
+                  </Link>
+                  <Link to="/auth/login">
+                    <PremiumButton
+                      size="lg"
+                      variant="outline"
+                      className="px-10 py-5 text-xl border-white/30"
+                    >
+                      Access Dashboard
+                    </PremiumButton>
+                  </Link>
                 </div>
 
-                <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center fade-in animation-delay-300">
-                  <div>
-                    <Star className="h-8 w-8 mx-auto mb-3 text-yellow-400" />
-                    <div className="text-lg font-semibold">Free to Start</div>
-                    <div className="text-blue-200 text-sm">No credit card required</div>
-                  </div>
-                  <div>
-                    <Shield className="h-8 w-8 mx-auto mb-3 text-green-400" />
-                    <div className="text-lg font-semibold">Enterprise Ready</div>
-                    <div className="text-blue-200 text-sm">SOC 2 compliant & secure</div>
-                  </div>
-                  <div>
-                    <Users className="h-8 w-8 mx-auto mb-3 text-purple-400" />
-                    <div className="text-lg font-semibold">24/7 Support</div>
-                    <div className="text-blue-200 text-sm">Expert assistance when you need it</div>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center fade-in animation-delay-300">
+                  <GlassCard className="backdrop-blur-xl bg-white/10 border-white/20">
+                    <div className="flex flex-col items-center">
+                      <Star className="h-10 w-10 mb-3 text-yellow-400" />
+                      <div className="text-lg font-bold text-white mb-1">Free to Start</div>
+                      <div className="text-blue-200 text-sm">No credit card, no commitment</div>
+                    </div>
+                  </GlassCard>
+                  <GlassCard className="backdrop-blur-xl bg-white/10 border-white/20">
+                    <div className="flex flex-col items-center">
+                      <Shield className="h-10 w-10 mb-3 text-green-400" />
+                      <div className="text-lg font-bold text-white mb-1">Enterprise Ready</div>
+                      <div className="text-blue-200 text-sm">
+                        Battle-tested security & compliance
+                      </div>
+                    </div>
+                  </GlassCard>
+                  <GlassCard className="backdrop-blur-xl bg-white/10 border-white/20">
+                    <div className="flex flex-col items-center">
+                      <Users className="h-10 w-10 mb-3 text-purple-400" />
+                      <div className="text-lg font-bold text-white mb-1">Expert Support</div>
+                      <div className="text-blue-200 text-sm">24/7 assistance from AI maestros</div>
+                    </div>
+                  </GlassCard>
                 </div>
               </div>
             </div>

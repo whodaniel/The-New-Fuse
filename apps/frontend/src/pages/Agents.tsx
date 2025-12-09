@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { ActionCard, GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
+import {
+  Activity,
+  AlertCircle,
+  Bot,
+  Eye,
+  PlayCircle,
+  Sparkles,
+  StopCircle,
+  TrendingUp,
+  Zap,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 
 interface Agent {
   id: string;
@@ -24,206 +33,253 @@ export default function AgentsPage() {
       setAgents([
         {
           id: '1',
-          name: 'Data Analyst Agent',
-          type: 'Analytics',
+          name: 'Data Analyst Champion',
+          type: 'Analytics Specialist',
           status: 'active',
-          lastActive: '2 minutes ago',
-          description: 'Specialized in data analysis and reporting',
-          capabilities: ['Data Processing', 'Report Generation', 'Chart Creation']
+          lastActive: 'Active now',
+          description:
+            'Elite intelligence unit mastering data patterns and generating strategic insights',
+          capabilities: ['Neural Data Processing', 'Predictive Analytics', 'Visual Intelligence'],
         },
         {
-          id: '2', 
-          name: 'Customer Support Agent',
-          type: 'Support',
+          id: '2',
+          name: 'Support Commander',
+          type: 'Customer Relations',
           status: 'active',
-          lastActive: '5 minutes ago',
-          description: 'Handles customer inquiries and support tickets',
-          capabilities: ['Chat Support', 'Ticket Management', 'FAQ Assistance']
+          lastActive: 'Conquering workflows',
+          description: 'Frontline warrior handling customer missions with precision and empathy',
+          capabilities: ['Real-time Support', 'Intelligent Triage', 'Knowledge Synthesis'],
         },
         {
           id: '3',
-          name: 'Code Review Agent',
-          type: 'Development',
+          name: 'Code Guardian',
+          type: 'Development Sentinel',
           status: 'inactive',
-          lastActive: '1 hour ago',
-          description: 'Reviews code for quality and security issues',
-          capabilities: ['Code Analysis', 'Security Scanning', 'Best Practices']
-        }
+          lastActive: 'Standing by',
+          description:
+            'Vigilant protector analyzing code architecture and security vulnerabilities',
+          capabilities: ['Deep Code Analysis', 'Threat Detection', 'Architecture Review'],
+        },
       ]);
       setLoading(false);
     }, 1000);
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500';
-      case 'inactive': return 'bg-gray-500';
-      case 'error': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'active':
+        return (
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+            <span className="text-xs font-semibold text-green-300">DEPLOYED</span>
+          </div>
+        );
+      case 'inactive':
+        return (
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-gray-500/20 to-slate-500/20 border border-gray-500/30">
+            <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+            <span className="text-xs font-semibold text-gray-300">STANDBY</span>
+          </div>
+        );
+      case 'error':
+        return (
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-red-500/20 to-rose-500/20 border border-red-500/30">
+            <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></div>
+            <span className="text-xs font-semibold text-red-300">ALERT</span>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading agents...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center relative overflow-hidden">
+        {/* Animated orbs */}
+        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-700"></div>
+
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-400 mx-auto mb-4"></div>
+          <p className="text-white text-lg font-semibold">Assembling your AI army...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 relative overflow-hidden">
+      {/* Animated background orbs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fade-in">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">🤖 AI Agents</h1>
-              <p className="text-gray-600 mt-2">Manage and monitor your AI agents</p>
+              <div className="flex items-center gap-3 mb-2">
+                <Bot className="w-10 h-10 text-purple-400" />
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                  AI Command Center
+                </h1>
+              </div>
+              <p className="text-gray-300 text-lg">Command your elite AI champions</p>
             </div>
             <Link to="/agents/new">
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                ➕ Create New Agent
-              </Button>
+              <PremiumButton icon={Sparkles} size="lg">
+                Forge Your Next AI Champion
+              </PremiumButton>
             </Link>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <span className="text-2xl">🤖</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Agents</p>
-                  <p className="text-2xl font-bold text-gray-900">{agents.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-slide-up">
+          <StatsCard
+            label="Total Champions"
+            value={agents.length}
+            icon={Bot}
+            gradient="purple"
+            change="+2 this week"
+            changeType="positive"
+          />
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <span className="text-2xl">✅</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Active</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {agents.filter(a => a.status === 'active').length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <StatsCard
+            label="Deployed & Active"
+            value={agents.filter((a) => a.status === 'active').length}
+            icon={Activity}
+            gradient="green"
+            change="Conquering tasks"
+            changeType="positive"
+          />
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <span className="text-2xl">⏸️</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Inactive</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {agents.filter(a => a.status === 'inactive').length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <StatsCard
+            label="On Standby"
+            value={agents.filter((a) => a.status === 'inactive').length}
+            icon={Zap}
+            gradient="cyan"
+            change="Ready for deployment"
+            changeType="neutral"
+          />
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <span className="text-2xl">❌</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Errors</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {agents.filter(a => a.status === 'error').length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <StatsCard
+            label="System Alerts"
+            value={agents.filter((a) => a.status === 'error').length}
+            icon={AlertCircle}
+            gradient="orange"
+            change="Requires attention"
+            changeType="neutral"
+          />
         </div>
 
         {/* Agents List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {agents.map((agent) => (
-            <Card key={agent.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{agent.name}</CardTitle>
-                  <div className={`w-3 h-3 rounded-full ${getStatusColor(agent.status)}`}></div>
+          {agents.map((agent, index) => (
+            <div
+              key={agent.id}
+              className="animate-fade-in-up"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <GlassCard hover={true} className="h-full group">
+                {/* Agent Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
+                      <Bot className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">
+                        {agent.name}
+                      </h3>
+                      <p className="text-sm text-gray-400">{agent.type}</p>
+                    </div>
+                  </div>
+                  {getStatusBadge(agent.status)}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="secondary">{agent.type}</Badge>
-                  <span className="text-sm text-gray-500">{agent.lastActive}</span>
+
+                {/* Last Active */}
+                <div className="flex items-center gap-2 mb-4 text-sm text-gray-400">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>{agent.lastActive}</span>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 mb-4">{agent.description}</p>
-                
-                <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Capabilities:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {agent.capabilities.map((capability, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
+
+                {/* Description */}
+                <p className="text-gray-300 mb-4 leading-relaxed">{agent.description}</p>
+
+                {/* Capabilities */}
+                <div className="mb-6">
+                  <p className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wide">
+                    Core Abilities
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {agent.capabilities.map((capability, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-full text-purple-200"
+                      >
                         {capability}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
                 </div>
 
-                <div className="flex space-x-2">
+                {/* Actions */}
+                <div className="flex gap-2">
                   <Link to={`/agents/${agent.id}`} className="flex-1">
-                    <Button variant="outline" className="w-full">
-                      View Details
-                    </Button>
+                    <PremiumButton variant="outline" size="sm" icon={Eye} fullWidth>
+                      Inspect
+                    </PremiumButton>
                   </Link>
-                  <Button 
-                    variant={agent.status === 'active' ? 'destructive' : 'default'}
-                    className="flex-1"
+                  <PremiumButton
+                    variant={agent.status === 'active' ? 'danger' : 'primary'}
+                    size="sm"
+                    icon={agent.status === 'active' ? StopCircle : PlayCircle}
+                    fullWidth
                   >
-                    {agent.status === 'active' ? 'Stop' : 'Start'}
-                  </Button>
+                    {agent.status === 'active' ? 'Deactivate' : 'Deploy'}
+                  </PremiumButton>
                 </div>
-              </CardContent>
-            </Card>
+              </GlassCard>
+            </div>
           ))}
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">🚀 Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <Sparkles className="w-6 h-6 text-purple-400" />
+            Command Operations
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Link to="/agents/new">
-              <Button variant="outline" className="w-full h-20 flex flex-col">
-                <span className="text-2xl mb-2">➕</span>
-                <span>Create Agent</span>
-              </Button>
+              <ActionCard
+                title="Forge New Champion"
+                description="Create and deploy a powerful new AI agent to your command center"
+                icon={Sparkles}
+                gradient="purple"
+                onClick={() => {}}
+              />
             </Link>
             <Link to="/dashboard/agents">
-              <Button variant="outline" className="w-full h-20 flex flex-col">
-                <span className="text-2xl mb-2">📊</span>
-                <span>View Analytics</span>
-              </Button>
+              <ActionCard
+                title="Battle Analytics"
+                description="Monitor performance metrics and strategic insights from your AI army"
+                icon={TrendingUp}
+                gradient="blue"
+                onClick={() => {}}
+              />
             </Link>
             <Link to="/multi-agent-chat">
-              <Button variant="outline" className="w-full h-20 flex flex-col">
-                <span className="text-2xl mb-2">💬</span>
-                <span>Multi-Agent Chat</span>
-              </Button>
+              <ActionCard
+                title="Multi-Agent Arena"
+                description="Orchestrate collaborative missions between multiple AI champions"
+                icon={Activity}
+                gradient="cyan"
+                onClick={() => {}}
+              />
             </Link>
           </div>
         </div>
