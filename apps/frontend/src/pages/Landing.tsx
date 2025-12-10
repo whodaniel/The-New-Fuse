@@ -21,10 +21,8 @@ import {
   Github,
   Globe,
   MessageSquare,
-  Music,
   Network,
   Quote,
-  Settings,
   Shield,
   Sparkles,
   Star,
@@ -179,23 +177,24 @@ export const Landing = () => {
                   className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20 fade-in"
                   aria-label="Platform badge"
                 >
-                  <Music className="w-4 h-4 mr-2" aria-hidden="true" />
-                  The Operating System for AI Orchestration
+                  <Cpu className="w-4 h-4 mr-2" aria-hidden="true" />
+                  The First Autopoietic AI System
                 </Badge>
 
                 <h1
                   id="hero-heading"
                   className="text-5xl lg:text-7xl font-bold mb-6 leading-tight fade-in"
                 >
-                  Orchestrate AI Agents
+                  Software That
                   <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                    Like a Symphony
+                    Builds Itself
                   </span>
                 </h1>
 
                 <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto leading-relaxed fade-in animation-delay-100">
-                  Deploy, manage, and scale AI agent workflows with the precision of a maestro.
-                  Command your AI empire and watch it perform in perfect harmony.
+                  The world's first <strong>Self-Improving AI Framework</strong>. Deploy an
+                  autonomous swarm that analyzes its own code, architect's upgrades, and deploys
+                  fixes—without your help.
                 </p>
 
                 <div
@@ -207,11 +206,11 @@ export const Landing = () => {
                     <PremiumButton
                       size="lg"
                       variant="primary"
-                      icon={Music}
+                      icon={Cpu}
                       iconPosition="left"
                       className="px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl group"
                     >
-                      Start Orchestrating Free
+                      Deploy The Swarm
                       <ArrowRight
                         className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
                         aria-hidden="true"
@@ -227,7 +226,7 @@ export const Landing = () => {
                       demoSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }}
                   >
-                    Discover the Power
+                    See It Evolve
                   </PremiumButton>
                 </div>
 
@@ -267,11 +266,11 @@ export const Landing = () => {
                   <div className="text-center">
                     <div
                       className="text-3xl lg:text-4xl font-bold text-orange-400"
-                      aria-label="99.9 percent uptime"
+                      aria-label="157 Orphaned Components"
                     >
-                      99.9%
+                      54+
                     </div>
-                    <div className="text-blue-200 text-sm font-medium">Uptime</div>
+                    <div className="text-blue-200 text-sm font-medium">Monorepo Packages</div>
                   </div>
                 </div>
               </div>
@@ -294,11 +293,11 @@ export const Landing = () => {
                   id="features-heading"
                   className="text-4xl lg:text-5xl font-bold text-foreground mb-6 fade-in"
                 >
-                  Everything You Need for AI Orchestration
+                  Engineered for Autonomy
                 </h2>
                 <p className="text-xl text-muted-foreground max-w-3xl mx-auto fade-in animation-delay-100">
-                  Transform how you work with AI. Each feature is designed to amplify your
-                  capabilities and turn complexity into elegant simplicity.
+                  This isn't just a chatbot. It's a complex adaptive system powered by a 5-agent
+                  swarm that continuously analyzes, architects, and improves its own codebase.
                 </p>
               </div>
 
@@ -309,38 +308,38 @@ export const Landing = () => {
               >
                 <FeatureCard
                   icon={Bot}
-                  title="Command an AI Army"
-                  description="Deploy specialized AI agents, each a master at its craft. Orchestrate them with precision as they work together to accomplish extraordinary tasks."
+                  title="Self-Correction Swarm"
+                  description="A dedicated 5-agent team (Analyzer, Architect, Implementer) living inside your API that detects bugs and writes its own fixes."
                   color="primary"
                 />
                 <FeatureCard
-                  icon={Workflow}
-                  title="Workflows That Dance"
-                  description="Choreograph complex workflows that move to your business rhythm. Watch automation pipelines flow like perfectly timed performances."
+                  icon={Network}
+                  title="Native MCP Support"
+                  description="Built on the Model Context Protocol standard. Connect seamlessly to local resources, GitHub, and external tools as native functions."
                   color="success"
                 />
                 <FeatureCard
-                  icon={BarChart3}
-                  title="Real-Time Vision"
-                  description="Watch your AI empire work in real-time with crystal-clear insights. See performance metrics that matter, when they matter."
+                  icon={Chrome}
+                  title="Browser Hub Awareness"
+                  description="Give your agents eyes. The integrated Browser Hub and Chrome Extension allow agents to see, browse, and scrape the live web."
                   color="indigo"
                 />
                 <FeatureCard
                   icon={Shield}
                   title="Fort Knox Security"
-                  description="Enterprise-grade protection that never sleeps. Role-based control and audit trails ensure your AI operations are always secure."
+                  description="The Reviewer Agent audits every line of generated code for SQL injection, XSS, and vulnerabilities before it ever runs."
                   color="danger"
                 />
                 <FeatureCard
                   icon={MessageSquare}
-                  title="Seamless Communication"
-                  description="Agents that speak fluently through Google's A2A and MCP protocols. Enable conversations that drive real business value."
+                  title="Multi-Agent Collaboration"
+                  description="Agents don't work alone. They communicate via A2A protocols to delegate tasks, share context, and solve complex problems together."
                   color="purple"
                 />
                 <FeatureCard
-                  icon={Settings}
-                  title="Tools Made for Maestros"
-                  description="VS Code and Chrome extensions that feel like magic. Comprehensive APIs that empower you to build anything you imagine."
+                  icon={Workflow}
+                  title="Visual Neural Builder"
+                  description="Drag-and-drop your agent's brain. Create complex logic flows visually, then let the swarm optimize them for performance."
                   color="orange"
                 />
               </div>
@@ -422,8 +421,8 @@ export const Landing = () => {
                 <div className="space-y-4 fade-in animation-delay-300">
                   <TechStackItem
                     icon={Code}
-                    name="Modern TypeScript Stack"
-                    description="Full-stack TypeScript with React, Node.js, and NestJS framework"
+                    name="54-Package Monorepo"
+                    description="A massive, modular PNPM workspace architecture designed for cleaner code separation and infinite scalability."
                   />
                   <TechStackItem
                     icon={Network}
@@ -437,8 +436,8 @@ export const Landing = () => {
                   />
                   <TechStackItem
                     icon={Terminal}
-                    name="Developer Experience"
-                    description="Rich CLI tools, VS Code extension, and comprehensive documentation"
+                    name="Self-Improving Agents"
+                    description="Agents that can analyze their own code, identify debt, and rewrite themselves for better performance."
                   />
                 </div>
               </div>

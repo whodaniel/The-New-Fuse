@@ -1,5 +1,11 @@
-import { PrismaClient, UserRole, AgentType, AgentStatus, AgentCapability } from '../generated/prisma';
 import * as bcrypt from 'bcrypt';
+import {
+  AgentCapability,
+  AgentStatus,
+  AgentType,
+  PrismaClient,
+  UserRole,
+} from '../generated/prisma';
 
 const prisma = new PrismaClient();
 
@@ -45,6 +51,41 @@ async function main() {
   });
 
   console.log(`✅ Admin user created/verified: ${adminUser.email}`);
+
+  // =============================================================================
+  // MASTER ADMIN SETUP - owner@example.com
+  // =============================================================================
+
+  console.log('👑 Creating Master Admin user...');
+
+  const masterAdminEmail = 'owner@example.com';
+  const masterAdminPassword = process.env.MASTER_ADMIN_PASSWORD || 'changeme123!'; // CHANGE IN PRODUCTION
+
+  if (masterAdminPassword === 'changeme123!') {
+    console.warn('⚠️  WARNING: Using default master admin password. Please change immediately!');
+  }
+
+  const masterHashedPassword = await bcrypt.hash(masterAdminPassword, 12);
+
+  const masterAdmin = await prisma.user.upsert({
+    where: { email: masterAdminEmail },
+    update: {
+      roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+      isActive: true,
+    },
+    create: {
+      email: masterAdminEmail,
+      username: 'bizsynth',
+      name: 'Master Administrator',
+      hashedPassword: masterHashedPassword,
+      role: UserRole.SUPER_ADMIN,
+      roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+      isActive: true,
+      emailVerified: true,
+    },
+  });
+
+  console.log(`✅ Master Admin created/verified: ${masterAdmin.email} (Role: SUPER_ADMIN)`);
 
   // =============================================================================
   // DEMO USER SETUP (Optional - for development)
@@ -124,18 +165,25 @@ async function main() {
   ];
 
   for (const config of llmConfigs) {
-    await prisma.lLMConfig.upsert({
-      where: {
-        // Use a composite unique constraint if available
-        name: config.name,
-      },
-      update: {
-        enabled: config.enabled,
-        priority: config.priority,
-      },
-      create: config,
+    // Check if config exists by name
+    const existing = await prisma.lLMConfig.findFirst({
+      where: { name: config.name },
     });
-    console.log(`✅ LLM config created: ${config.name}`);
+
+    if (existing) {
+      await prisma.lLMConfig.update({
+        where: { id: existing.id },
+        data: {
+          enabled: config.enabled,
+          priority: config.priority,
+        },
+      });
+    } else {
+      await prisma.lLMConfig.create({
+        data: config,
+      });
+    }
+    console.log(`✅ LLM config created/updated: ${config.name}`);
   }
 
   // =============================================================================
@@ -151,7 +199,8 @@ async function main() {
         type: AgentType.ASSISTANT,
         status: AgentStatus.ACTIVE,
         description: 'General-purpose coding assistant',
-        systemPrompt: 'You are a helpful coding assistant. Help users write, debug, and optimize code.',
+        systemPrompt:
+          'You are a helpful coding assistant. Help users write, debug, and optimize code.',
         capabilities: [
           AgentCapability.CODE_GENERATION,
           AgentCapability.CODE_REVIEW,
@@ -166,12 +215,9 @@ async function main() {
         type: AgentType.CHAT,
         status: AgentStatus.ACTIVE,
         description: 'Conversational AI agent',
-        systemPrompt: 'You are a friendly and helpful AI assistant. Engage in natural conversation.',
-        capabilities: [
-          AgentCapability.CHAT,
-          AgentCapability.RESEARCH,
-          AgentCapability.ANALYSIS,
-        ],
+        systemPrompt:
+          'You are a friendly and helpful AI assistant. Engage in natural conversation.',
+        capabilities: [AgentCapability.CHAT, AgentCapability.RESEARCH, AgentCapability.ANALYSIS],
         provider: 'default',
         userId: adminUser.id,
       },
@@ -180,7 +226,8 @@ async function main() {
         type: AgentType.WORKFLOW,
         status: AgentStatus.ACTIVE,
         description: 'Manages and executes complex workflows',
-        systemPrompt: 'You are a workflow orchestration agent. Coordinate tasks and manage execution flow.',
+        systemPrompt:
+          'You are a workflow orchestration agent. Coordinate tasks and manage execution flow.',
         capabilities: [
           AgentCapability.WORKFLOW,
           AgentCapability.TASK_EXECUTION,
@@ -192,18 +239,22 @@ async function main() {
     ];
 
     for (const agent of systemAgents) {
-      await prisma.agent.upsert({
+      // Check if agent exists
+      const existingAgent = await prisma.agent.findFirst({
         where: {
-          // Composite unique on name + userId if available, or use name only
-          name_userId: {
-            name: agent.name,
-            userId: agent.userId,
-          },
+          name: agent.name,
+          userId: agent.userId,
         },
-        update: {},
-        create: agent,
       });
-      console.log(`✅ System agent created: ${agent.name}`);
+
+      if (!existingAgent) {
+        await prisma.agent.create({
+          data: agent,
+        });
+        console.log(`✅ System agent created: ${agent.name}`);
+      } else {
+        console.log(`✅ System agent already exists: ${agent.name}`);
+      }
     }
   }
 
@@ -239,15 +290,19 @@ async function main() {
   ];
 
   for (const entity of systemEntities) {
-    await prisma.registeredEntity.upsert({
-      where: {
-        // Use composite unique if available
-        name: entity.name,
-      },
-      update: {},
-      create: entity,
+    // Check if entity exists
+    const existingEntity = await prisma.registeredEntity.findFirst({
+      where: { name: entity.name },
     });
-    console.log(`✅ Registered entity: ${entity.name}`);
+
+    if (!existingEntity) {
+      await prisma.registeredEntity.create({
+        data: entity,
+      });
+      console.log(`✅ Registered entity created: ${entity.name}`);
+    } else {
+      console.log(`✅ Registered entity already exists: ${entity.name}`);
+    }
   }
 
   // =============================================================================

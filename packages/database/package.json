@@ -32,7 +32,6 @@
     "@prisma/client": "^7.1.0",
     "@prisma/migrate": "^7.1.0",
     "@the-new-fuse/types": "workspace:*",
-    "bcrypt": "^5.1.1",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
