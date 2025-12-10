@@ -1,186 +1,278 @@
-# 🚀 AI AGENT HANDOFF PROMPT
+# 🔍 FULL CODEBASE AUDIT - BACKEND & ORPHAN DISCOVERY
 
-## The New Fuse - Codebase Hardening & Integration Audit
-
----
-
-## COPY THIS ENTIRE PROMPT TO START EVERY NEW AGENT SESSION
+## The New Fuse - Systematic File-by-File Assessment
 
 ---
 
-### 📋 MISSION BRIEFING
+## ⚠️ CRITICAL: READ THIS FIRST
 
-You are continuing a systematic audit of **The New Fuse** codebase. The previous
-agent completed a Premium Design System refactor of 16+ major pages. Your
-mission is to:
+**DO NOT** work on frontend pages that have already been refactored. Those are
+DONE.
 
-1. **Audit every remaining file** for purpose, functionality, and integration
-2. **Enforce Premium Design System** on all internal application pages
-3. **Verify frontend-backend integration** for all API calls
-4. **Remove dead code and orphan files**
-5. **Ensure TypeScript strictness** (no `any` types, proper event typing)
+**YOUR MISSION**: Crawl through **EVERY DIRECTORY** in the codebase, assess
+**EVERY FILE**, and determine:
 
----
-
-### 📊 CODEBASE SCALE (Current State)
-
-| Directory                       | File Count      | Notes                          |
-| ------------------------------- | --------------- | ------------------------------ |
-| `apps/frontend/src/pages/`      | ~178 TSX files  | Many need Premium Design audit |
-| `apps/frontend/src/components/` | ~441 TSX files  | Potential orphans exist        |
-| `apps/api/src/controllers/`     | ~26 controllers | Need route verification        |
-| `apps/api/src/services/`        | ~41 services    | Need integration check         |
+1. Is this file used/imported anywhere?
+2. Is this file functional or broken?
+3. Is this file properly integrated into the application?
+4. Does the backend code connect correctly to the frontend?
 
 ---
 
-### ✅ ALREADY COMPLETED (Don't Re-Refactor)
+## 🎯 PRIMARY TARGETS (In Order)
 
-These pages are **Premium Design System compliant**:
+### 1. Backend API (`apps/api/src/`)
 
-- `dashboard/index.tsx`, `Analytics.tsx`, `CreateAgent.tsx`
-- `Agents/AgentsPage.tsx`, `index.tsx`, `Detail.tsx`, `New.tsx`
-- `Agents.tsx`, `AgentNew.tsx`, `AIAgentPortal.tsx`
-- `Settings.tsx`, `GeneralSettings.tsx`
-- `Workflows.tsx`, `WorkflowsEnhanced.tsx`, `WorkflowTemplates.tsx`
-- `Tasks/index.tsx`, `WorkspaceChat.tsx`, `MetricsDashboard.tsx`
-- `Resources/` (all files)
+**~26 controllers, ~41 services, numerous modules**
 
----
+Crawl EVERY file and verify:
 
-### 🎨 PREMIUM DESIGN SYSTEM REQUIREMENTS
-
-**Components to use** (from `@/components/ui/premium`):
-
-```tsx
-import {
-  GlassCard,
-  StatsCard,
-  ActionCard,
-  PremiumButton,
-  PremiumInput,
-  PremiumSelect,
-  PremiumTextarea,
-  ToggleSwitch,
-} from '@/components/ui/premium';
-```
-
-**Background** (REQUIRED for internal pages):
-
-```tsx
-<div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-```
-
-**Icons**: `lucide-react` ONLY - no emojis, no other icon libraries
-
-**Animations**: `framer-motion` for all transitions
-
-**Badges**: Semi-transparent styling:
-
-```tsx
-<Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">
-```
-
----
-
-### 🔧 CODING STANDARDS (STRICT)
-
-1. **No `any` types** - Explicitly type all parameters
-2. **Use `@/` imports** - No relative paths like `../../`
-3. **Type events explicitly**: `(e: React.ChangeEvent<HTMLInputElement>)`
-4. **Type map parameters**: `.map((item: ItemType) => ...)`
-5. **No `eval()`** - Use `new Function()` with scope isolation if needed
-
----
-
-### 📝 YOUR WORKFLOW
-
-1. **Read the full handoff workflow first**:
-
-   ```
-   /codebase-audit-handoff
-   ```
-
-   This file is at: `.agent/workflows/codebase-audit-handoff.md`
-
-2. **Pick a directory to audit** (suggested order):
-   - `apps/frontend/src/pages/Admin/`
-   - `apps/frontend/src/pages/settings/`
-   - `apps/frontend/src/pages/workspace/`
-   - `apps/frontend/src/pages/workflow-pages/`
-
-3. **For each file**, check:
-   - Is it imported/used anywhere?
-   - Does it use Premium Design System?
-   - Are there TypeScript errors?
-   - Does it have proper imports?
-
-4. **Run build after changes**:
-
-   ```bash
-   cd apps/frontend && pnpm run build
-   ```
-
-5. **Report your progress** in this format:
-   ```
-   ## Audit Report: [Directory Name]
-   - Files Reviewed: X
-   - Issues Fixed: Y
-   - Files Deleted: Z
-   - Build Status: ✅ GREEN
-   ```
-
----
-
-### 🚨 CRITICAL RULES
-
-- **NEVER delete without verification** - Confirm file is truly orphaned
-- **ALWAYS run build** - Exit code 0 required after changes
-- **PRESERVE functionality** - Only upgrade visuals, don't break features
-- **Marketing pages stay light** - `Landing.tsx`, `Pricing.tsx`, `Docs.tsx`,
-  etc.
-
----
-
-### 🔍 USEFUL COMMANDS
+- [ ] Controller is registered in its module
+- [ ] Routes are properly decorated (@Get, @Post, etc.)
+- [ ] Service is injectable and used
+- [ ] DTOs exist and match request/response shapes
+- [ ] Database interactions use Prisma correctly
+- [ ] Frontend actually calls these endpoints
 
 ```bash
-# Find pages NOT using Premium components
-grep -rL "from.*ui/premium" apps/frontend/src/pages/*.tsx
+# List all backend files
+find apps/api/src -type f -name "*.ts" | head -50
+```
 
-# Find files with any types
-grep -r ": any" apps/frontend/src/pages/
+### 2. Backend Services (`apps/backend/src/`)
 
-# Find emoji usage (should be removed)
-grep -r "⚡\|🔄\|🤖\|🔍\|📊\|✅\|❌" apps/frontend/src/pages/
+Separate from API - additional backend services
 
-# Find relative imports (should use @/)
-grep -r "from '\.\." apps/frontend/src/pages/
+```bash
+find apps/backend/src -type f -name "*.ts" | head -50
+```
 
-# Verify build
-cd apps/frontend && pnpm run build
+### 3. Shared Packages (`packages/*/`)
+
+**~30+ packages** - many may be orphaned or broken
+
+Priority packages to audit:
+
+- `packages/database/` - Prisma schema, migrations, generated types
+- `packages/core/` - Core utilities
+- `packages/types/` - Shared TypeScript types
+- `packages/agent/` - Agent system logic
+- `packages/mcp-core/` - MCP protocol
+- `packages/workflow-engine/` - Workflow execution
+- `packages/security/` - Security utilities
+
+```bash
+# List all packages
+ls -la packages/
+```
+
+### 4. Frontend Components (`apps/frontend/src/components/`)
+
+**~441 component files** - Find orphans!
+
+```bash
+# Find components not imported anywhere
+for file in $(find apps/frontend/src/components -name "*.tsx"); do
+  basename=$(basename "$file" .tsx)
+  if ! grep -r "$basename" apps/frontend/src --include="*.tsx" --include="*.ts" | grep -v "^$file:" > /dev/null 2>&1; then
+    echo "ORPHAN: $file"
+  fi
+done
+```
+
+### 5. Frontend Services (`apps/frontend/src/services/`)
+
+Verify each service:
+
+- [ ] Is exported and used
+- [ ] API endpoints it calls exist in backend
+- [ ] Error handling is implemented
+
+### 6. Frontend Hooks (`apps/frontend/src/hooks/`)
+
+Verify each hook:
+
+- [ ] Is exported and used
+- [ ] Dependencies are properly declared
+- [ ] No broken imports
+
+---
+
+## 📋 FILE ASSESSMENT TEMPLATE
+
+For each file you examine, determine:
+
+```markdown
+## File: [path/to/file.ts]
+
+### Purpose
+
+[What does this file do?]
+
+### Status
+
+- [ ] Used/Imported: YES / NO / UNCLEAR
+- [ ] Functional: YES / NO / PARTIAL
+- [ ] Integrated: YES / NO / PARTIAL
+- [ ] Frontend Connected (if backend): YES / NO / N/A
+
+### Issues Found
+
+1. [Issue description]
+2. [Issue description]
+
+### Action Required
+
+- [ ] KEEP - File is good
+- [ ] FIX - File needs repair
+- [ ] DELETE - File is orphan/dead code
+- [ ] INTEGRATE - File exists but not connected
 ```
 
 ---
 
-### 🎯 SUCCESS CRITERIA
+## 🔧 AUDIT COMMANDS
 
-You're done when:
+### Find all TypeScript files in backend
 
-- [ ] All internal pages use Premium Design System
-- [ ] No TypeScript `any` types in page components
-- [ ] All imports use `@/` alias
-- [ ] No orphaned/unused files remain
-- [ ] All routes are verified functional
-- [ ] Build passes with exit code 0
+```bash
+find apps/api/src -name "*.ts" | wc -l
+find apps/backend/src -name "*.ts" | wc -l
+```
+
+### Find all controllers and check if registered
+
+```bash
+# List all controllers
+find apps/api/src -name "*.controller.ts"
+
+# For each controller, check if it's in a module
+grep -r "Controller" apps/api/src/**/*.module.ts
+```
+
+### Find all services and check if injectable
+
+```bash
+find apps/api/src -name "*.service.ts"
+```
+
+### Check frontend service → backend endpoint connections
+
+```bash
+# Find all fetch/axios calls in frontend
+grep -r "fetch\|axios" apps/frontend/src/services/ --include="*.ts"
+
+# Compare to backend routes
+grep -r "@Get\|@Post\|@Put\|@Delete" apps/api/src/
+```
+
+### Find orphaned frontend components
+
+```bash
+# Components that are never imported
+grep -rL "import" apps/frontend/src/components/*.tsx
+```
 
 ---
 
-**START BY RUNNING**: `/codebase-audit-handoff` to read the full workflow
-document.
+## 🚫 WHAT NOT TO AUDIT (Already Done)
+
+These frontend pages were already refactored to Premium Design System - **SKIP
+THEM**:
+
+```
+apps/frontend/src/pages/dashboard/index.tsx ✅
+apps/frontend/src/pages/dashboard/Analytics.tsx ✅
+apps/frontend/src/pages/dashboard/CreateAgent.tsx ✅
+apps/frontend/src/pages/Agents/AgentsPage.tsx ✅
+apps/frontend/src/pages/Agents/index.tsx ✅
+apps/frontend/src/pages/Agents/Detail.tsx ✅
+apps/frontend/src/pages/Agents/New.tsx ✅
+apps/frontend/src/pages/Agents.tsx ✅
+apps/frontend/src/pages/AgentNew.tsx ✅
+apps/frontend/src/pages/AIAgentPortal.tsx ✅
+apps/frontend/src/pages/Settings.tsx ✅
+apps/frontend/src/pages/GeneralSettings.tsx ✅
+apps/frontend/src/pages/Workflows.tsx ✅
+apps/frontend/src/pages/WorkflowsEnhanced.tsx ✅
+apps/frontend/src/pages/WorkflowTemplates.tsx ✅
+apps/frontend/src/pages/Tasks/index.tsx ✅
+apps/frontend/src/pages/WorkspaceChat.tsx ✅
+apps/frontend/src/pages/MetricsDashboard.tsx ✅
+apps/frontend/src/pages/Resources/*.tsx ✅
+```
+
+---
+
+## 📊 DIRECTORY INVENTORY
+
+Run this first to understand the scope:
+
+```bash
+echo "=== BACKEND API ===" && find apps/api/src -type f -name "*.ts" | wc -l
+echo "=== BACKEND SERVICES ===" && find apps/backend/src -type f -name "*.ts" 2>/dev/null | wc -l
+echo "=== PACKAGES ===" && ls -d packages/*/ | wc -l
+echo "=== FRONTEND COMPONENTS ===" && find apps/frontend/src/components -type f -name "*.tsx" | wc -l
+echo "=== FRONTEND SERVICES ===" && find apps/frontend/src/services -type f -name "*.ts" 2>/dev/null | wc -l
+echo "=== FRONTEND HOOKS ===" && find apps/frontend/src/hooks -type f -name "*.ts" 2>/dev/null | wc -l
+```
+
+---
+
+## 🎯 START HERE
+
+1. **Run the inventory command above** to see file counts
+2. **Start with `apps/api/src/controllers/`** - List all controllers, verify
+   each one
+3. **Move to `apps/api/src/services/`** - List all services, verify each one
+4. **Check `apps/api/src/modules/`** - Verify controller/service registration
+5. **Audit `packages/` one by one** - Find broken/orphaned packages
+6. **Scan `apps/frontend/src/components/`** - Find orphaned components
+7. **Verify `apps/frontend/src/services/`** - Check API endpoint connections
+
+---
+
+## ✅ SUCCESS CRITERIA
+
+The audit is complete when:
+
+- [ ] Every backend controller has been verified as registered and functional
+- [ ] Every backend service has been verified as used
+- [ ] API endpoints match frontend service calls
+- [ ] Orphaned frontend components have been removed or integrated
+- [ ] All packages in `packages/` are verified as used or marked for removal
+- [ ] Build passes: `pnpm run build` exit code 0
+
+---
+
+## 📝 PROGRESS TRACKING
+
+After each directory audit, log your findings:
+
+```markdown
+## Audit Progress: [Date]
+
+### Completed
+
+- [x] apps/api/src/controllers/ (X files, Y issues)
+- [ ] apps/api/src/services/
+- [ ] packages/database/ ...
+
+### Issues Found
+
+1. [Issue] - [Fix status]
+2. [Issue] - [Fix status]
+
+### Files Removed
+
+- path/to/orphan.ts (reason)
+
+### Build Status: ✅ / ❌
+```
+
+---
 
 **PROJECT ROOT**: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
 
----
-
-_Created: December 9, 2024 | Previous Session: Premium Design System Refactor
-Complete_
+_Last Updated: December 9, 2024_ _Focus: Backend & Package Audit, Orphan
+Discovery_
