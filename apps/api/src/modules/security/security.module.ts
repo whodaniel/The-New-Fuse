@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SecurityController } from '../../controllers/security.controller';
 import { InputSanitizationService } from '../../security/input-sanitization.service';
 import { ResponseSanitizationService } from '../../security/response-sanitization.service';
+import { SecurityLoggingService } from '../../security/security-logging.service';
 import { SecurityTestingService } from '../../security/security-testing.service';
 
 /**
@@ -25,7 +26,12 @@ import { SecurityTestingService } from '../../security/security-testing.service'
 @Module({
   imports: [JwtModule],
   controllers: [SecurityController],
-  providers: [SecurityTestingService, InputSanitizationService, ResponseSanitizationService],
+  providers: [
+    SecurityTestingService,
+    InputSanitizationService,
+    ResponseSanitizationService,
+    SecurityLoggingService,
+  ],
   exports: [SecurityTestingService, InputSanitizationService, ResponseSanitizationService],
 })
 export class SecurityModule {}

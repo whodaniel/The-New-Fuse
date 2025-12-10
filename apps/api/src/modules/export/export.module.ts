@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ExportController } from '../../controllers/export.controller';
+import { SecurityLoggingService } from '../../security/security-logging.service';
 
 /**
  * Export Module
@@ -17,7 +18,7 @@ import { ExportController } from '../../controllers/export.controller';
 @Module({
   imports: [JwtModule],
   controllers: [ExportController],
-  providers: [],
+  providers: [SecurityLoggingService],
   exports: [],
 })
 export class ExportModule {}

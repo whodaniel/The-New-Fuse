@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminController } from '../../controllers/admin.controller';
+import { SecurityLoggingService } from '../../security/security-logging.service';
 import { AuditService } from '../../services/audit.service';
 import { MetricsService } from '../../services/metrics.service';
 import { RoleService } from '../../services/role.service';
@@ -20,7 +21,7 @@ import { RoleService } from '../../services/role.service';
 @Module({
   imports: [JwtModule],
   controllers: [AdminController],
-  providers: [RoleService, AuditService, MetricsService],
+  providers: [RoleService, AuditService, MetricsService, SecurityLoggingService],
   exports: [RoleService, AuditService, MetricsService],
 })
 export class AdminModule {}
