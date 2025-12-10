@@ -155,7 +155,7 @@
     "vite": "^7.1.12",
     "vite-plugin-compression": "^0.5.1",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "latest"
+    "vitest": "^4.0.15"
   },
   "jest": {
     "testEnvironment": "jsdom"
