@@ -1,4 +1,9 @@
+// Load environment variables FIRST - before any other imports that use them
+import 'dotenv/config';
+
+import { PrismaPg } from '@prisma/adapter-pg';
 import * as bcrypt from 'bcrypt';
+import { Pool } from 'pg';
 import {
   AgentCapability,
   AgentStatus,
@@ -7,7 +12,16 @@ import {
   UserRole,
 } from '../generated/prisma';
 
-const prisma = new PrismaClient();
+// Validate required environment variable
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not set. Please check your .env file.');
+}
+
+console.log('📡 Connecting to database...');
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 /**
  * Database Seed Script
