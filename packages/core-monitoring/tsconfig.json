@@ -6,7 +6,9 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "module": "commonjs",
+    "moduleResolution": "node"
   },
   "include": [
     "src/**/*"

@@ -263,7 +263,7 @@ export class QdrantDriver implements IVectorDatabase {
         const info = await this.client.getCollection(collection);
         return {
           collection,
-          vectors_count: info.vectors_count || 0,
+          vectors_count: info.indexed_vectors_count || 0, // Fixed: API changed from vectors_count to indexed_vectors_count
           indexed_vectors_count: info.indexed_vectors_count || 0,
           points_count: info.points_count || 0,
           segments_count: info.segments_count || 0,
