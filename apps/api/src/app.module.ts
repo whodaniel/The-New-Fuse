@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer, ValidationPipe } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -6,6 +6,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
 import { DatabaseModule } from '@the-new-fuse/database';
+import { AgentsModule } from './agents/agents.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CacheService } from './cache/cache.service';
@@ -21,12 +22,15 @@ import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
+import { AdminModule } from './modules/admin/admin.module';
 import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
 import { AgentModule } from './modules/agent.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
+import { ExportModule } from './modules/export/export.module';
+import { SecurityModule } from './modules/security/security.module';
 import { TaskModule } from './modules/task/task.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
@@ -80,11 +84,15 @@ import { SecurityLoggingService } from './security/security-logging.service';
     ]) as any,
     AuthModule,
     AgentModule, // Add our new agent module
+    AgentsModule, // Self-Improvement Agents Module
     AgencyHubModule, // Agency Hub with Swarm coordination
     ChatModule,
     TaskModule,
     EntityDiscoveryModule,
     ClaudeDevAutomationModule,
+    AdminModule, // Admin operations and role management
+    ExportModule, // Data export functionality
+    SecurityModule, // Security testing and validation
     TNFMCPModule, // Add The New Fuse MCP Module
     A2ACoreModule.forRoot(), // Add A2A Protocol Module
     WebhooksModule, // Business event webhooks and SSE
