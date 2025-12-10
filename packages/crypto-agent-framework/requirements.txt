@@ -9,7 +9,7 @@ eth-account==0.10.0          # Ethereum account management
 
 # L3: Compute (Akash & Render)
 httpx==0.25.2                # Async HTTP client
-aiohttp==3.9.1               # Async HTTP for compute APIs
+aiohttp==3.9.4               # Async HTTP for compute APIs (security update)
 
 # L4: Memory (Arweave & AO)
 arweave-python-client==1.0.16  # Arweave storage
@@ -22,8 +22,8 @@ tenacity==8.2.3              # Retry logic
 jsonschema==4.20.0           # JSON schema validation
 
 # Crypto utilities
-cryptography==41.0.7         # Cryptographic operations
-ecdsa==0.18.0                # ECDSA signing
+cryptography==42.0.4         # Cryptographic operations (security update)
+ecdsa==0.18.0                # ECDSA signing (awaiting security patch)
 base58==2.1.1                # Base58 encoding
 
 # Logging and monitoring
