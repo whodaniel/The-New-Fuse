@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
-import { WalletMonitoringService } from './wallet-monitoring.service';
-import { MonitoringController } from './monitoring.controller';
 import { PrismaService } from '@the-new-fuse/database';
+import { MonitoringController } from './monitoring.controller';
+import { WalletMonitoringService } from './wallet-monitoring.service';
 
 @Module({
-  imports: [ScheduleModule.forRoot()],
+  imports: [ScheduleModule.forRoot(), JwtModule],
   controllers: [MonitoringController],
   providers: [WalletMonitoringService, PrismaService],
-  exports: [WalletMonitoringService]
+  exports: [WalletMonitoringService],
 })
 export class MonitoringModule {}

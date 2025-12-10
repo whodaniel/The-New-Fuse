@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { ExportController } from '../../controllers/export.controller';
 
 /**
@@ -14,6 +15,7 @@ import { ExportController } from '../../controllers/export.controller';
  * - HTML format for web viewing and printing
  */
 @Module({
+  imports: [JwtModule],
   controllers: [ExportController],
   providers: [],
   exports: [],

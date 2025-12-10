@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AdminController } from '../../controllers/admin.controller';
 import { AuditService } from '../../services/audit.service';
 import { MetricsService } from '../../services/metrics.service';
@@ -17,6 +18,7 @@ import { RoleService } from '../../services/role.service';
  * - System metrics and monitoring
  */
 @Module({
+  imports: [JwtModule],
   controllers: [AdminController],
   providers: [RoleService, AuditService, MetricsService],
   exports: [RoleService, AuditService, MetricsService],

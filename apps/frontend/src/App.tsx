@@ -4,6 +4,7 @@ import ErrorBoundary from './components/core/ErrorBoundary';
 import PerformanceMonitor, {
   usePerformanceMonitor,
 } from './components/performance/PerformanceMonitor';
+import { RouteProvider } from './components/route-context';
 import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
@@ -55,9 +56,11 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LayoutProvider>
-          <ErrorBoundary>
-            <AppContent />
-          </ErrorBoundary>
+          <RouteProvider>
+            <ErrorBoundary>
+              <AppContent />
+            </ErrorBoundary>
+          </RouteProvider>
         </LayoutProvider>
       </ThemeProvider>
     </QueryClientProvider>
