@@ -12,6 +12,7 @@ import { CacheService } from './cache/cache.service';
 import { getDatabaseConfig } from './config/database.config';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
+import { HealthController } from './controllers/health.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { SystemController } from './controllers/system.controller';
 import { WebSocketController } from './controllers/websocket.controller';
@@ -20,12 +21,14 @@ import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
+import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
 import { AgentModule } from './modules/agent.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { TaskModule } from './modules/task/task.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { TransactionsModule } from './transactions/transactions.module';
@@ -77,12 +80,14 @@ import { SecurityLoggingService } from './security/security-logging.service';
     ]) as any,
     AuthModule,
     AgentModule, // Add our new agent module
+    AgencyHubModule, // Agency Hub with Swarm coordination
     ChatModule,
     TaskModule,
     EntityDiscoveryModule,
     ClaudeDevAutomationModule,
     TNFMCPModule, // Add The New Fuse MCP Module
     A2ACoreModule.forRoot(), // Add A2A Protocol Module
+    WebhooksModule, // Business event webhooks and SSE
     WalletsModule, // Web3Auth Wallet Module
     TransactionsModule, // Blockchain Transaction Module
     Web3authModule, // Web3Auth Integration Module
@@ -93,6 +98,7 @@ import { SecurityLoggingService } from './security/security-logging.service';
   controllers: [
     AppController,
     A2AController,
+    HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
     SystemController,
     WebSocketController,

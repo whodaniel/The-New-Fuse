@@ -1,8 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../entities/User';
+import { PrismaService } from '@the-new-fuse/database';
 
 /**
  * Health Controller
@@ -52,14 +50,13 @@ export class HealthController {
   /**
    * Constructor for HealthController
    * 
-   * @param userRepository - TypeORM repository for User entity (used for DB connectivity testing)
+   * @param prisma - Prisma service for database connectivity testing
    * 
    * @example
-   * const controller = new HealthController(userRepository);
+   * const controller = new HealthController(prisma);
    */
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly prisma: PrismaService,
   ) {}
 
   @Get()
@@ -112,9 +109,9 @@ export class HealthController {
    */
   async check() {
     try {
-      // Test database connectivity with a simple query
+      // Test database connectivity with a simple Prisma query
       // This validates that the database is reachable and responsive
-      await this.userRepository.query('SELECT 1');
+      await this.prisma.$queryRaw`SELECT 1`;
       
       return {
         status: 'ok',
