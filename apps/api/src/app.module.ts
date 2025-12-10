@@ -47,15 +47,11 @@ import { CsrfProtectionMiddleware } from './middleware/csrf-protection.middlewar
 import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-handler.middleware';
 import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
 import { SecurityValidationMiddleware } from './middleware/security-validation.middleware';
-import { ApiEndpointMonitoringService } from './security/api-endpoint-monitoring.service';
-import { EnhancedRateLimitService } from './security/enhanced-rate-limit.service';
-import { InputSanitizationService } from './security/input-sanitization.service';
-import { ResponseSanitizationService } from './security/response-sanitization.service';
-import { SecurityIntegrationService } from './security/security-integration.service';
-import { SecurityLoggingService } from './security/security-logging.service';
+import { SecurityModule } from './security/security.module';
 
 @Module({
   imports: [
+    SecurityModule, // Global security services
     ConfigModule.forRoot({
       isGlobal: true,
       load: [llmProviderConfig, securityConfig],
@@ -108,9 +104,13 @@ import { SecurityLoggingService } from './security/security-logging.service';
     A2AController,
     HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
+    MCPController, // MCP server management (20+ endpoints)
+    ModelsController, // AI model provider selection
     SystemController,
+    UserManagementController, // User CRUD operations
     WebSocketController,
     WorkflowController,
+    WorkspaceController, // Multi-workspace support
     N8nWorkflowsController,
   ],
   providers: [
@@ -123,13 +123,7 @@ import { SecurityLoggingService } from './security/security-logging.service';
       useClass: MockLLMRegistry,
     },
     LLMProviderService,
-    // Security services
-    InputSanitizationService,
-    ResponseSanitizationService,
-    SecurityLoggingService,
-    EnhancedRateLimitService,
-    ApiEndpointMonitoringService,
-    SecurityIntegrationService,
+    // Middleware
     SecurityValidationMiddleware,
     CsrfProtectionMiddleware,
     EnhancedSecurityMiddleware,

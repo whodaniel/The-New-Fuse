@@ -28,7 +28,7 @@ export class EntityService {
       });
       this.logger.log(`Successfully created/updated entity with ID: ${entity.id}`);
       return entity;
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const errorStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(`Failed to create/update entity ${data.type} - ${data.name}: ${errorMessage}`, errorStack);
@@ -93,11 +93,14 @@ export class EntityService {
       });
        this.logger.log(`Successfully updated entity with ID: ${updatedEntity.id}`);
       return updatedEntity;
-    } catch (error) {
+    } catch (error: unknown) {
         // Handle Prisma error for record not found specifically
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-            this.logger.warn(`Update failed: Entity not found with where clause: ${JSON.stringify(where)}`);
-            throw new NotFoundException(`Entity not found.`);
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2025') {
+                this.logger.warn(`Update failed: Entity not found with where clause: ${JSON.stringify(where)}`);
+                throw new NotFoundException(`Entity not found.`);
+            }
         }
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         const errorStack = error instanceof Error ? error.stack : undefined;
@@ -114,11 +117,14 @@ export class EntityService {
       });
        this.logger.log(`Successfully removed entity with ID: ${deletedEntity.id}`);
       return deletedEntity;
-    } catch (error) {
+    } catch (error: unknown) {
          // Handle Prisma error for record not found specifically
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-            this.logger.warn(`Remove failed: Entity not found with where clause: ${JSON.stringify(where)}`);
-            throw new NotFoundException(`Entity not found.`);
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2025') {
+                this.logger.warn(`Remove failed: Entity not found with where clause: ${JSON.stringify(where)}`);
+                throw new NotFoundException(`Entity not found.`);
+            }
         }
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         const errorStack = error instanceof Error ? error.stack : undefined;
