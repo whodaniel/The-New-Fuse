@@ -20,6 +20,12 @@ restartPolicyType = "ON_FAILURE"
 builder = "DOCKERFILE"
 build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
 deploy = { healthcheckPath = "/health" }
+# Disable Redis-dependent features (no Redis service configured)
+# Remove these if you add a Redis service to Railway
+[services.backend.env]
+REDIS_ENABLED = "false"
+BULL_ENABLED = "false"
+CACHE_ENABLED = "false"
 
 # Frontend Service (uses root Dockerfile)
 # IMPORTANT: Make sure "Root Directory" is NOT set in Railway UI
