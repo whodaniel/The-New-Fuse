@@ -14,10 +14,14 @@ import { getDatabaseConfig } from './config/database.config';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
 import { HealthController } from './controllers/health.controller';
+import { MCPController } from './controllers/mcp.controller';
+import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
 import { SystemController } from './controllers/system.controller';
+import { UserManagementController } from './controllers/user-management.controller';
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
+import { WorkspaceController } from './controllers/workspace.controller';
 import { GraphqlModule } from './graphql/graphql.module';
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
@@ -47,11 +51,11 @@ import { CsrfProtectionMiddleware } from './middleware/csrf-protection.middlewar
 import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-handler.middleware';
 import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
 import { SecurityValidationMiddleware } from './middleware/security-validation.middleware';
-import { SecurityModule } from './security/security.module';
+import { SecurityModule as GlobalSecurityModule } from './security/security.module';
 
 @Module({
   imports: [
-    SecurityModule, // Global security services
+    GlobalSecurityModule, // Global security services
     ConfigModule.forRoot({
       isGlobal: true,
       load: [llmProviderConfig, securityConfig],
