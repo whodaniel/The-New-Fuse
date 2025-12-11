@@ -70,10 +70,16 @@ export default registerAs('cache', (): CacheConfig => {
       port: parseInt(process.env.REDIS_PORT || process.env.REDISPORT || '6379', 10),
       password: process.env.REDIS_PASSWORD || process.env.REDISPASSWORD || undefined,
       // Parse database index safely - handle empty strings and ensure valid integer
+      // For Railway Redis, use db 0 as it doesn't support database selection
       db: (() => {
-        const dbEnv = process.env.REDIS_CACHE_DB || process.env.REDIS_DB || '1';
+        const dbEnv = process.env.REDIS_CACHE_DB || process.env.REDIS_DB || '0';
         const parsed = parseInt(dbEnv, 10);
-        return !isNaN(parsed) && parsed >= 0 ? parsed : 1;
+        // If using Railway Redis, force db to 0
+        if (redisUrl && redisUrl.includes('railway')) {
+          console.log('🚂 Railway Redis detected - forcing database to 0');
+          return 0;
+        }
+        return !isNaN(parsed) && parsed >= 0 ? parsed : 0;
       })(),
       ttl: parseInt(process.env.REDIS_DEFAULT_TTL || '3600', 10), // 1 hour default
       // Increased from 3 to 10 for better resilience

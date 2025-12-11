@@ -37,8 +37,36 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     const cacheConfig = this.configService.get<CacheConfig>('cache');
 
+    // Railway-specific Redis configuration
+    if (cacheConfig.redis.url && cacheConfig.redis.url.includes('railway')) {
+      this.logger.log(
+        `[AdvancedCacheManager] Detected Railway Redis URL: ${cacheConfig.redis.url}`
+      );
+
+      try {
+        const url = new URL(cacheConfig.redis.url);
+        // Railway Redis doesn't support database selection
+        this.redisClient = new Redis({
+          host: url.hostname,
+          port: parseInt(url.port || '6379', 10),
+          // Remove db parameter as Railway Redis doesn't support database selection
+          maxRetriesPerRequest: cacheConfig.redis.maxRetriesPerRequest,
+          enableReadyCheck: cacheConfig.redis.enableReadyCheck,
+          retryStrategy: cacheConfig.redis.retryStrategy,
+          lazyConnect: false,
+        });
+        this.logger.log(
+          `[AdvancedCacheManager] Connecting to Railway Redis at ${url.hostname}:${url.port}`
+        );
+      } catch (error) {
+        this.logger.error(
+          `[AdvancedCacheManager] Failed to parse Railway REDIS_URL: ${(error as Error).message}`
+        );
+        throw error;
+      }
+    }
     // Prefer URL when present; otherwise use discrete host/port/password settings
-    if (cacheConfig.redis.url) {
+    else if (cacheConfig.redis.url) {
       this.redisClient = new Redis(cacheConfig.redis.url, {
         db: cacheConfig.redis.db,
         maxRetriesPerRequest: cacheConfig.redis.maxRetriesPerRequest,
