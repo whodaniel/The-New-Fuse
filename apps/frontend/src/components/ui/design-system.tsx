@@ -3,9 +3,9 @@
  * This file provides reusable, consistent UI components that implement the design system
  */
 
-import { cn } from '../../lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import React, { ButtonHTMLAttributes, forwardRef, HTMLAttributes, ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 
 // Base Button Component
 const buttonVariants = cva(
@@ -13,13 +13,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'btn-primary',
+        primary:
+          'btn-primary shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]',
         secondary: 'btn-secondary',
-        outline: 'btn-outline',
-        success: 'btn-success',
-        danger: 'btn-danger',
-        ghost: 'bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800',
-        link: 'bg-transparent underline-offset-4 hover:underline text-primary',
+        outline: 'btn-outline border-white/10 hover:bg-white/5 hover:text-white',
+        success: 'btn-success shadow-[0_0_15px_rgba(34,197,94,0.3)]',
+        danger: 'btn-danger shadow-[0_0_15px_rgba(239,68,68,0.3)]',
+        ghost: 'bg-transparent hover:bg-white/5 text-slate-300 hover:text-white',
+        link: 'bg-transparent underline-offset-4 hover:underline text-blue-400',
       },
       size: {
         sm: 'btn-sm',
@@ -331,7 +332,7 @@ const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         ref={ref}
         variant="glass"
         className={cn(
-          'backdrop-blur-md bg-white/40 dark:bg-slate-900/60 border border-white/20 dark:border-white/10 shadow-xl',
+          'backdrop-blur-xl bg-white/[0.03] dark:bg-slate-900/[0.4] border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]',
           gradient,
           className
         )}
@@ -533,34 +534,35 @@ const ModalOverlay = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 );
 ModalOverlay.displayName = 'ModalOverlay';
 
-const ModalContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { size?: ModalProps['size'] }>(
-  ({ className, size = 'md', ...props }, ref) => {
-    const sizeClasses = {
-      sm: 'max-w-sm',
-      md: 'max-w-md',
-      lg: 'max-w-lg',
-      xl: 'max-w-xl',
-      '2xl': 'max-w-2xl',
-      '3xl': 'max-w-3xl',
-      '4xl': 'max-w-4xl',
-      '5xl': 'max-w-5xl',
-      '6xl': 'max-w-6xl',
-      full: 'max-w-full',
-    };
+const ModalContent = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement> & { size?: ModalProps['size'] }
+>(({ className, size = 'md', ...props }, ref) => {
+  const sizeClasses = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-5xl',
+    '6xl': 'max-w-6xl',
+    full: 'max-w-full',
+  };
 
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'relative w-full transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all',
-          sizeClasses[size],
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'relative w-full transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all',
+        sizeClasses[size],
+        className
+      )}
+      {...props}
+    />
+  );
+});
 ModalContent.displayName = 'ModalContent';
 
 const ModalHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
@@ -585,7 +587,10 @@ const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('border-t border-neutral-200 dark:border-neutral-700 px-6 py-4 flex gap-2 justify-end', className)}
+      className={cn(
+        'border-t border-neutral-200 dark:border-neutral-700 px-6 py-4 flex gap-2 justify-end',
+        className
+      )}
       {...props}
     />
   )
@@ -596,11 +601,19 @@ const ModalCloseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTML
   ({ className, ...props }, ref) => (
     <button
       ref={ref}
-      className={cn('absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors', className)}
+      className={cn(
+        'absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors',
+        className
+      )}
       {...props}
     >
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M6 18L18 6M6 6l12 12"
+        />
       </svg>
     </button>
   )
@@ -670,12 +683,12 @@ export {
   GlassCard,
   LoadingSpinner,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   ProgressBar,
   StatCard,
   Tabs,

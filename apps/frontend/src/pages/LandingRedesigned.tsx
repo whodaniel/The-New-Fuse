@@ -2,9 +2,8 @@ import { LandingFooter } from '@/components/layout/LandingFooter';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { usePagePerformance } from '@/hooks/usePagePerformance';
 import { GlassCard, CardContent as GlassCardContent } from '@/components/ui/design-system';
+import { usePagePerformance } from '@/hooks/usePagePerformance';
 import {
   Activity,
   ArrowRight,
@@ -143,7 +142,7 @@ export const LandingRedesigned = () => {
   usePagePerformance('Landing Page Redesigned');
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-white selection:bg-blue-500/30">
+    <div className="min-h-screen flex flex-col bg-transparent text-white selection:bg-blue-500/30">
       <SEOHead
         title="The New Fuse - The Operating System for AI Collaboration"
         description="Unified AI orchestration platform featuring Master Command Center, Native MCP Protocol, and Autonomous Agent coordination. Build, deploy, and evolve your AI infrastructure."
@@ -243,7 +242,7 @@ export const LandingRedesigned = () => {
                     color: 'from-orange-500 to-orange-600',
                   },
                 ].map((stat, idx) => (
-                    <div className="relative group">
+                  <div className="relative group">
                     <div className="absolute inset-0 bg-gradient-to-r {stat.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity" />
                     <GlassCard className="border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/5 backdrop-blur-sm">
                       <GlassCardContent className="p-6 text-center">
@@ -273,7 +272,7 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Platform Overview - New Section */}
-        <section className="py-24 bg-slate-900/50 relative overflow-hidden backdrop-blur-sm">
+        <section className="py-24 bg-transparent relative overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-blue-500/10 text-blue-400 border-blue-500/20">
@@ -330,7 +329,7 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Why Choose The New Fuse - New Section */}
-        <section className="py-24 bg-slate-950 relative">
+        <section className="py-24 bg-transparent relative">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-purple-500/10 text-purple-400 border-purple-500/20">
@@ -409,10 +408,12 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Use Cases - Redesigned */}
-        <section className="py-24 bg-slate-900/50">
+        <section className="py-24 bg-transparent">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-green-500/10 text-green-400 border-green-500/20">Use Cases</Badge>
+              <Badge className="mb-4 bg-green-500/10 text-green-400 border-green-500/20">
+                Use Cases
+              </Badge>
               <h2 className="text-4xl lg:text-5xl font-black text-white mb-6">
                 From Scripting to Self-Evolving Systems
               </h2>
@@ -499,7 +500,7 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Social Proof - New Section */}
-        <section className="py-24 bg-slate-950">
+        <section className="py-24 bg-transparent">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
               <Badge className="mb-4 bg-yellow-500/10 text-yellow-400 border-yellow-500/20">

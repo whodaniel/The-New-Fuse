@@ -41,7 +41,7 @@ const StandardLayout = ({
   }
 
   return (
-    <div className={`min-h-screen bg-background ${themeMode === 'dark' ? 'dark' : ''}`}>
+    <div className={`min-h-screen bg-transparent ${themeMode === 'dark' ? 'dark' : ''}`}>
       {/* Header */}
       {showHeader && <Header />}
 
@@ -85,7 +85,7 @@ const StandardLayout = ({
 // Enhanced Sidebar Component
 const EnhancedSidebar = () => {
   return (
-    <div className="h-full bg-sidebar border-r border-border flex flex-col">
+    <div className="h-full bg-slate-950/30 backdrop-blur-xl border-r border-white/10 flex flex-col">
       <div className="p-4 border-b border-border">
         <h2 className="text-xl font-bold">The New Fuse</h2>
       </div>
@@ -135,7 +135,7 @@ const SidebarItem = ({ icon, label, path, active = false }: SidebarItemProps) =>
 // Enhanced Header Component
 const EnhancedHeader = () => {
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-900/40">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-4">
           <h1 className="text-xl font-bold">The New Fuse</h1>

@@ -38,14 +38,14 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   onClick,
 }) => {
   const hoverClasses = hover
-    ? 'hover:bg-white/10 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300'
+    ? 'hover:bg-white/[0.05] hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300'
     : '';
 
   const cursorClass = onClick ? 'cursor-pointer' : '';
 
   return (
     <div
-      className={`backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-xl p-6 ${hoverClasses} ${cursorClass} ${className}`}
+      className={`backdrop-blur-2xl bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-6 ${hoverClasses} ${cursorClass} ${className}`}
       onClick={onClick}
     >
       {(Icon || title) && (

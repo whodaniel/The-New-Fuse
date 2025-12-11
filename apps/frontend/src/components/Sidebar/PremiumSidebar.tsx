@@ -59,7 +59,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({ isOpen, setIsOpe
 
       {/* Sidebar container */}
       <div
-        className={`fixed top-0 left-0 bottom-0 w-72 bg-slate-900/80 backdrop-blur-xl border-r border-white/10 z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 bottom-0 w-72 bg-slate-950/30 backdrop-blur-2xl border-r border-white/10 z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
