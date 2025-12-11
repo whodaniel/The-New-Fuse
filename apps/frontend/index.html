@@ -60,45 +60,53 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
     /></noscript>
 
-    <!-- Critical CSS for initial render -->
+    <!-- Critical CSS for initial render - Dark Theme -->
     <style>
-      /* Critical above-the-fold styles */
+      /* Critical above-the-fold styles - Premium Dark Theme */
       * {
         box-sizing: border-box;
       }
 
+      html {
+        color-scheme: dark;
+      }
+
       body {
         font-family:
+          'Plus Jakarta Sans',
           'Inter',
           -apple-system,
           BlinkMacSystemFont,
           'Segoe UI',
           Roboto,
-          'Helvetica Neue',
-          Arial,
           sans-serif;
         margin: 0;
         padding: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #020617; /* Slate 950 - Deep Obsidian */
+        background-image:
+          radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+          linear-gradient(180deg, #020617 0%, #0f172a 100%);
+        background-attachment: fixed;
         min-height: 100vh;
+        color: #f8fafc; /* Slate 50 */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-display: swap;
       }
 
       #root {
         width: 100%;
         min-height: 100vh;
-        background: white;
+        background: transparent; /* CRITICAL: Was 'white', now transparent */
       }
 
-      /* Optimized loading spinner */
+      /* Optimized loading spinner - Dark Theme */
       .loading {
         display: flex;
         align-items: center;
         justify-content: center;
         min-height: 100vh;
-        color: #667eea;
+        color: #60a5fa; /* Blue 400 */
         font-size: 18px;
         font-weight: 500;
       }
@@ -108,7 +116,7 @@
         width: 20px;
         height: 20px;
         margin-left: 10px;
-        border: 3px solid #667eea;
+        border: 3px solid #3b82f6;
         border-top-color: transparent;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
@@ -136,10 +144,10 @@
       <div class="loading" role="status" aria-live="polite">
         <div style="text-align: center">
           <div style="font-size: 48px; margin-bottom: 20px">🚀</div>
-          <h1 style="font-size: 32px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0">
+          <h1 style="font-size: 32px; font-weight: 700; color: #f1f5f9; margin: 0 0 12px 0">
             The New Fuse
           </h1>
-          <p style="font-size: 16px; color: #64748b; margin: 0 0 24px 0">
+          <p style="font-size: 16px; color: #94a3b8; margin: 0 0 24px 0">
             AI Agent Orchestration Platform
           </p>
           <div
@@ -147,8 +155,8 @@
               width: 40px;
               height: 40px;
               margin: 0 auto;
-              border: 4px solid #e2e8f0;
-              border-top-color: #667eea;
+              border: 4px solid #334155;
+              border-top-color: #3b82f6;
               border-radius: 50%;
               animation: spin 0.8s linear infinite;
             "
