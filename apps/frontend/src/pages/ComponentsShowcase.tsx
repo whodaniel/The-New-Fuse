@@ -46,12 +46,12 @@ const ComponentsShowcase: React.FC = () => {
   const [selectValue, setSelectValue] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-950 text-white">
       <div className="max-w-4xl mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold mb-8 text-center">UI Components Showcase</h1>
-        
+
         {/* Badges Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Badges</h2>
@@ -62,7 +62,7 @@ const ComponentsShowcase: React.FC = () => {
             <Badge className="border border-gray-300">Outline</Badge>
           </div>
         </section>
-        
+
         {/* Buttons Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Buttons</h2>
@@ -82,7 +82,7 @@ const ComponentsShowcase: React.FC = () => {
             <Button disabled>Disabled</Button>
           </div>
         </section>
-        
+
         {/* Cards Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Cards</h2>
@@ -93,14 +93,14 @@ const ComponentsShowcase: React.FC = () => {
                 <Button>Card Action</Button>
               </div>
             </Card>
-            
+
             <Card variant="outline" title="Outline Card">
               <p>This is an outline card with a title and content.</p>
               <div className="mt-4">
                 <Button variant="outline">Card Action</Button>
               </div>
             </Card>
-            
+
             <Card variant="elevated" title="Elevated Card">
               <p>This is an elevated card with a title and content.</p>
               <div className="mt-4">
@@ -109,59 +109,59 @@ const ComponentsShowcase: React.FC = () => {
             </Card>
           </div>
         </section>
-        
+
         {/* Inputs Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Inputs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="default-input">Default Input</Label>
-              <Input 
+              <Input
                 id="default-input"
-                placeholder="Enter text here" 
+                placeholder="Enter text here"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="disabled-input">Disabled Input</Label>
-              <Input 
+              <Input
                 id="disabled-input"
-                placeholder="This input is disabled" 
+                placeholder="This input is disabled"
                 disabled
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="error-input">Input with Error</Label>
-              <Input 
+              <Input
                 id="error-input"
-                placeholder="Enter text here" 
+                placeholder="Enter text here"
                 className="border-red-500"
               />
               <p className="text-sm text-red-500">This field is required</p>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="success-input">Input with Success</Label>
-              <Input 
+              <Input
                 id="success-input"
-                placeholder="Enter text here" 
+                placeholder="Enter text here"
                 className="border-green-500"
               />
               <p className="text-sm text-green-500">Looks good!</p>
             </div>
           </div>
         </section>
-        
+
         {/* Select Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Select</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Select 
-                label="Default Select" 
+              <Select
+                label="Default Select"
                 placeholder="Select an option"
                 value={selectValue}
                 onChange={(value) => setSelectValue(value)}
@@ -172,10 +172,10 @@ const ComponentsShowcase: React.FC = () => {
                 ]}
               />
             </div>
-            
+
             <div>
-              <Select 
-                label="Disabled Select" 
+              <Select
+                label="Disabled Select"
                 placeholder="This select is disabled"
                 disabled
                 options={[
@@ -185,10 +185,10 @@ const ComponentsShowcase: React.FC = () => {
                 ]}
               />
             </div>
-            
+
             <div>
-              <Select 
-                label="Select with Error" 
+              <Select
+                label="Select with Error"
                 placeholder="Select an option"
                 error="Please select an option"
                 options={[
@@ -198,10 +198,10 @@ const ComponentsShowcase: React.FC = () => {
                 ]}
               />
             </div>
-            
+
             <div>
-              <Select 
-                label="Select with Success" 
+              <Select
+                label="Select with Success"
                 placeholder="Select an option"
                 success="Great choice!"
                 value="option1"
@@ -214,27 +214,27 @@ const ComponentsShowcase: React.FC = () => {
             </div>
           </div>
         </section>
-        
+
         {/* Container Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Container</h2>
           <Container size="sm" className="bg-gray-100 p-4 mb-4">
             <p>This is a small container</p>
           </Container>
-          
+
           <Container size="md" className="bg-gray-100 p-4 mb-4">
             <p>This is a medium container</p>
           </Container>
-          
+
           <Container size="lg" className="bg-gray-100 p-4 mb-4">
             <p>This is a large container</p>
           </Container>
-          
+
           <Container size="xl" className="bg-gray-100 p-4">
             <p>This is an extra large container</p>
           </Container>
         </section>
-        
+
         {/* Split Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Split</h2>
@@ -245,7 +245,7 @@ const ComponentsShowcase: React.FC = () => {
               <div className="bg-gray-200 p-4">Right Panel</div>
             </Split>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-medium mb-2">Vertical Split</h3>
             <Split direction="vertical" className="h-64 border">
@@ -254,7 +254,7 @@ const ComponentsShowcase: React.FC = () => {
             </Split>
           </div>
         </section>
-        
+
         {/* Sidebar Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Sidebar</h2>
@@ -266,7 +266,7 @@ const ComponentsShowcase: React.FC = () => {
               {collapsed ? 'Expand' : 'Collapse'} Sidebar
             </Button>
           </div>
-          
+
           <div className="relative h-96 border overflow-hidden">
             {/* Mobile Sidebar */}
             <Sidebar
@@ -282,7 +282,7 @@ const ComponentsShowcase: React.FC = () => {
               ]}
               className="h-full"
             />
-            
+
             {/* Desktop Sidebar */}
             <Sidebar
               collapsible
@@ -297,18 +297,18 @@ const ComponentsShowcase: React.FC = () => {
               ]}
               className="h-full hidden md:block"
             />
-            
+
             <div className={`${collapsed ? 'ml-16' : 'ml-64'} p-4 transition-all duration-300 md:block hidden`}>
               <p>Content next to sidebar</p>
               <p className="mt-2">The sidebar can be collapsed or expanded.</p>
             </div>
-            
+
             <div className="p-4 md:hidden">
               <p>Open the mobile sidebar using the button above.</p>
             </div>
           </div>
         </section>
-        
+
         {/* Layout Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Layout</h2>

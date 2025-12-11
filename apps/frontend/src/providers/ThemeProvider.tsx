@@ -16,9 +16,8 @@ interface ThemeProviderProps {
   defaultTheme?: 'light' | 'dark';
 }
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ 
-  children, 
-  defaultTheme: initialTheme = 'light' 
+  children,
+  defaultTheme: initialTheme = 'dark'
 }) => {
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(initialTheme);
   const [customTheme, setCustomTheme] = useState<Partial<Theme>>({});

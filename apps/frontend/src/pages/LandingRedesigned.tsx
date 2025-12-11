@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePagePerformance } from '@/hooks/usePagePerformance';
-import { GlassCard, GlassCardContent } from '@the-new-fuse/ui-consolidated';
+import { GlassCard, CardContent as GlassCardContent } from '@/components/ui/design-system';
 import {
   Activity,
   ArrowRight,
@@ -87,7 +87,7 @@ const ModernFeatureCard = ({
   description: string;
   gradient: string;
 }) => (
-  <GlassCard gradient={gradient}>
+  <GlassCard gradient={gradient} className="bg-white/5 border-white/10">
     <GlassCardContent className="p-8">
       <div className="relative">
         <div
@@ -95,10 +95,10 @@ const ModernFeatureCard = ({
         >
           <Icon className="h-7 w-7 text-white" />
         </div>
-        <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">
           {title}
         </h3>
-        <p className="text-gray-600 leading-relaxed">{description}</p>
+        <p className="text-gray-400 leading-relaxed">{description}</p>
       </div>
     </GlassCardContent>
   </GlassCard>
@@ -118,32 +118,32 @@ const UseCaseCard = ({
   features: string[];
   color: string;
 }) => (
-  <Card className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200 bg-gradient-to-br from-white to-gray-50">
-    <CardContent className="p-6">
+  <GlassCard className="group hover:shadow-xl transition-all duration-300 border border-white/10 hover:border-blue-500/50 bg-white/5">
+    <GlassCardContent className="p-6">
       <div
         className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
       >
         <Icon className="h-6 w-6 text-white" />
       </div>
-      <h3 className="text-lg font-bold mb-2 text-gray-900">{title}</h3>
-      <p className="text-gray-600 mb-4 text-sm">{description}</p>
+      <h3 className="text-lg font-bold mb-2 text-white">{title}</h3>
+      <p className="text-gray-400 mb-4 text-sm">{description}</p>
       <ul className="space-y-2">
         {features.map((feature, idx) => (
-          <li key={idx} className="flex items-start text-sm text-gray-600">
+          <li key={idx} className="flex items-start text-sm text-gray-300">
             <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
             <span>{feature}</span>
           </li>
         ))}
       </ul>
-    </CardContent>
-  </Card>
+    </GlassCardContent>
+  </GlassCard>
 );
 
 export const LandingRedesigned = () => {
   usePagePerformance('Landing Page Redesigned');
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-white selection:bg-blue-500/30">
       <SEOHead
         title="The New Fuse - The Operating System for AI Collaboration"
         description="Unified AI orchestration platform featuring Master Command Center, Native MCP Protocol, and Autonomous Agent coordination. Build, deploy, and evolve your AI infrastructure."
@@ -183,14 +183,14 @@ export const LandingRedesigned = () => {
                 id="hero-heading"
                 className="text-6xl lg:text-8xl font-black mb-8 animate-fade-in-up animation-delay-200"
               >
-                <span className="block text-gray-900">The Operating System for</span>
+                <span className="block text-white">The Operating System for</span>
                 <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                   AI Collaboration
                 </span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-xl lg:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
+              <p className="text-xl lg:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
                 A unified control plane for your entire AI workforce. Orchestrate multi-model
                 agents, automate complex workflows, and leverage the Master Command Center right
                 from your IDE.
@@ -243,21 +243,21 @@ export const LandingRedesigned = () => {
                     color: 'from-orange-500 to-orange-600',
                   },
                 ].map((stat, idx) => (
-                  <div key={idx} className="relative group">
+                    <div className="relative group">
                     <div className="absolute inset-0 bg-gradient-to-r {stat.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity" />
-                    <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-                      <CardContent className="p-6 text-center">
+                    <GlassCard className="border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/5 backdrop-blur-sm">
+                      <GlassCardContent className="p-6 text-center">
                         <div
                           className={`w-12 h-12 rounded-full bg-gradient-to-r ${stat.color} flex items-center justify-center mx-auto mb-3`}
                         >
                           <stat.icon className="h-6 w-6 text-white" />
                         </div>
-                        <div className="text-3xl font-black text-gray-900 mb-1">
+                        <div className="text-3xl font-black text-white mb-1">
                           <AnimatedCounter end={stat.value} suffix={stat.suffix} />
                         </div>
-                        <div className="text-sm font-semibold text-gray-600">{stat.label}</div>
-                      </CardContent>
-                    </Card>
+                        <div className="text-sm font-semibold text-gray-400">{stat.label}</div>
+                      </GlassCardContent>
+                    </GlassCard>
                   </div>
                 ))}
               </div>
@@ -273,16 +273,16 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Platform Overview - New Section */}
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section className="py-24 bg-slate-900/50 relative overflow-hidden backdrop-blur-sm">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
+              <Badge className="mb-4 bg-blue-500/10 text-blue-400 border-blue-500/20">
                 Core Architecture
               </Badge>
-              <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              <h2 className="text-4xl lg:text-5xl font-black text-white mb-6">
                 Modular, Standardized, Powerful
               </h2>
-              <p className="text-xl text-gray-600">
+              <p className="text-xl text-gray-300">
                 Built on the Model Context Protocol standards, providing a unified interface for any
                 AI model, tool, or data source.
               </p>
@@ -330,16 +330,16 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Why Choose The New Fuse - New Section */}
-        <section className="py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative">
+        <section className="py-24 bg-slate-950 relative">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200">
+              <Badge className="mb-4 bg-purple-500/10 text-purple-400 border-purple-500/20">
                 System Capabilities
               </Badge>
-              <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              <h2 className="text-4xl lg:text-5xl font-black text-white mb-6">
                 Engineered for Evolution
               </h2>
-              <p className="text-xl text-gray-600">
+              <p className="text-xl text-gray-300">
                 A platform that learns and adapts. The more you use it, the smarter your agent
                 workforce becomes.
               </p>
@@ -376,24 +376,24 @@ export const LandingRedesigned = () => {
                   stats: ['Docker Compose', 'K8s Ready', 'Zero-Config'],
                 },
               ].map((item, idx) => (
-                <Card
+                <GlassCard
                   key={idx}
-                  className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/90 backdrop-blur group"
+                  className="border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/5 backdrop-blur group"
                 >
-                  <CardContent className="p-8">
+                  <GlassCardContent className="p-8">
                     <div className="flex items-start space-x-4">
                       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <item.icon className="h-8 w-8 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-2xl font-bold mb-3 text-gray-900">{item.title}</h3>
-                        <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
+                        <h3 className="text-2xl font-bold mb-3 text-white">{item.title}</h3>
+                        <p className="text-gray-400 mb-4 leading-relaxed">{item.description}</p>
                         <div className="flex flex-wrap gap-2">
                           {item.stats.map((stat, i) => (
                             <Badge
                               key={i}
                               variant="secondary"
-                              className="bg-blue-100 text-blue-700"
+                              className="bg-blue-500/10 text-blue-300 border-blue-500/20"
                             >
                               {stat}
                             </Badge>
@@ -401,22 +401,22 @@ export const LandingRedesigned = () => {
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </GlassCardContent>
+                </GlassCard>
               ))}
             </div>
           </div>
         </section>
 
         {/* Use Cases - Redesigned */}
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-slate-900/50">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-green-100 text-green-700 border-green-200">Use Cases</Badge>
-              <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              <Badge className="mb-4 bg-green-500/10 text-green-400 border-green-500/20">Use Cases</Badge>
+              <h2 className="text-4xl lg:text-5xl font-black text-white mb-6">
                 From Scripting to Self-Evolving Systems
               </h2>
-              <p className="text-xl text-gray-600">
+              <p className="text-xl text-gray-300">
                 Empower your teams to move beyond simple chatbots to fully autonomous agent fleets.
               </p>
             </div>
@@ -499,16 +499,16 @@ export const LandingRedesigned = () => {
         </section>
 
         {/* Social Proof - New Section */}
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-slate-950">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <Badge className="mb-4 bg-yellow-100 text-yellow-700 border-yellow-200">
+              <Badge className="mb-4 bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
                 Community
               </Badge>
-              <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+              <h2 className="text-4xl lg:text-5xl font-black text-white mb-6">
                 Developers Love The New Fuse
               </h2>
-              <p className="text-xl text-gray-600">
+              <p className="text-xl text-gray-300">
                 Join the thousands of engineers building the next generation of AI software.
               </p>
             </div>
@@ -537,25 +537,25 @@ export const LandingRedesigned = () => {
                   rating: 5,
                 },
               ].map((testimonial, idx) => (
-                <Card
+                <GlassCard
                   key={idx}
-                  className="border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300"
+                  className="border-white/10 hover:border-blue-500/30 hover:shadow-xl transition-all duration-300 bg-white/5"
                 >
-                  <CardContent className="p-8">
+                  <GlassCardContent className="p-8">
                     <div className="flex mb-4">
                       {[...Array(testimonial.rating)].map((_, i) => (
                         <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                       ))}
                     </div>
-                    <p className="text-gray-700 mb-6 italic leading-relaxed">
+                    <p className="text-gray-300 mb-6 italic leading-relaxed">
                       "{testimonial.quote}"
                     </p>
                     <div>
-                      <div className="font-bold text-gray-900">{testimonial.author}</div>
-                      <div className="text-sm text-gray-600">{testimonial.role}</div>
+                      <div className="font-bold text-white">{testimonial.author}</div>
+                      <div className="text-sm text-gray-400">{testimonial.role}</div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </GlassCardContent>
+                </GlassCard>
               ))}
             </div>
           </div>
