@@ -3,7 +3,7 @@ uagents==0.12.0              # Fetch.ai uAgents framework
 # elizaos-sdk                # Alternative: ElizaOS (install if using)
 
 # L2: Interoperability (ENSO)
-requests==2.31.0             # HTTP requests for ENSO API
+requests==2.32.4             # HTTP requests for ENSO API
 web3==6.11.3                 # Web3 interactions
 eth-account==0.10.0          # Ethereum account management
 
