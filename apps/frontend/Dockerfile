@@ -35,6 +35,7 @@ RUN npm install --legacy-peer-deps || pnpm install --no-frozen-lockfile
 ENV NODE_ENV=production
 ENV VITE_API_URL=https://api.thenewfuse.com
 ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npm run build || pnpm run build
 
 # Normalize dist directory location

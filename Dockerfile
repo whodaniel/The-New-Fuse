@@ -27,6 +27,9 @@ COPY apps/frontend ./apps/frontend
 # We use --frozen-lockfile to ensure reproducible builds
 RUN pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
 
+# Set Node.js memory limit for TypeScript builds
+ENV NODE_OPTIONS=--max-old-space-size=4096
+
 # Build required workspace packages that frontend depends on
 # We explicitly build these to ensure they are ready before the app build
 RUN pnpm --filter @the-new-fuse/types build
