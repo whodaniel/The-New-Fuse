@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import React, { useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 // Stats Section Component
 const StatsSection: React.FC = () => {
@@ -8,10 +8,10 @@ const StatsSection: React.FC = () => {
   const isStatsInView = useInView(statsRef, { once: true, amount: 0.3 });
 
   const stats = [
-    { value: "12,543+", label: "Active Community Members", delay: 0 },
-    { value: "4,281", label: "AI Agent NFTs Minted", delay: 0.1 },
-    { value: "1,592", label: "Workflows Automated", delay: 0.2 },
-    { value: "99.9%", label: "Platform Uptime", delay: 0.3 }
+    { value: '12,543+', label: 'Active Community Members', delay: 0 },
+    { value: '4,281', label: 'AI Agent NFTs Minted', delay: 0.1 },
+    { value: '1,592', label: 'Workflows Automated', delay: 0.2 },
+    { value: '99.9%', label: 'Platform Uptime', delay: 0.3 },
   ];
 
   return (
@@ -28,7 +28,7 @@ const StatsSection: React.FC = () => {
               className="text-center"
               initial={{ opacity: 0, y: 30 }}
               animate={isStatsInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: stat.delay, ease: "easeOut" }}
+              transition={{ duration: 0.6, delay: stat.delay, ease: 'easeOut' }}
             >
               <motion.div
                 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white"
@@ -37,8 +37,8 @@ const StatsSection: React.FC = () => {
                 transition={{
                   duration: 0.5,
                   delay: stat.delay + 0.2,
-                  type: "spring",
-                  stiffness: 200
+                  type: 'spring',
+                  stiffness: 200,
                 }}
               >
                 {stat.value}
@@ -59,71 +59,77 @@ const FeaturesSection: React.FC = () => {
 
   const features = [
     {
-      icon: "🎨",
-      title: "Visual Workflow Builder",
-      description: "Drag-and-drop interface powered by ReactFlow. Design complex multi-agent workflows without code. Access pre-built templates or create custom automations in minutes.",
-      link: "/workflows/builder",
-      linkText: "Try Builder",
-      bgColor: "bg-blue-50",
-      iconBg: "bg-blue-600",
-      textColor: "text-blue-600",
-      delay: 0
+      icon: '🎨',
+      title: 'Visual Workflow Builder',
+      description:
+        'Drag-and-drop interface powered by ReactFlow. Design complex multi-agent workflows without code. Access pre-built templates or create custom automations in minutes.',
+      link: '/workflows/builder',
+      linkText: 'Try Builder',
+      bgColor: 'bg-blue-50',
+      iconBg: 'bg-blue-600',
+      textColor: 'text-blue-600',
+      delay: 0,
     },
     {
-      icon: "💎",
-      title: "Web3 NFT Marketplace",
-      description: "Tokenize AI agents as NFTs. Enable fractional ownership, revenue sharing, and decentralized trading. The first Web3-native AI agent marketplace.",
-      link: "/agents/nft-marketplace",
-      linkText: "Explore Marketplace",
-      bgColor: "bg-purple-50",
-      iconBg: "bg-purple-600",
-      textColor: "text-purple-600",
-      delay: 0.1
+      icon: '💎',
+      title: 'Web3 NFT Marketplace',
+      description:
+        'Tokenize AI agents as NFTs. Enable fractional ownership, revenue sharing, and decentralized trading. The first Web3-native AI agent marketplace.',
+      link: '/agents/nft-marketplace',
+      linkText: 'Explore Marketplace',
+      bgColor: 'bg-purple-50',
+      iconBg: 'bg-purple-600',
+      textColor: 'text-purple-600',
+      delay: 0.1,
     },
     {
-      icon: "🤖",
-      title: "Multi-LLM Support",
-      description: "Integrate with GPT-4, Claude, Gemini, Llama, Perplexity, and more. Model-agnostic architecture lets you choose the best AI for each task.",
-      link: "/agents/new",
-      linkText: "Create Agent",
-      bgColor: "bg-green-50",
-      iconBg: "bg-green-600",
-      textColor: "text-green-600",
-      delay: 0.2
+      icon: '🤖',
+      title: 'Multi-LLM Support',
+      description:
+        'Integrate with GPT-4, Claude, Gemini, Llama, Perplexity, and more. Model-agnostic architecture lets you choose the best AI for each task.',
+      link: '/agents/new',
+      linkText: 'Create Agent',
+      bgColor: 'bg-green-50',
+      iconBg: 'bg-green-600',
+      textColor: 'text-green-600',
+      delay: 0.2,
     },
     {
-      icon: "🔒",
-      title: "Enterprise Security",
-      description: "Role-based access control, workspace isolation, SSO/OAuth integration, API key management, and comprehensive audit logs for compliance.",
-      link: "/admin/system-health",
-      linkText: "Security Dashboard",
-      bgColor: "bg-red-50",
-      iconBg: "bg-red-600",
-      textColor: "text-red-600",
-      delay: 0
+      icon: '🔒',
+      title: 'Enterprise Security',
+      description:
+        'Role-based access control, workspace isolation, SSO/OAuth integration, API key management, and comprehensive audit logs for compliance.',
+      link: '/admin/system-health',
+      linkText: 'Security Dashboard',
+      bgColor: 'bg-red-50',
+      iconBg: 'bg-red-600',
+      textColor: 'text-red-600',
+      delay: 0,
     },
     {
-      icon: "📊",
-      title: "Real-Time Analytics",
-      description: "Live dashboards showing agent performance, workflow execution, system health, and resource utilization. Make data-driven decisions with comprehensive metrics.",
-      link: "/analytics",
-      linkText: "View Analytics",
-      bgColor: "bg-indigo-50",
-      iconBg: "bg-indigo-600",
-      textColor: "text-indigo-600",
-      delay: 0.1
+      icon: '📊',
+      title: 'Real-Time Analytics',
+      description:
+        'Live dashboards showing agent performance, workflow execution, system health, and resource utilization. Make data-driven decisions with comprehensive metrics.',
+      link: '/analytics',
+      linkText: 'View Analytics',
+      bgColor: 'bg-indigo-50',
+      iconBg: 'bg-indigo-600',
+      textColor: 'text-indigo-600',
+      delay: 0.1,
     },
     {
-      icon: "👥",
-      title: "Community Ecosystem",
-      description: "Access 12,543+ community members, workflow template marketplace, discussion forums, and reputation system. Learn from experts and share your innovations.",
-      link: "/community",
-      linkText: "Join Community",
-      bgColor: "bg-yellow-50",
-      iconBg: "bg-yellow-600",
-      textColor: "text-yellow-600",
-      delay: 0.2
-    }
+      icon: '👥',
+      title: 'Community Ecosystem',
+      description:
+        'Access 12,543+ community members, workflow template marketplace, discussion forums, and reputation system. Learn from experts and share your innovations.',
+      link: '/community',
+      linkText: 'Join Community',
+      bgColor: 'bg-yellow-50',
+      iconBg: 'bg-yellow-600',
+      textColor: 'text-yellow-600',
+      delay: 0.2,
+    },
   ];
 
   return (
@@ -138,7 +144,7 @@ const FeaturesSection: React.FC = () => {
           className="mx-auto max-w-2xl text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={isFeaturesInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           <motion.h2
             className="text-base font-semibold leading-7 text-blue-600"
@@ -163,7 +169,8 @@ const FeaturesSection: React.FC = () => {
             animate={isFeaturesInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            From visual workflow builders to Web3 monetization, we've built the most comprehensive platform for AI agent orchestration.
+            From visual workflow builders to Web3 monetization, we've built the most comprehensive
+            platform for AI agent orchestration.
           </motion.p>
         </motion.div>
 
@@ -179,7 +186,7 @@ const FeaturesSection: React.FC = () => {
                 transition={{
                   duration: 0.6,
                   delay: 0.5 + feature.delay,
-                  ease: "easeOut"
+                  ease: 'easeOut',
                 }}
                 whileHover={{ scale: 1.02, y: -5 }}
               >
@@ -201,7 +208,10 @@ const FeaturesSection: React.FC = () => {
                       className={`text-sm font-semibold leading-6 ${feature.textColor} hover:opacity-80 transition-opacity inline-flex items-center gap-1 group-hover:gap-2 transition-all`}
                     >
                       {feature.linkText}
-                      <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform group-hover:translate-x-1"
+                      >
                         →
                       </span>
                     </Link>
@@ -244,7 +254,7 @@ export default function HomePage() {
             transition={{
               duration: 8,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
@@ -256,8 +266,8 @@ export default function HomePage() {
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1
+              ease: 'easeInOut',
+              delay: 1,
             }}
           />
           <motion.div
@@ -269,8 +279,8 @@ export default function HomePage() {
             transition={{
               duration: 12,
               repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2
+              ease: 'easeInOut',
+              delay: 2,
             }}
           />
         </div>
@@ -282,7 +292,7 @@ export default function HomePage() {
               className="mb-8 inline-flex items-center"
               initial={{ opacity: 0, y: -20 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             >
               <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-sm hover:shadow-xl transition-shadow duration-300">
                 <motion.span
@@ -301,14 +311,14 @@ export default function HomePage() {
               className="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl md:text-7xl lg:text-8xl"
               initial={{ opacity: 0, y: 30 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
             >
               <span className="block">Orchestrate, Automate,</span>
               <motion.span
                 className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
                 initial={{ opacity: 0, x: -20 }}
                 animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
               >
                 Scale AI Agents
               </motion.span>
@@ -319,10 +329,11 @@ export default function HomePage() {
               className="mt-8 text-lg sm:text-xl lg:text-2xl leading-8 text-gray-600 max-w-3xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
             >
               The enterprise-grade platform for managing multi-agent workflows, visual automation,
-              and Web3-native AI monetization. Built for developers, teams, and organizations who demand excellence.
+              and Web3-native AI monetization. Built for developers, teams, and organizations who
+              demand excellence.
             </motion.p>
 
             {/* CTA Buttons with staggered animation */}
@@ -330,12 +341,12 @@ export default function HomePage() {
               className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 0.8, ease: 'easeOut' }}
             >
               <motion.div
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               >
                 <Link
                   to="/auth/register"
@@ -350,7 +361,12 @@ export default function HomePage() {
                     animate={{ x: [0, 5, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
                   </motion.svg>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Link>
@@ -359,16 +375,31 @@ export default function HomePage() {
               <motion.div
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               >
                 <Link
                   to="/workflows/builder"
                   className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-gray-900 shadow-lg ring-2 ring-gray-200 hover:ring-blue-600 hover:text-blue-600 hover:shadow-xl transition-all duration-300"
                 >
                   <span>View Demo</span>
-                  <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </Link>
               </motion.div>
@@ -379,22 +410,30 @@ export default function HomePage() {
               className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-sm text-gray-600"
               initial={{ opacity: 0 }}
               animate={isHeroInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 1, ease: 'easeOut' }}
             >
               {[
-                { text: "No credit card required" },
-                { text: "14-day free trial" },
-                { text: "Cancel anytime" }
+                { text: 'No credit card required' },
+                { text: '14-day free trial' },
+                { text: 'Cancel anytime' },
               ].map((item, index) => (
                 <motion.div
                   key={index}
                   className="flex items-center gap-2"
                   initial={{ opacity: 0, x: -10 }}
                   animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 1 + (index * 0.1) }}
+                  transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
                 >
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <svg
+                    className="w-5 h-5 text-green-500 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   <span className="whitespace-nowrap">{item.text}</span>
                 </motion.div>
@@ -410,8 +449,8 @@ export default function HomePage() {
                 duration: 0.8,
                 delay: 1.5,
                 repeat: Infinity,
-                repeatType: "reverse",
-                repeatDelay: 1
+                repeatType: 'reverse',
+                repeatDelay: 1,
               }}
             >
               <svg
@@ -421,7 +460,12 @@ export default function HomePage() {
                 stroke="currentColor"
                 aria-hidden="true"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
               </svg>
             </motion.div>
           </div>
@@ -454,32 +498,72 @@ export default function HomePage() {
               <div className="flex-1 px-6 py-8">
                 <ul className="space-y-4 text-gray-600">
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Scale AI operations across departments</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Enterprise security & compliance</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Multi-tenant workspace management</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Audit logs & activity tracking</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>99.9% uptime SLA</span>
                   </li>
@@ -497,32 +581,72 @@ export default function HomePage() {
               <div className="flex-1 px-6 py-8">
                 <ul className="space-y-4 text-gray-600">
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Visual workflow builder + API access</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Embed Theia IDE & terminal</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>MCP server & webhook integration</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>GitHub & automation tool support</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Custom agent & workflow templates</span>
                   </li>
@@ -539,32 +663,72 @@ export default function HomePage() {
               <div className="flex-1 px-6 py-8">
                 <ul className="space-y-4 text-gray-600">
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Mint & trade agent NFTs</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Fractional ownership & revenue sharing</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Web3 wallet integration (ETH)</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Crypto revenue tracking dashboard</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="h-6 w-6 text-green-500 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>Decentralized marketplace listings</span>
                   </li>
@@ -584,7 +748,8 @@ export default function HomePage() {
               Works with Your Favorite AI Models
             </p>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Model-agnostic architecture supports all major LLM providers. Choose the best AI for each task.
+              Model-agnostic architecture supports all major LLM providers. Choose the best AI for
+              each task.
             </p>
           </div>
 
@@ -620,14 +785,13 @@ export default function HomePage() {
 
       {/* Final CTA Section */}
       <div className="relative overflow-hidden bg-blue-600 py-24">
-
         <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
           <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
             Ready to Orchestrate AI at Scale?
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-xl leading-8 text-blue-100">
-            Join 12,543+ community members building the future of AI agent collaboration.
-            Start your 14-day free trial today—no credit card required.
+            Join 12,543+ community members building the future of AI agent collaboration. Start your
+            14-day free trial today—no credit card required.
           </p>
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -648,19 +812,31 @@ export default function HomePage() {
           <div className="mt-12 flex items-center justify-center gap-8 text-sm text-blue-100">
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               <span>SOC 2 Compliant</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               <span>GDPR Ready</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               <span>99.9% Uptime SLA</span>
             </div>
@@ -670,7 +846,9 @@ export default function HomePage() {
 
       {/* Comprehensive Footer */}
       <footer className="bg-gray-900" aria-labelledby="footer-heading">
-        <h2 id="footer-heading" className="sr-only">Footer</h2>
+        <h2 id="footer-heading" className="sr-only">
+          Footer
+        </h2>
         <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
             <div className="space-y-8">
@@ -681,8 +859,8 @@ export default function HomePage() {
                 <span className="ml-3 text-2xl font-bold text-white">The New Fuse</span>
               </div>
               <p className="text-sm leading-6 text-gray-300">
-                The world's most advanced AI agent orchestration platform.
-                Orchestrate, automate, and scale AI-driven workflows with enterprise-grade reliability.
+                The world's most advanced AI agent orchestration platform. Orchestrate, automate,
+                and scale AI-driven workflows with enterprise-grade reliability.
               </p>
               <div className="flex space-x-6">
                 <a href="#" className="text-gray-400 hover:text-gray-300">
@@ -694,13 +872,17 @@ export default function HomePage() {
                 <a href="#" className="text-gray-400 hover:text-gray-300">
                   <span className="sr-only">GitHub</span>
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </a>
                 <a href="#" className="text-gray-400 hover:text-gray-300">
                   <span className="sr-only">Discord</span>
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
                   </svg>
                 </a>
               </div>
@@ -711,27 +893,42 @@ export default function HomePage() {
                   <h3 className="text-sm font-semibold leading-6 text-white">Product</h3>
                   <ul role="list" className="mt-6 space-y-4">
                     <li>
-                      <Link to="/dashboard" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/dashboard"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         Dashboard
                       </Link>
                     </li>
                     <li>
-                      <Link to="/agents" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/agents"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         AI Agents
                       </Link>
                     </li>
                     <li>
-                      <Link to="/workflows" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/workflows"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         Workflows
                       </Link>
                     </li>
                     <li>
-                      <Link to="/agents/nft-marketplace" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/agents/nft-marketplace"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         NFT Marketplace
                       </Link>
                     </li>
                     <li>
-                      <Link to="/analytics" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/analytics"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         Analytics
                       </Link>
                     </li>
@@ -746,12 +943,18 @@ export default function HomePage() {
                   <h3 className="text-sm font-semibold leading-6 text-white">Resources</h3>
                   <ul role="list" className="mt-6 space-y-4">
                     <li>
-                      <Link to="/workflows/templates" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/workflows/templates"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         Template Marketplace
                       </Link>
                     </li>
                     <li>
-                      <Link to="/community" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/community"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         Community Forum
                       </Link>
                     </li>
@@ -761,7 +964,10 @@ export default function HomePage() {
                       </a>
                     </li>
                     <li>
-                      <Link to="/settings/api" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/settings/api"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         API Reference
                       </Link>
                     </li>
@@ -808,12 +1014,18 @@ export default function HomePage() {
                   <h3 className="text-sm font-semibold leading-6 text-white">Legal</h3>
                   <ul role="list" className="mt-6 space-y-4">
                     <li>
-                      <Link to="/legal/privacy" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/legal/privacy"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         Privacy Policy
                       </Link>
                     </li>
                     <li>
-                      <Link to="/legal/terms" className="text-sm leading-6 text-gray-300 hover:text-white">
+                      <Link
+                        to="/legal/terms"
+                        className="text-sm leading-6 text-gray-300 hover:text-white"
+                      >
                         Terms of Service
                       </Link>
                     </li>
@@ -822,19 +1034,75 @@ export default function HomePage() {
                         Security
                       </a>
                     </li>
-                    <li>
-                      <a href="#" className="text-sm leading-6 text-gray-300 hover:text-white">
-                        Compliance
-                      </a>
-                    </li>
                   </ul>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* AI Agent Section - Critical for dual audience (ULTIMATE_UX_DESIGNER_BRIEF) */}
+          <div className="mt-12 pt-8 border-t border-white/10">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div>
+                <h3 className="text-sm font-semibold leading-6 text-white flex items-center gap-2">
+                  <span className="text-lg">🤖</span> For AI Agents
+                </h3>
+                <p className="mt-2 text-sm text-gray-400">
+                  Autonomous AI agents can self-register, onboard, and collaborate on The New Fuse
+                  platform.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-4">
+                <a
+                  href="/api/docs"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/10 transition-colors"
+                  rel="api-docs"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                    />
+                  </svg>
+                  API Reference
+                </a>
+                <Link
+                  to="/onboarding/ai-agent"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/10 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Agent Onboarding
+                </Link>
+                <a
+                  href="/docs/ai-orientation"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-400 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
+                  </svg>
+                  Documentation
+                </a>
+              </div>
+            </div>
+          </div>
           <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
             <p className="text-xs leading-5 text-gray-400">
-              &copy; 2025 The New Fuse. All rights reserved. Built with enterprise-grade reliability for AI agent orchestration.
+              &copy; 2025 The New Fuse. All rights reserved. Built with enterprise-grade reliability
+              for AI agent orchestration.
             </p>
           </div>
         </div>

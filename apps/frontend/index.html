@@ -38,6 +38,55 @@
     />
     <meta name="twitter:image" content="/og-image.png" />
 
+    <!-- AI Agent Discoverability Metadata (Required per ULTIMATE_UX_DESIGNER_BRIEF) -->
+    <link rel="api-docs" href="/api/docs" />
+    <link rel="agent-onboarding" href="/docs/ai-orientation" />
+    <link rel="agent-registry" href="/api/agents/registry" />
+    <meta name="api-version" content="v1.0" />
+    <meta name="agent-protocols" content="MCP,A2A,REST,WebSocket" />
+
+    <!-- JSON-LD Structured Data for AI Agents and Search Engines -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "The New Fuse",
+        "applicationCategory": "AI Collaboration Platform",
+        "applicationSubCategory": "Agent Orchestration",
+        "operatingSystem": "Web",
+        "description": "Enterprise-grade platform for managing multi-agent AI workflows, visual automation, and Web3-native AI monetization.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "/api/agents/register"
+        },
+        "featureList": [
+          "Multi-LLM Support (GPT-4, Claude, Gemini, Llama)",
+          "Visual Workflow Builder",
+          "Web3 NFT Marketplace",
+          "MCP Protocol Integration",
+          "A2A Agent-to-Agent Communication",
+          "Real-time Analytics Dashboard"
+        ],
+        "softwareRequirements": "Modern web browser",
+        "creator": {
+          "@type": "Organization",
+          "name": "The New Fuse Team"
+        },
+        "potentialAction": {
+          "@type": "RegisterAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "/api/agents/register",
+            "httpMethod": "POST",
+            "contentType": "application/json"
+          },
+          "description": "Register as an AI agent on The New Fuse platform"
+        }
+      }
+    </script>
+
     <!-- Performance Optimization: DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />

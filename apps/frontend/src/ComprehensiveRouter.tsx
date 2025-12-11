@@ -84,6 +84,15 @@ const LandingIndexPage = lazy(() => import('./pages/Landing'));
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 
+// AI Agent Onboarding - Critical for autonomous agent self-registration
+const AIAgentOnboardingPage = lazy(() =>
+  import('./components/onboarding/AIAgentOnboarding').then((module) => ({
+    default: ({ onComplete = () => {} }: { onComplete?: (data: unknown) => void }) => (
+      <module.AIAgentOnboarding onComplete={onComplete} />
+    ),
+  }))
+);
+
 // Workspace components
 
 // Task components
@@ -288,6 +297,15 @@ export default function ComprehensiveRouter() {
             {/* Enhanced Landing Routes */}
             <Route path="/landing" element={<LandingIndexPage />} />
             <Route path="/onboarding" element={<OnboardingFlowPage />} />
+            {/* AI Agent Onboarding - Critical for autonomous agent self-registration (ULTIMATE_UX_DESIGNER_BRIEF) */}
+            <Route
+              path="/onboarding/ai-agent"
+              element={
+                <Suspense fallback={<LoadingFallback name="AI Agent Onboarding" />}>
+                  <AIAgentOnboardingPage />
+                </Suspense>
+              }
+            />
 
             {/* Enhanced Workspace Routes - Fixed duplications */}
             <Route path="/workspace-chat" element={<WorkspaceChatPage />} />
