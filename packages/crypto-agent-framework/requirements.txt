@@ -22,7 +22,7 @@ tenacity==8.2.3              # Retry logic
 jsonschema==4.20.0           # JSON schema validation
 
 # Crypto utilities
-cryptography==42.0.4         # Cryptographic operations (security update)
+cryptography==44.0.1         # Cryptographic operations (security update)
 ecdsa==0.18.0                # ECDSA signing (awaiting security patch)
 base58==2.1.1                # Base58 encoding
 
