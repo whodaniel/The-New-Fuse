@@ -144,33 +144,33 @@ const Agents: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-2xl">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-lg">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">My Agents</h1>
-          <p className="text-gray-400">Manage and monitor your deployed AI agents</p>
+          <h1 className="text-5xl font-extrabold text-white mb-sm font-heading">My AI Agents</h1>
+          <p className="text-lg text-gray-400">Manage and monitor your deployed AI workforce</p>
         </div>
-        <PremiumButton variant="gradient" glow onClick={() => navigate('/agents/new')}>
-          <Plus className="mr-2 h-4 w-4" /> Create Agent
+        <PremiumButton variant="gradient" size="lg" glow onClick={() => navigate('/agents/new')}>
+          <Plus className="mr-sm h-5 w-5" /> Deploy New Agent
         </PremiumButton>
       </div>
 
-      {/* Search and filters */}
-      <GlassCard className="p-4">
-        <div className="flex flex-col md:flex-row gap-4">
+      {/* Enhanced Search and Filters */}
+      <GlassCard className="p-xl">
+        <div className="flex flex-col md:flex-row gap-lg">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+            <Search className="absolute left-lg top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <Input
-              placeholder="Search agents..."
-              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Search agents by name or description..."
+              className="h-14 pl-14 text-base bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex gap-2">
-            <div className="relative">
+          <div className="flex gap-md">
+            <div className="relative min-w-[140px]">
               <select
-                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                className="h-14 w-full px-lg py-md rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
               >
@@ -180,11 +180,11 @@ const Agents: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+              <Filter className="absolute right-lg top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
             </div>
-            <div className="relative">
+            <div className="relative min-w-[140px]">
               <select
-                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                className="h-14 w-full px-lg py-md rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
               >
@@ -194,14 +194,14 @@ const Agents: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+              <Filter className="absolute right-lg top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
             </div>
           </div>
         </div>
       </GlassCard>
 
-      {/* Agents grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Premium Agents Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-xl">
         {filteredAgents.map((agent, index) => (
           <motion.div
             key={agent.id}
@@ -211,10 +211,10 @@ const Agents: React.FC = () => {
           >
             <GlassCard
               hoverEffect
-              className="h-full flex flex-col justify-between group cursor-pointer"
+              className="h-full flex flex-col justify-between group cursor-pointer p-3xl"
               onClick={() => navigate(`/agents/${agent.id}`)}
             >
-              <div className="p-1">
+              <div>
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:from-blue-500/20 group-hover:to-purple-500/20 transition-all">
                     <agent.icon className="h-6 w-6 text-blue-400 group-hover:text-blue-300 transition-colors" />
@@ -234,31 +234,42 @@ const Agents: React.FC = () => {
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+                <h3 className="text-2xl font-bold text-white mb-md group-hover:text-blue-300 transition-colors font-heading">
                   {agent.name}
                 </h3>
-                <p className="text-gray-400 text-sm mb-6 line-clamp-2">{agent.description}</p>
+                <p className="text-base text-gray-400 mb-xl line-clamp-2 leading-relaxed">
+                  {agent.description}
+                </p>
 
-                <div className="grid grid-cols-3 gap-2 py-3 border-t border-white/5 mb-2">
+                <div className="grid grid-cols-3 gap-lg py-lg border-t border-white/10 mb-md">
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Type</p>
-                    <p className="text-sm font-medium text-gray-300">{agent.type}</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-sm font-semibold">
+                      Type
+                    </p>
+                    <p className="text-base font-semibold text-gray-200">{agent.type}</p>
                   </div>
-                  <div className="text-center border-l border-white/5">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Tasks</p>
-                    <p className="text-sm font-medium text-gray-300">{agent.tasks}</p>
+                  <div className="text-center border-l border-white/10">
+                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-sm font-semibold">
+                      Tasks
+                    </p>
+                    <p className="text-base font-semibold text-gray-200">{agent.tasks}</p>
                   </div>
-                  <div className="text-center border-l border-white/5">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Success</p>
-                    <p className="text-sm font-medium text-green-400">{agent.successRate}</p>
+                  <div className="text-center border-l border-white/10">
+                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-sm font-semibold">
+                      Success
+                    </p>
+                    <p className="text-base font-semibold text-green-400">{agent.successRate}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center text-xs text-gray-500 mt-2 pt-2 border-t border-white/5">
-                <span>Last active: {agent.lastActive}</span>
-                <span className="text-blue-400 group-hover:translate-x-1 transition-transform inline-flex items-center">
-                  View Details <span className="ml-1">→</span>
+              <div className="flex justify-between items-center text-sm text-gray-500 mt-lg pt-lg border-t border-white/10">
+                <span className="flex items-center">
+                  <Clock className="w-4 h-4 mr-sm" />
+                  Last active: {agent.lastActive}
+                </span>
+                <span className="text-blue-400 font-semibold group-hover:translate-x-2 transition-transform inline-flex items-center">
+                  View Details <span className="ml-sm">→</span>
                 </span>
               </div>
             </GlassCard>

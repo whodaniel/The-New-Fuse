@@ -17,13 +17,15 @@ const GraphDemo = lazy(() =>
 );
 const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
-const AgentsPage = lazy(() => import('./pages/Agents')); // Updated path
+const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows'));
 const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
-const Dashboard = lazy(() => import('./components/Dashboard').then(module => ({ default: module.Dashboard }))); // Updated to point to updated component
+const Dashboard = lazy(() =>
+  import('./components/Dashboard').then((module) => ({ default: module.Dashboard }))
+); // Updated to point to updated component
 const Settings = lazy(() => import('./pages/Settings'));
 const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
 const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'));
@@ -79,7 +81,7 @@ const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 
 // Landing components
 const LandingIndexPage = lazy(() => import('./pages/Landing'));
-const LandingRedesignedPage = lazy(() => import('./pages/LandingRedesigned'));
+const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 
 // Workspace components
@@ -184,14 +186,16 @@ import SmartNavigation from './components/SmartNavigation';
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter() {
   const location = useLocation();
-  const isPublicRoute = ['/', '/login', '/register', '/landing', '/home'].includes(location.pathname) || location.pathname.startsWith('/auth');
+  const isPublicRoute =
+    ['/', '/login', '/register', '/landing', '/home'].includes(location.pathname) ||
+    location.pathname.startsWith('/auth');
 
   // Use PremiumLayout for authenticated routes
   const Layout = isPublicRoute ? 'div' : PremiumLayout;
 
   return (
     <div>
-       {/* Conditional Navigation - only show SmartNavigation on public pages if needed,
+      {/* Conditional Navigation - only show SmartNavigation on public pages if needed,
            or we can let PremiumLayout handle it for auth pages */}
       {isPublicRoute && <SmartNavigation />}
 
@@ -199,8 +203,8 @@ export default function ComprehensiveRouter() {
         <Suspense fallback={<LoadingFallback name="Page" />}>
           <Routes>
             {/* Core Routes */}
-            <Route path="/" element={<LandingRedesignedPage />} />
-            <Route path="/home" element={<LandingRedesignedPage />} />
+            <Route path="/" element={<LandingRevolutionPage />} />
+            <Route path="/home" element={<LandingRevolutionPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/sophisticated-hub" element={<SophisticatedTNFHub />} />
             <Route
@@ -359,7 +363,10 @@ export default function ComprehensiveRouter() {
             <Route path="/preview/onboarding" element={<OnboardingPreviewPage />} />
 
             {/* Remaining Specialized Settings Routes */}
-            <Route path="/workspace-settings/llm-selection" element={<WorkspaceLLMSelectionPage />} />
+            <Route
+              path="/workspace-settings/llm-selection"
+              element={<WorkspaceLLMSelectionPage />}
+            />
             <Route path="/workspace-settings/chat-model" element={<WorkspaceLLMSelectionPage />} />
             <Route
               path="/workspace-settings/agent-model"

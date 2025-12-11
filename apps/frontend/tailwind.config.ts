@@ -16,6 +16,34 @@ export default {
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
         heading: ['"Outfit"', 'sans-serif'],
       },
+      spacing: {
+        // Enhanced spacing scale for premium UX
+        xs: '4px',
+        sm: '8px',
+        md: '16px',
+        lg: '24px',
+        xl: '32px',
+        '2xl': '48px',
+        '3xl': '64px',
+        '4xl': '96px',
+        '5xl': '128px',
+        touch: '44px', // Minimum touch target
+      },
+      fontSize: {
+        // World-class typography scale
+        xs: ['12px', { lineHeight: '16px', letterSpacing: '0.05em', fontWeight: '600' }],
+        sm: ['14px', { lineHeight: '20px', letterSpacing: '0em', fontWeight: '500' }],
+        base: ['16px', { lineHeight: '24px', letterSpacing: '0em', fontWeight: '400' }],
+        lg: ['18px', { lineHeight: '28px', letterSpacing: '-0.01em', fontWeight: '500' }],
+        xl: ['20px', { lineHeight: '28px', letterSpacing: '-0.01em', fontWeight: '600' }],
+        '2xl': ['24px', { lineHeight: '32px', letterSpacing: '-0.01em', fontWeight: '700' }],
+        '3xl': ['32px', { lineHeight: '40px', letterSpacing: '-0.02em', fontWeight: '700' }],
+        '4xl': ['36px', { lineHeight: '40px', letterSpacing: '-0.02em', fontWeight: '800' }],
+        '5xl': ['48px', { lineHeight: '1', letterSpacing: '-0.02em', fontWeight: '800' }],
+        '6xl': ['60px', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '900' }],
+        '7xl': ['72px', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '900' }],
+        '8xl': ['96px', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '900' }],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -48,27 +76,20 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
-      fontSize: {
-        // Mobile-first font sizes (min 16px for readability)
-        xs: ['0.875rem', { lineHeight: '1.25rem' }],
-        sm: ['1rem', { lineHeight: '1.5rem' }], // 16px
-        base: ['1rem', { lineHeight: '1.5rem' }], // 16px
-        lg: ['1.125rem', { lineHeight: '1.75rem' }], // 18px
-        xl: ['1.25rem', { lineHeight: '1.75rem' }], // 20px
-        '2xl': ['1.5rem', { lineHeight: '2rem' }], // 24px
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }], // 30px
-        '4xl': ['2.25rem', { lineHeight: '2.5rem' }], // 36px
-        '5xl': ['3rem', { lineHeight: '1' }], // 48px
-      },
-      spacing: {
-        // Touch-friendly spacing
-        touch: '44px', // Minimum touch target size
-      },
       minHeight: {
         touch: '44px',
+        input: '48px',
+        button: '44px',
       },
       minWidth: {
         touch: '44px',
+        button: '120px',
+      },
+      boxShadow: {
+        'glow-sm': '0 0 10px rgba(59, 130, 246, 0.3)',
+        'glow-md': '0 0 20px rgba(59, 130, 246, 0.4)',
+        'glow-lg': '0 0 30px rgba(59, 130, 246, 0.5)',
+        glass: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -77,6 +98,7 @@ export default {
         'slide-in-left': 'slideInLeft 0.3s ease-out',
         'slide-in-right': 'slideInRight 0.3s ease-out',
         'scale-in': 'scaleIn 0.3s ease-out',
+        glow: 'glow 2s ease-in-out infinite alternate',
       },
       keyframes: {
         fadeIn: {
@@ -102,6 +124,10 @@ export default {
         scaleIn: {
           '0%': { transform: 'scale(0.9)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.2)' },
+          '100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)' },
         },
       },
     },
