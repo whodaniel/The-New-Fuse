@@ -1,25 +1,30 @@
-import React, { useState, useEffect } from 'react';
 import {
-  UserGroupIcon,
-  ChatBubbleLeftRightIcon,
-  StarIcon,
-  EyeIcon,
-  HeartIcon,
-  ShareIcon,
-  PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
-  ClockIcon,
-  FireIcon,
-  TrophyIcon,
-  BookmarkIcon,
-  UserIcon,
-  TagIcon,
-  ArrowUpIcon,
   ArrowDownIcon,
-  ChatBubbleOvalLeftIcon
+  ArrowUpIcon,
+  BookmarkIcon,
+  ChatBubbleLeftRightIcon,
+  ChatBubbleOvalLeftIcon,
+  ClockIcon,
+  EyeIcon,
+  FireIcon,
+  FunnelIcon,
+  HeartIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+  ShareIcon,
+  StarIcon,
+  TagIcon,
+  TrophyIcon,
+  UserGroupIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon, BookmarkIcon as BookmarkSolidIcon } from '@heroicons/react/24/solid';
+import {
+  BookmarkIcon as BookmarkSolidIcon,
+  HeartIcon as HeartSolidIcon,
+  StarIcon as StarSolidIcon,
+} from '@heroicons/react/24/solid';
+import { GlassCard } from '@the-new-fuse/ui-consolidated';
+import React, { useEffect, useState } from 'react';
 
 interface CommunityPost {
   id: string;
@@ -72,14 +77,14 @@ const CommunityHub: React.FC = () => {
     { id: 'help', name: 'Help & Support', icon: UserIcon },
     { id: 'showcase', name: 'Showcase', icon: StarIcon },
     { id: 'feedback', name: 'Feedback', icon: ChatBubbleOvalLeftIcon },
-    { id: 'announcements', name: 'Announcements', icon: TrophyIcon }
+    { id: 'announcements', name: 'Announcements', icon: TrophyIcon },
   ];
 
   const sortOptions = [
     { id: 'recent', name: 'Most Recent', icon: ClockIcon },
     { id: 'popular', name: 'Most Popular', icon: FireIcon },
     { id: 'top', name: 'Top Rated', icon: TrophyIcon },
-    { id: 'views', name: 'Most Viewed', icon: EyeIcon }
+    { id: 'views', name: 'Most Viewed', icon: EyeIcon },
   ];
 
   useEffect(() => {
@@ -90,8 +95,10 @@ const CommunityHub: React.FC = () => {
     setLoading(true);
     try {
       const [postsResponse, statsResponse] = await Promise.all([
-        fetch(`/api/community/posts?category=${selectedCategory}&sort=${sortBy}&search=${searchQuery}`),
-        fetch('/api/community/stats')
+        fetch(
+          `/api/community/posts?category=${selectedCategory}&sort=${sortBy}&search=${searchQuery}`
+        ),
+        fetch('/api/community/stats'),
       ]);
 
       if (postsResponse.ok && statsResponse.ok) {
@@ -118,12 +125,12 @@ const CommunityHub: React.FC = () => {
       const response = await fetch(`/api/community/posts/${postId}/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: voteType })
+        body: JSON.stringify({ type: voteType }),
       });
 
       if (response.ok) {
         const updatedPost = await response.json();
-        setPosts(posts.map(post => post.id === postId ? updatedPost : post));
+        setPosts(posts.map((post) => (post.id === postId ? updatedPost : post)));
       }
     } catch (error) {
       console.error('Failed to vote:', error);
@@ -133,15 +140,21 @@ const CommunityHub: React.FC = () => {
   const handleBookmark = async (postId: string) => {
     try {
       const response = await fetch(`/api/community/posts/${postId}/bookmark`, {
-        method: 'POST'
+        method: 'POST',
       });
 
       if (response.ok) {
-        setPosts(posts.map(post =>
-          post.id === postId
-            ? { ...post, isBookmarked: !post.isBookmarked, bookmarks: post.isBookmarked ? post.bookmarks - 1 : post.bookmarks + 1 }
-            : post
-        ));
+        setPosts(
+          posts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  isBookmarked: !post.isBookmarked,
+                  bookmarks: post.isBookmarked ? post.bookmarks - 1 : post.bookmarks + 1,
+                }
+              : post
+          )
+        );
       }
     } catch (error) {
       console.error('Failed to bookmark:', error);
@@ -151,15 +164,13 @@ const CommunityHub: React.FC = () => {
   const handleLike = async (postId: string) => {
     try {
       const response = await fetch(`/api/community/posts/${postId}/like`, {
-        method: 'POST'
+        method: 'POST',
       });
 
       if (response.ok) {
-        setPosts(posts.map(post =>
-          post.id === postId
-            ? { ...post, isLiked: !post.isLiked }
-            : post
-        ));
+        setPosts(
+          posts.map((post) => (post.id === postId ? { ...post, isLiked: !post.isLiked } : post))
+        );
       }
     } catch (error) {
       console.error('Failed to like:', error);
@@ -181,20 +192,21 @@ const CommunityHub: React.FC = () => {
     totalMembers: 12543,
     activeToday: 1247,
     totalPosts: 8932,
-    totalComments: 23456
+    totalComments: 23456,
   };
 
   const mockPosts: CommunityPost[] = [
     {
       id: '1',
       title: 'Best practices for AI agent deployment in production',
-      content: 'I\'ve been working on deploying AI agents to production and wanted to share some insights and get feedback from the community...',
+      content:
+        "I've been working on deploying AI agents to production and wanted to share some insights and get feedback from the community...",
       author: {
         id: 'user1',
         name: 'Sarah Chen',
         avatar: '/avatars/sarah.jpg',
         reputation: 2847,
-        badges: ['Expert', 'Contributor']
+        badges: ['Expert', 'Contributor'],
       },
       category: 'general',
       tags: ['deployment', 'production', 'best-practices'],
@@ -207,18 +219,19 @@ const CommunityHub: React.FC = () => {
       isBookmarked: false,
       isLiked: false,
       isPinned: true,
-      isFeatured: true
+      isFeatured: true,
     },
     {
       id: '2',
       title: 'Help: Agent not responding to custom prompts',
-      content: 'I\'m having trouble getting my agent to respond properly to custom prompts. Has anyone encountered this issue?',
+      content:
+        "I'm having trouble getting my agent to respond properly to custom prompts. Has anyone encountered this issue?",
       author: {
         id: 'user2',
         name: 'Mike Johnson',
         avatar: '/avatars/mike.jpg',
         reputation: 156,
-        badges: ['Newcomer']
+        badges: ['Newcomer'],
       },
       category: 'help',
       tags: ['troubleshooting', 'prompts', 'help'],
@@ -231,18 +244,19 @@ const CommunityHub: React.FC = () => {
       isBookmarked: false,
       isLiked: false,
       isPinned: false,
-      isFeatured: false
+      isFeatured: false,
     },
     {
       id: '3',
       title: 'Showcase: My AI-powered customer service bot',
-      content: 'Just finished building an AI customer service bot that handles 90% of inquiries automatically. Here\'s how I did it...',
+      content:
+        "Just finished building an AI customer service bot that handles 90% of inquiries automatically. Here's how I did it...",
       author: {
         id: 'user3',
         name: 'Alex Rodriguez',
         avatar: '/avatars/alex.jpg',
         reputation: 1923,
-        badges: ['Innovator', 'Helper']
+        badges: ['Innovator', 'Helper'],
       },
       category: 'showcase',
       tags: ['showcase', 'customer-service', 'automation'],
@@ -255,8 +269,8 @@ const CommunityHub: React.FC = () => {
       isBookmarked: true,
       isLiked: true,
       isPinned: false,
-      isFeatured: true
-    }
+      isFeatured: true,
+    },
   ];
 
   if (loading) {
@@ -274,9 +288,7 @@ const CommunityHub: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Community Hub
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Community Hub</h1>
               <p className="text-gray-600 dark:text-gray-300 mt-2">
                 Connect, share, and learn with the AI community
               </p>
@@ -296,28 +308,28 @@ const CommunityHub: React.FC = () => {
                   {stats.totalMembers.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Members</div>
-              </div>
+              </GlassCard>
               <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
                 <FireIcon className="w-8 h-8 text-green-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.activeToday.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Active Today</div>
-              </div>
+              </GlassCard>
               <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
                 <ChatBubbleLeftRightIcon className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalPosts.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Posts</div>
-              </div>
+              </GlassCard>
               <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
                 <ChatBubbleOvalLeftIcon className="w-8 h-8 text-orange-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalComments.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Comments</div>
-              </div>
+              </GlassCard>
             </div>
           )}
 
@@ -436,7 +448,7 @@ const CommunityHub: React.FC = () => {
                         </span>
                       )}
                       <span className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs rounded-full">
-                        {categories.find(c => c.id === post.category)?.name || post.category}
+                        {categories.find((c) => c.id === post.category)?.name || post.category}
                       </span>
                     </div>
                   </div>
@@ -510,7 +522,9 @@ const CommunityHub: React.FC = () => {
                       <button
                         onClick={() => handleLike(post.id)}
                         className={`flex items-center space-x-1 transition-colors ${
-                          post.isLiked ? 'text-red-600' : 'text-gray-500 dark:text-gray-400 hover:text-red-600'
+                          post.isLiked
+                            ? 'text-red-600'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-red-600'
                         }`}
                         title="Like post"
                       >
@@ -523,7 +537,9 @@ const CommunityHub: React.FC = () => {
                       <button
                         onClick={() => handleBookmark(post.id)}
                         className={`flex items-center space-x-1 transition-colors ${
-                          post.isBookmarked ? 'text-yellow-600' : 'text-gray-500 dark:text-gray-400 hover:text-yellow-600'
+                          post.isBookmarked
+                            ? 'text-yellow-600'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-yellow-600'
                         }`}
                         title="Bookmark post"
                       >
