@@ -11,6 +11,10 @@ import {
   Zap,
   BarChart3,
   Briefcase
+  MessageSquare,
+  Library,
+  Globe,
+  Lock,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -27,8 +31,12 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({ isOpen, setIsOpe
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'AI Agents', href: '/agents', icon: Bot },
     { name: 'Workflows', href: '/workflows', icon: Workflow },
+    { name: 'Chat', href: '/chat', icon: MessageSquare },
     { name: 'Tasks', href: '/tasks', icon: Briefcase },
+    { name: 'Resources', href: '/resources', icon: Library },
+    { name: 'Hub', href: '/hub', icon: Globe },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: 'Admin', href: '/admin', icon: Lock },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 

@@ -345,11 +345,11 @@ export default function TasksPage() {
           </div>
         </GlassCard>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 overflow-x-auto pb-4 h-full">
+        <div className="flex md:grid md:grid-cols-4 gap-6 overflow-x-auto pb-4 h-[calc(100vh-280px)] snap-x snap-mandatory md:snap-none">
           {(['pending', 'in-progress', 'completed', 'cancelled'] as const).map((status) => {
             const statusTasks = sortedTasks.filter((t) => t.status === status);
             return (
-              <div key={status} className="flex flex-col gap-4 min-w-[280px]">
+              <div key={status} className="flex flex-col gap-4 min-w-[280px] snap-center md:snap-align-none">
                 <div className="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/10">
                   <h3 className="text-sm font-bold capitalize text-gray-200">
                     {status.replace('-', ' ')}
