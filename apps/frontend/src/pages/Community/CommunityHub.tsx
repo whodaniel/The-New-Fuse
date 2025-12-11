@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   UserGroupIcon,
   ChatBubbleLeftRightIcon,
   StarIcon,
@@ -137,8 +137,8 @@ const CommunityHub: React.FC = () => {
       });
 
       if (response.ok) {
-        setPosts(posts.map(post => 
-          post.id === postId 
+        setPosts(posts.map(post =>
+          post.id === postId
             ? { ...post, isBookmarked: !post.isBookmarked, bookmarks: post.isBookmarked ? post.bookmarks - 1 : post.bookmarks + 1 }
             : post
         ));
@@ -155,8 +155,8 @@ const CommunityHub: React.FC = () => {
       });
 
       if (response.ok) {
-        setPosts(posts.map(post => 
-          post.id === postId 
+        setPosts(posts.map(post =>
+          post.id === postId
             ? { ...post, isLiked: !post.isLiked }
             : post
         ));
@@ -170,7 +170,7 @@ const CommunityHub: React.FC = () => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
@@ -290,28 +290,28 @@ const CommunityHub: React.FC = () => {
           {/* Community Stats */}
           {stats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
+              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
                 <UserGroupIcon className="w-8 h-8 text-blue-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalMembers.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Members</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
+              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
                 <FireIcon className="w-8 h-8 text-green-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.activeToday.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Active Today</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
+              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
                 <ChatBubbleLeftRightIcon className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalPosts.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">Posts</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center">
+              <GlassCard className="rounded-lg p-4 text-center border-white/10 bg-white/5">
                 <ChatBubbleOvalLeftIcon className="w-8 h-8 text-orange-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {stats.totalComments.toLocaleString()}
@@ -344,7 +344,7 @@ const CommunityHub: React.FC = () => {
 
           {/* Filters Panel */}
           {showFilters && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg p-4 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -390,7 +390,7 @@ const CommunityHub: React.FC = () => {
           {posts.map((post) => (
             <div
               key={post.id}
-              className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow ${
+              className={`bg-slate-900/60 backdrop-blur-md rounded-lg shadow-sm border border-white/10 p-6 hover:shadow-md transition-shadow ${
                 post.isPinned ? 'border-l-4 border-l-blue-500' : ''
               }`}
             >

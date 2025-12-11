@@ -51,7 +51,7 @@ export const Integrations = () => {
       <main className="flex-grow">
         <section className="py-20 lg:py-32 bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
           <div className="container mx-auto px-4">
-            <Badge className="mb-6 bg-white/10 text-white border-white/20">
+            <Badge className="mb-6 bg-slate-800/50 text-white border-white/20">
               <Puzzle className="w-4 h-4 mr-2" />
               Seamless Integrations
             </Badge>
@@ -64,7 +64,7 @@ export const Integrations = () => {
             <Button
               asChild
               size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
+              className="bg-white/90 text-slate-900 hover:bg-white px-8 py-4 text-lg font-semibold"
             >
               <Link to="/auth/register">
                 <Rocket className="mr-2 h-5 w-5" />
@@ -121,7 +121,7 @@ export const Integrations = () => {
           </div>
         </section>
 
-        <section className="py-20 bg-white text-center">
+        <section className="py-20 bg-slate-900/60 backdrop-blur-md text-center">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Ready to Connect?</h2>
             <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">

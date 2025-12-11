@@ -161,7 +161,7 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-green-900 to-slate-900">
       {isLoading && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 flex items-center gap-4">
+          <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg p-6 flex items-center gap-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
             <span className="text-lg font-medium">Processing transaction...</span>
           </div>

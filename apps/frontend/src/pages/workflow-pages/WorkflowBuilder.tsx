@@ -29,6 +29,7 @@ import {
 } from 'react-icons/fi';
 import { WorkflowApiService } from '../../api/workflow';
 import { Badge, Button, Card, CardContent } from '../../components/ui';
+import { GlassCard } from '@/components/ui/design-system';
 import { FormLabel } from '../../components/ui/form';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
@@ -37,21 +38,21 @@ import { useToast } from '../../hooks/useToast';
 // Custom Node Types
 const nodeTypes = {
   trigger: ({ data }: any) => (
-    <Card className="bg-green-50 border-2 border-green-200">
+    <GlassCard className="bg-green-500/10 border-green-500/20 backdrop-blur-sm">
       <CardContent className="p-3">
         <div className="flex flex-col gap-2">
-          <div className="text-green-600 animate-pulse">{data.icon}</div>
-          <p className="text-sm font-bold">{data.label}</p>
+          <div className="text-green-400 animate-pulse">{data.icon}</div>
+          <p className="text-sm font-bold text-white">{data.label}</p>
         </div>
       </CardContent>
-    </Card>
+    </GlassCard>
   ),
   action: ({ data }: any) => (
-    <Card className="bg-blue-50 border-2 border-blue-200">
+    <GlassCard className="bg-blue-500/10 border-blue-500/20 backdrop-blur-sm">
       <CardContent className="p-3">
         <div className="flex flex-col gap-2">
-          <div className="text-blue-600">{data.icon}</div>
-          <p className="text-sm font-bold">{data.label}</p>
+          <div className="text-blue-400">{data.icon}</div>
+          <p className="text-sm font-bold text-white">{data.label}</p>
           {data.status && (
             <Badge variant={data.status === 'completed' ? 'default' : 'secondary'}>
               {data.status}
@@ -59,28 +60,28 @@ const nodeTypes = {
           )}
         </div>
       </CardContent>
-    </Card>
+    </GlassCard>
   ),
   condition: ({ data }: any) => (
-    <Card className="bg-orange-50 border-2 border-orange-200">
+    <GlassCard className="bg-orange-500/10 border-orange-500/20 backdrop-blur-sm">
       <CardContent className="p-3">
         <div className="flex flex-col gap-2">
-          <div className="text-orange-600">{data.icon}</div>
-          <p className="text-sm font-bold">{data.label}</p>
+          <div className="text-orange-400">{data.icon}</div>
+          <p className="text-sm font-bold text-white">{data.label}</p>
         </div>
       </CardContent>
-    </Card>
+    </GlassCard>
   ),
   ai: ({ data }: any) => (
-    <Card className="bg-purple-50 border-2 border-purple-200">
+    <GlassCard className="bg-purple-500/10 border-purple-500/20 backdrop-blur-sm">
       <CardContent className="p-3">
         <div className="flex flex-col gap-2">
-          <div className="text-purple-600">{data.icon}</div>
-          <p className="text-sm font-bold">{data.label}</p>
+          <div className="text-purple-400">{data.icon}</div>
+          <p className="text-sm font-bold text-white">{data.label}</p>
           {data.model && <Badge variant="secondary">{data.model}</Badge>}
         </div>
       </CardContent>
-    </Card>
+    </GlassCard>
   ),
 };
 
@@ -549,7 +550,7 @@ const WorkflowBuilderContent: React.FC = () => {
           />
 
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all">
+            <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-slate-900/95 border border-white/10 backdrop-blur-xl text-left shadow-2xl transition-all">
               <div className="border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
                 <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
                   Node Settings
@@ -600,7 +601,7 @@ const WorkflowBuilderContent: React.FC = () => {
           />
 
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 text-left shadow-xl transition-all">
+            <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-slate-900/95 border border-white/10 backdrop-blur-xl text-left shadow-2xl transition-all">
               <div className="border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
                 <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
                   Save Workflow

@@ -26,7 +26,7 @@ export const OnboardingFlow: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto py-8">
       {userType === null ? (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg shadow-md p-6">
           <UserTypeDetection onDetectionComplete={handleDetectionComplete} />
         </div>
       ) : (

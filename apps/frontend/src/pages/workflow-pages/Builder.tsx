@@ -83,7 +83,7 @@ const WorkflowBuilder: React.FC = () => {
 
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="border-b p-4 bg-white">
+        <div className="border-b border-white/10 p-4 bg-slate-900/60 backdrop-blur-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Button
@@ -150,7 +150,7 @@ const WorkflowBuilder: React.FC = () => {
         {/* Main content */}
         <div className="flex-1 flex overflow-hidden">
           {/* Left sidebar - Node toolbox */}
-          <div className="w-64 border-r bg-white p-4 overflow-y-auto">
+          <div className="w-64 border-r border-white/10 bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto">
             <h3 className="font-medium mb-4">Nodes</h3>
             <NodeToolbox />
           </div>
@@ -165,7 +165,7 @@ const WorkflowBuilder: React.FC = () => {
           </div>
 
           {/* Right sidebar - Node properties */}
-          <div className="w-80 border-l bg-white p-4 overflow-y-auto">
+          <div className="w-80 border-l border-white/10 bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto">
             {selectedNode ? (
               <NodeProperties node={selectedNode} />
             ) : (
