@@ -1,21 +1,20 @@
-import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard,
+  BarChart3,
   Bot,
-  Workflow,
-  Settings,
+  Briefcase,
+  Globe,
+  LayoutDashboard,
+  Library,
+  Lock,
   LogOut,
-  Menu,
+  MessageSquare,
+  Settings,
+  Workflow,
   X,
   Zap,
-  BarChart3,
-  Briefcase
-  MessageSquare,
-  Library,
-  Globe,
-  Lock,
 } from 'lucide-react';
+import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface PremiumSidebarProps {
@@ -98,7 +97,9 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({ isOpen, setIsOpe
                       : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
                   }`}
                 >
-                  <item.icon className={`w-5 h-5 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`} />
+                  <item.icon
+                    className={`w-5 h-5 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
+                  />
                   <span className="font-medium">{item.name}</span>
                   {isActive && (
                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />

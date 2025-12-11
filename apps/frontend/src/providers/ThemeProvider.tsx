@@ -1,6 +1,6 @@
-import React, { ReactNode, createContext, useContext, useState, useEffect } from "react";
-import { Theme } from "@/theme/types";
-import { defaultTheme, darkTheme } from "@/theme/defaultTheme";
+import { darkTheme, defaultTheme } from '@/theme/defaultTheme';
+import { Theme } from '@/theme/types';
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 interface ThemeContextType {
   currentTheme: 'light' | 'dark';
@@ -16,8 +16,9 @@ interface ThemeProviderProps {
   defaultTheme?: 'light' | 'dark';
 }
 
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  defaultTheme: initialTheme = 'dark'
+  defaultTheme: initialTheme = 'dark',
 }) => {
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(initialTheme);
   const [customTheme, setCustomTheme] = useState<Partial<Theme>>({});
@@ -32,7 +33,7 @@ interface ThemeProviderProps {
   };
 
   const customizeTheme = (customizations: Partial<Theme>) => {
-    setCustomTheme(prev => ({ ...prev, ...customizations }));
+    setCustomTheme((prev) => ({ ...prev, ...customizations }));
   };
 
   useEffect(() => {
@@ -48,12 +49,14 @@ interface ThemeProviderProps {
   }, [currentTheme]);
 
   return (
-    <ThemeContext.Provider value={{
-      currentTheme,
-      theme,
-      setTheme,
-      customizeTheme,
-    }}>
+    <ThemeContext.Provider
+      value={{
+        currentTheme,
+        theme,
+        setTheme,
+        customizeTheme,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
