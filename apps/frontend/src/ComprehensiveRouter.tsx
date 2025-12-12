@@ -80,7 +80,6 @@ const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
 const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 
 // Landing components
-const LandingIndexPage = lazy(() => import('./pages/Landing'));
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 
@@ -129,10 +128,6 @@ const WorkspaceIndexPage = lazy(() => import('./pages/workspace'));
 // Additional component pages
 const ComponentsNavPage = lazy(() => import('./pages/ComponentsNav'));
 const HomePage = lazy(() => import('./pages/Home'));
-const LandingPageAlt = lazy(() =>
-  import('./pages/LandingPage').then((module) => ({ default: module.default }))
-);
-const SimpleLandingPage = lazy(() => import('./pages/SimpleLanding'));
 
 // Enhanced workflow pages
 const WorkflowsEnhancedPage = lazy(() => import('./pages/WorkflowsEnhanced'));
