@@ -359,8 +359,8 @@ export default function ComprehensiveRouter() {
             <Route path="/legal/terms" element={<TermsOfServicePage />} />
 
             {/* Enhanced Landing Pages */}
-            <Route path="/landing-page" element={<LandingPageAlt />} />
-            <Route path="/simple-landing" element={<SimpleLandingPage />} />
+            <Route path="/landing-page" element={<LandingRevolutionPage />} />
+            <Route path="/simple-landing" element={<LandingRevolutionPage />} />
             <Route path="/home-page" element={<HomePage />} />
 
             {/* Component Navigation */}
