@@ -290,7 +290,7 @@ export default function ComprehensiveRouter() {
             <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
             {/* Enhanced Landing Routes */}
-            <Route path="/landing" element={<LandingIndexPage />} />
+            <Route path="/landing" element={<LandingRevolutionPage />} />
             <Route path="/onboarding" element={<OnboardingFlowPage />} />
             {/* AI Agent Onboarding - Critical for autonomous agent self-registration (ULTIMATE_UX_DESIGNER_BRIEF) */}
             <Route
