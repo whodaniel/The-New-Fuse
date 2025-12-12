@@ -5,7 +5,19 @@ import { Label } from '@/components/ui/label';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import { WorkflowProvider } from '@/contexts/WorkflowContext';
 import { useWorkflow } from '@/hooks';
-import { ChevronLeft, Download, Play, Redo, Save, Undo, Upload } from 'lucide-react';
+import {
+  ChevronLeft,
+  Download,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelRightClose,
+  PanelRightOpen,
+  Play,
+  Redo,
+  Save,
+  Undo,
+  Upload,
+} from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
@@ -24,6 +36,8 @@ const WorkflowBuilder: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [showLeftPanel, setShowLeftPanel] = useState(false);
+  const [showRightPanel, setShowRightPanel] = useState(false);
 
   // Update workflow name and description when currentWorkflow changes
   useEffect(() => {
@@ -78,82 +92,155 @@ const WorkflowBuilder: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar />
+    <div className="flex h-screen bg-background overflow-hidden">
+      {/* Sidebar - hidden on mobile */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Header */}
-        <div className="border-b border-white/10 p-4 bg-slate-900/60 backdrop-blur-md">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+        <div className="border-b border-white/10 p-3 md:p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/workflows')}
-                className="mr-4"
+                className="flex-shrink-0"
               >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
+                <ChevronLeft className="h-4 w-4 md:mr-1" />
+                <span className="hidden md:inline">Back</span>
               </Button>
-              <div>
+              <div className="flex-1 min-w-0">
                 <Input
                   value={workflowName}
                   onChange={(e) => setWorkflowName(e.target.value)}
-                  className="text-xl font-bold border-none h-auto p-0 focus-visible:ring-0"
+                  className="text-lg md:text-xl font-bold border-none h-auto p-0 focus-visible:ring-0 w-full"
                   placeholder="Untitled Workflow"
                 />
-                <p className="text-muted-foreground text-sm">Workflow Builder</p>
+                <p className="text-muted-foreground text-xs md:text-sm truncate">
+                  Workflow Builder
+                </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+              {/* Panel toggle buttons */}
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={handleExportWorkflow}
-                title="Export Workflow"
+                onClick={() => setShowLeftPanel(!showLeftPanel)}
+                title={showLeftPanel ? 'Hide nodes panel' : 'Show nodes panel'}
+                className="md:hidden"
               >
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleImportWorkflow}
-                title="Import Workflow"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Import
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => {}} title="Undo" disabled>
-                <Undo className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => {}} title="Redo" disabled>
-                <Redo className="h-4 w-4" />
+                {showLeftPanel ? (
+                  <PanelLeftClose className="h-4 w-4" />
+                ) : (
+                  <PanelLeftOpen className="h-4 w-4" />
+                )}
               </Button>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={handleExecuteWorkflow}
-                disabled={isExecuting}
+                onClick={() => setShowRightPanel(!showRightPanel)}
+                title={showRightPanel ? 'Hide properties panel' : 'Show properties panel'}
+                className="md:hidden"
               >
-                <Play className="h-4 w-4 mr-2" />
-                {isExecuting ? 'Executing...' : 'Execute'}
+                {showRightPanel ? (
+                  <PanelRightClose className="h-4 w-4" />
+                ) : (
+                  <PanelRightOpen className="h-4 w-4" />
+                )}
               </Button>
-              <Button variant="default" size="sm" onClick={handleSaveWorkflow} disabled={isSaving}>
-                <Save className="h-4 w-4 mr-2" />
-                {isSaving ? 'Saving...' : 'Save'}
-              </Button>
+              {/* Action buttons - hidden on smallest screens */}
+              <div className="hidden sm:flex items-center gap-1 md:gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExportWorkflow}
+                  title="Export Workflow"
+                  className="hidden lg:inline-flex"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleImportWorkflow}
+                  title="Import Workflow"
+                  className="hidden lg:inline-flex"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {}}
+                  title="Undo"
+                  disabled
+                  className="hidden md:inline-flex"
+                >
+                  <Undo className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {}}
+                  title="Redo"
+                  disabled
+                  className="hidden md:inline-flex"
+                >
+                  <Redo className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExecuteWorkflow}
+                  disabled={isExecuting}
+                >
+                  <Play className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">
+                    {isExecuting ? 'Executing...' : 'Execute'}
+                  </span>
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handleSaveWorkflow}
+                  disabled={isSaving}
+                >
+                  <Save className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">{isSaving ? 'Saving...' : 'Save'}</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Main content */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden relative">
           {/* Left sidebar - Node toolbox */}
-          <div className="w-64 border-r border-white/10 bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto">
+          <div
+            className={`${
+              showLeftPanel ? 'translate-x-0' : '-translate-x-full'
+            } absolute md:relative md:translate-x-0 z-20 w-64 h-full border-r border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
+          >
             <h3 className="font-medium mb-4">Nodes</h3>
             <NodeToolbox />
           </div>
+
+          {/* Overlay for mobile when panels are open */}
+          {(showLeftPanel || showRightPanel) && (
+            <div
+              className="absolute inset-0 bg-black/50 z-10 md:hidden"
+              onClick={() => {
+                setShowLeftPanel(false);
+                setShowRightPanel(false);
+              }}
+            />
+          )}
 
           {/* Center - Workflow canvas */}
           <div className="flex-1 overflow-hidden">
@@ -165,7 +252,11 @@ const WorkflowBuilder: React.FC = () => {
           </div>
 
           {/* Right sidebar - Node properties */}
-          <div className="w-80 border-l border-white/10 bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto">
+          <div
+            className={`${
+              showRightPanel ? 'translate-x-0' : 'translate-x-full'
+            } absolute md:relative md:translate-x-0 right-0 z-20 w-80 h-full border-l border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
+          >
             {selectedNode ? (
               <NodeProperties node={selectedNode} />
             ) : (
