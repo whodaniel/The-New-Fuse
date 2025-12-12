@@ -123,26 +123,49 @@ export const StatsCard: React.FC<StatsCardProps> = ({
 interface ActionCardProps {
   title: string;
   description: string;
-  icon: LucideIcon;
-  gradient?: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan';
-  onClick: () => void;
+  icon: LucideIcon | React.ReactElement;
+  gradient?: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan' | string;
+  onClick?: () => void;
+  children?: ReactNode;
 }
 
 export const ActionCard: React.FC<ActionCardProps> = ({
   title,
   description,
-  icon: Icon,
+  icon,
   gradient = 'blue',
   onClick,
+  children,
 }) => {
+  // Check if icon is a React element or a component
+  const IconComponent = React.isValidElement(icon) ? null : (icon as LucideIcon);
+  const iconElement = React.isValidElement(icon) ? icon : null;
+
+  // Check if gradient is a custom class or predefined
+  const isCustomGradient =
+    gradient && !['blue', 'purple', 'green', 'orange', 'pink', 'cyan'].includes(gradient);
+
   return (
-    <GlassCard icon={Icon} gradient={gradient} hover={true} onClick={onClick} className="group">
-      <div className="mt-2">
-        <h4 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-300 transition-colors">
-          {title}
-        </h4>
-        <p className="text-base text-gray-300 leading-relaxed">{description}</p>
+    <div
+      className={`backdrop-blur-2xl bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-6 hover:bg-white/[0.05] hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover:border-white/20 hover:scale-[1.01] transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-3 mb-4">
+        {(IconComponent || iconElement) && (
+          <div
+            className={`w-10 h-10 rounded-lg bg-gradient-to-br ${isCustomGradient ? gradient : gradientClasses[gradient as keyof typeof gradientClasses]} flex items-center justify-center`}
+          >
+            {IconComponent ? <IconComponent className="w-5 h-5 text-white" /> : iconElement}
+          </div>
+        )}
+        <div>
+          <h4 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
+            {title}
+          </h4>
+          <p className="text-sm text-gray-400">{description}</p>
+        </div>
       </div>
-    </GlassCard>
+      {children}
+    </div>
   );
 };

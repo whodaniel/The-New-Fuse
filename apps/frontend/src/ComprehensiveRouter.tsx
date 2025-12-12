@@ -158,7 +158,6 @@ const GeneralSettingsPage = lazy(() => import('./pages/GeneralSettings'));
 const GeneralSettingsEmbeddingPage = lazy(
   () => import('./pages/GeneralSettings/EmbeddingPreference')
 );
-const WorkflowTemplates = lazy(() => import('./pages/WorkflowTemplates'));
 const GeneralSettings = lazy(() => import('./pages/GeneralSettings'));
 const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
@@ -250,7 +249,7 @@ export default function ComprehensiveRouter() {
             <Route path="/workflows" element={<Workflows />} />
             <Route path="/workflows/builder" element={<WorkflowBuilder />} />
             <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
-            <Route path="/workflows/templates" element={<WorkflowTemplates />} />
+            <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/admin/users" element={<AdminUserManagement />} />
             <Route path="/admin/system-health" element={<AdminSystemHealth />} />
