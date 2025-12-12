@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { GlassCard } from '@/components/ui/premium';
 import axios from 'axios';
+import { AlertCircle, Bot, Check, Loader2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface UserTypeDetectionProps {
   onDetectionComplete: (userType: 'human' | 'ai_agent' | 'unknown') => void;
@@ -12,58 +14,58 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
     { name: 'Analyzing connection', complete: false },
     { name: 'Checking authentication method', complete: false },
     { name: 'Analyzing request patterns', complete: false },
-    { name: 'Determining user type', complete: false }
+    { name: 'Determining user type', complete: false },
   ]);
 
   useEffect(() => {
     const detectUserType = async () => {
       try {
         // Update first step
-        setDetectionSteps(prev => {
+        setDetectionSteps((prev) => {
           const updated = [...prev];
           updated[0].complete = true;
           return updated;
         });
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         // Update second step
-        setDetectionSteps(prev => {
+        setDetectionSteps((prev) => {
           const updated = [...prev];
           updated[1].complete = true;
           return updated;
         });
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         // Make API call to detect user type
         const response = await axios.post('/api/onboarding/start');
-        
+
         // Update third step
-        setDetectionSteps(prev => {
+        setDetectionSteps((prev) => {
           const updated = [...prev];
           updated[2].complete = true;
           return updated;
         });
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         // Update fourth step
-        setDetectionSteps(prev => {
+        setDetectionSteps((prev) => {
           const updated = [...prev];
           updated[3].complete = true;
           return updated;
         });
-        
+
         // Small delay for visual feedback
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         // Call the callback with the detected user type
         onDetectionComplete(response.data.userType);
       } catch (err) {
         console.error('Error detecting user type:', err);
         setError('Failed to detect user type. Please try again.');
-        
+
         // Default to human if detection fails
         onDetectionComplete('human');
       } finally {
@@ -71,114 +73,73 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
       }
     };
 
-    // Use simulation for demo
-    // const simulateDetection = async () => {
-    //   try {
-    //     // Update first step
-    //     setDetectionSteps(prev => {
-    //       const updated = [...prev];
-    //       updated[0].complete = true;
-    //       return updated;
-    //     });
-        
-    //     await new Promise(resolve => setTimeout(resolve, 800));
-        
-    //     // Update second step
-    //     setDetectionSteps(prev => {
-    //       const updated = [...prev];
-    //       updated[1].complete = true;
-    //       return updated;
-    //     });
-        
-    //     await new Promise(resolve => setTimeout(resolve, 800));
-        
-    //     // Update third step
-    //     setDetectionSteps(prev => {
-    //       const updated = [...prev];
-    //       updated[2].complete = true;
-    //       return updated;
-    //     });
-        
-    //     await new Promise(resolve => setTimeout(resolve, 800));
-        
-    //     // Update fourth step
-    //     setDetectionSteps(prev => {
-    //       const updated = [...prev];
-    //       updated[3].complete = true;
-    //       return updated;
-    //     });
-        
-    //     // Small delay for visual feedback
-    //     await new Promise(resolve => setTimeout(resolve, 800));
-        
-    //     // For demo purposes, randomly select user type with bias toward human
-    //     const userType = Math.random() > 0.8 ? 'ai_agent' : 'human';
-    //     onDetectionComplete(userType);
-    //   } catch (err) {
-    //     console.error('Error in simulation:', err);
-    //     setError('Failed to detect user type. Please try again.');
-        
-    //     // Default to human if detection fails
-    //     onDetectionComplete('human');
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
-    // Use simulation for demo
-    // simulateDetection();
-    
-    // Use real detection in production
     detectUserType();
   }, [onDetectionComplete]);
 
-  const completedSteps = detectionSteps.filter(step => step.complete).length;
+  const completedSteps = detectionSteps.filter((step) => step.complete).length;
   const progressValue = (completedSteps / detectionSteps.length) * 100;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 text-center">
-      <h1 className="text-3xl font-bold mb-6">Detecting User Type</h1>
-      
+    <GlassCard className="max-w-2xl mx-auto p-8 text-center" gradient="blue">
+      <div className="flex justify-center mb-6">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center animate-pulse">
+          <Bot className="w-8 h-8 text-white" />
+        </div>
+      </div>
+
+      <h1 className="text-3xl font-bold mb-2 text-white">Identity Verification</h1>
+      <p className="text-gray-400 mb-8">
+        Please wait while we establish your secure session context.
+      </p>
+
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center">
-          <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          {error}
+        <div className="bg-red-500/10 border border-red-500/20 text-red-200 px-4 py-3 rounded-xl mb-6 flex items-center gap-3 text-left">
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <p>{error}</p>
         </div>
       )}
-      
-      <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
-        <div 
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+
+      <div className="w-full bg-black/30 rounded-full h-2 mb-8 overflow-hidden">
+        <div
+          className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full transition-all duration-500 ease-out"
           style={{ width: `${progressValue}%` }}
-        ></div>
+        />
       </div>
-      
-      <div className="space-y-4 text-left mb-6">
+
+      <div className="space-y-4 text-left mb-6 bg-white/5 rounded-xl p-6 border border-white/5">
         {detectionSteps.map((step, index) => (
-          <div key={index} className="flex items-center">
+          <div key={index} className="flex items-center gap-3">
             {step.complete ? (
-              <div className="text-green-500 mr-3">✓</div>
+              <div className="w-6 h-6 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center border border-green-500/20">
+                <Check className="w-3 h-3" />
+              </div>
+            ) : index === detectionSteps.findIndex((s) => !s.complete) ? (
+              <div className="w-6 h-6 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
             ) : (
-              index === detectionSteps.findIndex(s => !s.complete) ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3"></div>
-              ) : (
-                <div className="mr-3">○</div>
-              )
+              <div className="w-6 h-6 rounded-full border-2 border-gray-700" />
             )}
-            <span className={step.complete ? 'text-green-500' : 'text-gray-500'}>
+            <span
+              className={`text-sm font-medium ${step.complete ? 'text-green-400' : index === detectionSteps.findIndex((s) => !s.complete) ? 'text-blue-400' : 'text-gray-600'}`}
+            >
               {step.name}
             </span>
           </div>
         ))}
       </div>
-      
-      <p className="text-gray-600">
-        {loading
-          ? 'Please wait while we analyze your connection...'
-          : 'Detection complete. Redirecting to appropriate onboarding flow...'}
+
+      <p className="text-sm text-gray-500 bg-white/5 py-2 px-4 rounded-full inline-block">
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            Establishing secure handshake...
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            <Check className="w-3 h-3" />
+            Verification Complete
+          </span>
+        )}
       </p>
-    </div>
+    </GlassCard>
   );
 };

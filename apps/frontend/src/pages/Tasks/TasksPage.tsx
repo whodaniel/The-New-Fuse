@@ -1,22 +1,41 @@
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import {
+  GlassCard,
+  IconButton,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+} from '@/components/ui/premium';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
   CheckCircle,
   ClipboardList,
   Clock,
-  Filter,
+  LayoutGrid,
+  List,
   MoreVertical,
   Search,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// ... (interfaces)
-
-// ... imports ...
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
+  priority: 'urgent' | 'high' | 'medium' | 'low';
+  assignee: string;
+  assigneeAvatar: string;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+  tags: string[];
+  progress: number;
+  workspaceId: string;
+  workspaceName: string;
+}
 
 export default function TasksPage() {
   const navigate = useNavigate();
@@ -160,110 +179,89 @@ export default function TasksPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        {/* ... */}
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Team Tasks</h1>
+          <p className="text-gray-400">Manage and track project assignments</p>
+        </div>
+        <div className="flex gap-3">
+          <PremiumButton variant="gradient" glow onClick={() => navigate('/tasks/new')}>
+            Create Task
+          </PremiumButton>
+        </div>
       </div>
-
-      {/* Stats Cards */}
-      {/* ... */}
 
       {/* Search and Filters */}
       <GlassCard className="p-4">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-            <Input
+            <PremiumInput
               placeholder="Search tasks..."
-              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              icon={Search}
+              iconPosition="left"
             />
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <div className="relative">
-              <select
-                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+          <div className="flex gap-2 flex-wrap items-center">
+            <div className="min-w-[140px]">
+              <PremiumSelect
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="all" className="bg-gray-900">
-                  All Status
-                </option>
-                <option value="pending" className="bg-gray-900">
-                  Pending
-                </option>
-                <option value="in-progress" className="bg-gray-900">
-                  In Progress
-                </option>
-                <option value="completed" className="bg-gray-900">
-                  Completed
-                </option>
-                <option value="cancelled" className="bg-gray-900">
-                  Cancelled
-                </option>
-              </select>
-              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+                options={[
+                  { value: 'all', label: 'All Status' },
+                  { value: 'pending', label: 'Pending' },
+                  { value: 'in-progress', label: 'In Progress' },
+                  { value: 'completed', label: 'Completed' },
+                  { value: 'cancelled', label: 'Cancelled' },
+                ]}
+              />
             </div>
 
-            <div className="relative">
-              <select
-                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+            <div className="min-w-[140px]">
+              <PremiumSelect
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
-              >
-                <option value="all" className="bg-gray-900">
-                  All Priority
-                </option>
-                <option value="urgent" className="bg-gray-900">
-                  Urgent
-                </option>
-                <option value="high" className="bg-gray-900">
-                  High
-                </option>
-                <option value="medium" className="bg-gray-900">
-                  Medium
-                </option>
-                <option value="low" className="bg-gray-900">
-                  Low
-                </option>
-              </select>
-              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+                options={[
+                  { value: 'all', label: 'All Priority' },
+                  { value: 'urgent', label: 'Urgent' },
+                  { value: 'high', label: 'High' },
+                  { value: 'medium', label: 'Medium' },
+                  { value: 'low', label: 'Low' },
+                ]}
+              />
             </div>
 
-            <div className="relative">
-              <select
-                className="h-10 pl-3 pr-8 py-2 rounded-md border border-white/10 bg-white/5 text-sm text-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+            <div className="min-w-[140px]">
+              <PremiumSelect
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="dueDate" className="bg-gray-900">
-                  Due Date
-                </option>
-                <option value="priority" className="bg-gray-900">
-                  Priority
-                </option>
-                <option value="progress" className="bg-gray-900">
-                  Progress
-                </option>
-                <option value="title" className="bg-gray-900">
-                  Title
-                </option>
-              </select>
-              <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3 w-3 pointer-events-none" />
+                options={[
+                  { value: 'dueDate', label: 'Due Date' },
+                  { value: 'priority', label: 'Priority' },
+                  { value: 'progress', label: 'Progress' },
+                  { value: 'title', label: 'Title' },
+                ]}
+              />
             </div>
 
-            <div className="bg-white/5 rounded-lg p-1 flex border border-white/10">
-              <button
+            <div className="bg-white/5 rounded-lg p-1 flex border border-white/10 h-12 items-center">
+              <IconButton
+                icon={List}
                 onClick={() => setViewMode('list')}
-                className={`px-3 py-1 rounded transition-colors text-sm ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                List
-              </button>
-              <button
+                className={`w-8 h-8 rounded transition-colors ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                tooltip="List View"
+                variant={viewMode === 'list' ? 'primary' : 'ghost'}
+                size="sm"
+              />
+              <IconButton
+                icon={LayoutGrid}
                 onClick={() => setViewMode('kanban')}
-                className={`px-3 py-1 rounded transition-colors text-sm ${viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                Kanban
-              </button>
+                className={`w-8 h-8 rounded transition-colors ${viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                tooltip="Kanban View"
+                variant={viewMode === 'kanban' ? 'primary' : 'ghost'}
+                size="sm"
+              />
             </div>
           </div>
         </div>
@@ -334,9 +332,12 @@ export default function TasksPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <button className="text-gray-500 hover:text-white transition-colors p-1 rounded hover:bg-white/10">
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
+                      <IconButton
+                        icon={MoreVertical}
+                        variant="ghost"
+                        size="sm"
+                        className="text-gray-500 hover:text-white"
+                      />
                     </td>
                   </motion.tr>
                 ))}
@@ -349,7 +350,10 @@ export default function TasksPage() {
           {(['pending', 'in-progress', 'completed', 'cancelled'] as const).map((status) => {
             const statusTasks = sortedTasks.filter((t) => t.status === status);
             return (
-              <div key={status} className="flex flex-col gap-4 min-w-[280px] snap-center md:snap-align-none">
+              <div
+                key={status}
+                className="flex flex-col gap-4 min-w-[280px] snap-center md:snap-align-none"
+              >
                 <div className="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/10">
                   <h3 className="text-sm font-bold capitalize text-gray-200">
                     {status.replace('-', ' ')}
@@ -374,9 +378,12 @@ export default function TasksPage() {
                         >
                           <div className="flex justify-between items-start mb-2">
                             {getPriorityIcon(task.priority)}
-                            <button className="text-gray-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                              <MoreVertical className="w-4 h-4" />
-                            </button>
+                            <IconButton
+                              icon={MoreVertical}
+                              variant="ghost"
+                              size="sm"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            />
                           </div>
                           <h4 className="text-sm font-semibold text-white mb-1 line-clamp-2">
                             {task.title}

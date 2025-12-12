@@ -1,5 +1,7 @@
-import React, { useState, useMemo, ReactNode } from 'react';
+import { Search } from 'lucide-react';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { Resource } from '../../types/resources';
+import { PremiumInput, PremiumSelect } from '../ui/premium';
 
 // Filter configuration types
 export interface FilterOption {
@@ -44,7 +46,7 @@ function matchesSearch<T extends Resource>(
 
   const lowerSearch = searchTerm.toLowerCase();
 
-  return searchFields.some(field => {
+  return searchFields.some((field) => {
     const value = item[field];
 
     if (typeof value === 'string') {
@@ -52,19 +54,14 @@ function matchesSearch<T extends Resource>(
     }
 
     if (Array.isArray(value)) {
-      return value.some(v =>
-        typeof v === 'string' && v.toLowerCase().includes(lowerSearch)
-      );
+      return value.some((v) => typeof v === 'string' && v.toLowerCase().includes(lowerSearch));
     }
 
     return false;
   });
 }
 
-function matchesFilters<T extends Resource>(
-  item: T,
-  filters: Record<string, string>
-): boolean {
+function matchesFilters<T extends Resource>(item: T, filters: Record<string, string>): boolean {
   return Object.entries(filters).every(([key, value]) => {
     if (value === 'all') return true;
 
@@ -73,10 +70,7 @@ function matchesFilters<T extends Resource>(
   });
 }
 
-function sortItems<T extends Resource>(
-  items: T[],
-  sortBy: string
-): T[] {
+function sortItems<T extends Resource>(items: T[], sortBy: string): T[] {
   return [...items].sort((a, b) => {
     switch (sortBy) {
       case 'popular':
@@ -110,7 +104,7 @@ export function BaseBrowser<T extends Resource>({
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
-    filterFields.forEach(field => {
+    filterFields.forEach((field) => {
       initial[field.key] = 'all';
     });
     return initial;
@@ -120,16 +114,15 @@ export function BaseBrowser<T extends Resource>({
 
   // Filter and sort items
   const filteredItems = useMemo(() => {
-    let result = items.filter(item =>
-      matchesSearch(item, searchTerm, searchFields) &&
-      matchesFilters(item, filters)
+    let result = items.filter(
+      (item) => matchesSearch(item, searchTerm, searchFields) && matchesFilters(item, filters)
     );
 
     return sortItems(result, sortBy);
   }, [items, searchTerm, filters, sortBy, searchFields]);
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleAction = async (item: T, action: string) => {
@@ -151,82 +144,57 @@ export function BaseBrowser<T extends Resource>({
   return (
     <div className="space-y-6">
       {/* Search and Filters Component will be injected here */}
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex-1 relative">
-          <svg
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
-            type="text"
+      <div className="flex flex-col lg:flex-row gap-4 mb-6">
+        <div className="flex-1">
+          <PremiumInput
             placeholder={searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            icon={Search}
+            iconPosition="left"
+            className="w-full"
           />
         </div>
 
-        {filterFields.map(field => (
-          <select
-            key={field.key}
-            value={filters[field.key]}
-            onChange={(e) => handleFilterChange(field.key, e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">{field.label}</option>
-            {field.options.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        ))}
-
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {sortOptions.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
+        <div className="flex gap-4 flex-wrap">
+          {filterFields.map((field) => (
+            <div key={field.key} className="min-w-[200px]">
+              <PremiumSelect
+                value={filters[field.key]}
+                onChange={(e) => handleFilterChange(field.key, e.target.value)}
+                options={[{ value: 'all', label: field.label }, ...field.options]}
+              />
+            </div>
           ))}
-        </select>
+
+          <div className="min-w-[200px]">
+            <PremiumSelect
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              options={sortOptions}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Results Count */}
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        Showing {filteredItems.length} {filteredItems.length === 1 ? 'result' : 'results'}
+      <div className="text-sm text-gray-400 mb-4 px-1">
+        Showing <span className="text-white font-medium">{filteredItems.length}</span>{' '}
+        {filteredItems.length === 1 ? 'result' : 'results'}
       </div>
 
       {/* Items Grid or Empty State */}
       {filteredItems.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map((item, index) => (
-            <React.Fragment key={item.id}>
-              {renderCard(item, index, handleAction)}
-            </React.Fragment>
+            <React.Fragment key={item.id}>{renderCard(item, index, handleAction)}</React.Fragment>
           ))}
         </div>
       ) : (
-        <div className="text-center py-20">
-          <div className="text-6xl mb-4">{emptyStateIcon}</div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-            {emptyStateMessage}
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            Try adjusting your search or filter criteria
-          </p>
+        <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/5">
+          <div className="text-6xl mb-4 opacity-50">{emptyStateIcon}</div>
+          <h3 className="text-xl font-semibold text-white mb-2">{emptyStateMessage}</h3>
+          <p className="text-gray-400">Try adjusting your search or filter criteria</p>
         </div>
       )}
 

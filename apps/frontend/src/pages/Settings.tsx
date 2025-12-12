@@ -196,12 +196,15 @@ export default function Settings() {
                           <Globe className="w-4 h-4 inline mr-2" />
                           Language
                         </label>
-                        <PremiumSelect defaultValue="english">
-                          <option value="english">English</option>
-                          <option value="spanish">Spanish</option>
-                          <option value="french">French</option>
-                          <option value="german">German</option>
-                        </PremiumSelect>
+                        <PremiumSelect
+                          defaultValue="english"
+                          options={[
+                            { value: 'english', label: 'English' },
+                            { value: 'spanish', label: 'Spanish' },
+                            { value: 'french', label: 'French' },
+                            { value: 'german', label: 'German' },
+                          ]}
+                        />
                       </div>
 
                       <div>
@@ -209,12 +212,15 @@ export default function Settings() {
                           <Zap className="w-4 h-4 inline mr-2" />
                           Time Zone
                         </label>
-                        <PremiumSelect defaultValue="utc">
-                          <option value="utc">UTC (Coordinated Universal Time)</option>
-                          <option value="est">EST (Eastern Standard Time)</option>
-                          <option value="pst">PST (Pacific Standard Time)</option>
-                          <option value="gmt">GMT (Greenwich Mean Time)</option>
-                        </PremiumSelect>
+                        <PremiumSelect
+                          defaultValue="utc"
+                          options={[
+                            { value: 'utc', label: 'UTC (Coordinated Universal Time)' },
+                            { value: 'est', label: 'EST (Eastern Standard Time)' },
+                            { value: 'pst', label: 'PST (Pacific Standard Time)' },
+                            { value: 'gmt', label: 'GMT (Greenwich Mean Time)' },
+                          ]}
+                        />
                       </div>
 
                       <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
@@ -388,11 +394,14 @@ export default function Settings() {
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                           Font Size
                         </label>
-                        <PremiumSelect defaultValue="medium">
-                          <option value="small">Small</option>
-                          <option value="medium">Medium</option>
-                          <option value="large">Large</option>
-                        </PremiumSelect>
+                        <PremiumSelect
+                          defaultValue="medium"
+                          options={[
+                            { value: 'small', label: 'Small' },
+                            { value: 'medium', label: 'Medium' },
+                            { value: 'large', label: 'Large' },
+                          ]}
+                        />
                       </div>
 
                       <div className="pt-4">

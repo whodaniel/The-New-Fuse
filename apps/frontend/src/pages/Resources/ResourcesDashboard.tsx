@@ -1,4 +1,4 @@
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { resourcesService } from '@/services/resources.service';
 import { useQuery } from '@tanstack/react-query';
@@ -48,9 +48,7 @@ export default function ResourcesDashboard() {
             </p>
           </div>
           <div className="flex space-x-3">
-            <PremiumButton variant="gradient" glow>
-              Upload Resource
-            </PremiumButton>
+            <PremiumButton variant="gradient">Upload Resource</PremiumButton>
           </div>
         </div>
 
@@ -62,17 +60,12 @@ export default function ResourcesDashboard() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <GlassCard gradient="blue" className="h-full">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-blue-300 font-medium mb-1">Total Resources</p>
-                    <p className="text-3xl font-bold text-white">{stats.totalResources}</p>
-                  </div>
-                  <div className="p-3 bg-blue-500/20 rounded-lg">
-                    <Box className="w-8 h-8 text-blue-400" />
-                  </div>
-                </div>
-              </GlassCard>
+              <StatsCard
+                label="Total Resources"
+                value={stats.totalResources.toString()}
+                icon={Box}
+                gradient="blue"
+              />
             </motion.div>
 
             <motion.div
@@ -80,17 +73,12 @@ export default function ResourcesDashboard() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <GlassCard gradient="purple" className="h-full">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-purple-300 font-medium mb-1">Claude Skills</p>
-                    <p className="text-3xl font-bold text-white">{stats.totalSkills}</p>
-                  </div>
-                  <div className="p-3 bg-purple-500/20 rounded-lg">
-                    <Code className="w-8 h-8 text-purple-400" />
-                  </div>
-                </div>
-              </GlassCard>
+              <StatsCard
+                label="Claude Skills"
+                value={stats.totalSkills.toString()}
+                icon={Code}
+                gradient="purple"
+              />
             </motion.div>
 
             <motion.div
@@ -98,17 +86,12 @@ export default function ResourcesDashboard() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <GlassCard gradient="green" className="h-full">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-green-300 font-medium mb-1">n8n Workflows</p>
-                    <p className="text-3xl font-bold text-white">{stats.totalWorkflows}</p>
-                  </div>
-                  <div className="p-3 bg-green-500/20 rounded-lg">
-                    <Play className="w-8 h-8 text-green-400" />
-                  </div>
-                </div>
-              </GlassCard>
+              <StatsCard
+                label="n8n Workflows"
+                value={stats.totalWorkflows.toString()}
+                icon={Play}
+                gradient="green"
+              />
             </motion.div>
 
             <motion.div
@@ -116,19 +99,12 @@ export default function ResourcesDashboard() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
             >
-              <GlassCard gradient="orange" className="h-full">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-orange-300 font-medium mb-1">Total Downloads</p>
-                    <p className="text-3xl font-bold text-white">
-                      {stats.totalDownloads.toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-orange-500/20 rounded-lg">
-                    <FolderDown className="w-8 h-8 text-orange-400" />
-                  </div>
-                </div>
-              </GlassCard>
+              <StatsCard
+                label="Total Downloads"
+                value={stats.totalDownloads.toLocaleString()}
+                icon={FolderDown}
+                gradient="orange"
+              />
             </motion.div>
           </div>
         )}
@@ -213,12 +189,12 @@ export default function ResourcesDashboard() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 min-w-fit">
-              <PremiumButton variant="glass" className="flex items-center gap-2">
+              <PremiumButton variant="ghost" className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4" />
                 View Documentation
               </PremiumButton>
               <PremiumButton
-                variant="solid"
+                variant="primary"
                 className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
               >
                 <Video className="w-4 h-4" />

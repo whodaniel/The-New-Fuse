@@ -3,12 +3,13 @@ import React, { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gradient';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   icon?: LucideIcon;
   iconPosition?: 'left' | 'right';
   loading?: boolean;
   fullWidth?: boolean;
+  ariaLabel?: string;
 }
 
 /**
@@ -22,6 +23,7 @@ export const PremiumButton: React.FC<PremiumButtonProps> = ({
   iconPosition = 'left',
   loading = false,
   fullWidth = false,
+  ariaLabel,
   className = '',
   disabled,
   ...props
@@ -30,9 +32,11 @@ export const PremiumButton: React.FC<PremiumButtonProps> = ({
     'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const sizeClasses = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base',
-    lg: 'px-8 py-4 text-lg',
+    sm: 'px-4 py-2 text-sm h-10', // 40px tall
+    md: 'px-6 py-3 text-base h-12', // 48px tall
+    lg: 'px-8 py-4 text-lg h-14', // 56px tall
+    xl: 'px-10 py-5 text-xl h-16', // 64px tall
+    '2xl': 'px-12 py-6 text-2xl h-20', // 80px tall
   };
 
   const variantClasses = {
@@ -45,6 +49,8 @@ export const PremiumButton: React.FC<PremiumButtonProps> = ({
     ghost: 'text-white hover:bg-white/10 backdrop-blur-sm',
     danger:
       'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-lg hover:shadow-xl',
+    gradient:
+      'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98]',
   };
 
   const widthClass = fullWidth ? 'w-full' : '';
@@ -53,6 +59,9 @@ export const PremiumButton: React.FC<PremiumButtonProps> = ({
     <button
       className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${widthClass} ${className}`}
       disabled={disabled || loading}
+      aria-label={ariaLabel}
+      aria-disabled={disabled || loading}
+      aria-busy={loading}
       {...props}
     >
       {loading && (

@@ -4,11 +4,11 @@
  * Implements StandardLayout, design tokens, and consistent components
  */
 
-import { StandardLayout } from '@/components/layout/StandardLayout';
+import { StandardLayout } from '@/components/layout';
 import { SEOHead } from '@/components/seo/SEOHead';
+import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { usePagePerformance } from '@/hooks/usePagePerformance';
-import { Badge, Card, CardContent } from '@the-new-fuse/ui-consolidated';
 import {
   ArrowRight,
   Award,
@@ -79,11 +79,11 @@ const FeatureCard = ({
   };
 
   return (
-    <Card
-      className="group hover:shadow-lg transition-all duration-300 border-0 bg-background hover:bg-background/90 fade-in"
+    <GlassCard
+      className="group hover:shadow-lg transition-all duration-300 border-0 bg-background hover:bg-background/90 fade-in h-full"
       role="listitem"
     >
-      <CardContent className="p-6">
+      <div className="p-6">
         <div
           className={`w-12 h-12 rounded-lg ${colorClasses[color] || colorClasses.primary} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
           aria-hidden="true"
@@ -92,8 +92,8 @@ const FeatureCard = ({
         </div>
         <h3 className="text-lg font-semibold mb-2 text-foreground">{title}</h3>
         <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
-      </CardContent>
-    </Card>
+      </div>
+    </GlassCard>
   );
 };
 
@@ -183,18 +183,20 @@ export const Landing = () => {
 
                 <h1
                   id="hero-heading"
-                  className="text-5xl lg:text-7xl font-bold mb-6 leading-tight fade-in"
+                  className="text-6xl lg:text-8xl font-bold mb-6 leading-tight fade-in"
                 >
-                  Software That
+                  Build Your
                   <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                    Builds Itself
+                    AI Empire
                   </span>
                 </h1>
 
                 <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto leading-relaxed fade-in animation-delay-100">
-                  The world's first <strong>Self-Improving AI Framework</strong>. Deploy an
-                  autonomous swarm that analyzes its own code, architect's upgrades, and deploys
-                  fixes—without your help.
+                  <strong>
+                    Orchestrate multi-model workflows. Ship features 10x faster. No code required.
+                  </strong>
+                  The world's first self-improving AI framework that analyzes its own code,
+                  architects upgrades, and deploys fixes—autonomously.
                 </p>
 
                 <div
@@ -204,13 +206,14 @@ export const Landing = () => {
                 >
                   <Link to="/auth/register">
                     <PremiumButton
-                      size="lg"
-                      variant="primary"
+                      size="xl"
+                      variant="gradient"
                       icon={Cpu}
                       iconPosition="left"
-                      className="px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl group"
+                      className="font-semibold shadow-2xl hover:shadow-3xl group"
+                      ariaLabel="Start building your AI empire for free"
                     >
-                      Deploy The Swarm
+                      Start Building Free
                       <ArrowRight
                         className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
                         aria-hidden="true"
@@ -218,15 +221,16 @@ export const Landing = () => {
                     </PremiumButton>
                   </Link>
                   <PremiumButton
-                    size="lg"
+                    size="xl"
                     variant="outline"
-                    className="px-8 py-4 text-lg"
+                    className="text-lg"
                     onClick={() => {
                       const demoSection = document.getElementById('features-section');
                       demoSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }}
+                    ariaLabel="Learn how our AI platform works"
                   >
-                    See It Evolve
+                    See How It Works
                   </PremiumButton>
                 </div>
 
@@ -280,7 +284,7 @@ export const Landing = () => {
           {/* Core Features Section - Using design system grid and components */}
           <section
             id="features-section"
-            className="py-20 bg-background"
+            className="py-24 bg-background"
             aria-labelledby="features-heading"
           >
             <div className="container mx-auto px-4">
@@ -309,7 +313,7 @@ export const Landing = () => {
                 <FeatureCard
                   icon={Bot}
                   title="Self-Correction Swarm"
-                  description="A dedicated 5-agent team (Analyzer, Architect, Implementer) living inside your API that detects bugs and writes its own fixes."
+                  description="Deploy autonomous agents that detect bugs, architect fixes, and deploy updates—without human intervention."
                   color="primary"
                 />
                 <FeatureCard
@@ -723,11 +727,12 @@ export const Landing = () => {
             <div className="relative container mx-auto px-4 text-center">
               <div className="max-w-4xl mx-auto">
                 <h2 id="cta-heading" className="text-4xl lg:text-5xl font-bold mb-6 fade-in">
-                  Ready to Conduct Your AI Symphony?
+                  Ready to Build Your AI Empire?
                 </h2>
                 <p className="text-xl text-blue-100 mb-10 fade-in animation-delay-100">
-                  Join the maestros who are already orchestrating AI at scale. Transform your
-                  operations from chaotic to symphonic—starting today, completely free.
+                  Join thousands of innovators already deploying autonomous agents at scale.
+                  Transform your workflows from manual to autonomous—starting today, completely
+                  free.
                 </p>
 
                 <div
@@ -737,13 +742,14 @@ export const Landing = () => {
                 >
                   <Link to="/auth/register">
                     <PremiumButton
-                      size="lg"
-                      variant="primary"
-                      icon={Music}
+                      size="2xl"
+                      variant="gradient"
+                      icon={Cpu}
                       iconPosition="left"
-                      className="bg-white text-primary-600 hover:bg-blue-50 px-10 py-5 text-xl font-bold shadow-2xl hover:shadow-3xl group"
+                      className="font-bold shadow-2xl hover:shadow-3xl group"
+                      ariaLabel="Deploy your first autonomous AI agent"
                     >
-                      Begin Your AI Symphony
+                      Deploy Your First Agent
                       <ArrowRight
                         className="ml-2 h-6 w-6 group-hover:translate-x-1 transition-transform duration-300"
                         aria-hidden="true"
@@ -752,11 +758,12 @@ export const Landing = () => {
                   </Link>
                   <Link to="/auth/login">
                     <PremiumButton
-                      size="lg"
+                      size="2xl"
                       variant="outline"
-                      className="px-10 py-5 text-xl border-white/30"
+                      className="font-bold border-white/30"
+                      ariaLabel="Access your AI command center"
                     >
-                      Access Dashboard
+                      Access Command Center
                     </PremiumButton>
                   </Link>
                 </div>

@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui/premium';
 import {
   ArrowRight,
   Bot,
@@ -10,7 +9,6 @@ import {
   Command,
   Database,
   FileCode,
-  Filter,
   Layers,
   Plus,
   Search,
@@ -109,8 +107,14 @@ export const AgentsRevolution = () => {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const categories = ['All', ...new Set(revolutionaryAgents.map((a) => a.category))];
-  const statuses = ['All', ...new Set(revolutionaryAgents.map((a) => a.status))];
+  const categories = ['All', ...new Set(revolutionaryAgents.map((a) => a.category))].map((c) => ({
+    value: c,
+    label: c,
+  }));
+  const statuses = ['All', ...new Set(revolutionaryAgents.map((a) => a.status))].map((s) => ({
+    value: s,
+    label: s,
+  }));
 
   return (
     <div className="min-h-screen bg-transparent px-6 py-16">
@@ -134,70 +138,62 @@ export const AgentsRevolution = () => {
               <span className="text-white font-semibold">No babysitting required.</span>
             </p>
           </div>
-          <Button
+          <PremiumButton
             onClick={() => navigate('/agents/new')}
-            className="h-16 px-10 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_40px_rgba(59,130,246,0.6)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] transform hover:scale-105 transition-all duration-300 whitespace-nowrap"
+            size="xl"
+            variant="gradient"
+            className="shadow-[0_0_40px_rgba(59,130,246,0.6)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] transform hover:scale-105 transition-all duration-300 whitespace-nowrap"
           >
             <Plus className="mr-3 h-6 w-6" />
             Deploy New Agent
             <ArrowRight className="ml-3 h-6 w-6" />
-          </Button>
+          </PremiumButton>
         </div>
 
         {/* SEARCH & FILTERS - PREMIUM */}
-        <div className="p-8 rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 shadow-2xl">
+        <GlassCard className="p-8 rounded-3xl backdrop-blur-2xl shadow-2xl">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Search Bar */}
             <div className="relative flex-1">
-              <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 h-6 w-6" />
-              <Input
+              <PremiumInput
                 placeholder="Search by name, capability, or use case..."
-                className="h-16 pl-16 pr-6 text-lg bg-white/5 border-white/20 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-2xl transition-all"
+                className="h-16 text-lg rounded-2xl"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                icon={Search}
+                iconPosition="left"
               />
             </div>
 
             {/* Filters */}
             <div className="flex gap-4">
               <div className="relative min-w-[180px]">
-                <Filter className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
-                <select
-                  className="h-16 w-full pl-14 pr-6 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm text-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
+                <PremiumSelect
+                  options={categories}
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat} className="bg-gray-900">
-                      {cat}
-                    </option>
-                  ))}
-                </select>
+                  className="h-16 rounded-2xl text-lg appearance-none"
+                />
               </div>
               <div className="relative min-w-[160px]">
-                <select
-                  className="h-16 w-full px-6 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-sm text-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
+                <PremiumSelect
+                  options={statuses}
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  {statuses.map((status) => (
-                    <option key={status} value={status} className="bg-gray-900">
-                      {status}
-                    </option>
-                  ))}
-                </select>
+                  className="h-16 rounded-2xl text-lg appearance-none"
+                />
               </div>
             </div>
           </div>
-        </div>
+        </GlassCard>
 
         {/* AGENTS GRID - BOLD CARDS */}
         <div className="grid md:grid-cols-2 gap-8">
           {filteredAgents.map((agent) => (
-            <div
+            <GlassCard
               key={agent.id}
               onClick={() => navigate(`/agents/${agent.id}`)}
-              className="group relative p-10 rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 hover:border-white/30 transition-all duration-500 cursor-pointer overflow-hidden"
+              className="group relative p-10 rounded-3xl hover:border-white/30 transition-all duration-500 cursor-pointer overflow-hidden border border-white/10"
             >
               {/* Gradient Overlay on Hover */}
               <div
@@ -273,7 +269,7 @@ export const AgentsRevolution = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </GlassCard>
           ))}
         </div>
 
@@ -287,39 +283,41 @@ export const AgentsRevolution = () => {
                 ? 'Try adjusting your filters or search query.'
                 : 'Deploy your first AI agent and watch it transform your workflow.'}
             </p>
-            <Button
+            <PremiumButton
               onClick={() => navigate('/agents/new')}
-              className="h-16 px-12 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_40px_rgba(59,130,246,0.6)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] transform hover:scale-105 transition-all duration-300"
+              size="xl"
+              variant="gradient"
+              className="shadow-[0_0_40px_rgba(59,130,246,0.6)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] transform hover:scale-105 transition-all duration-300"
             >
               <Plus className="mr-3 h-6 w-6" />
               Deploy Your First Agent
-            </Button>
+            </PremiumButton>
           </div>
         )}
 
         {/* Stats Footer */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
-          <div className="p-8 rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/10 text-center">
+          <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 mb-4">
               <Command className="w-8 h-8 text-blue-400" />
             </div>
             <p className="text-5xl font-black text-white mb-2">{revolutionaryAgents.length}</p>
             <p className="text-lg text-gray-400">Agents Deployed</p>
-          </div>
-          <div className="p-8 rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/10 text-center">
+          </GlassCard>
+          <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 mb-4">
               <TrendingUp className="w-8 h-8 text-green-400" />
             </div>
             <p className="text-5xl font-black text-white mb-2">97.9%</p>
             <p className="text-lg text-gray-400">Avg Success Rate</p>
-          </div>
-          <div className="p-8 rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/10 text-center">
+          </GlassCard>
+          <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-500/20 mb-4">
               <Zap className="w-8 h-8 text-purple-400" />
             </div>
             <p className="text-5xl font-black text-white mb-2">1.9s</p>
             <p className="text-lg text-gray-400">Avg Response Time</p>
-          </div>
+          </GlassCard>
         </div>
       </div>
     </div>

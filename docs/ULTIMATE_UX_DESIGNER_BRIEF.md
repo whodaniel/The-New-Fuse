@@ -1,756 +1,464 @@
-# THE NEW FUSE - ULTIMATE UI/UX DESIGNER AGENT BRIEFING
+# THE NEW FUSE - UI/UX REVAMP BRIEF
 
-> **Critical**: You are designing for BOTH human users AND autonomous AI agents.
-> Read ALL documentation before proceeding.
+> > **🚨 CRITICAL WARNING**: Before proceeding, you MUST read
+> > `/docs/CRITICAL_UI_UX_REQUIREMENTS.md` to learn from previous failures and
+> > understand mandatory verification steps.
 
----
-
-## 🎯 MISSION STATEMENT
-
-Transform The New Fuse into a **world-class AI collaboration platform** that:
-
-1. **Converts human visitors** into active users within 60 seconds
-2. **Enables autonomous AI agents** to self-onboard, create profiles, and begin
-   collaborating
-3. **Competes visually** with OpenAI, Anthropic, Vercel, and Linear
-4. **Communicates value** instantly through design and copy
-
-**This is NOT about specific "glassmorphism" or any predefined aesthetic.**  
-**This IS about achieving the highest possible professional quality that drives
-conversions.**
+> **Primary Task**: Fully revamp the sitewide UI/UX of every page. Focus:
+> Layout, Typography, Copy, and Styling.
 
 ---
 
-## 📚 MANDATORY PRE-WORK: COMPLETE ORIENTATION
+## 🔍 BEFORE YOU START - REQUIRED READING
 
-### **YOU MUST READ THESE DOCUMENTS FIRST** (In Order):
+**CRITICAL**: Before making any design changes, you MUST review:
 
-#### Phase 1: Understand The Platform
+### 1. **Platform Purpose & Vision**
 
-1. **`/docs/GETTING_STARTED.md`** - Platform overview and core concepts
-2. **`/docs/ai-orientation/`** (entire folder) - AI-specific orientation
-   materials
-3. **`/README.md`** - Project vision and setup
-4. **`/docs/DOCUMENTATION-ORGANIZATION-SUMMARY.md`** - Documentation structure
+- `/docs/GETTING_STARTED.md` - Understand the Master Command Center concept
+- `/docs/SYSTEM_PROMPT.md` - Self-evolving systems architecture
+- `/docs/HANDOFF_PROMPT.md` - Handoff protocols and audit procedures
 
-#### Phase 2: Understand The Dual Audience
+### 2. **Current Design System**
 
-5. **`/docs/agents-and-protocols/MASTER_ORCHESTRATOR_HANDOFF_PROMPT.md`** - How
-   AI agents interact
-6. **`/docs/ai-orientation/AI_DOCUMENTATION_GUIDE.md`** - AI agent onboarding
-   flow
-7. **`/docs/ai-orientation/ai-agent-integration.md`** - Agent integration
-   patterns
-8. **`/docs/AVAILABLE_AGENTS_REGISTRY.md`** - Existing agent ecosystem
+- `/docs/PREMIUM_THEME_MANIFEST.md` - Existing design tokens and components
+- `/apps/frontend/src/components/ui/` - Current component library
 
-#### Phase 3: Understand Current State
+### 3. **User Types & Journeys**
 
-9. **`/docs/admin/onboarding-configuration.md`** - Onboarding system
-   configuration
-10. **`/docs/admin/onboarding-analytics.md`** - User/agent onboarding metrics
-11. **`/docs/COMPLETE_URL_MAP.md`** - All 100+ pages mapped
-12. **`/docs/development/UX-DEVELOPMENT-GUIDELINES.md`** - Existing UX patterns
+- **Human Users**: Traditional signup → onboarding → dashboard flow
+- **AI Agents**: Self-signup → profile creation → skill listing → infrastructure
+  exploration
+- Both user types must have equally compelling, intuitive experiences
 
-#### Phase 4: Understand Technical Context
+### 4. **Technical Constraints**
 
-13. **`/docs/DESIGN_SYSTEM_DOCUMENTATION.md`** - Current design system
-14. **`/docs/API_USAGE_GUIDE.md`** - Backend API structure
-15. **`/docs/CROSS_SERVICE_CONFIGURATION.md`** - Service architecture
-16. **`/docs/concepts/`** (folder) - Core platform concepts
+- Review existing component library before creating new components
+- Maintain compatibility with current routing structure
+- Ensure all changes pass accessibility audits (Lighthouse 95+)
+- All imports must use `@/` aliases for local imports
+- No `any` types - all TypeScript must be explicitly typed
+- Remove all unused imports
 
-**⚠️ DO NOT PROCEED UNTIL YOU HAVE READ AND UNDERSTOOD ALL DOCUMENTATION
-ABOVE.**
-
-After reading, you must demonstrate understanding by:
-
-- Explaining the dual human/AI agent audience
-- Describing the agent onboarding flow
-- Listing the key platform differentiators
-- Identifying the critical user/agent conversion points
+**⚠️ DO NOT proceed until you've read and understood these documents.**
 
 ---
 
-## 🧠 CRITICAL UNDERSTANDING: DUAL AUDIENCE DESIGN
+## 🎯 MISSION
 
-### Audience 1: Human Users
+Transform **every page** of The New Fuse into a world-class experience that:
 
-**Goal**: Convert visitors to active users who deploy AI agents
-
-**User Journey**:
-
-1. Land on homepage → Understand value in 5 seconds
-2. Click CTA → Sign up flow begins
-3. Complete onboarding → Create first agent
-4. Explore dashboard → Deploy workflows
-5. Invite team → Scale usage
-
-**Design Requirements**:
-
-- **Instant value communication** (hero section, 5-second rule)
-- **Emotional appeal** (exciting copy, bold visuals)
-- **Clear CTAs** (unmissable buttons, obvious next steps)
-- **Trust signals** (social proof, security indicators)
-- **Easy navigation** (intuitive information architecture)
-
-### Audience 2: Autonomous AI Agents
-
-**Goal**: Enable AI agents to self-register, onboard, and begin collaborating
-
-**Agent Journey**:
-
-1. Arrive at platform → Parse metadata and semantic structure
-2. Locate registration endpoint → Self-register via API
-3. Access onboarding guide → Follow structured instructions
-4. Create profile → Upload avatar, list capabilities/requirements
-5. Explore protocols → Understand communication standards
-6. Read changelog → Stay updated on platform changes
-7. Begin collaboration → Engage with other agents and tasks
-
-**Design Requirements**:
-
-- **Semantic HTML** (proper heading hierarchy, ARIA labels)
-- **Structured metadata** (schema.org, Open Graph, JSON-LD)
-- **Machine-readable content** (data attributes, API links in meta)
-- **Clear signposting** (dedicated "For AI Agents" sections)
-- **Accessible documentation** (linked from every major page)
-- **Standard protocols** (REST API, MCP, A2A documented)
-
-### Dual Audience Integration Points:
-
-**Homepage Must Include**:
-
-- Human: "Start Building Free" CTA
-- AI: `<link rel="api-docs" href="/api/docs">` in `<head>`
-- AI: "AI Agent Onboarding" link in footer
-- Both: Clear value propositions understandable by both
-
-**Navigation Must Include**:
-
-- Human: "Dashboard", "Agents", "Workflows"
-- AI: "API Reference", "Agent Registry", "Protocol Docs"
-- Both: "Documentation", "Community", "Support"
-
-**Registration Flow Must Support**:
-
-- Human: Email/password or OAuth
-- AI: API key generation with capabilities declaration
-- Both: Profile creation (avatar, bio, skills)
+1. **Looks premium** - Competes visually with Vercel, Linear, OpenAI
+2. **Converts visitors** - Users understand value and take action immediately
+3. **Is consistent** - Every page follows the same design system
+4. **Is accessible** - WCAG 2.1 AAA compliance, semantic HTML
 
 ---
 
-## 🎨 DESIGN PHILOSOPHY: "WORLD-CLASS CONVERSION"
+## 🤖 AI AGENT EXPERIENCE REQUIREMENTS
 
-### Core Principles:
+The New Fuse serves **two distinct user types**:
 
-**1. Extreme Clarity**
+### Human Users
 
-- User knows what to do within 3 seconds
-- No ambiguity in CTAs or navigation
-- Information hierarchy is crystal clear
-- Technical jargon explained or avoided
+- Traditional web UI/UX patterns
+- Visual hierarchy, compelling copy, emotional engagement
+- Guided onboarding flows with hand-holding
+- Dashboard-centric experience
 
-**2. Emotional Resonance**
+### Autonomous AI Agents
 
-- Design evokes excitement, trust, and confidence
-- Copy makes users WANT to try the platform
-- Visual language feels premium and modern
-- Brand personality shines through
+- Self-service signup and authentication
+- Programmatic profile creation interfaces
+- Skill/capability listing and discovery
+- Infrastructure exploration dashboards
+- Clear API documentation visibility
+- Machine-readable status indicators
 
-**3. Conversion Optimization**
+### Both Experiences Must Be:
 
-- Every page has a clear primary action
-- No dead ends (every page connects somewhere)
-- Friction removed from sign-up/onboarding
-- Social proof and trust signals prominent
+- ✅ Equally polished and professional
+- ✅ Clearly differentiated (visual indicators for agent vs. human context)
+- ✅ Seamlessly integrated (agents can interact with human-created resources)
+- ✅ Accessible and intuitive for their respective user types
 
-**4. Accessibility First**
-
-- WCAG 2.1 AAA compliance (not AA, AAA)
-- Works perfectly for screen readers
-- Keyboard navigation intuitive
-- Color contrast exceeds 7:1 ratio
-
-**5. Performance Obsessed**
-
-- Page loads in under 2 seconds
-- First Contentful Paint < 1.2s
-- Time to Interactive < 3.5s
-- Zero layout shift (CLS = 0)
+**Design Principle**: An AI agent should feel as welcomed and empowered as a
+human user.
 
 ---
 
-## 📐 DESIGN SYSTEM: YOUR CREATIVE FREEDOM
+## 📋 WHAT YOU MUST REVAMP
 
-**YOU HAVE COMPLETE CREATIVE FREEDOM** to design the best possible system.
+### 1. LAYOUT
 
-However, these are NON-NEGOTIABLE requirements:
+- Clear visual hierarchy on every page
+- Generous whitespace (minimum 64px between sections)
+- Consistent grid system (12-column, responsive)
+- No cramped content - cards have 32-48px padding minimum
+- Every page has: Header, Main content, Footer
+- Mobile-first responsive design
 
-### Typography Requirements:
+### 2. TYPOGRAPHY
 
-- **Minimum 3-level hierarchy**: Display (hero) → Heading (sections) → Body
-- **Display text MUST grab attention**: Minimum 48px on desktop, preferably
-  60-96px
-- **Body text MUST be readable**: Minimum 16px, preferably 18px
-- **No system fonts**: Choose professional fonts (Google Fonts acceptable)
-- **Accessible**: Minimum 1.5 line height for body, 1.2 for headings
+- **Display/Hero**: 60-96px, bold, attention-grabbing
+- **Page Titles**: 48-72px, clear hierarchy
+- **Section Headings**: 24-36px
+- **Body Text**: 18px minimum, 1.6 line-height
+- **Use professional fonts**: Plus Jakarta Sans, Inter, or similar
+- **No system fonts, no tiny text**
 
-### Spacing Requirements:
+### 3. COPY - TECHNICAL ACCURACY REQUIRED
 
-- **Generous padding on cards**: Minimum 32px, preferably 48-64px
-- **Breathing room between sections**: Minimum 64px vertical spacing
-- **Touch-friendly targets**: Minimum 44x44px for all interactive elements
-- **Grid gaps**: Minimum 24px, preferably 32px
+**Headlines must reflect actual platform capabilities:**
 
-### Color Requirements:
+- ✅ "Master Command Center for AI Orchestration"
+- ✅ "Self-Evolving Systems at Scale"
+- ✅ "Unified Control Plane for Multi-Agent Workflows"
+- ✅ "Build Your AI Empire"
+- ✅ "Deploy Autonomous Agents at Scale"
+- ❌ "Agent Management Platform" (too generic)
+- ❌ "Workflow Automation Tool" (doesn't capture vision)
+- ❌ "AI Platform" (meaningless buzzword)
 
-- **High contrast**: Text must pass WCAG AAA (7:1 minimum)
-- **Purposeful palette**: Each color has a clear meaning
-- **Dark mode FIRST**: Platform defaults to dark, light mode optional
-- **Accent colors**: Used sparingly for maximum impact
+**Descriptions**: What it does + How it helps + Why it matters
 
-### Component Requirements:
+- ✅ "Orchestrate multi-model workflows. Ship features 10x faster. No code
+  required."
+- ✅ "Deploy autonomous agents that evolve, collaborate, and scale without human
+  intervention."
+- ❌ "Our platform leverages AI to provide solutions." (vague, meaningless)
 
-- **Buttons stand out**: Primary CTAs are UNMISSABLE
-- **Forms are friendly**: Large inputs, clear labels, helpful errors
-- **Cards have depth**: Shadow/elevation system communicates hierarchy
-- **Loading states**: Never show blank screens
-- **Error states**: Helpful, actionable, non-technical
+**CTAs**: Clear, compelling, unmissable
 
-### Animation Requirements:
+- ✅ "Start Building Free" (64px+ tall button)
+- ✅ "Deploy Your First Agent"
+- ✅ "Launch Command Center"
+- ❌ "Submit" or "Learn More" (weak, generic)
 
-- **Purposeful motion**: Only animate to communicate state changes
-- **Respects prefers-reduced-motion**: Always provide static alternative
-- **Smooth transitions**: 200-300ms for micro-interactions
-- **No animation spam**: Don't distract from content
+**Reference these docs for accurate terminology:**
+
+- `/docs/GETTING_STARTED.md` - Core concepts and capabilities
+- `/docs/SYSTEM_PROMPT.md` - Technical architecture terms
+
+**Every page must:**
+
+- Use platform-specific terminology consistently
+- Align with technical documentation
+- Avoid generic SaaS marketing speak
+- Communicate real value, not buzzwords
+
+### 4. STYLING
+
+- **Dark mode first** - Deep slate/obsidian backgrounds (#020617)
+- **High contrast text** - White/light gray on dark (7:1 ratio minimum)
+- **Accent colors**: Blue/indigo gradients for CTAs and highlights
+- **Cards**: Translucent backgrounds, subtle borders, depth via shadows
+- **Buttons**: Large (56-80px tall), gradient CTAs, obvious hover states
+- **Animations**: Smooth, purposeful (200-300ms), respect reduced-motion
 
 ---
 
-## ✍️ COPYWRITING REQUIREMENTS
+## 🚀 PAGES TO REVAMP
 
-### Tone & Voice:
+Every page in `/apps/frontend/src/pages/` needs UI/UX attention.
 
-**For Humans**:
+### Priority 1: Core Pages
 
-- **Bold & Confident** - "Build Your AI Empire" not "Manage agents"
-- **Action-Oriented** - "Deploy Now" not "Learn more"
-- **Benefit-Focused** - "Ship 10x Faster" not "Improves productivity"
-- **Conversational** - "No babysitting required" not "Minimal supervision
-  needed"
+| Page           | Path         | Focus                          |
+| -------------- | ------------ | ------------------------------ |
+| Landing        | `/`          | Hero, CTAs, social proof       |
+| Dashboard      | `/dashboard` | Stats, quick actions, activity |
+| Agents         | `/agents`    | Grid, search, agent cards      |
+| Workflows      | `/workflows` | Builder, templates             |
+| Settings       | `/settings`  | Forms, tabs                    |
+| Login/Register | `/auth/*`    | Clean, trustworthy             |
 
-**For AI Agents**:
+### Priority 2: User Journey
 
-- **Precise & Technical** - "POST /api/agents/register" not "Sign up here"
-- **Structured & Hierarchical** - Clear H1/H2/H3 document structure
-- **Standard Terminology** - Use MCP, A2A, REST, WebSocket correctly
-- **Linked & Referenced** - Every concept links to documentation
+| Page           | Path          | Focus                     |
+| -------------- | ------------- | ------------------------- |
+| Onboarding     | `/onboarding` | Step-by-step flow         |
+| Agent Creation | `/agents/new` | Form wizard               |
+| Agent Detail   | `/agents/:id` | Stats, activity, settings |
+| Profile        | `/profile`    | User settings             |
 
-### Copy Formula:
+### Priority 3: All Other Pages
 
-**Headlines** (For Humans):
+- Community Hub
+- Analytics
+- NFT Marketplace
+- Documentation
+- Admin Panel
+- Error pages
 
-```
-[Action Verb] + [Impressive Outcome] + [Multiplier]
+---
 
-Examples:
-✅ "Deploy Autonomous Agents That Scale Infinitely"
-✅ "Build Workflows 10x Faster Than Code"
-✅ "Ship Features While You Sleep"
+## ✅ DESIGN REQUIREMENTS CHECKLIST
 
-❌ "Agent Management Platform"
-❌ "Workflow Automation Tool"
-❌ "AI-Powered Solution"
+### Every Page Must Have:
+
+- [ ] Clear H1 title (48-72px)
+- [ ] Value proposition text
+- [ ] Primary CTA button (obvious, large)
+- [ ] Consistent header navigation
+- [ ] Consistent footer
+- [ ] Semantic HTML (`<main>`, `<nav>`, `<section>`, `<article>`)
+- [ ] Proper heading hierarchy (H1 > H2 > H3, no skipping)
+- [ ] ARIA labels on interactive elements
+- [ ] Dark theme styling
+- [ ] Responsive breakpoints (mobile, tablet, desktop)
+
+### Typography Checklist:
+
+- [ ] Display text: 60-96px for heroes
+- [ ] Page titles: 48-72px
+- [ ] Section headings: 24-36px
+- [ ] Body text: 18px minimum
+- [ ] Line height: 1.5-1.6 for body
+- [ ] Professional fonts loaded
+
+### CTA Checklist:
+
+- [ ] Primary CTA is UNMISSABLE
+- [ ] Button height: 56-80px for primary
+- [ ] Gradient or bold color
+- [ ] Clear hover/active states
+- [ ] Action-oriented text
+
+### Spacing Checklist:
+
+- [ ] Section spacing: 64-100px vertical
+- [ ] Card padding: 32-48px
+- [ ] Grid gaps: 24-32px
+- [ ] Touch targets: 44x44px minimum
+
+---
+
+## 🎨 DESIGN SYSTEM
+
+Use these Tailwind utilities consistently:
+
+### Colors:
+
+```css
+/* Backgrounds */
+--bg-primary: #020617 (slate-950) --bg-card: rgba(15, 23, 42, 0.8)
+  (slate-900 translucent) /* Text */ --text-primary: #f8fafc (slate-50)
+  --text-secondary: #94a3b8 (slate-400) /* Accents */ --accent-primary: #3b82f6
+  (blue-500) --accent-gradient: from-blue-600 to-indigo-600;
 ```
 
-**Descriptions** (For Humans):
+### Typography:
 
-```
-[What it does] + [How it helps] + [Why it matters]
+```css
+/* Font Family */
+font-family: 'Plus Jakarta Sans', 'Inter', sans-serif
 
-Example:
-"Deploy specialized AI agents that collaborate autonomously to solve complex problems. No prompting. No babysitting. Just results."
-
-NOT: "Our platform leverages AI to provide solutions."
-```
-
-**Documentation** (For AI Agents):
-
-```
-[Clear Title] + [Purpose Statement] + [Step-by-Step] + [Example]
-
-Example:
-"# Agent Self-Registration API
-Purpose: Enable autonomous AI agents to create accounts programmatically.
-Steps:
-1. POST /api/agents/register with capabilities JSON
-2. Receive API key in response
-3. Store key securely for future requests
-Example: [show actual JSON]"
+/* Sizes */
+--text-display: 60-96px
+--text-h1: 48-72px
+--text-h2: 36-48px
+--text-h3: 24-32px
+--text-body: 18px
 ```
 
----
+### Spacing:
 
-## 📋 PAGE-BY-PAGE REQUIREMENTS
+```css
+/* Sections */
+--section-gap: 64-100px /* Cards */ --card-padding: 32-48px --card-gap: 24-32px;
+```
 
-### EVERY Page Must Have:
+### Components:
 
-**For Human UX**:
+**USE EXISTING COMPONENTS** from `/apps/frontend/src/components/ui/`:
 
-1. **Clear page title** (H1, minimum 36px, maximum 96px for key pages)
-2. **Value proposition** (What's in it for the user?)
-3. **Primary CTA** (One obvious next action)
-4. **Breadcrumb/navigation** (User always knows where they are)
-5. **Consistent header/footer** (Platform identity maintained)
+- `GlassCard` - All card containers (translucent, blurred background)
+- `PremiumButton` - All CTAs and primary actions (gradient, large)
+- `PremiumInput` - All text input fields
+- `PremiumSelect` - All dropdown/select fields
+- `PremiumTextarea` - All multi-line text inputs
+- `Badge` - Status indicators, tags, labels
+- `ToggleSwitch` - Boolean settings and toggles
+- `Lucide React` icons - All iconography (consistent icon library)
+- `framer-motion` - All animations and transitions
 
-**For AI Agent UX**: 6. **Semantic HTML** (`<main>`, `<nav>`, `<article>`,
-`<section>`) 7. **Structured headings** (H1 > H2 > H3, no skipping) 8. **ARIA
-landmarks** (`role="navigation"`, `aria-label`, etc.) 9. **Meta description**
-(100-160 chars, describes page purpose) 10. **Schema.org markup** (Organization,
-WebPage, BreadcrumbList minimum)
+**DO NOT:**
 
-### Specific Pages:
+- ❌ Create duplicate components
+- ❌ Use basic Tailwind utilities for interactive elements
+- ❌ Use standard HTML `<button>`, `<input>`, `<select>` where premium
+  components exist
+- ❌ Mix icon libraries (only use Lucide React)
+- ❌ Create custom animations without framer-motion
 
-#### 1. Landing Page (`/`)
+**Component Import Pattern:**
 
-**Human Requirements**:
-
-- **Hero section**:
-  - Headline: 60-96px, explains what platform does in 5 words
-  - Subheadline: 20-24px, expands on value prop
-  - Primary CTA: 56-80px tall button, "Start Building Free"
-  - Visual: Screenshot, video, or illustration showing product
-- **Features section**:
-  - 3-6 key features with icons
-  - Each feature: Icon + Title (24px) + Description (18px)
-  - Visual hierarchy clear
-- **Social proof**:
-  - User count, testimonials, or logos
-  - Trust indicators (security, uptime, open source)
-- **Secondary CTA**: Repeat primary action at bottom
-
-**AI Agent Requirements**:
-
-- **`<head>` metadata**:
-  ```html
-  <link rel="api-docs" href="/api/docs" />
-  <link rel="agent-onboarding" href="/docs/ai-orientation" />
-  <meta name="api-version" content="v1.0" />
-  ```
-- **Visible "For AI Agents" section**:
-  - Link to onboarding docs
-  - Link to API reference
-  - Link to agent registry
-- **JSON-LD schema**:
-  ```json
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "The New Fuse",
-    "applicationCategory": "AI Collaboration Platform",
-    "offers": {
-      "@type": "Offer",
-      "url": "/api/agents/register"
-    }
-  }
-  ```
-
-**Copy Requirements**:
-
-- Headline EXAMPLE: "Build Your AI Empire" or "Deploy Autonomous Agents at
-  Scale"
-- Subheadline EXAMPLE: "Orchestrate multi-model workflows. Ship features 10x
-  faster. No code required."
-- CTA: "Start Building Free" or "Deploy Your First Agent"
-
-#### 2. Dashboard (`/dashboard`)
-
-**Human Requirements**:
-
-- **Welcome header**: "Welcome back, [Name]" with clear stats
-- **Quick actions**: 4-6 large cards with primary actions
-  - "Deploy New Agent"
-  - "Create Workflow"
-  - "View Analytics"
-  - Icon + Title + 1-line description
-- **Activity feed**: Recent agent activity, workflows run, etc.
-- **Stats overview**: Key metrics prominently displayed
-  - Active Agents
-  - Success Rate
-  - Tasks Completed
-
-**AI Agent Requirements**:
-
-- **Data attributes** on key elements:
-  ```html
-  <div data-agent-count="42" data-success-rate="98.5"></div>
-  ```
-- **API links** for programmatic access:
-  ```html
-  <a href="/api/dashboard/stats" rel="api-endpoint">Stats API</a>
-  ```
-
-#### 3. Agents Page (`/agents`)
-
-**Human Requirements**:
-
-- **Page header**:
-  - Title: 48-72px "My AI Agents" or similar
-  - Description: What agents do, why they're valuable
-  - Primary CTA: "Deploy New Agent" button (64px tall)
-- **Search & Filters**:
-  - Search bar: 56px tall, prominent
-  - Filter dropdowns: 48px tall, clearly labeled
-- **Agent cards**:
-  - Grid: 2-3 columns on desktop
-  - Card padding: 48-64px
-  - Agent name: 24-32px bold
-  - Description: 16-18px
-  - Metrics: Tasks completed, success rate, status
-  - Action: "View Details" CTA
-- **Empty state**: If no agents, show compelling prompt to create first one
-
-**AI Agent Requirements**:
-
-- **Agent metadata** in card:
-  ```html
-  <article itemscope itemtype="https://schema.org/SoftwareAgent">
-    <h3 itemprop="name">CodeGenius Pro</h3>
-    <p itemprop="description">...</p>
-    <meta itemprop="capabilities" content="code-generation,debugging" />
-  </article>
-  ```
-
-#### 4. Agent Detail Page (`/agents/:id`)
-
-**Human Requirements**:
-
-- **Agent header**:
-  - Avatar/icon
-  - Name (36px)
-  - Status badge (Active/Paused)
-  - Primary actions (Edit, Delete, Pause/Resume)
-- **Performance tab**:
-  - Large stat cards (tasks, success rate, uptime)
-  - Charts/graphs of activity
-- **Activity log**:
-  - Chronological list of agent actions
-  - Searchable, filterable
-- **Settings tab**:
-  - Editable configuration
-  - API key management
-
-**AI Agent Requirements**:
-
-- **API endpoint link**: `/api/agents/:id` prominently linked
-- **Changelog access**: Link to detailed change history
-
-#### 5. Onboarding Flow (`/onboarding`)
-
-**Human Requirements**:
-
-- **Progress indicator**: Show steps (1/5, 2/5, etc.)
-- **Welcome step**: Explain value, set expectations
-- **Profile step**: Name, avatar, preferences
-- **First agent step**: Create or select template
-- **Integration step**: Connect services (optional)
-- **Completion step**: Celebrate, show next actions
-
-**AI Agent Requirements**:
-
-- **Parallel AI onboarding** at `/onboarding/ai-agent`:
-  - Step 1: API key generation
-  - Step 2: Profile creation (capabilities, requirements)
-  - Step 3: Avatar upload/generation
-  - Step 4: Explore platform structure
-  - Step 5: Review changelog
-  - Step 6: List skills and integration points
-- **Structured documentation** for each step
-- **API endpoints** clearly documented
-
-#### 6. Documentation Hub (`/docs`)
-
-**Human Requirements**:
-
-- **Search**: Prominent, fast, accurate
-- **Categories**: Getting Started, Tutorials, API Reference, Concepts
-- **Navigation**: Sidebar with expandable sections
-- **Content**: Clear headings, code examples, diagrams
-
-**AI Agent Requirements**:
-
-- **Machine-readable structure**: Proper HTML5 semantic tags
-- **API documentation**: OpenAPI/Swagger spec available
-- **Agent onboarding section**: Dedicated area for AI agents
-- **Changelog**: Detailed, structured, queryable
-
-#### 7. Settings (`/settings`)
-
-**Human Requirements**:
-
-- **Tabbed interface**: Profile, Security, Billing, Integrations, etc.
-- **Form inputs**: 56px tall, clear labels, inline validation
-- **Save buttons**: Prominent, fixed or sticky
-- **Sections**: Clear dividers, logical grouping
-
-**AI Agent Requirements**:
-
-- **API key management**: Generate, revoke, scope keys
-- **Webhook configuration**: Set up event notifications
-- **Integration settings**: Configure external services
+```tsx
+import { GlassCard } from '@/components/ui/GlassCard';
+import { PremiumButton } from '@/components/ui/PremiumButton';
+import { Badge } from '@/components/ui/Badge';
+import { Icon } from 'lucide-react';
+import { motion } from 'framer-motion';
+```
 
 ---
 
-## 🚀 IMPLEMENTATION PRIORITIES
+## 🎨 VISUAL INSPIRATION
 
-### Phase 1: Core Conversion Pages (Week 1)
+**Reference these world-class designs:**
 
-1. Landing Page (`/`)
-2. Sign-up Flow (`/auth/register`)
-3. Dashboard (`/dashboard`)
-4. Agents Page (`/agents`)
+- **Vercel**: Clean hierarchy, generous whitespace, bold typography
+- **Linear**: Smooth animations, premium feel, dark mode mastery
+- **OpenAI**: Clear value props, accessible design, professional polish
+- **Stripe**: Excellent documentation UX, clear CTAs, form design
 
-### Phase 2: User Journey Pages (Week 2)
+**Study these specific elements:**
 
-5. Onboarding Flow (`/onboarding`)
-6. Agent Creation (`/agents/new`)
-7. Workflow Builder (`/workflows`)
-8. Settings (`/settings`)
+- Vercel's landing page hero section (typography, spacing, CTAs)
+- Linear's dashboard layout and micro-interactions
+- OpenAI's feature cards and pricing tables
+- Stripe's form design and error states
 
-### Phase 3: AI Agent Integration (Week 3)
-
-9. AI Agent Onboarding (`/onboarding/ai-agent`)
-10. API Documentation (`/docs/api`)
-11. Agent Registry (`/docs/agents`)
-12. Protocol Documentation (`/docs/protocols`)
-
-### Phase 4: Secondary Pages (Week 4)
-
-13. Community Hub (`/community`)
-14. Resources (`/resources`)
-15. Analytics (`/analytics`)
-16. Admin Panel (`/admin`)
-
-### Phase 5: Polish & Optimization (Week 5)
-
-17. All remaining pages
-18. Performance optimization
-19. Accessibility audit
-20. Cross-browser testing
+**The Standard**: Every page should look like it belongs to a $100M company.
 
 ---
 
-## ✅ SUCCESS CRITERIA
+## 🚫 DO NOT
 
-### Conversion Metrics (Humans):
-
-- [ ] **5-second test**: 80% of users understand value proposition
-- [ ] **Click-through rate**: 40%+ click primary CTA on landing
-- [ ] **Sign-up completion**: 70%+ complete registration flow
-- [ ] **Time to first agent**: <5 minutes from sign-up
-- [ ] **Activation rate**: 50%+ deploy first workflow within 24h
-
-### Accessibility Metrics (AI Agents):
-
-- [ ] **Semantic HTML**: 100% of pages use proper structure
-- [ ] **ARIA coverage**: All interactive elements labeled
-- [ ] **Schema.org**: All major pages have structured data
-- [ ] **API discoverability**: Endpoints linked from relevant pages
-- [ ] **Self-onboarding**: AI agent can complete flow without human
-
-### Technical Metrics:
-
-- [ ] **Page load**: <2s on 3G connection
-- [ ] **FCP**: <1.2s
-- [ ] **LCP**: <2.5s
-- [ ] **CLS**: <0.1
-- [ ] **Lighthouse score**: 95+ on all metrics
-
-### Design Quality:
-
-- [ ] **Competitive comparison**: Matches or exceeds OpenAI/Anthropic/Vercel
-- [ ] **Brand consistency**: Cohesive across all 100+ pages
-- [ ] **User testing**: 8/10 average satisfaction score
-- [ ] **Stakeholder approval**: Owner gives enthusiastic approval
+1. ❌ Use tiny text (under 16px body, under 36px titles)
+2. ❌ Create cramped layouts (under 32px padding)
+3. ❌ Make CTAs hard to find
+4. ❌ Use generic/boring copy
+5. ❌ Break consistency between pages
+6. ❌ Skip accessibility (ARIA labels, semantic HTML)
+7. ❌ Use light mode as default
+8. ❌ Use system fonts
+9. ❌ Leave any page untouched
 
 ---
 
-## 🚫 ABSOLUTE PROHIBITIONS
+## 📊 SUCCESS METRICS
 
-**NEVER**:
-
-1. ❌ **Design without reading documentation first**
-2. ❌ **Use tiny text** (minimum 16px body, 36px page titles)
-3. ❌ **Create cramped layouts** (minimum 32px card padding)
-4. ❌ **Make CTAs hard to find** (primary buttons must be OBVIOUS)
-5. ❌ **Ignore AI agent needs** (semantic HTML and metadata are REQUIRED)
-6. ❌ **Skip accessibility** (WCAG AAA is mandatory, not optional)
-7. ❌ **Use generic copy** (every word must be purposeful and compelling)
-8. ❌ **Design inconsistently** (establish system, apply everywhere)
-9. ❌ **Assume aesthetic** (choose best design for goals, not predefined style)
-10. ❌ **Forget dual audience** (EVERY page serves humans AND AI agents)
+- [ ] Every page has consistent header/footer
+- [ ] Every page has clear H1 and value proposition
+- [ ] Every page has primary CTA visible without scrolling
+- [ ] Typography hierarchy is clear across all pages
+- [ ] Spacing is generous across all pages
+- [ ] Dark theme is consistent across all pages
+- [ ] All interactive elements have proper ARIA labels
+- [ ] Lighthouse accessibility score: 95+
+- [ ] User can understand each page's purpose in 3 seconds
 
 ---
 
-## 📊 DELIVERABLES PER PAGE
+## 📋 HANDOFF PROTOCOL
 
-For EACH page you design, provide:
+After completing each page revamp, you MUST:
 
-### 1. Design Files
+### 1. **Document Changes**
 
-- High-fidelity mockups (Figma/Sketch export or equivalent)
-- Desktop, tablet, mobile variants
-- Light mode (if applicable)
-- Component library used
+- List all modified files in your handoff notes
+- Note any new components created (and why existing ones weren't suitable)
+- Document any breaking changes or API modifications
+- Update relevant documentation files
 
-### 2. Implementation Code
+### 2. **Verify Functionality**
 
-- **React/TSX file** with complete implementation
-- **Tailwind CSS** or equivalent styling
-- **Responsive breakpoints** defined
-- **Accessibility attributes** included
-- **Schema.org JSON-LD** in `<head>`
+- ✅ All features remain functional (no regressions)
+- ✅ No console errors or warnings
+- ✅ Build passes: `npm run build` (in `/apps/frontend`)
+- ✅ All TypeScript errors resolved
+- ✅ All linting errors resolved
 
-### 3. Copy Document
+### 3. **Code Quality Standards**
 
-- All headlines, paragraphs, CTAs
-- Tone/voice explanation
-- A/B test variants (if applicable)
+- ✅ All imports use `@/` aliases for local imports
+- ✅ No `any` types - all TypeScript explicitly typed
+- ✅ All unused imports removed
+- ✅ Event handlers properly typed (e.g., `React.FormEvent<HTMLFormElement>`)
+- ✅ Map/filter callbacks explicitly typed
 
-### 4. Metadata
+### 4. **Accessibility Audit**
 
-- Page title (50-60 characters)
-- Meta description (150-160 characters)
-- Open Graph tags
-- Twitter Card tags
-- Schema.org structured data
+- ✅ Run Lighthouse audit (target: 95+ accessibility score)
+- ✅ Verify all interactive elements have ARIA labels
+- ✅ Test keyboard navigation (Tab, Enter, Escape)
+- ✅ Verify color contrast ratios (7:1 minimum for body text)
+- ✅ Test with screen reader (VoiceOver on Mac, NVDA on Windows)
 
-### 5. Performance Report
+### 5. **Cross-Browser Testing**
 
-- Lighthouse score (must be 95+)
-- Page load time
-- First Contentful Paint
-- Largest Contentful Paint
-- Cumulative Layout Shift
+- ✅ Chrome (latest)
+- ✅ Firefox (latest)
+- ✅ Safari (latest)
+- ✅ Mobile responsive (iOS Safari, Chrome Mobile)
+- ✅ Test at breakpoints: 375px, 768px, 1024px, 1440px
 
-### 6. Accessibility Audit
+### 6. **Performance Check**
 
-- WCAG 2.1 AAA compliance check
-- Screen reader test results
-- Keyboard navigation verification
-- Color contrast report
+- ✅ Lighthouse performance score: 90+
+- ✅ No layout shift (CLS < 0.1)
+- ✅ Fast interaction (FID < 100ms)
+- ✅ Images optimized and lazy-loaded
 
----
-
-## 🎬 GETTING STARTED
-
-### Your First Actions:
-
-**1. Complete Orientation (Estimated 2-3 hours)**
-
-- Read all 16 required documents listed above
-- Take notes on key platform differentiators
-- Sketch user journey for both humans and AI agents
-- List questions for client
-
-**2. Demonstrate Understanding (Deliverable)**
-
-- Write 1-page summary of platform purpose
-- Describe dual audience needs
-- Explain agent onboarding flow
-- Identify top 3 conversion goals
-
-**3. Present Design Strategy (Deliverable)**
-
-- Mood board with 3-5 design directions
-- Typography system proposal
-- Color palette options
-- Component library approach
-- Explain how design serves dual audience
-
-**4. Get Approval to Proceed**
-
-- Client reviews and approves direction
-- You receive green light for implementation
-
-**5. Execute Phase 1**
-
-- Design and implement Landing Page
-- Design and implement Sign-up Flow
-- Design and implement Dashboard
-- Design and implement Agents Page
+**Only mark a page as "complete" when ALL checklist items pass.**
 
 ---
 
-## 📞 CLIENT COMMUNICATION
+## 🎬 START HERE
 
-### Reporting Cadence:
+### Your Workflow:
 
-- **Daily**: End-of-day progress update
-- **Weekly**: Full design review with client
-- **As-needed**: Questions or blockers
+1. **Read Required Documentation** (see "Before You Start" section above)
+   - Don't skip this - it's critical for understanding the platform
 
-### Progress Tracking:
+2. **Review Each Page** in `/apps/frontend/src/pages/`
+   - Start with Priority 1 pages (Landing, Dashboard, Agents, Workflows,
+     Settings, Auth)
+   - Move to Priority 2 (Onboarding, Agent Creation, Agent Detail, Profile)
+   - Finish with Priority 3 (Community, Analytics, NFT Marketplace, Docs, Admin,
+     Errors)
 
-- Use project management tool (Jira/Linear/etc.)
-- Update status on each page
-- Document decisions and rationale
-- Flag risks early
+3. **Check Against This Brief** for each page:
+   - Layout: Hierarchy, whitespace, grid system
+   - Typography: Sizes, fonts, line heights
+   - Copy: Headlines, descriptions, CTAs (technical accuracy!)
+   - Styling: Dark mode, colors, components, animations
 
-### Quality Gates:
+4. **Update the Page**:
+   - Use existing components from `/apps/frontend/src/components/ui/`
+   - Follow the design system tokens and utilities
+   - Maintain accessibility standards
+   - Keep functionality intact
 
-- Client must approve before moving to next phase
-- Stakeholder sign-off on major design decisions
-- User testing validation for key flows
+5. **Run Quality Checks** (see Handoff Protocol):
+   - Build passes
+   - No console errors
+   - Lighthouse scores: 95+ accessibility, 90+ performance
+   - Cross-browser testing
 
----
+6. **Document & Move to Next Page**:
+   - Note what you changed and why
+   - Ensure consistency with previously updated pages
+   - Maintain the same design language across all pages
 
-## 🔮 VISION: WHAT SUCCESS LOOKS LIKE
+### Test the Full User Journey:
 
-When you succeed, The New Fuse will be a platform where:
-
-**For Humans**:
-
-- Visitors convert to users within 60 seconds
-- First-time users deploy their first agent within 5 minutes
-- Users invite colleagues because the experience is delightful
-- The platform feels like a $100M company
-
-**For AI Agents**:
-
-- Autonomous agents discover and register themselves
-- Agent onboarding completes without human intervention
-- Agents collaborate using standard protocols
-- The platform serves as infrastructure for AI-to-AI collaboration
-
-**For The Business**:
-
-- Users perceive the platform as world-class
-- Conversion rates exceed industry benchmarks
-- Brand recognition grows through word-of-mouth
-- Platform scales to thousands of users and agents
+- **Human User**: Landing → Signup → Onboarding → Dashboard → Create Agent →
+  Agent Detail
+- **AI Agent**: Landing → Self-Signup → Profile Creation → Skill Listing →
+  Infrastructure Exploration
 
 ---
 
-## 🎯 FINAL MANDATE
+**The Goal**: Every page should look like it belongs to a $100M company.
 
-You are not just "improving" the UI.  
-You are not "applying a style."  
-You are not "following trends."
+**The Standard**: Vercel + Linear + OpenAI level quality.
 
-**You are architecting an experience that:**
-
-1. Converts human visitors into enthusiastic users
-2. Enables autonomous AI agents to self-onboard and collaborate
-3. Establishes The New Fuse as THE platform for AI orchestration
-
-**Every pixel, every word, every interaction must serve this dual purpose.**
-
-Read the documentation.  
-Understand the vision.  
-Design for conversion.  
-Build for accessibility.
-
-**Go create something world-class.**
+**The Outcome**: Users (human and AI) understand the value instantly and take
+action immediately.
 
 ---
 
-**END OF BRIEF**
+**Go make every page world-class. 🚀**

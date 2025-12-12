@@ -5,7 +5,6 @@ interface GlassCardProps {
   children: ReactNode;
   className?: string;
   icon?: LucideIcon;
-  iconColor?: string;
   title?: string;
   subtitle?: string;
   gradient?: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'cyan';
@@ -30,7 +29,6 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   children,
   className = '',
   icon: Icon,
-  iconColor = 'blue',
   title,
   subtitle,
   gradient = 'blue',
@@ -45,8 +43,10 @@ export const GlassCard: React.FC<GlassCardProps> = ({
 
   return (
     <div
-      className={`backdrop-blur-2xl bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-6 ${hoverClasses} ${cursorClass} ${className}`}
+      className={`backdrop-blur-2xl bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-8 ${hoverClasses} ${cursorClass} ${className}`}
       onClick={onClick}
+      role="region"
+      aria-labelledby={title ? `${title}-heading` : undefined}
     >
       {(Icon || title) && (
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
@@ -109,9 +109,9 @@ export const StatsCard: React.FC<StatsCardProps> = ({
             <Icon className={`w-8 h-8 text-${gradient}-400`} />
           </div>
         )}
-        <p className="text-sm font-medium text-gray-400 mb-1">{label}</p>
-        <p className="text-3xl font-bold text-white mb-2">{value}</p>
-        {change && <p className={`text-xs ${changeColorClass}`}>{change}</p>}
+        <p className="text-base font-medium text-gray-400 mb-2">{label}</p>
+        <p className="text-4xl font-bold text-white mb-3">{value}</p>
+        {change && <p className={`text-sm ${changeColorClass}`}>{change}</p>}
       </div>
     </GlassCard>
   );
@@ -138,10 +138,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   return (
     <GlassCard icon={Icon} gradient={gradient} hover={true} onClick={onClick} className="group">
       <div className="mt-2">
-        <h4 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors">
+        <h4 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-300 transition-colors">
           {title}
         </h4>
-        <p className="text-sm text-gray-400 leading-relaxed">{description}</p>
+        <p className="text-base text-gray-300 leading-relaxed">{description}</p>
       </div>
     </GlassCard>
   );

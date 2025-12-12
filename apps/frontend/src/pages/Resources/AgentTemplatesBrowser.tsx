@@ -225,7 +225,7 @@ export default function AgentTemplatesBrowser() {
           <div className="flex gap-1">
             <PremiumButton
               size="icon"
-              variant="glass"
+              variant="ghost"
               className="h-9 w-9"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
@@ -236,7 +236,7 @@ export default function AgentTemplatesBrowser() {
             </PremiumButton>
             <PremiumButton
               size="icon"
-              variant="glass"
+              variant="ghost"
               className="h-9 w-9"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();

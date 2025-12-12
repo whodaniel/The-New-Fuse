@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card } from '@the-new-fuse/ui-consolidated';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useWizard } from './WizardProvider';
-import { WelcomeStep } from './steps/WelcomeStep';
-import { UserProfileStep } from './steps/UserProfileStep';
 import { AIPreferencesStep } from './steps/AIPreferencesStep';
-import { WorkspaceSetupStep } from './steps/WorkspaceSetupStep';
-import { ToolsSelectionStep } from './steps/ToolsSelectionStep';
-import { GreeterAgentStep } from './steps/GreeterAgentStep';
 import { CompletionStep } from './steps/CompletionStep';
+import { GreeterAgentStep } from './steps/GreeterAgentStep';
+import { ToolsSelectionStep } from './steps/ToolsSelectionStep';
+import { UserProfileStep } from './steps/UserProfileStep';
+import { WelcomeStep } from './steps/WelcomeStep';
+import { WorkspaceSetupStep } from './steps/WorkspaceSetupStep';
 
 export interface OnboardingWizardProps {
   userType: 'human' | 'ai_agent' | 'unknown';
@@ -28,7 +28,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
     { label: 'Workspace Setup', component: WorkspaceSetupStep },
     { label: 'Tools & Integrations', component: ToolsSelectionStep },
     { label: 'Meet Your Assistant', component: GreeterAgentStep },
-    { label: 'Complete', component: CompletionStep }
+    { label: 'Complete', component: CompletionStep },
   ];
 
   const aiAgentSteps = [
@@ -36,7 +36,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
     { label: 'Agent Profile', component: UserProfileStep },
     { label: 'Capabilities', component: AIPreferencesStep },
     { label: 'Integration Setup', component: WorkspaceSetupStep },
-    { label: 'Complete', component: CompletionStep }
+    { label: 'Complete', component: CompletionStep },
   ];
 
   // Select steps based on user type
@@ -51,13 +51,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
     const initSession = async () => {
       setLoading(true);
       try {
-        dispatch({ 
-          type: 'INITIALIZE_SESSION', 
+        dispatch({
+          type: 'INITIALIZE_SESSION',
           payload: {
             userType,
             startTime: new Date(),
-            data: {}
-          }
+            data: {},
+          },
         });
       } catch (error) {
         console.error('Failed to initialize wizard:', error);
@@ -88,9 +88,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
     // Collect all data from the wizard state
     const userData = {
       ...state.session?.data,
-      completedAt: new Date()
+      completedAt: new Date(),
     };
-    
+
     // Call the onComplete callback
     onComplete(userData);
   };
@@ -109,85 +109,104 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
 
   return (
     <div className="max-w-4xl mx-auto py-8">
-      <Card className="rounded-lg shadow-md p-6">
-        <h4 className="text-2xl font-bold mb-6 text-center">
+      <GlassCard className="p-8" gradient="blue">
+        <h4 className="text-3xl font-bold mb-8 text-center text-white">
           {userType === 'ai_agent' ? 'AI Agent Onboarding' : 'Welcome to The New Fuse'}
         </h4>
 
         {/* Custom Stepper */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-10 px-4">
+          <div className="flex items-center justify-between relative">
+            {/* Connecting Lines Layer */}
+            <div className="absolute top-1/2 left-0 w-full h-0.5 -translate-y-1/2 -z-10 px-6">
+              <div className="w-full h-full bg-gray-800 rounded-full" />
+            </div>
+
             {steps.map((step, index) => (
-              <div key={step.label} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    index < activeStep 
-                      ? 'bg-blue-500 text-white' 
-                      : index === activeStep 
-                        ? 'bg-blue-100 text-blue-600 border-2 border-blue-500' 
-                        : 'bg-gray-200 text-gray-500'
-                  }`}>
-                    {index < activeStep ? (
-                      <Check className="w-4 h-4" />
-                    ) : (
-                      <span>{index + 1}</span>
-                    )}
-                  </div>
-                  <span className="text-xs mt-1 text-center max-w-20">{step.label}</span>
+              <div key={step.label} className="relative z-10 flex flex-col items-center group">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2 ${
+                    index < activeStep
+                      ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.5)]'
+                      : index === activeStep
+                        ? 'bg-gray-900 border-blue-400 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] scale-110'
+                        : 'bg-gray-900 border-gray-700 text-gray-500'
+                  }`}
+                >
+                  {index < activeStep ? (
+                    <Check className="w-5 h-5" />
+                  ) : (
+                    <span className="text-sm font-bold">{index + 1}</span>
+                  )}
                 </div>
+
+                {/* Connector Line Progress */}
                 {index < steps.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-2 ${
-                    index < activeStep ? 'bg-blue-500' : 'bg-gray-200'
-                  }`} />
+                  <div
+                    className={`absolute top-1/2 left-1/2 h-0.5 w-full -z-20 transition-all duration-500 ${
+                      index < activeStep ? 'bg-blue-600' : 'bg-transparent'
+                    }`}
+                    style={{ left: '50%', width: '100%' }}
+                  />
                 )}
+
+                <div
+                  className={`absolute top-12 whitespace-nowrap px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+                    index === activeStep
+                      ? 'text-white bg-blue-500/10 border border-blue-500/20 opacity-100 translate-y-0'
+                      : 'text-gray-500 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0'
+                  }`}
+                >
+                  {step.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-8 min-h-[400px]">
           <CurrentStepComponent />
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="flex items-center justify-between pt-6 border-t border-white/10">
           <div>
             {!isFirstStep && (
-              <Button 
-                onClick={handleBack}
-                variant="outline"
-                className="flex items-center space-x-2"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
-              </Button>
+              <PremiumButton onClick={handleBack} variant="outline" icon={ChevronLeft}>
+                Back
+              </PremiumButton>
             )}
           </div>
-          
-          <div className="text-center">
-            <p className="text-sm text-gray-500">
-              Step {activeStep + 1} of {steps.length}
+
+          <div className="text-center hidden md:block">
+            <p className="text-sm text-gray-400">
+              Step <span className="text-white font-bold">{activeStep + 1}</span> of {steps.length}
             </p>
           </div>
-          
-          <div className="text-right">
+
+          <div>
             {isLastStep ? (
-              <Button 
+              <PremiumButton
                 onClick={handleComplete}
+                variant="gradient"
+                size="lg"
+                icon={Check}
+                iconPosition="right"
               >
-                Complete
-              </Button>
+                Complete Setup
+              </PremiumButton>
             ) : (
-              <Button 
+              <PremiumButton
                 onClick={handleNext}
-                className="flex items-center space-x-2"
+                variant="gradient"
+                icon={ChevronRight}
+                iconPosition="right"
               >
-                <span>Next</span>
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+                Next Step
+              </PremiumButton>
             )}
           </div>
         </div>
-      </Card>
+      </GlassCard>
     </div>
   );
 };
