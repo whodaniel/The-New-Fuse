@@ -8,6 +8,7 @@ import { useWorkflow } from '@/hooks';
 import {
   ChevronLeft,
   Download,
+  Menu,
   PanelLeftClose,
   PanelLeftOpen,
   PanelRightClose,
@@ -38,6 +39,7 @@ const WorkflowBuilder: React.FC = () => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [showLeftPanel, setShowLeftPanel] = useState(false);
   const [showRightPanel, setShowRightPanel] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   // Update workflow name and description when currentWorkflow changes
   useEffect(() => {
@@ -93,8 +95,12 @@ const WorkflowBuilder: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Sidebar - hidden on mobile */}
-      <div className="hidden lg:block">
+      {/* Collapsible Sidebar */}
+      <div
+        className={`${
+          showSidebar ? 'w-64' : 'w-0'
+        } hidden lg:block transition-all duration-300 ease-in-out overflow-hidden`}
+      >
         <Sidebar />
       </div>
 
@@ -103,6 +109,16 @@ const WorkflowBuilder: React.FC = () => {
         <div className="border-b border-white/10 p-3 md:p-4 bg-slate-900/60 backdrop-blur-md">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 flex-1 min-w-0">
+              {/* Sidebar toggle for desktop */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="hidden lg:flex flex-shrink-0"
+                title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
