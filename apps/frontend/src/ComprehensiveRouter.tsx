@@ -193,8 +193,11 @@ export default function ComprehensiveRouter() {
     ['/', '/login', '/register', '/landing', '/home'].includes(location.pathname) ||
     location.pathname.startsWith('/auth');
 
-  // Use PremiumLayout for authenticated routes
-  const Layout = isPublicRoute ? 'div' : PremiumLayout;
+  // Routes that have their own complete layout and shouldn't be wrapped in PremiumLayout
+  const hasOwnLayout = ['/workflows/builder'].includes(location.pathname);
+
+  // Use PremiumLayout for authenticated routes, except those with their own layout
+  const Layout = isPublicRoute || hasOwnLayout ? 'div' : PremiumLayout;
 
   return (
     <div>
