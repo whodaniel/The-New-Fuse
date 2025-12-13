@@ -1,22 +1,21 @@
 import React, { useCallback, useState } from 'react';
 import ReactFlow, {
   Background,
+  Connection,
   Controls,
   MiniMap,
-  addEdge,
-  useNodesState,
-  useEdgesState,
   Node,
-  Edge,
-  Connection
+  addEdge,
+  useEdgesState,
+  useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { NodeToolbar } from '../WorkflowBuilder/NodeToolbar';
-import { WorkflowToolbar } from './WorkflowToolbar';
 import { useWorkflow } from '../../hooks/useWorkflow';
 import { workflowValidationService } from '../../services/WorkflowValidationService';
-import { nodeTypes } from './nodes/nodeTypes';
+import { NodeToolbar } from '../WorkflowBuilder/NodeToolbar';
 import { edgeTypes } from './edges';
+import { nodeTypes } from './nodes/nodeTypes';
+import { WorkflowToolbar } from './WorkflowToolbar';
 
 export const WorkflowCanvas: React.FC = () => {
   const { saveWorkflow, executeWorkflow } = useWorkflow();
@@ -26,7 +25,10 @@ export const WorkflowCanvas: React.FC = () => {
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error' | 'info'} | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: 'success' | 'error' | 'info';
+  } | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' | 'info') => {
     setNotification({ message, type });
@@ -36,19 +38,22 @@ export const WorkflowCanvas: React.FC = () => {
   const onConnect = useCallback(
     (connection: Connection) => {
       // Validate connection before adding
-      const sourceNode = nodes.find(n => n.id === connection.source);
-      const targetNode = nodes.find(n => n.id === connection.target);
-      
+      const sourceNode = nodes.find((n) => n.id === connection.source);
+      const targetNode = nodes.find((n) => n.id === connection.target);
+
       if (sourceNode && targetNode) {
-        const validationErrors = workflowValidationService.validateEdgeConnection(sourceNode, targetNode);
-        const hasErrors = validationErrors.some(e => e.severity === 'error');
-        
+        const validationErrors = workflowValidationService.validateEdgeConnection(
+          sourceNode,
+          targetNode
+        );
+        const hasErrors = validationErrors.some((e) => e.severity === 'error');
+
         if (hasErrors) {
           showNotification(validationErrors[0].message, 'error');
           return;
         }
       }
-      
+
       setEdges((eds) => addEdge(connection, eds));
     },
     [setEdges, nodes]
@@ -79,10 +84,10 @@ export const WorkflowCanvas: React.FC = () => {
           id: `${nodeTemplate.type}-${Date.now()}`,
           type: nodeTemplate.type,
           position,
-          data: { 
+          data: {
             label: nodeTemplate.label,
             configuration: nodeTemplate.config || {},
-            ...nodeTemplate
+            ...nodeTemplate,
           },
         };
 
@@ -112,16 +117,19 @@ export const WorkflowCanvas: React.FC = () => {
         version: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: 'current-user'
+        createdBy: 'current-user',
       };
-      
+
       const validation = await workflowValidationService.validateWorkflow(workflow);
-      
+
       if (!validation.valid) {
-        showNotification(`${validation.errors.length} errors found. Please fix them before saving.`, 'error');
+        showNotification(
+          `${validation.errors.length} errors found. Please fix them before saving.`,
+          'error'
+        );
         return;
       }
-      
+
       await saveWorkflow(workflow);
       showNotification('Workflow saved', 'success');
     } catch (err) {
@@ -144,16 +152,19 @@ export const WorkflowCanvas: React.FC = () => {
         version: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: 'current-user'
+        createdBy: 'current-user',
       };
-      
+
       const validation = await workflowValidationService.validateWorkflow(workflow);
-      
+
       if (!validation.valid) {
-        showNotification(`Cannot execute workflow with ${validation.errors.length} errors.`, 'error');
+        showNotification(
+          `Cannot execute workflow with ${validation.errors.length} errors.`,
+          'error'
+        );
         return;
       }
-      
+
       // Execute workflow if it has an ID (saved workflow)
       if (workflow.id && workflow.id !== 'temp') {
         const execution = await executeWorkflow(workflow.id);
@@ -169,13 +180,17 @@ export const WorkflowCanvas: React.FC = () => {
   };
 
   return (
-    <div className="h-[80vh] border border-gray-200 rounded-md relative">
+    <div className="h-full w-full border border-white/10 rounded-md relative bg-slate-950">
       {notification && (
-        <div className={`absolute top-4 right-4 z-50 px-4 py-2 rounded-md text-white ${
-          notification.type === 'error' ? 'bg-red-500' : 
-          notification.type === 'success' ? 'bg-green-500' : 
-          'bg-blue-500'
-        }`}>
+        <div
+          className={`absolute top-4 right-4 z-50 px-4 py-2 rounded-md text-white ${
+            notification.type === 'error'
+              ? 'bg-red-500'
+              : notification.type === 'success'
+                ? 'bg-green-500'
+                : 'bg-blue-500'
+          }`}
+        >
           {notification.message}
         </div>
       )}
@@ -187,20 +202,18 @@ export const WorkflowCanvas: React.FC = () => {
         isSaving={isSaving}
         isExecuting={isExecuting}
       />
-      <NodeToolbar onAddNode={(nodeType, position) => {
-        const newNode = {
-          id: `node-${Date.now()}`,
-          type: nodeType,
-          position,
-          data: { label: nodeType }
-        };
-        setNodes(nodes => [...nodes, newNode]);
-      }} />
-      <div
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        style={{ height: '100%', width: '100%' }}
-      >
+      <NodeToolbar
+        onAddNode={(nodeType, position) => {
+          const newNode = {
+            id: `node-${Date.now()}`,
+            type: nodeType,
+            position,
+            data: { label: nodeType },
+          };
+          setNodes((nodes) => [...nodes, newNode]);
+        }}
+      />
+      <div onDrop={onDrop} onDragOver={onDragOver} style={{ height: '100%', width: '100%' }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}

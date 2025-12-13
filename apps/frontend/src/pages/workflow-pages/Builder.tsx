@@ -225,9 +225,8 @@ const WorkflowBuilder: React.FC = () => {
           <div
             className={`${
               showLeftPanel ? 'translate-x-0' : '-translate-x-full'
-            } absolute md:relative md:translate-x-0 z-20 w-64 h-full border-r border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
+            } absolute md:relative md:translate-x-0 z-20 w-64 lg:w-72 h-full border-r border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-3 md:p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
           >
-            <h3 className="font-medium mb-4">Nodes</h3>
             <NodeToolbox />
           </div>
 
@@ -255,29 +254,34 @@ const WorkflowBuilder: React.FC = () => {
           <div
             className={`${
               showRightPanel ? 'translate-x-0' : 'translate-x-full'
-            } absolute md:relative md:translate-x-0 right-0 z-20 w-80 h-full border-l border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
+            } absolute md:relative md:translate-x-0 right-0 z-20 w-80 lg:w-96 h-full border-l border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-3 md:p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
           >
             {selectedNode ? (
               <NodeProperties node={selectedNode} />
             ) : (
               <div>
-                <h3 className="font-medium mb-4">Workflow Properties</h3>
+                <h3 className="font-medium mb-4 text-white">Workflow Properties</h3>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description" className="text-gray-300">
+                      Description
+                    </Label>
                     <Input
                       id="description"
                       value={workflowDescription}
                       onChange={(e) => setWorkflowDescription(e.target.value)}
                       placeholder="Describe the purpose of this workflow"
+                      className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="trigger">Trigger</Label>
+                    <Label htmlFor="trigger" className="text-gray-300">
+                      Trigger
+                    </Label>
                     <select
                       id="trigger"
                       aria-label="Workflow trigger type"
-                      className="w-full p-2 border rounded-md"
+                      className="w-full p-2 border border-white/10 rounded-md bg-slate-800/50 text-white"
                     >
                       <option value="manual">Manual</option>
                       <option value="scheduled">Scheduled</option>

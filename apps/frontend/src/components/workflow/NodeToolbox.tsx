@@ -1,21 +1,17 @@
-import React, { useEffect } from 'react';
 import { useAgentsWorkflow, useMcpTools } from '@/hooks';
-import { Card } from '@/components/ui/card';
 import {
+  Bell,
   Bot,
+  CheckCircle,
   Code,
   GitBranch,
-  FileText,
-  Database,
-  Zap,
-  Bell,
-  ArrowRight,
-  Play,
-  CheckCircle,
+  Layers,
   Network,
+  Play,
   Repeat,
-  Layers
+  Zap,
 } from 'lucide-react';
+import React from 'react';
 
 interface NodeTypeItem {
   type: string;
@@ -34,7 +30,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Bot className="h-5 w-5" />,
     description: 'Execute tasks using an AI agent',
     category: 'agent',
-    color: 'bg-indigo-100 text-indigo-600'
+    color: 'bg-indigo-100 text-indigo-600',
   },
   {
     type: 'mcpTool',
@@ -42,7 +38,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Code className="h-5 w-5" />,
     description: 'Use an MCP tool or command',
     category: 'tool',
-    color: 'bg-emerald-100 text-emerald-600'
+    color: 'bg-emerald-100 text-emerald-600',
   },
 
   // Flow control nodes
@@ -52,7 +48,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <GitBranch className="h-5 w-5" />,
     description: 'Branch based on a condition',
     category: 'flow',
-    color: 'bg-amber-100 text-amber-600'
+    color: 'bg-amber-100 text-amber-600',
   },
   {
     type: 'transform',
@@ -60,7 +56,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Zap className="h-5 w-5" />,
     description: 'Transform data between nodes',
     category: 'flow',
-    color: 'bg-purple-100 text-purple-600'
+    color: 'bg-purple-100 text-purple-600',
   },
   {
     type: 'loop',
@@ -68,7 +64,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Repeat className="h-5 w-5" />,
     description: 'Iterate over a collection or condition',
     category: 'flow',
-    color: 'bg-orange-100 text-orange-600'
+    color: 'bg-orange-100 text-orange-600',
   },
   {
     type: 'subworkflow',
@@ -76,7 +72,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Layers className="h-5 w-5" />,
     description: 'Execute a nested workflow',
     category: 'flow',
-    color: 'bg-teal-100 text-teal-600'
+    color: 'bg-teal-100 text-teal-600',
   },
 
   // I/O nodes
@@ -86,7 +82,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Play className="h-5 w-5" />,
     description: 'Starting point of the workflow',
     category: 'io',
-    color: 'bg-blue-100 text-blue-600'
+    color: 'bg-blue-100 text-blue-600',
   },
   {
     type: 'output',
@@ -94,7 +90,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <CheckCircle className="h-5 w-5" />,
     description: 'End point of the workflow',
     category: 'io',
-    color: 'bg-red-100 text-red-600'
+    color: 'bg-red-100 text-red-600',
   },
   {
     type: 'notification',
@@ -102,7 +98,7 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Bell className="h-5 w-5" />,
     description: 'Send a notification',
     category: 'io',
-    color: 'bg-sky-100 text-sky-600'
+    color: 'bg-sky-100 text-sky-600',
   },
   {
     type: 'a2a',
@@ -110,8 +106,8 @@ const nodeTypes: NodeTypeItem[] = [
     icon: <Network className="h-5 w-5" />,
     description: 'Agent-to-Agent communication',
     category: 'agent',
-    color: 'bg-pink-100 text-pink-600'
-  }
+    color: 'bg-pink-100 text-pink-600',
+  },
 ];
 
 export const NodeToolbox: React.FC = () => {
@@ -127,27 +123,27 @@ export const NodeToolbox: React.FC = () => {
   return (
     <div className="space-y-4">
       <div>
-        <h4 className="text-sm font-medium mb-2">Agents & Tools</h4>
+        <h4 className="text-sm font-medium mb-2 text-white">Agents & Tools</h4>
         <div className="space-y-2">
           {nodeTypes
             .filter((node: any) => ['agent', 'tool'].includes(node.category))
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed rounded-md cursor-grab hover:bg-gray-50 transition-colors"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-white/5 hover:border-white/30 transition-colors"
                 draggable
-                onDragStart={(e) => onDragStart(e, node.type, {
-                  label: node.label,
-                  type: node.type,
-                  status: 'idle'
-                })}
+                onDragStart={(e) =>
+                  onDragStart(e, node.type, {
+                    label: node.label,
+                    type: node.type,
+                    status: 'idle',
+                  })
+                }
               >
-                <div className={`p-2 rounded-md ${node.color} mr-3`}>
-                  {node.icon}
-                </div>
-                <div>
-                  <div className="font-medium text-sm">{node.label}</div>
-                  <div className="text-xs text-gray-500">{node.description}</div>
+                <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm text-white truncate">{node.label}</div>
+                  <div className="text-xs text-gray-400 truncate">{node.description}</div>
                 </div>
               </div>
             ))}
@@ -155,27 +151,27 @@ export const NodeToolbox: React.FC = () => {
       </div>
 
       <div>
-        <h4 className="text-sm font-medium mb-2">Flow Control</h4>
+        <h4 className="text-sm font-medium mb-2 text-white">Flow Control</h4>
         <div className="space-y-2">
           {nodeTypes
             .filter((node: any) => node.category === 'flow')
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed rounded-md cursor-grab hover:bg-gray-50 transition-colors"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-white/5 hover:border-white/30 transition-colors"
                 draggable
-                onDragStart={(e) => onDragStart(e, node.type, {
-                  label: node.label,
-                  type: node.type,
-                  status: 'idle'
-                })}
+                onDragStart={(e) =>
+                  onDragStart(e, node.type, {
+                    label: node.label,
+                    type: node.type,
+                    status: 'idle',
+                  })
+                }
               >
-                <div className={`p-2 rounded-md ${node.color} mr-3`}>
-                  {node.icon}
-                </div>
-                <div>
-                  <div className="font-medium text-sm">{node.label}</div>
-                  <div className="text-xs text-gray-500">{node.description}</div>
+                <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm text-white truncate">{node.label}</div>
+                  <div className="text-xs text-gray-400 truncate">{node.description}</div>
                 </div>
               </div>
             ))}
@@ -183,27 +179,27 @@ export const NodeToolbox: React.FC = () => {
       </div>
 
       <div>
-        <h4 className="text-sm font-medium mb-2">Input & Output</h4>
+        <h4 className="text-sm font-medium mb-2 text-white">Input & Output</h4>
         <div className="space-y-2">
           {nodeTypes
             .filter((node: any) => node.category === 'io')
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed rounded-md cursor-grab hover:bg-gray-50 transition-colors"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-white/5 hover:border-white/30 transition-colors"
                 draggable
-                onDragStart={(e) => onDragStart(e, node.type, {
-                  label: node.label,
-                  type: node.type,
-                  status: 'idle'
-                })}
+                onDragStart={(e) =>
+                  onDragStart(e, node.type, {
+                    label: node.label,
+                    type: node.type,
+                    status: 'idle',
+                  })
+                }
               >
-                <div className={`p-2 rounded-md ${node.color} mr-3`}>
-                  {node.icon}
-                </div>
-                <div>
-                  <div className="font-medium text-sm">{node.label}</div>
-                  <div className="text-xs text-gray-500">{node.description}</div>
+                <div className={`p-2 rounded-md ${node.color} mr-3`}>{node.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm text-white truncate">{node.label}</div>
+                  <div className="text-xs text-gray-400 truncate">{node.description}</div>
                 </div>
               </div>
             ))}
