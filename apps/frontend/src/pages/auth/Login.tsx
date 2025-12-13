@@ -110,17 +110,17 @@ const Login: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#020617] relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] relative overflow-hidden p-4 sm:p-6 lg:p-8">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-md w-full mx-4 z-10">
-        <GlassCard className="p-8 space-y-8">
+      <div className="max-w-md lg:max-w-lg w-full z-10">
+        <GlassCard className="p-6 sm:p-8 lg:p-10 space-y-6 lg:space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">
               {requires2FA ? 'Two-Factor Authentication' : 'Welcome back'}
             </h2>
             <p className="mt-2 text-sm text-gray-400">

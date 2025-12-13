@@ -83,22 +83,22 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6 bg-gradient-to-br from-black via-zinc-900 to-black">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-black via-zinc-900 to-black">
+      <div className="w-full max-w-md lg:max-w-lg">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="space-y-8"
+          className="space-y-6 lg:space-y-8"
         >
           {/* Logo/Brand */}
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-white mb-2">The New Fuse</h2>
-            <p className="text-gray-400 text-sm">AI Agent Orchestration Platform</p>
+            <h2 className="text-2xl lg:text-3xl font-semibold text-white mb-2">The New Fuse</h2>
+            <p className="text-gray-400 text-sm lg:text-base">AI Agent Orchestration Platform</p>
           </div>
 
           {/* Main Card */}
-          <GlassCard className="p-8 backdrop-blur-xl border-zinc-800/50">
+          <GlassCard className="p-6 sm:p-8 lg:p-10 backdrop-blur-xl border-zinc-800/50">
             <div className="space-y-6">
               {/* Header */}
               <div className="space-y-2">
