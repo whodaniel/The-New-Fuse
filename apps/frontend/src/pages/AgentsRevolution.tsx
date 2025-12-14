@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui/premium';
+import { agentService, type Agent } from '@/services/AgentService';
 import {
   ArrowRight,
   Bot,
@@ -10,95 +11,114 @@ import {
   Database,
   FileCode,
   Layers,
+  Loader2,
   Plus,
   Search,
   Sparkles,
   TrendingUp,
   Zap,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Mock data - completely rewritten
-const revolutionaryAgents = [
-  {
-    id: 1,
-    name: 'CodeGenius Pro',
-    tagline: 'Your AI pair programmer that never sleeps',
-    description:
-      'Refactors legacy code, writes tests, and ships features 10x faster than human developers.',
-    category: 'Development',
-    status: 'Active',
+// Icon mapping for agent types
+const typeIcons: Record<string, React.ElementType> = {
+  development: Code2,
+  analytics: Database,
+  content: FileCode,
+  security: Layers,
+  chat: Bot,
+  assistant: Sparkles,
+  workflow: Zap,
+  default: Bot,
+};
+
+// Gradient mapping for agent types
+const typeGradients: Record<string, string> = {
+  development: 'from-blue-500 to-cyan-500',
+  analytics: 'from-purple-500 to-pink-500',
+  content: 'from-orange-500 to-red-500',
+  security: 'from-green-500 to-emerald-500',
+  chat: 'from-indigo-500 to-purple-500',
+  assistant: 'from-pink-500 to-rose-500',
+  workflow: 'from-yellow-500 to-orange-500',
+  default: 'from-gray-500 to-slate-500',
+};
+
+// Transformed agent interface for UI
+interface UIAgent {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  category: string;
+  status: 'Active' | 'Paused' | 'Error';
+  metrics: {
+    tasksCompleted: number;
+    successRate: number;
+    avgResponseTime: string;
+  };
+  icon: React.ElementType;
+  gradient: string;
+}
+
+// Transform API agent to UI agent
+const transformAgent = (agent: Agent): UIAgent => {
+  const type = agent.type?.toLowerCase() || 'default';
+  return {
+    id: agent.id,
+    name: agent.name,
+    tagline: agent.description?.split('.')[0] || 'AI-powered agent',
+    description: agent.description || 'No description available',
+    category: agent.type || 'General',
+    status: agent.status === 'active' ? 'Active' : agent.status === 'error' ? 'Error' : 'Paused',
     metrics: {
-      tasksCompleted: 1247,
-      successRate: 99.2,
-      avgResponseTime: '1.2s',
+      tasksCompleted: agent.metadata?.tasksCompleted || 0,
+      successRate: agent.metadata?.successRate || 0,
+      avgResponseTime: agent.metadata?.avgResponseTime || '0s',
     },
-    icon: Code2,
-    gradient: 'from-blue-500 to-cyan-500',
-  },
-  {
-    id: 2,
-    name: 'DataOracle AI',
-    tagline: 'Transform chaos into insights',
-    description:
-      'Analyzes petabytes of data, predicts trends, and delivers actionable business intelligence in real-time.',
-    category: 'Analytics',
-    status: 'Active',
-    metrics: {
-      tasksCompleted: 892,
-      successRate: 97.8,
-      avgResponseTime: '2.1s',
-    },
-    icon: Database,
-    gradient: 'from-purple-500 to-pink-500',
-  },
-  {
-    id: 3,
-    name: 'ContentMaster',
-    tagline: 'Write. Edit. Dominate.',
-    description:
-      'Generates SEO-optimized content, adapts tone for any audience, and publishes across all platforms.',
-    category: 'Content',
-    status: 'Paused',
-    metrics: {
-      tasksCompleted: 634,
-      successRate: 94.5,
-      avgResponseTime: '3.4s',
-    },
-    icon: FileCode,
-    gradient: 'from-orange-500 to-red-500',
-  },
-  {
-    id: 4,
-    name: 'SecurityGuardian',
-    tagline: 'Zero-day defender',
-    description:
-      'Scans codebases for vulnerabilities, patches exploits automatically, and monitors 24/7 for threats.',
-    category: 'Security',
-    status: 'Active',
-    metrics: {
-      tasksCompleted: 2103,
-      successRate: 99.9,
-      avgResponseTime: '0.8s',
-    },
-    icon: Layers,
-    gradient: 'from-green-500 to-emerald-500',
-  },
-];
+    icon: typeIcons[type] || typeIcons.default,
+    gradient: typeGradients[type] || typeGradients.default,
+  };
+};
 
 /**
  * AGENTS PAGE REVOLUTION
  * Bold. Modern. Premium.
+ * Now with REAL data from the backend API!
  */
 export const AgentsRevolution = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [agents, setAgents] = useState<UIAgent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch agents from the API
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const fetchedAgents = await agentService.getAgents();
+        setAgents(fetchedAgents.map(transformAgent));
+      } catch (err) {
+        console.error('Error fetching agents:', err);
+        setError('Failed to load agents. Please try again.');
+        // Show empty state if no agents found
+        setAgents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgents();
+  }, []);
 
   // Filter logic
-  const filteredAgents = revolutionaryAgents.filter((agent) => {
+  const filteredAgents = agents.filter((agent) => {
     const matchesSearch =
       agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       agent.tagline.toLowerCase().includes(searchQuery.toLowerCase());
@@ -107,14 +127,41 @@ export const AgentsRevolution = () => {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const categories = ['All', ...new Set(revolutionaryAgents.map((a) => a.category))].map((c) => ({
+  const categories = ['All', ...new Set(agents.map((a) => a.category))].map((c) => ({
     value: c,
     label: c,
   }));
-  const statuses = ['All', ...new Set(revolutionaryAgents.map((a) => a.status))].map((s) => ({
+  const statuses = ['All', ...new Set(agents.map((a) => a.status))].map((s) => ({
     value: s,
     label: s,
   }));
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
+          <p className="text-xl text-gray-400">Loading your AI workforce...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
+        <div className="text-center">
+          <Bot className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <p className="text-xl text-red-400 mb-4">{error}</p>
+          <PremiumButton onClick={() => window.location.reload()} variant="gradient">
+            Try Again
+          </PremiumButton>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-transparent px-6 py-16">
@@ -301,14 +348,21 @@ export const AgentsRevolution = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 mb-4">
               <Command className="w-8 h-8 text-blue-400" />
             </div>
-            <p className="text-5xl font-black text-white mb-2">{revolutionaryAgents.length}</p>
+            <p className="text-5xl font-black text-white mb-2">{agents.length}</p>
             <p className="text-lg text-gray-400">Agents Deployed</p>
           </GlassCard>
           <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 mb-4">
               <TrendingUp className="w-8 h-8 text-green-400" />
             </div>
-            <p className="text-5xl font-black text-white mb-2">97.9%</p>
+            <p className="text-5xl font-black text-white mb-2">
+              {agents.length > 0
+                ? (
+                    agents.reduce((acc, a) => acc + (a.metrics.successRate || 0), 0) / agents.length
+                  ).toFixed(1)
+                : '0'}
+              %
+            </p>
             <p className="text-lg text-gray-400">Avg Success Rate</p>
           </GlassCard>
           <GlassCard className="p-8 rounded-2xl backdrop-blur-xl text-center">
