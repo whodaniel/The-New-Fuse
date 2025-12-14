@@ -389,7 +389,7 @@ const A2ANode: React.FC<NodeProps> = memo(({ id, data }) => {
             </Label>
             <Select
               value={config.protocolVersion || '1.0'}
-              onValueChange={(value) => {
+              onValueChange={(value: string) => {
                 if (data.onUpdate) {
                   data.onUpdate({
                     config: {

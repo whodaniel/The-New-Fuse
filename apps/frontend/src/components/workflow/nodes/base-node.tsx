@@ -22,6 +22,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
     data,
     inputHandles = [{ id: 'default', label: 'Input' }],
     outputHandles = [{ id: 'default', label: 'Output' }],
+    ...props
   }) => {
     const [expanded, setExpanded] = useState(false);
 
