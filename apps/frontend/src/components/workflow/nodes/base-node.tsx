@@ -26,72 +26,114 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
     const [expanded, setExpanded] = useState(false);
 
     return (
-      <Card className="w-64 shadow-lg bg-slate-800 border-white/20 text-white">
-        <CardHeader className="p-3 pb-2 flex flex-row items-center justify-between border-b border-white/10">
-          <div className="flex-1 min-w-0">
-            <CardTitle className="text-sm font-medium text-white truncate">{data.name}</CardTitle>
-            {data.type && <div className="text-xs text-gray-400 mt-0.5">Type: {data.type}</div>}
+      <div className="relative" style={{ minWidth: '320px' }}>
+        {/* Port labels - Input (left) */}
+        {inputHandles.map((handle: any, index: number) => (
+          <div
+            key={`input-label-${handle.id}`}
+            className="absolute pointer-events-none z-10"
+            style={{
+              left: '-8px',
+              top: `${((1 + index) / (inputHandles.length + 1)) * 100}%`,
+              transform: 'translate(-100%, -50%)',
+            }}
+          >
+            <div className="bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg whitespace-nowrap border border-blue-400">
+              {handle.label}
+            </div>
           </div>
-          <div className="flex items-center space-x-1 ml-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 text-gray-400 hover:text-white hover:bg-white/10"
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </Button>
+        ))}
 
-            {data.onDelete && (
+        {/* Port labels - Output (right) */}
+        {outputHandles.map((handle: any, index: number) => (
+          <div
+            key={`output-label-${handle.id}`}
+            className="absolute pointer-events-none z-10"
+            style={{
+              right: '-8px',
+              top: `${((1 + index) / (outputHandles.length + 1)) * 100}%`,
+              transform: 'translate(100%, -50%)',
+            }}
+          >
+            <div className="bg-green-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg whitespace-nowrap border border-green-400">
+              {handle.label}
+            </div>
+          </div>
+        ))}
+
+        <Card className="w-full shadow-2xl bg-slate-800 border-slate-600 text-white">
+          <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between bg-gradient-to-r from-slate-800 to-slate-750 border-b border-slate-600">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-base font-semibold text-white truncate mb-1">
+                {data.name}
+              </CardTitle>
+              {data.type && (
+                <div className="text-xs text-slate-200 font-medium">Type: {data.type}</div>
+              )}
+            </div>
+            <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                onClick={data.onDelete}
+                className="h-7 w-7 text-slate-200 hover:text-white hover:bg-slate-700/70"
+                onClick={() => setExpanded(!expanded)}
               >
-                <Trash2 className="h-4 w-4" />
+                {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
-            )}
-          </div>
-        </CardHeader>
 
-        {expanded && (
-          <CardContent className="p-3 pt-2 bg-slate-800/50">
-            {/* Custom content for each node type will go here */}
-            {data.renderContent && data.renderContent()}
-          </CardContent>
-        )}
+              {data.onDelete && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-red-400 hover:text-red-300 hover:bg-red-900/40"
+                  onClick={data.onDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </CardHeader>
 
-        {/* Input handles */}
-        {inputHandles.map((handle: any) => (
-          <Handle
-            key={`input-${handle.id}`}
-            id={handle.id}
-            type="target"
-            position={Position.Left}
-            className="w-3 h-3 rounded-full bg-blue-500 border-2 border-slate-900 hover:bg-blue-400 transition-colors"
-            style={{
-              left: -6,
-              top: `${((1 + inputHandles.indexOf(handle)) / (inputHandles.length + 1)) * 100}%`,
-            }}
-          />
-        ))}
+          {expanded && (
+            <CardContent className="p-4 pt-3 bg-slate-850 border-t border-slate-700/50">
+              {/* Custom content for each node type will go here */}
+              {data.renderContent && data.renderContent()}
+            </CardContent>
+          )}
 
-        {/* Output handles */}
-        {outputHandles.map((handle: any) => (
-          <Handle
-            key={`output-${handle.id}`}
-            id={handle.id}
-            type="source"
-            position={Position.Right}
-            className="w-3 h-3 rounded-full bg-green-500 border-2 border-slate-900 hover:bg-green-400 transition-colors"
-            style={{
-              right: -6,
-              top: `${((1 + outputHandles.indexOf(handle)) / (outputHandles.length + 1)) * 100}%`,
-            }}
-          />
-        ))}
-      </Card>
+          {/* Input handles */}
+          {inputHandles.map((handle: any, index: number) => (
+            <Handle
+              key={`input-${handle.id}`}
+              id={handle.id}
+              type="target"
+              position={Position.Left}
+              className="w-4 h-4 rounded-full bg-blue-500 border-3 border-white hover:bg-blue-400 hover:scale-125 transition-all shadow-xl cursor-crosshair"
+              style={{
+                left: -8,
+                top: `${((1 + index) / (inputHandles.length + 1)) * 100}%`,
+                borderWidth: '3px',
+              }}
+            />
+          ))}
+
+          {/* Output handles */}
+          {outputHandles.map((handle: any, index: number) => (
+            <Handle
+              key={`output-${handle.id}`}
+              id={handle.id}
+              type="source"
+              position={Position.Right}
+              className="w-4 h-4 rounded-full bg-green-500 border-3 border-white hover:bg-green-400 hover:scale-125 transition-all shadow-xl cursor-crosshair"
+              style={{
+                right: -8,
+                top: `${((1 + index) / (outputHandles.length + 1)) * 100}%`,
+                borderWidth: '3px',
+              }}
+            />
+          ))}
+        </Card>
+      </div>
     );
   }
 );

@@ -51,34 +51,45 @@ const AgentNode: React.FC<NodeProps> = memo(({ id, data }) => {
 
   const renderContent = () => (
     <>
-      <div className="space-y-2">
-        <Label htmlFor={`agent-${id}`} className="text-xs">
-          Agent
-        </Label>
-        <Select
-          value={data.config?.agentId || ''}
-          onValueChange={handleAgentChange}
-          disabled={loading}
-        >
-          <SelectTrigger id={`agent-${id}`} className="text-xs h-8">
-            <SelectValue placeholder="Select agent" />
-          </SelectTrigger>
-          <SelectContent>
-            {agents.map((agent) => (
-              <SelectItem key={agent.id} value={agent.id} className="text-xs">
-                {agent.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="space-y-3">
+        <div>
+          <Label htmlFor={`agent-${id}`} className="text-xs font-medium text-slate-200">
+            Agent
+          </Label>
+          <Select
+            value={data.config?.agentId || ''}
+            onValueChange={handleAgentChange}
+            disabled={loading}
+          >
+            <SelectTrigger
+              id={`agent-${id}`}
+              className="text-xs h-9 mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+            >
+              <SelectValue placeholder="Select agent" />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-600">
+              {agents.map((agent) => (
+                <SelectItem
+                  key={agent.id}
+                  value={agent.id}
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  {agent.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {selectedAgent && (
-          <div className="text-xs text-muted-foreground mt-2">
-            <p>
-              <strong>Type:</strong> {selectedAgent.type}
+          <div className="text-xs text-slate-300 bg-slate-700/50 p-2 rounded border border-slate-600">
+            <p className="font-medium">
+              <span className="text-slate-100">Type:</span> {selectedAgent.type}
             </p>
             {selectedAgent.description && (
-              <p className="mt-1 line-clamp-2">{selectedAgent.description}</p>
+              <p className="mt-1.5 text-slate-300 line-clamp-2 leading-relaxed">
+                {selectedAgent.description}
+              </p>
             )}
           </div>
         )}

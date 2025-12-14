@@ -59,23 +59,23 @@ const InputNode: React.FC<NodeProps> = memo(({ id, data }) => {
 
   const renderContent = () => (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <Label className="text-xs text-gray-300">Workflow Inputs</Label>
+      <div className="space-y-2">
+        <Label className="text-xs font-medium text-slate-200">Workflow Inputs</Label>
 
-        <div className="space-y-2 mt-2">
+        <div className="space-y-2">
           {Object.keys(inputMapping).map((key) => (
             <div
               key={key}
-              className="flex items-center space-x-2 bg-slate-700/50 rounded px-2 py-1"
+              className="flex items-center space-x-2 bg-slate-700 rounded px-3 py-2 border border-slate-600"
             >
               <div className="flex-grow text-xs font-medium text-white">{key}</div>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 text-gray-400 hover:text-red-400 hover:bg-red-500/10"
+                className="h-6 w-6 text-slate-300 hover:text-red-400 hover:bg-red-500/20"
                 onClick={() => handleRemoveInput(key)}
               >
-                <X className="h-3 w-3" />
+                <X className="h-3.5 w-3.5" />
               </Button>
             </div>
           ))}
@@ -83,7 +83,7 @@ const InputNode: React.FC<NodeProps> = memo(({ id, data }) => {
 
         <div className="flex items-center space-x-2 mt-3">
           <Input
-            className="h-7 text-xs flex-grow bg-slate-700/50 border-white/10 text-white placeholder:text-gray-500"
+            className="h-9 text-xs flex-grow bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
             placeholder="New input name"
             value={newInputKey}
             onChange={(e: any) => setNewInputKey(e.target.value)}
@@ -92,11 +92,11 @@ const InputNode: React.FC<NodeProps> = memo(({ id, data }) => {
           <Button
             variant="outline"
             size="sm"
-            className="h-7 px-2 border-white/20 text-white hover:bg-white/10"
+            className="h-9 px-3 border-slate-600 text-white hover:bg-slate-700 bg-slate-700/50"
             onClick={handleAddInput}
           >
-            <Plus className="h-3 w-3 mr-1" />
-            <span className="text-xs">Add</span>
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            <span className="text-xs font-medium">Add</span>
           </Button>
         </div>
       </div>
