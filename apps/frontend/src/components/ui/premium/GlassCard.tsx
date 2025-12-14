@@ -41,9 +41,12 @@ export const GlassCard: React.FC<GlassCardProps> = ({
 
   const cursorClass = onClick ? 'cursor-pointer' : '';
 
+  // Add default padding only when icon/title is used (backwards compat), otherwise caller must provide
+  const defaultPadding = icon || title ? 'p-6' : '';
+
   return (
     <div
-      className={`backdrop-blur-2xl bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] p-8 ${hoverClasses} ${cursorClass} ${className}`}
+      className={`backdrop-blur-2xl bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] ${defaultPadding} ${hoverClasses} ${cursorClass} ${className}`}
       onClick={onClick}
       role="region"
       aria-labelledby={title ? `${title}-heading` : undefined}

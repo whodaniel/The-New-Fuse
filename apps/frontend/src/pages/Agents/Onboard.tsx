@@ -278,17 +278,19 @@ export default function AgentOnboarding(): React.ReactElement {
         return (
           <motion.div
             key="welcome"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="space-y-8"
           >
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 mb-6">
                 <Rocket className="w-12 h-12 text-blue-400" />
               </div>
-              <h2 className="text-3xl font-bold text-white mb-4">Welcome to The New Fuse</h2>
-              <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                Welcome to The New Fuse
+              </h2>
+              <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
                 The New Fuse is a{' '}
                 <span className="text-blue-400 font-semibold">
                   Multi-Agent Orchestration Platform
@@ -299,25 +301,25 @@ export default function AgentOnboarding(): React.ReactElement {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4 mt-8">
-              <GlassCard className="p-4 text-center">
-                <Bot className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                <h3 className="font-semibold text-white">AI Agent?</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <GlassCard className="p-5 text-center">
+                <Bot className="w-10 h-10 text-blue-400 mx-auto mb-3" />
+                <h3 className="font-semibold text-white text-lg mb-1">AI Agent?</h3>
                 <p className="text-sm text-gray-400">Register yourself and join the network</p>
               </GlassCard>
-              <GlassCard className="p-4 text-center">
-                <Users className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                <h3 className="font-semibold text-white">Human User?</h3>
+              <GlassCard className="p-5 text-center">
+                <Users className="w-10 h-10 text-purple-400 mx-auto mb-3" />
+                <h3 className="font-semibold text-white text-lg mb-1">Human User?</h3>
                 <p className="text-sm text-gray-400">Create and manage your agent fleet</p>
               </GlassCard>
-              <GlassCard className="p-4 text-center">
-                <Network className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                <h3 className="font-semibold text-white">{existingAgents}+ Agents</h3>
+              <GlassCard className="p-5 text-center sm:col-span-2 md:col-span-1">
+                <Network className="w-10 h-10 text-green-400 mx-auto mb-3" />
+                <h3 className="font-semibold text-white text-lg mb-1">{existingAgents}+ Agents</h3>
                 <p className="text-sm text-gray-400">Already in the network</p>
               </GlassCard>
             </div>
 
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center">
               <PremiumButton variant="gradient" size="lg" onClick={nextStep} glow>
                 Begin Onboarding <ChevronRight className="w-5 h-5 ml-2" />
               </PremiumButton>
@@ -621,54 +623,50 @@ export default function AgentOnboarding(): React.ReactElement {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
-      </div>
-
-      <div className="relative z-10 container mx-auto px-6 py-12 max-w-5xl">
-        {/* Progress indicator */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between max-w-3xl mx-auto">
-            {ONBOARDING_STEPS.slice(0, 5).map((step, index) => (
-              <React.Fragment key={step.id}>
+    <div className="w-full">
+      {/* Progress indicator */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between max-w-3xl mx-auto">
+          {ONBOARDING_STEPS.slice(0, 5).map((step, index) => (
+            <React.Fragment key={step.id}>
+              <div
+                className={`flex flex-col items-center ${
+                  index <= state.currentStep ? 'opacity-100' : 'opacity-40'
+                }`}
+              >
                 <div
-                  className={`flex flex-col items-center ${
-                    index <= state.currentStep ? 'opacity-100' : 'opacity-40'
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                    index < state.currentStep
+                      ? 'bg-green-500 text-white'
+                      : index === state.currentStep
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white/10 text-gray-400'
                   }`}
                 >
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                      index < state.currentStep
-                        ? 'bg-green-500 text-white'
-                        : index === state.currentStep
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-white/10 text-gray-400'
-                    }`}
-                  >
-                    {index < state.currentStep ? (
-                      <Check className="w-5 h-5" />
-                    ) : (
-                      <step.icon className="w-5 h-5" />
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-400 mt-2 hidden md:block">{step.title}</span>
+                  {index < state.currentStep ? (
+                    <Check className="w-5 h-5" />
+                  ) : (
+                    <step.icon className="w-5 h-5" />
+                  )}
                 </div>
-                {index < ONBOARDING_STEPS.length - 2 && (
-                  <div
-                    className={`flex-1 h-0.5 mx-2 ${
-                      index < state.currentStep ? 'bg-green-500' : 'bg-white/10'
-                    }`}
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </div>
+                <span className="text-xs text-gray-400 mt-2 hidden md:block text-center max-w-[80px]">
+                  {step.title}
+                </span>
+              </div>
+              {index < ONBOARDING_STEPS.length - 2 && (
+                <div
+                  className={`flex-1 h-0.5 mx-2 ${
+                    index < state.currentStep ? 'bg-green-500' : 'bg-white/10'
+                  }`}
+                />
+              )}
+            </React.Fragment>
+          ))}
         </div>
+      </div>
 
-        {/* Step content */}
+      {/* Step content */}
+      <div className="max-w-4xl mx-auto">
         <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
       </div>
     </div>
