@@ -27,17 +27,17 @@ const ConditionNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const renderContent = () => (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor={`condition-${id}`} className="text-xs">
+        <Label htmlFor={`condition-${id}`} className="text-xs text-gray-300">
           Condition Expression
         </Label>
         <Textarea
           id={`condition-${id}`}
-          className="h-20 text-xs resize-none"
+          className="h-20 text-xs resize-none bg-slate-700/50 border-white/10 text-white placeholder:text-gray-500"
           placeholder="e.g. input.value > 10"
           value={data.config?.condition || ''}
           onChange={(e: any) => handleConditionChange(e.target.value)}
         />
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Enter a JavaScript expression that evaluates to true or false. The expression can
           reference input values from connected nodes.
         </p>

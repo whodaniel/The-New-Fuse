@@ -58,9 +58,10 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
           type: nodeTemplate.type,
           position,
           data: {
-            label: nodeTemplate.label,
-            configuration: nodeTemplate.config || {},
-            ...nodeTemplate,
+            name: nodeTemplate.label || 'Untitled Node',
+            type: nodeTemplate.type,
+            config: nodeTemplate.config || {},
+            status: nodeTemplate.status || 'idle',
           },
         };
 
