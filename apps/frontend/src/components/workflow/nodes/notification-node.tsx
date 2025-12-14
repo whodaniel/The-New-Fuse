@@ -12,7 +12,7 @@ import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
 import { BaseNode } from './base-node';
 
-const NotificationNode: React.FC<NodeProps> = memo(({ id, data }) => {
+const NotificationNode: React.FC<NodeProps> = memo(({ id, data, ...props }) => {
   // Handle notification title change
   const handleTitleChange = (title: string) => {
     if (data.onUpdate) {
@@ -195,6 +195,7 @@ const NotificationNode: React.FC<NodeProps> = memo(({ id, data }) => {
       }}
       inputHandles={inputHandles}
       outputHandles={outputHandles}
+      {...props}
     />
   );
 });
