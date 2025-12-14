@@ -80,122 +80,86 @@ export default function AgentsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('lastActive');
 
-  // Mock data - replace with API call
+  // Fetch agents from real API
   useEffect(() => {
-    setTimeout(() => {
-      setAgents([
-        {
-          id: '1',
-          name: 'CustomerSupport AI',
-          description: 'Handles customer inquiries and provides support solutions',
-          type: 'chat',
-          status: 'active',
-          model: 'GPT-4',
-          capabilities: ['Natural Language Processing', 'Knowledge Base', 'Ticket Creation'],
-          createdAt: '2024-01-01T00:00:00Z',
-          lastActive: '2024-01-16T10:30:00Z',
-          messagesCount: 1247,
-          successRate: 94.5,
-          avgResponseTime: 1.2,
-          version: '2.1.0',
-          workspaceId: 'ws1',
-          workspaceName: 'Customer Success',
-          owner: 'Alice Johnson',
-        },
-        {
-          id: '2',
-          name: 'DataAnalyst Bot',
-          description: 'Analyzes data patterns and generates insights',
-          type: 'analysis',
-          status: 'active',
-          model: 'Claude-3',
-          capabilities: ['Data Analysis', 'Report Generation', 'Visualization'],
-          createdAt: '2024-01-05T00:00:00Z',
-          lastActive: '2024-01-16T09:45:00Z',
-          messagesCount: 892,
-          successRate: 98.1,
-          avgResponseTime: 2.8,
-          version: '1.5.2',
-          workspaceId: 'ws2',
-          workspaceName: 'Analytics Team',
-          owner: 'Bob Wilson',
-        },
-        {
-          id: '3',
-          name: 'TaskAutomator',
-          description: 'Automates repetitive tasks and workflows',
-          type: 'automation',
-          status: 'training',
-          model: 'GPT-3.5',
-          capabilities: ['Workflow Automation', 'Task Scheduling', 'Integration'],
-          createdAt: '2024-01-10T00:00:00Z',
-          lastActive: '2024-01-15T14:20:00Z',
-          messagesCount: 234,
-          successRate: 87.3,
-          avgResponseTime: 0.8,
-          version: '1.0.1',
-          workspaceId: 'ws3',
-          workspaceName: 'Operations',
-          owner: 'Carol Brown',
-        },
-        {
-          id: '4',
-          name: 'CodeReviewer AI',
-          description: 'Reviews code and provides suggestions for improvements',
-          type: 'task',
-          status: 'active',
-          model: 'GPT-4',
-          capabilities: ['Code Analysis', 'Security Review', 'Best Practices'],
-          createdAt: '2024-01-08T00:00:00Z',
-          lastActive: '2024-01-16T11:15:00Z',
-          messagesCount: 567,
-          successRate: 91.7,
-          avgResponseTime: 3.2,
-          version: '1.8.0',
-          workspaceId: 'ws1',
-          workspaceName: 'Development',
-          owner: 'David Lee',
-        },
-        {
-          id: '5',
-          name: 'SalesAssistant',
-          description: 'Assists with lead qualification and sales processes',
-          type: 'chat',
-          status: 'inactive',
-          model: 'GPT-3.5',
-          capabilities: ['Lead Scoring', 'CRM Integration', 'Email Automation'],
-          createdAt: '2024-01-12T00:00:00Z',
-          lastActive: '2024-01-14T16:30:00Z',
-          messagesCount: 156,
-          successRate: 89.4,
-          avgResponseTime: 1.8,
-          version: '1.2.3',
-          workspaceId: 'ws4',
-          workspaceName: 'Sales Team',
-          owner: 'Eve Martinez',
-        },
-        {
-          id: '6',
-          name: 'ContentGenerator',
-          description: 'Generates marketing content and copy',
-          type: 'task',
-          status: 'error',
-          model: 'Claude-3',
-          capabilities: ['Content Creation', 'SEO Optimization', 'Social Media'],
-          createdAt: '2024-01-14T00:00:00Z',
-          lastActive: '2024-01-15T12:45:00Z',
-          messagesCount: 89,
-          successRate: 76.8,
-          avgResponseTime: 4.1,
-          version: '0.9.5',
-          workspaceId: 'ws5',
-          workspaceName: 'Marketing',
-          owner: 'Frank Garcia',
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+    const fetchAgents = async () => {
+      try {
+        setLoading(true);
+        const { agentService } = await import('@/services/AgentService');
+        const fetchedAgents = await agentService.getAgents();
+
+        // Transform API data to match our interface
+        const transformedAgents: Agent[] = fetchedAgents.map((a) => ({
+          id: a.id,
+          name: a.name,
+          description: a.description || 'No description available',
+          type: mapAgentType(a.type),
+          status: mapAgentStatus(a.status),
+          model: a.model || 'GPT-4',
+          capabilities: a.capabilities || [],
+          createdAt: a.createdAt || new Date().toISOString(),
+          lastActive: a.updatedAt || new Date().toISOString(),
+          messagesCount: a.metadata?.messagesCount || 0,
+          successRate: a.metadata?.successRate || 95.0,
+          avgResponseTime: a.metadata?.avgResponseTime || 1.5,
+          version: a.metadata?.version || '1.0.0',
+          workspaceId: a.metadata?.workspaceId || 'default',
+          workspaceName: a.metadata?.workspaceName || 'Default Workspace',
+          owner: a.metadata?.owner || 'System',
+        }));
+
+        setAgents(transformedAgents);
+      } catch (error) {
+        console.error('Error fetching agents:', error);
+        setAgents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgents();
   }, []);
+
+  // Map API agent type to UI type
+  const mapAgentType = (type: string): Agent['type'] => {
+    const typeMap: Record<string, Agent['type']> = {
+      CHAT: 'chat',
+      TASK: 'task',
+      ANALYSIS: 'analysis',
+      WORKFLOW: 'automation',
+      ASSISTANT: 'chat',
+      BASIC: 'task',
+      CONVERSATIONAL: 'chat',
+      IDE_EXTENSION: 'task',
+      API: 'automation',
+    };
+    return typeMap[type] || 'task';
+  };
+
+  // Map API agent status to UI status
+  const mapAgentStatus = (status: string): Agent['status'] => {
+    const statusMap: Record<string, Agent['status']> = {
+      ACTIVE: 'active',
+      active: 'active',
+      INACTIVE: 'inactive',
+      inactive: 'inactive',
+      IDLE: 'inactive',
+      idle: 'inactive',
+      INITIALIZING: 'training',
+      initializing: 'training',
+      READY: 'active',
+      ready: 'active',
+      ERROR: 'error',
+      error: 'error',
+      BUSY: 'active',
+      busy: 'active',
+      OFFLINE: 'inactive',
+      offline: 'inactive',
+      TERMINATED: 'inactive',
+      terminated: 'inactive',
+    };
+    return statusMap[status] || 'inactive';
+  };
 
   const getStatusConfig = (status: Agent['status']) => {
     switch (status) {
