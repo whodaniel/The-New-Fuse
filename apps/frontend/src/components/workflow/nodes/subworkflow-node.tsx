@@ -244,6 +244,20 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
         </Select>
       </div>
 
+      {/* Empty state when no workflows available */}
+      {!loading && workflows.length === 0 && (
+        <div className="text-xs text-slate-400 bg-slate-700/30 p-3 rounded border border-slate-600/50 text-center">
+          <div className="text-2xl mb-2">📋</div>
+          <p className="font-medium text-slate-300">No Workflows Available</p>
+          <p className="mt-1 text-slate-400 leading-relaxed">
+            Create and save other workflows to use them as subworkflows here.
+          </p>
+          <p className="mt-2 text-slate-500 text-xs">
+            Subworkflows allow you to reuse complex logic across multiple workflows.
+          </p>
+        </div>
+      )}
+
       <div className="flex justify-between">
         <Button
           variant="outline"

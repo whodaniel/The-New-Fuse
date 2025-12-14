@@ -239,6 +239,21 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
         </Select>
       </div>
 
+      {/* Empty state when no servers available */}
+      {!loading && servers.length === 0 && (
+        <div className="text-xs text-slate-400 bg-slate-700/30 p-3 rounded border border-slate-600/50 text-center">
+          <div className="text-2xl mb-2">🔌</div>
+          <p className="font-medium text-slate-300">No MCP Servers Connected</p>
+          <p className="mt-1 text-slate-400 leading-relaxed">
+            MCP (Model Context Protocol) servers provide tools for agents to interact with external
+            systems.
+          </p>
+          <p className="mt-2 text-slate-500 text-xs">
+            Configure MCP servers in your settings to enable this node.
+          </p>
+        </div>
+      )}
+
       {selectedServer && (
         <div>
           <Label htmlFor={`tool-${id}`} className="text-xs font-medium text-slate-200">
