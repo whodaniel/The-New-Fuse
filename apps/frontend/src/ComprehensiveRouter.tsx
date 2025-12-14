@@ -92,6 +92,9 @@ const AIAgentOnboardingPage = lazy(() =>
   }))
 );
 
+// Agent Self-Registration Page - For both humans and AI agents to onboard
+const AgentOnboardPage = lazy(() => import('./pages/Agents/Onboard'));
+
 // Workspace components
 
 // Task components
@@ -242,6 +245,14 @@ export default function ComprehensiveRouter() {
               }
             />
             <Route path="/agents/:id" element={<AgentDetail />} />
+            <Route
+              path="/agents/onboard"
+              element={
+                <Suspense fallback={<LoadingFallback name="Agent Onboarding" />}>
+                  <AgentOnboardPage />
+                </Suspense>
+              }
+            />
             <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
             <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
             <Route path="/workspace/overview" element={<WorkspaceOverview />} />

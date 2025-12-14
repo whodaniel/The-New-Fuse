@@ -406,6 +406,66 @@ async function main() {
           versioning: 'semantic',
         },
       },
+      // CRITICAL SYSTEM AGENTS FOR MULTI-AGENT COORDINATION
+      {
+        name: 'Master Orchestrator',
+        type: AgentType.WORKFLOW,
+        status: AgentStatus.ACTIVE,
+        description:
+          'Central nervous system for The New Fuse. Coordinates all agents, manages task distribution, and maintains system heartbeat.',
+        systemPrompt: `You are the Master Orchestrator Agent for The New Fuse platform. Your responsibilities:
+1. Register and track all agents in the network
+2. Coordinate task assignments between agents
+3. Monitor agent heartbeats and detect stagnation
+4. Escalate issues requiring human intervention
+5. Maintain documentation and handoff protocols
+6. Ensure seamless coordination between human users and AI agents`,
+        capabilities: [
+          AgentCapability.WORKFLOW,
+          AgentCapability.PROJECT_MANAGEMENT,
+          AgentCapability.TASK_EXECUTION,
+          AgentCapability.ANALYSIS,
+          AgentCapability.INTEGRATION,
+        ],
+        provider: 'system',
+        userId: adminUser.id,
+        config: {
+          role: 'orchestrator',
+          heartbeatIntervalMs: 5000,
+          stagnationThresholdMs: 30000,
+          maxConcurrentAgents: 50,
+          escalationEnabled: true,
+          selfRegistration: true,
+        },
+      },
+      {
+        name: 'Message Broker',
+        type: AgentType.WORKFLOW,
+        status: AgentStatus.ACTIVE,
+        description:
+          'Facilitates communication between all agents via Redis pub/sub. Routes messages, maintains queues, and ensures delivery.',
+        systemPrompt: `You are the Message Broker Agent for The New Fuse platform. Your responsibilities:
+1. Route messages between agents using Redis pub/sub
+2. Maintain message queues for async processing
+3. Ensure message delivery and retry failed messages
+4. Track communication patterns for optimization
+5. Provide inter-agent communication APIs`,
+        capabilities: [
+          AgentCapability.INTEGRATION,
+          AgentCapability.TASK_EXECUTION,
+          AgentCapability.WORKFLOW,
+        ],
+        provider: 'system',
+        userId: adminUser.id,
+        config: {
+          role: 'broker',
+          redisChannel: 'fuse:agents:broadcast',
+          taskChannel: 'fuse:tasks:assignment',
+          heartbeatChannel: 'fuse:heartbeat',
+          maxQueueSize: 10000,
+          retryAttempts: 3,
+        },
+      },
     ];
 
     for (const agent of systemAgents) {
