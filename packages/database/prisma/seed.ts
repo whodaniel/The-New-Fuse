@@ -212,43 +212,199 @@ async function main() {
         name: 'Code Assistant',
         type: AgentType.ASSISTANT,
         status: AgentStatus.ACTIVE,
-        description: 'General-purpose coding assistant',
+        description:
+          'General-purpose coding assistant specialized in multiple programming languages',
         systemPrompt:
-          'You are a helpful coding assistant. Help users write, debug, and optimize code.',
+          'You are a helpful coding assistant. Help users write, debug, and optimize code across multiple languages including TypeScript, Python, JavaScript, and more.',
         capabilities: [
           AgentCapability.CODE_GENERATION,
           AgentCapability.CODE_REVIEW,
           AgentCapability.DEBUGGING,
           AgentCapability.CODE_REFACTORING,
+          AgentCapability.TESTING,
+          AgentCapability.CODE_COMPLETION,
         ],
         provider: 'default',
         userId: adminUser.id,
+        config: {
+          maxTokens: 4000,
+          temperature: 0.7,
+          language: 'typescript',
+        },
       },
       {
         name: 'Chat Agent',
         type: AgentType.CHAT,
         status: AgentStatus.ACTIVE,
-        description: 'Conversational AI agent',
+        description: 'Conversational AI agent for natural language interactions',
         systemPrompt:
-          'You are a friendly and helpful AI assistant. Engage in natural conversation.',
+          'You are a friendly and helpful AI assistant. Engage in natural conversation and help users with various tasks.',
         capabilities: [AgentCapability.CHAT, AgentCapability.RESEARCH, AgentCapability.ANALYSIS],
         provider: 'default',
         userId: adminUser.id,
+        config: {
+          conversationStyle: 'friendly',
+          contextWindow: 8000,
+        },
       },
       {
         name: 'Workflow Orchestrator',
         type: AgentType.WORKFLOW,
         status: AgentStatus.ACTIVE,
-        description: 'Manages and executes complex workflows',
+        description: 'Manages and executes complex multi-step workflows with error handling',
         systemPrompt:
-          'You are a workflow orchestration agent. Coordinate tasks and manage execution flow.',
+          'You are a workflow orchestration agent. Coordinate tasks, manage execution flow, and handle errors gracefully.',
         capabilities: [
           AgentCapability.WORKFLOW,
           AgentCapability.TASK_EXECUTION,
           AgentCapability.PROJECT_MANAGEMENT,
+          AgentCapability.ERROR_HANDLING,
         ],
         provider: 'default',
         userId: adminUser.id,
+        config: {
+          maxConcurrentTasks: 5,
+          retryAttempts: 3,
+        },
+      },
+      {
+        name: 'Security Auditor',
+        type: AgentType.ANALYSIS,
+        status: AgentStatus.ACTIVE,
+        description: 'Specialized agent for security audits and vulnerability detection',
+        systemPrompt:
+          'You are a security analysis expert. Review code and systems for vulnerabilities, suggest security improvements, and ensure best practices.',
+        capabilities: [
+          AgentCapability.SECURITY_AUDIT,
+          AgentCapability.CODE_REVIEW,
+          AgentCapability.ANALYSIS,
+          AgentCapability.VULNERABILITY_SCANNING,
+        ],
+        provider: 'default',
+        userId: adminUser.id,
+        config: {
+          scanDepth: 'deep',
+          reportFormat: 'detailed',
+        },
+      },
+      {
+        name: 'Documentation Writer',
+        type: AgentType.ASSISTANT,
+        status: AgentStatus.ACTIVE,
+        description: 'Creates comprehensive documentation from code and requirements',
+        systemPrompt:
+          'You are a technical documentation specialist. Create clear, concise, and comprehensive documentation for code, APIs, and systems.',
+        capabilities: [
+          AgentCapability.DOCUMENTATION,
+          AgentCapability.CODE_ANALYSIS,
+          AgentCapability.TECHNICAL_WRITING,
+        ],
+        provider: 'default',
+        userId: adminUser.id,
+        config: {
+          format: 'markdown',
+          includeExamples: true,
+        },
+      },
+      {
+        name: 'Test Generator',
+        type: AgentType.TASK,
+        status: AgentStatus.ACTIVE,
+        description: 'Automatically generates comprehensive test suites for code',
+        systemPrompt:
+          'You are a test automation specialist. Generate comprehensive unit tests, integration tests, and e2e tests.',
+        capabilities: [
+          AgentCapability.TESTING,
+          AgentCapability.TEST_GENERATION,
+          AgentCapability.CODE_ANALYSIS,
+          AgentCapability.QUALITY_ASSURANCE,
+        ],
+        provider: 'default',
+        userId: adminUser.id,
+        config: {
+          testFramework: 'jest',
+          coverage: 'high',
+        },
+      },
+      {
+        name: 'Code Reviewer Pro',
+        type: AgentType.ANALYSIS,
+        status: AgentStatus.ACTIVE,
+        description: 'Advanced code review agent with architectural insights',
+        systemPrompt:
+          'You are a senior software architect. Perform thorough code reviews, suggest architectural improvements, and ensure code quality.',
+        capabilities: [
+          AgentCapability.CODE_REVIEW,
+          AgentCapability.ARCHITECTURE_DESIGN,
+          AgentCapability.OPTIMIZATION,
+          AgentCapability.BEST_PRACTICES,
+        ],
+        provider: 'default',
+        userId: adminUser.id,
+        config: {
+          strictness: 'high',
+          focusAreas: ['performance', 'maintainability', 'security'],
+        },
+      },
+      {
+        name: 'Data Analyst',
+        type: AgentType.ANALYSIS,
+        status: AgentStatus.ACTIVE,
+        description: 'Analyzes data patterns and generates insights',
+        systemPrompt:
+          'You are a data analysis expert. Process data, identify patterns, and generate actionable insights.',
+        capabilities: [
+          AgentCapability.DATA_ANALYSIS,
+          AgentCapability.VISUALIZATION,
+          AgentCapability.PATTERN_RECOGNITION,
+          AgentCapability.REPORTING,
+        ],
+        provider: 'default',
+        userId: adminUser.id,
+        config: {
+          visualizationType: 'interactive',
+          analysisDepth: 'comprehensive',
+        },
+      },
+      {
+        name: 'DevOps Helper',
+        type: AgentType.TASK,
+        status: AgentStatus.INACTIVE,
+        description: 'Assists with DevOps tasks, CI/CD, and deployment automation',
+        systemPrompt:
+          'You are a DevOps specialist. Help with deployment, CI/CD pipelines, infrastructure as code, and monitoring.',
+        capabilities: [
+          AgentCapability.DEPLOYMENT,
+          AgentCapability.CI_CD,
+          AgentCapability.INFRASTRUCTURE,
+          AgentCapability.MONITORING,
+        ],
+        provider: 'default',
+        userId: adminUser.id,
+        config: {
+          platform: 'kubernetes',
+          cicdTool: 'github-actions',
+        },
+      },
+      {
+        name: 'API Designer',
+        type: AgentType.API,
+        status: AgentStatus.ACTIVE,
+        description: 'Designs RESTful and GraphQL APIs following best practices',
+        systemPrompt:
+          'You are an API design expert. Create well-structured, documented, and maintainable APIs.',
+        capabilities: [
+          AgentCapability.API_DESIGN,
+          AgentCapability.DOCUMENTATION,
+          AgentCapability.SCHEMA_DESIGN,
+          AgentCapability.BEST_PRACTICES,
+        ],
+        provider: 'default',
+        userId: adminUser.id,
+        config: {
+          apiStyle: 'REST',
+          versioning: 'semantic',
+        },
       },
     ];
 

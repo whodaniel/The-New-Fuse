@@ -1,310 +1,457 @@
-# The New Fuse Deployment Guide
+# Deployment Guide: Hybrid Vercel + Railway Setup
 
-This document provides comprehensive guidance for deploying The New Fuse in various environments, from local development to production.
+This guide covers deploying The New Fuse using a **hybrid approach**:
 
-## Table of Contents
-1. [Prerequisites](#prerequisites)
-2. [Environment Setup](#environment-setup)
-3. [Deployment Options](#deployment-options)
-   - [Docker Deployment](#docker-deployment)
-   - [Kubernetes Deployment](#kubernetes-deployment)
-   - [Manual Deployment](#manual-deployment)
-4. [Database Setup](#database-setup)
-5. [Monitoring Setup](#monitoring-setup)
-6. [Security Configuration](#security-configuration)
-7. [Troubleshooting](#troubleshooting)
-8. [Rollback Procedures](#rollback-procedures)
-9. [Health Checks](#health-checks)
-10. [Maintenance Procedures](#maintenance-procedures)
+- **Frontend** → Vercel (optimized for React/static sites)
+- **Backend Services** → Railway (optimized for Docker/databases)
 
-## Prerequisites
+---
 
-### Required Software
-- Node.js 18.x or later
-- PostgreSQL 14.x or later
-- Redis 6.x or later
-- Docker & Docker Compose (for containerized deployment)
-- Kubernetes & Helm (for Kubernetes deployment)
-- Firebase CLI (for Firebase deployment)
+## 🏗️ Architecture Overview
 
-### Required Access
-- Google Cloud Platform account (if using GCP)
-- Firebase project (if using Firebase)
-- Domain name (for production)
-- SSL certificates
-
-### Additional Prerequisites
-- Kubernetes cluster
-- Docker Hub account
-- GitHub account with required secrets configured
-- Base64 encoded kubeconfig
-
-## Environment Setup
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-org/the-new-fuse.git
-cd the-new-fuse
+```
+┌─────────────────────────────────────────────────────────┐
+│                    DEPLOYMENT ARCHITECTURE               │
+├─────────────────────────────────────────────────────────┤
+│                                                          │
+│  ┌──────────────┐                  ┌─────────────────┐  │
+│  │   VERCEL     │                  │    RAILWAY      │  │
+│  │              │                  │                 │  │
+│  │  Frontend    │◄─────────────────┤  API Gateway    │  │
+│  │  (React)     │      API Calls   │  :3002          │  │
+│  │              │                  │                 │  │
+│  │  Port: 3000  │                  │  Backend        │  │
+│  └──────────────┘                  │  :3003          │  │
+│                                     │                 │  │
+│                                     │  API            │  │
+│                                     │  :3001          │  │
+│                                     │                 │  │
+│                                     │  PostgreSQL     │  │
+│                                     │  Redis          │  │
+│                                     └─────────────────┘  │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### 2. Install Dependencies
+---
+
+## ✅ Current Status
+
+| Service         | Platform | Status        | URL                                                                   |
+| --------------- | -------- | ------------- | --------------------------------------------------------------------- |
+| **Frontend**    | Vercel   | ✅ Deployed   | https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/ |
+| **API Gateway** | Railway  | 🔧 Setting up | https://api-gateway-production-XXXX.up.railway.app                    |
+| **Backend**     | Railway  | 🔧 Setting up | https://backend-production-XXXX.up.railway.app                        |
+| **API**         | Railway  | 🔧 Setting up | https://api-production-XXXX.up.railway.app                            |
+
+---
+
+## 🚀 Railway Setup Guide
+
+### Prerequisites
+
+1. ✅ Railway account: https://railway.app
+2. ✅ Railway project created:
+   https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+3. ✅ GitHub repository connected to Railway
+4. ✅ Monorepo builds at 98% success
+
+### Step 1: Create Services in Railway
+
+In your Railway project dashboard, create **3 services**:
+
+#### 1.1 API Gateway Service
+
 ```bash
-yarn install
+Service Name: api-gateway
+Build Command: (handled by Dockerfile)
+Start Command: (handled by Dockerfile)
+Root Directory: /
+Dockerfile Path: apps/api-gateway/Dockerfile.railway
 ```
 
-### 3. Environment Variables
-Create a `.env` file in the root directory:
+#### 1.2 Backend Service
 
-```env
-# Application
+```bash
+Service Name: backend
+Build Command: (handled by Dockerfile)
+Start Command: (handled by Dockerfile)
+Root Directory: /
+Dockerfile Path: apps/backend/Dockerfile.railway
+```
+
+#### 1.3 API Service
+
+```bash
+Service Name: api
+Build Command: (handled by Dockerfile)
+Start Command: (handled by Dockerfile)
+Root Directory: /
+Dockerfile Path: apps/api/Dockerfile.railway
+```
+
+### Step 2: Add Databases (Optional)
+
+If your services need databases, add them in Railway:
+
+#### PostgreSQL
+
+```bash
+1. Click "+ New" → Database → PostgreSQL
+2. Railway will auto-generate connection vars
+3. Reference as: ${{Postgres.DATABASE_URL}}
+```
+
+#### Redis
+
+```bash
+1. Click "+ New" → Database → Redis
+2. Railway will auto-generate connection vars
+3. Reference as: ${{Redis.REDIS_URL}}
+```
+
+---
+
+## 🔑 Environment Variables
+
+### API Gateway Environment Variables
+
+Set these in Railway for the **api-gateway** service:
+
+```bash
+# Server Configuration
 NODE_ENV=production
-PORT=3000
-FRONTEND_URL=https://your-domain.com
+PORT=3002
+
+# Database (if using)
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+
+# Redis (if using)
+REDIS_URL=${{Redis.REDIS_URL}}
+
+# API Keys & Secrets
+JWT_SECRET=<your-jwt-secret-here>
+API_SECRET_KEY=<your-api-secret-here>
+
+# Service URLs
+BACKEND_URL=https://backend-production-XXXX.up.railway.app
+API_URL=https://api-production-XXXX.up.railway.app
+FRONTEND_URL=https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app
+
+# CORS
+CORS_ORIGIN=https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app
+```
+
+### Backend Service Environment Variables
+
+Set these in Railway for the **backend** service:
+
+```bash
+# Server Configuration
+NODE_ENV=production
+PORT=3003
 
 # Database
-DATABASE_URL=postgresql://user:password@host:5432/fuse
-REDIS_URL=redis://user:password@host:6379
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+
+# Prisma
+PRISMA_HIDE_UPDATE_MESSAGE=true
+
+# API Gateway
+API_GATEWAY_URL=https://api-gateway-production-XXXX.up.railway.app
 
 # Authentication
-JWT_SECRET=your-secure-jwt-secret
-SESSION_SECRET=your-secure-session-secret
+JWT_SECRET=<your-jwt-secret-here>
+SESSION_SECRET=<your-session-secret-here>
 
-# Logging
-LOG_LEVEL=info
-LOG_FORMAT=json
-LOG_FILE=/var/log/fuse/app.log
-LOG_MAX_FILES=5
-LOG_MAX_SIZE=10m
-
-# External Services
-FIREBASE_PROJECT_ID=your-project-id
-GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account.json
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-# Cache
-CACHE_TTL=3600
-MEMORY_CACHE_TTL=3600
+# External Services (if needed)
+OPENAI_API_KEY=<your-openai-key>
+STRIPE_SECRET_KEY=<your-stripe-key>
 ```
 
-### Staging Environment
-- 2 replicas
-- Resource limits:
-  - Memory: 1Gi
-  - CPU: 500m
-- Load balanced service
-- Health checks on /health and /ready endpoints
+### API Service Environment Variables
 
-### Production Environment
-- 3 replicas
-- Resource limits:
-  - Memory: 2Gi
-  - CPU: 1000m
-- Load balanced service
-- Enhanced monitoring
-- Automatic rollback on failures
+Set these in Railway for the **api** service:
 
-## Database Setup
-
-### 1. PostgreSQL Setup
 ```bash
-# Create database
-psql -U postgres
-CREATE DATABASE fuse;
-CREATE USER fuse_user WITH ENCRYPTED PASSWORD 'your-password';
-GRANT ALL PRIVILEGES ON DATABASE fuse TO fuse_user;
+# Server Configuration
+NODE_ENV=production
+PORT=3001
 
-# Run migrations
-yarn prisma migrate deploy
+# Database
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+
+# Authentication
+JWT_SECRET=<your-jwt-secret-here>
+
+# Service URLs
+API_GATEWAY_URL=https://api-gateway-production-XXXX.up.railway.app
+BACKEND_URL=https://backend-production-XXXX.up.railway.app
 ```
 
-### 2. Redis Setup
+---
+
+## 📦 Vercel Setup Guide
+
+### Current Status
+
+✅ **Vercel is already deployed!**
+
+- Working URL:
+  https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/
+
+### Vercel Environment Variables
+
+Add these in Vercel dashboard → Project Settings → Environment Variables:
+
 ```bash
-# Install Redis
-sudo apt-get install redis-server
+# API Endpoints
+NEXT_PUBLIC_API_GATEWAY_URL=https://api-gateway-production-XXXX.up.railway.app
+NEXT_PUBLIC_API_URL=https://api-production-XXXX.up.railway.app
+NEXT_PUBLIC_BACKEND_URL=https://backend-production-XXXX.up.railway.app
 
-# Configure Redis
-sudo nano /etc/redis/redis.conf
+# Feature Flags
+NEXT_PUBLIC_ENABLE_ANALYTICS=true
 
-# Set password
-requirepass your-secure-password
-
-# Restart Redis
-sudo systemctl restart redis
+# Other configs (if needed)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=<your-stripe-publishable-key>
 ```
 
-## Application Deployment
+### Vercel Build Configuration
 
-### Using Docker (Recommended)
+Ensure your `vercel.json` or project settings have:
 
-1. Build the Docker image:
-```bash
-docker build -t the-new-fuse .
+```json
+{
+  "buildCommand": "cd apps/frontend && pnpm build",
+  "outputDirectory": "apps/frontend/dist",
+  "installCommand": "pnpm install",
+  "framework": "vite"
+}
 ```
 
-2. Run using Docker Compose:
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
+---
+
+## 🔄 Deployment Workflow
+
+### Automatic Deployments
+
+#### Vercel (Frontend)
+
+- ✅ **Trigger**: Push to `main` branch
+- ✅ **Build**: Automatic via Vercel GitHub integration
+- ✅ **Preview**: Every PR gets a preview URL
+
+#### Railway (Backend)
+
+- ✅ **Trigger**: Push to `main` branch
+- ✅ **Build**: Automatic via Railway GitHub integration
+- ✅ **Deploy**: All 3 services deploy in parallel
 
 ### Manual Deployment
 
-1. Build the application:
+#### Railway CLI (if needed)
+
 ```bash
-yarn build-all
+# Install Railway CLI
+npm i -g @railway/cli
+
+# Login
+railway login
+
+# Link to project
+railway link 041cee9d-8648-4074-b5a6-0eae436de1d1
+
+# Deploy specific service
+railway up --service api-gateway
+railway up --service backend
+railway up --service api
 ```
 
-2. Start the application:
+---
+
+## 🧪 Testing Deployments
+
+### Health Checks
+
+Test each service is running:
+
 ```bash
-yarn start:prod
+# API Gateway
+curl https://api-gateway-production-XXXX.up.railway.app/health
+
+# Backend
+curl https://backend-production-XXXX.up.railway.app/health
+
+# API
+curl https://api-production-XXXX.up.railway.app/health
+
+# Frontend (in browser)
+https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/
 ```
 
-### Firebase Deployment
+### End-to-End Test
 
-1. Initialize Firebase:
+1. **Open Frontend**: Visit Vercel URL
+2. **Login/Signup**: Test authentication flow
+3. **Check Network Tab**: Verify API calls go to Railway URLs
+4. **Test Features**: Ensure backend integration works
+
+---
+
+## 🐛 Troubleshooting
+
+### Railway Build Failing
+
+**Issue**: Build fails with package errors
+
+**Solution**:
+
 ```bash
-firebase init
+# Check if monorepo builds locally
+pnpm build
+
+# If types package fails
+cd packages/types && pnpm build
+
+# Check Dockerfile paths in railway.toml
+cat railway.toml
 ```
 
-2. Deploy to Firebase:
+### CORS Errors
+
+**Issue**: Frontend can't call backend APIs
+
+**Solution**: Add CORS origin in Railway env vars:
+
 ```bash
-yarn deploy
+CORS_ORIGIN=https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app
 ```
 
-## Secret Management
-Required secrets in Kubernetes:
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: thefuse-secrets
-type: Opaque
-data:
-  database-url: <base64-encoded-url>
-```
+### Database Connection Errors
 
-## Deployment Process
-1. Changes pushed to main/develop trigger CI/CD pipeline
-2. Tests run (unit, integration, E2E)
-3. Security scan with Snyk
-4. Docker image built with layer caching
-5. Deployment to staging/production with version tagging
-6. Health check verification
-7. Automatic rollback if deployment fails
+**Issue**: Services can't connect to PostgreSQL
 
-## Monitoring Setup
+**Solution**:
 
-### 1. Health Checks
-The application exposes health check endpoints:
-- Basic health: `GET /health`
-- Detailed health: `GET /health/detailed`
+1. Verify `DATABASE_URL` is set in Railway
+2. Check PostgreSQL service is running
+3. Use Railway's internal references: `${{Postgres.DATABASE_URL}}`
 
-### 2. Logging
-Logs are written to:
-- Console (JSON format)
-- File (`/var/log/fuse/app.log`)
-- Cloud Logging (when deployed to GCP)
+### Service Not Starting
 
-### 3. Metrics
-Monitor the following metrics:
-- Request latency
-- Error rates
-- Cache hit rates
-- Database connection pool status
-- Redis connection status
-- Memory usage
-- CPU usage
+**Issue**: Railway service crashes on start
 
-### 4. Alerts
-Configure alerts for:
-- Error rate > 1%
-- P95 latency > 500ms
-- Memory usage > 85%
-- CPU usage > 85%
-- Failed health checks
-- Database connection issues
+**Solution**:
 
-## Security Configuration
-
-### 1. SSL/TLS
 ```bash
-# Install SSL certificate
-certbot certonly --nginx -d your-domain.com
+# Check Railway logs
+railway logs --service api-gateway
+
+# Check for missing env vars
+railway variables --service api-gateway
+
+# Verify Dockerfile builds locally
+docker build -f apps/api-gateway/Dockerfile.railway .
 ```
 
-### 2. Firewall Rules
+---
+
+## 📊 Monitoring & Logs
+
+### Railway Logs
+
+View logs for each service:
+
 ```bash
-# Allow only necessary ports
-sudo ufw allow 80
-sudo ufw allow 443
-sudo ufw allow 3000
+# Via Dashboard
+https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+
+# Via CLI
+railway logs --service api-gateway
+railway logs --service backend
+railway logs --service api
 ```
 
-### 3. Rate Limiting
-Rate limiting is configured in the application:
-- 100 requests per 15 minutes per IP
-- Configurable through environment variables
+### Vercel Logs
 
-### 4. API Keys
-Generate API keys through the admin interface:
-1. Log in as admin
-2. Navigate to Settings > API Keys
-3. Generate new key with appropriate permissions
+View frontend logs:
 
-## Troubleshooting
-
-### Common Issues
-
-1. Database Connection Issues
 ```bash
-# Check database logs
-tail -f /var/log/postgresql/postgresql.log
+# Via Dashboard
+https://vercel.com/dashboard
 
-# Check connection
-psql -h localhost -U fuse_user -d fuse
+# Via CLI
+vercel logs <deployment-url>
 ```
 
-2. Redis Connection Issues
-```bash
-# Check Redis status
-redis-cli ping
-redis-cli info
+---
 
-# Monitor Redis
-redis-cli monitor
-```
+## 💰 Cost Estimation
 
-3. Application Issues
-```bash
-# Check application logs
-tail -f /var/log/fuse/app.log
+### Railway (Backend)
 
-# Check system resources
-htop
-```
+- **Free Tier**: $5/month credit
+- **Hobby Plan**: $5/month per service
+- **Estimated**: ~$15-20/month (3 services + database)
 
-### Health Check Status Codes
-- 200: Healthy
-- 429: Rate Limited
-- 503: Service Unavailable
-- 500: Internal Server Error
+### Vercel (Frontend)
 
-### Support
-For additional support:
-1. Check the logs
-2. Review the documentation
-3. Contact the development team
-4. Open an issue on GitHub
+- **Free Tier**: Generous (100GB bandwidth, unlimited deployments)
+- **Pro**: $20/month (if needed for team features)
+- **Estimated**: $0-20/month
 
-## Rolling Back
-Automatic rollback occurs if:
-- Health checks fail
-- Resource limits exceeded
-- Application errors detected
+**Total Estimated Cost**: $15-40/month
 
-Manual rollback:
-```bash
-kubectl rollout undo deployment/thefuse -n [environment]
-```
+---
+
+## 🎯 Next Steps
+
+### After Initial Deployment
+
+1. ✅ **Test all endpoints** - Verify health checks pass
+2. ✅ **Update Vercel env vars** - Point to Railway URLs
+3. ✅ **Test E2E flow** - Login, API calls, database
+4. ✅ **Set up monitoring** - Add error tracking (Sentry, etc.)
+5. ✅ **Configure custom domains** - Add your own domain
+6. ✅ **Enable HTTPS** - Ensure all services use SSL
+7. ✅ **Set up CI/CD** - Automated tests before deploy
+
+### Production Readiness Checklist
+
+- [ ] All environment variables set
+- [ ] Database migrations run
+- [ ] CORS configured correctly
+- [ ] Health checks passing
+- [ ] Error monitoring enabled
+- [ ] Backup strategy defined
+- [ ] Custom domain configured
+- [ ] SSL certificates active
+- [ ] Rate limiting configured
+- [ ] Security headers set
+
+---
+
+## 🔗 Useful Links
+
+- **Railway Project**:
+  https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **Railway Docs**: https://docs.railway.app
+- **Vercel Dashboard**: https://vercel.com/dashboard
+- **Vercel Docs**: https://vercel.com/docs
+- **GitHub Repository**: https://github.com/whodaniel/fuse
+
+---
+
+## 📞 Support
+
+If you encounter issues:
+
+1. Check Railway logs first
+2. Review Vercel deployment logs
+3. Test services individually
+4. Check environment variables
+5. Verify database connections
+
+**Remember**: Vercel handles frontend, Railway handles everything else! 🚀

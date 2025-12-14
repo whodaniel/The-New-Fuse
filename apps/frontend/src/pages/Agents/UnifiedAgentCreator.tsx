@@ -1627,7 +1627,7 @@ export const UnifiedAgentCreator: React.FC = () => {
     }
   };
 
-  return <div className="min-h-screen bg-background p-6">{renderCurrentPath()}</div>;
+  return renderCurrentPath();
 };
 
 export default UnifiedAgentCreator;
