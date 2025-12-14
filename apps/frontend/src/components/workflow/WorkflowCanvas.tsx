@@ -10,7 +10,6 @@ import ReactFlow, {
   useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { edgeTypes } from './edges';
 import { nodeTypes } from './nodes/nodeTypes';
 
 interface WorkflowCanvasProps {
@@ -29,7 +28,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
   );
 
   const onNodeClick = useCallback(
-    (_, node) => {
+    (_event: React.MouseEvent, node: Node) => {
       if (onNodeSelect) {
         onNodeSelect(node);
       }
@@ -88,7 +87,6 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
         fitView
       >
         <Background />
