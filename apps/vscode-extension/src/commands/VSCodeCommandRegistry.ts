@@ -1,35 +1,41 @@
 import * as vscode from 'vscode';
-import { VSCodeCommandAdapter } from './VSCodeCommandAdapter';
 import { ChatViewProvider } from '../ChatViewProvider';
+import { VSCodeCommandAdapter } from './VSCodeCommandAdapter';
 
-// Import all command handlers
+// Import Handlers
 import {
-  SendMessageHandler,
   ClearChatHandler,
-  NewChatHandler
+  NewChatHandler,
+  SendMessageHandler,
 } from './handlers/ChatCommandHandlers';
 
-import {
-  MCPConnectHandler,
-  MCPStatusHandler
-} from './handlers/MCPCommandHandlers';
+import { MCPConnectHandler, MCPStatusHandler } from './handlers/MCPCommandHandlers';
 
 import {
+  AttachFilesHandler,
+  ConfigureLLMProvidersHandler,
+  HelpButtonClickedHandler,
   HistoryButtonClickedHandler,
   MarketplaceButtonClickedHandler,
   ProfileButtonClickedHandler,
   SettingsButtonClickedHandler,
-  HelpButtonClickedHandler,
-  AttachFilesHandler,
-  ConfigureLLMProvidersHandler
 } from './handlers/UICommandHandlers';
 
-/**
- * VSCode Command Registry
- * 
- * This class manages the registration of all VSCode commands with the unified command architecture.
- * It maps VSCode command IDs to unified command types and registers the appropriate handlers.
- */
+import {
+  AddToContextHandler,
+  ExplainCodeHandler,
+  FixCodeHandler,
+  GenerateCommitMessageHandler,
+  ImproveCodeHandler,
+} from './handlers/CodeCommandHandlers';
+
+import {
+  AgentFederationHandler,
+  PlanManagerHandler,
+  SecurityScanHandler,
+  TerminalOrchestrationHandler,
+} from './handlers/AgentCommandHandlers';
+
 export class VSCodeCommandRegistry {
   private adapter: VSCodeCommandAdapter;
   private extensionContext: vscode.ExtensionContext;
@@ -45,252 +51,176 @@ export class VSCodeCommandRegistry {
     this.chatProvider = chatProvider;
   }
 
-  /**
-   * Register all VSCode commands with the unified command architecture
-   */
   public registerAllCommands(): void {
     console.log('🔧 Registering VSCode commands with unified architecture...');
 
-    // Store chat provider in extension context for handlers to access
+    // Also store in global state for fallback access
     this.extensionContext.globalState.update('chatProvider', this.chatProvider);
 
-    // Register chat commands
     this.registerChatCommands();
-
-    // Register MCP commands
     this.registerMCPCommands();
-
-    // Register UI commands
     this.registerUICommands();
+    this.registerCodeCommands();
+    this.registerAgentCommands();
 
     console.log('✅ All VSCode commands registered successfully');
   }
 
-  /**
-   * Register chat-related commands
-   */
   private registerChatCommands(): void {
-    // Send Message Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.sendMessage',
-      'send-message',
-      new SendMessageHandler(),
-      {
-        category: 'The New Fuse',
-        title: 'Send Message',
-        icon: '$(send)',
-        enableProgress: true
-      }
-    );
+    const send = new SendMessageHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.sendMessage', 'send-message', {
+      execute: () => send.execute(this.chatProvider),
+    });
 
-    // Clear Chat Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.clearChat',
-      'clear-chat',
-      new ClearChatHandler(),
-      {
-        category: 'The New Fuse',
-        title: 'Clear Chat',
-        icon: '$(clear-all)'
-      }
-    );
+    const clear = new ClearChatHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.clearChat', 'clear-chat', {
+      execute: () => clear.execute(this.chatProvider),
+    });
 
-    // New Chat Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.newChat',
-      'new-chat',
-      new NewChatHandler(),
-      {
-        category: 'The New Fuse',
-        title: 'New Chat',
-        icon: '$(add)'
-      }
-    );
-
-    console.log('✅ Chat commands registered');
+    const newChat = new NewChatHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.newChat', 'new-chat', {
+      execute: () => newChat.execute(this.chatProvider),
+    });
   }
 
-  /**
-   * Register MCP-related commands
-   */
   private registerMCPCommands(): void {
-    // MCP Connect Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.mcpConnect',
-      'mcp-connect',
-      new MCPConnectHandler(),
-      {
-        category: 'The New Fuse - MCP',
-        title: '🔗 Connect MCP Server',
-        icon: '$(plug)',
-        enableProgress: true
-      }
-    );
+    const connect = new MCPConnectHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.mcpConnect', 'mcp-connect', {
+      execute: () => connect.execute(this.chatProvider),
+    });
 
-    // MCP Status Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.mcpStatus',
-      'mcp-status',
-      new MCPStatusHandler(),
-      {
-        category: 'The New Fuse - MCP',
-        title: '📊 MCP Server Status',
-        icon: '$(graph)'
-      }
-    );
-
-    console.log('✅ MCP commands registered');
+    const status = new MCPStatusHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.mcpStatus', 'mcp-status', {
+      execute: () => status.execute(this.chatProvider),
+    });
   }
 
-  /**
-   * Register UI-related commands
-   */
   private registerUICommands(): void {
-    // History Button Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.historyButtonClicked',
-      'history-button-clicked',
-      new HistoryButtonClickedHandler(),
-      {
-        category: 'The New Fuse - History',
-        title: '📚 Chat History',
-        icon: '$(history)'
-      }
-    );
+    const history = new HistoryButtonClickedHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.historyButtonClicked', 'history-button', {
+      execute: () => history.execute(this.chatProvider),
+    });
 
-    // Marketplace Button Command
+    const market = new MarketplaceButtonClickedHandler();
     this.adapter.registerVSCodeCommand(
       'theNewFuse.marketplaceButtonClicked',
-      'marketplace-button-clicked',
-      new MarketplaceButtonClickedHandler(),
-      {
-        category: 'The New Fuse - Marketplace',
-        title: '🛍️ Extensions Marketplace',
-        icon: '$(extensions)'
-      }
+      'marketplace-button',
+      { execute: () => market.execute(this.chatProvider) }
     );
 
-    // Profile Button Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.profileButtonClicked',
-      'profile-button-clicked',
-      new ProfileButtonClickedHandler(),
-      {
-        category: 'The New Fuse - Profile',
-        title: '👤 User Profile',
-        icon: '$(account)'
-      }
-    );
+    const profile = new ProfileButtonClickedHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.profileButtonClicked', 'profile-button', {
+      execute: () => profile.execute(this.chatProvider),
+    });
 
-    // Settings Button Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.settingsButtonClicked',
-      'settings-button-clicked',
-      new SettingsButtonClickedHandler(),
-      {
-        category: 'The New Fuse - Settings',
-        title: '⚙️ Settings',
-        icon: '$(settings-gear)'
-      }
-    );
+    const settings = new SettingsButtonClickedHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.settingsButtonClicked', 'settings-button', {
+      execute: () => settings.execute(this.chatProvider),
+    });
 
-    // Help Button Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.helpButtonClicked',
-      'help-button-clicked',
-      new HelpButtonClickedHandler(),
-      {
-        category: 'The New Fuse - Help',
-        title: '❓ Help & Documentation',
-        icon: '$(question)'
-      }
-    );
+    const help = new HelpButtonClickedHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.helpButtonClicked', 'help-button', {
+      execute: () => help.execute(this.chatProvider),
+    });
 
-    // Attach Files Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.attachFiles',
-      'attach-files',
-      new AttachFilesHandler(),
-      {
-        category: 'The New Fuse - Files',
-        title: '📎 Attach Files',
-        icon: '$(attach)'
-      }
-    );
+    const attach = new AttachFilesHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.attachFiles', 'attach-files', {
+      execute: () => attach.execute(this.chatProvider),
+    });
 
-    // Configure LLM Providers Command
-    this.adapter.registerVSCodeCommand(
-      'theNewFuse.configureLLMProviders',
-      'configure-llm-providers',
-      new ConfigureLLMProvidersHandler(),
-      {
-        category: 'The New Fuse - Configuration',
-        title: '🤖 Configure LLM Providers',
-        icon: '$(settings)'
-      }
-    );
+    const configLLM = new ConfigureLLMProvidersHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.configureLLMProviders', 'config-llm', {
+      execute: () => configLLM.execute(this.chatProvider),
+    });
 
-    console.log('✅ UI commands registered');
+    this.adapter.registerVSCodeCommand('theNewFuse.openInNewTab', 'open-new-tab', {
+      execute: async () => vscode.commands.executeCommand('workbench.action.webview.openWebView'),
+    });
   }
 
-  /**
-   * Get command registration statistics
-   */
-  public getRegistrationStats(): {
-    totalCommands: number;
-    chatCommands: number;
-    mcpCommands: number;
-    uiCommands: number;
-  } {
-    const stats = this.adapter.getCommandBus().getStats();
-    
-    return {
-      totalCommands: stats.registeredHandlers,
-      chatCommands: 3, // sendMessage, clearChat, newChat
-      mcpCommands: 2,  // mcpConnect, mcpStatus
-      uiCommands: 7    // history, marketplace, profile, settings, help, attachFiles, configureLLM
-    };
+  private registerCodeCommands(): void {
+    const explain = new ExplainCodeHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.explainCode', 'explain-code', {
+      execute: () => explain.execute(this.chatProvider),
+    });
+
+    const fix = new FixCodeHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.fixCode', 'fix-code', {
+      execute: () => fix.execute(this.chatProvider),
+    });
+
+    const improve = new ImproveCodeHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.improveCode', 'improve-code', {
+      execute: () => improve.execute(this.chatProvider),
+    });
+
+    const addContext = new AddToContextHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.addToContext', 'add-to-context', {
+      execute: () => addContext.execute(this.chatProvider),
+    });
+
+    const genCommit = new GenerateCommitMessageHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.generateCommitMessage', 'gen-commit', {
+      execute: () => genCommit.execute(this.chatProvider),
+    });
+
+    this.adapter.registerVSCodeCommand('theNewFuse.inlineSuggestions', 'inline-suggestions', {
+      execute: async () =>
+        vscode.window.showInformationMessage('Inline suggestions available within editor (Ctrl+I)'),
+    });
+
+    this.adapter.registerVSCodeCommand('theNewFuse.codeActions', 'code-actions', {
+      execute: async () =>
+        vscode.window.showInformationMessage('Code actions available via Right Click'),
+    });
   }
 
-  /**
-   * Dispose of all registered commands
-   */
+  private registerAgentCommands(): void {
+    const fed = new AgentFederationHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.agentFederation', 'agent-federation', {
+      execute: () => fed.execute(this.chatProvider),
+    });
+
+    const term = new TerminalOrchestrationHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.terminalOrchestration', 'terminal-orch', {
+      execute: () => term.execute(this.chatProvider),
+    });
+
+    const plan = new PlanManagerHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.planManager', 'plan-manager', {
+      execute: () => plan.execute(this.chatProvider),
+    });
+
+    const scan = new SecurityScanHandler();
+    this.adapter.registerVSCodeCommand('theNewFuse.securityScan', 'security-scan', {
+      execute: () => scan.execute(this.chatProvider),
+    });
+
+    this.adapter.registerVSCodeCommand('theNewFuse.securityDashboard', 'security-dashboard', {
+      execute: async () => this.chatProvider?.showSecurityDashboard(),
+    });
+
+    this.adapter.registerVSCodeCommand('theNewFuse.cli.runAgent', 'cli-run-agent', {
+      execute: async () =>
+        vscode.window.showInformationMessage('CLI Agent Run: Feature coming in v8.1'),
+    });
+    this.adapter.registerVSCodeCommand('theNewFuse.cli.initWorkspace', 'cli-init', {
+      execute: async () => vscode.window.showInformationMessage('CLI Init: Feature coming in v8.1'),
+    });
+  }
+
   public dispose(): void {
     this.adapter.dispose();
-    console.log('🗑️ VSCode command registry disposed');
   }
 }
 
-/**
- * Command Registry Factory
- * 
- * Provides a convenient way to create and configure the command registry
- */
 export class VSCodeCommandRegistryFactory {
-  /**
-   * Create a fully configured command registry
-   */
-  static create(
-    extensionContext: vscode.ExtensionContext,
-    chatProvider: ChatViewProvider
-  ): VSCodeCommandRegistry {
-    // Create the adapter
-    const adapter = new VSCodeCommandAdapter(extensionContext);
-
-    // Create the registry
-    const registry = new VSCodeCommandRegistry(adapter, extensionContext, chatProvider);
-
-    return registry;
-  }
-
-  /**
-   * Create and register all commands in one step
-   */
   static createAndRegister(
     extensionContext: vscode.ExtensionContext,
     chatProvider: ChatViewProvider
   ): VSCodeCommandRegistry {
-    const registry = VSCodeCommandRegistryFactory.create(extensionContext, chatProvider);
+    const adapter = new VSCodeCommandAdapter(extensionContext);
+    const registry = new VSCodeCommandRegistry(adapter, extensionContext, chatProvider);
     registry.registerAllCommands();
     return registry;
   }

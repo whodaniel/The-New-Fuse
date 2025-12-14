@@ -27,9 +27,9 @@ interface HeartbeatResponse {
 export class BackendConnector {
   private _apiUrl: string;
   private _agentId: string;
-  private _heartbeatInterval: NodeJS.Timer | null = null;
-  private _isConnected: boolean = false;
-  private _pollingIntervalMs: number = 30000; // 30 seconds
+  private _heartbeatInterval: any = null;
+  private _isConnected = false;
+  private _pollingIntervalMs = 30000; // 30 seconds
 
   constructor(private _context: vscode.ExtensionContext) {
     // Default to local API, but allow configuration

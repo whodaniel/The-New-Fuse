@@ -1,8 +1,8 @@
 {
-  "name": "@the-new-fuse/vscode-extension",
+  "name": "vscode-extension",
   "displayName": "The New Fuse",
   "description": "The New Fuse - AI Assistant with Multi-Agent Orchestration, Full MCP Configuration, Enhanced LiteLLM Integration & Multi-Tenant Support",
-  "version": "8.0.0",
+  "version": "8.1.0",
   "publisher": "TheNewFuse",
   "license": "MIT",
   "repository": {

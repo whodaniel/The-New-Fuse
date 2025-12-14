@@ -16,232 +16,228 @@
  */
 
 import * as vscode from 'vscode';
-import { LLMProviderManager, LLMProviderConfig, ProviderStatus } from '../ai/LLMProviderManager';
+import { LLMProviderConfig, LLMProviderManager } from '../ai/LLMProviderManager';
 
 export class LLMProviderPanel {
-	public static currentPanel: LLMProviderPanel | undefined;
-	private readonly _panel: vscode.WebviewPanel;
-	private _disposables: vscode.Disposable[] = [];
-	private providerManager: LLMProviderManager;
+  public static currentPanel: LLMProviderPanel | undefined;
+  private readonly _panel: vscode.WebviewPanel;
+  private _disposables: vscode.Disposable[] = [];
+  private providerManager: LLMProviderManager;
 
-	private constructor(
-		panel: vscode.WebviewPanel,
-		extensionUri: vscode.Uri,
-		providerManager: LLMProviderManager
-	) {
-		this._panel = panel;
-		this.providerManager = providerManager;
-		this._panel.webview.html = this._getWebviewContent();
-		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-		this._setupWebviewMessageListener();
+  private constructor(
+    panel: vscode.WebviewPanel,
+    extensionUri: vscode.Uri,
+    providerManager: LLMProviderManager
+  ) {
+    this._panel = panel;
+    this.providerManager = providerManager;
+    this._panel.webview.html = this._getWebviewContent();
+    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+    this._setupWebviewMessageListener();
 
-		// Listen to provider manager events
-		this.providerManager.on('providerUpdated', () => this._sendProvidersUpdate());
-		this.providerManager.on('providerChanged', () => this._sendProvidersUpdate());
-		this.providerManager.on('providerTested', () => this._sendStatusUpdate());
-	}
+    // Listen to provider manager events
+    this.providerManager.on('providerUpdated', () => this._sendProvidersUpdate());
+    this.providerManager.on('providerChanged', () => this._sendProvidersUpdate());
+    this.providerManager.on('providerTested', () => this._sendStatusUpdate());
+  }
 
-	public static render(
-		extensionUri: vscode.Uri,
-		providerManager: LLMProviderManager
-	): void {
-		if (LLMProviderPanel.currentPanel) {
-			LLMProviderPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
-		} else {
-			const panel = vscode.window.createWebviewPanel(
-				'llmProviderConfig',
-				'🤖 LLM Provider Configuration',
-				vscode.ViewColumn.One,
-				{
-					enableScripts: true,
-					retainContextWhenHidden: true,
-					localResourceRoots: [extensionUri]
-				}
-			);
+  public static render(extensionUri: vscode.Uri, providerManager: LLMProviderManager): void {
+    if (LLMProviderPanel.currentPanel) {
+      LLMProviderPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
+    } else {
+      const panel = vscode.window.createWebviewPanel(
+        'llmProviderConfig',
+        '🤖 LLM Provider Configuration',
+        vscode.ViewColumn.One,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+          localResourceRoots: [extensionUri],
+        }
+      );
 
-			LLMProviderPanel.currentPanel = new LLMProviderPanel(
-				panel,
-				extensionUri,
-				providerManager
-			);
-		}
-	}
+      LLMProviderPanel.currentPanel = new LLMProviderPanel(panel, extensionUri, providerManager);
+    }
+  }
 
-	private _setupWebviewMessageListener(): void {
-		this._panel.webview.onDidReceiveMessage(
-			async (message) => {
-				switch (message.command) {
-					case 'getProviders':
-						await this._handleGetProviders();
-						break;
-					case 'setActiveProvider':
-						await this._handleSetActiveProvider(message.provider);
-						break;
-					case 'updateProvider':
-						await this._handleUpdateProvider(message.provider, message.config);
-						break;
-					case 'testProvider':
-						await this._handleTestProvider(message.provider);
-						break;
-					case 'testAllProviders':
-						await this._handleTestAllProviders();
-						break;
-					case 'resetToDefaults':
-						await this._handleResetToDefaults();
-						break;
-					case 'clearAPIKeys':
-						await this._handleClearAPIKeys();
-						break;
-				}
-			},
-			null,
-			this._disposables
-		);
-	}
+  private _setupWebviewMessageListener(): void {
+    this._panel.webview.onDidReceiveMessage(
+      async (message) => {
+        switch (message.command) {
+          case 'getProviders':
+            await this._handleGetProviders();
+            break;
+          case 'setActiveProvider':
+            await this._handleSetActiveProvider(message.provider);
+            break;
+          case 'updateProvider':
+            await this._handleUpdateProvider(message.provider, message.config);
+            break;
+          case 'testProvider':
+            await this._handleTestProvider(message.provider);
+            break;
+          case 'testAllProviders':
+            await this._handleTestAllProviders();
+            break;
+          case 'resetToDefaults':
+            await this._handleResetToDefaults();
+            break;
+          case 'clearAPIKeys':
+            await this._handleClearAPIKeys();
+            break;
+        }
+      },
+      null,
+      this._disposables
+    );
+  }
 
-	private async _handleGetProviders(): Promise<void> {
-		const providers = this.providerManager.getProviders();
-		const activeProvider = this.providerManager.getActiveProvider();
-		const statuses = this.providerManager.getAllStatuses();
+  private async _handleGetProviders(): Promise<void> {
+    const providers = this.providerManager.getProviders();
+    const activeProvider = this.providerManager.getActiveProvider();
+    const statuses = this.providerManager.getAllStatuses();
 
-		this._panel.webview.postMessage({
-			command: 'providersData',
-			providers: providers.map(p => ({
-				...p,
-				apiKey: p.apiKey ? '***' : undefined, // Mask API keys
-				proxyAPIKey: p.proxyAPIKey ? '***' : undefined
-			})),
-			activeProvider: activeProvider?.provider,
-			statuses: Array.from(statuses.entries()).map(([provider, status]) => ({
-				provider,
-				...status
-			}))
-		});
-	}
+    this._panel.webview.postMessage({
+      command: 'providersData',
+      providers: providers.map((p) => ({
+        ...p,
+        apiKey: p.apiKey ? '***' : undefined, // Mask API keys
+        proxyAPIKey: p.proxyAPIKey ? '***' : undefined,
+      })),
+      activeProvider: activeProvider?.provider,
+      statuses: Array.from(statuses.entries()).map(([provider, status]) => ({
+        ...status,
+        provider,
+      })),
+    });
+  }
 
-	private async _handleSetActiveProvider(provider: string): Promise<void> {
-		try {
-			await this.providerManager.setActiveProvider(provider);
-			vscode.window.showInformationMessage(`✅ Switched to ${provider}`);
-			await this._sendProvidersUpdate();
-		} catch (error) {
-			const message = error instanceof Error ? error.message : 'Unknown error';
-			vscode.window.showErrorMessage(`❌ Failed to switch provider: ${message}`);
-			this._panel.webview.postMessage({
-				command: 'error',
-				message
-			});
-		}
-	}
+  private async _handleSetActiveProvider(provider: string): Promise<void> {
+    try {
+      await this.providerManager.setActiveProvider(provider);
+      vscode.window.showInformationMessage(`✅ Switched to ${provider}`);
+      await this._sendProvidersUpdate();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      vscode.window.showErrorMessage(`❌ Failed to switch provider: ${message}`);
+      this._panel.webview.postMessage({
+        command: 'error',
+        message,
+      });
+    }
+  }
 
-	private async _handleUpdateProvider(provider: string, config: Partial<LLMProviderConfig>): Promise<void> {
-		try {
-			await this.providerManager.updateProvider(provider, config);
-			vscode.window.showInformationMessage(`✅ Updated ${provider} configuration`);
-			await this._sendProvidersUpdate();
-		} catch (error) {
-			const message = error instanceof Error ? error.message : 'Unknown error';
-			vscode.window.showErrorMessage(`❌ Failed to update provider: ${message}`);
-			this._panel.webview.postMessage({
-				command: 'error',
-				message
-			});
-		}
-	}
+  private async _handleUpdateProvider(
+    provider: string,
+    config: Partial<LLMProviderConfig>
+  ): Promise<void> {
+    try {
+      await this.providerManager.updateProvider(provider, config);
+      vscode.window.showInformationMessage(`✅ Updated ${provider} configuration`);
+      await this._sendProvidersUpdate();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      vscode.window.showErrorMessage(`❌ Failed to update provider: ${message}`);
+      this._panel.webview.postMessage({
+        command: 'error',
+        message,
+      });
+    }
+  }
 
-	private async _handleTestProvider(provider: string): Promise<void> {
-		try {
-			const status = await this.providerManager.testProvider(provider);
-			this._panel.webview.postMessage({
-				command: 'providerTested',
-				provider,
-				status
-			});
+  private async _handleTestProvider(provider: string): Promise<void> {
+    try {
+      const status = await this.providerManager.testProvider(provider);
+      this._panel.webview.postMessage({
+        command: 'providerTested',
+        provider,
+        status,
+      });
 
-			if (status.healthy) {
-				vscode.window.showInformationMessage(
-					`✅ ${provider} is healthy${status.models ? ` - ${status.models.length} models available` : ''}`
-				);
-			} else {
-				vscode.window.showWarningMessage(
-					`⚠️ ${provider} health check failed: ${status.error || 'Unknown error'}`
-				);
-			}
-		} catch (error) {
-			const message = error instanceof Error ? error.message : 'Unknown error';
-			vscode.window.showErrorMessage(`❌ Test failed: ${message}`);
-		}
-	}
+      if (status.healthy) {
+        vscode.window.showInformationMessage(
+          `✅ ${provider} is healthy${status.models ? ` - ${status.models.length} models available` : ''}`
+        );
+      } else {
+        vscode.window.showWarningMessage(
+          `⚠️ ${provider} health check failed: ${status.error || 'Unknown error'}`
+        );
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      vscode.window.showErrorMessage(`❌ Test failed: ${message}`);
+    }
+  }
 
-	private async _handleTestAllProviders(): Promise<void> {
-		try {
-			vscode.window.showInformationMessage('🔍 Testing all enabled providers...');
-			await this.providerManager.checkAllProviders();
-			await this._sendStatusUpdate();
-			vscode.window.showInformationMessage('✅ Provider health checks complete');
-		} catch (error) {
-			const message = error instanceof Error ? error.message : 'Unknown error';
-			vscode.window.showErrorMessage(`❌ Health check failed: ${message}`);
-		}
-	}
+  private async _handleTestAllProviders(): Promise<void> {
+    try {
+      vscode.window.showInformationMessage('🔍 Testing all enabled providers...');
+      await this.providerManager.checkAllProviders();
+      await this._sendStatusUpdate();
+      vscode.window.showInformationMessage('✅ Provider health checks complete');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      vscode.window.showErrorMessage(`❌ Health check failed: ${message}`);
+    }
+  }
 
-	private async _handleResetToDefaults(): Promise<void> {
-		const confirm = await vscode.window.showWarningMessage(
-			'⚠️ Reset to default configuration? This will clear all API keys.',
-			{ modal: true },
-			'Reset',
-			'Cancel'
-		);
+  private async _handleResetToDefaults(): Promise<void> {
+    const confirm = await vscode.window.showWarningMessage(
+      '⚠️ Reset to default configuration? This will clear all API keys.',
+      { modal: true },
+      'Reset',
+      'Cancel'
+    );
 
-		if (confirm === 'Reset') {
-			try {
-				await this.providerManager.resetToDefaults();
-				vscode.window.showInformationMessage('✅ Reset to default configuration');
-				await this._sendProvidersUpdate();
-			} catch (error) {
-				const message = error instanceof Error ? error.message : 'Unknown error';
-				vscode.window.showErrorMessage(`❌ Reset failed: ${message}`);
-			}
-		}
-	}
+    if (confirm === 'Reset') {
+      try {
+        await this.providerManager.resetToDefaults();
+        vscode.window.showInformationMessage('✅ Reset to default configuration');
+        await this._sendProvidersUpdate();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        vscode.window.showErrorMessage(`❌ Reset failed: ${message}`);
+      }
+    }
+  }
 
-	private async _handleClearAPIKeys(): Promise<void> {
-		const confirm = await vscode.window.showWarningMessage(
-			'⚠️ Clear all API keys? You will need to re-enter them.',
-			{ modal: true },
-			'Clear',
-			'Cancel'
-		);
+  private async _handleClearAPIKeys(): Promise<void> {
+    const confirm = await vscode.window.showWarningMessage(
+      '⚠️ Clear all API keys? You will need to re-enter them.',
+      { modal: true },
+      'Clear',
+      'Cancel'
+    );
 
-		if (confirm === 'Clear') {
-			try {
-				await this.providerManager.clearAllAPIKeys();
-				vscode.window.showInformationMessage('✅ All API keys cleared');
-				await this._sendProvidersUpdate();
-			} catch (error) {
-				const message = error instanceof Error ? error.message : 'Unknown error';
-				vscode.window.showErrorMessage(`❌ Failed to clear keys: ${message}`);
-			}
-		}
-	}
+    if (confirm === 'Clear') {
+      try {
+        await this.providerManager.clearAllAPIKeys();
+        vscode.window.showInformationMessage('✅ All API keys cleared');
+        await this._sendProvidersUpdate();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        vscode.window.showErrorMessage(`❌ Failed to clear keys: ${message}`);
+      }
+    }
+  }
 
-	private async _sendProvidersUpdate(): Promise<void> {
-		await this._handleGetProviders();
-	}
+  private async _sendProvidersUpdate(): Promise<void> {
+    await this._handleGetProviders();
+  }
 
-	private async _sendStatusUpdate(): Promise<void> {
-		const statuses = this.providerManager.getAllStatuses();
-		this._panel.webview.postMessage({
-			command: 'statusUpdate',
-			statuses: Array.from(statuses.entries()).map(([provider, status]) => ({
-				provider,
-				...status
-			}))
-		});
-	}
+  private async _sendStatusUpdate(): Promise<void> {
+    const statuses = this.providerManager.getAllStatuses();
+    this._panel.webview.postMessage({
+      command: 'statusUpdate',
+      statuses: Array.from(statuses.entries()).map(([provider, status]) => ({
+        ...status,
+        provider,
+      })),
+    });
+  }
 
-	private _getWebviewContent(): string {
-		return `<!DOCTYPE html>
+  private _getWebviewContent(): string {
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -785,16 +781,16 @@ export class LLMProviderPanel {
 	</script>
 </body>
 </html>`;
-	}
+  }
 
-	public dispose(): void {
-		LLMProviderPanel.currentPanel = undefined;
-		this._panel.dispose();
-		while (this._disposables.length) {
-			const disposable = this._disposables.pop();
-			if (disposable) {
-				disposable.dispose();
-			}
-		}
-	}
+  public dispose(): void {
+    LLMProviderPanel.currentPanel = undefined;
+    this._panel.dispose();
+    while (this._disposables.length) {
+      const disposable = this._disposables.pop();
+      if (disposable) {
+        disposable.dispose();
+      }
+    }
+  }
 }

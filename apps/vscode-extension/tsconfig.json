@@ -1,13 +1,18 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "target": "es2020",
     "outDir": "out",
-    "lib": ["es2020"],
+    "lib": ["es2020", "dom"],
     "sourceMap": true,
     "rootDir": "src",
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "composite": false
   },
   "include": ["src"],
   "exclude": ["node_modules", ".vscode-test"]
