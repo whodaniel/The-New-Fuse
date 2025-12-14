@@ -17,7 +17,11 @@ import { edgeTypes } from './edges';
 import { nodeTypes } from './nodes/nodeTypes';
 import { WorkflowToolbar } from './WorkflowToolbar';
 
-export const WorkflowCanvas: React.FC = () => {
+interface WorkflowCanvasProps {
+  onNodeSelect?: (node: Node | null) => void;
+}
+
+export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
   const { saveWorkflow, executeWorkflow } = useWorkflow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -59,9 +63,15 @@ export const WorkflowCanvas: React.FC = () => {
     [setEdges, nodes]
   );
 
-  const onNodeClick = useCallback((_, node) => {
-    setSelectedNode(node);
-  }, []);
+  const onNodeClick = useCallback(
+    (_, node) => {
+      setSelectedNode(node);
+      if (onNodeSelect) {
+        onNodeSelect(node);
+      }
+    },
+    [onNodeSelect]
+  );
 
   // Handle dropping nodes from the node library
   const onDrop = useCallback(
