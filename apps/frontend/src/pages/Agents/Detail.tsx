@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/useToast';
+import { agentService, type Agent } from '@/services/AgentService';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity,
@@ -10,7 +11,6 @@ import {
   Bot,
   CheckCircle,
   Clock,
-  Code,
   Edit,
   History,
   List,
@@ -22,12 +22,12 @@ import {
   Trash2,
   Zap,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-// Types
+// Types for UI display
 interface Task {
-  id: number;
+  id: string;
   title: string;
   status: 'Completed' | 'In Progress' | 'Pending';
   completedAt?: string;
@@ -42,7 +42,7 @@ interface LogEntry {
 }
 
 interface AgentDetails {
-  id: number;
+  id: string;
   name: string;
   description: string;
   type: string;
@@ -50,7 +50,6 @@ interface AgentDetails {
   lastActive: string;
   tasks: number;
   successRate: string;
-  icon: React.ElementType;
   createdAt: string;
   createdBy: string;
   capabilities: string[];
@@ -66,52 +65,31 @@ interface AgentDetails {
   logs: LogEntry[];
 }
 
-// Mock data for agent details
-const mockAgentDetails: AgentDetails = {
-  id: 1,
-  name: 'CodeAssistant',
-  description: 'Helps with coding tasks and code reviews',
-  type: 'Development',
-  status: 'Active',
-  lastActive: '2 minutes ago',
-  tasks: 42,
-  successRate: '98%',
-  icon: Code,
-  createdAt: '2023-04-15',
-  createdBy: 'John Doe',
-  capabilities: ['Code generation', 'Code review', 'Bug fixing', 'Documentation', 'Refactoring'],
+// Transform API response to UI format
+const transformAgentToDetails = (agent: Agent): AgentDetails => ({
+  id: agent.id,
+  name: agent.name,
+  description: agent.description || 'No description available',
+  type: agent.type,
+  status:
+    agent.status === 'active' ? 'Active' : agent.status === 'error' ? 'Maintenance' : 'Inactive',
+  lastActive: agent.updatedAt ? new Date(agent.updatedAt).toLocaleString() : 'Unknown',
+  tasks: agent.metadata?.tasksCompleted || 0,
+  successRate: agent.metadata?.successRate ? `${agent.metadata.successRate}%` : 'N/A',
+  createdAt: agent.createdAt ? new Date(agent.createdAt).toISOString().split('T')[0] : 'Unknown',
+  createdBy: agent.metadata?.createdBy || 'System',
+  capabilities: agent.capabilities || [],
   configuration: {
-    model: 'GPT-4',
-    temperature: 0.7,
-    maxTokens: 4096,
-    topP: 1,
-    frequencyPenalty: 0,
-    presencePenalty: 0,
+    model: agent.model || 'gpt-4',
+    temperature: agent.configuration?.temperature || 0.7,
+    maxTokens: agent.configuration?.maxTokens || 4096,
+    topP: agent.configuration?.topP || 1,
+    frequencyPenalty: agent.configuration?.frequencyPenalty || 0,
+    presencePenalty: agent.configuration?.presencePenalty || 0,
   },
-  recentTasks: [
-    { id: 1, title: 'Implement new API endpoint', status: 'Completed', completedAt: '2023-06-10' },
-    { id: 2, title: 'Fix authentication bug', status: 'In Progress', startedAt: '2023-06-12' },
-    { id: 3, title: 'Optimize database queries', status: 'Pending', assignedAt: '2023-06-11' },
-  ],
-  logs: [
-    {
-      timestamp: '2023-06-12T14:30:00Z',
-      level: 'INFO',
-      message: 'Agent started task #2: Fix authentication bug',
-    },
-    { timestamp: '2023-06-12T14:35:22Z', level: 'INFO', message: 'Analyzing authentication flow' },
-    {
-      timestamp: '2023-06-12T14:40:15Z',
-      level: 'WARNING',
-      message: 'Detected potential security issue in token validation',
-    },
-    {
-      timestamp: '2023-06-12T14:45:30Z',
-      level: 'INFO',
-      message: 'Implementing fix for token validation',
-    },
-  ],
-};
+  recentTasks: agent.metadata?.recentTasks || [],
+  logs: agent.metadata?.logs || [],
+});
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -132,6 +110,7 @@ const itemVariants = {
 
 /**
  * Agent Detail page component - Premium Design System
+ * Now fetches REAL data from the backend API!
  */
 const AgentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -139,10 +118,59 @@ const AgentDetail: React.FC = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [agent, setAgent] = useState<AgentDetails | null>(null);
 
-  // In a real app, we would fetch the agent details based on the ID
-  const agent = mockAgentDetails;
-  const AgentIcon = agent.icon;
+  // Fetch agent from API
+  useEffect(() => {
+    const fetchAgent = async () => {
+      if (!id) return;
+
+      try {
+        setIsFetching(true);
+        setError(null);
+        const fetchedAgent = await agentService.getAgent(id);
+        setAgent(transformAgentToDetails(fetchedAgent));
+      } catch (err) {
+        console.error('Error fetching agent:', err);
+        setError('Failed to load agent details. Please try again.');
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchAgent();
+  }, [id]);
+
+  // Loading state
+  if (isFetching) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-purple-400 animate-spin mx-auto mb-4" />
+          <p className="text-xl text-gray-400">Loading agent details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !agent) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <p className="text-xl text-red-400 mb-4">{error || 'Agent not found'}</p>
+          <Link to="/agents">
+            <PremiumButton variant="gradient">
+              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Agents
+            </PremiumButton>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // Get status badge with Premium styling
   const getStatusBadge = (status: string) => {
@@ -299,7 +327,7 @@ const AgentDetail: React.FC = () => {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
-                <AgentIcon className="w-8 h-8 text-purple-400" />
+                <Bot className="w-8 h-8 text-purple-400" />
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-1">
