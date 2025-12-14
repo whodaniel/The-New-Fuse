@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Simple select component that matches the API used in the pages
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -20,7 +20,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     // Check if children contain option elements (simple pattern) or components (advanced pattern)
     const hasOptionChildren = React.Children.toArray(children).some(
-      child => React.isValidElement(child) && child.type === 'option'
+      (child) => React.isValidElement(child) && child.type === 'option'
     );
 
     if (hasOptionChildren) {
@@ -70,7 +70,12 @@ interface SelectRootProps {
   defaultValue?: string;
 }
 
-const SelectRoot: React.FC<SelectRootProps> = ({ value, onValueChange, children, defaultValue }) => {
+const SelectRoot: React.FC<SelectRootProps> = ({
+  value,
+  onValueChange,
+  children,
+  defaultValue,
+}) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState(defaultValue || value || '');
 
@@ -85,7 +90,9 @@ const SelectRoot: React.FC<SelectRootProps> = ({ value, onValueChange, children,
   };
 
   return (
-    <SelectContext.Provider value={{ value: currentValue, onValueChange: handleValueChange, open, setOpen }}>
+    <SelectContext.Provider
+      value={{ value: currentValue, onValueChange: handleValueChange, open, setOpen }}
+    >
       {children}
     </SelectContext.Provider>
   );
@@ -221,14 +228,44 @@ const SelectItem: React.FC<SelectItemProps> = ({ value, className = '', children
   );
 };
 
+// SelectGroup for grouping select items
+interface SelectGroupProps {
+  children: React.ReactNode;
+}
+
+const SelectGroup: React.FC<SelectGroupProps> = ({ children }) => {
+  return <div role="group">{children}</div>;
+};
+
+// SelectLabel for group labels
+interface SelectLabelProps {
+  className?: string;
+  children: React.ReactNode;
+}
+
+const SelectLabel: React.FC<SelectLabelProps> = ({ className = '', children }) => {
+  return (
+    <div
+      className={`
+        py-1.5 pl-8 pr-2 text-sm font-semibold text-gray-900
+        ${className}
+      `}
+    >
+      {children}
+    </div>
+  );
+};
+
 // Export both simple and advanced versions
-export { 
-  Select, 
+export {
+  Select,
   SelectRoot as SelectContainer,
-  SelectTrigger, 
-  SelectContent, 
-  SelectItem, 
-  SelectValue 
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
 };
 
 // Default export for backwards compatibility
