@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Check, Plus, Settings2, X } from 'lucide-react';
+import { Tooltip } from '@/components/ui/tooltip';
+import { Check, HelpCircle, Plus, Settings2, X } from 'lucide-react';
 import React, { memo, useState } from 'react';
 import { NodeProps } from 'reactflow';
 import { BaseNode } from './base-node';
@@ -23,11 +24,11 @@ export interface WorkflowInput {
   required?: boolean;
 }
 
-const InputNode: React.FC<NodeProps> = memo(({ id, data }) => {
+const InputNode: React.FC<NodeProps> = memo((props) => {
+  const { data } = props;
   const [newInputName, setNewInputName] = useState('');
   const [newInputType, setNewInputType] = useState<InputType>('text');
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [editingInput, setEditingInput] = useState<string | null>(null);
 
   const inputMapping: Record<string, WorkflowInput> = data.config?.inputMapping || {};
 
@@ -188,199 +189,296 @@ const InputNode: React.FC<NodeProps> = memo(({ id, data }) => {
   }
 
   const renderContent = () => (
-    <div className="space-y-3">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-xs font-medium text-slate-200">Workflow Inputs</Label>
+    <div className="space-y-4">
+      {/* Header with toggle */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Label className="text-sm font-semibold text-slate-100">Workflow Inputs</Label>
+          <Tooltip label="Define the input parameters that users will provide when running this workflow">
+            <HelpCircle className="h-3.5 w-3.5 text-slate-400 hover:text-slate-300 cursor-help" />
+          </Tooltip>
+        </div>
+        <Tooltip
+          label={
+            showAdvanced
+              ? 'Switch to simple mode (hide type selection and validation options)'
+              : 'Switch to advanced mode (show type selection and validation options)'
+          }
+        >
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 px-2 text-xs text-slate-300 hover:text-white hover:bg-slate-700"
+            className="h-7 px-2.5 text-xs text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all"
             onClick={() => setShowAdvanced(!showAdvanced)}
           >
-            <Settings2 className="h-3 w-3 mr-1" />
-            {showAdvanced ? 'Simple' : 'Advanced'}
+            <Settings2 className="h-3.5 w-3.5 mr-1.5" />
+            {showAdvanced ? 'Simple Mode' : 'Advanced Mode'}
           </Button>
-        </div>
+        </Tooltip>
+      </div>
 
-        {/* Existing inputs */}
-        <div className="space-y-2 max-h-48 overflow-y-auto">
-          {Object.keys(inputMapping).length === 0 ? (
-            <div className="text-xs text-slate-400 text-center py-4 border border-dashed border-slate-600 rounded">
-              No inputs defined yet
+      {/* Existing inputs list */}
+      <div className="space-y-2">
+        {Object.keys(inputMapping).length === 0 ? (
+          <div className="text-center py-8 px-4 border-2 border-dashed border-slate-600/50 rounded-lg bg-slate-800/30">
+            <div className="flex flex-col items-center gap-2">
+              <div className="text-slate-500 text-sm font-medium">No inputs defined yet</div>
+              <div className="text-xs text-slate-400 max-w-[200px]">
+                Add your first input below to get started
+              </div>
             </div>
-          ) : (
-            Object.entries(inputMapping).map(([key, input]) => (
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
+            {Object.entries(inputMapping).map(([key, input]) => (
               <div
                 key={key}
-                className="bg-slate-700 rounded-lg px-3 py-2.5 border border-slate-600 hover:border-slate-500 transition-colors"
+                className="bg-slate-700/50 rounded-lg px-3 py-2.5 border border-slate-600/50 hover:border-slate-500 hover:bg-slate-700/70 transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <div
-                        className={`${getTypeBadgeColor(input.type)} text-white text-xs font-bold px-1.5 py-0.5 rounded flex items-center justify-center`}
-                        style={{ minWidth: '24px' }}
-                        title={input.type}
-                      >
-                        {getTypeIcon(input.type)}
-                      </div>
+                      <Tooltip label={`Type: ${input.type}`}>
+                        <div
+                          className={`${getTypeBadgeColor(input.type)} text-white text-xs font-bold px-2 py-0.5 rounded-md flex items-center justify-center shadow-sm`}
+                          style={{ minWidth: '28px' }}
+                        >
+                          {getTypeIcon(input.type)}
+                        </div>
+                      </Tooltip>
                       <span className="text-sm font-semibold text-white truncate">{key}</span>
-                      {input.required && <span className="text-red-400 text-xs font-bold">*</span>}
+                      {input.required && (
+                        <Tooltip label="This field is required">
+                          <span className="text-red-400 text-xs font-bold">*</span>
+                        </Tooltip>
+                      )}
                     </div>
 
                     {showAdvanced && (
-                      <div className="mt-2 space-y-1.5 pl-8">
-                        <Select
-                          value={input.type}
-                          onValueChange={(value) => handleUpdateInputType(key, value as InputType)}
-                        >
-                          <SelectTrigger className="h-7 text-xs bg-slate-800 border-slate-600 text-white">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-slate-800 border-slate-600">
-                            <SelectItem
-                              value="text"
-                              className="text-xs text-white hover:bg-slate-700"
-                            >
-                              Text
-                            </SelectItem>
-                            <SelectItem
-                              value="number"
-                              className="text-xs text-white hover:bg-slate-700"
-                            >
-                              Number
-                            </SelectItem>
-                            <SelectItem
-                              value="boolean"
-                              className="text-xs text-white hover:bg-slate-700"
-                            >
-                              Boolean
-                            </SelectItem>
-                            <SelectItem
-                              value="select"
-                              className="text-xs text-white hover:bg-slate-700"
-                            >
-                              Select
-                            </SelectItem>
-                            <SelectItem
-                              value="textarea"
-                              className="text-xs text-white hover:bg-slate-700"
-                            >
-                              Textarea
-                            </SelectItem>
-                            <SelectItem
-                              value="date"
-                              className="text-xs text-white hover:bg-slate-700"
-                            >
-                              Date
-                            </SelectItem>
-                            <SelectItem
-                              value="json"
-                              className="text-xs text-white hover:bg-slate-700"
-                            >
-                              JSON
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <div className="mt-2.5 space-y-2 pl-9">
+                        <div>
+                          <Label className="text-xs text-slate-300 mb-1 block">Input Type</Label>
+                          <Select
+                            value={input.type}
+                            onValueChange={(value: string) =>
+                              handleUpdateInputType(key, value as InputType)
+                            }
+                          >
+                            <SelectTrigger className="h-8 text-xs bg-slate-800 border-slate-600 text-white hover:bg-slate-750 transition-colors">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-800 border-slate-600">
+                              <SelectItem
+                                value="text"
+                                className="text-xs text-white hover:bg-slate-700 cursor-pointer"
+                              >
+                                📝 Text
+                              </SelectItem>
+                              <SelectItem
+                                value="number"
+                                className="text-xs text-white hover:bg-slate-700 cursor-pointer"
+                              >
+                                🔢 Number
+                              </SelectItem>
+                              <SelectItem
+                                value="boolean"
+                                className="text-xs text-white hover:bg-slate-700 cursor-pointer"
+                              >
+                                ✓ Boolean (Yes/No)
+                              </SelectItem>
+                              <SelectItem
+                                value="select"
+                                className="text-xs text-white hover:bg-slate-700 cursor-pointer"
+                              >
+                                ▼ Select (Dropdown)
+                              </SelectItem>
+                              <SelectItem
+                                value="textarea"
+                                className="text-xs text-white hover:bg-slate-700 cursor-pointer"
+                              >
+                                📄 Textarea (Multi-line)
+                              </SelectItem>
+                              <SelectItem
+                                value="date"
+                                className="text-xs text-white hover:bg-slate-700 cursor-pointer"
+                              >
+                                📅 Date
+                              </SelectItem>
+                              <SelectItem
+                                value="json"
+                                className="text-xs text-white hover:bg-slate-700 cursor-pointer"
+                              >
+                                {'{ }'} JSON Object
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
 
                         <Button
                           variant="ghost"
                           size="sm"
-                          className={`h-7 px-2 text-xs w-full justify-start ${
+                          className={`h-7 px-2 text-xs w-full justify-start transition-all ${
                             input.required
-                              ? 'text-red-400 hover:text-red-300'
-                              : 'text-slate-300 hover:text-white'
-                          } hover:bg-slate-800`}
+                              ? 'text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20'
+                              : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                          }`}
                           onClick={() => handleToggleRequired(key)}
                         >
                           <Check
-                            className={`h-3 w-3 mr-1 ${input.required ? 'opacity-100' : 'opacity-30'}`}
+                            className={`h-3.5 w-3.5 mr-2 transition-opacity ${
+                              input.required ? 'opacity-100' : 'opacity-30'
+                            }`}
                           />
-                          Required
+                          {input.required ? 'Required Field' : 'Optional Field'}
                         </Button>
                       </div>
                     )}
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 flex-shrink-0 text-slate-300 hover:text-red-400 hover:bg-red-500/20"
-                    onClick={() => handleRemoveInput(key)}
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </Button>
+                  <Tooltip label="Remove this input">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 shrink-0 text-slate-400 hover:text-red-400 hover:bg-red-500/20 transition-all"
+                      onClick={() => handleRemoveInput(key)}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </Tooltip>
                 </div>
               </div>
-            ))
-          )}
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Add new input form */}
+      <div className="space-y-3 pt-3 border-t border-slate-600/50">
+        <div className="flex items-center gap-2">
+          <Label className="text-sm font-medium text-slate-200">Add New Input</Label>
+          <Tooltip label="Create a new input field that users will fill in when running this workflow">
+            <HelpCircle className="h-3.5 w-3.5 text-slate-400 hover:text-slate-300 cursor-help" />
+          </Tooltip>
         </div>
 
-        {/* Add new input form */}
-        <div className="space-y-2 pt-2 border-t border-slate-600">
-          <Label className="text-xs font-medium text-slate-200">Add New Input</Label>
-
-          <div className="space-y-2">
+        <div className="space-y-2.5">
+          <div>
+            <Label className="text-xs text-slate-300 mb-1.5 block">
+              Input Name <span className="text-red-400">*</span>
+            </Label>
             <Input
-              className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
-              placeholder="Input name (e.g., 'username', 'age')"
+              className="h-9 text-sm bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              placeholder="e.g., username, email, age, description..."
               value={newInputName}
-              onChange={(e: any) => setNewInputName(e.target.value)}
-              onKeyDown={(e: any) => e.key === 'Enter' && handleAddInput()}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewInputName(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                e.key === 'Enter' && newInputName.trim() && handleAddInput()
+              }
             />
+            {newInputName.length > 0 && newInputName.length < 2 && (
+              <p className="text-xs text-amber-400 mt-1">Name should be at least 2 characters</p>
+            )}
+          </div>
 
+          <div>
+            <Label className="text-xs text-slate-300 mb-1.5 block">Input Type</Label>
             <Select
               value={newInputType}
-              onValueChange={(value) => setNewInputType(value as InputType)}
+              onValueChange={(value: string) => setNewInputType(value as InputType)}
             >
-              <SelectTrigger className="h-9 text-xs bg-slate-700 border-slate-600 text-white">
-                <SelectValue placeholder="Select type" />
+              <SelectTrigger className="h-9 text-sm bg-slate-700/50 border-slate-600 text-white hover:bg-slate-700 transition-colors">
+                <SelectValue placeholder="Select input type..." />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-600">
-                <SelectItem value="text" className="text-xs text-white hover:bg-slate-700">
-                  📝 Text
+                <SelectItem
+                  value="text"
+                  className="text-sm text-white hover:bg-slate-700 cursor-pointer"
+                >
+                  📝 Text — Single-line text input
                 </SelectItem>
-                <SelectItem value="number" className="text-xs text-white hover:bg-slate-700">
-                  🔢 Number
+                <SelectItem
+                  value="number"
+                  className="text-sm text-white hover:bg-slate-700 cursor-pointer"
+                >
+                  🔢 Number — Numeric values only
                 </SelectItem>
-                <SelectItem value="boolean" className="text-xs text-white hover:bg-slate-700">
-                  ✓ Boolean (Yes/No)
+                <SelectItem
+                  value="boolean"
+                  className="text-sm text-white hover:bg-slate-700 cursor-pointer"
+                >
+                  ✓ Boolean — True/False or Yes/No
                 </SelectItem>
-                <SelectItem value="select" className="text-xs text-white hover:bg-slate-700">
-                  ▼ Select (Dropdown)
+                <SelectItem
+                  value="select"
+                  className="text-sm text-white hover:bg-slate-700 cursor-pointer"
+                >
+                  ▼ Select — Dropdown with predefined options
                 </SelectItem>
-                <SelectItem value="textarea" className="text-xs text-white hover:bg-slate-700">
-                  📄 Textarea (Multi-line)
+                <SelectItem
+                  value="textarea"
+                  className="text-sm text-white hover:bg-slate-700 cursor-pointer"
+                >
+                  📄 Textarea — Multi-line text input
                 </SelectItem>
-                <SelectItem value="date" className="text-xs text-white hover:bg-slate-700">
-                  📅 Date
+                <SelectItem
+                  value="date"
+                  className="text-sm text-white hover:bg-slate-700 cursor-pointer"
+                >
+                  📅 Date — Date picker
                 </SelectItem>
-                <SelectItem value="json" className="text-xs text-white hover:bg-slate-700">
-                  {'{}'} JSON Object
+                <SelectItem
+                  value="json"
+                  className="text-sm text-white hover:bg-slate-700 cursor-pointer"
+                >
+                  {'{ }'} JSON — Structured data object
                 </SelectItem>
               </SelectContent>
             </Select>
-
-            <Button
-              variant="default"
-              size="sm"
-              className="h-9 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium"
-              onClick={handleAddInput}
-              disabled={!newInputName.trim()}
-            >
-              <Plus className="h-4 w-4 mr-1.5" />
-              Add Input
-            </Button>
           </div>
+
+          <Button
+            variant="default"
+            size="sm"
+            className="h-9 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleAddInput}
+            disabled={!newInputName.trim() || newInputName.length < 2}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Input Field
+          </Button>
+          {!newInputName.trim() && (
+            <p className="text-xs text-slate-400 text-center">Enter a name to add an input</p>
+          )}
         </div>
       </div>
+
+      {/* Custom scrollbar styles */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(51, 65, 85, 0.3);
+            border-radius: 3px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 3px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.7);
+          }
+        `,
+        }}
+      />
     </div>
   );
 
   return (
     <BaseNode
-      id={id}
+      {...props}
       data={{
         ...data,
         name: data.name || 'Workflow Input',
