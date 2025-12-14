@@ -143,6 +143,7 @@ model AgentMetadata {
 }
 
 enum AgentType {
+  // ============ CORE TYPES (Original) ============
   BASIC
   CHAT
   WORKFLOW
@@ -152,6 +153,126 @@ enum AgentType {
   CONVERSATIONAL
   IDE_EXTENSION
   API
+
+  // ============ SYSTEM/ORCHESTRATION AGENTS ============
+  ORCHESTRATOR // Master coordination agent
+  BROKER // Message routing and queue management
+  MONITOR // System health and performance monitoring
+  VALIDATOR // Input/output validation
+  ROUTER // Task/message routing decisions
+  SCHEDULER // Time-based task scheduling
+  GATEWAY // API gateway and protocol translation
+
+  // ============ CLI AGENTS ============
+  CLI_CODER // Command-line coding assistant (Cline, Aider)
+  CLI_DEBUGGER // CLI-based debugging
+  CLI_DEVOPS // DevOps CLI operations
+  CLI_DATABASE // Database CLI operations
+  CLI_GIT // Git operations
+  CLI_SHELL // General shell operations
+
+  // ============ IDE EXTENSION AGENTS ============
+  IDE_VSCODE // VS Code specific
+  IDE_CURSOR // Cursor IDE
+  IDE_WINDSURF // Windsurf IDE
+  IDE_JETBRAINS // JetBrains IDEs
+  IDE_NEOVIM // Neovim/Vim
+  IDE_EMACS // Emacs
+
+  // ============ BROWSER AGENTS ============
+  BROWSER_GEMINI // Google Gemini
+  BROWSER_CLAUDE // Claude Web
+  BROWSER_CHATGPT // ChatGPT Web
+  BROWSER_COPILOT // GitHub Copilot Web
+  BROWSER_PERPLEXITY // Perplexity AI
+  BROWSER_PHIND // Phind
+
+  // ============ GITHUB INTEGRATED ============
+  GITHUB_JULES // Google Jules (direct GitHub commits)
+  GITHUB_COPILOT // GitHub Copilot
+  GITHUB_ACTIONS // GitHub Actions automation
+  GITHUB_CODESPACES // Codespaces integration
+
+  // ============ CODE/DEVELOPMENT AGENTS ============
+  CODE_GENERATOR // Code generation specialist
+  CODE_REVIEWER // Code review specialist
+  CODE_REFACTORER // Refactoring specialist
+  CODE_DOCUMENTER // Documentation generator
+  CODE_TESTER // Test generation
+  CODE_ARCHITECT // Architecture design
+  CODE_OPTIMIZER // Performance optimization
+  CODE_SECURITY // Security auditing
+  CODE_MIGRATOR // Code migration
+  CODE_TRANSLATOR // Language translation
+
+  // ============ DATA AGENTS ============
+  DATA_ANALYST // Data analysis
+  DATA_ENGINEER // Data pipeline
+  DATA_SCIENTIST // ML/AI modeling
+  DATA_VISUALIZER // Visualization
+  DATA_CLEANER // Data cleaning
+  DATA_VALIDATOR // Data validation
+
+  // ============ INFRASTRUCTURE AGENTS ============
+  INFRA_DEVOPS // DevOps operations
+  INFRA_CLOUD // Cloud management
+  INFRA_KUBERNETES // K8s operations
+  INFRA_DOCKER // Container management
+  INFRA_TERRAFORM // IaC operations
+  INFRA_MONITORING // Infrastructure monitoring
+
+  // ============ DOCUMENTATION AGENTS ============
+  DOC_WRITER // Technical writing
+  DOC_API // API documentation
+  DOC_README // README generation
+  DOC_CHANGELOG // Changelog management
+  DOC_TUTORIAL // Tutorial creation
+
+  // ============ TESTING AGENTS ============
+  TEST_UNIT // Unit testing
+  TEST_INTEGRATION // Integration testing
+  TEST_E2E // End-to-end testing
+  TEST_PERFORMANCE // Performance testing
+  TEST_SECURITY // Security testing
+  TEST_ACCESSIBILITY // Accessibility testing
+
+  // ============ AI/ML AGENTS ============
+  AI_TRAINER // Model training
+  AI_EVALUATOR // Model evaluation
+  AI_PROMPT_ENGINEER // Prompt optimization
+  AI_RAG // RAG operations
+  AI_EMBEDDINGS // Embedding generation
+  AI_FINE_TUNER // Fine-tuning specialist
+
+  // ============ COMMUNICATION AGENTS ============
+  COMM_TRANSLATOR // Language translation
+  COMM_SUMMARIZER // Content summarization
+  COMM_WRITER // Content writing
+  COMM_EMAIL // Email handling
+  COMM_SLACK // Slack integration
+  COMM_DISCORD // Discord integration
+
+  // ============ RESEARCH AGENTS ============
+  RESEARCH_WEB // Web research
+  RESEARCH_ACADEMIC // Academic research
+  RESEARCH_MARKET // Market research
+  RESEARCH_COMPETITOR // Competitor analysis
+
+  // ============ SPECIALIZED DOMAIN AGENTS ============
+  DOMAIN_LEGAL // Legal analysis
+  DOMAIN_FINANCE // Financial analysis
+  DOMAIN_HEALTHCARE // Healthcare domain
+  DOMAIN_EDUCATION // Education domain
+  DOMAIN_ECOMMERCE // E-commerce domain
+  DOMAIN_GAMING // Gaming domain
+
+  // ============ TNF FRAMEWORK AGENTS ============
+  TNF_CORE // The New Fuse itself as an agent
+  TNF_ONBOARDING // Agent onboarding specialist
+  TNF_COORDINATOR // Task coordination
+  TNF_HANDOFF // Handoff management
+  TNF_HEARTBEAT // Heartbeat monitoring
+  TNF_CLEANUP // System cleanup
 }
 
 enum AgentStatus {
