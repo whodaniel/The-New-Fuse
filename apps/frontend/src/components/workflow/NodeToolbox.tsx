@@ -4,6 +4,7 @@ import {
   Bot,
   CheckCircle,
   Code,
+  FileText,
   GitBranch,
   Layers,
   Network,
@@ -39,6 +40,14 @@ const nodeTypes: NodeTypeItem[] = [
     description: 'Use an MCP tool or command',
     category: 'tool',
     color: 'bg-emerald-100 text-emerald-600',
+  },
+  {
+    type: 'prompt',
+    label: 'Prompt Template',
+    icon: <FileText className="h-5 w-5" />,
+    description: 'Use versioned prompt templates',
+    category: 'tool',
+    color: 'bg-violet-100 text-violet-600',
   },
 
   // Flow control nodes
