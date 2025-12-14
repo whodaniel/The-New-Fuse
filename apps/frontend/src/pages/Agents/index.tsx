@@ -1,104 +1,98 @@
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { agentService, type Agent } from '@/services/AgentService';
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
   Bot,
   CheckCircle,
   Clock,
-  Code,
-  Database,
-  FileText,
   Filter,
+  Loader2,
   MoreVertical,
   Plus,
+  RefreshCw,
   Search,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Mock data for agents
-const mockAgents = [
-  {
-    id: 1,
-    name: 'CodeAssistant',
-    description: 'Helps with coding tasks and code reviews',
-    type: 'Development',
-    status: 'Active',
-    lastActive: '2 minutes ago',
-    tasks: 42,
-    successRate: '98%',
-    icon: Code,
-  },
-  {
-    id: 2,
-    name: 'DataAnalyzer',
-    description: 'Analyzes data and generates insights',
-    type: 'Analytics',
-    status: 'Active',
-    lastActive: '15 minutes ago',
-    tasks: 38,
-    successRate: '95%',
-    icon: Database,
-  },
-  {
-    id: 3,
-    name: 'ContentWriter',
-    description: 'Creates and edits content for various platforms',
-    type: 'Content',
-    status: 'Inactive',
-    lastActive: '2 days ago',
-    tasks: 31,
-    successRate: '92%',
-    icon: FileText,
-  },
-  {
-    id: 4,
-    name: 'BugHunter',
-    description: 'Identifies and fixes bugs in the codebase',
-    type: 'QA',
-    status: 'Maintenance',
-    lastActive: '1 hour ago',
-    tasks: 27,
-    successRate: '89%',
-    icon: Bot,
-  },
-  {
-    id: 5,
-    name: 'APIIntegrator',
-    description: 'Handles API integrations and data synchronization',
-    type: 'Development',
-    status: 'Active',
-    lastActive: '30 minutes ago',
-    tasks: 24,
-    successRate: '94%',
-    icon: Code,
-  },
-  {
-    id: 6,
-    name: 'DocumentationBot',
-    description: 'Creates and maintains documentation',
-    type: 'Content',
-    status: 'Active',
-    lastActive: '45 minutes ago',
-    tasks: 19,
-    successRate: '97%',
-    icon: FileText,
-  },
-];
+// Transformed UI Agent interface
+interface UIAgent {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  status: 'Active' | 'Inactive' | 'Maintenance';
+  lastActive: string;
+  tasks: number;
+  successRate: string;
+  capabilities: string[];
+}
+
+// Transform API agent to UI format
+const transformAgent = (agent: Agent): UIAgent => ({
+  id: agent.id,
+  name: agent.name,
+  description: agent.description || 'No description available',
+  type: agent.type || 'General',
+  status:
+    agent.status === 'active' ? 'Active' : agent.status === 'error' ? 'Maintenance' : 'Inactive',
+  lastActive: agent.updatedAt ? formatTimeAgo(new Date(agent.updatedAt)) : 'Unknown',
+  tasks: agent.metadata?.tasksCompleted || 0,
+  successRate: agent.metadata?.successRate ? `${agent.metadata.successRate}%` : 'N/A',
+  capabilities: agent.capabilities || [],
+});
+
+// Format time ago helper
+function formatTimeAgo(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+  return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+}
 
 /**
- * Agents page component
+ * Agents page component - Now with REAL data from the backend API!
  */
 const Agents: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [agents, setAgents] = useState<UIAgent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch agents from API
+  useEffect(() => {
+    fetchAgents();
+  }, []);
+
+  const fetchAgents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fetchedAgents = await agentService.getAgents();
+      setAgents(fetchedAgents.map(transformAgent));
+    } catch (err) {
+      console.error('Error fetching agents:', err);
+      setError('Failed to load agents. Please try again.');
+      setAgents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter agents based on search query and filters
-  const filteredAgents = mockAgents.filter((agent) => {
+  const filteredAgents = agents.filter((agent) => {
     const matchesSearch =
       agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       agent.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -109,10 +103,10 @@ const Agents: React.FC = () => {
   });
 
   // Get unique agent types for filter
-  const agentTypes = ['All', ...new Set(mockAgents.map((agent) => agent.type))];
+  const agentTypes = ['All', ...new Set(agents.map((agent) => agent.type))];
 
   // Get unique agent statuses for filter
-  const agentStatuses = ['All', ...new Set(mockAgents.map((agent) => agent.status))];
+  const agentStatuses = ['All', 'Active', 'Inactive', 'Maintenance'];
 
   // Get status badge color
   const getStatusBadge = (status: string) => {
@@ -143,16 +137,51 @@ const Agents: React.FC = () => {
     }
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
+          <p className="text-xl text-gray-400">Loading your AI agents...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <p className="text-xl text-red-400 mb-4">{error}</p>
+          <PremiumButton variant="gradient" onClick={fetchAgents}>
+            <RefreshCw className="w-4 h-4 mr-2" /> Try Again
+          </PremiumButton>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-lg">
         <div>
           <h1 className="text-5xl font-extrabold text-white mb-sm font-heading">My AI Agents</h1>
-          <p className="text-lg text-gray-400">Manage and monitor your deployed AI workforce</p>
+          <p className="text-lg text-gray-400">
+            Manage and monitor your deployed AI workforce
+            <span className="text-blue-400 ml-2">({agents.length} agents)</span>
+          </p>
         </div>
-        <PremiumButton variant="gradient" size="lg" glow onClick={() => navigate('/agents/new')}>
-          <Plus className="mr-sm h-5 w-5" /> Deploy New Agent
-        </PremiumButton>
+        <div className="flex gap-3">
+          <PremiumButton variant="glass" size="sm" onClick={fetchAgents}>
+            <RefreshCw className="h-4 w-4" />
+          </PremiumButton>
+          <PremiumButton variant="gradient" size="lg" glow onClick={() => navigate('/agents/new')}>
+            <Plus className="mr-sm h-5 w-5" /> Deploy New Agent
+          </PremiumButton>
+        </div>
       </div>
 
       {/* Enhanced Search and Filters */}
@@ -164,7 +193,7 @@ const Agents: React.FC = () => {
               placeholder="Search agents by name or description..."
               className="h-14 pl-14 text-base bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex gap-md">
@@ -172,7 +201,9 @@ const Agents: React.FC = () => {
               <select
                 className="h-14 w-full px-lg py-md rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
                 value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setFilterType(e.target.value)
+                }
               >
                 {agentTypes.map((type: string) => (
                   <option key={type} value={type} className="bg-gray-900">
@@ -186,7 +217,9 @@ const Agents: React.FC = () => {
               <select
                 className="h-14 w-full px-lg py-md rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm text-base text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer hover:bg-white/10 transition-all"
                 value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setFilterStatus(e.target.value)
+                }
               >
                 {agentStatuses.map((status) => (
                   <option key={status} value={status} className="bg-gray-900">
@@ -207,7 +240,7 @@ const Agents: React.FC = () => {
             key={agent.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.05 }}
           >
             <GlassCard
               hoverEffect
@@ -217,14 +250,14 @@ const Agents: React.FC = () => {
               <div>
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:from-blue-500/20 group-hover:to-purple-500/20 transition-all">
-                    <agent.icon className="h-6 w-6 text-blue-400 group-hover:text-blue-300 transition-colors" />
+                    <Bot className="h-6 w-6 text-blue-400 group-hover:text-blue-300 transition-colors" />
                   </div>
                   <div className="flex items-center">
                     {getStatusBadge(agent.status)}
                     <button
                       className="ml-2 p-1 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/10"
                       title="More options"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         // Menu logic here
                       }}
