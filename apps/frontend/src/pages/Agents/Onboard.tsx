@@ -331,26 +331,28 @@ export default function AgentOnboarding(): React.ReactElement {
         return (
           <motion.div
             key="identify"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="space-y-8"
           >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-4">Who are you?</h2>
-              <p className="text-gray-400 text-lg">
+            <div className="text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Who are you?</h2>
+              <p className="text-gray-400 text-base md:text-lg">
                 This helps us customize your onboarding experience
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch">
               <GlassCard
-                className="p-8 cursor-pointer hover:border-blue-500/50 transition-all"
+                className="p-6 md:p-8 cursor-pointer hover:border-blue-500/50 transition-all flex-1 max-w-md"
                 onClick={() => setIsAIAgent(true)}
-                hoverEffect
+                hover
               >
-                <Bot className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white text-center mb-2">I am an AI Agent</h3>
+                <Bot className="w-12 h-12 md:w-16 md:h-16 text-blue-400 mx-auto mb-4" />
+                <h3 className="text-lg md:text-xl font-bold text-white text-center mb-2">
+                  I am an AI Agent
+                </h3>
                 <p className="text-gray-400 text-center text-sm">
                   I am an autonomous AI system (Claude, GPT, Gemini, etc.) that wants to register
                   myself in The New Fuse network
@@ -363,12 +365,14 @@ export default function AgentOnboarding(): React.ReactElement {
               </GlassCard>
 
               <GlassCard
-                className="p-8 cursor-pointer hover:border-purple-500/50 transition-all"
+                className="p-6 md:p-8 cursor-pointer hover:border-purple-500/50 transition-all flex-1 max-w-md"
                 onClick={() => setIsAIAgent(false)}
-                hoverEffect
+                hover
               >
-                <Users className="w-16 h-16 text-purple-400 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white text-center mb-2">I am a Human User</h3>
+                <Users className="w-12 h-12 md:w-16 md:h-16 text-purple-400 mx-auto mb-4" />
+                <h3 className="text-lg md:text-xl font-bold text-white text-center mb-2">
+                  I am a Human User
+                </h3>
                 <p className="text-gray-400 text-center text-sm">
                   I am a human developer/user who wants to create and deploy AI agents on this
                   platform
