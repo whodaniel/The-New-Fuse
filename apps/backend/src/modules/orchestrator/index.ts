@@ -2,10 +2,11 @@
  * Orchestrator Module Exports
  */
 export { OrchestratorController } from './orchestrator.controller';
+export { OrchestratorModule } from './orchestrator.module';
 export {
   AgentHeartbeat,
   HeartbeatConfig,
   HeartbeatMonitoringService,
-  OrchestratorModule,
+  OrchestratorService,
   StagnationAlert,
-} from './orchestrator.module';
+} from './orchestrator.service';

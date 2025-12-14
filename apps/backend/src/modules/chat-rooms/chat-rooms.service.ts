@@ -1,18 +1,24 @@
-import { Injectable, Logger, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
-  CreateChatRoomDto,
-  UpdateChatRoomDto,
   AddParticipantDto,
-  CreateMessageDto,
-  UpdateMessageDto,
+  ChatRoomParticipantRole,
   ChatRoomResponseDto,
+  CreateChatRoomDto,
+  CreateMessageDto,
+  ExportConversationDto,
   MessageResponseDto,
+  MessageType,
   ParticipantResponseDto,
   SearchMessagesDto,
-  ExportConversationDto,
-  ChatRoomParticipantRole,
-  MessageType,
+  UpdateChatRoomDto,
+  UpdateMessageDto,
 } from './dto/chat-room.dto';
 
 @Injectable()
@@ -27,7 +33,7 @@ export class ChatRoomsService {
 
   async createChatRoom(
     createDto: CreateChatRoomDto,
-    ownerId: string,
+    ownerId: string
   ): Promise<ChatRoomResponseDto> {
     try {
       const room = await this.prisma.$transaction(async (tx) => {
@@ -64,15 +70,17 @@ export class ChatRoomsService {
         if (createDto.participantUserIds?.length) {
           await Promise.all(
             createDto.participantUserIds.map((userId) =>
-              tx.chatRoomParticipant.create({
-                data: {
-                  roomId: chatRoom.id,
-                  userId,
-                  role: ChatRoomParticipantRole.PARTICIPANT,
-                },
-              }).catch((error) => {
-                this.logger.warn(`Failed to add user ${userId}: ${error.message}`);
-              })
+              tx.chatRoomParticipant
+                .create({
+                  data: {
+                    roomId: chatRoom.id,
+                    userId,
+                    role: ChatRoomParticipantRole.PARTICIPANT,
+                  },
+                })
+                .catch((error) => {
+                  this.logger.warn(`Failed to add user ${userId}: ${error.message}`);
+                })
             )
           );
         }
@@ -81,15 +89,17 @@ export class ChatRoomsService {
         if (createDto.participantAgentIds?.length) {
           await Promise.all(
             createDto.participantAgentIds.map((agentId) =>
-              tx.chatRoomParticipant.create({
-                data: {
-                  roomId: chatRoom.id,
-                  agentId,
-                  role: ChatRoomParticipantRole.PARTICIPANT,
-                },
-              }).catch((error) => {
-                this.logger.warn(`Failed to add agent ${agentId}: ${error.message}`);
-              })
+              tx.chatRoomParticipant
+                .create({
+                  data: {
+                    roomId: chatRoom.id,
+                    agentId,
+                    role: ChatRoomParticipantRole.PARTICIPANT,
+                  },
+                })
+                .catch((error) => {
+                  this.logger.warn(`Failed to add agent ${agentId}: ${error.message}`);
+                })
             )
           );
         }
@@ -158,7 +168,7 @@ export class ChatRoomsService {
   async updateChatRoom(
     roomId: string,
     updateDto: UpdateChatRoomDto,
-    userId: string,
+    userId: string
   ): Promise<ChatRoomResponseDto> {
     await this.verifyAdminAccess(roomId, userId);
 
@@ -193,7 +203,7 @@ export class ChatRoomsService {
   async addParticipant(
     roomId: string,
     addDto: AddParticipantDto,
-    requesterId: string,
+    requesterId: string
   ): Promise<ParticipantResponseDto> {
     await this.verifyModeratorAccess(roomId, requesterId);
 
@@ -231,7 +241,7 @@ export class ChatRoomsService {
   async removeParticipant(
     roomId: string,
     participantId: string,
-    requesterId: string,
+    requesterId: string
   ): Promise<void> {
     await this.verifyModeratorAccess(roomId, requesterId);
 
@@ -263,7 +273,7 @@ export class ChatRoomsService {
     roomId: string,
     participantId: string,
     role: ChatRoomParticipantRole,
-    requesterId: string,
+    requesterId: string
   ): Promise<ParticipantResponseDto> {
     await this.verifyAdminAccess(roomId, requesterId);
 
@@ -284,7 +294,7 @@ export class ChatRoomsService {
     roomId: string,
     createDto: CreateMessageDto,
     senderId: string,
-    isAgent: boolean = false,
+    isAgent: boolean = false
   ): Promise<MessageResponseDto> {
     await this.verifyAccess(roomId, senderId);
 
@@ -324,7 +334,7 @@ export class ChatRoomsService {
     roomId: string,
     userId: string,
     page: number = 1,
-    limit: number = 50,
+    limit: number = 50
   ): Promise<{ messages: MessageResponseDto[]; total: number; page: number; totalPages: number }> {
     await this.verifyAccess(roomId, userId);
 
@@ -369,7 +379,7 @@ export class ChatRoomsService {
   async updateMessage(
     messageId: string,
     updateDto: UpdateMessageDto,
-    userId: string,
+    userId: string
   ): Promise<MessageResponseDto> {
     const message = await this.prisma.message.findUnique({
       where: { id: messageId },
@@ -433,11 +443,7 @@ export class ChatRoomsService {
   // TYPING INDICATORS & READ RECEIPTS
   // =================================================================
 
-  async setTypingIndicator(
-    roomId: string,
-    userId: string,
-    isTyping: boolean,
-  ): Promise<void> {
+  async setTypingIndicator(roomId: string, userId: string, isTyping: boolean): Promise<void> {
     await this.prisma.chatRoomParticipant.updateMany({
       where: {
         roomId,
@@ -455,7 +461,7 @@ export class ChatRoomsService {
     messageId: string,
     roomId: string,
     userId: string,
-    isAgent: boolean = false,
+    isAgent: boolean = false
   ): Promise<void> {
     await this.prisma.readReceipt.upsert({
       where: {
@@ -493,7 +499,7 @@ export class ChatRoomsService {
 
   async searchMessages(
     searchDto: SearchMessagesDto,
-    userId: string,
+    userId: string
   ): Promise<{ messages: MessageResponseDto[]; total: number }> {
     const page = searchDto.page ?? 1;
     const limit = searchDto.limit ?? 50;
@@ -548,10 +554,7 @@ export class ChatRoomsService {
     };
   }
 
-  async exportConversation(
-    exportDto: ExportConversationDto,
-    userId: string,
-  ): Promise<any> {
+  async exportConversation(exportDto: ExportConversationDto, userId: string): Promise<any> {
     await this.verifyAccess(exportDto.roomId, userId);
 
     const room = await this.prisma.chatRoom.findUnique({
@@ -630,9 +633,10 @@ export class ChatRoomsService {
     });
 
     // In a real implementation, this would use an AI service to generate a summary
-    const summary = `Conversation summary for room ${roomId}:\n` +
+    const summary =
+      `Conversation summary for room ${roomId}:\n` +
       `Total messages: ${messages.length}\n` +
-      `Participants discussed: ${messages.map(m => m.content.substring(0, 50)).join(', ')}...`;
+      `Participants discussed: ${messages.map((m) => m.content.substring(0, 50)).join(', ')}...`;
 
     // Store summary as system message
     await this.createMessage(
@@ -642,7 +646,7 @@ export class ChatRoomsService {
         type: MessageType.SUMMARY,
       },
       'system',
-      true,
+      true
     );
 
     return summary;
@@ -666,7 +670,7 @@ export class ChatRoomsService {
   // HELPER METHODS
   // =================================================================
 
-  private async verifyAccess(roomId: string, userId: string): Promise<void> {
+  async verifyAccess(roomId: string, userId: string): Promise<void> {
     const participant = await this.prisma.chatRoomParticipant.findFirst({
       where: {
         roomId,
@@ -680,7 +684,7 @@ export class ChatRoomsService {
     }
   }
 
-  private async verifyModeratorAccess(roomId: string, userId: string): Promise<void> {
+  async verifyModeratorAccess(roomId: string, userId: string): Promise<void> {
     const participant = await this.prisma.chatRoomParticipant.findFirst({
       where: {
         roomId,
@@ -697,7 +701,7 @@ export class ChatRoomsService {
     }
   }
 
-  private async verifyAdminAccess(roomId: string, userId: string): Promise<void> {
+  async verifyAdminAccess(roomId: string, userId: string): Promise<void> {
     const participant = await this.prisma.chatRoomParticipant.findFirst({
       where: {
         roomId,

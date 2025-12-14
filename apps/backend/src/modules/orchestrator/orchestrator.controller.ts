@@ -7,7 +7,7 @@
 
 import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { OrchestratorModule } from './orchestrator.module';
+import { OrchestratorService } from './orchestrator.service';
 
 interface RegisterAgentDto {
   agentId: string;
@@ -35,13 +35,13 @@ interface ActivityDto {
 export class OrchestratorController {
   private readonly logger = new Logger('OrchestratorController');
 
-  constructor(private readonly orchestratorModule: OrchestratorModule) {}
+  constructor(private readonly orchestratorService: OrchestratorService) {}
 
   @Get('health')
   @ApiOperation({ summary: 'Get system health and agent metrics' })
   @ApiResponse({ status: 200, description: 'System health metrics' })
   getSystemHealth() {
-    const health = this.orchestratorModule.getSystemHealth();
+    const health = this.orchestratorService.getSystemHealth();
     return {
       status: 'operational',
       timestamp: new Date().toISOString(),
@@ -61,7 +61,7 @@ export class OrchestratorController {
   registerAgent(@Body() dto: RegisterAgentDto) {
     this.logger.log(`📝 Registering agent: ${dto.agentId} (${dto.agentName || 'unnamed'})`);
 
-    this.orchestratorModule.registerAgent(dto.agentId, dto.expectedResponseTimeMs);
+    this.orchestratorService.registerAgent(dto.agentId, dto.expectedResponseTimeMs);
 
     return {
       success: true,
@@ -75,7 +75,7 @@ export class OrchestratorController {
   @ApiOperation({ summary: 'Record a heartbeat from an agent' })
   @ApiResponse({ status: 200, description: 'Heartbeat recorded' })
   recordHeartbeat(@Body() dto: HeartbeatDto) {
-    this.orchestratorModule.recordAgentHeartbeat(dto.agentId, dto.taskId);
+    this.orchestratorService.recordAgentHeartbeat(dto.agentId, dto.taskId);
 
     return {
       success: true,
@@ -87,7 +87,7 @@ export class OrchestratorController {
   @ApiOperation({ summary: 'Get all registered agents and their status' })
   @ApiResponse({ status: 200, description: 'List of all agents' })
   getAllAgents() {
-    const heartbeatService = this.orchestratorModule.getHeartbeatService();
+    const heartbeatService = this.orchestratorService.getHeartbeatService();
 
     if (!heartbeatService) {
       return { agents: [], message: 'Heartbeat service not initialized' };
@@ -110,7 +110,7 @@ export class OrchestratorController {
   @ApiOperation({ summary: 'Get status of a specific agent' })
   @ApiResponse({ status: 200, description: 'Agent status' })
   getAgentStatus(@Param('agentId') agentId: string) {
-    const heartbeatService = this.orchestratorModule.getHeartbeatService();
+    const heartbeatService = this.orchestratorService.getHeartbeatService();
 
     if (!heartbeatService) {
       return { error: 'Heartbeat service not initialized' };
@@ -136,9 +136,9 @@ export class OrchestratorController {
   @ApiOperation({ summary: 'Get TNF Core Agent status (The New Fuse as Master Agent)' })
   @ApiResponse({ status: 200, description: 'TNF Core status' })
   getTNFStatus() {
-    const heartbeatService = this.orchestratorModule.getHeartbeatService();
+    const heartbeatService = this.orchestratorService.getHeartbeatService();
     const tnfStatus = heartbeatService?.getAgentStatus('tnf-core');
-    const health = this.orchestratorModule.getSystemHealth();
+    const health = this.orchestratorService.getSystemHealth();
 
     return {
       identity: 'TNF Core - The New Fuse Master Agent',

@@ -11,6 +11,7 @@ export interface BaseNodeProps extends NodeProps {
     config: Record<string, any>;
     onUpdate?: (data: any) => void;
     onDelete?: () => void;
+    renderContent?: () => React.ReactNode;
   };
   inputHandles?: Array<{ id: string; label: string }>;
   outputHandles?: Array<{ id: string; label: string }>;
@@ -22,7 +23,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
     data,
     inputHandles = [{ id: 'default', label: 'Input' }],
     outputHandles = [{ id: 'default', label: 'Output' }],
-    ...props
+    ..._props
   }) => {
     // Default to expanded so users can see node content immediately
     const [expanded, setExpanded] = useState(true);
@@ -64,7 +65,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
         ))}
 
         <Card className="w-full shadow-2xl bg-slate-800 border-slate-600 text-white">
-          <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between bg-gradient-to-r from-slate-800 to-slate-750 border-b border-slate-600">
+          <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between bg-linear-to-r from-slate-800 to-slate-750 border-b border-slate-600">
             <div className="flex-1 min-w-0">
               <CardTitle className="text-base font-semibold text-white truncate mb-1">
                 {data.name}
@@ -73,7 +74,7 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
                 <div className="text-xs text-slate-200 font-medium">Type: {data.type}</div>
               )}
             </div>
-            <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
+            <div className="flex items-center space-x-1 ml-2 shrink-0">
               <Button
                 variant="ghost"
                 size="icon"

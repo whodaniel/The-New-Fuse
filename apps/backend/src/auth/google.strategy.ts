@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { BaseOAuthStrategy } from './base-oauth.strategy';
 
@@ -11,12 +11,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
   constructor(
     private configService: ConfigService,
-    private prisma: PrismaService,
+    private prisma: PrismaService
   ) {
     super({
-      clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
-      clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
-      callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL') ||
+      clientID: configService.get<string>('GOOGLE_CLIENT_ID') || 'MISSING_GOOGLE_CLIENT_ID',
+      clientSecret:
+        configService.get<string>('GOOGLE_CLIENT_SECRET') || 'MISSING_GOOGLE_CLIENT_SECRET',
+      callbackURL:
+        configService.get<string>('GOOGLE_CALLBACK_URL') ||
         `${configService.get<string>('API_URL')}/auth/google/callback`,
       scope: ['email', 'profile'],
     });
@@ -36,7 +38,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     accessToken: string,
     refreshToken: string,
     profile: any,
-    done: VerifyCallback,
+    done: VerifyCallback
   ): Promise<any> {
     return this.baseStrategy.validateOAuthUser(profile, accessToken, refreshToken, done);
   }

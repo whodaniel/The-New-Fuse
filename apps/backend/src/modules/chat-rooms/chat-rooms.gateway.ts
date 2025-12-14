@@ -1,15 +1,15 @@
+import { Logger } from '@nestjs/common';
 import {
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
-  MessageBody,
-  ConnectedSocket,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger, UseGuards } from '@nestjs/common';
 import { ChatRoomsService } from './chat-rooms.service';
 import { CreateMessageDto, MessageType } from './dto/chat-room.dto';
 
@@ -26,9 +26,7 @@ interface AuthenticatedSocket extends Socket {
   },
   namespace: '/chat-rooms',
 })
-export class ChatRoomsGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class ChatRoomsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
@@ -45,8 +43,8 @@ export class ChatRoomsGateway
   async handleConnection(client: AuthenticatedSocket) {
     try {
       // Extract user/agent info from handshake (in real app, verify JWT token)
-      const userId = client.handshake.auth?.userId || client.handshake.query?.userId as string;
-      const agentId = client.handshake.auth?.agentId || client.handshake.query?.agentId as string;
+      const userId = client.handshake.auth?.userId || (client.handshake.query?.userId as string);
+      const agentId = client.handshake.auth?.agentId || (client.handshake.query?.agentId as string);
       const isAgent = !!agentId;
 
       if (!userId && !agentId) {
@@ -65,7 +63,7 @@ export class ChatRoomsGateway
       if (!this.userSockets.has(identifier)) {
         this.userSockets.set(identifier, new Set());
       }
-      this.userSockets.get(identifier).add(client.id);
+      this.userSockets.get(identifier)?.add(client.id);
 
       this.logger.log(
         `Client connected: ${client.id} (${isAgent ? 'Agent' : 'User'}: ${identifier})`
@@ -78,7 +76,7 @@ export class ChatRoomsGateway
         isAgent,
       });
     } catch (error) {
-      this.logger.error(`Error handling connection: ${error.message}`);
+      this.logger.error(`Error handling connection: ${(error as any).message}`);
       client.disconnect();
     }
   }
@@ -117,7 +115,7 @@ export class ChatRoomsGateway
   @SubscribeMessage('room:join')
   async handleJoinRoom(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string },
+    @MessageBody() data: { roomId: string }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -153,19 +151,19 @@ export class ChatRoomsGateway
 
       return { success: true, roomId };
     } catch (error) {
-      this.logger.error(`Error joining room: ${error.message}`);
+      this.logger.error(`Error joining room: ${(error as any).message}`);
       client.emit('error', {
         event: 'room:join',
-        message: error.message,
+        message: (error as any).message,
       });
-      return { success: false, error: error.message };
+      return { success: false, error: (error as any).message };
     }
   }
 
   @SubscribeMessage('room:leave')
   async handleLeaveRoom(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string },
+    @MessageBody() data: { roomId: string }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -191,8 +189,8 @@ export class ChatRoomsGateway
 
       return { success: true, roomId };
     } catch (error) {
-      this.logger.error(`Error leaving room: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error leaving room: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
@@ -203,7 +201,7 @@ export class ChatRoomsGateway
   @SubscribeMessage('message:send')
   async handleSendMessage(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string; message: CreateMessageDto },
+    @MessageBody() data: { roomId: string; message: CreateMessageDto }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -214,7 +212,7 @@ export class ChatRoomsGateway
         roomId,
         message,
         userId,
-        client.isAgent,
+        client.isAgent
       );
 
       // Broadcast the message to all room participants
@@ -227,19 +225,19 @@ export class ChatRoomsGateway
 
       return { success: true, message: createdMessage };
     } catch (error) {
-      this.logger.error(`Error sending message: ${error.message}`);
+      this.logger.error(`Error sending message: ${(error as any).message}`);
       client.emit('error', {
         event: 'message:send',
-        message: error.message,
+        message: (error as any).message,
       });
-      return { success: false, error: error.message };
+      return { success: false, error: (error as any).message };
     }
   }
 
   @SubscribeMessage('message:edit')
   async handleEditMessage(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string; messageId: string; content: string },
+    @MessageBody() data: { roomId: string; messageId: string; content: string }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -249,7 +247,7 @@ export class ChatRoomsGateway
       const updatedMessage = await this.chatRoomsService.updateMessage(
         messageId,
         { content },
-        userId,
+        userId
       );
 
       // Broadcast the update to all room participants
@@ -260,15 +258,15 @@ export class ChatRoomsGateway
 
       return { success: true, message: updatedMessage };
     } catch (error) {
-      this.logger.error(`Error editing message: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error editing message: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
   @SubscribeMessage('message:delete')
   async handleDeleteMessage(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string; messageId: string },
+    @MessageBody() data: { roomId: string; messageId: string }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -285,8 +283,8 @@ export class ChatRoomsGateway
 
       return { success: true, messageId };
     } catch (error) {
-      this.logger.error(`Error deleting message: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error deleting message: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
@@ -297,7 +295,7 @@ export class ChatRoomsGateway
   @SubscribeMessage('typing:start')
   async handleTypingStart(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string },
+    @MessageBody() data: { roomId: string }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -315,15 +313,15 @@ export class ChatRoomsGateway
 
       return { success: true };
     } catch (error) {
-      this.logger.error(`Error setting typing indicator: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error setting typing indicator: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
   @SubscribeMessage('typing:stop')
   async handleTypingStop(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string },
+    @MessageBody() data: { roomId: string }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -341,8 +339,8 @@ export class ChatRoomsGateway
 
       return { success: true };
     } catch (error) {
-      this.logger.error(`Error clearing typing indicator: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error clearing typing indicator: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
@@ -353,7 +351,7 @@ export class ChatRoomsGateway
   @SubscribeMessage('message:read')
   async handleMessageRead(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string; messageId: string },
+    @MessageBody() data: { roomId: string; messageId: string }
   ) {
     try {
       const userId = client.userId || client.agentId;
@@ -373,8 +371,8 @@ export class ChatRoomsGateway
 
       return { success: true };
     } catch (error) {
-      this.logger.error(`Error marking message as read: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error marking message as read: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
@@ -385,7 +383,7 @@ export class ChatRoomsGateway
   @SubscribeMessage('agent:execute-command')
   async handleAgentExecuteCommand(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { roomId: string; command: string; params: any },
+    @MessageBody() data: { roomId: string; command: string; params: any }
   ) {
     try {
       if (!client.isAgent) {
@@ -412,7 +410,7 @@ export class ChatRoomsGateway
           type: MessageType.SYSTEM,
         },
         client.agentId,
-        true,
+        true
       );
 
       this.server.to(roomId).emit('message:new', {
@@ -422,15 +420,16 @@ export class ChatRoomsGateway
 
       return { success: true };
     } catch (error) {
-      this.logger.error(`Error executing agent command: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error executing agent command: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
   @SubscribeMessage('agent:create-task')
   async handleAgentCreateTask(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       roomId: string;
       taskData: {
         title: string;
@@ -438,7 +437,7 @@ export class ChatRoomsGateway
         assignedTo?: string;
         dueDate?: string;
       };
-    },
+    }
   ) {
     try {
       if (!client.isAgent) {
@@ -456,7 +455,7 @@ export class ChatRoomsGateway
           taskAssignment: taskData,
         },
         client.agentId,
-        true,
+        true
       );
 
       // Broadcast to room
@@ -474,8 +473,8 @@ export class ChatRoomsGateway
 
       return { success: true, message };
     } catch (error) {
-      this.logger.error(`Error creating task: ${error.message}`);
-      return { success: false, error: error.message };
+      this.logger.error(`Error creating task: ${(error as any).message}`);
+      return { success: false, error: (error as any).message };
     }
   }
 
