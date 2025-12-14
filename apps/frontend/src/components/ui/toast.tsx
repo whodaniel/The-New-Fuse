@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 // Toast Types
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -20,7 +20,7 @@ interface Toast {
 
 interface ToastContextType {
   toasts: Toast[];
-  addToast: (toast: ToastProps) => void;
+  addToast: (messageOrProps: string | ToastProps, type?: ToastType) => void;
   removeToast: (id: string) => void;
   toast: (toast: ToastProps) => void;
 }
@@ -38,19 +38,41 @@ export const useToast = () => {
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = (toastProps: ToastProps) => {
+  const addToast = (messageOrProps: string | ToastProps, type?: ToastType) => {
     const id = Math.random().toString(36).substring(2, 9);
-    const newToast: Toast = { 
-      id, 
-      title: toastProps.title,
-      description: toastProps.description,
-      variant: toastProps.variant || 'info',
-      duration: toastProps.duration || 5000
-    };
+    let newToast: Toast;
+
+    // Support both calling conventions:
+    // addToast('message', 'success') and addToast({ title: 'Title', variant: 'success' })
+    if (typeof messageOrProps === 'string') {
+      // Simple format: addToast(message, type)
+      const variantMap: Record<ToastType, Toast['variant']> = {
+        success: 'success',
+        error: 'destructive',
+        warning: 'warning',
+        info: 'info',
+      };
+      newToast = {
+        id,
+        title: messageOrProps,
+        variant: type ? variantMap[type] : 'info',
+        duration: 5000,
+      };
+    } else {
+      // Object format: addToast({ title, description, variant, duration })
+      newToast = {
+        id,
+        title: messageOrProps.title,
+        description: messageOrProps.description,
+        variant: messageOrProps.variant || 'info',
+        duration: messageOrProps.duration || 5000,
+      };
+    }
+
     setToasts((prevToasts) => [...prevToasts, newToast]);
 
     // Auto-remove after duration
-    if (newToast.duration > 0) {
+    if (newToast.duration && newToast.duration > 0) {
       setTimeout(() => {
         removeToast(id);
       }, newToast.duration);
@@ -61,8 +83,11 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   };
 
+  // toast function for object-style calls
+  const toastFn = (props: ToastProps) => addToast(props);
+
   return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast, toast: addToast }}>
+    <ToastContext.Provider value={{ toasts, addToast, removeToast, toast: toastFn }}>
       {children}
     </ToastContext.Provider>
   );
@@ -80,10 +105,10 @@ export const Toaster = () => {
             toast.variant === 'success'
               ? 'bg-green-500'
               : toast.variant === 'destructive'
-              ? 'bg-red-500'
-              : toast.variant === 'warning'
-              ? 'bg-yellow-500'
-              : 'bg-blue-500'
+                ? 'bg-red-500'
+                : toast.variant === 'warning'
+                  ? 'bg-yellow-500'
+                  : 'bg-blue-500'
           }`}
           role="alert"
         >
@@ -109,7 +134,9 @@ export const Toaster = () => {
 // Global toast instance for direct usage
 let globalAddToast: ((message: string, type: ToastType, duration?: number) => void) | undefined;
 
-export const setGlobalToast = (addToast: (message: string, type: ToastType, duration?: number) => void) => {
+export const setGlobalToast = (
+  addToast: (message: string, type: ToastType, duration?: number) => void
+) => {
   globalAddToast = addToast;
 };
 

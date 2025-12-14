@@ -141,11 +141,18 @@ export const UnifiedAgentCreator: React.FC = () => {
   const [selectedSuggestions, setSelectedSuggestions] = useState<Set<number>>(new Set());
 
   // Quick creation state
-  const [quickFormData, setQuickFormData] = useState({
+  const [quickFormData, setQuickFormData] = useState<{
+    name: string;
+    description: string;
+    type: string;
+    role: string;
+    capabilities: Record<string, boolean>;
+  }>({
     name: '',
     description: '',
     type: 'assistant',
     role: 'general',
+    capabilities: {},
   });
 
   // Chat context data (from URL params or state)
@@ -1609,6 +1616,12 @@ export const UnifiedAgentCreator: React.FC = () => {
         return renderAIAssisted();
       case 'from-chat':
         return renderFromChat();
+      case 'terminal-claude':
+        return renderTerminalClaude();
+      case 'terminal-native':
+        return renderTerminalNative();
+      case 'terminal-integrated':
+        return renderTerminalIntegrated();
       default:
         return renderPathSelection();
     }

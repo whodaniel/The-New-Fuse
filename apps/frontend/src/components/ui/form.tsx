@@ -1,9 +1,16 @@
 import React, { createContext, useContext } from 'react';
-import { Control, FieldPath, FieldValues, UseFormReturn, ControllerFieldState, ControllerRenderProps } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  ControllerRenderProps,
+  FieldPath,
+  FieldValues,
+  UseFormReturn,
+} from 'react-hook-form';
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TName;
 };
@@ -53,67 +60,64 @@ const Form = <TFieldValues extends FieldValues = FieldValues>({
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   control,
   name,
   render,
 }: {
-  control: Control<TFieldValues, TName>;
+  control: Control<TFieldValues>;
   name: TName;
   render: ({ field }: { field: ControllerRenderProps<TFieldValues, TName> }) => React.ReactElement;
 }) => {
   return (
     <FormFieldContext.Provider value={{ name }}>
-      {render({ field: { name, value: '', onChange: () => {} } })}
+      <Controller control={control} name={name} render={({ field }) => render({ field })} />
     </FormFieldContext.Provider>
   );
 };
 
-const FormItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className = '', ...props }, ref) => {
-  const id = React.useId();
+const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className = '', ...props }, ref) => {
+    const id = React.useId();
 
-  return (
-    <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={`space-y-2 ${className}`} {...props} />
-    </FormItemContext.Provider>
-  );
-});
+    return (
+      <FormItemContext.Provider value={{ id }}>
+        <div ref={ref} className={`space-y-2 ${className}`} {...props} />
+      </FormItemContext.Provider>
+    );
+  }
+);
 
-const FormLabel = React.forwardRef<
-  HTMLLabelElement,
-  React.LabelHTMLAttributes<HTMLLabelElement>
->(({ className = '', ...props }, ref) => {
-  const { formItemId } = useFormField();
+const FormLabel = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(
+  ({ className = '', ...props }, ref) => {
+    const { formItemId } = useFormField();
 
-  return (
-    <label
-      ref={ref}
-      className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
-      htmlFor={formItemId}
-      {...props}
-    />
-  );
-});
+    return (
+      <label
+        ref={ref}
+        className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
+        htmlFor={formItemId}
+        {...props}
+      />
+    );
+  }
+);
 
-const FormControl = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ ...props }, ref) => {
-  const { formItemId, formDescriptionId, formMessageId } = useFormField();
+const FormControl = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ ...props }, ref) => {
+    const { formItemId, formDescriptionId, formMessageId } = useFormField();
 
-  return (
-    <div
-      ref={ref}
-      id={formItemId}
-      aria-describedby={`${formDescriptionId} ${formMessageId}`}
-      {...props}
-    />
-  );
-});
+    return (
+      <div
+        ref={ref}
+        id={formItemId}
+        aria-describedby={`${formDescriptionId} ${formMessageId}`}
+        {...props}
+      />
+    );
+  }
+);
 
 const FormDescription = React.forwardRef<
   HTMLParagraphElement,
@@ -156,12 +160,12 @@ FormDescription.displayName = 'FormDescription';
 FormMessage.displayName = 'FormMessage';
 
 export {
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };
