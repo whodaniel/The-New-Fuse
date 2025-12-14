@@ -79,7 +79,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
       event.preventDefault();
 
       const reactFlowBounds = event.currentTarget.getBoundingClientRect();
-      const nodeData = event.dataTransfer.getData('application/reactflow');
+      const nodeData = event.dataTransfer.getData('application/reactflow/data');
 
       if (!nodeData) return;
 
