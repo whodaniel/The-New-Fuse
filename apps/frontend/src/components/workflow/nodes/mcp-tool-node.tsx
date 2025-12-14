@@ -141,7 +141,7 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
             value={value || ''}
             onChange={(e: any) => handleParamChange(paramName, e.target.value)}
             placeholder={paramConfig.description || paramName}
-            className="h-7 text-xs"
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
           />
         );
       case 'number':
@@ -152,7 +152,7 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
             value={value}
             onChange={(e: any) => handleParamChange(paramName, parseFloat(e.target.value))}
             placeholder={paramConfig.description || paramName}
-            className="h-7 text-xs"
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
           />
         );
       case 'boolean':
@@ -163,9 +163,9 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
               type="checkbox"
               checked={value}
               onChange={(e: any) => handleParamChange(paramName, e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+              className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500"
             />
-            <label htmlFor={`param-${id}-${paramName}`} className="text-xs">
+            <label htmlFor={`param-${id}-${paramName}`} className="text-xs text-slate-200">
               {paramConfig.description || paramName}
             </label>
           </div>
@@ -185,7 +185,7 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
               }
             }}
             placeholder={paramConfig.description || paramName}
-            className="h-16 text-xs"
+            className="h-24 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 font-mono resize-none"
           />
         );
       default:
@@ -195,7 +195,7 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
             value={value || ''}
             onChange={(e: any) => handleParamChange(paramName, e.target.value)}
             placeholder={paramConfig.description || paramName}
-            className="h-7 text-xs"
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
           />
         );
     }
@@ -211,7 +211,7 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const renderContent = () => (
     <div className="space-y-3">
       <div>
-        <Label htmlFor={`server-${id}`} className="text-xs">
+        <Label htmlFor={`server-${id}`} className="text-xs font-medium text-slate-200">
           MCP Server
         </Label>
         <Select
@@ -219,12 +219,19 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
           onValueChange={handleServerChange}
           disabled={loading}
         >
-          <SelectTrigger id={`server-${id}`} className="text-xs h-7 mt-1">
+          <SelectTrigger
+            id={`server-${id}`}
+            className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+          >
             <SelectValue placeholder="Select server" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-slate-800 border-slate-600">
             {servers.map((server) => (
-              <SelectItem key={server.id} value={server.name} className="text-xs">
+              <SelectItem
+                key={server.id}
+                value={server.name}
+                className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+              >
                 {server.name}
               </SelectItem>
             ))}
@@ -234,16 +241,23 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
 
       {selectedServer && (
         <div>
-          <Label htmlFor={`tool-${id}`} className="text-xs">
+          <Label htmlFor={`tool-${id}`} className="text-xs font-medium text-slate-200">
             Tool
           </Label>
           <Select value={data.config?.mcpTool || ''} onValueChange={handleToolChange}>
-            <SelectTrigger id={`tool-${id}`} className="text-xs h-7 mt-1">
+            <SelectTrigger
+              id={`tool-${id}`}
+              className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+            >
               <SelectValue placeholder="Select tool" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-slate-800 border-slate-600">
               {selectedServer.tools.map((tool) => (
-                <SelectItem key={tool.name} value={tool.name} className="text-xs">
+                <SelectItem
+                  key={tool.name}
+                  value={tool.name}
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
                   {tool.name}
                 </SelectItem>
               ))}
@@ -256,11 +270,11 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
         selectedTool.parameters &&
         Object.keys(selectedTool.parameters).length > 0 && (
           <div className="space-y-2">
-            <Label className="text-xs">Parameters</Label>
+            <Label className="text-xs font-medium text-slate-200">Parameters</Label>
             {Object.entries(selectedTool.parameters).map(([paramName, paramConfig]) => (
               <div key={paramName} className="space-y-1">
-                <Label htmlFor={`param-${id}-${paramName}`} className="text-xs">
-                  {paramName} {paramConfig.required && <span className="text-red-500">*</span>}
+                <Label htmlFor={`param-${id}-${paramName}`} className="text-xs text-slate-200">
+                  {paramName} {paramConfig.required && <span className="text-red-400">*</span>}
                 </Label>
                 {renderParamInput(paramName, paramConfig)}
               </div>

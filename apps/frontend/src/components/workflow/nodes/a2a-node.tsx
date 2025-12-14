@@ -1,5 +1,12 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import React, { memo } from 'react';
@@ -116,84 +123,182 @@ const A2ANode: React.FC<NodeProps> = memo(({ id, data }) => {
   const renderContent = () => (
     <div className="space-y-3">
       <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="basic">Basic</TabsTrigger>
-          <TabsTrigger value="advanced">Advanced</TabsTrigger>
-          <TabsTrigger value="payload">Payload</TabsTrigger>
-          <TabsTrigger value="protocol">Protocol</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-slate-700 border-slate-600">
+          <TabsTrigger
+            value="basic"
+            className="text-xs data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+          >
+            Basic
+          </TabsTrigger>
+          <TabsTrigger
+            value="advanced"
+            className="text-xs data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+          >
+            Advanced
+          </TabsTrigger>
+          <TabsTrigger
+            value="payload"
+            className="text-xs data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+          >
+            Payload
+          </TabsTrigger>
+          <TabsTrigger
+            value="protocol"
+            className="text-xs data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+          >
+            Protocol
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`agent-select-${id}`} className="text-xs">
+            <Label htmlFor={`agent-select-${id}`} className="text-xs font-medium text-slate-200">
               Target Agent
             </Label>
-            <select
-              id={`agent-select-${id}`}
-              className="w-full text-xs h-8 rounded-md border border-input"
-              value={config.agentId || ''}
-              onChange={(e: any) => handleAgentChange(e.target.value)}
-            >
-              <option value="">Select Agent</option>
-              {data.agents?.map((agent: any) => (
-                <option key={agent.id} value={agent.id}>
-                  {agent.name}
-                </option>
-              )) || (
-                <>
-                  <option value="agent-1">Code Assistant</option>
-                  <option value="agent-2">Data Analyzer</option>
-                  <option value="agent-3">Content Writer</option>
-                </>
-              )}
-            </select>
+            <Select value={config.agentId || ''} onValueChange={handleAgentChange}>
+              <SelectTrigger
+                id={`agent-select-${id}`}
+                className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              >
+                <SelectValue placeholder="Select Agent" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                {data.agents?.map((agent: any) => (
+                  <SelectItem
+                    key={agent.id}
+                    value={agent.id}
+                    className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                  >
+                    {agent.name}
+                  </SelectItem>
+                )) || (
+                  <>
+                    <SelectItem
+                      value="agent-1"
+                      className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                    >
+                      Code Assistant
+                    </SelectItem>
+                    <SelectItem
+                      value="agent-2"
+                      className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                    >
+                      Data Analyzer
+                    </SelectItem>
+                    <SelectItem
+                      value="agent-3"
+                      className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                    >
+                      Content Writer
+                    </SelectItem>
+                  </>
+                )}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`pattern-select-${id}`} className="text-xs">
+            <Label htmlFor={`pattern-select-${id}`} className="text-xs font-medium text-slate-200">
               Communication Pattern
             </Label>
-            <select
-              id={`pattern-select-${id}`}
-              className="w-full text-xs h-8 rounded-md border border-input"
+            <Select
               value={config.communicationPattern || 'direct'}
-              onChange={(e: any) => handlePatternChange(e.target.value)}
+              onValueChange={handlePatternChange}
             >
-              <option value="direct">Direct</option>
-              <option value="broadcast">Broadcast</option>
-              <option value="request-response">Request-Response</option>
-              <option value="publish-subscribe">Publish-Subscribe</option>
-            </select>
+              <SelectTrigger
+                id={`pattern-select-${id}`}
+                className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              >
+                <SelectValue placeholder="Select pattern" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem
+                  value="direct"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Direct
+                </SelectItem>
+                <SelectItem
+                  value="broadcast"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Broadcast
+                </SelectItem>
+                <SelectItem
+                  value="request-response"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Request-Response
+                </SelectItem>
+                <SelectItem
+                  value="publish-subscribe"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Publish-Subscribe
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`message-type-${id}`} className="text-xs">
+            <Label htmlFor={`message-type-${id}`} className="text-xs font-medium text-slate-200">
               Message Type
             </Label>
-            <select
-              id={`message-type-${id}`}
-              className="w-full text-xs h-8 rounded-md border border-input"
+            <Select
               value={config.messageType || 'TASK_REQUEST'}
-              onChange={(e: any) => handleMessageTypeChange(e.target.value)}
+              onValueChange={handleMessageTypeChange}
             >
-              <option value="TASK_REQUEST">Task Request</option>
-              <option value="QUERY">Query</option>
-              <option value="NOTIFICATION">Notification</option>
-              <option value="STATUS_UPDATE">Status Update</option>
-              <option value="ERROR">Error</option>
-            </select>
+              <SelectTrigger
+                id={`message-type-${id}`}
+                className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              >
+                <SelectValue placeholder="Select message type" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem
+                  value="TASK_REQUEST"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Task Request
+                </SelectItem>
+                <SelectItem
+                  value="QUERY"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Query
+                </SelectItem>
+                <SelectItem
+                  value="NOTIFICATION"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Notification
+                </SelectItem>
+                <SelectItem
+                  value="STATUS_UPDATE"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Status Update
+                </SelectItem>
+                <SelectItem
+                  value="ERROR"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Error
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </TabsContent>
 
         <TabsContent value="advanced" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`timeout-${id}`} className="text-xs">
+            <Label htmlFor={`timeout-${id}`} className="text-xs font-medium text-slate-200">
               Timeout (ms)
             </Label>
             <Input
               id={`timeout-${id}`}
               type="number"
-              className="h-7 text-xs"
+              className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
               value={config.timeout || 30000}
               onChange={(e: any) => handleTimeoutChange(parseInt(e.target.value))}
               min={0}
@@ -202,13 +307,13 @@ const A2ANode: React.FC<NodeProps> = memo(({ id, data }) => {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`retry-count-${id}`} className="text-xs">
+            <Label htmlFor={`retry-count-${id}`} className="text-xs font-medium text-slate-200">
               Retry Count
             </Label>
             <Input
               id={`retry-count-${id}`}
               type="number"
-              className="h-7 text-xs"
+              className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
               value={config.retryCount || 3}
               onChange={(e: any) => handleRetryCountChange(parseInt(e.target.value))}
               min={0}
@@ -217,66 +322,106 @@ const A2ANode: React.FC<NodeProps> = memo(({ id, data }) => {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`priority-${id}`} className="text-xs">
+            <Label htmlFor={`priority-${id}`} className="text-xs font-medium text-slate-200">
               Priority
             </Label>
-            <select
-              id={`priority-${id}`}
-              className="w-full text-xs h-8 rounded-md border border-input"
-              value={config.priority || 'medium'}
-              onChange={(e: any) => handlePriorityChange(e.target.value)}
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
+            <Select value={config.priority || 'medium'} onValueChange={handlePriorityChange}>
+              <SelectTrigger
+                id={`priority-${id}`}
+                className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              >
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem
+                  value="low"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Low
+                </SelectItem>
+                <SelectItem
+                  value="medium"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  Medium
+                </SelectItem>
+                <SelectItem
+                  value="high"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  High
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </TabsContent>
 
         <TabsContent value="payload" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`payload-template-${id}`} className="text-xs">
+            <Label
+              htmlFor={`payload-template-${id}`}
+              className="text-xs font-medium text-slate-200"
+            >
               Payload Template
             </Label>
             <Textarea
               id={`payload-template-${id}`}
-              className="h-32 text-xs font-mono resize-none"
+              className="h-32 text-xs font-mono resize-none bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
               placeholder="Enter payload template in JSON format. Use {{variable}} for dynamic values."
               value={
                 config.payloadTemplate || '{\n  "data": {{input}},\n  "context": {{context}}\n}'
               }
               onChange={(e: any) => handlePayloadTemplateChange(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              Use {{ input }} and {{ context }} to reference input values.
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Use {'{{ input }}'} and {'{{ context }}'} to reference input values.
             </p>
           </div>
         </TabsContent>
 
         <TabsContent value="protocol" className="space-y-3">
           <div className="space-y-1">
-            <Label htmlFor={`protocol-version-${id}`} className="text-xs">
+            <Label
+              htmlFor={`protocol-version-${id}`}
+              className="text-xs font-medium text-slate-200"
+            >
               Protocol Version
             </Label>
-            <select
-              id={`protocol-version-${id}`}
-              className="w-full text-xs h-8 rounded-md border border-input"
+            <Select
               value={config.protocolVersion || '1.0'}
-              onChange={(e: any) => {
+              onValueChange={(value) => {
                 if (data.onUpdate) {
                   data.onUpdate({
                     config: {
                       ...config,
-                      protocolVersion: e.target.value,
+                      protocolVersion: value,
                     },
                   });
                 }
               }}
             >
-              <option value="1.0">A2A Protocol v1.0</option>
-              <option value="2.0">A2A Protocol v2.0</option>
-            </select>
-            <p className="text-xs text-muted-foreground mt-1">
+              <SelectTrigger
+                id={`protocol-version-${id}`}
+                className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              >
+                <SelectValue placeholder="Select protocol version" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem
+                  value="1.0"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  A2A Protocol v1.0
+                </SelectItem>
+                <SelectItem
+                  value="2.0"
+                  className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+                >
+                  A2A Protocol v2.0
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-slate-300 leading-relaxed">
               {config.protocolVersion === '2.0'
                 ? 'v2.0 uses a header/body structure with enhanced metadata.'
                 : 'v1.0 uses a flat message structure with basic metadata.'}
@@ -284,7 +429,10 @@ const A2ANode: React.FC<NodeProps> = memo(({ id, data }) => {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor={`message-encryption-${id}`} className="text-xs">
+            <Label
+              htmlFor={`message-encryption-${id}`}
+              className="text-xs font-medium text-slate-200"
+            >
               Message Encryption
             </Label>
             <div className="flex items-center space-x-2">
@@ -302,13 +450,13 @@ const A2ANode: React.FC<NodeProps> = memo(({ id, data }) => {
                     });
                   }
                 }}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+                className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500"
               />
-              <label htmlFor={`message-encryption-${id}`} className="text-xs">
+              <label htmlFor={`message-encryption-${id}`} className="text-xs text-slate-200">
                 Enable end-to-end encryption
               </label>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-slate-300 leading-relaxed">
               Encrypts message content for secure agent-to-agent communication.
             </p>
           </div>

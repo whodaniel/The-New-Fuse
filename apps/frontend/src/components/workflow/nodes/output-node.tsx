@@ -60,33 +60,47 @@ const OutputNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const renderContent = () => (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label className="text-xs">Workflow Outputs</Label>
+        <Label className="text-xs font-medium text-slate-200">Workflow Outputs</Label>
 
-        <div className="space-y-2 mt-2">
-          {Object.keys(outputMapping).map((key) => (
-            <div key={key} className="flex items-center space-x-2">
-              <div className="flex-grow text-xs font-medium">{key}</div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-5 w-5"
-                onClick={() => handleRemoveOutput(key)}
+        {Object.keys(outputMapping).length === 0 ? (
+          <div className="text-xs text-slate-300 leading-relaxed bg-slate-700/30 p-3 rounded border border-slate-600/50 mt-2">
+            No outputs defined. Add outputs to expose workflow results.
+          </div>
+        ) : (
+          <div className="space-y-2 mt-2">
+            {Object.keys(outputMapping).map((key) => (
+              <div
+                key={key}
+                className="flex items-center space-x-2 bg-slate-700/50 p-2 rounded border border-slate-600"
               >
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
-          ))}
-        </div>
+                <div className="flex-grow text-xs font-medium text-white">{key}</div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-slate-300 hover:text-white hover:bg-slate-600"
+                  onClick={() => handleRemoveOutput(key)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="flex items-center space-x-2 mt-3">
           <Input
-            className="h-7 text-xs flex-grow"
+            className="h-9 text-xs flex-grow bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
             placeholder="New output name"
             value={newOutputKey}
             onChange={(e: any) => setNewOutputKey(e.target.value)}
             onKeyDown={(e: any) => e.key === 'Enter' && handleAddOutput()}
           />
-          <Button variant="outline" size="sm" className="h-7 px-2" onClick={handleAddOutput}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 px-3 border-slate-600 text-white hover:bg-slate-700 bg-slate-700/50"
+            onClick={handleAddOutput}
+          >
             <Plus className="h-3 w-3 mr-1" />
             <span className="text-xs">Add</span>
           </Button>

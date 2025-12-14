@@ -1,4 +1,11 @@
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
@@ -35,34 +42,55 @@ const TransformNode: React.FC<NodeProps> = memo(({ id, data }) => {
 
   const renderContent = () => (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <Label htmlFor={`transform-type-${id}`} className="text-xs">
+      <div className="space-y-2">
+        <Label htmlFor={`transform-type-${id}`} className="text-xs font-medium text-slate-200">
           Transform Type
         </Label>
-        <select
-          id={`transform-type-${id}`}
-          className="w-full text-xs h-8 rounded-md border border-input"
+        <Select
           value={data.config?.transformType || 'javascript'}
-          onChange={(e: any) => handleTransformTypeChange(e.target.value)}
+          onValueChange={handleTransformTypeChange}
         >
-          <option value="javascript">JavaScript</option>
-          <option value="json-path">JSONPath</option>
-          <option value="template">Template</option>
-        </select>
+          <SelectTrigger
+            id={`transform-type-${id}`}
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+          >
+            <SelectValue placeholder="Select transform type" />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-600">
+            <SelectItem
+              value="javascript"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              ⚡ JavaScript
+            </SelectItem>
+            <SelectItem
+              value="json-path"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              🔍 JSONPath
+            </SelectItem>
+            <SelectItem
+              value="template"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              📝 Template
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="space-y-1">
-        <Label htmlFor={`transform-code-${id}`} className="text-xs">
+      <div className="space-y-2">
+        <Label htmlFor={`transform-code-${id}`} className="text-xs font-medium text-slate-200">
           Transform Code
         </Label>
         <Textarea
           id={`transform-code-${id}`}
-          className="h-32 text-xs font-mono resize-none"
+          className="h-32 text-xs font-mono resize-none bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
           placeholder={getPlaceholderByType(data.config?.transformType)}
           value={data.config?.transformCode || ''}
           onChange={(e: any) => handleTransformCodeChange(e.target.value)}
         />
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-slate-300 leading-relaxed bg-slate-700/30 p-2 rounded border border-slate-600/50">
           {getHelpTextByType(data.config?.transformType)}
         </p>
       </div>

@@ -216,7 +216,7 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const renderContent = () => (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor={`workflow-${id}`} className="text-xs">
+        <Label htmlFor={`workflow-${id}`} className="text-xs font-medium text-slate-200">
           Subworkflow
         </Label>
         <Select
@@ -224,12 +224,19 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
           onValueChange={handleWorkflowChange}
           disabled={loading}
         >
-          <SelectTrigger id={`workflow-${id}`} className="text-xs h-7">
+          <SelectTrigger
+            id={`workflow-${id}`}
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+          >
             <SelectValue placeholder="Select workflow" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-slate-800 border-slate-600">
             {workflows.map((workflow) => (
-              <SelectItem key={workflow.id} value={workflow.id} className="text-xs">
+              <SelectItem
+                key={workflow.id}
+                value={workflow.id}
+                className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+              >
                 {workflow.name}
               </SelectItem>
             ))}
@@ -241,7 +248,7 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
         <Button
           variant="outline"
           size="sm"
-          className="text-xs h-7"
+          className="text-xs h-7 border-slate-600 text-white hover:bg-slate-700 bg-slate-700/50"
           onClick={() => setIsDialogOpen(true)}
         >
           <Edit className="h-3 w-3 mr-1" />
@@ -251,7 +258,7 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
         <Button
           variant="outline"
           size="sm"
-          className="text-xs h-7"
+          className="text-xs h-7 border-slate-600 text-white hover:bg-slate-700 bg-slate-700/50"
           onClick={executeSubworkflow}
           disabled={!config.workflowId || isExecuting}
         >
@@ -261,46 +268,59 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
       </div>
 
       {selectedWorkflow && (
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-slate-300">
           <div>Workflow: {selectedWorkflow.name}</div>
           <div>Nodes: {selectedWorkflow.nodes?.length || 0}</div>
         </div>
       )}
 
       {executionResult && (
-        <div className="text-xs bg-muted p-2 rounded-md max-h-20 overflow-auto">
-          <pre className="text-xs">{JSON.stringify(executionResult, null, 2)}</pre>
+        <div className="text-xs bg-slate-700/50 border border-slate-600 p-2 rounded-md max-h-20 overflow-auto">
+          <pre className="text-xs text-slate-200">{JSON.stringify(executionResult, null, 2)}</pre>
         </div>
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-slate-800 border-slate-600 text-white">
           <DialogHeader>
-            <DialogTitle>Configure Subworkflow</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Configure Subworkflow</DialogTitle>
+            <DialogDescription className="text-slate-300">
               Configure input and output mappings for the subworkflow.
             </DialogDescription>
           </DialogHeader>
 
           <Tabs defaultValue="input">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="input">Input Mapping</TabsTrigger>
-              <TabsTrigger value="output">Output Mapping</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-slate-700 border-slate-600">
+              <TabsTrigger
+                value="input"
+                className="data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+              >
+                Input Mapping
+              </TabsTrigger>
+              <TabsTrigger
+                value="output"
+                className="data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+              >
+                Output Mapping
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="input" className="space-y-3">
               <div className="space-y-1">
-                <Label htmlFor={`input-mapping-${id}`} className="text-sm">
+                <Label
+                  htmlFor={`input-mapping-${id}`}
+                  className="text-sm font-medium text-slate-200"
+                >
                   Input Mapping
                 </Label>
                 <Textarea
                   id={`input-mapping-${id}`}
-                  className="font-mono text-xs h-40"
+                  className="font-mono text-xs h-40 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 resize-none"
                   placeholder='{\n  "targetField": "source.path.to.field"\n}'
                   value={config.inputMapping || '{\n  "input": "input"\n}'}
                   onChange={(e: any) => handleInputMappingChange(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   Map input fields to subworkflow variables. Use JSON format with target fields as
                   keys and source paths as values.
                 </p>
@@ -309,17 +329,20 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
 
             <TabsContent value="output" className="space-y-3">
               <div className="space-y-1">
-                <Label htmlFor={`output-mapping-${id}`} className="text-sm">
+                <Label
+                  htmlFor={`output-mapping-${id}`}
+                  className="text-sm font-medium text-slate-200"
+                >
                   Output Mapping
                 </Label>
                 <Textarea
                   id={`output-mapping-${id}`}
-                  className="font-mono text-xs h-40"
+                  className="font-mono text-xs h-40 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 resize-none"
                   placeholder='{\n  "result": "output-node-id.result"\n}'
                   value={config.outputMapping || '{\n  "result": "output"\n}'}
                   onChange={(e: any) => handleOutputMappingChange(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   Map subworkflow results to output fields. Use JSON format with output fields as
                   keys and result paths as values.
                 </p>
@@ -328,7 +351,12 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
           </Tabs>
 
           <DialogFooter>
-            <Button onClick={() => setIsDialogOpen(false)}>Done</Button>
+            <Button
+              onClick={() => setIsDialogOpen(false)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Done
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

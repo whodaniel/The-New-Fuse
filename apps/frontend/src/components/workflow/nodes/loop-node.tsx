@@ -246,21 +246,33 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
   const renderContent = () => (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor={`loop-type-${id}`} className="text-xs">
+        <Label htmlFor={`loop-type-${id}`} className="text-xs font-medium text-slate-200">
           Loop Type
         </Label>
         <Select value={config.loopType || 'count'} onValueChange={handleLoopTypeChange}>
-          <SelectTrigger id={`loop-type-${id}`} className="text-xs h-7">
+          <SelectTrigger
+            id={`loop-type-${id}`}
+            className="h-9 text-xs bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+          >
             <SelectValue placeholder="Select loop type" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="count" className="text-xs">
+          <SelectContent className="bg-slate-800 border-slate-600">
+            <SelectItem
+              value="count"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
               Count (For Loop)
             </SelectItem>
-            <SelectItem value="collection" className="text-xs">
+            <SelectItem
+              value="collection"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
               Collection (ForEach)
             </SelectItem>
-            <SelectItem value="condition" className="text-xs">
+            <SelectItem
+              value="condition"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
               Condition (While)
             </SelectItem>
           </SelectContent>
@@ -271,7 +283,7 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
         <Button
           variant="ghost"
           size="sm"
-          className="text-xs h-7 px-2"
+          className="text-xs h-7 px-2 text-slate-200 hover:text-white hover:bg-slate-700"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? (
@@ -282,7 +294,12 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
           {isExpanded ? 'Hide Details' : 'Show Details'}
         </Button>
 
-        <Button variant="outline" size="sm" className="text-xs h-7" onClick={testLoopCondition}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-xs h-7 border-slate-600 text-white hover:bg-slate-700 bg-slate-700/50"
+          onClick={testLoopCondition}
+        >
           <Play className="h-3 w-3 mr-1" />
           Test
         </Button>
@@ -290,22 +307,40 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
 
       {isExpanded && (
         <Tabs defaultValue={config.loopType || 'count'} onValueChange={handleLoopTypeChange}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="count">Count</TabsTrigger>
-            <TabsTrigger value="collection">Collection</TabsTrigger>
-            <TabsTrigger value="condition">Condition</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-slate-700 border-slate-600">
+            <TabsTrigger
+              value="count"
+              className="text-xs data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+            >
+              Count
+            </TabsTrigger>
+            <TabsTrigger
+              value="collection"
+              className="text-xs data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+            >
+              Collection
+            </TabsTrigger>
+            <TabsTrigger
+              value="condition"
+              className="text-xs data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+            >
+              Condition
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="count" className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor={`iteration-count-${id}`} className="text-xs">
+              <Label
+                htmlFor={`iteration-count-${id}`}
+                className="text-xs font-medium text-slate-200"
+              >
                 Iteration Count
               </Label>
               <Input
                 id={`iteration-count-${id}`}
                 type="number"
                 min="1"
-                className="text-xs h-7"
+                className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                 value={config.iterationCount || 1}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleIterationCountChange(e.target.value)
@@ -314,18 +349,21 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor={`index-variable-${id}`} className="text-xs">
+              <Label
+                htmlFor={`index-variable-${id}`}
+                className="text-xs font-medium text-slate-200"
+              >
                 Index Variable Name
               </Label>
               <Input
                 id={`index-variable-${id}`}
-                className="text-xs h-7"
+                className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                 value={config.indexVariable || 'index'}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleIndexVariableChange(e.target.value)
                 }
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Variable name for the current iteration index.
               </p>
             </div>
@@ -333,52 +371,58 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
 
           <TabsContent value="collection" className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor={`collection-path-${id}`} className="text-xs">
+              <Label
+                htmlFor={`collection-path-${id}`}
+                className="text-xs font-medium text-slate-200"
+              >
                 Collection Path
               </Label>
               <Input
                 id={`collection-path-${id}`}
-                className="text-xs h-7"
+                className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                 value={config.collectionPath || 'items'}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleCollectionPathChange(e.target.value)
                 }
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Path to the collection in the input object (e.g., "data.items").
               </p>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor={`item-variable-${id}`} className="text-xs">
+              <Label htmlFor={`item-variable-${id}`} className="text-xs font-medium text-slate-200">
                 Item Variable Name
               </Label>
               <Input
                 id={`item-variable-${id}`}
-                className="text-xs h-7"
+                className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                 value={config.itemVariable || 'item'}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleItemVariableChange(e.target.value)
                 }
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Variable name for the current collection item.
               </p>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor={`index-variable-collection-${id}`} className="text-xs">
+              <Label
+                htmlFor={`index-variable-collection-${id}`}
+                className="text-xs font-medium text-slate-200"
+              >
                 Index Variable Name
               </Label>
               <Input
                 id={`index-variable-collection-${id}`}
-                className="text-xs h-7"
+                className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                 value={config.indexVariable || 'index'}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleIndexVariableChange(e.target.value)
                 }
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Variable name for the current iteration index.
               </p>
             </div>
@@ -386,37 +430,43 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
 
           <TabsContent value="condition" className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor={`condition-code-${id}`} className="text-xs">
+              <Label
+                htmlFor={`condition-code-${id}`}
+                className="text-xs font-medium text-slate-200"
+              >
                 Condition Code
               </Label>
               <Textarea
                 id={`condition-code-${id}`}
-                className="font-mono text-xs h-20"
+                className="font-mono text-xs h-24 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 resize-none"
                 placeholder="return index < 10;"
                 value={config.conditionCode || 'return index < 10;'}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   handleConditionCodeChange(e.target.value)
                 }
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 JavaScript code that returns a boolean. The loop continues while this condition is
                 true.
               </p>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor={`index-variable-condition-${id}`} className="text-xs">
+              <Label
+                htmlFor={`index-variable-condition-${id}`}
+                className="text-xs font-medium text-slate-200"
+              >
                 Index Variable Name
               </Label>
               <Input
                 id={`index-variable-condition-${id}`}
-                className="text-xs h-7"
+                className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                 value={config.indexVariable || 'index'}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleIndexVariableChange(e.target.value)
                 }
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Variable name for the current iteration index.
               </p>
             </div>
@@ -426,7 +476,7 @@ const LoopNode: React.FC<NodeProps> = memo((props) => {
 
       {testResult && (
         <div
-          className={`text-xs p-2 rounded-md ${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}
+          className={`text-xs p-2 rounded-md ${testResult.success ? 'bg-green-900/30 text-green-300 border border-green-700' : 'bg-red-900/30 text-red-300 border border-red-700'}`}
         >
           {testResult.message}
         </div>

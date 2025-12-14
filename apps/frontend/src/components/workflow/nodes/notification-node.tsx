@@ -1,5 +1,12 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
@@ -61,46 +68,95 @@ const NotificationNode: React.FC<NodeProps> = memo(({ id, data }) => {
   const renderContent = () => (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor={`notification-type-${id}`} className="text-xs">
+        <Label htmlFor={`notification-type-${id}`} className="text-xs font-medium text-slate-200">
           Notification Type
         </Label>
-        <select
-          id={`notification-type-${id}`}
-          className="w-full text-xs h-8 rounded-md border border-input"
-          value={data.config?.type || 'info'}
-          onChange={(e: any) => handleTypeChange(e.target.value)}
-        >
-          <option value="info">Info</option>
-          <option value="success">Success</option>
-          <option value="warning">Warning</option>
-          <option value="error">Error</option>
-        </select>
+        <Select value={data.config?.type || 'info'} onValueChange={handleTypeChange}>
+          <SelectTrigger
+            id={`notification-type-${id}`}
+            className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+          >
+            <SelectValue placeholder="Select type" />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-600">
+            <SelectItem
+              value="info"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              ℹ️ Info
+            </SelectItem>
+            <SelectItem
+              value="success"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              ✅ Success
+            </SelectItem>
+            <SelectItem
+              value="warning"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              ⚠️ Warning
+            </SelectItem>
+            <SelectItem
+              value="error"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              ❌ Error
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor={`notification-channel-${id}`} className="text-xs">
+        <Label
+          htmlFor={`notification-channel-${id}`}
+          className="text-xs font-medium text-slate-200"
+        >
           Channel
         </Label>
-        <select
-          id={`notification-channel-${id}`}
-          className="w-full text-xs h-8 rounded-md border border-input"
-          value={data.config?.channel || 'ui'}
-          onChange={(e: any) => handleChannelChange(e.target.value)}
-        >
-          <option value="ui">UI Toast</option>
-          <option value="email">Email</option>
-          <option value="slack">Slack</option>
-          <option value="webhook">Webhook</option>
-        </select>
+        <Select value={data.config?.channel || 'ui'} onValueChange={handleChannelChange}>
+          <SelectTrigger
+            id={`notification-channel-${id}`}
+            className="h-9 text-xs mt-1.5 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+          >
+            <SelectValue placeholder="Select channel" />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-slate-600">
+            <SelectItem
+              value="ui"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              💬 UI Toast
+            </SelectItem>
+            <SelectItem
+              value="email"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              📧 Email
+            </SelectItem>
+            <SelectItem
+              value="slack"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              💬 Slack
+            </SelectItem>
+            <SelectItem
+              value="webhook"
+              className="text-xs text-white hover:bg-slate-700 focus:bg-slate-700"
+            >
+              🔗 Webhook
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor={`notification-title-${id}`} className="text-xs">
+        <Label htmlFor={`notification-title-${id}`} className="text-xs font-medium text-slate-200">
           Title
         </Label>
         <Input
           id={`notification-title-${id}`}
-          className="h-7 text-xs"
+          className="h-9 text-xs bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
           placeholder="Notification Title"
           value={data.config?.title || ''}
           onChange={(e: any) => handleTitleChange(e.target.value)}
@@ -108,18 +164,21 @@ const NotificationNode: React.FC<NodeProps> = memo(({ id, data }) => {
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor={`notification-message-${id}`} className="text-xs">
+        <Label
+          htmlFor={`notification-message-${id}`}
+          className="text-xs font-medium text-slate-200"
+        >
           Message
         </Label>
         <Textarea
           id={`notification-message-${id}`}
-          className="h-20 text-xs resize-none"
+          className="h-24 text-xs resize-none bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
           placeholder="Notification message..."
           value={data.config?.message || ''}
           onChange={(e: any) => handleMessageChange(e.target.value)}
         />
-        <p className="text-xs text-muted-foreground mt-1">
-          You can use template variables like {{ variable }} in your message.
+        <p className="text-xs text-slate-300 leading-relaxed">
+          You can use template variables like {'{{ variable }}'} in your message.
         </p>
       </div>
     </div>
