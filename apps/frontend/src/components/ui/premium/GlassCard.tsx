@@ -42,7 +42,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   const cursorClass = onClick ? 'cursor-pointer' : '';
 
   // Add default padding only when icon/title is used (backwards compat), otherwise caller must provide
-  const defaultPadding = icon || title ? 'p-6' : '';
+  const defaultPadding = Icon || title ? 'p-6' : '';
 
   return (
     <div
