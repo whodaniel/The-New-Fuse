@@ -85,39 +85,54 @@ export const authHelpers = {
    */
   async signUp(email: string, password: string, metadata?: any): Promise<AuthResponse> {
     try {
-      // For now, create a mock session for demo purposes
-      // TODO: Replace with actual Railway backend API call
-      const mockUser: User = {
-        id: 'mock-user-' + Date.now(),
-        email: email,
-        user_metadata: {
-          name: metadata?.name || email.split('@')[0],
-          role: metadata?.role || 'user'
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        created_at: new Date().toISOString()
+        body: JSON.stringify({
+          email,
+          password,
+          name: metadata?.name || email.split('@')[0],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Sign up failed');
+      }
+
+      const user: User = {
+        id: data.user.id,
+        email: data.user.email,
+        user_metadata: {
+          name: data.user.name,
+          role: 'user',
+        },
+        created_at: new Date().toISOString(),
       };
 
-      const mockSession: Session = {
-        access_token: 'mock-jwt-token-' + Date.now(),
-        refresh_token: 'mock-refresh-token',
-        user: mockUser
+      const session: Session = {
+        access_token: data.access_token,
+        user: user,
       };
 
       // Store in localStorage
-      localStorage.setItem('auth_session', JSON.stringify(mockSession));
-      localStorage.setItem('auth_token', mockSession.access_token);
+      localStorage.setItem('auth_session', JSON.stringify(session));
+      localStorage.setItem('auth_token', session.access_token);
 
       return {
         success: true,
         data: {
-          session: mockSession,
-          user: mockUser
-        }
+          session: session,
+          user: user,
+        },
       };
     } catch (error: any) {
       return {
         success: false,
-        error: error.message || 'Sign up failed'
+        error: error.message || 'Sign up failed',
       };
     }
   },
