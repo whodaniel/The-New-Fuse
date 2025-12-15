@@ -1,8 +1,8 @@
 {
-  "name": "vscode-extension",
+  "name": "the-new-fuse",
   "displayName": "The New Fuse",
-  "description": "The New Fuse - AI Assistant with Multi-Agent Orchestration, Full MCP Configuration, Enhanced LiteLLM Integration & Multi-Tenant Support",
-  "version": "8.1.0",
+  "description": "AI-Powered Development Assistant with Multi-Provider LLM Support & MCP Integration",
+  "version": "9.0.0",
   "publisher": "TheNewFuse",
   "license": "MIT",
   "repository": {
@@ -20,20 +20,23 @@
     "AI",
     "Chat",
     "Programming Languages",
-    "Education"
+    "Other"
   ],
   "keywords": [
     "ai",
     "chat",
     "assistant",
-    "agent",
-    "automation",
-    "litellm",
-    "llm-provider",
-    "multi-model"
+    "copilot",
+    "llm",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt",
+    "mcp"
   ],
+  "icon": "media/icon.png",
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -50,274 +53,290 @@
           "type": "webview",
           "id": "theNewFuse.chatView",
           "name": "AI Chat",
-          "when": "true"
+          "icon": "$(comment-discussion)"
         }
       ]
     },
     "commands": [
       {
         "command": "theNewFuse.sendMessage",
+        "title": "Send Message",
         "category": "The New Fuse",
-        "title": "Send Message"
-      },
-      {
-        "command": "theNewFuse.clearChat",
-        "category": "The New Fuse",
-        "title": "Clear Chat",
-        "icon": "$(clear-all)"
+        "icon": "$(comment)"
       },
       {
         "command": "theNewFuse.newChat",
-        "category": "The New Fuse",
         "title": "New Chat",
+        "category": "The New Fuse",
         "icon": "$(add)"
       },
       {
-        "command": "theNewFuse.openWorkflowBuilder",
-        "category": "The New Fuse - Workflow",
-        "title": "🔄 Open Workflow Builder",
-        "icon": "$(workflow)"
-      },
-      {
-        "command": "theNewFuse.agentFederation",
-        "category": "The New Fuse - Agents",
-        "title": "🤖 Agent Federation",
-        "icon": "$(organization)"
-      },
-      {
-        "command": "theNewFuse.mcpConnect",
-        "category": "The New Fuse - MCP",
-        "title": "🔗 Connect MCP Server",
-        "icon": "$(plug)"
-      },
-      {
-        "command": "theNewFuse.terminalOrchestration",
-        "category": "The New Fuse - Terminal",
-        "title": "⚡ Terminal Orchestration",
-        "icon": "$(terminal)"
-      },
-      {
-        "command": "theNewFuse.codeActions",
-        "category": "The New Fuse - Code",
-        "title": "💻 Code Actions",
-        "icon": "$(code)"
-      },
-      {
-        "command": "theNewFuse.planManager",
-        "category": "The New Fuse - Planning",
-        "title": "📋 Plan Manager",
-        "icon": "$(list-ordered)"
+        "command": "theNewFuse.clearChat",
+        "title": "Clear Chat",
+        "category": "The New Fuse",
+        "icon": "$(clear-all)"
       },
       {
         "command": "theNewFuse.explainCode",
-        "category": "The New Fuse - Code",
-        "title": "🔍 Explain Code",
+        "title": "Explain Code",
+        "category": "The New Fuse",
         "icon": "$(info)"
       },
       {
         "command": "theNewFuse.fixCode",
-        "category": "The New Fuse - Code",
-        "title": "🔧 Fix Code",
+        "title": "Fix Code",
+        "category": "The New Fuse",
         "icon": "$(wrench)"
       },
       {
         "command": "theNewFuse.improveCode",
-        "category": "The New Fuse - Code",
-        "title": "⚡ Improve Code",
+        "title": "Improve Code",
+        "category": "The New Fuse",
         "icon": "$(rocket)"
       },
       {
         "command": "theNewFuse.addToContext",
-        "category": "The New Fuse - Context",
-        "title": "📎 Add to Context",
+        "title": "Add to Context",
+        "category": "The New Fuse",
         "icon": "$(link)"
       },
       {
         "command": "theNewFuse.generateCommitMessage",
-        "category": "The New Fuse - Git",
-        "title": "📝 Generate Commit Message",
+        "title": "Generate Commit Message",
+        "category": "The New Fuse",
         "icon": "$(git-commit)"
       },
       {
-        "command": "theNewFuse.inlineSuggestions",
-        "category": "The New Fuse - AI",
-        "title": "💡 Inline Code Suggestions",
-        "icon": "$(lightbulb)"
+        "command": "theNewFuse.mcpConnect",
+        "title": "Connect MCP Server",
+        "category": "The New Fuse",
+        "icon": "$(plug)"
       },
       {
-        "command": "theNewFuse.openInNewTab",
-        "category": "The New Fuse - View",
-        "title": "🗂️ Open in New Tab",
-        "icon": "$(link-external)"
+        "command": "theNewFuse.mcpStatus",
+        "title": "MCP Status",
+        "category": "The New Fuse",
+        "icon": "$(pulse)"
       },
       {
         "command": "theNewFuse.historyButtonClicked",
-        "category": "The New Fuse - History",
-        "title": "📚 Chat History",
+        "title": "Chat History",
+        "category": "The New Fuse",
         "icon": "$(history)"
       },
       {
         "command": "theNewFuse.marketplaceButtonClicked",
-        "category": "The New Fuse - Marketplace",
-        "title": "🛍️ Extensions Marketplace",
+        "title": "MCP Marketplace",
+        "category": "The New Fuse",
         "icon": "$(extensions)"
       },
       {
         "command": "theNewFuse.profileButtonClicked",
-        "category": "The New Fuse - Profile",
-        "title": "👤 User Profile",
-        "icon": "$(account)"
+        "title": "Configure API Keys",
+        "category": "The New Fuse",
+        "icon": "$(key)"
       },
       {
         "command": "theNewFuse.settingsButtonClicked",
-        "category": "The New Fuse - Settings",
-        "title": "⚙️ Settings",
+        "title": "Settings",
+        "category": "The New Fuse",
         "icon": "$(settings-gear)"
       },
       {
         "command": "theNewFuse.helpButtonClicked",
-        "category": "The New Fuse - Help",
-        "title": "❓ Help & Documentation",
+        "title": "Help",
+        "category": "The New Fuse",
         "icon": "$(question)"
       },
       {
-        "command": "theNewFuse.autoApprove",
-        "category": "The New Fuse - Automation",
-        "title": "✅ Auto-Approve Mode",
-        "icon": "$(check)"
-      },
-      {
-        "command": "theNewFuse.codeMode",
-        "category": "The New Fuse - Modes",
-        "title": "💻 Code Mode",
-        "icon": "$(code)"
-      },
-      {
-        "command": "theNewFuse.databaseMode",
-        "category": "The New Fuse - Modes",
-        "title": "🗃️ Database Mode",
-        "icon": "$(database)"
+        "command": "theNewFuse.openInNewTab",
+        "title": "Open in New Tab",
+        "category": "The New Fuse",
+        "icon": "$(link-external)"
       },
       {
         "command": "theNewFuse.attachFiles",
-        "category": "The New Fuse - Files",
-        "title": "📎 Attach Files",
-        "icon": "$(attach)"
+        "title": "Attach Files",
+        "category": "The New Fuse",
+        "icon": "$(file-add)"
+      },
+      {
+        "command": "theNewFuse.agentFederation",
+        "title": "Agent Federation",
+        "category": "The New Fuse",
+        "icon": "$(organization)"
+      },
+      {
+        "command": "theNewFuse.openWorkflowBuilder",
+        "title": "Workflow Builder",
+        "category": "The New Fuse",
+        "icon": "$(workflow)"
+      },
+      {
+        "command": "theNewFuse.terminalOrchestration",
+        "title": "Terminal",
+        "category": "The New Fuse",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "theNewFuse.planManager",
+        "title": "Plan Manager",
+        "category": "The New Fuse",
+        "icon": "$(list-ordered)"
       },
       {
         "command": "theNewFuse.securityDashboard",
-        "category": "The New Fuse - Security",
-        "title": "🛡️ Security Dashboard",
+        "title": "Security Dashboard",
+        "category": "The New Fuse",
         "icon": "$(shield)"
       },
       {
         "command": "theNewFuse.securityScan",
-        "category": "The New Fuse - Security",
-        "title": "🔍 Run Security Scan",
-        "icon": "$(search-view-icon)"
+        "title": "Security Scan",
+        "category": "The New Fuse",
+        "icon": "$(search)"
       },
       {
         "command": "theNewFuse.emergencyMode",
-        "category": "The New Fuse - Security",
-        "title": "🚨 Emergency Mode",
+        "title": "Emergency Mode",
+        "category": "The New Fuse",
         "icon": "$(warning)"
       },
       {
         "command": "theNewFuse.systemStatus",
-        "category": "The New Fuse - System",
-        "title": "🔗 System Status",
+        "title": "System Status",
+        "category": "The New Fuse",
         "icon": "$(pulse)"
       },
       {
+        "command": "theNewFuse.autoApprove",
+        "title": "Auto-Approve Mode",
+        "category": "The New Fuse",
+        "icon": "$(check)"
+      },
+      {
+        "command": "theNewFuse.codeMode",
+        "title": "Code Mode",
+        "category": "The New Fuse",
+        "icon": "$(code)"
+      },
+      {
+        "command": "theNewFuse.databaseMode",
+        "title": "Database Mode",
+        "category": "The New Fuse",
+        "icon": "$(database)"
+      },
+      {
+        "command": "theNewFuse.inlineSuggestions",
+        "title": "Inline Suggestions",
+        "category": "The New Fuse",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "theNewFuse.codeActions",
+        "title": "Code Actions",
+        "category": "The New Fuse",
+        "icon": "$(code)"
+      },
+      {
+        "command": "theNewFuse.openLiteLLMConfig",
+        "title": "LiteLLM Configuration",
+        "category": "The New Fuse",
+        "icon": "$(settings)"
+      },
+      {
         "command": "theNewFuse.cli.runAgent",
-        "category": "The New Fuse - CLI",
-        "title": "🤖 Run CLI Agent",
+        "title": "Run CLI Agent",
+        "category": "The New Fuse CLI",
         "icon": "$(robot)"
       },
       {
         "command": "theNewFuse.cli.initWorkspace",
-        "category": "The New Fuse - CLI",
-        "title": "🔧 Initialize TNF Workspace",
-        "icon": "$(folder-opened)"
+        "title": "Initialize Workspace",
+        "category": "The New Fuse CLI",
+        "icon": "$(folder)"
       },
       {
         "command": "theNewFuse.cli.showTasks",
-        "category": "The New Fuse - CLI",
-        "title": "📋 Show Active CLI Tasks",
-        "icon": "$(list-ordered)"
+        "title": "Show Tasks",
+        "category": "The New Fuse CLI",
+        "icon": "$(tasklist)"
       },
       {
         "command": "theNewFuse.cli.showHistory",
-        "category": "The New Fuse - CLI",
-        "title": "📜 Show CLI Task History",
+        "title": "Task History",
+        "category": "The New Fuse CLI",
         "icon": "$(history)"
       },
       {
         "command": "theNewFuse.cli.chatSession",
-        "category": "The New Fuse - CLI",
-        "title": "💬 Start CLI Chat Session",
-        "icon": "$(comment)"
+        "title": "CLI Chat Session",
+        "category": "The New Fuse CLI",
+        "icon": "$(terminal)"
       },
       {
-        "command": "theNewFuse.mcpStatus",
-        "category": "The New Fuse - MCP",
-        "title": "📊 MCP Server Status",
-        "icon": "$(graph)"
+        "command": "theNewFuse.selectOpenRouterModel",
+        "title": "Browse OpenRouter Models",
+        "category": "The New Fuse",
+        "icon": "$(list-selection)"
       },
       {
-        "command": "theNewFuse.openLiteLLMConfig",
-        "category": "The New Fuse - LLM",
-        "title": "🚀 Enhanced LiteLLM Configuration",
-        "icon": "$(settings-gear)"
+        "command": "theNewFuse.mcpImportConfig",
+        "title": "Import MCP Configuration",
+        "category": "The New Fuse",
+        "icon": "$(import)"
+      },
+      {
+        "command": "theNewFuse.mcpExportConfig",
+        "title": "Export MCP Configuration",
+        "category": "The New Fuse",
+        "icon": "$(export)"
+      },
+      {
+        "command": "theNewFuse.mcpMarketplace",
+        "title": "MCP Server Marketplace",
+        "category": "The New Fuse",
+        "icon": "$(package)"
+      },
+      {
+        "command": "theNewFuse.selectModel",
+        "title": "Select AI Model",
+        "category": "The New Fuse",
+        "icon": "$(symbol-enum)"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "theNewFuse.newChat",
-          "group": "navigation@1",
-          "when": "view == theNewFuse.chatView"
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@1"
         },
         {
           "command": "theNewFuse.mcpConnect",
-          "group": "navigation@2",
-          "when": "view == theNewFuse.chatView"
-        },
-        {
-          "command": "theNewFuse.marketplaceButtonClicked",
-          "group": "navigation@3",
-          "when": "view == theNewFuse.chatView"
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@2"
         },
         {
           "command": "theNewFuse.historyButtonClicked",
-          "group": "navigation@4",
-          "when": "view == theNewFuse.chatView"
-        },
-        {
-          "command": "theNewFuse.profileButtonClicked",
-          "group": "navigation@5",
-          "when": "view == theNewFuse.chatView"
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@3"
         },
         {
           "command": "theNewFuse.settingsButtonClicked",
-          "group": "navigation@6",
-          "when": "view == theNewFuse.chatView"
-        },
-        {
-          "command": "theNewFuse.openInNewTab",
-          "group": "navigation@7",
-          "when": "view == theNewFuse.chatView"
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@4"
         },
         {
           "command": "theNewFuse.clearChat",
-          "group": "navigation@8",
-          "when": "view == theNewFuse.chatView"
+          "when": "view == theNewFuse.chatView",
+          "group": "navigation@5"
         }
       ],
       "editor/context": [
         {
           "submenu": "theNewFuse.contextMenu",
-          "group": "1"
+          "group": "z_theNewFuse"
         }
       ],
       "theNewFuse.contextMenu": [
@@ -336,6 +355,10 @@
         {
           "command": "theNewFuse.addToContext",
           "group": "1_actions@4"
+        },
+        {
+          "command": "theNewFuse.securityScan",
+          "group": "2_security@1"
         }
       ],
       "scm/input": [
@@ -355,8 +378,12 @@
       {
         "command": "theNewFuse.sendMessage",
         "key": "ctrl+shift+a",
-        "mac": "cmd+shift+a",
-        "when": "true"
+        "mac": "cmd+shift+a"
+      },
+      {
+        "command": "theNewFuse.newChat",
+        "key": "ctrl+shift+n",
+        "mac": "cmd+shift+n"
       },
       {
         "command": "theNewFuse.inlineSuggestions",
@@ -366,156 +393,272 @@
       }
     ],
     "configuration": {
-      "title": "The New Fuse - LiteLLM",
+      "title": "The New Fuse",
       "properties": {
-        "tnf.litellm.baseURL": {
+        "theNewFuse.defaultProvider": {
+          "type": "string",
+          "default": "openai",
+          "enum": [
+            "openai",
+            "anthropic",
+            "gemini",
+            "deepseek",
+            "qwen",
+            "openrouter",
+            "litellm",
+            "copilot",
+            "claude-cli",
+            "gemini-cli",
+            "jules-cli",
+            "aider-cli",
+            "custom-cli"
+          ],
+          "enumDescriptions": [
+            "OpenAI (GPT-5.2, GPT-5.1-Codex-Max)",
+            "Anthropic (Claude Opus 4.5, Sonnet 4.5)",
+            "Google Gemini (Gemini 3 Pro, Gemini 2.5 Flash)",
+            "DeepSeek (V3.2-Speciale, DeepSeek-R1)",
+            "Qwen (Qwen3-Coder, Qwen 2.5-Max)",
+            "OpenRouter (Multi-provider)",
+            "LiteLLM (Self-hosted proxy)",
+            "VS Code Copilot",
+            "Claude CLI (Local)",
+            "Gemini CLI (Local)",
+            "Jules CLI (Local)",
+            "Aider CLI (Local)",
+            "Custom CLI Command"
+          ],
+          "description": "Default AI provider - includes API and CLI-based options (December 2025)"
+        },
+        "theNewFuse.defaultModel": {
+          "type": "string",
+          "default": "gpt-5.2",
+          "description": "Default model to use"
+        },
+        "theNewFuse.autoConnect": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically connect to MCP servers on startup"
+        },
+        "theNewFuse.enableTelemetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous usage telemetry"
+        },
+        "theNewFuse.theme": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ],
+          "description": "Chat interface theme"
+        },
+        "theNewFuse.mcpServers": {
+          "type": "array",
+          "default": [],
+          "description": "MCP server configurations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Server name"
+              },
+              "command": {
+                "type": "string",
+                "description": "Command to start the server"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Command arguments"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables"
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether the server is enabled"
+              }
+            },
+            "required": [
+              "name",
+              "command"
+            ]
+          }
+        },
+        "theNewFuse.providers.openai.baseUrl": {
+          "type": "string",
+          "default": "https://api.openai.com/v1",
+          "description": "OpenAI API base URL"
+        },
+        "theNewFuse.providers.openai.model": {
+          "type": "string",
+          "default": "gpt-5.2",
+          "description": "Default OpenAI model (December 2025: gpt-5.2, gpt-5.1-codex-max)"
+        },
+        "theNewFuse.providers.anthropic.baseUrl": {
+          "type": "string",
+          "default": "https://api.anthropic.com/v1",
+          "description": "Anthropic API base URL"
+        },
+        "theNewFuse.providers.anthropic.model": {
+          "type": "string",
+          "default": "claude-opus-4.5-20251124",
+          "description": "Default Anthropic model (December 2025: claude-opus-4.5, claude-sonnet-4.5)"
+        },
+        "theNewFuse.providers.gemini.model": {
+          "type": "string",
+          "default": "gemini-3-pro",
+          "description": "Default Gemini model (December 2025: gemini-3-pro, gemini-2.5-flash)"
+        },
+        "theNewFuse.providers.deepseek.baseUrl": {
+          "type": "string",
+          "default": "https://api.deepseek.com/v1",
+          "description": "DeepSeek API base URL"
+        },
+        "theNewFuse.providers.deepseek.model": {
+          "type": "string",
+          "default": "deepseek-v3.2-speciale",
+          "description": "Default DeepSeek model (December 2025: deepseek-v3.2-speciale, deepseek-r1)"
+        },
+        "theNewFuse.providers.qwen.baseUrl": {
+          "type": "string",
+          "default": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+          "description": "Qwen/DashScope API base URL"
+        },
+        "theNewFuse.providers.qwen.model": {
+          "type": "string",
+          "default": "qwen3-coder-480b",
+          "description": "Default Qwen model (December 2025: qwen3-coder-480b, qwen-2.5-max)"
+        },
+        "theNewFuse.providers.openrouter.baseUrl": {
+          "type": "string",
+          "default": "https://openrouter.ai/api/v1",
+          "description": "OpenRouter API base URL"
+        },
+        "theNewFuse.providers.openrouter.model": {
+          "type": "string",
+          "default": "anthropic/claude-opus-4.5",
+          "description": "Default OpenRouter model"
+        },
+        "theNewFuse.providers.litellm.baseUrl": {
           "type": "string",
           "default": "http://localhost:4000",
           "description": "LiteLLM proxy base URL"
         },
-        "tnf.litellm.apiKey": {
+        "theNewFuse.providers.litellm.model": {
           "type": "string",
-          "default": "",
-          "description": "LiteLLM API key (optional)"
-        },
-        "tnf.litellm.model": {
-          "type": "string",
-          "default": "gpt-3.5-turbo",
+          "default": "gpt-5.2",
           "description": "Default LiteLLM model"
         },
-        "tnf.litellm.masterKey": {
-          "type": "string",
-          "default": "",
-          "description": "LiteLLM master key for virtual keys management"
-        },
-        "tnf.litellm.maxRetries": {
+        "theNewFuse.maxTokens": {
           "type": "number",
-          "default": 3,
-          "description": "Maximum number of retry attempts"
+          "default": 8192,
+          "description": "Maximum tokens for responses"
         },
-        "tnf.litellm.retryDelay": {
+        "theNewFuse.temperature": {
           "type": "number",
-          "default": 1000,
-          "description": "Initial retry delay in milliseconds"
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Response temperature (creativity)"
         },
-        "tnf.litellm.retryMultiplier": {
-          "type": "number",
-          "default": 2,
-          "description": "Retry delay multiplier for exponential backoff"
-        },
-        "tnf.litellm.fallbackModels": {
+        "theNewFuse.cliAgents": {
           "type": "array",
           "default": [],
-          "description": "Fallback models to use when primary fails",
+          "description": "CLI-based AI agent configurations for local tools like claude, gemini, jules, aider",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Agent name (e.g., 'claude', 'gemini', 'jules', 'aider')"
+              },
+              "command": {
+                "type": "string",
+                "description": "CLI command to execute (e.g., 'claude', 'gemini')"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Command line arguments"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables"
+              },
+              "workingDirectory": {
+                "type": "string",
+                "description": "Working directory for the command"
+              },
+              "inputFormat": {
+                "type": "string",
+                "enum": [
+                  "stdin",
+                  "arg",
+                  "file"
+                ],
+                "default": "stdin",
+                "description": "How to pass the prompt to the CLI"
+              },
+              "outputFormat": {
+                "type": "string",
+                "enum": [
+                  "stdout",
+                  "file",
+                  "json"
+                ],
+                "default": "stdout",
+                "description": "How to read the response from the CLI"
+              },
+              "timeout": {
+                "type": "number",
+                "default": 120000,
+                "description": "Timeout in milliseconds"
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether this agent is enabled"
+              }
+            },
+            "required": [
+              "name",
+              "command"
+            ]
           }
-        },
-        "tnf.litellm.enableFallback": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable automatic fallback to alternative models"
-        },
-        "tnf.litellm.circuitBreakerThreshold": {
-          "type": "number",
-          "default": 5,
-          "description": "Number of failures before circuit breaker opens"
-        },
-        "tnf.litellm.circuitBreakerTimeout": {
-          "type": "number",
-          "default": 60000,
-          "description": "Circuit breaker cooldown period in milliseconds"
-        },
-        "tnf.litellm.enableCache": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable response caching"
-        },
-        "tnf.litellm.cacheType": {
-          "type": "string",
-          "enum": [
-            "memory",
-            "redis"
-          ],
-          "default": "memory",
-          "description": "Cache storage type"
-        },
-        "tnf.litellm.cacheTTL": {
-          "type": "number",
-          "default": 3600,
-          "description": "Cache time-to-live in seconds"
-        },
-        "tnf.litellm.redisHost": {
-          "type": "string",
-          "default": "localhost",
-          "description": "Redis host for caching"
-        },
-        "tnf.litellm.redisPort": {
-          "type": "number",
-          "default": 6379,
-          "description": "Redis port for caching"
-        },
-        "tnf.litellm.enableBudget": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable budget tracking and limits"
-        },
-        "tnf.litellm.budgetLimit": {
-          "type": "number",
-          "default": 0,
-          "description": "Maximum budget limit in USD"
-        },
-        "tnf.litellm.timeout": {
-          "type": "number",
-          "default": 30000,
-          "description": "Request timeout in milliseconds"
-        },
-        "tnf.litellm.enableBackgroundHealthCheck": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable automatic background health checks"
-        },
-        "tnf.litellm.healthCheckInterval": {
-          "type": "number",
-          "default": 60000,
-          "description": "Health check interval in milliseconds"
-        },
-        "tnf.litellm.embeddingModel": {
-          "type": "string",
-          "default": "text-embedding-ada-002",
-          "description": "Model to use for embeddings"
-        },
-        "tnf.litellm.enableLogging": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable detailed logging"
         }
       }
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "compile": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "package": "npm run compile && npx @vscode/vsce package --no-dependencies"
   },
   "devDependencies": {
-    "@eslint/js": "^9.13.0",
-    "@stylistic/eslint-plugin": "^2.9.0",
-    "@types/vscode": "^1.90.0",
     "@types/node": "18.x",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^2.32.0",
+    "esbuild": "^0.27.1",
     "eslint": "^9.13.0",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^8.39.0",
-    "@vscode/test-electron": "^2.3.9"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
-    "openai": "^4.28.0",
-    "@anthropic-ai/sdk": "^0.17.1",
     "@modelcontextprotocol/sdk": "^1.24.0",
-    "ws": "^8.18.0",
-    "@the-new-fuse/tnf-core": "workspace:*"
+    "@vscode/codicons": "^0.0.36"
   }
 }

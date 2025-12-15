@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The New Fuse - Settings</title>
+    <link rel="stylesheet" href="popup.css" />
+    <style>
+      body {
+        width: 100%;
+        max-width: 800px;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 0;
+      }
+
+      .options-container {
+        padding: 24px;
+      }
+
+      .options-header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .options-header h1 {
+        font-size: 1.75rem;
+        margin-bottom: 8px;
+      }
+
+      .options-header p {
+        color: var(--tnf-text-muted);
+      }
+
+      .options-section {
+        margin-bottom: 24px;
+      }
+
+      .options-section h2 {
+        font-size: 1.125rem;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--tnf-border);
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 16px;
+      }
+
+      .save-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 16px 24px;
+        background: var(--tnf-slate-dark);
+        border-top: 1px solid var(--tnf-border);
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 24px;
+        background: var(--tnf-success);
+        color: white;
+        border-radius: var(--tnf-radius-md);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .toast.visible {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-logo">🚀</div>
+      <div>
+        <div class="header-title">The New Fuse</div>
+        <div class="header-subtitle">Extension Settings</div>
+      </div>
+    </header>
+
+    <div class="options-container">
+      <div class="options-header">
+        <h1>⚙️ Extension Settings</h1>
+        <p>Configure The New Fuse Chrome Extension</p>
+      </div>
+
+      <div class="options-section">
+        <h2>🔗 Connection Settings</h2>
+        <div class="options-grid">
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-label">Relay Server URL</label>
+              <input
+                type="text"
+                class="form-input"
+                id="relayUrl"
+                placeholder="http://localhost:3000"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">WebSocket Port</label>
+              <input type="number" class="form-input" id="wsPort" placeholder="3000" />
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="autoConnect" />
+                <span>Auto-connect on browser startup</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="autoReconnect" />
+                <span>Auto-reconnect when disconnected</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Max Reconnect Attempts</label>
+              <input
+                type="number"
+                class="form-input"
+                id="maxReconnectAttempts"
+                value="10"
+                min="1"
+                max="50"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-section">
+        <h2>🤖 Agent Settings</h2>
+        <div class="options-grid">
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-label">Agent Name</label>
+              <input
+                type="text"
+                class="form-input"
+                id="agentName"
+                placeholder="TNF Chrome Bridge"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Agent ID Prefix</label>
+              <input
+                type="text"
+                class="form-input"
+                id="agentIdPrefix"
+                placeholder="chrome-bridge"
+              />
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-label">Capabilities (comma-separated)</label>
+              <textarea
+                class="form-textarea"
+                id="capabilities"
+                rows="3"
+                placeholder="web-bridge, ai-detection, text-injection"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-section">
+        <h2>🎨 Appearance</h2>
+        <div class="options-grid">
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="showBadge" />
+                <span>Show connection status badge on icon</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="notifications" />
+                <span>Enable desktop notifications</span>
+              </label>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-label">Floating Panel Position</label>
+              <select class="form-select" id="panelPosition">
+                <option value="top-right">Top Right</option>
+                <option value="top-left">Top Left</option>
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="minimizedByDefault" />
+                <span>Panel starts minimized</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-section">
+        <h2>🔧 Advanced Settings</h2>
+        <div class="options-grid">
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-label">Log Level</label>
+              <select class="form-select" id="logLevel">
+                <option value="error">Error only</option>
+                <option value="warn">Warnings</option>
+                <option value="info">Info (recommended)</option>
+                <option value="debug">Debug (verbose)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message History Limit</label>
+              <input
+                type="number"
+                class="form-input"
+                id="historyLimit"
+                value="100"
+                min="10"
+                max="1000"
+              />
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="enableTelemetry" />
+                <span>Enable anonymous usage analytics</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="devMode" />
+                <span>Developer mode (extra logging)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-section">
+        <h2>📦 Data Management</h2>
+        <div class="glass-card">
+          <div class="actions-bar">
+            <button class="btn btn-secondary" id="exportSettings">
+              <span>📤</span> Export Settings
+            </button>
+            <button class="btn btn-secondary" id="importSettings">
+              <span>📥</span> Import Settings
+            </button>
+            <button class="btn btn-secondary" id="clearHistory">
+              <span>🗑️</span> Clear History
+            </button>
+            <button class="btn btn-error" id="resetAll"><span>🔄</span> Reset All Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-section">
+        <h2>ℹ️ About</h2>
+        <div class="glass-card">
+          <p><strong>The New Fuse AI Bridge</strong></p>
+          <p class="text-muted">Version: <span id="version">1.0.0</span></p>
+          <p class="text-muted mt-sm">
+            An enterprise-grade browser extension for AI-to-AI and human-to-AI communication. Part
+            of The New Fuse framework.
+          </p>
+          <div class="actions-bar mt-md">
+            <a href="https://thenewfuse.com/docs" target="_blank" class="btn btn-ghost">
+              <span>📚</span> Documentation
+            </a>
+            <a href="https://github.com/whodaniel/fuse" target="_blank" class="btn btn-ghost">
+              <span>💻</span> GitHub
+            </a>
+            <a href="https://thenewfuse.com/support" target="_blank" class="btn btn-ghost">
+              <span>❓</span> Support
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spacer for fixed save bar -->
+      <div style="height: 80px"></div>
+    </div>
+
+    <div class="save-bar">
+      <button class="btn btn-secondary" id="discardChanges"><span>↩️</span> Discard Changes</button>
+      <button class="btn btn-primary" id="saveSettings"><span>💾</span> Save Settings</button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

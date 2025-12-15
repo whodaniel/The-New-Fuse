@@ -1,4 +1,3 @@
-
 .vscode/**
 .vscode-test/**
 src/**
@@ -8,8 +7,9 @@ test/**
 vsc-extension-quickstart.md
 **/*.map
 **/*.ts
-node_modules/**/jest-editor-support/**
+node_modules/**
 create-vsix.js
+esbuild.js
 install-v7.4.0.sh
 test-openrouter-api.js
 test-openrouter.js
@@ -17,3 +17,4 @@ tsconfig.json
 eslint.config.mjs
 bun.lock
 pnpm-lock.yaml
+out/**

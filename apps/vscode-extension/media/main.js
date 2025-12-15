@@ -1,325 +1,307 @@
-// Get VS Code API
-const vscode = acquireVsCodeApi();
+/**
+ * The New Fuse VSCode Extension - Webview Main Script
+ * Version 9.0.0
+ */
 
-// DOM elements
-const messagesContainer = document.getElementById('messages');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-const inputContainer = document.getElementById('inputContainer');
-const dropZone = document.getElementById('dropZone');
-const contextInfo = document.getElementById('contextInfo');
-const attachBtn = document.getElementById('attachBtn');
-const codeBtn = document.getElementById('codeBtn');
-const dbBtn = document.getElementById('dbBtn');
-const clearContext = document.getElementById('clearContext');
+(function () {
+  // @ts-ignore
+  const vscode = acquireVsCodeApi();
 
-// State
-let isReady = false;
-let attachedFiles = [];
-let currentMode = 'chat';
-let dragCounter = 0;
+  // DOM Elements
+  const messagesContainer = document.getElementById('messages');
+  const inputElement = document.getElementById('input');
+  const sendButton = document.getElementById('btn-send');
+  const attachButton = document.getElementById('btn-attach');
+  const codeButton = document.getElementById('btn-code');
+  const agentButton = document.getElementById('btn-agent');
+  const contextBar = document.getElementById('context-bar');
+  const dropZone = document.getElementById('drop-zone');
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+  // State
+  let currentMode = 'chat';
+  let dragCounter = 0;
+
+  // Initialize
+  function init() {
     setupEventListeners();
-    signalReady();
-});
+    vscode.postMessage({ type: 'ready' });
+  }
 
-function setupEventListeners() {
-    // Send button click
-    sendButton.addEventListener('click', sendMessage);
-
-    // Enter key to send (Shift+Enter for new line)
-    messageInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
+  function setupEventListeners() {
+    // Send message
+    sendButton?.addEventListener('click', sendMessage);
+    inputElement?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
     });
 
     // Auto-resize textarea
-    messageInput.addEventListener('input', () => {
-        messageInput.style.height = 'auto';
-        messageInput.style.height = messageInput.scrollHeight + 'px';
+    inputElement?.addEventListener('input', () => {
+      inputElement.style.height = 'auto';
+      inputElement.style.height = Math.min(inputElement.scrollHeight, 200) + 'px';
     });
 
     // Action buttons
-    attachBtn.addEventListener('click', () => {
-        vscode.postMessage({ type: 'attachFiles' });
+    attachButton?.addEventListener('click', () => {
+      vscode.postMessage({ type: 'attachFiles' });
     });
 
-    codeBtn.addEventListener('click', () => {
-        setMode('code');
-        vscode.postMessage({ type: 'setCodeMode' });
+    codeButton?.addEventListener('click', () => {
+      setMode('code');
     });
 
-    dbBtn.addEventListener('click', () => {
-        setMode('database');
-        vscode.postMessage({ type: 'setDatabaseMode' });
+    agentButton?.addEventListener('click', () => {
+      setMode('agent');
     });
 
-    clearContext.addEventListener('click', () => {
-        clearAttachedFiles();
+    // Context bar clear
+    document.querySelector('.context-clear')?.addEventListener('click', () => {
+      vscode.postMessage({ type: 'clearContext' });
     });
 
-    // Header buttons
-    document.getElementById('marketplaceBtn').addEventListener('click', () => {
-        vscode.postMessage({ type: 'marketplaceButtonClicked' });
-    });
-
-    document.getElementById('historyBtn').addEventListener('click', () => {
-        vscode.postMessage({ type: 'historyButtonClicked' });
-    });
-
-    document.getElementById('profileBtn').addEventListener('click', () => {
-        vscode.postMessage({ type: 'profileButtonClicked' });
-    });
-
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-        vscode.postMessage({ type: 'settingsButtonClicked' });
-    });
-
-    document.getElementById('toolsBtn').addEventListener('click', () => {
-        vscode.postMessage({ type: 'toolsButtonClicked' });
-    });
-
-    document.getElementById('resourcesBtn').addEventListener('click', () => {
-        vscode.postMessage({ type: 'resourcesButtonClicked' });
-    });
-
-    document.getElementById('securityBtn').addEventListener('click', () => {
-        vscode.postMessage({ type: 'securityButtonClicked' });
-    });
-
-    // Drag and drop functionality
+    // Drag and drop
     document.addEventListener('dragenter', handleDragEnter);
     document.addEventListener('dragleave', handleDragLeave);
-    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('dragover', (e) => e.preventDefault());
     document.addEventListener('drop', handleDrop);
-}
 
-function sendMessage() {
-    const content = messageInput.value.trim();
+    // Handle messages from extension
+    window.addEventListener('message', handleExtensionMessage);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+  }
+
+  function sendMessage() {
+    const content = inputElement?.value?.trim();
     if (!content) return;
 
-    // Clear input
-    messageInput.value = '';
-    messageInput.style.height = 'auto';
+    inputElement.value = '';
+    inputElement.style.height = 'auto';
 
-    // Send to extension
     vscode.postMessage({
-        type: 'sendMessage',
-        content: content
+      type: 'sendMessage',
+      payload: content,
     });
-}
+  }
 
-function clearChat() {
-    messagesContainer.innerHTML = '';
-}
+  function setMode(mode) {
+    currentMode = mode;
 
-function focusInput() {
-    messageInput.focus();
-}
+    // Update button states
+    document.querySelectorAll('.action-btn').forEach((btn) => {
+      btn.classList.remove('active');
+    });
 
-function signalReady() {
-    isReady = true;
-    vscode.postMessage({ type: 'ready' });
-}
+    if (mode === 'code') {
+      codeButton?.classList.add('active');
+      inputElement.placeholder = 'Ask about code...';
+    } else if (mode === 'agent') {
+      agentButton?.classList.add('active');
+      inputElement.placeholder = 'Talk to agents...';
+    } else {
+      inputElement.placeholder = 'Type a message... (/ for commands)';
+    }
 
-// Handle messages from extension
-window.addEventListener('message', event => {
+    vscode.postMessage({ type: 'setMode', payload: mode });
+  }
+
+  function handleExtensionMessage(event) {
     const message = event.data;
 
     switch (message.type) {
-        case 'addMessage':
-            addMessage(message.message);
-            break;
-        case 'clearChat':
-            clearChat();
-            break;
-        case 'focusInput':
-            focusInput();
-            break;
-        case 'updateHeader':
-            updateHeader(message.header);
-            break;
-        case 'updateStatus':
-            updateStatus(message.status);
-            break;
+      case 'addMessage':
+        addMessage(message.payload);
+        break;
+
+      case 'clearChat':
+        clearMessages();
+        break;
+
+      case 'focusInput':
+        inputElement?.focus();
+        break;
+
+      case 'updateStatus':
+        updateStatus(message.payload);
+        break;
+
+      case 'error':
+        showError(message.payload?.message || 'An error occurred');
+        break;
     }
-});
+  }
 
-function updateHeader(header) {
-    const headerElement = document.querySelector('.chat-header h3');
-    if (headerElement) {
-        headerElement.textContent = header;
-    }
-}
+  function addMessage(message) {
+    if (!message || !messagesContainer) return;
 
-function updateStatus(status) {
-    const statusElement = document.querySelector('.status');
-    if (statusElement) {
-        statusElement.textContent = status;
-        // Add status indicator
-        statusElement.className = status === 'Ready' ? 'status status-ready' : 'status status-processing';
-    }
-}
+    const messageEl = document.createElement('div');
+    messageEl.className = `message message-${message.role}`;
+    messageEl.dataset.messageId = message.id;
 
-function processMarkdown(text) {
-    // Simple markdown processing for basic formatting
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`(.*?)`/g, '<code>$1</code>')
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/^• (.*$)/gim, '<li>$1</li>')
-        .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
-        .replace(/\n/g, '<br>');
-}
+    const time = new Date(message.timestamp).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
-// Enhanced addMessage function with markdown support
-function addMessage(message) {
-    const messageElement = document.createElement('div');
-    messageElement.className = `message message-${message.role}`;
+    const roleIcon = message.role === 'user' ? '👤' : '🤖';
+    const roleName = message.role === 'user' ? 'You' : 'AI';
 
-    const time = new Date(message.timestamp).toLocaleTimeString();
-    const processedContent = processMarkdown(escapeHtml(message.content));
-
-    messageElement.innerHTML = `
-        <div class="message-header">
-            <span class="message-role">${message.role === 'user' ? '👤 You' : '🤖 AI'}</span>
-            <span class="message-time">${time}</span>
-        </div>
-        <div class="message-content">${processedContent}</div>
+    messageEl.innerHTML = `
+      <div class="message-header">
+        <span class="message-role">${roleIcon} ${roleName}</span>
+        <span class="message-time">${time}</span>
+      </div>
+      <div class="message-content">${formatContent(message.content)}</div>
+      ${message.metadata?.model ? `<div class="message-meta">${message.metadata.model}</div>` : ''}
     `;
 
-    messagesContainer.appendChild(messageElement);
+    messagesContainer.appendChild(messageEl);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
+  }
 
-// Utility function to escape HTML
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+  function formatContent(content) {
+    if (!content) return '';
 
-// Mode management
-function setMode(mode) {
-    currentMode = mode;
-    document.querySelectorAll('.input-action-btn').forEach(btn => btn.classList.remove('active'));
+    // Escape HTML
+    let formatted = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    if (mode === 'code') {
-        codeBtn.classList.add('active');
-        messageInput.placeholder = 'Ask about code, request functions, debug issues...';
-    } else if (mode === 'database') {
-        dbBtn.classList.add('active');
-        messageInput.placeholder = 'Ask about databases, SQL queries, schema design...';
-    } else {
-        messageInput.placeholder = '@ to add context, / for commands, hold shift to drag in files/images';
+    // Code blocks
+    formatted = formatted.replace(
+      /```(\w*)\n([\s\S]*?)```/g,
+      '<pre class="code-block"><code class="language-$1">$2</code></pre>'
+    );
+
+    // Inline code
+    formatted = formatted.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+
+    // Bold
+    formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // Italic
+    formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+    // Headers
+    formatted = formatted.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    formatted = formatted.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    formatted = formatted.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+    // Lists
+    formatted = formatted.replace(/^- (.+)$/gm, '<li>$1</li>');
+    formatted = formatted.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+
+    // Line breaks
+    formatted = formatted.replace(/\n/g, '<br>');
+
+    return formatted;
+  }
+
+  function clearMessages() {
+    if (messagesContainer) {
+      messagesContainer.innerHTML = '';
     }
-}
+  }
 
-// File management
-function updateContextInfo() {
-    const count = attachedFiles.length;
-    if (count > 0) {
-        contextInfo.style.display = 'flex';
-        contextInfo.querySelector('.context-count').textContent = `📎 ${count} file${count > 1 ? 's' : ''} attached`;
-    } else {
-        contextInfo.style.display = 'none';
+  function updateStatus(status) {
+    if (!status) return;
+
+    // Update context bar
+    if (status.contextCount !== undefined) {
+      if (status.contextCount > 0) {
+        contextBar?.classList.remove('hidden');
+        const countEl = contextBar?.querySelector('.context-count');
+        if (countEl) {
+          countEl.textContent = `📎 ${status.contextCount} file${status.contextCount > 1 ? 's' : ''} attached`;
+        }
+      } else {
+        contextBar?.classList.add('hidden');
+      }
     }
-}
 
-function clearAttachedFiles() {
-    attachedFiles = [];
-    updateContextInfo();
-    vscode.postMessage({ type: 'clearAttachedFiles' });
-}
+    // Update attachment count
+    if (status.attachmentCount !== undefined && status.attachmentCount > 0) {
+      contextBar?.classList.remove('hidden');
+      const countEl = contextBar?.querySelector('.context-count');
+      if (countEl) {
+        countEl.textContent = `📎 ${status.attachmentCount} file${status.attachmentCount > 1 ? 's' : ''} ready`;
+      }
+    }
+  }
 
-// Drag and drop handlers
-function handleDragEnter(e) {
+  function showError(message) {
+    const errorEl = document.createElement('div');
+    errorEl.className = 'message message-error';
+    errorEl.innerHTML = `
+      <div class="message-content">❌ ${message}</div>
+    `;
+    messagesContainer?.appendChild(errorEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  // Drag and drop handlers
+  function handleDragEnter(e) {
     e.preventDefault();
     dragCounter++;
-    if (e.dataTransfer.types.includes('Files')) {
-        dropZone.style.display = 'flex';
-        dropZone.classList.add('drag-over');
+    if (e.dataTransfer?.types.includes('Files')) {
+      dropZone?.classList.remove('hidden');
     }
-}
+  }
 
-function handleDragLeave(e) {
+  function handleDragLeave(e) {
     e.preventDefault();
     dragCounter--;
     if (dragCounter === 0) {
-        dropZone.style.display = 'none';
-        dropZone.classList.remove('drag-over');
+      dropZone?.classList.add('hidden');
     }
-}
+  }
 
-function handleDragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-}
-
-function handleDrop(e) {
+  function handleDrop(e) {
     e.preventDefault();
     dragCounter = 0;
-    dropZone.style.display = 'none';
-    dropZone.classList.remove('drag-over');
+    dropZone?.classList.add('hidden');
 
-    const files = Array.from(e.dataTransfer.files);
+    const files = Array.from(e.dataTransfer?.files || []);
     if (files.length > 0) {
-        // Send file information to extension
-        const fileInfo = files.map(file => ({
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            path: file.path || file.name
-        }));
+      const fileInfo = files.map((file) => ({
+        name: file.name,
+        path: file.path || file.name,
+        size: file.size,
+        type: file.type,
+      }));
 
-        attachedFiles.push(...fileInfo);
-        updateContextInfo();
-
-        vscode.postMessage({
-            type: 'filesDropped',
-            files: fileInfo
-        });
+      vscode.postMessage({
+        type: 'filesDropped',
+        payload: fileInfo,
+      });
     }
-}
+  }
 
-// Enhanced keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + K to clear chat
+  // Keyboard shortcuts
+  function handleKeyboardShortcuts(e) {
+    // Ctrl/Cmd + K - Clear chat
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        vscode.postMessage({ type: 'clearChat' });
+      e.preventDefault();
+      vscode.postMessage({ type: 'clearChat' });
     }
 
-    // Ctrl/Cmd + / to focus input
+    // Ctrl/Cmd + / - Focus input
     if ((e.ctrlKey || e.metaKey) && e.key === '/') {
-        e.preventDefault();
-        messageInput.focus();
+      e.preventDefault();
+      inputElement?.focus();
     }
 
-    // Ctrl/Cmd + U to toggle code mode
-    if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
-        e.preventDefault();
-        setMode(currentMode === 'code' ? 'chat' : 'code');
+    // Escape - Exit mode
+    if (e.key === 'Escape' && currentMode !== 'chat') {
+      setMode('chat');
     }
+  }
 
-    // Ctrl/Cmd + D to toggle database mode
-    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        setMode(currentMode === 'database' ? 'chat' : 'database');
-    }
-});
-
-// Initial setup
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', signalReady);
-} else {
-    signalReady();
-}
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

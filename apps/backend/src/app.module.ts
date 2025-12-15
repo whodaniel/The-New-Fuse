@@ -14,6 +14,7 @@ import { FilesModule } from './modules/files/files.module';
 import { MassModule } from './modules/mass/mass.module';
 import { MCPModule } from './modules/mcp/mcp.module';
 import { OrchestratorController, OrchestratorModule } from './modules/orchestrator';
+import { RelayModule } from './modules/relay/relay.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -52,8 +53,10 @@ import { UsersModule } from './users/users.module';
     CacheModule,
     MCPModule, // MCP Integration for agent communication
     OrchestratorModule, // TNF Orchestration - Heartbeat, Coordination, Handoffs
+    RelayModule, // Relay Core - Agent-to-Agent communication relay
   ],
   controllers: [AppController, CacheController, OrchestratorController],
   providers: [AppService, EventBus, LoggingService],
 })
 export class AppModule {}
+

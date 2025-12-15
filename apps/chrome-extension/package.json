@@ -1,0 +1,45 @@
+{
+  "name": "@the-new-fuse/chrome-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The New Fuse Chrome Extension - Enterprise AI Bridge for Browser Integration",
+  "main": "background.js",
+  "scripts": {
+    "build": "npm run clean && npm run generate-icons && npm run copy-files",
+    "build:dev": "npm run copy-files",
+    "generate-icons": "node create-icons.js",
+    "copy-files": "mkdir -p dist && cp manifest.json dist/ && cp *.js dist/ && cp *.html dist/ && cp *.css dist/ && cp -r icons dist/",
+    "clean": "rm -rf dist",
+    "lint": "eslint *.js --fix || true",
+    "lint:check": "eslint *.js || true",
+    "format": "prettier --write '**/*.{js,json,html,css}'",
+    "format:check": "prettier --check '**/*.{js,json,html,css}'",
+    "package": "npm run build && cd dist && zip -r ../the-new-fuse-chrome-extension-$(date +%Y%m%d).zip . && cd .. && echo 'Package created!'",
+    "dev": "npm run build && echo 'Extension ready! Load the dist folder as an unpacked extension in Chrome'",
+    "validate": "node -e \"const m = require('./manifest.json'); console.log('Manifest valid:', m.name, 'v' + m.version)\""
+  },
+  "keywords": [
+    "chrome-extension",
+    "ai-bridge",
+    "the-new-fuse",
+    "browser-integration",
+    "gemini",
+    "chatgpt",
+    "claude",
+    "ai-to-ai",
+    "relay"
+  ],
+  "author": "The New Fuse Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whodaniel/fuse"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "prettier": "^3.7.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

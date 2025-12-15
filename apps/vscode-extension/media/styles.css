@@ -1,0 +1,522 @@
+/**
+ * The New Fuse VSCode Extension - Styles
+ * Version 9.0.0 - Modern, Clean Design
+ */
+
+/* ============================================
+   CSS Variables
+   ============================================ */
+:root {
+  --bg-primary: var(--vscode-editor-background);
+  --bg-secondary: var(--vscode-sideBar-background);
+  --bg-tertiary: var(--vscode-input-background);
+  --text-primary: var(--vscode-foreground);
+  --text-secondary: var(--vscode-descriptionForeground);
+  --text-muted: var(--vscode-disabledForeground);
+  --border-color: var(--vscode-panel-border);
+  --accent-color: var(--vscode-button-background);
+  --accent-hover: var(--vscode-button-hoverBackground);
+  --accent-text: var(--vscode-button-foreground);
+  --success-color: var(--vscode-testing-iconPassed);
+  --error-color: var(--vscode-errorForeground);
+  --warning-color: var(--vscode-editorWarning-foreground);
+  --link-color: var(--vscode-textLink-foreground);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+}
+
+/* ============================================
+   Messages Container
+   ============================================ */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  scroll-behavior: smooth;
+}
+
+.messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ============================================
+   Message Styles
+   ============================================ */
+.message {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-user {
+  background: var(--accent-color);
+  color: var(--accent-text);
+  margin-left: 24px;
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.message-assistant {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  margin-right: 24px;
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.message-system {
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  color: var(--text-secondary);
+  font-style: italic;
+  text-align: center;
+}
+
+.message-error {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.85em;
+}
+
+.message-role {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.message-time {
+  opacity: 0.6;
+  font-size: 0.9em;
+}
+
+.message-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.message-meta {
+  margin-top: 8px;
+  font-size: 0.75em;
+  opacity: 0.5;
+}
+
+/* ============================================
+   Content Formatting
+   ============================================ */
+.message-content h1,
+.message-content h2,
+.message-content h3 {
+  margin: 16px 0 8px 0;
+  font-weight: 600;
+}
+
+.message-content h1 {
+  font-size: 1.3em;
+}
+.message-content h2 {
+  font-size: 1.15em;
+}
+.message-content h3 {
+  font-size: 1.05em;
+}
+
+.message-content ul,
+.message-content ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.message-content li {
+  margin: 4px 0;
+}
+
+.message-content strong {
+  font-weight: 600;
+}
+
+.message-content em {
+  font-style: italic;
+}
+
+.code-block {
+  background: var(--vscode-textCodeBlock-background);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.code-block code {
+  background: transparent;
+  padding: 0;
+}
+
+.inline-code {
+  background: var(--vscode-textCodeBlock-background);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.9em;
+}
+
+/* ============================================
+   Context Bar
+   ============================================ */
+.context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.context-bar.hidden {
+  display: none;
+}
+
+.context-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.context-clear {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 1.1em;
+  transition: var(--transition-fast);
+}
+
+.context-clear:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   Input Area
+   ============================================ */
+.input-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.input-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.action-btn:hover {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
+.action-btn.active {
+  background: var(--accent-color);
+  color: var(--accent-text);
+  border-color: var(--accent-color);
+}
+
+#input {
+  width: 100%;
+  min-height: 60px;
+  max-height: 200px;
+  padding: 12px 14px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  transition: var(--transition-fast);
+}
+
+#input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 0, 122, 204), 0.15);
+}
+
+#input::placeholder {
+  color: var(--text-muted);
+}
+
+.send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    var(--accent-hover, var(--accent-color))
+  );
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--accent-text);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.send-btn:hover {
+  background: linear-gradient(
+    135deg,
+    var(--accent-hover, var(--accent-color)),
+    var(--accent-color)
+  );
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+
+.send-btn:active {
+  transform: scale(0.95) translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* SVG icon styling */
+.action-btn svg,
+.send-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  transition: var(--transition-fast);
+}
+
+.action-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.send-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================
+   Drop Zone
+   ============================================ */
+.drop-zone {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.drop-zone.hidden {
+  display: none;
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px;
+  background: var(--bg-secondary);
+  border: 2px dashed var(--accent-color);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+}
+
+.drop-zone-content .codicon {
+  font-size: 48px;
+  color: var(--accent-color);
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 32px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state-title {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.empty-state-description {
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+@media (max-width: 400px) {
+  .message {
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+  }
+
+  .input-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================
+   Codicon Font Fix
+   ============================================ */
+.codicon {
+  font-family: 'codicon';
+  font-size: 16px;
+  display: inline-block;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fallback icons - hidden by default when codicons load */
+.icon-fallback {
+  display: none;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Show fallback if codicon font fails to load */
+@supports not (font-family: 'codicon') {
+  .codicon {
+    display: none !important;
+  }
+  .icon-fallback {
+    display: inline-block !important;
+  }
+}
+
+/* Alternative approach: check if codicon content is empty */
+.action-btn .codicon:empty + .icon-fallback,
+.send-btn .codicon:empty + .icon-fallback {
+  display: inline-block;
+}
+
+/* Ensure buttons show at least one icon */
+.action-btn:has(.codicon:empty) .icon-fallback,
+.send-btn:has(.codicon:empty) .icon-fallback {
+  display: inline-block;
+}

@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The New Fuse AI Bridge</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-logo">🚀</div>
+      <div>
+        <div class="header-title">The New Fuse</div>
+        <div class="header-subtitle">AI Bridge for Browser</div>
+      </div>
+      <div class="header-status">
+        <span id="status-indicator" class="status-indicator disconnected"></span>
+        <span id="status-text" class="text-muted" style="font-size: 0.7rem">Disconnected</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="dashboard">
+        <span class="nav-tab-icon">📊</span>
+        Dashboard
+      </button>
+      <button class="nav-tab" data-tab="agents">
+        <span class="nav-tab-icon">🤖</span>
+        Agents
+      </button>
+      <button class="nav-tab" data-tab="relay">
+        <span class="nav-tab-icon">🔗</span>
+        Relay
+      </button>
+      <button class="nav-tab" data-tab="ai-bridge">
+        <span class="nav-tab-icon">🌐</span>
+        AI Bridge
+      </button>
+      <button class="nav-tab" data-tab="settings">
+        <span class="nav-tab-icon">⚙️</span>
+        Settings
+      </button>
+    </nav>
+
+    <!-- Content Area -->
+    <main class="content">
+      <!-- Dashboard Tab -->
+      <div id="dashboard" class="tab-panel active">
+        <div class="connection-panel">
+          <div class="connection-status">
+            <span id="connection-status-dot" class="status-indicator disconnected"></span>
+            <span id="connection-status-text" class="connection-status-text"
+              >Not Connected to TNF Relay</span
+            >
+          </div>
+          <div class="connection-url" id="relay-url">http://localhost:3000/relay</div>
+          <div class="actions-bar">
+            <button class="btn btn-primary" id="btn-connect"><span>🔌</span> Connect</button>
+            <button class="btn btn-secondary" id="btn-disconnect" disabled>
+              <span>❌</span> Disconnect
+            </button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-agents">0</div>
+            <div class="stat-label">Active Agents</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-messages">0</div>
+            <div class="stat-label">Messages</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-tabs">0</div>
+            <div class="stat-label">Connected Tabs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-uptime">0s</div>
+            <div class="stat-label">Uptime</div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">📝</span>
+            <span class="card-title">Recent Activity</span>
+          </div>
+          <div class="message-log" id="activity-log">
+            <div class="message-item">
+              <span class="message-time">[--:--:--]</span>
+              <span class="text-muted">Waiting for activity...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <button class="btn btn-ghost btn-sm" id="btn-clear-log"><span>🗑️</span> Clear Log</button>
+          <button class="btn btn-ghost btn-sm" id="btn-export-log"><span>📤</span> Export</button>
+        </div>
+      </div>
+
+      <!-- Agents Tab -->
+      <div id="agents" class="tab-panel">
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">🤖</span>
+            <span class="card-title">Connected Agents</span>
+            <span class="badge badge-info" id="agent-count">0</span>
+          </div>
+          <div class="card-description mb-sm">Agents registered with the TNF relay system</div>
+
+          <div class="agent-list" id="agent-list">
+            <div class="text-center text-muted" style="padding: 20px">
+              <div style="font-size: 2rem; margin-bottom: 8px">🔍</div>
+              <p>No agents connected</p>
+              <p style="font-size: 0.7rem">Connect to the relay to discover agents</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">📡</span>
+            <span class="card-title">Register This Extension</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Agent Name</label>
+            <input
+              type="text"
+              class="form-input"
+              id="agent-name"
+              value="TNF Chrome Bridge"
+              placeholder="Agent name"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Capabilities</label>
+            <input
+              type="text"
+              class="form-input"
+              id="agent-capabilities"
+              value="web-bridge, ai-detection, tab-analysis"
+              placeholder="comma-separated"
+            />
+          </div>
+          <button class="btn btn-primary btn-block" id="btn-register-agent">
+            <span>📝</span> Register as Agent
+          </button>
+        </div>
+      </div>
+
+      <!-- Relay Tab -->
+      <div id="relay" class="tab-panel">
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">📨</span>
+            <span class="card-title">Send Message</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Agent</label>
+            <select class="form-select" id="target-agent">
+              <option value="">Broadcast to all</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message Type</label>
+            <select class="form-select" id="message-type">
+              <option value="chat">Chat Message</option>
+              <option value="command">Command</option>
+              <option value="request">Request</option>
+              <option value="notification">Notification</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payload</label>
+            <textarea
+              class="form-textarea"
+              id="message-payload"
+              placeholder='{"content": "Hello from Chrome!"}'
+            ></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" id="btn-send-message">
+            <span>📤</span> Send Message
+          </button>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">📥</span>
+            <span class="card-title">Incoming Messages</span>
+          </div>
+          <div class="message-log" id="message-log">
+            <div class="message-item">
+              <span class="message-time">[--:--:--]</span>
+              <span class="text-muted">No messages yet...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Bridge Tab -->
+      <div id="ai-bridge" class="tab-panel">
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">🎯</span>
+            <span class="card-title">AI Platform Detection</span>
+          </div>
+          <div class="card-description mb-sm">Detect and connect to AI chat interfaces</div>
+
+          <div id="ai-platform-status" class="mb-sm">
+            <div class="flex items-center gap-sm">
+              <span class="status-indicator disconnected" id="ai-status-dot"></span>
+              <span id="ai-platform-name">No AI platform detected</span>
+            </div>
+          </div>
+
+          <div class="actions-bar">
+            <button class="btn btn-primary" id="btn-detect-ai">
+              <span>🔍</span> Detect AI Platform
+            </button>
+            <button class="btn btn-secondary" id="btn-inject-ui"><span>💉</span> Inject UI</button>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">📋</span>
+            <span class="card-title">Supported Platforms</span>
+          </div>
+          <div class="agent-list">
+            <div class="agent-item">
+              <div class="agent-avatar">🤖</div>
+              <div class="agent-info">
+                <div class="agent-name">Google Gemini</div>
+                <div class="agent-type">gemini.google.com</div>
+              </div>
+              <span class="badge badge-success">Supported</span>
+            </div>
+            <div class="agent-item">
+              <div class="agent-avatar">💬</div>
+              <div class="agent-info">
+                <div class="agent-name">ChatGPT</div>
+                <div class="agent-type">chat.openai.com</div>
+              </div>
+              <span class="badge badge-success">Supported</span>
+            </div>
+            <div class="agent-item">
+              <div class="agent-avatar">🧠</div>
+              <div class="agent-info">
+                <div class="agent-name">Claude</div>
+                <div class="agent-type">claude.ai</div>
+              </div>
+              <span class="badge badge-success">Supported</span>
+            </div>
+            <div class="agent-item">
+              <div class="agent-avatar">🔮</div>
+              <div class="agent-info">
+                <div class="agent-name">Perplexity</div>
+                <div class="agent-type">perplexity.ai</div>
+              </div>
+              <span class="badge badge-info">Beta</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">⚡</span>
+            <span class="card-title">Quick Actions</span>
+          </div>
+          <div class="actions-bar flex-col gap-xs">
+            <button class="btn btn-secondary btn-block" id="btn-send-test">
+              <span>🧪</span> Send Test Message
+            </button>
+            <button class="btn btn-secondary btn-block" id="btn-capture-response">
+              <span>📸</span> Capture Last Response
+            </button>
+            <button class="btn btn-secondary btn-block" id="btn-start-monitoring">
+              <span>👁️</span> Start Response Monitoring
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settings" class="tab-panel">
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">🔗</span>
+            <span class="card-title">Relay Connection</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Relay Server URL</label>
+            <input
+              type="text"
+              class="form-input"
+              id="setting-relay-url"
+              value="http://localhost:3000"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">WebSocket Port</label>
+            <input type="number" class="form-input" id="setting-ws-port" value="3000" />
+          </div>
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input type="checkbox" id="setting-auto-connect" checked />
+              <span>Auto-connect on startup</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input type="checkbox" id="setting-auto-reconnect" checked />
+              <span>Auto-reconnect on disconnect</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">🎨</span>
+            <span class="card-title">Appearance</span>
+          </div>
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input type="checkbox" id="setting-show-badge" checked />
+              <span>Show connection badge on icon</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input type="checkbox" id="setting-notifications" checked />
+              <span>Enable notifications</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-icon">🔧</span>
+            <span class="card-title">Advanced</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Log Level</label>
+            <select class="form-select" id="setting-log-level">
+              <option value="error">Error only</option>
+              <option value="warn">Warnings</option>
+              <option value="info" selected>Info</option>
+              <option value="debug">Debug</option>
+            </select>
+          </div>
+          <div class="actions-bar">
+            <button class="btn btn-secondary btn-sm" id="btn-export-settings">
+              <span>📤</span> Export
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-import-settings">
+              <span>📥</span> Import
+            </button>
+            <button class="btn btn-error btn-sm" id="btn-reset-settings">
+              <span>🔄</span> Reset
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block mt-md" id="btn-save-settings">
+          <span>💾</span> Save Settings
+        </button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-version">v1.0.0</span>
+      <div class="footer-links">
+        <a href="https://thenewfuse.com/docs" target="_blank">Docs</a>
+        <a href="https://github.com/whodaniel/fuse" target="_blank">GitHub</a>
+      </div>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

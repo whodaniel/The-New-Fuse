@@ -1,0 +1,33 @@
+{
+  "name": "@the-new-fuse/chrome-extension-native-messaging",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The New Fuse Chrome Extension with Native Messaging - Local AI Connector",
+  "scripts": {
+    "build": "npm run clean && npm run copy-files",
+    "copy-files": "mkdir -p dist && cp manifest.json dist/ && cp *.js dist/ && cp *.html dist/ && cp -r images dist/ 2>/dev/null || true",
+    "clean": "rm -rf dist",
+    "lint": "eslint *.js --fix",
+    "lint:check": "eslint *.js",
+    "format": "prettier --write '**/*.{js,json,html}'",
+    "format:check": "prettier --check '**/*.{js,json,html}'",
+    "package": "npm run build && cd dist && zip -r ../local-ai-connector.zip .",
+    "install-native-host": "node scripts/install-native-host.js",
+    "dev": "npm run build && echo 'Load the dist folder as an unpacked extension in Chrome'"
+  },
+  "keywords": [
+    "chrome-extension",
+    "native-messaging",
+    "local-ai",
+    "the-new-fuse"
+  ],
+  "author": "The New Fuse Team",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "prettier": "^3.7.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
