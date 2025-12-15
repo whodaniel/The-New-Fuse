@@ -8,7 +8,7 @@ module.exports = {
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsconfig: '<rootDir>/tsconfig.json',
+        tsconfig: '<rootDir>/tsconfig.spec.json',
       },
     ],
   },
@@ -22,7 +22,7 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/**/index.ts'],
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.json',
+      tsconfig: '<rootDir>/tsconfig.spec.json',
       isolatedModules: true,
     },
   },
