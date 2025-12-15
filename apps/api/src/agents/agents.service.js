@@ -33,16 +33,18 @@ let AgentsService = class AgentsService {
                     config: this.agentFactory.getDefaultConfig(dto.type)
                 }
             });
-            // TODO: Implement monitoring methods
-            // this.monitoring.recordMetric('agent.created', 1, {
-            //   type: dto.type,
-            //   userId
-            // });
+            if (this.monitoring) {
+                this.monitoring.recordMetric('agent.created', 1, {
+                    type: dto.type,
+                    userId
+                });
+            }
             return agent;
         }
         catch (error) {
-            // TODO: Implement monitoring methods
-            // this.monitoring.captureError(error, { userId, dto });
+            if (this.monitoring) {
+                this.monitoring.captureError(error, { userId, dto });
+            }
             throw error;
         }
     }

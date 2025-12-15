@@ -34,8 +34,12 @@ import { ReviewerAgentService } from './reviewer.service';
     {
       provide: 'UnifiedMonitoringService',
       useValue: {
-        recordMetric: () => {},
-        captureError: () => {},
+        recordMetric: (metric: string, value: any, tags: any) => {
+          console.log(`[UnifiedMonitoringService] Record Metric: ${metric}`, value, tags);
+        },
+        captureError: (error: any, context: any) => {
+          console.error(`[UnifiedMonitoringService] Capture Error:`, error, context);
+        },
       },
     },
     AnalyzerAgentService,
