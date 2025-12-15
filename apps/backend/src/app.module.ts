@@ -20,6 +20,7 @@ import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-t
 import { PrismaModule } from './prisma/prisma.module';
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
+import { ApiModule } from './api/api.module';
 
 // Create a comprehensive module to support all frontend routing expectations
 // TNF (The New Fuse) is the Master Agent that orchestrates all other agents
@@ -44,6 +45,7 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     AuthModule,
     UsersModule,
+    ApiModule,
     MassModule,
     JobsModule,
     AgentExecutionsModule,
