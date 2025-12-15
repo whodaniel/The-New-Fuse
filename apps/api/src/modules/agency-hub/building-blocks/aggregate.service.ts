@@ -30,12 +30,39 @@ export class AggregateService {
   ): Promise<AggregationResult> {
     this.logger.log(`Aggregating ${responses.length} responses`);
     
-    // TODO: Implement response aggregation logic
-    const keyPoints = responses.map(r => r.response);
-    const avgConfidence = responses.reduce((sum, r) => sum + r.confidence, 0) / responses.length;
+    if (responses.length === 0) {
+      return {
+        summary: 'No responses to aggregate',
+        keyPoints: [],
+        confidence: 0,
+        sources: []
+      };
+    }
+
+    // Use consensus finding as the core aggregation strategy
+    const opinions = responses.map(r => ({
+      agentId: r.agentId,
+      opinion: r.response,
+      weight: r.confidence
+    }));
+
+    const consensusResult = await this.findConsensus(opinions);
+
+    // Calculate confidence for the aggregated result
+    // We can use the average confidence of the agents that agreed with the consensus
+    const winningResponseNormalized = consensusResult.consensus.trim().toLowerCase();
+    const winningAgents = responses.filter(r => r.response.trim().toLowerCase() === winningResponseNormalized);
     
+    // If consensus is "No clear consensus found" or similar fallback, handled gracefully
+    const avgConfidence = winningAgents.length > 0
+      ? winningAgents.reduce((sum, r) => sum + r.confidence, 0) / winningAgents.length
+      : 0;
+
+    // Collect key points (unique responses)
+    const keyPoints = Array.from(new Set(responses.map(r => r.response)));
+
     return {
-      summary: 'Aggregated response from multiple agents',
+      summary: winningAgents.length > 0 ? winningAgents[0].response : consensusResult.consensus,
       keyPoints,
       confidence: avgConfidence,
       sources: responses.map(r => r.agentId)
@@ -54,12 +81,75 @@ export class AggregateService {
   ): Promise<ConsensusResult> {
     this.logger.log(`Finding consensus among ${opinions.length} opinions`);
     
-    // TODO: Implement consensus finding logic
+    if (opinions.length === 0) {
+      return {
+        consensus: 'No opinions provided',
+        agreement: 0,
+        dissenting: [],
+        reasoning: 'No input data'
+      };
+    }
+
+    // Group opinions by normalized text
+    const groups = new Map<string, {
+      totalWeight: number;
+      agents: string[];
+      originalText: string;
+    }>();
+
+    let totalWeightAll = 0;
+
+    for (const { agentId, opinion, weight } of opinions) {
+      const normalized = opinion.trim().toLowerCase();
+      const existing = groups.get(normalized);
+
+      totalWeightAll += weight;
+
+      if (existing) {
+        existing.totalWeight += weight;
+        existing.agents.push(agentId);
+      } else {
+        groups.set(normalized, {
+          totalWeight: weight,
+          agents: [agentId],
+          originalText: opinion
+        });
+      }
+    }
+
+    // Find the winning group
+    let winner = {
+      normalized: '',
+      totalWeight: -1,
+      agents: [] as string[],
+      originalText: ''
+    };
+
+    for (const [key, data] of groups.entries()) {
+      if (data.totalWeight > winner.totalWeight) {
+        winner = {
+          normalized: key,
+          totalWeight: data.totalWeight,
+          agents: data.agents,
+          originalText: data.originalText
+        };
+      }
+    }
+
+    const agreement = totalWeightAll > 0 ? winner.totalWeight / totalWeightAll : 0;
+
+    // Identify dissenting agents (all agents not in the winning group)
+    const dissenting = opinions
+      .filter(o => o.opinion.trim().toLowerCase() !== winner.normalized)
+      .map(o => o.agentId);
+
+    const reasoning = `Consensus reached on "${winner.originalText}" with ${Math.round(agreement * 100)}% agreement (weighted). Supported by agents: ${winner.agents.join(', ')}.`;
+
     return {
-      consensus: 'No clear consensus found',
-      agreement: 0.5,
-      dissenting: [],
-      reasoning: 'Consensus analysis completed'
+      consensus: winner.originalText,
+      agreement,
+      dissenting,
+      reasoning
     };
   }
 
