@@ -83,7 +83,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-black via-zinc-900 to-black">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-linear-to-br from-black via-zinc-900 to-black">
       <div className="w-full max-w-md lg:max-w-lg">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -98,7 +98,7 @@ const Register: React.FC = () => {
           </div>
 
           {/* Main Card */}
-          <GlassCard className="p-6 sm:p-8 lg:p-10 backdrop-blur-xl border-zinc-800/50">
+          <GlassCard className="w-full p-6 sm:p-8 lg:p-10 backdrop-blur-xl border-zinc-800/50">
             <div className="space-y-6">
               {/* Header */}
               <div className="space-y-2">
@@ -109,7 +109,7 @@ const Register: React.FC = () => {
               {/* Error */}
               {error && (
                 <div className="bg-red-500/10 border border-red-500/20 rounded-md p-3 flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                   <p className="text-sm text-red-200">{error}</p>
                 </div>
               )}
@@ -206,13 +206,10 @@ const Register: React.FC = () => {
               </form>
 
               {/* Divider */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-zinc-700/50"></div>
-                </div>
-                <div className="relative flex justify-center text-xs">
-                  <span className="px-2 bg-transparent text-gray-500 backdrop-blur-xl">Or</span>
-                </div>
+              <div className="flex items-center gap-4 py-2">
+                <div className="h-px flex-1 bg-zinc-700/50"></div>
+                <span className="text-xs text-gray-500">Or</span>
+                <div className="h-px flex-1 bg-zinc-700/50"></div>
               </div>
 
               {/* Google */}
