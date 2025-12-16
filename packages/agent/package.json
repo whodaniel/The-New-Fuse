@@ -17,7 +17,7 @@
   "dependencies": {
     "@nestjs/common": "^11.1.9",
     "@nestjs/core": "^11.1.9",
-    "@nestjs/graphql": "13.2.0",
+    "@nestjs/graphql": "13.2.3",
     "@the-new-fuse/api-types": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
