@@ -72,6 +72,54 @@ Enabled permissions for advanced browser control:
 - All dependencies (axios, adm-zip) bundled into `main.js`
 - No more `node_modules` resolution issues in packaged app
 
+### 8. **Browser Hub UI Refinement (Dec 16, 2024)**
+
+- **System Extension Import**: Added "Import System" button for manual loading
+  of system Chrome extensions (macOS)
+- **Toolbar Pinning**: Implemented "Pin" functionality to control which
+  extension icons appear in the toolbar
+- **Scrollbar Fix**: Fixed extension toolbar scrolling and visibility
+- **UI Clean-up**: Removed external AI links (Claude, Gemini), removed redundant
+  sidebar extension button, moved Prompt Manager to Quick Access
+- **Brand Alignment**: Update branding elements to match "Deep Space" theme
+
+**Status**: Code updated. **Build Complete** (Version 3.0.0).
+
+---
+
+## 📦 Build & Packaging Process (Updated Dec 16, 2024)
+
+To generate the `.dmg` installer for macOS:
+
+1.  **Navigate to Directory**:
+
+    ```bash
+    cd apps/electron-desktop
+    ```
+
+2.  **Run Build Command**:
+    - _Note: Ensure `pnpm` is in your path. If running from an automated
+      environment, source your shell configuration first._
+
+    ```bash
+    source ~/.zshrc && pnpm run dist
+    ```
+
+3.  **Process Breakdown**: The `pnpm run dist` command automates the following
+    pipeline:
+    - **Frontend Build**: `vite build` (Compiles React/Vite app to
+      `dist/renderer`)
+    - **Main Process Build**: `pnpm run build:main` (Compiles TypeScript main
+      process with `esbuild` to `dist/main`)
+    - **Asset Copy**: `node ./scripts/copy-browser-hub.js --once` (Copies 14
+      Browser Hub HTML files to `dist/browser-hub`)
+    - **Packaging**: `electron-builder` (Packages everything into
+      `release/mac/The New Fuse-3.0.0.dmg`)
+
+4.  **Output**:
+    - File: `apps/electron-desktop/release/The New Fuse-3.0.0.dmg`
+    - Size: ~119 MB
+
 ---
 
 ## 🔧 Technical Implementation
