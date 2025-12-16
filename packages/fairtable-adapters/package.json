@@ -20,7 +20,7 @@
     "@the-new-fuse/fairtable-core": "workspace:*",
     "@the-new-fuse/fairtable-utils": "workspace:*",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@types/node": "^24.9.1",
