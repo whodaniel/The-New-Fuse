@@ -84,6 +84,7 @@ const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 const PricingPage = lazy(() => import('./pages/Pricing'));
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
+const SupportPage = lazy(() => import('./pages/Support'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
 const AIAgentOnboardingPage = lazy(() =>
@@ -195,9 +196,17 @@ import SmartNavigation from './components/SmartNavigation';
 export default function ComprehensiveRouter() {
   const location = useLocation();
   const isPublicRoute =
-    ['/', '/login', '/register', '/landing', '/home', '/pricing', '/community'].includes(
-      location.pathname
-    ) ||
+    [
+      '/',
+      '/login',
+      '/register',
+      '/landing',
+      '/home',
+      '/pricing',
+      '/community',
+      '/support',
+      '/contact',
+    ].includes(location.pathname) ||
     location.pathname.startsWith('/auth') ||
     location.pathname.startsWith('/legal');
 
@@ -311,6 +320,8 @@ export default function ComprehensiveRouter() {
             <Route path="/landing" element={<LandingRevolutionPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/community" element={<CommunityHubPage />} />
+            <Route path="/support" element={<SupportPage />} />
+            <Route path="/contact" element={<SupportPage />} />
             <Route path="/onboarding" element={<OnboardingFlowPage />} />
             {/* AI Agent Onboarding - Critical for autonomous agent self-registration (ULTIMATE_UX_DESIGNER_BRIEF) */}
             <Route
