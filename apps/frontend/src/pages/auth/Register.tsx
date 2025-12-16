@@ -181,11 +181,14 @@ const Register: React.FC = () => {
                     className="text-sm text-gray-400 cursor-pointer select-none"
                   >
                     I agree to the{' '}
-                    <Link to="/terms" className="text-blue-400 hover:text-blue-300 underline">
+                    <Link to="/legal/terms" className="text-blue-400 hover:text-blue-300 underline">
                       Terms
                     </Link>{' '}
                     and{' '}
-                    <Link to="/privacy" className="text-blue-400 hover:text-blue-300 underline">
+                    <Link
+                      to="/legal/privacy"
+                      className="text-blue-400 hover:text-blue-300 underline"
+                    >
                       Privacy Policy
                     </Link>
                   </label>
