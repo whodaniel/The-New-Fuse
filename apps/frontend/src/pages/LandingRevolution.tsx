@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom';
  */
 export const LandingPageRevolution = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
       {/* HERO SECTION - MASSIVE & BOLD */}
       <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32">
         {/* Background Glow Effects */}
@@ -42,7 +42,7 @@ export const LandingPageRevolution = () => {
           {/* Main Headline - RESPONSIVE */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-4 sm:mb-6 lg:mb-8 leading-tight sm:leading-none">
             <span className="block text-white">Build Your</span>
-            <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="block bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               AI Empire
             </span>
           </h1>
@@ -58,7 +58,7 @@ export const LandingPageRevolution = () => {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6 justify-center items-center px-4">
             <Button
               asChild
-              className="w-full sm:w-auto h-12 sm:h-14 lg:h-16 px-6 sm:px-8 lg:px-12 text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_30px_rgba(59,130,246,0.5)] sm:shadow-[0_0_40px_rgba(59,130,246,0.6)] hover:shadow-[0_0_50px_rgba(59,130,246,0.7)] sm:hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] transform hover:scale-105 transition-all duration-300"
+              className="w-full sm:w-auto h-12 sm:h-14 lg:h-16 px-6 sm:px-8 lg:px-12 text-base sm:text-lg lg:text-xl font-bold bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-glow-lg sm:shadow-[0_0_40px_rgba(59,130,246,0.6)] hover:shadow-[0_0_50px_rgba(59,130,246,0.7)] sm:hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] transform hover:scale-105 transition-all duration-300"
             >
               <Link to="/auth/register">
                 <Rocket className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
@@ -105,7 +105,7 @@ export const LandingPageRevolution = () => {
           <div className="text-center mb-10 sm:mb-14 lg:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6">
               <span className="text-white">Why Developers</span>{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Choose Us
               </span>
             </h2>
@@ -117,10 +117,10 @@ export const LandingPageRevolution = () => {
           {/* Feature Grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Feature 1 */}
-            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 hover:border-blue-500/50 transition-all duration-500 hover:bg-white/[0.05] cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
+            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-blue-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
+              <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
                   <Bot className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 lg:mb-4 text-white">
@@ -134,10 +134,10 @@ export const LandingPageRevolution = () => {
             </div>
 
             {/* Feature 2 */}
-            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 hover:bg-white/[0.05] cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
+            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
+              <div className="absolute inset-0 bg-linear-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-linear-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
                   <Network className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 lg:mb-4 text-white">
@@ -151,10 +151,10 @@ export const LandingPageRevolution = () => {
             </div>
 
             {/* Feature 3 */}
-            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 hover:border-green-500/50 transition-all duration-500 hover:bg-white/[0.05] cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
+            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-green-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
+              <div className="absolute inset-0 bg-linear-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-linear-to-br from-green-500 to-green-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
                   <Workflow className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 lg:mb-4 text-white">
@@ -168,10 +168,10 @@ export const LandingPageRevolution = () => {
             </div>
 
             {/* Feature 4 */}
-            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 hover:border-orange-500/50 transition-all duration-500 hover:bg-white/[0.05] cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
+            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-orange-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
+              <div className="absolute inset-0 bg-linear-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-linear-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
                   <Code className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 lg:mb-4 text-white">
@@ -185,10 +185,10 @@ export const LandingPageRevolution = () => {
             </div>
 
             {/* Feature 5 */}
-            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 hover:border-pink-500/50 transition-all duration-500 hover:bg-white/[0.05] cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
+            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-pink-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
+              <div className="absolute inset-0 bg-linear-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-linear-to-br from-pink-500 to-pink-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
                   <Shield className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 lg:mb-4 text-white">
@@ -201,10 +201,10 @@ export const LandingPageRevolution = () => {
             </div>
 
             {/* Feature 6 */}
-            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/[0.02] backdrop-blur-2xl border border-white/10 hover:border-cyan-500/50 transition-all duration-500 hover:bg-white/[0.05] cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
+            <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-cyan-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
+              <div className="absolute inset-0 bg-linear-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-linear-to-br from-cyan-500 to-cyan-600 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transform transition-transform shadow-2xl">
                   <Globe className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 lg:mb-4 text-white">
@@ -226,7 +226,7 @@ export const LandingPageRevolution = () => {
           <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-4 sm:mb-6 lg:mb-8 leading-tight sm:leading-none">
             <span className="text-white">Ready to Build</span>
             <br />
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               The Future?
             </span>
           </h2>
@@ -235,7 +235,7 @@ export const LandingPageRevolution = () => {
           </p>
           <Button
             asChild
-            className="w-full sm:w-auto h-14 sm:h-16 lg:h-20 px-8 sm:px-12 lg:px-16 text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_40px_rgba(59,130,246,0.6)] sm:shadow-[0_0_60px_rgba(59,130,246,0.7)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] sm:hover:shadow-[0_0_80px_rgba(59,130,246,0.9)] transform hover:scale-105 sm:hover:scale-110 transition-all duration-300"
+            className="w-full sm:w-auto h-14 sm:h-16 lg:h-20 px-8 sm:px-12 lg:px-16 text-lg sm:text-xl lg:text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_40px_rgba(59,130,246,0.6)] sm:shadow-[0_0_60px_rgba(59,130,246,0.7)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] sm:hover:shadow-[0_0_80px_rgba(59,130,246,0.9)] transform hover:scale-105 sm:hover:scale-110 transition-all duration-300"
           >
             <Link to="/auth/register">
               <Rocket className="mr-2 sm:mr-3 lg:mr-4 h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8" />
@@ -259,7 +259,7 @@ export const LandingPageRevolution = () => {
                 to="/"
                 className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <Rocket className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold">The New Fuse</span>

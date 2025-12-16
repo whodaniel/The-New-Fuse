@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 
 export const Docs = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
-      <main className="flex-grow">
-        <section className="py-20 lg:py-32 bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
+    <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
+      <main className="grow">
+        <section className="py-20 lg:py-32 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
           <div className="container mx-auto px-4">
             <Badge className="mb-6 bg-white/10 text-white border-white/20">
               <Book className="w-4 h-4 mr-2" />
@@ -46,7 +46,7 @@ export const Docs = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <Card>
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
                     <Code className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2 text-gray-900">API Reference</h3>
@@ -58,7 +58,7 @@ export const Docs = () => {
 
               <Card>
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-green-500 to-green-600 flex items-center justify-center mb-4">
                     <Terminal className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2 text-gray-900">CLI Guide</h3>
@@ -68,7 +68,7 @@ export const Docs = () => {
 
               <Card>
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4">
                     <Globe className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2 text-gray-900">SDK Documentation</h3>
@@ -103,7 +103,7 @@ export const Docs = () => {
             to="/"
             className="inline-flex items-center justify-center gap-3 mb-4 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <Rocket className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold">The New Fuse</span>
