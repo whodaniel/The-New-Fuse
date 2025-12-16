@@ -85,6 +85,7 @@ const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 const PricingPage = lazy(() => import('./pages/Pricing'));
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
 const SupportPage = lazy(() => import('./pages/Support'));
+const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
 const AIAgentOnboardingPage = lazy(() =>
@@ -323,6 +324,9 @@ export default function ComprehensiveRouter() {
             <Route path="/support" element={<SupportPage />} />
             <Route path="/contact" element={<SupportPage />} />
             <Route path="/onboarding" element={<OnboardingFlowPage />} />
+            {/* Brand Identity / Design System */}
+            <Route path="/brand" element={<BrandIdentityPage />} />
+            <Route path="/design-system" element={<BrandIdentityPage />} />
             {/* AI Agent Onboarding - Critical for autonomous agent self-registration (ULTIMATE_UX_DESIGNER_BRIEF) */}
             <Route
               path="/onboarding/ai-agent"
