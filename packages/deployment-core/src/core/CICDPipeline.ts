@@ -1,27 +1,27 @@
+import { EventEmitter } from 'events';
+import { Logger } from 'winston';
 import { ICICDPipeline } from '../interfaces/ICICDPipeline';
 import {
-  BuildTrigger,
   BuildResult,
-  PipelineDefinition,
-  PipelineResult,
+  BuildTrigger,
   DeploymentConfig,
   DeploymentResult,
-  RollbackResult,
-  PipelineStatus,
   PipelineConfig,
+  PipelineDefinition,
+  PipelineMetrics,
+  PipelineResult,
+  PipelineStage,
+  PipelineStatus,
+  PipelineTask,
+  RollbackResult,
   StageResult,
   TaskResult,
-  PipelineMetrics,
-  PipelineStage,
-  PipelineTask
 } from '../types/pipeline';
-import { PipelineExecutor } from './PipelineExecutor';
-import { PipelineValidator } from './PipelineValidator';
-import { PipelineStorage } from './PipelineStorage';
-import { NotificationService } from './NotificationService';
 import { MetricsCollector } from './MetricsCollector';
-import { Logger } from 'winston';
-import { EventEmitter } from 'events';
+import { NotificationService } from './NotificationService';
+import { PipelineExecutor } from './PipelineExecutor';
+import { PipelineStorage } from './PipelineStorage';
+import { PipelineValidator } from './PipelineValidator';
 
 /**
  * Core CI/CD Pipeline implementation
@@ -62,13 +62,13 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     this.logger.info(`Triggering build for ${trigger.source.repository}:${trigger.source.branch}`, {
       triggerId: trigger.id,
       type: trigger.type,
-      commit: trigger.source.commit
+      commit: trigger.source.commit,
     });
 
     try {
       // Find matching pipeline configurations
       const pipelineConfigs = await this.findMatchingPipelines(trigger);
-      
+
       if (pipelineConfigs.length === 0) {
         throw new Error(`No pipeline configurations found for trigger: ${trigger.id}`);
       }
@@ -88,7 +88,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         artifacts: pipelineResult.artifacts,
         logs: pipelineResult.logs,
         metrics: this.convertTouildMetrics(pipelineResult.metrics),
-        error: pipelineResult.error
+        error: pipelineResult.error,
       };
 
       // Store build result
@@ -101,11 +101,10 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       this.metricsCollector.recordBuildMetrics(buildResult);
 
       return buildResult;
-
     } catch (error) {
       this.logger.error(`Build trigger failed: ${error.message}`, {
         triggerId: trigger.id,
-        error: error.stack
+        error: error.stack,
       });
 
       const failedResult: BuildResult = {
@@ -120,9 +119,9 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         metrics: {
           buildTime: 0,
           artifactSize: 0,
-          dependencies: 0
+          dependencies: 0,
         },
-        error: error.message
+        error: error.message,
       };
 
       await this.storage.storeBuildResult(failedResult);
@@ -135,11 +134,11 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
    */
   async executePipeline(pipeline: PipelineDefinition): Promise<PipelineResult> {
     const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     this.logger.info(`Starting pipeline execution: ${pipeline.name}`, {
       pipelineId: pipeline.id,
       executionId,
-      stages: pipeline.stages.length
+      stages: pipeline.stages.length,
     });
 
     // Validate pipeline before execution
@@ -155,7 +154,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       status: PipelineStatus.RUNNING,
       startTime,
       stages: [],
-      currentStageIndex: 0
+      currentStageIndex: 0,
     };
 
     this.runningPipelines.set(executionId, execution);
@@ -167,7 +166,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
 
       // Execute pipeline stages
       const stageResults: StageResult[] = [];
-      
+
       for (let i = 0; i < pipeline.stages.length; i++) {
         const stage = pipeline.stages[i];
         execution.currentStageIndex = i;
@@ -176,17 +175,17 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
           pipelineId: pipeline.id,
           executionId,
           stageId: stage.id,
-          stageIndex: i
+          stageIndex: i,
         });
 
         // Check stage conditions
-        if (!await this.evaluateStageConditions(stage, stageResults)) {
+        if (!(await this.evaluateStageConditions(stage, stageResults))) {
           this.logger.info(`Stage ${stage.name} skipped due to conditions`, {
             pipelineId: pipeline.id,
             executionId,
-            stageId: stage.id
+            stageId: stage.id,
           });
-          
+
           const skippedResult: StageResult = {
             id: `stage-${Date.now()}`,
             stageId: stage.id,
@@ -196,9 +195,9 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
             endTime: new Date(),
             duration: 0,
             tasks: [],
-            logs: ['Stage skipped due to conditions']
+            logs: ['Stage skipped due to conditions'],
           };
-          
+
           stageResults.push(skippedResult);
           continue;
         }
@@ -214,7 +213,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
             pipelineId: pipeline.id,
             executionId,
             stageId: stage.id,
-            error: stageResult.error
+            error: stageResult.error,
           });
           break;
         }
@@ -240,10 +239,15 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         duration,
         stages: stageResults,
         artifacts: this.collectArtifacts(stageResults),
-        metrics: await this.calculatePipelineMetrics(pipeline.id, stageResults, duration, overallStatus),
+        metrics: await this.calculatePipelineMetrics(
+          pipeline.id,
+          stageResults,
+          duration,
+          overallStatus
+        ),
         logs: this.collectLogs(stageResults),
         triggeredBy: 'system', // TODO: Get from context
-        environment: pipeline.environment.name
+        environment: pipeline.environment.name,
       };
 
       // Store pipeline result
@@ -260,11 +264,10 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         pipelineId: pipeline.id,
         executionId,
         status: overallStatus,
-        duration
+        duration,
       });
 
       return pipelineResult;
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -274,7 +277,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       this.logger.error(`Pipeline execution failed: ${pipeline.name}`, {
         pipelineId: pipeline.id,
         executionId,
-        error: error.stack
+        error: error.stack,
       });
 
       const failedResult: PipelineResult = {
@@ -286,11 +289,16 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         duration,
         stages: execution.stages,
         artifacts: [],
-        metrics: await this.calculatePipelineMetrics(pipeline.id, execution.stages, duration, PipelineStatus.FAILED),
+        metrics: await this.calculatePipelineMetrics(
+          pipeline.id,
+          execution.stages,
+          duration,
+          PipelineStatus.FAILED
+        ),
         logs: [error.message],
         error: error.message,
         triggeredBy: 'system',
-        environment: pipeline.environment.name
+        environment: pipeline.environment.name,
       };
 
       await this.storage.storePipelineResult(failedResult);
@@ -298,7 +306,6 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       await this.notificationService.notifyPipelineFailed(failedResult);
 
       return failedResult;
-
     } finally {
       this.runningPipelines.delete(executionId);
     }
@@ -310,7 +317,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
   async deployToEnvironment(deployment: DeploymentConfig): Promise<DeploymentResult> {
     this.logger.info(`Starting deployment to ${deployment.environment}`, {
       deploymentId: deployment.id,
-      services: deployment.services.length
+      services: deployment.services.length,
     });
 
     try {
@@ -318,7 +325,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       await this.validator.validateDeployment(deployment);
 
       // Check approvals if required
-      if (deployment.approvals.some(a => a.required)) {
+      if (deployment.approvals.some((a) => a.required)) {
         await this.waitForApprovals(deployment);
       }
 
@@ -335,12 +342,11 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       this.metricsCollector.recordDeploymentMetrics(result);
 
       return result;
-
     } catch (error) {
       this.logger.error(`Deployment failed: ${error.message}`, {
         deploymentId: deployment.id,
         environment: deployment.environment,
-        error: error.stack
+        error: error.stack,
       });
 
       const failedResult: DeploymentResult = {
@@ -354,7 +360,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         services: [],
         healthChecks: [],
         logs: [error.message],
-        error: error.message
+        error: error.message,
       };
 
       await this.storage.storeDeploymentResult(failedResult);
@@ -387,11 +393,10 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       await this.notificationService.notifyRollbackComplete(result);
 
       return result;
-
     } catch (error) {
       this.logger.error(`Rollback failed: ${error.message}`, {
         deploymentId,
-        error: error.stack
+        error: error.stack,
       });
 
       const failedResult: RollbackResult = {
@@ -405,7 +410,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         currentVersion: 'unknown',
         reason: 'Manual rollback',
         logs: [error.message],
-        error: error.message
+        error: error.message,
       };
 
       return failedResult;
@@ -417,7 +422,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
    */
   async monitorPipeline(pipelineId: string): Promise<PipelineStatus> {
     const execution = this.runningPipelines.get(pipelineId);
-    
+
     if (!execution) {
       // Check if pipeline exists in storage
       const storedResult = await this.storage.getPipelineResult(pipelineId);
@@ -433,7 +438,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
   async managePipelineConfiguration(config: PipelineConfig): Promise<void> {
     this.logger.info(`Managing pipeline configuration: ${config.name}`, {
       configId: config.id,
-      version: config.version
+      version: config.version,
     });
 
     // Validate configuration
@@ -460,7 +465,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
    */
   async cancelPipeline(pipelineId: string): Promise<boolean> {
     const execution = this.runningPipelines.get(pipelineId);
-    
+
     if (!execution) {
       return false;
     }
@@ -468,17 +473,16 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     try {
       // Cancel the execution
       await this.executor.cancelExecution(pipelineId);
-      
+
       execution.status = PipelineStatus.CANCELLED;
       this.runningPipelines.delete(pipelineId);
 
       this.logger.info(`Pipeline cancelled: ${pipelineId}`);
       return true;
-
     } catch (error) {
       this.logger.error(`Failed to cancel pipeline: ${error.message}`, {
         pipelineId,
-        error: error.stack
+        error: error.stack,
       });
       return false;
     }
@@ -487,7 +491,9 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
   /**
    * Validate pipeline configuration
    */
-  async validatePipeline(pipeline: PipelineDefinition): Promise<{ valid: boolean; errors: string[] }> {
+  async validatePipeline(
+    pipeline: PipelineDefinition
+  ): Promise<{ valid: boolean; errors: string[] }> {
     return await this.validator.validatePipeline(pipeline);
   }
 
@@ -504,7 +510,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     this.on('pipeline:start', (data) => {
       this.logger.info(`Pipeline started: ${data.pipeline.name}`, {
         executionId: data.executionId,
-        pipelineId: data.pipeline.id
+        pipelineId: data.pipeline.id,
       });
     });
 
@@ -512,29 +518,29 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       this.logger.info(`Pipeline completed: ${data.pipeline.name}`, {
         executionId: data.executionId,
         status: data.result.status,
-        duration: data.result.duration
+        duration: data.result.duration,
       });
     });
 
     this.on('pipeline:failed', (data) => {
       this.logger.error(`Pipeline failed: ${data.pipeline.name}`, {
         executionId: data.executionId,
-        error: data.error.message
+        error: data.error.message,
       });
     });
   }
 
   private async findMatchingPipelines(trigger: BuildTrigger): Promise<PipelineConfig[]> {
     const allConfigs = await this.storage.getAllPipelineConfigs();
-    
-    return allConfigs.filter(config => {
-      return config.definition.triggers.some(pipelineTrigger => {
+
+    return allConfigs.filter((config) => {
+      return config.definition.triggers.some((pipelineTrigger) => {
         if (pipelineTrigger.type !== trigger.type) {
           return false;
         }
 
         // Check filters
-        return pipelineTrigger.filters.every(filter => {
+        return pipelineTrigger.filters.every((filter) => {
           switch (filter.type) {
             case 'branch':
               const matches = new RegExp(filter.pattern).test(trigger.source.branch);
@@ -551,22 +557,22 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
   }
 
   private async executeStage(
-    stage: PipelineStage, 
-    pipeline: PipelineDefinition, 
+    stage: PipelineStage,
+    pipeline: PipelineDefinition,
     executionId: string
   ): Promise<StageResult> {
     const startTime = new Date();
-    
+
     try {
       const taskResults: TaskResult[] = [];
 
       // Execute tasks in parallel or sequence based on stage configuration
       if (stage.parallel) {
-        const taskPromises = stage.tasks.map(task => 
+        const taskPromises = stage.tasks.map((task) =>
           this.executeTask(task, stage, pipeline, executionId)
         );
         const results = await Promise.allSettled(taskPromises);
-        
+
         results.forEach((result, index) => {
           if (result.status === 'fulfilled') {
             taskResults.push(result.value);
@@ -581,7 +587,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
               duration: 0,
               logs: [result.reason.message],
               artifacts: [],
-              error: result.reason.message
+              error: result.reason.message,
             });
           }
         });
@@ -613,9 +619,8 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         endTime,
         duration,
         tasks: taskResults,
-        logs: this.collectTaskLogs(taskResults)
+        logs: this.collectTaskLogs(taskResults),
       };
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -630,7 +635,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         duration,
         tasks: [],
         logs: [error.message],
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -645,7 +650,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
   }
 
   private async evaluateStageConditions(
-    stage: PipelineStage, 
+    stage: PipelineStage,
     previousStages: StageResult[]
   ): Promise<boolean> {
     for (const condition of stage.conditions) {
@@ -662,9 +667,9 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     // This is a simplified version
     switch (condition.type) {
       case 'branch':
-        return condition.operator === 'equals' ? 
-          context.branch === condition.value : 
-          context.branch !== condition.value;
+        return condition.operator === 'equals'
+          ? context.branch === condition.value
+          : context.branch !== condition.value;
       case 'previous_stage':
         const previousStage = context.find((s: StageResult) => s.name === condition.value);
         return previousStage?.status === PipelineStatus.SUCCESS;
@@ -673,7 +678,10 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     }
   }
 
-  private async evaluateQualityGates(_qualityGates: any[], _stageResult: StageResult): Promise<void> {
+  private async evaluateQualityGates(
+    _qualityGates: any[],
+    _stageResult: StageResult
+  ): Promise<void> {
     // Implementation for quality gate evaluation
     // This would check various metrics and thresholds
   }
@@ -683,12 +691,13 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       return PipelineStatus.PENDING;
     }
 
-    const hasFailures = stageResults.some(s => s.status === PipelineStatus.FAILED);
-    const hasCancelled = stageResults.some(s => s.status === PipelineStatus.CANCELLED);
-    const allCompleted = stageResults.every(s => 
-      s.status === PipelineStatus.SUCCESS || 
-      s.status === PipelineStatus.SKIPPED ||
-      s.status === PipelineStatus.FAILED
+    const hasFailures = stageResults.some((s) => s.status === PipelineStatus.FAILED);
+    const hasCancelled = stageResults.some((s) => s.status === PipelineStatus.CANCELLED);
+    const allCompleted = stageResults.every(
+      (s) =>
+        s.status === PipelineStatus.SUCCESS ||
+        s.status === PipelineStatus.SKIPPED ||
+        s.status === PipelineStatus.FAILED
     );
 
     if (hasCancelled) {
@@ -711,8 +720,8 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       return PipelineStatus.SUCCESS;
     }
 
-    const hasFailures = taskResults.some(t => t.status === PipelineStatus.FAILED);
-    const hasCancelled = taskResults.some(t => t.status === PipelineStatus.CANCELLED);
+    const hasFailures = taskResults.some((t) => t.status === PipelineStatus.FAILED);
+    const hasCancelled = taskResults.some((t) => t.status === PipelineStatus.CANCELLED);
 
     if (hasCancelled) {
       return PipelineStatus.CANCELLED;
@@ -727,9 +736,9 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
 
   private collectArtifacts(stageResults: StageResult[]): any[] {
     const artifacts: any[] = [];
-    
-    stageResults.forEach(stage => {
-      stage.tasks.forEach(task => {
+
+    stageResults.forEach((stage) => {
+      stage.tasks.forEach((task) => {
         artifacts.push(...task.artifacts);
       });
     });
@@ -739,10 +748,10 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
 
   private collectLogs(stageResults: StageResult[]): string[] {
     const logs: string[] = [];
-    
-    stageResults.forEach(stage => {
+
+    stageResults.forEach((stage) => {
       logs.push(...stage.logs);
-      stage.tasks.forEach(task => {
+      stage.tasks.forEach((task) => {
         logs.push(...task.logs);
       });
     });
@@ -752,7 +761,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
 
   private collectTaskLogs(taskResults: TaskResult[]): string[] {
     const logs: string[] = [];
-    taskResults.forEach(task => {
+    taskResults.forEach((task) => {
       logs.push(...task.logs);
     });
     return logs;
@@ -764,9 +773,9 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     totalDuration: number,
     currentStatus: PipelineStatus
   ): Promise<PipelineMetrics> {
-    const buildStages = stageResults.filter(s => s.name.toLowerCase().includes('build'));
-    const testStages = stageResults.filter(s => s.name.toLowerCase().includes('test'));
-    const deployStages = stageResults.filter(s => s.name.toLowerCase().includes('deploy'));
+    const buildStages = stageResults.filter((s) => s.name.toLowerCase().includes('build'));
+    const testStages = stageResults.filter((s) => s.name.toLowerCase().includes('test'));
+    const deployStages = stageResults.filter((s) => s.name.toLowerCase().includes('deploy'));
 
     const buildTime = buildStages.reduce((sum, s) => sum + (s.duration || 0), 0);
     const testTime = testStages.reduce((sum, s) => sum + (s.duration || 0), 0);
@@ -777,8 +786,8 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
 
     // Include current run in metrics
     const totalRuns = history.length + 1;
-    const historicalSuccess = history.filter(r => r.status === PipelineStatus.SUCCESS).length;
-    const historicalFailures = history.filter(r => r.status === PipelineStatus.FAILED).length;
+    const historicalSuccess = history.filter((r) => r.status === PipelineStatus.SUCCESS).length;
+    const historicalFailures = history.filter((r) => r.status === PipelineStatus.FAILED).length;
 
     const currentSuccess = currentStatus === PipelineStatus.SUCCESS ? 1 : 0;
     const currentFailure = currentStatus === PipelineStatus.FAILED ? 1 : 0;
@@ -793,7 +802,8 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     let throughput = 0;
     if (history.length > 0) {
       const oldestRun = history[history.length - 1];
-      const timeSpanDays = (new Date().getTime() - oldestRun.startTime.getTime()) / (1000 * 60 * 60 * 24);
+      const timeSpanDays =
+        (new Date().getTime() - oldestRun.startTime.getTime()) / (1000 * 60 * 60 * 24);
       if (timeSpanDays > 0) {
         throughput = (historicalSuccess + currentSuccess) / timeSpanDays;
       } else {
@@ -815,7 +825,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       throughput,
       leadTime: 0, // TODO: Calculate from commit to deployment
       changeFailureRate: 0, // TODO: Calculate from deployment data
-      meanTimeToRecovery: 0 // TODO: Calculate from incident data
+      meanTimeToRecovery: 0, // TODO: Calculate from incident data
     };
   }
 
@@ -826,7 +836,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
       codeQualityScore: 0, // TODO: Extract from quality checks
       securityScore: 0, // TODO: Extract from security scans
       artifactSize: 0, // TODO: Calculate from artifacts
-      dependencies: 0 // TODO: Extract from dependency analysis
+      dependencies: 0, // TODO: Extract from dependency analysis
     };
   }
 
