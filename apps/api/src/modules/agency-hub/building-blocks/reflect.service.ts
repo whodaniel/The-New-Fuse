@@ -29,13 +29,16 @@ export class ReflectService {
   /**
    * Reflect on agent performance and behavior based on provided metrics.
    */
-  async reflectOnPerformance(agentId: string, metrics: AgentPerformanceMetrics): Promise<{
+  async reflectOnPerformance(
+    agentId: string,
+    metrics: AgentPerformanceMetrics
+  ): Promise<{
     insights: string[];
     recommendations: string[];
     confidence: number;
   }> {
     this.logger.log(`Reflecting on performance for agent ${agentId}`);
-    
+
     const insights: string[] = [];
     const recommendations: string[] = [];
     let confidenceScore = 1.0;
@@ -94,27 +97,30 @@ export class ReflectService {
     return {
       insights,
       recommendations,
-      confidence: parseFloat(confidenceScore.toFixed(2))
+      confidence: parseFloat(confidenceScore.toFixed(2)),
     };
   }
 
   /**
    * Analyze agent decision-making patterns from a history of decisions.
    */
-  async analyzeDecisionPatterns(agentId: string, decisions: AgentDecision[]): Promise<{
+  async analyzeDecisionPatterns(
+    agentId: string,
+    decisions: AgentDecision[]
+  ): Promise<{
     patterns: string[];
     improvements: string[];
   }> {
     this.logger.log(`Analyzing decision patterns for agent ${agentId}`);
-    
+
     const patterns: string[] = [];
     const improvements: string[] = [];
 
     if (!decisions || decisions.length === 0) {
-        return {
-            patterns: ['No decision history available.'],
-            improvements: ['Enable decision logging to track patterns.']
-        };
+      return {
+        patterns: ['No decision history available.'],
+        improvements: ['Enable decision logging to track patterns.'],
+      };
     }
 
     // 1. Analyze Failure Repetition
@@ -122,50 +128,58 @@ export class ReflectService {
     let repeatedActionFailures = 0;
 
     for (let i = 0; i < decisions.length; i++) {
-        if (decisions[i].outcome === 'failure') {
-            consecutiveFailures++;
-            // Check if previous action was same and also failed
-            if (i > 0 && decisions[i-1].outcome === 'failure' && decisions[i].action === decisions[i-1].action) {
-                repeatedActionFailures++;
-            }
-        } else {
-            consecutiveFailures = 0;
+      if (decisions[i].outcome === 'failure') {
+        consecutiveFailures++;
+        // Check if previous action was same and also failed
+        if (
+          i > 0 &&
+          decisions[i - 1].outcome === 'failure' &&
+          decisions[i].action === decisions[i - 1].action
+        ) {
+          repeatedActionFailures++;
         }
+      } else {
+        consecutiveFailures = 0;
+      }
     }
 
     if (repeatedActionFailures > 0) {
-        patterns.push(`Detected ${repeatedActionFailures} instances of repeating failed actions.`);
-        improvements.push('Implement a backoff or alternative strategy when an action fails.');
+      patterns.push(`Detected ${repeatedActionFailures} instances of repeating failed actions.`);
+      improvements.push('Implement a backoff or alternative strategy when an action fails.');
     }
 
     // 2. Analyze Confidence Calibration
-    const highConfidenceFailures = decisions.filter(d => d.confidence > 0.8 && d.outcome === 'failure');
-    const lowConfidenceSuccesses = decisions.filter(d => d.confidence < 0.5 && d.outcome === 'success');
+    const highConfidenceFailures = decisions.filter(
+      (d) => d.confidence > 0.8 && d.outcome === 'failure'
+    );
+    const lowConfidenceSuccesses = decisions.filter(
+      (d) => d.confidence < 0.5 && d.outcome === 'success'
+    );
 
     if (highConfidenceFailures.length > 0) {
-        patterns.push('Agent exhibits overconfidence in some failed scenarios.');
-        improvements.push('Review confidence scoring mechanism for edge cases.');
+      patterns.push('Agent exhibits overconfidence in some failed scenarios.');
+      improvements.push('Review confidence scoring mechanism for edge cases.');
     }
 
     if (lowConfidenceSuccesses.length > 0) {
-        patterns.push('Agent succeeds even with low confidence.');
-        improvements.push('Investigate successful low-confidence actions to refine heuristics.');
+      patterns.push('Agent succeeds even with low confidence.');
+      improvements.push('Investigate successful low-confidence actions to refine heuristics.');
     }
 
     // 3. Action Diversity
-    const actions = new Set(decisions.map(d => d.action));
+    const actions = new Set(decisions.map((d) => d.action));
     if (actions.size === 1 && decisions.length > 5) {
-        patterns.push('Agent relies on a single action type.');
-        improvements.push('Ensure agent is considering the full range of available tools.');
+      patterns.push('Agent relies on a single action type.');
+      improvements.push('Ensure agent is considering the full range of available tools.');
     }
 
     if (patterns.length === 0) {
-        patterns.push('Decision patterns appear consistent and healthy.');
+      patterns.push('Decision patterns appear consistent and healthy.');
     }
 
     return {
       patterns,
-      improvements
+      improvements,
     };
   }
 
@@ -180,23 +194,20 @@ export class ReflectService {
     goals: string[];
   }> {
     this.logger.log(`Generating self-assessment for agent ${agentId}`);
-    
+
     // Placeholder logic - requires persistent storage access to be fully meaningful
     // For now, we return a structural template.
 
     return {
-      strengths: [
-        'Ability to process provided metrics',
-        'Pattern recognition in decision history'
-      ],
+      strengths: ['Ability to process provided metrics', 'Pattern recognition in decision history'],
       weaknesses: [
         'Lack of long-term memory access (implementation pending)',
-        'Limited context awareness outside provided metrics'
+        'Limited context awareness outside provided metrics',
       ],
       goals: [
         'Integrate with persistent storage for historical analysis',
-        'Improve confidence calibration based on feedback loops'
-      ]
+        'Improve confidence calibration based on feedback loops',
+      ],
     };
   }
 }

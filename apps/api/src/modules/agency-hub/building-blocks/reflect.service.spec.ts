@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
-import { describe, it, expect, beforeEach } from '@jest/globals';
-import { ReflectService, AgentPerformanceMetrics, AgentDecision } from './reflect.service';
+import { AgentDecision, AgentPerformanceMetrics, ReflectService } from './reflect.service';
 
 describe('ReflectService', () => {
   let service: ReflectService;
