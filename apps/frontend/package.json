@@ -129,7 +129,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/selenium-webdriver": "^4.35.4",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
-    "@typescript-eslint/parser": "^8.47.0",
+    "@typescript-eslint/parser": "^8.49.0",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitejs/plugin-react-swc": "^4.1.0",
     "@vitest/coverage-v8": "latest",
