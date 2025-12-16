@@ -1,17 +1,8 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, CheckCircle, Rocket, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { LandingFooter } from '../../components/layout/LandingFooter';
-import { LandingHeader } from '../../components/layout/LandingHeader';
-import { SEOHead } from '../../components/seo/SEOHead';
-import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/card';
 
 const PricingCard = ({
   title,
@@ -60,19 +51,7 @@ const PricingCard = ({
 
 export const Pricing = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <SEOHead
-        title="The New Fuse - Pricing | AI Collaboration Platform"
-        description="Choose the right plan for your AI collaboration needs. From free tier to enterprise solutions, we have options for every team size."
-        keywords={[
-          'AI platform pricing',
-          'workflow automation pricing',
-          'AI agents pricing',
-          'agent orchestration pricing',
-        ]}
-      />
-      <LandingHeader />
-
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
       <main className="flex-grow" role="main">
         {/* Hero Section */}
         <section
@@ -448,7 +427,90 @@ export const Pricing = () => {
         </section>
       </main>
 
-      <LandingFooter />
+      {/* Footer */}
+      <footer className="border-t border-white/10 py-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {/* Brand */}
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <Rocket className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold">The New Fuse</span>
+              </div>
+              <p className="text-gray-400 text-sm">AI Agent Orchestration Platform</p>
+            </div>
+
+            {/* Product */}
+            <div>
+              <h3 className="font-semibold mb-4">Product</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <Link to="/dashboard" className="hover:text-white transition-colors">
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/agents" className="hover:text-white transition-colors">
+                    AI Agents
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/workflows" className="hover:text-white transition-colors">
+                    Workflows
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h3 className="font-semibold mb-4">Resources</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <Link to="/community" className="hover:text-white transition-colors">
+                    Community
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/whodaniel/The-New-Fuse"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h3 className="font-semibold mb-4">Legal</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <Link to="/legal/privacy" className="hover:text-white transition-colors">
+                    Privacy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/legal/terms" className="hover:text-white transition-colors">
+                    Terms
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8 pt-8 border-t border-white/10 text-center">
+            <p className="text-xs text-gray-500">
+              © {new Date().getFullYear()} The New Fuse. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
