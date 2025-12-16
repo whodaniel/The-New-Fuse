@@ -103,3 +103,40 @@ git worktree remove ../tnf-hotfix
 3.  **Long-term**: Integrate "Worktree Management" into the **Browser Hub**
     Developer Tools, allowing you to spawn a new "Instance" of the codebase in a
     tab.
+
+---
+
+## 🤖 Convergence: CI/CD Workflows as AI Skills
+
+### The Insight
+
+There is a direct structural correlation between **GitHub Action Workflows**
+(YAML steps) and **Agentic Skills** (sequences of tool calls).
+
+As AI Agents (like Anthropic's "Computer Use" or our own Antigravity) evolve,
+they require defined "SOPs" (Standard Operating Procedures) to execute complex
+tasks reliably.
+
+### The Opportunity
+
+By standardizing our CI/CD pipelines as modular "Workflows", we are effectively
+building a **Skill Library** for our AI Agents:
+
+1.  **Workflows as Skills**: A `build-electron` workflow is not just a CI
+    script; it is a learned skill that an AI Agent can invoke: "Agent, please
+    build the electron app."
+2.  **Shared Language**: Both CI pipelines and AI Agents can understand
+    YAML/JSON definitions of tasks (Inputs → Steps → Outputs).
+3.  **Self-Improvement Loop**:
+    - **Phase 1**: Human writes a workflow (e.g., "Deploy to Production").
+    - **Phase 2**: Agent learns to invoke this workflow via API.
+    - **Phase 3**: Agent analyzes the workflow logs and _optimizes the workflow
+      definition itself_ (e.g., "I noticed step 3 is flaky, I will add a retry
+      logic").
+
+### Strategic Alignment
+
+This aligns perfectly with TNF's vision of a **Self-Improving Platform**. The
+codebase contains the instructions for its own evolution. When we define a
+robust CI/CD pipeline, we are simultaneously teaching the AI how to maintain the
+system.
