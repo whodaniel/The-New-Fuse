@@ -83,6 +83,7 @@ const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 const PricingPage = lazy(() => import('./pages/Pricing'));
+const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
 const AIAgentOnboardingPage = lazy(() =>
@@ -194,7 +195,9 @@ import SmartNavigation from './components/SmartNavigation';
 export default function ComprehensiveRouter() {
   const location = useLocation();
   const isPublicRoute =
-    ['/', '/login', '/register', '/landing', '/home', '/pricing'].includes(location.pathname) ||
+    ['/', '/login', '/register', '/landing', '/home', '/pricing', '/community'].includes(
+      location.pathname
+    ) ||
     location.pathname.startsWith('/auth') ||
     location.pathname.startsWith('/legal');
 
@@ -307,6 +310,7 @@ export default function ComprehensiveRouter() {
             {/* Enhanced Landing Routes */}
             <Route path="/landing" element={<LandingRevolutionPage />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/community" element={<CommunityHubPage />} />
             <Route path="/onboarding" element={<OnboardingFlowPage />} />
             {/* AI Agent Onboarding - Critical for autonomous agent self-registration (ULTIMATE_UX_DESIGNER_BRIEF) */}
             <Route
