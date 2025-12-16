@@ -255,12 +255,15 @@ export const LandingPageRevolution = () => {
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
             {/* Brand */}
             <div className="col-span-2 md:col-span-4 lg:col-span-1">
-              <div className="flex items-center gap-3 mb-6">
+              <Link
+                to="/"
+                className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
+              >
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <Rocket className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold">The New Fuse</span>
-              </div>
+              </Link>
               <p className="text-gray-400 text-sm mb-6">
                 The world's most advanced AI agent orchestration platform.
               </p>
