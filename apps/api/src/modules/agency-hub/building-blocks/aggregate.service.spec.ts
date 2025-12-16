@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AggregateService } from './aggregate.service';
-import { describe, beforeEach, it, expect } from '@jest/globals';
 
 describe('AggregateService', () => {
   let service: AggregateService;
@@ -33,7 +33,7 @@ describe('AggregateService', () => {
     });
 
     it('should handle tie-breaking or no clear consensus', async () => {
-       const opinions = [
+      const opinions = [
         { agentId: '1', opinion: 'yes', weight: 0.5 },
         { agentId: '2', opinion: 'no', weight: 0.5 },
       ];

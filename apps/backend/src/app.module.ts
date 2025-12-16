@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
+import { ApiModule } from './api/api.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -20,7 +21,6 @@ import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-t
 import { PrismaModule } from './prisma/prisma.module';
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
-import { ApiModule } from './api/api.module';
 
 // Create a comprehensive module to support all frontend routing expectations
 // TNF (The New Fuse) is the Master Agent that orchestrates all other agents
@@ -61,4 +61,3 @@ import { ApiModule } from './api/api.module';
   providers: [AppService, EventBus, LoggingService],
 })
 export class AppModule {}
-

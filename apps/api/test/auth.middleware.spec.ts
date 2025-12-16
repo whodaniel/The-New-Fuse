@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { authenticate } from '../src/middleware/auth';
 import { ApiError } from '../src/middleware/errorHandler';
@@ -7,7 +7,7 @@ import { ApiError } from '../src/middleware/errorHandler';
 jest.mock('jsonwebtoken');
 
 // Explicitly import describe, it, expect from @jest/globals to fix the issue
-import { describe, it, expect, beforeEach, afterAll, jest } from '@jest/globals';
+import { afterAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 describe('Authentication Middleware', () => {
   let req: Partial<Request>;

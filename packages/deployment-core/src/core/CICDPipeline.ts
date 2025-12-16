@@ -240,7 +240,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         duration,
         stages: stageResults,
         artifacts: this.collectArtifacts(stageResults),
-        metrics: await this.calculatePipelineMetrics(stageResults, duration),
+        metrics: await this.calculatePipelineMetrics(pipeline.id, stageResults, duration, overallStatus),
         logs: this.collectLogs(stageResults),
         triggeredBy: 'system', // TODO: Get from context
         environment: pipeline.environment.name
@@ -286,7 +286,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
         duration,
         stages: execution.stages,
         artifacts: [],
-        metrics: await this.calculatePipelineMetrics(execution.stages, duration),
+        metrics: await this.calculatePipelineMetrics(pipeline.id, execution.stages, duration, PipelineStatus.FAILED),
         logs: [error.message],
         error: error.message,
         triggeredBy: 'system',
@@ -759,8 +759,10 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
   }
 
   private async calculatePipelineMetrics(
-    stageResults: StageResult[], 
-    totalDuration: number
+    pipelineId: string,
+    stageResults: StageResult[],
+    totalDuration: number,
+    currentStatus: PipelineStatus
   ): Promise<PipelineMetrics> {
     const buildStages = stageResults.filter(s => s.name.toLowerCase().includes('build'));
     const testStages = stageResults.filter(s => s.name.toLowerCase().includes('test'));
@@ -770,16 +772,47 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     const testTime = testStages.reduce((sum, s) => sum + (s.duration || 0), 0);
     const deployTime = deployStages.reduce((sum, s) => sum + (s.duration || 0), 0);
 
+    // Calculate historical metrics
+    const history = await this.getPipelineHistory(pipelineId, 100);
+
+    // Include current run in metrics
+    const totalRuns = history.length + 1;
+    const historicalSuccess = history.filter(r => r.status === PipelineStatus.SUCCESS).length;
+    const historicalFailures = history.filter(r => r.status === PipelineStatus.FAILED).length;
+
+    const currentSuccess = currentStatus === PipelineStatus.SUCCESS ? 1 : 0;
+    const currentFailure = currentStatus === PipelineStatus.FAILED ? 1 : 0;
+
+    const successRate = ((historicalSuccess + currentSuccess) / totalRuns) * 100;
+    const failureRate = ((historicalFailures + currentFailure) / totalRuns) * 100;
+
+    const totalHistoryDuration = history.reduce((sum, r) => sum + r.duration, 0);
+    const averageDuration = (totalHistoryDuration + totalDuration) / totalRuns;
+
+    // Calculate throughput (successful runs per day)
+    let throughput = 0;
+    if (history.length > 0) {
+      const oldestRun = history[history.length - 1];
+      const timeSpanDays = (new Date().getTime() - oldestRun.startTime.getTime()) / (1000 * 60 * 60 * 24);
+      if (timeSpanDays > 0) {
+        throughput = (historicalSuccess + currentSuccess) / timeSpanDays;
+      } else {
+        throughput = historicalSuccess + currentSuccess;
+      }
+    } else {
+      throughput = currentSuccess;
+    }
+
     return {
       totalDuration,
       queueTime: 0, // TODO: Calculate actual queue time
       buildTime,
       testTime,
       deployTime,
-      successRate: 0, // TODO: Calculate from historical data
-      failureRate: 0, // TODO: Calculate from historical data
-      averageDuration: 0, // TODO: Calculate from historical data
-      throughput: 0, // TODO: Calculate from historical data
+      successRate,
+      failureRate,
+      averageDuration,
+      throughput,
       leadTime: 0, // TODO: Calculate from commit to deployment
       changeFailureRate: 0, // TODO: Calculate from deployment data
       meanTimeToRecovery: 0 // TODO: Calculate from incident data

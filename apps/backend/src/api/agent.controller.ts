@@ -1,8 +1,23 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  Agent,
+  AgentCapability,
+  AgentStatus,
+  AgentType,
+} from '@the-new-fuse/database/generated/prisma';
+import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
 import { PrismaService } from '../prisma/prisma.service';
-import { Agent, AgentType, AgentStatus, AgentCapability } from '@the-new-fuse/database/generated/prisma';
-import { IsString, IsArray, IsOptional, IsObject, IsEnum, IsBoolean } from 'class-validator';
-import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
 
 export class CreateAgentDto {
   @IsString()
@@ -67,7 +82,6 @@ export class UpdateAgentDto {
 @ApiTags('Agents')
 @Controller('api/agents')
 export class AgentController {
-  
   constructor(private readonly prisma: PrismaService) {}
 
   @Post()
@@ -78,12 +92,12 @@ export class AgentController {
     // For now, let's assume a default user or provided in body.
     // In a real app, this should come from AuthGuard user.
     if (!data.userId) {
-       // Trying to find a default user or first user to assign
-       const user = await this.prisma.user.findFirst();
-       if (!user) {
-         throw new HttpException('No user found to assign agent to', HttpStatus.BAD_REQUEST);
-       }
-       data.userId = user.id;
+      // Trying to find a default user or first user to assign
+      const user = await this.prisma.user.findFirst();
+      if (!user) {
+        throw new HttpException('No user found to assign agent to', HttpStatus.BAD_REQUEST);
+      }
+      data.userId = user.id;
     }
 
     return this.prisma.agent.create({
@@ -111,9 +125,9 @@ export class AgentController {
     return this.prisma.agent.findMany({
       where: {
         status: {
-          not: AgentStatus.OFFLINE
-        }
-      }
+          not: AgentStatus.OFFLINE,
+        },
+      },
     });
   }
 
@@ -129,7 +143,7 @@ export class AgentController {
   @ApiParam({ name: 'id', description: 'Agent ID' })
   async getAgentById(@Param('id') id: string): Promise<Agent> {
     const agent = await this.prisma.agent.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!agent) {
@@ -143,7 +157,7 @@ export class AgentController {
   @ApiParam({ name: 'id', description: 'Agent ID' })
   async updateAgent(@Param('id') id: string, @Body() updates: UpdateAgentDto): Promise<Agent> {
     const agent = await this.prisma.agent.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!agent) {
@@ -158,11 +172,11 @@ export class AgentController {
 
     // Handle capabilities
     if (updates.capabilities) {
-        // Filter valid capabilities from the enum
-        const validCapabilities = updates.capabilities.filter(c =>
-            Object.values(AgentCapability).includes(c as AgentCapability)
-        ) as AgentCapability[];
-        data.capabilities = validCapabilities;
+      // Filter valid capabilities from the enum
+      const validCapabilities = updates.capabilities.filter((c) =>
+        Object.values(AgentCapability).includes(c as AgentCapability)
+      ) as AgentCapability[];
+      data.capabilities = validCapabilities;
     }
 
     // Handle configuration (configPath, settings) merge
@@ -176,8 +190,8 @@ export class AgentController {
 
       if (updates.settings) {
         newConfig.settings = {
-           ...(newConfig.settings || {}),
-           ...updates.settings
+          ...(newConfig.settings || {}),
+          ...updates.settings,
         };
       }
 
@@ -186,15 +200,18 @@ export class AgentController {
 
     return this.prisma.agent.update({
       where: { id },
-      data
+      data,
     });
   }
 
   @Put(':id/status')
   @ApiOperation({ summary: 'Update agent status' })
-  async updateAgentStatus(@Param('id') id: string, @Body('status') status: AgentStatus): Promise<Agent> {
+  async updateAgentStatus(
+    @Param('id') id: string,
+    @Body('status') status: AgentStatus
+  ): Promise<Agent> {
     const agent = await this.prisma.agent.findUnique({
-      where: { id }
+      where: { id },
     });
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
@@ -202,7 +219,7 @@ export class AgentController {
 
     return this.prisma.agent.update({
       where: { id },
-      data: { status }
+      data: { status },
     });
   }
 
@@ -211,15 +228,15 @@ export class AgentController {
   async deleteAgent(@Param('id') id: string): Promise<{ message: string }> {
     try {
       await this.prisma.agent.delete({
-        where: { id }
+        where: { id },
       });
       return { message: 'Agent deleted successfully' };
     } catch (error) {
-       // P2025 is Prisma error for Record to delete does not exist.
-       if (error.code === 'P2025') {
-           throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
-       }
-       throw error;
+      // P2025 is Prisma error for Record to delete does not exist.
+      if (error.code === 'P2025') {
+        throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
+      }
+      throw error;
     }
   }
 }

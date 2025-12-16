@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { ApiError } from './errorHandler';
 
@@ -10,7 +10,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
   const token = req.headers.authorization?.split(' ')[1];
 
   // In development, allow test-token to bypass auth
-  if ((process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') && token === 'test-token') {
+  if (
+    (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') &&
+    token === 'test-token'
+  ) {
     // Add mock user for test-token
     (req as any).user = {
       id: 'test-user-id',

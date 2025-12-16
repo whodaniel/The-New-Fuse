@@ -37,13 +37,9 @@ export class DebateService {
   /**
    * Initialize a debate between agents
    */
-  async initializeDebate(
-    topic: string,
-    participants: string[],
-    rules?: any
-  ): Promise<string> {
+  async initializeDebate(topic: string, participants: string[], rules?: any): Promise<string> {
     this.logger.log(`Initializing debate on topic: ${topic}`);
-    
+
     const debateId = `debate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const debate: Debate = {
@@ -61,24 +57,21 @@ export class DebateService {
     };
 
     // Initialize positions array for each participant
-    participants.forEach(p => {
+    participants.forEach((p) => {
       debate.positions[p] = [];
     });
 
     this.debates.set(debateId, debate);
-    
+
     return debateId;
   }
 
   /**
    * Submit a position for debate
    */
-  async submitPosition(
-    debateId: string,
-    position: DebatePosition
-  ): Promise<void> {
+  async submitPosition(debateId: string, position: DebatePosition): Promise<void> {
     this.logger.log(`Position submitted for debate ${debateId} by agent ${position.agentId}`);
-    
+
     const debate = this.debates.get(debateId);
     if (!debate) {
       throw new NotFoundException(`Debate not found: ${debateId}`);
@@ -107,20 +100,20 @@ export class DebateService {
     positions: DebatePosition[] // Optional override, usually we use stored positions
   ): Promise<DebateResult> {
     this.logger.log(`Evaluating debate ${debateId}`);
-    
+
     const debate = this.debates.get(debateId);
     if (!debate) {
-        // If debate doesn't exist but positions are provided, we can still evaluate ad-hoc
-         if (positions && positions.length > 0) {
-            return this.simpleEvaluation(positions);
-         }
-        throw new NotFoundException(`Debate not found: ${debateId}`);
+      // If debate doesn't exist but positions are provided, we can still evaluate ad-hoc
+      if (positions && positions.length > 0) {
+        return this.simpleEvaluation(positions);
+      }
+      throw new NotFoundException(`Debate not found: ${debateId}`);
     }
 
     // Collect all positions if not provided
     let allPositions = positions;
     if (!allPositions || allPositions.length === 0) {
-        allPositions = Object.values(debate.positions).flat();
+      allPositions = Object.values(debate.positions).flat();
     }
 
     const result = this.simpleEvaluation(allPositions);
@@ -141,25 +134,29 @@ export class DebateService {
     let maxScore = -1;
     const scores: Record<string, number> = {};
 
-    positions.forEach(p => {
-        // Simple score calculation
-        const score = p.confidence * (1 + (p.evidence.length * 0.1) + (p.arguments.length * 0.1));
-        scores[p.agentId] = (scores[p.agentId] || 0) + score;
+    positions.forEach((p) => {
+      // Simple score calculation
+      const score = p.confidence * (1 + p.evidence.length * 0.1 + p.arguments.length * 0.1);
+      scores[p.agentId] = (scores[p.agentId] || 0) + score;
     });
 
     // Find winner based on aggregated scores
     for (const [agentId, score] of Object.entries(scores)) {
-        if (score > maxScore) {
-            maxScore = score;
-            winner = agentId;
-        }
+      if (score > maxScore) {
+        maxScore = score;
+        winner = agentId;
+      }
     }
 
     return {
-        winner,
-        consensus: positions.length > 1 ? 'Majority decision based on confidence and evidence' : 'Single participant submission',
-        reasoning: 'Evaluation based on argument strength (confidence) and quantity of evidence provided.',
-        participantScores: scores
+      winner,
+      consensus:
+        positions.length > 1
+          ? 'Majority decision based on confidence and evidence'
+          : 'Single participant submission',
+      reasoning:
+        'Evaluation based on argument strength (confidence) and quantity of evidence provided.',
+      participantScores: scores,
     };
   }
 
@@ -172,9 +169,9 @@ export class DebateService {
     rounds: number = 3
   ): Promise<DebateResult> {
     this.logger.log(`Facilitating ${rounds}-round debate on: ${topic}`);
-    
+
     const debateId = await this.initializeDebate(topic, participants, { rounds });
-    
+
     // Note: In a real implementation, this method would orchestrate calls to the agents
     // to get their positions for each round.
     // Since we don't have access to the agent execution layer here, we assume
@@ -195,7 +192,7 @@ export class DebateService {
       winner: 'pending',
       consensus: 'Debate initialized, waiting for rounds execution',
       reasoning: 'Multi-round debate started. External orchestration required.',
-      participantScores: {}
+      participantScores: {},
     };
 
     return result;

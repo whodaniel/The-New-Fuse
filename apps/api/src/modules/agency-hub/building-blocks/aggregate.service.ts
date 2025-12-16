@@ -29,21 +29,21 @@ export class AggregateService {
     }>
   ): Promise<AggregationResult> {
     this.logger.log(`Aggregating ${responses.length} responses`);
-    
+
     if (responses.length === 0) {
       return {
         summary: 'No responses to aggregate',
         keyPoints: [],
         confidence: 0,
-        sources: []
+        sources: [],
       };
     }
 
     // Use consensus finding as the core aggregation strategy
-    const opinions = responses.map(r => ({
+    const opinions = responses.map((r) => ({
       agentId: r.agentId,
       opinion: r.response,
-      weight: r.confidence
+      weight: r.confidence,
     }));
 
     const consensusResult = await this.findConsensus(opinions);
@@ -51,21 +51,24 @@ export class AggregateService {
     // Calculate confidence for the aggregated result
     // We can use the average confidence of the agents that agreed with the consensus
     const winningResponseNormalized = consensusResult.consensus.trim().toLowerCase();
-    const winningAgents = responses.filter(r => r.response.trim().toLowerCase() === winningResponseNormalized);
-    
+    const winningAgents = responses.filter(
+      (r) => r.response.trim().toLowerCase() === winningResponseNormalized
+    );
+
     // If consensus is "No clear consensus found" or similar fallback, handled gracefully
-    const avgConfidence = winningAgents.length > 0
-      ? winningAgents.reduce((sum, r) => sum + r.confidence, 0) / winningAgents.length
-      : 0;
+    const avgConfidence =
+      winningAgents.length > 0
+        ? winningAgents.reduce((sum, r) => sum + r.confidence, 0) / winningAgents.length
+        : 0;
 
     // Collect key points (unique responses)
-    const keyPoints = Array.from(new Set(responses.map(r => r.response)));
+    const keyPoints = Array.from(new Set(responses.map((r) => r.response)));
 
     return {
       summary: winningAgents.length > 0 ? winningAgents[0].response : consensusResult.consensus,
       keyPoints,
       confidence: avgConfidence,
-      sources: responses.map(r => r.agentId)
+      sources: responses.map((r) => r.agentId),
     };
   }
 
@@ -80,22 +83,25 @@ export class AggregateService {
     }>
   ): Promise<ConsensusResult> {
     this.logger.log(`Finding consensus among ${opinions.length} opinions`);
-    
+
     if (opinions.length === 0) {
       return {
         consensus: 'No opinions provided',
         agreement: 0,
         dissenting: [],
-        reasoning: 'No input data'
+        reasoning: 'No input data',
       };
     }
 
     // Group opinions by normalized text
-    const groups = new Map<string, {
-      totalWeight: number;
-      agents: string[];
-      originalText: string;
-    }>();
+    const groups = new Map<
+      string,
+      {
+        totalWeight: number;
+        agents: string[];
+        originalText: string;
+      }
+    >();
 
     let totalWeightAll = 0;
 
@@ -112,7 +118,7 @@ export class AggregateService {
         groups.set(normalized, {
           totalWeight: weight,
           agents: [agentId],
-          originalText: opinion
+          originalText: opinion,
         });
       }
     }
@@ -122,7 +128,7 @@ export class AggregateService {
       normalized: '',
       totalWeight: -1,
       agents: [] as string[],
-      originalText: ''
+      originalText: '',
     };
 
     for (const [key, data] of groups.entries()) {
@@ -131,7 +137,7 @@ export class AggregateService {
           normalized: key,
           totalWeight: data.totalWeight,
           agents: data.agents,
-          originalText: data.originalText
+          originalText: data.originalText,
         };
       }
     }
@@ -140,8 +146,8 @@ export class AggregateService {
 
     // Identify dissenting agents (all agents not in the winning group)
     const dissenting = opinions
-      .filter(o => o.opinion.trim().toLowerCase() !== winner.normalized)
-      .map(o => o.agentId);
+      .filter((o) => o.opinion.trim().toLowerCase() !== winner.normalized)
+      .map((o) => o.agentId);
 
     const reasoning = `Consensus reached on "${winner.originalText}" with ${Math.round(agreement * 100)}% agreement (weighted). Supported by agents: ${winner.agents.join(', ')}.`;
 
@@ -149,7 +155,7 @@ export class AggregateService {
       consensus: winner.originalText,
       agreement,
       dissenting,
-      reasoning
+      reasoning,
     };
   }
 
@@ -168,12 +174,12 @@ export class AggregateService {
     conflicts: string[];
   }> {
     this.logger.log(`Combining ${sources.length} data sources`);
-    
+
     // TODO: Implement data combination logic
     return {
       combinedData: {},
       reliability: 0.8,
-      conflicts: []
+      conflicts: [],
     };
   }
 
@@ -192,12 +198,12 @@ export class AggregateService {
     expertiseAreas: string[];
   }> {
     this.logger.log(`Synthesizing information from ${agentInputs.length} agents`);
-    
+
     // TODO: Implement information synthesis logic
     return {
       synthesis: 'Synthesized information from multiple expert agents',
       confidence: 0.7,
-      expertiseAreas: agentInputs.map(i => i.expertise)
+      expertiseAreas: agentInputs.map((i) => i.expertise),
     };
   }
 }
