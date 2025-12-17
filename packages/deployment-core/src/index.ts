@@ -10,8 +10,8 @@ export { MetricsCollector } from './core/MetricsCollector';
 // export * from './infrastructure'; // Temporarily disabled due to export conflicts
 
 // Interfaces
-export { ICICDPipeline } from './interfaces/ICICDPipeline';
-export { IInfrastructureManager } from './interfaces/IInfrastructureManager';
+export type { ICICDPipeline } from './interfaces/ICICDPipeline';
+export type { IInfrastructureManager } from './interfaces/IInfrastructureManager';
 
 // Types
 // export * from './types/pipeline'; // Temporarily disabled due to export conflicts
