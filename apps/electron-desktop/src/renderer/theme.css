@@ -1,0 +1,46 @@
+/* Desktop app theme styles */
+/* Migrated from Chakra UI to Tailwind CSS */
+
+:root {
+  --brand-50: #e6f3ff;
+  --brand-100: #cce7ff;
+  --brand-200: #99cfff;
+  --brand-300: #66b7ff;
+  --brand-400: #339fff;
+  --brand-500: #0087ff;
+  --brand-600: #006bcc;
+  --brand-700: #004f99;
+  --brand-800: #003366;
+  --brand-900: #001733;
+}
+
+body {
+  background: transparent;
+  color: white;
+}
+
+/* Card glassmorphism styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Button solid variant */
+.btn-solid {
+  background: var(--brand-500);
+  color: white;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-solid:hover {
+  background: var(--brand-600);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-solid:active {
+  background: var(--brand-700);
+  transform: translateY(0);
+}
