@@ -11,61 +11,46 @@ export class CacheService {
     // Parse Redis connection - support both REDIS_URL and individual env vars
     let redisUrl = configService.get('REDIS_URL');
 
-    // Railway-specific fix: Check for Railway Redis URL format
-    if (redisUrl && redisUrl.includes('railway')) {
-      this.logger.log(`[CacheService] Detected Railway Redis URL: ${redisUrl}`);
-
-      // Railway Redis URLs are in format: redis://host:port
-      // No password or database selection needed for Railway Redis
-      try {
-        const url = new URL(redisUrl);
-        this.client = new Redis({
-          host: url.hostname,
-          port: parseInt(url.port || '6379', 10),
-          // Railway Redis doesn't require password for basic connections
-          // Remove db parameter as Railway Redis doesn't support database selection
-        });
-        this.logger.log(
-          `[CacheService] Connecting to Railway Redis at ${url.hostname}:${url.port}`
-        );
-      } catch (error) {
-        this.logger.error(
-          `[CacheService] Failed to parse Railway REDIS_URL: ${(error as Error).message}`
-        );
-        throw error;
-      }
-    } else if (redisUrl) {
+    if (redisUrl) {
       // Trim whitespace
       redisUrl = redisUrl.trim();
 
       // Check if URL was accidentally duplicated (e.g., in Railway environment vars)
-      const redisPrefix = 'redis://';
-      const firstIndex = redisUrl.indexOf(redisPrefix);
-      const secondIndex = redisUrl.indexOf(redisPrefix, firstIndex + redisPrefix.length);
+      // Check for both redis:// and rediss:// (TLS) prefixes
+      const supportedPrefixes = ['redis://', 'rediss://'];
+      const prefix = supportedPrefixes.find((p) => redisUrl.startsWith(p));
 
-      if (firstIndex !== -1 && secondIndex !== -1) {
-        // If a duplicated prefix is found, take only the first valid URL
-        redisUrl = redisUrl.substring(0, secondIndex);
-        this.logger.warn(
-          `[CacheService] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`
-        );
+      if (prefix) {
+        const secondIndex = redisUrl.indexOf(prefix, prefix.length);
+
+        if (secondIndex !== -1) {
+          // If a duplicated prefix is found, take only the first valid URL
+          const originalUrlLength = redisUrl.length;
+          redisUrl = redisUrl.substring(0, secondIndex);
+          this.logger.warn(
+            `[CacheService] Detected duplicated REDIS_URL in environment variable. Truncated from ${originalUrlLength} to ${redisUrl.length} characters.`
+          );
+        }
       }
 
-      // Parse URL explicitly to avoid ioredis env fallbacks
-      try {
-        const url = new URL(redisUrl);
-        const dbFromPath =
-          url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : NaN;
-        const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+      // Railway Redis Check: Log if it is a Railway URL
+      if (redisUrl.includes('railway')) {
+        this.logger.log(`[CacheService] Detected Railway Redis URL`);
+      }
 
-        this.client = new Redis({
-          host: url.hostname,
-          port: parseInt(url.port || '6379', 10),
-          password: url.password || undefined,
-          db,
-        });
+      // Initialize Redis client with the connection string
+      // This automatically handles hostname, port, password, database, and TLS (rediss://)
+      try {
+        // Validate URL parsing before passing to ioredis to ensure it's valid
+        // and to extract information for logging
+        const url = new URL(redisUrl);
+
+        this.client = new Redis(redisUrl);
+
         this.logger.log(
-          `[CacheService] Connecting to Redis at ${url.hostname}:${url.port || 6379} (db: ${db})`
+          `[CacheService] Connecting to Redis at ${url.hostname}:${url.port || 6379}${
+            url.pathname && url.pathname.length > 1 ? ` (db: ${url.pathname.slice(1)})` : ''
+          }`
         );
       } catch (error) {
         this.logger.error(`[CacheService] Failed to parse REDIS_URL: ${(error as Error).message}`);
