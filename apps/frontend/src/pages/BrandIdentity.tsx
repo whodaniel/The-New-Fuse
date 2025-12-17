@@ -11,24 +11,6 @@ import { Link } from 'react-router-dom';
 export const BrandIdentity = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
-      {/* HEADER */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-gray-900/80 backdrop-blur-md border-b border-white/10">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-            <Rocket className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold text-white">The New Fuse</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link
-            to="/"
-            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-          >
-            Back to Home
-          </Link>
-        </div>
-      </header>
-
       <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* HERO */}
         <div className="text-center mb-20">
@@ -216,6 +198,40 @@ export const BrandIdentity = () => {
                   bg-linear-to-r from-blue-600 to-purple-600
                 </p>
                 <p className="text-xs text-gray-500">Action Gradient (Buttons)</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl">
+            <h3 className="text-xl font-bold mb-6 text-white">Workflow System Colors (Subtle Palette)</h3>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-indigo-100 p-4 rounded-lg flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-indigo-600 shrink-0"></div>
+                <div>
+                  <p className="text-indigo-900 font-bold">Agents</p>
+                  <p className="text-indigo-600 text-xs">Indigo</p>
+                </div>
+              </div>
+              <div className="bg-emerald-100 p-4 rounded-lg flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-emerald-600 shrink-0"></div>
+                <div>
+                  <p className="text-emerald-900 font-bold">Tools</p>
+                  <p className="text-emerald-600 text-xs">Emerald</p>
+                </div>
+              </div>
+              <div className="bg-violet-100 p-4 rounded-lg flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-violet-600 shrink-0"></div>
+                <div>
+                  <p className="text-violet-900 font-bold">Prompts</p>
+                  <p className="text-violet-600 text-xs">Violet</p>
+                </div>
+              </div>
+              <div className="bg-amber-100 p-4 rounded-lg flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-amber-600 shrink-0"></div>
+                <div>
+                  <p className="text-amber-900 font-bold">Logic</p>
+                  <p className="text-amber-600 text-xs">Amber</p>
+                </div>
               </div>
             </div>
           </div>

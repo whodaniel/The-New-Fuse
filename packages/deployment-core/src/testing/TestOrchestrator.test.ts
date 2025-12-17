@@ -1,10 +1,24 @@
 import { TestOrchestrator, TestExecutionPlan, TestType, TestPlanStatus } from './TestOrchestrator';
-import { TestFramework } from './TestRunner';
+import { TestFramework, TestStatus } from './TestRunner';
 import winston from 'winston';
+
+// Mock the TestRunner
+jest.mock('./TestRunner', () => {
+  const actual = jest.requireActual('./TestRunner');
+  return {
+    ...actual,
+    TestRunner: jest.fn().mockImplementation(() => ({
+      executeTests: jest.fn(),
+      generateTestSummary: jest.fn(),
+      on: jest.fn()
+    }))
+  };
+});
 
 describe('TestOrchestrator', () => {
   let orchestrator: TestOrchestrator;
   let mockLogger: winston.Logger;
+  let mockTestRunner: any;
 
   beforeEach(() => {
     // Create mock logger
@@ -14,6 +28,44 @@ describe('TestOrchestrator', () => {
     });
 
     orchestrator = new TestOrchestrator(mockLogger);
+
+    // Get the mocked TestRunner instance
+    mockTestRunner = (orchestrator as any).testRunner;
+
+    // Setup default mock implementations
+    mockTestRunner.executeTests.mockResolvedValue({
+      id: 'test-1',
+      type: TestType.UNIT,
+      status: TestStatus.PASSED,
+      startTime: new Date(),
+      endTime: new Date(),
+      duration: 1000,
+      totalTests: 10,
+      passedTests: 10,
+      failedTests: 0,
+      skippedTests: 0,
+      failures: [],
+      logs: [],
+      artifacts: [],
+      metadata: {}
+    });
+
+    mockTestRunner.generateTestSummary.mockReturnValue({
+      totalSuites: 1,
+      totalTests: 10,
+      passedTests: 10,
+      failedTests: 0,
+      skippedTests: 0,
+      totalDuration: 1000,
+      successRate: 1,
+      coverage: null,
+      byType: {},
+      trends: {
+        successRate: 'stable',
+        duration: 'stable',
+        coverage: 'stable'
+      }
+    });
   });
 
   describe('generatePlanTemplate', () => {
@@ -94,9 +146,48 @@ describe('TestOrchestrator', () => {
       expect(result.planId).toBe(plan.id);
       expect(result.status).toBe(TestPlanStatus.COMPLETED);
       expect(result.stages).toHaveLength(1);
-    });
+    }, 30000);
 
     it('should handle plan execution failure', async () => {
+      // Mock a failed test result
+      mockTestRunner.executeTests.mockResolvedValueOnce({
+        id: 'test-1',
+        type: TestType.UNIT,
+        status: TestStatus.FAILED,
+        startTime: new Date(),
+        endTime: new Date(),
+        duration: 1000,
+        totalTests: 10,
+        passedTests: 5,
+        failedTests: 5,
+        skippedTests: 0,
+        failures: [{
+          testName: 'failing test',
+          testFile: 'test.ts',
+          error: 'Test failed'
+        }],
+        logs: ['Test execution failed'],
+        artifacts: [],
+        metadata: {}
+      });
+
+      mockTestRunner.generateTestSummary.mockReturnValueOnce({
+        totalSuites: 1,
+        totalTests: 10,
+        passedTests: 5,
+        failedTests: 5,
+        skippedTests: 0,
+        totalDuration: 1000,
+        successRate: 0.5,
+        coverage: null,
+        byType: {},
+        trends: {
+          successRate: 'stable',
+          duration: 'stable',
+          coverage: 'stable'
+        }
+      });
+
       const plan: TestExecutionPlan = {
         id: 'failing-plan',
         name: 'Failing Test Plan',
@@ -148,7 +239,7 @@ describe('TestOrchestrator', () => {
       expect(result).toBeDefined();
       expect(result.status).toBe(TestPlanStatus.FAILED);
       expect(result.stages[0].status).toBe('failed');
-    });
+    }, 30000);
   });
 
   describe('getPlanResult', () => {

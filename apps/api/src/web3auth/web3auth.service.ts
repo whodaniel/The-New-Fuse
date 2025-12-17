@@ -9,7 +9,7 @@ import { mainnet } from 'viem/chains';
 @Injectable()
 export class Web3authService implements OnModuleInit {
   private readonly logger = new Logger(Web3authService.name);
-  private web3auth: Web3Auth;
+  private web3auth!: Web3Auth;
   private chainConfig = {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: '0x1', // Ethereum Mainnet
@@ -23,7 +23,7 @@ export class Web3authService implements OnModuleInit {
   async onModuleInit() {
     try {
       this.logger.log('Initializing Web3Auth Node SDK...');
-      
+
       const clientId = process.env.WEB3AUTH_CLIENT_ID;
       if (!clientId) {
         this.logger.warn('WEB3AUTH_CLIENT_ID environment variable is missing. Web3Auth module will be disabled.');
@@ -59,7 +59,7 @@ export class Web3authService implements OnModuleInit {
       // For server-side operations, we need to use custom JWT or other authentication
       // This is a simplified example - in production, you'd implement proper JWT validation
       const idToken = await this.generateServerSideToken(verifierId);
-      
+
       const web3authProvider = await this.web3auth.connect({
         verifier: 'tnf-server-verifier', // Configure this in Web3Auth dashboard
         verifierId,
@@ -102,7 +102,7 @@ export class Web3authService implements OnModuleInit {
       // This is a simplified approach - you might want to cache addresses
       const provider = await this.getProvider(verifierId);
       const address = getAddress(provider.account.address);
-      
+
       this.logger.log(`Derived address ${address} for verifierId ${verifierId}`);
       return address;
     } catch (error) {
@@ -115,7 +115,7 @@ export class Web3authService implements OnModuleInit {
     // This is a placeholder for server-side JWT generation
     // In production, implement proper JWT creation with your authentication logic
     // The JWT should contain claims that identify the user/agent
-    
+
     const jwt = require('jsonwebtoken');
     const payload = {
       iss: process.env.WEB3AUTH_VERIFIER_DOMAIN || 'tnf.local',

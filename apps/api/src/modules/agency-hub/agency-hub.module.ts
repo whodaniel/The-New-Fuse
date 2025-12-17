@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { DatabaseModule } from '@the-new-fuse/database';
 // import { AgencyHubModule as CoreAgencyHubModule } from '../../types/core';
 
 // Import existing controllers to maintain compatibility
@@ -6,11 +8,17 @@ import { AgencyController } from './controllers/agency.controller';
 import { SwarmController } from './controllers/swarm.controller';
 import { ServiceRequestController } from './controllers/service-request.controller';
 import { AnalyticsController } from './controllers/analytics.controller';
+import { A2AMessageBrokerController } from './controllers/a2a-broker.controller';
+
+// Services - The Three Pillars of TNF Agent
+import { AgentSwarmOrchestrationService } from './services/agent-swarm-orchestration.service';
+import { A2AMessageBrokerService } from './services/a2a-message-broker.service';
 
 @Module({
   imports: [
-    // Import the comprehensive Agency Hub module from core
-    // CoreAgencyHubModule,
+    // Required dependencies
+    EventEmitterModule.forRoot(),
+    DatabaseModule,
   ],
   controllers: [
     // Keep existing controllers for backward compatibility
@@ -19,8 +27,20 @@ import { AnalyticsController } from './controllers/analytics.controller';
     SwarmController,
     ServiceRequestController,
     AnalyticsController,
+    // A2A Message Broker Controller - Third Pillar
+    A2AMessageBrokerController,
   ],
-  // Re-export everything from the core module
-  // exports: [CoreAgencyHubModule],
+  providers: [
+    // Pillar 1: Orchestrator - Task management and swarm coordination
+    AgentSwarmOrchestrationService,
+    // Pillar 3: Message Broker - Inter-agent communication
+    A2AMessageBrokerService,
+    // Note: Pillar 2 (Heartbeat) is integrated into the Orchestrator via setInterval
+  ],
+  exports: [
+    AgentSwarmOrchestrationService,
+    A2AMessageBrokerService
+  ]
 })
 export class AgencyHubModule {}
+

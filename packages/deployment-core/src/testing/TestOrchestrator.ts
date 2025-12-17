@@ -3,6 +3,9 @@ import { EventEmitter } from 'events';
 import { TestRunner, TestConfiguration, TestResult, TestType, TestFramework, TestSummaryReport, TestStatus } from './TestRunner';
 import { QualityGateEvaluator, QualityGateResult } from './QualityGateEvaluator';
 
+// Re-export commonly used types from TestRunner for convenience
+export { TestType, TestFramework, TestStatus } from './TestRunner';
+
 /**
  * Test execution plan interface
  */
@@ -235,13 +238,13 @@ export class TestOrchestrator extends EventEmitter {
         execution.stages.push(stageResult);
 
         // Evaluate quality gates for this stage
-        const stageQualityGates = plan.qualityGates.filter(qg => 
+        const stageQualityGates = plan.qualityGates.filter(qg =>
           qg.scope === 'stage' && this.matchesQualityGateConditions(qg, { stage: stage.name })
         );
 
         for (const qualityGate of stageQualityGates) {
           const gateResult = await this.qualityGateEvaluator.evaluate(qualityGate, stageResult.summary);
-          
+
           if (!gateResult.passed && qualityGate.required) {
             this.logger.error(`Quality gate failed: ${qualityGate.name}`, {
               planId: plan.id,
@@ -383,7 +386,7 @@ export class TestOrchestrator extends EventEmitter {
 
       // Cancel any running tests
       // This would require tracking individual test executions
-      
+
       this.logger.info(`Test plan cancelled: ${executionId}`);
       this.emit('plan:cancelled', { executionId });
 
@@ -531,12 +534,12 @@ export class TestOrchestrator extends EventEmitter {
 
       if (stage.parallel) {
         // Execute tests in parallel
-        const testPromises = stage.tests.map(testConfig => 
+        const testPromises = stage.tests.map(testConfig =>
           this.executeTestWithRetry(testConfig, plan.retryPolicy)
         );
 
         const results = await Promise.allSettled(testPromises);
-        
+
         results.forEach((result, index) => {
           if (result.status === 'fulfilled') {
             testResults.push(result.value);
@@ -624,21 +627,21 @@ export class TestOrchestrator extends EventEmitter {
     while (attempt <= (retryPolicy.enabled ? retryPolicy.maxAttempts : 1)) {
       try {
         const result = await this.testRunner.executeTests(testConfig);
-        
+
         // Check if retry is needed
         if (result.status === 'passed' || !this.shouldRetry(result, retryPolicy)) {
           return result;
         }
 
         lastResult = result;
-        
+
         if (attempt < retryPolicy.maxAttempts) {
           const delay = this.calculateRetryDelay(retryPolicy, attempt);
           this.logger.info(`Retrying test after failure (attempt ${attempt + 1}/${retryPolicy.maxAttempts})`, {
             testType: testConfig.type,
             delay
           });
-          
+
           await new Promise(resolve => setTimeout(resolve, delay));
         }
 
@@ -670,14 +673,14 @@ export class TestOrchestrator extends EventEmitter {
         case 'timeout':
           return result.logs.some(log => log.includes('timeout'));
         case 'infrastructure_error':
-          return result.logs.some(log => 
-            log.includes('ECONNREFUSED') || 
-            log.includes('network') || 
+          return result.logs.some(log =>
+            log.includes('ECONNREFUSED') ||
+            log.includes('network') ||
             log.includes('infrastructure')
           );
         case 'flaky_test':
-          return result.failures.some(failure => 
-            failure.error.includes('flaky') || 
+          return result.failures.some(failure =>
+            failure.error.includes('flaky') ||
             failure.error.includes('intermittent')
           );
         default:
@@ -720,17 +723,17 @@ export class TestOrchestrator extends EventEmitter {
       case 'environment':
         const envValue = process.env[condition.value] || context.plan.environment[condition.value];
         return condition.operator === 'equals' ? !!envValue : !envValue;
-      
+
       case 'previous_stage':
         const previousStage = context.previousStages.find(s => s.name === condition.value);
         return previousStage?.status === TestStageStatus.COMPLETED;
-      
+
       case 'branch':
         const currentBranch = process.env.GIT_BRANCH || 'main';
-        return condition.operator === 'equals' ? 
-          currentBranch === condition.value : 
+        return condition.operator === 'equals' ?
+          currentBranch === condition.value :
           currentBranch !== condition.value;
-      
+
       default:
         return true;
     }
@@ -763,7 +766,7 @@ export class TestOrchestrator extends EventEmitter {
       return TestPlanStatus.FAILED;
     }
 
-    const allCompleted = stageResults.every(s => 
+    const allCompleted = stageResults.every(s =>
       s.status === TestStageStatus.COMPLETED || s.status === TestStageStatus.SKIPPED
     );
 
@@ -866,12 +869,12 @@ export class TestOrchestrator extends EventEmitter {
     });
 
     // Calculate success rate
-    aggregated.successRate = aggregated.totalTests > 0 ? 
+    aggregated.successRate = aggregated.totalTests > 0 ?
       aggregated.passedTests / aggregated.totalTests : 0;
 
     // Calculate success rates by type
     Object.values(aggregated.byType).forEach(typeStats => {
-      typeStats.successRate = typeStats.totalTests > 0 ? 
+      typeStats.successRate = typeStats.totalTests > 0 ?
         typeStats.passedTests / typeStats.totalTests : 0;
     });
 

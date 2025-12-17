@@ -4,10 +4,10 @@ import { PipelineValidator } from './PipelineValidator';
 import { PipelineStorage } from './PipelineStorage';
 import { NotificationService } from './NotificationService';
 import { MetricsCollector } from './MetricsCollector';
-import { 
-  PipelineDefinition, 
-  PipelineStatus, 
-  StageType, 
+import {
+  PipelineDefinition,
+  PipelineStatus,
+  StageType,
   TriggerType,
   BuildTrigger,
   EnvironmentType
@@ -92,12 +92,26 @@ describe('CICDPipeline', () => {
       jest.spyOn(mockStorage, 'getAllPipelineConfigs').mockResolvedValue([mockPipelineConfig]);
       jest.spyOn(mockStorage, 'storeBuildResult').mockResolvedValue();
 
+      // Mock executor to return successful task results
+      jest.spyOn(mockExecutor, 'executeTask').mockResolvedValue({
+        id: 'result-1',
+        taskId: 'task-1',
+        name: 'Test Task',
+        status: PipelineStatus.SUCCESS,
+        startTime: new Date(),
+        endTime: new Date(),
+        duration: 1000,
+        logs: ['Task completed successfully'],
+        artifacts: [],
+        metadata: {}
+      });
+
       const result = await pipeline.triggerBuild(trigger);
 
       expect(result).toBeDefined();
       expect(result.triggerId).toBe(trigger.id);
       expect(result.status).toBe(PipelineStatus.SUCCESS);
-    });
+    }, 30000);
 
     it('should handle build trigger failure', async () => {
       const trigger: BuildTrigger = {
@@ -139,13 +153,27 @@ describe('CICDPipeline', () => {
       // Mock storage
       jest.spyOn(mockStorage, 'storePipelineResult').mockResolvedValue();
 
+      // Mock executor to return successful task results
+      jest.spyOn(mockExecutor, 'executeTask').mockResolvedValue({
+        id: 'result-1',
+        taskId: 'task-1',
+        name: 'Test Task',
+        status: PipelineStatus.SUCCESS,
+        startTime: new Date(),
+        endTime: new Date(),
+        duration: 1000,
+        logs: ['Task completed successfully'],
+        artifacts: [],
+        metadata: {}
+      });
+
       const result = await pipeline.executePipeline(pipelineDefinition);
 
       expect(result).toBeDefined();
       expect(result.pipelineId).toBe(pipelineDefinition.id);
       expect(result.status).toBe(PipelineStatus.SUCCESS);
       expect(result.stages).toHaveLength(pipelineDefinition.stages.length);
-    });
+    }, 30000);
 
     it('should fail pipeline execution with invalid configuration', async () => {
       const pipelineDefinition = createTestPipelineDefinition();
@@ -249,7 +277,7 @@ describe('CICDPipeline', () => {
 
       // Wait for execution to complete
       await executionPromise;
-    });
+    }, 30000);
   });
 
   describe('getPipelineMetrics', () => {

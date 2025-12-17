@@ -419,6 +419,7 @@ export interface TaskResult {
   logs: string[];
   artifacts: TaskArtifact[];
   error?: string;
+  metadata?: Record<string, any>;
 }
 
 export interface DeploymentResult {

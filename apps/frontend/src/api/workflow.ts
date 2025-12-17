@@ -28,6 +28,20 @@ interface ApiResponse<T> {
   message?: string;
 }
 
+export interface WorkflowTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  definition: {
+    nodes: any[];
+    edges: any[];
+  };
+  isPublic: boolean;
+  metadata?: any;
+  usageCount: number;
+}
+
 export class WorkflowApiService {
   private baseUrl: string;
 
@@ -230,6 +244,116 @@ export class WorkflowApiService {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
         message: 'Failed to save workflow'
+      };
+    }
+  }
+
+  async getWorkflowTemplates(category?: string): Promise<ApiResponse<WorkflowTemplate[]>> {
+    try {
+      const url = category ? `${config.apiUrl}/workflow-templates?category=${category}` : `${config.apiUrl}/workflow-templates`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        credentials: 'include'
+      });
+      return this.handleResponse<WorkflowTemplate[]>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error',
+        message: 'Failed to fetch workflow templates'
+      };
+    }
+  }
+
+  async getWorkflowTemplate(id: string): Promise<ApiResponse<WorkflowTemplate>> {
+    try {
+      const response = await fetch(`${config.apiUrl}/workflow-templates/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        credentials: 'include'
+      });
+      return this.handleResponse<WorkflowTemplate>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error',
+        message: `Failed to fetch workflow template ${id}`
+      };
+    }
+  }
+
+  async createWorkflowTemplate(data: Partial<WorkflowTemplate>): Promise<ApiResponse<WorkflowTemplate>> {
+    try {
+      const response = await fetch(`${config.apiUrl}/workflow-templates`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+      return this.handleResponse<WorkflowTemplate>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error',
+        message: 'Failed to create workflow template'
+      };
+    }
+  }
+
+  async updateWorkflowTemplate(id: string, data: Partial<WorkflowTemplate>): Promise<ApiResponse<WorkflowTemplate>> {
+    try {
+      const response = await fetch(`${config.apiUrl}/workflow-templates/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+      return this.handleResponse<WorkflowTemplate>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error',
+        message: `Failed to update workflow template ${id}`
+      };
+    }
+  }
+
+  async deleteWorkflowTemplate(id: string): Promise<ApiResponse<boolean>> {
+    try {
+      const response = await fetch(`${config.apiUrl}/workflow-templates/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        credentials: 'include'
+      });
+
+      const result = await this.handleResponse<any>(response);
+      return {
+        success: result.success,
+        data: result.success,
+        error: result.error,
+        message: result.message
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error',
+        message: `Failed to delete workflow template ${id}`
       };
     }
   }

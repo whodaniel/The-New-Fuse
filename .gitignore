@@ -66,3 +66,13 @@ secrets-to-remove.txt
 
 # Generated files
 packages/database/generated/
+
+# Electron build artifacts
+apps/electron-desktop/release/
+apps/electron-desktop/release-debug/
+apps/electron-desktop/dist/
+apps/electron-desktop/out/
+*.dmg
+*.app
+*.exe
+*.AppImage

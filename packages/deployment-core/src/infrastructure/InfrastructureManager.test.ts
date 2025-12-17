@@ -25,7 +25,7 @@ describe('InfrastructureManager', () => {
 
   beforeEach(() => {
     mockLogger = createLogger({ silent: true });
-    
+
     const templateParser = new TemplateParser();
     const stateManager = new StateManager(new InMemoryStateStorage());
     const resourceProvisioner = new ResourceProvisioner();
@@ -114,7 +114,7 @@ describe('InfrastructureManager', () => {
         id: '',
         name: '',
         version: '',
-        provider: CloudProvider.KUBERNETES,
+        provider: CloudProvider.GCP,
         resources: [],
         variables: [],
         outputs: [],
@@ -399,7 +399,7 @@ describe('InfrastructureManager', () => {
         id: 'list-test-template-1',
         name: 'List Test Infrastructure 1',
         version: '1.0.0',
-        provider: CloudProvider.KUBERNETES,
+        provider: CloudProvider.GCP,
         resources: [],
         variables: [],
         outputs: [],

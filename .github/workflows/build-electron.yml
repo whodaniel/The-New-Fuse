@@ -19,20 +19,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "pnpm"
-
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-          run_install: false
+      - name: Verify Node and PNPM
+        run: |
+          # Use system-installed node and pnpm (already on self-hosted runner)
+          export PATH="$HOME/Library/pnpm:$PATH"
+          node --version
+          pnpm --version
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          export PATH="$HOME/Library/pnpm:$PATH"
+          pnpm install --frozen-lockfile
 
       - name: Build and Package
         working-directory: apps/electron-desktop
@@ -40,6 +37,7 @@ jobs:
           # Use the GITHUB_TOKEN for releasing/publishing integration if needed later
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          export PATH="$HOME/Library/pnpm:$PATH"
           pnpm run dist
 
       - name: Upload DMG Artifact

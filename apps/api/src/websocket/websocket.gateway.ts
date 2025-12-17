@@ -48,7 +48,9 @@ export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnec
   async handleDisconnect(client: Socket) {
     const userId = await this.cache.get(`socket:${client.id}`);
     await this.cache.del(`socket:${client.id}`);
-    await this.cache.srem('online_users', userId);
+    if (userId) {
+      await this.cache.srem('online_users', userId);
+    }
 
     this.monitoring?.recordMetric('websocket.disconnect', 1, { userId });
 

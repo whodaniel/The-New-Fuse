@@ -31,15 +31,16 @@ model User {
   emailVerified  Boolean    @default(false)
 
   // Relationships
-  agents        Agent[]
-  pipelines     Pipeline[]
-  tasks         Task[]
-  workflows     Workflow[]
-  chatRooms     ChatRoom[]
-  messages      Message[]
-  authSessions  AuthSession[]
-  loginAttempts LoginAttempt[]
-  authEvents    AuthEvent[]
+  agents            Agent[]
+  pipelines         Pipeline[]
+  tasks             Task[]
+  workflows         Workflow[]
+  chatRooms         ChatRoom[]
+  messages          Message[]
+  authSessions      AuthSession[]
+  loginAttempts     LoginAttempt[]
+  workflowTemplates WorkflowTemplate[]
+  authEvents        AuthEvent[]
 
   @@map("users")
 }
@@ -490,6 +491,23 @@ enum WorkflowExecutionStatus {
   COMPLETED
   FAILED
   CANCELLED
+}
+
+model WorkflowTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  category    String   @default("Custom")
+  definition  Json // The node/edge structure
+  isPublic    Boolean  @default(false)
+  creator     User?    @relation(fields: [creatorId], references: [id])
+  creatorId   String?
+  metadata    Json?
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("workflow_templates")
 }
 
 // =============================================================================
@@ -1017,6 +1035,56 @@ model AgentPromptVersion {
   agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
   @@map("agent_prompt_versions")
+}
+
+model PromptTemplate {
+  id               String   @id @default(uuid())
+  name             String
+  description      String?
+  currentVersionId String?
+  isPublic         Boolean  @default(false)
+  category         String?
+  tags             String[] @default([])
+  analytics        Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  versions PromptVersion[]
+
+  @@map("prompt_templates")
+}
+
+model PromptVersion {
+  id         String   @id @default(uuid())
+  templateId String
+  version    Int
+  label      String?
+  content    String   @db.Text
+  variables  Json?
+  metrics    Json?
+  changelog  String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  template PromptTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@map("prompt_versions")
+}
+
+model PromptSnippet {
+  id          String   @id @default(uuid())
+  name        String
+  content     String   @db.Text
+  type        String
+  category    String?
+  tags        String[] @default([])
+  usageCount  Int      @default(0)
+  description String?
+  isStarred   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("prompt_snippets")
 }
 
 model ValidationDataset {

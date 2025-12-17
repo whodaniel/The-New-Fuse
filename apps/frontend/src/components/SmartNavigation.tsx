@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+
 import { useAuth } from '../hooks/useAuth';
 
 // Smart Navigation Component that adapts based on authentication status and user role
@@ -8,10 +9,10 @@ function SmartNavigation() {
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
   const navRef = useRef<HTMLDivElement>(null);
-  
+
   // Check if user has admin role
   const isAdmin = user?.role === 'admin' || user?.role === 'administrator';
-  const isPublicPage = ['/', '/login', '/register', '/legal/privacy', '/legal/terms'].includes(location.pathname);
+  const isPublicPage = ['/', '/login', '/register', '/legal/privacy', '/legal/terms', '/brand', '/design-system'].includes(location.pathname);
 
   const toggleDropdown = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
@@ -36,57 +37,45 @@ function SmartNavigation() {
     setActiveDropdown(null);
   }, [location.pathname]);
 
-  // Public Navigation (for non-authenticated users)
+  // Public Navigation (for non-authenticated users) - Premium Dark Theme
   if (!isAuthenticated || isPublicPage) {
     return (
-      <nav ref={navRef} className="bg-white shadow-sm border-b">
+      <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-white/10 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0 flex items-center">
-                <div className="h-8 w-8 bg-blue-600 rounded-md flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">🚀</span>
-                </div>
-                <h1 className="ml-2 text-xl font-bold text-gray-900">The New Fuse</h1>
+              <Link to="/" className="shrink-0 flex items-center group">
+                <img
+                  src="/assets/brand/logo-monogram-neon.png"
+                  alt="The New Fuse Logo"
+                  className="h-10 w-10 rounded-xl shadow-lg group-hover:scale-105 transition-transform object-cover"
+                />
+                <h1 className="ml-3 text-xl font-bold text-white tracking-tight group-hover:opacity-90 transition-opacity">The New Fuse</h1>
               </Link>
             </div>
-            
+
             {/* Public Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link 
-                to="/#features" 
-                className="text-gray-500 hover:text-blue-600 transition-colors"
-                onClick={(e) => {
-                  if (location.pathname === '/') {
-                    e.preventDefault();
-                    const featuresElement = document.getElementById('features');
-                    if (featuresElement) {
-                      featuresElement.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }
-                }}
-              >
-                Features
-              </Link>
-              <Link to="/agents" className="text-gray-500 hover:text-blue-600 transition-colors">AI Agents</Link>
-              <Link to="/workflows" className="text-gray-500 hover:text-blue-600 transition-colors">Workflows</Link>
-              <Link to="/resources" className="text-gray-500 hover:text-blue-600 transition-colors">Resources</Link>
-              <Link to="/analytics" className="text-gray-500 hover:text-blue-600 transition-colors">Analytics</Link>
+              <Link to="/#features" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Features</Link>
+              <Link to="/agents" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">AI Agents</Link>
+              <Link to="/workflows" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Workflows</Link>
+              <Link to="/resources" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Resources</Link>
+              <Link to="/pricing" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Pricing</Link>
             </div>
-            
+
             {/* Auth Buttons */}
             <div className="flex items-center space-x-4">
               <Link
                 to="/login"
-                className="text-gray-500 hover:text-blue-600 font-medium transition-colors"
+                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 to="/register"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                className="bg-white text-gray-900 hover:bg-gray-100 px-5 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-glow-sm"
               >
-                Get Started Free
+                Get Started
               </Link>
             </div>
           </div>
@@ -102,15 +91,15 @@ function SmartNavigation() {
         <Link to="/dashboard" className="text-xl font-bold hover:text-blue-200 transition-colors">
           🚀 The New Fuse
         </Link>
-        
+
         <div className="flex items-center space-x-2 flex-wrap">
           <Link to="/dashboard" className="hover:text-blue-200 px-3 py-2 rounded transition-colors">
             📊 Dashboard
           </Link>
-          
+
           {/* AI Agents Dropdown */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => toggleDropdown('agents')}
               className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-blue-700 flex items-center"
             >
@@ -128,7 +117,7 @@ function SmartNavigation() {
 
           {/* Workflows Dropdown */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => toggleDropdown('workflows')}
               className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-indigo-600 flex items-center"
             >
@@ -147,7 +136,7 @@ function SmartNavigation() {
           {/* Resources Marketplace Link */}
           <Link
             to="/resources"
-            className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-gradient-to-r from-purple-600 to-pink-600"
+            className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-linear-to-r from-purple-600 to-pink-600"
           >
             📦 Resources
           </Link>
@@ -171,7 +160,7 @@ function SmartNavigation() {
 
           {/* Workspace Dropdown */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => toggleDropdown('workspace')}
               className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-purple-600 flex items-center"
             >
@@ -196,7 +185,7 @@ function SmartNavigation() {
           {/* Admin Dropdown - Only show for admin users */}
           {isAdmin && (
             <div className="relative">
-              <button 
+              <button
                 onClick={() => toggleDropdown('admin')}
                 className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-red-600 flex items-center"
               >
@@ -217,7 +206,7 @@ function SmartNavigation() {
 
           {/* Settings Dropdown */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => toggleDropdown('settings')}
               className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-gray-600 flex items-center"
             >
@@ -236,7 +225,7 @@ function SmartNavigation() {
 
           {/* User Menu */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => toggleDropdown('user')}
               className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-gray-700 flex items-center"
             >
@@ -247,7 +236,7 @@ function SmartNavigation() {
                 <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">👤 Profile</Link>
                 <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">⚙️ Settings</Link>
                 <div className="border-t border-gray-200"></div>
-                <button 
+                <button
                   onClick={async () => {
                     try {
                       await logout();

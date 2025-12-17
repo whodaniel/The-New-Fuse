@@ -1,4 +1,3 @@
-
 /**
  * HTTP Transport for The New Fuse Relay System
  *
@@ -7,10 +6,12 @@
  */
 
 import { EventEmitter } from 'events';
+
 import express from 'express';
-import http from 'http';
-import { Transport, RelayMessage, InterceptRule } from '../types/index.js';
-import { Logger } from '../utils/Logger.js';
+
+import type { InterceptRule, RelayMessage, Transport } from '../types/index.js';
+import type { Logger } from '../utils/Logger.js';
+import type { Server } from 'http';
 
 export interface HTTPTransportConfig {
   port: number;
@@ -22,7 +23,7 @@ export class HTTPTransport extends EventEmitter implements Transport {
   public readonly name = 'http';
   private config: HTTPTransportConfig;
   private logger: Logger;
-  private server: http.Server | null = null;
+  private server: Server | null = null;
   private messageHandlers: ((message: RelayMessage) => void)[] = [];
 
   constructor(config: HTTPTransportConfig) {
@@ -69,7 +70,7 @@ export class HTTPTransport extends EventEmitter implements Transport {
     }
   }
 
-  async send(message: RelayMessage): Promise<boolean> {
+  async send(_message: RelayMessage): Promise<boolean> {
     // HTTP transport is typically for receiving messages, not sending them directly.
     // Outbound messages should be handled by other transports (e.g., WebSocket, Redis).
     this.logger.warn('HTTP transport does not support sending messages directly.');
@@ -85,14 +86,14 @@ export class HTTPTransport extends EventEmitter implements Transport {
   }
 
   private setupRoutes(app: express.Express): void {
-    app.get('/status', (req, res) => {
-      this.emit('getStatus', (status: any) => {
+    app.get('/status', (_req, res) => {
+      this.emit('getStatus', (status: unknown) => {
         res.json(status);
       });
     });
 
-    app.get('/agents', (req, res) => {
-      this.emit('getAgents', (agents: any) => {
+    app.get('/agents', (_req, res) => {
+      this.emit('getAgents', (agents: unknown) => {
         res.json(agents);
       });
     });

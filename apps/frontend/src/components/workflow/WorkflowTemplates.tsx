@@ -18,8 +18,9 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, FileTemplate, Plus } from 'lucide-react';
-import React, { useState } from 'react';
+import { ArrowRight, FileTemplate, Plus, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { WorkflowApiService, WorkflowTemplate } from '@/api/workflow';
 
 // Template categories
 const TEMPLATE_CATEGORIES = [
@@ -30,223 +31,6 @@ const TEMPLATE_CATEGORIES = [
   'Custom',
 ];
 
-// Template definitions
-const WORKFLOW_TEMPLATES = [
-  {
-    id: 'simple-agent-task',
-    name: 'Simple Agent Task',
-    description: 'A simple workflow with an input, agent, and output node.',
-    category: 'Basic',
-    nodes: [
-      {
-        id: 'input-1',
-        type: 'input',
-        position: { x: 100, y: 100 },
-        data: { name: 'Input', type: 'input' },
-      },
-      {
-        id: 'agent-1',
-        type: 'agent',
-        position: { x: 300, y: 100 },
-        data: { name: 'Agent', type: 'agent' },
-      },
-      {
-        id: 'output-1',
-        type: 'output',
-        position: { x: 500, y: 100 },
-        data: { name: 'Output', type: 'output' },
-      },
-    ],
-    edges: [
-      { id: 'e1-2', source: 'input-1', target: 'agent-1' },
-      { id: 'e2-3', source: 'agent-1', target: 'output-1' },
-    ],
-  },
-  {
-    id: 'agent-collaboration',
-    name: 'Agent Collaboration',
-    description: 'A workflow with two agents collaborating via A2A communication.',
-    category: 'Agent Collaboration',
-    nodes: [
-      {
-        id: 'input-1',
-        type: 'input',
-        position: { x: 100, y: 100 },
-        data: { name: 'Input', type: 'input' },
-      },
-      {
-        id: 'agent-1',
-        type: 'agent',
-        position: { x: 300, y: 50 },
-        data: { name: 'Agent 1', type: 'agent' },
-      },
-      {
-        id: 'agent-2',
-        type: 'agent',
-        position: { x: 300, y: 150 },
-        data: { name: 'Agent 2', type: 'agent' },
-      },
-      {
-        id: 'a2a-1',
-        type: 'a2a',
-        position: { x: 500, y: 100 },
-        data: { name: 'A2A Communication', type: 'a2a' },
-      },
-      {
-        id: 'output-1',
-        type: 'output',
-        position: { x: 700, y: 100 },
-        data: { name: 'Output', type: 'output' },
-      },
-    ],
-    edges: [
-      { id: 'e1-2', source: 'input-1', target: 'agent-1' },
-      { id: 'e1-3', source: 'input-1', target: 'agent-2' },
-      { id: 'e2-4', source: 'agent-1', target: 'a2a-1' },
-      { id: 'e3-4', source: 'agent-2', target: 'a2a-1' },
-      { id: 'e4-5', source: 'a2a-1', target: 'output-1' },
-    ],
-  },
-  {
-    id: 'data-processing',
-    name: 'Data Processing Pipeline',
-    description: 'A workflow for processing and transforming data.',
-    category: 'Data Processing',
-    nodes: [
-      {
-        id: 'input-1',
-        type: 'input',
-        position: { x: 100, y: 100 },
-        data: { name: 'Data Input', type: 'input' },
-      },
-      {
-        id: 'transform-1',
-        type: 'transform',
-        position: { x: 300, y: 100 },
-        data: { name: 'Data Transformation', type: 'transform' },
-      },
-      {
-        id: 'mcpTool-1',
-        type: 'mcpTool',
-        position: { x: 500, y: 100 },
-        data: { name: 'Data Processing Tool', type: 'mcpTool' },
-      },
-      {
-        id: 'output-1',
-        type: 'output',
-        position: { x: 700, y: 100 },
-        data: { name: 'Processed Output', type: 'output' },
-      },
-    ],
-    edges: [
-      { id: 'e1-2', source: 'input-1', target: 'transform-1' },
-      { id: 'e2-3', source: 'transform-1', target: 'mcpTool-1' },
-      { id: 'e3-4', source: 'mcpTool-1', target: 'output-1' },
-    ],
-  },
-  {
-    id: 'conditional-workflow',
-    name: 'Conditional Workflow',
-    description: 'A workflow with conditional branching based on input data.',
-    category: 'Basic',
-    nodes: [
-      {
-        id: 'input-1',
-        type: 'input',
-        position: { x: 100, y: 100 },
-        data: { name: 'Input', type: 'input' },
-      },
-      {
-        id: 'condition-1',
-        type: 'condition',
-        position: { x: 300, y: 100 },
-        data: { name: 'Condition', type: 'condition' },
-      },
-      {
-        id: 'agent-1',
-        type: 'agent',
-        position: { x: 500, y: 50 },
-        data: { name: 'Agent A', type: 'agent' },
-      },
-      {
-        id: 'agent-2',
-        type: 'agent',
-        position: { x: 500, y: 150 },
-        data: { name: 'Agent B', type: 'agent' },
-      },
-      {
-        id: 'output-1',
-        type: 'output',
-        position: { x: 700, y: 100 },
-        data: { name: 'Output', type: 'output' },
-      },
-    ],
-    edges: [
-      { id: 'e1-2', source: 'input-1', target: 'condition-1' },
-      {
-        id: 'e2-3',
-        source: 'condition-1',
-        target: 'agent-1',
-        sourceHandle: 'true',
-        targetHandle: 'default',
-      },
-      {
-        id: 'e2-4',
-        source: 'condition-1',
-        target: 'agent-2',
-        sourceHandle: 'false',
-        targetHandle: 'default',
-      },
-      { id: 'e3-5', source: 'agent-1', target: 'output-1' },
-      { id: 'e4-5', source: 'agent-2', target: 'output-1' },
-    ],
-  },
-  {
-    id: 'api-integration',
-    name: 'API Integration',
-    description: 'A workflow for integrating with external APIs.',
-    category: 'Integration',
-    nodes: [
-      {
-        id: 'input-1',
-        type: 'input',
-        position: { x: 100, y: 100 },
-        data: { name: 'Request Input', type: 'input' },
-      },
-      {
-        id: 'transform-1',
-        type: 'transform',
-        position: { x: 300, y: 100 },
-        data: { name: 'Request Transformation', type: 'transform' },
-      },
-      {
-        id: 'mcpTool-1',
-        type: 'mcpTool',
-        position: { x: 500, y: 100 },
-        data: { name: 'API Client', type: 'mcpTool' },
-      },
-      {
-        id: 'transform-2',
-        type: 'transform',
-        position: { x: 700, y: 100 },
-        data: { name: 'Response Transformation', type: 'transform' },
-      },
-      {
-        id: 'output-1',
-        type: 'output',
-        position: { x: 900, y: 100 },
-        data: { name: 'API Response', type: 'output' },
-      },
-    ],
-    edges: [
-      { id: 'e1-2', source: 'input-1', target: 'transform-1' },
-      { id: 'e2-3', source: 'transform-1', target: 'mcpTool-1' },
-      { id: 'e3-4', source: 'mcpTool-1', target: 'transform-2' },
-      { id: 'e4-5', source: 'transform-2', target: 'output-1' },
-    ],
-  },
-];
-
 interface WorkflowTemplatesProps {
   onApplyTemplate: (template: any) => void;
 }
@@ -254,15 +38,50 @@ interface WorkflowTemplatesProps {
 export const WorkflowTemplates: React.FC<WorkflowTemplatesProps> = ({ onApplyTemplate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('Basic');
+  const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const workflowApi = new WorkflowApiService();
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchTemplates();
+    }
+  }, [isOpen]);
+
+  const fetchTemplates = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await workflowApi.getWorkflowTemplates();
+      if (response.success && response.data) {
+        setTemplates(response.data);
+      } else {
+        setError(response.error || 'Failed to fetch templates');
+      }
+    } catch (err) {
+      setError('An error occurred while fetching templates');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter templates by category
-  const filteredTemplates = WORKFLOW_TEMPLATES.filter(
-    (template: any) => template.category === selectedCategory
+  const filteredTemplates = templates.filter(
+    (template) => template.category === selectedCategory
   );
 
   // Apply template and close dialog
-  const applyTemplate = (template: any) => {
-    onApplyTemplate(template);
+  const applyTemplate = (template: WorkflowTemplate) => {
+    // Transform API template structure to what the builder expects if necessary
+    // Assuming the API returns a 'definition' object with nodes and edges
+    const builderTemplate = {
+      ...template,
+      nodes: template.definition.nodes,
+      edges: template.definition.edges
+    };
+    onApplyTemplate(builderTemplate);
     setIsOpen(false);
   };
 
@@ -293,46 +112,60 @@ export const WorkflowTemplates: React.FC<WorkflowTemplatesProps> = ({ onApplyTem
           {TEMPLATE_CATEGORIES.map((category) => (
             <TabsContent key={category} value={category} className="mt-0">
               <ScrollArea className="h-[400px] pr-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredTemplates.map((template: any) => (
-                    <Card key={template.id} className="overflow-hidden">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">{template.name}</CardTitle>
-                        <CardDescription>{template.description}</CardDescription>
-                      </CardHeader>
+                {loading ? (
+                  <div className="flex justify-center items-center h-full min-h-[200px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : error ? (
+                   <div className="text-center text-red-500 py-8">
+                    {error}
+                  </div>
+                ) : filteredTemplates.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    No templates found in this category.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredTemplates.map((template) => (
+                      <Card key={template.id} className="overflow-hidden">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-lg">{template.name}</CardTitle>
+                          <CardDescription>{template.description}</CardDescription>
+                        </CardHeader>
 
-                      <CardContent className="pb-2">
-                        <div className="bg-muted rounded-md p-2 h-32 flex items-center justify-center text-muted-foreground text-sm">
-                          <div className="text-center">
-                            <div className="font-mono text-xs mb-1">
-                              {template.nodes.length} nodes, {template.edges.length} connections
-                            </div>
-                            <div className="flex items-center justify-center space-x-2">
-                              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                <Plus className="h-4 w-4 text-primary" />
+                        <CardContent className="pb-2">
+                          <div className="bg-muted rounded-md p-2 h-32 flex items-center justify-center text-muted-foreground text-sm">
+                            <div className="text-center">
+                              <div className="font-mono text-xs mb-1">
+                                {template.definition.nodes.length} nodes, {template.definition.edges.length} connections
                               </div>
-                              <ArrowRight className="h-4 w-4" />
-                              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                {template.nodes.length}
+                              <div className="flex items-center justify-center space-x-2">
+                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                                  <Plus className="h-4 w-4 text-primary" />
+                                </div>
+                                <ArrowRight className="h-4 w-4" />
+                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                                  {template.definition.nodes.length}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </CardContent>
+                        </CardContent>
 
-                      <CardFooter>
-                        <Button
-                          variant="default"
-                          size="sm"
-                          className="w-full"
-                          onClick={() => applyTemplate(template)}
-                        >
-                          Use Template
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
+                        <CardFooter>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => applyTemplate(template)}
+                          >
+                            Use Template
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </TabsContent>
           ))}

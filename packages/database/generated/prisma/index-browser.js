@@ -292,6 +292,20 @@ exports.Prisma.WorkflowExecutionScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.WorkflowTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  definition: 'definition',
+  isPublic: 'isPublic',
+  creatorId: 'creatorId',
+  metadata: 'metadata',
+  usageCount: 'usageCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PipelineScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -575,6 +589,46 @@ exports.Prisma.AgentPromptVersionScalarFieldEnum = {
   performanceMetrics: 'performanceMetrics',
   massStage: 'massStage',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.PromptTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  currentVersionId: 'currentVersionId',
+  isPublic: 'isPublic',
+  category: 'category',
+  tags: 'tags',
+  analytics: 'analytics',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PromptVersionScalarFieldEnum = {
+  id: 'id',
+  templateId: 'templateId',
+  version: 'version',
+  label: 'label',
+  content: 'content',
+  variables: 'variables',
+  metrics: 'metrics',
+  changelog: 'changelog',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PromptSnippetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  content: 'content',
+  type: 'type',
+  category: 'category',
+  tags: 'tags',
+  usageCount: 'usageCount',
+  description: 'description',
+  isStarred: 'isStarred',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.ValidationDatasetScalarFieldEnum = {
@@ -953,6 +1007,7 @@ exports.Prisma.ModelName = {
   Workflow: 'Workflow',
   WorkflowStep: 'WorkflowStep',
   WorkflowExecution: 'WorkflowExecution',
+  WorkflowTemplate: 'WorkflowTemplate',
   Pipeline: 'Pipeline',
   Task: 'Task',
   TaskExecution: 'TaskExecution',
@@ -973,6 +1028,9 @@ exports.Prisma.ModelName = {
   AgentOnboardingEvent: 'AgentOnboardingEvent',
   AgentDirectoryEntry: 'AgentDirectoryEntry',
   AgentPromptVersion: 'AgentPromptVersion',
+  PromptTemplate: 'PromptTemplate',
+  PromptVersion: 'PromptVersion',
+  PromptSnippet: 'PromptSnippet',
   ValidationDataset: 'ValidationDataset',
   BusinessMetric: 'BusinessMetric',
   ErrorLog: 'ErrorLog',

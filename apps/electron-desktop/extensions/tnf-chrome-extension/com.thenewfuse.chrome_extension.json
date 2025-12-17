@@ -1,0 +1,11 @@
+{
+  "name": "com.thenewfuse.chrome_extension",
+  "description": "TNF Chrome Extension Native Host",
+  "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension/native_host.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://*/",
+    "chrome-extension://bjgmnlkpkofmnjbcccahnfjdljnneibj/",
+    "chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/"
+  ]
+}

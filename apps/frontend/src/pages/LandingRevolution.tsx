@@ -22,32 +22,6 @@ import { Link } from 'react-router-dom';
 export const LandingPageRevolution = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
-      {/* HEADER - FIXED */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-gray-900/80 backdrop-blur-md border-b border-white/10">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-glow-lg">
-            <Rocket className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold text-white group-hover:opacity-80 transition-opacity">
-            The New Fuse
-          </span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link
-            to="/auth/login"
-            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-          >
-            Login
-          </Link>
-          <Button
-            asChild
-            className="h-10 px-6 text-sm font-bold bg-white text-gray-900 hover:bg-gray-100 rounded-full"
-          >
-            <Link to="/auth/register">Get Started</Link>
-          </Button>
-        </div>
-      </header>
-
       {/* HERO SECTION - MASSIVE & BOLD */}
       <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 pt-32">
         {/* Background Glow Effects */}

@@ -1,0 +1,15 @@
+{
+  "appId": "com.thenewfuse.desktop",
+  "productName": "TheNewFuse",
+  "files": [
+    "dist/**/*",
+    "native/**/*",
+    "package.json"
+  ],
+  "directories": {
+    "output": "release-debug"
+  },
+  "mac": {
+    "target": "dir"
+  }
+}

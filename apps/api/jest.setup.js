@@ -1,25 +1,56 @@
-import '@testing-library/jest-dom';
-import { jest } from '@jest/globals';
-// Set up global Jest environment variables
-global.jest = jest;
-global.describe = jest.describe;
-global.expect = jest.expect;
-global.it = jest.it;
-global.test = jest.test;
-global.beforeAll = jest.beforeAll;
-global.beforeEach = jest.beforeEach;
-global.afterAll = jest.afterAll;
-// Mock environment variables
-process.env.NODE_ENV = 'test';
-process.env.JWT_SECRET = 'test-secret';
-process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/fuse_test';
-process.env.REDIS_URL = 'redis://localhost:6379/1';
-// Mock console methods
-global.console = {
-    ...console,
-    log: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    info: jest.fn()
+// Jest setup file to handle ESM/CJS compatibility issues
+
+// Simple UUID v4 generator that doesn't depend on the uuid module
+function simpleUUIDv4() {
+  let uuid = '';
+  for (let i = 0; i < 32; i++) {
+    if (i === 8 || i === 12 || i === 16 || i === 20) {
+      uuid += '-';
+    }
+    const random = Math.random() * 16 | 0;
+    if (i === 12) {
+      uuid += '4'; // UUID version 4
+    } else if (i === 16) {
+      uuid += (random & 3 | 8).toString(16); // UUID variant
+    } else {
+      uuid += random.toString(16);
+    }
+  }
+  return uuid;
+}
+
+// Create a mock UUID module that works with both ESM and CJS
+global.uuid = {
+  v1: () => 'xxxxxxxx-xxxx-1xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  }),
+  v3: (_name, _namespace) => '00000000-0000-3000-8000-000000000000',
+  v4: simpleUUIDv4,
+  v5: (_name, _namespace) => '00000000-0000-5000-8000-000000000000',
+  validate: (uuid) => {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
+  },
+  version: (uuid) => {
+    if (!global.uuid.validate(uuid)) return null;
+    return parseInt(uuid.charAt(14), 16);
+  },
+  NIL: '00000000-0000-0000-0000-000000000000',
+  parse: (uuid) => {
+    if (!global.uuid.validate(uuid)) return null;
+    const hex = uuid.replace(/-/g, '');
+    const buffer = Buffer.alloc(16);
+    for (let i = 0; i < 16; i++) {
+      buffer[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    return buffer;
+  },
+  stringify: (buffer) => {
+    if (!Buffer.isBuffer(buffer) || buffer.length !== 16) return null;
+    let hex = buffer.toString('hex');
+    return `${hex.substr(0, 8)}-${hex.substr(8, 4)}-${hex.substr(12, 4)}-${hex.substr(16, 4)}-${hex.substr(20, 12)}`;
+  }
 };
-//# sourceMappingURL=jest.setup.js.map
+
+// Mock the uuid module globally
+jest.mock('uuid', () => global.uuid);

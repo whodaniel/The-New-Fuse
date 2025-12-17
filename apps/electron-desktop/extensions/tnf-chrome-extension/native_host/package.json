@@ -1,0 +1,24 @@
+{
+  "name": "tnf-native-host",
+  "version": "1.0.0",
+  "description": "Native host for TNF Chrome Extension, communicating via WebSocket relay",
+  "main": "dist/native_host.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/native_host.js",
+    "dev": "ts-node src/native_host.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/ws": "^8.5.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.1",
+    "ws": "^8.18.0"
+  }
+}

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Web3authService } from '../web3auth/web3auth.service';
 import { PrismaService } from '@the-new-fuse/database';
 import { SmartAccountService } from '../smart-accounts/smart-account.service';
-import { createWalletClient, http, parseEther, formatEther, parseAbi, encodeFunctionData, getAddress } from 'viem';
+import { createWalletClient, createPublicClient, http, parseEther, formatEther, parseAbi, encodeFunctionData, getAddress } from 'viem';
 import { mainnet } from 'viem/chains';
 
 interface ComplianceCheckResult {
@@ -40,10 +40,10 @@ export class TransactionsService {
 
       // Get Smart Account address for the AI agent
       const smartAccountAddress = await this.getSmartAccountAddress(agentVerifierId);
-      
+
       // Compliance check before proceeding
       const complianceCheck = await this.performComplianceCheck(smartAccountAddress, to);
-      
+
       if (complianceCheck.isHighRisk) {
         this.logger.warn(`High-risk transaction detected: ${complianceCheck.reason}`);
         throw new Error(`Transaction blocked due to compliance check: ${complianceCheck.reason}`);
@@ -115,13 +115,13 @@ export class TransactionsService {
   }) {
     // Build ERC-4337 UserOperation
     const smartAccountAddress = await this.getSmartAccountAddress(agentVerifierId);
-    
+
     // Encode the execute call data for the Smart Account
     const executeCallData = this.encodeExecuteCall(callData.target, callData.value, callData.data);
-    
+
     // Get nonce from EntryPoint
     const nonce = await this.getNonce(smartAccountAddress);
-    
+
     // Build UserOperation structure
     const userOp = {
       sender: smartAccountAddress,
@@ -143,25 +143,25 @@ export class TransactionsService {
   private async signUserOperation(agentVerifierId: string, userOp: any) {
     // Get Web3Auth provider for signing
     const provider = await this.web3authService.getProvider(agentVerifierId);
-    
+
     // Create UserOperation hash for signing
     const userOpHash = this.getUserOperationHash(userOp);
-    
+
     // Sign with Web3Auth
     const signature = await provider.account.signMessage({
       message: userOpHash
     });
-    
+
     // Add signature to UserOperation
     userOp.signature = signature;
-    
+
     return userOp;
   }
 
   private async submitUserOperation(userOp: any): Promise<string> {
     // Submit UserOperation to Bundler service
     const bundlerUrl = process.env.BUNDLER_URL || 'https://api.alchemy.com/v2/your-api-key';
-    
+
     try {
       const response = await fetch(bundlerUrl, {
         method: 'POST',
@@ -177,11 +177,11 @@ export class TransactionsService {
       });
 
       const result = await response.json();
-      
+
       if (result.error) {
         throw new Error(`Bundler error: ${result.error.message}`);
       }
-      
+
       return result.result; // UserOperation hash
     } catch (error) {
       this.logger.error('Failed to submit UserOperation to bundler:', error);
@@ -195,7 +195,7 @@ export class TransactionsService {
       const executeAbi = parseAbi([
         'function execute(address dest, uint256 value, bytes calldata func) external'
       ]);
-      
+
       return encodeFunctionData({
         abi: executeAbi,
         functionName: 'execute',
@@ -247,7 +247,7 @@ export class TransactionsService {
       // Calculate UserOperation hash for ERC-4337
       // This would typically involve keccak hashing the UserOperation struct
       // For now, return a proper hash structure
-      
+
       const userOpType = {
         sender: 'address',
         nonce: 'uint256',
@@ -304,7 +304,7 @@ export class TransactionsService {
 
       const wallet = await this.prisma.wallet.findUnique({
         where: { id: walletId },
-        include: { 
+        include: {
           agent: {
             include: { user: true }
           }
@@ -382,7 +382,7 @@ export class TransactionsService {
 
       const wallet = await this.prisma.wallet.findUnique({
         where: { id: walletId },
-        include: { 
+        include: {
           agent: {
             include: { user: true }
           }
@@ -463,7 +463,7 @@ export class TransactionsService {
   ): Promise<string> {
     // Get Web3Auth provider for EOA transaction
     const provider = await this.web3authService.getProvider(verifierId);
-    
+
     // Create viem wallet client
     const walletClient = createWalletClient({
       chain: mainnet,
@@ -512,7 +512,7 @@ export class TransactionsService {
   private async performComplianceCheck(fromAddress: string, toAddress: string): Promise<ComplianceCheckResult> {
     try {
       this.logger.log(`Performing compliance check for transaction from ${fromAddress} to ${toAddress}`);
-      
+
       // Create public client for blockchain queries
       const publicClient = createPublicClient({
         chain: mainnet,
@@ -551,7 +551,7 @@ export class TransactionsService {
       const codeAtAddress = await publicClient.getBytecode({
         address: toAddress as `0x${string}`
       });
-      
+
       if (codeAtAddress && codeAtAddress !== '0x') {
         // This is a contract, check if it's verified or suspicious
         const contractRisk = await this.assessContractRisk(toAddress);
@@ -562,7 +562,7 @@ export class TransactionsService {
       }
 
       const isHighRisk = riskScore > 70;
-      
+
       return {
         isHighRisk,
         riskScore,
@@ -601,7 +601,7 @@ export class TransactionsService {
       // 2. Analyze contract code for suspicious patterns
       // 3. Check contract age and activity
       // 4. Query external risk APIs
-      
+
       // For now, return a default low risk score
       return 10;
     } catch (error) {
@@ -615,11 +615,11 @@ export class TransactionsService {
       where: { address },
       select: { id: true }
     });
-    
+
     if (!wallet) {
       throw new Error(`Wallet not found for address ${address}`);
     }
-    
+
     return wallet.id;
   }
 

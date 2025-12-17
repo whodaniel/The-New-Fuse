@@ -207,6 +207,8 @@ export default function ComprehensiveRouter() {
       '/community',
       '/support',
       '/contact',
+      '/brand',
+      '/design-system',
     ].includes(location.pathname) ||
     location.pathname.startsWith('/auth') ||
     location.pathname.startsWith('/legal');

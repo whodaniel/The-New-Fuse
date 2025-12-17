@@ -37,13 +37,13 @@ export class TemplateParser {
     try {
       // Resolve variables
       const resolvedVariables = await this.resolveVariables(template.variables);
-      
+
       // Parse resources with resolved variables
       const parsedResources = await this.parseResources(template.resources, resolvedVariables);
-      
+
       // Build dependency graph
       const dependencies = this.buildDependencyGraph(parsedResources);
-      
+
       // Validate dependencies
       this.validateDependencies(dependencies);
 
@@ -64,10 +64,10 @@ export class TemplateParser {
     try {
       // Generate resource definitions from state
       const resources = await this.generateResourceDefinitions(state.resources);
-      
+
       // Generate variables from resource properties
       const variables = this.generateVariables(resources);
-      
+
       // Generate outputs from resource outputs
       const outputs = this.generateOutputs(state.resources);
 
@@ -112,7 +112,7 @@ export class TemplateParser {
         if (variable.required) {
           throw new Error(`Failed to resolve required variable ${variable.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
-        
+
         // Use default value for optional variables
         if (variable.defaultValue !== undefined) {
           resolved.set(variable.name, variable.defaultValue);
@@ -124,7 +124,7 @@ export class TemplateParser {
   }
 
   private async parseResources(
-    resources: ResourceDefinition[], 
+    resources: ResourceDefinition[],
     variables: Map<string, any>
   ): Promise<ResourceDefinition[]> {
     const parsed: ResourceDefinition[] = [];
@@ -271,11 +271,26 @@ export class TemplateParser {
   }
 
   private initializeParsers(): void {
+    // Generic resource types
     this.resourceParsers.set(ResourceType.COMPUTE, new ComputeResourceParser());
     this.resourceParsers.set(ResourceType.STORAGE, new StorageResourceParser());
     this.resourceParsers.set(ResourceType.NETWORK, new NetworkResourceParser());
     this.resourceParsers.set(ResourceType.DATABASE, new DatabaseResourceParser());
     this.resourceParsers.set(ResourceType.LOAD_BALANCER, new LoadBalancerResourceParser());
+
+    // GCP-specific resource types (use the same parsers as generic types)
+    this.resourceParsers.set(ResourceType.COMPUTE_ENGINE, new ComputeResourceParser());
+    this.resourceParsers.set(ResourceType.CLOUD_STORAGE, new StorageResourceParser());
+    this.resourceParsers.set(ResourceType.VPC_NETWORK, new NetworkResourceParser());
+    this.resourceParsers.set(ResourceType.CLOUD_SQL, new DatabaseResourceParser());
+    this.resourceParsers.set(ResourceType.SECURITY_GROUP, new NetworkResourceParser());
+    this.resourceParsers.set(ResourceType.FIREWALL_RULE, new NetworkResourceParser());
+    this.resourceParsers.set(ResourceType.IAM_ROLE, new ComputeResourceParser());
+    this.resourceParsers.set(ResourceType.CLOUD_DNS, new NetworkResourceParser());
+    this.resourceParsers.set(ResourceType.SSL_CERTIFICATE, new NetworkResourceParser());
+    this.resourceParsers.set(ResourceType.CONTAINER_REGISTRY, new StorageResourceParser());
+    this.resourceParsers.set(ResourceType.GKE_CLUSTER, new ComputeResourceParser());
+    this.resourceParsers.set(ResourceType.CLOUD_FUNCTION, new ComputeResourceParser());
   }
 }
 
@@ -289,7 +304,7 @@ class StringVariableResolver implements VariableResolver {
     if (variable.defaultValue !== undefined) {
       return String(variable.defaultValue);
     }
-    
+
     // In a real implementation, this might fetch from environment variables,
     // configuration files, or prompt the user
     throw new Error(`No value provided for required string variable: ${variable.name}`);
@@ -301,7 +316,7 @@ class NumberVariableResolver implements VariableResolver {
     if (variable.defaultValue !== undefined) {
       return Number(variable.defaultValue);
     }
-    
+
     throw new Error(`No value provided for required number variable: ${variable.name}`);
   }
 }
@@ -311,7 +326,7 @@ class BooleanVariableResolver implements VariableResolver {
     if (variable.defaultValue !== undefined) {
       return Boolean(variable.defaultValue);
     }
-    
+
     throw new Error(`No value provided for required boolean variable: ${variable.name}`);
   }
 }
@@ -321,7 +336,7 @@ class ListVariableResolver implements VariableResolver {
     if (variable.defaultValue !== undefined) {
       return Array.isArray(variable.defaultValue) ? variable.defaultValue : [variable.defaultValue];
     }
-    
+
     throw new Error(`No value provided for required list variable: ${variable.name}`);
   }
 }
@@ -331,7 +346,7 @@ class MapVariableResolver implements VariableResolver {
     if (variable.defaultValue !== undefined) {
       return typeof variable.defaultValue === 'object' ? variable.defaultValue : {};
     }
-    
+
     throw new Error(`No value provided for required map variable: ${variable.name}`);
   }
 }
@@ -341,7 +356,7 @@ class ObjectVariableResolver implements VariableResolver {
     if (variable.defaultValue !== undefined) {
       return variable.defaultValue;
     }
-    
+
     throw new Error(`No value provided for required object variable: ${variable.name}`);
   }
 }
@@ -355,16 +370,16 @@ class ComputeResourceParser implements ResourceParser {
   async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
     // Parse compute-specific properties
     const parsedResource = { ...resource };
-    
+
     // Substitute variables in properties
     parsedResource.properties = this.substituteVariables(resource.properties, _variables);
-    
+
     return parsedResource;
   }
 
   private substituteVariables(properties: any, variables: Map<string, any>): any {
     const substituted = { ...properties };
-    
+
     for (const [key, value] of Object.entries(substituted)) {
       if (typeof value === 'string' && value.startsWith('${') && value.endsWith('}')) {
         const varName = value.slice(2, -1);
@@ -373,7 +388,7 @@ class ComputeResourceParser implements ResourceParser {
         }
       }
     }
-    
+
     return substituted;
   }
 }

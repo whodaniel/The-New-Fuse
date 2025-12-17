@@ -52,7 +52,7 @@ export class StateManager {
       // Check cache first
       if (this.stateCache.has(id)) {
         const cachedState = this.stateCache.get(id)!;
-        
+
         // Verify cache is still valid (not too old)
         const cacheAge = Date.now() - cachedState.updatedAt.getTime();
         if (cacheAge < 60000) { // 1 minute cache validity
@@ -228,7 +228,7 @@ export class StateManager {
       for (const state of allStates) {
         try {
           const age = Date.now() - state.updatedAt.getTime();
-          
+
           if (age > maxAge && (
             state.status === InfrastructureStatus.ERROR ||
             state.status === InfrastructureStatus.DESTROYED
@@ -289,4 +289,70 @@ export interface StateIntegrityResult {
 export interface CleanupResult {
   cleanedStates: string[];
   errors: string[];
+}
+
+/**
+ * In-memory implementation of StateStorage for testing
+ */
+export class InMemoryStateStorage implements StateStorage {
+  private states: Map<string, InfrastructureState> = new Map();
+  private locks: Map<string, { reason: string; by: string; at: Date }> = new Map();
+
+  async save(state: InfrastructureState): Promise<void> {
+    this.states.set(state.id, { ...state });
+  }
+
+  async get(id: string): Promise<InfrastructureState | null> {
+    return this.states.get(id) || null;
+  }
+
+  async list(filters?: InfrastructureFilters): Promise<InfrastructureState[]> {
+    let states = Array.from(this.states.values());
+
+    if (filters) {
+      if (filters.environment) {
+        states = states.filter(s => s.environment === filters.environment);
+      }
+      if (filters.status && filters.status.length > 0) {
+        states = states.filter(s => filters.status!.includes(s.status));
+      }
+      if (filters.createdAfter) {
+        states = states.filter(s => s.createdAt >= filters.createdAfter!);
+      }
+      if (filters.createdBefore) {
+        states = states.filter(s => s.createdAt <= filters.createdBefore!);
+      }
+      // Note: provider and tags filtering would require loading the template
+      // For now, we skip those filters in the in-memory implementation
+    }
+
+    return states;
+  }
+
+  async delete(id: string): Promise<void> {
+    this.states.delete(id);
+    this.locks.delete(id);
+  }
+
+  async lock(id: string, lockReason: string, lockBy: string): Promise<void> {
+    this.locks.set(id, { reason: lockReason, by: lockBy, at: new Date() });
+  }
+
+  async unlock(id: string): Promise<void> {
+    this.locks.delete(id);
+  }
+
+  async isLocked(id: string): Promise<boolean> {
+    return this.locks.has(id);
+  }
+
+  // Helper methods for testing
+  clear(): void {
+    this.states.clear();
+    this.locks.clear();
+  }
+
+  size(): number {
+    return this.states.size;
+  }
 }

@@ -67,8 +67,8 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
     password: dbConfig.password,
     database: dbConfig.database,
     entities: [User, Agent, Pipeline, Task, TaskExecution, AuthSession, LoginAttempt, AuthEvent],
-    // Disable synchronize in production to prevent schema conflicts
-    synchronize: configService.get('NODE_ENV') !== 'production',
+    // Disable synchronize to prevent schema conflicts - use Prisma migrations instead
+    synchronize: false,
     logging: configService.get('NODE_ENV') === 'development',
   };
 };
