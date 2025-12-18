@@ -8,6 +8,8 @@
   [whodaniel/fuse-theia-ide](https://github.com/whodaniel/fuse-theia-ide)
 - **Service Name**: `fuse-theia-ide`
 - **Node Version**: 22-slim (v22.12.0+)
+- **Build Requirements**: python3, make, g++ (for native modules like
+  `drivelist`)
 - **URL**: `https://fuse-theia-ide-production.up.railway.app`
 
 ## 2. Desktop Integration (Tauri)
