@@ -1,7 +1,65 @@
 # The New Fuse Design System Reference
 
+> **"World Class or Nothing"** - The New Fuse Design Philosophy
+
 This folder contains design references and documentation for maintaining visual
 consistency across The New Fuse project.
+
+---
+
+## 🚀 Brand Identity
+
+**Source**: `/apps/frontend/src/pages/BrandIdentity.tsx`
+
+### Logo Concepts
+
+Three official logo variations stored in `/apps/frontend/public/assets/brand/`:
+
+| Concept                  | File                         | Description                                                                                         |
+| ------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| 🌟 **Neon Monogram**     | `logo-monogram-neon.png`     | Futuristic 3D intertwining "TNF" letters with glowing cyan and purple accents. Cyberpunk aesthetic. |
+| ✨ **Abstract Gradient** | `logo-abstract-gradient.png` | Minimalist geometric fusion of TNF letters. Metallic silver with iridescent finishes.               |
+| 🔗 **Circuit Network**   | `logo-circuit-node.png`      | Node-based connections symbolizing neural networks and data flow. Glassmorphic style.               |
+
+### Brand Color Palette: "Deep Space Premium Dark"
+
+```css
+--tnf-deep-obsidian: #020617; /* Primary Background */
+--tnf-electric-blue: #3b82f6; /* Primary Action (CTAs) */
+--tnf-cosmic-purple: #a855f7; /* Secondary Accent */
+--tnf-neon-pink: #ec4899; /* Highlights */
+```
+
+### Workflow System Colors (Functional)
+
+| Function    | Color   | Hex       | Usage                         |
+| ----------- | ------- | --------- | ----------------------------- |
+| **Agents**  | Indigo  | `#4f46e5` | AI Agent nodes, blue category |
+| **Tools**   | Emerald | `#10b981` | MCP Tools, green indicators   |
+| **Prompts** | Violet  | `#8b5cf6` | Prompt nodes, purple elements |
+| **Logic**   | Amber   | `#f59e0b` | Control flow, warnings        |
+
+### Brand Gradients
+
+```css
+/* Primary Brand Gradient (Text clips, hero elements) */
+background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6);
+/* Tailwind: bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 */
+
+/* Action Gradient (Buttons, CTAs) */
+background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+/* Tailwind: bg-gradient-to-r from-blue-600 to-blue-800 */
+```
+
+### Voice & Tone Guidelines
+
+| ✅ Do This                 | ❌ Avoid This               |
+| -------------------------- | --------------------------- |
+| "Agent Swarms"             | "Unified Agent Ecosystem"   |
+| "No babysitting required." | "Manage and monitor agents" |
+| "Build Your AI Empire"     | "Get Started" (weak CTA)    |
+
+---
 
 ## Current Design System (Active)
 
@@ -11,6 +69,7 @@ The production design system is implemented in the React frontend:
 
 | File                          | Location                                                    | Purpose                                                 |
 | ----------------------------- | ----------------------------------------------------------- | ------------------------------------------------------- |
+| **BrandIdentity.tsx**         | `/apps/frontend/src/pages/BrandIdentity.tsx`                | Complete brand style guide page                         |
 | **PREMIUM_THEME_MANIFEST.md** | `/docs/PREMIUM_THEME_MANIFEST.md`                           | Current design philosophy                               |
 | **design-system.tsx**         | `/apps/frontend/src/components/ui/design-system.tsx`        | React components (Button, Card, Badge, GlassCard, etc.) |
 | **tailwind.config.ts**        | `/apps/frontend/tailwind.config.ts`                         | Tailwind theme configuration                            |
