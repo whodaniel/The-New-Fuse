@@ -49,6 +49,7 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
         this.redisClient = new Redis({
           host: url.hostname,
           port: parseInt(url.port || '6379', 10),
+          password: url.password, // Pass password from URL
           // Remove db parameter as Railway Redis doesn't support database selection
           maxRetriesPerRequest: cacheConfig.redis.maxRetriesPerRequest,
           enableReadyCheck: cacheConfig.redis.enableReadyCheck,
