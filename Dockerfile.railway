@@ -81,9 +81,9 @@ COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/index.js || (echo "ERROR: types dist not found in runner!" && exit 1)
 RUN echo "Runner stage - verifying types package.json..." && cat packages/types/package.json | grep -E '"main"|"type"'
 
-# Copy scripts with executable permissions (before switching to non-root user)
-COPY --chmod=755 scripts/run-service.sh ./apps/${SERVICE_PATH}/run-service.sh
-COPY --chmod=755 scripts/healthcheck.sh ./apps/${SERVICE_PATH}/healthcheck.sh
+# Copy scripts from builder stage with executable permissions (before switching to non-root user)
+COPY --from=builder --chmod=755 /app/scripts/run-service.sh ./apps/${SERVICE_PATH}/run-service.sh
+COPY --from=builder --chmod=755 /app/scripts/healthcheck.sh ./apps/${SERVICE_PATH}/healthcheck.sh
 
 # Switch to non-root user for security
 USER app-user
