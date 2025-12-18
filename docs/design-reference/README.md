@@ -1,0 +1,183 @@
+# The New Fuse Design System Reference
+
+This folder contains design references and documentation for maintaining visual
+consistency across The New Fuse project.
+
+## Current Design System (Active)
+
+The production design system is implemented in the React frontend:
+
+### Key Files
+
+| File                          | Location                                                    | Purpose                                                 |
+| ----------------------------- | ----------------------------------------------------------- | ------------------------------------------------------- |
+| **PREMIUM_THEME_MANIFEST.md** | `/docs/PREMIUM_THEME_MANIFEST.md`                           | Current design philosophy                               |
+| **design-system.tsx**         | `/apps/frontend/src/components/ui/design-system.tsx`        | React components (Button, Card, Badge, GlassCard, etc.) |
+| **tailwind.config.ts**        | `/apps/frontend/tailwind.config.ts`                         | Tailwind theme configuration                            |
+| **theme.ts**                  | `/packages/ui-consolidated/src/styles/theme.ts`             | Theme color tokens                                      |
+| **ThemeProvider.tsx**         | `/packages/ui-consolidated/src/providers/ThemeProvider.tsx` | Theme context provider                                  |
+| **globals.css**               | `/apps/frontend/src/styles/globals.css`                     | Global CSS variables                                    |
+
+---
+
+## Design Philosophy: "Deep Space" v2.0
+
+> "World Class or Nothing"
+
+### Global Background
+
+```css
+--bg-base: #020617; /* Deep Obsidian */
+/* + Radial gradients Cyan/Blue (8% opacity) at top center */
+/* + Radial gradients Purple/Violet (5% opacity) at top right */
+/* + Linear gradient Obsidian to Slate */
+```
+
+### Typography
+
+- **Headings**: `Outfit` (Sans-serif, Geometric, Humanist)
+- **Body**: `Plus Jakarta Sans` (Geometric Sans)
+
+### Glassmorphism 2.0
+
+```css
+/* Surface */
+background: rgba(255, 255, 255, 0.02);
+backdrop-filter: blur(24px); /* backdrop-blur-2xl */
+border: 1px solid rgba(255, 255, 255, 0.08);
+
+/* Depth */
+box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+
+/* Hover */
+background: rgba(255, 255, 255, 0.05);
+/* + glow effect */
+```
+
+---
+
+## Color Palette
+
+### Production Colors (HSL Variables)
+
+```css
+--background: 222.2 84% 4.9%;
+--foreground: 210 40% 98%;
+--primary: 217.2 91.2% 59.8%;
+--primary-foreground: 222.2 47.4% 11.2%;
+--secondary: 217.2 32.6% 17.5%;
+--muted: 217.2 32.6% 17.5%;
+--accent: 217.2 32.6% 17.5%;
+--destructive: 0 62.8% 30.6%;
+```
+
+### UI Consolidated Theme
+
+```typescript
+// Dark Theme
+background: '#020617'; // Deep obsidian
+card: '#1e293b'; // Slate 800
+sidebar: '#334155'; // Slate 700
+border: '#475569'; // Slate 600
+primary: '#0ea5e9'; // Sky 500
+success: '#10b981'; // Emerald 500
+warning: '#f59e0b'; // Amber 500
+error: '#f87171'; // Red 400
+```
+
+---
+
+## Component Library
+
+### Available Components (from design-system.tsx)
+
+| Component          | Variants                                           | Description                      |
+| ------------------ | -------------------------------------------------- | -------------------------------- |
+| **Button**         | primary, secondary, outline, ghost, link, gradient | Action buttons with glow effects |
+| **Card**           | default, glass, gradient, glow                     | Content containers               |
+| **GlassCard**      | -                                                  | Premium glassmorphism card       |
+| **AnimatedCard**   | -                                                  | Card with hover animations       |
+| **FeatureCard**    | -                                                  | Icon + title + description card  |
+| **Badge**          | default, secondary, success, warning, danger       | Status indicators                |
+| **Alert**          | default, success, warning, danger                  | Alert banners                    |
+| **StatCard**       | primary, secondary, success, warning, danger       | Metric display                   |
+| **LoadingSpinner** | sm, md, lg                                         | Loading indicator                |
+| **Input**          | -                                                  | Form input                       |
+| **Select**         | -                                                  | Dropdown select                  |
+| **Separator**      | -                                                  | Visual divider                   |
+| **Progress**       | -                                                  | Progress bar                     |
+| **Container**      | -                                                  | Layout container                 |
+| **Grid**           | 1-6 columns                                        | Responsive grid                  |
+
+---
+
+## Animation System
+
+### Tailwind Animations
+
+```typescript
+// Available animations
+'fade-in'; // opacity 0 -> 1
+'slide-in-up'; // translateY(20px) -> 0
+'slide-in-down'; // translateY(-20px) -> 0
+'slide-in-left'; // translateX(-100%) -> 0
+'slide-in-right'; // translateX(100%) -> 0
+'scale-in'; // scale(0.9) -> 1
+'glow'; // Blue glow pulse
+```
+
+### Box Shadow Tokens
+
+```typescript
+'glow-sm': '0 0 10px rgba(59, 130, 246, 0.3)'
+'glow-md': '0 0 20px rgba(59, 130, 246, 0.4)'
+'glow-lg': '0 0 30px rgba(59, 130, 246, 0.5)'
+'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+```
+
+---
+
+## Archived Reference (Legacy Electron HTML)
+
+The `./archived/` subfolder contains:
+
+- Static HTML prototypes from the Electron Browser Hub era
+- CSS design references (in `unified-styles.css`)
+- These are preserved for historical reference but should NOT be used for new
+  development
+
+**For new Tauri development, always use the React component library in
+`design-system.tsx`.**
+
+---
+
+## Quick Start for New Components
+
+```tsx
+import {
+  Button,
+  GlassCard,
+  Badge,
+  LoadingSpinner,
+} from '@/components/ui/design-system';
+
+// Example usage
+<GlassCard gradient="bg-gradient-to-br from-indigo-500/10 to-purple-500/10">
+  <h2 className="text-xl font-heading">Dashboard</h2>
+  <Button variant="gradient">Get Started</Button>
+  <Badge variant="success">Online</Badge>
+</GlassCard>;
+```
+
+---
+
+## Git History Reference
+
+Recent design commits for reference:
+
+- `6ae7feeef` - Premium dark glassmorphism theme
+- `cc5e31ca0` - Complete premium dark glassmorphism rollout
+- `a3733663c` - Transform UI with premium components
+- `033c096f1` - Redesign landing page with design system
+
+To view changes: `git show <commit-hash>`
