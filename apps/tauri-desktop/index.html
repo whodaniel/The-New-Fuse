@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The New Fuse</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* Deep Space Theme - Tauri Edition */
+      :root {
+        --tnf-primary: #6366f1;
+        --tnf-primary-hover: #4f46e5;
+        --tnf-secondary: #8b5cf6;
+        --tnf-accent: #06b6d4;
+        --tnf-bg-dark: #0f172a;
+        --tnf-bg-darker: #020617;
+        --tnf-surface: rgba(30, 41, 59, 0.7);
+        --tnf-surface-hover: rgba(51, 65, 85, 0.8);
+        --tnf-border: rgba(148, 163, 184, 0.1);
+        --tnf-text: #f8fafc;
+        --tnf-text-muted: #94a3b8;
+        --tnf-success: #10b981;
+        --tnf-warning: #f59e0b;
+        --tnf-error: #ef4444;
+        --tnf-glass: blur(20px);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: var(--tnf-bg-darker);
+        color: var(--tnf-text);
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .app-container {
+        display: flex;
+        height: 100vh;
+        background: radial-gradient(circle at top right, #1e1b4b 0%, var(--tnf-bg-darker) 40%);
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 260px;
+        background: var(--tnf-surface);
+        backdrop-filter: var(--tnf-glass);
+        border-right: 1px solid var(--tnf-border);
+        display: flex;
+        flex-direction: column;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .sidebar.collapsed {
+        width: 68px;
+      }
+      .sidebar.collapsed .logo-text,
+      .sidebar.collapsed .nav-item span {
+        display: none;
+      }
+
+      .sidebar-header {
+        height: 64px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--tnf-border);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .logo i {
+        color: var(--tnf-primary);
+        font-size: 20px;
+        filter: drop-shadow(0 0 8px var(--tnf-primary));
+      }
+
+      .sidebar-toggle {
+        background: transparent;
+        border: none;
+        color: var(--tnf-text-muted);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 6px;
+      }
+
+      .sidebar-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-nav {
+        flex: 1;
+        padding: 16px 8px;
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        margin: 4px 0;
+        color: var(--tnf-text-muted);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+      }
+
+      .nav-item.active {
+        background: linear-gradient(90deg, rgba(99, 102, 241, 0.2) 0%, transparent 100%);
+        color: var(--tnf-primary);
+        border-left: 2px solid var(--tnf-primary);
+      }
+
+      .nav-item i {
+        width: 20px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+      }
+
+      /* Dashboard */
+      .dashboard-container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .dashboard-header {
+        text-align: center;
+        padding: 40px 0;
+      }
+
+      .icon-circle {
+        width: 100px;
+        height: 100px;
+        background: rgba(99, 102, 241, 0.1);
+        border: 2px solid rgba(99, 102, 241, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+      }
+
+      .icon-circle .icon {
+        font-size: 40px;
+        color: var(--tnf-primary);
+        filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+      }
+
+      .dashboard-header h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+      }
+
+      .subtitle {
+        color: var(--tnf-text-muted);
+        font-size: 16px;
+      }
+
+      /* Quick Actions */
+      .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin: 32px 0;
+      }
+
+      .action-card {
+        background: var(--tnf-surface);
+        border: 1px solid var(--tnf-border);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--tnf-text);
+        position: relative;
+      }
+
+      .action-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--tnf-primary);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+      }
+
+      .action-card i {
+        font-size: 24px;
+        color: var(--tnf-primary);
+      }
+      .action-card span {
+        font-weight: 500;
+      }
+
+      /* Service Cards */
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .service-card {
+        background: var(--tnf-surface);
+        border: 1px solid var(--tnf-border);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .service-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(99, 102, 241, 0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--tnf-primary);
+      }
+
+      .service-info {
+        flex: 1;
+      }
+      .service-info h3 {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .service-info p {
+        font-size: 12px;
+        color: var(--tnf-text-muted);
+      }
+
+      /* Status Dot */
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      .status-dot.online {
+        background: var(--tnf-success);
+        box-shadow: 0 0 10px var(--tnf-success);
+        animation: pulse 2s infinite;
+      }
+
+      .status-dot.offline {
+        background: #475569;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+      }
+
+      /* Notifications */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        animation: slideIn 0.3s;
+        z-index: 1000;
+      }
+
+      .notification-success {
+        background: var(--tnf-success);
+      }
+      .notification-error {
+        background: var(--tnf-error);
+      }
+      .notification-info {
+        background: var(--tnf-primary);
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Panel Headers */
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+
+      .panel-header h2 {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .refresh-btn {
+        background: transparent;
+        border: 1px solid var(--tnf-border);
+        color: var(--tnf-text-muted);
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .refresh-btn:hover {
+        border-color: var(--tnf-primary);
+        color: var(--tnf-primary);
+      }
+
+      /* Tools Grid */
+      .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .tool-card {
+        background: var(--tnf-surface);
+        border: 1px solid var(--tnf-border);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .tool-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(99, 102, 241, 0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--tnf-primary);
+      }
+
+      .tool-info {
+        flex: 1;
+      }
+      .tool-info h3 {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .tool-info p {
+        font-size: 12px;
+        color: var(--tnf-text-muted);
+      }
+
+      .run-btn {
+        background: var(--tnf-primary);
+        border: none;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .run-btn:hover {
+        background: var(--tnf-primary-hover);
+      }
+
+      /* Settings */
+      .settings-group {
+        background: var(--tnf-surface);
+        border: 1px solid var(--tnf-border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+
+      .settings-group h3 {
+        margin-bottom: 16px;
+        font-size: 14px;
+        color: var(--tnf-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .setting-item label {
+        font-size: 14px;
+      }
+
+      .setting-item input[type='text'] {
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--tnf-border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        color: white;
+        width: 300px;
+      }
+
+      .primary-btn {
+        background: linear-gradient(135deg, var(--tnf-primary), var(--tnf-secondary));
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      .primary-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .loading,
+      .empty,
+      .placeholder {
+        color: var(--tnf-text-muted);
+        text-align: center;
+        padding: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <i class="fas fa-rocket"></i>
+            <span class="logo-text">The New Fuse</span>
+          </div>
+          <button class="sidebar-toggle" onclick="window.tnf.toggleSidebar()">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div
+            class="nav-item active"
+            data-view="dashboard"
+            onclick="window.tnf.switchView('dashboard')"
+          >
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-view="tools" onclick="window.tnf.switchView('tools')">
+            <i class="fas fa-tools"></i>
+            <span>MCP Tools</span>
+          </div>
+          <div class="nav-item" data-view="files" onclick="window.tnf.switchView('files')">
+            <i class="fas fa-folder-open"></i>
+            <span>Files</span>
+          </div>
+          <div class="nav-item" data-view="settings" onclick="window.tnf.switchView('settings')">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </div>
+        </nav>
+
+        <div style="padding: 16px; border-top: 1px solid var(--tnf-border)">
+          <div class="nav-item" onclick="window.tnf.connectBridge()">
+            <i class="fas fa-plug"></i>
+            <span>Connect</span>
+            <div class="status-dot offline" id="bridge-status"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <main class="main-content" id="main-content">
+        <!-- Content rendered by JS -->
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

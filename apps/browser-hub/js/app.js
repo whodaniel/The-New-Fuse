@@ -773,7 +773,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   switchToTab('dashboard');
 });
-
 // Helpers
 function openAccount() {
   createNewTab('http://localhost:3000/account', 'Account');

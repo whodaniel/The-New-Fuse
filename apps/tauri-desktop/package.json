@@ -1,0 +1,29 @@
+{
+  "name": "@the-new-fuse/tauri-desktop",
+  "private": true,
+  "version": "4.0.0",
+  "type": "module",
+  "description": "The New Fuse - Lightweight Desktop Hub with MCP Bridge",
+  "author": "Daniel Goldberg",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "dist": "pnpm run build && tauri build"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-shell": "^2",
+    "@tauri-apps/plugin-fs": "^2",
+    "@tauri-apps/plugin-http": "^2"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "vite": "^6.0.3",
+    "typescript": "~5.6.2"
+  }
+}
