@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
+    <script>
+      (function() {
+        const originalDefine = customElements.define;
+        customElements.define = function(name, constructor, options) {
+          if (customElements.get(name)) {
+            console.warn(`[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`);
+            return;
+          }
+          originalDefine.call(this, name, constructor, options);
+        };
+      })();
+    </script>
+
     <!-- SEO and Meta Information -->
     <title>
       The New Fuse - AI Collaboration Platform | Workflow Automation & Agent Orchestration
