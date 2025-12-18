@@ -76,6 +76,57 @@ The production design system is implemented in the React frontend:
 | **theme.ts**                  | `/packages/ui-consolidated/src/styles/theme.ts`             | Theme color tokens                                      |
 | **ThemeProvider.tsx**         | `/packages/ui-consolidated/src/providers/ThemeProvider.tsx` | Theme context provider                                  |
 | **globals.css**               | `/apps/frontend/src/styles/globals.css`                     | Global CSS variables                                    |
+| **brand-tokens.ts**           | `/packages/ui-consolidated/src/styles/brand-tokens.ts`      | TypeScript brand token definitions                      |
+| **brand.css**                 | `/packages/ui-consolidated/src/styles/brand.css`            | CSS brand variables and utilities                       |
+
+---
+
+## Framework-Wide Implementation Status
+
+The design system is implemented across all TNF modules:
+
+| Module                       | Status           | Style File                          | Notes                                   |
+| ---------------------------- | ---------------- | ----------------------------------- | --------------------------------------- |
+| **apps/frontend**            | ✅ Complete      | `tailwind.config.ts`, `globals.css` | Core React app, uses Tailwind           |
+| **apps/tauri-desktop**       | ✅ Complete      | `src/styles.css`                    | Aligned with brand tokens               |
+| **apps/chrome-extension**    | ✅ Complete      | `popup.css`, `injectable-ui.css`    | Full Deep Space theme                   |
+| **packages/ui-consolidated** | ✅ Complete      | `brand-tokens.ts`, `brand.css`      | Central token source                    |
+| **apps/vscode-extension**    | ⚠️ VS Code Theme | `media/styles.css`                  | Uses VS Code's native theming (correct) |
+| **apps/backend**             | N/A              | -                                   | No UI                                   |
+| **apps/api**                 | N/A              | -                                   | No UI                                   |
+| **apps/cloud-sandbox**       | N/A              | -                                   | No UI                                   |
+
+### Importing Brand Tokens
+
+**In TypeScript/React:**
+
+```typescript
+import {
+  tnfBrandTheme,
+  brandColors,
+  gradients,
+  glass,
+  shadows,
+} from '@the-new-fuse/ui-consolidated';
+
+// Usage
+const primaryColor = brandColors.primary; // #7c3aed
+const headerGradient = gradients.header; // linear-gradient(...)
+```
+
+**In CSS:**
+
+```css
+/* Import the brand CSS file */
+@import '@the-new-fuse/ui-consolidated/src/styles/brand.css';
+
+/* Use the variables */
+.my-card {
+  background: var(--tnf-surface);
+  border: 1px solid var(--tnf-border);
+  backdrop-filter: blur(24px);
+}
+```
 
 ---
 
