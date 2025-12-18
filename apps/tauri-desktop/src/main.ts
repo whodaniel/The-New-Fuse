@@ -145,6 +145,9 @@ function renderContent(viewId: string) {
     case 'browser':
       content.innerHTML = renderBrowser();
       break;
+    case 'theia':
+      content.innerHTML = renderTheiaIDE();
+      break;
     case 'settings':
       content.innerHTML = renderSettings();
       break;
@@ -181,9 +184,9 @@ function renderDashboard(): string {
           <span>File Manager</span>
         </button>
 
-        <button class="action-card" onclick="window.open('https://thenewfuse.com')">
-          <i class="fas fa-globe"></i>
-          <span>TNF Cloud</span>
+        <button class="action-card" onclick="window.tnf.switchView('theia')">
+          <i class="fas fa-code"></i>
+          <span>Cloud IDE</span>
         </button>
       </div>
 
@@ -197,13 +200,13 @@ function renderDashboard(): string {
           <div class="status-dot ${bridgeConnected ? 'online' : 'offline'}"></div>
         </div>
 
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-database"></i></div>
+        <div class="service-card" onclick="window.tnf.switchView('theia')">
+          <div class="service-icon"><i class="fas fa-code"></i></div>
           <div class="service-info">
-            <h3>PostgreSQL</h3>
-            <p>railway.app</p>
+            <h3>Cloud IDE</h3>
+            <p>Theia Editor</p>
           </div>
-          <div class="status-dot offline"></div>
+          <div class="status-dot online"></div>
         </div>
 
         <div class="service-card">
@@ -289,6 +292,38 @@ function renderBrowser(): string {
       </div>
 
       <div id="browser-result" class="browser-result"></div>
+    </div>
+  `;
+}
+
+function renderTheiaIDE(): string {
+  // Use production URL if deployed, otherwise fallback or user setting
+  const theiaUrl =
+    localStorage.getItem('theiaUrl') || 'https://fuse-theia-ide-production.up.railway.app';
+
+  return `
+    <div class="theia-container" style="height: 100%; display: flex; flex-direction: column;">
+      <div class="panel-header" style="padding: 12px 16px; border-bottom: 1px solid var(--tnf-border); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <h2><i class="fas fa-code"></i> Cloud IDE</h2>
+          <span class="connection-badge online">Theia v2.0</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="action-btn" onclick="window.open('${theiaUrl}', '_blank')">
+            <i class="fas fa-external-link-alt"></i> Open in Browser
+          </button>
+          <button class="action-btn" onclick="document.getElementById('theia-frame').src = '${theiaUrl}'">
+            <i class="fas fa-sync"></i> Reload
+          </button>
+        </div>
+      </div>
+      <iframe
+        id="theia-frame"
+        src="${theiaUrl}"
+        style="flex: 1; border: none; background: #1e1e1e;"
+        title="Theia IDE"
+        allow="clipboard-read; clipboard-write; fullscreen"
+      ></iframe>
     </div>
   `;
 }
