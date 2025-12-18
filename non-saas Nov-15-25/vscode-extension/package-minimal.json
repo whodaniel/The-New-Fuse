@@ -1,0 +1,37 @@
+{
+  "name": "the-new-fuse-minimal",
+  "displayName": "The New Fuse - Minimal",
+  "description": "Minimal working version of The New Fuse VSCode extension",
+  "version": "1.0.0",
+  "publisher": "the-new-fuse",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "main": "./dist/extension-minimal.js",
+  "scripts": {
+    "build": "esbuild src/extension-minimal.ts --bundle --outfile=dist/extension-minimal.js --external:vscode --format=cjs --platform=node",
+    "package": "pnpm dlx vsce package",
+    "clean": "rm -rf dist *.vsix"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "the-new-fuse.showChat",
+        "title": "Show Chat",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.runDiagnostic", 
+        "title": "Run Diagnostic",
+        "category": "The New Fuse"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/vscode": "1.90.0",
+    "@vscode/vsce": "^3.5.0",
+    "esbuild": "^0.19.0",
+    "typescript": "^5.0.4"
+  }
+}

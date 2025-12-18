@@ -1,0 +1,7 @@
+/*!***************************************************
+* advanced-mark.js v2.7.0
+* https://github.com/angezid/advanced-mark.js
+* MIT licensed
+* Copyright (c) 2022–2025, angezid
+* Based on 'mark.js', license https://git.io/vwTVl
+*****************************************************/

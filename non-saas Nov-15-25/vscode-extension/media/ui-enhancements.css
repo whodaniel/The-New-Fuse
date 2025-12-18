@@ -1,0 +1,367 @@
+/* Notification System Styles */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.notification {
+    background-color: var(--vscode-notifications-background);
+    color: var(--vscode-notifications-foreground);
+    border: 1px solid var(--vscode-notifications-border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    min-width: 300px;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+    pointer-events: auto;
+    position: relative;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.success {
+    background-color: var(--vscode-notificationsInfoIcon-foreground, #007acc);
+    color: white;
+}
+
+.notification.error {
+    background-color: var(--vscode-notificationsErrorIcon-foreground, #f85149);
+    color: white;
+}
+
+.notification.warning {
+    background-color: var(--vscode-notificationsWarningIcon-foreground, #ffab00);
+    color: white;
+}
+
+.notification-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    padding: 2px;
+    border-radius: 2px;
+}
+
+.notification-close:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Message styling improvements */
+.message {
+    position: relative;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    padding: 16px;
+    animation: messageSlideIn 0.3s ease-out;
+    max-width: 85%;
+    word-wrap: break-word;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.user {
+    background: linear-gradient(135deg, var(--vscode-inputOption-activeBackground), var(--vscode-button-background));
+    margin-left: auto;
+    margin-right: 8px;
+    border-bottom-right-radius: 4px;
+    color: var(--vscode-button-foreground);
+}
+
+.message.assistant {
+    background: linear-gradient(135deg, var(--vscode-editor-selectionBackground), var(--vscode-editor-selectionHighlightBackground));
+    margin-right: auto;
+    margin-left: 8px;
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--vscode-panel-border);
+}
+
+.message.system {
+    background-color: var(--vscode-editor-inactiveSelectionBackground);
+    text-align: center;
+    font-style: italic;
+    margin: 8px auto;
+    max-width: 70%;
+    opacity: 0.9;
+    border-radius: 8px;
+}
+
+.message-time {
+    font-size: 0.75em;
+    color: var(--vscode-descriptionForeground);
+    margin-top: 4px;
+    text-align: right;
+}
+
+.message.user .message-time {
+    text-align: left;
+}
+
+.message.system .message-time {
+    text-align: center;
+}
+
+/* Message actions and starring */
+.message-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    gap: 4px;
+}
+
+.message:hover .message-actions {
+    opacity: 1;
+}
+
+.message-star-button {
+    background: none;
+    border: none;
+    color: var(--vscode-icon-foreground);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.message-star-button:hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+    color: var(--vscode-focusBorder);
+}
+
+.message-star-button .codicon-star-full {
+    color: #ffb000;
+}
+
+.message-star-button .codicon-star-empty:hover {
+    color: #ffb000;
+}
+
+/* Enhanced input area */
+.input-container {
+    background-color: var(--vscode-sideBar-background);
+    border-top: 1px solid var(--vscode-panel-border);
+    padding: 12px;
+}
+
+.input-box {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background-color: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 8px;
+    padding: 8px;
+    gap: 8px;
+}
+
+.input-box:focus-within {
+    border-color: var(--vscode-focusBorder);
+}
+
+#userInput {
+    flex: 1;
+    background: none;
+    border: none;
+    resize: none;
+    outline: none;
+    color: var(--vscode-input-foreground);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.4;
+    min-height: 20px;
+    max-height: 120px;
+}
+
+.send-button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.send-button:hover:not(:disabled) {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.send-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Loading and thinking indicators */
+.thinking {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    margin: 8px 0;
+    background-color: var(--vscode-editor-background);
+    border-radius: 8px;
+    opacity: 0.8;
+}
+
+.thinking .dots {
+    display: flex;
+    gap: 4px;
+}
+
+.thinking .dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--vscode-foreground);
+    border-radius: 50%;
+    animation: thinking 1.4s infinite;
+}
+
+.thinking .dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.thinking .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes thinking {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    30% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Code block enhancements */
+.code-block-wrapper {
+    margin: 8px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--vscode-panel-border);
+}
+
+.code-block-header {
+    background-color: var(--vscode-editor-background);
+    border-bottom: 1px solid var(--vscode-panel-border);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85em;
+}
+
+.code-block-lang {
+    color: var(--vscode-descriptionForeground);
+    font-weight: 500;
+}
+
+.copy-code-button {
+    background: none;
+    border: none;
+    color: var(--vscode-icon-foreground);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.copy-code-button:hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+/* Copy notification */
+.copy-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--vscode-notifications-background);
+    color: var(--vscode-notifications-foreground);
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--vscode-notifications-border);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease-out;
+    z-index: 1000;
+}
+
+.copy-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Improved scrollbar styling */
+.messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messages::-webkit-scrollbar-track {
+    background: var(--vscode-scrollbarSlider-background);
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background: var(--vscode-scrollbarSlider-hoverBackground);
+    border-radius: 4px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+    background: var(--vscode-scrollbarSlider-activeBackground);
+}
+
+/* Enhanced welcome message */
+.welcome-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--vscode-descriptionForeground);
+    background: linear-gradient(135deg, transparent, var(--vscode-editor-selectionBackground));
+    border-radius: 12px;
+    margin: 20px;
+    border: 1px dashed var(--vscode-panel-border);
+}
+
+.welcome-message h2 {
+    color: var(--vscode-foreground);
+    margin-bottom: 12px;
+    font-size: 1.4em;
+}
+
+.welcome-message p {
+    margin: 0;
+    line-height: 1.5;
+}

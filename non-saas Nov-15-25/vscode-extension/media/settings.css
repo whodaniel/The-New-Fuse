@@ -1,0 +1,101 @@
+body {
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+    padding: 20px;
+    background-color: var(--vscode-editor-background);
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 400;
+    color: var(--vscode-settings-headerForeground);
+    border-bottom: 1px solid var(--vscode-panel-border);
+    padding-bottom: 10px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-weight: 400;
+    color: var(--vscode-settings-headerForeground);
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.setting-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: var(--vscode-settings-rowHoverBackground);
+    border-radius: 5px;
+}
+
+.form-row {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+select, input[type="text"], input[type="number"], input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 3px;
+}
+
+input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.provider-settings {
+    padding: 10px;
+    margin-top: 10px;
+    border-left: 3px solid var(--vscode-activityBar-activeBorder);
+    background-color: var(--vscode-editor-background);
+}
+
+.checkbox-setting {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-setting label {
+    margin-bottom: 0;
+    display: inline;
+}
+
+.description {
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.hidden {
+    display: none;
+}
