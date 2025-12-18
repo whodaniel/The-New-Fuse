@@ -16,8 +16,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@the-new-fuse/a2a-core": "workspace:*",
-    "react": "^19.2.0"
+    "react": "^19.2.3"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
