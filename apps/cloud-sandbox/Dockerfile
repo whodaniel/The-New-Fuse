@@ -1,43 +1,28 @@
 # The New Fuse - Cloud Sandbox
-# Docker container with headless browser and MCP server for Railway deployment
+# Standalone MCP server for Railway deployment
 
-FROM mcr.microsoft.com/playwright:v1.40.0-jammy
-
-# Install build essentials
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js 20
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
-
-# Install pnpm
-RUN npm install -g pnpm
+FROM node:22-alpine
 
 # Create app directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
+# Copy only cloud-sandbox files
+COPY apps/cloud-sandbox/package.json ./
+COPY apps/cloud-sandbox/tsconfig.json ./
+COPY apps/cloud-sandbox/src ./src
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile || pnpm install
-
-# Copy source
-COPY . .
+RUN npm install
 
 # Build TypeScript
-RUN pnpm run build || true
+RUN npx tsc
 
 # Expose MCP server port
 EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8080/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
 
 # Start MCP server
 CMD ["node", "dist/server.js"]

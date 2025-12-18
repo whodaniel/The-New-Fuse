@@ -1,6 +1,7 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "Dockerfile"
+dockerfilePath = "./Dockerfile"
+watchPatterns = ["src/**", "package.json", "tsconfig.json"]
 
 [deploy]
 startCommand = "node dist/server.js"
@@ -8,7 +9,3 @@ healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
-
-[service]
-name = "tnf-cloud-sandbox"
-internalPort = 8080

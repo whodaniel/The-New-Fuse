@@ -58,3 +58,15 @@ dockerfilePath = "Dockerfile"
 watchPaths = ["apps/frontend/**", "packages/**"]
 [services."Frontend Application".deploy]
 healthcheckPath = "/"
+
+# TNF Cloud Sandbox (MCP Server for Tauri bridge)
+# Standalone service - uses its own Dockerfile in apps/cloud-sandbox
+[services.tnf-cloud-sandbox]
+builder = "DOCKERFILE"
+[services.tnf-cloud-sandbox.build]
+dockerfilePath = "apps/cloud-sandbox/Dockerfile"
+watchPaths = ["apps/cloud-sandbox/**"]
+[services.tnf-cloud-sandbox.deploy]
+healthcheckPath = "/health"
+startCommand = "node dist/server.js"
+restartPolicyType = "ON_FAILURE"

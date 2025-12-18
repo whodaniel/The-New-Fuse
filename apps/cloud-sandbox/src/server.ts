@@ -1,14 +1,21 @@
 /**
  * The New Fuse - Cloud Sandbox MCP Server
  * Handles WebSocket connections from local Tauri bridge sidecars
- * Provides headless browser, build tools, and AI inference capabilities
+ * Provides shell command execution and file system capabilities
  */
 
-import express from 'express';
+import { exec } from 'child_process';
+import { promises as fs } from 'fs';
 import { createServer } from 'http';
-import { Browser, Page, chromium } from 'playwright';
+import { promisify } from 'util';
+
+import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { WebSocket, WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws';
+
+import type { WebSocket } from 'ws';
+
+const execAsync = promisify(exec);
 
 // ============================================================================
 // TYPES
@@ -42,91 +49,12 @@ interface ToolHandler {
 // ============================================================================
 
 const clients = new Map<string, ConnectedClient>();
-let browser: Browser | null = null;
-let browserPage: Page | null = null;
 
 // ============================================================================
 // MCP TOOLS
 // ============================================================================
 
 const tools: ToolHandler[] = [
-  {
-    name: 'browser_navigate',
-    description: 'Navigate headless browser to a URL',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        url: { type: 'string', description: 'URL to navigate to' },
-      },
-      required: ['url'],
-    },
-    handler: async (params) => {
-      const url = params.url as string;
-      if (!browserPage) {
-        browser = await chromium.launch({ headless: true });
-        browserPage = await browser.newPage();
-      }
-      await browserPage.goto(url);
-      return { success: true, url, title: await browserPage.title() };
-    },
-  },
-  {
-    name: 'browser_screenshot',
-    description: 'Take a screenshot of the current page',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        fullPage: { type: 'boolean', default: false },
-      },
-    },
-    handler: async (params) => {
-      if (!browserPage) {
-        return { success: false, error: 'No browser page open' };
-      }
-      const screenshot = await browserPage.screenshot({
-        fullPage: (params.fullPage as boolean) || false,
-        type: 'png',
-      });
-      return { success: true, base64: screenshot.toString('base64') };
-    },
-  },
-  {
-    name: 'browser_click',
-    description: 'Click on an element',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        selector: { type: 'string', description: 'CSS selector' },
-      },
-      required: ['selector'],
-    },
-    handler: async (params) => {
-      if (!browserPage) {
-        return { success: false, error: 'No browser page open' };
-      }
-      await browserPage.click(params.selector as string);
-      return { success: true };
-    },
-  },
-  {
-    name: 'browser_type',
-    description: 'Type text into an input element',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        selector: { type: 'string', description: 'CSS selector' },
-        text: { type: 'string', description: 'Text to type' },
-      },
-      required: ['selector', 'text'],
-    },
-    handler: async (params) => {
-      if (!browserPage) {
-        return { success: false, error: 'No browser page open' };
-      }
-      await browserPage.fill(params.selector as string, params.text as string);
-      return { success: true };
-    },
-  },
   {
     name: 'run_command',
     description: 'Execute a shell command in the sandbox',
@@ -139,23 +67,20 @@ const tools: ToolHandler[] = [
       required: ['command'],
     },
     handler: async (params) => {
-      const { exec } = await import('child_process');
-      const { promisify } = await import('util');
-      const execAsync = promisify(exec);
-
       try {
         const { stdout, stderr } = await execAsync(params.command as string, {
           cwd: (params.cwd as string) || '/app',
           timeout: 60000,
         });
         return { success: true, stdout, stderr };
-      } catch (error: any) {
-        return { success: false, error: error.message, stderr: error.stderr };
+      } catch (error: unknown) {
+        const err = error as { message: string; stderr?: string };
+        return { success: false, error: err.message, stderr: err.stderr };
       }
     },
   },
   {
-    name: 'read_remote_file',
+    name: 'read_file',
     description: 'Read a file from the sandbox filesystem',
     inputSchema: {
       type: 'object',
@@ -165,17 +90,17 @@ const tools: ToolHandler[] = [
       required: ['path'],
     },
     handler: async (params) => {
-      const fs = await import('fs/promises');
       try {
         const content = await fs.readFile(params.path as string, 'utf-8');
         return { success: true, content };
-      } catch (error: any) {
-        return { success: false, error: error.message };
+      } catch (error: unknown) {
+        const err = error as { message: string };
+        return { success: false, error: err.message };
       }
     },
   },
   {
-    name: 'write_remote_file',
+    name: 'write_file',
     description: 'Write a file to the sandbox filesystem',
     inputSchema: {
       type: 'object',
@@ -186,13 +111,47 @@ const tools: ToolHandler[] = [
       required: ['path', 'content'],
     },
     handler: async (params) => {
-      const fs = await import('fs/promises');
       try {
         await fs.writeFile(params.path as string, params.content as string);
         return { success: true };
-      } catch (error: any) {
-        return { success: false, error: error.message };
+      } catch (error: unknown) {
+        const err = error as { message: string };
+        return { success: false, error: err.message };
       }
+    },
+  },
+  {
+    name: 'list_directory',
+    description: 'List files in a directory',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Directory path' },
+      },
+      required: ['path'],
+    },
+    handler: async (params) => {
+      try {
+        const files = await fs.readdir(params.path as string);
+        return { success: true, files };
+      } catch (error: unknown) {
+        const err = error as { message: string };
+        return { success: false, error: err.message };
+      }
+    },
+  },
+  {
+    name: 'echo',
+    description: 'Echo back a message (for testing)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', description: 'Message to echo' },
+      },
+      required: ['message'],
+    },
+    handler: async (params) => {
+      return { success: true, echo: params.message };
     },
   },
 ];
@@ -239,8 +198,8 @@ async function handleMCPMessage(client: ConnectedClient, message: MCPMessage): P
 
   // Handle tools/call
   if (method === 'tools/call') {
-    const toolName = (params as any)?.name;
-    const toolArgs = (params as any)?.arguments || {};
+    const toolName = (params as { name?: string })?.name;
+    const toolArgs = (params as { arguments?: Record<string, unknown> })?.arguments || {};
 
     const tool = tools.find((t) => t.name === toolName);
     if (!tool) {
@@ -260,11 +219,12 @@ async function handleMCPMessage(client: ConnectedClient, message: MCPMessage): P
           content: [{ type: 'text', text: JSON.stringify(result) }],
         },
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { message: string };
       return {
         jsonrpc: '2.0',
         id,
-        error: { code: -32000, message: error.message },
+        error: { code: -32000, message: err.message },
       };
     }
   }
@@ -282,28 +242,30 @@ async function handleMCPMessage(client: ConnectedClient, message: MCPMessage): P
 // ============================================================================
 
 const app = express();
-const server = createServer(app);
-const wss = new WebSocketServer({ server, path: '/ws' });
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({
     status: 'healthy',
     clients: clients.size,
-    browserActive: !!browserPage,
     uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
   });
 });
 
 // API info endpoint
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     name: 'TNF Cloud Sandbox',
     version: '1.0.0',
     protocol: 'MCP 2024-11-05',
     tools: tools.map((t) => t.name),
+    websocket: '/ws',
   });
 });
+
+const server = createServer(app);
+const wss = new WebSocketServer({ server, path: '/ws' });
 
 // WebSocket connection handling
 wss.on('connection', (ws) => {
@@ -327,7 +289,7 @@ wss.on('connection', (ws) => {
 
       const response = await handleMCPMessage(client, message);
       ws.send(JSON.stringify(response));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Message handling error:', error);
       ws.send(
         JSON.stringify({
@@ -350,11 +312,8 @@ wss.on('connection', (ws) => {
 });
 
 // Cleanup on shutdown
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', () => {
   console.log('🛑 Shutting down...');
-  if (browser) {
-    await browser.close();
-  }
   server.close();
   process.exit(0);
 });
