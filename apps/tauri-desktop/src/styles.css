@@ -1,33 +1,90 @@
 /* TNF Browser Hub - Premier Theme */
+/* The New Fuse Design System - "World Class or Nothing" */
+
 :root {
-  /* Core Colors - Deep Space Theme */
+  /* Deep Space Background Colors */
+  --tnf-obsidian: #020617;
+  --tnf-slate-dark: #0f172a;
+  --tnf-slate: #1e293b;
+  --tnf-slate-light: #334155;
+
+  /* Primary Gradient Colors (aligned with Chrome Extension) */
+  --tnf-primary-start: #667eea;
+  --tnf-primary-end: #764ba2;
   --tnf-primary: #6366f1;
   --tnf-primary-hover: #4f46e5;
+  --tnf-primary-light: #8b5cf6;
+  --tnf-primary-dark: #6d28d9;
+
+  /* Secondary & Accent */
   --tnf-secondary: #8b5cf6;
   --tnf-accent: #06b6d4;
+  --tnf-cyan: #06b6d4;
+  --tnf-cyan-light: #22d3ee;
+  --tnf-violet: #8b5cf6;
+  --tnf-purple: #a855f7;
+  --tnf-pink: #ec4899;
+
+  /* Legacy compatibility */
   --tnf-bg-dark: #0f172a;
   --tnf-bg-darker: #020617;
-  --tnf-surface: rgba(30, 41, 59, 0.7);
-  --tnf-surface-hover: rgba(51, 65, 85, 0.8);
-  --tnf-border: rgba(148, 163, 184, 0.1);
-  --tnf-text: #f8fafc;
-  --tnf-text-muted: #94a3b8;
 
-  /* Status Colors */
+  /* Surface Colors (Glassmorphism 2.0) */
+  --tnf-surface: rgba(255, 255, 255, 0.02);
+  --tnf-surface-hover: rgba(255, 255, 255, 0.05);
+  --tnf-surface-active: rgba(255, 255, 255, 0.08);
+  --tnf-border: rgba(255, 255, 255, 0.08);
+  --tnf-border-hover: rgba(255, 255, 255, 0.12);
+
+  /* Text Colors */
+  --tnf-text: #f8fafc;
+  --tnf-text-primary: #f8fafc;
+  --tnf-text-secondary: #cbd5e1;
+  --tnf-text-muted: #64748b;
+
+  /* Semantic Colors */
   --tnf-success: #10b981;
   --tnf-warning: #f59e0b;
   --tnf-error: #ef4444;
+  --tnf-info: #3b82f6;
+
+  /* Shadows */
+  --tnf-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --tnf-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --tnf-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.36);
+  --tnf-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.2);
 
   /* Effects */
-  --tnf-glass: blur(20px);
-  --tnf-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --tnf-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --tnf-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --tnf-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.2);
+  --tnf-glass: blur(24px);
+  --tnf-glass-md: blur(16px);
+  --tnf-glass-sm: blur(10px);
 
   /* Transitions */
   --tnf-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --tnf-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --tnf-transition-fast: 150ms ease;
+  --tnf-transition-normal: 250ms ease;
+  --tnf-transition-slow: 400ms ease;
+
+  /* Typography */
+  --tnf-font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  --tnf-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --tnf-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --tnf-space-xxs: 0.25rem;
+  --tnf-space-xs: 0.5rem;
+  --tnf-space-sm: 0.75rem;
+  --tnf-space-md: 1rem;
+  --tnf-space-lg: 1.5rem;
+  --tnf-space-xl: 2rem;
+
+  /* Border Radius */
+  --tnf-radius-sm: 0.375rem;
+  --tnf-radius-md: 0.5rem;
+  --tnf-radius-lg: 0.75rem;
+  --tnf-radius-xl: 1rem;
+  --tnf-radius-full: 9999px;
 }
 
 * {
