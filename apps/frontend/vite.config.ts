@@ -54,6 +54,15 @@ export default defineConfig(({ mode }) => {
         }),
     ].filter(Boolean),
     resolve: {
+      // Force all packages to use the same React instance to prevent
+      // "Cannot read properties of null (reading 'useRef')" errors
+      dedupe: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+      ],
       alias: {
         '@': path.resolve(__dirname, 'src'),
         // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code

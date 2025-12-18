@@ -3,663 +3,256 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The New Fuse</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
+
+    <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
+    <script>
+      (function() {
+        try {
+          const originalDefine = customElements.define;
+          customElements.define = function(name, constructor, options) {
+            if (customElements.get(name)) {
+              console.warn(`[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`);
+              return;
+            }
+            try {
+              originalDefine.call(this, name, constructor, options);
+            } catch (e) {
+              if (e.message.includes('already been defined')) {
+                 console.warn(`[The New Fuse] Custom element '${name}' collision caught in try-catch.`);
+                 return;
+              }
+              throw e;
+            }
+          };
+          console.log('[The New Fuse] Custom Element Guard activated.');
+        } catch(e) {
+          console.error('[The New Fuse] Failed to activate Custom Element Guard', e);
+        }
+      })();
+    </script>
+
+    <!-- SEO and Meta Information -->
+    <title>
+      The New Fuse - AI Collaboration Platform | Workflow Automation & Agent Orchestration
+    </title>
+    <meta
+      name="description"
+      content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols."
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    <meta
+      name="keywords"
+      content="AI platform, workflow automation, AI agents, agent orchestration, MCP protocol, A2A protocol, enterprise AI, AI collaboration"
     />
+    <meta name="author" content="The New Fuse Team" />
+    <meta name="theme-color" content="#667eea" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The New Fuse - AI Collaboration Platform" />
+    <meta
+      property="og:description"
+      content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:site_name" content="The New Fuse" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The New Fuse - AI Collaboration Platform" />
+    <meta
+      name="twitter:description"
+      content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <!-- AI Agent Discoverability Metadata (Required per ULTIMATE_UX_DESIGNER_BRIEF) -->
+    <link rel="api-docs" href="/api/docs" />
+    <link rel="agent-onboarding" href="/docs/ai-orientation" />
+    <link rel="agent-registry" href="/api/agents/registry" />
+    <meta name="api-version" content="v1.0" />
+    <meta name="agent-protocols" content="MCP,A2A,REST,WebSocket" />
+
+    <!-- JSON-LD Structured Data for AI Agents and Search Engines -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "The New Fuse",
+        "applicationCategory": "AI Collaboration Platform",
+        "applicationSubCategory": "Agent Orchestration",
+        "operatingSystem": "Web",
+        "description": "Enterprise-grade platform for managing multi-agent AI workflows, visual automation, and Web3-native AI monetization.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "/api/agents/register"
+        },
+        "featureList": [
+          "Multi-LLM Support (GPT-4, Claude, Gemini, Llama)",
+          "Visual Workflow Builder",
+          "Web3 NFT Marketplace",
+          "MCP Protocol Integration",
+          "A2A Agent-to-Agent Communication",
+          "Real-time Analytics Dashboard"
+        ],
+        "softwareRequirements": "Modern web browser",
+        "creator": {
+          "@type": "Organization",
+          "name": "The New Fuse Team"
+        },
+        "potentialAction": {
+          "@type": "RegisterAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "/api/agents/register",
+            "httpMethod": "POST",
+            "contentType": "application/json"
+          },
+          "description": "Register as an AI agent on The New Fuse platform"
+        }
+      }
+    </script>
+
+    <!-- Performance Optimization: DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
+    <!-- Performance Optimization: Preconnect to critical origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Font Optimization: Preload critical fonts -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    /></noscript>
+
+    <!-- Critical CSS for initial render - Dark Theme -->
     <style>
-      /* Deep Space Theme - Tauri Edition */
-      :root {
-        --tnf-primary: #6366f1;
-        --tnf-primary-hover: #4f46e5;
-        --tnf-secondary: #8b5cf6;
-        --tnf-accent: #06b6d4;
-        --tnf-bg-dark: #0f172a;
-        --tnf-bg-darker: #020617;
-        --tnf-surface: rgba(30, 41, 59, 0.7);
-        --tnf-surface-hover: rgba(51, 65, 85, 0.8);
-        --tnf-border: rgba(148, 163, 184, 0.1);
-        --tnf-text: #f8fafc;
-        --tnf-text-muted: #94a3b8;
-        --tnf-success: #10b981;
-        --tnf-warning: #f59e0b;
-        --tnf-error: #ef4444;
-        --tnf-glass: blur(20px);
+      /* Critical above-the-fold styles - Premium Dark Theme */
+      * {
+        box-sizing: border-box;
       }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      html {
+        color-scheme: dark;
       }
 
       body {
         font-family:
+          'Plus Jakarta Sans',
           'Inter',
           -apple-system,
           BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
           sans-serif;
-        background: var(--tnf-bg-darker);
-        color: var(--tnf-text);
-        height: 100vh;
-        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        background-color: #020617; /* Slate 950 - Deep Obsidian */
+        background-image:
+          radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+          linear-gradient(180deg, #020617 0%, #0f172a 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+        color: #f8fafc; /* Slate 50 */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      .app-container {
-        display: flex;
-        height: 100vh;
-        background: radial-gradient(circle at top right, #1e1b4b 0%, var(--tnf-bg-darker) 40%);
+      #root {
+        width: 100%;
+        min-height: 100vh;
+        background: transparent; /* CRITICAL: Was 'white', now transparent */
       }
 
-      /* Sidebar */
-      .sidebar {
-        width: 260px;
-        background: var(--tnf-surface);
-        backdrop-filter: var(--tnf-glass);
-        border-right: 1px solid var(--tnf-border);
-        display: flex;
-        flex-direction: column;
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      .sidebar.collapsed {
-        width: 68px;
-      }
-      .sidebar.collapsed .logo-text,
-      .sidebar.collapsed .nav-item span {
-        display: none;
-      }
-
-      .sidebar-header {
-        height: 64px;
-        padding: 0 16px;
+      /* Optimized loading spinner - Dark Theme */
+      .loading {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid var(--tnf-border);
+        justify-content: center;
+        min-height: 100vh;
+        color: #60a5fa; /* Blue 400 */
+        font-size: 18px;
+        font-weight: 500;
       }
 
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
-        font-size: 15px;
-      }
-
-      .logo i {
-        color: var(--tnf-primary);
-        font-size: 20px;
-        filter: drop-shadow(0 0 8px var(--tnf-primary));
-      }
-
-      .sidebar-toggle {
-        background: transparent;
-        border: none;
-        color: var(--tnf-text-muted);
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 6px;
-      }
-
-      .sidebar-toggle:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .sidebar-nav {
-        flex: 1;
-        padding: 16px 8px;
-        overflow-y: auto;
-      }
-
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        margin: 4px 0;
-        color: var(--tnf-text-muted);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: white;
-      }
-
-      .nav-item.active {
-        background: linear-gradient(90deg, rgba(99, 102, 241, 0.2) 0%, transparent 100%);
-        color: var(--tnf-primary);
-        border-left: 2px solid var(--tnf-primary);
-      }
-
-      .nav-item i {
+      .loading::after {
+        content: '';
         width: 20px;
-        text-align: center;
-      }
-
-      /* Main Content */
-      .main-content {
-        flex: 1;
-        padding: 24px;
-        overflow-y: auto;
-      }
-
-      /* Dashboard */
-      .dashboard-container {
-        max-width: 900px;
-        margin: 0 auto;
-      }
-
-      .dashboard-header {
-        text-align: center;
-        padding: 40px 0;
-      }
-
-      .icon-circle {
-        width: 100px;
-        height: 100px;
-        background: rgba(99, 102, 241, 0.1);
-        border: 2px solid rgba(99, 102, 241, 0.2);
+        height: 20px;
+        margin-left: 10px;
+        border: 3px solid #3b82f6;
+        border-top-color: transparent;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 24px;
+        animation: spin 0.8s linear infinite;
       }
 
-      .icon-circle .icon {
-        font-size: 40px;
-        color: var(--tnf-primary);
-        filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
-      }
-
-      .dashboard-header h1 {
-        font-size: 32px;
-        margin-bottom: 8px;
-      }
-
-      .subtitle {
-        color: var(--tnf-text-muted);
-        font-size: 16px;
-      }
-
-      /* Quick Actions */
-      .quick-actions {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        margin: 32px 0;
-      }
-
-      .action-card {
-        background: var(--tnf-surface);
-        border: 1px solid var(--tnf-border);
-        border-radius: 12px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        transition: all 0.2s;
-        color: var(--tnf-text);
-        position: relative;
-      }
-
-      .action-card:hover {
-        transform: translateY(-2px);
-        border-color: var(--tnf-primary);
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
-      }
-
-      .action-card i {
-        font-size: 24px;
-        color: var(--tnf-primary);
-      }
-      .action-card span {
-        font-weight: 500;
-      }
-
-      /* Service Cards */
-      .services-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-      }
-
-      .service-card {
-        background: var(--tnf-surface);
-        border: 1px solid var(--tnf-border);
-        border-radius: 12px;
-        padding: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .service-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(99, 102, 241, 0.1);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--tnf-primary);
-      }
-
-      .service-info {
-        flex: 1;
-      }
-      .service-info h3 {
-        font-size: 14px;
-        font-weight: 600;
-      }
-      .service-info p {
-        font-size: 12px;
-        color: var(--tnf-text-muted);
-      }
-
-      /* Status Dot */
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-      }
-
-      .status-dot.online {
-        background: var(--tnf-success);
-        box-shadow: 0 0 10px var(--tnf-success);
-        animation: pulse 2s infinite;
-      }
-
-      .status-dot.offline {
-        background: #475569;
-      }
-
-      @keyframes pulse {
-        0% {
-          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-        }
-        70% {
-          box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-        }
-      }
-
-      /* Notifications */
-      .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        animation: slideIn 0.3s;
-        z-index: 1000;
-      }
-
-      .notification-success {
-        background: var(--tnf-success);
-      }
-      .notification-error {
-        background: var(--tnf-error);
-      }
-      .notification-info {
-        background: var(--tnf-primary);
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
+      @keyframes spin {
         to {
-          opacity: 1;
-          transform: translateY(0);
+          transform: rotate(360deg);
         }
       }
 
-      /* Panel Headers */
-      .panel-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 24px;
-      }
-
-      .panel-header h2 {
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .refresh-btn {
-        background: transparent;
-        border: 1px solid var(--tnf-border);
-        color: var(--tnf-text-muted);
-        padding: 8px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-      }
-
-      .refresh-btn:hover {
-        border-color: var(--tnf-primary);
-        color: var(--tnf-primary);
-      }
-
-      /* Tools Grid */
-      .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-      }
-
-      .tool-card {
-        background: var(--tnf-surface);
-        border: 1px solid var(--tnf-border);
-        border-radius: 12px;
-        padding: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .tool-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(99, 102, 241, 0.1);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--tnf-primary);
-      }
-
-      .tool-info {
-        flex: 1;
-      }
-      .tool-info h3 {
-        font-size: 14px;
-        font-weight: 600;
-      }
-      .tool-info p {
-        font-size: 12px;
-        color: var(--tnf-text-muted);
-      }
-
-      .run-btn {
-        background: var(--tnf-primary);
-        border: none;
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        cursor: pointer;
-      }
-
-      .run-btn:hover {
-        background: var(--tnf-primary-hover);
-      }
-
-      /* Settings */
-      .settings-group {
-        background: var(--tnf-surface);
-        border: 1px solid var(--tnf-border);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
-      }
-
-      .settings-group h3 {
-        margin-bottom: 16px;
-        font-size: 14px;
-        color: var(--tnf-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .setting-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-      }
-
-      .setting-item label {
-        font-size: 14px;
-      }
-
-      .setting-item input[type='text'] {
-        background: rgba(15, 23, 42, 0.5);
-        border: 1px solid var(--tnf-border);
-        border-radius: 8px;
-        padding: 8px 12px;
-        color: white;
-        width: 300px;
-      }
-
-      .primary-btn {
-        background: linear-gradient(135deg, var(--tnf-primary), var(--tnf-secondary));
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 8px;
-      }
-
-      .primary-btn:hover {
-        transform: translateY(-1px);
-      }
-
-      .loading,
-      .empty,
-      .placeholder {
-        color: var(--tnf-text-muted);
-        text-align: center;
-        padding: 40px;
-      }
-
-      /* Browser View */
-      .browser-container {
-        max-width: 900px;
-      }
-
-      .browser-controls {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 20px;
-      }
-
-      .browser-controls input {
-        flex: 1;
-        background: rgba(15, 23, 42, 0.5);
-        border: 1px solid var(--tnf-border);
-        border-radius: 8px;
-        padding: 12px 16px;
-        color: white;
-        font-size: 14px;
-      }
-
-      .browser-controls input:focus {
-        outline: none;
-        border-color: var(--tnf-primary);
-      }
-
-      .action-btn {
-        background: var(--tnf-surface);
-        border: 1px solid var(--tnf-border);
-        color: var(--tnf-text);
-        padding: 10px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .action-btn:hover {
-        border-color: var(--tnf-primary);
-        color: var(--tnf-primary);
-      }
-
-      .connection-badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-      }
-
-      .connection-badge.online {
-        background: rgba(16, 185, 129, 0.2);
-        color: var(--tnf-success);
-      }
-
-      .connection-badge.offline {
-        background: rgba(245, 158, 11, 0.2);
-        color: var(--tnf-warning);
-      }
-
-      .info-box {
-        background: var(--tnf-surface);
-        border: 1px solid var(--tnf-border);
-        border-radius: 12px;
-        padding: 20px;
-      }
-
-      .info-box h3 {
-        margin-bottom: 12px;
-        color: var(--tnf-primary);
-      }
-
-      .info-box ul {
-        list-style: none;
-        margin: 12px 0;
-      }
-
-      .info-box li {
-        padding: 4px 0;
-        font-size: 13px;
-      }
-
-      .info-box li strong {
-        color: var(--tnf-accent);
-      }
-
-      .browser-result {
-        margin-top: 20px;
-      }
-
-      .success-result {
-        background: rgba(16, 185, 129, 0.1);
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        border-radius: 12px;
-        padding: 20px;
-      }
-
-      .success-result h4 {
-        margin-bottom: 12px;
-        color: var(--tnf-success);
-      }
-
-      .error-result {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        border-radius: 12px;
-        padding: 20px;
-        color: var(--tnf-error);
-      }
-
-      pre {
-        background: rgba(0, 0, 0, 0.3);
-        padding: 12px;
-        border-radius: 8px;
-        font-size: 12px;
-        margin-top: 12px;
-      }
-
-      code {
-        background: rgba(99, 102, 241, 0.2);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 12px;
+      /* Prevent layout shift */
+      img,
+      svg,
+      video,
+      canvas,
+      iframe {
+        max-width: 100%;
+        height: auto;
       }
     </style>
   </head>
   <body>
-    <div class="app-container">
-      <!-- Sidebar -->
-      <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-          <div class="logo">
-            <i class="fas fa-rocket"></i>
-            <span class="logo-text">The New Fuse</span>
-          </div>
-          <button class="sidebar-toggle" onclick="window.tnf.toggleSidebar()">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-        </div>
-
-        <nav class="sidebar-nav">
+    <div id="root">
+      <div class="loading" role="status" aria-live="polite">
+        <div style="text-align: center">
+          <div style="font-size: 48px; margin-bottom: 20px">🚀</div>
+          <h1 style="font-size: 32px; font-weight: 700; color: #f1f5f9; margin: 0 0 12px 0">
+            The New Fuse
+          </h1>
+          <p style="font-size: 16px; color: #94a3b8; margin: 0 0 24px 0">
+            AI Agent Orchestration Platform
+          </p>
           <div
-            class="nav-item active"
-            data-view="dashboard"
-            onclick="window.tnf.switchView('dashboard')"
-          >
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
-          </div>
-          <div class="nav-item" data-view="tools" onclick="window.tnf.switchView('tools')">
-            <i class="fas fa-tools"></i>
-            <span>MCP Tools</span>
-          </div>
-          <div class="nav-item" data-view="files" onclick="window.tnf.switchView('files')">
-            <i class="fas fa-folder-open"></i>
-            <span>Files</span>
-          </div>
-          <div class="nav-item" data-view="browser" onclick="window.tnf.switchView('browser')">
-            <i class="fas fa-globe"></i>
-            <span>Browser</span>
-          </div>
-          <div class="nav-item" data-view="theia" onclick="window.tnf.switchView('theia')">
-            <i class="fas fa-code"></i>
-            <span>Cloud IDE</span>
-          </div>
-          <div class="nav-item" data-view="settings" onclick="window.tnf.switchView('settings')">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-          </div>
-        </nav>
-
-        <div style="padding: 16px; border-top: 1px solid var(--tnf-border)">
-          <div class="nav-item" onclick="window.tnf.connectBridge()">
-            <i class="fas fa-plug"></i>
-            <span>Connect</span>
-            <div class="status-dot offline" id="bridge-status"></div>
-          </div>
+            style="
+              width: 40px;
+              height: 40px;
+              margin: 0 auto;
+              border: 4px solid #334155;
+              border-top-color: #3b82f6;
+              border-radius: 50%;
+              animation: spin 0.8s linear infinite;
+            "
+          ></div>
         </div>
       </div>
-
-      <!-- Main Content -->
-      <main class="main-content" id="main-content">
-        <!-- Content rendered by JS -->
-      </main>
     </div>
 
-    <script type="module" src="/src/main.ts"></script>
+    <!-- Main application entry point - Vite will inject preload tags automatically -->
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="padding: 20px; text-align: center; color: #333">
+        <h1>JavaScript Required</h1>
+        <p>
+          This application requires JavaScript to run. Please enable JavaScript in your browser
+          settings.
+        </p>
+      </div>
+    </noscript>
   </body>
 </html>
