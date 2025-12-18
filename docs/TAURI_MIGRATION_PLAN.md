@@ -289,34 +289,51 @@ Railway supports autoscaling. Configure:
 
 ### Completed Components
 
-| Component             | Status | Location                      |
-| --------------------- | ------ | ----------------------------- |
-| Tauri App Scaffold    | ✅     | `apps/tauri-desktop/`         |
-| Tauri Config          | ✅     | `src-tauri/tauri.conf.json`   |
-| Rust Backend          | ✅     | `src-tauri/src/lib.rs`        |
-| Frontend (Deep Space) | ✅     | `index.html`, `src/main.ts`   |
-| Cloud Sandbox         | ✅     | `apps/cloud-sandbox/`         |
-| MCP Server            | ✅     | `cloud-sandbox/src/server.ts` |
-| Railway Config        | ✅     | `cloud-sandbox/railway.toml`  |
-| Docker Config         | ✅     | `cloud-sandbox/Dockerfile`    |
+| Component             | Status | Location                                      |
+| --------------------- | ------ | --------------------------------------------- |
+| Tauri App Scaffold    | ✅     | `apps/tauri-desktop/`                         |
+| Tauri Config          | ✅     | `src-tauri/tauri.conf.json`                   |
+| Rust Backend          | ✅     | `src-tauri/src/lib.rs`                        |
+| WebSocket Bridge      | ✅     | `src-tauri/src/bridge.rs`                     |
+| Frontend (Deep Space) | ✅     | `index.html`, `src/main.ts`                   |
+| Cloud Sandbox         | ✅     | `apps/cloud-sandbox/`                         |
+| MCP Server            | ✅     | `cloud-sandbox/src/server.ts`                 |
+| Railway Deployment    | ✅     | `tnf-cloud-sandbox-production.up.railway.app` |
+| Docker Config         | ✅     | `cloud-sandbox/Dockerfile`                    |
+| Health Check          | ✅     | `/health` endpoint returning healthy status   |
+
+### Railway Cloud Sandbox URL
+
+```
+https://tnf-cloud-sandbox-production.up.railway.app
+wss://tnf-cloud-sandbox-production.up.railway.app/ws
+```
 
 ### Available MCP Tools (Cloud Sandbox)
 
-1. `browser_navigate` - Navigate headless Playwright browser
-2. `browser_screenshot` - Capture screenshots
-3. `browser_click` - Click on elements via CSS selector
-4. `browser_type` - Type text into inputs
-5. `run_command` - Execute shell commands in sandbox
-6. `read_remote_file` - Read files from cloud filesystem
-7. `write_remote_file` - Write files to cloud filesystem
+1. `run_command` - Execute shell commands in sandbox
+2. `read_file` - Read files from cloud filesystem
+3. `write_file` - Write files to cloud filesystem
+4. `list_directory` - List directory contents
+5. `echo` - Test echo functionality
 
-### Next Steps
+### Completed on Dec 18, 2024
 
-1. **Install dependencies**: Run `pnpm install` in `apps/tauri-desktop`
-2. **Install Rust toolchain**: Ensure `rustc` and `cargo` are installed
-3. **Test Tauri dev mode**: Run `pnpm tauri:dev`
-4. **Deploy cloud sandbox**: Push to Railway
-5. **Implement WebSocket tunnel**: Connect Tauri sidecar to Railway
+- ✅ Cloud Sandbox deployed and running on Railway
+- ✅ Health check endpoint verified (`/health`)
+- ✅ Tauri app successfully compiled (464 crates)
+- ✅ Tauri app running in dev mode
+- ✅ Default sandbox URL configured to production Railway endpoint
+- ✅ Code warnings cleaned up
+
+### Remaining Tasks
+
+1. **Test WebSocket Connection**: Click "Connect Bridge" in Tauri app to test
+   connection
+2. **Test MCP Tools**: Call tools through the bridge to verify end-to-end flow
+3. **Build Production Binary**: Run `pnpm tauri:build` to create distributable
+   app
+4. **Add Playwright**: Extend cloud sandbox with browser automation tools
 
 ---
 

@@ -142,6 +142,9 @@ function renderContent(viewId: string) {
     case 'files':
       content.innerHTML = renderFileManager();
       break;
+    case 'browser':
+      content.innerHTML = renderBrowser();
+      break;
     case 'settings':
       content.innerHTML = renderSettings();
       break;
@@ -245,6 +248,51 @@ function renderFileManager(): string {
   `;
 }
 
+function renderBrowser(): string {
+  return `
+    <div class="browser-container">
+      <div class="panel-header">
+        <h2><i class="fas fa-globe"></i> Cloud Browser</h2>
+        <div class="connection-badge ${bridgeConnected ? 'online' : 'offline'}">
+          ${bridgeConnected ? '🌐 Connected to Playwright' : '⚠️ Connect cloud first'}
+        </div>
+      </div>
+
+      <div class="browser-controls">
+        <input type="text" id="browser-url" placeholder="Enter URL to navigate..." value="https://example.com" />
+        <button class="primary-btn" onclick="window.tnf.browserNavigate()">
+          <i class="fas fa-arrow-right"></i> Navigate
+        </button>
+        <button class="action-btn" onclick="window.tnf.browserScreenshot()">
+          <i class="fas fa-camera"></i> Screenshot
+        </button>
+      </div>
+
+      <div class="browser-info">
+        <div id="browser-status" class="info-box">
+          <h3>How Cloud Browser Works</h3>
+          <p>The browser runs in your <strong>Railway Cloud Sandbox</strong> using headless Chromium (Playwright).</p>
+          <ul>
+            <li><strong>browser_navigate</strong> - Go to any URL</li>
+            <li><strong>browser_screenshot</strong> - Capture screenshots</li>
+            <li><strong>browser_click</strong> - Click elements by CSS selector</li>
+            <li><strong>browser_type</strong> - Type into input fields</li>
+            <li><strong>browser_get_content</strong> - Extract page text</li>
+            <li><strong>browser_evaluate</strong> - Run JavaScript</li>
+            <li><strong>browser_wait</strong> - Wait for elements</li>
+          </ul>
+          <p style="margin-top: 12px; opacity: 0.7">
+            <i class="fas fa-info-circle"></i>
+            Results appear in the Tools panel. Heavy browser work happens in the cloud, keeping your local app lightweight!
+          </p>
+        </div>
+      </div>
+
+      <div id="browser-result" class="browser-result"></div>
+    </div>
+  `;
+}
+
 function renderSettings(): string {
   return `
     <div class="settings-container">
@@ -332,6 +380,130 @@ async function saveSandboxUrl() {
 }
 
 // ============================================================================
+// BROWSER FUNCTIONS
+// ============================================================================
+
+async function browserNavigate() {
+  const urlInput = document.getElementById('browser-url') as HTMLInputElement;
+  const resultDiv = document.getElementById('browser-result');
+
+  if (!urlInput || !resultDiv) {
+    return;
+  }
+
+  const url = urlInput.value;
+  if (!url) {
+    showNotification('Please enter a URL', 'error');
+    return;
+  }
+
+  if (!bridgeConnected) {
+    showNotification('Connect to cloud first!', 'error');
+    return;
+  }
+
+  showNotification(`Navigating to ${url}...`, 'info');
+  resultDiv.innerHTML = '<div class="loading">🌐 Loading page...</div>';
+
+  try {
+    const result = await callMCPTool('browser_navigate', { url });
+    console.log('Navigation result:', result);
+
+    const r = result as { success: boolean; title?: string; error?: string };
+    if (r.success) {
+      resultDiv.innerHTML = `
+        <div class="success-result">
+          <h4>✅ Page Loaded</h4>
+          <p><strong>Title:</strong> ${r.title || 'Unknown'}</p>
+          <p><strong>URL:</strong> ${url}</p>
+        </div>
+      `;
+      showNotification(`Loaded: ${r.title}`, 'success');
+    } else {
+      resultDiv.innerHTML = `<div class="error-result">❌ ${r.error}</div>`;
+      showNotification('Navigation failed', 'error');
+    }
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="error-result">❌ Error: ${e}</div>`;
+    showNotification('Navigation failed', 'error');
+  }
+}
+
+async function browserScreenshot() {
+  const resultDiv = document.getElementById('browser-result');
+  if (!resultDiv) {
+    return;
+  }
+
+  if (!bridgeConnected) {
+    showNotification('Connect to cloud first!', 'error');
+    return;
+  }
+
+  showNotification('Taking screenshot...', 'info');
+  resultDiv.innerHTML = '<div class="loading">📸 Capturing...</div>';
+
+  try {
+    const result = await callMCPTool('browser_screenshot', { path: '/tmp/screenshot.png' });
+    console.log('Screenshot result:', result);
+
+    const r = result as { success: boolean; path?: string; error?: string };
+    if (r.success) {
+      resultDiv.innerHTML = `
+        <div class="success-result">
+          <h4>📸 Screenshot Captured</h4>
+          <p><strong>Saved to:</strong> ${r.path}</p>
+          <p style="opacity: 0.7">Use <code>read_file</code> to retrieve the image data</p>
+        </div>
+      `;
+      showNotification('Screenshot saved', 'success');
+    } else {
+      resultDiv.innerHTML = `<div class="error-result">❌ ${r.error}</div>`;
+      showNotification('Screenshot failed', 'error');
+    }
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="error-result">❌ Error: ${e}</div>`;
+    showNotification('Screenshot failed', 'error');
+  }
+}
+
+async function browserGetContent() {
+  const resultDiv = document.getElementById('browser-result');
+  if (!resultDiv) {
+    return;
+  }
+
+  if (!bridgeConnected) {
+    showNotification('Connect to cloud first!', 'error');
+    return;
+  }
+
+  showNotification('Extracting content...', 'info');
+
+  try {
+    const result = await callMCPTool('browser_get_content', {});
+    console.log('Content result:', result);
+
+    const r = result as { success: boolean; title?: string; content?: string; error?: string };
+    if (r.success) {
+      const preview = r.content?.substring(0, 500) || '';
+      resultDiv.innerHTML = `
+        <div class="success-result">
+          <h4>📄 Page Content</h4>
+          <p><strong>Title:</strong> ${r.title || 'Unknown'}</p>
+          <pre style="white-space: pre-wrap; max-height: 200px; overflow: auto;">${preview}${r.content && r.content.length > 500 ? '...' : ''}</pre>
+        </div>
+      `;
+      showNotification('Content extracted', 'success');
+    } else {
+      resultDiv.innerHTML = `<div class="error-result">❌ ${r.error}</div>`;
+    }
+  } catch (e) {
+    resultDiv.innerHTML = `<div class="error-result">❌ Error: ${e}</div>`;
+  }
+}
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
@@ -376,6 +548,9 @@ function initApp() {
   loadTools,
   runTool,
   saveSandboxUrl,
+  browserNavigate,
+  browserScreenshot,
+  browserGetContent,
 };
 
 // Initialize on DOM ready

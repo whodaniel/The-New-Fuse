@@ -1,18 +1,23 @@
-# The New Fuse - Cloud Sandbox
-# Standalone MCP server for Railway deployment
+# The New Fuse - Cloud Sandbox with Playwright
+# MCP server with headless browser automation for Railway deployment
 
-FROM node:22-alpine
+FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+
+# Install Node.js 22
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create app directory
 WORKDIR /app
 
 # Copy only cloud-sandbox files
-# Copy only cloud-sandbox files
 COPY package.json ./
 COPY tsconfig.json ./
 COPY src ./src
 
-# Install dependencies
+# Install dependencies (including Playwright)
 RUN npm install
 
 # Build TypeScript

@@ -473,6 +473,131 @@
         text-align: center;
         padding: 40px;
       }
+
+      /* Browser View */
+      .browser-container {
+        max-width: 900px;
+      }
+
+      .browser-controls {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .browser-controls input {
+        flex: 1;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--tnf-border);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: white;
+        font-size: 14px;
+      }
+
+      .browser-controls input:focus {
+        outline: none;
+        border-color: var(--tnf-primary);
+      }
+
+      .action-btn {
+        background: var(--tnf-surface);
+        border: 1px solid var(--tnf-border);
+        color: var(--tnf-text);
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-btn:hover {
+        border-color: var(--tnf-primary);
+        color: var(--tnf-primary);
+      }
+
+      .connection-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .connection-badge.online {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--tnf-success);
+      }
+
+      .connection-badge.offline {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--tnf-warning);
+      }
+
+      .info-box {
+        background: var(--tnf-surface);
+        border: 1px solid var(--tnf-border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .info-box h3 {
+        margin-bottom: 12px;
+        color: var(--tnf-primary);
+      }
+
+      .info-box ul {
+        list-style: none;
+        margin: 12px 0;
+      }
+
+      .info-box li {
+        padding: 4px 0;
+        font-size: 13px;
+      }
+
+      .info-box li strong {
+        color: var(--tnf-accent);
+      }
+
+      .browser-result {
+        margin-top: 20px;
+      }
+
+      .success-result {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .success-result h4 {
+        margin-bottom: 12px;
+        color: var(--tnf-success);
+      }
+
+      .error-result {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        color: var(--tnf-error);
+      }
+
+      pre {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        margin-top: 12px;
+      }
+
+      code {
+        background: rgba(99, 102, 241, 0.2);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
     </style>
   </head>
   <body>
@@ -505,6 +630,10 @@
           <div class="nav-item" data-view="files" onclick="window.tnf.switchView('files')">
             <i class="fas fa-folder-open"></i>
             <span>Files</span>
+          </div>
+          <div class="nav-item" data-view="browser" onclick="window.tnf.switchView('browser')">
+            <i class="fas fa-globe"></i>
+            <span>Browser</span>
           </div>
           <div class="nav-item" data-view="settings" onclick="window.tnf.switchView('settings')">
             <i class="fas fa-cog"></i>

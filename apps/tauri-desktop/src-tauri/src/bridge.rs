@@ -96,7 +96,7 @@ impl BridgeManager {
         println!("✅ Connected to cloud sandbox");
 
         // Spawn write task
-        let write_handle = tokio::spawn(async move {
+        let _write_handle = tokio::spawn(async move {
             while let Some(msg) = rx.recv().await {
                 if write.send(Message::Text(msg)).await.is_err() {
                     break;
@@ -107,7 +107,7 @@ impl BridgeManager {
         // Spawn read task
         let handlers = response_handlers.clone();
         let conn_ref = connection.clone();
-        let read_handle = tokio::spawn(async move {
+        let _read_handle = tokio::spawn(async move {
             while let Some(msg) = read.next().await {
                 match msg {
                     Ok(Message::Text(text)) => {

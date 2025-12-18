@@ -3,7 +3,7 @@
 
 mod bridge;
 
-use std::collections::HashMap;
+// HashMap imported on demand via bridge module
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tauri::{Manager, State};
@@ -24,7 +24,7 @@ impl Default for AppState {
     fn default() -> Self {
         Self {
             bridge_manager: Arc::new(Mutex::new(None)),
-            sandbox_url: Mutex::new(String::from("wss://tnf-sandbox.up.railway.app/ws")),
+            sandbox_url: Mutex::new(String::from("wss://tnf-cloud-sandbox-production.up.railway.app/ws")),
         }
     }
 }
