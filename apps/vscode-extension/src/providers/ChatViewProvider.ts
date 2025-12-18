@@ -390,23 +390,23 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       <div class="input-row">
         <div class="input-actions">
           <button id="btn-attach" class="action-btn" title="Attach files">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11.5 1.5a2.5 2.5 0 0 1 2.5 2.5v7a4.5 4.5 0 0 1-9 0V4a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 0 7 0V4a1.5 1.5 0 0 0-3 0v7a.5.5 0 0 0 1 0V4a.5.5 0 0 1 1 0v7a1.5 1.5 0 0 1-3 0V4a2.5 2.5 0 0 1 2.5-2.5z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/>
             </svg>
           </button>
           <button id="btn-code" class="action-btn" title="Code mode">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/>
             </svg>
           </button>
           <button id="btn-agent" class="action-btn" title="Agent mode">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zM3 8.062C3 6.371 4.287 5 5.98 5a.25.25 0 0 0 .177-.073l.674-.674a.75.75 0 0 1 .75-.146l1.012.337a.25.25 0 0 0 .219-.044L9.55 3.808a.75.75 0 0 1 .9 0l.738.592a.25.25 0 0 0 .22.044l1.01-.337a.75.75 0 0 1 .75.146l.674.674a.25.25 0 0 0 .177.073c1.693 0 2.98 1.371 2.98 3.062 0 1.586-1.048 2.889-2.5 3.248v.19a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75v-.19C2.91 10.95 3 9.648 3 8.062zM5.98 6c-.988 0-1.98.804-1.98 2.062C4 9.56 4.864 10.5 6 10.5h4c1.136 0 2-.94 2-2.438C12 6.804 11.008 6 10.02 6a1.25 1.25 0 0 1-.884-.366l-.404-.405-.664.222a1.25 1.25 0 0 1-1.094-.22L6.86 5.12l-.405.405C6.204 5.776 5.914 6 5.98 6z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
             </svg>
           </button>
         </div>
         <button id="btn-send" class="send-btn" title="Send message">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11zM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493z"/>
           </svg>
         </button>

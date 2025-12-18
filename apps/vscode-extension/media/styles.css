@@ -386,7 +386,10 @@ body {
 .send-btn svg {
   width: 16px;
   height: 16px;
+  min-width: 16px;
+  min-height: 16px;
   fill: currentColor;
+  display: block;
   transition: var(--transition-fast);
 }
 
@@ -397,6 +400,8 @@ body {
 .send-btn svg {
   width: 18px;
   height: 18px;
+  min-width: 18px;
+  min-height: 18px;
 }
 
 /* ============================================
