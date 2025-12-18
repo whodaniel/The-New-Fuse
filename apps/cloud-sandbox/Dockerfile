@@ -7,9 +7,10 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Copy only cloud-sandbox files
-COPY apps/cloud-sandbox/package.json ./
-COPY apps/cloud-sandbox/tsconfig.json ./
-COPY apps/cloud-sandbox/src ./src
+# Copy only cloud-sandbox files
+COPY package.json ./
+COPY tsconfig.json ./
+COPY src ./src
 
 # Install dependencies
 RUN npm install
