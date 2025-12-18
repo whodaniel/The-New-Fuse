@@ -213,18 +213,27 @@ EOF
     echo "Migration check complete, continuing with service start..."
   fi
 
-  # Try to find main.js in various possible locations
+  # Try to find the main entry point in various possible locations
   if [ -f "dist/main.js" ]; then
     echo "Found dist/main.js in current directory"
     exec node dist/main.js
+  elif [ -f "dist/server.js" ]; then
+    echo "Found dist/server.js in current directory"
+    exec node dist/server.js
   elif [ -f "dist/src/main.js" ]; then
     echo "Found dist/src/main.js in current directory"
     exec node dist/src/main.js
   elif [ -f "/app/apps/${SERVICE_PATH}/dist/main.js" ]; then
     echo "Found main.js at /app/apps/${SERVICE_PATH}/dist/main.js"
     exec node /app/apps/${SERVICE_PATH}/dist/main.js
+  elif [ -f "/app/apps/${SERVICE_PATH}/dist/server.js" ]; then
+    echo "Found server.js at /app/apps/${SERVICE_PATH}/dist/server.js"
+    exec node /app/apps/${SERVICE_PATH}/dist/server.js
+  elif [ -f "package.json" ]; then
+    echo "Falling back to npm start"
+    exec npm start
   else
-    echo "ERROR: Cannot find main.js in any expected location"
+    echo "ERROR: Cannot find main.js or server.js in any expected location"
     echo "Contents of dist directory:"
     ls -la dist/ || echo "No dist directory"
     exit 1
