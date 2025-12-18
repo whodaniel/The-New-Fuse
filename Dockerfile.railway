@@ -2,7 +2,7 @@ ARG NODE_VERSION=22
 ARG PNPM_VERSION=10.22.0
 ARG SERVICE_PATH
 
-# Cache bust: 2025-05-01-v2
+# Cache bust: 2025-12-18-v1
 #------------------------------------------------------------------------------
 # Builder stage
 #------------------------------------------------------------------------------
@@ -19,12 +19,20 @@ COPY . .
 # Install all dependencies
 RUN pnpm install --frozen-lockfile || (echo "Lockfile compatibility issue detected, recreating lockfile..." && pnpm install --force)
 
+# Generate Prisma client FIRST - required for security package to compile
+# The generated types are already committed, but we regenerate to ensure consistency
+RUN if [ -f "./packages/database/prisma/schema.prisma" ]; then \
+      DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
+      npx prisma generate --schema=./packages/database/prisma/schema.prisma || echo "Prisma generate skipped"; \
+    fi
+
 # Build foundational types first to satisfy downstream package builds
 RUN pnpm --filter @the-new-fuse/types build
 
-# Build essential workspace packages only (exclude problematic ones)
-# Skip: sync-core, integration-tests, web-scraping, core, n8n-workflows
-RUN pnpm --filter @the-new-fuse/database build || echo "Database build skipped (Prisma placeholder active)"
+# Build database package (may fail but types are already in generated/)
+RUN pnpm --filter @the-new-fuse/database build || echo "Database build skipped (using pre-generated types)"
+
+# Build essential workspace packages
 RUN pnpm --filter @the-new-fuse/api-types build
 RUN pnpm --filter @the-new-fuse/utils build
 RUN pnpm --filter @the-new-fuse/common build
@@ -44,17 +52,10 @@ RUN pnpm --filter=./apps/${SERVICE_PATH}... build
 
 # Generate Prisma clients from workspace root to access hoisted dependencies
 # For Prisma 7+, we need to provide a placeholder DATABASE_URL since generate doesn't connect to the DB
-# Generate Prisma client for services that have a schema (from workspace root)
+# Generate Prisma client for services that have their own schema
 RUN if [ -f "./apps/${SERVICE_PATH}/prisma/schema.prisma" ]; then \
       DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
       npx prisma generate --schema=./apps/${SERVICE_PATH}/prisma/schema.prisma; \
-    fi
-
-# Generate Prisma client for the shared database package (from workspace root)
-# Using placeholder URL for Prisma 7+ compatibility (generate doesn't connect to DB)
-RUN if [ -f "./packages/database/prisma/schema.prisma" ]; then \
-      DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
-      npx prisma generate --schema=./packages/database/prisma/schema.prisma; \
     fi
 
 #------------------------------------------------------------------------------
