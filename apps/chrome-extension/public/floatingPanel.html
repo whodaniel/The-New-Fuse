@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fuse Floating Panel</title>
+  <!-- 
+    The floatingPanel.css is primarily for global styles within the iframe context if needed.
+    Most component-specific styles will be handled by MUI and JSS within the React app.
+    However, it's good practice to include it.
+  -->
+  <link rel="stylesheet" href="floatingPanel.css">
+  <style>
+    /* Basic reset and full-height for React app */
+    body, html, #floating-panel-react-root {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Prevent scrollbars on the iframe body itself */
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="floating-panel-react-root"></div>
+  <!-- 
+    The actual React application bundle for the floating panel.
+    Webpack will generate this file.
+  -->
+  <script src="floatingPanel.js"></script>
+</body>
+</html>

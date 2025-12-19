@@ -1,125 +1,92 @@
 {
   "manifest_version": 3,
-  "name": "The New Fuse AI Bridge",
-  "version": "1.0.0",
-  "description": "Enterprise AI Bridge - Connect browser tabs to AI agents and the TNF relay system for seamless AI-to-AI and human-to-AI communication.",
-
+  "name": "The New Fuse - Hybrid Automation System",
+  "version": "3.0.0",
+  "description": "Supercharged Chrome extension for hybrid automation, TNF Relay, MCP, and native host integration.",
   "permissions": [
-    "tabs",
-    "activeTab",
     "storage",
-    "alarms",
+    "activeTab",
+    "scripting",
     "contextMenus",
     "notifications",
-    "scripting",
-    "clipboardWrite",
-    "clipboardRead"
+    "tabs",
+    "webNavigation",
+    "debugger",
+    "offscreen",
+    "windows"
   ],
-
-  "host_permissions": [
-    "http://localhost/*",
-    "http://127.0.0.1/*",
-    "https://gemini.google.com/*",
-    "https://bard.google.com/*",
-    "https://chat.openai.com/*",
-    "https://chatgpt.com/*",
-    "https://claude.ai/*",
-    "https://www.perplexity.ai/*",
-    "https://perplexity.ai/*",
-    "https://thenewfuse.com/*",
-    "https://*.thenewfuse.com/*",
-    "https://*.railway.app/*",
-    "<all_urls>"
-  ],
-
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "The New Fuse AI Bridge",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    }
-  },
-
-  "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
-
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
-      "matches": [
-        "https://gemini.google.com/*",
-        "https://bard.google.com/*",
-        "https://chat.openai.com/*",
-        "https://chatgpt.com/*",
-        "https://claude.ai/*",
-        "https://www.perplexity.ai/*",
-        "https://perplexity.ai/*"
-      ],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "run_at": "document_idle",
-      "all_frames": false
+      "css": ["content.css", "element-selection.css"],
+      "run_at": "document_start",
+      "type": "module"
     }
   ],
-
   "web_accessible_resources": [
     {
-      "resources": ["icons/*", "popup.css", "injectable-ui.css"],
+      "resources": [
+        "vendor.js",
+        "commons.js",
+        "*.js.map",
+        "*.css.map",
+        "floatingPanel.html",
+        "floatingPanel.js",
+        "floatingPanel.css",
+        "element-selection.css",
+        "enhanced-theme.css",
+        "icons/*.png",
+        "ui-html-css/*"
+      ],
       "matches": ["<all_urls>"]
     }
   ],
-
-  "externally_connectable": {
-    "matches": [
-      "http://localhost/*",
-      "https://thenewfuse.com/*",
-      "https://*.thenewfuse.com/*",
-      "https://*.railway.app/*"
-    ]
-  },
-
+  "options_page": "options.html",
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:* https://chat.openai.com https://claude.ai https://gemini.google.com;"
   },
-
   "commands": {
-    "_execute_action": {
+    "toggle-element-selection": {
       "suggested_key": {
-        "default": "Ctrl+Shift+F",
-        "mac": "Command+Shift+F"
+        "default": "Ctrl+Shift+E"
       },
-      "description": "Open The New Fuse popup"
+      "description": "Toggle element selection mode"
     },
-    "inject-floating-panel": {
+    "auto-detect-elements": {
       "suggested_key": {
-        "default": "Ctrl+Shift+P",
-        "mac": "Command+Shift+P"
+        "default": "Ctrl+Shift+D"
       },
-      "description": "Toggle floating panel on current page"
+      "description": "Auto-detect chat elements"
     },
-    "capture-response": {
+    "start-ai-session": {
       "suggested_key": {
-        "default": "Ctrl+Shift+C",
-        "mac": "Command+Shift+C"
+        "default": "Ctrl+Shift+A"
       },
-      "description": "Capture AI response from current page"
+      "description": "Start AI automation session"
     }
   },
-
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
+  "externally_connectable": {
+    "ids": ["*"],
+    "matches": ["<all_urls>"]
   },
-
-  "minimum_chrome_version": "110"
+  "nativeMessaging": true
 }

@@ -1,252 +1,288 @@
-# The New Fuse Chrome Extension
+# The New Fuse - Chrome Extension
 
-<div align="center">
-
-**🚀 Enterprise AI Bridge for Browser Integration**
-
-[![Version](https://img.shields.io/badge/version-1.0.0-purple.svg)]()
-[![Chrome](https://img.shields.io/badge/Chrome-MV3-green.svg)]()
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
-
-</div>
-
----
-
-## 🎯 Overview
-
-The New Fuse Chrome Extension is an enterprise-grade browser extension that
-bridges AI chat platforms with the TNF relay system. It enables:
-
-- **AI-to-AI Communication** - Connect multiple AI agents across different
-  platforms
-- **Human-to-AI Bridge** - Seamlessly inject prompts and capture responses
-- **Real-time Relay** - Instant message routing through the TNF backend
-- **Multi-Platform Support** - Works with Gemini, ChatGPT, Claude, and more
+A comprehensive Chrome extension for AI automation, element detection, and
+cross-platform communication. Features a modern React-based interface with the
+original styling and enhanced functionality.
 
 ## ✨ Features
 
-### 🤖 AI Platform Integration
+### 🎯 Element Detection
 
-- **Google Gemini** - Full support for text injection and response capture
-- **ChatGPT** - OpenAI's chat interface integration
-- **Claude** - Anthropic's AI assistant integration
-- **Perplexity** - Research-focused AI integration
-- **Custom Platforms** - Extensible selector system
+- **Auto-detection** of chat input fields, send buttons, and output areas
+- **Manual element selection** with visual feedback
+- **Real-time validation** of detected elements
+- **Multi-platform support** (ChatGPT, Claude, Gemini, etc.)
 
-### 🔗 TNF Relay Connection
+### 🤖 AI Session Management
 
-- HTTP REST API integration with `/relay` endpoints
-- WebSocket support for real-time messaging
-- Automatic agent registration
-- Message queuing and routing
-- Health monitoring and auto-reconnect
+- **Start/Stop AI sessions** with visual status indicators
+- **Real-time session monitoring**
+- **URL-based context awareness**
+- **Session state persistence**
 
-### 💉 Text Injection System
+### 🔌 WebSocket Communication
 
-- Multiple injection strategies (ContentEditable, value setter, clipboard,
-  simulated typing)
-- AI platform-specific selectors
-- Automatic send button detection
-- Submit option for auto-sending
+- **Real-time connection to local servers**
+- **Configurable port settings**
+- **Connection health monitoring**
+- **Auto-reconnection capabilities**
 
-### 📸 Response Capture
+### 🎛️ Floating Panel
 
-- MutationObserver-based monitoring
-- Intelligent content extraction
-- Platform-specific output selectors
-- Real-time capture notifications
+- **Draggable mini-interface**
+- **Quick access to common functions**
+- **Real-time status display**
+- **Minimalist design for minimal screen impact**
 
-### 🎨 Premium UI/UX
+## 🏗️ Architecture
 
-- "Deep Space" design system with purple/blue gradients
-- Glassmorphism 2.0 effects
-- Draggable floating panel
-- 5-tab popup interface (Dashboard, Agents, Relay, AI Bridge, Settings)
-- Dark theme optimized
+### Core Components
 
-## 📦 Installation
+1. **NewFusePopup.tsx** - Main popup interface with tabs and controls
+2. **EnhancedFloatingPanel.tsx** - Draggable floating panel
+3. **Background script** - Handles WebSocket connections and message routing
+4. **Content script** - Manages element detection and page interaction
 
-### From Source (Development)
+### File Structure
 
-```bash
-# Navigate to extension directory
-cd apps/chrome-extension
-
-# Install dependencies (optional, for linting)
-npm install
-
-# Build the extension
-npm run build
-
-# The built extension is in the dist/ folder
+```
+src/
+├── popup/
+│   ├── NewFusePopup.tsx        # Main popup component
+│   └── popup.html              # Popup HTML wrapper
+├── floatingPanel/
+│   ├── EnhancedFloatingPanel.tsx # Floating panel component
+│   └── floatingPanel.html      # Panel HTML wrapper
+├── background/
+│   └── background.ts           # Service worker
+├── content/
+│   └── index.ts               # Content script
+└── styles/
+    ├── content.css            # Content script styles
+    └── element-selection.css  # Element selection styles
 ```
 
-### Load in Chrome
+## 🚀 Setup & Installation
 
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable **Developer mode** (toggle in top-right)
-3. Click **Load unpacked**
-4. Select the `dist` folder
-5. The extension icon should appear in your toolbar
+### Prerequisites
 
-### Keyboard Shortcuts
+- Node.js 18+ or Bun
+- Chrome/Chromium browser
+- Git
 
-| Shortcut                            | Action                |
-| ----------------------------------- | --------------------- |
-| `Ctrl+Shift+F` (Mac: `Cmd+Shift+F`) | Open popup            |
-| `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`) | Toggle floating panel |
-| `Ctrl+Shift+C` (Mac: `Cmd+Shift+C`) | Capture AI response   |
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   cd chrome-extension
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   bun install
+   # or
+   npm install
+   ```
+
+3. **Build the extension**
+
+   ```bash
+   bun run build
+   # or
+   npm run build
+   ```
+
+4. **Load in Chrome**
+   - Open `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked"
+   - Select the `dist` folder
+
+## 🎨 Interface Design
+
+### Popup Interface
+
+The popup features a **purple gradient background** with multiple tabs:
+
+- **Elements Tab**: Element detection and selection controls
+- **AI Session Tab**: Session management and URL display
+- **Connection Tab**: WebSocket connection settings
+- **Settings Tab**: Configuration options
+
+### Floating Panel
+
+A **compact, draggable panel** that provides:
+
+- Connection status indicator
+- Element detection status
+- Quick action buttons
+- Session controls
 
 ## 🔧 Configuration
 
-### Relay Connection
+### WebSocket Settings
 
-By default, the extension connects to:
+- **Default Port**: 3712
+- **Protocols**: ws:// and wss://
+- **Auto-reconnect**: Enabled by default
 
-- **Development**: `http://localhost:3000/relay`
-- **Production**: Configure in Settings tab
+### Element Detection
 
-### Settings Options
+- **Auto-detection**: Automatically finds common chat elements
+- **Manual selection**: Click-to-select interface
+- **Validation**: Confirms element accessibility
 
-| Setting        | Default                 | Description               |
-| -------------- | ----------------------- | ------------------------- |
-| Relay URL      | `http://localhost:3000` | TNF backend URL           |
-| Auto-connect   | `true`                  | Connect on startup        |
-| Auto-reconnect | `true`                  | Reconnect on disconnect   |
-| Show badge     | `true`                  | Connection status on icon |
-| Notifications  | `true`                  | Desktop notifications     |
-| Log level      | `info`                  | Console logging verbosity |
+## 🛠️ Development
 
-## 🏗 Architecture
+### Build Commands
 
-```
-chrome-extension/
-├── manifest.json       # Extension manifest (MV3)
-├── background.js       # Service worker - relay connection, routing
-├── content.js          # Content script - AI detection, injection
-├── popup.html/js/css   # Extension popup UI
-├── options.html/js     # Settings page
-├── icons/              # Extension icons (16, 32, 48, 128px)
-├── create-icons.js     # Icon generation script
-└── package.json        # Package configuration
+```bash
+# Development build with watch
+bun run dev
+
+# Production build
+bun run build
+
+# Clean build artifacts
+./cleanup.sh
+
+# Run tests
+bun run test
 ```
 
-### Message Flow
+### Code Quality
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Popup     │────▶│  Background │────▶│  TNF Relay  │
-│             │◀────│  (Service   │◀────│  Backend    │
-│             │     │   Worker)   │     │             │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │   Content   │
-                    │   Script    │
-                    │ (AI Pages)  │
-                    └─────────────┘
-```
+- **TypeScript** for type safety
+- **React** for modern UI components
+- **Webpack** for bundling
+- **ESLint** for code linting
 
-## 🔌 API Reference
+## 📡 Message Protocol
 
-### Background → Content Script Messages
+### Background ↔ Content Script
 
-```javascript
-// Inject text into AI chat
-{ type: 'INJECT_TEXT', payload: { text: 'Hello', submit: false } }
+```typescript
+// Element detection
+{ type: 'AUTO_DETECT_ELEMENTS' }
+{ type: 'START_ELEMENT_SELECTION', elementType: 'inputField' }
+{ type: 'VALIDATE_ELEMENTS' }
 
-// Capture current response
-{ type: 'CAPTURE_RESPONSE' }
+// Session management
+{ type: 'START_AI_SESSION' }
+{ type: 'END_AI_SESSION' }
 
-// Toggle floating panel
-{ type: 'INJECT_FLOATING_PANEL' }
-
-// Start response monitoring
-{ type: 'START_MONITORING' }
+// Status updates
+{ type: 'ELEMENT_SELECTED', payload: { elementType, element } }
+{ type: 'WEBSOCKET_STATUS_UPDATE', payload: { status, message } }
 ```
 
-### Content Script → Background Messages
+### WebSocket Communication
 
-```javascript
-// Content script ready
-{ type: 'CONTENT_SCRIPT_READY', payload: { url, platform } }
+```typescript
+// Connection management
+{ type: 'WEBSOCKET_CONNECT', port: number }
+{ type: 'WEBSOCKET_DISCONNECT' }
+{ type: 'GET_STATUS' }
 
-// AI response captured
-{ type: 'AI_RESPONSE_CAPTURED', payload: { content, platform, timestamp } }
+// Panel control
+{ type: 'TOGGLE_FLOATING_PANEL' }
+{ type: 'SET_FLOATING_PANEL_STATE', state: object }
 ```
 
-### Relay REST API
+## 🎯 Usage Guide
 
-```javascript
-// Register as agent
-POST /relay/agents
-{ id, name, type: 'browser-bridge', capabilities: [...] }
+### Basic Workflow
 
-// Send message
-POST /relay/messages
-{ type, source, target, payload }
+1. **Open the extension** by clicking the icon
+2. **Navigate to Elements tab** for element detection
+3. **Click "Auto-Detect Elements"** or manually select elements
+4. **Switch to AI Session tab** to start automation
+5. **Use Connection tab** to configure WebSocket settings
+6. **Toggle floating panel** for quick access
 
-// Broadcast message
-POST /relay/broadcast
-{ source, type, payload, filter: { type?, capability? } }
-```
+### Element Selection
 
-## 🧪 Testing
+- **Auto-detect**: Automatically finds common patterns
+- **Manual selection**: Click the selection button, then click target element
+- **Validation**: Ensures elements are accessible and functional
 
-### Quick Test
+### Session Management
 
-1. Load extension in Chrome
-2. Navigate to [google.com/gemini](https://gemini.google.com)
-3. Click extension icon
-4. Go to "AI Bridge" tab
-5. Click "Detect AI Platform" - should show "Google Gemini detected"
-6. Click "Inject UI" to show floating panel
-7. Type a message and click "Inject Text"
+- **Start session**: Begins AI automation on current page
+- **End session**: Stops automation and resets state
+- **Status monitoring**: Real-time feedback on session state
 
-### Full Integration Test
+## 🔍 Troubleshooting
 
-1. Start TNF backend: `pnpm --filter @the-new-fuse/backend-app dev`
-2. Load extension
-3. Connect to relay (Dashboard tab)
-4. Register as agent (Agents tab)
-5. Send messages through relay (Relay tab)
+### Common Issues
 
-## 🔒 Permissions
+**Extension not loading**
 
-The extension requests these permissions:
+- Check if all dependencies are installed
+- Verify the build completed successfully
+- Look for errors in Chrome's extension console
 
-| Permission      | Purpose                                |
-| --------------- | -------------------------------------- |
-| `tabs`          | Access tab URLs for platform detection |
-| `activeTab`     | Interact with active tab               |
-| `storage`       | Persist settings                       |
-| `notifications` | Desktop notifications                  |
-| `scripting`     | Inject content scripts                 |
-| `clipboard*`    | Text injection fallback                |
-| `contextMenus`  | Right-click menu options               |
-| `alarms`        | Periodic health checks                 |
+**Elements not detected**
+
+- Try manual selection instead of auto-detect
+- Check if the page has finished loading
+- Verify the page contains chat-like interfaces
+
+**WebSocket connection fails**
+
+- Confirm the target server is running
+- Check port configuration
+- Verify firewall settings
+
+### Debug Mode
+
+Enable debug mode in the Settings tab for:
+
+- Detailed console logging
+- Enhanced error messages
+- Performance monitoring
 
 ## 🤝 Contributing
+
+### Development Setup
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Run tests and linting
 5. Submit a pull request
+
+### Code Style
+
+- Use TypeScript for all new code
+- Follow React best practices
+- Maintain consistent formatting
+- Add comments for complex logic
 
 ## 📄 License
 
-MIT License - The New Fuse Team
+MIT License - see LICENSE file for details.
+
+## 🔄 Changelog
+
+### v3.0.0 (Latest)
+
+- ✨ Complete React-based rewrite
+- 🎨 Modern purple gradient interface
+- 🎛️ Enhanced floating panel
+- 🔧 Improved element detection
+- 🚀 Better performance and reliability
+- 🧹 Cleaned up codebase and removed legacy files
+
+### Previous Versions
+
+- v2.x: Vanilla JavaScript implementation
+- v1.x: Initial prototype
 
 ---
 
-<div align="center">
-
-**Part of [The New Fuse](https://thenewfuse.com) Framework**
-
-[Documentation](https://thenewfuse.com/docs) •
-[GitHub](https://github.com/whodaniel/fuse) •
-[Support](https://thenewfuse.com/support)
-
-</div>
+**The New Fuse** - Bridging AI and automation with elegant design and powerful
+functionality.

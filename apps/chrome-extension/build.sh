@@ -1,48 +1,111 @@
 #!/bin/bash
 
-# TNF AI Bridge - Simple Build Script
-echo "Building TNF AI Bridge Chrome Extension..."
+# Enable strict error handling
+set -e
 
-# Create dist directory
-mkdir -p dist
+echo "🚀 Building The New Fuse Chrome Extension..."
 
-# Copy extension files
-cp manifest.json dist/
-cp background.js dist/
-cp content.js dist/
-cp popup.html dist/
-cp popup.js dist/
+# --- Setup ---
+# Get the directory of this script to run from anywhere
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+cd "$SCRIPT_DIR"
 
-# Create README for installation
-cat > dist/README.md << 'EOF'
-# TNF AI Bridge Chrome Extension
+DIST_DIR="$SCRIPT_DIR/dist"
+SRC_DIR="$SCRIPT_DIR/src"
 
-## Installation
+# --- Dependency Management ---
+echo "📦 Checking for dependencies..."
+if [ ! -d "node_modules" ]; then
+  echo "Node modules not found. Installing dependencies..."
+  # Use yarn if yarn.lock exists, otherwise use npm
+  if [ -f "yarn.lock" ]; then
+    yarn install
+  else
+    npm install
+  fi
+else
+  echo "Dependencies are already installed."
+fi
 
-1. Open Chrome and go to chrome://extensions/
-2. Enable "Developer mode" (toggle in top right)
-3. Click "Load unpacked"
-4. Select this `dist` folder
+# --- Cleaning ---
+echo "🧹 Cleaning previous build..."
+rm -rf "$DIST_DIR"
+mkdir -p "$DIST_DIR"
+mkdir -p "$DIST_DIR/icons"
 
-## Usage
+# --- Compiling and Bundling ---
+echo "⚙️ Building with Webpack..."
+# Use the local webpack binary from node_modules
+WEBPACK_BIN="./node_modules/.bin/webpack"
 
-1. Make sure TNF relay is running on port 3001
-2. Navigate to ChatGPT, Claude, or other supported AI sites
-3. Use the extension popup to send messages or let the TNF relay route messages
+if ! $WEBPACK_BIN --config webpack.config.js --mode production; then
+    echo "❌ ERROR: Webpack build failed. Exiting."
+    exit 1
+fi
+echo "Webpack build successful."
 
-## Supported Sites
+# --- Verification ---
+echo "🔍 Verifying build output in '$DIST_DIR'..."
+MISSING_FILES=0
+ESSENTIAL_FILES=(
+    "manifest.json"
+    "popup.html"
+    "popup.js"
+    "background.js"
+    "content.js"
+)
 
-- ChatGPT (https://chatgpt.com)
-- Claude (https://claude.ai)
-- Gemini (https://gemini.google.com)
-- Perplexity (https://www.perplexity.ai)
-- Poe (https://poe.com)
-- Character.AI (https://character.ai)
+# Check for icons
+ICON_FILES=(
+    "icons/icon16.png"
+    "icons/icon48.png"
+    "icons/icon128.png"
+)
 
-## Architecture
+for file in "${ESSENTIAL_FILES[@]}"; do
+  if [ ! -f "$DIST_DIR/$file" ]; then
+    echo "❌ ERROR: Essential file is missing: $file"
+    MISSING_FILES=$((MISSING_FILES + 1))
+  else
+    echo "✅ Found: $file"
+  fi
+done
 
-The extension acts as a bridge between web-based AI chats and the TNF relay system, enabling AI-to-AI communication.
-EOF
+for icon in "${ICON_FILES[@]}"; do
+  if [ ! -f "$DIST_DIR/$icon" ]; then
+    echo "⚠️  WARNING: Icon file is missing: $icon"
+    # Icons are not critical for functionality, so we don't increment MISSING_FILES
+  else
+    echo "✅ Found: $icon"
+  fi
+done
 
-echo "Extension built successfully in dist/ folder"
-echo "To install: Load unpacked extension from chrome://extensions/"
+# Check for optional files that enhance functionality
+OPTIONAL_FILES=(
+    "options.html"
+    "options.js"
+    "floatingPanel.html"
+    "floatingPanel.js"
+)
+
+for file in "${OPTIONAL_FILES[@]}"; do
+  if [ ! -f "$DIST_DIR/$file" ]; then
+    echo "ℹ️  INFO: Optional file not found: $file"
+  else
+    echo "✅ Found: $file"
+  fi
+done
+
+# --- Final Status ---
+if [ $MISSING_FILES -gt 0 ]; then
+  echo "⚠️ Build process completed with $MISSING_FILES missing essential files. The extension may not work properly."
+  exit 1
+else
+  echo "🎉 Build complete! All essential files are present."
+  echo "The extension is ready to be loaded from the '$DIST_DIR' directory."
+  echo ""
+  echo "🚀 Next steps:"
+  echo "  1. Open Chrome and navigate to chrome://extensions/"
+  echo "  2. Enable 'Developer mode'"
+  echo "  3. Click 'Load unpacked' and select: $DIST_DIR"
+fi
