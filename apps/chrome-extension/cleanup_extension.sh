@@ -184,7 +184,7 @@ echo ""
 echo "🎉 Cleanup completed successfully!"
 echo ""
 echo "🔍 NEXT STEPS:"
-echo "1. Test the build: npm run build (or bun run build)"
+echo "1. Test the build: pnpm run build (or npm run build)"
 echo "2. Verify extension loads in Chrome"
 echo "3. Test core functionality:"
 echo "   - Element selection"
@@ -200,16 +200,16 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "🔨 Testing build..."
     if [ -f "package.json" ]; then
-        if command -v bun &> /dev/null; then
-            echo "Using bun to build..."
-            bun run build
-            echo "✅ Build test completed with bun!"
+        if command -v pnpm &> /dev/null; then
+            echo "Using pnpm to build..."
+            pnpm run build
+            echo "✅ Build test completed with pnpm!"
         elif command -v npm &> /dev/null; then
             echo "Using npm to build..."
             npm run build
             echo "✅ Build test completed with npm!"
         else
-            echo "⚠️  No package manager found. Please run 'npm run build' or 'bun run build' manually."
+            echo "⚠️  No package manager found. Please run 'pnpm run build' or 'npm run build' manually."
         fi
     else
         echo "⚠️  No package.json found. Please verify your project structure."

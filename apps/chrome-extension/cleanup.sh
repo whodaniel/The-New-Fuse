@@ -46,4 +46,4 @@ find . -name "Thumbs.db" -delete
 
 echo "✅ Cleanup complete!"
 echo ""
-echo "Now run: bun run build"
+echo "Now run: pnpm run build"

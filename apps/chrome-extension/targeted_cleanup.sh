@@ -137,7 +137,7 @@ echo ""
 echo "🎉 Targeted cleanup completed successfully!"
 echo ""
 echo "🔍 NEXT STEPS:"
-echo "1. Test the build: npm run build (or bun run build)"  
+echo "1. Test the build: pnpm run build (or npm run build)"
 echo "2. Verify extension loads in Chrome"
 echo "3. Test core functionality"
 

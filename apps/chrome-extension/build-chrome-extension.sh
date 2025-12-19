@@ -2,7 +2,7 @@
 
 # The New Fuse - Chrome Extension Builder
 # Builds the Chrome extension workspace within The New Fuse monorepo
-# Uses bun for package management and webpack for bundling
+# Uses pnpm for package management and webpack for bundling
 
 set -e
 
@@ -19,21 +19,19 @@ cd "$SCRIPT_DIR"
 echo "📂 Working in: $(pwd)"
 echo "🎯 Target: Chrome Extension for AI-powered browser automation"
 
-# Use full path to bun (since it's not in PATH)
-BUN_PATH="$HOME/.bun/bin/bun"
-
-if [ ! -f "$BUN_PATH" ]; then
-    echo "❌ Bun not found at $BUN_PATH"
-    echo "Please install bun or check the path"
+# Check for pnpm
+if ! command -v pnpm &> /dev/null; then
+    echo "❌ pnpm not found"
+    echo "Please install pnpm: npm install -g pnpm"
     exit 1
 fi
 
-echo "✅ Found bun at: $BUN_PATH"
+echo "✅ Found pnpm at: $(which pnpm)"
 
 # Install dependencies if needed (within this workspace)
-if [ ! -d "node_modules" ] || [ ! -f "node_modules/.package-lock.json" ]; then
-    echo "📦 Installing Chrome extension dependencies with bun..."
-    "$BUN_PATH" install
+if [ ! -d "node_modules" ]; then
+    echo "📦 Installing Chrome extension dependencies with pnpm..."
+    pnpm install
 else
     echo "✅ Chrome extension dependencies already installed"
 fi
@@ -42,18 +40,18 @@ echo ""
 echo "🔨 Building Chrome extension workspace..."
 
 # Try to build with full prebuild process first
-if "$BUN_PATH" run build; then
+if pnpm run build; then
     echo "✅ Chrome extension build completed successfully!"
 else
     echo "⚠️  Build with prebuild failed, trying direct webpack build..."
-    
+
     # Try running webpack directly without the prebuild step (icon generation)
     if [ -f "node_modules/.bin/webpack" ]; then
         echo "🔄 Running webpack directly for Chrome extension..."
         ./node_modules/.bin/webpack --config webpack.config.cjs --mode production
         echo "✅ Chrome extension build completed (without icon generation)!"
     else
-        echo "❌ Webpack not found. Please run: $BUN_PATH install"
+        echo "❌ Webpack not found. Please run: pnpm install"
         exit 1
     fi
 fi

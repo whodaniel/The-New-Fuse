@@ -66,7 +66,8 @@ src/
 
 ### Prerequisites
 
-- Node.js 18+ or Bun
+- Node.js 18+
+- pnpm (recommended) or npm
 - Chrome/Chromium browser
 - Git
 
@@ -82,7 +83,7 @@ src/
 2. **Install dependencies**
 
    ```bash
-   bun install
+   pnpm install
    # or
    npm install
    ```
@@ -90,7 +91,7 @@ src/
 3. **Build the extension**
 
    ```bash
-   bun run build
+   pnpm run build
    # or
    npm run build
    ```
@@ -141,16 +142,16 @@ A **compact, draggable panel** that provides:
 
 ```bash
 # Development build with watch
-bun run dev
+pnpm run dev
 
 # Production build
-bun run build
+pnpm run build
 
 # Clean build artifacts
 ./cleanup.sh
 
 # Run tests
-bun run test
+pnpm run test
 ```
 
 ### Code Quality
