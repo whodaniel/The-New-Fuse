@@ -6,29 +6,41 @@ import { useLayout } from './contexts/LayoutContext';
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const AgentHub = lazy(() => import('./pages/AgentHub'));
 const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'));
+const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
+const MCPMarketplace = lazy(() => import('./pages/MCPMarketplace'));
 const Settings = lazy(() => import('./pages/Settings'));
 
 /**
  * The New Fuse Tauri Desktop - Comprehensive Router
- * Deep Space Premium Design
+ * Deep Space Premium Design with Full Navigation
  */
 const ComprehensiveRouter: React.FC = () => {
   const { currentRoute, navigate } = useRoute();
   const { sidebarCollapsed, toggleSidebar, sidebarOpen } = useLayout();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard' },
-    { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents' },
-    { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows' },
-    { id: 'settings', label: 'Settings', icon: '⚙️', route: '/settings' },
+    { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
+    { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
+    { id: 'chat', label: 'Multi-Agent Chat', icon: '💬', route: '/chat', section: 'main' },
+    { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows', section: 'main' },
+    { id: 'mcp', label: 'MCP Store', icon: '🔧', route: '/mcp', section: 'tools' },
+    { id: 'settings', label: 'Settings', icon: '⚙️', route: '/settings', section: 'system' },
   ];
+
+  const mainNav = navItems.filter((item) => item.section === 'main');
+  const toolsNav = navItems.filter((item) => item.section === 'tools');
+  const systemNav = navItems.filter((item) => item.section === 'system');
 
   const renderPage = () => {
     switch (currentRoute) {
       case '/agents':
         return <AgentHub />;
+      case '/chat':
+        return <MultiAgentChat />;
       case '/workflows':
         return <WorkflowBuilder />;
+      case '/mcp':
+        return <MCPMarketplace />;
       case '/settings':
         return <Settings />;
       case '/dashboard':
@@ -54,7 +66,38 @@ const ComprehensiveRouter: React.FC = () => {
         </div>
 
         <nav className="sidebar-nav">
-          {navItems.map((item) => (
+          {/* Main Navigation */}
+          {!sidebarCollapsed && <div className="nav-section-label">Main</div>}
+          {mainNav.map((item) => (
+            <button
+              key={item.id}
+              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
+              onClick={() => navigate(item.route)}
+              title={sidebarCollapsed ? item.label : undefined}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+            </button>
+          ))}
+
+          {/* Tools */}
+          {!sidebarCollapsed && <div className="nav-section-label">Tools</div>}
+          {toolsNav.map((item) => (
+            <button
+              key={item.id}
+              className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
+              onClick={() => navigate(item.route)}
+              title={sidebarCollapsed ? item.label : undefined}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+            </button>
+          ))}
+
+          <div className="nav-spacer" />
+
+          {/* System */}
+          {systemNav.map((item) => (
             <button
               key={item.id}
               className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
@@ -69,10 +112,16 @@ const ComprehensiveRouter: React.FC = () => {
 
         <div className="sidebar-footer">
           {!sidebarCollapsed && (
-            <div className="version-info">
-              <span>v1.0.0</span>
-              <span className="status-dot"></span>
-            </div>
+            <>
+              <div className="connection-indicator">
+                <span className="status-dot online"></span>
+                <span>Connected</span>
+              </div>
+              <div className="version-info">
+                <span>v4.0.0</span>
+                <span className="build-type">Tauri</span>
+              </div>
+            </>
           )}
         </div>
       </aside>
@@ -162,6 +211,20 @@ const ComprehensiveRouter: React.FC = () => {
           display: flex;
           flex-direction: column;
           gap: 4px;
+          overflow-y: auto;
+        }
+
+        .nav-section-label {
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--tnf-text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding: 16px 16px 8px;
+        }
+
+        .nav-spacer {
+          flex: 1;
         }
 
         .nav-item {
@@ -206,20 +269,43 @@ const ComprehensiveRouter: React.FC = () => {
           border-top: 1px solid var(--tnf-border);
         }
 
-        .version-info {
+        .connection-indicator {
           display: flex;
           align-items: center;
           gap: 8px;
           font-size: 12px;
           color: var(--tnf-text-muted);
+          margin-bottom: 8px;
         }
 
         .status-dot {
           width: 8px;
           height: 8px;
           border-radius: 50%;
+        }
+
+        .status-dot.online {
           background: var(--tnf-success, #10b981);
           box-shadow: 0 0 8px var(--tnf-success);
+        }
+
+        .status-dot.offline {
+          background: var(--tnf-error, #ef4444);
+        }
+
+        .version-info {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 11px;
+          color: var(--tnf-text-muted);
+        }
+
+        .build-type {
+          background: rgba(99, 102, 241, 0.2);
+          color: var(--tnf-primary-light);
+          padding: 2px 8px;
+          border-radius: 8px;
         }
 
         /* Main Content */
@@ -232,20 +318,24 @@ const ComprehensiveRouter: React.FC = () => {
         }
 
         /* Scrollbar */
-        .main-content::-webkit-scrollbar {
+        .main-content::-webkit-scrollbar,
+        .sidebar-nav::-webkit-scrollbar {
           width: 6px;
         }
 
-        .main-content::-webkit-scrollbar-track {
+        .main-content::-webkit-scrollbar-track,
+        .sidebar-nav::-webkit-scrollbar-track {
           background: transparent;
         }
 
-        .main-content::-webkit-scrollbar-thumb {
+        .main-content::-webkit-scrollbar-thumb,
+        .sidebar-nav::-webkit-scrollbar-thumb {
           background: var(--tnf-border);
           border-radius: 3px;
         }
 
-        .main-content::-webkit-scrollbar-thumb:hover {
+        .main-content::-webkit-scrollbar-thumb:hover,
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
           background: var(--tnf-border-hover);
         }
       `}</style>
