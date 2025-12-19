@@ -74,3 +74,6 @@ export * from './constants/types';
 // Utilities
 export { Logger, logger } from './utils/logger';
 export * from './utils/errors';
+
+// Delegation
+export * from './delegation';
