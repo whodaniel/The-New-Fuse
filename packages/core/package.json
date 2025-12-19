@@ -23,6 +23,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
