@@ -8,7 +8,7 @@
  * - Health and status monitoring
  */
 
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -81,7 +81,7 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {
     this.config = this.buildConfig();
   }
@@ -282,7 +282,7 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
     source: string,
     type: string,
     payload: unknown,
-    filter?: { type?: string; capability?: string },
+    filter?: { type?: string; capability?: string }
   ): Promise<string[]> {
     let targetAgents = await this.getAllAgents();
 

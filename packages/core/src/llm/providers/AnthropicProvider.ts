@@ -2,17 +2,10 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LLMProvider } from '../LLMProvider';
-import {
-  AnthropicModel,
-  PromptCachingService,
-  PromptParts,
-} from '../prompt-caching.service';
+import { AnthropicModel, PromptCachingService, PromptParts } from '../prompt-caching.service';
 
 // Prices are per 1 million tokens
-const MODEL_PRICING: Record<
-  AnthropicModel,
-  { input: number; output: number }
-> = {
+const MODEL_PRICING: Record<AnthropicModel, { input: number; output: number }> = {
   'claude-3-opus-20240229': {
     input: 15,
     output: 75,
@@ -55,7 +48,7 @@ export class AnthropicProvider extends LLMProvider {
       this.trackCost(response.usage as UsageWithCache, parts.model);
     }
 
-    return response.content.map(block => block.text).join('');
+    return response.content.map((block) => block.text).join('');
   }
 
   private trackCost(usage: UsageWithCache, model: AnthropicModel) {
@@ -63,8 +56,7 @@ export class AnthropicProvider extends LLMProvider {
     const { input: inputPrice, output: outputPrice } = MODEL_PRICING[model];
 
     const billedCost =
-      (input_tokens / 1_000_000) * inputPrice +
-      (output_tokens / 1_000_000) * outputPrice;
+      (input_tokens / 1_000_000) * inputPrice + (output_tokens / 1_000_000) * outputPrice;
 
     const totalTokensWithoutCache = input_tokens + cache_read_input_tokens;
     const potentialCost =
@@ -72,13 +64,10 @@ export class AnthropicProvider extends LLMProvider {
       (output_tokens / 1_000_000) * outputPrice;
 
     const savings = potentialCost - billedCost;
-    const savingsPercentage =
-      potentialCost > 0 ? (savings / potentialCost) * 100 : 0;
+    const savingsPercentage = potentialCost > 0 ? (savings / potentialCost) * 100 : 0;
 
     this.logger.log(`Billed cost: $${billedCost.toFixed(6)}`);
     this.logger.log(`Potential cost without cache: $${potentialCost.toFixed(6)}`);
-    this.logger.log(
-      `Cache savings: $${savings.toFixed(6)} (${savingsPercentage.toFixed(2)}%)`,
-    );
+    this.logger.log(`Cache savings: $${savings.toFixed(6)} (${savingsPercentage.toFixed(2)}%)`);
   }
 }

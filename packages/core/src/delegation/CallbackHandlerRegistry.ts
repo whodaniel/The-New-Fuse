@@ -1,4 +1,3 @@
-
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
@@ -57,10 +56,7 @@ export class CallbackHandlerRegistry {
       await Promise.all(
         taskHandlers.map((handler) =>
           handler(event).catch((error) =>
-            this.logger.error(
-              `Error executing handler for parent task ${parentTaskId}:`,
-              error,
-            ),
+            this.logger.error(`Error executing handler for parent task ${parentTaskId}:`, error),
           ),
         ),
       );

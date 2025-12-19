@@ -28,7 +28,7 @@ export class SemanticSkillDiscoveryImpl implements SemanticSkillDiscovery {
         skillSet.add('sql-optimization');
         skillSet.add('database-management');
       }
-       if (example.taskDescription.includes('payment gateway')) {
+      if (example.taskDescription.includes('payment gateway')) {
         skillSet.add('payment-integration');
         skillSet.add('error-handling');
       }

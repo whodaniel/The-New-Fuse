@@ -27,7 +27,9 @@ export class MetricsCollector {
     const uptime = process.uptime();
     const { rss, heapTotal, heapUsed, external, arrayBuffers } = memoryUsage;
 
-    this.logger.debug(`Memory usage: ${JSON.stringify({ rss, heapTotal, heapUsed, external, arrayBuffers })}`);
+    this.logger.debug(
+      `Memory usage: ${JSON.stringify({ rss, heapTotal, heapUsed, external, arrayBuffers })}`,
+    );
     this.logger.debug(`CPU usage: ${JSON.stringify(cpuUsage)}`);
     this.logger.debug(`Uptime: ${uptime}`);
   }

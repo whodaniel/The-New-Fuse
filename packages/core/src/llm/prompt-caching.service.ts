@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-export type AnthropicModel =
-  | 'claude-3-5-sonnet-20240620'
-  | 'claude-3-opus-20240229';
+export type AnthropicModel = 'claude-3-5-sonnet-20240620' | 'claude-3-opus-20240229';
 
 export interface PromptParts {
   systemContext: string;

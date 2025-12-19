@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useEffect, useState } from 'react';
 
-import AgentMessage from './agent-message';
 import { webSocketService } from '../services/websocket';
+import AgentMessage from './agent-message';
 
 interface AgentChatRoomProps {}
 
@@ -29,13 +29,13 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
   const [currentAgent] = useState({
     id: 'composer',
     name: 'Composer',
-    avatar: '/composer-avatar.png'
+    avatar: '/composer-avatar.png',
   });
 
   useEffect(() => {
     const handleError = (error: any) => {
-        setError(error.message);
-        console.error('WebSocket error:', error.message);
+      setError(error.message);
+      console.error('WebSocket error:', error.message);
     };
 
     // Subscribe to Redis channel messages
@@ -48,9 +48,9 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
         agent: {
           id: data.senderId,
           name: data.senderName || 'Unknown Agent',
-          avatar: data.senderAvatar
+          avatar: data.senderAvatar,
         },
-        metadata: data.metadata
+        metadata: data.metadata,
       };
       setMessages((prev: any) => [...prev, newMessage]);
     });
@@ -65,9 +65,9 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
         agent: {
           id: data.senderId,
           name: data.senderName || 'Unknown Agent',
-          avatar: data.senderAvatar
+          avatar: data.senderAvatar,
         },
-        metadata: data.metadata
+        metadata: data.metadata,
       };
       setMessages((prev: any) => [...prev, newMessage]);
     });
@@ -88,10 +88,10 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
       </CardHeader>
       <CardContent className="flex-grow flex flex-col p-4 overflow-hidden">
         {error && (
-            <Alert variant="destructive">
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
         <ScrollArea className="flex-grow pr-4">
           <div className="space-y-4">

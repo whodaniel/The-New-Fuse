@@ -76,11 +76,11 @@ export class ContextAwareOrchestrator {
     }
 
     const keyElements = successfulPatterns.map(
-      (p) => p.taskDescription.split(' ').slice(0, 5).join(' ') + '...'
+      (p) => p.taskDescription.split(' ').slice(0, 5).join(' ') + '...',
     );
 
     return `Based on past successes with tasks like "${keyElements.join(
-      ', '
+      ', ',
     )}", the recommended approach involves leveraging similar strategies.`;
   }
 
@@ -92,7 +92,7 @@ export class ContextAwareOrchestrator {
    */
   private calculateConfidence(
     successfulPatterns: PastTaskResult[],
-    totalSimilarTasks: number
+    totalSimilarTasks: number,
   ): number {
     if (totalSimilarTasks === 0) {
       return 0.1; // Low confidence if no similar tasks are found
@@ -101,7 +101,7 @@ export class ContextAwareOrchestrator {
     const successRate = successfulPatterns.length / totalSimilarTasks;
     const averageRelevance =
       successfulPatterns.reduce((sum, p) => sum + p.relevance, 0) /
-        (successfulPatterns.length || 1);
+      (successfulPatterns.length || 1);
 
     // Weighted average of success rate and relevance
     const confidence = successRate * 0.6 + averageRelevance * 0.4;

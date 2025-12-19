@@ -129,7 +129,7 @@ export class ExtendedThinkingProvider {
       if (thinking.length > 0) {
         try {
           const memoryPromises = thinking.map((thought) =>
-            this.vectorMemorySystem.addMemory(thought, { type: 'REASONING' as MemoryType })
+            this.vectorMemorySystem.addMemory(thought, { type: 'REASONING' as MemoryType }),
           );
           await Promise.all(memoryPromises);
         } catch (error) {
@@ -144,7 +144,9 @@ export class ExtendedThinkingProvider {
       };
     } catch (error) {
       console.error('Error invoking Anthropic API with thinking:', error);
-      throw new Error(`Anthropic API request failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Anthropic API request failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 }

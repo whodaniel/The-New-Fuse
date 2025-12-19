@@ -6,6 +6,7 @@ export { MemoryIndexer } from './MemoryIndexer';
 export { VectorMemoryStore } from './VectorMemoryStore';
 export { MemoryOptimizer } from './MemoryOptimizer';
 export { MemoryLeakDetector } from './MemoryLeakDetector';
+export { ConversationMemory, ConversationTurn } from './ConversationMemory';
 // Enhanced memory manager
 export { EnhancedMemoryManager, MemoryContent, MemoryManagerConfig } from './enhanced-memory-manager';
 // Cache exports

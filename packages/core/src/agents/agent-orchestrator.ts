@@ -277,12 +277,17 @@ export class AgentOrchestrator extends EventEmitter {
       this.logger.error(`Failed to execute task ${task.id} with delegation`, error);
       task.status = 'failed';
       this.emit('taskFailed', { task, error });
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown delegation error' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown delegation error',
+      };
     }
   }
 
   private aggregateAndFinalize(taskId: string): void {
-    this.logger.log(`All sub-tasks completed for parent task ${taskId}. Aggregating and finalizing.`);
+    this.logger.log(
+      `All sub-tasks completed for parent task ${taskId}. Aggregating and finalizing.`,
+    );
     const task = this.tasks.get(taskId);
     if (task) {
       task.status = 'completed';

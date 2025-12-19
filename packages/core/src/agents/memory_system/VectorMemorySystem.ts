@@ -15,7 +15,7 @@ export class VectorMemorySystemImpl implements VectorMemorySystem {
    */
   public async search(
     query: string,
-    options: { type: string; minRelevance: number }
+    options: { type: string; minRelevance: number },
   ): Promise<PastTaskResult[]> {
     console.log(`Searching vector memory for tasks similar to: "${query}" with options:`, options);
 
@@ -48,7 +48,7 @@ export class VectorMemorySystemImpl implements VectorMemorySystem {
         },
         relevance: 0.81,
       },
-       {
+      {
         taskId: 'past-task-4',
         taskDescription: 'Fix a critical bug in the payment gateway integration',
         outcome: {
@@ -61,7 +61,7 @@ export class VectorMemorySystemImpl implements VectorMemorySystem {
 
     // Filter results based on minRelevance to simulate a real search
     const filteredResults = mockResults.filter(
-      (result) => result.relevance >= options.minRelevance
+      (result) => result.relevance >= options.minRelevance,
     );
 
     return Promise.resolve(filteredResults);

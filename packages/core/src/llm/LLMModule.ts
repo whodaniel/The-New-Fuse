@@ -8,12 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 @Global()
 @Module({
   imports: [ConfigModule],
-  providers: [
-    LLMService,
-    LLMRegistry,
-    AnthropicProvider,
-    PromptCachingService,
-  ],
+  providers: [LLMService, LLMRegistry, AnthropicProvider, PromptCachingService],
   exports: [LLMService],
 })
 export class LLMModule {}

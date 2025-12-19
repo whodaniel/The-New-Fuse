@@ -1,5 +1,5 @@
+import { Bell, Menu, Search, User } from 'lucide-react';
 import React from 'react';
-import { Bell, Search, Menu, User } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 interface PremiumHeaderProps {
@@ -25,11 +25,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
             <Menu className="w-6 h-6" />
           </button>
 
-          {title && (
-            <h1 className="text-xl font-semibold text-white hidden sm:block">
-              {title}
-            </h1>
-          )}
+          {title && <h1 className="text-xl font-semibold text-white hidden sm:block">{title}</h1>}
         </div>
 
         <div className="flex items-center gap-4">

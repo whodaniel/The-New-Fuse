@@ -1,4 +1,3 @@
-
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { mock } from 'jest-mock-extended';
@@ -95,9 +94,9 @@ describe('CallbackHandlerRegistry', () => {
     });
 
     it('should do nothing if no handlers are registered for the event', async () => {
-        const eventWithoutHandlers: SubTaskEvent = { ...event, parentTaskId: 'task2' };
-        // We expect no calls and no errors
-        await expect(registry.executeHandlers(eventWithoutHandlers)).resolves.toBeUndefined();
+      const eventWithoutHandlers: SubTaskEvent = { ...event, parentTaskId: 'task2' };
+      // We expect no calls and no errors
+      await expect(registry.executeHandlers(eventWithoutHandlers)).resolves.toBeUndefined();
     });
   });
 

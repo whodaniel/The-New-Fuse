@@ -17,18 +17,13 @@ async function runExample() {
   } as ConfigService;
 
   const promptCachingService = new PromptCachingService();
-  const anthropicProvider = new AnthropicProvider(
-    promptCachingService,
-    configService,
-  );
+  const anthropicProvider = new AnthropicProvider(promptCachingService, configService);
 
   // Mock the Anthropic client to avoid making real API calls
   (anthropicProvider as any).client = {
     messages: {
       create: jest.fn().mockImplementation(async (request: any) => {
-        const isCached = request.messages.some(
-          (m: any) => m.cache_control,
-        );
+        const isCached = request.messages.some((m: any) => m.cache_control);
         return {
           content: [{ text: 'Mocked response' }],
           usage: {

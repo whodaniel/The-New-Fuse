@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  A2AProvider, 
-  useA2AContext, 
-  useA2AAgents, 
-  useA2AMessages, 
-  useA2AConversations,
+import {
   A2AMessage,
   A2AMessageType,
   A2APriority,
-  AgentStatus
+  A2AProvider,
+  useA2AAgents,
+  useA2AContext,
+  useA2AConversations,
+  useA2AMessages,
 } from '@the-new-fuse/a2a-react';
+import { AlertCircle, Send } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Pencil, Trash2, AlertCircle, Send } from 'lucide-react';
 
 // Icons (same as before)
 const SystemIcon = () => <AlertCircle className="h-4 w-4" />;
@@ -40,15 +39,15 @@ export default function MultiAgentChat() {
             id: 'ui-interaction',
             name: 'UI Interaction',
             description: 'Handle user interface interactions',
-            version: '1.0.0'
+            version: '1.0.0',
           },
           {
             id: 'message-display',
             name: 'Message Display',
             description: 'Display messages and conversations',
-            version: '1.0.0'
-          }
-        ]
+            version: '1.0.0',
+          },
+        ],
       }}
     >
       <EnhancedMultiAgentChatUI />
@@ -61,17 +60,17 @@ function EnhancedMultiAgentChatUI() {
   const { agents, refreshAgents } = useA2AAgents();
   const { messages, sendMessage, broadcast } = useA2AMessages();
   const { conversations, joinConversation } = useA2AConversations();
-  
+
   const [inputValue, setInputValue] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [currentConversation, setCurrentConversation] = useState<string | null>(null);
   const [mode, setMode] = useState<'direct' | 'broadcast' | 'conversation'>('direct');
   const [isAutomating, setIsAutomating] = useState(false);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Auto-refresh agents periodically
@@ -89,7 +88,7 @@ function EnhancedMultiAgentChatUI() {
       const messagePayload = {
         text: inputValue,
         sender: 'User',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       if (mode === 'direct' && selectedAgent) {
@@ -97,22 +96,22 @@ function EnhancedMultiAgentChatUI() {
         await sendMessage({
           toAgent: selectedAgent,
           type: A2AMessageType.REQUEST,
-      priority: A2APriority.MEDIUM,
+          priority: A2APriority.MEDIUM,
           conversationId: currentConversation || undefined,
-          payload: messagePayload
+          payload: messagePayload,
         });
       } else if (mode === 'broadcast') {
         // Broadcast to all agents
         await broadcast(messagePayload, {
-          topic: 'user-broadcast'
+          topic: 'user-broadcast',
         });
       } else if (mode === 'conversation' && currentConversation) {
         // Send to conversation
         await sendMessage({
           type: A2AMessageType.NOTIFICATION,
-        priority: A2APriority.MEDIUM,
+          priority: A2APriority.MEDIUM,
           conversationId: currentConversation,
-          payload: messagePayload
+          payload: messagePayload,
         });
       }
 
@@ -121,14 +120,22 @@ function EnhancedMultiAgentChatUI() {
       // Handle error - could use a state variable to show error in UI
       setInputValue((prev) => `${prev} (Failed to send)`);
     }
-  }, [inputValue, mode, selectedAgent, currentConversation, connectionState.authenticated, sendMessage, broadcast]);
+  }, [
+    inputValue,
+    mode,
+    selectedAgent,
+    currentConversation,
+    connectionState.authenticated,
+    sendMessage,
+    broadcast,
+  ]);
 
   const handleAutomateAgentCreation = useCallback(async () => {
     setIsAutomating(true);
     try {
       // Create sample A2A agents using the API
       const apiUrl = A2A_CONFIG.url.replace('ws://', 'http://').replace(':3001', ':3000');
-      
+
       const agents = [
         {
           agentId: uuidv4(),
@@ -141,9 +148,9 @@ function EnhancedMultiAgentChatUI() {
               id: 'general-assistance',
               name: 'General Assistance',
               description: 'Provide general help and support',
-              version: '1.0.0'
-            }
-          ]
+              version: '1.0.0',
+            },
+          ],
         },
         {
           agentId: uuidv4(),
@@ -156,17 +163,17 @@ function EnhancedMultiAgentChatUI() {
               id: 'data-analysis',
               name: 'Data Analysis',
               description: 'Analyze data and generate insights',
-              version: '1.0.0'
-            }
-          ]
-        }
+              version: '1.0.0',
+            },
+          ],
+        },
       ];
 
       for (const agent of agents) {
         await fetch(`${apiUrl}/a2a/agents/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(agent)
+          body: JSON.stringify(agent),
         });
       }
 
@@ -177,8 +184,8 @@ function EnhancedMultiAgentChatUI() {
         body: JSON.stringify({
           initiator: agents[0].agentId,
           participants: [agents[1].agentId],
-          topic: 'Automated Agent Collaboration'
-        })
+          topic: 'Automated Agent Collaboration',
+        }),
       });
 
       const { conversationId } = await response.json();
@@ -189,14 +196,16 @@ function EnhancedMultiAgentChatUI() {
       await refreshAgents();
 
       // Send welcome message
-      await broadcast({
-        type: 'automation_complete',
-        message: 'Automated agent setup completed! Two agents are ready for collaboration.',
-        conversationId
-      }, {
-        topic: 'system-announcement'
-      });
-
+      await broadcast(
+        {
+          type: 'automation_complete',
+          message: 'Automated agent setup completed! Two agents are ready for collaboration.',
+          conversationId,
+        },
+        {
+          topic: 'system-announcement',
+        }
+      );
     } catch (error) {
       console.error('Automation failed:', error);
     } finally {
@@ -214,15 +223,15 @@ function EnhancedMultiAgentChatUI() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           initiator: A2A_CONFIG.agentId,
-          participants: agents.slice(0, 3).map(a => a.agentId), // Include up to 3 agents
-          topic: 'Multi-Agent Discussion'
-        })
+          participants: agents.slice(0, 3).map((a) => a.agentId), // Include up to 3 agents
+          topic: 'Multi-Agent Discussion',
+        }),
       });
 
       const { conversationId } = await response.json();
       setCurrentConversation(conversationId);
       setMode('conversation');
-      
+
       // Join the conversation
       await joinConversation(conversationId);
     } catch (error) {
@@ -232,30 +241,33 @@ function EnhancedMultiAgentChatUI() {
 
   // Connection status component
   const ConnectionStatus = () => (
-    <div className={cn(
-      'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
-      connectionState.connected 
-        ? connectionState.authenticated 
-          ? 'bg-green-100 text-green-800' 
-          : 'bg-yellow-100 text-yellow-800'
-        : 'bg-red-100 text-red-800'
-    )}>
-      <div className={cn(
-        'w-2 h-2 rounded-full',
-        connectionState.connected 
-          ? connectionState.authenticated 
-            ? 'bg-green-500' 
-            : 'bg-yellow-500'
-          : 'bg-red-500'
-      )} />
-      {connectionState.connected 
-        ? connectionState.authenticated 
-          ? 'Connected & Authenticated' 
+    <div
+      className={cn(
+        'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
+        connectionState.connected
+          ? connectionState.authenticated
+            ? 'bg-green-100 text-green-800'
+            : 'bg-yellow-100 text-yellow-800'
+          : 'bg-red-100 text-red-800'
+      )}
+    >
+      <div
+        className={cn(
+          'w-2 h-2 rounded-full',
+          connectionState.connected
+            ? connectionState.authenticated
+              ? 'bg-green-500'
+              : 'bg-yellow-500'
+            : 'bg-red-500'
+        )}
+      />
+      {connectionState.connected
+        ? connectionState.authenticated
+          ? 'Connected & Authenticated'
           : 'Connected (Authenticating...)'
-        : connectionState.connecting 
-          ? 'Connecting...' 
-          : 'Disconnected'
-      }
+        : connectionState.connecting
+          ? 'Connecting...'
+          : 'Disconnected'}
     </div>
   );
 
@@ -269,10 +281,11 @@ function EnhancedMultiAgentChatUI() {
       isSystem && 'bg-gray-500 text-white text-center text-xs italic mx-auto',
       !isUser && !isSystem && 'bg-white dark:bg-gray-700 mr-auto'
     );
-    
-    const senderName = isUser ? 'You' : 
-      agents.find(a => a.agentId === msg.fromAgent)?.name || msg.fromAgent;
-    
+
+    const senderName = isUser
+      ? 'You'
+      : agents.find((a) => a.agentId === msg.fromAgent)?.name || msg.fromAgent;
+
     return (
       <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
         <div className={bubbleClass}>
@@ -335,9 +348,9 @@ function EnhancedMultiAgentChatUI() {
       <header className="bg-white dark:bg-gray-800 shadow-sm p-3 z-10">
         <div className="flex items-center gap-4 pb-2 flex-wrap">
           <ConnectionStatus />
-          
-          <button 
-            onClick={handleAutomateAgentCreation} 
+
+          <button
+            onClick={handleAutomateAgentCreation}
             disabled={isAutomating || !connectionState.authenticated}
             className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 disabled:bg-purple-400"
           >
@@ -374,7 +387,7 @@ function EnhancedMultiAgentChatUI() {
               className="px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 text-sm"
             >
               <option value="">Select Agent</option>
-              {agents.map(agent => (
+              {agents.map((agent) => (
                 <option key={agent.agentId} value={agent.agentId}>
                   {agent.name} ({agent.type})
                 </option>
@@ -389,17 +402,19 @@ function EnhancedMultiAgentChatUI() {
 
         {/* Agents list */}
         <div className="flex items-center gap-2 mt-2 flex-wrap">
-          {agents.map(agent => (
-            <div 
-              key={agent.agentId} 
+          {agents.map((agent) => (
+            <div
+              key={agent.agentId}
               className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-lg px-2 py-1"
             >
               <span className="text-sm">{agent.name}</span>
               <span className="text-xs opacity-75">({agent.type})</span>
-              <div className={cn(
-                'w-2 h-2 rounded-full',
-                'bg-green-500' // Assume online for now
-              )} />
+              <div
+                className={cn(
+                  'w-2 h-2 rounded-full',
+                  'bg-green-500' // Assume online for now
+                )}
+              />
             </div>
           ))}
         </div>
@@ -409,7 +424,7 @@ function EnhancedMultiAgentChatUI() {
           <div className="mt-2">
             <div className="text-sm font-medium mb-1">Active Conversations:</div>
             <div className="flex gap-2 flex-wrap">
-              {conversations.map(conv => (
+              {conversations.map((conv) => (
                 <button
                   key={conv.id}
                   onClick={() => {
@@ -418,8 +433,8 @@ function EnhancedMultiAgentChatUI() {
                   }}
                   className={cn(
                     'px-2 py-1 text-xs rounded border',
-                    currentConversation === conv.id 
-                      ? 'bg-blue-500 text-white' 
+                    currentConversation === conv.id
+                      ? 'bg-blue-500 text-white'
                       : 'bg-gray-100 dark:bg-gray-700'
                   )}
                 >
@@ -430,9 +445,9 @@ function EnhancedMultiAgentChatUI() {
           </div>
         )}
       </header>
-      
+
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {messages.map(msg => (
+        {messages.map((msg) => (
           <MessageBubble key={msg.id} msg={msg} />
         ))}
         {messages.length === 0 && connectionState.authenticated && (
@@ -448,29 +463,38 @@ function EnhancedMultiAgentChatUI() {
       <footer className="bg-white dark:bg-gray-800 shadow-inner p-2">
         <div className="flex items-center space-x-2">
           <div className="flex-1 relative">
-            <input 
-              type="text" 
-              value={inputValue} 
-              onChange={e => setInputValue(e.target.value)} 
-              onKeyPress={e => e.key === 'Enter' && handleSendMessage()} 
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder={
-                mode === 'direct' 
-                  ? selectedAgent 
-                    ? `Message ${agents.find(a => a.agentId === selectedAgent)?.name}...`
-                    : "Select an agent first..."
+                mode === 'direct'
+                  ? selectedAgent
+                    ? `Message ${agents.find((a) => a.agentId === selectedAgent)?.name}...`
+                    : 'Select an agent first...'
                   : mode === 'broadcast'
-                    ? "Broadcast to all agents..."
+                    ? 'Broadcast to all agents...'
                     : currentConversation
-                      ? "Message conversation..."
-                      : "Start or join a conversation..."
+                      ? 'Message conversation...'
+                      : 'Start or join a conversation...'
               }
-              disabled={!connectionState.authenticated || (mode === 'direct' && !selectedAgent) || (mode === 'conversation' && !currentConversation)}
-              className="w-full p-2 border bg-transparent border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-blue-500 disabled:opacity-50" 
+              disabled={
+                !connectionState.authenticated ||
+                (mode === 'direct' && !selectedAgent) ||
+                (mode === 'conversation' && !currentConversation)
+              }
+              className="w-full p-2 border bg-transparent border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-blue-500 disabled:opacity-50"
             />
           </div>
-          <button 
-            onClick={handleSendMessage} 
-            disabled={!inputValue.trim() || !connectionState.authenticated || (mode === 'direct' && !selectedAgent) || (mode === 'conversation' && !currentConversation)}
+          <button
+            onClick={handleSendMessage}
+            disabled={
+              !inputValue.trim() ||
+              !connectionState.authenticated ||
+              (mode === 'direct' && !selectedAgent) ||
+              (mode === 'conversation' && !currentConversation)
+            }
             aria-label="Send message"
             className="p-3 bg-blue-500 text-white rounded-full disabled:bg-gray-400 hover:bg-blue-600"
           >
