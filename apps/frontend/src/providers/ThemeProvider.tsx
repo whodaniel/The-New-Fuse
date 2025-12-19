@@ -1,12 +1,9 @@
-import { darkTheme, defaultTheme } from '@/theme/defaultTheme';
-import { Theme } from '@/theme/types';
+
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 interface ThemeContextType {
-  currentTheme: 'light' | 'dark';
-  theme: Theme;
+  theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
-  customizeTheme: (customizations: Partial<Theme>) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -14,52 +11,38 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 interface ThemeProviderProps {
   children: ReactNode;
   defaultTheme?: 'light' | 'dark';
+  storageKey?: string;
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  defaultTheme: initialTheme = 'dark',
+  defaultTheme = 'system',
+  storageKey = 'vite-ui-theme',
 }) => {
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(initialTheme);
-  const [customTheme, setCustomTheme] = useState<Partial<Theme>>({});
-
-  const theme = {
-    ...(currentTheme === 'light' ? defaultTheme : darkTheme),
-    ...customTheme,
-  };
-
-  const setTheme = (theme: 'light' | 'dark') => {
-    setCurrentTheme(theme);
-  };
-
-  const customizeTheme = (customizations: Partial<Theme>) => {
-    setCustomTheme((prev) => ({ ...prev, ...customizations }));
-  };
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-      setCurrentTheme(savedTheme);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const storedTheme = localStorage.getItem(storageKey) as 'light' | 'dark' | null;
+    if (storedTheme) {
+      return storedTheme;
     }
-  }, []);
+    if (defaultTheme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return defaultTheme;
+  });
 
   useEffect(() => {
-    localStorage.setItem('theme', currentTheme);
-    document.documentElement.className = currentTheme;
-  }, [currentTheme]);
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem(storageKey, theme);
+  }, [theme, storageKey]);
 
-  return (
-    <ThemeContext.Provider
-      value={{
-        currentTheme,
-        theme,
-        setTheme,
-        customizeTheme,
-      }}
-    >
-      {children}
-    </ThemeContext.Provider>
-  );
+  const value = {
+    theme,
+    setTheme,
+  };
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = () => {

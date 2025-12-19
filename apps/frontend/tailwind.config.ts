@@ -17,17 +17,11 @@ export default {
         heading: ['"Outfit"', 'sans-serif'],
       },
       spacing: {
-        // Enhanced spacing scale for premium UX
         xs: '4px',
         sm: '8px',
         md: '16px',
         lg: '24px',
         xl: '32px',
-        '2xl': '48px',
-        '3xl': '64px',
-        '4xl': '96px',
-        '5xl': '128px',
-        touch: '44px', // Minimum touch target
       },
       fontSize: {
         // World-class typography scale
@@ -70,11 +64,20 @@ export default {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
+        surface: {
+          DEFAULT: 'hsl(var(--surface))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+        },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: '1rem',
+        xl: '1.5rem',
+        '2xl': '2rem',
       },
       minHeight: {
         touch: '44px',
@@ -86,10 +89,8 @@ export default {
         button: '120px',
       },
       boxShadow: {
-        'glow-sm': '0 0 10px rgba(59, 130, 246, 0.3)',
-        'glow-md': '0 0 20px rgba(59, 130, 246, 0.4)',
-        'glow-lg': '0 0 30px rgba(59, 130, 246, 0.5)',
-        glass: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -124,10 +125,6 @@ export default {
         scaleIn: {
           '0%': { transform: 'scale(0.9)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
-        },
-        glow: {
-          '0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.2)' },
-          '100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)' },
         },
       },
     },
