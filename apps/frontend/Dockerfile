@@ -29,7 +29,7 @@ COPY . ./frontend-source/
 
 # Install dependencies
 WORKDIR /app/frontend-source
-RUN npm install --legacy-peer-deps || pnpm install --no-frozen-lockfile
+RUN npm install --legacy-peer-deps || pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Build the application
 ENV NODE_ENV=production
