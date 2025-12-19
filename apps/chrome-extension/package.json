@@ -9,7 +9,7 @@
     "generate-icons": "node generate-icons.cjs",
     "generate-notification-icons": "node scripts/generate-notification-icons.cjs",
     "build": "webpack --config webpack.config.cjs --mode production",
-    "prebuild": "bun run generate-icons && bun run generate-notification-icons",
+    "prebuild": "node generate-icons.cjs && node scripts/generate-notification-icons.cjs",
     "dev": "webpack --mode development --watch",
     "package": "node scripts/package-extension.js",
     "test": "jest",
@@ -19,7 +19,7 @@
     "clean": "rimraf dist icons coverage .turbo node_modules/.cache",
     "clean:build": "rimraf dist icons coverage",
     "typecheck": "tsc --noEmit",
-    "build:package": "bun run build && bun run package"
+    "build:package": "pnpm run build && pnpm run package"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
