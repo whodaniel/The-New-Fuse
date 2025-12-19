@@ -76,13 +76,13 @@ seamless AI-to-AI communication across different environments.
 
 ### 2. Agent Framework (5 packages)
 
-| Package                           | Description                         | Status      |
-| --------------------------------- | ----------------------------------- | ----------- |
-| `@the-new-fuse/agent`             | Core agent implementations          | ⚠️ Stubbed  |
-| `@the-new-fuse/claude-skills`     | Anthropic Claude Skills integration | ✅ Complete |
-| `@the-new-fuse/workflow-engine`   | Unified workflow execution          | ✅ Complete |
-| `@the-new-fuse/prompt-templating` | Modular prompt system               | ✅ Complete |
-| `@the-new-fuse/resource-registry` | Agent/resource management           | ✅ Complete |
+| Package                           | Description                         | Status         |
+| --------------------------------- | ----------------------------------- | -------------- |
+| `@the-new-fuse/agent`             | Core agent implementations          | ✅ Implemented |
+| `@the-new-fuse/claude-skills`     | Anthropic Claude Skills integration | ✅ Complete    |
+| `@the-new-fuse/workflow-engine`   | Unified workflow execution          | ✅ Complete    |
+| `@the-new-fuse/prompt-templating` | Modular prompt system               | ✅ Complete    |
+| `@the-new-fuse/resource-registry` | Agent/resource management           | ✅ Complete    |
 
 ### 3. Infrastructure & Operations (8 packages)
 
