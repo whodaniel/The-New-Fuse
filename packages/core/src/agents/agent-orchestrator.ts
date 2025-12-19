@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events';
 import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { v4 as uuidv4 } from 'uuid';
+import { SubTaskLifecycleManager } from './sub-task-lifecycle-manager';
 
 export interface Task {
   id: string;
@@ -37,8 +39,9 @@ export class AgentOrchestrator extends EventEmitter {
   private readonly tasks = new Map<string, Task>();
   private readonly agents = new Map<string, Agent>();
   private readonly taskQueue: string[] = [];
+  private readonly subTaskCompletions = new Map<string, { completed: number; total: number }>();
 
-  constructor() {
+  constructor(private readonly subTaskLifecycleManager: SubTaskLifecycleManager) {
     super();
     this.logger.log('AgentOrchestrator initialized');
   }
@@ -67,10 +70,16 @@ export class AgentOrchestrator extends EventEmitter {
   async executeTask(taskId: string): Promise<TaskResult> {
     const task = this.tasks.get(taskId);
     if (!task) {
+      this.logger.error(`Task ${taskId} not found`);
       throw new Error(`Task ${taskId} not found`);
     }
 
+    if (task.payload?.useDelegation) {
+      return this.executeWithDelegation(task);
+    }
+
     if (task.status !== 'pending') {
+      this.logger.warn(`Task ${taskId} is not in pending state, current status: ${task.status}`);
       throw new Error(`Task ${taskId} is not in pending state`);
     }
 
@@ -78,6 +87,7 @@ export class AgentOrchestrator extends EventEmitter {
       // Wait for an available agent if none are free
       const agent = await this.getAvailableAgent();
       if (!agent) {
+        this.logger.log(`No agent available for task ${taskId}, waiting...`);
         await new Promise((resolve) => this.once('agentAvailable', resolve));
       }
 
@@ -94,6 +104,7 @@ export class AgentOrchestrator extends EventEmitter {
 
       return result;
     } catch (error) {
+      this.logger.error(`Error executing task ${taskId}`, error);
       task.status = 'failed';
       task.updatedAt = new Date();
       this.emit('taskFailed', { task, error });
@@ -198,6 +209,76 @@ export class AgentOrchestrator extends EventEmitter {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
+    }
+  }
+
+  @OnEvent('subtask.completed')
+  handleSubTaskCompletion(event: { parentTaskId: string; subTask: any; result: TaskResult }) {
+    this.logger.log(`Sub-task completed for parent task ${event.parentTaskId}`);
+    const completionStatus = this.subTaskCompletions.get(event.parentTaskId);
+    if (!completionStatus) {
+      this.logger.warn(`No completion status found for parent task ${event.parentTaskId}`);
+      return;
+    }
+
+    completionStatus.completed += 1;
+    if (completionStatus.completed >= completionStatus.total) {
+      this.aggregateAndFinalize(event.parentTaskId);
+      this.subTaskCompletions.delete(event.parentTaskId);
+    }
+  }
+
+  async executeWithDelegation(task: Task): Promise<TaskResult> {
+    this.logger.log(`Executing task ${task.id} with delegation`);
+    try {
+      const subTasks = this.subTaskLifecycleManager.planSubTasks(task);
+      if (subTasks.length === 0) {
+        this.logger.log(`No sub-tasks planned for ${task.id}. Completing task directly.`);
+        task.status = 'completed';
+        task.updatedAt = new Date();
+        this.emit('taskCompleted', task);
+        return { success: true, data: 'Completed with no sub-tasks' };
+      }
+
+      this.subTaskCompletions.set(task.id, { completed: 0, total: subTasks.length });
+
+      // Mock agent 'Jules' for delegation
+      const julesAgent: Agent = {
+        id: 'jules-001',
+        name: 'Jules',
+        type: 'DelegationAgent',
+        status: 'idle',
+        capabilities: ['delegation'],
+        lastActivity: new Date(),
+      };
+
+      for (const subTask of subTasks) {
+        this.logger.log(`Delegating sub-task for parent task ${task.id}`);
+        this.subTaskLifecycleManager.delegateSubTask(subTask, julesAgent);
+      }
+
+      task.status = 'in_progress';
+      this.emit('taskStarted', task);
+
+      return { success: true, data: 'Delegation in progress' };
+    } catch (error) {
+      this.logger.error(`Failed to execute task ${task.id} with delegation`, error);
+      task.status = 'failed';
+      this.emit('taskFailed', { task, error });
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown delegation error' };
+    }
+  }
+
+  private aggregateAndFinalize(taskId: string): void {
+    this.logger.log(`All sub-tasks completed for parent task ${taskId}. Aggregating and finalizing.`);
+    const task = this.tasks.get(taskId);
+    if (task) {
+      task.status = 'completed';
+      task.updatedAt = new Date();
+      this.emit('taskCompleted', task);
+      this.logger.log(`Task ${taskId} has been finalized.`);
+    } else {
+      this.logger.error(`Could not find task ${taskId} to finalize.`);
     }
   }
 
