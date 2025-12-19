@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
 import { DatabaseModule } from '@the-new-fuse/database';
 import { AgentsModule } from './agents/agents.module';
+import { BrandConsistencyAgentModule } from './agents/brand-consistency-agent.module';
+import { BrowserHubSwarmModule } from './agents/browser-hub-swarm.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CacheService } from './cache/cache.service';
@@ -34,19 +36,18 @@ import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
+import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { SecurityModule } from './modules/security/security.module';
 import { TaskModule } from './modules/task/task.module';
+import { TNFAutonomousModule } from './modules/tnf-autonomous.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module';
+import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { Web3authModule } from './web3auth/web3auth.module';
 import { WebsocketGateway } from './websocket/websocket.gateway';
-import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
-import { PromptTemplatesModule } from './modules/prompt-templates.module';
-import { BrandConsistencyAgentModule } from './agents/brand-consistency-agent.module';
-import { BrowserHubSwarmModule } from './agents/browser-hub-swarm.module';
 
 // Security imports
 import { SecureAuthGuard } from './guards/secure-auth.guard';
@@ -110,6 +111,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
     GraphqlModule, // GraphQL API Module
+    TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
   ],
   controllers: [
     AppController,
@@ -174,8 +176,7 @@ export class AppModule implements NestModule {
     // TODO: Re-enable after fixing middleware implementation
     consumer
       .apply(EnhancedSecurityMiddleware)
-      .exclude('api/agents/(.*)', 'api/a2a/(.*)', 'api/system/(.*)')  // Exclude test routes
+      .exclude('api/agents/(.*)', 'api/a2a/(.*)', 'api/system/(.*)') // Exclude test routes
       .forRoutes('*');
   }
 }
-

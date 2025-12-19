@@ -65,7 +65,6 @@ export class LLMChatAgent implements IAgent {
     this.id = config.agentId;
     this.name = config.name;
     this.config = {
-      provider: 'anthropic',
       model: 'claude-3-sonnet-20240229',
       maxTokens: 4096,
       temperature: 0.7,

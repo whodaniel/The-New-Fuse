@@ -4,7 +4,9 @@
  * Implements the "cascade" pattern where one agent's output becomes another's input
  */
 
-import { IAgent } from '../interfaces/IAgent';
+import type { Message, MessageType } from '@the-new-fuse/types';
+
+import type { IAgent } from '../interfaces/IAgent';
 
 export interface CascadeConfig {
   agentId: string;
@@ -287,10 +289,18 @@ export class CascadeAgent implements IAgent {
       // Execute via agent
       const agent = this.agentRegistry.get(step.agentId);
       if (agent) {
-        const response = await agent.process({
-          action: step.action,
-          payload: mappedInput,
-        });
+        const message: Message = {
+          id: `msg-${Date.now()}`,
+          type: 'command' as MessageType,
+          content: {
+            action: step.action,
+            payload: mappedInput,
+          },
+          timestamp: Date.now(),
+          sender: this.id,
+          recipient: step.agentId,
+        };
+        const response = await agent.process(message);
         result.output = response;
         result.status = 'success';
       } else {
@@ -320,7 +330,9 @@ export class CascadeAgent implements IAgent {
     variables: Record<string, unknown>,
     lastOutput: unknown
   ): unknown {
-    if (path === '$output') return lastOutput;
+    if (path === '$output') {
+      return lastOutput;
+    }
     if (path.startsWith('$')) {
       return variables[path.slice(1)];
     }
