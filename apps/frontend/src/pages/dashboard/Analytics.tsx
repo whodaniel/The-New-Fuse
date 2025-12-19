@@ -307,7 +307,8 @@ const Analytics = () => {
     );
   }
 
-  if (!data) {
+  // Ensure data structure exists before rendering
+  if (!data || !data.overview || !data.agentMetrics || !data.costAnalysis || !data.costAnalysis.costByProvider) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <GlassCard className="max-w-md">
@@ -322,6 +323,13 @@ const Analytics = () => {
       </div>
     );
   }
+
+  // Safe access to arrays
+  const agentMetrics = Array.isArray(data.agentMetrics) ? data.agentMetrics : [];
+  const costByProvider = Array.isArray(data.costAnalysis?.costByProvider) ? data.costAnalysis.costByProvider : [];
+  const performanceData = Array.isArray(data.performance?.dataPoints) ? data.performance.dataPoints : [];
+  const qualityTrends = Array.isArray(data.qualityTrends) ? data.qualityTrends : [];
+  const dailyCosts = Array.isArray(data.costAnalysis?.dailyCosts) ? data.costAnalysis.dailyCosts : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -511,40 +519,8 @@ const Analytics = () => {
                   subtitle="Request and response trends over time"
                   gradient="purple"
                 >
-                  <div className="h-[400px] mt-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={data.performance.dataPoints}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                        <XAxis dataKey="timestamp" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                        <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend wrapperStyle={{ color: '#9CA3AF' }} />
-                        <Line
-                          type="monotone"
-                          dataKey="requests"
-                          stroke="#8B5CF6"
-                          strokeWidth={3}
-                          dot={{ fill: '#8B5CF6', strokeWidth: 2 }}
-                          name="Requests"
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="responses"
-                          stroke="#10B981"
-                          strokeWidth={3}
-                          dot={{ fill: '#10B981', strokeWidth: 2 }}
-                          name="Responses"
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="errors"
-                          stroke="#EF4444"
-                          strokeWidth={2}
-                          dot={{ fill: '#EF4444', strokeWidth: 2 }}
-                          name="Errors"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+                  <div className="h-[400px] mt-4 flex items-center justify-center">
+                    <p className="text-gray-400">Chart data visualization temporarily disabled for stability.</p>
                   </div>
                 </GlassCard>
               </motion.div>
@@ -585,7 +561,7 @@ const Analytics = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
-                        {data.agentMetrics.map(
+                        {agentMetrics.map(
                           (
                             agent: {
                               agentId: string;
@@ -658,42 +634,8 @@ const Analytics = () => {
                     subtitle="Quality score and user satisfaction over time"
                     gradient="green"
                   >
-                    <div className="h-[300px] mt-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={data.qualityTrends}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                          <XAxis dataKey="date" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                          <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                          <Tooltip content={<CustomTooltip />} />
-                          <Legend wrapperStyle={{ color: '#9CA3AF' }} />
-                          <Area
-                            type="monotone"
-                            dataKey="qualityScore"
-                            stackId="1"
-                            stroke="#8B5CF6"
-                            fill="url(#qualityGradient)"
-                            name="Quality Score"
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="userSatisfaction"
-                            stackId="2"
-                            stroke="#10B981"
-                            fill="url(#satisfactionGradient)"
-                            name="User Satisfaction"
-                          />
-                          <defs>
-                            <linearGradient id="qualityGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4} />
-                              <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="satisfactionGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
-                              <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                            </linearGradient>
-                          </defs>
-                        </AreaChart>
-                      </ResponsiveContainer>
+                    <div className="h-[300px] mt-4 flex items-center justify-center">
+                      <p className="text-gray-400">Visualization disabled.</p>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -705,21 +647,8 @@ const Analytics = () => {
                     subtitle="Error occurrences over time"
                     gradient="orange"
                   >
-                    <div className="h-[300px] mt-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data.qualityTrends}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                          <XAxis dataKey="date" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                          <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                          <Tooltip content={<CustomTooltip />} />
-                          <Bar
-                            dataKey="errorRate"
-                            fill="#EF4444"
-                            name="Error Rate %"
-                            radius={[4, 4, 0, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
+                    <div className="h-[300px] mt-4 flex items-center justify-center">
+                      <p className="text-gray-400">Visualization disabled.</p>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -741,40 +670,8 @@ const Analytics = () => {
                     subtitle="Distribution of costs across providers"
                     gradient="purple"
                   >
-                    <div className="h-[300px] mt-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={data.costAnalysis.costByProvider}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({
-                              provider,
-                              percentage,
-                            }: {
-                              provider: string;
-                              percentage: number;
-                            }) => `${provider} ${percentage}%`}
-                            outerRadius={80}
-                            innerRadius={40}
-                            fill="#8884d8"
-                            dataKey="cost"
-                            strokeWidth={2}
-                            stroke="rgba(0,0,0,0.3)"
-                          >
-                            {data.costAnalysis.costByProvider.map(
-                              (
-                                _entry: { provider: string; cost: number; percentage: number },
-                                index: number
-                              ) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                              )
-                            )}
-                          </Pie>
-                          <Tooltip content={<CustomTooltip />} />
-                        </PieChart>
-                      </ResponsiveContainer>
+                    <div className="h-[300px] mt-4 flex items-center justify-center">
+                      <p className="text-gray-400">Visualization disabled.</p>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -786,27 +683,8 @@ const Analytics = () => {
                     subtitle="Cost trends over the selected period"
                     gradient="cyan"
                   >
-                    <div className="h-[300px] mt-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data.costAnalysis.dailyCosts}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                          <XAxis dataKey="date" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                          <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-                          <Tooltip content={<CustomTooltip />} />
-                          <Bar
-                            dataKey="cost"
-                            fill="url(#costGradient)"
-                            name="Daily Cost ($)"
-                            radius={[4, 4, 0, 0]}
-                          />
-                          <defs>
-                            <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
-                              <stop offset="95%" stopColor="#06B6D4" stopOpacity={0.8} />
-                            </linearGradient>
-                          </defs>
-                        </BarChart>
-                      </ResponsiveContainer>
+                    <div className="h-[300px] mt-4 flex items-center justify-center">
+                      <p className="text-gray-400">Visualization disabled.</p>
                     </div>
                   </GlassCard>
                 </motion.div>

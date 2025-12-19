@@ -73,7 +73,7 @@ export const ModernHub: React.FC = () => {
   const checkServiceStatus = async () => {
     try {
       // Check core services
-      const coreResponse = await fetch('http://localhost:3000/api/health');
+      const coreResponse = await fetch('/api/health');
       setCoreStatus(coreResponse.ok ? 'active' : 'error');
     } catch {
       setCoreStatus('error');
@@ -81,7 +81,7 @@ export const ModernHub: React.FC = () => {
 
     try {
       // Check frontend
-      const frontendResponse = await fetch('http://localhost:5173');
+      const frontendResponse = await fetch(window.location.origin);
       setWorkflowStatus(frontendResponse.ok ? 'active' : 'error');
     } catch {
       setWorkflowStatus('error');

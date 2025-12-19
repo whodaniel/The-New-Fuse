@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface DialogProps {
   open?: boolean;
@@ -35,6 +35,35 @@ interface DialogTriggerProps {
 }
 
 export function Dialog({ open, onOpenChange, children }: DialogProps) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (open && e.key === 'Escape') {
+        onOpenChange?.(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+      // Lock body scroll when dialog is open, but save original style
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.removeEventListener('keydown', handleEscape);
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+
+    // Cleanup if component unmounts without running the effect cleanup above (e.g. if open was false)
+    // Actually, the effect cleanup runs when 'open' changes or component unmounts.
+    // But if open is false, we didn't set the listener or style.
+
+    // Simpler logic:
+    return () => {
+       document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open, onOpenChange]);
+
   if (!open) return null;
 
   return (
@@ -42,8 +71,13 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
       <div
         className="fixed inset-0 bg-black bg-opacity-50"
         onClick={() => onOpenChange?.(false)}
+        aria-hidden="true"
       />
-      <div className="relative bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+      <div
+        className="relative bg-white rounded-lg shadow-lg max-w-md w-full mx-4"
+        role="dialog"
+        aria-modal="true"
+      >
         {children}
       </div>
     </div>
