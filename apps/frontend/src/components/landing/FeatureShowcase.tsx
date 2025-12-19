@@ -18,7 +18,10 @@ import { FeaturesSection } from './FeaturesSection';
 
 export const FeatureShowcase: React.FC = () => {
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div
+      id="features"
+      className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+    >
       {/* Main Features Section */}
       <FeaturesSection
         id="core-features"
