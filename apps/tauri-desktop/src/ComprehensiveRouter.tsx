@@ -8,21 +8,23 @@ const AgentHub = lazy(() => import('./pages/AgentHub'));
 const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'));
 const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
 const MCPMarketplace = lazy(() => import('./pages/MCPMarketplace'));
+const Analytics = lazy(() => import('./pages/Analytics'));
 const Settings = lazy(() => import('./pages/Settings'));
 
 /**
  * The New Fuse Tauri Desktop - Comprehensive Router
- * Deep Space Premium Design with Full Navigation
+ * Deep Space Premium Design with Responsive Mobile/Desktop Navigation
  */
 const ComprehensiveRouter: React.FC = () => {
   const { currentRoute, navigate } = useRoute();
-  const { sidebarCollapsed, toggleSidebar, sidebarOpen } = useLayout();
+  const { sidebarCollapsed, sidebarOpen, isMobile, toggleSidebar, setSidebarOpen } = useLayout();
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
     { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
-    { id: 'chat', label: 'Multi-Agent Chat', icon: '💬', route: '/chat', section: 'main' },
+    { id: 'chat', label: 'Chat', icon: '💬', route: '/chat', section: 'main' },
     { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows', section: 'main' },
+    { id: 'analytics', label: 'Analytics', icon: '📊', route: '/analytics', section: 'main' },
     { id: 'mcp', label: 'MCP Store', icon: '🔧', route: '/mcp', section: 'tools' },
     { id: 'settings', label: 'Settings', icon: '⚙️', route: '/settings', section: 'system' },
   ];
@@ -39,6 +41,8 @@ const ComprehensiveRouter: React.FC = () => {
         return <MultiAgentChat />;
       case '/workflows':
         return <WorkflowBuilder />;
+      case '/analytics':
+        return <Analytics />;
       case '/mcp':
         return <MCPMarketplace />;
       case '/settings':
@@ -49,21 +53,51 @@ const ComprehensiveRouter: React.FC = () => {
     }
   };
 
+  const handleNavClick = (route: string) => {
+    navigate(route);
+    // Close sidebar on mobile after navigation
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="app-container">
+      {/* Mobile Header */}
+      {isMobile && (
+        <header className="mobile-header">
+          <button className="hamburger-btn" onClick={toggleSidebar}>
+            {sidebarOpen ? '✕' : '☰'}
+          </button>
+          <div className="mobile-logo">
+            <span className="logo-icon">🔥</span>
+            <span className="logo-text">The New Fuse</span>
+          </div>
+          <div className="mobile-header-spacer"></div>
+        </header>
+      )}
+
+      {/* Mobile Overlay */}
+      {isMobile && sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${!sidebarOpen ? 'hidden' : ''}`}
+        className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${sidebarOpen ? 'open' : 'closed'} ${isMobile ? 'mobile' : 'desktop'}`}
       >
-        <div className="sidebar-header">
-          <div className="logo">
-            <span className="logo-icon">🔥</span>
-            {!sidebarCollapsed && <span className="logo-text">The New Fuse</span>}
+        {/* Desktop Logo */}
+        {!isMobile && (
+          <div className="sidebar-header">
+            <div className="logo">
+              <span className="logo-icon">🔥</span>
+              {!sidebarCollapsed && <span className="logo-text">The New Fuse</span>}
+            </div>
+            <button className="collapse-btn" onClick={toggleSidebar}>
+              {sidebarCollapsed ? '→' : '←'}
+            </button>
           </div>
-          <button className="collapse-btn" onClick={toggleSidebar}>
-            {sidebarCollapsed ? '→' : '←'}
-          </button>
-        </div>
+        )}
 
         <nav className="sidebar-nav">
           {/* Main Navigation */}
@@ -72,7 +106,7 @@ const ComprehensiveRouter: React.FC = () => {
             <button
               key={item.id}
               className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => navigate(item.route)}
+              onClick={() => handleNavClick(item.route)}
               title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-icon">{item.icon}</span>
@@ -86,7 +120,7 @@ const ComprehensiveRouter: React.FC = () => {
             <button
               key={item.id}
               className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => navigate(item.route)}
+              onClick={() => handleNavClick(item.route)}
               title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-icon">{item.icon}</span>
@@ -101,7 +135,7 @@ const ComprehensiveRouter: React.FC = () => {
             <button
               key={item.id}
               className={`nav-item ${currentRoute === item.route ? 'active' : ''}`}
-              onClick={() => navigate(item.route)}
+              onClick={() => handleNavClick(item.route)}
               title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-icon">{item.icon}</span>
@@ -127,17 +161,70 @@ const ComprehensiveRouter: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="main-content">
+      <main className={`main-content ${isMobile ? 'mobile' : ''}`}>
         <Suspense fallback={<LoadingScreen />}>{renderPage()}</Suspense>
       </main>
 
       <style>{`
         .app-container {
           display: flex;
+          flex-direction: column;
           height: 100vh;
           background: var(--tnf-obsidian, #020617);
           color: var(--tnf-text-primary, #f8fafc);
           font-family: var(--tnf-font-body, 'Plus Jakarta Sans', sans-serif);
+        }
+
+        @media (min-width: 768px) {
+          .app-container {
+            flex-direction: row;
+          }
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 56px;
+          padding: 0 16px;
+          background: var(--tnf-surface, rgba(255, 255, 255, 0.02));
+          border-bottom: 1px solid var(--tnf-border, rgba(255, 255, 255, 0.08));
+          position: sticky;
+          top: 0;
+          z-index: 50;
+        }
+
+        .hamburger-btn {
+          width: 40px;
+          height: 40px;
+          background: transparent;
+          border: none;
+          color: var(--tnf-text-primary);
+          font-size: 22px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .mobile-logo {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .mobile-header-spacer {
+          width: 40px;
+        }
+
+        /* Sidebar Overlay (Mobile) */
+        .sidebar-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+          z-index: 90;
         }
 
         /* Sidebar */
@@ -148,15 +235,29 @@ const ComprehensiveRouter: React.FC = () => {
           border-right: 1px solid var(--tnf-border, rgba(255, 255, 255, 0.08));
           display: flex;
           flex-direction: column;
-          transition: width 0.3s var(--tnf-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
           z-index: 100;
         }
 
-        .sidebar.collapsed {
+        /* Mobile Sidebar */
+        .sidebar.mobile {
+          position: fixed;
+          top: 56px;
+          left: 0;
+          bottom: 0;
+          transform: translateX(-100%);
+        }
+
+        .sidebar.mobile.open {
+          transform: translateX(0);
+        }
+
+        /* Desktop Sidebar */
+        .sidebar.desktop.collapsed {
           width: 72px;
         }
 
-        .sidebar.hidden {
+        .sidebar.desktop.closed {
           display: none;
         }
 
@@ -289,10 +390,6 @@ const ComprehensiveRouter: React.FC = () => {
           box-shadow: 0 0 8px var(--tnf-success);
         }
 
-        .status-dot.offline {
-          background: var(--tnf-error, #ef4444);
-        }
-
         .version-info {
           display: flex;
           align-items: center;
@@ -315,6 +412,10 @@ const ComprehensiveRouter: React.FC = () => {
           background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
                       radial-gradient(ellipse 60% 40% at 80% 0%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
                       var(--tnf-obsidian);
+        }
+
+        .main-content.mobile {
+          padding-bottom: env(safe-area-inset-bottom);
         }
 
         /* Scrollbar */
