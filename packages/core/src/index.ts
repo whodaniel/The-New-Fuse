@@ -21,6 +21,7 @@ export { AgentSwarmOrchestrationService } from './agents/AgentSwarmOrchestration
 // Memory System
 export { MemorySystem } from './memory/MemorySystem';
 export { MemoryManager } from './memory/MemoryManager';
+export { VectorMemorySystem } from './memory/VectorMemorySystem';
 
 // Workflow System
 export { WorkflowEngine } from './workflow/WorkflowEngine';
@@ -44,28 +45,28 @@ export * from './types/workflow';
 export * from './types/featureFlags';
 
 // Export monitoring types with explicit naming to avoid conflicts
-export { 
-  PerformanceMetrics, 
-  SystemMetrics, 
-  ApplicationMetrics, 
-  AgentMetrics, 
+export {
+  PerformanceMetrics,
+  SystemMetrics,
+  ApplicationMetrics,
+  AgentMetrics,
   WorkflowMetrics,
-  Alert, 
-  AlertSeverity, 
-  AlertStatus, 
-  AlertCondition, 
+  Alert,
+  AlertSeverity,
+  AlertStatus,
+  AlertCondition,
   AlertAction,
-  LogEntry, 
+  LogEntry,
   LogLevel,
-  Trace, 
-  Span, 
+  Trace,
+  Span,
   SpanLog,
-  Metric, 
-  MetricType, 
-  MetricSeries, 
+  Metric,
+  MetricType,
+  MetricSeries,
   MetricDataPoint,
   HealthStatus as MonitoringHealthStatus,
-  ServiceHealth as MonitoringServiceHealth
+  ServiceHealth as MonitoringServiceHealth,
 } from './types/monitoring';
 
 // Constants

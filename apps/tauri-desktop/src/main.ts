@@ -5,6 +5,7 @@
 
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { AgentHealth, SystemHealth } from './services/heartbeat';
 import './styles.css';
 
 // ============================================================================
@@ -24,6 +25,9 @@ interface MCPTool {
 let bridgeConnected = false;
 let activeView = 'dashboard';
 let sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+let heartbeatConnected = false;
+let systemHealth: SystemHealth | null = null;
+let agents: AgentHealth[] = [];
 
 // ============================================================================
 // TAURI API WRAPPERS
@@ -151,6 +155,10 @@ function renderContent(viewId: string) {
     case 'settings':
       content.innerHTML = renderSettings();
       break;
+    case 'heartbeat':
+      content.innerHTML = renderHeartbeatPanel();
+      initHeartbeatListeners();
+      break;
     default:
       content.innerHTML = renderDashboard();
   }
@@ -187,6 +195,12 @@ function renderDashboard(): string {
         <button class="action-card" onclick="window.tnf.switchView('theia')">
           <i class="fas fa-code"></i>
           <span>Cloud IDE</span>
+        </button>
+
+        <button class="action-card" onclick="window.tnf.switchView('heartbeat')">
+          <i class="fas fa-heartbeat"></i>
+          <span>Heartbeat</span>
+          <div class="status-dot ${heartbeatConnected ? 'online pulse' : 'offline'}" id="heartbeat-status-card"></div>
         </button>
       </div>
 
@@ -539,6 +553,241 @@ async function browserGetContent() {
 }
 
 // ============================================================================
+// HEARTBEAT FUNCTIONS
+// ============================================================================
+
+function renderHeartbeatPanel(): string {
+  const health = systemHealth;
+  const agentList = agents;
+
+  return `
+    <div class="heartbeat-container">
+      <div class="panel-header">
+        <h2><i class="fas fa-heartbeat"></i> Heartbeat Monitor</h2>
+        <div class="connection-badge ${heartbeatConnected ? 'online' : 'offline'}">
+          ${heartbeatConnected ? '💓 Connected' : '⚡ Disconnected'}
+        </div>
+      </div>
+
+      <div class="heartbeat-controls">
+        <button class="primary-btn" onclick="window.tnf.connectHeartbeat()" ${heartbeatConnected ? 'disabled' : ''}>
+          <i class="fas fa-plug"></i> Connect Heartbeat
+        </button>
+        <button class="action-btn" onclick="window.tnf.refreshHeartbeat()">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
+      </div>
+
+      <!-- Visual Heartbeat Pulse -->
+      <div class="heartbeat-visual" id="heartbeat-visual">
+        <div class="pulse-container">
+          <div class="pulse-ring ${heartbeatConnected ? 'active' : ''}"></div>
+          <div class="pulse-core ${heartbeatConnected ? 'active' : ''}">
+            <i class="fas fa-heart"></i>
+          </div>
+        </div>
+        <div class="pulse-stats">
+          <span class="pulse-bpm">${health ? '60' : '--'} BPM</span>
+          <span class="pulse-label">System Heartbeat</span>
+        </div>
+      </div>
+
+      <!-- System Health -->
+      <div class="health-grid" id="health-grid">
+        <div class="health-card">
+          <div class="health-value">${health?.totalAgents || 0}</div>
+          <div class="health-label">Total Agents</div>
+        </div>
+        <div class="health-card success">
+          <div class="health-value">${health?.activeAgents || 0}</div>
+          <div class="health-label">Active</div>
+        </div>
+        <div class="health-card warning">
+          <div class="health-value">${health?.stalledAgents || 0}</div>
+          <div class="health-label">Stalled</div>
+        </div>
+        <div class="health-card danger">
+          <div class="health-value">${health?.failedAgents || 0}</div>
+          <div class="health-label">Failed</div>
+        </div>
+      </div>
+
+      <!-- Alert Summary -->
+      <div class="alert-summary">
+        <div class="alert-item ${(health?.criticalAlerts || 0) > 0 ? 'critical' : ''}">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>${health?.criticalAlerts || 0} Critical Alerts</span>
+        </div>
+        <div class="alert-item ${(health?.emergencyAlerts || 0) > 0 ? 'emergency' : ''}">
+          <i class="fas fa-radiation"></i>
+          <span>${health?.emergencyAlerts || 0} Emergency Alerts</span>
+        </div>
+        <div class="alert-item">
+          <i class="fas fa-clock"></i>
+          <span>Avg Response: ${health?.averageResponseTime ? Math.round(health.averageResponseTime) + 'ms' : '--'}</span>
+        </div>
+      </div>
+
+      <!-- Agent List -->
+      <div class="agents-section">
+        <h3><i class="fas fa-robot"></i> Registered Agents</h3>
+        <div class="agents-list" id="agents-list">
+          ${
+            agentList.length === 0
+              ? '<p class="empty">No agents registered yet. Connect to see active agents.</p>'
+              : agentList
+                  .map(
+                    (agent) => `
+              <div class="agent-card ${agent.status}">
+                <div class="agent-status-indicator ${agent.status}"></div>
+                <div class="agent-info">
+                  <h4>${agent.agentId}</h4>
+                  <p>Status: ${agent.status} ${agent.currentTask ? `• Task: ${agent.currentTask}` : ''}</p>
+                </div>
+                <div class="agent-health ${agent.isHealthy ? 'healthy' : 'unhealthy'}">
+                  <i class="fas fa-${agent.isHealthy ? 'check-circle' : 'times-circle'}"></i>
+                </div>
+              </div>
+            `
+                  )
+                  .join('')
+          }
+        </div>
+      </div>
+
+      <!-- Last Update -->
+      <div class="last-update">
+        Last updated: ${health?.lastUpdate ? new Date(health.lastUpdate).toLocaleTimeString() : 'Never'}
+      </div>
+    </div>
+  `;
+}
+
+function initHeartbeatListeners(): void {
+  // Set up heartbeat client event listeners
+  heartbeatClient.on('connected', () => {
+    heartbeatConnected = true;
+    updateHeartbeatUI();
+    showNotification('Heartbeat connected', 'success');
+  });
+
+  heartbeatClient.on('disconnected', () => {
+    heartbeatConnected = false;
+    updateHeartbeatUI();
+    showNotification('Heartbeat disconnected', 'info');
+  });
+
+  heartbeatClient.on('system_health_updated', (health: SystemHealth) => {
+    systemHealth = health;
+    updateHealthDisplay();
+  });
+
+  heartbeatClient.on('agent_registered', (agent: AgentHealth) => {
+    agents.push(agent);
+    updateAgentsList();
+  });
+
+  heartbeatClient.on('heartbeat', () => {
+    // Trigger pulse animation
+    const pulseCore = document.querySelector('.pulse-core');
+    if (pulseCore) {
+      pulseCore.classList.add('beat');
+      setTimeout(() => pulseCore.classList.remove('beat'), 300);
+    }
+  });
+
+  heartbeatClient.on('critical_alert', (alert: unknown) => {
+    showNotification(
+      `🚨 Critical: Agent ${(alert as { agentId: string }).agentId} stalled`,
+      'error'
+    );
+  });
+
+  heartbeatClient.on('human_intervention_required', (data: unknown) => {
+    const d = data as { message: string };
+    showNotification(`⚠️ ${d.message}`, 'error');
+  });
+}
+
+async function connectHeartbeat(): Promise<void> {
+  showNotification('Connecting to heartbeat...', 'info');
+  try {
+    await heartbeatClient.connect();
+  } catch (e) {
+    showNotification('Heartbeat connection failed', 'error');
+    console.error('Heartbeat connection error:', e);
+  }
+}
+
+function refreshHeartbeat(): void {
+  heartbeatClient.requestSystemHealth();
+  showNotification('Refreshing heartbeat data...', 'info');
+}
+
+function updateHeartbeatUI(): void {
+  const badge = document.querySelector('.heartbeat-container .connection-badge');
+  if (badge) {
+    badge.className = `connection-badge ${heartbeatConnected ? 'online' : 'offline'}`;
+    badge.innerHTML = heartbeatConnected ? '💓 Connected' : '⚡ Disconnected';
+  }
+
+  const pulseRing = document.querySelector('.pulse-ring');
+  const pulseCore = document.querySelector('.pulse-core');
+  if (pulseRing) pulseRing.classList.toggle('active', heartbeatConnected);
+  if (pulseCore) pulseCore.classList.toggle('active', heartbeatConnected);
+}
+
+function updateHealthDisplay(): void {
+  const healthGrid = document.getElementById('health-grid');
+  if (healthGrid && systemHealth) {
+    healthGrid.innerHTML = `
+      <div class="health-card">
+        <div class="health-value">${systemHealth.totalAgents}</div>
+        <div class="health-label">Total Agents</div>
+      </div>
+      <div class="health-card success">
+        <div class="health-value">${systemHealth.activeAgents}</div>
+        <div class="health-label">Active</div>
+      </div>
+      <div class="health-card warning">
+        <div class="health-value">${systemHealth.stalledAgents}</div>
+        <div class="health-label">Stalled</div>
+      </div>
+      <div class="health-card danger">
+        <div class="health-value">${systemHealth.failedAgents}</div>
+        <div class="health-label">Failed</div>
+      </div>
+    `;
+  }
+}
+
+function updateAgentsList(): void {
+  const agentsList = document.getElementById('agents-list');
+  if (agentsList) {
+    if (agents.length === 0) {
+      agentsList.innerHTML = '<p class="empty">No agents registered yet.</p>';
+    } else {
+      agentsList.innerHTML = agents
+        .map(
+          (agent) => `
+        <div class="agent-card ${agent.status}">
+          <div class="agent-status-indicator ${agent.status}"></div>
+          <div class="agent-info">
+            <h4>${agent.agentId}</h4>
+            <p>Status: ${agent.status} ${agent.currentTask ? `• Task: ${agent.currentTask}` : ''}</p>
+          </div>
+          <div class="agent-health ${agent.isHealthy ? 'healthy' : 'unhealthy'}">
+            <i class="fas fa-${agent.isHealthy ? 'check-circle' : 'times-circle'}"></i>
+          </div>
+        </div>
+      `
+        )
+        .join('');
+    }
+  }
+}
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
@@ -586,6 +835,8 @@ function initApp() {
   browserNavigate,
   browserScreenshot,
   browserGetContent,
+  connectHeartbeat,
+  refreshHeartbeat,
 };
 
 // Initialize on DOM ready

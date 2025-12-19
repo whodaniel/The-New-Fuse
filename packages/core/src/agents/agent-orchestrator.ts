@@ -54,7 +54,7 @@ export class AgentOrchestrator extends EventEmitter {
       status: 'pending',
       createdAt: new Date(),
       updatedAt: new Date(),
-      retries: 0
+      retries: 0,
     };
 
     this.tasks.set(taskId, newTask);
@@ -100,6 +100,18 @@ export class AgentOrchestrator extends EventEmitter {
       const result = await this.performTask(task);
       task.status = result.success ? 'completed' : 'failed';
       task.updatedAt = new Date();
+
+      // Store result in memory
+      if (this.memoryManager && result.success) {
+        await this.memoryManager
+          .storeTaskResult(task.agentId || 'system', task.id, result.data, {
+            type: task.type,
+            status: task.status,
+            priority: task.priority,
+          })
+          .catch((err) => this.logger.warn(`Failed to store task result for ${taskId}`, err));
+      }
+
       this.emit('taskCompleted', task);
 
       return result;
@@ -118,11 +130,11 @@ export class AgentOrchestrator extends EventEmitter {
   }
 
   getPendingTasks(): Task[] {
-    return Array.from(this.tasks.values()).filter(task => task.status === 'pending');
+    return Array.from(this.tasks.values()).filter((task) => task.status === 'pending');
   }
 
   getRunningTasks(): Task[] {
-    return Array.from(this.tasks.values()).filter(task => task.status === 'in_progress');
+    return Array.from(this.tasks.values()).filter((task) => task.status === 'in_progress');
   }
 
   cancelTask(taskId: string): boolean {
@@ -163,7 +175,7 @@ export class AgentOrchestrator extends EventEmitter {
   registerAgent(agent: Omit<Agent, 'lastActivity'>): void {
     const newAgent: Agent = {
       ...agent,
-      lastActivity: new Date()
+      lastActivity: new Date(),
     };
 
     this.agents.set(agent.id, newAgent);
@@ -202,12 +214,12 @@ export class AgentOrchestrator extends EventEmitter {
     // Placeholder for actual task execution logic
     // This would interface with specific agents based on task type
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate work
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate work
       return { success: true, data: `Task ${task.id} completed` };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -291,6 +303,6 @@ export class AgentOrchestrator extends EventEmitter {
   }
 
   getActiveAgents(): Agent[] {
-    return Array.from(this.agents.values()).filter(agent => agent.status !== 'offline');
+    return Array.from(this.agents.values()).filter((agent) => agent.status !== 'offline');
   }
 }

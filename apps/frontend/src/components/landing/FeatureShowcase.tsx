@@ -20,7 +20,7 @@ export const FeatureShowcase: React.FC = () => {
   return (
     <div
       id="features"
-      className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+      className="bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
     >
       {/* Main Features Section */}
       <FeaturesSection
