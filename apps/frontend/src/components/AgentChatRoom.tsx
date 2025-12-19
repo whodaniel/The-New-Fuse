@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import AgentMessage from './agent-message';
 import { webSocketService } from '../services/websocket';
@@ -24,6 +25,7 @@ interface Message {
 
 export function AgentChatRoom({}: AgentChatRoomProps) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [currentAgent] = useState({
     id: 'composer',
     name: 'Composer',
@@ -31,6 +33,11 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
   });
 
   useEffect(() => {
+    const handleError = (error: any) => {
+        setError(error.message);
+        console.error('WebSocket error:', error.message);
+    };
+
     // Subscribe to Redis channel messages
     webSocketService.on(`agent:broadcast`, (data) => {
       const newMessage: Message = {
@@ -65,9 +72,12 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
       setMessages((prev: any) => [...prev, newMessage]);
     });
 
+    webSocketService.on('error', handleError);
+
     return () => {
       webSocketService.removeAllListeners(`agent:broadcast`);
       webSocketService.removeAllListeners(`agent:direct:${currentAgent.id}`);
+      webSocketService.off('error', handleError);
     };
   }, [currentAgent.id]);
 
@@ -77,6 +87,12 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
         <CardTitle className="text-xl font-bold">Agent Communication Room</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col p-4 overflow-hidden">
+        {error && (
+            <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+        )}
         <ScrollArea className="flex-grow pr-4">
           <div className="space-y-4">
             {messages.map((message) => (

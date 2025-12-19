@@ -94,7 +94,7 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
       logLevel: this.configService.get('LOG_LEVEL', 'info') as RelayConfig['logLevel'],
       ports: {
         http: this.configService.get('RELAY_HTTP_PORT', 3010),
-        websocket: this.configService.get('RELAY_WS_PORT', 8081),
+        websocket: this.configService.get('WEBSOCKET_PORT', 3001),
         grpc: this.configService.get('RELAY_GRPC_PORT', 50051),
       },
       transports: {

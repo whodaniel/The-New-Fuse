@@ -19,7 +19,7 @@ const cn = (...classes: string[]) => classes.filter(Boolean).join(' ');
 
 // A2A Configuration
 const A2A_CONFIG = {
-  url: process.env.REACT_APP_A2A_WEBSOCKET_URL || 'ws://localhost:3001',
+  url: import.meta.env.VITE_WS_URL || 'ws://localhost:3001',
   agentId: uuidv4(), // Generate unique agent ID for this session
 };
 
@@ -57,7 +57,7 @@ export default function MultiAgentChat() {
 }
 
 function EnhancedMultiAgentChatUI() {
-  const { connectionState, connect, disconnect } = useA2AContext();
+  const { connectionState, connect, disconnect, error: connectionError } = useA2AContext();
   const { agents, refreshAgents } = useA2AAgents();
   const { messages, sendMessage, broadcast } = useA2AMessages();
   const { conversations, joinConversation } = useA2AConversations();
@@ -290,13 +290,30 @@ function EnhancedMultiAgentChatUI() {
     );
   };
 
+  if (connectionError) {
+    return (
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
+        <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
+        <h1 className="text-3xl font-bold mb-2">Connection Error</h1>
+        <p className="text-gray-400 mb-4">Could not connect to the WebSocket server.</p>
+        <p className="text-gray-500 text-sm mb-6">{connectionError.message}</p>
+        <button
+          onClick={connect}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Retry Connection
+        </button>
+      </div>
+    );
+  }
+
   if (!connectionState.connected && !connectionState.connecting) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
         <div className="w-20 h-20 border-8 border-dashed rounded-full animate-spin border-blue-500 mb-6"></div>
         <h1 className="text-3xl font-bold mb-2">A2A Multi-Agent Chat</h1>
         <p className="text-gray-400 mb-4">Connecting to A2A protocol...</p>
-        <button 
+        <button
           onClick={connect}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
