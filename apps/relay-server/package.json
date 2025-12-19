@@ -9,8 +9,8 @@
     "setup": "node src/comprehensive-tnf-relay.js setup",
     "build-ui": "cd ui && npm run build",
     "dev-ui": "cd ui && npm start",
-    "install": "./install.sh",
-    "uninstall": "./uninstall.sh"
+    "manual-setup": "./install.sh",
+    "manual-uninstall": "./uninstall.sh"
   },
   "dependencies": {
     "express": "^4.18.2",

@@ -40,24 +40,31 @@ management system that provides:
 
 ## Installation
 
-### Quick Install
+### From Monorepo Root (Recommended)
 
 ```bash
-cd "./tnf-relay-package"
-./install.sh
-```
-
-### Manual Install
-
-```bash
-# Install dependencies
+# Install all dependencies
 pnpm install
 
-# Build UI
-pnpm run build-ui
+# Build UI (optional)
+pnpm --filter tnf-relay-complete run build-ui
+
+# Start the relay server
+pnpm --filter tnf-relay-complete start
+```
+
+### Standalone Setup (Advanced)
+
+If you want to run relay-server standalone outside the monorepo:
+
+```bash
+cd apps/relay-server
+
+# Run manual setup script
+pnpm run manual-setup
 
 # Start the system
-npm start
+pnpm start
 ```
 
 ## Usage
