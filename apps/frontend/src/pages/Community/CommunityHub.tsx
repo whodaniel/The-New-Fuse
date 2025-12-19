@@ -101,7 +101,12 @@ const CommunityHub: React.FC = () => {
         fetch('/api/community/stats'),
       ]);
 
-      if (postsResponse.ok && statsResponse.ok) {
+      const isJson = (response: Response) => {
+        const contentType = response.headers.get('content-type');
+        return contentType && contentType.includes('application/json');
+      };
+
+      if (postsResponse.ok && statsResponse.ok && isJson(postsResponse) && isJson(statsResponse)) {
         const postsData = await postsResponse.json();
         const statsData = await statsResponse.json();
         setPosts(postsData);
