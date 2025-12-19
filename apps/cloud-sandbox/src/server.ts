@@ -481,6 +481,298 @@ app.get('/', (_req, res) => {
 const server = createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws' });
 
+// ============================================================================
+// HEARTBEAT MONITORING SYSTEM
+// ============================================================================
+
+interface AgentHeartbeat {
+  agentId: string;
+  lastHeartbeat: Date;
+  lastActivity: Date;
+  status: 'active' | 'idle' | 'stalled' | 'failed';
+  consecutiveFailures: number;
+  currentTask?: string;
+}
+
+interface HeartbeatClient {
+  id: string;
+  ws: WebSocket;
+  type: 'monitor'; // Client type for heartbeat connections
+}
+
+const agentHeartbeats = new Map<string, AgentHeartbeat>();
+const heartbeatClients = new Map<string, HeartbeatClient>();
+
+// Heartbeat configuration
+const HEARTBEAT_CONFIG = {
+  intervalMs: 10000, // Check every 10 seconds
+  timeoutMs: 30000, // Agent timeout after 30 seconds
+  stagnationThresholdMs: 60000, // Stagnation after 1 minute
+};
+
+// Heartbeat WebSocket server
+const heartbeatWss = new WebSocketServer({ server, path: '/ws/heartbeat' });
+
+heartbeatWss.on('connection', (ws) => {
+  const clientId = uuidv4();
+  const client: HeartbeatClient = {
+    id: clientId,
+    ws,
+    type: 'monitor',
+  };
+  heartbeatClients.set(clientId, client);
+
+  console.log(`💓 Heartbeat client connected: ${clientId} (Total: ${heartbeatClients.size})`);
+
+  // Send initial system health
+  sendSystemHealth(ws);
+
+  ws.on('message', (data) => {
+    try {
+      const message = JSON.parse(data.toString());
+      handleHeartbeatMessage(clientId, message);
+    } catch (error) {
+      console.error('Heartbeat message error:', error);
+    }
+  });
+
+  ws.on('close', () => {
+    heartbeatClients.delete(clientId);
+    console.log(`💔 Heartbeat client disconnected: ${clientId}`);
+  });
+
+  ws.on('error', (error) => {
+    console.error(`Heartbeat error for ${clientId}:`, error);
+    heartbeatClients.delete(clientId);
+  });
+});
+
+function handleHeartbeatMessage(
+  clientId: string,
+  message: { type: string; payload?: Record<string, unknown> }
+): void {
+  switch (message.type) {
+    case 'register_agent': {
+      const agentId = message.payload?.agentId as string;
+      if (agentId) {
+        registerAgent(agentId);
+        broadcastToHeartbeatClients({ type: 'agent_registered', payload: { agentId } });
+      }
+      break;
+    }
+    case 'heartbeat': {
+      const agentId = message.payload?.agentId as string;
+      const taskId = message.payload?.taskId as string | undefined;
+      if (agentId) {
+        recordHeartbeat(agentId, taskId);
+      }
+      break;
+    }
+    case 'activity': {
+      const agentId = message.payload?.agentId as string;
+      if (agentId) {
+        recordActivity(agentId);
+      }
+      break;
+    }
+    case 'get_system_health': {
+      const client = heartbeatClients.get(clientId);
+      if (client) {
+        sendSystemHealth(client.ws);
+      }
+      break;
+    }
+    case 'get_agent_health': {
+      const agentId = message.payload?.agentId as string;
+      const client = heartbeatClients.get(clientId);
+      if (client && agentId) {
+        const health = agentHeartbeats.get(agentId);
+        client.ws.send(
+          JSON.stringify({
+            type: 'agent_health',
+            payload: health || null,
+          })
+        );
+      }
+      break;
+    }
+  }
+}
+
+function registerAgent(agentId: string): void {
+  agentHeartbeats.set(agentId, {
+    agentId,
+    lastHeartbeat: new Date(),
+    lastActivity: new Date(),
+    status: 'active',
+    consecutiveFailures: 0,
+  });
+  console.log(`📝 Agent registered: ${agentId}`);
+}
+
+function recordHeartbeat(agentId: string, taskId?: string): void {
+  let heartbeat = agentHeartbeats.get(agentId);
+  if (!heartbeat) {
+    registerAgent(agentId);
+    heartbeat = agentHeartbeats.get(agentId)!;
+  }
+
+  heartbeat.lastHeartbeat = new Date();
+  heartbeat.lastActivity = new Date();
+  heartbeat.status = 'active';
+  heartbeat.consecutiveFailures = 0;
+  if (taskId) {
+    heartbeat.currentTask = taskId;
+  }
+
+  broadcastToHeartbeatClients({
+    type: 'heartbeat_received',
+    payload: { agentId, taskId },
+  });
+}
+
+function recordActivity(agentId: string): void {
+  const heartbeat = agentHeartbeats.get(agentId);
+  if (heartbeat) {
+    heartbeat.lastActivity = new Date();
+    heartbeat.status = 'active';
+  }
+}
+
+function getSystemHealth(): object {
+  const agents = Array.from(agentHeartbeats.values());
+  const now = new Date();
+
+  const activeAgents = agents.filter((a) => a.status === 'active').length;
+  const stalledAgents = agents.filter((a) => a.status === 'stalled').length;
+  const failedAgents = agents.filter((a) => a.status === 'failed').length;
+
+  const responseTimes = agents
+    .filter((a) => a.status === 'active')
+    .map((a) => now.getTime() - a.lastHeartbeat.getTime());
+
+  const averageResponseTime =
+    responseTimes.length > 0
+      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
+      : 0;
+
+  // Count alerts
+  const criticalAlerts = agents.filter(
+    (a) => a.status === 'stalled' && a.consecutiveFailures > 3
+  ).length;
+  const emergencyAlerts = agents.filter(
+    (a) => a.status === 'failed' || a.consecutiveFailures > 5
+  ).length;
+
+  return {
+    totalAgents: agents.length,
+    activeAgents,
+    stalledAgents,
+    failedAgents,
+    activeAlerts: stalledAgents + failedAgents,
+    criticalAlerts,
+    emergencyAlerts,
+    averageResponseTime,
+    lastUpdate: now.toISOString(),
+  };
+}
+
+function sendSystemHealth(ws: WebSocket): void {
+  ws.send(
+    JSON.stringify({
+      type: 'system_health',
+      payload: getSystemHealth(),
+    })
+  );
+}
+
+function broadcastToHeartbeatClients(message: object): void {
+  const data = JSON.stringify(message);
+  for (const client of heartbeatClients.values()) {
+    if (client.ws.readyState === 1) {
+      // WebSocket.OPEN
+      client.ws.send(data);
+    }
+  }
+}
+
+// Periodic health check
+function performHealthCheck(): void {
+  const now = new Date();
+
+  for (const [agentId, heartbeat] of agentHeartbeats.entries()) {
+    const timeSinceLastHeartbeat = now.getTime() - heartbeat.lastHeartbeat.getTime();
+    const timeSinceLastActivity = now.getTime() - heartbeat.lastActivity.getTime();
+
+    let newStatus = heartbeat.status;
+
+    // Check for timeout
+    if (timeSinceLastHeartbeat > HEARTBEAT_CONFIG.timeoutMs * 2) {
+      newStatus = 'failed';
+      heartbeat.consecutiveFailures++;
+    } else if (timeSinceLastActivity > HEARTBEAT_CONFIG.stagnationThresholdMs) {
+      newStatus = 'stalled';
+      heartbeat.consecutiveFailures++;
+    } else if (timeSinceLastHeartbeat > HEARTBEAT_CONFIG.timeoutMs) {
+      newStatus = 'idle';
+    }
+
+    if (heartbeat.status !== newStatus) {
+      heartbeat.status = newStatus;
+      broadcastToHeartbeatClients({
+        type: 'agent_status_changed',
+        payload: { agentId, newStatus },
+      });
+
+      if (newStatus === 'stalled') {
+        broadcastToHeartbeatClients({
+          type: 'stagnation_detected',
+          payload: {
+            agentId,
+            taskId: heartbeat.currentTask || 'unknown',
+            stagnationType: 'no_progress',
+            detectedAt: now.toISOString(),
+            duration: timeSinceLastActivity,
+            severity:
+              heartbeat.consecutiveFailures > 5
+                ? 'emergency'
+                : heartbeat.consecutiveFailures > 3
+                  ? 'critical'
+                  : 'warning',
+          },
+        });
+      }
+
+      if (newStatus === 'failed' && heartbeat.consecutiveFailures > 5) {
+        broadcastToHeartbeatClients({
+          type: 'human_intervention_required',
+          payload: {
+            agentId,
+            alert: {
+              stagnationType: 'timeout',
+              severity: 'emergency',
+            },
+            message: `Agent ${agentId} has failed after ${heartbeat.consecutiveFailures} consecutive failures`,
+          },
+        });
+      }
+    }
+  }
+
+  // Broadcast updated health to all clients
+  for (const client of heartbeatClients.values()) {
+    sendSystemHealth(client.ws);
+  }
+}
+
+// Start heartbeat monitoring
+setInterval(performHealthCheck, HEARTBEAT_CONFIG.intervalMs);
+console.log('💓 Heartbeat monitoring started');
+
+// ============================================================================
+// MAIN WebSocket connection handling
+// ============================================================================
+
 // WebSocket connection handling
 wss.on('connection', (ws) => {
   const clientId = uuidv4();
@@ -537,5 +829,6 @@ const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`🚀 TNF Cloud Sandbox running on port ${PORT}`);
   console.log(`📡 WebSocket endpoint: ws://localhost:${PORT}/ws`);
+  console.log(`💓 Heartbeat endpoint: ws://localhost:${PORT}/ws/heartbeat`);
   console.log(`🔧 Available tools: ${tools.map((t) => t.name).join(', ')}`);
 });

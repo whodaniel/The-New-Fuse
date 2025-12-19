@@ -2,8 +2,9 @@
  * @fileoverview Memory manager that coordinates multiple memory systems
  */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { MemorySystem } from './MemorySystem';
+import { VectorMemorySystem } from './VectorMemorySystem';
 import { MemoryContent, MemoryQuery, MemoryQueryResult, MemoryContentType } from '../types/memory';
 import { ServiceState } from '../constants/types';
 import { BaseError } from '../utils/errors';
@@ -15,10 +16,17 @@ export class MemoryManager {
   private memorySystems: Map<string, MemorySystem> = new Map();
   private defaultSystem: MemorySystem;
 
-  constructor() {
-    // Initialize default memory system
+  constructor(@Optional() private readonly vectorMemorySystem?: VectorMemorySystem) {
+    // Initialize default memory system (local)
     this.defaultSystem = new MemorySystem();
     this.memorySystems.set('default', this.defaultSystem);
+
+    // Register vector memory system if available
+    if (this.vectorMemorySystem) {
+      // Cast VectorMemorySystem to MemorySystem (compatible interfaces)
+      this.memorySystems.set('vector', this.vectorMemorySystem as unknown as MemorySystem);
+      this.logger.log('Vector memory system registered');
+    }
   }
 
   async start(): Promise<void> {
@@ -76,7 +84,10 @@ export class MemoryManager {
   }
 
   // Memory operations that delegate to appropriate systems
-  async store(content: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'>, systemName?: string): Promise<string> {
+  async store(
+    content: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'>,
+    systemName?: string,
+  ): Promise<string> {
     const system = this.getMemorySystem(systemName);
     return await system.store(content);
   }
@@ -86,7 +97,11 @@ export class MemoryManager {
     return await system.retrieve(id);
   }
 
-  async update(id: string, updates: Partial<Omit<MemoryContent, 'id' | 'createdAt' | 'accessCount' | 'lastAccessed'>>, systemName?: string): Promise<MemoryContent | null> {
+  async update(
+    id: string,
+    updates: Partial<Omit<MemoryContent, 'id' | 'createdAt' | 'accessCount' | 'lastAccessed'>>,
+    systemName?: string,
+  ): Promise<MemoryContent | null> {
     const system = this.getMemorySystem(systemName);
     return await system.update(id, updates);
   }
@@ -117,7 +132,7 @@ export class MemoryManager {
     }
 
     // Combine and sort results
-    const combinedResults = allResults.flatMap(result => result.results);
+    const combinedResults = allResults.flatMap((result) => result.results);
     combinedResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
     // Apply limit across all results
@@ -127,13 +142,21 @@ export class MemoryManager {
       results: limitedResults,
       totalCount: combinedResults.length,
       queryTime: totalQueryTime,
-      suggestions: this.combineSuggestions(allResults.map(r => r.suggestions || [])),
+      suggestions: this.combineSuggestions(allResults.map((r) => r.suggestions || [])),
     };
   }
 
   // Agent-specific memory operations
-  async storeAgentMemory(agentId: string, content: string, type: MemoryContentType, metadata?: Record<string, any>): Promise<string> {
-    const memoryContent: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'> = {
+  async storeAgentMemory(
+    agentId: string,
+    content: string,
+    type: MemoryContentType,
+    metadata?: Record<string, any>,
+  ): Promise<string> {
+    const memoryContent: Omit<
+      MemoryContent,
+      'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'
+    > = {
       content,
       type,
       metadata: {
@@ -157,17 +180,26 @@ export class MemoryManager {
     };
 
     const result = await this.search(query);
-    return result.results.map(r => r.content);
+    return result.results.map((r) => r.content);
   }
 
-  async storeConversation(agentId: string, conversation: string, metadata?: Record<string, any>): Promise<string> {
+  async storeConversation(
+    agentId: string,
+    conversation: string,
+    metadata?: Record<string, any>,
+  ): Promise<string> {
     return await this.storeAgentMemory(agentId, conversation, MemoryContentType.CONVERSATION, {
       ...metadata,
       tags: ['conversation', `agent:${agentId}`],
     });
   }
 
-  async storeTaskResult(agentId: string, taskId: string, result: any, metadata?: Record<string, any>): Promise<string> {
+  async storeTaskResult(
+    agentId: string,
+    taskId: string,
+    result: any,
+    metadata?: Record<string, any>,
+  ): Promise<string> {
     const content = typeof result === 'string' ? result : JSON.stringify(result);
     return await this.storeAgentMemory(agentId, content, MemoryContentType.TASK_RESULT, {
       ...metadata,
@@ -176,8 +208,15 @@ export class MemoryManager {
     });
   }
 
-  async storeKnowledge(content: string, tags: string[], metadata?: Record<string, any>): Promise<string> {
-    const memoryContent: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'> = {
+  async storeKnowledge(
+    content: string,
+    tags: string[],
+    metadata?: Record<string, any>,
+  ): Promise<string> {
+    const memoryContent: Omit<
+      MemoryContent,
+      'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'
+    > = {
       content,
       type: MemoryContentType.KNOWLEDGE,
       metadata: {
@@ -242,7 +281,7 @@ export class MemoryManager {
     };
 
     const result = await this.searchAll(query);
-    return result.results.map(r => r.content);
+    return result.results.map((r) => r.content);
   }
 
   async getRecentMemories(agentId?: string, limit: number = 10): Promise<MemoryContent[]> {
@@ -253,13 +292,13 @@ export class MemoryManager {
     };
 
     const result = await this.searchAll(query);
-    
+
     // Sort by creation date (most recent first)
-    const sortedResults = result.results.sort((a, b) => 
-      b.content.createdAt.getTime() - a.content.createdAt.getTime()
+    const sortedResults = result.results.sort(
+      (a, b) => b.content.createdAt.getTime() - a.content.createdAt.getTime(),
     );
 
-    return sortedResults.map(r => r.content);
+    return sortedResults.map((r) => r.content);
   }
 
   async getMemoriesByTag(tag: string, limit?: number): Promise<MemoryContent[]> {
@@ -270,13 +309,13 @@ export class MemoryManager {
     };
 
     const result = await this.searchAll(query);
-    return result.results.map(r => r.content);
+    return result.results.map((r) => r.content);
   }
 
   private getMemorySystem(systemName?: string): MemorySystem {
     const name = systemName || 'default';
     const system = this.memorySystems.get(name);
-    
+
     if (!system) {
       throw new BaseError(`Memory system not found: ${name}`, 'MEMORY_SYSTEM_NOT_FOUND');
     }
@@ -286,7 +325,7 @@ export class MemoryManager {
 
   private combineSuggestions(suggestionArrays: string[][]): string[] {
     const suggestionCounts = new Map<string, number>();
-    
+
     for (const suggestions of suggestionArrays) {
       for (const suggestion of suggestions) {
         suggestionCounts.set(suggestion, (suggestionCounts.get(suggestion) || 0) + 1);

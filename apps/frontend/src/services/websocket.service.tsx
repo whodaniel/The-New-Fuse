@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
 import { sessionManager } from '@your-org/security';
+import { EventEmitter } from 'events';
 
 export class WebSocketService extends EventEmitter {
   private ws: WebSocket | null = null;
@@ -12,7 +12,7 @@ export class WebSocketService extends EventEmitter {
     private readonly baseUrl: string,
     private readonly options = {
       reconnectDelay: 2000,
-      pingInterval: 30000
+      pingInterval: 30000,
     }
   ) {
     super();
@@ -88,12 +88,15 @@ export class WebSocketService extends EventEmitter {
       return;
     }
 
-    this.reconnectTimeout = setTimeout(() => {
-      this.reconnectAttempts++;
-      this.connect().catch(error => {
-        this.emit('error', error);
-      });
-    }, this.options.reconnectDelay * Math.pow(2, this.reconnectAttempts));
+    this.reconnectTimeout = setTimeout(
+      () => {
+        this.reconnectAttempts++;
+        this.connect().catch((error) => {
+          this.emit('error', error);
+        });
+      },
+      this.options.reconnectDelay * Math.pow(2, this.reconnectAttempts)
+    );
   }
 
   private startPingInterval(): void {
@@ -140,4 +143,7 @@ export class WebSocketService extends EventEmitter {
   }
 }
 
-export const webSocketService = new WebSocketService(process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000');
+// Import centralized config
+import { getWebSocketUrl } from '../config/ports';
+
+export const webSocketService = new WebSocketService(getWebSocketUrl());
