@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { REFETCH_LOGO_EVENT } from "../contexts/LogoContext";
+
 const availableThemes = {
     default: "Default",
     light: "Light",

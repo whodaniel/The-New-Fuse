@@ -105,7 +105,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
   label,
   error,
   hint,
-  options,
+  options = [],
   className = '',
   ...props
 }) => {
