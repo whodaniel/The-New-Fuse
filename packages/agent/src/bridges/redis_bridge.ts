@@ -81,7 +81,9 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
       }
 
       // Create publisher connection
-      this.publisher = new Redis({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const RedisClass = Redis as any;
+      this.publisher = new RedisClass({
         host: this.config.host,
         port: this.config.port,
         password: this.config.password,
@@ -106,12 +108,12 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
       });
 
       // Setup error handlers
-      this.publisher.on('error', (err: Error) => {
-        this.emit('error', err);
+      this.publisher.on('error', (err: unknown) => {
+        this.emit('error', err instanceof Error ? err : new Error(String(err)));
       });
 
-      this.subscriber.on('error', (err: Error) => {
-        this.emit('error', err);
+      this.subscriber.on('error', (err: unknown) => {
+        this.emit('error', err instanceof Error ? err : new Error(String(err)));
       });
 
       this.connected = true;

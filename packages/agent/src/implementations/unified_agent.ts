@@ -79,6 +79,13 @@ export interface AgentState {
 // UNIFIED AGENT
 // ============================================================
 
+interface UnifiedAgentMetrics {
+  tasksCompleted: number;
+  tasksFailed: number;
+  totalDuration: number;
+  averageDuration: number;
+}
+
 export class UnifiedAgent extends EventEmitter {
   private config: UnifiedAgentConfig;
   private state: AgentState;
@@ -86,12 +93,7 @@ export class UnifiedAgent extends EventEmitter {
   private processing = false;
   private startTime: Date;
   private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
-  private metrics: {
-    tasksCompleted: number;
-    tasksFailed: number;
-    totalDuration: number;
-    averageDuration: number;
-  };
+  private metrics: UnifiedAgentMetrics;
 
   constructor(config: UnifiedAgentConfig) {
     super();
@@ -152,7 +154,7 @@ export class UnifiedAgent extends EventEmitter {
     capabilities: string[];
     protocols: SupportedProtocol[];
     state: AgentState;
-    metrics: typeof this.metrics;
+    metrics: UnifiedAgentMetrics;
   } {
     return {
       id: this.config.id,

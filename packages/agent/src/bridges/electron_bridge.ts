@@ -560,7 +560,8 @@ export class ElectronBridge extends BaseBridge {
 
     // Listen for messages on allowed channels
     for (const channel of this.config.allowedChannels) {
-      ipc.on(channel, async (event, message: IPCMessage) => {
+      ipc.on(channel, async (event: unknown, ...args: unknown[]) => {
+        const message = args[0] as IPCMessage;
         await this.handleMessage(message);
       });
     }

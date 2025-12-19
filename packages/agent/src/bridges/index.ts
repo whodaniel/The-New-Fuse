@@ -68,21 +68,13 @@ export * from './universal_bridge';
 export * from './vscode_bridge';
 
 // Protocol bridge - explicit exports (it has MCPTool, MCPResource, MCPPrompt)
-export {
-  A2AProtocolHandler,
-  MCPProtocolHandler,
-  ProtocolBridge,
-  TNFProtocolHandler,
-} from './protocol_bridge';
+export { ProtocolBridge } from './protocol_bridge';
 export type {
   A2AMessage,
-  MCPMessage,
   MCPPrompt,
   MCPResource,
   MCPTool,
   ProtocolBridgeConfig,
-  ProtocolMessage,
-  TNFMessage,
 } from './protocol_bridge';
 
 // MCP bridge - explicit exports (avoid MCP type duplicates with protocol_bridge)

@@ -88,17 +88,20 @@ export interface ToolCall {
 // ENHANCED AGENT
 // ============================================================
 
+// Define metrics type manually to avoid 'this' reference in return type
+interface AgentMetrics {
+  requestsProcessed: number;
+  tokensUsed: number;
+  averageLatency: number;
+  toolsInvoked: number;
+  errors: number;
+}
+
 export class EnhancedAgent extends EventEmitter {
   private config: EnhancedAgentConfig;
   private contexts: Map<string, AgentContext> = new Map();
   private shortTermMemory: Message[] = [];
-  private metrics: {
-    requestsProcessed: number;
-    tokensUsed: number;
-    averageLatency: number;
-    toolsInvoked: number;
-    errors: number;
-  };
+  private metrics: AgentMetrics;
   private isRunning = false;
 
   constructor(config: EnhancedAgentConfig) {
@@ -143,7 +146,7 @@ export class EnhancedAgent extends EventEmitter {
     name: string;
     running: boolean;
     capabilities: string[];
-    metrics: typeof this.metrics;
+    metrics: AgentMetrics;
   } {
     return {
       id: this.config.id,
