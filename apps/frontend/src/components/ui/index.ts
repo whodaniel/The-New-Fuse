@@ -1,3 +1,4 @@
+export * from './alert';
 export * from './badge';
 export * from './button';
 export * from './card';
@@ -16,4 +17,4 @@ export * from './tabs';
 export * from './textarea';
 export * from './use-toast';
 // Export specific components from toast to avoid conflicts
-export { Toast, Toaster } from './toast';
+export { Toaster } from './toast';
