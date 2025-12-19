@@ -56,6 +56,14 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        // Ensure single React instance to prevent "Invalid hook call" errors
+        react: path.resolve(__dirname, '../../node_modules/react'),
+        'react-dom': path.resolve(__dirname, '../../node_modules/react-dom'),
+        'react/jsx-runtime': path.resolve(__dirname, '../../node_modules/react/jsx-runtime'),
+        'react/jsx-dev-runtime': path.resolve(
+          __dirname,
+          '../../node_modules/react/jsx-dev-runtime'
+        ),
         // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code
         // @the-new-fuse/utils is aliased to a browser-safe shim
         '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
@@ -99,9 +107,9 @@ export default defineConfig(({ mode }) => {
     publicDir: 'public',
     optimizeDeps: {
       include: [
-        'firebase',
-        '@firebase/app',
-        '@firebase/auth',
+        'firebase/app',
+        'firebase/auth',
+        'firebase/firestore',
         'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
         'react',
         'react-dom',
