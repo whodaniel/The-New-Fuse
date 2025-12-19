@@ -25,12 +25,12 @@ export function LogoProvider({ children }): any {
         try {
             const { isCustomLogo, logoURL } = await System.fetchLogo();
             if (logoURL) {
-                setLogo({ url: logoURL, alt: 'Custom Logo', width: 150, height: 40 });
+                setLogo({ url: logoURL, alt: 'Instance custom logo', width: 150, height: 40 });
                 setLoginLogo(isCustomLogo ? logoURL : defaultLoginLogo);
                 setIsCustomLogo(isCustomLogo);
             }
             else {
-                localStorage.getItem("theme") !== "default"
+                (localStorage.getItem("theme") || "default") !== "default"
                     ? setLogo({ url: AnythingLLMDark, alt: 'Anything LLM Dark', width: 150, height: 40 })
                     : setLogo(defaultLogo);
                 setLoginLogo(defaultLoginLogo);
@@ -38,7 +38,7 @@ export function LogoProvider({ children }): any {
             }
         }
         catch (err) {
-            localStorage.getItem("theme") !== "default"
+            (localStorage.getItem("theme") || "default") !== "default"
                 ? setLogo({ url: AnythingLLMDark, alt: 'Anything LLM Dark', width: 150, height: 40 })
                 : setLogo(defaultLogo);
             setLoginLogo(defaultLoginLogo);

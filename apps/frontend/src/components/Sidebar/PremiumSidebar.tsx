@@ -62,6 +62,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({ isOpen, setIsOpe
         className={`fixed top-0 left-0 bottom-0 w-72 bg-slate-950/30 backdrop-blur-2xl border-r border-white/10 z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
+        role="navigation"
       >
         <div className="flex flex-col h-full">
           {/* Logo Area */}
@@ -77,6 +78,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({ isOpen, setIsOpe
             <button
               className="ml-auto lg:hidden text-gray-400 hover:text-white"
               onClick={() => setIsOpen(false)}
+              aria-label="Close sidebar"
             >
               <X className="w-6 h-6" />
             </button>

@@ -11,12 +11,16 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-30 h-16 backdrop-blur-md bg-slate-900/50 border-b border-white/5">
+    <header
+      className="sticky top-0 z-30 h-16 backdrop-blur-md bg-slate-900/50 border-b border-white/5"
+      role="banner"
+    >
       <div className="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={onMenuClick}
             className="lg:hidden p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+            aria-label="Open sidebar"
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -36,11 +40,15 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
               type="text"
               placeholder="Search anything..."
               className="bg-transparent border-none outline-none text-sm text-white placeholder-gray-500 w-full"
+              aria-label="Search"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="p-2 text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors relative">
+            <button
+              className="p-2 text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors relative"
+              aria-label="View notifications"
+            >
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
             </button>
