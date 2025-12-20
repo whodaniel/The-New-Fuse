@@ -8,10 +8,14 @@ import { performanceOptimizer } from '../utils/performance-optimizer';
 import { settingsManager } from '../utils/settings-manager';
 import { webSocketManager } from '../utils/websocket-manager';
 import { AIElementDetector } from './ai-element-detector';
+import { setupBrowserControlHandlers } from './browser-control-handlers';
 import { ChatIntegrationManager } from './chat-integration-manager';
 import { ElementInfo, ElementSelector, PageElementMapping } from './element-selector';
 
 console.log('The New Fuse enhanced content script loaded with floating panel support.');
+
+// Initialize browser control handlers for AI agent automation
+setupBrowserControlHandlers();
 
 // Initialize components
 const logger = new Logger({

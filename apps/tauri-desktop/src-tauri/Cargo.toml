@@ -28,6 +28,9 @@ tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
 futures-util = "0.3"
 uuid = { version = "1", features = ["v4"] }
 
+# HTTP client for Antigravity integration
+reqwest = { version = "0.12", features = ["json", "multipart", "rustls-tls"], default-features = false }
+
 [profile.release]
 panic = "abort"
 codegen-units = 1

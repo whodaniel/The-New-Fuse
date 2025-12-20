@@ -2,6 +2,7 @@
 // Handles MCP communication, bridge sidecar, and local permissions
 
 mod bridge;
+mod antigravity;
 
 // HashMap imported on demand via bridge module
 use std::sync::Arc;
@@ -10,6 +11,7 @@ use tauri::{Manager, State};
 use serde::{Deserialize, Serialize};
 
 use bridge::BridgeManager;
+use antigravity::{AntigravityClient, AntigravityCredentials, AntigravityStatus, PageInfo, UserSettings};
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -18,6 +20,7 @@ use bridge::BridgeManager;
 pub struct AppState {
     pub bridge_manager: Arc<Mutex<Option<BridgeManager>>>,
     pub sandbox_url: Mutex<String>,
+    pub antigravity_client: Arc<Mutex<AntigravityClient>>,
 }
 
 impl Default for AppState {
@@ -25,6 +28,7 @@ impl Default for AppState {
         Self {
             bridge_manager: Arc::new(Mutex::new(None)),
             sandbox_url: Mutex::new(String::from("wss://tnf-cloud-sandbox-production.up.railway.app/ws")),
+            antigravity_client: Arc::new(Mutex::new(AntigravityClient::new())),
         }
     }
 }
@@ -244,6 +248,81 @@ async fn check_service_status(services: Vec<ServiceStatus>) -> Vec<ServiceStatus
 }
 
 // ============================================================================
+// TAURI COMMANDS - Antigravity Integration
+// ============================================================================
+
+#[tauri::command]
+async fn antigravity_set_credentials(
+    csrf_token: String,
+    server_address: String,
+    state: State<'_, AppState>
+) -> Result<(), String> {
+    let mut client = state.antigravity_client.lock().await;
+    client.set_credentials(AntigravityCredentials {
+        csrf_token,
+        server_address,
+    });
+    Ok(())
+}
+
+#[tauri::command]
+async fn antigravity_get_status(state: State<'_, AppState>) -> Result<AntigravityStatus, String> {
+    let client = state.antigravity_client.lock().await;
+    client.get_status().await
+}
+
+#[tauri::command]
+async fn antigravity_get_user_settings(state: State<'_, AppState>) -> Result<UserSettings, String> {
+    let client = state.antigravity_client.lock().await;
+    client.get_user_settings().await
+}
+
+#[tauri::command]
+async fn antigravity_list_pages(state: State<'_, AppState>) -> Result<Vec<PageInfo>, String> {
+    let client = state.antigravity_client.lock().await;
+    client.list_pages().await
+}
+
+#[tauri::command]
+async fn antigravity_smart_focus(
+    conversation_id: String,
+    state: State<'_, AppState>
+) -> Result<(), String> {
+    let client = state.antigravity_client.lock().await;
+    client.smart_focus(&conversation_id).await
+}
+
+#[tauri::command]
+async fn antigravity_cancel_cascade(
+    invocation_id: String,
+    state: State<'_, AppState>
+) -> Result<(), String> {
+    let client = state.antigravity_client.lock().await;
+    client.cancel_cascade(&invocation_id).await
+}
+
+#[tauri::command]
+async fn antigravity_validate_cascade_overlay(
+    invocation_id: String,
+    validate: bool,
+    state: State<'_, AppState>
+) -> Result<(), String> {
+    let client = state.antigravity_client.lock().await;
+    client.validate_cascade_overlay(&invocation_id, validate).await
+}
+
+#[tauri::command]
+async fn antigravity_save_recording(
+    data: Vec<u8>,
+    filename: String,
+    conversation_id: String,
+    state: State<'_, AppState>
+) -> Result<(), String> {
+    let client = state.antigravity_client.lock().await;
+    client.save_recording(&data, &filename, &conversation_id).await
+}
+
+// ============================================================================
 // APPLICATION ENTRY POINT
 // ============================================================================
 
@@ -270,7 +349,16 @@ pub fn run() {
             list_directory,
             file_exists,
             // Services
-            check_service_status
+            check_service_status,
+            // Antigravity
+            antigravity_set_credentials,
+            antigravity_get_status,
+            antigravity_get_user_settings,
+            antigravity_list_pages,
+            antigravity_smart_focus,
+            antigravity_cancel_cascade,
+            antigravity_validate_cascade_overlay,
+            antigravity_save_recording
         ])
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();

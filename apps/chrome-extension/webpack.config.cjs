@@ -13,10 +13,10 @@ module.exports = (env, argv) => {
     devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
     entry: {
       popup: './src/popup/popup-fallback.js',
-      background: './src/background.js',
-      content: './src/content/index.js',
-      options: './src/options/options.js',
-      floatingPanel: './src/floatingPanel/floatingPanel.js'
+      background: './src/background.ts',
+      content: './src/content/index.ts',
+      options: './src/options/options.ts',
+      floatingPanel: './src/floatingPanel/floatingPanel.ts',
     },
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -24,22 +24,24 @@ module.exports = (env, argv) => {
       clean: true,
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.mjs'],
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
       mainFields: ['browser', 'module', 'main'],
       alias: {
         '@utils': path.resolve(__dirname, 'src/utils'),
         '@styles': path.resolve(__dirname, 'src/styles'),
-        '@components': path.resolve(__dirname, 'src/components')
-      }
+        '@components': path.resolve(__dirname, 'src/components'),
+      },
     },
     module: {
       rules: [
         {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
+        },
+        {
           test: /\.css$/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            'css-loader'
-          ],
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -59,8 +61,15 @@ module.exports = (env, argv) => {
             transform(content) {
               const manifest = JSON.parse(content.toString());
               // Adjust paths to be relative to the dist directory
-              if (manifest.action && manifest.action.default_popup && manifest.action.default_popup.startsWith('dist/')) {
-                manifest.action.default_popup = manifest.action.default_popup.replace(/^dist\//, '');
+              if (
+                manifest.action &&
+                manifest.action.default_popup &&
+                manifest.action.default_popup.startsWith('dist/')
+              ) {
+                manifest.action.default_popup = manifest.action.default_popup.replace(
+                  /^dist\//,
+                  ''
+                );
               }
               return JSON.stringify(manifest, null, 2);
             },
@@ -101,7 +110,7 @@ module.exports = (env, argv) => {
             name: 'commons',
             chunks: 'all',
             minChunks: 2,
-            enforce: true
+            enforce: true,
           },
         },
       },

@@ -5,6 +5,7 @@ import { useLayout } from './contexts/LayoutContext';
 // Lazy load pages
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const AgentHub = lazy(() => import('./pages/AgentHub'));
+const AntigravityHub = lazy(() => import('./pages/AntigravityHub'));
 const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'));
 const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
 const MCPMarketplace = lazy(() => import('./pages/MCPMarketplace'));
@@ -22,6 +23,7 @@ const ComprehensiveRouter: React.FC = () => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
     { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
+    { id: 'antigravity', label: 'Antigravity', icon: '🔮', route: '/antigravity', section: 'main' },
     { id: 'chat', label: 'Chat', icon: '💬', route: '/chat', section: 'main' },
     { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows', section: 'main' },
     { id: 'analytics', label: 'Analytics', icon: '📊', route: '/analytics', section: 'main' },
@@ -37,6 +39,8 @@ const ComprehensiveRouter: React.FC = () => {
     switch (currentRoute) {
       case '/agents':
         return <AgentHub />;
+      case '/antigravity':
+        return <AntigravityHub />;
       case '/chat':
         return <MultiAgentChat />;
       case '/workflows':

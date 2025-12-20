@@ -3,6 +3,11 @@
  * Supports AI-powered browser automation and element selection
  */
 
+import {
+  browserControlHandler,
+  BrowserControlMessageType,
+} from './background/browser-control-handler';
+import { federationManager } from './federation/FederationManager';
 import { ConnectionStatusMessage } from './shared-protocol';
 import { FileTransferManager } from './utils/file-transfer';
 import { Logger } from './utils/logger';
@@ -181,8 +186,37 @@ class TNFRelayConnection {
         case 'SESSION_CONTROL':
           await this.handleSessionControl(message.payload);
           break;
+
+        // Federation message handling
+        case 'FEDERATION_CHANNEL_CREATE':
+        case 'FEDERATION_CHANNEL_UPDATE':
+        case 'FEDERATION_CHANNEL_DELETE':
+        case 'FEDERATION_MEMBER_JOIN':
+        case 'FEDERATION_MEMBER_LEAVE':
+        case 'FEDERATION_CHANNEL_MESSAGE':
+        case 'FEDERATION_CONTEXT_SYNC':
+        case 'FEDERATION_ROUTE_REQUEST':
+        case 'FEDERATION_STATUS_REQUEST':
+          // Federation messages are handled by the FederationManager
+          // which has its own relay connection
+          this.logger.debug(`Federation message received: ${message.type}`);
+          break;
+
         default:
-          this.logger.warn('Unknown relay message type:', message.type);
+          // Try browser control handler for all other message types
+          if (
+            Object.values(BrowserControlMessageType).includes(
+              message.type as BrowserControlMessageType
+            )
+          ) {
+            const result = await browserControlHandler.handleMessage(message);
+            this.sendRelayMessage(`${message.type}_RESULT`, {
+              ...result,
+              correlationId: message.id,
+            });
+          } else {
+            this.logger.warn('Unknown relay message type:', message.type);
+          }
       }
     } catch (error) {
       this.logger.error('Error handling relay message:', error);
@@ -419,6 +453,20 @@ chrome.runtime.onStartup.addListener(() => {
         tnfRelayConnection.connect();
       }
     });
+
+    // Initialize Federation Manager
+    federationManager
+      .initialize()
+      .then((success: boolean) => {
+        if (success) {
+          backgroundLogger.info('Federation Manager initialized');
+        } else {
+          backgroundLogger.warn('Federation Manager initialization failed');
+        }
+      })
+      .catch((error: Error) => {
+        backgroundLogger.error('Federation Manager initialization error:', error);
+      });
   } catch (error) {
     backgroundLogger.error('Error during onStartup initialization:', error);
   }

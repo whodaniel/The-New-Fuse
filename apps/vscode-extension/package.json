@@ -54,6 +54,12 @@
           "id": "theNewFuse.chatView",
           "name": "AI Chat",
           "icon": "$(comment-discussion)"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.browserView",
+          "name": "Browser",
+          "icon": "$(globe)"
         }
       ]
     },
@@ -303,6 +309,30 @@
         "title": "Select AI Model",
         "category": "The New Fuse",
         "icon": "$(symbol-enum)"
+      },
+      {
+        "command": "theNewFuse.openBrowser",
+        "title": "Open Embedded Browser",
+        "category": "The New Fuse",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "theNewFuse.navigateTo",
+        "title": "Navigate Browser To URL",
+        "category": "The New Fuse",
+        "icon": "$(link)"
+      },
+      {
+        "command": "theNewFuse.browserScreenshot",
+        "title": "Take Browser Screenshot",
+        "category": "The New Fuse",
+        "icon": "$(device-camera)"
+      },
+      {
+        "command": "theNewFuse.browserExecuteScript",
+        "title": "Execute Script in Browser",
+        "category": "The New Fuse",
+        "icon": "$(code)"
       }
     ],
     "menus": {
@@ -659,6 +689,10 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.24.0",
-    "@vscode/codicons": "^0.0.36"
+    "@vscode/codicons": "^0.0.36",
+    "electron": "^28.0.0"
+  },
+  "optionalDependencies": {
+    "electron": "^28.0.0"
   }
 }
