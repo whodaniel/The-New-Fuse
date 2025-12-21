@@ -13,3 +13,5 @@ export type {
   MemberStatus,
   MemberType,
 } from './FederationManager';
+export { RedisBridge, redisBridge } from './RedisBridge';
+export type { RedisAgentInfo, RedisAgentMessage, RedisBridgeConfig } from './RedisBridge';

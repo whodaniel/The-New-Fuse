@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "The New Fuse - Hybrid Automation System",
-  "version": "3.0.0",
-  "description": "Supercharged Chrome extension for hybrid automation, TNF Relay, MCP, and native host integration.",
+  "name": "Fuse Connect - AI Bridge Extension",
+  "version": "3.1.0",
+  "description": "Bridge your browser to the AI agent network. Connect multiple AI chat platforms, automate workflows, and enable multi-agent collaboration.",
   "permissions": [
     "storage",
     "activeTab",
