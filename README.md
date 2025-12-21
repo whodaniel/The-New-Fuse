@@ -350,21 +350,74 @@ pnpm run docker:test
 
 ## 📚 Documentation
 
-### Guides
+### Essential Documentation
 
-- [Docker Setup Guide](./docs/guides/docker-setup.md)
+- **[Documentation Map](./DOCUMENTATION_MAP.md)** - Complete map of all 1,200+ docs with navigation paths
+- **[Documentation Index](./DOCUMENTATION_INDEX.md)** - Organized index by category
+- **[Quick Start Guide](./QUICK_START_GUIDE.md)** - 7-day path to launch
+- **[Production Readiness](./PRODUCTION_READINESS.md)** - Current production status
+
+### Getting Started
+
+- [Getting Started Guide](./docs/development/GETTING_STARTED.md)
 - [Development Workflow](./docs/guides/development-workflow.md)
-- [Database Configuration](./docs/guides/database-configuration.md)
-- [Deployment Guide](./docs/guides/deployment-guide.md)
+- [Build Guide](./docs/development/BUILD_GUIDE.md)
+- [Build System Overview](./docs/development/BUILD_SYSTEM.md)
+
+### Architecture & Design
+
+- [Architecture Standards](./docs/architecture/ARCHITECTURE_STANDARDS.md)
+- [Monorepo Architecture](./docs/architecture/MONOREPO_ARCHITECTURE.md)
+- [Design System Documentation](./docs/DESIGN_SYSTEM_DOCUMENTATION.md)
+- [System Architecture](./docs/architecture/)
+
+### Development Guides
+
+- [Backend Development](./apps/backend/README.md)
+- [Frontend Development](./apps/frontend/README.md)
+- [API Examples](./apps/backend/API_EXAMPLES.md)
+- [GraphQL Guide](./apps/api/src/graphql/README.md)
+- [WebSocket Integration](./apps/backend/WEBSOCKET_INTEGRATION_GUIDE.md)
+
+### Agent System
+
+- [Complete Agent Guide](./docs/agents/COMPLETE-AGENT-GUIDE.md)
+- [Agent Communication Protocol](./docs/AGENT_COMMUNICATION_PROTOCOL.md)
+- [Agent Development Guide](./docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md)
+- [Agent Registry API](./apps/backend/src/modules/agent-registry/API_DOCUMENTATION.md)
+
+### Deployment & Operations
+
+- [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
+- [Railway Deployment](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
+- [Docker Setup Guide](./docs/guides/docker-setup.md)
+- [Docker Best Practices](./docs/DOCKER_BEST_PRACTICES.md)
+- [CI/CD Strategy](./docs/CICD_STRATEGY.md)
+- [Monitoring](./docs/deployment/MONITORING.md)
+
+### Testing & Quality
+
+- [Testing Setup](./docs/testing/TESTING_SETUP_COMPLETE.md)
+- [E2E Testing](./docs/testing/E2E_TEST_SUMMARY.md)
+- [Testing Best Practices](./docs/testing/BEST_PRACTICES.md)
+- [Code Quality](./docs/CODE_QUALITY.md)
+
+### Security
+
+- [Security Best Practices](./docs/security/SECURITY_BEST_PRACTICES.md)
+- [Security Audit Report](./docs/security/SECURITY_AUDIT_REPORT.md)
+- [Developer Security Checklist](./docs/security/DEVELOPER_SECURITY_CHECKLIST.md)
 
 ### Troubleshooting
 
 - [Docker Services Issues](./docs/troubleshooting/docker-services.md)
+- [Deployment Troubleshooting](./docs/deployment/TROUBLESHOOTING.md)
 
-### Architecture
+### API Documentation
 
-- [System Architecture](./docs/architecture/)
+- [API Usage Guide](./docs/API_USAGE_GUIDE.md)
 - [API Documentation](./docs/api/)
+- [GraphQL Examples](./apps/api/src/graphql/GRAPHQL_EXAMPLES.md)
 
 ## 🚀 Deployment
 
@@ -544,14 +597,24 @@ pnpm run db:generate
 pnpm run type-check
 ```
 
-## Documentation
+## Related Documentation
 
-- [Development Setup](./DEVELOPMENT_SETUP.md) - Detailed development guide
-- [Railway Deployment](./RAILWAY_DEPLOYMENT.md) - Deployment instructions
-- [API Documentation](./docs/api/) - API reference
-- [Architecture](./docs/architecture/) - System architecture
-- [pnpm Standardization](./PNPM_STANDARDIZATION_REPORT.md) - Package manager
-  info
+### Core Documentation
+- [Documentation Map](./DOCUMENTATION_MAP.md) - Complete navigation guide for all 1,200+ docs
+- [Quick Start Guide](./QUICK_START_GUIDE.md) - 7-day path to production
+- [Production Readiness](./PRODUCTION_READINESS.md) - Current status and roadmap
+
+### Developer Resources
+- [Architecture Standards](./docs/architecture/ARCHITECTURE_STANDARDS.md)
+- [API Usage Guide](./docs/API_USAGE_GUIDE.md)
+- [Agent Development Guide](./docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md)
+- [Testing Best Practices](./docs/testing/BEST_PRACTICES.md)
+
+### Deployment Resources
+- [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
+- [Railway Deployment](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
+- [Docker Best Practices](./docs/DOCKER_BEST_PRACTICES.md)
+- [CI/CD Strategy](./docs/CICD_STRATEGY.md)
 
 ## Contributing
 

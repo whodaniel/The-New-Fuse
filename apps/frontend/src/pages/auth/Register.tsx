@@ -83,7 +83,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-linear-to-br from-black via-zinc-900 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-md lg:max-w-lg">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -121,7 +121,7 @@ const Register: React.FC = () => {
                   label="Full Name"
                   placeholder="John Doe"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                   required
                   icon={User}
                   iconPosition="left"
@@ -133,7 +133,7 @@ const Register: React.FC = () => {
                   label="Email"
                   placeholder="you@company.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   required
                   icon={Mail}
                   iconPosition="left"
@@ -145,7 +145,7 @@ const Register: React.FC = () => {
                   label="Password"
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                   required
                   icon={Lock}
                   iconPosition="left"
@@ -157,7 +157,7 @@ const Register: React.FC = () => {
                   label="Confirm Password"
                   placeholder="••••••••"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                   required
                   icon={Lock}
                   iconPosition="left"

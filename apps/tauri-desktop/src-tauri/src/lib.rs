@@ -3,6 +3,7 @@
 
 mod bridge;
 mod antigravity;
+mod oagi;
 
 // HashMap imported on demand via bridge module
 use std::sync::Arc;
@@ -358,7 +359,17 @@ pub fn run() {
             antigravity_smart_focus,
             antigravity_cancel_cascade,
             antigravity_validate_cascade_overlay,
-            antigravity_save_recording
+            antigravity_save_recording,
+            // OAGI/Lux Computer Use
+            oagi::capture_screen,
+            oagi::execute_click,
+            oagi::execute_drag,
+            oagi::execute_scroll,
+            oagi::execute_type,
+            oagi::execute_hotkey,
+            oagi::get_screen_size,
+            oagi::get_mouse_position,
+            oagi::wait_duration
         ])
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();

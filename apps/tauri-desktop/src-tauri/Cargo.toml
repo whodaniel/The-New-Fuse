@@ -31,6 +31,12 @@ uuid = { version = "1", features = ["v4"] }
 # HTTP client for Antigravity integration
 reqwest = { version = "0.12", features = ["json", "multipart", "rustls-tls"], default-features = false }
 
+# OAGI/Lux Computer Use - Screen capture and automation
+enigo = "0.2"
+screenshots = "0.8"
+image = "0.24"
+base64 = "0.21"
+
 [profile.release]
 panic = "abort"
 codegen-units = 1

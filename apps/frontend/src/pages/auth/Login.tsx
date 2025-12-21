@@ -147,7 +147,7 @@ const Login: React.FC = () => {
                 type="text"
                 required
                 value={twoFactorCode}
-                onChange={(e) => setTwoFactorCode(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTwoFactorCode(e.target.value)}
                 className="text-center tracking-widest text-lg"
                 placeholder="000000"
                 icon={Lock}
@@ -160,7 +160,7 @@ const Login: React.FC = () => {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   placeholder="john@example.com"
                   icon={Mail}
                 />
@@ -181,7 +181,7 @@ const Login: React.FC = () => {
                     type="password"
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     icon={Key}
                     className="mt-0"

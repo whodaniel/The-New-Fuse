@@ -1718,5 +1718,34 @@ Before submitting PR:
 
 ---
 
+## Related Documentation
+
+### Core Architecture
+- [Monorepo Architecture](./MONOREPO_ARCHITECTURE.md) - Workspace and package structure
+- [Architecture Analysis](./ARCHITECTURE_ANALYSIS_SUMMARY.md) - System analysis and patterns
+- [Architectural Consistency Report](./ARCHITECTURAL_CONSISTENCY_REPORT.md) - Consistency audit
+
+### Code Quality
+- [Code Duplication Report](./CODE_DUPLICATION_REPORT.md) - Duplication analysis
+- [Refactoring Opportunities](./REFACTORING_OPPORTUNITIES.md) - Improvement recommendations
+- [Feature Recreation Analysis](./FEATURE_RECREATION_ANALYSIS.md) - Feature analysis
+
+### Development
+- [README.md](../../README.md) - Project overview
+- [Getting Started](../development/GETTING_STARTED.md) - Development setup
+- [Build Guide](../development/BUILD_GUIDE.md) - Build system documentation
+- [Testing Best Practices](../testing/BEST_PRACTICES.md) - Testing standards
+
+### Design & UI
+- [Design System Documentation](../DESIGN_SYSTEM_DOCUMENTATION.md) - UI/UX standards
+- [Design System Implementation Plan](../DESIGN_SYSTEM_IMPLEMENTATION_PLAN.md)
+
+### Backend & API
+- [Backend README](../../apps/backend/README.md) - Backend architecture
+- [API Examples](../../apps/backend/API_EXAMPLES.md) - API usage patterns
+- [GraphQL Guide](../../apps/api/src/graphql/README.md) - GraphQL architecture
+
+---
+
 **Document Version:** 1.0.0 **Last Review:** 2025-11-18 **Next Review:**
 2026-02-18 **Maintainers:** The New Fuse Architecture Team

@@ -1396,4 +1396,72 @@ communicationManager.initialize(redisClient).then(() => {
 
 ---
 
+## Related Documentation
+
+### Agent System
+- [Agent Communication Protocol](../AGENT_COMMUNICATION_PROTOCOL.md) - Communication specifications
+- [Agent Development Guide](../agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md) - Development workflow
+- [Agent Framework Protocols](../agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md) - Framework specs
+- [Agent Discovery Summary](./AGENT_DISCOVERY_SUMMARY.md) - Discovery system
+- [Agent Swarm Summary](./AGENT_SWARM_SUMMARY.md) - Multi-agent coordination
+- [Available Agents Registry](../AVAILABLE_AGENTS_REGISTRY.md) - Agent catalog
+
+### Agent Communication
+- [Agent Communication Guide](../AGENT-COMMUNICATION-GUIDE.md) - Communication overview
+- [Agent Redis Communication](../AGENT_REDIS_COMMUNICATION.md) - Redis integration
+- [Agent Communication Architecture](../agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
+
+### Agent Registry & API
+- [Agent Registry Module](../../apps/backend/src/modules/agent-registry/README.md) - Registry system
+- [Agent Registry API](../../apps/backend/src/modules/agent-registry/API_DOCUMENTATION.md) - API reference
+- [Agent Registry Implementation](../../apps/backend/src/modules/agent-registry/IMPLEMENTATION_SUMMARY.md)
+
+### MCP Integration
+- [MCP Module](../../apps/backend/src/modules/mcp/README.md) - MCP system
+- [MCP Quickstart](../../apps/backend/src/modules/mcp/QUICKSTART.md) - Quick setup
+- [MCP Agent Coordination](../../apps/backend/src/modules/mcp/AGENT_COORDINATION_EXAMPLES.md) - Examples
+- [MCP Testing](../../apps/backend/src/modules/mcp/MCP-TESTING-SUMMARY.md) - Testing guide
+
+### Slash Commands (.claude/commands/)
+- [Agent Register Command](../../.claude/commands/agent-register.md) - Register agents
+- [Agent Discover Command](../../.claude/commands/agent-discover.md) - Discover agents
+- [Agent Status Command](../../.claude/commands/agent-status.md) - Check status
+- [Commands README](../../.claude/commands/README.md) - All commands
+
+### Agent Definitions
+- [.claude/agents/](../../.claude/agents/) - 127+ specialized agent definitions
+- Content creation, marketing, technical, business agents
+
+### Backend & Infrastructure
+- [Backend README](../../apps/backend/README.md) - Backend architecture
+- [API Examples](../../apps/backend/API_EXAMPLES.md) - API usage patterns
+- [WebSocket Integration](../../apps/backend/WEBSOCKET_INTEGRATION_GUIDE.md) - Real-time comm
+- [Chat Rooms Module](../../apps/backend/src/modules/chat-rooms/README.md) - Chat system
+
+### Workflows
+- [Workflow Quickstart](../workflows/WORKFLOW_QUICKSTART.md) - Workflow basics
+- [Workflow Builder](../workflows/WORKFLOW_BUILDER_ENHANCEMENTS.md) - Builder guide
+- [n8n Integration](../../WORKFLOW_N8N_COMPLETE.md) - n8n workflows
+
+### Architecture & Standards
+- [Architecture Standards](../architecture/ARCHITECTURE_STANDARDS.md) - Coding standards
+- [Monorepo Architecture](../architecture/MONOREPO_ARCHITECTURE.md) - Project structure
+- [API Usage Guide](../API_USAGE_GUIDE.md) - API guidelines
+
+### Testing & Quality
+- [Testing Setup](../testing/TESTING_SETUP_COMPLETE.md) - Testing framework
+- [E2E Testing](../testing/E2E_TEST_SUMMARY.md) - End-to-end tests
+- [Code Quality](../CODE_QUALITY.md) - Quality standards
+
+### Deployment
+- [Deployment Guide](../deployment/DEPLOYMENT_GUIDE.md) - Production deployment
+- [Production Readiness](../../PRODUCTION_READINESS.md) - Production status
+
+### Getting Started
+- [Project README](../../README.md) - Project overview
+- [Quick Start Guide](../../QUICK_START_GUIDE.md) - Quick setup
+- [Documentation Map](../../DOCUMENTATION_MAP.md) - All documentation
+
+---
+
 This guide provides comprehensive information for developing, integrating, and deploying agents within The New Fuse platform. Follow the examples and best practices outlined here to create powerful, secure, and efficient agents that integrate seamlessly with the ecosystem.

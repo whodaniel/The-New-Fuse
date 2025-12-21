@@ -149,10 +149,37 @@ pnpm run dev:no-ide  # Fastest startup
 
 | Document                   | Purpose                                        |
 | -------------------------- | ---------------------------------------------- |
-| `PUBLIC_LAUNCH_ROADMAP.md` | Comprehensive 3-phase plan with detailed tasks |
-| `BUILD_STATUS.md`          | Current build status and known issues          |
-| `DEPLOYMENT_STATUS.md`     | Railway configuration and deployment guide     |
-| `README.md`                | Project overview and development setup         |
+| [README.md](./README.md) | Project overview and development setup         |
+| [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) | Current production status and comprehensive roadmap |
+| [DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md) | Complete map of all 1,200+ docs with navigation paths |
+| [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md) | Organized index by category |
+| [BUILD_STATUS.md](./docs/development/BUILD_STATUS.md) | Current build status and known issues          |
+| [DEPLOYMENT_STATUS.md](./docs/deployment/DEPLOYMENT_STATUS.md) | Railway configuration and deployment guide     |
+
+## 📖 Related Documentation
+
+### Development
+- [Getting Started Guide](./docs/development/GETTING_STARTED.md)
+- [Build Guide](./docs/development/BUILD_GUIDE.md)
+- [Build System Overview](./docs/development/BUILD_SYSTEM.md)
+- [Development Workflow](./docs/guides/development-workflow.md)
+
+### Deployment
+- [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
+- [Railway Deployment](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
+- [Docker Setup](./docs/guides/docker-setup.md)
+- [CI/CD Strategy](./docs/CICD_STRATEGY.md)
+
+### Architecture
+- [Architecture Standards](./docs/architecture/ARCHITECTURE_STANDARDS.md)
+- [Monorepo Architecture](./docs/architecture/MONOREPO_ARCHITECTURE.md)
+- [Design System](./docs/DESIGN_SYSTEM_DOCUMENTATION.md)
+
+### Backend & API
+- [Backend Development](./apps/backend/README.md)
+- [API Examples](./apps/backend/API_EXAMPLES.md)
+- [GraphQL Guide](./apps/api/src/graphql/README.md)
+- [Agent Registry API](./apps/backend/src/modules/agent-registry/API_DOCUMENTATION.md)
 
 ---
 
