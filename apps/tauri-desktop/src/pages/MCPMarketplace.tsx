@@ -1,18 +1,176 @@
 import React, { useEffect, useState } from 'react';
+import { GoogleDriveWizard } from '../components/mcp/GoogleDriveWizard';
 import { apiService } from '../services/api';
 import type { MCPServer } from '../types';
+
+// Mock Plugin Data (New Architecture)
+interface Plugin extends MCPServer {
+  type: 'skill' | 'mcp' | 'agent' | 'bundle';
+  capabilities?: string[];
+}
+
+const mockPlugins: Plugin[] = [
+  {
+    id: 'claude-skills',
+    name: 'Antigravity Skills Bridge',
+    description:
+      'The essential plugin for using official Claude Skills directly in your agent. Includes Frontend Design, PDF Analysis, and more.',
+    version: '1.0.0',
+    category: 'skills',
+    author: 'TNF Core',
+    installed: false,
+    enabled: false,
+    type: 'bundle',
+    capabilities: ['Skills Runtime', 'MCP Bridge'],
+    tools: [
+      {
+        name: 'skill_frontend_design',
+        description: 'Create distinctive, production-grade frontend interfaces',
+        inputSchema: {},
+      },
+      {
+        name: 'skill_doc_coauthoring',
+        description: ' Workflow for co-authoring documentation',
+        inputSchema: {},
+      },
+      {
+        name: 'skill_mcp_builder',
+        description: 'Guide for creating high-quality MCP servers',
+        inputSchema: {},
+      },
+    ],
+  },
+  {
+    id: 'google-drive',
+    name: 'Google Workspace',
+    description: 'Full integration with Drive, Docs, and Sheets.',
+    version: '1.0.0',
+    category: 'file',
+    author: 'Google',
+    installed: false,
+    enabled: false,
+    type: 'mcp',
+    tools: [
+      { name: 'read_doc', description: 'Read content', inputSchema: {} },
+      { name: 'create_doc', description: 'Create document', inputSchema: {} },
+    ],
+  },
+  {
+    id: 'web-search',
+    name: 'Brave Search',
+    description: 'Privacy-focused web search integration.',
+    version: '2.0.0',
+    category: 'web',
+    author: 'TNF Core',
+    installed: true,
+    enabled: true,
+    type: 'mcp',
+    tools: [{ name: 'search', description: 'Search web', inputSchema: {} }],
+  },
+  {
+    id: 'github',
+    name: 'GitHub Pro',
+    description: 'Manage repositories, PRs, and Issues.',
+    version: '1.5.0',
+    category: 'code',
+    author: 'GitHub',
+    installed: false,
+    enabled: false,
+    type: 'mcp',
+    tools: [
+      { name: 'create_issue', description: 'Create a new issue', inputSchema: {} },
+      { name: 'list_repos', description: 'List repositories', inputSchema: {} },
+    ],
+  },
+  {
+    id: 'youtube-curator',
+    name: 'YouTube Curator Agent',
+    description:
+      'Multimodal AI that watches your "Watch Later" playlist, understands video content (visuals + audio), and summarizes/actions it based on your goals.',
+    version: '0.1.0-alpha',
+    category: 'ai',
+    author: 'TNF / User',
+    installed: false,
+    enabled: false,
+    type: 'bundle',
+    capabilities: ['YouTube Data API', 'Multimodal Vision', 'Playlist Sync'],
+    tools: [
+      {
+        name: 'get_watch_later',
+        description: 'Retrieve generic or private Watch Later playlist',
+        inputSchema: {},
+      },
+      {
+        name: 'analyze_video_content',
+        description: 'Multimodal review of video frames & transcript',
+        inputSchema: {},
+      },
+      {
+        name: 'archive_watched',
+        description: 'Remove video from playlist after review',
+        inputSchema: {},
+      },
+    ],
+  },
+  {
+    id: 'slack',
+    name: 'Slack',
+    description: 'Send messages and interact with Slack workspaces.',
+    version: '1.1.0',
+    category: 'web',
+    author: 'Slack',
+    installed: false,
+    enabled: false,
+    type: 'mcp',
+    tools: [
+      { name: 'send_message', description: 'Send a message to a channel', inputSchema: {} },
+      { name: 'list_channels', description: 'List available channels', inputSchema: {} },
+    ],
+  },
+  {
+    id: 'openai-vision',
+    name: 'OpenAI Vision',
+    description: 'Analyze images using GPT-4 Vision capabilities.',
+    version: '1.0.0',
+    category: 'ai',
+    author: 'OpenAI',
+    installed: false,
+    enabled: false,
+    type: 'mcp',
+    tools: [
+      { name: 'analyze_image', description: 'Analyze an image', inputSchema: {} },
+      { name: 'extract_text', description: 'Extract text from an image', inputSchema: {} },
+    ],
+  },
+  {
+    id: 'prisma',
+    name: 'Prisma',
+    description: 'Interact with Prisma ORM for database operations.',
+    version: '1.0.0',
+    category: 'database',
+    author: 'TNF Core',
+    installed: false,
+    enabled: false,
+    type: 'mcp',
+    tools: [
+      { name: 'read_model', description: 'Read data using Prisma model', inputSchema: {} },
+      { name: 'update_model', description: 'Update data using Prisma model', inputSchema: {} },
+    ],
+  },
+];
 
 /**
  * MCP Marketplace Page
  * Browse and install MCP servers and tools
  */
 const MCPMarketplace: React.FC = () => {
-  const [servers, setServers] = useState<MCPServer[]>(mockMCPServers);
+  const [plugins, setPlugins] = useState<Plugin[]>(mockPlugins);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
+  const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
   const [showInstallModal, setShowInstallModal] = useState(false);
+  const [showDriveWizard, setShowDriveWizard] = useState(false);
 
   const categories = [
     { id: 'all', label: 'All', icon: '📦' },
@@ -22,6 +180,7 @@ const MCPMarketplace: React.FC = () => {
     { id: 'ai', label: 'AI', icon: '🤖' },
     { id: 'file', label: 'Files', icon: '📁' },
     { id: 'database', label: 'Database', icon: '🗄️' },
+    { id: 'skills', label: 'Skills', icon: '🧠' },
   ];
 
   useEffect(() => {
@@ -32,63 +191,89 @@ const MCPMarketplace: React.FC = () => {
     setLoading(true);
     const response = await apiService.getMCPServers();
     if (response.success && response.data) {
-      setServers(response.data);
+      // Merge real plugins (mapped from servers) with our mock plugins
+      // For now, we'll just use mocks for the full 'Plugin' experience until backend catches up
+      setPlugins(mockPlugins);
+    } else {
+      setPlugins(mockPlugins);
     }
     setLoading(false);
   };
 
-  const filteredServers = servers.filter((server) => {
+  const filteredPlugins = plugins.filter((plugin) => {
     const matchesSearch =
-      server.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      server.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || server.category === selectedCategory;
+      plugin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      plugin.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || plugin.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const installedServers = servers.filter((s) => s.installed);
-  const availableServers = servers.filter((s) => !s.installed);
+  const installedPlugins = plugins.filter((s) => s.installed);
+  const availablePlugins = plugins.filter((s) => !s.installed);
 
   const handleInstall = async (server: MCPServer) => {
+    if (server.id === 'google-drive') {
+      setShowDriveWizard(true);
+      setShowInstallModal(false);
+      return;
+    }
+
+    if (server.id === 'claude-skills') {
+      // For skills, we just enable it immediately since it's local
+      setPlugins((prev) =>
+        prev.map((s) => (s.id === server.id ? { ...s, installed: true, enabled: true } : s))
+      );
+      setShowInstallModal(false);
+      return;
+    }
+
     const response = await apiService.installMCPServer(server.id);
     if (response.success) {
-      setServers((prev) =>
+      setPlugins((prev) =>
         prev.map((s) => (s.id === server.id ? { ...s, installed: true, enabled: true } : s))
       );
     } else {
       // Simulate install for demo
-      setServers((prev) =>
+      setPlugins((prev) =>
         prev.map((s) => (s.id === server.id ? { ...s, installed: true, enabled: true } : s))
       );
     }
     setShowInstallModal(false);
-    setSelectedServer(null);
+    setSelectedPlugin(null);
   };
 
   const handleUninstall = async (serverId: string) => {
     await apiService.uninstallMCPServer(serverId);
-    setServers((prev) =>
+    setPlugins((prev) =>
       prev.map((s) => (s.id === serverId ? { ...s, installed: false, enabled: false } : s))
     );
   };
 
   const handleToggleEnabled = (serverId: string) => {
-    setServers((prev) => prev.map((s) => (s.id === serverId ? { ...s, enabled: !s.enabled } : s)));
+    setPlugins((prev) => prev.map((s) => (s.id === serverId ? { ...s, enabled: !s.enabled } : s)));
+  };
+
+  const handleWizardComplete = () => {
+    setPlugins((prev) =>
+      prev.map((s) => (s.id === 'google-drive' ? { ...s, installed: true, enabled: true } : s))
+    );
+    setShowDriveWizard(false);
   };
 
   return (
     <div className="page-container">
       <header className="page-header">
         <div>
-          <h1 className="page-title">MCP Marketplace</h1>
-          <p className="page-subtitle">Extend your agents with powerful tools</p>
+          <h1 className="page-title">Plugin Store</h1>
+          <p className="page-subtitle">Extend Antigravity with Skills, MCP Servers, and Agents</p>
         </div>
         <div className="header-stats">
           <div className="stat">
-            <span className="stat-value">{installedServers.length}</span>
+            <span className="stat-value">{installedPlugins.length}</span>
             <span className="stat-label">Installed</span>
           </div>
           <div className="stat">
-            <span className="stat-value">{installedServers.filter((s) => s.enabled).length}</span>
+            <span className="stat-value">{installedPlugins.filter((s) => s.enabled).length}</span>
             <span className="stat-label">Active</span>
           </div>
         </div>
@@ -98,7 +283,7 @@ const MCPMarketplace: React.FC = () => {
       <div className="search-bar">
         <input
           type="text"
-          placeholder="Search MCP servers..."
+          placeholder="Search plugins..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -119,11 +304,11 @@ const MCPMarketplace: React.FC = () => {
       </div>
 
       {/* Installed Servers Section */}
-      {installedServers.length > 0 && selectedCategory === 'all' && !searchQuery && (
+      {installedPlugins.length > 0 && selectedCategory === 'all' && !searchQuery && (
         <section className="section">
-          <h2 className="section-title">✅ Installed Servers</h2>
+          <h2 className="section-title">✅ Installed Plugins</h2>
           <div className="server-grid">
-            {installedServers.map((server) => (
+            {installedPlugins.map((server) => (
               <div key={server.id} className="server-card installed">
                 <div className="card-header">
                   <span className="server-icon">{getCategoryIcon(server.category)}</span>
@@ -153,7 +338,10 @@ const MCPMarketplace: React.FC = () => {
                   </div>
                 </div>
                 <div className="card-actions">
-                  <button className="configure-btn" onClick={() => setSelectedServer(server)}>
+                  <button
+                    className="configure-btn"
+                    onClick={() => setSelectedPlugin(server as Plugin)}
+                  >
                     ⚙️ Configure
                   </button>
                   <button className="uninstall-btn" onClick={() => handleUninstall(server.id)}>
@@ -170,14 +358,14 @@ const MCPMarketplace: React.FC = () => {
       <section className="section">
         <h2 className="section-title">
           {selectedCategory === 'all' && !searchQuery
-            ? '📦 Available Servers'
-            : `Results (${filteredServers.filter((s) => !s.installed).length})`}
+            ? '📦 Available Plugins'
+            : `Results (${filteredPlugins.filter((s) => !s.installed).length})`}
         </h2>
         {loading ? (
-          <div className="loading-state">Loading servers...</div>
+          <div className="loading-state">Loading plugins...</div>
         ) : (
           <div className="server-grid">
-            {filteredServers
+            {filteredPlugins
               .filter((s) => !s.installed)
               .map((server) => (
                 <div key={server.id} className="server-card">
@@ -204,7 +392,7 @@ const MCPMarketplace: React.FC = () => {
                   <button
                     className="install-btn"
                     onClick={() => {
-                      setSelectedServer(server);
+                      setSelectedPlugin(server as Plugin);
                       setShowInstallModal(true);
                     }}
                   >
@@ -217,21 +405,21 @@ const MCPMarketplace: React.FC = () => {
       </section>
 
       {/* Install Modal */}
-      {showInstallModal && selectedServer && (
+      {showInstallModal && selectedPlugin && (
         <div className="modal-overlay" onClick={() => setShowInstallModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Install {selectedServer.name}</h2>
+              <h2>Install {selectedPlugin.name}</h2>
               <button className="close-btn" onClick={() => setShowInstallModal(false)}>
                 ×
               </button>
             </div>
             <div className="modal-body">
-              <p className="install-description">{selectedServer.description}</p>
+              <p className="install-description">{selectedPlugin.description}</p>
 
               <div className="tools-list">
                 <h4>Available Tools:</h4>
-                {selectedServer.tools.map((tool) => (
+                {selectedPlugin.tools.map((tool) => (
                   <div key={tool.name} className="tool-item">
                     <span className="tool-name">🔧 {tool.name}</span>
                     <span className="tool-desc">{tool.description}</span>
@@ -248,12 +436,20 @@ const MCPMarketplace: React.FC = () => {
               <button className="secondary-btn" onClick={() => setShowInstallModal(false)}>
                 Cancel
               </button>
-              <button className="primary-btn" onClick={() => handleInstall(selectedServer)}>
+              <button className="primary-btn" onClick={() => handleInstall(selectedPlugin)}>
                 Install Server
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Google Drive Wizard */}
+      {showDriveWizard && (
+        <GoogleDriveWizard
+          onClose={() => setShowDriveWizard(false)}
+          onComplete={handleWizardComplete}
+        />
       )}
 
       <style>{`
@@ -687,127 +883,9 @@ const getCategoryIcon = (category: string): string => {
     ai: '🤖',
     file: '📁',
     database: '🗄️',
+    skills: '🧠',
   };
   return icons[category] || '📦';
 };
-
-// Mock MCP Servers data
-const mockMCPServers: MCPServer[] = [
-  {
-    id: 'filesystem',
-    name: 'File System',
-    description:
-      'Read, write, and manage files on the local filesystem with secure access controls.',
-    version: '1.2.0',
-    category: 'file',
-    author: 'TNF Core',
-    installed: true,
-    enabled: true,
-    tools: [
-      { name: 'read_file', description: 'Read contents of a file', inputSchema: {} },
-      { name: 'write_file', description: 'Write content to a file', inputSchema: {} },
-      { name: 'list_directory', description: 'List files in a directory', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'web-search',
-    name: 'Web Search',
-    description: 'Search the web using multiple search engines and return structured results.',
-    version: '2.0.1',
-    category: 'web',
-    author: 'TNF Core',
-    installed: true,
-    enabled: true,
-    tools: [
-      { name: 'search', description: 'Perform a web search', inputSchema: {} },
-      { name: 'fetch_page', description: 'Fetch and parse a webpage', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'github',
-    name: 'GitHub',
-    description: 'Interact with GitHub repositories, issues, and pull requests.',
-    version: '1.5.0',
-    category: 'code',
-    author: 'GitHub',
-    installed: false,
-    enabled: false,
-    tools: [
-      { name: 'create_issue', description: 'Create a new issue', inputSchema: {} },
-      { name: 'list_repos', description: 'List repositories', inputSchema: {} },
-      { name: 'create_pr', description: 'Create a pull request', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'postgresql',
-    name: 'PostgreSQL',
-    description: 'Execute queries and manage PostgreSQL databases.',
-    version: '1.0.0',
-    category: 'database',
-    author: 'TNF Core',
-    installed: false,
-    enabled: false,
-    tools: [
-      { name: 'execute_query', description: 'Execute a SQL query', inputSchema: {} },
-      { name: 'list_tables', description: 'List database tables', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'python-executor',
-    name: 'Python Executor',
-    description: 'Execute Python code in a sandboxed environment.',
-    version: '1.3.0',
-    category: 'code',
-    author: 'TNF Core',
-    installed: false,
-    enabled: false,
-    tools: [
-      { name: 'execute_python', description: 'Execute Python code', inputSchema: {} },
-      { name: 'install_package', description: 'Install a Python package', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    description: 'Send messages and interact with Slack workspaces.',
-    version: '1.1.0',
-    category: 'web',
-    author: 'Slack',
-    installed: false,
-    enabled: false,
-    tools: [
-      { name: 'send_message', description: 'Send a message to a channel', inputSchema: {} },
-      { name: 'list_channels', description: 'List available channels', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'openai-vision',
-    name: 'OpenAI Vision',
-    description: 'Analyze images using GPT-4 Vision capabilities.',
-    version: '1.0.0',
-    category: 'ai',
-    author: 'OpenAI',
-    installed: false,
-    enabled: false,
-    tools: [
-      { name: 'analyze_image', description: 'Analyze an image', inputSchema: {} },
-      { name: 'extract_text', description: 'Extract text from an image', inputSchema: {} },
-    ],
-  },
-  {
-    id: 'prisma',
-    name: 'Prisma',
-    description: 'Interact with Prisma ORM for database operations.',
-    version: '1.0.0',
-    category: 'database',
-    author: 'Prisma',
-    installed: false,
-    enabled: false,
-    tools: [
-      { name: 'run_migration', description: 'Run database migrations', inputSchema: {} },
-      { name: 'open_studio', description: 'Open Prisma Studio', inputSchema: {} },
-    ],
-  },
-];
 
 export default MCPMarketplace;

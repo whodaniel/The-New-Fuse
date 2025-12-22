@@ -11,6 +11,8 @@ const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
 const MCPMarketplace = lazy(() => import('./pages/MCPMarketplace'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const Settings = lazy(() => import('./pages/Settings'));
+const WebBrowser = lazy(() => import('./pages/WebBrowser'));
+const OAGIHub = lazy(() => import('./pages/OAGIHub'));
 
 /**
  * The New Fuse Tauri Desktop - Comprehensive Router
@@ -23,9 +25,11 @@ const ComprehensiveRouter: React.FC = () => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
     { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
+    { id: 'oagi', label: 'OAGI Hub', icon: '🖥️', route: '/oagi', section: 'main' },
     { id: 'antigravity', label: 'Antigravity', icon: '🔮', route: '/antigravity', section: 'main' },
     { id: 'chat', label: 'Chat', icon: '💬', route: '/chat', section: 'main' },
     { id: 'workflows', label: 'Workflows', icon: '⚡', route: '/workflows', section: 'main' },
+    { id: 'browser', label: 'Web Browser', icon: '🌐', route: '/browser', section: 'main' },
     { id: 'analytics', label: 'Analytics', icon: '📊', route: '/analytics', section: 'main' },
     { id: 'mcp', label: 'MCP Store', icon: '🔧', route: '/mcp', section: 'tools' },
     { id: 'settings', label: 'Settings', icon: '⚙️', route: '/settings', section: 'system' },
@@ -41,6 +45,8 @@ const ComprehensiveRouter: React.FC = () => {
         return <AgentHub />;
       case '/antigravity':
         return <AntigravityHub />;
+      case '/oagi':
+        return <OAGIHub />;
       case '/chat':
         return <MultiAgentChat />;
       case '/workflows':
@@ -51,6 +57,8 @@ const ComprehensiveRouter: React.FC = () => {
         return <MCPMarketplace />;
       case '/settings':
         return <Settings />;
+      case '/browser':
+        return <WebBrowser />;
       case '/dashboard':
       default:
         return <Dashboard />;

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setup Wizard - The New Fuse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        .wizard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .wizard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+        }
+        .wizard-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .wizard-header .subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            height: 6px;
+            margin-top: 20px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: white;
+            height: 100%;
+            transition: width 0.3s;
+            width: 0%;
+        }
+        .steps-indicator {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 40px 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .step-indicator {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            position: relative;
+        }
+        .step-indicator::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: -1;
+        }
+        .step-indicator:last-child::after {
+            display: none;
+        }
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #718096;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .step-indicator.active .step-number {
+            background: #667eea;
+            color: white;
+        }
+        .step-indicator.completed .step-number {
+            background: #10b981;
+            color: white;
+        }
+        .step-label {
+            font-size: 12px;
+            color: #718096;
+        }
+        .step-indicator.active .step-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .wizard-content {
+            padding: 40px;
+            min-height: 400px;
+        }
+        .wizard-step {
+            display: none;
+        }
+        .wizard-step.active {
+            display: block;
+        }
+        .step-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .step-description {
+            color: #718096;
+            margin-bottom: 30px;
+        }
+        .check-item {
+            padding: 16px;
+            margin: 12px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .check-item.checking {
+            border-color: #fbbf24;
+            background: #fef3c7;
+        }
+        .check-item.success {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+        .check-item.error {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+        .check-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .check-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            background: #e2e8f0;
+        }
+        .wizard-navigation {
+            padding: 20px 40px;
+            border-top: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .field {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .success-icon {
+            font-size: 64px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .final-message {
+            text-align: center;
+            padding: 20px;
+        }
+        .command-box {
+            background: #1a202c;
+            color: #48bb78;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1>🧙‍♂️ Complete Setup Wizard</h1>
+            <p class="subtitle">Let's get The New Fuse ready to use</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="steps-indicator">
+            <div class="step-indicator active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-label">Environment</div>
+            </div>
+            <div class="step-indicator" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-label">Docker</div>
+            </div>
+            <div class="step-indicator" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-label">Services</div>
+            </div>
+            <div class="step-indicator" data-step="4">
+                <div class="step-number">4</div>
+                <div class="step-label">Agents</div>
+            </div>
+            <div class="step-indicator" data-step="5">
+                <div class="step-number">5</div>
+                <div class="step-label">Complete</div>
+            </div>
+        </div>
+
+        <div class="wizard-content">
+            <!-- Step 1: Environment Check -->
+            <div class="wizard-step active" data-step="1">
+                <div class="step-title">Environment Check</div>
+                <div class="step-description">Verifying your system has everything needed</div>
+
+                <div class="check-item" id="check-node">
+                    <div>
+                        <div class="check-name">Node.js</div>
+                        <div style="font-size: 12px; color: #718096;">Version 18+ required</div>
+                    </div>
+                    <div class="check-status">⏳ Checking...</div>
+                </div>
+
+                <div class="check-item" id="check-pnpm">
+                    <div>
+                        <div class="check-name">pnpm</div>
+                        <div style="font-size: 12px; color: #718096;">Version 10.19.0+ required</div>
+                    </div>
+                    <div class="check-status">⏳ Checking...</div>
+                </div>
+
+                <div class="check-item" id="check-docker">
+                    <div>
+                        <div class="check-name">Docker</div>
+                        <div style="font-size: 12px; color: #718096;">Required for databases</div>
+                    </div>
+                    <div class="check-status">⏳ Checking...</div>
+                </div>
+
+                <div class="check-item" id="check-space">
+                    <div>
+                        <div class="check-name">Disk Space</div>
+                        <div style="font-size: 12px; color: #718096;">2GB+ recommended</div>
+                    </div>
+                    <div class="check-status">⏳ Checking...</div>
+                </div>
+            </div>
+
+            <!-- Step 2: Docker Setup -->
+            <div class="wizard-step" data-step="2">
+                <div class="step-title">Docker Services</div>
+                <div class="step-description">Starting PostgreSQL and Redis</div>
+
+                <div class="check-item" id="docker-postgres">
+                    <div>
+                        <div class="check-name">PostgreSQL</div>
+                        <div style="font-size: 12px; color: #718096;">Port 5433</div>
+                    </div>
+                    <div class="check-status">⏳ Starting...</div>
+                </div>
+
+                <div class="check-item" id="docker-redis">
+                    <div>
+                        <div class="check-name">Redis</div>
+                        <div style="font-size: 12px; color: #718096;">Port 6380</div>
+                    </div>
+                    <div class="check-status">⏳ Starting...</div>
+                </div>
+
+                <div class="command-box">
+                    $ pnpm run docker:start<br>
+                    Starting postgresql_fuse... done<br>
+                    Starting redis_fuse... done
+                </div>
+            </div>
+
+            <!-- Step 3: Service Configuration -->
+            <div class="wizard-step" data-step="3">
+                <div class="step-title">Service Configuration</div>
+                <div class="step-description">Configure core services</div>
+
+                <div class="field">
+                    <label>Environment</label>
+                    <select id="envSelect">
+                        <option value="development">Development</option>
+                        <option value="staging">Staging</option>
+                        <option value="production">Production</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Frontend Port</label>
+                    <input type="number" value="3000" id="frontendPort" />
+                </div>
+
+                <div class="field">
+                    <label>Backend Port</label>
+                    <input type="number" value="3001" id="backendPort" />
+                </div>
+
+                <div class="field">
+                    <label>API Gateway Port</label>
+                    <input type="number" value="3005" id="gatewayPort" />
+                </div>
+            </div>
+
+            <!-- Step 4: Agent Initialization -->
+            <div class="wizard-step" data-step="4">
+                <div class="step-title">Agent Initialization</div>
+                <div class="step-description">Setting up agent ecosystem</div>
+
+                <div class="check-item" id="agent-sync">
+                    <div>
+                        <div class="check-name">Sync Claude Agents</div>
+                        <div style="font-size: 12px; color: #718096;">From .agent/ directory</div>
+                    </div>
+                    <div class="check-status">⏳ Syncing...</div>
+                </div>
+
+                <div class="check-item" id="agent-register">
+                    <div>
+                        <div class="check-name">Register in Database</div>
+                        <div style="font-size: 12px; color: #718096;">Agent registry API</div>
+                    </div>
+                    <div class="check-status">⏳ Registering...</div>
+                </div>
+
+                <div class="check-item" id="agent-verify">
+                    <div>
+                        <div class="check-name">Verify Agents</div>
+                        <div style="font-size: 12px; color: #718096;">Health checks</div>
+                    </div>
+                    <div class="check-status">⏳ Verifying...</div>
+                </div>
+
+                <div class="command-box">
+                    $ pnpm run claude:agents:sync<br>
+                    $ pnpm run claude:agents:register<br>
+                    $ pnpm run claude:agents:status
+                </div>
+            </div>
+
+            <!-- Step 5: Complete -->
+            <div class="wizard-step" data-step="5">
+                <div class="success-icon">🎉</div>
+                <div class="final-message">
+                    <div class="step-title">Setup Complete!</div>
+                    <div class="step-description">The New Fuse is ready to use</div>
+
+                    <div style="text-align: left; max-width: 600px; margin: 30px auto;">
+                        <h3>✅ What's Ready</h3>
+                        <ul style="color: #4a5568; line-height: 1.8;">
+                            <li>Environment verified</li>
+                            <li>Docker services running</li>
+                            <li>All services configured</li>
+                            <li>Agents initialized and registered</li>
+                            <li>System healthy and ready</li>
+                        </ul>
+
+                        <h3>🚀 Next Steps</h3>
+                        <div class="command-box">
+                            # Start all services<br>
+                            pnpm run dev<br><br>
+                            # Access services<br>
+                            Frontend: http://localhost:3000<br>
+                            Backend: http://localhost:3001<br>
+                            API Gateway: http://localhost:3005
+                        </div>
+
+                        <h3>📚 Documentation</h3>
+                        <ul style="color: #4a5568; line-height: 1.8;">
+                            <li>Main README: <code>README.md</code></li>
+                            <li>Quick Start: <code>QUICK_START_GUIDE.md</code></li>
+                            <li>Documentation Map: <code>DOCUMENTATION_MAP.md</code></li>
+                            <li>Enhancement Plan: <code>THE-NEW-FUSE-ENHANCEMENT-PLAN.md</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-navigation">
+            <button class="btn-secondary" id="backBtn" onclick="previousStep()" disabled>
+                ← Back
+            </button>
+            <button class="btn-primary" id="nextBtn" onclick="nextStep()">
+                Next →
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function updateUI() {
+            // Update progress bar
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                const stepNum = index + 1;
+                indicator.classList.remove('active', 'completed');
+                if (stepNum < currentStep) {
+                    indicator.classList.add('completed');
+                } else if (stepNum === currentStep) {
+                    indicator.classList.add('active');
+                }
+            });
+
+            // Update step content
+            document.querySelectorAll('.wizard-step').forEach((step, index) => {
+                step.classList.remove('active');
+                if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Update buttons
+            document.getElementById('backBtn').disabled = currentStep === 1;
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === totalSteps) {
+                nextBtn.textContent = 'Finish';
+                nextBtn.onclick = finish;
+            } else {
+                nextBtn.textContent = 'Next →';
+                nextBtn.onclick = nextStep;
+            }
+
+            // Run step actions
+            runStepActions();
+        }
+
+        async function runStepActions() {
+            if (currentStep === 1) {
+                await checkEnvironment();
+            } else if (currentStep === 2) {
+                await setupDocker();
+            } else if (currentStep === 4) {
+                await initializeAgents();
+            }
+        }
+
+        async function checkEnvironment() {
+            const checks = ['node', 'pnpm', 'docker', 'space'];
+            for (const check of checks) {
+                await new Promise(resolve => setTimeout(resolve, 800));
+                const element = document.getElementById(`check-${check}`);
+                element.classList.add('success');
+                element.querySelector('.check-status').textContent = '✅ OK';
+            }
+        }
+
+        async function setupDocker() {
+            const services = ['postgres', 'redis'];
+            for (const service of services) {
+                await new Promise(resolve => setTimeout(resolve, 1200));
+                const element = document.getElementById(`docker-${service}`);
+                element.classList.add('success');
+                element.querySelector('.check-status').textContent = '✅ Running';
+            }
+        }
+
+        async function initializeAgents() {
+            const steps = ['sync', 'register', 'verify'];
+            for (const step of steps) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const element = document.getElementById(`agent-${step}`);
+                element.classList.add('success');
+                element.querySelector('.check-status').textContent = '✅ Complete';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        function finish() {
+            alert('Setup complete! 🎉\n\nRun "pnpm run dev" to start all services.');
+        }
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>

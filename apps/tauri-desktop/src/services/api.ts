@@ -14,11 +14,14 @@ import type {
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 class ApiService {
-  private baseUrl: string;
+  private baseUrl: string = API_BASE_URL;
   private token: string | null = null;
 
-  constructor() {
-    this.baseUrl = API_BASE_URL;
+  constructor() {}
+
+  setBaseUrl(url: string) {
+    this.baseUrl = url;
+    console.log(`🚀 API Base URL updated to: ${url}`);
   }
 
   setToken(token: string) {

@@ -3,6 +3,8 @@ import { apiService } from '../services/api';
 import { useAgentStore } from '../stores/agentStore';
 import type { ActivityItem, DashboardStats } from '../types';
 
+import { QuickActionsDashboard } from '../components/QuickActionsDashboard';
+
 /**
  * Dashboard Page - Unified Responsive Design
  * Combines best of SaaS + Tauri with mobile-first approach
@@ -17,6 +19,7 @@ const Dashboard: React.FC = () => {
     recentActivity: [],
   });
   const [loading, setLoading] = useState(true);
+  const [activeView, setActiveView] = useState<'overview' | 'actions'>('overview');
 
   useEffect(() => {
     fetchDashboardData();
@@ -94,119 +97,141 @@ const Dashboard: React.FC = () => {
           <p className="page-subtitle">Welcome back! Here's your AI command center.</p>
         </div>
         <div className="header-actions">
+          <div className="view-switcher">
+            <button
+              className={`view-btn ${activeView === 'overview' ? 'active' : ''}`}
+              onClick={() => setActiveView('overview')}
+            >
+              📊 Overview
+            </button>
+            <button
+              className={`view-btn ${activeView === 'actions' ? 'active' : ''}`}
+              onClick={() => setActiveView('actions')}
+            >
+              ⚡ Quick Actions
+            </button>
+          </div>
           <button className="refresh-btn" onClick={fetchDashboardData}>
             🔄
           </button>
         </div>
       </header>
 
-      {/* Stats Grid - Responsive: 2 cols mobile, 4 cols desktop */}
-      <div className="stats-grid">
-        <StatCard
-          icon="🤖"
-          label="Active Agents"
-          value={stats.activeAgents}
-          total={agents.length}
-          gradient="purple"
-        />
-        <StatCard
-          icon="⚡"
-          label="Workflows"
-          value={stats.totalWorkflows}
-          change="+2 this week"
-          gradient="blue"
-        />
-        <StatCard
-          icon="✅"
-          label="Tasks Today"
-          value={stats.tasksToday}
-          change="+15%"
-          gradient="green"
-        />
-        <StatCard
-          icon="📈"
-          label="Success Rate"
-          value={`${stats.successRate}%`}
-          change="Excellent"
-          gradient="cyan"
-        />
-      </div>
-
-      {/* Main Content Grid - Responsive */}
-      <div className="content-grid">
-        {/* Quick Actions */}
-        <section className="quick-actions-section">
-          <h2 className="section-title">Quick Actions</h2>
-          <div className="quick-actions-grid">
-            {quickActions.map((action, index) => (
-              <button key={index} className="quick-action-card">
-                <span className="action-icon">{action.icon}</span>
-                <div className="action-content">
-                  <span className="action-label">{action.label}</span>
-                  <span className="action-description">{action.description}</span>
-                </div>
-              </button>
-            ))}
+      {activeView === 'overview' ? (
+        <>
+          {/* Stats Grid - Responsive: 2 cols mobile, 4 cols desktop */}
+          <div className="stats-grid">
+            <StatCard
+              icon="🤖"
+              label="Active Agents"
+              value={stats.activeAgents}
+              total={agents.length}
+              gradient="purple"
+            />
+            <StatCard
+              icon="⚡"
+              label="Workflows"
+              value={stats.totalWorkflows}
+              change="+2 this week"
+              gradient="blue"
+            />
+            <StatCard
+              icon="✅"
+              label="Tasks Today"
+              value={stats.tasksToday}
+              change="+15%"
+              gradient="green"
+            />
+            <StatCard
+              icon="📈"
+              label="Success Rate"
+              value={`${stats.successRate}%`}
+              change="Excellent"
+              gradient="cyan"
+            />
           </div>
-        </section>
 
-        {/* Recent Activity */}
-        <section className="activity-section">
-          <h2 className="section-title">Recent Activity</h2>
-          <div className="activity-list">
-            {stats.recentActivity.map((item) => (
-              <div key={item.id} className="activity-item">
-                <div className={`activity-status ${item.status}`}></div>
-                <div className="activity-content">
-                  <span className="activity-agent">{item.agentName}</span>
-                  <span className="activity-action">{item.action}</span>
-                </div>
-                <span className="activity-time">{item.timestamp}</span>
+          {/* Main Content Grid - Responsive */}
+          <div className="content-grid">
+            {/* Quick Actions Panel */}
+            <section className="quick-actions-section">
+              <h2 className="section-title">Common Tasks</h2>
+              <div className="quick-actions-grid">
+                {quickActions.map((action, index) => (
+                  <button key={index} className="quick-action-card">
+                    <span className="action-icon">{action.icon}</span>
+                    <div className="action-content">
+                      <span className="action-label">{action.label}</span>
+                      <span className="action-description">{action.description}</span>
+                    </div>
+                  </button>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
 
-        {/* System Health - Desktop only */}
-        <section className="health-section">
-          <h2 className="section-title">System Health</h2>
-          <div className="health-metrics">
-            <HealthMetric label="CPU" value={32} unit="%" status="good" />
-            <HealthMetric label="Memory" value={4.2} unit="GB" status="good" />
-            <HealthMetric label="API Latency" value={145} unit="ms" status="good" />
-            <HealthMetric label="Uptime" value={99.9} unit="%" status="excellent" />
-          </div>
-        </section>
-
-        {/* Active Agents Preview */}
-        <section className="agents-preview-section">
-          <h2 className="section-title">Active Agents</h2>
-          <div className="agents-preview-list">
-            {agents
-              .filter((a) => a.status === 'active')
-              .slice(0, 4)
-              .map((agent) => (
-                <div key={agent.id} className="agent-preview-item">
-                  <span className="agent-type-emoji">
-                    {agent.type === 'claude'
-                      ? '🧠'
-                      : agent.type === 'gpt'
-                        ? '🤖'
-                        : agent.type === 'gemini'
-                          ? '💎'
-                          : agent.type === 'perplexity'
-                            ? '🔍'
-                            : '⚙️'}
-                  </span>
-                  <div className="agent-preview-info">
-                    <span className="agent-preview-name">{agent.name}</span>
-                    <span className="agent-preview-status">Active • {agent.tasks} tasks</span>
+            {/* Recent Activity */}
+            <section className="activity-section">
+              <h2 className="section-title">Recent Activity</h2>
+              <div className="activity-list">
+                {stats.recentActivity.map((item) => (
+                  <div key={item.id} className="activity-item">
+                    <div className={`activity-status ${item.status}`}></div>
+                    <div className="activity-content">
+                      <span className="activity-agent">{item.agentName}</span>
+                      <span className="activity-action">{item.action}</span>
+                    </div>
+                    <span className="activity-time">{item.timestamp}</span>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </section>
+
+            {/* System Health */}
+            <section className="health-section">
+              <h2 className="section-title">System Health</h2>
+              <div className="health-metrics">
+                <HealthMetric label="CPU" value={32} unit="%" status="good" />
+                <HealthMetric label="Memory" value={4.2} unit="GB" status="good" />
+                <HealthMetric label="API Latency" value={145} unit="ms" status="good" />
+                <HealthMetric label="Uptime" value={99.9} unit="%" status="excellent" />
+              </div>
+            </section>
+
+            {/* Active Agents Preview */}
+            <section className="agents-preview-section">
+              <h2 className="section-title">Active Agents</h2>
+              <div className="agents-preview-list">
+                {agents
+                  .filter((a) => a.status === 'active')
+                  .slice(0, 4)
+                  .map((agent) => (
+                    <div key={agent.id} className="agent-preview-item">
+                      <span className="agent-type-emoji">
+                        {agent.type === 'claude'
+                          ? '🧠'
+                          : agent.type === 'gpt'
+                            ? '🤖'
+                            : agent.type === 'gemini'
+                              ? '💎'
+                              : agent.type === 'perplexity'
+                                ? '🔍'
+                                : '⚙️'}
+                      </span>
+                      <div className="agent-preview-info">
+                        <span className="agent-preview-name">{agent.name}</span>
+                        <span className="agent-preview-status">Active • {agent.tasks} tasks</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </section>
           </div>
-        </section>
-      </div>
+        </>
+      ) : (
+        <div className="actions-view-container">
+          <QuickActionsDashboard />
+        </div>
+      )}
 
       <style>{`
         /* Base Layout - Mobile First */
@@ -276,6 +301,42 @@ const Dashboard: React.FC = () => {
         .refresh-btn:hover {
           background: var(--tnf-surface-hover);
           transform: rotate(180deg);
+        }
+
+        /* View Switcher */
+        .view-switcher {
+          display: flex;
+          background: var(--tnf-surface);
+          border: 1px solid var(--tnf-border);
+          border-radius: 12px;
+          padding: 4px;
+          margin-right: 12px;
+        }
+
+        .view-btn {
+          padding: 8px 16px;
+          border-radius: 8px;
+          border: none;
+          background: transparent;
+          color: var(--tnf-text-muted);
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .view-btn.active {
+          background: var(--tnf-primary);
+          color: white;
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .actions-view-container {
+          height: calc(100vh - 200px);
+          min-height: 500px;
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1px solid var(--tnf-border);
         }
 
         /* Stats Grid - 2x2 on mobile, 4x1 on desktop */

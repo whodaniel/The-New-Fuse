@@ -62,6 +62,15 @@ class BrowserControlServiceClass extends EventEmitter<BrowserControlEvent> {
   private ws: WebSocket | null = null;
   private relayUrl: string = 'ws://localhost:3000';
   private connected: boolean = false;
+
+  setRelayUrl(url: string) {
+    this.relayUrl = url;
+    if (this.ws) {
+      console.log(`🔄 Relay URL updated to ${url}, reconnecting...`);
+      this.disconnect();
+      this.connect();
+    }
+  }
   private extensionConnected: boolean = false;
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 5;

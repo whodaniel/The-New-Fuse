@@ -12,7 +12,8 @@
     },
     "./validation": "./src/validation/index.ts",
     "./utils": "./src/utils/index.ts",
-    "./hooks": "./src/hooks/index.ts"
+    "./hooks": "./src/hooks/index.ts",
+    "./browser-control/protocol": "./src/browser-control/protocol.ts"
   },
   "scripts": {
     "build": "rimraf dist && tsc --build",

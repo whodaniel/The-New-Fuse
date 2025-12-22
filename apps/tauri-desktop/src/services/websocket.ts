@@ -7,16 +7,22 @@ type ConnectionHandler = (connected: boolean) => void;
 
 class WebSocketService {
   private ws: WebSocket | null = null;
-  private url: string;
+  private url: string = import.meta.env.VITE_WS_URL || 'ws://localhost:3001/ws';
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectDelay = 1000;
   private messageHandlers: Map<string, Set<MessageHandler>> = new Map();
   private connectionHandlers: Set<ConnectionHandler> = new Set();
 
-  constructor() {
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3001/ws';
-    this.url = wsUrl;
+  constructor() {}
+
+  setUrl(url: string) {
+    this.url = url;
+    if (this.ws) {
+      console.log('🔄 WebSocket URL updated, reconnecting...');
+      this.disconnect();
+      this.connect();
+    }
   }
 
   connect(): void {

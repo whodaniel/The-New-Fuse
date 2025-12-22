@@ -334,51 +334,75 @@ const AgentHub: React.FC = () => {
         }
 
         .agent-card {
-          background: var(--tnf-surface);
-          border: 1px solid var(--tnf-border);
-          border-radius: 16px;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 20px;
           padding: 24px;
-          transition: all 0.2s;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           cursor: pointer;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .agent-card::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+          opacity: 0;
+          transition: opacity 0.3s;
         }
 
         .agent-card:hover {
-          background: var(--tnf-surface-hover);
-          border-color: var(--tnf-border-hover);
-          transform: translateY(-4px);
-          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+          background: rgba(15, 23, 42, 0.8);
+          border-color: rgba(99, 102, 241, 0.3);
+          transform: translateY(-6px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .agent-card:hover::before {
+          opacity: 1;
         }
 
         .agent-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 16px;
+          margin-bottom: 20px;
+          position: relative;
+          z-index: 1;
         }
 
         .agent-type-icon {
-          font-size: 32px;
+          font-size: 36px;
+          filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
         }
 
         .agent-status-indicator {
-          width: 12px;
-          height: 12px;
+          width: 10px;
+          height: 10px;
           border-radius: 50%;
-          box-shadow: 0 0 8px currentColor;
+          box-shadow: 0 0 12px currentColor;
         }
 
         .agent-name {
-          font-family: var(--tnf-font-heading);
-          font-size: 18px;
-          font-weight: 600;
+          font-family: 'Outfit', sans-serif;
+          font-size: 20px;
+          font-weight: 700;
           margin: 0 0 8px;
+          color: #f8fafc;
+          position: relative;
+          z-index: 1;
         }
 
         .agent-description {
-          font-size: 13px;
-          color: var(--tnf-text-muted);
-          margin: 0 0 12px;
-          line-height: 1.5;
+          font-size: 14px;
+          color: #94a3b8;
+          margin: 0 0 16px;
+          line-height: 1.6;
+          position: relative;
+          z-index: 1;
         }
 
         .agent-meta {

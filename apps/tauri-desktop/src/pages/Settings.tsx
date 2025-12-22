@@ -1,52 +1,30 @@
 import React, { useState } from 'react';
 import { useTheme } from '../providers/ThemeProvider';
 
+import { useSettingsStore } from '../stores/settingsStore';
+
 /**
  * Settings Page - The New Fuse Desktop
  */
 const Settings: React.FC = () => {
-  const { theme, setTheme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const { environment, setEnvironment, customApiUrl, setCustomApiUrl, apiUrl } = useSettingsStore();
   const [apiKey, setApiKey] = useState('');
 
   const settingsSections = [
-    {
-      id: 'appearance',
-      title: 'Appearance',
-      icon: '🎨',
-      items: [
-        { label: 'Theme', type: 'theme' },
-        { label: 'Sidebar Position', type: 'select', options: ['Left', 'Right'] },
-        { label: 'Compact Mode', type: 'toggle' },
-      ],
-    },
-    {
-      id: 'ai',
-      title: 'AI Configuration',
-      icon: '🤖',
-      items: [
-        { label: 'Default Provider', type: 'select', options: ['Claude', 'GPT-4', 'Gemini'] },
-        { label: 'API Key', type: 'password' },
-        { label: 'Max Tokens', type: 'number' },
-      ],
-    },
-    {
-      id: 'notifications',
-      title: 'Notifications',
-      icon: '🔔',
-      items: [
-        { label: 'Task Completion', type: 'toggle' },
-        { label: 'Agent Errors', type: 'toggle' },
-        { label: 'System Updates', type: 'toggle' },
-      ],
-    },
+    { id: 'connection', title: 'Connection', icon: '🌐' },
+    { id: 'appearance', title: 'Appearance', icon: '🎨' },
+    { id: 'ai', title: 'AI Configuration', icon: '🤖' },
+    { id: 'notifications', title: 'Notifications', icon: '🔔' },
+    { id: 'about', title: 'About', icon: 'ℹ️' },
   ];
 
   return (
     <div className="page-container">
       <header className="page-header">
-        <div>
+        <div className="header-info">
           <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">Configure your workspace preferences</p>
+          <p className="page-subtitle">Configure your workspace and connection preferences</p>
         </div>
       </header>
 
@@ -61,6 +39,56 @@ const Settings: React.FC = () => {
         </nav>
 
         <div className="settings-content">
+          {/* Connection Section */}
+          <section id="connection" className="settings-section">
+            <h2 className="section-title">🌐 Connection & Environment</h2>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Backend Environment</label>
+                <p>Choose which environment to connect to</p>
+              </div>
+              <div className="env-selector">
+                {(['local', 'sandbox', 'production', 'custom'] as const).map((env) => (
+                  <button
+                    key={env}
+                    className={`env-btn ${environment === env ? 'active' : ''}`}
+                    onClick={() => setEnvironment(env)}
+                  >
+                    <span className="env-icon">
+                      {env === 'local'
+                        ? '🏠'
+                        : env === 'sandbox'
+                          ? '🏗️'
+                          : env === 'production'
+                            ? '🚀'
+                            : '⚙️'}
+                    </span>
+                    <span className="env-label">{env.charAt(0).toUpperCase() + env.slice(1)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Active API URL</label>
+                <p>
+                  Currently connecting to: <code className="url-code">{apiUrl}</code>
+                </p>
+              </div>
+              {environment === 'custom' && (
+                <input
+                  type="text"
+                  className="text-input"
+                  placeholder="https://api.yourdomain.com"
+                  value={customApiUrl}
+                  onChange={(e) => setCustomApiUrl(e.target.value)}
+                />
+              )}
+            </div>
+          </section>
+
           {/* Appearance Section */}
           <section id="appearance" className="settings-section">
             <h2 className="section-title">🎨 Appearance</h2>
@@ -305,6 +333,55 @@ const Settings: React.FC = () => {
         .theme-btn.active {
           border-color: var(--tnf-primary);
           background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Environment Selector */
+        .env-selector {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        .env-btn {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 16px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--tnf-border);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s;
+          color: var(--tnf-text-primary);
+        }
+
+        .env-btn:hover {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .env-btn.active {
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+          border-color: var(--tnf-primary);
+          box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .env-icon {
+          font-size: 18px;
+        }
+
+        .env-label {
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        .url-code {
+          background: rgba(0, 0, 0, 0.3);
+          padding: 2px 6px;
+          border-radius: 4px;
+          color: var(--tnf-primary-light);
+          font-family: var(--tnf-font-mono);
+          font-size: 12px;
         }
 
         .toggle {

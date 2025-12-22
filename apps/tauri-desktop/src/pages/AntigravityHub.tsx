@@ -274,10 +274,10 @@ export const AntigravityHub: React.FC = () => {
       {/* Header */}
       <div className="hub-header">
         <div className="header-title">
-          <span className="icon-glow">🔮</span>
+          <span className="icon-glow">🌐</span>
           <div>
-            <h1>Antigravity Agent</h1>
-            <p className="subtitle">AI-Powered Browser Automation</p>
+            <h1>Browser Automation</h1>
+            <p className="subtitle">Agent & User Browser Bridge</p>
           </div>
         </div>
 
@@ -522,46 +522,59 @@ export const AntigravityHub: React.FC = () => {
         }
 
         .status-card {
-          background: linear-gradient(135deg, rgba(26, 27, 38, 0.8), rgba(36, 37, 48, 0.8));
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 20px;
           padding: 24px;
           margin-bottom: 24px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
         .status-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
 
         .status-header h2 {
-          font-size: 1.1rem;
+          font-family: 'Outfit', sans-serif;
+          font-size: 1.25rem;
+          font-weight: 700;
           color: #fff;
           margin: 0;
         }
 
         .status-indicator {
           font-size: 0.85rem;
-          font-weight: 500;
+          font-weight: 600;
+          padding: 4px 12px;
+          border-radius: 12px;
         }
 
         .status-indicator.online {
-          color: #22c55e;
+          background: rgba(34, 197, 94, 0.1);
+          color: #4ade80;
+          border: 1px solid rgba(34, 197, 94, 0.2);
         }
 
         .status-indicator.offline {
+          background: rgba(255, 255, 255, 0.05);
           color: rgba(255, 255, 255, 0.4);
         }
 
         .status-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 16px;
+          gap: 20px;
         }
 
         .stat-item {
+          background: rgba(255, 255, 255, 0.02);
+          padding: 16px;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
           display: flex;
           flex-direction: column;
           gap: 4px;
@@ -570,21 +583,24 @@ export const AntigravityHub: React.FC = () => {
         .stat-item.full-width {
           grid-column: span 3;
           margin-top: 8px;
-          padding-top: 16px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.01);
+          border-style: dashed;
         }
 
         .stat-value {
-          font-size: 1.5rem;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 1.75rem;
           font-weight: 700;
-          color: #fff;
+          color: #a78bfa;
+          filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.3));
         }
 
         .stat-label {
-          font-size: 0.8rem;
-          color: rgba(255, 255, 255, 0.5);
+          font-size: 0.75rem;
+          color: #94a3b8;
           text-transform: uppercase;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.1em;
+          font-weight: 700;
         }
 
         .stat-message {
