@@ -172,14 +172,30 @@ const WebBrowser: React.FC = () => {
               src={url}
               className="content-frame"
               title="Browser View"
-              sandbox="allow-same-origin allow-scripts allow-forms"
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
             />
             {/* Overlay to inform about iframe limitations */}
             <div className="browser-notice">
               <p>
-                Note: Some websites may not load in this preview due to security policies. For full
-                automation, use the TNF Chrome Extension.
+                <strong>Security Notice:</strong> Complex sites (Google, GitHub) block embedded
+                previews.
               </p>
+              <button
+                onClick={() => import('@tauri-apps/plugin-shell').then(({ open }) => open(url))}
+                style={{
+                  marginTop: '8px',
+                  background: 'var(--tnf-primary)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '4px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  width: '100%',
+                  fontSize: '11px',
+                }}
+              >
+                Open in Native Window
+              </button>
             </div>
           </div>
         )}

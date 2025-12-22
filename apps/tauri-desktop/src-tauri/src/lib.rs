@@ -235,6 +235,35 @@ async fn file_exists(path: String) -> bool {
     tokio::fs::metadata(&path).await.is_ok()
 }
 
+#[tauri::command]
+async fn execute_command(command: String) -> Result<String, String> {
+    println!("Executing command: {}", command);
+
+    #[cfg(target_os = "windows")]
+    let output = std::process::Command::new("cmd")
+        .args(["/C", &command])
+        .output();
+
+    #[cfg(not(target_os = "windows"))]
+    let output = std::process::Command::new("sh")
+        .arg("-c")
+        .arg(&command)
+        .output();
+
+    match output {
+        Ok(out) => {
+             let stdout = String::from_utf8_lossy(&out.stdout).to_string();
+             let stderr = String::from_utf8_lossy(&out.stderr).to_string();
+             if !out.status.success() {
+                 Ok(format!("{}\nError: {}", stdout, stderr))
+             } else {
+                 Ok(stdout)
+             }
+        },
+        Err(e) => Err(format!("Failed to execute: {}", e))
+    }
+}
+
 // ============================================================================
 // TAURI COMMANDS - Service Status
 // ============================================================================
@@ -349,6 +378,7 @@ pub fn run() {
             write_file,
             list_directory,
             file_exists,
+            execute_command,
             // Services
             check_service_status,
             // Antigravity
