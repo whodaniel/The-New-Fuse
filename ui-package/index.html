@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The New Fuse - Capability Launchpad</title>
+    <style>
+      :root {
+        --primary: #667eea;
+        --secondary: #764ba2;
+        --bg: #f7fafc;
+        --text: #2d3748;
+        --card-bg: #ffffff;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      .header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 800;
+      }
+      .header p {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+      .container {
+        max-width: 1200px;
+        margin: -3rem auto 3rem;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 10;
+      }
+
+      .status-bar {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #cbd5e0;
+      }
+      .dot.active {
+        background-color: #48bb78;
+      }
+      .dot.error {
+        background-color: #f56565;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .section-title {
+        grid-column: 1 / -1;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+        border-left: 5px solid var(--primary);
+        padding-left: 1rem;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e2e8f0;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary);
+      }
+      .card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      .card h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+      }
+      .card p {
+        margin: 0;
+        color: #718096;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      .tag {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        align-self: flex-start;
+      }
+      .tag.one-click {
+        background: #e6fffa;
+        color: #2c7a7b;
+      }
+      .tag.form {
+        background: #ebf8ff;
+        color: #2b6cb0;
+      }
+      .tag.wizard {
+        background: #faf5ff;
+        color: #553c9a;
+      }
+      .tag.viz {
+        background: #fffaf0;
+        color: #c05621;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>The New Fuse Launchpad</h1>
+      <p>Your central command center for AI Agents, Services, and Workflows</p>
+    </div>
+
+    <div class="container">
+      <div class="status-bar">
+        <div class="status-indicator">
+          <div class="dot" id="api-dot"></div>
+          <span id="api-status">Checking API Status...</span>
+        </div>
+        <div style="font-size: 0.9rem; color: #718096">Backend: http://localhost:5000</div>
+      </div>
+
+      <div class="grid">
+        <!-- Section: Agents -->
+        <div class="section-title">🤖 AI Agents</div>
+
+        <a href="one-click/register-agent.html" class="card">
+          <div class="card-icon">⚡</div>
+          <h3>Quick Register</h3>
+          <p>Register a new AI agent with smart defaults in seconds.</p>
+          <span class="tag one-click">ONE CLICK</span>
+        </a>
+
+        <a href="forms/agent-registration.html" class="card">
+          <div class="card-icon">📝</div>
+          <h3>Agent Registration</h3>
+          <p>Detailed form to create custom task-based or role-based agents.</p>
+          <span class="tag form">FORM</span>
+        </a>
+
+        <a href="wizards/agent-setup-wizard.html" class="card">
+          <div class="card-icon">🧙‍♂️</div>
+          <h3>Setup Wizard</h3>
+          <p>Step-by-step guided process to configure advanced agents.</p>
+          <span class="tag wizard">WIZARD</span>
+        </a>
+
+        <!-- Section: Services -->
+        <div class="section-title">🏗️ Services</div>
+
+        <a href="one-click/service-health-check.html" class="card">
+          <div class="card-icon">🩺</div>
+          <h3>Health Check</h3>
+          <p>Instantly check the status of all microservices and databases.</p>
+          <span class="tag one-click">ONE CLICK</span>
+        </a>
+
+        <a href="forms/service-configuration.html" class="card">
+          <div class="card-icon">⚙️</div>
+          <h3>Service Config</h3>
+          <p>Manage ports, environment variables, and scaling settings.</p>
+          <span class="tag form">FORM</span>
+        </a>
+
+        <a href="../visualizations/service-architecture-map.html" class="card">
+          <div class="card-icon">🗺️</div>
+          <h3>Architecture Map</h3>
+          <p>Visual exploration of system services and dependencies.</p>
+          <span class="tag viz">VISUALIZATION</span>
+        </a>
+
+        <!-- Section: Database -->
+        <div class="section-title">💾 Database</div>
+
+        <a href="one-click/seed-database.html" class="card">
+          <div class="card-icon">🌱</div>
+          <h3>Quick Seed</h3>
+          <p>Populate your database with initial test data automatically.</p>
+          <span class="tag one-click">ONE CLICK</span>
+        </a>
+
+        <a href="wizards/database-migration-wizard.html" class="card">
+          <div class="card-icon">🛡️</div>
+          <h3>Safe Migration</h3>
+          <p>Guided wizard for migrations, deployments, and resets.</p>
+          <span class="tag wizard">WIZARD</span>
+        </a>
+
+        <a href="forms/database-operations.html" class="card">
+          <div class="card-icon">🗄️</div>
+          <h3>DB Operations</h3>
+          <p>Advanced manual controls for database management.</p>
+          <span class="tag form">FORM</span>
+        </a>
+
+        <!-- Section: Workflows -->
+        <div class="section-title">⚡ Workflows</div>
+
+        <a href="wizards/workflow-builder.html" class="card">
+          <div class="card-icon">🎨</div>
+          <h3>Workflow Builder</h3>
+          <p>Drag-and-drop interface to create complex agent workflows.</p>
+          <span class="tag wizard">WIZARD</span>
+        </a>
+
+        <a href="../visualizations/workflow-dependencies.html" class="card">
+          <div class="card-icon">🕸️</div>
+          <h3>Dependency Graph</h3>
+          <p>Visualize relationships between different workflow tasks.</p>
+          <span class="tag viz">VISUALIZATION</span>
+        </a>
+
+        <!-- Section: Monitoring -->
+        <div class="section-title">📊 Monitoring</div>
+
+        <a href="../visualizations/monitoring-dashboard.html" class="card">
+          <div class="card-icon">📈</div>
+          <h3>Live Dashboard</h3>
+          <p>Real-time metrics for system performance and agent activity.</p>
+          <span class="tag viz">VISUALIZATION</span>
+        </a>
+
+        <a href="../visualizations/bundle-size-analyzer.html" class="card">
+          <div class="card-icon">📦</div>
+          <h3>Bundle Analyzer</h3>
+          <p>Deep dive into application bundle sizes and dependencies.</p>
+          <span class="tag viz">VISUALIZATION</span>
+        </a>
+
+        <a href="../visualizations/agent-communication-flow.html" class="card">
+          <div class="card-icon">🗣️</div>
+          <h3>Comms Flow</h3>
+          <p>Interactive network graph of agent-to-agent communication.</p>
+          <span class="tag viz">VISUALIZATION</span>
+        </a>
+      </div>
+    </div>
+
+    <script>
+      async function checkHealth() {
+        const apiDot = document.getElementById('api-dot');
+        const apiStatus = document.getElementById('api-status');
+
+        try {
+          const response = await fetch('http://localhost:5000/api/health');
+          if (response.ok) {
+            apiDot.className = 'dot active';
+            apiStatus.textContent = 'API Backend Connected';
+            apiStatus.style.color = '#276749';
+          } else {
+            throw new Error('API unstable');
+          }
+        } catch (e) {
+          apiDot.className = 'dot error';
+          apiStatus.textContent = 'Backend Disconnected (Run python3 api.py)';
+          apiStatus.style.color = '#c53030';
+        }
+      }
+
+      checkHealth();
+      setInterval(checkHealth, 5000);
+    </script>
+  </body>
+</html>

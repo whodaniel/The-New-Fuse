@@ -1,9 +1,9 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { Provider } from 'react-redux'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
-import { store } from './store/store'
-import { CommandCenter } from './components/CommandCenter'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { AppLayout } from './components/AppLayout';
+import { store } from './store/store';
 
 // Custom theme for the desktop app
 const theme = extendTheme({
@@ -66,14 +66,14 @@ const theme = extendTheme({
       },
     },
   },
-})
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
       <ChakraProvider theme={theme}>
-        <CommandCenter />
+        <AppLayout />
       </ChakraProvider>
     </Provider>
   </React.StrictMode>
-)
+);

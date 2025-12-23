@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "prebuild": "pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/mcp-core build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build",
+    "prebuild": "pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/mcp-core build && pnpm --filter @the-new-fuse/ag-ui-core build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build",
     "build": "nest build || echo 'Build completed with warnings'",
     "build:watch": "nest build --watch",
     "dev": "cross-env PORT=3004 ts-node-dev --respawn --transpile-only src/simple-main.ts",
@@ -35,6 +35,7 @@
     "@nestjs/schedule": "^4.0.2",
     "@nestjs/typeorm": "^11.0.0",
     "@prisma/client": "7.1.0",
+    "@the-new-fuse/ag-ui-core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/feature-tracker": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",

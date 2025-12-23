@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workflow Preview - The New Fuse</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        overflow: hidden;
+        background-color: #f7fafc;
+      }
+      #controls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+        width: 300px;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 10px;
+        font-family: monospace;
+        border: 1px solid #cbd5e0;
+        border-radius: 4px;
+      }
+      button {
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      button:hover {
+        background-color: #3182ce;
+      }
+      .node circle {
+        fill: #fff;
+        stroke: #4299e1;
+        stroke-width: 3px;
+      }
+      .node text {
+        font-size: 12px;
+        font-family: sans-serif;
+      }
+      .link {
+        fill: none;
+        stroke: #cbd5e0;
+        stroke-width: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      <h3>Workflow Preview</h3>
+      <p>Paste Workflow JSON below:</p>
+      <textarea id="jsonInput">
+{
+  "name": "Example Workflow",
+  "steps": [
+    { "id": "start", "type": "trigger", "next": ["analysis"] },
+    { "id": "analysis", "type": "agent", "agent": "DataAnalyzer", "next": ["report", "notify"] },
+    { "id": "report", "type": "tool", "tool": "GeneratePDF", "next": ["end"] },
+    { "id": "notify", "type": "tool", "tool": "SendEmail", "next": ["end"] },
+    { "id": "end", "type": "done" }
+  ]
+}
+        </textarea
+      >
+      <button onclick="render()">Visualize</button>
+    </div>
+    <svg id="viz"></svg>
+
+    <script>
+      function render() {
+        const input = document.getElementById('jsonInput').value;
+        let data;
+        try {
+          data = JSON.parse(input);
+        } catch (e) {
+          alert('Invalid JSON');
+          return;
+        }
+
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        d3.select('#viz').selectAll('*').remove();
+
+        const svg = d3
+          .select('#viz')
+          .attr('width', width)
+          .attr('height', height)
+          .call(
+            d3.zoom().on('zoom', (event) => {
+              g.attr('transform', event.transform);
+            })
+          );
+
+        const g = svg.append('g');
+
+        // Process data into nodes and links
+        const nodes = data.steps.map((s) => ({ id: s.id, type: s.type }));
+        const links = [];
+        data.steps.forEach((s) => {
+          if (s.next) {
+            s.next.forEach((target) => {
+              links.push({ source: s.id, target: target });
+            });
+          }
+        });
+
+        const simulation = d3
+          .forceSimulation(nodes)
+          .force(
+            'link',
+            d3
+              .forceLink(links)
+              .id((d) => d.id)
+              .distance(100)
+          )
+          .force('charge', d3.forceManyBody().strength(-500))
+          .force('center', d3.forceCenter(width / 2, height / 2));
+
+        // Arrows
+        svg
+          .append('defs')
+          .selectAll('marker')
+          .data(['end'])
+          .enter()
+          .append('marker')
+          .attr('id', 'arrow')
+          .attr('viewBox', '0 -5 10 10')
+          .attr('refX', 25)
+          .attr('refY', 0)
+          .attr('markerWidth', 6)
+          .attr('markerHeight', 6)
+          .attr('orient', 'auto')
+          .append('path')
+          .attr('d', 'M0,-5L10,0L0,5')
+          .attr('fill', '#cbd5e0');
+
+        const link = g
+          .append('g')
+          .selectAll('line')
+          .data(links)
+          .enter()
+          .append('line')
+          .attr('class', 'link')
+          .attr('marker-end', 'url(#arrow)');
+
+        const node = g
+          .append('g')
+          .selectAll('.node')
+          .data(nodes)
+          .enter()
+          .append('g')
+          .attr('class', 'node')
+          .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended));
+
+        node
+          .append('circle')
+          .attr('r', 20)
+          .style('fill', (d) => getTypeColor(d.type));
+
+        node
+          .append('text')
+          .attr('dy', 35)
+          .attr('text-anchor', 'middle')
+          .text((d) => d.id);
+
+        simulation.on('tick', () => {
+          link
+            .attr('x1', (d) => d.source.x)
+            .attr('y1', (d) => d.source.y)
+            .attr('x2', (d) => d.target.x)
+            .attr('y2', (d) => d.target.y);
+
+          node.attr('transform', (d) => `translate(${d.x},${d.y})`);
+        });
+
+        function getTypeColor(type) {
+          const colors = {
+            trigger: '#48bb78', // Green
+            agent: '#667eea', // Blue
+            tool: '#ed8936', // Orange
+            done: '#a0aec0', // Gray
+          };
+          return colors[type] || '#4299e1';
+        }
+
+        function dragstarted(event, d) {
+          if (!event.active) simulation.alphaTarget(0.3).restart();
+          d.fx = d.x;
+          d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+          d.fx = event.x;
+          d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+          if (!event.active) simulation.alphaTarget(0);
+          d.fx = null;
+          d.fy = null;
+        }
+      }
+
+      // Initial render
+      render();
+    </script>
+  </body>
+</html>

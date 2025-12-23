@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse - Monitoring Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        #header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        #header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: white;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.healthy {
+            background: #10b981;
+        }
+
+        .status-dot.warning {
+            background: #f59e0b;
+        }
+
+        .status-dot.error {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .dashboard {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .widget {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 1px solid #334155;
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .widget-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .widget-icon {
+            font-size: 24px;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .metric {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .service-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #334155;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .service-item:hover {
+            background: #3f4e63;
+        }
+
+        .service-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .service-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .service-status.running {
+            background: #10b981;
+            color: white;
+        }
+
+        .service-status.stopped {
+            background: #ef4444;
+            color: white;
+        }
+
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+
+        .activity-feed {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 12px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 10px;
+            background: #334155;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .activity-message {
+            font-size: 13px;
+            color: #e2e8f0;
+        }
+
+        .wide {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 768px) {
+            .wide {
+                grid-column: span 1;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #334155;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .agent-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .agent-dot.active {
+            background: #10b981;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .agent-dot.idle {
+            background: #64748b;
+        }
+
+        .refresh-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .refresh-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>🎛️ Monitoring Dashboard</h1>
+        <div class="status-indicator">
+            <span>System Status:</span>
+            <div class="status-dot healthy" id="systemStatus"></div>
+            <span id="statusText">Healthy</span>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- System Metrics -->
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-title">System Metrics</span>
+                <span class="widget-icon">📊</span>
+            </div>
+            <div class="metric-grid">
+                <div class="metric">
+                    <div class="metric-value" id="cpuUsage">45%</div>
+                    <div class="metric-label">CPU Usage</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="memoryUsage">62%</div>
+                    <div class="metric-label">Memory Usage</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 62%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="diskUsage">38%</div>
+                    <div class="metric-label">Disk Usage</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 38%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="networkRate">1.2 MB/s</div>
+                    <div class="metric-label">Network I/O</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Status -->
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-title">Services</span>
+                <button class="refresh-button" onclick="refreshServices()">🔄 Refresh</button>
+            </div>
+            <div class="service-list" id="serviceList">
+                <div class="service-item">
+                    <div class="service-name">
+                        <span>🌐</span>
+                        <span>Frontend</span>
+                    </div>
+                    <span class="service-status running">Running</span>
+                </div>
+                <div class="service-item">
+                    <div class="service-name">
+                        <span>⚙️</span>
+                        <span>Backend API</span>
+                    </div>
+                    <span class="service-status running">Running</span>
+                </div>
+                <div class="service-item">
+                    <div class="service-name">
+                        <span>🗄️</span>
+                        <span>PostgreSQL</span>
+                    </div>
+                    <span class="service-status running">Running</span>
+                </div>
+                <div class="service-item">
+                    <div class="service-name">
+                        <span>⚡</span>
+                        <span>Redis</span>
+                    </div>
+                    <span class="service-status running">Running</span>
+                </div>
+                <div class="service-item">
+                    <div class="service-name">
+                        <span>🌍</span>
+                        <span>Browser Hub</span>
+                    </div>
+                    <span class="service-status stopped">Stopped</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Agents -->
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-title">Active Agents</span>
+                <span class="widget-icon">🤖</span>
+            </div>
+            <div id="agentList">
+                <div class="agent-status">
+                    <div class="agent-dot active"></div>
+                    <span>nestjs-endpoint-generator</span>
+                </div>
+                <div class="agent-status">
+                    <div class="agent-dot active"></div>
+                    <span>agent-flow-analyzer</span>
+                </div>
+                <div class="agent-status">
+                    <div class="agent-dot idle"></div>
+                    <span>mcp-server-integrator</span>
+                </div>
+                <div class="metric-grid" style="margin-top: 15px;">
+                    <div class="metric">
+                        <div class="metric-value">3</div>
+                        <div class="metric-label">Total Agents</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">2</div>
+                        <div class="metric-label">Active Now</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Rate Chart -->
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-title">Request Rate</span>
+                <span class="widget-icon">📈</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="requestChart"></canvas>
+            </div>
+            <div class="metric-grid" style="margin-top: 15px;">
+                <div class="metric">
+                    <div class="metric-value">234</div>
+                    <div class="metric-label">Requests/min</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">12ms</div>
+                    <div class="metric-label">Avg Response</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="widget wide">
+            <div class="widget-header">
+                <span class="widget-title">Activity Feed</span>
+                <span class="widget-icon">📝</span>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+                <div class="activity-item">
+                    <div class="activity-time">2 minutes ago</div>
+                    <div class="activity-message">🤖 Agent "nestjs-endpoint-generator" completed task successfully</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">5 minutes ago</div>
+                    <div class="activity-message">✅ Workflow "User Onboarding" completed (Duration: 3.2s)</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">8 minutes ago</div>
+                    <div class="activity-message">🔄 Database migration "add_workflow_table" applied</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">12 minutes ago</div>
+                    <div class="activity-message">🌐 API Gateway health check passed</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">15 minutes ago</div>
+                    <div class="activity-message">📦 Package "@the-new-fuse/core" built successfully</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Log -->
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-title">Recent Errors</span>
+                <span class="widget-icon">⚠️</span>
+            </div>
+            <div class="metric-grid">
+                <div class="metric">
+                    <div class="metric-value">0</div>
+                    <div class="metric-label">Last Hour</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">2</div>
+                    <div class="metric-label">Last 24h</div>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding: 12px; background: #334155; border-radius: 6px; text-align: center; color: #10b981;">
+                ✅ No recent errors
+            </div>
+        </div>
+
+        <!-- Workflow Execution -->
+        <div class="widget">
+            <div class="widget-header">
+                <span class="widget-title">Workflow Stats</span>
+                <span class="widget-icon">🔧</span>
+            </div>
+            <div class="metric-grid">
+                <div class="metric">
+                    <div class="metric-value">156</div>
+                    <div class="metric-label">Total Runs</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">98.7%</div>
+                    <div class="metric-label">Success Rate</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">4.2s</div>
+                    <div class="metric-label">Avg Duration</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">3</div>
+                    <div class="metric-label">In Progress</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate real-time data updates
+        function updateMetrics() {
+            // Randomize system metrics
+            const cpu = 30 + Math.random() * 40;
+            const memory = 50 + Math.random() * 30;
+            const disk = 35 + Math.random() * 15;
+
+            document.getElementById('cpuUsage').textContent = cpu.toFixed(0) + '%';
+            document.getElementById('memoryUsage').textContent = memory.toFixed(0) + '%';
+            document.getElementById('diskUsage').textContent = disk.toFixed(0) + '%';
+            document.getElementById('networkRate').textContent = (0.5 + Math.random() * 2).toFixed(1) + ' MB/s';
+
+            document.querySelectorAll('.progress-fill')[0].style.width = cpu + '%';
+            document.querySelectorAll('.progress-fill')[1].style.width = memory + '%';
+            document.querySelectorAll('.progress-fill')[2].style.width = disk + '%';
+
+            // Update system status
+            const avgLoad = (cpu + memory + disk) / 3;
+            const statusDot = document.getElementById('systemStatus');
+            const statusText = document.getElementById('statusText');
+
+            if (avgLoad < 60) {
+                statusDot.className = 'status-dot healthy';
+                statusText.textContent = 'Healthy';
+            } else if (avgLoad < 80) {
+                statusDot.className = 'status-dot warning';
+                statusText.textContent = 'Warning';
+            } else {
+                statusDot.className = 'status-dot error';
+                statusText.textContent = 'Critical';
+            }
+        }
+
+        // Simple line chart for request rate
+        function initChart() {
+            const canvas = document.getElementById('requestChart');
+            const ctx = canvas.getContext('2d');
+
+            const data = [];
+            for (let i = 0; i < 50; i++) {
+                data.push(180 + Math.random() * 100);
+            }
+
+            function drawChart() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const width = canvas.width;
+                const height = canvas.height;
+                const max = Math.max(...data);
+                const min = Math.min(...data);
+                const range = max - min;
+
+                // Draw grid
+                ctx.strokeStyle = '#334155';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 5; i++) {
+                    const y = (i / 4) * height;
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(width, y);
+                    ctx.stroke();
+                }
+
+                // Draw line
+                ctx.strokeStyle = '#a78bfa';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+
+                data.forEach((value, index) => {
+                    const x = (index / (data.length - 1)) * width;
+                    const y = height - ((value - min) / range) * height;
+
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+
+                ctx.stroke();
+
+                // Fill area under line
+                ctx.lineTo(width, height);
+                ctx.lineTo(0, height);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(167, 139, 250, 0.1)';
+                ctx.fill();
+
+                // Update data
+                data.shift();
+                data.push(180 + Math.random() * 100);
+
+                requestAnimationFrame(drawChart);
+            }
+
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            drawChart();
+        }
+
+        function refreshServices() {
+            // Simulate service check
+            const button = event.target;
+            button.textContent = '⏳ Checking...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                button.textContent = '🔄 Refresh';
+                button.disabled = false;
+            }, 1500);
+        }
+
+        // Initialize
+        updateMetrics();
+        initChart();
+
+        // Update metrics every 3 seconds
+        setInterval(updateMetrics, 3000);
+    </script>
+</body>
+</html>

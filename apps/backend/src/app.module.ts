@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
+import { AGUIModule } from '@the-new-fuse/ag-ui-core';
 import { ApiModule } from './api/api.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -56,6 +57,7 @@ import { UsersModule } from './users/users.module';
     MCPModule, // MCP Integration for agent communication
     OrchestratorModule, // TNF Orchestration - Heartbeat, Coordination, Handoffs
     RelayModule, // Relay Core - Agent-to-Agent communication relay
+    AGUIModule, // AG-UI Protocol - Real-time agent visualization pipeline
   ],
   controllers: [AppController, CacheController, OrchestratorController],
   providers: [AppService, EventBus, LoggingService],

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Agent Registration - The New Fuse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 60px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+            color: #1e293b;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .quick-info {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .quick-info h3 {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .main-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .main-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .main-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .secondary-button:hover {
+            background: #cbd5e1;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .result.success {
+            background: #dcfce7;
+            border: 2px solid #86efac;
+            color: #166534;
+        }
+
+        .result.error {
+            background: #fee2e2;
+            border: 2px solid #fca5a5;
+            color: #991b1b;
+        }
+
+        .result h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+
+        .result-details {
+            background: rgba(0,0,0,0.05);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .result-path {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 11px;
+            word-break: break-all;
+        }
+
+        .tip {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 20px;
+            font-size: 13px;
+            text-align: left;
+            color: #1e40af;
+        }
+
+        .tip strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🤖</div>
+        <h1>Quick Agent Registration</h1>
+        <p class="subtitle">Register a new AI agent with smart defaults in one click</p>
+
+        <div class="quick-info">
+            <h3>Agent Configuration</h3>
+            <div class="info-item">
+                <span class="info-label">Name</span>
+                <span class="info-value" id="agentName">quick-agent-<span id="timestamp"></span></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Type</span>
+                <span class="info-value">Task-Based</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Model</span>
+                <span class="info-value">claude-sonnet-4.5</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Capabilities</span>
+                <span class="info-value">Read, Write, Execute</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Auto-Register</span>
+                <span class="info-value">✅ Yes</span>
+            </div>
+        </div>
+
+        <button class="main-button" onclick="registerAgent()" id="registerBtn">
+            🚀 Register Agent Now
+        </button>
+
+        <button class="secondary-button" onclick="refreshTimestamp()">
+            🔄 Generate New Name
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Registering agent...</p>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <div class="tip">
+            <strong>💡 Quick Tip</strong>
+            This creates a general-purpose agent that you can customize later. The agent will be saved in <code>.agent/</code> and automatically registered in the database if the API is running.
+        </div>
+    </div>
+
+    <script>
+        // Generate timestamp for unique agent name
+        function refreshTimestamp() {
+            const timestamp = Date.now().toString().slice(-6);
+            document.getElementById('timestamp').textContent = timestamp;
+        }
+
+        // Initialize with timestamp
+        refreshTimestamp();
+
+        async function registerAgent() {
+            const agentName = document.getElementById('agentName').textContent;
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('registerBtn').disabled = true;
+
+            try {
+                // Prepare agent data
+                const agentData = {
+                    name: agentName,
+                    description: 'Quick-registered general-purpose agent',
+                    type: 'Task-Based Agent',
+                    capability1: 'Execute complex multi-step tasks',
+                    capability2: 'Process and analyze data',
+                    capability3: 'Generate code and documentation',
+                    model: 'claude-sonnet-4.5',
+                    temperature: '0.7',
+                    maxTokens: '8192',
+                    tools: 'Read, Write, Edit, Bash, Grep, Glob, Web Search'
+                };
+
+                // Call API
+                const response = await fetch('http://localhost:5000/api/agents/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(agentData)
+                });
+
+                const result = await response.json();
+
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('registerBtn').disabled = false;
+
+                // Show result
+                const resultDiv = document.getElementById('result');
+                if (result.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Agent Registered Successfully!</h3>
+                        <div class="result-details">
+                            <div><strong>Agent:</strong> ${agentName}</div>
+                            <div><strong>File:</strong></div>
+                            <div class="result-path">${result.file_path}</div>
+                            ${result.db_registered ?
+                                '<div style="margin-top: 10px;">✅ <strong>Database:</strong> Registered</div>' :
+                                '<div style="margin-top: 10px;">⚠️ <strong>Database:</strong> Registration skipped (API not running)</div>'
+                            }
+                        </div>
+                        <div style="margin-top: 15px; padding: 12px; background: rgba(22, 101, 52, 0.1); border-radius: 6px;">
+                            <strong>Next Steps:</strong>
+                            <ol style="margin: 10px 0 0 20px; text-align: left; line-height: 1.8;">
+                                <li>Customize agent capabilities in the file</li>
+                                <li>Use agent in Claude Code sessions</li>
+                                <li>Monitor agent performance</li>
+                            </ol>
+                        </div>
+                    `;
+
+                    // Generate new name for next registration
+                    setTimeout(refreshTimestamp, 2000);
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Registration Failed</h3>
+                        <div class="result-details">
+                            <strong>Error:</strong><br>
+                            ${result.error}
+                        </div>
+                        <div style="margin-top: 15px; padding: 12px; background: rgba(153, 27, 27, 0.1); border-radius: 6px;">
+                            <strong>Troubleshooting:</strong>
+                            <ol style="margin: 10px 0 0 20px; text-align: left; line-height: 1.8;">
+                                <li>Ensure the backend API is running:<br><code>python3 ui-package/api.py</code></li>
+                                <li>Check file permissions in .agent/ directory</li>
+                                <li>Verify project directory path</li>
+                            </ol>
+                        </div>
+                    `;
+                }
+
+                resultDiv.style.display = 'block';
+
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('registerBtn').disabled = false;
+
+                const resultDiv = document.getElementById('result');
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error</h3>
+                    <div class="result-details">
+                        <strong>Error:</strong><br>
+                        ${error.message}
+                    </div>
+                    <div style="margin-top: 15px; padding: 12px; background: rgba(153, 27, 27, 0.1); border-radius: 6px;">
+                        <strong>Solution:</strong><br>
+                        Make sure the backend API is running:<br>
+                        <code>cd ui-package && source venv/bin/activate && python3 api.py</code>
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

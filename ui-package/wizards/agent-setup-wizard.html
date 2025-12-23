@@ -1,0 +1,417 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Guided Agent Setup - The New Fuse</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 40px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .wizard-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+      }
+      h1 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+        text-align: center;
+      }
+      .subtitle {
+        text-align: center;
+        color: #718096;
+        margin-bottom: 2rem;
+      }
+      .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+      }
+      .step-indicator::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e2e8f0;
+        z-index: 0;
+        transform: translateY(-50%);
+      }
+      .step {
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border: 2px solid #cbd5e0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #cbd5e0;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s;
+      }
+      .step.active {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+      }
+      .step.completed {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+      }
+      .step-content {
+        display: none;
+      }
+      .step-content.active {
+        display: block;
+        animation: fadeIn 0.5s;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+        font-weight: 600;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+      .btn-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+      }
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        transition:
+          transform 0.1s,
+          box-shadow 0.1s;
+      }
+      .btn-prev {
+        background: #edf2f7;
+        color: #4a5568;
+      }
+      .btn-next {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      .review-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #edf2f7;
+      }
+      .review-label {
+        color: #718096;
+        font-weight: 600;
+      }
+      .review-value {
+        color: #2d3748;
+      }
+      #success-message {
+        display: none;
+        text-align: center;
+      }
+      .success-icon {
+        font-size: 3rem;
+        color: #48bb78;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wizard-container">
+      <h1>Agent Setup Wizard</h1>
+      <p class="subtitle">Create a new AI agent in 4 simple steps</p>
+
+      <div class="step-indicator">
+        <div class="step active">1</div>
+        <div class="step">2</div>
+        <div class="step">3</div>
+        <div class="step">4</div>
+      </div>
+
+      <form id="wizardForm">
+        <!-- Step 1: Basic Info -->
+        <div class="step-content active" data-step="1">
+          <div class="form-group">
+            <label>Agent Name</label>
+            <input type="text" name="name" placeholder="e.g. DataAnalyzer" required />
+          </div>
+          <div class="form-group">
+            <label>Agent Type</label>
+            <select name="type">
+              <option value="Task-Based">Task-Based (Specific function)</option>
+              <option value="Role-Based">Role-Based (Persona)</option>
+              <option value="Assistant">Assistant (General helper)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea
+              name="description"
+              rows="3"
+              placeholder="What does this agent do?"
+              required
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Step 2: Capabilities -->
+        <div class="step-content" data-step="2">
+          <div class="form-group">
+            <label>Primary Capability</label>
+            <input type="text" name="capability1" placeholder="e.g. Analyze CSV files" required />
+          </div>
+          <div class="form-group">
+            <label>Secondary Capability</label>
+            <input type="text" name="capability2" placeholder="e.g. Generate charts" />
+          </div>
+          <div class="form-group">
+            <label>Additional Capability</label>
+            <input type="text" name="capability3" placeholder="e.g. Export reports" />
+          </div>
+        </div>
+
+        <!-- Step 3: Configuration -->
+        <div class="step-content" data-step="3">
+          <div class="form-group">
+            <label>AI Model</label>
+            <select name="model">
+              <option value="claude-sonnet-4.5">Claude Sonnet 4.5 (Recommended)</option>
+              <option value="claude-opus-3">Claude Opus 3</option>
+              <option value="gpt-4o">GPT-4o</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Temperature (Creativity)</label>
+            <input
+              type="range"
+              name="temperature"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.7"
+              oninput="this.nextElementSibling.value = this.value"
+            />
+            <output>0.7</output>
+          </div>
+          <div class="form-group">
+            <label>Max Tokens</label>
+            <select name="maxTokens">
+              <option value="4096">4096 (Standard)</option>
+              <option value="8192" selected>8192 (High)</option>
+              <option value="16384">16384 (Massive)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 4: Review -->
+        <div class="step-content" data-step="4">
+          <h3>Review Configuration</h3>
+          <div id="review-content">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </form>
+
+      <div id="success-message">
+        <div class="success-icon">🎉</div>
+        <h2>Agent Created Successfully!</h2>
+        <p id="success-details"></p>
+        <button class="btn btn-next" onclick="location.reload()">Create Another</button>
+      </div>
+
+      <div class="btn-group" id="navigation-buttons">
+        <button class="btn btn-prev" id="prevBtn" disabled>Previous</button>
+        <button class="btn btn-next" id="nextBtn">Next</button>
+      </div>
+    </div>
+
+    <script>
+      let currentStep = 1;
+      const totalSteps = 4;
+      const form = document.getElementById('wizardForm');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const steps = document.querySelectorAll('.step');
+      const stepContents = document.querySelectorAll('.step-content');
+
+      function updateStep() {
+        // Update Progress Circles
+        steps.forEach((step, idx) => {
+          if (idx + 1 < currentStep) {
+            step.classList.add('completed');
+            step.classList.remove('active');
+          } else if (idx + 1 === currentStep) {
+            step.classList.add('active');
+            step.classList.remove('completed');
+          } else {
+            step.classList.remove('active', 'completed');
+          }
+        });
+
+        // Show Content
+        stepContents.forEach((content) => {
+          content.classList.remove('active');
+          if (parseInt(content.dataset.step) === currentStep) {
+            content.classList.add('active');
+          }
+        });
+
+        // Update Buttons
+        prevBtn.disabled = currentStep === 1;
+        nextBtn.textContent = currentStep === totalSteps ? 'Create Agent' : 'Next';
+
+        if (currentStep === 4) {
+          populateReview();
+        }
+      }
+
+      function populateReview() {
+        const formData = new FormData(form);
+        const reviewDiv = document.getElementById('review-content');
+        let html = '';
+        for (let [key, value] of formData.entries()) {
+          if (value && key !== 'temperature') {
+            html += `
+                        <div class="review-item">
+                            <span class="review-label">${key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                            <span class="review-value">${value}</span>
+                        </div>
+                    `;
+          }
+        }
+        reviewDiv.innerHTML = html;
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+          currentStep--;
+          updateStep();
+        }
+      });
+
+      nextBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        if (currentStep < totalSteps) {
+          // Validate current step
+          const currentInputs = document
+            .querySelector(`.step-content[data-step="${currentStep}"]`)
+            .querySelectorAll('input[required], textarea[required]');
+          let valid = true;
+          currentInputs.forEach((input) => {
+            if (!input.value) {
+              valid = false;
+              input.style.borderColor = 'red';
+            } else {
+              input.style.borderColor = '#e2e8f0';
+            }
+          });
+
+          if (valid) {
+            currentStep++;
+            updateStep();
+          }
+        } else {
+          // Submit Form
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+
+          nextBtn.disabled = true;
+          nextBtn.textContent = 'Creating...';
+
+          try {
+            const response = await fetch('http://localhost:5000/api/agents/register', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+              document.getElementById('navigation-buttons').style.display = 'none';
+              form.style.display = 'none';
+              document.querySelector('.step-indicator').style.display = 'none';
+              const successMsg = document.getElementById('success-message');
+              document.getElementById('success-details').textContent =
+                data.name + ' is ready to work!';
+              successMsg.style.display = 'block';
+            } else {
+              alert('Error: ' + result.error);
+              nextBtn.disabled = false;
+              nextBtn.textContent = 'Create Agent';
+            }
+          } catch (error) {
+            alert('Failed to connect to backend API: ' + error.message);
+            nextBtn.disabled = false;
+            nextBtn.textContent = 'Create Agent';
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

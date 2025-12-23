@@ -68,6 +68,22 @@ secrets-to-remove.txt
 # Generated files
 packages/database/generated/
 
+# Python virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+**/venv/
+**/.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
 # Electron build artifacts
 apps/electron-desktop/release/
 apps/electron-desktop/release-debug/

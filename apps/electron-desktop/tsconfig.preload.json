@@ -6,20 +6,12 @@
     "target": "ES2020",
     "module": "CommonJS",
     "moduleResolution": "node",
-    "declaration": false,
+    "declaration": true,
     "skipLibCheck": true,
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "src/preload/**/*",
-    "src/shared/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src/renderer",
-    "src/main"
-  ]
+  "include": ["src/preload/**/*", "src/shared/**/*"],
+  "exclude": ["node_modules", "dist", "src/renderer", "src/main"]
 }

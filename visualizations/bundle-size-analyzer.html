@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse - Bundle Size Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        #header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        #header h1 {
+            margin: 0 0 10px 0;
+            font-size: 36px;
+            color: white;
+        }
+
+        #header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        #controls {
+            background: #1e293b;
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #controls label {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        #controls select, #controls button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #controls select {
+            background: #334155;
+            color: white;
+            border: 1px solid #475569;
+        }
+
+        #controls button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        #controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        #stats {
+            background: #1e293b;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            border-top: 1px solid #334155;
+        }
+
+        .stat-card {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #treemap {
+            width: 100%;
+            height: calc(100vh - 300px);
+            min-height: 500px;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .node:hover {
+            opacity: 0.8;
+        }
+
+        .node text {
+            pointer-events: none;
+            fill: white;
+            font-size: 11px;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        #tooltip {
+            position: absolute;
+            padding: 12px 16px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 13px;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-width: 300px;
+        }
+
+        #tooltip.visible {
+            opacity: 1;
+        }
+
+        #tooltip h3 {
+            margin: 0 0 8px 0;
+            color: #a78bfa;
+            font-size: 16px;
+        }
+
+        #tooltip .detail {
+            margin: 4px 0;
+        }
+
+        #tooltip .label {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .breadcrumb {
+            background: #334155;
+            padding: 12px 20px;
+            border-bottom: 1px solid #475569;
+            font-size: 14px;
+        }
+
+        .breadcrumb span {
+            color: #94a3b8;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb span:hover {
+            color: #a78bfa;
+        }
+
+        .breadcrumb span:not(:last-child)::after {
+            content: ' / ';
+            color: #64748b;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>📦 Bundle Size Analyzer</h1>
+        <p>Interactive treemap visualization of package dependencies and bundle sizes</p>
+    </div>
+
+    <div id="controls">
+        <label for="sizeMetric">Size Metric:</label>
+        <select id="sizeMetric" onchange="updateVisualization()">
+            <option value="size">Bundle Size</option>
+            <option value="gzip">Gzip Size</option>
+            <option value="dependencies">Dependencies Count</option>
+        </select>
+
+        <label for="colorScheme">Color Scheme:</label>
+        <select id="colorScheme" onchange="updateVisualization()">
+            <option value="rainbow">Rainbow</option>
+            <option value="blue">Blue Scale</option>
+            <option value="purple">Purple Scale</option>
+            <option value="green">Green Scale</option>
+        </select>
+
+        <button onclick="resetZoom()">Reset Zoom</button>
+        <button onclick="exportData()">Export Data</button>
+    </div>
+
+    <div id="stats">
+        <div class="stat-card">
+            <div class="stat-value" id="totalSize">-</div>
+            <div class="stat-label">Total Size</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="totalPackages">-</div>
+            <div class="stat-label">Total Packages</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="largestPackage">-</div>
+            <div class="stat-label">Largest Package</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="avgSize">-</div>
+            <div class="stat-label">Average Size</div>
+        </div>
+    </div>
+
+    <div class="breadcrumb" id="breadcrumb">
+        <span onclick="resetZoom()">root</span>
+    </div>
+
+    <svg id="treemap"></svg>
+    <div id="tooltip"></div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        // Sample data for The New Fuse project
+        const bundleData = {
+            name: "The New Fuse",
+            children: [
+                {
+                    name: "Apps",
+                    children: [
+                        {
+                            name: "Frontend",
+                            size: 2456000,
+                            gzip: 589000,
+                            dependencies: 42,
+                            children: [
+                                { name: "react", size: 142000, gzip: 45000, dependencies: 0 },
+                                { name: "react-dom", size: 135000, gzip: 42000, dependencies: 1 },
+                                { name: "reactflow", size: 456000, gzip: 128000, dependencies: 8 },
+                                { name: "framer-motion", size: 523000, gzip: 152000, dependencies: 3 },
+                                { name: "lucide-react", size: 234000, gzip: 67000, dependencies: 1 },
+                                { name: "tailwindcss", size: 156000, gzip: 42000, dependencies: 5 },
+                                { name: "vite", size: 345000, gzip: 98000, dependencies: 12 },
+                                { name: "other", size: 465000, gzip: 115000, dependencies: 12 }
+                            ]
+                        },
+                        {
+                            name: "Backend API",
+                            size: 1234000,
+                            gzip: 345000,
+                            dependencies: 38,
+                            children: [
+                                { name: "@nestjs/core", size: 234000, gzip: 67000, dependencies: 5 },
+                                { name: "@nestjs/common", size: 145000, gzip: 42000, dependencies: 3 },
+                                { name: "@prisma/client", size: 456000, gzip: 123000, dependencies: 0 },
+                                { name: "class-validator", size: 89000, gzip: 28000, dependencies: 2 },
+                                { name: "other", size: 310000, gzip: 85000, dependencies: 28 }
+                            ]
+                        },
+                        {
+                            name: "Tauri Desktop",
+                            size: 3456000,
+                            gzip: 892000,
+                            dependencies: 56,
+                            children: [
+                                { name: "@tauri-apps/api", size: 234000, gzip: 67000, dependencies: 0 },
+                                { name: "electron", size: 1234000, gzip: 345000, dependencies: 12 },
+                                { name: "electron-builder", size: 567000, gzip: 156000, dependencies: 8 },
+                                { name: "other", size: 1421000, gzip: 324000, dependencies: 36 }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Packages",
+                    children: [
+                        {
+                            name: "Core",
+                            size: 567000,
+                            gzip: 156000,
+                            dependencies: 15,
+                            children: [
+                                { name: "agent-core", size: 234000, gzip: 67000, dependencies: 5 },
+                                { name: "workflow-engine", size: 189000, gzip: 54000, dependencies: 6 },
+                                { name: "utils", size: 144000, gzip: 35000, dependencies: 4 }
+                            ]
+                        },
+                        {
+                            name: "Browser Automation",
+                            size: 890000,
+                            gzip: 234000,
+                            dependencies: 22,
+                            children: [
+                                { name: "puppeteer", size: 456000, gzip: 123000, dependencies: 8 },
+                                { name: "playwright", size: 434000, gzip: 111000, dependencies: 14 }
+                            ]
+                        },
+                        {
+                            name: "Database",
+                            size: 234000,
+                            gzip: 67000,
+                            dependencies: 8,
+                            children: [
+                                { name: "@prisma/client", size: 156000, gzip: 45000, dependencies: 0 },
+                                { name: "postgres", size: 78000, gzip: 22000, dependencies: 8 }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Tools",
+                    children: [
+                        { name: "Port Manager", size: 45000, gzip: 12000, dependencies: 3 },
+                        { name: "Codebase Analysis", size: 67000, gzip: 18000, dependencies: 5 },
+                        { name: "VSCode Bridge", size: 89000, gzip: 24000, dependencies: 7 }
+                    ]
+                }
+            ]
+        };
+
+        // Setup
+        const width = window.innerWidth;
+        const height = window.innerHeight - 300;
+
+        const svg = d3.select("#treemap")
+            .attr("width", width)
+            .attr("height", height);
+
+        let currentRoot = null;
+        let currentMetric = 'size';
+
+        // Color schemes
+        const colorSchemes = {
+            rainbow: d3.scaleOrdinal(d3.schemeCategory10),
+            blue: d3.scaleSequential(d3.interpolateBlues),
+            purple: d3.scaleSequential(d3.interpolatePurples),
+            green: d3.scaleSequential(d3.interpolateGreens)
+        };
+
+        function updateVisualization() {
+            currentMetric = document.getElementById('sizeMetric').value;
+            const colorScheme = document.getElementById('colorScheme').value;
+            renderTreemap(bundleData, colorScheme);
+            updateStats(bundleData);
+        }
+
+        function renderTreemap(data, colorScheme = 'rainbow') {
+            svg.selectAll("*").remove();
+
+            const hierarchy = d3.hierarchy(data)
+                .sum(d => d[currentMetric] || 0)
+                .sort((a, b) => b.value - a.value);
+
+            const treemapLayout = d3.treemap()
+                .size([width, height])
+                .padding(2)
+                .round(true);
+
+            const root = treemapLayout(hierarchy);
+            currentRoot = root;
+
+            const colorScale = colorSchemes[colorScheme];
+
+            const nodes = svg.selectAll("g")
+                .data(root.leaves())
+                .join("g")
+                .attr("class", "node")
+                .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+            nodes.append("rect")
+                .attr("width", d => d.x1 - d.x0)
+                .attr("height", d => d.y1 - d.y0)
+                .attr("fill", (d, i) => {
+                    if (colorScheme === 'rainbow') {
+                        return colorScale(d.parent.data.name);
+                    } else {
+                        const maxValue = root.value;
+                        return colorScale(d.value / maxValue);
+                    }
+                })
+                .attr("stroke", "#0f172a")
+                .attr("stroke-width", 2)
+                .on("mouseover", showTooltip)
+                .on("mouseout", hideTooltip)
+                .on("click", zoomToNode);
+
+            nodes.append("text")
+                .selectAll("tspan")
+                .data(d => {
+                    const width = d.x1 - d.x0;
+                    const name = d.data.name;
+                    if (width > 80) {
+                        return [name, formatBytes(d.value)];
+                    } else if (width > 40) {
+                        return [name.length > 12 ? name.substring(0, 10) + '...' : name];
+                    }
+                    return [];
+                })
+                .join("tspan")
+                .attr("x", 4)
+                .attr("y", (d, i) => 15 + i * 12)
+                .text(d => d);
+        }
+
+        function showTooltip(event, d) {
+            const tooltip = d3.select("#tooltip");
+            tooltip.html(`
+                <h3>${d.data.name}</h3>
+                <div class="detail"><span class="label">Size:</span> ${formatBytes(d.data.size)}</div>
+                <div class="detail"><span class="label">Gzip:</span> ${formatBytes(d.data.gzip)}</div>
+                <div class="detail"><span class="label">Dependencies:</span> ${d.data.dependencies || 0}</div>
+                <div class="detail"><span class="label">Percentage:</span> ${((d.value / currentRoot.value) * 100).toFixed(1)}%</div>
+            `)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY + 10) + "px")
+            .classed("visible", true);
+        }
+
+        function hideTooltip() {
+            d3.select("#tooltip").classed("visible", false);
+        }
+
+        function zoomToNode(event, d) {
+            // Update breadcrumb
+            const path = d.ancestors().reverse().map(n => n.data.name);
+            const breadcrumb = d3.select("#breadcrumb");
+            breadcrumb.html(
+                path.map((name, i) =>
+                    `<span onclick="zoomToBreadcrumb(${i})">${name}</span>`
+                ).join('')
+            );
+        }
+
+        function resetZoom() {
+            updateVisualization();
+            d3.select("#breadcrumb").html('<span onclick="resetZoom()">root</span>');
+        }
+
+        function updateStats(data) {
+            const allNodes = [];
+
+            function traverse(node) {
+                if (node.size) allNodes.push(node);
+                if (node.children) node.children.forEach(traverse);
+            }
+
+            traverse(data);
+
+            const totalSize = allNodes.reduce((sum, n) => sum + (n.size || 0), 0);
+            const totalPackages = allNodes.length;
+            const largest = allNodes.reduce((max, n) => (n.size || 0) > max.size ? n : max, { size: 0 });
+            const avgSize = totalSize / totalPackages;
+
+            document.getElementById('totalSize').textContent = formatBytes(totalSize);
+            document.getElementById('totalPackages').textContent = totalPackages;
+            document.getElementById('largestPackage').textContent = largest.name || '-';
+            document.getElementById('avgSize').textContent = formatBytes(avgSize);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(bundleData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bundle-analysis.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initial render
+        updateVisualization();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            updateVisualization();
+        });
+    </script>
+</body>
+</html>

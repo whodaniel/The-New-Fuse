@@ -1,0 +1,35 @@
+{
+  "name": "@the-new-fuse/ag-ui-core",
+  "version": "1.0.0",
+  "description": "AG-UI Protocol integration for The New Fuse - Connect AI agents to self-contained visualizations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": [
+    "ag-ui",
+    "agent-ui",
+    "microsoft",
+    "ai-agents",
+    "visualization",
+    "the-new-fuse"
+  ],
+  "author": "The New Fuse Team",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.5.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0"
+  }
+}
