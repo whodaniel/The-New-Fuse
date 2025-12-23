@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/renderer",
+    "rootDir": "./src/renderer",
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "declaration": false,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": [
+    "src/renderer/**/*",
+    "src/shared/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/main"
+  ]
+}
