@@ -18,7 +18,8 @@ import {
   Progress,
   Textarea,
   IconButton,
-  Tooltip
+  Tooltip,
+  Icon
 } from '@chakra-ui/react'
 import { FiTarget, FiRefreshCw, FiEye } from 'react-icons/fi'
 import type { RootState } from '../../store/store'
@@ -189,7 +190,7 @@ export const ElementsTab: React.FC = () => {
                 size="sm"
                 colorScheme="blue"
                 variant="outline"
-                leftIcon={<FiTarget />}
+                leftIcon={<Icon as={FiTarget} />}
                 isLoading={isSelecting}
                 loadingText="Select in browser..."
               >
@@ -200,7 +201,7 @@ export const ElementsTab: React.FC = () => {
                 <Tooltip label="View element details">
                   <IconButton
                     aria-label="View details"
-                    icon={<FiEye />}
+                    icon={<Icon as={FiEye} />}
                     size="sm"
                     variant="ghost"
                   />
@@ -259,7 +260,7 @@ export const ElementsTab: React.FC = () => {
               <Button
                 onClick={handleAutoDetect}
                 colorScheme="green"
-                leftIcon={<FiRefreshCw />}
+                leftIcon={<Icon as={FiRefreshCw} />}
                 isLoading={autoDetecting}
                 loadingText="Scanning..."
                 isDisabled={!tnfRelay.connected}

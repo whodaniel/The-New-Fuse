@@ -1,23 +1,18 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "outDir": "./dist/renderer",
-    "rootDir": "./src/renderer",
+    "rootDir": "./src",
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
-    "declaration": false,
     "skipLibCheck": true,
     "strict": true
   },
-  "include": [
-    "src/renderer/**/*",
-    "src/shared/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src/main"
-  ]
+  "include": ["src/renderer/**/*", "src/shared/**/*"],
+  "exclude": ["node_modules", "dist", "src/main", "src/preload"]
 }

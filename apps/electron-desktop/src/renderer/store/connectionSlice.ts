@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-interface ConnectionState {
+export interface ConnectionState {
   tnfRelay: {
     connected: boolean
     reconnectAttempts: number

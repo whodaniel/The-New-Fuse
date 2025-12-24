@@ -3,6 +3,7 @@ import {
   Button,
   Code,
   Collapse,
+  CollapseProps,
   HStack,
   Icon,
   SimpleGrid,
@@ -24,6 +25,9 @@ import {
   FiTerminal,
   FiZap,
 } from 'react-icons/fi';
+
+// Workaround for React types conflict with Chakra UI Collapse
+const TypedCollapse = Collapse as React.FC<CollapseProps & { children?: React.ReactNode }>;
 
 // Services/Categories
 const ACTION_CATEGORIES = [
@@ -146,7 +150,7 @@ export const QuickActionsDashboard: React.FC = () => {
           const [cmd, ...args] = action.command.split(' ');
           const response = await window.api.nativeExecute(cmd, args);
 
-          const output = response.data?.stdout || response.error || 'Command executed';
+          const output = response.data?.output || response.error || 'Command executed';
           setTerminalOutput((prev) => prev + `\n$ ${action.command}\n${output}\n`);
 
           if (response.success) {
@@ -223,7 +227,7 @@ export const QuickActionsDashboard: React.FC = () => {
                 />
               </Button>
 
-              <Collapse in={expandedCategory === category.name}>
+              <TypedCollapse in={expandedCategory === category.name}>
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} p={4} pt={0}>
                   {category.actions.map((action) => (
                     <Button
@@ -256,12 +260,12 @@ export const QuickActionsDashboard: React.FC = () => {
                             {action.description}
                           </Text>
                         </VStack>
-                        {action.command && <Icon as={FiPlay} size="xs" color="gray.600" />}
+                        {action.command && <Icon as={FiPlay} boxSize={3} color="gray.600" />}
                       </HStack>
                     </Button>
                   ))}
                 </SimpleGrid>
-              </Collapse>
+              </TypedCollapse>
             </Box>
           ))}
         </VStack>

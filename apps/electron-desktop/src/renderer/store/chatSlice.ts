@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-interface ChatMessage {
+export interface ChatMessage {
   id: string
   content: string
   timestamp: string
@@ -8,7 +8,7 @@ interface ChatMessage {
   metadata?: any
 }
 
-interface ChatState {
+export interface ChatState {
   messages: ChatMessage[]
   isLoading: boolean
   currentInput: string

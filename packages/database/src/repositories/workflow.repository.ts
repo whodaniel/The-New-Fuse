@@ -38,6 +38,7 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       error: prismaExecution.error ?? null,
       startedAt: prismaExecution.startedAt,
       completedAt: prismaExecution.completedAt ?? null,
+      projectId: prismaExecution.projectId ?? null,
     };
   }
 

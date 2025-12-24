@@ -36,7 +36,8 @@ export const ConnectionTab: React.FC = () => {
   const [tnfConfig, setTnfConfig] = useState({
     url: 'ws://localhost:3001',
     port: 3001,
-    autoReconnect: true
+    autoReconnect: true,
+    maxReconnectAttempts: 5
   })
   
   const [mcpConfig, setMcpConfig] = useState({

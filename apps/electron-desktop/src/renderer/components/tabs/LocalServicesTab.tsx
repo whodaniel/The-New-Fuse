@@ -23,7 +23,8 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   FormControl,
-  FormLabel
+  FormLabel,
+  Icon
 } from '@chakra-ui/react'
 import { FiPlus, FiTrash2, FiRefreshCw, FiPlay, FiServer, FiActivity, FiExternalLink, FiMonitor } from 'react-icons/fi'
 import type { RootState } from '../../store/store'
@@ -319,7 +320,7 @@ export const LocalServicesTab: React.FC = () => {
                             <Button
                               size="xs"
                               colorScheme={isRunning ? "blue" : "gray"}
-                              leftIcon={<FiExternalLink />}
+                              leftIcon={<Icon as={FiExternalLink} />}
                               onClick={() => handleOpenService(service.url)}
                               isDisabled={!isRunning}
                               flex={1}
@@ -364,7 +365,7 @@ export const LocalServicesTab: React.FC = () => {
                   onClick={handleRefreshStatuses}
                   size="sm"
                   variant="ghost"
-                  leftIcon={<FiRefreshCw />}
+                  leftIcon={<Icon as={FiRefreshCw} />}
                 >
                   Refresh
                 </Button>
@@ -396,7 +397,7 @@ export const LocalServicesTab: React.FC = () => {
                 onClick={handleAddPort}
                 colorScheme="blue"
                 size="sm"
-                leftIcon={<FiPlus />}
+                leftIcon={<Icon as={FiPlus} />}
               >
                 Add Port
               </Button>
@@ -426,7 +427,7 @@ export const LocalServicesTab: React.FC = () => {
                             </VStack>
                             <IconButton
                               aria-label="Remove port"
-                              icon={<FiTrash2 />}
+                              icon={<Icon as={FiTrash2} />}
                               size="xs"
                               variant="ghost"
                               colorScheme="red"
@@ -449,7 +450,7 @@ export const LocalServicesTab: React.FC = () => {
                                 <Button
                                   size="xs"
                                   colorScheme="blue"
-                                  leftIcon={<FiExternalLink />}
+                                  leftIcon={<Icon as={FiExternalLink} />}
                                   onClick={() => handleOpenService(service.url)}
                                   w="100%"
                                 >
@@ -564,7 +565,7 @@ export const LocalServicesTab: React.FC = () => {
               <Button
                 onClick={handleExecuteCommand}
                 colorScheme="green"
-                leftIcon={<FiPlay />}
+                leftIcon={<Icon as={FiPlay} />}
                 isDisabled={!systemStatus.nativeHost}
               >
                 Execute Command
@@ -584,7 +585,7 @@ export const LocalServicesTab: React.FC = () => {
               <GridItem>
                 <VStack>
                   <Box p={3} bg={tnfRelay.connected ? 'green.900' : 'red.900'} borderRadius="full">
-                    <FiServer color={tnfRelay.connected ? 'lightgreen' : 'lightcoral'} size="24" />
+                    <Icon as={FiServer} color={tnfRelay.connected ? 'lightgreen' : 'lightcoral'} boxSize="24px" />
                   </Box>
                   <Text fontSize="sm" textAlign="center">TNF Relay</Text>
                   <Badge colorScheme={tnfRelay.connected ? 'green' : 'red'} variant="subtle">
@@ -596,7 +597,7 @@ export const LocalServicesTab: React.FC = () => {
               <GridItem>
                 <VStack>
                   <Box p={3} bg={systemStatus.nativeHost ? 'green.900' : 'red.900'} borderRadius="full">
-                    <FiActivity color={systemStatus.nativeHost ? 'lightgreen' : 'lightcoral'} size="24" />
+                    <Icon as={FiActivity} color={systemStatus.nativeHost ? 'lightgreen' : 'lightcoral'} boxSize="24px" />
                   </Box>
                   <Text fontSize="sm" textAlign="center">Native Host</Text>
                   <Badge colorScheme={systemStatus.nativeHost ? 'green' : 'red'} variant="subtle">
@@ -608,7 +609,7 @@ export const LocalServicesTab: React.FC = () => {
               <GridItem>
                 <VStack>
                   <Box p={3} bg={statuses.some(s => s.isOpen) ? 'green.900' : 'red.900'} borderRadius="full">
-                    <FiServer color={statuses.some(s => s.isOpen) ? 'lightgreen' : 'lightcoral'} size="24" />
+                    <Icon as={FiServer} color={statuses.some(s => s.isOpen) ? 'lightgreen' : 'lightcoral'} boxSize="24px" />
                   </Box>
                   <Text fontSize="sm" textAlign="center">Local Services</Text>
                   <Badge colorScheme={statuses.some(s => s.isOpen) ? 'green' : 'red'} variant="subtle">

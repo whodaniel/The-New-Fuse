@@ -16,11 +16,25 @@ import {
   Textarea,
   IconButton,
   Flex,
-  Avatar
+  Avatar,
+  Icon
 } from '@chakra-ui/react'
 import { FiSend, FiTrash2, FiDownload } from 'react-icons/fi'
 import type { RootState } from '../../store/store'
-import type { ChatMessage } from '../../shared/types'
+
+// Using local interface to match the chatSlice type (timestamp as string for Redux serialization)
+interface ChatMessage {
+  id: string
+  content: string
+  timestamp: string
+  sender: 'user' | 'system' | 'ai' | 'chrome'
+  metadata?: {
+    platform?: string
+    confidence?: number
+    tabId?: number
+    url?: string
+  }
+}
 
 export const ChatTab: React.FC = () => {
   const toast = useToast()
@@ -305,7 +319,7 @@ export const ChatTab: React.FC = () => {
             <HStack>
               <IconButton
                 aria-label="Export history"
-                icon={<FiDownload />}
+                icon={<Icon as={FiDownload} />}
                 size="sm"
                 variant="ghost"
                 onClick={handleExportHistory}
@@ -313,7 +327,7 @@ export const ChatTab: React.FC = () => {
               />
               <IconButton
                 aria-label="Clear history"
-                icon={<FiTrash2 />}
+                icon={<Icon as={FiTrash2} />}
                 size="sm"
                 variant="ghost"
                 colorScheme="red"
@@ -402,7 +416,7 @@ export const ChatTab: React.FC = () => {
                     onClick={handleSendToChrome}
                     colorScheme="orange"
                     size="sm"
-                    leftIcon={<FiSend />}
+                    leftIcon={<Icon as={FiSend} />}
                     isLoading={isSending}
                     isDisabled={!inputMessage.trim() || !tnfRelay.connected}
                   >
@@ -414,7 +428,7 @@ export const ChatTab: React.FC = () => {
                   onClick={handleSendMessage}
                   colorScheme="blue"
                   size="sm"
-                  leftIcon={<FiSend />}
+                  leftIcon={<Icon as={FiSend} />}
                   isLoading={isSending}
                   isDisabled={!inputMessage.trim() || !tnfRelay.connected}
                 >

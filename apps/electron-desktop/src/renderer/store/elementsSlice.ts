@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-interface ElementInfo {
+export interface ElementInfo {
   type: 'input' | 'button' | 'output'
   selector: string
   xpath: string
@@ -8,9 +8,30 @@ interface ElementInfo {
   tabId?: number
   isSelected: boolean
   lastDetected: string
+  tag?: string
+  id?: string
+  classes?: string[]
+  text?: string
+  placeholder?: string
+  role?: string
+  ariaLabel?: string
+  position?: { x: number; y: number; width: number; height: number }
+  isVisible?: boolean
+  isInteractable?: boolean
+  elementType?: 'input' | 'button' | 'output' | 'unknown'
 }
 
-interface ElementsState {
+export interface PageElementMapping {
+  chatInput?: ElementInfo
+  sendButton?: ElementInfo
+  chatOutput?: ElementInfo
+  messageContainer?: ElementInfo
+  timestamp: number
+  url: string
+  domain: string
+}
+
+export interface ElementsState {
   detectedElements: {
     input: ElementInfo | null
     button: ElementInfo | null
@@ -18,6 +39,8 @@ interface ElementsState {
   }
   selectionMode: boolean
   currentTab: number | null
+  mapping: PageElementMapping | null
+  selectedElement: ElementInfo | null
 }
 
 const initialState: ElementsState = {
@@ -28,6 +51,8 @@ const initialState: ElementsState = {
   },
   selectionMode: false,
   currentTab: null,
+  mapping: null,
+  selectedElement: null,
 }
 
 export const elementsSlice = createSlice({
@@ -64,6 +89,12 @@ export const elementsSlice = createSlice({
         state.detectedElements[type]!.isSelected = isSelected
       }
     },
+    setMapping: (state, action: PayloadAction<PageElementMapping | null>) => {
+      state.mapping = action.payload
+    },
+    setSelectedElement: (state, action: PayloadAction<ElementInfo | null>) => {
+      state.selectedElement = action.payload
+    },
   },
 })
 
@@ -74,4 +105,6 @@ export const {
   setSelectionMode,
   setCurrentTab,
   updateElementStatus,
+  setMapping,
+  setSelectedElement,
 } = elementsSlice.actions
