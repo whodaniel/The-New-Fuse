@@ -289,7 +289,8 @@ exports.Prisma.WorkflowExecutionScalarFieldEnum = {
   output: 'output',
   error: 'error',
   startedAt: 'startedAt',
-  completedAt: 'completedAt'
+  completedAt: 'completedAt',
+  projectId: 'projectId'
 };
 
 exports.Prisma.WorkflowTemplateScalarFieldEnum = {
@@ -654,6 +655,43 @@ exports.Prisma.ErrorLogScalarFieldEnum = {
   stack: 'stack',
   context: 'context',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.WorkspaceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  workspaceId: 'workspaceId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgentMemoryScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  agentId: 'agentId',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ResourceAllocationScalarFieldEnum = {
+  id: 'id',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  projectId: 'projectId',
+  allocatedAt: 'allocatedAt',
+  metadata: 'metadata'
 };
 
 exports.Prisma.SyncStateScalarFieldEnum = {
@@ -1034,6 +1072,10 @@ exports.Prisma.ModelName = {
   ValidationDataset: 'ValidationDataset',
   BusinessMetric: 'BusinessMetric',
   ErrorLog: 'ErrorLog',
+  Workspace: 'Workspace',
+  Project: 'Project',
+  AgentMemory: 'AgentMemory',
+  ResourceAllocation: 'ResourceAllocation',
   SyncState: 'SyncState',
   SyncConflict: 'SyncConflict'
 };

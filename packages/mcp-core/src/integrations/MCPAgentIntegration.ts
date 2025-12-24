@@ -1,28 +1,28 @@
 /**
  * MCP Agent Integration Implementation
- * 
+ *
  * This class provides the implementation for integrating agents with the MCP system,
  * enabling agent-to-agent communication through standardized MCP protocols.
  */
 
 import type {
-  IMCPAgentIntegration,
   Agent,
-  AgentMCPEndpoint,
-  AgentMessageRouting,
-  AgentCollaboration,
   AgentCapabilityDiscovery,
-  AgentRegistrationResult,
+  AgentCollaboration,
+  AgentMCPEndpoint,
   AgentMessageResult,
-  MCPCapability
+  AgentMessageRouting,
+  AgentRegistrationResult,
+  IMCPAgentIntegration,
+  MCPCapability,
 } from '../interfaces/IMCPAgentIntegration';
 import { AgentStatus } from '../interfaces/IMCPAgentIntegration';
 import type { IMCPBroker } from '../interfaces/IMCPBroker';
 import type { IMCPClient } from '../interfaces/IMCPClient';
-import type { MCPServiceInfo } from '../types/broker';
 import type { MCPMessage } from '../interfaces/IMCPMessage';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import type { MCPServiceInfo } from '../types/broker';
 import { ServiceStatus } from '../types/common';
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 /**
  * Configuration for MCP Agent Integration
@@ -46,7 +46,7 @@ const DEFAULT_CONFIG: MCPAgentIntegrationConfig = {
   heartbeatInterval: 60000, // 1 minute
   collaborationTimeout: 300000, // 5 minutes
   enableMetrics: true,
-  enableAuditLog: true
+  enableAuditLog: true,
 };
 
 /**
@@ -85,27 +85,28 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
         name: agent.name,
         version: agent.version,
         endpoint: agent.endpoint || `mcp://agent/${agent.id}`,
+        skills: [], // Agent skills can be added here if available
         capabilities: agent.capabilities,
-        resources: agent.resources.map(resource => ({
+        resources: agent.resources.map((resource) => ({
           uri: resource,
           name: resource,
           description: `Resource from agent ${agent.name}`,
-          handler: null as any // Will be set by the agent
+          handler: null as any, // Will be set by the agent
         })),
-        tools: agent.tools.map(tool => ({
+        tools: agent.tools.map((tool) => ({
           name: tool,
           description: `Tool from agent ${agent.name}`,
           inputSchema: { type: 'object' }, // Basic schema
-          handler: null as any // Will be set by the agent
+          handler: null as any, // Will be set by the agent
         })),
         status: this.mapAgentStatusToServiceStatus(agent.status),
         metadata: {
           ...agent.metadata,
           agentType: 'mcp-integrated',
-          registeredBy: 'MCPAgentIntegration'
+          registeredBy: 'MCPAgentIntegration',
         },
         registeredAt: new Date(),
-        lastHeartbeat: new Date()
+        lastHeartbeat: new Date(),
       };
 
       // Register with broker
@@ -121,7 +122,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
         status: agent.status,
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        metadata: agent.metadata
+        metadata: agent.metadata,
       };
 
       // Store registered agent
@@ -142,18 +143,17 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
         serviceInfo,
         errors: [],
         warnings: [],
-        registeredAt: new Date()
+        registeredAt: new Date(),
       };
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
+
       return {
         success: false,
         agentId: agent.id,
         errors: [errorMessage],
         warnings: [],
-        registeredAt: new Date()
+        registeredAt: new Date(),
       };
     }
   }
@@ -173,9 +173,10 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       this.registeredAgents.delete(agentId);
 
       // End any active collaborations
-      const collaborations = Array.from(this.activeCollaborations.values())
-        .filter(collab => collab.participants.includes(agentId));
-      
+      const collaborations = Array.from(this.activeCollaborations.values()).filter((collab) =>
+        collab.participants.includes(agentId)
+      );
+
       for (const collaboration of collaborations) {
         await this.endCollaboration(collaboration.id);
       }
@@ -208,20 +209,23 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       // Update agent status to active
       endpoint.status = AgentStatus.ACTIVE;
       endpoint.lastHeartbeat = new Date();
-      
+
       // Update service status in broker
       const serviceInfo = await this.broker.getServiceHealth(agentId);
       if (serviceInfo) {
         // Re-register service as online
         await this.broker.registerService({
-          ...serviceInfo as any,
-          status: 'online'
+          ...(serviceInfo as any),
+          status: 'online',
         });
       }
 
       return true;
     } catch (error) {
-      console.error(`[MCPAgentIntegration] Failed to enable MCP communication for agent ${agentId}:`, error);
+      console.error(
+        `[MCPAgentIntegration] Failed to enable MCP communication for agent ${agentId}:`,
+        error
+      );
       return false;
     }
   }
@@ -238,19 +242,22 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
 
       // Update agent status to inactive
       endpoint.status = AgentStatus.INACTIVE;
-      
+
       // Update service status in broker
       const serviceInfo = await this.broker.getServiceHealth(agentId);
       if (serviceInfo) {
         await this.broker.registerService({
-          ...serviceInfo as any,
-          status: 'offline'
+          ...(serviceInfo as any),
+          status: 'offline',
         });
       }
 
       return true;
     } catch (error) {
-      console.error(`[MCPAgentIntegration] Failed to disable MCP communication for agent ${agentId}:`, error);
+      console.error(
+        `[MCPAgentIntegration] Failed to disable MCP communication for agent ${agentId}:`,
+        error
+      );
       return false;
     }
   }
@@ -266,7 +273,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
   ): Promise<AgentMessageResult> {
     const messageId = this.generateMessageId();
     const startTime = Date.now();
-    
+
     const routingInfo: AgentMessageRouting = {
       fromAgentId: from,
       toAgentId: to,
@@ -277,9 +284,9 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       retryPolicy: routing.retryPolicy || {
         maxRetries: this.config.maxRetries,
         backoffMs: 1000,
-        exponential: true
+        exponential: true,
       },
-      metadata: routing.metadata
+      metadata: routing.metadata,
     };
 
     let retryCount = 0;
@@ -312,25 +319,31 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
             from,
             to,
             message,
-            routing: routingInfo
+            routing: routingInfo,
           },
           meta: {
             timestamp: new Date(),
             source: from,
-            priority: routingInfo.priority === 'urgent' ? 'high' : routingInfo.priority === 'low' ? 'low' : 'normal',
-            timeout: routingInfo.timeout
-          }
+            priority:
+              routingInfo.priority === 'urgent'
+                ? 'high'
+                : routingInfo.priority === 'low'
+                  ? 'low'
+                  : 'normal',
+            timeout: routingInfo.timeout,
+          },
         };
 
         // Route through broker
-        const response = await this.broker.routeRequest(
-          mcpMessage,
-          to
-        );
+        const response = await this.broker.routeRequest(mcpMessage, to);
 
         // Track collaboration if this is the start of one
         if (routing.metadata?.startCollaboration) {
-          await this.startCollaboration([from, to], from, routing.metadata.purpose || 'Agent communication');
+          await this.startCollaboration(
+            [from, to],
+            from,
+            routing.metadata.purpose || 'Agent communication'
+          );
         }
 
         // Log successful routing if audit is enabled
@@ -345,9 +358,8 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
           deliveredAt: new Date(),
           response: response.result,
           retryCount,
-          totalTime: Date.now() - startTime
+          totalTime: Date.now() - startTime,
         };
-
       } catch (error) {
         lastError = error instanceof Error ? error.message : 'Unknown error';
         retryCount++;
@@ -358,7 +370,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
             ? routingInfo.retryPolicy!.backoffMs * Math.pow(2, retryCount - 1)
             : routingInfo.retryPolicy!.backoffMs;
 
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
     }
@@ -370,7 +382,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       routingInfo,
       error: lastError,
       retryCount,
-      totalTime: Date.now() - startTime
+      totalTime: Date.now() - startTime,
     };
   }
 
@@ -389,7 +401,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
 
       // Get service health from broker
       const health = await this.broker.getServiceHealth(agentId);
-      
+
       return {
         agentId,
         capabilities: endpoint.capabilities,
@@ -398,16 +410,15 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
         compatibility: {
           version: '1.0.0', // MCP version
           supported: true,
-          issues: []
+          issues: [],
         },
         performance: {
           responseTime: health?.responseTime || 0,
           availability: this.calculateAvailability(endpoint),
-          errorRate: health?.errorRate || 0
+          errorRate: health?.errorRate || 0,
         },
-        lastUpdated: endpoint.lastHeartbeat
+        lastUpdated: endpoint.lastHeartbeat,
       };
-
     } catch (error) {
       throw new MCPErrorClass(
         MCPErrorCode.INTERNAL_ERROR,
@@ -428,29 +439,29 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
    */
   async findAgentsByCapability(capability: string): Promise<Agent[]> {
     const agents: Agent[] = [];
-    
+
     for (const endpoint of this.registeredAgents.values()) {
-      const hasCapability = endpoint.capabilities.some(cap => 
-        cap.name === capability || cap.methods.includes(capability)
+      const hasCapability = endpoint.capabilities.some(
+        (cap) => cap.name === capability || cap.methods.includes(capability)
       );
-      
+
       if (hasCapability) {
         agents.push({
           id: endpoint.agentId,
           name: endpoint.agentId, // We don't store full agent info, just endpoint
           version: '1.0.0',
-          capabilities: endpoint.capabilities.map(cap => cap.name),
+          capabilities: endpoint.capabilities.map((cap) => cap.name),
           resources: endpoint.resources,
           tools: endpoint.tools,
           endpoint: endpoint.endpoint,
           status: endpoint.status,
           createdAt: endpoint.registeredAt,
           lastActivity: endpoint.lastHeartbeat,
-          metadata: endpoint.metadata
+          metadata: endpoint.metadata,
         });
       }
     }
-    
+
     return agents;
   }
 
@@ -463,7 +474,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
     purpose: string
   ): Promise<AgentCollaboration> {
     const collaborationId = this.generateCollaborationId();
-    
+
     const collaboration: AgentCollaboration = {
       id: collaborationId,
       participants,
@@ -473,7 +484,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       status: 'active',
       messageCount: 0,
       lastActivity: new Date(),
-      metadata: {}
+      metadata: {},
     };
 
     this.activeCollaborations.set(collaborationId, collaboration);
@@ -485,7 +496,9 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
 
     // Log collaboration start if audit is enabled
     if (this.config.enableAuditLog) {
-      console.log(`[MCPAgentIntegration] Collaboration ${collaborationId} started between agents: ${participants.join(', ')}`);
+      console.log(
+        `[MCPAgentIntegration] Collaboration ${collaborationId} started between agents: ${participants.join(', ')}`
+      );
     }
 
     return collaboration;
@@ -520,8 +533,9 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
    * Get active collaborations for an agent
    */
   async getAgentCollaborations(agentId: string): Promise<AgentCollaboration[]> {
-    return Array.from(this.activeCollaborations.values())
-      .filter(collab => collab.participants.includes(agentId) && collab.status === 'active');
+    return Array.from(this.activeCollaborations.values()).filter(
+      (collab) => collab.participants.includes(agentId) && collab.status === 'active'
+    );
   }
 
   /**
@@ -552,10 +566,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
   }> {
     const endpoint = this.registeredAgents.get(agentId);
     if (!endpoint) {
-      throw new MCPErrorClass(
-        MCPErrorCode.RESOURCE_NOT_FOUND,
-        `Agent ${agentId} not found`
-      );
+      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Agent ${agentId} not found`);
     }
 
     const health = await this.broker.getServiceHealth(agentId);
@@ -566,7 +577,7 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       lastHeartbeat: endpoint.lastHeartbeat,
       responseTime: health?.responseTime || 0,
       errorRate: health?.errorRate || 0,
-      availability: this.calculateAvailability(endpoint)
+      availability: this.calculateAvailability(endpoint),
     };
   }
 
@@ -587,13 +598,14 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
 
   private validateAgent(agent: Agent): void {
     if (!agent.id || !agent.name) {
-      throw new MCPErrorClass(
-        MCPErrorCode.INVALID_PARAMS,
-        'Agent must have id and name'
-      );
+      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, 'Agent must have id and name');
     }
 
-    if (!Array.isArray(agent.capabilities) || !Array.isArray(agent.resources) || !Array.isArray(agent.tools)) {
+    if (
+      !Array.isArray(agent.capabilities) ||
+      !Array.isArray(agent.resources) ||
+      !Array.isArray(agent.tools)
+    ) {
       throw new MCPErrorClass(
         MCPErrorCode.INVALID_PARAMS,
         'Agent capabilities, resources, and tools must be arrays'
@@ -624,20 +636,20 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
         name: 'agent.communication',
         version: '1.0.0',
         description: 'Basic agent-to-agent communication',
-        methods: ['agent.message', 'agent.status', 'agent.heartbeat']
+        methods: ['agent.message', 'agent.status', 'agent.heartbeat'],
       },
       {
         name: 'agent.resources',
         version: '1.0.0',
         description: 'Agent resource access',
-        methods: agent.resources.map(resource => `resource.${resource}`)
+        methods: agent.resources.map((resource) => `resource.${resource}`),
       },
       {
         name: 'agent.tools',
         version: '1.0.0',
         description: 'Agent tool execution',
-        methods: agent.tools.map(tool => `tool.${tool}`)
-      }
+        methods: agent.tools.map((tool) => `tool.${tool}`),
+      },
     ];
   }
 
@@ -645,10 +657,10 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
     const now = Date.now();
     const lastHeartbeat = endpoint.lastHeartbeat.getTime();
     const timeSinceHeartbeat = now - lastHeartbeat;
-    
+
     // Consider agent available if heartbeat is within 2x the heartbeat interval
     const maxHeartbeatAge = this.config.heartbeatInterval * 2;
-    
+
     if (timeSinceHeartbeat <= maxHeartbeatAge) {
       return 1.0; // 100% available
     } else {
@@ -674,7 +686,9 @@ export class MCPAgentIntegration implements IMCPAgentIntegration {
       if (timeSinceHeartbeat > this.config.heartbeatInterval * 3) {
         // Mark as inactive if no heartbeat for 3 intervals
         endpoint.status = AgentStatus.INACTIVE;
-        console.warn(`[MCPAgentIntegration] Agent ${agentId} marked as inactive due to missing heartbeat`);
+        console.warn(
+          `[MCPAgentIntegration] Agent ${agentId} marked as inactive due to missing heartbeat`
+        );
       }
     }, this.config.heartbeatInterval);
 
