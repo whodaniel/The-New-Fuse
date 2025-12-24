@@ -164,6 +164,12 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
   /**
    * Register a service with the broker
+   *
+   * FUTURE: This method will be updated to support resource scoping.
+   * - A `context` parameter will be added: `registerService(service: MCPServiceInfo, context: { workspaceId?: string; projectId?: string })`
+   * - If `projectId` is provided, the service's resources will be scoped to that project.
+   * - If only `workspaceId` is provided, resources are scoped to the workspace.
+   * - If neither is provided, the service and its resources are considered global.
    */
   async registerService(service: MCPServiceInfo): Promise<void> {
     if (!this.isRunningFlag) {
@@ -245,6 +251,14 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
   /**
    * Discover services based on query criteria
+   *
+   * FUTURE: This method will be updated to support resource scoping.
+   * - A `context` parameter will be added: `discoverServices(query: ServiceQuery, context: { workspaceId?: string; projectId?: string })`
+   * - The discovery process will filter services based on the provided context.
+   * - An agent in a specific project can discover:
+   *   1. Services explicitly registered to that `projectId`.
+   *   2. Services registered to the parent `workspaceId`.
+   *   3. Global services (no `projectId` or `workspaceId`).
    */
   async discoverServices(query: ServiceQuery): Promise<MCPServiceInfo[]> {
     if (!this.isRunningFlag) {

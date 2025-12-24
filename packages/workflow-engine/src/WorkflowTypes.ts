@@ -185,6 +185,8 @@ export interface WorkflowInstance {
   workflowDefinitionId: string;
   workflowVersion: number;
   status: WorkflowStepStatus; // Overall status of the workflow run
+  workspaceId?: string; // Isolate user workflows
+  projectId?: string; // Isolate ideas in progress
   inputs: Record<string, any>;
   outputs?: Record<string, any>;
   startedAt: Date;

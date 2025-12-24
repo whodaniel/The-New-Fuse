@@ -41,6 +41,7 @@ model User {
   loginAttempts     LoginAttempt[]
   workflowTemplates WorkflowTemplate[]
   authEvents        AuthEvent[]
+  workspaces        Workspace[]
 
   @@map("users")
 }
@@ -471,6 +472,9 @@ model WorkflowExecution {
   error       String?
   startedAt   DateTime                @default(now())
   completedAt DateTime?
+
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
 
   @@map("workflow_executions")
 }
@@ -1120,6 +1124,67 @@ model ErrorLog {
   createdAt DateTime @default(now())
 
   @@map("error_logs")
+}
+
+// =============================================================================
+// WORKSPACE & PROJECT MANAGEMENT
+// =============================================================================
+
+model Workspace {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  projects Project[]
+
+  @@map("workspaces")
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  workflowExecutions  WorkflowExecution[]
+  agentMemories       AgentMemory[]
+  resourceAllocations ResourceAllocation[]
+
+  @@map("projects")
+}
+
+model AgentMemory {
+  id        String   @id @default(uuid())
+  key       String
+  value     Json
+  agentId   String? // Can be linked to an agent if needed
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("agent_memories")
+}
+
+model ResourceAllocation {
+  id           String   @id @default(uuid())
+  resourceType String
+  resourceId   String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId    String
+  allocatedAt  DateTime @default(now())
+  metadata     Json?
+
+  @@map("resource_allocations")
 }
 
 // =============================================================================
