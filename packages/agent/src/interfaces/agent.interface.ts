@@ -1,4 +1,5 @@
 import { Priority } from '../bridges';
+import { Skill } from '@the-new-fuse/mcp-core/types/skill';
 
 export enum AgentState {
     INITIALIZING = 'INITIALIZING',
@@ -10,7 +11,7 @@ export enum AgentState {
 
 export interface AgentConfig {
     agentId: string;
-    capabilities: Set<string>; // Changed to string as per api-types/src/agent.ts
+    skills: Skill[];
     modelName?: string;
     maxConcurrentTasks?: number;
     taskTimeout?: number;  // seconds

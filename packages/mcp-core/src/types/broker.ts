@@ -4,6 +4,7 @@
 
 import { ServiceStatus, LoadBalancingStrategy, FilterConfig, SortConfig, Pagination } from './common';
 import { MCPResource, MCPTool, MCPCapability } from '../interfaces';
+import { Skill } from './skill';
 
 /**
  * MCP Service information interface
@@ -17,6 +18,8 @@ export interface MCPServiceInfo {
   version: string;
   /** Service endpoint URL */
   endpoint: string;
+  /** Service skills */
+  skills: Skill[];
   /** Service capabilities */
   capabilities: string[];
   /** Available resources */
@@ -43,6 +46,8 @@ export interface MCPServiceInfo {
 export interface ServiceQuery {
   /** Service name filter */
   name?: string;
+  /** Skill filter */
+  skill?: string;
   /** Capability filter */
   capability?: string;
   /** Resource filter */

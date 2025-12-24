@@ -5,6 +5,7 @@
  * It integrates with the Prisma database schema and the Master Agent Registry.
  */
 
+import { ResourceRequirement } from '@the-new-fuse/mcp-core/types/skill';
 // import { AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
 
 // Define local types to replace database imports
@@ -218,6 +219,7 @@ export interface WorkflowTask {
   description: string;
   action: string;
   params: Record<string, any>;
+  resourceRequirements?: ResourceRequirement[];
   priority: TaskPriority;
   status: TaskStatus;
   assignedAgentId?: string;

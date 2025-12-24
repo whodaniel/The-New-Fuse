@@ -255,7 +255,13 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     }
 
     try {
-      const services = await this.serviceRegistry.discover(query);
+      let services = await this.serviceRegistry.discover(query);
+
+      if (query.skill) {
+        services = services.filter(service =>
+          service.skills.some(skill => skill.id === query.skill || skill.name === query.skill)
+        );
+      }
 
       // Filter by health status if health checking is enabled
       if (this.config.healthCheck.enabled && this.config.loadBalancing.useHealthCheck) {
