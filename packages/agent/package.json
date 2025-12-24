@@ -15,8 +15,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.9",
-    "@nestjs/core": "^11.1.9",
+    "@nestjs/common": "^11.1.10",
+    "@nestjs/core": "^11.1.10",
     "@nestjs/graphql": "13.2.3",
     "@the-new-fuse/api-types": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
