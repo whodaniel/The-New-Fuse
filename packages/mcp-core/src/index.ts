@@ -81,6 +81,9 @@ export type {
   ServiceStatus,
 } from './types/index.js';
 
+// Skill types (used by workflow-engine and agent packages)
+export type { ResourceRequirement, Skill } from './types/index.js';
+
 // Error types and classes
 export {
   ErrorCategory,

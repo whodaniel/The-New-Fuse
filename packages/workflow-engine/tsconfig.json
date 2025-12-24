@@ -26,6 +26,8 @@
       "@/*": ["./src/*"],
       "@the-new-fuse/database": ["../database/src"],
       "@the-new-fuse/database/*": ["../database/src/*"],
+      "@the-new-fuse/mcp-core": ["../mcp-core/src"],
+      "@the-new-fuse/mcp-core/*": ["../mcp-core/src/*"],
       "@the-new-fuse/security": ["../security/src"],
       "@the-new-fuse/security/*": ["../security/src/*"],
       "@the-new-fuse/relay-core": ["../relay-core/src"],
@@ -35,14 +37,10 @@
   },
   "include": ["src"],
   "references": [
+    { "path": "../mcp-core" },
     { "path": "../relay-core" },
     { "path": "../database" },
     { "path": "../security" }
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

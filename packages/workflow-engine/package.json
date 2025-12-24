@@ -72,6 +72,7 @@
   },
   "dependencies": {
     "@prisma/client": "^7.1.0",
+    "@the-new-fuse/mcp-core": "workspace:*",
     "@the-new-fuse/relay-core": "workspace:*",
     "events": "^3.3.0"
   },

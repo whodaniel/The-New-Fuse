@@ -5,7 +5,7 @@
  * It integrates with the Prisma database schema and the Master Agent Registry.
  */
 
-import { ResourceRequirement } from '@the-new-fuse/mcp-core/types/skill';
+import type { ResourceRequirement } from '@the-new-fuse/mcp-core';
 // import { AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
 
 // Define local types to replace database imports
@@ -13,7 +13,7 @@ export enum TaskPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
-  URGENT = 'URGENT'
+  URGENT = 'URGENT',
 }
 
 export enum TaskStatus {
@@ -21,7 +21,7 @@ export enum TaskStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
 // ------------------- Core Workflow Enums -------------------
@@ -72,15 +72,15 @@ export interface WorkflowDefinition {
   updatedAt: Date;
   authorId: string;
   tags: string[];
-  
+
   // Execution graph
   steps: WorkflowStep[];
   edges: WorkflowEdge[];
-  
+
   // Trigger and input schema
   trigger: WorkflowTrigger;
   inputSchema: Record<string, any>;
-  
+
   // Configuration
   defaultPriority: TaskPriority;
   maxRetries: number;
@@ -92,29 +92,29 @@ export interface WorkflowStep {
   type: StepType;
   name: string;
   description?: string;
-  
+
   // Task-specific details
   task?: TaskDetails;
-  
+
   // Sub-workflow details
   subWorkflowId?: string;
-  
+
   // Conditional logic
   condition?: string; // e.g., "outputs.step1.result === 'success'"
-  
+
   // Iteration logic
   iteration?: IterationDetails;
-  
+
   // Agent assignment
   assignee: StepAssignee;
-  
+
   // Input/Output mapping
   inputs: Record<string, any>; // e.g., { "url": "workflow.inputs.targetUrl" }
   outputs: Record<string, any>;
-  
+
   // Error handling and retry strategy
   retryStrategy?: RetryStrategy;
-  
+
   // UI position for the builder
   position: { x: number; y: number };
 }
@@ -192,7 +192,7 @@ export interface WorkflowInstance {
   startedAt: Date;
   completedAt?: Date;
   triggeredBy: string; // User ID, "schedule", "webhook", etc.
-  
+
   // State of each step in the instance
   stepStates: Map<string, WorkflowStepState>;
 }
