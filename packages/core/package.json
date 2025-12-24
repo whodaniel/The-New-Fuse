@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
-    "@nestjs/cache-manager": "^3.0.1",
-    "@nestjs/common": "^11.1.9",
+    "@nestjs/cache-manager": "^3.1.0",
+    "@nestjs/common": "^11.1.10",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.9",
+    "@nestjs/core": "^11.1.10",
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/schedule": "^6.0.1",
     "@the-new-fuse/core-vector-db": "workspace:*",

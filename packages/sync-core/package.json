@@ -28,9 +28,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.9",
+    "@nestjs/common": "^11.1.10",
     "@nestjs/config": "^3.3.0",
-    "@nestjs/core": "^11.1.9",
+    "@nestjs/core": "^11.1.10",
     "@nestjs/event-emitter": "^2.0.3",
     "@nestjs/swagger": "^7.1.17",
     "@nestjs/terminus": "^10.2.3",
