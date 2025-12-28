@@ -19,14 +19,11 @@
     "src/types/memory.types.ts",
     "src/types/messages.ts",
     "src/types/multi-agent-chat.types.ts",
-    "src/utils/correlation-id.ts"
+    "src/utils/correlation-id.ts",
+    "src/task/**/*.ts",
+    "src/index.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
     {
       "path": "../database"
