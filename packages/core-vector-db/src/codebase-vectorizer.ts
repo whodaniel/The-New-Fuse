@@ -28,7 +28,7 @@ interface Relationship {
 }
 
 export class CodebaseVectorizer {
-  private prisma: any;
+  private prisma: PrismaClient;
   private openai: OpenAI;
   private embeddingModel = 'text-embedding-3-small'; // Cheaper and faster
   private batchSize = 100;
@@ -74,7 +74,7 @@ export class CodebaseVectorizer {
     const entities: CodeEntity[] = [];
     const extensions = ['.ts', '.tsx', '.js', '.jsx', '.py', '.java', '.go', '.rs'];
 
-    async function scan(dir: string): Promise<void> {
+    const scan = async (dir: string): Promise<void> => {
       const entries = await fs.readdir(dir, { withFileTypes: true });
 
       for (const entry of entries) {
@@ -118,7 +118,7 @@ export class CodebaseVectorizer {
           }
         }
       }
-    }
+    };
 
     await scan(rootPath);
     return entities;

@@ -19,7 +19,7 @@ interface RelatedCode {
 }
 
 export class CodebaseSearch {
-  private prisma: any;
+  private prisma: PrismaClient;
   private openai: OpenAI;
   private embeddingModel = 'text-embedding-3-small';
 
@@ -149,7 +149,7 @@ export class CodebaseSearch {
       entityId
     );
 
-    return usages.map((u) => ({
+    return usages.map((u: SearchResult & { relationship: string }) => ({
       entity: u,
       relationship: u.relationship,
       depth: 1,
@@ -190,7 +190,7 @@ export class CodebaseSearch {
       entityId
     );
 
-    return dependencies.map((d) => ({
+    return dependencies.map((d: SearchResult & { relationship: string }) => ({
       entity: d,
       relationship: d.relationship,
       depth: 1,
@@ -353,7 +353,7 @@ export class CodebaseSearch {
       if (similar.length > 0) {
         clusters.push([entity as SearchResult, ...similar]);
         processed.add(entityId);
-        similar.forEach((s) => processed.add(String(s.id)));
+        similar.forEach((s: SearchResult) => processed.add(String(s.id)));
       }
     }
 

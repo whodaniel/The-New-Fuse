@@ -1,15 +1,14 @@
 // Re-export all Prisma types and enums
 import type * as PrismaTypes from '../generated/prisma';
 import {
-    TaskStatus as _TaskStatus,
-    TaskPriority as _TaskPriority,
-    AgentStatus as _AgentStatus,
-    AgentType as _AgentType,
-    UserRole as _UserRole,
-    WorkflowStatus as _WorkflowStatus,
-    WorkflowExecutionStatus as _WorkflowExecutionStatus,
-    PrismaClient as _PrismaClient,
-    Prisma as _Prisma
+  AgentStatus as _AgentStatus,
+  AgentType as _AgentType,
+  PrismaClient as _PrismaClient,
+  TaskPriority as _TaskPriority,
+  TaskStatus as _TaskStatus,
+  UserRole as _UserRole,
+  WorkflowExecutionStatus as _WorkflowExecutionStatus,
+  WorkflowStatus as _WorkflowStatus,
 } from '../generated/prisma';
 
 // Export enums as values
@@ -21,6 +20,9 @@ export const UserRole = _UserRole;
 export const WorkflowStatus = _WorkflowStatus;
 export const WorkflowExecutionStatus = _WorkflowExecutionStatus;
 export const PrismaClient = _PrismaClient;
+
+// Export PrismaClient as a type for type annotations
+export type PrismaClient = _PrismaClient;
 
 // Export Prisma both as value and namespace
 export { Prisma } from '../generated/prisma';
