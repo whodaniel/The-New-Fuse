@@ -1,6 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
@@ -14,15 +16,10 @@
     "dist",
     "test",
     "tests",
+    "src/__tests__/**",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
     "src/modules/mcp/examples/**",
     "src/examples/**"
-  ],
-  "references": [
-    { "path": "../../packages/types" },
-    { "path": "../../packages/core" },
-    { "path": "../../packages/database" },
-    { "path": "../../packages/utils" },
-    { "path": "../../packages/mcp-core" },
-    { "path": "../../packages/feature-tracker" }
   ]
 }
