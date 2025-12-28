@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import Redis, { Cluster } from 'ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {
@@ -8,12 +8,33 @@ export class RedisService implements OnModuleDestroy {
   private subscriber: Redis;
 
   constructor() {
+    // Check if we're using Railway Redis (doesn't support database selection)
+    const redisUrl = process.env.REDIS_URL || '';
+    const isRailway = redisUrl.includes('railway.internal') || redisUrl.includes('railway.app');
+
+    // Safe parsing of database index - handle empty strings and ensure valid integer
+    const parseDbIndex = (): number | undefined => {
+      if (isRailway) {
+        this.logger.log('🚂 Railway Redis detected - skipping database selection');
+        return undefined; // Railway Redis doesn't support database selection
+      }
+
+      const dbEnv = process.env.REDIS_DB || '0';
+      const parsed = parseInt(dbEnv, 10);
+
+      if (isNaN(parsed) || parsed < 0) {
+        this.logger.warn(`Invalid REDIS_DB value: "${dbEnv}", defaulting to 0`);
+        return 0;
+      }
+
+      return parsed;
+    };
+
     // Optimized Redis connection pool configuration
-    const redisConfig = {
+    const redisConfig: any = {
       host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
       password: process.env.REDIS_PASSWORD,
-      db: parseInt(process.env.REDIS_DB || '0'),
       // Connection pooling settings
       maxRetriesPerRequest: 3,
       enableReadyCheck: true,
@@ -37,6 +58,12 @@ export class RedisService implements OnModuleDestroy {
         return false;
       },
     };
+
+    // Only add db parameter if not Railway
+    const dbIndex = parseDbIndex();
+    if (dbIndex !== undefined) {
+      redisConfig.db = dbIndex;
+    }
 
     this.client = new Redis(redisConfig);
 
@@ -123,7 +150,7 @@ export class RedisService implements OnModuleDestroy {
 
   async getTasks(): Promise<any[]> {
     const tasks = await this.client.lrange('tasks', 0, -1);
-    return tasks.map(task => JSON.parse(task));
+    return tasks.map((task) => JSON.parse(task));
   }
 
   async addTask(task: any): Promise<void> {
