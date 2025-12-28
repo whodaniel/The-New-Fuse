@@ -14,15 +14,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "src/types/llm.types.ts",
-    "src/types/memory.types.ts",
-    "src/types/messages.ts",
-    "src/types/multi-agent-chat.types.ts",
-    "src/utils/correlation-id.ts",
-    "src/task/**/*.ts",
-    "src/index.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
     {
