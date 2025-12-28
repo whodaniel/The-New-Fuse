@@ -28,7 +28,7 @@ interface Relationship {
 }
 
 export class CodebaseVectorizer {
-  private prisma: InstanceType<typeof PrismaClient>;
+  private prisma: any;
   private openai: OpenAI;
   private embeddingModel = 'text-embedding-3-small'; // Cheaper and faster
   private batchSize = 100;
