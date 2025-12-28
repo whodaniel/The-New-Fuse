@@ -1,6 +1,6 @@
 /**
  * Redis Agent Registry
- * 
+ *
  * Implements capability-based discovery and dual-registration logic
  * Stores agent metadata in Redis with TTL for presence
  */
@@ -8,18 +8,18 @@
 import { createClient, RedisClientType } from 'redis';
 import { z } from 'zod';
 
-export const AgentStatus = z.enum(['online', 'offline', 'busy', 'error']);
-export type AgentStatus = z.infer<typeof AgentStatus>;
+const AgentStatusSchema = z.enum(['online', 'offline', 'busy', 'error']);
+export type AgentStatus = z.infer<typeof AgentStatusSchema>;
 
 export const AgentMetadata = z.object({
   id: z.string(),
   name: z.string(),
-  platform: z.string().default('unknown'),
-  capabilities: z.array(z.string()).default([]),
-  status: AgentStatus.default('online'),
-  gatewayId: z.string().optional().describe('ID of the relay gateway this agent is connected to'),
+  platform: z.string().optional(),
+  capabilities: z.array(z.string()).optional(),
+  status: z.enum(['online', 'offline', 'busy', 'error']).optional(),
+  gatewayId: z.string().optional(),
   lastSeen: z.number(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type AgentMetadata = z.infer<typeof AgentMetadata>;
@@ -42,7 +42,7 @@ export class RedisAgentRegistry {
     };
 
     this.redis = createClient({ url: this.config.redisUrl });
-    
+
     this.redis.on('error', (err) => console.error('[AgentRegistry] Redis error:', err));
   }
 
@@ -61,11 +61,15 @@ export class RedisAgentRegistry {
   async register(metadata: Omit<AgentMetadata, 'lastSeen'>): Promise<void> {
     const fullMetadata: AgentMetadata = {
       ...metadata,
+      platform: metadata.platform || 'unknown',
+      capabilities: metadata.capabilities || [],
+      status: metadata.status || 'online',
+      metadata: metadata.metadata || {},
       lastSeen: Date.now(),
     };
 
     const key = `${this.config.prefix}:${metadata.id}`;
-    
+
     // Use transaction to set hash and expiry
     const multi = this.redis.multi();
     multi.hSet(key, {
@@ -74,7 +78,7 @@ export class RedisAgentRegistry {
       metadata: JSON.stringify(fullMetadata.metadata),
     });
     multi.expire(key, this.config.ttl);
-    
+
     await multi.exec();
   }
 
@@ -118,7 +122,7 @@ export class RedisAgentRegistry {
       if (data.capabilities) {
         const caps = JSON.parse(data.capabilities);
         if (caps.includes(capability)) {
-           agents.push({
+          agents.push({
             ...data,
             capabilities: caps,
             metadata: data.metadata ? JSON.parse(data.metadata) : {},
@@ -141,7 +145,7 @@ export class RedisAgentRegistry {
     for (const key of keys) {
       const data = await this.redis.hGetAll(key);
       if (Object.keys(data).length > 0) {
-         agents.push({
+        agents.push({
           ...data,
           capabilities: data.capabilities ? JSON.parse(data.capabilities) : [],
           metadata: data.metadata ? JSON.parse(data.metadata) : {},

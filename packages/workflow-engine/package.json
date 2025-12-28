@@ -71,10 +71,14 @@
     "schema": "../database/prisma/schema.prisma"
   },
   "dependencies": {
+    "@nestjs/event-emitter": "^3.0.1",
     "@prisma/client": "^7.1.0",
+    "@the-new-fuse/agent": "workspace:*",
+    "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",
     "@the-new-fuse/relay-core": "workspace:*",
     "events": "^3.3.0",
+    "ioredis": "^5.0.0",
     "redis": "^5.10.0",
     "zod": "^4.2.1"
   },

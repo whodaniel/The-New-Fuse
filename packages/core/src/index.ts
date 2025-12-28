@@ -19,18 +19,18 @@ export { AgentOrchestrator, Task, Agent, TaskResult } from './agents/agent-orche
 export { AgentSwarmOrchestrationService } from './agents/AgentSwarmOrchestrationService';
 
 // Agency Services (Multi-tenant white-label management)
-export { 
-  AgencyService, 
-  AgencyProfile, 
-  AgencySettings, 
-  CreateAgencyDto, 
-  UpdateAgencyDto 
+export {
+  AgencyService,
+  AgencyProfile,
+  AgencySettings,
+  CreateAgencyDto,
+  UpdateAgencyDto,
 } from './services/agency.service';
-export { 
-  EnhancedAgencyService, 
-  AgencyAnalytics, 
-  SwarmInitializationResult, 
-  ProviderRegistration 
+export {
+  EnhancedAgencyService,
+  AgencyAnalytics,
+  SwarmInitializationResult,
+  ProviderRegistration,
 } from './services/enhanced-agency.service';
 
 // Memory System
@@ -93,3 +93,6 @@ export * from './utils/errors';
 
 // Delegation
 export * from './delegation';
+
+// Task Management
+export * from './task';

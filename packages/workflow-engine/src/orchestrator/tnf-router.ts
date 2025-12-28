@@ -1,9 +1,9 @@
-import { createClient, RedisClientType } from 'redis';
-import { TNFEnvelope, validateTNFEnvelope, createTNFEnvelope } from '../../../../packages/relay-core/src/protocol/tnf-envelope';
-import { RedisAgentRegistry } from '../../../../packages/agent/src/registry/redis-agent-registry';
-import { SystemQueueService, SystemQueueName } from './services/system-queue.service';
-import { AgentInbox } from '@the-new-fuse/core/task';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { RedisAgentRegistry } from '@the-new-fuse/agent';
+import { AgentInbox } from '@the-new-fuse/core';
+import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from '@the-new-fuse/relay-core';
+import { createClient, RedisClientType } from 'redis';
+import { SystemQueueName, SystemQueueService } from './services/system-queue.service';
 
 export interface RouterConfig {
   redisUrl: string;
@@ -45,8 +45,8 @@ export class TNFRouter {
   }
 
   private setupErrorHandlers(): void {
-    this.redisSubscriber.on('error', err => console.error('[Router] Subscriber error:', err));
-    this.redisPublisher.on('error', err => console.error('[Router] Publisher error:', err));
+    this.redisSubscriber.on('error', (err) => console.error('[Router] Subscriber error:', err));
+    this.redisPublisher.on('error', (err) => console.error('[Router] Publisher error:', err));
     this.redis.on('error', (err: any) => console.error('[Router] ioredis error:', err));
   }
 
@@ -62,7 +62,9 @@ export class TNFRouter {
     });
 
     console.log(`[Router] Listening on ${this.config.ingressChannel}`);
-    console.log(`[Router] Inbox routing: ${this.config.enableInboxRouting ? 'ENABLED' : 'DISABLED'}`);
+    console.log(
+      `[Router] Inbox routing: ${this.config.enableInboxRouting ? 'ENABLED' : 'DISABLED'}`
+    );
   }
 
   async stop(): Promise<void> {
@@ -99,7 +101,7 @@ export class TNFRouter {
 
   /**
    * Route a task to the best capable agent OR system queue
-   * 
+   *
    * NEW: Enhanced with agent inbox routing and load balancing
    */
   private async routeTask(envelope: TNFEnvelope): Promise<void> {
@@ -114,27 +116,37 @@ export class TNFRouter {
 
     // 1. Find capable agents
     const candidates = await this.registry.findAgentsByCapability(requiredCapability);
-    
+
     if (candidates.length === 0) {
       console.warn(`[Router] No agents found for capability: ${requiredCapability}`);
-      await this.sendError(envelope, 'NO_AGENT_FOUND', `No agent with capability ${requiredCapability}`);
+      await this.sendError(
+        envelope,
+        'NO_AGENT_FOUND',
+        `No agent with capability ${requiredCapability}`
+      );
       return;
     }
 
     // 2. NEW: Load balancing - select agent with fewest pending tasks
     let targetAgent = candidates[0];
-    
+
     if (this.config.enableInboxRouting && candidates.length > 1) {
-      targetAgent = await this.selectBestAgent(candidates.map(c => c.id));
+      targetAgent = await this.selectBestAgent(candidates.map((c) => c.id));
     }
 
     console.log(`[Router] Routing task to agent: ${targetAgent.id || targetAgent}`);
 
     // 3. NEW: Route to agent's inbox (if enabled) or direct channel
     if (this.config.enableInboxRouting) {
-      await this.routeToInbox(typeof targetAgent === 'string' ? targetAgent : targetAgent.id, envelope);
+      await this.routeToInbox(
+        typeof targetAgent === 'string' ? targetAgent : targetAgent.id,
+        envelope
+      );
     } else {
-      await this.forwardToAgent(typeof targetAgent === 'string' ? targetAgent : targetAgent.id, envelope);
+      await this.forwardToAgent(
+        typeof targetAgent === 'string' ? targetAgent : targetAgent.id,
+        envelope
+      );
     }
   }
 
@@ -144,7 +156,7 @@ export class TNFRouter {
   private async routeToInbox(agentId: string, envelope: TNFEnvelope): Promise<void> {
     try {
       const inbox = new AgentInbox(agentId, this.redis, this.eventEmitter);
-      
+
       // Convert TNFEnvelope to AgentTask
       const task = {
         id: envelope.id,
@@ -168,7 +180,7 @@ export class TNFRouter {
       this.eventEmitter.emit('router.task_routed', {
         taskId: envelope.id,
         agentId,
-        timestamp: new Date(),  
+        timestamp: new Date(),
       });
     } catch (error) {
       console.error(`[Router] Failed to route to inbox for agent ${agentId}:`, error);
@@ -198,7 +210,7 @@ export class TNFRouter {
     // Return agent with minimum load
     const sorted = Array.from(loadMap.entries()).sort((a, b) => a[1] - b[1]);
     const selected = sorted[0][0];
-    
+
     console.log(`[Router] Load balancing selected agent ${selected} (pending: ${sorted[0][1]})`);
     return selected;
   }
@@ -208,7 +220,7 @@ export class TNFRouter {
    */
   private async routeSystemTask(capability: string, envelope: TNFEnvelope): Promise<void> {
     console.log(`[Router] Routing system task: ${capability}`);
-    
+
     try {
       let queueName: SystemQueueName;
       let jobType = 'process'; // Default job name
@@ -225,15 +237,14 @@ export class TNFRouter {
           queueName = SystemQueueName.DATA_SYNC;
           break;
         case 'system:agent-exec':
-           queueName = SystemQueueName.AGENT_EXECUTION;
-           break;
+          queueName = SystemQueueName.AGENT_EXECUTION;
+          break;
         default:
           throw new Error(`Unknown system capability: ${capability}`);
       }
 
       const jobId = await this.systemQueue.dispatchTask(queueName, jobType, envelope.payload);
       console.log(`[Router] Dispatched to queue ${queueName}, Job ID: ${jobId}`);
-
     } catch (error: any) {
       console.error(`[Router] System task failed:`, error);
       await this.sendError(envelope, 'SYSTEM_TASK_FAILED', error.message);
@@ -260,7 +271,11 @@ export class TNFRouter {
   /**
    * Send error response
    */
-  private async sendError(originalEnvelope: TNFEnvelope, code: string, message: string): Promise<void> {
+  private async sendError(
+    originalEnvelope: TNFEnvelope,
+    code: string,
+    message: string
+  ): Promise<void> {
     const errorEnvelope = createTNFEnvelope(
       'response',
       { agentId: 'orchestrator', role: 'orchestrator' },
