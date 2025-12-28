@@ -8,13 +8,10 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "noImplicitAny": false,
+    "strict": false,
     "types": ["node", "jest"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
 }
