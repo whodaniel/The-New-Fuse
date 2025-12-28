@@ -15,7 +15,18 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/prisma/**/*",
+    "src/database/DatabaseMonitor.ts",
+    "src/database/TransactionManager.ts",
+    "src/services/AgentMetadataManager.ts",
+    "src/communication/MessagingService.ts",
+    "src/communication/NotificationService.ts"
+  ],
   "references": [
     {
       "path": "../database"
