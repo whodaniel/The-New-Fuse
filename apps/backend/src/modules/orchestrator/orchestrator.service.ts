@@ -4,7 +4,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import Redis from 'ioredis';
 import { AgentLifecycleManager } from './AgentLifecycleManager';
-import { AgentInbox } from '@the-new-fuse/core';
+import { AgentInbox } from '../../shared/agent-inbox';
 
 // Types for the orchestrator services
 interface HeartbeatConfig {

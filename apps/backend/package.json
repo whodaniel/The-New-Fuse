@@ -38,7 +38,7 @@
     "@nestjs/websockets": "^11.1.10",
     "@prisma/client": "7.1.0",
     "@the-new-fuse/ag-ui-core": "workspace:*",
-    "@the-new-fuse/core": "workspace:*",
+
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/feature-tracker": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",

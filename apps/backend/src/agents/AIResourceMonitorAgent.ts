@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import Redis from 'ioredis';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AgentInbox } from '@the-new-fuse/core';
+import { AgentInbox } from '../shared/agent-inbox';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 

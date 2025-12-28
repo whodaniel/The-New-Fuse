@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AgentTask } from '@the-new-fuse/core';
+import { AgentTask } from '../shared/agent-inbox';
 import Redis from 'ioredis';
 
 export interface AgentCostModel {
