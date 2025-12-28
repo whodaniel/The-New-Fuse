@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import Redis from 'ioredis';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { glob } from 'glob';
-import { parse as parseTypeScript } from '@typescript-eslint/typescript-estree';
-import { AgentInbox } from '../shared/agent-inbox';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Cron } from '@nestjs/schedule';
+import { parse as parseTypeScript } from '@typescript-eslint/typescript-estree';
+import * as fs from 'fs/promises';
+import { glob } from 'glob';
+import Redis from 'ioredis';
+import * as path from 'path';
+import { AgentInbox } from '../shared/agent-inbox';
 
 export interface Resource {
   id: string;
@@ -60,10 +60,10 @@ export interface SynergyOpportunity {
 
 /**
  * CodebaseIndexer Agent
- * 
+ *
  * Continuously indexes the TNF codebase, detects resources,
  * analyzes dependencies, and finds synergy opportunities.
- * 
+ *
  * Runs on cron schedules:
  * - Daily full index (midnight)
  * - Incremental index every 30min
@@ -204,7 +204,7 @@ export class CodebaseIndexerAgent {
 
       // Compare with previous analysis
       const previousSynergies = await this.loadPreviousSynergies();
-      const newSynergies = this.compareS ynergies(synergies, previousSynergies);
+      const newSynergies = this.compareSynergies(synergies, previousSynergies);
 
       if (newSynergies.length > 0) {
         this.logger.log(`🆕 Found ${newSynergies.length} NEW synergy opportunities`);
@@ -524,7 +524,10 @@ export class CodebaseIndexerAgent {
     const nameGroups = new Map<string, Resource[]>();
 
     for (const resource of resources) {
-      const baseName = resource.name.toLowerCase().replace(/service|agent|manager/gi, '').trim();
+      const baseName = resource.name
+        .toLowerCase()
+        .replace(/service|agent|manager/gi, '')
+        .trim();
       if (!nameGroups.has(baseName)) {
         nameGroups.set(baseName, []);
       }
@@ -644,10 +647,16 @@ export class CodebaseIndexerAgent {
   /**
    * Save resources to registry
    */
-  private async saveToRegistry(resources: Resource[], synergies: SynergyOpportunity[]): Promise<void> {
+  private async saveToRegistry(
+    resources: Resource[],
+    synergies: SynergyOpportunity[]
+  ): Promise<void> {
     // Save to Redis
     for (const resource of resources) {
-      await this.redis.set(`registry:resources:${resource.type}:${resource.id}`, JSON.stringify(resource));
+      await this.redis.set(
+        `registry:resources:${resource.type}:${resource.id}`,
+        JSON.stringify(resource)
+      );
       await this.redis.sadd(`registry:index:${resource.type}`, resource.id);
     }
 
@@ -701,7 +710,10 @@ export class CodebaseIndexerAgent {
     return [];
   }
 
-  private async updateRegistry(resources: Resource[], synergies: SynergyOpportunity[]): Promise<void> {
+  private async updateRegistry(
+    resources: Resource[],
+    synergies: SynergyOpportunity[]
+  ): Promise<void> {
     // Update existing entries
   }
 
