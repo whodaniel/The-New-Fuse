@@ -5,7 +5,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { glob } from 'glob';
 import { parse as parseTypeScript } from '@typescript-eslint/typescript-estree';
-import { AgentInbox } from '@the-new-fuse/core/task';
+import { AgentInbox } from '@the-new-fuse/core';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export interface Resource {
