@@ -7,3 +7,4 @@ export * from './TaskModule';
 export * from './types';
 export * from './tasks/ComponentAnalysisTask';
 export * from './AgentInbox';
+export * from './SequentialFileIngestion';
