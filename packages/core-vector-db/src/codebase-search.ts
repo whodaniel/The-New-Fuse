@@ -19,7 +19,7 @@ interface RelatedCode {
 }
 
 export class CodebaseSearch {
-  private prisma: PrismaClient;
+  private prisma: InstanceType<typeof PrismaClient>;
   private openai: OpenAI;
   private embeddingModel = 'text-embedding-3-small';
 

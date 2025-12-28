@@ -1,8 +1,8 @@
 import { PrismaClient } from '@the-new-fuse/database';
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { createHash } from 'crypto';
+import * as fs from 'fs/promises';
 import OpenAI from 'openai';
+import * as path from 'path';
 
 interface CodeEntity {
   filePath: string;
@@ -28,7 +28,7 @@ interface Relationship {
 }
 
 export class CodebaseVectorizer {
-  private prisma: PrismaClient;
+  private prisma: InstanceType<typeof PrismaClient>;
   private openai: OpenAI;
   private embeddingModel = 'text-embedding-3-small'; // Cheaper and faster
   private batchSize = 100;
@@ -113,11 +113,7 @@ export class CodebaseVectorizer {
             });
 
             // Extract functions/classes (simplified - would use AST parser in production)
-            const codeEntities = await this.extractCodeEntities(
-              content,
-              relativePath,
-              ext
-            );
+            const codeEntities = await this.extractCodeEntities(content, relativePath, ext);
             entities.push(...codeEntities);
           }
         }
@@ -254,7 +250,9 @@ export class CodebaseVectorizer {
     // Process in batches to avoid API limits
     for (let i = 0; i < entities.length; i += this.batchSize) {
       const batch = entities.slice(i, i + this.batchSize);
-      console.log(`Processing batch ${i / this.batchSize + 1}/${Math.ceil(entities.length / this.batchSize)}`);
+      console.log(
+        `Processing batch ${i / this.batchSize + 1}/${Math.ceil(entities.length / this.batchSize)}`
+      );
 
       // Get entity contents
       const entityData = await this.prisma.$queryRawUnsafe(
@@ -323,9 +321,7 @@ export class CodebaseVectorizer {
         const importPath = match[1];
 
         // Find matching entity
-        const importedEntity = allEntities.find((e: any) =>
-          e.file_path.includes(importPath)
-        );
+        const importedEntity = allEntities.find((e: any) => e.file_path.includes(importPath));
 
         if (importedEntity) {
           relationships.push({
