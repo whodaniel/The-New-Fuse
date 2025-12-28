@@ -26,7 +26,6 @@
     "@nestjs/core": "^11.1.10",
     "@nestjs/microservices": "^11.1.10",
     "@qdrant/js-client-rest": "^1.15.1",
-    "@the-new-fuse/database": "workspace:*",
     "chroma-js": "^3.1.2",
     "openai": "^6.5.0",
     "pg": "^8.16.3",

@@ -1,5 +1,5 @@
-import { PrismaClient } from '@the-new-fuse/database';
 import OpenAI from 'openai';
+import { disconnect as dbDisconnect, query } from './db/connection';
 
 interface SearchResult {
   id: bigint;
@@ -19,12 +19,10 @@ interface RelatedCode {
 }
 
 export class CodebaseSearch {
-  private prisma: PrismaClient;
   private openai: OpenAI;
   private embeddingModel = 'text-embedding-3-small';
 
   constructor() {
-    this.prisma = new PrismaClient();
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -34,14 +32,14 @@ export class CodebaseSearch {
    * Semantic search: Find code similar to a natural language query
    * Example: "authentication logic", "database connection handling"
    */
-  async semanticSearch(query: string, limit = 10): Promise<SearchResult[]> {
+  async semanticSearch(searchQuery: string, limit = 10): Promise<SearchResult[]> {
     const startTime = Date.now();
 
     // 1. Generate embedding for query
-    const queryEmbedding = await this.generateQueryEmbedding(query);
+    const queryEmbedding = await this.generateQueryEmbedding(searchQuery);
 
     // 2. Search using pgvector cosine similarity
-    const results = await this.prisma.$queryRawUnsafe<SearchResult[]>(
+    const result = await query<SearchResult>(
       `SELECT 
         ce.id,
         ce.file_path as "filePath",
@@ -55,14 +53,13 @@ export class CodebaseSearch {
       JOIN code_embeddings cem ON ce.id = cem.entity_id
       ORDER BY cem.embedding <=> $1::vector
       LIMIT $2`,
-      JSON.stringify(queryEmbedding),
-      limit
+      [JSON.stringify(queryEmbedding), limit]
     );
 
     // 3. Log analytics
-    await this.logSearch(query, 'semantic', results.length, Date.now() - startTime);
+    await this.logSearch(searchQuery, 'semantic', result.rows.length, Date.now() - startTime);
 
-    return results;
+    return result.rows;
   }
 
   /**
@@ -74,25 +71,24 @@ export class CodebaseSearch {
     threshold = 0.9
   ): Promise<SearchResult[]> {
     // Get the entity's embedding
-    const entity = await this.prisma.$queryRawUnsafe<any[]>(
+    const entityResult = await query(
       `SELECT ce.id, cem.embedding
       FROM code_entities ce
       JOIN code_embeddings cem ON ce.id = cem.entity_id
       WHERE ce.file_path = $1 AND ce.entity_name = $2
       LIMIT 1`,
-      filePath,
-      entityName
+      [filePath, entityName]
     );
 
-    if (!entity || entity.length === 0) {
+    if (entityResult.rows.length === 0) {
       return [];
     }
 
-    const sourceEmbedding = entity[0].embedding;
-    const sourceId = entity[0].id;
+    const sourceEmbedding = entityResult.rows[0].embedding;
+    const sourceId = entityResult.rows[0].id;
 
     // Find similar embeddings
-    const results = await this.prisma.$queryRawUnsafe<SearchResult[]>(
+    const results = await query<SearchResult>(
       `SELECT 
         ce.id,
         ce.file_path as "filePath",
@@ -107,33 +103,30 @@ export class CodebaseSearch {
         AND 1 - (cem.embedding <=> $1::vector) > $3
       ORDER BY cem.embedding <=> $1::vector
       LIMIT 20`,
-      sourceEmbedding,
-      sourceId,
-      threshold
+      [sourceEmbedding, sourceId, threshold]
     );
 
-    return results;
+    return results.rows;
   }
 
   /**
    * Find code that imports/uses a specific entity (knowledge graph traversal)
    */
   async findUsages(filePath: string, entityName: string): Promise<RelatedCode[]> {
-    const entity = await this.prisma.$queryRawUnsafe<any[]>(
+    const entityResult = await query(
       `SELECT id FROM code_entities 
       WHERE file_path = $1 AND entity_name = $2
       LIMIT 1`,
-      filePath,
-      entityName
+      [filePath, entityName]
     );
 
-    if (!entity || entity.length === 0) {
+    if (entityResult.rows.length === 0) {
       return [];
     }
 
-    const entityId = entity[0].id;
+    const entityId = entityResult.rows[0].id;
 
-    const usages = await this.prisma.$queryRawUnsafe<any[]>(
+    const usages = await query<SearchResult & { relationship: string }>(
       `SELECT 
         ce.id,
         ce.file_path as "filePath",
@@ -146,10 +139,10 @@ export class CodebaseSearch {
       FROM code_relationships cr
       JOIN code_entities ce ON cr.from_entity_id = ce.id
       WHERE cr.to_entity_id = $1`,
-      entityId
+      [entityId]
     );
 
-    return usages.map((u: SearchResult & { relationship: string }) => ({
+    return usages.rows.map((u) => ({
       entity: u,
       relationship: u.relationship,
       depth: 1,
@@ -160,21 +153,20 @@ export class CodebaseSearch {
    * Find what a specific entity imports/uses (reverse dependencies)
    */
   async findDependencies(filePath: string, entityName: string): Promise<RelatedCode[]> {
-    const entity = await this.prisma.$queryRawUnsafe<any[]>(
+    const entityResult = await query(
       `SELECT id FROM code_entities 
       WHERE file_path = $1 AND entity_name = $2
       LIMIT 1`,
-      filePath,
-      entityName
+      [filePath, entityName]
     );
 
-    if (!entity || entity.length === 0) {
+    if (entityResult.rows.length === 0) {
       return [];
     }
 
-    const entityId = entity[0].id;
+    const entityId = entityResult.rows[0].id;
 
-    const dependencies = await this.prisma.$queryRawUnsafe<any[]>(
+    const dependencies = await query<SearchResult & { relationship: string }>(
       `SELECT 
         ce.id,
         ce.file_path as "filePath",
@@ -187,10 +179,10 @@ export class CodebaseSearch {
       FROM code_relationships cr
       JOIN code_entities ce ON cr.to_entity_id = ce.id
       WHERE cr.from_entity_id = $1`,
-      entityId
+      [entityId]
     );
 
-    return dependencies.map((d: SearchResult & { relationship: string }) => ({
+    return dependencies.rows.map((d) => ({
       entity: d,
       relationship: d.relationship,
       depth: 1,
@@ -201,7 +193,7 @@ export class CodebaseSearch {
    * Hybrid search: Combine semantic search with filters
    */
   async hybridSearch(
-    query: string,
+    searchQuery: string,
     filters: {
       entityType?: string[];
       language?: string[];
@@ -209,10 +201,10 @@ export class CodebaseSearch {
     } = {},
     limit = 10
   ): Promise<SearchResult[]> {
-    const queryEmbedding = await this.generateQueryEmbedding(query);
+    const queryEmbedding = await this.generateQueryEmbedding(searchQuery);
 
     // Build WHERE clause dynamically
-    const conditions = [];
+    const conditions: string[] = [];
     const params: any[] = [JSON.stringify(queryEmbedding)];
     let paramIndex = 2;
 
@@ -238,7 +230,7 @@ export class CodebaseSearch {
 
     params.push(limit);
 
-    const results = await this.prisma.$queryRawUnsafe<SearchResult[]>(
+    const results = await query<SearchResult>(
       `SELECT 
         ce.id,
         ce.file_path as "filePath",
@@ -253,10 +245,10 @@ export class CodebaseSearch {
       ${whereClause}
       ORDER BY cem.embedding <=> $1::vector
       LIMIT $${paramIndex}`,
-      ...params
+      params
     );
 
-    return results;
+    return results.rows;
   }
 
   /**
@@ -269,7 +261,7 @@ export class CodebaseSearch {
     byType: Record<string, number>;
     byLanguage: Record<string, number>;
   }> {
-    const stats = await this.prisma.$queryRawUnsafe<any[]>(
+    const stats = await query(
       `SELECT 
         COUNT(*) as total_entities,
         COUNT(DISTINCT file_path) as total_files,
@@ -285,12 +277,10 @@ export class CodebaseSearch {
       ) t`
     );
 
-    const relationshipCount = await this.prisma.$queryRawUnsafe<any[]>(
-      `SELECT COUNT(*) as count FROM code_relationships`
-    );
+    const relationshipCount = await query(`SELECT COUNT(*) as count FROM code_relationships`);
 
-    const stat = stats[0] || {};
-    const relCount = relationshipCount[0]?.count || 0;
+    const stat = stats.rows[0] || {};
+    const relCount = relationshipCount.rows[0]?.count || 0;
 
     return {
       totalEntities: Number(stat.total_entities || 0),
@@ -306,7 +296,7 @@ export class CodebaseSearch {
    */
   async findCodeClusters(minSimilarity = 0.85): Promise<Array<SearchResult[]>> {
     // Get all embeddings
-    const allEmbeddings = await this.prisma.$queryRawUnsafe<any[]>(
+    const allEmbeddings = await query(
       `SELECT 
         ce.id,
         ce.file_path as "filePath",
@@ -319,7 +309,7 @@ export class CodebaseSearch {
       WHERE ce.entity_type IN ('function', 'class', 'method')`
     );
 
-    if (!allEmbeddings || allEmbeddings.length === 0) {
+    if (allEmbeddings.rows.length === 0) {
       return [];
     }
 
@@ -327,12 +317,12 @@ export class CodebaseSearch {
     const clusters: Array<SearchResult[]> = [];
     const processed = new Set<string>();
 
-    for (const entity of allEmbeddings) {
+    for (const entity of allEmbeddings.rows) {
       const entityId = String(entity.id);
       if (processed.has(entityId)) continue;
 
       // Find similar entities
-      const similar = await this.prisma.$queryRawUnsafe<SearchResult[]>(
+      const similar = await query<SearchResult>(
         `SELECT 
           ce.id,
           ce.file_path as "filePath",
@@ -345,15 +335,13 @@ export class CodebaseSearch {
         WHERE ce.id != $2
           AND 1 - (cem.embedding <=> $1::vector) > $3
         ORDER BY cem.embedding <=> $1::vector`,
-        entity.embedding,
-        entity.id,
-        minSimilarity
+        [entity.embedding, entity.id, minSimilarity]
       );
 
-      if (similar.length > 0) {
-        clusters.push([entity as SearchResult, ...similar]);
+      if (similar.rows.length > 0) {
+        clusters.push([entity as SearchResult, ...similar.rows]);
         processed.add(entityId);
-        similar.forEach((s: SearchResult) => processed.add(String(s.id)));
+        similar.rows.forEach((s) => processed.add(String(s.id)));
       }
     }
 
@@ -376,19 +364,16 @@ export class CodebaseSearch {
    * Log search for analytics
    */
   private async logSearch(
-    query: string,
+    searchQuery: string,
     queryType: string,
     resultCount: number,
     queryTimeMs: number
   ): Promise<void> {
     try {
-      await this.prisma.$queryRawUnsafe(
+      await query(
         `INSERT INTO search_analytics (query_text, query_type, results_count, query_time_ms)
         VALUES ($1, $2, $3, $4)`,
-        query,
-        queryType,
-        resultCount,
-        queryTimeMs
+        [searchQuery, queryType, resultCount, queryTimeMs]
       );
     } catch (error) {
       console.error('Failed to log search:', error);
@@ -396,6 +381,6 @@ export class CodebaseSearch {
   }
 
   async disconnect(): Promise<void> {
-    await this.prisma.$disconnect();
+    await dbDisconnect();
   }
 }

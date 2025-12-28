@@ -1,8 +1,8 @@
-import { PrismaClient } from '@the-new-fuse/database';
 import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
 import OpenAI from 'openai';
 import * as path from 'path';
+import { disconnect as dbDisconnect, query } from './db/connection';
 
 interface CodeEntity {
   filePath: string;
@@ -15,11 +15,6 @@ interface CodeEntity {
   metadata?: Record<string, any>;
 }
 
-interface EmbeddingResult {
-  entityId: bigint;
-  embedding: number[];
-}
-
 interface Relationship {
   fromEntityId: bigint;
   toEntityId: bigint;
@@ -28,13 +23,11 @@ interface Relationship {
 }
 
 export class CodebaseVectorizer {
-  private prisma: PrismaClient;
   private openai: OpenAI;
-  private embeddingModel = 'text-embedding-3-small'; // Cheaper and faster
+  private embeddingModel = 'text-embedding-3-small';
   private batchSize = 100;
 
   constructor() {
-    this.prisma = new PrismaClient();
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -206,35 +199,36 @@ export class CodebaseVectorizer {
       const contentHash = createHash('sha256').update(entity.content).digest('hex');
 
       // Check if already exists
-      const existing = await this.prisma.$queryRawUnsafe(
-        `SELECT id FROM code_entities WHERE content_hash = $1`,
-        contentHash
-      );
+      const existing = await query(`SELECT id FROM code_entities WHERE content_hash = $1`, [
+        contentHash,
+      ]);
 
-      if (Array.isArray(existing) && existing.length > 0) {
-        stored.push(existing[0]);
+      if (existing.rows.length > 0) {
+        stored.push(existing.rows[0]);
         continue;
       }
 
       // Insert new entity
-      const result = await this.prisma.$queryRawUnsafe(
+      const result = await query(
         `INSERT INTO code_entities 
         (file_path, entity_type, entity_name, content, start_line, end_line, language, metadata, content_hash)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING id`,
-        entity.filePath,
-        entity.entityType,
-        entity.entityName,
-        entity.content,
-        entity.startLine || null,
-        entity.endLine || null,
-        entity.language,
-        JSON.stringify(entity.metadata || {}),
-        contentHash
+        [
+          entity.filePath,
+          entity.entityType,
+          entity.entityName,
+          entity.content,
+          entity.startLine || null,
+          entity.endLine || null,
+          entity.language,
+          JSON.stringify(entity.metadata || {}),
+          contentHash,
+        ]
       );
 
-      if (Array.isArray(result) && result.length > 0) {
-        stored.push(result[0]);
+      if (result.rows.length > 0) {
+        stored.push(result.rows[0]);
       }
     }
 
@@ -255,15 +249,15 @@ export class CodebaseVectorizer {
       );
 
       // Get entity contents
-      const entityData = await this.prisma.$queryRawUnsafe(
+      const entityData = await query(
         `SELECT id, entity_name, content FROM code_entities WHERE id = ANY($1::bigint[])`,
-        batch.map((e: any) => e.id)
+        [batch.map((e: any) => e.id)]
       );
 
-      if (!Array.isArray(entityData)) continue;
+      if (entityData.rows.length === 0) continue;
 
       // Prepare texts for embedding
-      const texts = entityData.map(
+      const texts = entityData.rows.map(
         (e: any) => `${e.entity_name}\n\n${e.content.substring(0, 8000)}`
       );
 
@@ -275,17 +269,15 @@ export class CodebaseVectorizer {
         });
 
         // Store embeddings
-        for (let j = 0; j < entityData.length; j++) {
-          const entity = entityData[j];
+        for (let j = 0; j < entityData.rows.length; j++) {
+          const entity = entityData.rows[j];
           const embedding = response.data[j].embedding;
 
-          await this.prisma.$queryRawUnsafe(
+          await query(
             `INSERT INTO code_embeddings (entity_id, embedding, model)
             VALUES ($1, $2, $3)
             ON CONFLICT (entity_id) DO UPDATE SET embedding = $2, model = $3`,
-            entity.id,
-            JSON.stringify(embedding),
-            this.embeddingModel
+            [entity.id, JSON.stringify(embedding), this.embeddingModel]
           );
         }
 
@@ -300,16 +292,17 @@ export class CodebaseVectorizer {
   /**
    * Extract relationships between code entities
    */
-  private async extractRelationships(entities: any[]): Promise<void> {
+  private async extractRelationships(_entities: any[]): Promise<void> {
     console.log('🔗 Extracting code relationships...');
 
     // Get all entities with their content
-    const allEntities = await this.prisma.$queryRawUnsafe(
-      `SELECT id, file_path, entity_name, content FROM code_entities`
+    const allEntitiesResult = await query(
+      `SELECT id, file_path, entity_name, entity_type, content FROM code_entities`
     );
 
-    if (!Array.isArray(allEntities)) return;
+    if (allEntitiesResult.rows.length === 0) return;
 
+    const allEntities = allEntitiesResult.rows;
     const relationships: Relationship[] = [];
 
     for (const entity of allEntities) {
@@ -355,14 +348,11 @@ export class CodebaseVectorizer {
 
     // Store relationships
     for (const rel of relationships) {
-      await this.prisma.$queryRawUnsafe(
+      await query(
         `INSERT INTO code_relationships (from_entity_id, to_entity_id, relationship_type, metadata)
         VALUES ($1, $2, $3, $4)
         ON CONFLICT DO NOTHING`,
-        rel.fromEntityId,
-        rel.toEntityId,
-        rel.relationshipType,
-        JSON.stringify(rel.metadata || {})
+        [rel.fromEntityId, rel.toEntityId, rel.relationshipType, JSON.stringify(rel.metadata || {})]
       );
     }
 
@@ -382,19 +372,14 @@ export class CodebaseVectorizer {
       console.log('Could not get git hash');
     }
 
-    const filesCount = await this.prisma.$queryRawUnsafe(
-      `SELECT COUNT(DISTINCT file_path) as count FROM code_entities`
-    );
+    const filesCount = await query(`SELECT COUNT(DISTINCT file_path) as count FROM code_entities`);
 
-    const count = Array.isArray(filesCount) && filesCount[0] ? filesCount[0].count : 0;
+    const count = filesCount.rows[0]?.count || 0;
 
-    await this.prisma.$queryRawUnsafe(
+    await query(
       `INSERT INTO codebase_snapshots (git_commit_hash, total_entities, total_files, metadata)
       VALUES ($1, $2, $3, $4)`,
-      gitHash,
-      totalEntities,
-      count,
-      JSON.stringify({ timestamp: new Date().toISOString() })
+      [gitHash, totalEntities, count, JSON.stringify({ timestamp: new Date().toISOString() })]
     );
   }
 
@@ -402,6 +387,6 @@ export class CodebaseVectorizer {
    * Cleanup
    */
   async disconnect(): Promise<void> {
-    await this.prisma.$disconnect();
+    await dbDisconnect();
   }
 }
