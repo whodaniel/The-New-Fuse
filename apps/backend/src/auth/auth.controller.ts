@@ -108,4 +108,39 @@ export class AuthController {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     res.redirect(`${frontendUrl}/auth/github/callback?token=${token}`);
   }
+
+  @Post('unstoppable-domains')
+  async unstoppableDomainsAuth(@Body() body: { domain: string; walletAddress: string; walletType?: string }) {
+    const { domain, walletAddress, walletType } = body;
+
+    // Validate input
+    if (!domain || !walletAddress) {
+      throw new Error('Domain and wallet address are required');
+    }
+
+    // Find or create user with Unstoppable Domain
+    const user = await this.authService.findOrCreateUnstoppableDomainsUser(
+      domain,
+      walletAddress,
+      walletType,
+    );
+
+    // Generate JWT token
+    const token = this.jwtService.sign({
+      sub: user.id,
+      email: user.email || domain,
+      role: user.role || 'user',
+    });
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email || domain,
+        name: user.name || domain,
+        role: user.role || 'user',
+        photoURL: user.photoURL,
+      },
+    };
+  }
 }

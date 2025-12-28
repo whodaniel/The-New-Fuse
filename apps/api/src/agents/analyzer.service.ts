@@ -234,7 +234,7 @@ export class AnalyzerAgentService {
   private async identifyBottlenecks(
     files: string[]
   ): Promise<Array<{ location: string; description: string; impact: number }>> {
-    const bottlenecks = [];
+    const bottlenecks: Array<{ location: string; description: string; impact: number }> = [];
 
     // Check for missing indexes in schema
     const schemaFiles = files.filter((f) => f.includes('schema.prisma'));

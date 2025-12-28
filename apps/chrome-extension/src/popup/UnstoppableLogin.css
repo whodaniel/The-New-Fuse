@@ -1,0 +1,325 @@
+/**
+ * Unstoppable Domains Login Component Styles
+ */
+
+.ud-login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Loading State */
+.ud-login-container.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.ud-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4c47f7;
+  border-radius: 50%;
+  animation: ud-spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes ud-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Login Header */
+.ud-login-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.ud-logo {
+  margin: 0 auto 16px;
+  width: 40px;
+  height: 40px;
+}
+
+.ud-login-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.ud-description {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Error Message */
+.ud-error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ud-error-icon {
+  font-size: 20px;
+}
+
+.ud-error-message p {
+  margin: 0;
+  font-size: 14px;
+  color: #c00;
+}
+
+/* Login Button */
+.ud-login-button {
+  width: 100%;
+  background: linear-gradient(135deg, #4c47f7 0%, #6366f1 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(76, 71, 247, 0.2);
+}
+
+.ud-login-button:hover {
+  background: linear-gradient(135deg, #3d38e6 0%, #5254e0 100%);
+  box-shadow: 0 4px 12px rgba(76, 71, 247, 0.3);
+  transform: translateY(-1px);
+}
+
+.ud-login-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(76, 71, 247, 0.2);
+}
+
+.ud-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Authenticated State */
+.ud-login-container.authenticated {
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8e9ff 100%);
+  border: 1px solid #d0d1ff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.ud-user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #d0d1ff;
+}
+
+.ud-user-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid #4c47f7;
+  object-fit: cover;
+}
+
+.ud-user-details {
+  flex: 1;
+}
+
+.ud-domain-name {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #4c47f7;
+  word-break: break-all;
+}
+
+.ud-wallet-address {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  color: #666;
+  background: rgba(76, 71, 247, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.ud-email {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* Verified Addresses */
+.ud-verified-addresses {
+  margin-bottom: 20px;
+}
+
+.ud-verified-addresses h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4c47f7;
+}
+
+.ud-verified-addresses ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ud-verified-addresses li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.ud-chain-symbol {
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  background: #4c47f7;
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.ud-address {
+  font-size: 12px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  color: #666;
+}
+
+/* Logout Button */
+.ud-logout-button {
+  width: 100%;
+  background: white;
+  color: #4c47f7;
+  border: 2px solid #4c47f7;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ud-logout-button:hover {
+  background: #4c47f7;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(76, 71, 247, 0.2);
+}
+
+.ud-logout-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Benefits Section */
+.ud-benefits {
+  margin: 24px 0;
+  padding: 16px;
+  background: rgba(76, 71, 247, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(76, 71, 247, 0.1);
+}
+
+.ud-benefits h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.ud-benefits ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ud-benefits li {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Footer */
+.ud-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.ud-footer p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.ud-footer a {
+  color: #4c47f7;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.ud-footer a:hover {
+  color: #3d38e6;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .ud-login-container {
+    padding: 16px;
+  }
+
+  .ud-login-header h2 {
+    font-size: 20px;
+  }
+
+  .ud-user-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ud-user-avatar {
+    width: 80px;
+    height: 80px;
+  }
+}

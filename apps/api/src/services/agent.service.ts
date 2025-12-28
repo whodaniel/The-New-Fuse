@@ -132,9 +132,9 @@ export class AgentService {
         name: updateAgentDto.name,
         description: updateAgentDto.description,
         systemPrompt: updateAgentDto.systemPrompt,
-        configuration: updateAgentDto.configuration as Prisma.InputJsonValue,
-        metadata: updateAgentDto.metadata as Prisma.InputJsonValue,
-        role: updateAgentDto.role,
+        config: updateAgentDto.configuration as Prisma.InputJsonValue,
+        // If metadata needs to be stored, it should go in config or a specific JSON field
+        // role: updateAgentDto.role, // Field does not exist in Prisma schema
         type: updateAgentDto.type as any,
         status: updateAgentDto.status as any,
         capabilities: updateAgentDto.capabilities as any,

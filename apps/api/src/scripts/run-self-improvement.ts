@@ -123,7 +123,7 @@ async function bootstrap() {
 
   } catch (error) {
     console.error('❌ Error during self-improvement cycle:', error);
-    console.error(error.stack);
+    console.error((error as Error).stack);
   } finally {
     await app.close();
   }

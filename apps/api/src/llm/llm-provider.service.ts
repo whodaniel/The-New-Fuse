@@ -73,7 +73,7 @@ export class LLMProviderService {
         modelName: provider.modelName,
         isDefault: provider.priority === 1,
         isCustom: provider.isCustom || false,
-        apiEndpoint: provider.apiEndpoint
+        apiEndpoint: provider.apiEndpoint || undefined
       }));
     } catch (error) {
       this.logger.error('Failed to fetch LLM providers', error);
@@ -120,7 +120,7 @@ export class LLMProviderService {
         provider: newProvider.provider,
         modelName: newProvider.modelName,
         isCustom: true,
-        apiEndpoint: newProvider.apiEndpoint
+        apiEndpoint: newProvider.apiEndpoint || undefined
       };
     } catch (error) {
       this.logger.error('Failed to create LLM provider', error);
@@ -145,7 +145,7 @@ export class LLMProviderService {
         modelName: provider.modelName,
         isDefault: provider.priority === 1,
         isCustom: provider.isCustom || false,
-        apiEndpoint: provider.apiEndpoint
+        apiEndpoint: provider.apiEndpoint || undefined
       };
     } catch (error) {
       this.logger.error(`Failed to find LLM provider with id ${id}`, error);
@@ -185,7 +185,7 @@ export class LLMProviderService {
         modelName: provider.modelName,
         isDefault: provider.priority === 1,
         isCustom: provider.isCustom || false,
-        apiEndpoint: provider.apiEndpoint
+        apiEndpoint: provider.apiEndpoint || undefined
       };
     } catch (error) {
       this.logger.error(`Failed to update LLM provider with id ${id}`, error);
@@ -241,7 +241,7 @@ export class LLMProviderService {
         modelName: provider.modelName,
         isDefault: true,
         isCustom: provider.isCustom || false,
-        apiEndpoint: provider.apiEndpoint
+        apiEndpoint: provider.apiEndpoint || undefined
       };
     } catch (error) {
       this.logger.error(`Failed to set LLM provider ${id} as default`, error);
@@ -276,7 +276,7 @@ export class LLMProviderService {
           modelName: existingProvider.modelName,
           isDefault: existingProvider.priority === 1,
           isCustom: false,
-          apiEndpoint: existingProvider.apiEndpoint
+          apiEndpoint: existingProvider.apiEndpoint || undefined
         };
       }
 
@@ -320,7 +320,7 @@ export class LLMProviderService {
         modelName: newProvider.modelName,
         isDefault: false,
         isCustom: false,
-        apiEndpoint: newProvider.apiEndpoint
+        apiEndpoint: newProvider.apiEndpoint || undefined
       };
     } catch (error) {
       this.logger.error('Failed to register Claude Code CLI provider', error);
@@ -355,7 +355,7 @@ export class LLMProviderService {
           modelName: existingProvider.modelName,
           isDefault: existingProvider.priority === 1,
           isCustom: false,
-          apiEndpoint: existingProvider.apiEndpoint
+          apiEndpoint: existingProvider.apiEndpoint || undefined
         };
       }
 
@@ -399,7 +399,7 @@ export class LLMProviderService {
         modelName: newProvider.modelName,
         isDefault: false,
         isCustom: false,
-        apiEndpoint: newProvider.apiEndpoint
+        apiEndpoint: newProvider.apiEndpoint || undefined
       };
     } catch (error) {
       this.logger.error('Failed to register Gemini CLI provider', error);

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Query, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { ChatService } from '../services/chat.service';
 import { CreateMessageDto } from '../dtos/message.dto';
 import { AuthGuard } from '../guards/auth.guard';
@@ -298,8 +299,17 @@ export class ChatController {
   async sendMessage(
     @Param('roomId') roomId: string,
     @Body() createMessageDto: CreateMessageDto,
+    @Req() req: Request,
   ) {
-    return this.chatService.sendMessage(roomId, createMessageDto);
+    const senderId = req.user?.id || 'anonymous';
+    return this.chatService.sendMessage(
+      roomId, 
+      createMessageDto.content, 
+      senderId,
+      {
+        metadata: createMessageDto.metadata,
+      }
+    );
   }
 
   /**

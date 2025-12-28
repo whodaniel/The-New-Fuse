@@ -1,8 +1,18 @@
 export enum UserRole {
-  ADMIN = 'admin',
+  // Core roles
   USER = 'user',
+  ADMIN = 'admin',
+  SUPER_ADMIN = 'super_admin',
+  
+  // Agent roles
   AGENT = 'agent',
   SYSTEM = 'system',
+  
+  // Agency roles (white-label multi-tenant)
+  AGENCY_OWNER = 'agency_owner',
+  AGENCY_ADMIN = 'agency_admin',
+  AGENCY_MANAGER = 'agency_manager',
+  AGENT_OPERATOR = 'agent_operator',
 }
 
 export interface UserPreferences {

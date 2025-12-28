@@ -595,4 +595,4 @@ export class WebSocketManager extends EventEmitter {
  * import { WebSocketManager } from './websocket-manager';
  * const myManager = new WebSocketManager();
  */
-export const webSocketManager = new WebSocketManager();
+export const webSocketManager = new WebSocketManager('ws://localhost:3001/ws', { debug: true });

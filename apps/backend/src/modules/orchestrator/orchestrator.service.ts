@@ -1,15 +1,228 @@
-/**
- * Orchestrator Module
- *
- * Integrates the HeartbeatMonitoringService and OrchestratorIntegrationService
- * into the NestJS backend for live multi-agent coordination.
- *
- * TNF (The New Fuse) IS the Master Agent - it coordinates all other agents.
- */
-
 import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import Redis from 'ioredis';
+import { AgentLifecycleManager } from './AgentLifecycleManager';
+import { AgentInbox } from '@the-new-fuse/core/task';
+
+// Types for the orchestrator services
+interface HeartbeatConfig {
+  intervalMs: number;
+  timeoutMs: number;
+  maxRetries: number;
+  escalationDelay: number;
+  stagnationThresholdMs: number;
+}
+
+interface AgentHeartbeat {
+  agentId: string;
+  lastHeartbeat: Date;
+  lastActivity: Date;
+  status: 'active' | 'idle' | 'stalled' | 'failed';
+  consecutiveFailures: number;
+  currentTask?: string;
+  expectedResponseTime?: number;
+}
+
+interface StagnationAlert {
+  agentId: string;
+  taskId: string;
+  stagnationType: 'no_heartbeat' | 'no_progress' | 'circular_communication' | 'timeout';
+  detectedAt: Date;
+  duration: number;
+  severity: 'warning' | 'critical' | 'emergency';
+}
+
+/**
+ * Heartbeat Monitoring Service
+ * Monitors agent health and detects stagnation
+ */
+class HeartbeatMonitoringService {
+  private readonly logger = new Logger('HeartbeatMonitoring');
+  private config: HeartbeatConfig;
+  private agentHeartbeats: Map<string, AgentHeartbeat> = new Map();
+  private monitoringInterval: NodeJS.Timeout | null = null;
+  private eventEmitter: EventEmitter2;
+
+  constructor(config: HeartbeatConfig, eventEmitter: EventEmitter2) {
+    this.config = config;
+    this.eventEmitter = eventEmitter;
+  }
+
+  start(): void {
+    this.logger.log('🔔 Starting Heartbeat Monitoring Service');
+    this.monitoringInterval = setInterval(() => {
+      this.performHealthCheck();
+    }, this.config.intervalMs);
+  }
+
+  stop(): void {
+    if (this.monitoringInterval) {
+      clearInterval(this.monitoringInterval);
+      this.monitoringInterval = null;
+    }
+    this.logger.log('🔕 Heartbeat Monitoring Service stopped');
+  }
+
+  registerAgent(agentId: string, expectedResponseTime?: number): void {
+    const now = new Date();
+    this.agentHeartbeats.set(agentId, {
+      agentId,
+      lastHeartbeat: now,
+      lastActivity: now,
+      status: 'active',
+      consecutiveFailures: 0,
+      expectedResponseTime: expectedResponseTime || this.config.timeoutMs,
+    });
+    this.logger.log(`✅ Agent registered for heartbeat monitoring: ${agentId}`);
+    this.eventEmitter.emit('agent.registered', { agentId, timestamp: now });
+  }
+
+  recordHeartbeat(agentId: string, taskId?: string): void {
+    const heartbeat = this.agentHeartbeats.get(agentId);
+    if (heartbeat) {
+      heartbeat.lastHeartbeat = new Date();
+      heartbeat.consecutiveFailures = 0;
+      heartbeat.status = 'active';
+      if (taskId) {
+        heartbeat.currentTask = taskId;
+      }
+      this.eventEmitter.emit('agent.heartbeat', { agentId, taskId, timestamp: new Date() });
+    }
+  }
+
+  recordActivity(agentId: string, activityType: string, metadata?: Record<string, unknown>): void {
+    const heartbeat = this.agentHeartbeats.get(agentId);
+    if (heartbeat) {
+      heartbeat.lastActivity = new Date();
+      this.eventEmitter.emit('agent.activity', {
+        agentId,
+        activityType,
+        metadata,
+        timestamp: new Date(),
+      });
+    }
+  }
+
+  private performHealthCheck(): void {
+    const now = new Date();
+
+    for (const [agentId, heartbeat] of this.agentHeartbeats) {
+      const timeSinceHeartbeat = now.getTime() - heartbeat.lastHeartbeat.getTime();
+      const timeSinceActivity = now.getTime() - heartbeat.lastActivity.getTime();
+
+      // Check for heartbeat timeout
+      if (timeSinceHeartbeat > this.config.timeoutMs) {
+        heartbeat.consecutiveFailures++;
+
+        if (heartbeat.consecutiveFailures >= this.config.maxRetries) {
+          heartbeat.status = 'failed';
+          this.emitStagnationAlert(agentId, heartbeat, 'no_heartbeat', timeSinceHeartbeat);
+        } else {
+          heartbeat.status = 'stalled';
+        }
+      }
+
+      // Check for activity stagnation
+      if (timeSinceActivity > this.config.stagnationThresholdMs && heartbeat.currentTask) {
+        this.emitStagnationAlert(agentId, heartbeat, 'no_progress', timeSinceActivity);
+      }
+    }
+  }
+
+  private emitStagnationAlert(
+    agentId: string,
+    heartbeat: AgentHeartbeat,
+    type: StagnationAlert['stagnationType'],
+    duration: number
+  ): void {
+    const severity: StagnationAlert['severity'] =
+      duration > this.config.stagnationThresholdMs * 3
+        ? 'emergency'
+        : duration > this.config.stagnationThresholdMs * 2
+          ? 'critical'
+          : 'warning';
+
+    const alert: StagnationAlert = {
+      agentId,
+      taskId: heartbeat.currentTask || 'unknown',
+      stagnationType: type,
+      detectedAt: new Date(),
+      duration,
+      severity,
+    };
+
+    this.logger.warn(`⚠️ Stagnation detected for agent ${agentId}: ${type} (${severity})`);
+    this.eventEmitter.emit('agent.stagnation', alert);
+  }
+
+  getAgentStatus(agentId: string): AgentHeartbeat | undefined {
+    return this.agentHeartbeats.get(agentId);
+  }
+
+  getAllAgentStatuses(): Map<string, AgentHeartbeat> {
+    return this.agentHeartbeats;
+  }
+
+  getHealthMetrics(): {
+    totalAgents: number;
+    activeAgents: number;
+    stalledAgents: number;
+    failedAgents: number;
+  } {
+    let active = 0,
+      stalled = 0,
+      failed = 0;
+
+    for (const heartbeat of this.agentHeartbeats.values()) {
+      switch (heartbeat.status) {
+        case 'active':
+          active++;
+          break;
+        case 'stalled':
+          stalled++;
+          break;
+        case 'failed':
+          failed++;
+          break;
+      }
+    }
+
+    return {
+      totalAgents: this.agentHeartbeats.size,
+      activeAgents: active,
+      stalledAgents: stalled,
+      failedAgents: failed,
+    };
+  }
+}
+
+/**
+ * Orchestrator Service
+ * Main service for coordinating agents within TNF
+ * 
+ * NEW: Integrated with AgentLifecycleManager
+ */
+@Injectable()
+export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger('OrchestratorService');
+  private heartbeatService: HeartbeatMonitoringService | null = null;
+  private lifecycleManager: AgentLifecycleManager | null = null; // NEW
+  private tnfHeartbeatInterval: NodeJS.Timeout | null = null;
+  private redis: Redis; // NEW
+
+  constructor(
+    @Inject(ConfigService) private configService: ConfigService,
+    @Inject(EventEmitter2) private eventEmitter: EventEmitter2
+  ) {
+    // NEW: Initialize Redis client
+    const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
+    this.redis = new Redis(redisUrl);
+  }
+
+  async onModuleInit(): Promise<void> {
+    this.logger.log('🚀 Initializing TNF Orchestrator Module...');
 
 // Types for the orchestrator services
 interface HeartbeatConfig {

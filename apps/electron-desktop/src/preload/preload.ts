@@ -36,6 +36,22 @@ const api: WindowAPI = {
   // Shell integration
   openExternal: (url) => ipcRenderer.invoke('shell:open-external', url),
   
+  // Secure Storage / API Key Management
+  secureStorageSave: (provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => 
+    ipcRenderer.invoke('secure-storage:save', provider, apiKey, customName, metadata),
+  secureStorageGet: (provider: string) => 
+    ipcRenderer.invoke('secure-storage:get', provider),
+  secureStorageDelete: (provider: string) => 
+    ipcRenderer.invoke('secure-storage:delete', provider),
+  secureStorageList: () => 
+    ipcRenderer.invoke('secure-storage:list'),
+  secureStorageHas: (provider: string) => 
+    ipcRenderer.invoke('secure-storage:has', provider),
+  secureStorageStatus: () => 
+    ipcRenderer.invoke('secure-storage:status'),
+  secureStorageProviders: () => 
+    ipcRenderer.invoke('secure-storage:providers'),
+  
   // Event listeners
   onSystemEvent: (callback) => {
     const subscription = (_: any, event: string, data: any) => callback(event, data)
@@ -85,7 +101,24 @@ const electronAPI = {
   // Prompt management
   getPromptTemplates: () => ipcRenderer.invoke('prompt:get-templates'),
   createPromptTemplate: (template: any) => ipcRenderer.invoke('prompt:create-template', template),
-  generatePrompt: (templateId: string, variables: any) => ipcRenderer.invoke('prompt:generate', templateId, variables)
+  generatePrompt: (templateId: string, variables: any) => ipcRenderer.invoke('prompt:generate', templateId, variables),
+  // Secure Storage / API Key Management
+  secureStorage: {
+    save: (provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => 
+      ipcRenderer.invoke('secure-storage:save', provider, apiKey, customName, metadata),
+    get: (provider: string) => 
+      ipcRenderer.invoke('secure-storage:get', provider),
+    delete: (provider: string) => 
+      ipcRenderer.invoke('secure-storage:delete', provider),
+    list: () => 
+      ipcRenderer.invoke('secure-storage:list'),
+    has: (provider: string) => 
+      ipcRenderer.invoke('secure-storage:has', provider),
+    status: () => 
+      ipcRenderer.invoke('secure-storage:status'),
+    providers: () => 
+      ipcRenderer.invoke('secure-storage:providers'),
+  }
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI)

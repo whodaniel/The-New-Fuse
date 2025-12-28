@@ -22,12 +22,15 @@ export enum RateLimitTier {
 }
 
 // Security levels
-export enum SecurityLevel {
+export enum SecurityLevelEnum {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
   CRITICAL = 'critical'
 }
+
+// Type alias for backward compatibility
+export type SecurityLevel = SecurityLevelEnum;
 
 // Metadata keys
 export const AUTH_LEVEL_KEY = 'authLevel';
@@ -54,7 +57,7 @@ export function SetRateLimitTier(tier: RateLimitTier) {
 /**
  * Set security level for endpoint
  */
-export function SecurityLevel(level: SecurityLevel) {
+export function SetSecurityLevel(level: SecurityLevelEnum) {
   return SetMetadata(SECURITY_LEVEL_KEY, level);
 }
 
@@ -97,7 +100,7 @@ export class SecureAuthGuard implements CanActivate {
 
     // Get security requirements
     const authLevel = this.reflector.get<AuthLevel>(AUTH_LEVEL_KEY, handler) || AuthLevel.PUBLIC;
-    const securityLevel = this.reflector.get<SecurityLevel>(SECURITY_LEVEL_KEY, handler) || SecurityLevel.LOW;
+    const securityLevel = this.reflector.get<SecurityLevelEnum>(SECURITY_LEVEL_KEY, handler) || SecurityLevelEnum.LOW;
     const requireSSL = this.reflector.get<boolean>(REQUIRE_SSL_KEY, handler) || false;
     const auditLog = this.reflector.get<boolean>(AUDIT_LOG_KEY, handler) || false;
     const sensitiveData = this.reflector.get<boolean>(SENSITIVE_DATA_KEY, handler) || false;
@@ -133,7 +136,7 @@ export class SecureAuthGuard implements CanActivate {
     }
 
     // Add user info to request
-    request.user = user;
+    (request as any).user = user;
 
     // Log endpoint access
     this.logEndpointAccess(request, 'PROTECTED_ACCESS', { 
@@ -176,7 +179,7 @@ export class SecureAuthGuard implements CanActivate {
         endpoint: request.path,
         success: false,
         reason: 'Invalid or expired token',
-        metadata: { error: error.message },
+        metadata: { error: (error as Error).message },
       });
       return null;
     }
@@ -216,17 +219,13 @@ export class SecureAuthGuard implements CanActivate {
   /**
    * Log endpoint access
    */
-  private logEndpointAccess(request: Request, event: string, details: any): void {
+  private logEndpointAccess(request: Request & { user?: any; requestId?: string }, event: string, details: any): void {
     this.securityLogging.logApiAccess(request.method, request.path, {
       requestId: request.requestId,
       userId: request.user?.id,
       ip: this.getClientIP(request),
       userAgent: request.headers['user-agent'],
       statusCode: 200, // Will be updated by response
-      details: {
-        event,
-        ...details,
-      },
     });
   }
 
@@ -267,12 +266,12 @@ export function SystemOnly() {
  * Decorator for high-security endpoints
  */
 export function HighSecurity() {
-  return SecurityLevel(SecurityLevel.HIGH);
+  return SetSecurityLevel(SecurityLevelEnum.HIGH);
 }
 
 /**
  * Decorator for critical security endpoints
  */
 export function CriticalSecurity() {
-  return SecurityLevel(SecurityLevel.CRITICAL);
+  return SetSecurityLevel(SecurityLevelEnum.CRITICAL);
 }

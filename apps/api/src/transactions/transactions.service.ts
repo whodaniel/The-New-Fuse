@@ -231,7 +231,7 @@ export class TransactionsService {
         functionName: 'getNonce',
         args: [
           smartAccountAddress as `0x${string}`,
-          '0x0000000000000000000000000000000000000000000000000000000000000000' // key
+          0n // key as bigint (uint192)
         ]
       });
 

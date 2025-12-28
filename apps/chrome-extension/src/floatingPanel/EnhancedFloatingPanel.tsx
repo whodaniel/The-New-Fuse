@@ -18,7 +18,11 @@ const FloatingPanel = () => {
   const nodeRef = useRef(null);
 
   useEffect(() => {
-    const messageListener = (message, sender, sendResponse) => {
+    const messageListener = (
+      message: any,
+      sender: chrome.runtime.MessageSender,
+      sendResponse: (response?: any) => void
+    ) => {
       if (message.type === 'TOGGLE_FLOATING_PANEL') {
         setIsVisible((prev) => !prev);
         sendResponse({ status: 'Panel visibility toggled' });
@@ -64,7 +68,7 @@ const FloatingPanel = () => {
   const handleAutoDetect = () => {
     if (typeof chrome !== 'undefined' && chrome.tabs) {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0]) {
+        if (tabs[0] && tabs[0].id !== undefined) {
           chrome.tabs.sendMessage(tabs[0].id, {
             type: 'AUTO_DETECT_ELEMENTS',
           });
@@ -324,7 +328,7 @@ const FloatingPanel = () => {
                 onClick={() => {
                   if (typeof chrome !== 'undefined' && chrome.tabs) {
                     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                      if (tabs[0]) {
+                      if (tabs[0] && tabs[0].id !== undefined) {
                         chrome.tabs.sendMessage(tabs[0].id, {
                           type: 'VALIDATE_ELEMENTS',
                         });

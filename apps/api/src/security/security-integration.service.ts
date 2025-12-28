@@ -50,23 +50,18 @@ export class SecurityIntegrationService {
       // 2. Security analysis
       const securityFlags = await this.performSecurityAnalysis(request);
 
-      // 3. Log API access
+      // 3. Log API access (statusCode is required, use 200 for successful requests)
       this.securityLogging.logApiAccess(request.method, request.path, {
         ip: clientIP,
         userAgent,
         userId: request.user?.id,
         requestId: request.requestId,
-        securityFlags,
-        processingTime: Date.now() - startTime,
+        statusCode: 200,
+        responseTime: Date.now() - startTime,
       });
 
-      // 4. Update monitoring
-      this.monitoringService.recordRequest(request.path, request.method, {
-        ip: clientIP,
-        userAgent,
-        success: true,
-        processingTime: Date.now() - startTime,
-      });
+      // 4. Update monitoring (method, endpoint, statusCode, responseTime, userId?, ip?)
+      this.monitoringService.recordRequest(request.method, request.path, 200, Date.now() - startTime, request.user?.id, clientIP);
 
       return {
         allowed: true,
@@ -75,14 +70,15 @@ export class SecurityIntegrationService {
       };
 
     } catch (error) {
-      this.logger.error(`Security check failed: ${error.message}`, error.stack);
+      this.logger.error(`Security check failed: ${(error as Error).message}`, (error as Error).stack);
       
-      this.securityLogging.logSecurityViolation('security_check_error', {
+      // Log as suspicious_pattern since 'security_check_error' is not a valid violation type
+      this.securityLogging.logSecurityViolation('suspicious_pattern', {
         ip: clientIP,
-        userAgent,
         endpoint: request.path,
         method: request.method,
-        error: error.message,
+        payload: { error: (error as Error).message },
+        severity: 'medium',
       });
 
       return {
@@ -128,7 +124,7 @@ export class SecurityIntegrationService {
         endpoint: request.path,
         success: false,
         reason: 'Invalid or expired token',
-        metadata: { error: error.message },
+        metadata: { error: (error as Error).message },
       });
       return null;
     }
@@ -172,11 +168,19 @@ export class SecurityIntegrationService {
   /**
    * Perform security analysis on request
    */
-  private async performSecurityAnalysis(request: any): Promise<any> {
-    const flags = {
+  private async performSecurityAnalysis(request: any): Promise<{
+    isBot: boolean;
+    isSuspicious: boolean;
+    threatLevel: 'low' | 'medium' | 'high' | 'critical';
+  }> {
+    const flags: {
+      isBot: boolean;
+      isSuspicious: boolean;
+      threatLevel: 'low' | 'medium' | 'high' | 'critical';
+    } = {
       isBot: this.detectBot(request),
       isSuspicious: false,
-      threatLevel: 'low' as const,
+      threatLevel: 'low',
     };
 
     // Check for suspicious patterns

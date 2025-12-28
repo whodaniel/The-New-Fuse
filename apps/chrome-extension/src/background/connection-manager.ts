@@ -38,11 +38,11 @@ export const DEFAULT_CONNECTION_SETTINGS: ConnectionSettings = {
   wsHost: CONFIG.WS_HOST,
   wsPort: CONFIG.WS_PORT,
   useCompression: CONFIG.ENABLE_COMPRESSION,
-  relayUrl: 'https://localhost:3000', // This setting is not in CONFIG, keep as is for now
-  autoConnect: true, // This setting is not in CONFIG, keep as is for now
+  relayUrl: 'ws://localhost:3001/ws', // TNF Relay WebSocket endpoint
+  autoConnect: true,
   maxRetryAttempts: CONFIG.MAX_RETRY_ATTEMPTS,
   retryDelay: CONFIG.RETRY_DELAY,
-  debugMode: CONFIG.DEBUG_MODE_DEFAULT, // Use new default from CONFIG
+  debugMode: CONFIG.DEBUG_MODE_DEFAULT,
 };
 
 /**

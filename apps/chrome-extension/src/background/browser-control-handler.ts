@@ -10,6 +10,7 @@
 
 import { Logger } from '../utils/logger';
 import { screenRecordingService } from './screen-recording';
+import { web3Interceptor } from './web3-interceptor';
 
 // ============================================================================
 // MESSAGE TYPES (Must match protocol.ts in shared package)
@@ -230,18 +231,53 @@ export class BrowserControlHandler {
   private async handleNavigate(payload: any): Promise<any> {
     const { url, tabId, newTab, waitForLoad } = payload;
 
+    // Intercept and resolve Web3 URLs
+    const interceptionResult = web3Interceptor.interceptUrl(url);
+    const finalUrl = interceptionResult.url;
+
+    // Show notification if Web3 URL was resolved
+    if (interceptionResult.wasWeb3 && interceptionResult.protocol && !interceptionResult.error) {
+      await web3Interceptor.showNotification(
+        interceptionResult.originalUrl!,
+        finalUrl,
+        interceptionResult.protocol
+      );
+    }
+
+    // Log any Web3 URL errors
+    if (interceptionResult.error) {
+      this.logger.warn(`Web3 URL error: ${interceptionResult.error}`, { url });
+    }
+
     if (newTab) {
       return new Promise((resolve) => {
-        chrome.tabs.create({ url, active: true }, (tab) => {
+        chrome.tabs.create({ url: finalUrl, active: true }, (tab) => {
           if (waitForLoad) {
             chrome.tabs.onUpdated.addListener(function listener(updatedTabId, info) {
               if (updatedTabId === tab.id && info.status === 'complete') {
                 chrome.tabs.onUpdated.removeListener(listener);
-                resolve({ success: true, tabId: tab.id, url: tab.url, title: tab.title });
+                resolve({
+                  success: true,
+                  tabId: tab.id,
+                  url: tab.url,
+                  title: tab.title,
+                  web3: interceptionResult.wasWeb3 ? {
+                    protocol: interceptionResult.protocol,
+                    originalUrl: interceptionResult.originalUrl,
+                  } : undefined,
+                });
               }
             });
           } else {
-            resolve({ success: true, tabId: tab.id, url });
+            resolve({
+              success: true,
+              tabId: tab.id,
+              url: finalUrl,
+              web3: interceptionResult.wasWeb3 ? {
+                protocol: interceptionResult.protocol,
+                originalUrl: interceptionResult.originalUrl,
+              } : undefined,
+            });
           }
         });
       });
@@ -253,16 +289,33 @@ export class BrowserControlHandler {
     }
 
     return new Promise((resolve) => {
-      chrome.tabs.update(targetTabId, { url }, (tab) => {
+      chrome.tabs.update(targetTabId, { url: finalUrl }, (tab) => {
         if (waitForLoad) {
           chrome.tabs.onUpdated.addListener(function listener(updatedTabId, info) {
             if (updatedTabId === targetTabId && info.status === 'complete') {
               chrome.tabs.onUpdated.removeListener(listener);
-              resolve({ success: true, tabId: targetTabId, url: tab?.url, title: tab?.title });
+              resolve({
+                success: true,
+                tabId: targetTabId,
+                url: tab?.url,
+                title: tab?.title,
+                web3: interceptionResult.wasWeb3 ? {
+                  protocol: interceptionResult.protocol,
+                  originalUrl: interceptionResult.originalUrl,
+                } : undefined,
+              });
             }
           });
         } else {
-          resolve({ success: true, tabId: targetTabId, url });
+          resolve({
+            success: true,
+            tabId: targetTabId,
+            url: finalUrl,
+            web3: interceptionResult.wasWeb3 ? {
+              protocol: interceptionResult.protocol,
+              originalUrl: interceptionResult.originalUrl,
+            } : undefined,
+          });
         }
       });
     });

@@ -922,6 +922,7 @@ exports.WorkflowStatus = exports.$Enums.WorkflowStatus = {
 exports.WorkflowExecutionStatus = exports.$Enums.WorkflowExecutionStatus = {
   PENDING: 'PENDING',
   RUNNING: 'RUNNING',
+  PAUSED: 'PAUSED',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
   CANCELLED: 'CANCELLED'

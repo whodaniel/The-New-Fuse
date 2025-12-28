@@ -17,6 +17,8 @@ const GraphDemo = lazy(() =>
 );
 const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
+const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
+const AgencyOnboarding = lazy(() => import('./pages/Agency/AgencyOnboarding'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows'));
@@ -78,6 +80,7 @@ const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
 const SSOPage = lazy(() => import('./pages/auth/SSO'));
 const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
 const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
+const UnstoppableDomainsCallbackPage = lazy(() => import('./pages/auth/UnstoppableDomainsCallback'));
 
 // Landing components
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
@@ -118,11 +121,7 @@ const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
 // Admin pages that exist
 const AdminOnboardingPage = lazy(() => import('./pages/Admin/Onboarding'));
 const AdminDashboardPage = lazy(() => import('./pages/Admin/Dashboard'));
-const ExperimentalFeaturesPage = lazy(() =>
-  import('./pages/Admin/ExperimentalFeatures/features').then((module) => ({
-    default: module.default,
-  }))
-);
+const ExperimentalFeaturesPage = () => <div className="p-8 text-white">Experimental Features Config (Coming Soon)</div>;
 
 // Legal pages
 const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
@@ -282,6 +281,8 @@ export default function ComprehensiveRouter() {
             <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
             <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+            <Route path="/agency/onboard" element={<AgencyOnboarding />} />
             <Route path="/admin/users" element={<AdminUserManagement />} />
             <Route path="/admin/system-health" element={<AdminSystemHealth />} />
             <Route path="/settings" element={<Settings />} />
@@ -318,6 +319,7 @@ export default function ComprehensiveRouter() {
             <Route path="/auth/sso" element={<SSOPage />} />
             <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
             <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
+            <Route path="/auth/unstoppable-callback" element={<UnstoppableDomainsCallbackPage />} />
 
             {/* Enhanced Landing Routes */}
             <Route path="/landing" element={<LandingRevolutionPage />} />
@@ -422,9 +424,8 @@ export default function ComprehensiveRouter() {
               path="/workspace-settings/agent-model"
               element={
                 <AgentModelSelectionPage
-                  agentModel="default"
                   provider="default"
-                  workspace="default"
+                  workspace={{ agentModel: 'default' }}
                   setHasChanges={() => {}}
                 />
               }

@@ -29,3 +29,7 @@ export { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
 
 // Adapter exports
 export { LegacyVectorAdapter, createLegacyAdapter, TypeConverter } from './adapters/legacy-adapter';
+
+// Codebase Intelligence exports
+export { CodebaseVectorizer } from './codebase-vectorizer';
+export { CodebaseSearch } from './codebase-search';

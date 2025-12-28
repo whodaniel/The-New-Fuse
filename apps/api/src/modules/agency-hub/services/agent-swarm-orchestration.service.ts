@@ -101,6 +101,65 @@ export class AgentSwarmOrchestrationService {
   }
 
   /**
+   * Initialize swarm (global initialization for compatibility with EnhancedAgencyService)
+   */
+  async initializeSwarm(): Promise<{ message: string; agentCount: number }> {
+    this.logger.log('Global swarm initialization');
+    
+    let totalAgents = 0;
+    for (const agents of this.activeAgents.values()) {
+      totalAgents += agents.length;
+    }
+    
+    return {
+      message: 'Swarm orchestration service initialized',
+      agentCount: totalAgents,
+    };
+  }
+
+  /**
+   * Get global swarm status (aggregated across all agencies)
+   * Note: Use getSwarmStatus(agencyId) for agency-specific status
+   */
+  async getGlobalSwarmStatus(): Promise<{
+    totalAgents: number;
+    onlineAgents: number;
+    busyAgents: number;
+    offlineAgents: number;
+    activeExecutions: number;
+    completedExecutions: number;
+  }> {
+    let totalAgents = 0;
+    let onlineAgents = 0;
+    let busyAgents = 0;
+    let offlineAgents = 0;
+    let activeExecutions = 0;
+    let completedExecutions = 0;
+
+    // Aggregate across all agencies
+    for (const agents of this.activeAgents.values()) {
+      totalAgents += agents.length;
+      onlineAgents += agents.filter(a => a.status === 'active').length;
+      busyAgents += agents.filter(a => a.status === 'busy').length;
+      offlineAgents += agents.filter(a => a.status === 'offline').length;
+    }
+
+    for (const executions of this.activeExecutions.values()) {
+      activeExecutions += executions.filter(e => e.status === 'executing').length;
+      completedExecutions += executions.filter(e => e.status === 'completed').length;
+    }
+
+    return {
+      totalAgents,
+      onlineAgents,
+      busyAgents,
+      offlineAgents,
+      activeExecutions,
+      completedExecutions,
+    };
+  }
+
+  /**
    * Initialize swarm orchestration for an agency
    */
   async initializeAgencySwarm(agencyId: string, config?: Partial<SwarmConfiguration>): Promise<void> {

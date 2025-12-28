@@ -15,6 +15,7 @@ export interface SecurityLogEntry {
   endpoint?: string;
   method?: string;
   statusCode?: number;
+  success?: boolean;
   details?: any;
 }
 

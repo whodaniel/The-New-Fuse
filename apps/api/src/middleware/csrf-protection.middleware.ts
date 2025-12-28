@@ -116,14 +116,15 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
     // Check if token matches and hasn't expired
     const isValid = tokenEntry.token === token && tokenEntry.expires > Date.now();
 
-    // Rotate token on successful validation
+    // Rotate token on successful validation - token has been validated, store new one for next request
     if (isValid) {
       const newToken = this.generateCsrfToken();
       this.tokenStore.set(sessionId, {
         token: newToken,
         expires: Date.now() + (30 * 60 * 1000) // 30 minutes
       });
-      this.setCsrfCookie(tokenEntry.token, newToken); // Update cookie
+      // Note: Can't update cookie here as we don't have access to Response object
+      // The new token will be set in addCsrfTokenToResponse
     }
 
     return isValid;
@@ -187,15 +188,19 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
 }
 
 // Decorator to skip CSRF validation for specific routes
+// Uses Reflect metadata to mark methods that should skip CSRF validation
+const SKIP_CSRF_KEY = 'skipCsrfValidation';
+
 export function SkipCsrfValidation() {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value;
-    descriptor.value = function (...args: any[]) {
-      // Add marker to skip CSRF check
-      this.skipCsrfValidation = true;
-      return originalMethod.apply(this, args);
-    };
+  return function (target: any, propertyKey: string, _descriptor: PropertyDescriptor) {
+    // Store the skip flag in metadata
+    Reflect.defineMetadata(SKIP_CSRF_KEY, true, target, propertyKey);
   };
+}
+
+// Helper to check if a method should skip CSRF validation
+export function shouldSkipCsrf(target: any, propertyKey: string): boolean {
+  return Reflect.getMetadata(SKIP_CSRF_KEY, target, propertyKey) === true;
 }
 
 // Global utility to generate CSRF token for testing

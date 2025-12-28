@@ -12,6 +12,7 @@ export interface AutomationRequest {
 export interface AutomationResult {
   id: string;
   templateId: string;
+  type?: string;
   status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
   result?: any;
   error?: string;
@@ -47,6 +48,7 @@ export interface ClaudeDevAgent {
   id: string;
   name: string;
   type: string;
+  template: string;
   status: 'active' | 'inactive' | 'busy' | 'error';
   capabilities: string[];
   tenantId?: string;
@@ -59,6 +61,7 @@ export interface ClaudeDevTask {
   id: string;
   agentId: string;
   templateId: string;
+  type: string;
   status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
   parameters: Record<string, any>;
   result?: any;
@@ -76,6 +79,11 @@ export interface ClaudeDevStatistics {
   completedTasks: number;
   failedTasks: number;
   averageTaskDuration: number;
+  successRate: number;
+  resourceUsage: {
+    cpuUsage: number;
+    memoryUsage: number;
+  };
   systemUptime: number;
   memoryUsage: number;
   cpuUsage: number;
@@ -282,7 +290,7 @@ export class ClaudeDevAutomationService {
   /**
    * Get service statistics
    */
-  async getStatistics(): Promise<any> {
+  async getStatistics(tenantId?: string): Promise<any> {
     const automations = Array.from(this.automations.values());
     return {
       totalAutomations: automations.length,
@@ -297,7 +305,7 @@ export class ClaudeDevAutomationService {
   /**
    * Create a new agent
    */
-  async createAgent(agentData: any): Promise<any> {
+  async createAgent(tenantId: string, agentData: any): Promise<any> {
     // Mock implementation - in real scenario, this would interact with an agent management system
     const agent = {
       id: `agent-${Date.now()}`,
@@ -321,7 +329,7 @@ export class ClaudeDevAutomationService {
   /**
    * Get agent by ID
    */
-  async getAgent(agentId: string): Promise<any | null> {
+  async getAgent(agentId: string, tenantId?: string): Promise<any | null> {
     // Mock implementation
     return {
       id: agentId,
@@ -335,7 +343,7 @@ export class ClaudeDevAutomationService {
   /**
    * Execute a task
    */
-  async executeTask(taskData: any): Promise<any> {
+  async executeTask(agentId: string, tenantId: string, taskData: any): Promise<any> {
     // Convert task to automation request
     const request: AutomationRequest = {
       templateId: taskData.templateId || 'built-in-code-review',
@@ -350,13 +358,13 @@ export class ClaudeDevAutomationService {
   /**
    * Create agent batch
    */
-  async createAgentBatch(batchData: any): Promise<any> {
+  async createAgentBatch(tenantId: string, batchData: any): Promise<any> {
     // Mock implementation
-    const agents = [];
+    const agents: any[] = [];
     const count = batchData.count || 1;
     
     for (let i = 0; i < count; i++) {
-      const agent = await this.createAgent({
+      const agent = await this.createAgent(tenantId, {
         name: `${batchData.namePrefix || 'Agent'} ${i + 1}`,
         type: batchData.type || 'general'
       });
@@ -389,5 +397,10 @@ export class ClaudeDevAutomationService {
     return results.sort((a, b) => 
       new Date(b.metadata.startTime).getTime() - new Date(a.metadata.startTime).getTime()
     );
+  }
+
+  async getTasksByTenant(tenantId: string): Promise<AutomationResult[]> {
+    // Mock implementation returning all tasks for now or filtered by tenant if implementation allows
+    return this.getTasksByAgent('any', tenantId); 
   }
 }

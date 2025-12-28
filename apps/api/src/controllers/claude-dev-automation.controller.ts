@@ -132,15 +132,15 @@ export class ClaudeDevAutomationController {
     } catch (error) {
       this.logger.error(`Failed to create agent for tenant ${tenantId}`, error);
 
-      if ((error as Error).message.includes('Template') && error.message.includes('not found')) {
+      if ((error as Error).message.includes('Template') && (error as Error).message.includes('not found')) {
         throw new HttpException(
-          `Invalid template: ${error.message}`,
+          `Invalid template: ${(error as Error).message}`,
           HttpStatus.BAD_REQUEST,
         );
       }
 
       throw new HttpException(
-        error.message || 'Failed to create agent',
+        (error as Error).message || 'Failed to create agent',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -255,20 +255,20 @@ export class ClaudeDevAutomationController {
 
       if ((error as Error).message.includes('not found')) {
         throw new HttpException(
-          error.message,
+          (error as Error).message,
           HttpStatus.NOT_FOUND,
         );
       }
 
-      if (error.message.includes('not active')) {
+      if ((error as Error).message.includes('not active')) {
         throw new HttpException(
-          error.message,
+          (error as Error).message,
           HttpStatus.BAD_REQUEST,
         );
       }
 
       throw new HttpException(
-        error.message || 'Failed to execute task',
+        (error as Error).message || 'Failed to execute task',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -502,13 +502,13 @@ export class ClaudeDevAutomationController {
 
       if ((error as Error).message.includes('not found')) {
         throw new HttpException(
-          error.message,
+          (error as Error).message,
           HttpStatus.NOT_FOUND,
         );
       }
 
       throw new HttpException(
-        error.message || 'Failed to customize template',
+        (error as Error).message || 'Failed to customize template',
         HttpStatus.BAD_REQUEST,
       );
     }

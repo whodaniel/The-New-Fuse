@@ -1,21 +1,26 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ChatRoom } from '../entities/chat-room.entity';
-import { Message } from '../entities/message.entity';
-import { CreateMessageDto } from '../dtos/message.dto';
-import { WebSocketGateway } from '../gateways/websocket.gateway';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { PrismaService } from '@the-new-fuse/database';
+import { ChatRoom, Message, MessageRole } from '@the-new-fuse/database/generated/prisma';
 
+/**
+ * ChatRoomService handles multi-user chat room operations.
+ * 
+ * This service works with ChatRoom model for collaborative conversations
+ * between multiple users and/or agents.
+ * 
+ * Note: For 1:1 agent conversations, see modules/chat/chat.service.ts
+ */
 @Injectable()
 export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
+
   constructor(
-    @InjectRepository(ChatRoom)
-    private readonly chatRoomRepository: Repository<ChatRoom>,
-    @InjectRepository(Message)
-    private readonly messageRepository: Repository<Message>,
-    private readonly websocketGateway: WebSocketGateway,
+    private readonly prisma: PrismaService,
   ) {}
 
+  /**
+   * Get all chat rooms with pagination
+   */
   async getRooms(
     page: number = 1,
     limit: number = 50
@@ -23,31 +28,57 @@ export class ChatService {
     const skip = (page - 1) * limit;
 
     const [rooms, total] = await Promise.all([
-      this.chatRoomRepository.find({
-        select: ['id', 'name', 'description', 'type', 'isPrivate', 'lastMessageAt', 'isActive'],
+      this.prisma.chatRoom.findMany({
+        where: { 
+          isActive: true,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          isPrivate: true,
+          lastMessageAt: true,
+          isActive: true,
+          ownerId: true,
+          settings: true,
+          metadata: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
         take: limit,
         skip,
-        order: { lastMessageAt: 'DESC' },
+        orderBy: { lastMessageAt: 'desc' },
       }),
-      this.chatRoomRepository.count(),
+      this.prisma.chatRoom.count({
+        where: { 
+          isActive: true,
+          deletedAt: null,
+        },
+      }),
     ]);
 
-    return { rooms, total, page, limit };
+    return { rooms: rooms as ChatRoom[], total, page, limit };
   }
 
+  /**
+   * Get a specific chat room by ID
+   */
   async getRoom(roomId: string, includeMessages: boolean = false): Promise<ChatRoom> {
-    const options: any = {
+    const room = await this.prisma.chatRoom.findUnique({
       where: { id: roomId },
-    };
-
-    // Only load messages if explicitly requested
-    if (includeMessages) {
-      options.relations = ['messages'];
-      options.order = { messages: { timestamp: 'DESC' } };
-      options.take = { messages: 50 }; // Limit to recent 50 messages
-    }
-
-    const room = await this.chatRoomRepository.findOne(options);
+      include: includeMessages ? {
+        messages: {
+          take: 50,
+          orderBy: { timestamp: 'desc' },
+          include: {
+            sender: true,
+            agent: true,
+          },
+        },
+      } : undefined,
+    });
 
     if (!room) {
       throw new NotFoundException('Chat room not found');
@@ -56,46 +87,120 @@ export class ChatService {
     return room;
   }
 
+  /**
+   * Get messages for a room with pagination
+   */
   async getMessages(
     roomId: string,
     options: { limit: number; offset: number },
   ): Promise<Message[]> {
-    const room = await this.getRoom(roomId);
-    return this.messageRepository.find({
-      where: { room: { id: room.id } },
+    // Verify room exists
+    await this.getRoom(roomId);
+    
+    return this.prisma.message.findMany({
+      where: { roomId },
       take: options.limit,
       skip: options.offset,
-      order: { timestamp: 'DESC' },
+      orderBy: { timestamp: 'desc' },
+      include: {
+        sender: true,
+        agent: true,
+      },
     });
   }
 
+  /**
+   * Send a message to a chat room
+   */
   async sendMessage(
     roomId: string,
-    createMessageDto: CreateMessageDto,
+    content: string,
+    senderId: string,
+    options?: {
+      role?: MessageRole;
+      agentId?: string;
+      metadata?: Record<string, unknown>;
+    }
   ): Promise<Message> {
+    // Verify room exists
     const room = await this.getRoom(roomId);
-    const message = this.messageRepository.create({
-      ...createMessageDto,
-      room,
+    
+    const message = await this.prisma.message.create({
+      data: {
+        content,
+        role: options?.role || MessageRole.USER,
+        roomId: room.id,
+        senderId,
+        agentId: options?.agentId,
+        metadata: options?.metadata as any,
+      },
+      include: {
+        sender: true,
+        agent: true,
+      },
     });
 
-    await this.messageRepository.save(message);
+    // Update room's lastMessageAt
+    await this.prisma.chatRoom.update({
+      where: { id: roomId },
+      data: { lastMessageAt: new Date() },
+    });
 
-    // Notify connected clients through WebSocket
-    this.websocketGateway.emitMessage(roomId, message);
+    // TODO: Emit through WebSocket gateway when integrated
+    // this.websocketGateway.emitMessage(roomId, message);
 
     return message;
   }
 
-  async getAnalytics(): Promise<any> {
-    const [totalRooms, totalMessages] = await Promise.all([
-      this.chatRoomRepository.count(),
-      this.messageRepository.count(),
+  /**
+   * Create a new chat room
+   */
+  async createRoom(
+    ownerId: string,
+    name: string,
+    options?: {
+      description?: string;
+      isPrivate?: boolean;
+      settings?: Record<string, unknown>;
+      metadata?: Record<string, unknown>;
+    }
+  ): Promise<ChatRoom> {
+    return this.prisma.chatRoom.create({
+      data: {
+        name,
+        ownerId,
+        description: options?.description,
+        isPrivate: options?.isPrivate || false,
+        settings: options?.settings as any,
+        metadata: options?.metadata as any,
+      },
+    });
+  }
+
+  /**
+   * Get chat analytics
+   */
+  async getAnalytics(): Promise<{
+    totalRooms: number;
+    totalMessages: number;
+    activeRooms: number;
+    timestamp: Date;
+  }> {
+    const [totalRooms, totalMessages, activeRooms] = await Promise.all([
+      this.prisma.chatRoom.count(),
+      this.prisma.message.count(),
+      this.prisma.chatRoom.count({
+        where: { 
+          isActive: true,
+          deletedAt: null,
+        },
+      }),
     ]);
 
     return {
       totalRooms,
       totalMessages,
+      activeRooms,
       timestamp: new Date(),
     };
   }

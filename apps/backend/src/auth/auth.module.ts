@@ -13,6 +13,7 @@ import { GitHubStrategy } from './github.strategy';
 import { UsersService } from '../users/users.service';
 import { LoggingService } from '../services/logging.service';
 import { EventBus } from '../events/event-bus.service';
+import { IdentityService } from '../services/identity.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { EventBus } from '../events/event-bus.service';
     AgentJwtStrategy,
     GoogleStrategy,
     GitHubStrategy,
+    IdentityService,
   ],
   controllers: [AuthController],
   exports: [AuthService, RolesGuard, FirebaseAuthGuard, AgentJwtStrategy],

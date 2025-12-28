@@ -28,6 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<UserCredential>;
   register: (name: string, email: string, password: string) => Promise<UserCredential>;
   signInWithGoogle: () => Promise<UserCredential>;
+  loginWithUnstoppableDomains?: (udUser: any) => Promise<void>;
   logout: () => Promise<void>;
   error: string | null;
 }
@@ -130,6 +131,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Login with Unstoppable Domains
+  const loginWithUnstoppableDomains = useCallback(async (udUser: any) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      // Send UD user data to backend to create/authenticate user
+      const response = await fetch('/api/auth/unstoppable-domains', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          domain: udUser.sub,
+          walletAddress: udUser.wallet_address,
+          walletType: udUser.wallet_type_hint,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to authenticate with Unstoppable Domains');
+      }
+
+      const { token, user: backendUser } = await response.json();
+      
+      // Store token
+      localStorage.setItem('auth_token', token);
+      
+      // Set user state
+      setUser({
+        id: backendUser.id,
+        email: backendUser.email || udUser.sub,
+        name: backendUser.name || udUser.sub,
+        role: backendUser.role || 'user',
+        photoURL: backendUser.photoURL,
+      });
+    } catch (error: any) {
+      setError(error.message || 'Failed to sign in with Unstoppable Domains');
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   // Logout user
   const logout = useCallback(async () => {
     setIsLoading(true);
@@ -152,6 +194,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         signInWithGoogle,
+        loginWithUnstoppableDomains,
         logout,
         error,
       }}

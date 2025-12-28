@@ -41,15 +41,25 @@ export class AgentRepository {
   }
 
 
-  async findMany(filters?: Prisma.AgentWhereInput): Promise<any[]> {
+  async findMany(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.AgentWhereUniqueInput;
+    where?: Prisma.AgentWhereInput;
+    orderBy?: Prisma.AgentOrderByWithRelationInput;
+  }): Promise<any[]> {
+    const { skip, take, cursor, where, orderBy } = params;
     const results = await this.prisma.agent.findMany({
-      where: filters,
+      skip,
+      take,
+      cursor,
+      where,
       include: {
         user: true,
         workflows: true,
         nft: true
       },
-      orderBy: {
+      orderBy: orderBy || {
         updatedAt: 'desc'
       }
     });

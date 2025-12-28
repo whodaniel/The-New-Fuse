@@ -267,7 +267,8 @@ export class SystemController {
         type: 'code-optimization',
         priority: 'high',
         payload: { target: 'workflow-engine', scope: 'performance' },
-        requirements: ['code-analysis', 'optimization']
+        requirements: ['code-analysis', 'optimization'],
+        assignedAgents: [],  // Will be assigned by orchestrator
       });
       log(`✓ Task submitted to orchestrator: ${taskId}`);
 

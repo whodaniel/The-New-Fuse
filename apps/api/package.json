@@ -26,6 +26,7 @@
     "@prisma/client": "^7.1.0",
     "@the-new-fuse/a2a-core": "workspace:*",
     "@the-new-fuse/api-types": "workspace:*",
+    "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/n8n-workflows": "workspace:*",
     "@the-new-fuse/port-management": "workspace:*",

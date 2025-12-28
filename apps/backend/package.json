@@ -32,8 +32,10 @@
     "@nestjs/core": "^11.1.10",
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/platform-express": "^11.1.10",
+    "@nestjs/platform-socket.io": "^11.1.10",
     "@nestjs/schedule": "^4.0.2",
     "@nestjs/typeorm": "^11.0.0",
+    "@nestjs/websockets": "^11.1.10",
     "@prisma/client": "7.1.0",
     "@the-new-fuse/ag-ui-core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
@@ -42,8 +44,6 @@
     "@the-new-fuse/relay-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
-    "@nestjs/websockets": "^11.1.10",
-    "@nestjs/platform-socket.io": "^11.1.10",
     "@types/react-router-dom": "^5.3.3",
     "@willsoto/nestjs-prometheus": "^6.0.2",
     "aws-sdk": "^2.1692.0",
@@ -81,6 +81,7 @@
     "sanitize-html": "^2.17.0",
     "socket.io": "^4.8.1",
     "typeorm": "^0.3.27",
+    "viem": "^2.43.2",
     "zod": "^4.1.12"
   },
   "devDependencies": {

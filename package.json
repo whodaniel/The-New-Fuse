@@ -13,6 +13,8 @@
     "dev:gateway": "turbo run dev --filter=@the-new-fuse/api-gateway",
     "dev:frontend": "turbo run dev --filter=@the-new-fuse/frontend-app",
     "dev:backend": "turbo run dev --filter=@the-new-fuse/backend-app",
+    "relay": "turbo run relay --filter=@the-new-fuse/relay-core",
+    "relay:start": "pnpm --filter @the-new-fuse/relay-core run relay",
     "dev:low-memory": "BUILD_MEMORY_LIMIT=1024 BUILD_CONCURRENCY=1 node scripts/memory-optimized-dev.cjs",
     "prebuild": "node scripts/pre-build-check.cjs",
     "build": "turbo run build --filter=!@the-new-fuse/web-scraping --filter=!@the-new-fuse/core --filter=!@the-new-fuse/n8n-workflows --filter=!@the-new-fuse/sync-core --filter=!@the-new-fuse/integration-tests --filter=!@the-new-fuse/resource-registry --filter=!@the-new-fuse/tauri-desktop --filter=!the-new-fuse-chrome-extension",
@@ -95,6 +97,7 @@
   "devDependencies": {
     "@prisma/engines": "7.1.0",
     "@types/node": "^24.0.13",
+    "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
     "concurrently": "^9.2.0",

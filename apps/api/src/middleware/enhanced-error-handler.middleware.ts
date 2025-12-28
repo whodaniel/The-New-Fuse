@@ -1,5 +1,5 @@
-import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Injectable, Logger } from '@nestjs/common';
+import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import { SecurityLoggingService } from '../security/security-logging.service';
 
 export interface ApiErrorResponse {
@@ -15,20 +15,23 @@ export interface ApiErrorResponse {
 }
 
 @Injectable()
-export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
+export class EnhancedErrorHandlerMiddleware {
   private readonly logger = new Logger(EnhancedErrorHandlerMiddleware.name);
 
   constructor(private securityLogging: SecurityLoggingService) {}
 
-  use(err: any, req: Request, res: Response, next: NextFunction): void {
-    // Log the error with security context
-    this.logError(err, req, res);
+  // Error handling middleware function (4 parameters)
+  getHandler(): ErrorRequestHandler {
+    return (err: any, req: Request, res: Response, _next: NextFunction): void => {
+      // Log the error with security context
+      this.logError(err, req, res);
 
-    // Determine error response based on error type and security context
-    const errorResponse = this.createErrorResponse(err, req);
-    
-    // Send the response
-    res.status(errorResponse.error.statusCode).json(errorResponse);
+      // Determine error response based on error type and security context
+      const errorResponse = this.createErrorResponse(err, req);
+      
+      // Send the response
+      res.status(errorResponse.error.statusCode).json(errorResponse);
+    };
   }
 
   /**
@@ -84,7 +87,7 @@ export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
   /**
    * Handle validation errors
    */
-  private handleValidationError(error: any, timestamp: string, requestId: string): ApiErrorResponse {
+  private handleValidationError(error: any, timestamp: string, requestId?: string): ApiErrorResponse {
     return {
       success: false,
       error: {
@@ -104,7 +107,7 @@ export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
   /**
    * Handle unauthorized errors
    */
-  private handleUnauthorizedError(error: any, timestamp: string, requestId: string, req: Request): ApiErrorResponse {
+  private handleUnauthorizedError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
     this.securityLogging.logAuthEvent('auth_failure', {
       ip: req.clientIP,
       userAgent: req.headers['user-agent'],
@@ -134,7 +137,7 @@ export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
   /**
    * Handle forbidden errors
    */
-  private handleForbiddenError(error: any, timestamp: string, requestId: string, req: Request): ApiErrorResponse {
+  private handleForbiddenError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
     this.securityLogging.logAuthZEvent('access_denied', {
       userId: req.user?.id,
       ip: req.clientIP,
@@ -165,7 +168,7 @@ export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
   /**
    * Handle not found errors
    */
-  private handleNotFoundError(error: any, timestamp: string, requestId: string, req: Request): ApiErrorResponse {
+  private handleNotFoundError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
     return {
       success: false,
       error: {
@@ -186,7 +189,7 @@ export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
   /**
    * Handle rate limit errors
    */
-  private handleRateLimitError(error: any, timestamp: string, requestId: string, req: Request): ApiErrorResponse {
+  private handleRateLimitError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
     return {
       success: false,
       error: {
@@ -208,7 +211,7 @@ export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
   /**
    * Handle bad request errors
    */
-  private handleBadRequestError(error: any, timestamp: string, requestId: string, req: Request): ApiErrorResponse {
+  private handleBadRequestError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
     this.securityLogging.logInputValidation(req.path, req.method, {
       ip: req.clientIP,
       reason: error.message || 'Bad request',
@@ -233,7 +236,7 @@ export class EnhancedErrorHandlerMiddleware implements NestMiddleware {
   /**
    * Handle server errors
    */
-  private handleServerError(error: any, timestamp: string, requestId: string, req: Request): ApiErrorResponse {
+  private handleServerError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
     // Log server errors for monitoring
     this.logger.error('Server Error', {
       error: error.message,

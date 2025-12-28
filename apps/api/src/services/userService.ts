@@ -61,10 +61,12 @@ export class UserService {
   }
 
   async update(id: string, data: Partial<User>): Promise<User> {
+    // Remove any readonly/computed fields that Prisma doesn't allow in updates
+    const { id: _id, createdAt, ...updateData } = data as any;
     return this.prisma.user.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
         updatedAt: new Date()
       }
     });

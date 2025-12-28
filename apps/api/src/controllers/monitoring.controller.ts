@@ -357,7 +357,7 @@ export class MonitoringController {
       services: 'healthy'  // Would be checked in production
     };
     
-    const alerts = [];
+    const alerts: Array<{ type: string; message: string; metric: string; value: number }> = [];
     if (memoryUsage >= 80) {
       alerts.push({
         type: memoryUsage >= 90 ? 'critical' : 'warning',

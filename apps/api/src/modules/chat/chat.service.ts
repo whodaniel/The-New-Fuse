@@ -1,252 +1,293 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { AgentsService } from '../../agents/agents.service';
+import { MessageRole } from '@the-new-fuse/database/generated/prisma';
 
-interface Message {
-  id: string;
-  content: string;
-  sender: 'user' | 'agent' | 'system';
-  timestamp: Date;
-  agentId?: string;
-  agentName?: string;
-  type?: 'text' | 'code' | 'image' | 'file';
-}
-
-interface ConversationRule {
-  id: string;
-  sourceId: string;
-  targetId: string;
-}
-
-interface SynthesisJob {
-  id: string;
-  summary: string;
-  imagePrompts: string[];
-  timestamp: Date;
-  status: 'processing' | 'completed' | 'failed';
-}
-
+/**
+ * ChatService handles agent-based chat conversations.
+ * 
+ * Note: This service works with the Chat model (agent conversations).
+ * For multi-user chat rooms, see ChatRoom model and related services.
+ * 
+ * Schema notes:
+ * - Chat: Single agent per chat, optional userId
+ * - Message: Uses senderId for user, agentId for agent, chatId to connect to Chat
+ */
 @Injectable()
 export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
+
   constructor(
     private prisma: PrismaService,
     private agentsService: AgentsService,
   ) {}
 
+  /**
+   * Find all chats for a user (via their agents)
+   */
   async findAll(userId: string) {
     try {
-      // Get all chat sessions for the user
-      const chats = await this.prisma.chat?.findMany({
-        where: { userId },
+      // Get chats through the user's agents
+      const chats = await this.prisma.chat.findMany({
+        where: {
+          agent: {
+            userId: userId,
+          },
+        },
         include: {
           messages: {
-            orderBy: { createdAt: 'asc' },
+            orderBy: { timestamp: 'asc' },
             include: {
-              agent: true
-            }
+              agent: true,
+              sender: true,
+            },
           },
-          agents: true
-        }
-      }) || [];
+          agent: true,
+        },
+      });
       
       return chats;
     } catch (error) {
-      console.error('Error fetching chats:', error);
+      this.logger.error('Error fetching chats:', error);
       return [];
     }
   }
 
+  /**
+   * Find a specific chat by ID
+   */
   async findOne(id: string, userId: string) {
     try {
-      const chat = await this.prisma.chat?.findFirst({
-        where: { id, userId },
+      const chat = await this.prisma.chat.findFirst({
+        where: { 
+          id,
+          agent: {
+            userId: userId,
+          },
+        },
         include: {
           messages: {
-            orderBy: { createdAt: 'asc' },
+            orderBy: { timestamp: 'asc' },
             include: {
-              agent: true
-            }
+              agent: true,
+              sender: true,
+            },
           },
-          agents: true
-        }
+          agent: true,
+        },
       });
       
       if (!chat) {
-        return { id, messages: [], agents: [] };
+        return null;
       }
       
       return chat;
     } catch (error) {
-      console.error('Error fetching chat:', error);
-      return { id, messages: [], agents: [] };
+      this.logger.error('Error fetching chat:', error);
+      return null;
     }
   }
 
-  async create(userId: string, createChatDto: any) {
+  /**
+   * Create a new chat with an agent
+   */
+  async create(userId: string, agentId: string, title?: string) {
     try {
-      const chat = await this.prisma.chat?.create({
+      // Verify the agent belongs to the user
+      const agent = await this.prisma.agent.findFirst({
+        where: { id: agentId, userId },
+      });
+
+      if (!agent) {
+        throw new Error('Agent not found or does not belong to user');
+      }
+
+      const chat = await this.prisma.chat.create({
         data: {
-          ...createChatDto,
-          userId,
+          title: title || `Chat with ${agent.name}`,
+          agentId: agentId,
+          userId: userId,
         },
         include: {
           messages: true,
-          agents: true
-        }
+          agent: true,
+        },
       });
       
-      return chat || { id: Date.now().toString(), ...createChatDto };
+      return chat;
     } catch (error) {
-      console.error('Error creating chat:', error);
-      return { id: Date.now().toString(), ...createChatDto };
+      this.logger.error('Error creating chat:', error);
+      throw error;
     }
   }
 
-  async addMessage(chatId: string, userId: string, messageData: Partial<Message>) {
+  /**
+   * Add a message to a chat
+   */
+  async addMessage(
+    chatId: string, 
+    content: string,
+    role: MessageRole,
+    options?: {
+      senderId?: string;
+      agentId?: string;
+      metadata?: Record<string, unknown>;
+    }
+  ) {
     try {
-      const message = await this.prisma.message?.create({
+      const message = await this.prisma.message.create({
         data: {
-          ...messageData,
+          content,
+          role,
           chatId,
-          userId,
-          createdAt: new Date(),
+          senderId: options?.senderId,
+          agentId: options?.agentId,
+          metadata: options?.metadata as any,
         },
         include: {
-          agent: true
-        }
+          agent: true,
+          sender: true,
+        },
       });
       
-      return message || { id: Date.now().toString(), ...messageData };
+      return message;
     } catch (error) {
-      console.error('Error adding message:', error);
-      return { id: Date.now().toString(), ...messageData };
+      this.logger.error('Error adding message:', error);
+      throw error;
     }
   }
 
-  async createConversationRule(userId: string, ruleData: Omit<ConversationRule, 'id'>) {
+  /**
+   * Get messages for a chat with pagination
+   */
+  async getMessages(chatId: string, options?: { limit?: number; cursor?: string }) {
     try {
-      const rule = await this.prisma.conversationRule?.create({
-        data: {
-          ...ruleData,
-          userId,
-        }
+      const messages = await this.prisma.message.findMany({
+        where: { chatId },
+        take: options?.limit || 50,
+        ...(options?.cursor && {
+          cursor: { id: options.cursor },
+          skip: 1,
+        }),
+        orderBy: { timestamp: 'desc' },
+        include: {
+          agent: true,
+          sender: true,
+        },
       });
       
-      return rule || { id: Date.now().toString(), ...ruleData };
+      return messages;
     } catch (error) {
-      console.error('Error creating conversation rule:', error);
-      return { id: Date.now().toString(), ...ruleData };
-    }
-  }
-
-  async getConversationRules(userId: string) {
-    try {
-      const rules = await this.prisma.conversationRule?.findMany({
-        where: { userId }
-      }) || [];
-      
-      return rules;
-    } catch (error) {
-      console.error('Error fetching conversation rules:', error);
+      this.logger.error('Error fetching messages:', error);
       return [];
     }
   }
 
-  async createSynthesisJob(userId: string, jobData: Omit<SynthesisJob, 'id'>) {
-    try {
-      const job = await this.prisma.synthesisJob?.create({
-        data: {
-          ...jobData,
-          userId,
-        }
-      });
-      
-      return job || { id: Date.now().toString(), ...jobData };
-    } catch (error) {
-      console.error('Error creating synthesis job:', error);
-      return { id: Date.now().toString(), ...jobData };
-    }
-  }
-
-  async getSynthesisJobs(userId: string) {
-    try {
-      const jobs = await this.prisma.synthesisJob?.findMany({
-        where: { userId },
-        orderBy: { timestamp: 'desc' }
-      }) || [];
-      
-      return jobs;
-    } catch (error) {
-      console.error('Error fetching synthesis jobs:', error);
-      return [];
-    }
-  }
-
+  /**
+   * Generate an agent response for a prompt
+   */
   async generateAgentResponse(prompt: string, agentId: string, userId: string) {
     try {
       // Get the agent details
-      const agents = await this.agentsService.findAll(userId);
-      const agent = agents.find(a => a.id === agentId);
+      const agent = await this.prisma.agent.findFirst({
+        where: { id: agentId, userId },
+      });
       
       if (!agent) {
         throw new Error('Agent not found');
       }
 
-      // Mock AI response generation - replace with actual AI service integration
-      const response = await this.mockAIResponse(prompt, (agent.config as any)?.systemPrompt || 'You are a helpful assistant.');
+      // TODO: Replace with actual AI service integration
+      const systemPrompt = (agent.config as Record<string, unknown>)?.systemPrompt as string 
+        || agent.systemPrompt 
+        || 'You are a helpful assistant.';
+      
+      const response = await this.mockAIResponse(prompt, systemPrompt);
       
       return response;
     } catch (error) {
-      console.error('Error generating agent response:', error);
+      this.logger.error('Error generating agent response:', error);
       return 'I apologize, but I encountered an error while processing your request.';
     }
   }
 
-  private async mockAIResponse(prompt: string, systemPrompt: string): Promise<string> {
+  /**
+   * Mock AI response - to be replaced with actual AI integration
+   */
+  private async mockAIResponse(prompt: string, _systemPrompt: string): Promise<string> {
     // Simulate AI processing time
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
     
     // Return a mock response based on the prompt
     const responses = [
       `Based on your message about "${prompt.substring(0, 30)}...", I can help you with that.`,
       `I understand you're asking about: ${prompt.substring(0, 50)}. Let me provide some insights.`,
       `That's an interesting question about "${prompt.substring(0, 40)}...". Here's my perspective:`,
-      `Regarding your inquiry: "${prompt.substring(0, 45)}...", I'd like to share some thoughts.`
+      `Regarding your inquiry, I'd like to share some thoughts.`,
     ];
     
     return responses[Math.floor(Math.random() * responses.length)];
   }
 
-  async automateConversation(chatId: string, userId: string, conversationGoal?: string) {
+  /**
+   * Delete a chat and its messages
+   */
+  async delete(chatId: string, userId: string) {
     try {
-      // Get chat with agents and rules
-      const chat = await this.findOne(chatId, userId);
-      const rules = await this.getConversationRules(userId);
-      
-      if (!chat.agents || chat.agents.length === 0) {
-        throw new Error('No agents found in chat');
+      // Verify ownership through agent
+      const chat = await this.prisma.chat.findFirst({
+        where: {
+          id: chatId,
+          agent: { userId },
+        },
+      });
+
+      if (!chat) {
+        throw new Error('Chat not found or access denied');
       }
 
-      // Start automated conversation flow
-      const firstAgent = chat.agents[0];
-      const initialPrompt = conversationGoal 
-        ? `As ${firstAgent.name}, start the conversation based on this goal: "${conversationGoal}"`
-        : `As ${firstAgent.name}, start a new conversation.`;
-      
-      const response = await this.generateAgentResponse(initialPrompt, firstAgent.id, userId);
-      
-      await this.addMessage(chatId, userId, {
-        content: response,
-        sender: 'agent',
-        agentId: firstAgent.id,
-        agentName: firstAgent.name,
-        type: 'text'
+      // Soft delete by setting deletedAt
+      await this.prisma.chat.update({
+        where: { id: chatId },
+        data: { deletedAt: new Date() },
       });
-      
-      return { success: true, message: 'Automation started' };
+
+      return { success: true };
     } catch (error) {
-      console.error('Error automating conversation:', error);
-      return { success: false, message: error.message };
+      this.logger.error('Error deleting chat:', error);
+      throw error;
     }
   }
+
+  // ============================================================================
+  // TODO: Future Features - Requires Schema Updates
+  // ============================================================================
+  // 
+  // The following features are planned but require Prisma schema updates:
+  // 
+  // 1. ConversationRule - For defining routing/automation rules between agents
+  //    Suggested schema:
+  //    model ConversationRule {
+  //      id        String   @id @default(uuid())
+  //      userId    String
+  //      sourceId  String   // Source agent or trigger
+  //      targetId  String   // Target agent
+  //      condition Json?    // Conditions for rule activation
+  //      ...
+  //    }
+  //
+  // 2. SynthesisJob - For AI-powered conversation summarization
+  //    Suggested schema:
+  //    model SynthesisJob {
+  //      id           String   @id @default(uuid())
+  //      userId       String
+  //      chatId       String?
+  //      summary      String
+  //      imagePrompts String[]
+  //      status       String   // 'processing' | 'completed' | 'failed'
+  //      ...
+  //    }
+  //
+  // These should be added to packages/database/prisma/schema.prisma when needed.
+  // ============================================================================
 }

@@ -18,6 +18,21 @@ export { MongoFeatureFlagService } from './services/MongoFeatureFlagService';
 export { AgentOrchestrator, Task, Agent, TaskResult } from './agents/agent-orchestrator';
 export { AgentSwarmOrchestrationService } from './agents/AgentSwarmOrchestrationService';
 
+// Agency Services (Multi-tenant white-label management)
+export { 
+  AgencyService, 
+  AgencyProfile, 
+  AgencySettings, 
+  CreateAgencyDto, 
+  UpdateAgencyDto 
+} from './services/agency.service';
+export { 
+  EnhancedAgencyService, 
+  AgencyAnalytics, 
+  SwarmInitializationResult, 
+  ProviderRegistration 
+} from './services/enhanced-agency.service';
+
 // Memory System
 export { MemorySystem } from './memory/MemorySystem';
 export { MemoryManager } from './memory/MemoryManager';

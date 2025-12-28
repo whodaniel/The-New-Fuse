@@ -1,7 +1,7 @@
-import { createLogger, format, transports } from 'winston';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as winston from 'winston';
 import 'winston-daily-rotate-file';
-import { existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
 
 export interface LogMetadata {
   timestamp?: string;
@@ -20,14 +20,10 @@ export const LOG_LEVELS = {
   http: 3,
   verbose: 4,
   debug: 5,
-  silly: 6
+  silly: 6,
 };
 
-export const createLogger = (config: {
-  logDir: string;
-  level: string;
-  service: string;
-}) => {
+export const createAppLogger = (config: { logDir: string; level: string; service: string }) => {
   // Create log directory if it doesn't exist
   if (!fs.existsSync(config.logDir)) {
     fs.mkdirSync(config.logDir, { recursive: true });
@@ -45,40 +41,37 @@ export const createLogger = (config: {
         timestamp,
         level,
         message,
-        metadata
+        metadata,
       });
     })
   );
 
-  const consoleFormat = winston.format.combine(
-    winston.format.colorize(),
-    winston.format.simple()
-  );
+  const consoleFormat = winston.format.combine(winston.format.colorize(), winston.format.simple());
 
   // Configure transports
-  const transports: winston.transport[] = [
+  const logTransports: winston.transport[] = [
     // Console Transport
     new winston.transports.Console({
       level: config.level,
-      format: consoleFormat
+      format: consoleFormat,
     }),
     // File Transport for all logs
-    new winston.transports.DailyRotateFile({
+    new (winston.transports as any).DailyRotateFile({
       filename: path.join(config.logDir, 'app-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       maxSize: '10m',
       maxFiles: '7d',
-      format: detailedFormat
+      format: detailedFormat,
     }),
     // File Transport for error logs
-    new winston.transports.DailyRotateFile({
+    new (winston.transports as any).DailyRotateFile({
       filename: path.join(config.logDir, 'error-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       maxSize: '10m',
       maxFiles: '30d',
       level: 'error',
-      format: detailedFormat
-    })
+      format: detailedFormat,
+    }),
   ];
 
   // Create logger instance
@@ -86,9 +79,9 @@ export const createLogger = (config: {
     level: config.level,
     levels: LOG_LEVELS,
     defaultMeta: {
-      service: config.service
+      service: config.service,
     },
-    transports
+    transports: logTransports,
   });
 
   return logger;
@@ -102,5 +95,5 @@ winston.addColors({
   http: 'magenta',
   verbose: 'cyan',
   debug: 'blue',
-  silly: 'gray'
+  silly: 'gray',
 });

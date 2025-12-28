@@ -150,6 +150,51 @@ export interface AppSettings {
   debugMode: boolean
 }
 
+// Secure Storage Types
+export interface StoredCredential {
+  id: string
+  name: string
+  provider: string
+  category?: string
+  createdAt: string
+  updatedAt: string
+  metadata?: Record<string, string>
+}
+
+export interface SecureStorageSaveResponse {
+  success: boolean
+  id: string
+  error?: string
+}
+
+export interface SecureStorageGetResponse {
+  success: boolean
+  apiKey?: string
+  error?: string
+}
+
+export interface SecureStorageDeleteResponse {
+  success: boolean
+  error?: string
+}
+
+export interface SecureStorageListResponse {
+  success: boolean
+  credentials: StoredCredential[]
+  error?: string
+}
+
+export interface SecureStorageStatusResponse {
+  available: boolean
+  usingKeychain: boolean
+}
+
+export interface AIProviderInfo {
+  name: string
+  envKey: string
+  placeholder: string
+}
+
 // IPC Types for Electron communication
 export interface IpcResponse<T = any> {
   success: boolean
@@ -192,6 +237,15 @@ export interface WindowAPI {
   // Shell integration
   openExternal: (url: string) => Promise<IpcResponse<boolean>>
   
+  // Secure Storage / API Key Management
+  secureStorageSave: (provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => Promise<SecureStorageSaveResponse>
+  secureStorageGet: (provider: string) => Promise<SecureStorageGetResponse>
+  secureStorageDelete: (provider: string) => Promise<SecureStorageDeleteResponse>
+  secureStorageList: () => Promise<SecureStorageListResponse>
+  secureStorageHas: (provider: string) => Promise<boolean>
+  secureStorageStatus: () => Promise<SecureStorageStatusResponse>
+  secureStorageProviders: () => Promise<Record<string, AIProviderInfo>>
+  
   // Events
   onSystemEvent: (callback: (event: string, data: any) => void) => void
   offSystemEvent: (callback: (event: string, data: any) => void) => void
@@ -200,5 +254,19 @@ export interface WindowAPI {
 declare global {
   interface Window {
     api: WindowAPI
+    electronAPI: {
+      invoke: (channel: string, ...args: any[]) => Promise<any>
+      secureStorage: {
+        save: (provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => Promise<SecureStorageSaveResponse>
+        get: (provider: string) => Promise<SecureStorageGetResponse>
+        delete: (provider: string) => Promise<SecureStorageDeleteResponse>
+        list: () => Promise<SecureStorageListResponse>
+        has: (provider: string) => Promise<boolean>
+        status: () => Promise<SecureStorageStatusResponse>
+        providers: () => Promise<Record<string, AIProviderInfo>>
+      }
+      [key: string]: any
+    }
   }
 }
+

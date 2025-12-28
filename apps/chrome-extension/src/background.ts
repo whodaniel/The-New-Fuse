@@ -601,6 +601,31 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ success: true });
         break;
 
+      case 'INJECT_MESSAGE':
+        backgroundLogger.info('Handling INJECT_MESSAGE');
+        // Forward to content script on active tab
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (tabs[0] && tabs[0].id) {
+            chrome.tabs
+              .sendMessage(tabs[0].id, {
+                type: 'INJECT_MESSAGE',
+                content: message.content,
+              })
+              .then((response) => {
+                backgroundLogger.info('Inject message response from content script:', response);
+                sendResponse(response);
+              })
+              .catch((error) => {
+                backgroundLogger.error('Error forwarding INJECT_MESSAGE to content script:', error);
+                sendResponse({ success: false, error: error.message });
+              });
+          } else {
+            backgroundLogger.error('No active tab found for message injection.');
+            sendResponse({ success: false, error: 'No active tab found.' });
+          }
+        });
+        return true; // Async response
+
       case 'ELEMENT_SELECTED':
         backgroundLogger.info('Handling ELEMENT_SELECTED');
         // Forward to popup if open
@@ -735,8 +760,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           if (tabs[0] && tabs[0].id) {
             chrome.tabs
               .sendMessage(tabs[0].id, {
-                type: 'CONTROL_IFRAME_VISIBILITY',
-                visible: message.visible,
+                type: 'TOGGLE_PANEL',
               })
               .then((response) => sendResponse(response))
               .catch((error) => {

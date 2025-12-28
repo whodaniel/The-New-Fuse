@@ -8,7 +8,7 @@ import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationServi
 @Injectable()
 export class TNFMCPService implements OnModuleInit {
   private readonly logger = new Logger(TNFMCPService.name);
-  private mcpServer: TheNewFuseMCPServer;
+  private mcpServer!: TheNewFuseMCPServer;
 
   constructor(
     private readonly agentService: AgentService,

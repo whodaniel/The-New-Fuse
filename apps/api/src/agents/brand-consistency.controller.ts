@@ -75,7 +75,7 @@ export class BrandConsistencyController {
   async analyzeBatch(
     @Body() body: { components: Array<{ path: string; code: string }> }
   ) {
-    const results = [];
+    const results: any[] = [];
 
     for (const component of body.components) {
       const analysis = await this.agentService.analyzeComponent(component.path, component.code);

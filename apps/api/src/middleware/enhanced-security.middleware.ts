@@ -95,11 +95,19 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
   /**
    * Perform comprehensive security analysis
    */
-  private async performSecurityAnalysis(req: Request): Promise<any> {
-    const flags = {
+  private async performSecurityAnalysis(req: Request): Promise<{
+    isBot: boolean;
+    isSuspicious: boolean;
+    threatLevel: 'low' | 'medium' | 'high' | 'critical';
+  }> {
+    const flags: {
+      isBot: boolean;
+      isSuspicious: boolean;
+      threatLevel: 'low' | 'medium' | 'high' | 'critical';
+    } = {
       isBot: this.detectBot(req),
       isSuspicious: false,
-      threatLevel: 'low' as const,
+      threatLevel: 'low',
     };
 
     // Check for common attack patterns
@@ -138,7 +146,7 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
   private async enforceRateLimiting(req: Request, res: Response): Promise<void> {
     try {
       // Check if IP is blocked
-      if (this.rateLimitService.isIPBlocked(req.clientIP)) {
+      if (this.rateLimitService.isIPBlocked(req.clientIP || 'unknown')) {
         throw new UnauthorizedException('IP address temporarily blocked');
       }
 
@@ -159,7 +167,7 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
         userAgent: req.userAgent,
         endpoint: req.path,
         method: req.method,
-        reason: error.message,
+        reason: (error as Error).message,
       });
       throw error;
     }
@@ -173,16 +181,17 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
       // Sanitize query parameters
       if (req.query && typeof req.query === 'object') {
         Object.keys(req.query).forEach(key => {
-          if (typeof req.query[key] === 'string') {
-            const sanitized = this.inputSanitization.sanitizeText(req.query[key]);
+          const queryValue = req.query[key];
+          if (typeof queryValue === 'string') {
+            const sanitized = this.inputSanitization.sanitizeText(queryValue);
             req.query[key] = sanitized;
             
             // Log if sanitization changed the value
-            if (sanitized !== req.query[key]) {
+            if (sanitized !== queryValue) {
               this.securityLogging.logInputValidation(req.path, req.method, {
                 ip: req.clientIP,
                 field: `query.${key}`,
-                value: req.query[key],
+                value: queryValue,
                 reason: 'Potentially malicious content detected',
                 severity: 'medium',
               });
@@ -207,7 +216,7 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
     } catch (error) {
       this.securityLogging.logInputValidation(req.path, req.method, {
         ip: req.clientIP,
-        reason: error.message,
+        reason: (error as Error).message,
         severity: 'high',
       });
       throw new BadRequestException('Invalid input data');

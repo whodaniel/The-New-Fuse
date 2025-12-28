@@ -8,7 +8,7 @@ import { RouteProvider } from './components/route-context';
 import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
-import ComprehensiveRouter from './ComprehensiveRouter';
+import SubdomainRouter from './routers/SubdomainRouter';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +18,7 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      <ComprehensiveRouter />
+      <SubdomainRouter />
       {showMonitor && <PerformanceMonitor position="bottom-right" compact={true} />}
     </>
   );

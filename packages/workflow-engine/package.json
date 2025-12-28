@@ -74,7 +74,9 @@
     "@prisma/client": "^7.1.0",
     "@the-new-fuse/mcp-core": "workspace:*",
     "@the-new-fuse/relay-core": "workspace:*",
-    "events": "^3.3.0"
+    "events": "^3.3.0",
+    "redis": "^5.10.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

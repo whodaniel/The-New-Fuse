@@ -40,11 +40,14 @@ export class SmartAccountService {
   ) {}
 
   private getSmartAccountMetadata(wallet: any): SmartAccountMetadata {
+    // Use wallet type to determine if smart account is enabled
+    // The actual schema uses type: WalletType.SMART_ACCOUNT to indicate this
+    const isSmartAccount = wallet.type === 'SMART_ACCOUNT';
     return {
-      enabled: wallet.smartAccountEnabled || false,
-      deployed: wallet.smartAccountDeployed || false,
-      address: wallet.smartAccountAddress || undefined,
-      salt: wallet.smartAccountSalt || undefined
+      enabled: isSmartAccount,
+      deployed: isSmartAccount && wallet.isActive, // Assume deployed if active smart account
+      address: isSmartAccount ? wallet.address : undefined,
+      salt: undefined // Salt would need to be stored separately if needed
     };
   }
 
@@ -163,12 +166,12 @@ export class SmartAccountService {
         throw new Error('Smart Account deployment transaction failed');
       }
 
-      // Update wallet with deployment info
+      // Update wallet to mark as deployed/active
       await this.prisma.wallet.update({
         where: { id: walletId },
         data: {
-          smartAccountDeployed: true,
-          smartAccountAddress: metadata.address || wallet.address
+          isActive: true,
+          lastActivity: new Date()
         }
       });
 

@@ -141,7 +141,7 @@ export class PerformanceOptimizer {
     ) as PerformanceNavigationTiming[];
     if (navigationEntries.length > 0) {
       const nav = navigationEntries[0];
-      loadTime = nav.loadEventEnd - nav.navigationStart;
+      loadTime = nav.loadEventEnd - nav.startTime;
     }
 
     return { renderTime, scriptTime, loadTime };
@@ -247,7 +247,14 @@ export class PerformanceOptimizer {
       priority: number;
     }>
   > {
-    const optimizations = [];
+    const optimizations: Array<{
+      type: 'setting' | 'feature';
+      target: string;
+      action: 'enable' | 'disable' | 'adjust';
+      value?: any;
+      reason: string;
+      priority: number;
+    }> = [];
     const settings = settingsManager.getOptimizationSettings();
 
     // High memory usage optimizations

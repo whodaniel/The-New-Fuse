@@ -19,7 +19,7 @@ export class MCPRegistryService {
     const agent: Agent = {
       id: `agent-${Date.now()}`,
       name: params.name,
-      description: params.description || null,
+      description: params.description,
       type: params.type,
       capabilities: params.capabilities,
       status: AgentStatus.ACTIVE,

@@ -4,6 +4,7 @@
 import { Logger } from '../utils/logger.js';
 import { ConnectionManager } from './connection-manager.js';
 import { MessageHandler } from './message-handler.js';
+import { web3Interceptor } from './web3-interceptor.js';
 
 // Create a background-specific logger
 const backgroundLogger = new Logger({
@@ -74,6 +75,36 @@ async function initialize() {
       // Return false or undefined for synchronous listeners if not sending an async response.
       // If this listener might send an async response later, return true.
       return false;
+    });
+
+    // Step 6: Set up Web3 URL interception for address bar navigation
+    chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
+      // Only intercept main frame navigations (not iframes)
+      if (details.frameId !== 0) return;
+
+      const url = details.url;
+      const interceptionResult = web3Interceptor.interceptUrl(url);
+
+      // If it's a Web3 URL and was successfully resolved, redirect
+      if (interceptionResult.wasWeb3 && !interceptionResult.error && interceptionResult.url !== url) {
+        // Cancel the current navigation and redirect to resolved URL
+        chrome.tabs.update(details.tabId, { url: interceptionResult.url });
+
+        // Show notification
+        if (interceptionResult.protocol) {
+          await web3Interceptor.showNotification(
+            interceptionResult.originalUrl!,
+            interceptionResult.url,
+            interceptionResult.protocol
+          );
+        }
+
+        backgroundLogger.info('Intercepted and resolved Web3 URL from address bar', {
+          original: url,
+          resolved: interceptionResult.url,
+          protocol: interceptionResult.protocol,
+        });
+      }
     });
 
     backgroundLogger.info('Background script initialized successfully and listeners are set up.');

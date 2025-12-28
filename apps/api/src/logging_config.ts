@@ -15,7 +15,7 @@ export function setupLogging(): any {
           format.simple()
         )
       }),
-      new transports.DailyRotateFile({
+      new (transports as any).DailyRotateFile({
         filename: 'logs/application-%DATE%.log',
         datePattern: 'YYYY-MM-DD',
         zippedArchive: true,

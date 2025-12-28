@@ -269,14 +269,49 @@ MIT License - see LICENSE file for details.
 
 ## 🔄 Changelog
 
-### v3.0.0 (Latest)
+### v6.0.0 (December 25, 2024) - Latest
+
+**🔴 Critical Bug Fixes:**
+
+- Fixed missing `humanSimulator` import that caused runtime errors
+- Fixed "dead-end" Agents tab with actionable navigation
+
+**🆕 New Features:**
+
+- 🤖 **CAPTCHA Detection & Bypass** - Auto-detects reCAPTCHA, hCaptcha,
+  Cloudflare Turnstile
+- 🔄 **Merged Network + Agents Tabs** - Reduced from 5 to 4 tabs for cleaner UX
+- 📊 **Auto CAPTCHA Detection** - Automatically scans pages on load
+- 👤 **Human Behavior Simulation** - Natural typing, clicking, scrolling
+  patterns
+
+**📋 API Additions:**
+
+- `DETECT_CAPTCHA` - Check for CAPTCHA presence
+- `BYPASS_CAPTCHA` - Attempt automatic bypass
+- `WAIT_FOR_CAPTCHA` - Wait for manual/auto solution
+- `CAPTCHA_DETECTED` - Background notification
+
+**🔧 Improvements:**
+
+- Better empty state messaging with actionable buttons
+- Available agent types list in Network tab
+- Consolidated popup with 4 tabs (Connect, Network, Services, Settings)
+
+### v4.0.0
+
+- 🔌 Universal Chat Detection
+- 🌐 Multi-node connection support
+- 🤖 Federation channels and multi-agent support
+- 🎨 Neon cyberpunk styling
+
+### v3.0.0
 
 - ✨ Complete React-based rewrite
 - 🎨 Modern purple gradient interface
 - 🎛️ Enhanced floating panel
 - 🔧 Improved element detection
 - 🚀 Better performance and reliability
-- 🧹 Cleaned up codebase and removed legacy files
 
 ### Previous Versions
 
@@ -285,5 +320,4 @@ MIT License - see LICENSE file for details.
 
 ---
 
-**The New Fuse** - Bridging AI and automation with elegant design and powerful
-functionality.
+**Fuse Connect** - The ultimate AI agent bridge for browser automation.

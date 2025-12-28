@@ -4,11 +4,16 @@
   "description": "Unified relay system for The New Fuse framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "tnf-relay": "./dist/standalone-relay.js"
+  },
   "scripts": {
     "build": "tsc",
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
+    "relay": "node dist/standalone-relay.js",
+    "relay:dev": "ts-node src/standalone-relay.ts",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
@@ -23,7 +28,9 @@
     "ethers": "^6.15.0",
     "express": "^4.22.0",
     "ioredis": "^5.8.1",
-    "ws": "^8.18.3"
+    "redis": "^5.10.0",
+    "ws": "^8.18.3",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",

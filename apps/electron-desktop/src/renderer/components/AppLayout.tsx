@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ConsoleView } from './ConsoleView';
 import { QuickActionsDashboard } from './QuickActionsDashboard';
 import { Sidebar } from './Sidebar';
+import CredentialsTab from './tabs/CredentialsTab';
 
 export const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -15,12 +16,14 @@ export const AppLayout: React.FC = () => {
       case 'dashboard':
         return <QuickActionsDashboard />;
       case 'console':
-        return <ConsoleView />;
+        return <ConsoleView initialTab="logs" />;
       case 'agents':
       case 'chat':
         // For now, map Chat/Agents to ConsoleView (it has tabs for these)
         // Or eventually split them out
-        return <ConsoleView />;
+        return <ConsoleView initialTab="chat" />;
+      case 'settings':
+        return <CredentialsTab />;
       default:
         return <QuickActionsDashboard />;
     }

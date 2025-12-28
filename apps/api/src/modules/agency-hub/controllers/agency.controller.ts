@@ -1,3 +1,10 @@
+/**
+ * Agency Controller
+ * 
+ * REST API endpoints for agency (white-label instance) management.
+ * Integrates with the local AgencyService.
+ */
+
 import {
   Controller,
   Get,
@@ -10,32 +17,335 @@ import {
   UseGuards,
   HttpStatus,
   HttpException,
+  Logger,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-// import { EnhancedAgencyService } from '../../../types/core';
-// import { AuthGuard } from '../../guards/auth.guard';
-// import { RolesGuard } from '../../guards/roles.guard';
-// import { Roles } from '../../decorators/roles.decorator';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { PrismaService } from '@the-new-fuse/database';
 
-// Type definitions
-export type AgentId = string;
+// Local services
+import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service';
+
+// ============================================================================
+// INLINE TYPES (from @the-new-fuse/core/services/agency.service)
+// ============================================================================
+
+export interface AgencyProfile {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  ownerId: string;
+  ownerEmail?: string;
+  settings: AgencySettings;
+  licenseId?: string;
+  licenseStatus: 'none' | 'active' | 'expired' | 'sovereign';
+  revenueShare: {
+    house: number;
+    investors: number;
+    affiliates: number;
+  };
+  agentLimit: number;
+  userLimit: number;
+  stats: {
+    totalAgents: number;
+    activeAgents: number;
+    totalUsers: number;
+    activeUsers: number;
+    totalWorkflows: number;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+  isActive: boolean;
+}
+
+export interface AgencySettings {
+  branding: {
+    primaryColor?: string;
+    secondaryColor?: string;
+    logoUrl?: string;
+    faviconUrl?: string;
+    customDomain?: string;
+  };
+  features: {
+    enableAgentMarketplace: boolean;
+    enableWorkflowBuilder: boolean;
+    enableA2ACommunication: boolean;
+    enableBlockchainFeatures: boolean;
+  };
+  notifications: {
+    emailEnabled: boolean;
+    slackWebhook?: string;
+    discordWebhook?: string;
+  };
+}
+
+export interface CreateAgencyDto {
+  name: string;
+  slug: string;
+  description?: string;
+  ownerId: string;
+  settings?: Partial<AgencySettings>;
+}
+
+export interface UpdateAgencyDto {
+  name?: string;
+  description?: string;
+  settings?: Partial<AgencySettings>;
+  isActive?: boolean;
+}
+
+const DEFAULT_SETTINGS: AgencySettings = {
+  branding: {},
+  features: {
+    enableAgentMarketplace: true,
+    enableWorkflowBuilder: true,
+    enableA2ACommunication: true,
+    enableBlockchainFeatures: false,
+  },
+  notifications: {
+    emailEnabled: true,
+  },
+};
+
+// ============================================================================
+// LOCAL AGENCY SERVICE (inline implementation)
+// ============================================================================
+
+class AgencyServiceLocal {
+  private readonly logger = new Logger(AgencyServiceLocal.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
+
+  async createAgency(dto: CreateAgencyDto): Promise<AgencyProfile> {
+    this.logger.log(`Creating agency: ${dto.name} (${dto.slug})`);
+
+    if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(dto.slug) && dto.slug.length > 2) {
+      throw new BadRequestException('Slug must be lowercase alphanumeric with optional hyphens');
+    }
+
+    const existingWorkspace = await this.prisma.workspace.findFirst({
+      where: { name: dto.slug },
+    });
+
+    if (existingWorkspace) {
+      throw new BadRequestException(`Agency slug "${dto.slug}" is already taken`);
+    }
+
+    const workspace = await this.prisma.workspace.create({
+      data: {
+        name: dto.slug,
+        description: JSON.stringify({
+          displayName: dto.name,
+          description: dto.description,
+          type: 'AGENCY',
+          settings: { ...DEFAULT_SETTINGS, ...dto.settings },
+          licenseId: null,
+          licenseStatus: 'none',
+          revenueShare: { house: 60, investors: 30, affiliates: 10 },
+          agentLimit: 5,
+          userLimit: 10,
+        }),
+        ownerId: dto.ownerId,
+      },
+    });
+
+    this.eventEmitter.emit('agency.created', { agencyId: workspace.id, slug: dto.slug });
+    return this.workspaceToAgencyProfile(workspace);
+  }
+
+  async getAgency(agencyId: string): Promise<AgencyProfile> {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: agencyId },
+      include: { owner: { select: { email: true } } },
+    });
+
+    if (!workspace) throw new NotFoundException(`Agency not found: ${agencyId}`);
+    return this.workspaceToAgencyProfile(workspace);
+  }
+
+  async getAgencyBySlug(slug: string): Promise<AgencyProfile> {
+    const workspace = await this.prisma.workspace.findFirst({
+      where: { name: slug },
+      include: { owner: { select: { email: true } } },
+    });
+
+    if (!workspace) throw new NotFoundException(`Agency not found: ${slug}`);
+    return this.workspaceToAgencyProfile(workspace);
+  }
+
+  async updateAgency(agencyId: string, dto: UpdateAgencyDto): Promise<AgencyProfile> {
+    const existing = await this.getAgency(agencyId);
+    const parsedDesc = this.parseWorkspaceDescription(existing);
+    
+    const updatedDescription = {
+      ...parsedDesc,
+      ...(dto.name && { displayName: dto.name }),
+      ...(dto.description && { description: dto.description }),
+      ...(dto.settings && { settings: { ...existing.settings, ...dto.settings } }),
+      ...(dto.isActive !== undefined && { isActive: dto.isActive }),
+    };
+
+    const workspace = await this.prisma.workspace.update({
+      where: { id: agencyId },
+      data: { description: JSON.stringify(updatedDescription) },
+      include: { owner: { select: { email: true } } },
+    });
+
+    this.eventEmitter.emit('agency.updated', { agencyId, changes: dto });
+    return this.workspaceToAgencyProfile(workspace);
+  }
+
+  async deleteAgency(agencyId: string): Promise<void> {
+    const agency = await this.getAgency(agencyId);
+    await this.prisma.workspace.delete({ where: { id: agencyId } });
+    this.eventEmitter.emit('agency.deleted', { agencyId, slug: agency.slug });
+  }
+
+  async listAgenciesForOwner(ownerId: string): Promise<AgencyProfile[]> {
+    const workspaces = await this.prisma.workspace.findMany({
+      where: { ownerId },
+      include: { owner: { select: { email: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return workspaces
+      .filter(w => {
+        try {
+          const desc = JSON.parse(w.description || '{}');
+          return desc.type === 'AGENCY';
+        } catch { return false; }
+      })
+      .map(w => this.workspaceToAgencyProfile(w));
+  }
+
+  async getAgencyStats(agencyId: string): Promise<AgencyProfile['stats']> {
+    const agency = await this.getAgency(agencyId);
+    return agency.stats;
+  }
+
+  private parseWorkspaceDescription(workspace: any): any {
+    try {
+      if (typeof workspace === 'string') return JSON.parse(workspace);
+      if (workspace.description) return JSON.parse(workspace.description);
+      return {};
+    } catch { return {}; }
+  }
+
+  private workspaceToAgencyProfile(workspace: any): AgencyProfile {
+    const desc = this.parseWorkspaceDescription(workspace);
+    
+    return {
+      id: workspace.id,
+      name: desc.displayName || workspace.name,
+      slug: workspace.name,
+      description: desc.description,
+      ownerId: workspace.ownerId,
+      ownerEmail: workspace.owner?.email,
+      settings: desc.settings || DEFAULT_SETTINGS,
+      licenseId: desc.licenseId,
+      licenseStatus: desc.licenseStatus || 'none',
+      revenueShare: desc.revenueShare || { house: 60, investors: 30, affiliates: 10 },
+      agentLimit: desc.agentLimit || 5,
+      userLimit: desc.userLimit || 10,
+      stats: {
+        totalAgents: 0,
+        activeAgents: 0,
+        totalUsers: 1,
+        activeUsers: 1,
+        totalWorkflows: workspace.projects?.length || 0,
+      },
+      createdAt: workspace.createdAt,
+      updatedAt: workspace.updatedAt,
+      isActive: desc.isActive !== false,
+    };
+  }
+}
+
+// ============================================================================
+// API DTOs
+// ============================================================================
+
+class CreateAgencyApiDto {
+  name!: string;
+  slug!: string;
+  description?: string;
+}
+
+class UpdateAgencyApiDto {
+  name?: string;
+  description?: string;
+  settings?: {
+    branding?: { primaryColor?: string; secondaryColor?: string; logoUrl?: string; };
+    features?: { enableAgentMarketplace?: boolean; enableWorkflowBuilder?: boolean; enableA2ACommunication?: boolean; };
+  };
+  isActive?: boolean;
+}
+
+class InitializeSwarmDto {
+  maxConcurrentExecutions?: number;
+  enableAutoScaling?: boolean;
+}
+
+class RegisterProvidersDto {
+  providers!: Array<{
+    name: string;
+    type: 'llm' | 'tool' | 'integration' | 'custom';
+    endpoint?: string;
+    capabilities: string[];
+    isActive: boolean;
+  }>;
+}
+
+// ============================================================================
+// CONTROLLER
+// ============================================================================
 
 @ApiTags('agencies')
 @Controller('api/agencies')
-// @UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class AgencyController {
-  // constructor(private readonly enhancedAgencyService: EnhancedAgencyService) {}
+  private readonly logger = new Logger(AgencyController.name);
+  private readonly agencyService: AgencyServiceLocal;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly swarmService: AgentSwarmOrchestrationService,
+  ) {
+    this.agencyService = new AgencyServiceLocal(prisma, eventEmitter);
+  }
 
   @Post()
-  // @UseGuards(RolesGuard)
-  // @Roles(UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Create a new agency with swarm capabilities' })
+  @ApiOperation({ summary: 'Create a new agency (white-label instance)' })
   @ApiResponse({ status: 201, description: 'Agency created successfully' })
-  async createAgency(@Body() createAgencyDto: any) {
+  @ApiResponse({ status: 400, description: 'Invalid input or slug already taken' })
+  async createAgency(
+    @Body() dto: CreateAgencyApiDto,
+    @Query('ownerId') ownerId: string,
+  ): Promise<AgencyProfile> {
     try {
-      return { message: 'Agency creation service not implemented' };
+      if (!ownerId) {
+        throw new HttpException('Owner ID is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const createDto: CreateAgencyDto = {
+        name: dto.name,
+        slug: dto.slug,
+        description: dto.description,
+        ownerId,
+      };
+
+      const agency = await this.agencyService.createAgency(createDto);
+      this.logger.log(`Agency created: ${agency.id} (${agency.slug})`);
+      return agency;
     } catch (error) {
+      this.logger.error(`Failed to create agency: ${(error as Error).message}`);
       throw new HttpException(
         (error as Error).message || 'Failed to create agency',
         HttpStatus.BAD_REQUEST
@@ -43,12 +353,37 @@ export class AgencyController {
     }
   }
 
-  @Get(':agencyId')
-  @ApiOperation({ summary: 'Get agency details with swarm status' })
-  @ApiResponse({ status: 200, description: 'Agency details retrieved' })
-  async getAgency(@Param('agencyId') agencyId: string) {
+  @Get()
+  @ApiOperation({ summary: 'List agencies for the authenticated user' })
+  @ApiResponse({ status: 200, description: 'Agencies retrieved' })
+  @ApiQuery({ name: 'ownerId', required: true, description: 'Owner user ID' })
+  async listAgencies(@Query('ownerId') ownerId: string): Promise<AgencyProfile[]> {
     try {
-      return { message: 'Agency retrieval service not implemented' };
+      if (!ownerId) {
+        throw new HttpException('Owner ID is required', HttpStatus.BAD_REQUEST);
+      }
+      return await this.agencyService.listAgenciesForOwner(ownerId);
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message || 'Failed to list agencies',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get(':agencyId')
+  @ApiOperation({ summary: 'Get agency details with status' })
+  @ApiResponse({ status: 200, description: 'Agency details retrieved' })
+  @ApiResponse({ status: 404, description: 'Agency not found' })
+  @ApiParam({ name: 'agencyId', description: 'Agency UUID or slug' })
+  async getAgency(@Param('agencyId') agencyId: string): Promise<AgencyProfile> {
+    try {
+      // Try ID first, then slug
+      try {
+        return await this.agencyService.getAgency(agencyId);
+      } catch {
+        return await this.agencyService.getAgencyBySlug(agencyId);
+      }
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Agency not found',
@@ -58,16 +393,21 @@ export class AgencyController {
   }
 
   @Put(':agencyId')
-  // @UseGuards(RolesGuard)
-  // @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
   @ApiOperation({ summary: 'Update agency configuration' })
   @ApiResponse({ status: 200, description: 'Agency updated successfully' })
+  @ApiResponse({ status: 404, description: 'Agency not found' })
   async updateAgency(
     @Param('agencyId') agencyId: string,
-    @Body() updateAgencyDto: any
-  ) {
+    @Body() dto: UpdateAgencyApiDto
+  ): Promise<AgencyProfile> {
     try {
-      return { message: 'Agency update service not implemented' };
+      const updateDto: UpdateAgencyDto = {
+        name: dto.name,
+        description: dto.description,
+        settings: dto.settings as any,
+        isActive: dto.isActive,
+      };
+      return await this.agencyService.updateAgency(agencyId, updateDto);
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to update agency',
@@ -76,17 +416,55 @@ export class AgencyController {
     }
   }
 
+  @Delete(':agencyId')
+  @ApiOperation({ summary: 'Delete an agency' })
+  @ApiResponse({ status: 204, description: 'Agency deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Agency not found' })
+  async deleteAgency(@Param('agencyId') agencyId: string): Promise<{ message: string }> {
+    try {
+      await this.agencyService.deleteAgency(agencyId);
+      return { message: `Agency ${agencyId} deleted successfully` };
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message || 'Failed to delete agency',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  // ==========================================================================
+  // Swarm Orchestration Endpoints
+  // ==========================================================================
+
   @Post(':agencyId/swarm/initialize')
-  // @UseGuards(RolesGuard)
-  // @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
-  @ApiOperation({ summary: 'Initialize swarm for agency' })
+  @ApiOperation({ summary: 'Initialize swarm orchestration for agency' })
   @ApiResponse({ status: 200, description: 'Swarm initialized successfully' })
   async initializeSwarm(
     @Param('agencyId') agencyId: string,
-    @Body() config?: any
-  ) {
+    @Body() config?: InitializeSwarmDto
+  ): Promise<{
+    success: boolean;
+    agencyId: string;
+    message: string;
+    swarmStatus?: any;
+  }> {
     try {
-      return { message: 'Service not implemented' };
+      // Verify agency exists
+      await this.agencyService.getAgency(agencyId);
+      
+      // Initialize swarm for this agency
+      await this.swarmService.initializeAgencySwarm(agencyId);
+      const result = await this.swarmService.initializeSwarm();
+      const status = await this.swarmService.getSwarmStatus(agencyId);
+      
+      this.logger.log(`Swarm initialized for agency ${agencyId}`);
+      
+      return {
+        success: true,
+        agencyId,
+        message: result.message,
+        swarmStatus: status,
+      };
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to initialize swarm',
@@ -98,9 +476,22 @@ export class AgencyController {
   @Get(':agencyId/swarm/status')
   @ApiOperation({ summary: 'Get current swarm status for agency' })
   @ApiResponse({ status: 200, description: 'Swarm status retrieved' })
-  async getSwarmStatus(@Param('agencyId') agencyId: string) {
+  async getSwarmStatus(@Param('agencyId') agencyId: string): Promise<{
+    agencyId: string;
+    swarmEnabled: boolean;
+    status: any;
+  }> {
     try {
-      return { message: 'Service not implemented' };
+      // Verify agency exists
+      await this.agencyService.getAgency(agencyId);
+      
+      const status = await this.swarmService.getSwarmStatus(agencyId);
+      
+      return {
+        agencyId,
+        swarmEnabled: status.isSwarmEnabled,
+        status,
+      };
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get swarm status',
@@ -109,17 +500,38 @@ export class AgencyController {
     }
   }
 
+  // ==========================================================================
+  // Provider Management Endpoints
+  // ==========================================================================
+
   @Post(':agencyId/providers/register')
-  // @UseGuards(RolesGuard)
-  // @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
-  @ApiOperation({ summary: 'Register service providers' })
+  @ApiOperation({ summary: 'Register service providers for agency' })
   @ApiResponse({ status: 201, description: 'Providers registered successfully' })
   async registerProviders(
     @Param('agencyId') agencyId: string,
-    @Body() providersDto: any
-  ) {
+    @Body() dto: RegisterProvidersDto
+  ): Promise<{
+    success: boolean;
+    registered: number;
+    providers: any[];
+  }> {
     try {
-      return { message: 'Service not implemented' };
+      // Verify agency exists
+      await this.agencyService.getAgency(agencyId);
+      
+      // In production, would persist these providers
+      const registered = dto.providers.map((p, idx) => ({
+        id: `${agencyId}_provider_${Date.now()}_${idx}`,
+        ...p,
+      }));
+      
+      this.logger.log(`Registered ${registered.length} providers for agency ${agencyId}`);
+      
+      return {
+        success: true,
+        registered: registered.length,
+        providers: registered,
+      };
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to register providers',
@@ -133,11 +545,22 @@ export class AgencyController {
   @ApiResponse({ status: 200, description: 'Providers retrieved successfully' })
   async getProviders(
     @Param('agencyId') agencyId: string,
-    @Query('categoryId') categoryId?: string,
-    @Query('active') active?: boolean
-  ) {
+    @Query('type') type?: string,
+    @Query('active') active?: string
+  ): Promise<{
+    agencyId: string;
+    providers: any[];
+  }> {
     try {
-      return { message: 'Service not implemented' };
+      // Verify agency exists
+      await this.agencyService.getAgency(agencyId);
+      
+      // In production, would fetch from database
+      // For now, return empty array - providers are ephemeral
+      return {
+        agencyId,
+        providers: [],
+      };
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get providers',
@@ -146,22 +569,127 @@ export class AgencyController {
     }
   }
 
+  // ==========================================================================
+  // Analytics Endpoints
+  // ==========================================================================
+
   @Get(':agencyId/analytics')
-  // @UseGuards(RolesGuard)
-  // @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
   @ApiOperation({ summary: 'Get agency performance analytics' })
   @ApiResponse({ status: 200, description: 'Analytics retrieved successfully' })
+  @ApiQuery({ name: 'timeframe', required: false, description: 'Timeframe (e.g., 7d, 30d, 90d)' })
   async getAnalytics(
     @Param('agencyId') agencyId: string,
     @Query('timeframe') timeframe: string = '30d'
-  ) {
+  ): Promise<{
+    agencyId: string;
+    period: string;
+    agents: any;
+    tasks: any;
+    swarm: any;
+  }> {
     try {
-      return { message: 'Service not implemented' };
+      const agency = await this.agencyService.getAgency(agencyId);
+      const swarmStatus = await this.swarmService.getSwarmStatus(agencyId);
+      
+      // Get date range
+      const now = new Date();
+      const startDate = this.getDateFromTimeframe(timeframe, now);
+      
+      // Fetch analytics data
+      const agents = await this.prisma.agent.findMany({
+        take: 100,
+      });
+      
+      const tasks = await this.prisma.task.findMany({
+        where: {
+          createdAt: { gte: startDate },
+        },
+      });
+      
+      const completedTasks = tasks.filter(t => t.status === 'COMPLETED');
+      const failedTasks = tasks.filter(t => t.status === 'FAILED');
+      
+      const byType: Record<string, number> = {};
+      agents.forEach(a => {
+        byType[a.type] = (byType[a.type] || 0) + 1;
+      });
+      
+      return {
+        agencyId,
+        period: timeframe,
+        agents: {
+          total: agents.length,
+          active: agents.filter(a => a.status === 'ACTIVE').length,
+          byType,
+        },
+        tasks: {
+          total: tasks.length,
+          completed: completedTasks.length,
+          failed: failedTasks.length,
+          successRate: tasks.length > 0 
+            ? Math.round((completedTasks.length / tasks.length) * 100) 
+            : 0,
+        },
+        swarm: {
+          enabled: swarmStatus.isSwarmEnabled,
+          totalAgents: swarmStatus.totalProviders,
+          onlineAgents: swarmStatus.activeProviders,
+          activeExecutions: swarmStatus.activeExecutions,
+        },
+      };
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get analytics',
         HttpStatus.NOT_FOUND
       );
+    }
+  }
+
+  @Get(':agencyId/stats')
+  @ApiOperation({ summary: 'Get quick agency statistics' })
+  @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
+  async getStats(@Param('agencyId') agencyId: string): Promise<{
+    agencyId: string;
+    stats: AgencyProfile['stats'];
+  }> {
+    try {
+      const stats = await this.agencyService.getAgencyStats(agencyId);
+      return { agencyId, stats };
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message || 'Failed to get stats',
+        HttpStatus.NOT_FOUND
+      );
+    }
+  }
+
+  // ==========================================================================
+  // Helper Methods
+  // ==========================================================================
+
+  private getDateFromTimeframe(timeframe: string, now: Date): Date {
+    const match = timeframe.match(/^(\d+)([dhwmy])$/);
+    
+    if (!match) {
+      return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    }
+    
+    const amount = parseInt(match[1], 10);
+    const unit = match[2];
+    
+    switch (unit) {
+      case 'd':
+        return new Date(now.getTime() - amount * 24 * 60 * 60 * 1000);
+      case 'h':
+        return new Date(now.getTime() - amount * 60 * 60 * 1000);
+      case 'w':
+        return new Date(now.getTime() - amount * 7 * 24 * 60 * 60 * 1000);
+      case 'm':
+        return new Date(now.getTime() - amount * 30 * 24 * 60 * 60 * 1000);
+      case 'y':
+        return new Date(now.getTime() - amount * 365 * 24 * 60 * 60 * 1000);
+      default:
+        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
   }
 }

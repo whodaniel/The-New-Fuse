@@ -14,16 +14,26 @@ export enum MessageType {
   ERROR = 'error',
   EVENT = 'event',
   CONNECTION_STATUS = 'CONNECTION_STATUS',
+  HEARTBEAT = 'heartbeat',
 }
 
 export enum MessageSource {
   CHROME_EXTENSION_POPUP = 'chrome-extension-popup',
   CHROME_EXTENSION_BACKGROUND = 'chrome-extension-background',
   CHROME_EXTENSION_CONTENT = 'chrome-extension-content',
+  CHROME_EXTENSION = 'chrome-extension',
   VSCODE_EXTENSION = 'vscode-extension',
   VSCODE_WEBVIEW = 'vscode-webview',
   USER = 'user',
   AGENT_X = 'agent-x',
+}
+
+export interface BaseMessage {
+  id: string;
+  source: MessageSource;
+  timestamp: number;
+  type: MessageType;
+  payload?: unknown;
 }
 
 export interface WebSocketRequest extends WebSocketMessage {

@@ -222,7 +222,9 @@ export class SettingsManager {
   }
 
   getFeaturesByCategory(category: FeatureConfig['category']): FeatureConfig[] {
-    return Object.values(this.settings.features).filter((feature) => feature.category === category);
+    return Object.values(this.settings.features).filter(
+      (feature: FeatureConfig) => feature.category === category
+    );
   }
 
   // Optimization settings
@@ -340,7 +342,13 @@ export class SettingsManager {
     reason: string;
     impact: 'low' | 'medium' | 'high';
   }> {
-    const recommendations = [];
+    const recommendations: Array<{
+      type: 'feature' | 'setting';
+      target: string;
+      action: 'enable' | 'disable' | 'change';
+      reason: string;
+      impact: 'low' | 'medium' | 'high';
+    }> = [];
 
     // Example recommendations based on current settings
     if (!this.settings.optimization.intelligentCaching) {

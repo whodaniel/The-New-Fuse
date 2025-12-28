@@ -6,6 +6,7 @@ type Session = import('electron').Session;
 type Shell = import('electron').Shell;
 import { join } from 'path';
 import { HybridBackend } from './HybridBackend';
+import { getSecureStorage, SecureStorageService } from './SecureStorageService';
 
 const isDev = process.env.NODE_ENV === 'development' || process.env.ELECTRON_DEV === '1';
 const browserHubEntry = process.env.BROWSER_HUB_ENTRY || 'unified-hub.html';
@@ -13,6 +14,7 @@ const browserHubEntry = process.env.BROWSER_HUB_ENTRY || 'unified-hub.html';
 class ElectronMain {
   private mainWindow: BrowserWindow | null = null;
   private hybridBackend: HybridBackend | null = null;
+  private secureStorage: SecureStorageService | null = null;
   private views: Map<string, BrowserView> = new Map();
   private activeViewId: string | null = null;
 
@@ -210,6 +212,14 @@ class ElectronMain {
 
   private async initializeHybridBackend(): Promise<void> {
     try {
+      // Initialize secure storage first (for API keys)
+      this.secureStorage = getSecureStorage();
+      const storageInit = await this.secureStorage.initialize();
+      console.log('[ElectronMain] SecureStorage initialized:', storageInit);
+      
+      // Load stored API keys into environment
+      await this.secureStorage.loadAllKeysToEnv();
+      
       this.hybridBackend = new HybridBackend();
       await this.hybridBackend.initialize();
 
@@ -450,6 +460,84 @@ class ElectronMain {
         return { success: false, error: 'Backend not available' };
       } catch (error) {
         return { success: false, error: (error as Error).message };
+      }
+    });
+
+    // Secure Storage / API Key Management handlers
+    ipcMain.handle('secure-storage:save', async (_: any, provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => {
+      try {
+        if (!this.secureStorage) {
+          return { success: false, id: '', error: 'Secure storage not initialized' };
+        }
+        return await this.secureStorage.saveApiKey(provider, apiKey, customName, metadata);
+      } catch (error) {
+        return { success: false, id: '', error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('secure-storage:get', async (_: any, provider: string) => {
+      try {
+        if (!this.secureStorage) {
+          return { success: false, error: 'Secure storage not initialized' };
+        }
+        return await this.secureStorage.getApiKey(provider);
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('secure-storage:delete', async (_: any, provider: string) => {
+      try {
+        if (!this.secureStorage) {
+          return { success: false, error: 'Secure storage not initialized' };
+        }
+        return await this.secureStorage.deleteApiKey(provider);
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('secure-storage:list', async () => {
+      try {
+        if (!this.secureStorage) {
+          return { success: false, credentials: [], error: 'Secure storage not initialized' };
+        }
+        return await this.secureStorage.listCredentials();
+      } catch (error) {
+        return { success: false, credentials: [], error: (error as Error).message };
+      }
+    });
+
+    ipcMain.handle('secure-storage:has', async (_: any, provider: string) => {
+      try {
+        if (!this.secureStorage) {
+          return false;
+        }
+        return await this.secureStorage.hasApiKey(provider);
+      } catch (error) {
+        return false;
+      }
+    });
+
+    ipcMain.handle('secure-storage:status', async () => {
+      try {
+        if (!this.secureStorage) {
+          return { available: false, usingKeychain: false };
+        }
+        return this.secureStorage.getEncryptionStatus();
+      } catch (error) {
+        return { available: false, usingKeychain: false };
+      }
+    });
+
+    ipcMain.handle('secure-storage:providers', async () => {
+      try {
+        if (!this.secureStorage) {
+          return {};
+        }
+        return this.secureStorage.getSupportedProviders();
+      } catch (error) {
+        return {};
       }
     });
   }

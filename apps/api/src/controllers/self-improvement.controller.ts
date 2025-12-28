@@ -66,7 +66,7 @@ export class SelfImprovementController {
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: (error as Error).message,
       };
     }
   }

@@ -23,10 +23,12 @@ export class AgentService {
   }
 
   async update(id: string, data: Partial<Agent>): Promise<Agent> {
+    // Remove readonly/relational fields that Prisma doesn't accept in updates
+    const { id: _id, createdAt: _createdAt, userId: _userId, ...updateData } = data as any;
     return this.prisma.agent.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
         updatedAt: new Date()
       }
     });

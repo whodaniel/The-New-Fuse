@@ -27,3 +27,46 @@ export const useStore = create<PopupState>((set) => ({
     set({ isDarkMode: persistedMode });
   },
 }));
+
+/**
+ * Store class for chrome.storage abstraction
+ * Used by SecurityManager for secure storage of secrets
+ */
+export class Store {
+  private static instance: Store;
+
+  static getInstance(): Store {
+    if (!Store.instance) {
+      Store.instance = new Store();
+    }
+    return Store.instance;
+  }
+
+  async get<T>(key: string): Promise<T | undefined> {
+    return new Promise((resolve) => {
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        chrome.storage.local.get([key], (result) => {
+          resolve(result[key] as T);
+        });
+      } else {
+        // Fallback to localStorage for non-extension environments
+        const value = localStorage.getItem(key);
+        resolve(value ? JSON.parse(value) : undefined);
+      }
+    });
+  }
+
+  async set(key: string, value: any): Promise<void> {
+    return new Promise((resolve) => {
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        chrome.storage.local.set({ [key]: value }, () => {
+          resolve();
+        });
+      } else {
+        // Fallback to localStorage
+        localStorage.setItem(key, JSON.stringify(value));
+        resolve();
+      }
+    });
+  }
+}

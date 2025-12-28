@@ -14,9 +14,9 @@ module.exports = (env, argv) => {
     entry: {
       popup: './src/popup/popup-fallback.js',
       background: './src/background.ts',
-      content: './src/content/index.ts',
-      options: './src/options/options.ts',
-      floatingPanel: './src/floatingPanel/floatingPanel.ts',
+      content: './src/v5/content/index.ts',
+      options: './src/options/index.ts',
+      floatingPanel: './src/floatingPanel/EnhancedFloatingPanel.tsx',
     },
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -26,6 +26,10 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
       mainFields: ['browser', 'module', 'main'],
+      extensionAlias: {
+        '.js': ['.ts', '.js'],
+        '.mjs': ['.mts', '.mjs'],
+      },
       alias: {
         '@utils': path.resolve(__dirname, 'src/utils'),
         '@styles': path.resolve(__dirname, 'src/styles'),
@@ -36,7 +40,18 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true, // Skip type checking for faster builds
+              compilerOptions: {
+                module: 'ESNext',
+                moduleResolution: 'bundler',
+                strict: false,
+                noImplicitAny: false,
+              },
+            },
+          },
           exclude: /node_modules/,
         },
         {

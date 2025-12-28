@@ -8,13 +8,15 @@ export interface RateLimitConfig {
   skipSuccessfulRequests?: boolean;
   skipFailedRequests?: boolean;
   keyGenerator?: (request: any) => string;
+  burstMultiplier?: number;
 }
 
 export interface RateLimitTier {
   name: string;
   requests: number;
   window: number;
-  burstMultiplier?: number;
+  burstMultiplier: number;
+  keyGenerator?: (request: any) => string;
 }
 
 @Injectable()

@@ -20,12 +20,31 @@ import { ConnectionTab } from './tabs/ConnectionTab';
 import { ElementsTab } from './tabs/ElementsTab';
 import { LocalServicesTab } from './tabs/LocalServicesTab';
 
-export const ConsoleView: React.FC = () => {
+interface ConsoleViewProps {
+  initialTab?: 'connections' | 'elements' | 'chat' | 'services' | 'logs';
+}
+
+export const ConsoleView: React.FC<ConsoleViewProps> = ({ initialTab = 'connections' }) => {
   const dispatch = useDispatch();
+  const [tabIndex, setTabIndex] = React.useState(0);
   const toast = useToast();
 
   const { tnfRelay, mcp, systemStatus } = useSelector((state: RootState) => state.connections);
   const { statuses: portStatuses } = useSelector((state: RootState) => state.ports);
+
+  useEffect(() => {
+    // Map initialTab to index
+    const tabMap: Record<string, number> = {
+      connections: 0,
+      elements: 1,
+      chat: 2,
+      services: 3,
+      logs: 3 // 'logs' maps to Services for now as per previous structure context, or maybe 0? Let's use 0 as default if unknown.
+    };
+    if (initialTab && tabMap[initialTab] !== undefined) {
+      setTabIndex(tabMap[initialTab]);
+    }
+  }, [initialTab]);
 
   useEffect(() => {
     // Set up IPC event listeners for real-time updates
@@ -182,7 +201,7 @@ export const ConsoleView: React.FC = () => {
         </HStack>
 
         {/* Main Tabs */}
-        <Tabs variant="soft-rounded" colorScheme="brand">
+        <Tabs variant="soft-rounded" colorScheme="brand" index={tabIndex} onChange={setTabIndex}>
           <TabList justifyContent="center" gap={2}>
             <Tab
               _selected={{

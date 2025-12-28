@@ -2,36 +2,55 @@
  * Main Routes Index - Centralized route management
  */
 
-import { Express } from 'express';
-import { SystemController } from '../controllers/system.controller';
+import { Express, Request, Response } from 'express';
+import { PrismaService } from '@the-new-fuse/database';
 import { WebSocketController } from '../controllers/websocket.controller';
 import { WorkflowController } from '../controllers/workflow.controller';
-import { createSystemRoutes } from './system.routes';
 import { createWebSocketRoutes } from './websocket.routes';
 import { createWorkflowRoutes } from './workflow.routes';
 
-export function setupRoutes(app: Express): void {
-  // Initialize controllers
-  const systemController = new SystemController();
+// Lightweight health check function that doesn't require controller dependencies
+async function healthCheck(_req: Request, res: Response): Promise<void> {
+  try {
+    res.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memoryUsage: process.memoryUsage().heapUsed / 1024 / 1024
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'unhealthy',
+      error: 'Health check failed'
+    });
+  }
+}
+
+export function setupRoutes(app: Express, prismaService?: PrismaService): void {
+  // Initialize controllers that don't have complex dependencies
   const webSocketController = new WebSocketController();
-  const workflowController = new WorkflowController(
-    null, // WorkflowEngine - will be injected
-    null, // WorkflowExecutor - will be injected
-    null, // WorkflowValidator - will be injected
-    null, // Logger - will be injected
-    null  // PrismaClient - will be injected
-  );
+  
+  // WorkflowController requires PrismaService - skip if not provided
+  let workflowController: WorkflowController | null = null;
+  if (prismaService) {
+    workflowController = new WorkflowController(prismaService);
+  }
 
   // Setup routes
-  app.use('/api/system', createSystemRoutes(systemController));
+  // Note: SystemController requires AgentSwarmOrchestrationService, A2AMessageBrokerService,
+  // and PromptTemplatesService - these are injected via NestJS DI, not here
+  // app.use('/api/system', createSystemRoutes(systemController));
+  
   app.use('/api/websocket', createWebSocketRoutes(webSocketController));
-  app.use('/api/workflows', createWorkflowRoutes(workflowController));
+  if (workflowController) {
+    app.use('/api/workflows', createWorkflowRoutes(workflowController));
+  }
 
-  // Health check endpoint (public)
-  app.get('/health', systemController.getHealth.bind(systemController));
+  // Health check endpoint (public) - lightweight version without controller
+  app.get('/health', healthCheck);
 
   // API info endpoint
-  app.get('/api', (req, res) => {
+  app.get('/api', (_req, res) => {
     res.json({
       name: 'The New Fuse API',
       version: '2.0.0',

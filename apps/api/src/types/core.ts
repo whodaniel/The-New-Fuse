@@ -52,3 +52,5 @@ export type MetricSeries = any;
 export type MetricDataPoint = any;
 export type MonitoringHealthStatus = any;
 export type MonitoringServiceHealth = any;
+export type MemoryContent = any;
+export type MemoryQuery = any;

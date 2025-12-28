@@ -1,24 +1,28 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { credentials, Metadata, ClientReadableStream } from '@grpc/grpc-js';
+import { credentials } from '@grpc/grpc-js';
 import { promisify } from 'util';
 import { join } from 'path';
 
 // Import generated proto types (these will be generated from the proto files)
+// gRPC service client interface with callback-style methods
 interface VectorStoreServiceClient {
-  createCollection: (request: any, metadata?: Metadata, callback?: Function) => any;
-  upsertDocuments: (request: any, metadata?: Metadata, callback?: Function) => any;
-  getDocument: (request: any, metadata?: Metadata, callback?: Function) => any;
-  similaritySearch: (request: any, metadata?: Metadata, callback?: Function) => any;
-  healthCheck: (request: any, metadata?: Metadata, callback?: Function) => any;
-  getStats: (request: any, metadata?: Metadata, callback?: Function) => any;
-  listCollections: (request: any, metadata?: Metadata, callback?: Function) => any;
-  deleteCollection: (request: any, metadata?: Metadata, callback?: Function) => any;
+  createCollection: (request: any, callback: (error: Error | null, response: any) => void) => void;
+  upsertDocuments: (request: any, callback: (error: Error | null, response: any) => void) => void;
+  getDocument: (request: any, callback: (error: Error | null, response: any) => void) => void;
+  similaritySearch: (request: any, callback: (error: Error | null, response: any) => void) => void;
+  healthCheck: (request: any, callback: (error: Error | null, response: any) => void) => void;
+  getStats: (request: any, callback: (error: Error | null, response: any) => void) => void;
+  listCollections: (request: any, callback: (error: Error | null, response: any) => void) => void;
+  deleteCollection: (request: any, callback: (error: Error | null, response: any) => void) => void;
 }
+
+// Type helper for promisified gRPC methods
+type PromisifiedGrpcMethod<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>;
 
 @Injectable()
 export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(VectorStoreGrpcClient.name);
-  private client: VectorStoreServiceClient;
+  private client!: VectorStoreServiceClient;
   private readonly grpcUrl: string;
 
   constructor() {
@@ -77,7 +81,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     metric?: string;
     config?: { [key: string]: string };
   }): Promise<{ success: boolean; message: string }> {
-    const createCollection = promisify(this.client.createCollection.bind(this.client));
+    const createCollection = promisify(this.client.createCollection.bind(this.client)) as (request: any) => Promise<{ success: boolean; message: string }>;
     
     try {
       const response = await createCollection({
@@ -95,7 +99,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async deleteCollection(name: string): Promise<{ success: boolean; message: string }> {
-    const deleteCollection = promisify(this.client.deleteCollection.bind(this.client));
+    const deleteCollection = promisify(this.client.deleteCollection.bind(this.client)) as (request: any) => Promise<{ success: boolean; message: string }>;
     
     try {
       const response = await deleteCollection({ name });
@@ -107,7 +111,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async listCollections(): Promise<{ collections: string[] }> {
-    const listCollections = promisify(this.client.listCollections.bind(this.client));
+    const listCollections = promisify(this.client.listCollections.bind(this.client)) as (request: any) => Promise<{ collections: string[] }>;
     
     try {
       const response = await listCollections({});
@@ -129,7 +133,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     }>;
     generateEmbeddings?: boolean;
   }): Promise<{ success: boolean; message: string; documentsProcessed: number }> {
-    const upsertDocuments = promisify(this.client.upsertDocuments.bind(this.client));
+    const upsertDocuments = promisify(this.client.upsertDocuments.bind(this.client)) as (request: any) => Promise<{ success: boolean; message: string; documentsProcessed: number }>;
     
     try {
       const response = await upsertDocuments({
@@ -154,7 +158,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     };
     found: boolean;
   }> {
-    const getDocument = promisify(this.client.getDocument.bind(this.client));
+    const getDocument = promisify(this.client.getDocument.bind(this.client)) as (request: any) => Promise<{ document?: { id: string; content: string; metadata?: any; embedding?: number[] }; found: boolean }>;
     
     try {
       const response = await getDocument({ collection, id });
@@ -182,7 +186,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       distance: number;
     }>;
   }> {
-    const similaritySearch = promisify(this.client.similaritySearch.bind(this.client));
+    const similaritySearch = promisify(this.client.similaritySearch.bind(this.client)) as (request: any) => Promise<{ results: Array<{ id: string; content: string; metadata?: any; score: number; distance: number }> }>;
     
     try {
       const response = await similaritySearch({
@@ -207,7 +211,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     status: string;
     details: { [key: string]: string };
   }> {
-    const healthCheck = promisify(this.client.healthCheck.bind(this.client));
+    const healthCheck = promisify(this.client.healthCheck.bind(this.client)) as (request: any) => Promise<{ healthy: boolean; status: string; details: { [key: string]: string } }>;
     
     try {
       const response = await healthCheck({});
@@ -219,7 +223,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async getStats(collection?: string): Promise<{ stats: any }> {
-    const getStats = promisify(this.client.getStats.bind(this.client));
+    const getStats = promisify(this.client.getStats.bind(this.client)) as (request: any) => Promise<{ stats: any }>;
     
     try {
       const response = await getStats({ collection });

@@ -79,7 +79,7 @@ export class WalletMonitoringService {
         type: 'WEB3AUTH_FAILURE',
         severity: 'HIGH',
         message: 'System health check failed',
-        metadata: { error: error.message },
+        metadata: { error: (error as Error).message },
       });
     }
   }
@@ -187,7 +187,7 @@ export class WalletMonitoringService {
     } catch (error) {
       // If Web3Auth URL is not configured or network error, return 'healthy' to avoid spamming alerts in dev
       if (!process.env.WEB3AUTH_URL) return 'healthy';
-      this.logger.warn('Web3Auth health check failed:', error.message);
+      this.logger.warn('Web3Auth health check failed:', (error as Error).message);
       return 'down';
     }
   }

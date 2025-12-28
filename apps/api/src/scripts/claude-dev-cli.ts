@@ -72,13 +72,13 @@ class ClaudeDevCLI {
       });
       
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
-        throw new Error(`API Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
+        throw new Error(`API Error: ${error.response.status} - ${error.response.data?.message || error.response.statusText}`);
       } else if (error.request) {
         throw new Error('Network Error: Could not connect to the API');
       } else {
-        throw new Error(`Request Error: ${error.message}`);
+        throw new Error(`Request Error: ${(error as Error).message}`);
       }
     }
   }

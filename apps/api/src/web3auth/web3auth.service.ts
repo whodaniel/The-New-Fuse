@@ -10,6 +10,7 @@ import { mainnet } from 'viem/chains';
 export class Web3authService implements OnModuleInit {
   private readonly logger = new Logger(Web3authService.name);
   private web3auth!: Web3Auth;
+  private privateKeyProvider!: EthereumPrivateKeyProvider;
   private chainConfig = {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: '0x1', // Ethereum Mainnet
@@ -31,17 +32,19 @@ export class Web3authService implements OnModuleInit {
       }
 
       // Initialize the Ethereum provider
-      const privateKeyProvider = new EthereumPrivateKeyProvider({
+      this.privateKeyProvider = new EthereumPrivateKeyProvider({
         config: { chainConfig: this.chainConfig }
       });
 
       // Initialize Web3Auth
+      // Note: Using type assertion as SDK types may not be up to date
       this.web3auth = new Web3Auth({
         clientId,
-        web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_MAINNET, // Use TESTNET for development
-      });
+        web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_MAINNET,
+      } as any);
 
-      await this.web3auth.init({ provider: privateKeyProvider as any });
+      // Initialize - the privateKeyProvider is passed here for some SDK versions
+      await (this.web3auth as any).init({ provider: this.privateKeyProvider });
       this.logger.log('Web3Auth initialized successfully');
     } catch (error) {
       this.logger.error('Failed to initialize Web3Auth:', error);
@@ -60,20 +63,33 @@ export class Web3authService implements OnModuleInit {
       // This is a simplified example - in production, you'd implement proper JWT validation
       const idToken = await this.generateServerSideToken(verifierId);
 
+      // Use the new connect API
       const web3authProvider = await this.web3auth.connect({
         verifier: 'tnf-server-verifier', // Configure this in Web3Auth dashboard
         verifierId,
         idToken
-      });
+      } as any); // Type assertion needed as the API types may be out of sync
 
       if (!web3authProvider) {
         throw new Error('Failed to get Web3Auth provider');
       }
 
-      // Get private key from Web3Auth
-      const privateKey = await web3authProvider.request({
-        method: 'eth_private_key'
-      }) as string;
+      // Get private key from the provider - use the privateKeyProvider instead
+      let privateKey: string;
+      if (this.privateKeyProvider && typeof (this.privateKeyProvider as any).request === 'function') {
+        privateKey = await (this.privateKeyProvider as any).request({
+          method: 'eth_private_key'
+        }) as string;
+      } else {
+        // Fallback - try to get from web3auth provider directly
+        privateKey = await (web3authProvider as any).request?.({
+          method: 'eth_private_key'
+        }) as string;
+      }
+
+      if (!privateKey) {
+        throw new Error('Failed to retrieve private key from Web3Auth');
+      }
 
       // Create viem account and wallet client
       const account = privateKeyToAccount(`0x${privateKey}`);

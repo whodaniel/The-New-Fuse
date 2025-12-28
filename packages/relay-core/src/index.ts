@@ -14,3 +14,12 @@ export * from './utils/AgentRegistry';
 export * from './utils/MessageRouter';
 export * from './services/MasterAgentRegistry';
 export * from './services/HeartbeatMonitoringService';
+
+// Standalone relay server
+export { TNFRelayServer } from './standalone-relay';
+
+// Protocol
+export * from './protocol/tnf-envelope';
+
+// Bridges
+export * from './redis-relay-bridge';

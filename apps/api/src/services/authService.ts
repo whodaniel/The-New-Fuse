@@ -27,13 +27,13 @@ export class AuthService {
 
     const accessToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'default-jwt-secret-change-in-production',
       { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_REFRESH_SECRET,
+      process.env.JWT_REFRESH_SECRET || 'default-jwt-refresh-secret-change-in-production',
       { expiresIn: '7d' }
     );
 
@@ -65,13 +65,13 @@ export class AuthService {
 
     const accessToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'default-jwt-secret-change-in-production',
       { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_REFRESH_SECRET,
+      process.env.JWT_REFRESH_SECRET || 'default-jwt-refresh-secret-change-in-production',
       { expiresIn: '7d' }
     );
 
@@ -115,13 +115,13 @@ export class AuthService {
 
       const accessToken = jwt.sign(
         { userId: user.id },
-        process.env.JWT_SECRET,
+        process.env.JWT_SECRET || 'default-jwt-secret-change-in-production',
         { expiresIn: '15m' }
       );
 
       const newRefreshToken = jwt.sign(
         { userId: user.id },
-        process.env.JWT_REFRESH_SECRET,
+        process.env.JWT_REFRESH_SECRET || 'default-jwt-refresh-secret-change-in-production',
         { expiresIn: '7d' }
       );
 

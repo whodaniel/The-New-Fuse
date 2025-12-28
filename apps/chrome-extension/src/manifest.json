@@ -66,6 +66,13 @@
     "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:* https://chat.openai.com https://claude.ai https://gemini.google.com;"
   },
   "commands": {
+    "toggle-floating-panel": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "Command+Shift+F"
+      },
+      "description": "Toggle Fuse Connect floating panel"
+    },
     "toggle-element-selection": {
       "suggested_key": {
         "default": "Ctrl+Shift+E"

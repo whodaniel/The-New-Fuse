@@ -104,27 +104,27 @@ export default registerAs('security', (): SecurityConfig => {
     // Rate Limiting Configuration
     rateLimit: {
       enabled: true,
-      defaultLimit: parseInt(process.env.RATE_LIMIT_DEFAULT) || 100,
-      defaultWindow: parseInt(process.env.RATE_LIMIT_WINDOW) || 60000, // 1 minute
+      defaultLimit: parseInt(process.env.RATE_LIMIT_DEFAULT || '') || 100,
+      defaultWindow: parseInt(process.env.RATE_LIMIT_WINDOW || '') || 60000, // 1 minute
       tiers: {
         auth: {
-          requests: parseInt(process.env.RATE_LIMIT_AUTH) || 5,
+          requests: parseInt(process.env.RATE_LIMIT_AUTH || '') || 5,
           window: 60000, // 1 minute
         },
         api: {
-          requests: parseInt(process.env.RATE_LIMIT_API) || 100,
+          requests: parseInt(process.env.RATE_LIMIT_API || '') || 100,
           window: 60000, // 1 minute
         },
         admin: {
-          requests: parseInt(process.env.RATE_LIMIT_ADMIN) || 20,
+          requests: parseInt(process.env.RATE_LIMIT_ADMIN || '') || 20,
           window: 60000, // 1 minute
         },
         public: {
-          requests: parseInt(process.env.RATE_LIMIT_PUBLIC) || 200,
+          requests: parseInt(process.env.RATE_LIMIT_PUBLIC || '') || 200,
           window: 60000, // 1 minute
         },
         health: {
-          requests: parseInt(process.env.RATE_LIMIT_HEALTH) || 10,
+          requests: parseInt(process.env.RATE_LIMIT_HEALTH || '') || 10,
           window: 60000, // 1 minute
         },
       },
@@ -176,7 +176,7 @@ export default registerAs('security', (): SecurityConfig => {
     
     // Input Validation Configuration
     inputValidation: {
-      maxPayloadSize: parseInt(process.env.MAX_PAYLOAD_SIZE) || 10 * 1024 * 1024, // 10MB
+      maxPayloadSize: parseInt(process.env.MAX_PAYLOAD_SIZE || '') || 10 * 1024 * 1024, // 10MB
       allowedContentTypes: [
         'application/json',
         'application/x-www-form-urlencoded',
@@ -200,7 +200,7 @@ export default registerAs('security', (): SecurityConfig => {
     monitoring: {
       logLevel: (process.env.LOG_LEVEL as any) || (isProduction ? 'warn' : 'info'),
       enableSecurityLogging: true,
-      logRetention: parseInt(process.env.LOG_RETENTION_DAYS) || 30,
+      logRetention: parseInt(process.env.LOG_RETENTION_DAYS || '') || 30,
       enableMetrics: true,
       enableHealthChecks: true,
     },

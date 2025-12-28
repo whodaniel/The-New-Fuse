@@ -36,7 +36,7 @@ export class GqlAuthGuard {
       this.securityLogging.logAuthEvent('login', {
         userId: user.id,
         ip: this.getClientIP(req),
-        operation: ctx.getInfo()?.fieldName,
+        endpoint: ctx.getInfo()?.fieldName,
         success: true,
       });
 
@@ -44,7 +44,7 @@ export class GqlAuthGuard {
     } catch (error) {
       this.securityLogging.logAuthEvent('auth_failure', {
         ip: this.getClientIP(req),
-        operation: ctx.getInfo()?.fieldName,
+        endpoint: ctx.getInfo()?.fieldName,
         success: false,
         reason: 'Invalid or expired token',
         metadata: { error: (error as Error).message },

@@ -87,7 +87,7 @@ export class SecurityGuard implements CanActivate {
       if (request.query && typeof request.query === 'object') {
         Object.keys(request.query).forEach(key => {
           if (typeof request.query[key] === 'string') {
-            request.query[key] = this.sanitizationService.sanitizeText(request.query[key]);
+            (request.query as any)[key] = this.sanitizationService.sanitizeText(request.query[key] as string);
           }
         });
       }
@@ -207,7 +207,7 @@ export class SecurityGuard implements CanActivate {
   }
 
   private validateAuthorization(request: Request, options: any): void {
-    const user = request.user;
+    const user = (request as any).user;
     if (!user) {
       throw new UnauthorizedException('User information not found');
     }

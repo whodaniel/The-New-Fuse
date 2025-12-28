@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Web3authService } from '../web3auth/web3auth.service';
 import { PrismaService } from '@the-new-fuse/database';
 import { SmartAccountService, SmartAccountDeploymentResult } from '../smart-accounts/smart-account.service';
-import { Prisma } from '@prisma/client'; // Import Prisma
+// Prisma types are used internally by PrismaService
 
 @Injectable()
 export class WalletsService {

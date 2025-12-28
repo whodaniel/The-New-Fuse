@@ -492,6 +492,7 @@ enum WorkflowStatus {
 enum WorkflowExecutionStatus {
   PENDING
   RUNNING
+  PAUSED
   COMPLETED
   FAILED
   CANCELLED
