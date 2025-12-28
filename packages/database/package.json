@@ -32,14 +32,18 @@
     "@prisma/client": "^7.1.0",
     "@prisma/migrate": "^7.1.0",
     "@the-new-fuse/types": "workspace:*",
+    "drizzle-orm": "^0.38.3",
     "pg": "^8.16.3",
+    "postgres": "^3.4.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^24.8.1",
+    "@types/pg": "^8.11.10",
     "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.30.1",
     "eslint": "^9.38.0",
     "prisma": "7.1.0",
     "rimraf": "^6.0.1",
