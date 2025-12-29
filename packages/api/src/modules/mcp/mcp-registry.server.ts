@@ -1,10 +1,16 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { WebSocketServer, WebSocket } from 'ws';
+import {
+  createMCPError,
+  createMCPResponse,
+  MCPMessage,
+  MCPTool,
+  parseMCPMessage,
+} from '@the-new-fuse/types';
 import Ajv, { ValidateFunction } from 'ajv';
-import { MCPRegistryService } from './mcp-registry.service';
-import { MCPMessage, MCPTool, parseMCPMessage, createMCPResponse, createMCPError } from '@the-new-fuse/types';
 import { v4 as uuidv4 } from 'uuid';
+import { WebSocket, WebSocketServer } from 'ws';
+import { MCPRegistryService } from './mcp-registry.service';
 
 @Injectable()
 export class MCPRegistryServer implements OnModuleInit {
@@ -17,30 +23,34 @@ export class MCPRegistryServer implements OnModuleInit {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly registryService: MCPRegistryService,
+    private readonly registryService: MCPRegistryService
   ) {
     this.port = this.configService.get<number>('MCP_REGISTRY_PORT', 3002); // Example port, configure as needed
-    this.tools = new Map(this.registryService.getTools().map(tool => [tool.name, tool]));
+    this.tools = new Map(this.registryService.getTools().map((tool) => [tool.name, tool]));
     this.ajv = new Ajv({ allErrors: true }); // Initialize Ajv, 'allErrors' provides more detail
     this.validatorCache = new Map(); // Initialize cache
     this.compileValidators(); // Pre-compile validators
   }
 
   private compileValidators() {
-    this.tools.forEach(tool => {
-      if (tool.parameters && Object.keys(tool.parameters).length > 0) { // Check if parameters schema exists and is not empty
+    this.tools.forEach((tool) => {
+      if (tool.parameters && Object.keys(tool.parameters).length > 0) {
+        // Check if parameters schema exists and is not empty
         try {
-          const validate = this.ajv.compile(tool.parameters);
+          const validate = this.ajv.compile(tool.parameters as object);
           this.validatorCache.set(tool.name, validate);
           this.logger.debug(`Compiled validator for tool: ${tool.name}`);
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           const errorStack = error instanceof Error ? error.stack : undefined;
-          this.logger.error(`Failed to compile schema for tool ${tool.name}: ${errorMessage}`, errorStack);
+          this.logger.error(
+            `Failed to compile schema for tool ${tool.name}: ${errorMessage}`,
+            errorStack
+          );
           // Decide how to handle compilation errors - skip tool? throw? For now, just log.
         }
       } else {
-          this.logger.debug(`No parameter schema to compile for tool: ${tool.name}`);
+        this.logger.debug(`No parameter schema to compile for tool: ${tool.name}`);
       }
     });
   }
@@ -71,7 +81,7 @@ export class MCPRegistryServer implements OnModuleInit {
           if (mcpMessage.type === 'request') {
             const toolName = (mcpMessage as any).tool_name;
             const parameters = (mcpMessage as any).parameters;
-            
+
             const tool = this.tools.get(toolName);
             if (!tool || !tool.execute) {
               throw new Error(`Tool '${toolName}' not found or not executable`);
@@ -83,37 +93,57 @@ export class MCPRegistryServer implements OnModuleInit {
               const valid = validator(parameters);
               if (!valid) {
                 const errorText = this.ajv.errorsText(validator.errors);
-                this.logger.warn(`Invalid parameters for tool '${toolName}' from ${connectionId}: ${errorText}`);
+                this.logger.warn(
+                  `Invalid parameters for tool '${toolName}' from ${connectionId}: ${errorText}`
+                );
                 throw new Error(`Invalid parameters: ${errorText}`);
               }
-              this.logger.debug(`Parameters validated successfully for tool '${toolName}' from ${connectionId}`);
+              this.logger.debug(
+                `Parameters validated successfully for tool '${toolName}' from ${connectionId}`
+              );
             } else if (tool.parameters && Object.keys(tool.parameters).length > 0) {
-                // If schema exists but wasn't compiled (e.g., due to error), reject the call
-                this.logger.error(`Schema found but no validator compiled for tool '${toolName}'. Rejecting call.`);
-                throw new Error(`Internal server error: Could not validate parameters for tool '${toolName}'.`);
+              // If schema exists but wasn't compiled (e.g., due to error), reject the call
+              this.logger.error(
+                `Schema found but no validator compiled for tool '${toolName}'. Rejecting call.`
+              );
+              throw new Error(
+                `Internal server error: Could not validate parameters for tool '${toolName}'.`
+              );
             }
             // --- End Parameter Validation ---
 
-
-            this.logger.log(`Executing tool '${toolName}' for ${connectionId} (ID: ${mcpMessage.id})`);
+            this.logger.log(
+              `Executing tool '${toolName}' for ${connectionId} (ID: ${mcpMessage.id})`
+            );
             const result = await tool.execute(parameters);
             const response = createMCPResponse(mcpMessage.id, result);
             ws.send(JSON.stringify(response));
-            this.logger.log(`Sent response for tool '${toolName}' to ${connectionId} (ID: ${mcpMessage.id})`);
-
+            this.logger.log(
+              `Sent response for tool '${toolName}' to ${connectionId} (ID: ${mcpMessage.id})`
+            );
           } else {
             // Handle other message types if needed (e.g., 'response', 'error')
-            this.logger.warn(`Received unhandled message type '${mcpMessage.type}' from ${connectionId}`);
+            this.logger.warn(
+              `Received unhandled message type '${mcpMessage.type}' from ${connectionId}`
+            );
           }
-
         } catch (error: any) {
-          this.logger.error(`Error processing message from ${connectionId}: ${error.message}`, error.stack);
+          this.logger.error(
+            `Error processing message from ${connectionId}: ${error.message}`,
+            error.stack
+          );
           if (mcpMessage && mcpMessage.id) {
             const errorResponse = createMCPError(mcpMessage.id, error.message);
             ws.send(JSON.stringify(errorResponse));
           } else {
             // Send generic error if message ID is unknown
-             ws.send(JSON.stringify({ type: 'error', id: 'unknown', error: `Failed to process message: ${error.message}` }));
+            ws.send(
+              JSON.stringify({
+                type: 'error',
+                id: 'unknown',
+                error: `Failed to process message: ${error.message}`,
+              })
+            );
           }
         }
       });

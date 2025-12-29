@@ -4,24 +4,24 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseService } from './base.service';
-import { AgentRepository } from '../repositories/agent.repository';
-import { 
-  Agent as AppAgent, 
-  CreateAgentDto, 
-  UpdateAgentDto, 
-  AgentStatus, 
-  AgentCapability 
+import {
+  AgentCapability,
+  AgentStatus,
+  Agent as AppAgent,
+  CreateAgentDto,
+  UpdateAgentDto,
 } from '@the-new-fuse/types';
-import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { toError } from '../../utils/error'; // Import the helper
+import { PrismaService } from '../prisma/prisma.service';
+import { AgentRepository } from '../repositories/agent.repository';
+import { BaseService } from './base.service';
 
 @Injectable()
 export class AgentService extends BaseService<AppAgent> {
   // Change logger visibility to protected
   protected readonly logger = new Logger(AgentService.name);
-  protected readonly repository: any;
+  declare protected readonly repository: any;
 
   constructor(private readonly prisma: PrismaService) {
     // Initialize the repository with the prisma client
@@ -39,9 +39,9 @@ export class AgentService extends BaseService<AppAgent> {
   async createAgent(data: CreateAgentDto, userId: string): Promise<AppAgent> {
     try {
       // Check for existing agent with same name
-      const existingAgent = await this.repository.findOne({ 
-        name: data.name, 
-        userId 
+      const existingAgent = await this.repository.findOne({
+        name: data.name,
+        userId,
       });
 
       if (existingAgent) {
@@ -59,18 +59,19 @@ export class AgentService extends BaseService<AppAgent> {
         capabilities: data.capabilities || [],
         metadata: {
           systemPrompt: data.systemPrompt,
-          configuration: data.configuration
+          configuration: data.configuration,
         },
         userId,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       } as any);
 
       this.logger.log(`Created agent: ${agent.id} (${agent.name})`);
-      
+
       // Make sure metadata is included in the returned agent
       return this.addMetadataIfMissing(agent);
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error creating agent: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not create agent: ${err.message}`);
@@ -87,7 +88,8 @@ export class AgentService extends BaseService<AppAgent> {
       const agents = await this.repository.findAll({ userId });
       // Make sure metadata is included in all returned agents
       return agents.map((agent: any) => this.addMetadataIfMissing(agent));
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting agents: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve agents: ${err.message}`);
@@ -125,7 +127,8 @@ export class AgentService extends BaseService<AppAgent> {
         throw new Error(`Agent with ID ${id} not found`);
       }
       return this.addMetadataIfMissing(agent);
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting agent by ID: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve agent ${id}: ${err.message}`);
@@ -151,18 +154,21 @@ export class AgentService extends BaseService<AppAgent> {
         ...(updates.type && { type: updates.type }),
         ...(updates.role && { role: updates.role }),
         ...(updates.capabilities && { capabilities: updates.capabilities }),
-        ...(updates.systemPrompt || updates.configuration ? {
-          metadata: {
-            systemPrompt: updates.systemPrompt,
-            configuration: updates.configuration
-          }
-        } : {}),
-        updatedAt: new Date()
+        ...(updates.systemPrompt || updates.configuration
+          ? {
+              metadata: {
+                systemPrompt: updates.systemPrompt,
+                configuration: updates.configuration,
+              },
+            }
+          : {}),
+        updatedAt: new Date(),
       } as any);
 
       this.logger.log(`Updated agent: ${id}`);
       return this.addMetadataIfMissing(agent);
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error updating agent: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not update agent ${id}: ${err.message}`);
@@ -184,12 +190,13 @@ export class AgentService extends BaseService<AppAgent> {
       // Update the agent status
       const agent = await this.repository.update(id, {
         status,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       } as any);
 
       this.logger.log(`Updated agent status: ${id} -> ${status}`);
       return this.addMetadataIfMissing(agent);
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error updating agent status: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not update status for agent ${id}: ${err.message}`);
@@ -202,7 +209,8 @@ export class AgentService extends BaseService<AppAgent> {
    * @param userId User ID
    * @returns boolean indicating success
    */
-  async deleteAgent(id: string, userId: string): Promise<boolean> { // Change return type to boolean
+  async deleteAgent(id: string, userId: string): Promise<boolean> {
+    // Change return type to boolean
     try {
       // Check if agent exists and belongs to user
       await this.getAgentById(id, userId);
@@ -212,16 +220,17 @@ export class AgentService extends BaseService<AppAgent> {
 
       this.logger.log(`Deleted agent: ${id}`);
       return true; // Return true on success
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error deleting agent: ${err.message}`, err.stack); // Use err
       // Rethrow specific errors or return false
       if (err.message?.includes('not found')) {
         // Or handle as needed, maybe return false if not found is not an error condition for deletion
-         throw err; 
+        throw err;
       }
       // For other errors, return false
-      return false; 
+      return false;
       // Or rethrow if deletion failure should halt execution
       // throw new Error(`Could not delete agent ${id}: ${err.message}`);
     }
@@ -237,15 +246,16 @@ export class AgentService extends BaseService<AppAgent> {
     try {
       // This is a more complex query that requires custom implementation
       const agents = await this.getAgents(userId);
-      
+
       // Filter agents by capability
-      return agents.filter(agent => {
+      return agents.filter((agent) => {
         if (!agent.capabilities) return false;
-        
+
         // Handle AgentCapability[] enum array
         return agent.capabilities.includes(capability);
       });
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting agents by capability: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve agents by capability ${capability}: ${err.message}`);
@@ -259,12 +269,13 @@ export class AgentService extends BaseService<AppAgent> {
    */
   async getActiveAgents(userId: string): Promise<AppAgent[]> {
     try {
-      const agents = await this.repository.findAll({ 
-        userId, 
-        status: AgentStatus.ACTIVE 
+      const agents = await this.repository.findAll({
+        userId,
+        status: AgentStatus.ACTIVE,
       });
       return agents.map((agent: any) => this.addMetadataIfMissing(agent));
-    } catch (error) { // Change to unknown
+    } catch (error) {
+      // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting active agents: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve active agents: ${err.message}`);
@@ -277,14 +288,14 @@ export class AgentService extends BaseService<AppAgent> {
    */
   private addMetadataIfMissing(agent: any): AppAgent {
     if (!agent) return agent;
-    
+
     if (!agent.metadata) {
       return {
         ...agent,
-        metadata: {} as Record<string, unknown>
+        metadata: {} as Record<string, unknown>,
       };
     }
-    
+
     return agent as AppAgent;
   }
 }
