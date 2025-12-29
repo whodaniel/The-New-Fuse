@@ -58,7 +58,7 @@ export class AgentController {
     try {
       // Remove timestamp fields that should be set by the service
       const { createdAt: _createdAt, updatedAt: _updatedAt, ...agentData } = createAgentDto;
-      const agent = await this.agentService.createAgent(agentData, user.id);
+      const agent = await this.agentService.createAgent(agentData as any, user.id);
       return res.status(201).json(agent);
     } catch (error) {
       const err = toError(error);
@@ -69,6 +69,7 @@ export class AgentController {
     }
   }
 
+
   @Put(':id')
   @ApiOperation({ summary: 'Update an agent' })
   @ApiBody({ type: AgentDto })
@@ -78,7 +79,7 @@ export class AgentController {
     try {
       // Remove timestamp fields that should be managed by the service
       const { createdAt: _createdAt2, updatedAt: _updatedAt2, ...agentData } = updateAgentDto;
-      const updatedAgent = await this.agentService.updateAgent(id, agentData, user.id);
+      const updatedAgent = await this.agentService.updateAgent(id, agentData as any, user.id);
       return res.status(200).json(updatedAgent);
     } catch (error) {
       const err = toError(error);

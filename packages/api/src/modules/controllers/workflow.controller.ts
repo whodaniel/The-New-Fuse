@@ -15,7 +15,7 @@ import {
   HttpStatus,
   HttpCode
 } from '@nestjs/common';
-import { WorkflowService } from '../services/workflow.service';
+import { WorkflowService } from '../../services/workflow.service';
 import { BaseController } from './base.controller';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';

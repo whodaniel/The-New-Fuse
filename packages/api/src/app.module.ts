@@ -8,15 +8,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { LlmModule } from '@the-new-fuse/core';
+import { DrizzleModule } from '@the-new-fuse/database';
 import { HealthController } from './controllers/health.controller';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { AgentModule } from './modules/agent.module';
 import { ExportModule } from './modules/export.module';
 import { WorkflowModule } from './modules/workflow.module';
 import { AppConfigService } from './services/app-config.service';
+import { DatabaseService } from './services/database.service';
 import { EventService } from './services/event.service';
 import { HealthService } from './services/health.service';
-import { PrismaService } from './services/prisma.service';
+// import { PrismaService } from './services/prisma.service';
 
 @Module({
   imports: [
@@ -25,6 +27,9 @@ import { PrismaService } from './services/prisma.service';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }) as any,
+
+    // Drizzle ORM database module
+    DrizzleModule.forRootAsync(),
 
     // Event emitter for application-wide events
     EventEmitterModule.forRoot({
@@ -61,8 +66,8 @@ import { PrismaService } from './services/prisma.service';
     LlmModule,
   ],
   controllers: [HealthController],
-  providers: [PrismaService, AppConfigService, EventService, HealthService],
-  exports: [PrismaService, AppConfigService, EventService, HealthService],
+  providers: [DatabaseService, AppConfigService, EventService, HealthService],
+  exports: [DatabaseService, AppConfigService, EventService, HealthService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

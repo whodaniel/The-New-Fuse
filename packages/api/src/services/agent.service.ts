@@ -1,34 +1,34 @@
-import { Injectable } from '@nestjs/common';
+/**
+ * Agent Service - Drizzle ORM Implementation
+ * 
+ * This service provides business logic for Agent operations.
+ * It uses the Drizzle-based AgentRepository for data access.
+ */
+
+import { Injectable, Logger } from '@nestjs/common';
 import { AgentCapability } from '@the-new-fuse/types';
-import { AgentRepository } from '../repositories/agent.repository';
-import { Agent, AgentStatus } from '../types/agent';
+import { AgentRepository, type Agent, type NewAgent } from '../repositories/agent.repository';
 import { toError } from '../utils/error';
-import { BaseService } from './base.service';
-// Mock LocalAIDetectionService to avoid cross-package import issues
+
 // Mock LocalAIDetectionService to avoid cross-package import issues
 export class LocalAIDetectionService {
   async detectAndCreateAgents(_userId: string): Promise<any[]> {
-    // Mock implementation
     return [];
   }
 
   async getAvailableProviders(): Promise<any[]> {
-    // Mock implementation
     return [];
   }
 }
 
 @Injectable()
-export class AgentService extends BaseService<Agent> {
-  protected readonly repository: AgentRepository;
+export class AgentService {
+  private readonly logger = new Logger(AgentService.name);
 
   constructor(
     private readonly agentRepository: AgentRepository,
     private readonly localAIDetectionService: LocalAIDetectionService
-  ) {
-    super('AgentService');
-    this.repository = agentRepository;
-  }
+  ) {}
 
   /**
    * Handle errors consistently
@@ -40,35 +40,13 @@ export class AgentService extends BaseService<Agent> {
   }
 
   /**
-   * Transform database model to API response
-   */
-  protected transform(agent: any): Agent {
-    return {
-      id: agent.id,
-      name: agent.name,
-      type: agent.type,
-      description: agent.description ?? undefined,
-      capabilities: agent.capabilities || [],
-      status: agent.status || AgentStatus.IDLE,
-      provider: agent.provider || 'unknown',
-      lastActive: agent.lastActive || agent.createdAt,
-      metadata: agent.metadata || {},
-      createdAt: agent.createdAt,
-      updatedAt: agent.updatedAt,
-      ...(agent.deletedAt && { deletedAt: agent.deletedAt }),
-    };
-  }
-
-  /**
    * Get all agents for a user
    */
   async getAgents(userId: string): Promise<Agent[]> {
     try {
-      const agents = await this.agentRepository.findAll({ userId });
-      return agents.map((agent) => this.transform(agent));
+      return await this.agentRepository.findByUserId(userId);
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, 'getAgents');
+      return this.handleError(error, 'getAgents');
     }
   }
 
@@ -77,11 +55,9 @@ export class AgentService extends BaseService<Agent> {
    */
   async findAll(): Promise<Agent[]> {
     try {
-      const agents = await this.agentRepository.findAll({});
-      return agents.map((agent) => this.transform(agent));
+      return await this.agentRepository.findAll();
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, 'findAll');
+      return this.handleError(error, 'findAll');
     }
   }
 
@@ -90,60 +66,51 @@ export class AgentService extends BaseService<Agent> {
    */
   async getAgentById(id: string, userId: string): Promise<Agent | null> {
     try {
-      const agent = await this.agentRepository.findOne({ id, userId });
-      if (!agent) {
-        return null;
-      }
-      return this.transform(agent);
+      return await this.agentRepository.findOne({ id, userId });
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, `getAgentById(${id})`);
+      return this.handleError(error, `getAgentById(${id})`);
     }
   }
 
   /**
    * Create a new agent for a user
    */
-  async createAgent(data: Partial<Agent>, userId: string): Promise<Agent> {
+  async createAgent(data: Partial<NewAgent>, userId: string): Promise<Agent> {
     try {
-      // Convert capabilities from string[] to AgentCapability[] if needed
-      const agentData = {
-        ...data,
+      const agentData: NewAgent = {
+        name: data.name || 'Untitled Agent',
+        type: data.type || 'ASSISTANT',
         userId,
-        capabilities:
-          data.capabilities?.map((cap) =>
-            typeof cap === 'string' ? (cap as AgentCapability) : cap
-          ) || [],
+        status: data.status,
+        description: data.description,
+        systemPrompt: data.systemPrompt,
+        config: data.config,
+        capabilities: data.capabilities || [],
+        provider: data.provider || 'default',
       };
-      const newAgent = await this.agentRepository.create(agentData);
-      return this.transform(newAgent);
+      return await this.agentRepository.create(agentData);
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, 'createAgent');
+      return this.handleError(error, 'createAgent');
     }
   }
 
   /**
    * Update an agent for a user
    */
-  async updateAgent(id: string, data: Partial<Agent>, userId: string): Promise<Agent> {
+  async updateAgent(id: string, data: Partial<NewAgent>, userId: string): Promise<Agent> {
     try {
       const agent = await this.agentRepository.findOne({ id, userId });
       if (!agent) {
         throw new Error(`Agent with ID ${id} not found for this user`);
       }
-      // Convert capabilities from string[] to AgentCapability[] if needed
-      const agentData = {
-        ...data,
-        capabilities: data.capabilities?.map((cap) =>
-          typeof cap === 'string' ? (cap as AgentCapability) : cap
-        ),
-      };
-      const updatedAgent = await this.agentRepository.update(id, agentData);
-      return this.transform(updatedAgent);
+      
+      const updatedAgent = await this.agentRepository.update(id, data);
+      if (!updatedAgent) {
+        throw new Error(`Failed to update agent ${id}`);
+      }
+      return updatedAgent;
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, `updateAgent(${id})`);
+      return this.handleError(error, `updateAgent(${id})`);
     }
   }
 
@@ -159,7 +126,7 @@ export class AgentService extends BaseService<Agent> {
       return this.agentRepository.delete(id);
     } catch (error) {
       const err = toError(error);
-      this.handleError(err, `deleteAgent(${id})`);
+      this.logger.error(`Error in deleteAgent(${id}): ${err.message}`, err.stack);
       return false;
     }
   }
@@ -172,11 +139,10 @@ export class AgentService extends BaseService<Agent> {
       const agents = await this.getAgents(userId);
       return agents.filter((agent) => {
         if (!agent.capabilities) return false;
-        return agent.capabilities.includes(capability);
+        return (agent.capabilities as string[]).includes(capability);
       });
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, 'getAgentsByCapability');
+      return this.handleError(error, 'getAgentsByCapability');
     }
   }
 
@@ -191,27 +157,19 @@ export class AgentService extends BaseService<Agent> {
 
     for (const agentDto of detectedAgents) {
       try {
-        const existingAgents = await this.agentRepository.findAll({ userId });
+        const existingAgents = await this.agentRepository.findByUserId(userId);
         const exists = existingAgents.some(
-          (agent) => agent.configuration?.provider === agentDto.provider
+          (agent) => (agent.config as any)?.provider === agentDto.provider
         );
 
         if (!exists) {
-          const agentData = {
+          const agentData: Partial<NewAgent> = {
             ...agentDto,
             capabilities: Array.isArray(agentDto.capabilities)
-              ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
+              ? agentDto.capabilities.filter((cap: any): cap is string =>
                   Object.values(AgentCapability).includes(cap as AgentCapability)
                 )
               : [],
-            metadata:
-              agentDto.metadata && typeof agentDto.metadata === 'object'
-                ? (agentDto.metadata as Record<string, unknown>)
-                : {},
-            configuration:
-              agentDto.configuration && typeof agentDto.configuration === 'object'
-                ? (agentDto.configuration as Record<string, unknown>)
-                : {},
           };
           const agent = await this.createAgent(agentData, userId);
           registeredAgents.push(agent);
@@ -234,13 +192,10 @@ export class AgentService extends BaseService<Agent> {
    */
   async getLocalAIAgents(userId: string): Promise<Agent[]> {
     try {
-      const agents = await this.agentRepository.findAll({ userId });
-      return agents
-        .filter((agent) => agent.configuration?.localAI === true)
-        .map((agent) => this.transform(agent));
+      const agents = await this.agentRepository.findByUserId(userId);
+      return agents.filter((agent) => (agent.config as any)?.localAI === true);
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, 'getLocalAIAgents');
+      return this.handleError(error, 'getLocalAIAgents');
     }
   }
 
@@ -254,11 +209,13 @@ export class AgentService extends BaseService<Agent> {
       const availableProviders = await this.localAIDetectionService.getAvailableProviders();
       const availableProviderNames = availableProviders.map((p: any) => p.name);
 
-      const existingAgents = await this.agentRepository.findAll({ userId });
-      const localAIAgents = existingAgents.filter((agent) => agent.configuration?.localAI === true);
+      const existingAgents = await this.agentRepository.findByUserId(userId);
+      const localAIAgents = existingAgents.filter(
+        (agent) => (agent.config as any)?.localAI === true
+      );
 
       for (const agent of localAIAgents) {
-        if (!availableProviderNames.includes(agent.configuration?.provider)) {
+        if (!availableProviderNames.includes((agent.config as any)?.provider)) {
           await this.deleteAgent(agent.id, userId);
           this.logger.log(`🗑️ Removed unavailable AI agent: ${agent.name}`);
         }
@@ -266,8 +223,7 @@ export class AgentService extends BaseService<Agent> {
 
       return this.detectAndRegisterLocalAIs(userId);
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, 'refreshLocalAIAgents');
+      return this.handleError(error, 'refreshLocalAIAgents');
     }
   }
 
@@ -282,21 +238,13 @@ export class AgentService extends BaseService<Agent> {
       const registeredAgents: Agent[] = [];
 
       for (const agentDto of systemAgents) {
-        const agentData = {
+        const agentData: Partial<NewAgent> = {
           ...agentDto,
           capabilities: Array.isArray(agentDto.capabilities)
-            ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
+            ? agentDto.capabilities.filter((cap: any): cap is string =>
                 Object.values(AgentCapability).includes(cap as AgentCapability)
               )
             : [],
-          metadata:
-            agentDto.metadata && typeof agentDto.metadata === 'object'
-              ? (agentDto.metadata as Record<string, unknown>)
-              : {},
-          configuration:
-            agentDto.configuration && typeof agentDto.configuration === 'object'
-              ? (agentDto.configuration as Record<string, unknown>)
-              : {},
         };
         const agent = await this.createAgent(agentData, 'system');
         registeredAgents.push(agent);
@@ -305,8 +253,7 @@ export class AgentService extends BaseService<Agent> {
 
       return registeredAgents;
     } catch (error) {
-      const err = toError(error);
-      return this.handleError(err, 'createSystemLocalAIAgents');
+      return this.handleError(error, 'createSystemLocalAIAgents');
     }
   }
 }

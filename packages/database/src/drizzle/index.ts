@@ -24,6 +24,9 @@ export * from './types';
 // Export all repositories
 export * from './repositories';
 
+// Export compatibility layer for Prisma migration
+export * from './compatibility';
+
 // Re-export useful Drizzle utilities
 export {
   and,

@@ -1,16 +1,20 @@
 /**
  * Workflow Module
- * Organizes all workflow-related components
+ * Organizes all workflow-related components using Drizzle ORM
  */
 
 import { Module } from '@nestjs/common';
 import { WorkflowController } from './controllers/workflow.controller';
-import { WorkflowService } from './services/workflow.service';
-import { PrismaService } from '../services/prisma.service';
+import { WorkflowService } from '../services/workflow.service';
+import { WorkflowRepository, WorkflowExecutionRepository } from '../repositories/workflow.repository';
 
 @Module({
   controllers: [WorkflowController],
-  providers: [WorkflowService, PrismaService],
-  exports: [WorkflowService]
+  providers: [
+    WorkflowService,
+    WorkflowRepository,
+    WorkflowExecutionRepository,
+  ],
+  exports: [WorkflowService, WorkflowRepository]
 })
 export class WorkflowModule {}

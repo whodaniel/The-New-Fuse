@@ -219,11 +219,11 @@ export class ConsolidatedApiController {
       systemHealth,
     ] = await Promise.all([
       this.agentService.getAgents(user.id).then(agents => agents.length), // Assuming countByUser is not directly available
-      this.workflowService.getWorkflows(user.id).then(workflows => workflows.filter(w => w.status === 'active').length), // Assuming countActive is not directly available
+      this.workflowService.getWorkflows(user.id).then(workflows => workflows.filter(w => (w.status as string) === 'ACTIVE').length),
       // this.taskService.countPending(user.id),
       this.getRecentActivityCount(user.id),
-      this.agentService.getAgents(user.id).then(agents => agents.slice(0, 5)), // Assuming findRecent is not directly available
-      this.workflowService.getWorkflows(user.id).then(workflows => workflows.filter(w => w.status === 'active').slice(0, 5)), // Assuming findActive is not directly available
+      this.agentService.getAgents(user.id).then(agents => agents.slice(0, 5)),
+      this.workflowService.getWorkflows(user.id).then(workflows => workflows.filter(w => (w.status as string) === 'ACTIVE').slice(0, 5)),
       // this.taskService.findUrgent(user.id, 10),
       this.getSystemHealth(),
     ]);

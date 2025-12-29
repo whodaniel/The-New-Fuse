@@ -14,9 +14,8 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "noImplicitAny": false,
-    "noEmitOnError": false,
     "strict": false,
+    "noImplicitAny": false,
     "types": ["jest", "node"]
   },
   "include": ["src/**/*.ts"],
@@ -25,9 +24,6 @@
     "dist",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "src/services/prisma.service.ts",
-    "src/services/health.service.ts",
-    "src/test-db.ts",
-    "src/modules/prisma/**"
+    "src/test-db.ts"
   ]
 }

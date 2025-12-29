@@ -1,18 +1,23 @@
 /**
  * Agent Module
- * Organizes all agent-related components
+ * Organizes all agent-related components using Drizzle ORM
  */
 
 import { Module } from '@nestjs/common';
 import { AgentController } from '../controllers/AgentController';
-import { AgentService } from './services/agent.service';
-import { PrismaService } from '../services/prisma.service';
-import { AuthModule } from './auth/auth.module'; // Import AuthModule
+import { AgentService } from '../services/agent.service';
+import { AgentRepository } from '../repositories/agent.repository';
+import { LocalAIDetectionService } from '../services/agent.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [AuthModule], // Import AuthModule here
+  imports: [AuthModule],
   controllers: [AgentController],
-  providers: [AgentService, PrismaService],
-  exports: [AgentService]
+  providers: [
+    AgentService,
+    AgentRepository,
+    LocalAIDetectionService,
+  ],
+  exports: [AgentService, AgentRepository]
 })
 export class AgentModule {}
