@@ -5,8 +5,8 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc --build",
-    "build:api": "tsc --build",
+    "build": "tsc",
+    "build:api": "tsc",
     "build:force": "tsc --build --force",
     "build:ignore-errors": "tsc --skipLibCheck --skipDefaultLibCheck --noEmitOnError",
     "build:js-only": "./scripts/build-js-only.sh",

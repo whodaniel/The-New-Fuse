@@ -36,7 +36,15 @@ ENV NODE_ENV=production
 ENV VITE_API_URL=https://api.thenewfuse.com
 ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
 ENV NODE_OPTIONS=--max-old-space-size=4096
-RUN npm run build || pnpm run build
+
+# Build foundational packages first to ensure they're available
+# This avoids Turbo cache issues in fresh Docker builds
+RUN pnpm --filter @the-new-fuse/types build || true
+RUN pnpm --filter @the-new-fuse/core-vector-db build || true
+RUN pnpm --filter @the-new-fuse/core build || true
+
+# Run the full build (use --force to avoid stale cache issues)
+RUN npm run build -- --force || pnpm run build -- --force
 
 # Normalize dist directory location
 # If running from monorepo root, build output is in apps/frontend/dist
