@@ -39,12 +39,15 @@ RUN pnpm --filter @the-new-fuse/common build
 RUN pnpm --filter @the-new-fuse/infrastructure build
 RUN pnpm --filter @the-new-fuse/core-error-handling build
 RUN pnpm --filter @the-new-fuse/core-monitoring build
+RUN pnpm --filter @the-new-fuse/core-vector-db build
 RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/mcp-core build
 RUN pnpm --filter @the-new-fuse/ui-consolidated build
 RUN pnpm --filter @the-new-fuse/port-management build
 RUN pnpm --filter @the-new-fuse/prompt-templating build
+RUN pnpm --filter @the-new-fuse/core build
+RUN pnpm --filter @the-new-fuse/shared build
 
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies

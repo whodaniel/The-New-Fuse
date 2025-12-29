@@ -32,6 +32,9 @@
   ],
   "references": [
     {
+      "path": "../core-vector-db"
+    },
+    {
       "path": "../database"
     },
     {

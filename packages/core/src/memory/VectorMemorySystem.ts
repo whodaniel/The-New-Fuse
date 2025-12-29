@@ -7,6 +7,7 @@ import {
   MemoryStorageConfig,
   MemoryStats,
   MemoryContentType,
+  MemorySearchResult,
 } from '../types/memory';
 import { ServiceState } from '../constants/types';
 import { MemorySystem } from './MemorySystem';
@@ -113,7 +114,7 @@ export class VectorMemorySystem {
           lastAccessed: new Date().toISOString(),
         },
       })
-      .catch((err) => this.logger.warn(`Failed to update access metrics for ${id}`, err));
+      .catch((err: Error) => this.logger.warn(`Failed to update access metrics for ${id}`, err));
 
     return {
       id: doc.id,
@@ -181,29 +182,45 @@ export class VectorMemorySystem {
       metadata_filter: Object.keys(filter).length > 0 ? filter : undefined,
     });
 
-    const memoryResults = results.map((r) => {
-      const metadata = r.metadata || {};
-      return {
-        content: {
-          id: r.id,
-          content: r.content || '',
-          type: (metadata.type as MemoryContentType) || MemoryContentType.TEXT,
-          metadata: {
-            source: metadata.source || 'unknown',
-            tags: metadata.tags || [],
-            importance: metadata.importance || 0.5,
-            isPrivate: metadata.isPrivate || false,
-            ...metadata,
+    // Type the metadata interface for clarity
+    interface SearchMetadata {
+      type?: string;
+      source?: string;
+      tags?: string[];
+      importance?: number;
+      isPrivate?: boolean;
+      createdAt?: string | number;
+      updatedAt?: string | number;
+      accessCount?: number;
+      lastAccessed?: string | number;
+      [key: string]: unknown;
+    }
+
+    const memoryResults: MemorySearchResult[] = results.map(
+      (r: { id: string; content?: string; metadata?: Record<string, unknown>; score: number }) => {
+        const metadata = (r.metadata || {}) as SearchMetadata;
+        const result: MemorySearchResult = {
+          content: {
+            id: r.id,
+            content: r.content || '',
+            type: (metadata.type as MemoryContentType) || MemoryContentType.TEXT,
+            metadata: {
+              source: (metadata.source as string) || 'unknown',
+              tags: (metadata.tags as string[]) || [],
+              importance: (metadata.importance as number) ?? 0.5,
+              isPrivate: (metadata.isPrivate as boolean) ?? false,
+            },
+            createdAt: new Date(metadata.createdAt || Date.now()),
+            updatedAt: new Date(metadata.updatedAt || Date.now()),
+            accessCount: (metadata.accessCount as number) ?? 0,
+            lastAccessed: new Date(metadata.lastAccessed || Date.now()),
           },
-          createdAt: new Date(metadata.createdAt || Date.now()),
-          updatedAt: new Date(metadata.updatedAt || Date.now()),
-          accessCount: metadata.accessCount || 0,
-          lastAccessed: new Date(metadata.lastAccessed || Date.now()),
-        },
-        relevanceScore: r.score,
-        matchedTerms: [], // Vector search doesn't return matched terms easily
-      };
-    });
+          relevanceScore: r.score,
+          matchedTerms: [], // Vector search doesn't return matched terms easily
+        };
+        return result;
+      },
+    );
 
     // Post-filter logic for complex queries not handled by vector DB
     let filtered = memoryResults;
