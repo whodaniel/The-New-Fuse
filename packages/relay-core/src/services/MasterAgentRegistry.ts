@@ -6,7 +6,7 @@
  * Every agent must register here and maintain state through this system.
  */
 
-import { AgentStatus, AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
+import type { AgentStatus, AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
 import { Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
