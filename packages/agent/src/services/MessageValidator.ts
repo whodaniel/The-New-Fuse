@@ -1,10 +1,10 @@
+import { Message, MessageType } from '@the-new-fuse/types';
+import addFormats from 'ajv-formats';
 import { BaseService } from '../core/BaseService';
 import { Logger } from '../types/core';
-import { Message, MessageType } from '@the-new-fuse/types';
 const Ajv = require('ajv');
 type ValidateFunction = any;
 type Schema = any;
-import addFormats from 'ajv-formats';
 
 const baseMessageSchema: Schema = {
   type: 'object',
@@ -22,33 +22,33 @@ const baseMessageSchema: Schema = {
 const commandSchema: Schema = {
   ...baseMessageSchema,
   properties: {
-      ...baseMessageSchema.properties,
-      type: { const: MessageType.COMMAND },
-      content: {
-          type: 'object',
-          properties: {
-              commandType: { type: 'string' },
-              parameters: { type: 'object' },
-          },
-          required: ['commandType'],
+    ...baseMessageSchema.properties,
+    type: { const: MessageType.COMMAND },
+    content: {
+      type: 'object',
+      properties: {
+        commandType: { type: 'string' },
+        parameters: { type: 'object' },
       },
+      required: ['commandType'],
+    },
   },
 };
 
 const taskAssignmentSchema: Schema = {
-    ...baseMessageSchema,
-    properties: {
-        ...baseMessageSchema.properties,
-        type: { const: MessageType.TASK_ASSIGNMENT },
-        content: {
-            type: 'object',
-            properties: {
-                id: { type: 'string', format: 'uuid' },
-                title: { type: 'string' },
-            },
-            required: ['id', 'title'],
-        },
+  ...baseMessageSchema,
+  properties: {
+    ...baseMessageSchema.properties,
+    type: { const: MessageType.TASK_ASSIGNMENT },
+    content: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', format: 'uuid' },
+        title: { type: 'string' },
+      },
+      required: ['id', 'title'],
     },
+  },
 };
 
 export class MessageValidator extends BaseService {
@@ -82,7 +82,9 @@ export class MessageValidator extends BaseService {
       this.validators.set(messageType, validate);
       this.logger.info(`Schema added/updated for message type: ${messageType}`);
     } catch (error) {
-      this.logger.error(`Failed to compile schema for type ${messageType}: ${(error as Error).message}`);
+      this.logger.error(
+        `Failed to compile schema for type ${messageType}: ${(error as Error).message}`
+      );
     }
   }
 
@@ -96,41 +98,50 @@ export class MessageValidator extends BaseService {
     let validator = this.validators.get(messageType);
 
     if (!validator) {
-       this.logger.debug(`No specific schema found for type "${messageType}".`);
-       return false;
+      this.logger.debug(`No specific schema found for type "${messageType}".`);
+      return false;
     }
 
     const isValid = validator(message) as boolean;
     if (!isValid) {
-      this.logger.warn(`Validation failed for message type "${messageType}": ${JSON.stringify((validator as any).errors)}`);
-      this.logger.warn(`Message content: ${JSON.stringify(this.sanitizeMessageForLog(message as Message))}`);
+      this.logger.warn(
+        `Validation failed for message type "${messageType}": ${JSON.stringify((validator as any).errors)}`
+      );
+      this.logger.warn(
+        `Message content: ${JSON.stringify(this.sanitizeMessageForLog(message as Message))}`
+      );
     } else {
-       this.logger.debug(`Validation successful for message type "${messageType}".`);
+      this.logger.debug(`Validation successful for message type "${messageType}".`);
     }
 
     return isValid;
   }
 
   private sanitizeMessageForLog(message: Message): any {
-    const sanitizedContent: Record<string, any> = typeof message.content === 'object' && message.content !== null
-      ? { ...message.content as object }
-      : { value: message.content };
+    const sanitizedContent: Record<string, any> =
+      typeof message.content === 'object' && message.content !== null
+        ? { ...(message.content as object) }
+        : { value: message.content };
     if (typeof sanitizedContent === 'object' && sanitizedContent !== null) {
-        for (const key of Object.keys(sanitizedContent)) {
-            if (key.toLowerCase().includes('password') || key.toLowerCase().includes('token') || key.toLowerCase().includes('apikey')) {
-                sanitizedContent[key] = '[REDACTED]';
-            }
+      for (const key of Object.keys(sanitizedContent)) {
+        if (
+          key.toLowerCase().includes('password') ||
+          key.toLowerCase().includes('token') ||
+          key.toLowerCase().includes('apikey')
+        ) {
+          sanitizedContent[key] = '[REDACTED]';
         }
+      }
     }
     return {
-        id: message.id,
-        type: message.type,
-        content: sanitizedContent,
+      id: message.id,
+      type: message.type,
+      content: sanitizedContent,
     };
   }
 
   getLastErrors(messageType: string): any {
-     const validator = this.validators.get(messageType);
-     return (validator as any)?.errors;
+    const validator = this.validators.get(messageType);
+    return (validator as any)?.errors;
   }
 }
