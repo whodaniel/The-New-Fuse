@@ -4,7 +4,7 @@
  */
 import { and, desc, eq, isNull, like, or, sql } from 'drizzle-orm';
 import { db } from '../client';
-import { agentDirectoryEntries, agentMetadata, agentRegistrations, agents } from '../schema';
+import { agentCapabilityRegistry, agentDirectoryEntries, agentMetadata, agentOnboardingEvents, agentRegistrations, agents } from '../schema';
 import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types';
 
 /**
@@ -336,6 +336,155 @@ export class DrizzleAgentRepository {
       .returning();
 
     return agent ?? null;
+  }
+
+  /**
+   * Create agent registration
+   */
+  async createRegistration(data: {
+    agentId: string;
+    authToken: string;
+    registrationData: any;
+    verificationStatus: string;
+    onboardingStatus: string;
+    onboardingProgress: number;
+    heartbeatInterval: number;
+    isOnline: boolean;
+    metadata: any;
+  }) {
+    const [registration] = await db
+      .insert(agentRegistrations)
+      .values(data)
+      .returning();
+    return registration;
+  }
+
+  /**
+   * Find registration by auth token
+   */
+  async findRegistrationByToken(token: string) {
+    const [registration] = await db
+      .select()
+      .from(agentRegistrations)
+      .where(eq(agentRegistrations.authToken, token));
+
+    return registration ?? null;
+  }
+
+  /**
+   * Find registration by ID
+   */
+  async findRegistrationById(id: string) {
+    const [registration] = await db
+      .select()
+      .from(agentRegistrations)
+      .where(eq(agentRegistrations.id, id));
+
+    return registration ?? null;
+  }
+
+  /**
+   * Update registration heartbeat
+   */
+  async updateRegistrationHeartbeat(registrationId: string): Promise<void> {
+    await db
+      .update(agentRegistrations)
+      .set({
+        lastHeartbeat: new Date(),
+        isOnline: true,
+        updatedAt: new Date(),
+      })
+      .where(eq(agentRegistrations.id, registrationId));
+  }
+
+  /**
+   * Create capability registry entry
+   */
+  async createCapability(data: {
+    registrationId: string;
+    capabilityName: string;
+    capabilityType: string;
+    version: string;
+    description?: string;
+    parameters?: any;
+    verificationStatus: string;
+  }) {
+    const [capability] = await db
+      .insert(agentCapabilityRegistry)
+      .values(data)
+      .returning();
+    return capability;
+  }
+
+  /**
+   * Create onboarding event
+   */
+  async createOnboardingEvent(data: {
+    registrationId: string;
+    eventType: string;
+    message: string;
+    eventData?: any;
+  }) {
+    const [event] = await db
+      .insert(agentOnboardingEvents)
+      .values(data)
+      .returning();
+    return event;
+  }
+
+  /**
+   * Create directory entry
+   */
+  async createDirectoryEntry(data: {
+    agentId: string;
+    displayName: string;
+    description?: string;
+    category: string;
+    tags: string[];
+    isPublic: boolean;
+    isVerified: boolean;
+    rating: number;
+    usageCount: number;
+    searchableData?: string;
+  }) {
+    const [entry] = await db
+      .insert(agentDirectoryEntries)
+      .values(data)
+      .returning();
+    return entry;
+  }
+
+  /**
+   * Find registration with related data
+   */
+  async findRegistrationWithDetails(registrationId: string) {
+    // First get the registration
+    const registration = await this.findRegistrationById(registrationId);
+    if (!registration) return null;
+
+    // Get the agent
+    const agent = await this.findById(registration.agentId);
+
+    // Get capabilities
+    const capabilities = await db
+      .select()
+      .from(agentCapabilityRegistry)
+      .where(eq(agentCapabilityRegistry.registrationId, registrationId));
+
+    // Get recent onboarding events (last 10)
+    const onboardingEvents = await db
+      .select()
+      .from(agentOnboardingEvents)
+      .where(eq(agentOnboardingEvents.registrationId, registrationId))
+      .orderBy(desc(agentOnboardingEvents.timestamp))
+      .limit(10);
+
+    return {
+      ...registration,
+      agent,
+      capabilities,
+      onboardingEvents,
+    };
   }
 }
 

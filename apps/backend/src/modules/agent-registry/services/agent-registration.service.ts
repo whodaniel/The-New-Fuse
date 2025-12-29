@@ -1,15 +1,12 @@
 import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '../../../prisma/prisma.service';
+import { drizzleAgentRepository } from '@the-new-fuse/database/drizzle';
 import { RegisterAgentDto, AgentRegistrationResponseDto } from '../dto';
 import { IRegistrationData } from '../interfaces/agent-registry.interfaces';
 import { randomBytes } from 'crypto';
-import { AgentType, AgentStatus } from '@prisma/client';
 
 @Injectable()
 export class AgentRegistrationService {
   private readonly logger = new Logger(AgentRegistrationService.name);
-
-  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Register a new agent with auto-discovery
@@ -21,122 +18,104 @@ export class AgentRegistrationService {
     this.logger.log(`Registering new agent: ${data.name}`);
 
     try {
-      return await this.prisma.$transaction(async (tx) => {
-        // Check for duplicate agent names
-        const existingAgent = await tx.agent.findFirst({
-          where: {
-            name: data.name,
-            userId,
-            deletedAt: null,
-          },
-        });
+      // Check for duplicate agent names
+      const existingAgent = await drizzleAgentRepository.findByNameAndUserId(data.name, userId);
 
-        if (existingAgent) {
-          throw new BadRequestException(`Agent with name "${data.name}" already exists`);
-        }
+      if (existingAgent) {
+        throw new BadRequestException(`Agent with name "${data.name}" already exists`);
+      }
 
-        // Create the agent
-        const agent = await tx.agent.create({
-          data: {
-            name: data.name,
-            type: AgentType.API,
-            status: AgentStatus.INITIALIZING,
-            description: data.description,
-            capabilities: [],
-            provider: 'self-registered',
-            userId,
-            config: {
-              version: data.version,
-              author: data.author,
-              ...data.metadata,
-            },
-          },
-        });
-
-        // Generate authentication token
-        const authToken = this.generateAuthToken();
-
-        // Create registration record
-        const registration = await tx.agentRegistration.create({
-          data: {
-            agentId: agent.id,
-            authToken,
-            registrationData: data as any,
-            verificationStatus: 'PENDING',
-            onboardingStatus: 'INITIALIZED',
-            onboardingProgress: 0,
-            heartbeatInterval: data.heartbeatInterval || 60000,
-            isOnline: true,
-            metadata: data.metadata || {},
-          },
-        });
-
-        // Register capabilities
-        if (data.capabilities && data.capabilities.length > 0) {
-          await Promise.all(
-            data.capabilities.map((cap) =>
-              tx.agentCapabilityRegistry.create({
-                data: {
-                  registrationId: registration.id,
-                  capabilityName: cap.name,
-                  capabilityType: cap.type,
-                  version: cap.version,
-                  description: cap.description,
-                  parameters: cap.parameters || {},
-                  verificationStatus: 'PENDING',
-                },
-              }),
-            ),
-          );
-        }
-
-        // Create registration event
-        await tx.agentOnboardingEvent.create({
-          data: {
-            registrationId: registration.id,
-            eventType: 'REGISTRATION_STARTED',
-            message: `Agent ${data.name} has started registration`,
-            eventData: {
-              agentName: data.name,
-              capabilities: data.capabilities.map((c) => c.name),
-            },
-          },
-        });
-
-        // Create directory entry
-        await tx.agentDirectoryEntry.create({
-          data: {
-            agentId: agent.id,
-            displayName: data.name,
-            description: data.description,
-            category: this.inferCategory(data.capabilities),
-            tags: this.extractTags(data),
-            isPublic: false,
-            isVerified: false,
-            rating: 0,
-            usageCount: 0,
-            searchableData: `${data.name} ${data.description || ''} ${data.capabilities.map((c) => c.name).join(' ')}`,
-          },
-        });
-
-        this.logger.log(`Agent registered successfully: ${agent.id}`);
-
-        // Generate welcome message and next steps
-        const welcomeMessage = this.generateWelcomeMessage(data.name);
-        const nextSteps = this.generateNextSteps(registration.id);
-
-        return {
-          registrationId: registration.id,
-          agentId: agent.id,
-          authToken,
-          verificationStatus: registration.verificationStatus,
-          onboardingStatus: registration.onboardingStatus,
-          welcomeMessage,
-          nextSteps,
-          onboardingUrl: `/api/agent-registry/onboarding/${registration.id}`,
-          createdAt: registration.createdAt,
-        };
+      // Create the agent
+      const agent = await drizzleAgentRepository.create({
+        name: data.name,
+        type: 'API',
+        status: 'INITIALIZING',
+        description: data.description,
+        capabilities: [],
+        provider: 'self-registered',
+        userId,
+        config: {
+          version: data.version,
+          author: data.author,
+          ...data.metadata,
+        },
       });
+
+      // Generate authentication token
+      const authToken = this.generateAuthToken();
+
+      // Create registration record
+      const registration = await drizzleAgentRepository.createRegistration({
+        agentId: agent.id,
+        authToken,
+        registrationData: data as any,
+        verificationStatus: 'PENDING',
+        onboardingStatus: 'INITIALIZED',
+        onboardingProgress: 0,
+        heartbeatInterval: data.heartbeatInterval || 60000,
+        isOnline: true,
+        metadata: data.metadata || {},
+      });
+
+      // Register capabilities
+      if (data.capabilities && data.capabilities.length > 0) {
+        await Promise.all(
+          data.capabilities.map((cap) =>
+            drizzleAgentRepository.createCapability({
+              registrationId: registration.id,
+              capabilityName: cap.name,
+              capabilityType: cap.type,
+              version: cap.version,
+              description: cap.description,
+              parameters: cap.parameters || {},
+              verificationStatus: 'PENDING',
+            }),
+          ),
+        );
+      }
+
+      // Create registration event
+      await drizzleAgentRepository.createOnboardingEvent({
+        registrationId: registration.id,
+        eventType: 'REGISTRATION_STARTED',
+        message: `Agent ${data.name} has started registration`,
+        eventData: {
+          agentName: data.name,
+          capabilities: data.capabilities.map((c) => c.name),
+        },
+      });
+
+      // Create directory entry
+      await drizzleAgentRepository.createDirectoryEntry({
+        agentId: agent.id,
+        displayName: data.name,
+        description: data.description,
+        category: this.inferCategory(data.capabilities),
+        tags: this.extractTags(data),
+        isPublic: false,
+        isVerified: false,
+        rating: 0,
+        usageCount: 0,
+        searchableData: `${data.name} ${data.description || ''} ${data.capabilities.map((c) => c.name).join(' ')}`,
+      });
+
+      this.logger.log(`Agent registered successfully: ${agent.id}`);
+
+      // Generate welcome message and next steps
+      const welcomeMessage = this.generateWelcomeMessage(data.name);
+      const nextSteps = this.generateNextSteps(registration.id);
+
+      return {
+        registrationId: registration.id,
+        agentId: agent.id,
+        authToken,
+        verificationStatus: registration.verificationStatus,
+        onboardingStatus: registration.onboardingStatus,
+        welcomeMessage,
+        nextSteps,
+        onboardingUrl: `/api/agent-registry/onboarding/${registration.id}`,
+        createdAt: registration.createdAt,
+      };
     } catch (error) {
       this.logger.error(`Failed to register agent: ${error.message}`, error.stack);
       throw error;
@@ -147,10 +126,7 @@ export class AgentRegistrationService {
    * Verify agent authentication token
    */
   async verifyAuthToken(token: string): Promise<{ agentId: string; registrationId: string }> {
-    const registration = await this.prisma.agentRegistration.findUnique({
-      where: { authToken: token },
-      select: { id: true, agentId: true },
-    });
+    const registration = await drizzleAgentRepository.findRegistrationByToken(token);
 
     if (!registration) {
       throw new UnauthorizedException('Invalid authentication token');
@@ -166,30 +142,14 @@ export class AgentRegistrationService {
    * Update agent heartbeat
    */
   async updateHeartbeat(registrationId: string): Promise<void> {
-    await this.prisma.agentRegistration.update({
-      where: { id: registrationId },
-      data: {
-        lastHeartbeat: new Date(),
-        isOnline: true,
-      },
-    });
+    await drizzleAgentRepository.updateRegistrationHeartbeat(registrationId);
   }
 
   /**
    * Get registration details
    */
   async getRegistration(registrationId: string) {
-    return this.prisma.agentRegistration.findUnique({
-      where: { id: registrationId },
-      include: {
-        agent: true,
-        capabilities: true,
-        onboardingEvents: {
-          orderBy: { timestamp: 'desc' },
-          take: 10,
-        },
-      },
-    });
+    return drizzleAgentRepository.findRegistrationWithDetails(registrationId);
   }
 
   /**
