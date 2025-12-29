@@ -1,5 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AgentStatus, AgentType } from '@prisma/client';
+
+// Define AgentType and AgentStatus enums compatible with Drizzle schema
+export enum AgentType {
+  BASIC = 'BASIC',
+  CHAT = 'CHAT',
+  WORKFLOW = 'WORKFLOW',
+  TASK = 'TASK',
+  ASSISTANT = 'ASSISTANT',
+  ANALYSIS = 'ANALYSIS',
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  IDE_EXTENSION = 'IDE_EXTENSION',
+  API = 'API',
+}
+
+export enum AgentStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  IDLE = 'IDLE',
+  BUSY = 'BUSY',
+  ERROR = 'ERROR',
+  OFFLINE = 'OFFLINE',
+  INITIALIZING = 'INITIALIZING',
+  READY = 'READY',
+  TERMINATED = 'TERMINATED',
+}
 
 export class CreateAgentDto {
   @ApiProperty({
