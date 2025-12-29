@@ -1,14 +1,14 @@
 /**
  * Agency Service - Multi-Tenant Agency Management
- * 
+ *
  * This service manages "Agencies" which are white-label instances of TNF.
  * Agencies can have their own:
  * - Users (with AGENCY_OWNER, AGENCY_ADMIN, AGENCY_MANAGER roles)
  * - Agents
  * - Workflows
  * - Revenue configurations (via FuseAgencyRegistry on-chain)
- * 
- * NOTE: This uses Workspace as the organizational container until the 
+ *
+ * NOTE: This uses Workspace as the organizational container until the
  * Organization model is migrated from schema.enhanced.prisma.backup
  */
 
@@ -22,27 +22,27 @@ export interface AgencyProfile {
   name: string;
   slug: string; // subdomain-compatible identifier (e.g., "acme" -> acme.thenewfuse.hub)
   description?: string;
-  
+
   // Owner information
   ownerId: string;
   ownerEmail?: string;
-  
+
   // Configuration
   settings: AgencySettings;
-  
+
   // Billing (for FuseAgencyRegistry integration)
-  licenseId?: string;           // On-chain NFT token ID from FuseAgencyRegistry
+  licenseId?: string; // On-chain NFT token ID from FuseAgencyRegistry
   licenseStatus: 'none' | 'active' | 'expired' | 'sovereign';
   revenueShare: {
-    house: number;   // Agency's share (e.g., 60%)
+    house: number; // Agency's share (e.g., 60%)
     investors: number;
     affiliates: number;
   };
-  
+
   // Limits
   agentLimit: number;
   userLimit: number;
-  
+
   // Statistics (computed)
   stats: {
     totalAgents: number;
@@ -51,7 +51,7 @@ export interface AgencyProfile {
     activeUsers: number;
     totalWorkflows: number;
   };
-  
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -126,7 +126,7 @@ export class AgencyService {
     // Validate slug format (subdomain-compatible)
     if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(dto.slug) && dto.slug.length > 2) {
       throw new BadRequestException(
-        'Slug must be lowercase alphanumeric with optional hyphens, no leading/trailing hyphens'
+        'Slug must be lowercase alphanumeric with optional hyphens, no leading/trailing hyphens',
       );
     }
 
@@ -213,7 +213,7 @@ export class AgencyService {
    */
   async updateAgency(agencyId: string, dto: UpdateAgencyDto): Promise<AgencyProfile> {
     const existing = await this.getAgency(agencyId);
-    
+
     const updatedDescription = {
       ...this.parseWorkspaceDescription(existing),
       ...(dto.name && { displayName: dto.name }),
@@ -243,7 +243,7 @@ export class AgencyService {
    */
   async deleteAgency(agencyId: string): Promise<void> {
     const agency = await this.getAgency(agencyId);
-    
+
     await this.prisma.workspace.delete({
       where: { id: agencyId },
     });
@@ -268,7 +268,7 @@ export class AgencyService {
 
     // Filter to only agency-type workspaces
     return workspaces
-      .filter(w => {
+      .filter((w: any) => {
         try {
           const desc = JSON.parse(w.description || '{}');
           return desc.type === 'AGENCY';
@@ -276,7 +276,7 @@ export class AgencyService {
           return false;
         }
       })
-      .map(w => this.workspaceToAgencyProfile(w));
+      .map((w: any) => this.workspaceToAgencyProfile(w));
   }
 
   /**
@@ -293,7 +293,7 @@ export class AgencyService {
     });
 
     return workspaces
-      .filter(w => {
+      .filter((w: any) => {
         try {
           const desc = JSON.parse(w.description || '{}');
           return desc.type === 'AGENCY';
@@ -301,7 +301,7 @@ export class AgencyService {
           return false;
         }
       })
-      .map(w => this.workspaceToAgencyProfile(w));
+      .map((w: any) => this.workspaceToAgencyProfile(w));
   }
 
   /**
@@ -318,16 +318,16 @@ export class AgencyService {
    * Update agency license (from blockchain event)
    */
   async updateAgencyLicense(
-    agencyId: string, 
-    licenseId: string, 
-    status: 'active' | 'expired' | 'sovereign'
+    agencyId: string,
+    licenseId: string,
+    status: 'active' | 'expired' | 'sovereign',
   ): Promise<AgencyProfile> {
     const existing = await this.getAgency(agencyId);
     const parsedDesc = this.parseWorkspaceDescription(existing);
-    
+
     parsedDesc.licenseId = licenseId;
     parsedDesc.licenseStatus = status;
-    
+
     // Sovereign agencies get 100% revenue (0% to platform)
     if (status === 'sovereign') {
       parsedDesc.revenueShare = { house: 100, investors: 0, affiliates: 0 };
@@ -367,7 +367,7 @@ export class AgencyService {
 
   private workspaceToAgencyProfile(workspace: any): AgencyProfile {
     const desc = this.parseWorkspaceDescription(workspace);
-    
+
     return {
       id: workspace.id,
       name: desc.displayName || workspace.name,

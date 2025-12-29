@@ -301,14 +301,14 @@ export class EnhancedAgencyService {
       },
     });
 
-    const completedTasks = tasks.filter((t) => t.status === 'COMPLETED');
-    const failedTasks = tasks.filter((t) => t.status === 'FAILED');
+    const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED');
+    const failedTasks = tasks.filter((t: any) => t.status === 'FAILED');
 
     // Calculate average duration
-    const tasksWithDuration = tasks.filter((t) => t.startTime && t.endTime);
+    const tasksWithDuration = tasks.filter((t: any) => t.startTime && t.endTime);
     const avgDuration =
       tasksWithDuration.length > 0
-        ? tasksWithDuration.reduce((sum, t) => {
+        ? tasksWithDuration.reduce((sum: number, t: any) => {
             const duration = new Date(t.endTime!).getTime() - new Date(t.startTime!).getTime();
             return sum + duration;
           }, 0) / tasksWithDuration.length
@@ -316,7 +316,7 @@ export class EnhancedAgencyService {
 
     // Aggregate agent types
     const byType: Record<string, number> = {};
-    agents.forEach((a) => {
+    agents.forEach((a: any) => {
       byType[a.type] = (byType[a.type] || 0) + 1;
     });
 
@@ -325,7 +325,7 @@ export class EnhancedAgencyService {
       period: timeframe,
       agents: {
         total: agents.length,
-        active: agents.filter((a) => a.status === 'ACTIVE').length,
+        active: agents.filter((a: any) => a.status === 'ACTIVE').length,
         byType,
       },
       tasks: {
