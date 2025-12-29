@@ -230,6 +230,113 @@ export class DrizzleAgentRepository {
       directoryEntry: r.agent_directory_entries,
     }));
   }
+
+  /**
+   * Find agent by name and user ID (for duplicate checking)
+   */
+  async findByNameAndUserId(name: string, userId: string): Promise<Agent | null> {
+    const [agent] = await db
+      .select()
+      .from(agents)
+      .where(and(eq(agents.name, name), eq(agents.userId, userId), isNull(agents.deletedAt)));
+
+    return agent ?? null;
+  }
+
+  /**
+   * Find agents with pagination
+   */
+  async findWithPagination(
+    userId: string,
+    page = 1,
+    limit = 50
+  ): Promise<{ data: Agent[]; total: number }> {
+    const skip = (page - 1) * limit;
+
+    const [data, countResult] = await Promise.all([
+      db
+        .select()
+        .from(agents)
+        .where(and(eq(agents.userId, userId), isNull(agents.deletedAt)))
+        .orderBy(desc(agents.createdAt))
+        .offset(skip)
+        .limit(limit),
+      db
+        .select({ count: sql<number>`cast(count(*) as integer)` })
+        .from(agents)
+        .where(and(eq(agents.userId, userId), isNull(agents.deletedAt))),
+    ]);
+
+    return {
+      data,
+      total: countResult[0]?.count ?? 0,
+    };
+  }
+
+  /**
+   * Find agents by status and user ID
+   */
+  async findByStatusAndUserId(status: string, userId: string): Promise<Agent[]> {
+    return db
+      .select()
+      .from(agents)
+      .where(and(eq(agents.status, status), eq(agents.userId, userId), isNull(agents.deletedAt)))
+      .orderBy(desc(agents.updatedAt));
+  }
+
+  /**
+   * Search agents by query (name, type, capability)
+   */
+  async searchAgents(
+    userId: string,
+    query: { name?: string; type?: string; capability?: string }
+  ): Promise<Agent[]> {
+    const conditions = [eq(agents.userId, userId), isNull(agents.deletedAt)];
+
+    if (query.name) {
+      conditions.push(like(agents.name, `%${query.name}%`));
+    }
+
+    if (query.type) {
+      conditions.push(eq(agents.type, query.type));
+    }
+
+    if (query.capability) {
+      conditions.push(sql`${agents.capabilities}::jsonb @> ${JSON.stringify([query.capability])}::jsonb`);
+    }
+
+    return db.select().from(agents).where(and(...conditions)).orderBy(desc(agents.createdAt));
+  }
+
+  /**
+   * Find agents by capability
+   */
+  async findByCapability(capability: string, userId: string): Promise<Agent[]> {
+    return db
+      .select()
+      .from(agents)
+      .where(
+        and(
+          eq(agents.userId, userId),
+          isNull(agents.deletedAt),
+          sql`${agents.capabilities}::jsonb @> ${JSON.stringify([capability])}::jsonb`
+        )
+      )
+      .orderBy(desc(agents.createdAt));
+  }
+
+  /**
+   * Update agent status
+   */
+  async updateStatus(id: string, status: string): Promise<Agent | null> {
+    const [agent] = await db
+      .update(agents)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(agents.id, id))
+      .returning();
+
+    return agent ?? null;
+  }
 }
 
 // Export singleton instance
