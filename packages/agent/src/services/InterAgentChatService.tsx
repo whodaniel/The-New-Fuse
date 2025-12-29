@@ -1,19 +1,21 @@
+import { Message, MessageType } from '@the-new-fuse/types'; // Import Message and MessageType
 import { BaseService } from '../core/BaseService'; // Corrected import path
 import { Logger } from '../types/core';
-import { UUID, Message } from '@the-new-fuse/types'; // Assuming types are available
 
-// Define specific message structures for inter-agent chat if needed
+// UUID type alias for clarity
+type UUID = string;
+
+// Define specific message structures for inter-agent chat
+// Note: Message already has id, type, timestamp, content, sender from @the-new-fuse/types
 export interface ChatMessage extends Message {
   senderAgentId: UUID;
   recipientAgentId: UUID;
   conversationId?: UUID; // Optional: to group messages
-  sender: string; // Add missing sender property
 }
 
 export interface BroadcastMessage extends Message {
   senderAgentId: UUID;
   topic?: string; // Optional: for pub/sub style broadcasts
-  sender: string; // Add missing sender property
 }
 
 // Interface for the underlying transport mechanism (e.g., Redis Pub/Sub, WebSocket, gRPC)
@@ -80,7 +82,7 @@ export class InterAgentChatService extends BaseService {
       senderAgentId: this.currentAgentId,
       recipientAgentId: recipientAgentId,
       timestamp: Date.now(),
-      type: 'chat' as any, // TODO: Fix MessageType enum
+      type: MessageType.TEXT,
       content: content,
       conversationId: conversationId,
       sender: this.currentAgentId,
@@ -90,7 +92,9 @@ export class InterAgentChatService extends BaseService {
       await this.transport.sendMessage(message);
       this.logger.debug(`Sent message ${message.id} to Agent ${recipientAgentId}.`);
     } catch (error) {
-      this.logger.error(`Failed to send message to Agent ${recipientAgentId}: ${(error as Error).message}`);
+      this.logger.error(
+        `Failed to send message to Agent ${recipientAgentId}: ${(error as Error).message}`
+      );
       throw error; // Re-throw for the caller to handle
     }
   }
@@ -101,15 +105,12 @@ export class InterAgentChatService extends BaseService {
    * @param type The type of the message (defaults to 'broadcast').
    * @param topic Optional topic for targeted broadcast.
    */
-  async broadcast(
-    content: string | Record<string, unknown>,
-    topic?: string
-  ): Promise<void> {
-     const message: BroadcastMessage = {
+  async broadcast(content: string | Record<string, unknown>, topic?: string): Promise<void> {
+    const message: BroadcastMessage = {
       id: crypto.randomUUID(), // Generate a unique message ID
       senderAgentId: this.currentAgentId,
       timestamp: Date.now(),
-      type: 'broadcast' as any, // TODO: Fix MessageType enum
+      type: MessageType.NOTIFICATION,
       content: content,
       topic: topic,
       sender: this.currentAgentId,
@@ -134,7 +135,9 @@ export class InterAgentChatService extends BaseService {
       return;
     }
 
-    this.logger.debug(`Received message ${message.id} from Agent ${message.senderAgentId}. Type: ${message.type}`);
+    this.logger.debug(
+      `Received message ${message.id} from Agent ${message.senderAgentId}. Type: ${message.type}`
+    );
 
     // TODO: Implement logic to process the incoming message.
     // This might involve:
@@ -142,8 +145,6 @@ export class InterAgentChatService extends BaseService {
     // - Calling a registered handler based on message type
     // - Storing the message
     // - Triggering agent actions
-
-    
   }
 
   /**
@@ -164,13 +165,13 @@ export class InterAgentChatService extends BaseService {
     }
   }
 
-   /**
+  /**
    * Unsubscribe from a specific topic.
    * Requires transport support.
    * @param topic The topic name.
    */
   async unsubscribeFromTopic(topic: string): Promise<void> {
-     if (!this.transport.unsubscribeFromTopic) {
+    if (!this.transport.unsubscribeFromTopic) {
       this.logger.warn('Transport does not support topic unsubscriptions.');
       return;
     }
@@ -181,7 +182,6 @@ export class InterAgentChatService extends BaseService {
       this.logger.error(`Failed to unsubscribe from topic ${topic}: ${(error as Error).message}`);
     }
   }
-
 
   async disconnect(): Promise<void> {
     try {
