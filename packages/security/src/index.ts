@@ -6,8 +6,7 @@ export { EncryptionService } from './EncryptionService';
 export { SecurityService } from './SecurityService';
 
 // Auth services and types
-export { AuthService } from './auth/AuthService';
-export type { User, Permission } from './auth/AuthService';
+export { AuthService, UserCredentials, type UserCredentialsType } from './auth';
 
 // Audit services and types  
 export { AuditService } from './audit';
