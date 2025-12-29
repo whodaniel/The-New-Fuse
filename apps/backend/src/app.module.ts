@@ -20,6 +20,7 @@ import { RelayModule } from './modules/relay/relay.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { DrizzleModule } from '@the-new-fuse/database/drizzle';
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
 
@@ -43,7 +44,9 @@ import { UsersModule } from './users/users.module';
       secret: process.env.JWT_SECRET || 'your-secret-key',
       signOptions: { expiresIn: '7d' },
     }),
-    PrismaModule,
+    // Database modules - both Prisma and Drizzle during transition
+    PrismaModule, // Legacy - can be removed after full migration
+    DrizzleModule.forRootAsync(), // New - production ready
     AuthModule,
     UsersModule,
     ApiModule,

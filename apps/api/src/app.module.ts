@@ -6,6 +6,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
 import { DatabaseModule } from '@the-new-fuse/database';
+import { DrizzleModule } from '@the-new-fuse/database/drizzle';
 import { AgentsModule } from './agents/agents.module';
 import { BrandConsistencyAgentModule } from './agents/brand-consistency-agent.module';
 import { BrowserHubSwarmModule } from './agents/browser-hub-swarm.module';
@@ -71,8 +72,9 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
     }) as any,
-    // Use Prisma instead of TypeORM
-    DatabaseModule as any,
+    // Database modules - both Prisma and Drizzle during transition
+    DatabaseModule as any, // Legacy Prisma - can be removed after full migration
+    DrizzleModule.forRootAsync(), // New Drizzle ORM - production ready
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
