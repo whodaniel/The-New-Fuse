@@ -24,7 +24,7 @@ jest.mock('redis', () => ({
 
 describe('RedisAgentRegistry', () => {
   let registry: RedisAgentRegistry;
-  let mockMulti;
+  let mockMulti: any;
 
   beforeEach(() => {
     registry = new RedisAgentRegistry({ redisUrl: 'redis://mock' });
