@@ -8,7 +8,10 @@ export class EncryptionService {
   private readonly key: Buffer;
 
   constructor() {
-    const secret = process.env.ENCRYPTION_KEY || 'default-super-secret-key-for-dev';
+    const secret = process.env.ENCRYPTION_KEY;
+    if (!secret) {
+      throw new Error('ENCRYPTION_KEY is not set');
+    }
     if (secret.length < 32) {
       this.logger.warn('Encryption key is less than 32 characters. This is not secure for production.');
     }

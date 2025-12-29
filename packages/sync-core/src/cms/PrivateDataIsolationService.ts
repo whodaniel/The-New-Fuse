@@ -638,7 +638,10 @@ export class PrivateDataIsolationService {
 
   private generateEncryptionKey(tenantId: string): string {
     // Generate deterministic key based on tenant ID and secret
-    const secret = process.env.ENCRYPTION_SECRET || 'default-secret';
+    const secret = process.env.ENCRYPTION_SECRET;
+    if (!secret) {
+      throw new Error('ENCRYPTION_SECRET is not set in environment variables');
+    }
     return createHash('sha256').update(`${tenantId}:${secret}`).digest('hex');
   }
 

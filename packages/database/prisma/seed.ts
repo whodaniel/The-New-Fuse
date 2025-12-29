@@ -11,6 +11,7 @@ import {
   PrismaClient,
   UserRole,
 } from '../generated/prisma';
+import { EncryptionService } from '@the-new-fuse/core';
 
 // Validate required environment variable
 const connectionString = process.env.DATABASE_URL;
@@ -22,6 +23,7 @@ console.log('📡 Connecting to database...');
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
+const encryptionService = new EncryptionService();
 
 /**
  * Database Seed Script
@@ -179,6 +181,7 @@ async function main() {
   ];
 
   for (const config of llmConfigs) {
+    const encryptedApiKey = await encryptionService.encrypt(config.apiKey);
     // Check if config exists by name
     const existing = await prisma.lLMConfig.findFirst({
       where: { name: config.name },
@@ -190,11 +193,12 @@ async function main() {
         data: {
           enabled: config.enabled,
           priority: config.priority,
+          apiKey: encryptedApiKey,
         },
       });
     } else {
       await prisma.lLMConfig.create({
-        data: config,
+        data: { ...config, apiKey: encryptedApiKey },
       });
     }
     console.log(`✅ LLM config created/updated: ${config.name}`);
