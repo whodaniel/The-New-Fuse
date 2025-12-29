@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { WorkflowExecution, WorkflowExecutionStatus, Prisma } from '../../generated/prisma';
+import { Prisma, WorkflowExecution, WorkflowExecutionStatus } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
 
 @Injectable()
-export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecution, Prisma.WorkflowExecutionCreateInput, Prisma.WorkflowExecutionUpdateInput, Prisma.WorkflowExecutionWhereInput> {
+export class WorkflowExecutionRepository extends BaseRepository<
+  WorkflowExecution,
+  Prisma.WorkflowExecutionCreateInput,
+  Prisma.WorkflowExecutionUpdateInput,
+  Prisma.WorkflowExecutionWhereInput
+> {
   constructor(prisma: PrismaService) {
     super(prisma, 'workflowExecution');
   }
@@ -34,10 +39,10 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
     const results = await this.prisma.workflowExecution.findMany({
       where: filters,
       orderBy: {
-        startedAt: 'desc'
-      }
+        startedAt: 'desc',
+      },
     });
-    return results.map(result => this.convertPrismaToApp(result));
+    return results.map((result: WorkflowExecution) => this.convertPrismaToApp(result));
   }
 
   async create(data: Prisma.WorkflowExecutionCreateInput): Promise<WorkflowExecution> {
@@ -48,19 +53,19 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
   }
 
   async update(id: string, data: Partial<WorkflowExecution>): Promise<WorkflowExecution> {
-        const { ...updateData } = data;
-    
+    const { ...updateData } = data;
+
     // Handle null values for JSON fields
-    const cleanData: any = { ...updateData };
+    const cleanData: Prisma.WorkflowExecutionUpdateInput = { ...updateData };
     if (cleanData.input === null) cleanData.input = undefined;
     if (cleanData.output === null) cleanData.output = undefined;
     if (cleanData.error === null) cleanData.error = undefined;
-    
+
     const result = await this.prisma.workflowExecution.update({
       where: { id },
       data: {
         ...cleanData,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
     });
     return this.convertPrismaToApp(result);
@@ -77,29 +82,34 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
     const results = await this.prisma.workflowExecution.findMany({
       where: { workflowId },
       orderBy: {
-        startedAt: 'desc'
-      }
+        startedAt: 'desc',
+      },
     });
-    return results.map(result => this.convertPrismaToApp(result));
+    return results.map((result: WorkflowExecution) => this.convertPrismaToApp(result));
   }
 
   async findByStatus(status: WorkflowExecutionStatus): Promise<WorkflowExecution[]> {
     const results = await this.prisma.workflowExecution.findMany({
-      where: { status: status as any },
+      where: { status },
       orderBy: {
-        startedAt: 'desc'
-      }
+        startedAt: 'desc',
+      },
     });
-    return results.map(result => this.convertPrismaToApp(result));
+    return results.map((result: WorkflowExecution) => this.convertPrismaToApp(result));
   }
 
-  async updateStatus(id: string, status: WorkflowExecutionStatus, output?: any, error?: string): Promise<WorkflowExecution> {
-    const updateData: any = {
-      status: status as any,
-      updatedAt: new Date()
+  async updateStatus(
+    id: string,
+    status: WorkflowExecutionStatus,
+    output?: Prisma.JsonValue,
+    error?: string
+  ): Promise<WorkflowExecution> {
+    const updateData: Prisma.WorkflowExecutionUpdateInput = {
+      status,
+      updatedAt: new Date(),
     };
 
-        if (status === WorkflowExecutionStatus.COMPLETED || status === WorkflowExecutionStatus.FAILED) {
+    if (status === WorkflowExecutionStatus.COMPLETED || status === WorkflowExecutionStatus.FAILED) {
       updateData.completedAt = new Date();
     }
 
@@ -126,15 +136,25 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
     return this.findByStatus(WorkflowExecutionStatus.PENDING);
   }
 
-  async getExecutionStats(workflowId?: string): Promise<{ total: number; completed: number; failed: number; successRate: number; failureRate: number; avgExecutionTimeMs: number; byStatus: Record<string, number> }> {
-    const where = workflowId ? { workflowId } : {};
+  async getExecutionStats(
+    workflowId?: string
+  ): Promise<{
+    total: number;
+    completed: number;
+    failed: number;
+    successRate: number;
+    failureRate: number;
+    avgExecutionTimeMs: number;
+    byStatus: Record<string, number>;
+  }> {
+    const where: Prisma.WorkflowExecutionWhereInput = workflowId ? { workflowId } : {};
 
     const statusCounts = await this.prisma.workflowExecution.groupBy({
       by: ['status'],
       where,
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
     const totalExecutions = await this.prisma.workflowExecution.count({ where });
@@ -142,15 +162,15 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
     const completedExecutions = await this.prisma.workflowExecution.count({
       where: {
         ...where,
-                status: WorkflowExecutionStatus.COMPLETED as any
-      }
+        status: WorkflowExecutionStatus.COMPLETED,
+      },
     });
 
     const failedExecutions = await this.prisma.workflowExecution.count({
       where: {
         ...where,
-        status: WorkflowExecutionStatus.FAILED as any
-      }
+        status: WorkflowExecutionStatus.FAILED,
+      },
     });
 
     // Calculate average execution time for completed executions
@@ -158,21 +178,28 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
       where: {
         ...where,
         status: WorkflowExecutionStatus.COMPLETED,
-        completedAt: { not: null }
+        completedAt: { not: null },
       },
       select: {
         startedAt: true,
-        completedAt: true
-      }
+        completedAt: true,
+      },
     });
 
     const executionTimes = completedWithTimes
-      .filter((exec: any) => exec.completedAt)
-      .map((exec: any) => exec.completedAt!.getTime() - exec.startedAt.getTime());
+      .filter(
+        (exec: { completedAt: Date | null }): exec is { startedAt: Date; completedAt: Date } =>
+          exec.completedAt !== null
+      )
+      .map(
+        (exec: { completedAt: Date; startedAt: Date }) =>
+          exec.completedAt.getTime() - exec.startedAt.getTime()
+      );
 
-    const avgExecutionTime = executionTimes.length > 0
-      ? executionTimes.reduce((a: number, b: number) => a + b, 0) / executionTimes.length
-      : 0;
+    const avgExecutionTime =
+      executionTimes.length > 0
+        ? executionTimes.reduce((a: number, b: number) => a + b, 0) / executionTimes.length
+        : 0;
 
     return {
       total: totalExecutions,
@@ -181,10 +208,16 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
       successRate: totalExecutions > 0 ? (completedExecutions / totalExecutions) * 100 : 0,
       failureRate: totalExecutions > 0 ? (failedExecutions / totalExecutions) * 100 : 0,
       avgExecutionTimeMs: avgExecutionTime,
-      byStatus: statusCounts.reduce((acc: Record<string, number>, { status, _count }: { status: WorkflowExecutionStatus, _count: { id: number } }) => {
-        acc[status] = _count.id;
-        return acc;
-      }, {} as Record<string, number>)
+      byStatus: statusCounts.reduce(
+        (
+          acc: Record<string, number>,
+          { status, _count }: { status: WorkflowExecutionStatus; _count: { id: number } }
+        ) => {
+          acc[status] = _count.id;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
     };
   }
 
@@ -194,11 +227,11 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
     const results = await this.prisma.workflowExecution.findMany({
       where,
       orderBy: {
-        startedAt: 'desc'
+        startedAt: 'desc',
       },
-      take: limit
+      take: limit,
     });
-    return results.map(result => this.convertPrismaToApp(result));
+    return results.map((result: WorkflowExecution) => this.convertPrismaToApp(result));
   }
 
   async getLongRunningExecutions(thresholdMinutes = 60): Promise<WorkflowExecution[]> {
@@ -206,16 +239,16 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
 
     const results = await this.prisma.workflowExecution.findMany({
       where: {
-        status: WorkflowExecutionStatus.RUNNING as any,
+        status: WorkflowExecutionStatus.RUNNING,
         startedAt: {
-          lt: threshold
-        }
+          lt: threshold,
+        },
       },
       orderBy: {
-        startedAt: 'asc'
-      }
+        startedAt: 'asc',
+      },
     });
-    return results.map(result => this.convertPrismaToApp(result));
+    return results.map((result: WorkflowExecution) => this.convertPrismaToApp(result));
   }
 
   async cancelExecution(id: string): Promise<WorkflowExecution> {
@@ -241,10 +274,10 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
     const results = await this.prisma.workflowExecution.findMany({
       where: { workflowId },
       orderBy: {
-        startedAt: 'desc'
+        startedAt: 'desc',
       },
-      take: limit
+      take: limit,
     });
-    return results.map(result => this.convertPrismaToApp(result));
+    return results.map((result: WorkflowExecution) => this.convertPrismaToApp(result));
   }
 }

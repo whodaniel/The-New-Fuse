@@ -1,276 +1,332 @@
 import { Injectable } from '@nestjs/common';
-import { Workflow, WorkflowStatus, WorkflowExecutionStatus, WorkflowExecution, Prisma } from '../../generated/prisma';
+import {
+  Agent,
+  Prisma,
+  User,
+  Workflow,
+  WorkflowExecution,
+  WorkflowExecutionStatus,
+  WorkflowStatus,
+} from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
 
+export type WorkflowStep = {
+  id: string;
+  order: number;
+  [key: string]: any;
+};
+
+export type AppWorkflow = Workflow & {
+  executions: WorkflowExecution[];
+  steps: WorkflowStep[];
+  agent?: Agent | null;
+  user?: User | null;
+};
+
 @Injectable()
-export class WorkflowRepository extends BaseRepository<Workflow, Prisma.WorkflowCreateInput, Prisma.WorkflowUpdateInput, Prisma.WorkflowWhereInput> {
+export class WorkflowRepository extends BaseRepository<
+  Workflow,
+  Prisma.WorkflowCreateInput,
+  Prisma.WorkflowUpdateInput,
+  Prisma.WorkflowWhereInput
+> {
   constructor(prisma: PrismaService) {
     super(prisma, 'workflow');
   }
 
   // Helper method to convert Prisma Workflow to App Workflow
-  private convertPrismaToApp(prismaWorkflow: Workflow & { executions?: WorkflowExecution[], steps?: any[], agent?: any, user?: any }): any {
+  private convertPrismaToApp(
+    prismaWorkflow: Workflow & {
+      executions?: WorkflowExecution[];
+      agent?: Agent | null;
+      user?: User | null;
+    }
+  ): AppWorkflow {
+    const definition = (prismaWorkflow.definition as { steps?: WorkflowStep[] }) || { steps: [] };
     return {
-      id: prismaWorkflow.id,
-      name: prismaWorkflow.name,
-      description: prismaWorkflow.description ?? null,
-      definition: prismaWorkflow.definition,
-      status: prismaWorkflow.status,
-      createdAt: prismaWorkflow.createdAt,
-      updatedAt: prismaWorkflow.updatedAt,
-      lastExecutedAt: prismaWorkflow.lastExecutedAt ?? null,
-      agentId: prismaWorkflow.agentId ?? null,
-      creatorId: prismaWorkflow.creatorId ?? null,
-      executions: prismaWorkflow.executions?.map((exec: any) => this.convertExecutionPrismaToApp(exec)) ?? [],
-      steps: prismaWorkflow.steps?.map((step) => ({ ...step })) ?? [],
+      ...prismaWorkflow,
+      executions: prismaWorkflow.executions?.map(this.convertExecutionPrismaToApp) ?? [],
+      steps: definition.steps ?? [],
     };
   }
 
   // Helper method to convert Prisma WorkflowExecution to App WorkflowExecution
   private convertExecutionPrismaToApp(prismaExecution: WorkflowExecution): WorkflowExecution {
     return {
-      id: prismaExecution.id,
-      workflowId: prismaExecution.workflowId,
-      status: prismaExecution.status,
+      ...prismaExecution,
       input: prismaExecution.input ?? null,
       output: prismaExecution.output ?? null,
       error: prismaExecution.error ?? null,
-      startedAt: prismaExecution.startedAt,
       completedAt: prismaExecution.completedAt ?? null,
       projectId: prismaExecution.projectId ?? null,
     };
   }
 
-  async findById(id: string): Promise<Workflow | null> {
+  async findById(id: string): Promise<AppWorkflow | null> {
     const result = await this.prisma.workflow.findUnique({
       where: { id },
       include: {
         executions: {
           orderBy: {
-            startedAt: 'desc'
+            startedAt: 'desc',
           },
-          take: 10
+          take: 10,
         },
-        agent: true,
-      }
+        agent: { include: { user: true } },
+      },
     });
     return result ? this.convertPrismaToApp(result) : null;
   }
 
-  async findMany(filters?: Prisma.WorkflowWhereInput): Promise<Workflow[]> {
+  async findMany(filters?: Prisma.WorkflowWhereInput): Promise<AppWorkflow[]> {
     const results = await this.prisma.workflow.findMany({
       where: filters,
       include: {
         executions: true,
-        agent: true,
+        agent: { include: { user: true } },
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: Workflow) => this.convertPrismaToApp(workflow));
   }
 
-  async create(data: Prisma.WorkflowCreateInput): Promise<Workflow> {
+  async create(data: Prisma.WorkflowCreateInput): Promise<AppWorkflow> {
     const result = await this.prisma.workflow.create({
       data,
       include: {
         executions: true,
-        agent: true,
-      }
+        agent: { include: { user: true } },
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async update(id: string, data: Prisma.WorkflowUpdateInput): Promise<Workflow> {
+  async update(id: string, data: Prisma.WorkflowUpdateInput): Promise<AppWorkflow> {
     const result = await this.prisma.workflow.update({
       where: { id },
       data: {
         ...data,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       include: {
         executions: true,
-        agent: true,
-      }
+        agent: { include: { user: true } },
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async delete(id: string): Promise<Workflow> {
+  async delete(id: string): Promise<AppWorkflow> {
     const result = await this.prisma.workflow.delete({
-      where: { id }
+      where: { id },
+      include: {
+        executions: true,
+        agent: { include: { user: true } },
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async findByCreatorId(creatorId: string): Promise<Workflow[]> {
+  async findByCreatorId(creatorId: string): Promise<AppWorkflow[]> {
     const results = await this.prisma.workflow.findMany({
       where: { creatorId },
       include: {
         executions: true,
-        agent: true,
+        agent: { include: { user: true } },
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: Workflow) => this.convertPrismaToApp(workflow));
   }
 
-  async findByAgentId(agentId: string): Promise<Workflow[]> {
+  async findByAgentId(agentId: string): Promise<AppWorkflow[]> {
     const results = await this.prisma.workflow.findMany({
       where: { agentId },
       include: {
         executions: true,
-        agent: true,
+        agent: { include: { user: true } },
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: Workflow) => this.convertPrismaToApp(workflow));
   }
 
-  async findByStatus(status: WorkflowStatus): Promise<Workflow[]> {
+  async findByStatus(status: WorkflowStatus): Promise<AppWorkflow[]> {
     const results = await this.prisma.workflow.findMany({
       where: { status },
       include: {
         executions: true,
-        agent: true,
+        agent: { include: { user: true } },
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: Workflow) => this.convertPrismaToApp(workflow));
   }
 
-  async updateStatus(id: string, status: WorkflowStatus): Promise<Workflow> {
+  async updateStatus(id: string, status: WorkflowStatus): Promise<AppWorkflow> {
     const result = await this.prisma.workflow.update({
       where: { id },
       data: {
         status,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       include: {
         executions: true,
-        agent: true,
-      }
+        agent: { include: { user: true } },
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async addStep(workflowId: string, stepData: any): Promise<any> {
+  async addStep(
+    workflowId: string,
+    stepData: Omit<WorkflowStep, 'id' | 'order'>
+  ): Promise<AppWorkflow> {
     const workflow = await this.prisma.workflow.findUnique({
-      where: { id: workflowId }
+      where: { id: workflowId },
+      include: {
+        executions: true,
+        agent: { include: { user: true } },
+      },
     });
-    
+
     if (!workflow) {
       throw new Error('Workflow not found');
     }
-    
-    const definition = workflow.definition as any || { steps: [] };
+
+    const definition = (workflow.definition as { steps?: WorkflowStep[] }) || { steps: [] };
     const steps = definition.steps || [];
-    const newStep = { ...stepData, id: `step_${Date.now()}`, order: steps.length };
-    
+    const newStep: WorkflowStep = { ...stepData, id: `step_${Date.now()}`, order: steps.length };
+
     const result = await this.prisma.workflow.update({
       where: { id: workflowId },
       data: {
         definition: {
           ...definition,
-          steps: [...steps, newStep]
-        }
-      }
+          steps: [...steps, newStep],
+        },
+      },
+      include: {
+        executions: true,
+        agent: { include: { user: true } },
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async removeStep(workflowId: string, stepId: string): Promise<any> {
+  async removeStep(workflowId: string, stepId: string): Promise<AppWorkflow> {
     const workflow = await this.prisma.workflow.findUnique({
-      where: { id: workflowId }
+      where: { id: workflowId },
+      include: {
+        executions: true,
+        agent: { include: { user: true } },
+      },
     });
-    
+
     if (!workflow) {
       throw new Error('Workflow not found');
     }
-    
-    const definition = workflow.definition as any || { steps: [] };
+
+    const definition = (workflow.definition as { steps?: WorkflowStep[] }) || { steps: [] };
     const steps = definition.steps || [];
-    const filteredSteps = steps.filter((step: any) => step.id !== stepId);
-    
+    const filteredSteps = steps.filter((step) => step.id !== stepId);
+
     const result = await this.prisma.workflow.update({
       where: { id: workflowId },
       data: {
         definition: {
           ...definition,
-          steps: filteredSteps
-        }
-      }
+          steps: filteredSteps,
+        },
+      },
+      include: {
+        executions: true,
+        agent: { include: { user: true } },
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async reorderSteps(workflowId: string, stepOrders: Array<{ id: string; order: number }>): Promise<void> {
+  async reorderSteps(
+    workflowId: string,
+    stepOrders: Array<{ id: string; order: number }>
+  ): Promise<void> {
     const workflow = await this.prisma.workflow.findUnique({
-      where: { id: workflowId }
+      where: { id: workflowId },
     });
-    
+
     if (!workflow) {
       throw new Error('Workflow not found');
     }
-    
-    const definition = workflow.definition as any || { steps: [] };
+
+    const definition = (workflow.definition as { steps?: WorkflowStep[] }) || { steps: [] };
     const steps = definition.steps || [];
-    
+
     // Reorder steps based on stepOrders
-    const reorderedSteps = steps.map((step: any) => {
-      const orderInfo = stepOrders.find(o => o.id === step.id);
-      return orderInfo ? { ...step, order: orderInfo.order } : step;
-    }).sort((a: any, b: any) => a.order - b.order);
-    
+    const reorderedSteps = steps
+      .map((step) => {
+        const orderInfo = stepOrders.find((o) => o.id === step.id);
+        return orderInfo ? { ...step, order: orderInfo.order } : step;
+      })
+      .sort((a, b) => a.order - b.order);
+
     await this.prisma.workflow.update({
       where: { id: workflowId },
       data: {
         definition: {
           ...definition,
-          steps: reorderedSteps
-        }
-      }
+          steps: reorderedSteps,
+        },
+      },
     });
   }
 
-  async getWorkflowStats(): Promise<any> {
+  async getWorkflowStats(): Promise<{
+    total: number;
+    active: number;
+    totalExecutions: number;
+    successfulExecutions: number;
+    successRate: number;
+    byStatus: Record<string, number>;
+    executionsByStatus: Record<string, number>;
+  }> {
     const statusCounts = await this.prisma.workflow.groupBy({
       by: ['status'],
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
     const totalWorkflows = await this.prisma.workflow.count();
 
     const activeWorkflows = await this.prisma.workflow.count({
       where: {
-        status: WorkflowStatus.ACTIVE
-      }
+        status: WorkflowStatus.ACTIVE,
+      },
     });
 
-    // Get execution stats
     const executionStats = await this.prisma.workflowExecution.groupBy({
       by: ['status'],
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
     const totalExecutions = await this.prisma.workflowExecution.count();
 
     const successfulExecutions = await this.prisma.workflowExecution.count({
       where: {
-                status: WorkflowExecutionStatus.COMPLETED
-      }
+        status: WorkflowExecutionStatus.COMPLETED,
+      },
     });
 
     return {
@@ -279,43 +335,55 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       totalExecutions,
       successfulExecutions,
       successRate: totalExecutions > 0 ? (successfulExecutions / totalExecutions) * 100 : 0,
-      byStatus: statusCounts.reduce((acc: Record<string, number>, { status, _count }: { status: any, _count: any }) => {
-        acc[status] = _count.id;
-        return acc;
-      }, {} as Record<string, number>),
-      executionsByStatus: executionStats.reduce((acc: Record<string, number>, { status, _count }: { status: any, _count: any }) => {
-        acc[status] = _count.id;
-        return acc;
-      }, {} as Record<string, number>)
+      byStatus: statusCounts.reduce(
+        (
+          acc: Record<string, number>,
+          { status, _count }: { status: WorkflowStatus; _count: { id: number } }
+        ) => {
+          acc[status] = _count.id;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      executionsByStatus: executionStats.reduce(
+        (
+          acc: Record<string, number>,
+          { status, _count }: { status: WorkflowExecutionStatus; _count: { id: number } }
+        ) => {
+          acc[status] = _count.id;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
     };
   }
 
-  async searchWorkflows(query: string): Promise<Workflow[]> {
+  async searchWorkflows(query: string): Promise<AppWorkflow[]> {
     const results = await this.prisma.workflow.findMany({
       where: {
         OR: [
           {
             name: {
               contains: query,
-              mode: 'insensitive'
-            }
+              mode: 'insensitive',
+            },
           },
           {
             description: {
               contains: query,
-              mode: 'insensitive'
-            }
-          }
-        ]
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
       include: {
         executions: true,
-        agent: true,
+        agent: { include: { user: true } },
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: Workflow) => this.convertPrismaToApp(workflow));
   }
 }

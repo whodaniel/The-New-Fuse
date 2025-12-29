@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User, UserRole, Prisma } from '../../generated/prisma';
+import { Prisma, User, UserRole } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
@@ -49,7 +49,7 @@ export class UserRepository {
   async findById(id: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      select: this.getUserSelect()
+      select: this.getUserSelect(),
     });
 
     if (!user) return null;
@@ -59,7 +59,7 @@ export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
-      select: this.getUserSelect()
+      select: this.getUserSelect(),
     });
 
     if (!user) return null;
@@ -71,11 +71,11 @@ export class UserRepository {
       where: filters,
       select: this.getUserSelect(),
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
 
-    return users.map(user => this.mapDatabaseUserToUser(user));
+    return users.map((user: User) => this.mapDatabaseUserToUser(user));
   }
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
@@ -84,7 +84,7 @@ export class UserRepository {
         ...data,
         emailVerified: false,
       },
-      select: this.getUserSelect()
+      select: this.getUserSelect(),
     });
     return this.mapDatabaseUserToUser(user);
   }
@@ -94,9 +94,9 @@ export class UserRepository {
       where: { id },
       data: {
         ...data,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      select: this.getUserSelect()
+      select: this.getUserSelect(),
     });
     return this.mapDatabaseUserToUser(user);
   }
@@ -104,7 +104,7 @@ export class UserRepository {
   async delete(id: string): Promise<User> {
     const user = await this.prisma.user.delete({
       where: { id },
-      select: this.getUserSelect()
+      select: this.getUserSelect(),
     });
 
     return this.mapDatabaseUserToUser(user);
@@ -112,14 +112,14 @@ export class UserRepository {
 
   async findByRole(role: UserRole): Promise<User[]> {
     const users = await this.prisma.user.findMany({
-      where: { role: role as any }, // Cast to any to handle enum type
+      where: { role },
       select: this.getUserSelect(),
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
 
-    return users.map(user => this.mapDatabaseUserToUser(user));
+    return users.map((user: User) => this.mapDatabaseUserToUser(user));
   }
 
   async updatePassword(id: string, hashedPassword: string): Promise<User> {
@@ -127,9 +127,9 @@ export class UserRepository {
       where: { id },
       data: {
         hashedPassword,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      select: this.getUserSelect()
+      select: this.getUserSelect(),
     });
 
     return this.mapDatabaseUserToUser(user);
@@ -140,9 +140,9 @@ export class UserRepository {
       where: { id },
       data: {
         role,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      select: this.getUserSelect()
+      select: this.getUserSelect(),
     });
 
     return this.mapDatabaseUserToUser(user);
@@ -155,24 +155,24 @@ export class UserRepository {
           {
             email: {
               contains: query,
-              mode: 'insensitive'
-            }
+              mode: 'insensitive',
+            },
           },
           {
             name: {
               contains: query,
-              mode: 'insensitive'
-            }
-          }
-        ]
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
       select: this.getUserSelect(),
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
 
-    return users.map(user => this.mapDatabaseUserToUser(user));
+    return users.map((user: User) => this.mapDatabaseUserToUser(user));
   }
 
   async getUserStats(): Promise<{ total: number; recent: number; byRole: Record<string, number> }> {
@@ -181,31 +181,37 @@ export class UserRepository {
     const roleStats = await this.prisma.user.groupBy({
       by: ['role'],
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
     const recentUsers = await this.prisma.user.count({
       where: {
         createdAt: {
-          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Last 30 days
-        }
-      }
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
+        },
+      },
     });
 
     return {
       total: totalUsers,
       recent: recentUsers,
-      byRole: roleStats.reduce((acc: Record<string, number>, { role, _count }: { role: any, _count: any }) => {
-        acc[role] = _count.id;
-        return acc;
-      }, {} as Record<string, number>)
+      byRole: roleStats.reduce(
+        (
+          acc: Record<string, number>,
+          { role, _count }: { role: UserRole; _count: { id: number } }
+        ) => {
+          acc[role] = _count.id;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
     };
   }
 
-  async count(filters?: any): Promise<number> {
+  async count(filters?: Prisma.UserWhereInput): Promise<number> {
     return this.prisma.user.count({
-      where: filters
+      where: filters,
     });
   }
 }

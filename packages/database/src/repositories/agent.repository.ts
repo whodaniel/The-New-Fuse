@@ -1,45 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { Agent, AgentStatus, AgentType, Prisma } from '../../generated/prisma';
+import { AgentCapability } from '@the-new-fuse/types';
+import { Agent, AgentStatus, AgentType, Prisma, User, Workflow } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 
-import { AgentCapability } from '@the-new-fuse/types';
+// Define a type for the enriched agent object
+export type AppAgent = Agent & {
+  user?: User | null;
+  workflows?: Workflow[];
+  nft?: Record<string, unknown> | null; // Assuming NFT type is not defined in Prisma schema
+};
 
 @Injectable()
 export class AgentRepository {
   constructor(private prisma: PrismaService) {}
 
   // Helper method to convert Prisma Agent to App Agent
-  private convertPrismaToApp(prismaAgent: Agent & { user?: any; workflows?: any; nft?: any }): any {
+  private convertPrismaToApp(
+    prismaAgent: Agent & { user?: User | null; workflows?: Workflow[]; nft?: any }
+  ): AppAgent {
     return {
-      id: prismaAgent.id,
-      name: prismaAgent.name,
-      description: prismaAgent.description,
-      type: prismaAgent.type,
-      status: prismaAgent.status,
-      userId: prismaAgent.userId,
-      config: prismaAgent.config,
-      createdAt: prismaAgent.createdAt,
-      updatedAt: prismaAgent.updatedAt,
+      ...prismaAgent,
       capabilities: prismaAgent.capabilities as unknown as AgentCapability[],
-      provider: prismaAgent.provider,
       nft: prismaAgent.nft || null,
       workflows: prismaAgent.workflows || [],
-      user: prismaAgent.user || null
+      user: prismaAgent.user || null,
     };
   }
 
-  async findById(id: string): Promise<any | null> {
+  async findById(id: string): Promise<AppAgent | null> {
     const result = await this.prisma.agent.findUnique({
       where: { id },
       include: {
         user: true,
         workflows: true,
-        nft: true
-      }
+        nft: true,
+      },
     });
     return result ? this.convertPrismaToApp(result) : null;
   }
-
 
   async findMany(params: {
     skip?: number;
@@ -47,7 +45,7 @@ export class AgentRepository {
     cursor?: Prisma.AgentWhereUniqueInput;
     where?: Prisma.AgentWhereInput;
     orderBy?: Prisma.AgentOrderByWithRelationInput;
-  }): Promise<any[]> {
+  }): Promise<AppAgent[]> {
     const { skip, take, cursor, where, orderBy } = params;
     const results = await this.prisma.agent.findMany({
       skip,
@@ -57,84 +55,125 @@ export class AgentRepository {
       include: {
         user: true,
         workflows: true,
-        nft: true
+        nft: true,
       },
       orderBy: orderBy || {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
     });
-    return results.map(agent => this.convertPrismaToApp(agent));
+    return results.map((agent: Agent & { user?: User | null; workflows?: Workflow[]; nft?: any }) =>
+      this.convertPrismaToApp(agent)
+    );
   }
 
-
-  async create(data: Prisma.AgentCreateInput): Promise<Agent> {
+  async create(data: Prisma.AgentCreateInput): Promise<AppAgent> {
     const result = await this.prisma.agent.create({
-      data
+      data,
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-
-  async update(id: string, data: Prisma.AgentUpdateInput): Promise<Agent> {
+  async update(id: string, data: Prisma.AgentUpdateInput): Promise<AppAgent> {
     const result = await this.prisma.agent.update({
       where: { id },
       data: {
         ...data,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async delete(id: string): Promise<Agent> {
+  async delete(id: string): Promise<AppAgent> {
     const result = await this.prisma.agent.delete({
-      where: { id }
+      where: { id },
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async findByStatus(status: AgentStatus): Promise<Agent[]> {
+  async findByStatus(status: AgentStatus): Promise<AppAgent[]> {
     const results = await this.prisma.agent.findMany({
-      where: { status: status as any },
+      where: { status },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
-    return results.map(agent => this.convertPrismaToApp(agent));
+    return results.map((agent: Agent & { user?: User | null; workflows?: Workflow[]; nft?: any }) =>
+      this.convertPrismaToApp(agent)
+    );
   }
 
-  async findByType(type: AgentType): Promise<Agent[]> {
+  async findByType(type: AgentType): Promise<AppAgent[]> {
     const results = await this.prisma.agent.findMany({
-      where: { type: type as any },
+      where: { type },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
-    return results.map(agent => this.convertPrismaToApp(agent));
+    return results.map((agent: Agent & { user?: User | null; workflows?: Workflow[]; nft?: any }) =>
+      this.convertPrismaToApp(agent)
+    );
   }
 
-  async findByUserId(userId: string): Promise<Agent[]> {
+  async findByUserId(userId: string): Promise<AppAgent[]> {
     const results = await this.prisma.agent.findMany({
       where: { userId },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: 'desc',
+      },
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
-    return results.map(agent => this.convertPrismaToApp(agent));
+    return results.map((agent: Agent & { user?: User | null; workflows?: Workflow[]; nft?: any }) =>
+      this.convertPrismaToApp(agent)
+    );
   }
 
-  async updateStatus(id: string, status: AgentStatus): Promise<Agent> {
+  async updateStatus(id: string, status: AgentStatus): Promise<AppAgent> {
     const result = await this.prisma.agent.update({
       where: { id },
       data: {
-        status: status as any,
-        updatedAt: new Date()
-      }
+        status,
+        updatedAt: new Date(),
+      },
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
     return this.convertPrismaToApp(result);
   }
 
-  async findActiveAgents(): Promise<Agent[]> {
+  async findActiveAgents(): Promise<AppAgent[]> {
     return this.findByStatus(AgentStatus.IDLE);
   }
 
@@ -142,24 +181,34 @@ export class AgentRepository {
     const counts = await this.prisma.agent.groupBy({
       by: ['type'],
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
-    return counts.reduce((acc: Record<AgentType, number>, { type, _count }: { type: AgentType, _count: { id: number } }) => {
-      acc[type] = _count.id;
-      return acc;
-    }, {} as Record<string, number>);
+    return counts.reduce(
+      (
+        acc: Record<AgentType, number>,
+        { type, _count }: { type: AgentType; _count: { id: number } }
+      ) => {
+        acc[type] = _count.id;
+        return acc;
+      },
+      {} as Record<AgentType, number>
+    );
   }
 
-  async getAgentStats(id: string): Promise<Agent | null> {
+  async getAgentStats(id: string): Promise<AppAgent | null> {
     const agent = await this.prisma.agent.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        user: true,
+        workflows: true,
+        nft: true,
+      },
     });
 
     if (!agent) return null;
 
-    const convertedAgent = this.convertPrismaToApp(agent);
-    return convertedAgent;
+    return this.convertPrismaToApp(agent);
   }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from '../../generated/prisma';
+import { Message, MessageRole, Prisma } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
-import { Prisma } from '../../generated/prisma';
 
 @Injectable()
 export class ChatMessageRepository {
@@ -56,7 +55,7 @@ export class ChatMessageRepository {
   async findById(id: string): Promise<Message | null> {
     const message = await this.prisma.message.findUnique({
       where: { id },
-      select: this.getMessageSelect()
+      select: this.getMessageSelect(),
     });
 
     if (!message) return null;
@@ -68,11 +67,11 @@ export class ChatMessageRepository {
       where: filters,
       select: this.getMessageSelect(),
       orderBy: {
-        timestamp: 'desc'
-      }
+        timestamp: 'desc',
+      },
     });
 
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 
   async create(
@@ -80,7 +79,7 @@ export class ChatMessageRepository {
   ): Promise<Message> {
     const message = await this.prisma.message.create({
       data,
-      select: this.getMessageSelect()
+      select: this.getMessageSelect(),
     });
     return this.mapDatabaseMessageToChatMessage(message);
   }
@@ -93,9 +92,9 @@ export class ChatMessageRepository {
       where: { id },
       data: {
         ...data,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      select: this.getMessageSelect()
+      select: this.getMessageSelect(),
     });
     return this.mapDatabaseMessageToChatMessage(message);
   }
@@ -103,7 +102,7 @@ export class ChatMessageRepository {
   async delete(id: string): Promise<Message> {
     const message = await this.prisma.message.delete({
       where: { id },
-      select: this.getMessageSelect()
+      select: this.getMessageSelect(),
     });
 
     return this.mapDatabaseMessageToChatMessage(message);
@@ -114,10 +113,10 @@ export class ChatMessageRepository {
       where: { senderId },
       select: this.getMessageSelect(),
       orderBy: {
-        timestamp: 'desc'
-      }
+        timestamp: 'desc',
+      },
     });
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 
   async findByChatId(chatId: string): Promise<Message[]> {
@@ -125,23 +124,23 @@ export class ChatMessageRepository {
       where: { chatId },
       select: this.getMessageSelect(),
       orderBy: {
-        timestamp: 'asc'
-      }
+        timestamp: 'asc',
+      },
     });
 
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async findByRole(role: string): Promise<Message[]> {
+  async findByRole(role: MessageRole): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
-      where: { role: role as any }, // Cast to any to handle MessageRole enum
+      where: { role },
       select: this.getMessageSelect(),
       orderBy: {
-        timestamp: 'desc'
-      }
+        timestamp: 'desc',
+      },
     });
 
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 
   async getRecentMessages(senderId: string, limit = 50): Promise<Message[]> {
@@ -149,12 +148,12 @@ export class ChatMessageRepository {
       select: this.getMessageSelect(),
       where: { senderId },
       orderBy: {
-        timestamp: 'desc'
+        timestamp: 'desc',
       },
-      take: limit
+      take: limit,
     });
 
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 
   async searchMessages(senderId: string, query: string): Promise<Message[]> {
@@ -163,27 +162,29 @@ export class ChatMessageRepository {
         senderId,
         content: {
           contains: query,
-          mode: 'insensitive'
-        }
+          mode: 'insensitive',
+        },
       },
       select: this.getMessageSelect(),
       orderBy: {
-        timestamp: 'desc'
-      }
+        timestamp: 'desc',
+      },
     });
 
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async getMessageStats(senderId?: string): Promise<{ total: number; recent: number; byRole: Record<string, number> }> {
+  async getMessageStats(
+    senderId?: string
+  ): Promise<{ total: number; recent: number; byRole: Record<string, number> }> {
     const whereClause = senderId ? { senderId } : {};
 
     const roleStats = await this.prisma.message.groupBy({
       by: ['role'],
       where: whereClause,
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
     const totalMessages = await this.prisma.message.count({ where: whereClause });
@@ -191,18 +192,24 @@ export class ChatMessageRepository {
     const recentMessages = await this.prisma.message.count({
       where: {
         timestamp: {
-          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // Last 7 days
-        }
-      }
+          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
+        },
+      },
     });
 
     return {
       total: totalMessages,
       recent: recentMessages,
-      byRole: roleStats.reduce((acc: Record<string, number>, { role, _count }: { role: string, _count: { id: number } }) => {
-        acc[role] = _count.id;
-        return acc;
-      }, {} as Record<string, number>)
+      byRole: roleStats.reduce(
+        (
+          acc: Record<string, number>,
+          { role, _count }: { role: MessageRole; _count: { id: number } }
+        ) => {
+          acc[role] = _count.id;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
     };
   }
 
@@ -210,18 +217,18 @@ export class ChatMessageRepository {
     const messages = await this.prisma.message.findMany({
       where: { chatId },
       orderBy: {
-        timestamp: 'asc'
+        timestamp: 'asc',
       },
       take: limit,
-      select: this.getMessageSelect()
+      select: this.getMessageSelect(),
     });
 
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 
   async deleteMessagesByChatId(chatId: string): Promise<number> {
     const result = await this.prisma.message.deleteMany({
-      where: { chatId }
+      where: { chatId },
     });
     return result.count;
   }
@@ -231,15 +238,15 @@ export class ChatMessageRepository {
       where: {
         timestamp: {
           gte: from,
-          lte: to
-        }
+          lte: to,
+        },
       },
       select: this.getMessageSelect(),
       orderBy: {
-        timestamp: 'asc'
-      }
+        timestamp: 'asc',
+      },
     });
 
-    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
+    return messages.map((message: Message) => this.mapDatabaseMessageToChatMessage(message));
   }
 }

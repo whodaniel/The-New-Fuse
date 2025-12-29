@@ -8,18 +8,11 @@
     "declarationMap": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "module": "commonjs"
+    "module": "commonjs",
+    "strict": true
   },
-  "include": [
-    "src/**/*",
-    "generated/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ],
+  "include": ["src/**/*", "generated/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
     {
       "path": "../types"
