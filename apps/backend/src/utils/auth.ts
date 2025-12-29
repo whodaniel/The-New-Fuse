@@ -1,8 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
-
-// Create a Prisma client instance
-const prisma = new PrismaClient();
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 
 // Generate a JWT token
 export function generateToken(payload: any, expiresIn: string = '24h'): string {
@@ -25,8 +22,8 @@ export function verifyToken(token: string): any {
 export async function authenticateUser(email: string, password: string): Promise<any> {
   try {
     // Find the user by email
-    const user = await prisma.user.findUnique({ where: { email } });
-    
+    const user = await drizzleUserRepository.findByEmail(email);
+
     if (!user) {
       return { success: false, message: 'User not found' };
     }

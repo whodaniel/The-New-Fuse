@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import passport from 'passport';
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/token';
-
-const prisma = new PrismaClient();
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -30,13 +28,11 @@ export const googleAuthCallback = [
         { expiresIn: '24h' } as SignOptions
       );
 
-      await prisma.session.create({
-        data: {
-          userId: user.id,
-          token,
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-        }
-      });
+      await drizzleUserRepository.createSession(
+        user.id,
+        token,
+        new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      );
 
       // Redirect to frontend with token
       res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
@@ -52,9 +48,7 @@ export const register = async (req: Request, res: Response) => {
     const { email, password, name } = req.body;
 
     // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
+    const existingUser = await drizzleUserRepository.findByEmail(email);
 
     if (existingUser) {
       return res.status(400).json({
@@ -67,25 +61,21 @@ export const register = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = await prisma.user.create({
-      data: {
-        email,
-        name,
-        password: hashedPassword
-      }
+    const user = await drizzleUserRepository.create({
+      email,
+      name: name || null,
+      hashedPassword
     });
 
     // Generate token
     const token = generateToken(user.id);
 
     // Create session
-    await prisma.session.create({
-      data: {
-        token,
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
-      }
-    });
+    await drizzleUserRepository.createSession(
+      user.id,
+      token,
+      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    );
 
     res.status(201).json({
       success: true,
@@ -112,11 +102,9 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     // Find user
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
+    const user = await drizzleUserRepository.findByEmail(email);
 
-    if (!user || !user.password) {
+    if (!user || !user.hashedPassword) {
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
@@ -124,7 +112,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Check password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await bcrypt.compare(password, user.hashedPassword);
 
     if (!isValidPassword) {
       return res.status(401).json({
@@ -137,13 +125,11 @@ export const login = async (req: Request, res: Response) => {
     const token = generateToken(user.id);
 
     // Create session
-    await prisma.session.create({
-      data: {
-        token,
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
-      }
-    });
+    await drizzleUserRepository.createSession(
+      user.id,
+      token,
+      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+    );
 
     res.json({
       success: true,
@@ -177,9 +163,7 @@ export const logout = async (req: Request, res: Response) => {
     }
 
     // Delete session
-    await prisma.session.delete({
-      where: { token }
-    });
+    await drizzleUserRepository.deleteSession(token);
 
     res.json({
       success: true,
@@ -209,9 +193,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as { userId: string };
 
     // Get user
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId }
-    });
+    const user = await drizzleUserRepository.findById(decoded.userId);
 
     if (!user) {
       return res.status(404).json({

@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '@the-new-fuse/types';
-import { PrismaClient } from '@prisma/client';
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 
 import { RedisService } from '../services/redis.service';
 import { ConfigService } from '@nestjs/config';
 
-const prisma = new PrismaClient();
 const configService = new ConfigService();
 const redisService = new RedisService();
 
@@ -46,9 +45,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction): Pro
       console.warn('Redis cache error, falling back to database:', redisError);
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.id }
-    });
+    const user = await drizzleUserRepository.findById(decoded.id);
 
     if (!user) {
       res.status(401).json({ success: false, message: 'User not found' });

@@ -1,9 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { PrismaClient } from '@prisma/client';
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 import crypto from 'crypto';
-
-const prisma = new PrismaClient();
 
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
@@ -11,9 +9,7 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id }
-    });
+    const user = await drizzleUserRepository.findById(id);
     done(null, user);
   } catch (error) {
     done(error, null);
@@ -32,35 +28,21 @@ passport.use(
       try {
 
         // Check if user exists
-        let user = await prisma.user.findFirst({
-          where: {
-            email: profile.emails![0].value
-          }
-        });
+        let user = await drizzleUserRepository.findByEmail(profile.emails![0].value);
 
         // If user doesn't exist, create new user
         if (!user) {
-          
-          user = await prisma.user.create({
-            data: {
-              email: profile.emails![0].value,
-              name: profile.displayName,
-              googleId: profile.id,
-              avatar: profile.photos?.[0]?.value,
-              emailVerified: true, // Since Google has verified the email
-              password: null // This is now optional in our schema
-            }
+          user = await drizzleUserRepository.create({
+            email: profile.emails![0].value,
+            name: profile.displayName,
+            hashedPassword: '', // Empty password for OAuth users
+            emailVerified: true, // Since Google has verified the email
           });
-        } else if (!user.googleId) {
-          
-          user = await prisma.user.update({
-            where: { id: user.id },
-            data: {
-              googleId: profile.id,
-              avatar: profile.photos?.[0]?.value || user.avatar,
-              emailVerified: true
-            }
-          });
+        } else {
+          // Update user to link Google account if not already linked
+          user = await drizzleUserRepository.update(user.id, {
+            emailVerified: true
+          }) || user;
         }
 
         return done(null, user);
