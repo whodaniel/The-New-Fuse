@@ -8,15 +8,15 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
-  ListResourcesRequestSchema,
-  ListPromptsRequestSchema,
-  ReadResourceRequestSchema,
   GetPromptRequestSchema,
+  ListPromptsRequestSchema,
+  ListResourcesRequestSchema,
   ListToolsRequestSchema,
+  ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import * as fs from 'fs/promises';
-import * as path from 'path';
 import { glob } from 'glob';
+import * as path from 'path';
 
 interface SkillMetadata {
   name: string;
@@ -109,7 +109,11 @@ export class SkillsMCPServer {
       let type: 'meta-skill' | 'skill' | 'context' = 'skill';
       if (filePath.includes('/context/')) {
         type = 'context';
-      } else if (content.includes('Meta-Skill') || name === 'skill-builder' || name === 'library-of-living-knowledge') {
+      } else if (
+        content.includes('Meta-Skill') ||
+        name === 'skill-builder' ||
+        name === 'library-of-living-knowledge'
+      ) {
         type = 'meta-skill';
       }
 
@@ -337,9 +341,10 @@ export class SkillsMCPServer {
         case 'search_skills': {
           const query = ((args as any).query || '').toLowerCase();
           const skills = Array.from(this.skillsCache.values())
-            .filter((skill) =>
-              skill.name.toLowerCase().includes(query) ||
-              skill.description.toLowerCase().includes(query)
+            .filter(
+              (skill) =>
+                skill.name.toLowerCase().includes(query) ||
+                skill.description.toLowerCase().includes(query)
             )
             .map((skill) => ({
               name: skill.name,
@@ -410,11 +415,4 @@ export class SkillsMCPServer {
   }
 }
 
-// CLI entry point
-if (require.main === module) {
-  const server = new SkillsMCPServer();
-  server.start().catch((error) => {
-    console.error('[Skills MCP] Fatal error:', error);
-    process.exit(1);
-  });
-}
+// CLI entry point removed - handled in index.ts

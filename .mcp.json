@@ -11,7 +11,9 @@
     },
     "resource-registry": {
       "command": "node",
-      "args": ["packages/resource-registry/dist/mcp/resource-registry-mcp-server.js"],
+      "args": [
+        "packages/resource-registry/dist/mcp/resource-registry-mcp-server.js"
+      ],
       "env": {
         "DATABASE_URL": "${DATABASE_URL}"
       }
@@ -19,6 +21,13 @@
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "tnf-skills": {
+      "command": "node",
+      "args": ["packages/mcp-skills-server/dist/index.js"],
+      "env": {
+        "SKILLS_BASE_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent"
+      }
     }
   }
 }

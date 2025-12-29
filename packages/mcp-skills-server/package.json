@@ -1,6 +1,7 @@
 {
   "name": "@the-new-fuse/mcp-skills-server",
   "version": "1.0.0",
+  "type": "module",
   "description": "MCP server exposing The New Fuse skills library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
