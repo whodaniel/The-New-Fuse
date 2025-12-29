@@ -4,7 +4,7 @@
  * Handles message queuing, pub/sub, and stream processing for The New Fuse
  */
 
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
@@ -77,15 +77,44 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
    * Initialize Redis connections for streams and pub/sub
    */
   private async initializeRedisConnections(): Promise<void> {
-    const redisConfig = {
+    // Check if we're using Railway Redis (doesn't support database selection)
+    const redisUrl = this.configService.get<string>('REDIS_URL', '');
+    const isRailway = redisUrl.includes('railway.internal') || redisUrl.includes('railway.app');
+
+    // Safe parsing of database index
+    const parseDbIndex = (): number | undefined => {
+      if (isRailway) {
+        this.logger.log(
+          '🚂 Railway Redis detected in streams service - skipping database selection'
+        );
+        return undefined;
+      }
+
+      const dbEnv = this.configService.get<string>('REDIS_DB', '0');
+      const parsed = parseInt(dbEnv, 10);
+
+      if (isNaN(parsed) || parsed < 0) {
+        this.logger.warn(`Invalid REDIS_DB value: "${dbEnv}", defaulting to 0`);
+        return 0;
+      }
+
+      return parsed;
+    };
+
+    const redisConfig: any = {
       host: this.configService.get<string>('REDIS_HOST', 'localhost'),
       port: this.configService.get<number>('REDIS_PORT', 6379),
       password: this.configService.get<string>('REDIS_PASSWORD'),
-      db: this.configService.get<number>('REDIS_DB', 0),
       retryDelayOnFailover: 100,
       maxRetriesPerRequest: 3,
       lazyConnect: true,
     };
+
+    // Only add db parameter if not Railway
+    const dbIndex = parseDbIndex();
+    if (dbIndex !== undefined) {
+      redisConfig.db = dbIndex;
+    }
 
     this.redis = new Redis(redisConfig);
     this.subscriber = new Redis(redisConfig);
@@ -116,7 +145,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       'agency:events',
       'agent:communications',
       'swarm:orchestration',
-      'system:notifications'
+      'system:notifications',
     ];
 
     for (const streamKey of defaultStreams) {
@@ -135,26 +164,34 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
   /**
    * Publish a message to a Redis stream
    */
-  async publishToStream(streamKey: string, message: Omit<StreamMessage, 'id' | 'timestamp'>): Promise<string> {
+  async publishToStream(
+    streamKey: string,
+    message: Omit<StreamMessage, 'id' | 'timestamp'>
+  ): Promise<string> {
     const streamMessage: StreamMessage = {
       ...message,
       id: this.generateMessageId(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     try {
       const messageId = await this.redis.xadd(
         streamKey,
         '*',
-        'data', JSON.stringify(streamMessage),
-        'type', message.type,
-        'agencyId', message.agencyId,
-        'agentId', message.agentId,
-        'priority', message.priority
+        'data',
+        JSON.stringify(streamMessage),
+        'type',
+        message.type,
+        'agencyId',
+        message.agencyId,
+        'agentId',
+        message.agentId,
+        'priority',
+        message.priority
       );
 
       this.logger.debug(`Message published to stream ${streamKey}: ${messageId}`);
-      
+
       // Update stats
       this.updateStreamStats(streamKey, 'published');
 
@@ -162,7 +199,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       this.eventEmitter.emit('stream.message.published', {
         streamKey,
         messageId,
-        message: streamMessage
+        message: streamMessage,
       });
 
       return messageId;
@@ -175,7 +212,10 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
   /**
    * Start consuming messages from a stream
    */
-  async startConsumer(config: StreamConsumerConfig, handler: (message: StreamMessage) => Promise<void>): Promise<void> {
+  async startConsumer(
+    config: StreamConsumerConfig,
+    handler: (message: StreamMessage) => Promise<void>
+  ): Promise<void> {
     const { groupName, consumerName, streamKey } = config;
     const consumerKey = `${streamKey}:${groupName}:${consumerName}`;
 
@@ -192,11 +232,16 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       await this.redis.xgroup('CREATE', streamKey, groupName, '0', 'MKSTREAM');
     } catch (error) {
       if (error instanceof Error && !error.message.includes('BUSYGROUP')) {
-        this.logger.error(`Error creating consumer group ${groupName} for stream ${streamKey}:`, error);
+        this.logger.error(
+          `Error creating consumer group ${groupName} for stream ${streamKey}:`,
+          error
+        );
       }
     }
 
-    this.logger.log(`Starting consumer ${consumerName} for stream ${streamKey} in group ${groupName}`);
+    this.logger.log(
+      `Starting consumer ${consumerName} for stream ${streamKey} in group ${groupName}`
+    );
 
     // Start the consumer loop
     this.consumeMessages(config);
@@ -207,10 +252,10 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
    */
   async stopConsumer(streamKey: string, groupName: string, consumerName: string): Promise<void> {
     const consumerKey = `${streamKey}:${groupName}:${consumerName}`;
-    
+
     this.consumers.set(consumerKey, false);
     this.messageHandlers.delete(consumerKey);
-    
+
     this.logger.log(`Stopped consumer ${consumerName} for stream ${streamKey}`);
   }
 
@@ -225,9 +270,14 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       try {
         // Read pending messages first
         const pendingMessages = await this.redis.xreadgroup(
-          'GROUP', groupName, consumerName,
-          'COUNT', batchSize,
-          'STREAMS', streamKey, '0'
+          'GROUP',
+          groupName,
+          consumerName,
+          'COUNT',
+          batchSize,
+          'STREAMS',
+          streamKey,
+          '0'
         );
 
         if (pendingMessages && pendingMessages.length > 0) {
@@ -236,16 +286,21 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
 
         // Then read new messages
         const newMessages = await this.redis.xreadgroup(
-          'GROUP', groupName, consumerName,
-          'COUNT', batchSize,
-          'BLOCK', blockTime,
-          'STREAMS', streamKey, '>'
+          'GROUP',
+          groupName,
+          consumerName,
+          'COUNT',
+          batchSize,
+          'BLOCK',
+          blockTime,
+          'STREAMS',
+          streamKey,
+          '>'
         );
 
         if (newMessages && newMessages.length > 0) {
           await this.processStreamMessages(newMessages, consumerKey, streamKey, groupName);
         }
-
       } catch (error) {
         this.logger.error(`Error consuming messages for ${consumerKey}:`, error);
         await this.sleep(5000); // Wait 5 seconds before retrying
@@ -279,11 +334,13 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
 
           this.logger.debug(`Processed message ${messageId} from stream ${streamKey}`);
           this.updateStreamStats(streamKey, 'processed');
-
         } catch (error) {
-          this.logger.error(`Error processing message ${messageId} from stream ${streamKey}:`, error);
+          this.logger.error(
+            `Error processing message ${messageId} from stream ${streamKey}:`,
+            error
+          );
           this.updateStreamStats(streamKey, 'error');
-          
+
           // Handle failed message (could implement retry logic here)
           await this.handleFailedMessage(streamKey, groupName, messageId, error as Error);
         }
@@ -305,7 +362,12 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
   /**
    * Handle failed message processing
    */
-  private async handleFailedMessage(streamKey: string, groupName: string, messageId: string, error: Error): Promise<void> {
+  private async handleFailedMessage(
+    streamKey: string,
+    groupName: string,
+    messageId: string,
+    error: Error
+  ): Promise<void> {
     // For now, just acknowledge to prevent infinite retries
     // In production, you might want to move to a dead letter queue
     try {
@@ -313,7 +375,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       this.eventEmitter.emit('stream.message.failed', {
         streamKey,
         messageId,
-        error: error.message
+        error: error.message,
       });
     } catch (ackError) {
       this.logger.error(`Error acknowledging failed message ${messageId}:`, ackError);
@@ -323,18 +385,21 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
   /**
    * Publish a notification to all agency members
    */
-  async publishNotification(agencyId: string, notification: {
-    type: string;
-    title: string;
-    message: string;
-    data?: Record<string, unknown>;
-  }): Promise<void> {
+  async publishNotification(
+    agencyId: string,
+    notification: {
+      type: string;
+      title: string;
+      message: string;
+      data?: Record<string, unknown>;
+    }
+  ): Promise<void> {
     await this.publishToStream('system:notifications', {
       agencyId,
       agentId: 'system',
       type: 'notification',
       payload: notification,
-      priority: 'medium'
+      priority: 'medium',
     });
 
     // Also publish to pub/sub for real-time updates
@@ -344,11 +409,15 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
   /**
    * Send a command to a specific agent
    */
-  async sendCommandToAgent(agencyId: string, agentId: string, command: {
-    action: string;
-    parameters?: Record<string, unknown>;
-    timeout?: number;
-  }): Promise<string> {
+  async sendCommandToAgent(
+    agencyId: string,
+    agentId: string,
+    command: {
+      action: string;
+      parameters?: Record<string, unknown>;
+      timeout?: number;
+    }
+  ): Promise<string> {
     return await this.publishToStream('agency:commands', {
       agencyId,
       agentId,
@@ -357,25 +426,28 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       priority: 'high',
       metadata: {
         correlationId: this.generateMessageId(),
-        ttl: command.timeout || 30000
-      }
+        ttl: command.timeout || 30000,
+      },
     });
   }
 
   /**
    * Broadcast event to all agents in an agency
    */
-  async broadcastEvent(agencyId: string, event: {
-    type: string;
-    data: Record<string, unknown>;
-    source?: string;
-  }): Promise<string> {
+  async broadcastEvent(
+    agencyId: string,
+    event: {
+      type: string;
+      data: Record<string, unknown>;
+      source?: string;
+    }
+  ): Promise<string> {
     return await this.publishToStream('agency:events', {
       agencyId,
       agentId: 'broadcast',
       type: 'event',
       payload: event,
-      priority: 'medium'
+      priority: 'medium',
     });
   }
 
@@ -395,11 +467,11 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
           name: group[1],
           consumers: group[3],
           pending: group[5],
-          lastDeliveredId: group[7]
+          lastDeliveredId: group[7],
         })),
         messagesPerSecond: this.streamStats.get(streamKey)?.messagesPerSecond || 0,
         totalProcessed: this.streamStats.get(streamKey)?.totalProcessed || 0,
-        errors: this.streamStats.get(streamKey)?.errors || 0
+        errors: this.streamStats.get(streamKey)?.errors || 0,
       };
 
       return stats;
@@ -420,7 +492,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       groups: [],
       messagesPerSecond: 0,
       totalProcessed: 0,
-      errors: 0
+      errors: 0,
     };
 
     switch (action) {
@@ -468,7 +540,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
    */
   private async closeConnections(): Promise<void> {
     this.logger.log('Closing Redis connections...');
-    
+
     // Stop all consumers
     for (const consumerKey of this.consumers.keys()) {
       this.consumers.set(consumerKey, false);
@@ -476,7 +548,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
 
     await this.redis.quit();
     await this.subscriber.quit();
-    
+
     this.logger.log('Redis connections closed');
   }
 
@@ -484,6 +556,6 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
    * Utility sleep function
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
