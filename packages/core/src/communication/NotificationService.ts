@@ -1,12 +1,10 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, Inject } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Logger } from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { Redis } from 'ioredis';
-import { PrismaClient } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Inject } from '@nestjs/common';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 export interface Notification {
   id: string;

@@ -11,17 +11,11 @@ let databaseModule: any = null;
 
 try {
   databaseModule = require('@the-new-fuse/database');
-  if (databaseModule && databaseModule.PrismaService) {
-    prisma = new databaseModule.PrismaService();
+  if (databaseModule && databaseModule.db) {
+    prisma = databaseModule.db; // Use Drizzle client
   }
 } catch (error) {
-  // Try direct Prisma client
-  try {
-    const { PrismaClient } = require('@prisma/client');
-    prisma = new PrismaClient();
-  } catch (prismaError) {
-    console.log('Database integration not available, using in-memory storage');
-  }
+  console.log('Database integration not available, using in-memory storage');
 }
 
 export interface DatabaseIntegrationConfig {
