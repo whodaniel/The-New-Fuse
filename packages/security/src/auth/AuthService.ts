@@ -38,10 +38,11 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly hashingService: HashingService
   ) {
-    this.jwtSecret = process.env.JWT_SECRET;
-    if (!this.jwtSecret) {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
       throw new Error('JWT_SECRET environment variable not set');
     }
+    this.jwtSecret = secret;
   }
 
   async authenticate(req: Request): Promise<boolean> {
