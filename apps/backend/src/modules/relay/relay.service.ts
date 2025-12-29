@@ -11,9 +11,11 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Cron } from '@nestjs/schedule';
+import { LRUCache } from 'lru-cache';
 
-// Types for relay integration
-export interface RelayConfig {
+// Types for relay integration (we'll define these inline to avoid import issues)
+interface RelayConfig {
   id: string;
   version: string;
   workspaceDir: string;
@@ -39,7 +41,7 @@ export interface RelayConfig {
   };
 }
 
-export interface Agent {
+interface Agent {
   id: string;
   name: string;
   type: string;
@@ -49,7 +51,7 @@ export interface Agent {
   metadata?: Record<string, unknown>;
 }
 
-export interface RelayMessage {
+interface RelayMessage {
   id: string;
   type: string;
   source: string;
@@ -59,7 +61,7 @@ export interface RelayMessage {
   metadata?: Record<string, unknown>;
 }
 
-export interface SystemStatus {
+interface SystemStatus {
   relayId: string;
   uptime: number;
   agentCount: number;
@@ -75,8 +77,10 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
   private config: RelayConfig;
 
   // In-memory stores when relay server is not available
-  private agents: Map<string, Agent> = new Map();
+  private agents: LRUCache<string, Agent>;
   private messageQueue: RelayMessage[] = [];
+  private agentEvictionCount = 0;
+  private messageEvictionCount = 0;
   private startTime: Date = new Date();
 
   constructor(
@@ -84,6 +88,14 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
     private readonly eventEmitter: EventEmitter2
   ) {
     this.config = this.buildConfig();
+    this.agents = new LRUCache<string, Agent>({
+      max: 10000, // Max 10,000 agents
+      ttl: 1000 * 60 * 15, // 15 minute TTL
+      dispose: (value, key) => {
+        this.logger.log(`Agent ${key} evicted from cache.`);
+        this.agentEvictionCount++;
+      },
+    });
   }
 
   private buildConfig(): RelayConfig {
@@ -243,6 +255,7 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
         // Fall back to local agents
       }
     }
+
     return Array.from(this.agents.values());
   }
 
@@ -270,6 +283,11 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
     if (this.relayServer) {
       await this.relayServer.sendMessage(fullMessage);
     } else {
+      // Enforce a max queue size
+      if (this.messageQueue.length >= 1000) {
+        this.messageQueue.shift(); // Remove the oldest message (FIFO)
+        this.messageEvictionCount++;
+      }
       // Queue message for later processing or handle locally
       this.messageQueue.push(fullMessage);
       this.eventEmitter.emit('relay.message.queued', fullMessage);
@@ -346,5 +364,31 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
   async restart(): Promise<void> {
     await this.stop();
     await this.startRelayServer();
+  }
+
+  // ========================================
+  // Scheduled Jobs for Cleanup
+  // ========================================
+
+  @Cron('*/10 * * * *') // Runs every 10 minutes
+  logMemoryUsage() {
+    this.logger.log(`Memory Usage: Agents -> ${this.agents.size}, Message Queue -> ${this.messageQueue.length}, Agent Evictions -> ${this.agentEvictionCount}, Message Evictions -> ${this.messageEvictionCount}`);
+  }
+
+  @Cron('*/5 * * * *') // Runs every 5 minutes
+  handleMessageQueueCleanup() {
+    const now = Date.now();
+    const messageTTL = 1000 * 60 * 5; // 5 minutes
+
+    const initialSize = this.messageQueue.length;
+    this.messageQueue = this.messageQueue.filter(
+      (message) => now - message.timestamp.getTime() < messageTTL
+    );
+    const removedCount = initialSize - this.messageQueue.length;
+    this.messageEvictionCount += removedCount;
+
+    if (removedCount > 0) {
+      this.logger.log(`Cleaned up ${removedCount} old messages from the queue.`);
+    }
   }
 }
