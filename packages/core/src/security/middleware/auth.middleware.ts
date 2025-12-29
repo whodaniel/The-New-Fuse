@@ -8,8 +8,11 @@ export class AuthMiddleware implements NestMiddleware {
   private readonly jwtSecret: string;
 
   constructor(private readonly securityService: SecurityService) {
-    // In a real application, the JWT secret should be managed securely.
-    this.jwtSecret = process.env.JWT_SECRET || 'default-secret-for-dev';
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is not set');
+    }
+    this.jwtSecret = secret;
   }
 
   async use(req: any, res: Response, next: NextFunction) {

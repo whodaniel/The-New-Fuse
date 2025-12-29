@@ -7,7 +7,11 @@ export class AuthService {
   private readonly jwtSecret: string;
 
   constructor(private readonly securityService: SecurityService) {
-    this.jwtSecret = process.env.JWT_SECRET || 'default-secret-for-dev';
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is not set');
+    }
+    this.jwtSecret = secret;
   }
 
   async validateUser(password: string, hash: string): Promise<boolean> {
