@@ -21,6 +21,9 @@ export * from './schema';
 // Export all inferred types
 export * from './types';
 
+// Export all repositories
+export * from './repositories';
+
 // Re-export useful Drizzle utilities
 export {
   and,
