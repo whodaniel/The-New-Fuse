@@ -53,20 +53,22 @@ export class WorkflowExecutionRepository extends BaseRepository<
   }
 
   async update(id: string, data: Partial<WorkflowExecution>): Promise<WorkflowExecution> {
-    const { ...updateData } = data;
+    // Build update data with proper Prisma types
+    const updateData: Prisma.WorkflowExecutionUpdateInput = {};
 
-    // Handle null values for JSON fields
-    const cleanData: Prisma.WorkflowExecutionUpdateInput = { ...updateData };
-    if (cleanData.input === null) cleanData.input = undefined;
-    if (cleanData.output === null) cleanData.output = undefined;
-    if (cleanData.error === null) cleanData.error = undefined;
+    // Note: workflowId and projectId are relation fields and can't be updated directly
+    if (data.status !== undefined) updateData.status = data.status;
+    if (data.input !== undefined && data.input !== null)
+      updateData.input = data.input as Prisma.InputJsonValue;
+    if (data.output !== undefined && data.output !== null)
+      updateData.output = data.output as Prisma.InputJsonValue;
+    if (data.error !== undefined) updateData.error = data.error;
+    if (data.startedAt !== undefined) updateData.startedAt = data.startedAt;
+    if (data.completedAt !== undefined) updateData.completedAt = data.completedAt;
 
     const result = await this.prisma.workflowExecution.update({
       where: { id },
-      data: {
-        ...cleanData,
-        updatedAt: new Date(),
-      },
+      data: updateData,
     });
     return this.convertPrismaToApp(result);
   }
@@ -106,15 +108,14 @@ export class WorkflowExecutionRepository extends BaseRepository<
   ): Promise<WorkflowExecution> {
     const updateData: Prisma.WorkflowExecutionUpdateInput = {
       status,
-      updatedAt: new Date(),
     };
 
     if (status === WorkflowExecutionStatus.COMPLETED || status === WorkflowExecutionStatus.FAILED) {
       updateData.completedAt = new Date();
     }
 
-    if (output !== undefined) {
-      updateData.output = output;
+    if (output !== undefined && output !== null) {
+      updateData.output = output as Prisma.InputJsonValue;
     }
 
     if (error) {
@@ -136,9 +137,7 @@ export class WorkflowExecutionRepository extends BaseRepository<
     return this.findByStatus(WorkflowExecutionStatus.PENDING);
   }
 
-  async getExecutionStats(
-    workflowId?: string
-  ): Promise<{
+  async getExecutionStats(workflowId?: string): Promise<{
     total: number;
     completed: number;
     failed: number;

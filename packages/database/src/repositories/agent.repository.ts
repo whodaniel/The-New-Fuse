@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { AgentCapability } from '@the-new-fuse/types';
 import { Agent, AgentStatus, AgentType, Prisma, User, Workflow } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 
@@ -14,13 +13,11 @@ export type AppAgent = Agent & {
 export class AgentRepository {
   constructor(private prisma: PrismaService) {}
 
-  // Helper method to convert Prisma Agent to App Agent
   private convertPrismaToApp(
     prismaAgent: Agent & { user?: User | null; workflows?: Workflow[]; nft?: any }
   ): AppAgent {
     return {
       ...prismaAgent,
-      capabilities: prismaAgent.capabilities as unknown as AgentCapability[],
       nft: prismaAgent.nft || null,
       workflows: prismaAgent.workflows || [],
       user: prismaAgent.user || null,
