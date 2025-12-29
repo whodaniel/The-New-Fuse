@@ -10,6 +10,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AgentModule } from './modules/agent.module';
 import { WorkflowModule } from './modules/workflow.module';
 import { ExportModule } from './modules/export.module';
+import { LlmModule } from '@the-new-fuse/core';
 import { PrismaService } from './services/prisma.service';
 import { AppConfigService } from './services/app-config.service';
 import { EventService } from './services/event.service';
@@ -57,6 +58,7 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware'
     AgentModule,
     WorkflowModule,
     ExportModule,
+    LlmModule,
   ],
   controllers: [
     HealthController

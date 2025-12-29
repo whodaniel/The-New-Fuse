@@ -934,7 +934,7 @@ model LLMConfig {
   name        String
   provider    String
   modelName   String
-  apiKey      String // Should be encrypted in production
+  apiKey      String // Encrypted API key
   apiEndpoint String?
   isCustom    Boolean   @default(false)
   enabled     Boolean   @default(true)
@@ -954,6 +954,7 @@ model LLMConfig {
 model AgentRegistration {
   id                 String    @id @default(uuid())
   agentId            String
+  // TODO: Encrypt this field
   authToken          String    @unique
   registrationData   Json
   verificationStatus String    @default("PENDING")

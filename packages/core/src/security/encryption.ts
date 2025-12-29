@@ -8,9 +8,14 @@ export class EncryptionService {
   private readonly key: Buffer;
 
   constructor() {
-    const secret = process.env.ENCRYPTION_KEY || 'default-super-secret-key-for-dev';
+    const secret = process.env.ENCRYPTION_KEY;
+    if (!secret) {
+      throw new Error('ENCRYPTION_KEY is not set');
+    }
     if (secret.length < 32) {
-      this.logger.warn('Encryption key is less than 32 characters. This is not secure for production.');
+      this.logger.warn(
+        'Encryption key is less than 32 characters. This is not secure for production.',
+      );
     }
     this.key = crypto.createHash('sha256').update(String(secret)).digest('base64').substr(0, 32);
   }
@@ -39,5 +44,26 @@ export class EncryptionService {
       this.logger.error('Decryption failed', error.stack);
       throw new Error('Decryption failed.');
     }
+  }
+
+  /**
+   * Encrypts a string and returns a single string suitable for database storage
+   * Format: iv:encryptedData
+   */
+  async encryptString(text: string): Promise<string> {
+    const { iv, encryptedData } = this.encrypt(text);
+    return `${iv}:${encryptedData}`;
+  }
+
+  /**
+   * Decrypts a string that was encrypted with encryptString
+   * Expects format: iv:encryptedData
+   */
+  async decryptString(encryptedString: string): Promise<string> {
+    const parts = encryptedString.split(':');
+    if (parts.length !== 2) {
+      throw new Error('Invalid encrypted string format');
+    }
+    return this.decrypt({ iv: parts[0], encryptedData: parts[1] });
   }
 }

@@ -17,9 +17,9 @@ export class SecurityService {
   constructor() {
     // In a real application, the encryption key should be managed securely
     // (e.g., through a secret manager) and not hardcoded.
-    const secret = process.env.ENCRYPTION_KEY || 'default-super-secret-key-for-dev';
-    if (secret.length < 32) {
-      this.logger.warn('Encryption key is less than 32 characters. This is not secure for production.');
+    const secret = process.env.ENCRYPTION_KEY;
+    if (!secret) {
+      throw new Error('ENCRYPTION_KEY is not set');
     }
     this.key = crypto.createHash('sha256').update(String(secret)).digest('base64').substr(0, 32);
   }

@@ -618,7 +618,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const sensitiveErrorHandler = {
         name: 'SensitiveErrorHandler',
         async execute(_params: any): Promise<ToolResult> {
-          throw new Error('Database connection failed: password=secret123 at /etc/database/config.json from 192.168.1.100');
+          throw new Error('Database connection failed: password=[REDACTED] at /etc/database/config.json from 192.168.1.100');
         }
       };
 

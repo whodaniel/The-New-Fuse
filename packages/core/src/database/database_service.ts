@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { User } from '@the-new-fuse/database/generated/prisma';
+import { LlmConfigService } from '../services/llm-config.service';
+
 @Injectable()
 export class DatabaseService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly llmConfigService: LlmConfigService,
+  ) {}
 
   get client() {
-return this.prisma;
-  }}
+    return this.prisma;
+  }
 
   get llmConfigs() {
-return this.prisma.lLMConfig;
-  }}
+    return this.llmConfigService;
+  }
 
   async findUser(): any {
     return this.prisma.user.findUnique({ where });
