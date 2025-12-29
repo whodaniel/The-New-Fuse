@@ -39,12 +39,31 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
 
     // Railway-specific Redis configuration
     if (cacheConfig.redis.url && cacheConfig.redis.url.includes('railway')) {
+      let redisUrl = cacheConfig.redis.url;
+      this.logger.log(`[AdvancedCacheManager] Raw Railway Redis URL detected`);
+
+      // Double-check for duplication - this provides a safety net if cache.config.ts logic didn't catch it
+      const redisPrefix = 'redis://';
+      const redissPrefix = 'rediss://';
+      const prefix = redisUrl.startsWith(redissPrefix) ? redissPrefix : redisPrefix;
+      const firstIndex = redisUrl.indexOf(prefix);
+
+      // Look for the prefix again after the first occurrence
+      const secondIndex = redisUrl.indexOf(prefix, firstIndex + prefix.length);
+
+      if (firstIndex !== -1 && secondIndex !== -1) {
+        this.logger.warn(
+          `[AdvancedCacheManager] Detected duplicated REDIS_URL in config (len: ${redisUrl.length}). Auto-correcting locally.`
+        );
+        redisUrl = redisUrl.substring(0, secondIndex);
+      }
+
       this.logger.log(
-        `[AdvancedCacheManager] Detected Railway Redis URL: ${cacheConfig.redis.url}`
+        `[AdvancedCacheManager] Connecting to Railway Redis at url length: ${redisUrl.length}`
       );
 
       try {
-        const url = new URL(cacheConfig.redis.url);
+        const url = new URL(redisUrl);
         // Railway Redis doesn't support database selection
         this.redisClient = new Redis({
           host: url.hostname,
@@ -56,13 +75,18 @@ export class AdvancedCacheManager implements OnModuleInit, OnModuleDestroy {
           retryStrategy: cacheConfig.redis.retryStrategy,
           lazyConnect: false,
         });
+
         this.logger.log(
-          `[AdvancedCacheManager] Connecting to Railway Redis at ${url.hostname}:${url.port}`
+          `[AdvancedCacheManager] Connection initialized to ${url.hostname}:${url.port}`
         );
       } catch (error) {
         this.logger.error(
           `[AdvancedCacheManager] Failed to parse Railway REDIS_URL: ${(error as Error).message}`
         );
+        // Attempt fallback to cleaned string if new URL failed
+        if (redisUrl !== cacheConfig.redis.url) {
+          throw error;
+        }
         throw error;
       }
     }
