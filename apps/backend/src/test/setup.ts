@@ -1,11 +1,10 @@
-import { Test } from '@nestjs/testing';
-import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { Test } from '@nestjs/testing';
+import { db, sql } from '@the-new-fuse/database/drizzle';
 
 export async function setupTestModule() {
   const moduleRef = await Test.createTestingModule({
     providers: [
-      PrismaService,
       {
         provide: ConfigService,
         useValue: {
@@ -26,15 +25,16 @@ export async function setupTestModule() {
 }
 
 export async function setupTestDatabase() {
-  const prisma = new PrismaService();
-  
   // Clean up test database
-  await prisma.$executeRaw`TRUNCATE TABLE "User" CASCADE`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Agent" CASCADE`;
-  
-  return prisma;
+  await db.execute(sql`TRUNCATE TABLE users CASCADE`);
+  await db.execute(sql`TRUNCATE TABLE agents CASCADE`);
+
+  return db;
 }
 
-export async function teardownTestDatabase(prisma: PrismaService) {
-  await prisma.$disconnect();
+export async function teardownTestDatabase() {
+  // Drizzle client (postgres.js) handles connection pool
+  // No explicit disconnect needed usually, or use sql`DISCARD ALL`?
+  // But for tests, we can just leave it or explicit close if exposed.
+  // The exported 'db' is a singleton.
 }

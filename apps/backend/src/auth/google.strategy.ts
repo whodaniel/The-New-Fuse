@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { PrismaService } from '../prisma/prisma.service';
+// import { PrismaService } from '../prisma/prisma.service';
 import { BaseOAuthStrategy } from './base-oauth.strategy';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   private baseStrategy: BaseOAuthStrategy;
 
-  constructor(
-    private configService: ConfigService,
-    private prisma: PrismaService
-  ) {
+  constructor(private configService: ConfigService) {
     super({
       clientID: configService.get<string>('GOOGLE_CLIENT_ID') || 'MISSING_GOOGLE_CLIENT_ID',
       clientSecret:
@@ -31,7 +28,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       protected getProviderName(): string {
         return 'Google';
       }
-    })(configService, prisma);
+    })(configService);
   }
 
   async validate(

@@ -1,13 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PrismaService } from '../../prisma/prisma.service';
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
@@ -23,11 +20,22 @@ export class RolesGuard implements CanActivate {
     }
 
     // Get user with roles from database
-    const dbUser = await this.prisma.user.findUnique({
-      where: { id: user.id },
-      select: { role: true },
-    });
+    const dbUser = await drizzleUserRepository.findById(user.id);
 
-    return roles.includes(dbUser.role);
+    if (!dbUser) {
+      return false;
+    }
+
+    // Check primary role
+    if (roles.includes(dbUser.role)) {
+      return true;
+    }
+
+    // Check roles array if it exists (schema has both role and roles)
+    if (dbUser.roles && Array.isArray(dbUser.roles)) {
+      return dbUser.roles.some((r: string) => roles.includes(r));
+    }
+
+    return false;
   }
 }

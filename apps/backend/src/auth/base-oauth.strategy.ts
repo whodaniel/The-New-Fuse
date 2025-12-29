@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service';
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 import { VerifyCallback } from 'passport-oauth2';
 
 /**
@@ -7,10 +7,7 @@ import { VerifyCallback } from 'passport-oauth2';
  * Extracts common validation logic to reduce code duplication
  */
 export abstract class BaseOAuthStrategy {
-  constructor(
-    protected configService: ConfigService,
-    protected prisma: PrismaService,
-  ) {}
+  constructor(protected configService: ConfigService) {}
 
   /**
    * Returns the provider-specific ID field name (e.g., 'googleId', 'githubId')
@@ -30,62 +27,42 @@ export abstract class BaseOAuthStrategy {
     profile: any,
     accessToken: string,
     refreshToken: string,
-    done: VerifyCallback,
+    done: VerifyCallback
   ): Promise<void> {
     const { id, emails, displayName, username, photos } = profile;
     const email = emails?.[0]?.value;
 
     if (!email) {
       return done(
-        new Error(`No email found from ${this.getProviderName()}. Please make your email public in ${this.getProviderName()} settings.`),
-        null,
+        new Error(
+          `No email found from ${this.getProviderName()}. Please make your email public in ${this.getProviderName()} settings.`
+        ),
+        null
       );
     }
 
     try {
-      const providerIdField = this.getProviderIdField();
+      // Find user by email
+      let user = await drizzleUserRepository.findByEmail(email);
 
-      // Try to find user by provider ID first
-      let user = await this.prisma.user.findUnique({
-        where: { [providerIdField]: id },
-      });
-
-      if (!user) {
-        // Check if user exists with this email
-        user = await this.prisma.user.findUnique({
-          where: { email },
-        });
-
-        if (user) {
-          // Link provider account to existing user
-          user = await this.prisma.user.update({
-            where: { id: user.id },
-            data: {
-              [providerIdField]: id,
-              picture: photos?.[0]?.value,
-              emailVerified: new Date(), // OAuth providers verify emails
-            },
-          });
-        } else {
-          // Create new user with provider account
-          user = await this.prisma.user.create({
-            data: {
-              email,
-              name: displayName || username || email.split('@')[0],
-              [providerIdField]: id,
-              picture: photos?.[0]?.value,
-              emailVerified: new Date(),
-              role: 'USER',
-            },
-          });
+      if (user) {
+        // User exists, we can update basic info if needed
+        // Note: provider IDs and picture fields are currently not in schema
+        // We ensure email is verified since it came from OAuth provider
+        if (!user.emailVerified) {
+          await drizzleUserRepository.verifyEmail(user.id);
+          user.emailVerified = true;
         }
       } else {
-        // Update profile picture
-        user = await this.prisma.user.update({
-          where: { id: user.id },
-          data: {
-            picture: photos?.[0]?.value,
-          },
+        // Create new user
+        // Note: We don't have googleId in schema, so we rely on email
+        user = await drizzleUserRepository.create({
+          email,
+          name: displayName || username || email.split('@')[0],
+          hashedPassword: '', // No password for OAuth users
+          emailVerified: true,
+          role: 'USER',
+          isActive: true,
         });
       }
 

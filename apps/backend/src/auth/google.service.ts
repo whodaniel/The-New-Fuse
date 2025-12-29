@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { OAuth2Client } from 'google-auth-library';
-import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class GoogleAuthService {
@@ -10,13 +10,12 @@ export class GoogleAuthService {
 
   constructor(
     private configService: ConfigService,
-    private prisma: PrismaService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {
     this.oauth2Client = new OAuth2Client(
       configService.get('GOOGLE_CLIENT_ID'),
       configService.get('GOOGLE_CLIENT_SECRET'),
-      configService.get('GOOGLE_REDIRECT_URI'),
+      configService.get('GOOGLE_REDIRECT_URI')
     );
   }
 
@@ -28,21 +27,32 @@ export class GoogleAuthService {
     });
 
     const payload = ticket.getPayload();
-    
+
     // Find or create user
-    const user = await this.prisma.user.upsert({
-      where: { email: payload.email },
-      update: {
+    let user = await drizzleUserRepository.findByEmail(payload.email);
+
+    if (user) {
+      // Update existing user
+      // Note: picture field is not currently in schema, ignoring
+      user = await drizzleUserRepository.update(user.id, {
         name: payload.name,
-        picture: payload.picture,
-      },
-      create: {
+      });
+      // Also ensure email verified
+      if (!user.emailVerified) {
+        await drizzleUserRepository.verifyEmail(user.id);
+        user.emailVerified = true;
+      }
+    } else {
+      // Create new user
+      user = await drizzleUserRepository.create({
         email: payload.email,
         name: payload.name,
-        picture: payload.picture,
+        hashedPassword: '', // No password for OAuth users
+        emailVerified: true,
         role: 'USER',
-      },
-    });
+        isActive: true,
+      });
+    }
 
     // Generate JWT
     const jwt = this.jwtService.sign({

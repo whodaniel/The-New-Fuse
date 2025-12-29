@@ -3,17 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-github2';
 import { VerifyCallback } from 'passport-oauth2';
-import { PrismaService } from '../prisma/prisma.service';
+// import { PrismaService } from '../prisma/prisma.service';
 import { BaseOAuthStrategy } from './base-oauth.strategy';
 
 @Injectable()
 export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
   private baseStrategy: BaseOAuthStrategy;
 
-  constructor(
-    private configService: ConfigService,
-    private prisma: PrismaService
-  ) {
+  constructor(private configService: ConfigService) {
     super({
       clientID: configService.get<string>('GITHUB_CLIENT_ID') || 'MISSING_GITHUB_CLIENT_ID',
       clientSecret:
@@ -32,7 +29,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
       protected getProviderName(): string {
         return 'GitHub';
       }
-    })(configService, prisma);
+    })(configService);
   }
 
   async validate(
