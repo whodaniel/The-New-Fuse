@@ -743,6 +743,296 @@ describe('DrizzleChatRepository', () => {
     });
   });
 
+  describe('Chat Room Participant Operations', () => {
+    let testRoomId: string;
+
+    beforeEach(async () => {
+      const roomData = {
+        name: 'Test Room',
+        ownerId: testUserId,
+        isPrivate: false,
+        metadata: {},
+      };
+      const room = await drizzleChatRepository.createRoom(roomData);
+      testRoomId = room.id;
+    });
+
+    describe('addParticipant', () => {
+      it('should add participant to room', async () => {
+        const participantData = {
+          roomId: testRoomId,
+          userId: testUserId,
+          role: 'MEMBER' as const,
+        };
+
+        const participant = await drizzleChatRepository.addParticipant(participantData);
+
+        expectDatabaseRow(participant, {
+          roomId: testRoomId,
+          userId: testUserId,
+          role: 'MEMBER',
+        });
+      });
+
+      it('should add participant with admin role', async () => {
+        const participantData = {
+          roomId: testRoomId,
+          userId: testUserId,
+          role: 'ADMIN' as const,
+        };
+
+        const participant = await drizzleChatRepository.addParticipant(participantData);
+
+        expect(participant.role).toBe('ADMIN');
+      });
+    });
+
+    describe('findParticipantsByRoomId', () => {
+      it('should find all participants in room', async () => {
+        const user2Data = await UserFactory.build();
+        const user2 = await drizzleUserRepository.create(user2Data);
+
+        await drizzleChatRepository.addParticipant({
+          roomId: testRoomId,
+          userId: testUserId,
+          role: 'ADMIN' as const,
+        });
+        await drizzleChatRepository.addParticipant({
+          roomId: testRoomId,
+          userId: user2.id,
+          role: 'MEMBER' as const,
+        });
+
+        const participants = await drizzleChatRepository.findParticipantsByRoomId(testRoomId);
+
+        expectArrayLength(participants, 2);
+        expect(participants.every((p) => p.roomId === testRoomId)).toBe(true);
+      });
+
+      it('should return empty array for room with no participants', async () => {
+        const participants = await drizzleChatRepository.findParticipantsByRoomId('non-existent-room');
+
+        expect(participants).toEqual([]);
+      });
+    });
+
+    describe('findParticipant', () => {
+      it('should find specific participant', async () => {
+        await drizzleChatRepository.addParticipant({
+          roomId: testRoomId,
+          userId: testUserId,
+          role: 'MEMBER' as const,
+        });
+
+        const participant = await drizzleChatRepository.findParticipant(testRoomId, testUserId);
+
+        expectNotNull(participant);
+        expect(participant.roomId).toBe(testRoomId);
+        expect(participant.userId).toBe(testUserId);
+      });
+
+      it('should return null for non-existent participant', async () => {
+        const participant = await drizzleChatRepository.findParticipant(testRoomId, 'non-existent-user');
+
+        expect(participant).toBeNull();
+      });
+    });
+
+    describe('updateParticipant', () => {
+      it('should update participant role', async () => {
+        await drizzleChatRepository.addParticipant({
+          roomId: testRoomId,
+          userId: testUserId,
+          role: 'MEMBER' as const,
+        });
+
+        const updated = await drizzleChatRepository.updateParticipant(testRoomId, testUserId, {
+          role: 'ADMIN' as const,
+        });
+
+        expectNotNull(updated);
+        expect(updated.role).toBe('ADMIN');
+      });
+
+      it('should return null for non-existent participant', async () => {
+        const updated = await drizzleChatRepository.updateParticipant(testRoomId, 'non-existent-user', {
+          role: 'ADMIN' as const,
+        });
+
+        expect(updated).toBeNull();
+      });
+    });
+
+    describe('removeParticipant', () => {
+      it('should remove participant from room', async () => {
+        await drizzleChatRepository.addParticipant({
+          roomId: testRoomId,
+          userId: testUserId,
+          role: 'MEMBER' as const,
+        });
+
+        const result = await drizzleChatRepository.removeParticipant(testRoomId, testUserId);
+
+        expect(result).toBe(true);
+
+        const participant = await drizzleChatRepository.findParticipant(testRoomId, testUserId);
+        expect(participant).toBeNull();
+      });
+
+      it('should return false for non-existent participant', async () => {
+        const result = await drizzleChatRepository.removeParticipant(testRoomId, 'non-existent-user');
+
+        expect(result).toBe(false);
+      });
+    });
+
+    describe('findJoinedRooms', () => {
+      it('should find all rooms user has joined', async () => {
+        const room1Data = {
+          name: 'Room 1',
+          ownerId: testUserId,
+          isPrivate: false,
+          metadata: {},
+        };
+        const room2Data = {
+          name: 'Room 2',
+          ownerId: testUserId,
+          isPrivate: false,
+          metadata: {},
+        };
+
+        const room1 = await drizzleChatRepository.createRoom(room1Data);
+        const room2 = await drizzleChatRepository.createRoom(room2Data);
+
+        await drizzleChatRepository.addParticipant({
+          roomId: room1.id,
+          userId: testUserId,
+          role: 'MEMBER' as const,
+        });
+        await drizzleChatRepository.addParticipant({
+          roomId: room2.id,
+          userId: testUserId,
+          role: 'MEMBER' as const,
+        });
+
+        const rooms = await drizzleChatRepository.findJoinedRooms(testUserId);
+
+        expect(rooms.length).toBeGreaterThanOrEqual(2);
+        expect(rooms.some((r) => r.id === room1.id)).toBe(true);
+        expect(rooms.some((r) => r.id === room2.id)).toBe(true);
+      });
+
+      it('should return empty array for user not in any rooms', async () => {
+        const user2Data = await UserFactory.build();
+        const user2 = await drizzleUserRepository.create(user2Data);
+
+        const rooms = await drizzleChatRepository.findJoinedRooms(user2.id);
+
+        expect(rooms).toEqual([]);
+      });
+
+      it('should not return soft-deleted rooms', async () => {
+        const roomData = {
+          name: 'Deleted Room',
+          ownerId: testUserId,
+          isPrivate: false,
+          metadata: {},
+        };
+        const room = await drizzleChatRepository.createRoom(roomData);
+
+        await drizzleChatRepository.addParticipant({
+          roomId: room.id,
+          userId: testUserId,
+          role: 'MEMBER' as const,
+        });
+
+        await drizzleChatRepository.softDeleteRoom(room.id);
+
+        const rooms = await drizzleChatRepository.findJoinedRooms(testUserId);
+
+        expect(rooms.every((r) => r.id !== room.id)).toBe(true);
+      });
+    });
+  });
+
+  describe('Read Receipt Operations', () => {
+    let testChatId: string;
+    let testMessageId: string;
+
+    beforeEach(async () => {
+      const chatData = ChatFactory.build({ userId: testUserId });
+      const chat = await drizzleChatRepository.createChat(chatData);
+      testChatId = chat.id;
+
+      const messageData = MessageFactory.build({ chatId: testChatId });
+      const message = await drizzleChatRepository.createMessage(messageData);
+      testMessageId = message.id;
+    });
+
+    describe('upsertReadReceipt', () => {
+      it('should create new read receipt', async () => {
+        const receiptData = {
+          messageId: testMessageId,
+          userId: testUserId,
+          readAt: new Date(),
+        };
+
+        const receipt = await drizzleChatRepository.upsertReadReceipt(receiptData);
+
+        expectDatabaseRow(receipt, {
+          messageId: testMessageId,
+          userId: testUserId,
+        });
+        expect(receipt.readAt).toBeInstanceOf(Date);
+      });
+
+      it('should update existing read receipt', async () => {
+        const receiptData = {
+          messageId: testMessageId,
+          userId: testUserId,
+          readAt: new Date('2024-01-01'),
+        };
+
+        const first = await drizzleChatRepository.upsertReadReceipt(receiptData);
+        const firstReadAt = first.readAt;
+
+        // Small delay to ensure different timestamp
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        // Upsert again - should update existing
+        const second = await drizzleChatRepository.upsertReadReceipt({
+          messageId: testMessageId,
+          userId: testUserId,
+          readAt: new Date(),
+        });
+
+        expect(second.id).toBe(first.id); // Same record
+        expect(second.readAt.getTime()).toBeGreaterThan(firstReadAt.getTime()); // Updated timestamp
+      });
+
+      it('should create separate receipts for different users', async () => {
+        const user2Data = await UserFactory.build();
+        const user2 = await drizzleUserRepository.create(user2Data);
+
+        const receipt1 = await drizzleChatRepository.upsertReadReceipt({
+          messageId: testMessageId,
+          userId: testUserId,
+          readAt: new Date(),
+        });
+
+        const receipt2 = await drizzleChatRepository.upsertReadReceipt({
+          messageId: testMessageId,
+          userId: user2.id,
+          readAt: new Date(),
+        });
+
+        expect(receipt1.id).not.toBe(receipt2.id);
+        expect(receipt1.userId).toBe(testUserId);
+        expect(receipt2.userId).toBe(user2.id);
+      });
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle chats with null metadata', async () => {
       const chat = await drizzleChatRepository.createChat(
