@@ -79,6 +79,7 @@ export const agentNfts = pgTable('agent_nfts', {
 
 export const agentRegistrations = pgTable('agent_registrations', {
   id: uuid('id').primaryKey().defaultRandom(),
+  // Indexed for faster agent lookups (see migration: 20240725120000_add_performance_indexes.sql)
   agentId: uuid('agent_id')
     .notNull()
     .references(() => agents.id, { onDelete: 'cascade' }),
