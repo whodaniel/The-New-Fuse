@@ -27,6 +27,10 @@ export * from './repositories';
 // Export compatibility layer for Prisma migration
 export * from './compatibility';
 
+// Export DatabaseService (unified database access layer)
+// PrismaService is an alias for backwards compatibility
+export { DatabaseService, PrismaService } from './database.service';
+
 // Re-export useful Drizzle utilities
 export {
   and,

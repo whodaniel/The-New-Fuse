@@ -46,13 +46,8 @@ RUN pnpm --filter @the-new-fuse/shared build
 # The ... suffix tells pnpm to also build dependencies
 RUN pnpm --filter=./apps/${SERVICE_PATH}... build
 
-# Generate Prisma clients from workspace root to access hoisted dependencies
-# For Prisma 7+, we need to provide a placeholder DATABASE_URL since generate doesn't connect to the DB
-# Generate Prisma client for services that have their own schema
-RUN if [ -f "./apps/${SERVICE_PATH}/prisma/schema.prisma" ]; then \
-      DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" \
-      npx prisma generate --schema=./apps/${SERVICE_PATH}/prisma/schema.prisma; \
-    fi
+# NOTE: Prisma has been migrated to Drizzle ORM - no generation step needed
+
 
 #------------------------------------------------------------------------------
 # Runner stage

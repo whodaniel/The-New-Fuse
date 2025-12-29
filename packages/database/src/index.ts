@@ -23,6 +23,9 @@ export {
   type Transaction,
 } from './drizzle';
 
+// Export DatabaseService and PrismaService (backwards compatibility)
+export { DatabaseService, PrismaService } from './drizzle/database.service';
+
 // Export Drizzle schema tables
 export * as drizzleSchema from './drizzle/schema';
 
@@ -44,11 +47,11 @@ export {
   notifications,
   revenueDistributions,
   revenueStreams,
-  users,
-  workspaces,
   tasks,
-  workflows,
+  users,
   workflowExecutions,
+  workflows,
+  workspaces,
 } from './drizzle/schema';
 
 // Export Drizzle inferred types
@@ -57,11 +60,6 @@ export type {
   Chat,
   ChatMessage,
   Message,
-  Task,
-  User,
-  Workflow,
-  WorkflowExecution,
-  Workspace,
   NewAgent,
   NewChat,
   NewChatMessage,
@@ -71,6 +69,11 @@ export type {
   NewWorkflow,
   NewWorkflowExecution,
   NewWorkspace,
+  Task,
+  User,
+  Workflow,
+  WorkflowExecution,
+  Workspace,
 } from './drizzle/types';
 
 // Export Drizzle repositories
@@ -119,13 +122,14 @@ export {
   sql,
 } from 'drizzle-orm';
 
-// Re-export enums from types for backward compatibility
+// Re-export pg enums from schema for backward compatibility
+// Note: These are pgEnum types, not TypeScript enums
 export {
-  AgentStatus,
-  AgentType,
-  TaskPriority,
-  TaskStatus,
-  UserRole,
-  WorkflowExecutionStatus,
-  WorkflowStatus,
-} from './drizzle/types';
+  agentStatusEnum,
+  agentTypeEnum,
+  taskPriorityEnum,
+  taskStatusEnum,
+  userRoleEnum,
+  workflowExecutionStatusEnum,
+  workflowStatusEnum,
+} from './drizzle/schema';
