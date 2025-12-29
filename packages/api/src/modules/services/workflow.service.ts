@@ -187,17 +187,28 @@ export class WorkflowService extends BaseService<Workflow> {
 
       this.logger.log(`Started workflow execution: ${execution.id} for workflow ${id}`);
 
-      // In a real implementation, we would trigger the actual workflow execution here,
-      // potentially using a queue or background processing system
-      // For this example, we'll just update the execution record with a successful completion
+      // TODO: This is a mock implementation. A real workflow engine should be implemented here.
+      // The engine should support the following features:
+      // 1.  DAG-based step execution
+      // 2.  Conditional branching
+      // 3.  Per-step timeout handling
+      // 4.  Resuming from failure
+      // 5.  Input/Output mapping between steps
+      // 6.  Agent assignment and handoff
+      this.logger.warn(
+        `Executing mock workflow for execution ID: ${execution.id}`,
+      );
 
-      // Update execution record
-      const completedExecution = await this.executionRepository.update(execution.id, {
-        status: 'completed', // Using properly typed status
-        progress: 100,
-        outputs: { result: 'Workflow executed successfully' },
-        finishedAt: new Date()
-      } as any);
+      // Update execution record to simulate a successful run
+      const completedExecution = await this.executionRepository.update(
+        execution.id,
+        {
+          status: 'completed',
+          progress: 100,
+          outputs: { result: 'Mock workflow executed successfully' },
+          finishedAt: new Date(),
+        } as any,
+      );
 
       this.logger.log(`Completed workflow execution: ${execution.id}`);
       return this.convertExecutionStatus(completedExecution);

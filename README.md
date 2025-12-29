@@ -176,7 +176,8 @@ graph TD
 
 - NestJS framework
 - TypeScript
-- Prisma ORM
+- Prisma ORM (migrating to Drizzle ORM)
+- Drizzle ORM
 - PostgreSQL database
 - Redis caching
 
@@ -451,6 +452,11 @@ pnpm run test:e2e         # End-to-end tests
 ### Database
 
 ```bash
+# Drizzle ORM (New)
+pnpm run db:generate:drizzle # Generate Drizzle schema
+pnpm run db:migrate:drizzle  # Run Drizzle migrations
+
+# Prisma ORM (Legacy)
 pnpm run db:generate      # Generate Prisma client
 pnpm run db:migrate       # Run migrations
 pnpm run db:studio        # Open Prisma Studio

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { Agent, CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentType, AgentStatus, AgentCapability } from '@the-new-fuse/types';
 import { PrismaService } from '../../prisma/prisma.service';
 import { PrismaClient, Prisma, Agent as PrismaAgent, AgentStatus as PrismaAgentStatus } from '@prisma/client';
@@ -10,12 +10,10 @@ export class AgentService {
   constructor(private readonly prisma: PrismaService) {}
 
   private mapPrismaStatusToType(prismaStatus: PrismaAgentStatus): AgentStatus {
-    // Since the enums now match, we can do a simple string mapping
     return prismaStatus as unknown as AgentStatus;
   }
 
   private mapTypeStatusToPrisma(typeStatus: AgentStatus): PrismaAgentStatus {
-    // Since the enums now match, we can do a simple string mapping
     return typeStatus as unknown as PrismaAgentStatus;
   }
 
@@ -36,18 +34,15 @@ export class AgentService {
 
   async createAgent(data: CreateAgentDto, userId: string): Promise<Agent> {
     try {
-      // Use transaction to ensure data consistency
       return await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        // Check for existing agent with same name
         const existingAgent = await tx.agent.findFirst({
-          where: { name: data.name, deletedAt: null }
+          where: { name: data.name, userId, deletedAt: null }
         });
 
         if (existingAgent) {
-          throw new Error(`Agent with name "${data.name}" already exists`);
+          throw new ConflictException(`Agent with name "${data.name}" already exists`);
         }
 
-        // Create the agent
         const agent = await tx.agent.create({
           data: {
             name: data.name,
@@ -66,16 +61,18 @@ export class AgentService {
         return this.transformPrismaAgent(agent);
       });
     } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to create agent: ${errorMessage}`);
-      throw error;
+      throw new InternalServerErrorException('Failed to create agent');
     }
   }
 
   async getAgents(userId: string, page: number = 1, limit: number = 50): Promise<{ data: Agent[], pagination: any }> {
     try {
       const skip = (page - 1) * limit;
-
       const [agents, total] = await Promise.all([
         this.prisma.agent.findMany({
           where: { userId, deletedAt: null },
@@ -100,9 +97,8 @@ export class AgentService {
         }),
         this.prisma.agent.count({ where: { userId, deletedAt: null } }),
       ]);
-
       return {
-        data: agents.map(this.transformPrismaAgent),
+        data: agents.map(a => this.transformPrismaAgent(a as PrismaAgent)),
         pagination: {
           page,
           limit,
@@ -113,71 +109,48 @@ export class AgentService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to get agents: ${errorMessage}`);
-      throw error;
+      throw new InternalServerErrorException('Failed to retrieve agents');
     }
   }
 
   async getAgentById(id: string, userId: string): Promise<Agent> {
-    try {
-      const agent = await this.prisma.agent.findFirst({
-        where: { id, userId, deletedAt: null },
-        select: {
-          id: true,
-          name: true,
-          type: true,
-          status: true,
-          description: true,
-          systemPrompt: true,
-          config: true,
-          capabilities: true,
-          provider: true,
-          userId: true,
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
-        },
-      });
+    const agent = await this.prisma.agent.findFirst({
+      where: { id, userId, deletedAt: null },
+    });
 
-      if (!agent) {
-        throw new Error(`Agent with id "${id}" not found`);
-      }
-
-      return this.transformPrismaAgent(agent);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`Failed to get agent: ${errorMessage}`);
-      throw error;
+    if (!agent) {
+      throw new NotFoundException(`Agent with id "${id}" not found`);
     }
+
+    return this.transformPrismaAgent(agent);
   }
 
   async updateAgent(id: string, updates: UpdateAgentDto, userId: string): Promise<Agent> {
     try {
-      return await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        // Check if agent exists
+      return await this.prisma.$transaction(async (tx) => {
         const existingAgent = await tx.agent.findFirst({
           where: { id, userId, deletedAt: null }
         });
 
         if (!existingAgent) {
-          throw new Error(`Agent with id "${id}" not found`);
+          throw new NotFoundException(`Agent with id "${id}" not found`);
         }
 
-        // Check name uniqueness if name is being updated
         if (updates.name) {
           const nameExists = await tx.agent.findFirst({
             where: {
               name: updates.name,
+              userId,
               id: { not: id },
               deletedAt: null
             }
           });
 
           if (nameExists) {
-            throw new Error(`Agent with name "${updates.name}" already exists`);
+            throw new ConflictException(`Agent with name "${updates.name}" already exists`);
           }
         }
 
-        // Update the agent
         const agent = await tx.agent.update({
           where: { id },
           data: {
@@ -190,24 +163,30 @@ export class AgentService {
         return this.transformPrismaAgent(agent);
       });
     } catch (error) {
+      if (error instanceof NotFoundException || error instanceof ConflictException) {
+        throw error;
+      }
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`Failed to update agent: ${errorMessage}`);
-      throw error;
+      this.logger.error(`Failed to update agent ${id}: ${errorMessage}`);
+      throw new InternalServerErrorException(`Failed to update agent ${id}`);
     }
   }
 
   async deleteAgent(id: string, userId: string): Promise<void> {
     try {
+      const agent = await this.getAgentById(id, userId);
       await this.prisma.agent.update({
-        where: { id },
+        where: { id: agent.id },
         data: { deletedAt: new Date() }
       });
-
       this.logger.log(`Deleted agent: ${id}`);
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to delete agent: ${errorMessage}`);
-      throw error;
+      throw new InternalServerErrorException('Failed to delete agent');
     }
   }
 
@@ -227,8 +206,8 @@ export class AgentService {
           type: true,
           status: true,
           description: true,
-          systemPrompt: false, // Exclude large text field
-          config: false, // Exclude large JSON field
+          systemPrompt: false, 
+          config: false, 
           capabilities: true,
           provider: true,
           userId: true,
@@ -237,12 +216,11 @@ export class AgentService {
           deletedAt: true,
         }
       });
-
-      return agents.map(this.transformPrismaAgent);
+      return agents.map(a => this.transformPrismaAgent(a as PrismaAgent));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to get agents by capability: ${errorMessage}`);
-      throw error;
+      throw new InternalServerErrorException('Failed to retrieve agents by capability');
     }
   }
 
@@ -260,8 +238,8 @@ export class AgentService {
           type: true,
           status: true,
           description: true,
-          systemPrompt: false, // Exclude for list view
-          config: false, // Exclude for list view
+          systemPrompt: false, 
+          config: false, 
           capabilities: true,
           provider: true,
           userId: true,
@@ -271,28 +249,71 @@ export class AgentService {
         },
         orderBy: { updatedAt: 'desc' }
       });
-
-      return agents.map(this.transformPrismaAgent);
+      return agents.map(a => this.transformPrismaAgent(a as PrismaAgent));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to get active agents: ${errorMessage}`);
-      throw error;
+      throw new InternalServerErrorException('Failed to retrieve active agents');
     }
   }
 
   async updateAgentStatus(id: string, status: AgentStatus, userId: string): Promise<Agent> {
+    await this.getAgentById(id, userId); // Verifies ownership and existence
     try {
       const agent = await this.prisma.agent.update({
         where: { id },
         data: { status: this.mapTypeStatusToPrisma(status) }
       });
-
       this.logger.log(`Updated agent status: ${id} -> ${status}`);
       return this.transformPrismaAgent(agent);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to update agent status: ${errorMessage}`);
-      throw error;
+      throw new InternalServerErrorException('Failed to update agent status');
+    }
+  }
+
+  async startAgent(id: string, userId: string): Promise<Agent> {
+    return this.updateAgentStatus(id, AgentStatus.ACTIVE, userId);
+  }
+
+  async stopAgent(id: string, userId: string): Promise<Agent> {
+    return this.updateAgentStatus(id, AgentStatus.INACTIVE, userId);
+  }
+
+  async getAgentStatus(id: string, userId: string): Promise<{ status: AgentStatus }> {
+    const agent = await this.getAgentById(id, userId);
+    return { status: agent.status };
+  }
+
+  async searchAgents(query: { name?: string; type?: AgentType; capability?: AgentCapability }, userId: string): Promise<Agent[]> {
+    try {
+      const where: Prisma.AgentWhereInput = {
+        userId,
+        deletedAt: null,
+      };
+
+      if (query.name) {
+        where.name = {
+          contains: query.name,
+          mode: 'insensitive',
+        };
+      }
+      if (query.type) {
+        where.type = query.type;
+      }
+      if (query.capability) {
+        where.capabilities = {
+          has: query.capability,
+        };
+      }
+
+      const agents = await this.prisma.agent.findMany({ where });
+      return agents.map(a => this.transformPrismaAgent(a as PrismaAgent));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to search agents: ${errorMessage}`);
+      throw new InternalServerErrorException('Failed to search for agents');
     }
   }
 } 

@@ -99,7 +99,7 @@ export const LandingPageRevolution = () => {
       </section>
 
       {/* FEATURES SECTION - BOLD CARDS */}
-      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
+      <section id="features" className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-10 sm:mb-14 lg:mb-20">

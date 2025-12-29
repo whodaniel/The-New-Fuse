@@ -1,3 +1,5 @@
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsEnum } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from './core/base-types';
 import { AgentCapability, AgentStatus, AgentRole } from './core/enums';
 
@@ -45,14 +47,47 @@ export class Agent implements BaseEntity {
 
 // Changed from interface to class
 export class CreateAgentDto {
+  @ApiProperty({ required: true, description: "The agent's name" })
+  @IsString()
+  @IsNotEmpty()
   name: string;
+
+  @ApiProperty({ required: true, enum: AgentType, description: "The agent's type" })
+  @IsEnum(AgentType)
+  @IsNotEmpty()
   type: AgentType;
+
+  @ApiProperty({ required: false, description: "A description of the agent's purpose" })
+  @IsString()
+  @IsOptional()
   description?: string;
+
+  @ApiProperty({ required: false, description: "The system-level instructions for the agent" })
+  @IsString()
+  @IsOptional()
   systemPrompt?: string;
+
+  @ApiProperty({ required: false, isArray: true, enum: AgentCapability, description: "The agent's capabilities" })
+  @IsArray()
+  @IsOptional()
   capabilities?: AgentCapability[];
+
+  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Agent-specific configuration' })
+  @IsOptional()
   configuration?: unknown;
+
+  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Arbitrary metadata' })
+  @IsOptional()
   metadata?: unknown;
+
+  @ApiProperty({ required: false, enum: AgentRole, description: 'The role of the agent' })
+  @IsEnum(AgentRole)
+  @IsOptional()
   role?: AgentRole;
+
+  @ApiProperty({ required: false, description: 'The provider of the agent' })
+  @IsString()
+  @IsOptional()
   provider?: string;
 
   constructor(data: Partial<CreateAgentDto>) {
@@ -70,14 +105,47 @@ export class CreateAgentDto {
 
 // Changed from interface to class
 export class UpdateAgentDto {
+  @ApiProperty({ required: false, description: "The agent's name" })
+  @IsString()
+  @IsOptional()
   name?: string;
+
+  @ApiProperty({ required: false, description: "A description of the agent's purpose" })
+  @IsString()
+  @IsOptional()
   description?: string;
+
+  @ApiProperty({ required: false, description: "The system-level instructions for the agent" })
+  @IsString()
+  @IsOptional()
   systemPrompt?: string;
+
+  @ApiProperty({ required: false, isArray: true, enum: AgentCapability, description: "The agent's capabilities" })
+  @IsArray()
+  @IsOptional()
   capabilities?: AgentCapability[];
+
+  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Agent-specific configuration' })
+  @IsOptional()
   configuration?: unknown;
+
+  @ApiProperty({ required: false, enum: AgentStatus, description: "The agent's status" })
+  @IsEnum(AgentStatus)
+  @IsOptional()
   status?: AgentStatus;
+
+  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Arbitrary metadata' })
+  @IsOptional()
   metadata?: unknown;
+
+  @ApiProperty({ required: false, enum: AgentType, description: "The agent's type" })
+  @IsEnum(AgentType)
+  @IsOptional()
   type?: AgentType;
+
+  @ApiProperty({ required: false, enum: AgentRole, description: 'The role of the agent' })
+  @IsEnum(AgentRole)
+  @IsOptional()
   role?: AgentRole;
 
   constructor(data: Partial<UpdateAgentDto> = {}) {
