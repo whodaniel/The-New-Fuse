@@ -13,6 +13,7 @@ import {
 import { PromptOptimizerService } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
 import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
+import { RedisLockService } from '../../services/redis-lock.service';
 
 @Injectable()
 export class MassOrchestrationService {
@@ -21,7 +22,8 @@ export class MassOrchestrationService {
   constructor(
     private readonly promptOptimizer: PromptOptimizerService,
     private readonly topologyOptimizer: TopologyOptimizerService,
-    private readonly workflowOptimizer: WorkflowPromptOptimizerService
+    private readonly workflowOptimizer: WorkflowPromptOptimizerService,
+    private readonly redisLockService: RedisLockService,
   ) {}
 
   // Stage 1: Block-Level Prompt Optimization
@@ -30,6 +32,10 @@ export class MassOrchestrationService {
     config: MassOptimizationConfig
   ): Promise<OptimizationJob> {
     this.logger.log(`Starting MASS Stage 1 for agent ${agentId}`);
+    const lockId = await this.redisLockService.acquireLock(`optimizeAgentPrompt:${agentId}`, 30);
+    if (!lockId) {
+      throw new Error(`Could not acquire lock for agent ${agentId}`);
+    }
 
     const job = await this.createOptimizationJob('block_level', agentId, config);
 
@@ -55,6 +61,8 @@ export class MassOrchestrationService {
       this.logger.error(`MASS Stage 1 failed for agent ${agentId}:`, error);
       await this.updateJobStatus(job.id, 'failed', errorMessage);
       throw error;
+    } finally {
+      await this.redisLockService.releaseLock(`optimizeAgentPrompt:${agentId}`, lockId);
     }
   }
 
@@ -64,8 +72,14 @@ export class MassOrchestrationService {
     config: TopologyOptimizationConfig
   ): Promise<OptimizationJob> {
     this.logger.log(`Starting MASS Stage 2 with ${agentIds.length} agents`);
+    const sortedAgentIds = [...agentIds].sort();
+    const lockKey = `optimizeWorkflowTopology:${JSON.stringify(sortedAgentIds)}`;
+    const lockId = await this.redisLockService.acquireLock(lockKey, 60);
+    if (!lockId) {
+      throw new Error('Could not acquire lock for workflow topology optimization');
+    }
 
-    const job = await this.createOptimizationJob('topology', JSON.stringify(agentIds), config);
+    const job = await this.createOptimizationJob('topology', JSON.stringify(sortedAgentIds), config);
 
     try {
       await this.updateJobStatus(job.id, 'running');
@@ -89,6 +103,8 @@ export class MassOrchestrationService {
       this.logger.error(`MASS Stage 2 failed:`, error);
       await this.updateJobStatus(job.id, 'failed', errorMessage);
       throw error;
+    } finally {
+      await this.redisLockService.releaseLock(lockKey, lockId);
     }
   }
 

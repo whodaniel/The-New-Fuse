@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
 import { AgentLifecycleManager } from './AgentLifecycleManager';
+import { RedisLockService } from '../../services/redis-lock.service';
 
 // Types for the orchestrator services
 interface HeartbeatConfig {
@@ -42,10 +43,12 @@ class HeartbeatMonitoringService {
   private agentHeartbeats: Map<string, AgentHeartbeat> = new Map();
   private monitoringInterval: NodeJS.Timeout | null = null;
   private eventEmitter: EventEmitter2;
+  private redisLockService: RedisLockService;
 
-  constructor(config: HeartbeatConfig, eventEmitter: EventEmitter2) {
+  constructor(config: HeartbeatConfig, eventEmitter: EventEmitter2, redisLockService: RedisLockService) {
     this.config = config;
     this.eventEmitter = eventEmitter;
+    this.redisLockService = redisLockService;
   }
 
   start(): void {
@@ -63,18 +66,33 @@ class HeartbeatMonitoringService {
     this.logger.log('🔕 Heartbeat Monitoring Service stopped');
   }
 
-  registerAgent(agentId: string, expectedResponseTime?: number): void {
-    const now = new Date();
-    this.agentHeartbeats.set(agentId, {
-      agentId,
-      lastHeartbeat: now,
-      lastActivity: now,
-      status: 'active',
-      consecutiveFailures: 0,
-      expectedResponseTime: expectedResponseTime || this.config.timeoutMs,
-    });
-    this.logger.log(`✅ Agent registered for heartbeat monitoring: ${agentId}`);
-    this.eventEmitter.emit('agent.registered', { agentId, timestamp: now });
+  async registerAgent(agentId: string, expectedResponseTime?: number): Promise<void> {
+    const lockId = await this.redisLockService.acquireLock(`registerAgent:${agentId}`, 10);
+    if (!lockId) {
+      this.logger.warn(`Could not acquire lock to register agent ${agentId}. It might be registered by another instance.`);
+      return;
+    }
+
+    try {
+      if (this.agentHeartbeats.has(agentId)) {
+        this.logger.log(`Agent ${agentId} is already registered.`);
+        return;
+      }
+
+      const now = new Date();
+      this.agentHeartbeats.set(agentId, {
+        agentId,
+        lastHeartbeat: now,
+        lastActivity: now,
+        status: 'active',
+        consecutiveFailures: 0,
+        expectedResponseTime: expectedResponseTime || this.config.timeoutMs,
+      });
+      this.logger.log(`✅ Agent registered for heartbeat monitoring: ${agentId}`);
+      this.eventEmitter.emit('agent.registered', { agentId, timestamp: now });
+    } finally {
+      await this.redisLockService.releaseLock(`registerAgent:${agentId}`, lockId);
+    }
   }
 
   recordHeartbeat(agentId: string, taskId?: string): void {
@@ -212,7 +230,8 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
 
   constructor(
     @Inject(ConfigService) private configService: ConfigService,
-    @Inject(EventEmitter2) private eventEmitter: EventEmitter2
+    @Inject(EventEmitter2) private eventEmitter: EventEmitter2,
+    private readonly redisLockService: RedisLockService,
   ) {
     // NEW: Initialize Redis client
     const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
@@ -231,11 +250,11 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
       stagnationThresholdMs: parseInt(this.configService.get('STAGNATION_THRESHOLD_MS') || '30000'),
     };
 
-    this.heartbeatService = new HeartbeatMonitoringService(heartbeatConfig, this.eventEmitter);
+    this.heartbeatService = new HeartbeatMonitoringService(heartbeatConfig, this.eventEmitter, this.redisLockService);
     this.heartbeatService.start();
 
     // Register TNF itself as the Master Agent
-    this.heartbeatService.registerAgent('tnf-core', 60000);
+    await this.heartbeatService.registerAgent('tnf-core', 60000);
     this.logger.log('🎯 TNF Core registered as Master Agent');
 
     // Start self-heartbeat for TNF Core

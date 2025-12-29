@@ -36,7 +36,6 @@
     "@nestjs/schedule": "^4.0.2",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.10",
-    "@prisma/client": "7.1.0",
     "@the-new-fuse/ag-ui-core": "workspace:*",
 
     "@the-new-fuse/database": "workspace:*",
@@ -104,6 +103,7 @@
     "@types/passport-github2": "^1.2.9",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/supertest": "^6.0.3",
+    "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.49.0",
     "cross-env": "^10.1.0",
@@ -111,10 +111,10 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "inversify": "^7.10.6",
+    "ioredis-mock": "^8.9.1",
     "jest": "30.2.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.7.3",
-    "prisma": "7.1.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.1.4",
     "ts-jest": "29.4.5",
@@ -122,6 +122,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
+    "uuid": "^11.0.4",
     "webpack": "^5.103.0"
   },
   "jest": {
