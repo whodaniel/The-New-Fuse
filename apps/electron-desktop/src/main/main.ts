@@ -216,10 +216,10 @@ class ElectronMain {
       this.secureStorage = getSecureStorage();
       const storageInit = await this.secureStorage.initialize();
       console.log('[ElectronMain] SecureStorage initialized:', storageInit);
-      
+
       // Load stored API keys into environment
       await this.secureStorage.loadAllKeysToEnv();
-      
+
       this.hybridBackend = new HybridBackend();
       await this.hybridBackend.initialize();
 
@@ -344,19 +344,19 @@ class ElectronMain {
     });
 
     // Additional Tab Management Handlers
-    ipcMain.handle('tab:create', (event, url: string) => {
+    ipcMain.handle('tab:create', (_event: Electron.IpcMainInvokeEvent, url: string) => {
       return this.createMetaTab(url);
     });
 
-    ipcMain.handle('tab:switch', (event, viewId: string) => {
+    ipcMain.handle('tab:switch', (_event: Electron.IpcMainInvokeEvent, viewId: string) => {
       this.switchTab(viewId);
     });
 
-    ipcMain.handle('tab:close', (event, viewId: string) => {
+    ipcMain.handle('tab:close', (_event: Electron.IpcMainInvokeEvent, viewId: string) => {
       this.closeTab(viewId);
     });
 
-    ipcMain.handle('view:update-bounds', (event, bounds: any) => {
+    ipcMain.handle('view:update-bounds', (_event: Electron.IpcMainInvokeEvent, bounds: any) => {
       if (this.activeViewId) {
         this.updateViewBounds(this.activeViewId, bounds);
       }
@@ -464,16 +464,25 @@ class ElectronMain {
     });
 
     // Secure Storage / API Key Management handlers
-    ipcMain.handle('secure-storage:save', async (_: any, provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => {
-      try {
-        if (!this.secureStorage) {
-          return { success: false, id: '', error: 'Secure storage not initialized' };
+    ipcMain.handle(
+      'secure-storage:save',
+      async (
+        _: any,
+        provider: string,
+        apiKey: string,
+        customName?: string,
+        metadata?: Record<string, string>
+      ) => {
+        try {
+          if (!this.secureStorage) {
+            return { success: false, id: '', error: 'Secure storage not initialized' };
+          }
+          return await this.secureStorage.saveApiKey(provider, apiKey, customName, metadata);
+        } catch (error) {
+          return { success: false, id: '', error: (error as Error).message };
         }
-        return await this.secureStorage.saveApiKey(provider, apiKey, customName, metadata);
-      } catch (error) {
-        return { success: false, id: '', error: (error as Error).message };
       }
-    });
+    );
 
     ipcMain.handle('secure-storage:get', async (_: any, provider: string) => {
       try {
