@@ -13,6 +13,14 @@ export { AgentLLMService, LLMResponse } from './services/AgentLLMService';
 export { PromptService, PromptTemplate, PromptContext } from './services/PromptService';
 export { FeatureFlagService } from './services/FeatureFlagService';
 export { MongoFeatureFlagService } from './services/MongoFeatureFlagService';
+export { LlmConfigService } from './services/llm-config.service';
+
+// Security Services
+export { EncryptionService } from './security/encryption';
+export { SecurityService } from './security/security.service';
+
+// Modules
+export { LlmModule } from './modules/llm/llm.module';
 
 // Agent Services - Only export working implementations
 export { AgentOrchestrator, Task, Agent, TaskResult } from './agents/agent-orchestrator';
