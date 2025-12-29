@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 
 // Constants
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-for-development-only';
@@ -31,20 +31,20 @@ export function verifyToken(token: string): any {
 }
 
 // Validate user credentials
-export async function validateUser(email: string, password: string, prisma: PrismaClient): Promise<any> {
-  const user = await prisma.user.findUnique({ where: { email } });
-  
+export async function validateUser(email: string, password: string): Promise<any> {
+  const user = await drizzleUserRepository.findByEmail(email);
+
   if (!user) {
     return null;
   }
-  
-  const isPasswordValid = await comparePasswords(password, user.password || '');
-  
+
+  const isPasswordValid = await comparePasswords(password, user.hashedPassword || '');
+
   if (!isPasswordValid) {
     return null;
   }
-  
+
   // Don't return the password
-  const { password: _password, ...result } = user;
+  const { hashedPassword: _password, ...result } = user;
   return result;
 }
