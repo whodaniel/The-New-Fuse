@@ -4,7 +4,16 @@
  */
 
 import * as bcrypt from 'bcrypt';
-import type { NewUser, NewAgent, NewChat, NewMessage, NewTask, NewWorkflow } from '../../src/drizzle/types';
+import type {
+  NewUser,
+  NewAgent,
+  NewChat,
+  NewMessage,
+  NewTask,
+  NewWorkflow,
+  NewPipeline,
+  NewTaskExecution,
+} from '../../src/drizzle/types';
 
 /**
  * Generate a unique timestamp-based ID suffix
@@ -171,6 +180,58 @@ export const WorkflowFactory = {
    */
   buildList: (count: number, overrides: Partial<NewWorkflow> = {}): NewWorkflow[] => {
     return Array.from({ length: count }, () => WorkflowFactory.build(overrides));
+  },
+};
+
+/**
+ * Pipeline Factory
+ */
+export const PipelineFactory = {
+  /**
+   * Build pipeline data (not saved to database)
+   */
+  build: (overrides: Partial<NewPipeline> = {}): NewPipeline => {
+    return {
+      name: `Test Pipeline ${uniqueId()}`,
+      description: 'Test pipeline description',
+      configuration: { testConfig: true },
+      status: 'DRAFT',
+      userId: overrides.userId || 'default-user-id',
+      agentId: overrides.agentId || 'default-agent-id',
+      ...overrides,
+    };
+  },
+
+  /**
+   * Build multiple pipelines
+   */
+  buildList: (count: number, overrides: Partial<NewPipeline> = {}): NewPipeline[] => {
+    return Array.from({ length: count }, () => PipelineFactory.build(overrides));
+  },
+};
+
+/**
+ * Task Execution Factory
+ */
+export const TaskExecutionFactory = {
+  /**
+   * Build task execution data (not saved to database)
+   */
+  build: (overrides: Partial<NewTaskExecution> = {}): NewTaskExecution => {
+    return {
+      taskId: overrides.taskId || 'default-task-id',
+      status: 'PENDING',
+      output: null,
+      error: null,
+      ...overrides,
+    };
+  },
+
+  /**
+   * Build multiple task executions
+   */
+  buildList: (count: number, overrides: Partial<NewTaskExecution> = {}): NewTaskExecution[] => {
+    return Array.from({ length: count }, () => TaskExecutionFactory.build(overrides));
   },
 };
 
