@@ -69,7 +69,6 @@
     "clean:all": "rm -rf node_modules packages/*/node_modules apps/*/node_modules && pnpm install",
     "clean:cache": "turbo daemon stop && rm -rf .turbo",
     "clean:deps": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && find . -name '.turbo' -type d -prune -exec rm -rf '{}' +",
-    "db:generate": "pnpm prisma generate --schema ./prisma/schema.prisma",
     "db:migrate": "turbo run db:migrate",
     "db:reset": "turbo run db:reset",
     "db:studio": "turbo run db:studio",
