@@ -40,11 +40,14 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 # Build foundational packages first to ensure they're available
 # This avoids Turbo cache issues in fresh Docker builds
 RUN pnpm --filter @the-new-fuse/types build || true
-RUN pnpm --filter @the-new-fuse/core-vector-db build || true
+RUN pnpm --filter @the-new-fuse/core-vector-db build || true  
 RUN pnpm --filter @the-new-fuse/core build || true
 
-# Run the full build (use --force to avoid stale cache issues)
-RUN npm run build -- --force || pnpm run build -- --force
+# Clear Turbo cache and run the full build
+# TURBO_FORCE=true tells Turbo to ignore cache
+RUN rm -rf .turbo node_modules/.cache/turbo
+ENV TURBO_FORCE=true
+RUN npm run build || pnpm run build
 
 # Normalize dist directory location
 # If running from monorepo root, build output is in apps/frontend/dist

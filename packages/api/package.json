@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
+    "prebuild": "pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/core build",
     "build": "tsc",
     "build:api": "tsc",
     "build:force": "tsc --build --force",
