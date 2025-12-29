@@ -1,8 +1,12 @@
-import express, { Request, Response, NextFunction } from 'express';
-import passport from 'passport';
-import { register, login, logout, getCurrentUser } from '../controllers/authController';
+import express, { NextFunction, Request, Response } from 'express';
+import { AppConfigService } from '../config/app-config.service';
+import { SecureAuthController } from '../controllers/authController';
 
 const router = express.Router();
+
+// Initialize secure auth controller with config service
+const appConfig = new AppConfigService();
+const authController = new SecureAuthController(appConfig);
 
 // Wrapper function to handle async route handlers
 const asyncHandler = (fn: (req: Request, res: Response, next?: NextFunction) => Promise<any>) => {
@@ -12,21 +16,13 @@ const asyncHandler = (fn: (req: Request, res: Response, next?: NextFunction) => 
 };
 
 // Local auth routes
-router.post('/register', asyncHandler(register));
-router.post('/login', asyncHandler(login));
-router.post('/logout', asyncHandler(logout));
-router.get('/me', asyncHandler(getCurrentUser));
+router.post('/register', asyncHandler(authController.register));
+router.post('/login', asyncHandler(authController.login));
+router.post('/logout', asyncHandler(authController.logout));
+router.get('/me', asyncHandler(authController.getCurrentUser));
 
 // Google OAuth routes
-router.get('/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
+router.get('/google', authController.googleAuth);
+router.get('/google/callback', ...authController.googleAuthCallback);
 
 export const authRoutes = router;

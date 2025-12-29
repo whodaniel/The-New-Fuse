@@ -1,74 +1,73 @@
+import { AgentCapability, AgentMessage, AgentResponse, PriorityQueue } from '@the-new-fuse/types';
 import { EventEmitter } from 'events';
-import { Redis } from 'ioredis';
-import { AgentMessage, AgentResponse, AgentCapability, PriorityQueue } from '@the-new-fuse/types';
-import { FeatureTracker } from '@the-new-fuse/feature-tracker';
+// import { FeatureTracker } from '@the-new-fuse/feature-tracker'; // TODO: Package doesn't exist
 
 export class AgentCoordinator extends EventEmitter {
-    private readonly messageQueue: PriorityQueue<AgentMessage>;
-    private readonly agents: Map<string, AgentCapability[]> = new Map();
-    public readonly agentMap: Map<string, any> = new Map(); // For external access
+  private readonly messageQueue: PriorityQueue<AgentMessage>;
+  private readonly agents: Map<string, AgentCapability[]> = new Map();
+  public readonly agentMap: Map<string, any> = new Map(); // For external access
 
-    constructor(
-        private readonly name: string,
-        private readonly featureTracker: FeatureTracker
-    ) {
-        super();
-        this.messageQueue = new PriorityQueue<AgentMessage>();
-    }
+  constructor(
+    private readonly name: string
+    // private readonly featureTracker: FeatureTracker // TODO: Package doesn't exist
+  ) {
+    super();
+    this.messageQueue = new PriorityQueue<AgentMessage>();
+  }
 
-    async handleMessage(message: AgentMessage): Promise<void> {
-        const bestAgent = await this.findBestAgent(message);
-        await this.dispatchToAgent(bestAgent, message);
-    }
+  async handleMessage(message: AgentMessage): Promise<void> {
+    const bestAgent = await this.findBestAgent(message);
+    await this.dispatchToAgent(bestAgent, message);
+  }
 
-    private async findBestAgent(message: AgentMessage): Promise<string> {
-        const capabilities = this.analyzeMessageRequirements(message);
-        return this.matchAgentCapabilities(capabilities);
-    }
+  private async findBestAgent(message: AgentMessage): Promise<string> {
+    const capabilities = this.analyzeMessageRequirements(message);
+    return this.matchAgentCapabilities(capabilities);
+  }
 
-    private async handleResponse(response: AgentResponse): Promise<void> {
-        await this.validateResponse(response);
-        await this.updateFeatureProgress(response);
-        await this.notifySubscribers(response);
-    }
+  private async handleResponse(response: AgentResponse): Promise<void> {
+    await this.validateResponse(response);
+    await this.updateFeatureProgress(response);
+    await this.notifySubscribers(response);
+  }
 
-    private dispatchToAgent(agent: string, message: AgentMessage): Promise<void> {
-        // Implementation
-        return Promise.resolve();
-    }
+  private dispatchToAgent(agent: string, message: AgentMessage): Promise<void> {
+    // Implementation
+    return Promise.resolve();
+  }
 
-    private analyzeMessageRequirements(message: AgentMessage): AgentCapability[] {
-        // Implementation
-        return [];
-    }
+  private analyzeMessageRequirements(message: AgentMessage): AgentCapability[] {
+    // Implementation
+    return [];
+  }
 
-    private matchAgentCapabilities(capabilities: AgentCapability[]): string {
-        // Implementation
-        return '';
-    }
+  private matchAgentCapabilities(capabilities: AgentCapability[]): string {
+    // Implementation
+    return '';
+  }
 
-    private validateResponse(response: AgentResponse): Promise<void> {
-        // Implementation
-        return Promise.resolve();
-    }
+  private validateResponse(response: AgentResponse): Promise<void> {
+    // Implementation
+    return Promise.resolve();
+  }
 
-    private updateFeatureProgress(response: AgentResponse): Promise<void> {
-        // Implementation
-        return Promise.resolve();
-    }
+  private updateFeatureProgress(response: AgentResponse): Promise<void> {
+    // Implementation
+    return Promise.resolve();
+  }
 
-    private notifySubscribers(response: AgentResponse): Promise<void> {
-        // Implementation
-        return Promise.resolve();
-    }
+  private notifySubscribers(response: AgentResponse): Promise<void> {
+    // Implementation
+    return Promise.resolve();
+  }
 
-    start(): Promise<void> {
-        // Initialize the coordinator
-        return Promise.resolve();
-    }
+  start(): Promise<void> {
+    // Initialize the coordinator
+    return Promise.resolve();
+  }
 
-    stop(): Promise<void> {
-        // Stop the coordinator
-        return Promise.resolve();
-    }
+  stop(): Promise<void> {
+    // Stop the coordinator
+    return Promise.resolve();
+  }
 }

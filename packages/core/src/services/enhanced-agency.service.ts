@@ -14,7 +14,7 @@
  */
 
 import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { drizzleAgentRepository, drizzleTaskRepository } from '@the-new-fuse/database';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AgencyService, AgencyProfile, CreateAgencyDto, UpdateAgencyDto } from './agency.service';
 import { AgentSwarmOrchestrationService } from '../agents/AgentSwarmOrchestrationService';
@@ -71,7 +71,7 @@ export class EnhancedAgencyService {
   private providers = new Map<string, ProviderRegistration[]>();
 
   constructor(
-    private readonly prisma: PrismaService,
+    // private readonly prisma: PrismaService, // removed
     private readonly eventEmitter: EventEmitter2,
     private readonly agencyService: AgencyService,
     @Inject(forwardRef(() => AgentSwarmOrchestrationService))
@@ -288,18 +288,12 @@ export class EnhancedAgencyService {
     const swarmStatus = await this.getSwarmStatus(agencyId);
 
     // Get agents for this agency (would filter by organizationId in production)
-    const agents = await this.prisma.agent.findMany({
-      take: 100,
-    });
+    const agents = await drizzleAgentRepository.findAll(100);
 
     // Get tasks (would filter by agency in production)
-    const tasks = await this.prisma.task.findMany({
-      where: {
-        createdAt: {
-          gte: this.getDateFromTimeframe(timeframe),
-        },
-      },
-    });
+    const tasks = await drizzleTaskRepository.findTasksCreatedAfter(
+      this.getDateFromTimeframe(timeframe),
+    );
 
     const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED');
     const failedTasks = tasks.filter((t: any) => t.status === 'FAILED');

@@ -83,6 +83,24 @@ export class DrizzleAgentRepository {
   }
 
   /**
+   * Find all agents (with optional limit)
+   */
+  async findAll(limit?: number): Promise<Agent[]> {
+    let query = db
+      .select()
+      .from(agents)
+      .where(isNull(agents.deletedAt))
+      .orderBy(desc(agents.createdAt));
+
+    if (limit) {
+      // @ts-ignore
+      query = query.limit(limit);
+    }
+
+    return query;
+  }
+
+  /**
    * Update an agent
    */
   async update(id: string, data: Partial<NewAgent>): Promise<Agent | null> {

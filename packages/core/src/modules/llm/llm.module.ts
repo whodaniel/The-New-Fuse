@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { LlmConfigService } from '../../services/llm-config.service';
-import { PrismaService } from '@the-new-fuse/database';
+import { DrizzleModule } from '@the-new-fuse/database';
 
 @Module({
-  providers: [LlmConfigService, PrismaService],
+  imports: [DrizzleModule.forRoot()],
+  providers: [LlmConfigService],
   exports: [LlmConfigService],
 })
 export class LlmModule {}

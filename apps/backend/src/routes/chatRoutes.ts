@@ -1,6 +1,8 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
+import { AppConfigService } from '../config/app-config.service';
+import { createAuthMiddleware } from '../middleware/auth';
 import { ChatService } from '../services/chatService';
-import { authMiddleware } from '../middleware/auth';
+import { RedisService } from '../services/redis.service';
 
 // Define interface to extend Express Request
 interface AuthenticatedRequest extends Request {
@@ -15,8 +17,15 @@ interface AuthenticatedRequest extends Request {
 
 const router = express.Router();
 
+// Initialize services for auth middleware
+const appConfig = new AppConfigService();
+const redisService = new RedisService();
+const authMiddleware = createAuthMiddleware(appConfig, redisService);
+
 // Wrapper function to handle async route handlers
-const asyncHandler = (fn: (req: AuthenticatedRequest, res: Response, next?: NextFunction) => Promise<any>) => {
+const asyncHandler = (
+  fn: (req: AuthenticatedRequest, res: Response, next?: NextFunction) => Promise<any>
+) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req as AuthenticatedRequest, res, next)).catch(next);
   };
@@ -24,54 +33,63 @@ const asyncHandler = (fn: (req: AuthenticatedRequest, res: Response, next?: Next
 
 router.use(authMiddleware);
 
-router.get('/history', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    // Check if user exists in the request
-    if (!req.user) {
-      return res.status(401).json({ error: 'User not authenticated' });
-    }
-    
-    const page = parseInt(req.query.page as string) || 1;
-    const history = await ChatService.getChatHistory(req.user.id, page);
-    res.json(history);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error retrieving chat history:', errorMessage);
-    res.status(500).json({ error: 'Failed to retrieve chat history' });
-  }
-}));
+router.get(
+  '/history',
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user exists in the request
+      if (!req.user) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
 
-router.post('/message', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    // Check if user exists in the request
-    if (!req.user) {
-      return res.status(401).json({ error: 'User not authenticated' });
+      const page = parseInt(req.query.page as string) || 1;
+      const history = await ChatService.getChatHistory(req.user.id, page);
+      res.json(history);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error retrieving chat history:', errorMessage);
+      res.status(500).json({ error: 'Failed to retrieve chat history' });
     }
-    
-    const { role, content } = req.body;
-    const message = await ChatService.addMessage(req.user.id, role, content);
-    res.json(message);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error adding message:', errorMessage);
-    res.status(400).json({ error: 'Invalid message data' });
-  }
-}));
+  })
+);
 
-router.delete('/history', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    // Check if user exists in the request
-    if (!req.user) {
-      return res.status(401).json({ error: 'User not authenticated' });
+router.post(
+  '/message',
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user exists in the request
+      if (!req.user) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
+
+      const { role, content } = req.body;
+      const message = await ChatService.addMessage(req.user.id, role, content);
+      res.json(message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error adding message:', errorMessage);
+      res.status(400).json({ error: 'Invalid message data' });
     }
-    
-    const result = await ChatService.clearChatHistory(req.user.id);
-    res.json(result);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error clearing chat history:', errorMessage);
-    res.status(500).json({ error: 'Failed to clear chat history' });
-  }
-}));
+  })
+);
+
+router.delete(
+  '/history',
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user exists in the request
+      if (!req.user) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
+
+      const result = await ChatService.clearChatHistory(req.user.id);
+      res.json(result);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error clearing chat history:', errorMessage);
+      res.status(500).json({ error: 'Failed to clear chat history' });
+    }
+  })
+);
 
 export default router;

@@ -1,15 +1,20 @@
 import express from 'express';
-import { authController, googleAuth, googleAuthCallback, register, login, logout, getCurrentUser } from '../controllers/authController';
+import { AppConfigService } from '../config/app-config.service';
+import { SecureAuthController } from '../controllers/authController';
 
 // Create the router
 export const authRouter = express.Router();
 
+// Initialize secure auth controller with config service
+const appConfig = new AppConfigService();
+const authController = new SecureAuthController(appConfig);
+
 // Google OAuth routes
-authRouter.get('/google', googleAuth);
-authRouter.get('/google/callback', googleAuthCallback);
+authRouter.get('/google', authController.googleAuth);
+authRouter.get('/google/callback', ...authController.googleAuthCallback);
 
 // Local auth routes
-authRouter.post('/register', register);
-authRouter.post('/login', login);
-authRouter.post('/logout', logout);
-authRouter.get('/me', getCurrentUser);
+authRouter.post('/register', authController.register);
+authRouter.post('/login', authController.login);
+authRouter.post('/logout', authController.logout);
+authRouter.get('/me', authController.getCurrentUser);

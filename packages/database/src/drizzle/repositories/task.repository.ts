@@ -2,7 +2,7 @@
  * Task Repository - Drizzle ORM Implementation
  * Provides data access for Task and Pipeline entities
  */
-import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 import { db } from '../client';
 import { pipelines, taskExecutions, tasks } from '../schema';
 import type {
@@ -24,6 +24,17 @@ export class DrizzleTaskRepository {
   async createTask(data: NewTask): Promise<Task> {
     const [task] = await db.insert(tasks).values(data).returning();
     return task;
+  }
+
+  /**
+   * Find tasks created after a certain date
+   */
+  async findTasksCreatedAfter(date: Date): Promise<Task[]> {
+    return db
+      .select()
+      .from(tasks)
+      .where(and(gte(tasks.createdAt, date), isNull(tasks.deletedAt)))
+      .orderBy(desc(tasks.createdAt));
   }
 
   /**

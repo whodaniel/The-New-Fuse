@@ -13,7 +13,7 @@
  */
 
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { drizzleWorkspaceRepository } from '@the-new-fuse/database';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // Agency types - maps to OrganizationType.AGENCY when Organization model is active
@@ -111,10 +111,7 @@ const DEFAULT_SETTINGS: AgencySettings = {
 export class AgencyService {
   private readonly logger = new Logger(AgencyService.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private readonly eventEmitter: EventEmitter2) {}
 
   /**
    * Create a new agency (white-label instance)
@@ -131,33 +128,27 @@ export class AgencyService {
     }
 
     // Check if slug is already taken
-    const existingWorkspace = await this.prisma.workspace.findFirst({
-      where: {
-        name: dto.slug,
-      },
-    });
+    const existingWorkspace = await drizzleWorkspaceRepository.findByName(dto.slug);
 
     if (existingWorkspace) {
       throw new BadRequestException(`Agency slug "${dto.slug}" is already taken`);
     }
 
     // Create workspace as agency container
-    const workspace = await this.prisma.workspace.create({
-      data: {
-        name: dto.slug,
-        description: JSON.stringify({
-          displayName: dto.name,
-          description: dto.description,
-          type: 'AGENCY',
-          settings: { ...DEFAULT_SETTINGS, ...dto.settings },
-          licenseId: null,
-          licenseStatus: 'none',
-          revenueShare: { house: 60, investors: 30, affiliates: 10 },
-          agentLimit: 5,
-          userLimit: 10,
-        }),
-        ownerId: dto.ownerId,
-      },
+    const workspace = await drizzleWorkspaceRepository.create({
+      name: dto.slug,
+      description: JSON.stringify({
+        displayName: dto.name,
+        description: dto.description,
+        type: 'AGENCY',
+        settings: { ...DEFAULT_SETTINGS, ...dto.settings },
+        licenseId: null,
+        licenseStatus: 'none',
+        revenueShare: { house: 60, investors: 30, affiliates: 10 },
+        agentLimit: 5,
+        userLimit: 10,
+      }),
+      ownerId: dto.ownerId,
     });
 
     this.eventEmitter.emit('agency.created', { agencyId: workspace.id, slug: dto.slug });
@@ -170,15 +161,7 @@ export class AgencyService {
    * Get agency by ID
    */
   async getAgency(agencyId: string): Promise<AgencyProfile> {
-    const workspace = await this.prisma.workspace.findUnique({
-      where: { id: agencyId },
-      include: {
-        owner: {
-          select: { email: true },
-        },
-        projects: true,
-      },
-    });
+    const workspace = await drizzleWorkspaceRepository.findByIdWithOwner(agencyId);
 
     if (!workspace) {
       throw new NotFoundException(`Agency not found: ${agencyId}`);
@@ -191,15 +174,7 @@ export class AgencyService {
    * Get agency by slug (subdomain)
    */
   async getAgencyBySlug(slug: string): Promise<AgencyProfile> {
-    const workspace = await this.prisma.workspace.findFirst({
-      where: { name: slug },
-      include: {
-        owner: {
-          select: { email: true },
-        },
-        projects: true,
-      },
-    });
+    const workspace = await drizzleWorkspaceRepository.findByNameWithOwner(slug);
 
     if (!workspace) {
       throw new NotFoundException(`Agency not found: ${slug}`);
@@ -222,17 +197,11 @@ export class AgencyService {
       ...(dto.isActive !== undefined && { isActive: dto.isActive }),
     };
 
-    const workspace = await this.prisma.workspace.update({
-      where: { id: agencyId },
-      data: {
-        description: JSON.stringify(updatedDescription),
-      },
-      include: {
-        owner: {
-          select: { email: true },
-        },
-      },
+    await drizzleWorkspaceRepository.update(agencyId, {
+      description: JSON.stringify(updatedDescription),
     });
+
+    const workspace = await drizzleWorkspaceRepository.findByIdWithOwner(agencyId);
 
     this.eventEmitter.emit('agency.updated', { agencyId, changes: dto });
     return this.workspaceToAgencyProfile(workspace);
@@ -244,9 +213,7 @@ export class AgencyService {
   async deleteAgency(agencyId: string): Promise<void> {
     const agency = await this.getAgency(agencyId);
 
-    await this.prisma.workspace.delete({
-      where: { id: agencyId },
-    });
+    await drizzleWorkspaceRepository.delete(agencyId);
 
     this.eventEmitter.emit('agency.deleted', { agencyId, slug: agency.slug });
     this.logger.log(`Agency deleted: ${agencyId}`);
@@ -256,15 +223,7 @@ export class AgencyService {
    * List all agencies for an owner
    */
   async listAgenciesForOwner(ownerId: string): Promise<AgencyProfile[]> {
-    const workspaces = await this.prisma.workspace.findMany({
-      where: { ownerId },
-      include: {
-        owner: {
-          select: { email: true },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const workspaces = await drizzleWorkspaceRepository.findByOwnerWithOwner(ownerId);
 
     // Filter to only agency-type workspaces
     return workspaces
@@ -283,14 +242,7 @@ export class AgencyService {
    * List all agencies (admin only)
    */
   async listAllAgencies(): Promise<AgencyProfile[]> {
-    const workspaces = await this.prisma.workspace.findMany({
-      include: {
-        owner: {
-          select: { email: true },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const workspaces = await drizzleWorkspaceRepository.findAllWithOwner();
 
     return workspaces
       .filter((w: any) => {
@@ -333,15 +285,11 @@ export class AgencyService {
       parsedDesc.revenueShare = { house: 100, investors: 0, affiliates: 0 };
     }
 
-    const workspace = await this.prisma.workspace.update({
-      where: { id: agencyId },
-      data: {
-        description: JSON.stringify(parsedDesc),
-      },
-      include: {
-        owner: { select: { email: true } },
-      },
+    await drizzleWorkspaceRepository.update(agencyId, {
+      description: JSON.stringify(parsedDesc),
     });
+
+    const workspace = await drizzleWorkspaceRepository.findByIdWithOwner(agencyId);
 
     this.eventEmitter.emit('agency.license.updated', { agencyId, licenseId, status });
     return this.workspaceToAgencyProfile(workspace);
