@@ -3,29 +3,20 @@ export * from './agent';
 export * from './analysis';
 export * from './core';
 export * from './communication';
-export {
-  CommunicationPattern,
-  ModelType,
-  ResourceType,
-  TokenType,
-  WalletType
-} from './models';
+export { CommunicationPattern, ModelType, ResourceType, TokenType, WalletType } from './models';
 export { MessageRole, MessageType, MessageStatus, VerificationLevel } from './enums';
 export * from './monitoring';
 export * from './prompt.types';
 export * from './security';
 export * from './state';
-export * from './task';
+
 export * from './validation';
 
 // Constants and enums
 export { ServiceState } from '../constants/types';
 
 // Named exports from analysis and agent
-export {
-  type ValidationError,
-  type ValidationWarning
-} from './analysis';
+export { type ValidationError, type ValidationWarning } from './analysis';
 export type { AgentState } from './agent';
 
 // Dependency Injection Types

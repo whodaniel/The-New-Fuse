@@ -1,11 +1,15 @@
-// filepath: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core/src/security/security.service.tsx
 import { Injectable } from '@nestjs/common';
-import { SecurityConfig } from '@the-new-fuse/types/dist/security';
-import { SecurityError } from '@the-new-fuse/types/dist/errors';
-import { Logger } from '@the-new-fuse/utils';
+import { SecurityError } from '../utils/errors';
+import { Logger } from '../utils/logger';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import * as sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
+
+export interface SecurityConfig {
+  apiKey?: string;
+  jwtSecret?: string;
+  allowedOrigins?: string[];
+}
 
 @Injectable()
 export class SecurityService {
@@ -19,7 +23,9 @@ export class SecurityService {
     try {
       return await bcrypt.hash(password, this.saltRounds);
     } catch (error) {
-      this.logger.error('Password hashing failed:', { error: error instanceof Error ? error.message : String(error) });
+      this.logger.error('Password hashing failed:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -28,7 +34,9 @@ export class SecurityService {
     try {
       return await bcrypt.compare(plaintext, hash);
     } catch (error) {
-      this.logger.error('Password comparison failed:', { error: error instanceof Error ? error.message : String(error) });
+      this.logger.error('Password comparison failed:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -36,7 +44,7 @@ export class SecurityService {
   encryptText(text: string): { encryptedData: string; iv: string; authTag: string } {
     try {
       const iv = crypto.randomBytes(12);
-      const key = crypto.scryptSync(this.config.jwtSecret, 'salt', 32);
+      const key = crypto.scryptSync(this.config.jwtSecret || 'secret', 'salt', 32);
       const cipher = crypto.createCipheriv(this.algorithm, key, iv);
 
       let encryptedData = cipher.update(text, 'utf8', 'hex');
@@ -46,30 +54,30 @@ export class SecurityService {
       return {
         encryptedData,
         iv: iv.toString('hex'),
-        authTag
+        authTag,
       };
     } catch (error) {
-      this.logger.error('Encryption failed:', { error: error instanceof Error ? error.message : String(error) });
+      this.logger.error('Encryption failed:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
 
   decryptText(encryptedData: string, iv: string, authTag: string): string {
     try {
-      const key = crypto.scryptSync(this.config.jwtSecret, 'salt', 32);
-      const decipher = crypto.createDecipheriv(
-        this.algorithm, 
-        key, 
-        Buffer.from(iv, 'hex')
-      );
+      const key = crypto.scryptSync(this.config.jwtSecret || 'secret', 'salt', 32);
+      const decipher = crypto.createDecipheriv(this.algorithm, key, Buffer.from(iv, 'hex'));
       decipher.setAuthTag(Buffer.from(authTag, 'hex'));
 
       let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       return decrypted;
     } catch (error) {
-      this.logger.error('Decryption failed:', { error: error instanceof Error ? error.message : String(error) });
+      this.logger.error('Decryption failed:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -79,11 +87,13 @@ export class SecurityService {
       return sanitizeHtml(input, {
         allowedTags: ['b', 'i', 'em', 'strong', 'a'],
         allowedAttributes: {
-          'a': ['href']
-        }
+          a: ['href'],
+        },
       });
     } catch (error) {
-      this.logger.error('Input sanitization failed:', { error: error instanceof Error ? error.message : String(error) });
+      this.logger.error('Input sanitization failed:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -92,7 +102,9 @@ export class SecurityService {
     try {
       return crypto.randomBytes(length).toString('hex');
     } catch (error) {
-      this.logger.error('Token generation failed:', { error: error instanceof Error ? error.message : String(error) });
+      this.logger.error('Token generation failed:', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }

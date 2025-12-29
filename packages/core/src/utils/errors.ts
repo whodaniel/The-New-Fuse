@@ -18,7 +18,7 @@ export class BaseError extends Error {
     code: string,
     details: Record<string, any> = {},
     severity: 'low' | 'medium' | 'high' | 'critical' = 'medium',
-    recoverable: boolean = true
+    recoverable: boolean = true,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -38,18 +38,18 @@ export class BaseError extends Error {
   private getSource(): string {
     const stack = this.stack;
     if (!stack) return 'unknown';
-    
+
     const lines = stack.split('\n');
     const callerLine = lines[2]; // Skip Error and constructor lines
     if (!callerLine) return 'unknown';
-    
+
     const match = callerLine.match(/at\s+(.+)\s+\((.+):(\d+):(\d+)\)/);
     if (match) {
       const [, , filePath, lineNumber] = match;
       const fileName = filePath.split('/').pop() || filePath;
       return `${fileName}:${lineNumber}`;
     }
-    
+
     return 'unknown';
   }
 
@@ -88,7 +88,13 @@ export class SystemInitializationError extends BaseError {
 
 export class ServiceUnavailableError extends BaseError {
   constructor(serviceName: string, details?: Record<string, any>) {
-    super(`Service ${serviceName} is unavailable`, ERROR_CODES.SERVICE_UNAVAILABLE, details, 'high', true);
+    super(
+      `Service ${serviceName} is unavailable`,
+      ERROR_CODES.SERVICE_UNAVAILABLE,
+      details,
+      'high',
+      true,
+    );
   }
 }
 
@@ -112,7 +118,9 @@ export class AgentNotFoundError extends AgentError {
 
 export class AgentTimeoutError extends AgentError {
   constructor(agentId: string, timeout: number) {
-    super(`Agent ${agentId} timed out after ${timeout}ms`, ERROR_CODES.AGENT_TIMEOUT, agentId, { timeout });
+    super(`Agent ${agentId} timed out after ${timeout}ms`, ERROR_CODES.AGENT_TIMEOUT, agentId, {
+      timeout,
+    });
   }
 }
 
@@ -166,7 +174,19 @@ export class NetworkError extends BaseError {
 
 export class TimeoutError extends BaseError {
   constructor(operation: string, timeout: number) {
-    super(`Operation ${operation} timed out after ${timeout}ms`, ERROR_CODES.TIMEOUT_ERROR, { operation, timeout }, 'medium', true);
+    super(
+      `Operation ${operation} timed out after ${timeout}ms`,
+      ERROR_CODES.TIMEOUT_ERROR,
+      { operation, timeout },
+      'medium',
+      true,
+    );
+  }
+}
+
+export class SecurityError extends BaseError {
+  constructor(message: string, details?: Record<string, any>) {
+    super(message, ERROR_CODES.UNAUTHORIZED, details, 'high', false);
   }
 }
 
@@ -198,13 +218,13 @@ export class ErrorHandler {
         'UNKNOWN_ERROR',
         { originalError: error.name },
         'medium',
-        true
+        true,
       );
       baseError.stack = error.stack;
     }
 
     // Notify all registered callbacks
-    this.errorCallbacks.forEach(callback => {
+    this.errorCallbacks.forEach((callback) => {
       try {
         callback(baseError);
       } catch (callbackError) {
@@ -233,15 +253,16 @@ export class ErrorHandler {
 
     if (error instanceof BaseError) {
       // Don't retry validation errors
-      if (error.code === ERROR_CODES.INVALID_INPUT || 
-          error.code === ERROR_CODES.MISSING_REQUIRED_FIELD ||
-          error.code === ERROR_CODES.INVALID_FORMAT) {
+      if (
+        error.code === ERROR_CODES.INVALID_INPUT ||
+        error.code === ERROR_CODES.MISSING_REQUIRED_FIELD ||
+        error.code === ERROR_CODES.INVALID_FORMAT
+      ) {
         return false;
       }
 
       // Don't retry authorization errors
-      if (error.code === ERROR_CODES.UNAUTHORIZED || 
-          error.code === ERROR_CODES.FORBIDDEN) {
+      if (error.code === ERROR_CODES.UNAUTHORIZED || error.code === ERROR_CODES.FORBIDDEN) {
         return false;
       }
     }
@@ -249,7 +270,11 @@ export class ErrorHandler {
     return true;
   }
 
-  getRetryDelay(attempt: number, strategy: 'fixed' | 'exponential' | 'linear' = 'exponential', baseDelay: number = 1000): number {
+  getRetryDelay(
+    attempt: number,
+    strategy: 'fixed' | 'exponential' | 'linear' = 'exponential',
+    baseDelay: number = 1000,
+  ): number {
     switch (strategy) {
       case 'fixed':
         return baseDelay;

@@ -1,12 +1,12 @@
 /**
  * Enhanced Agency Service
- * 
+ *
  * Extends AgencyService with orchestration capabilities:
  * - Swarm initialization and management
  * - A2A message brokering
  * - Analytics aggregation
  * - Provider registration
- * 
+ *
  * This service acts as a facade that coordinates between:
  * - AgencyService (multi-tenant management)
  * - AgentSwarmOrchestrationService (swarm coordination)
@@ -17,7 +17,7 @@ import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AgencyService, AgencyProfile, CreateAgencyDto, UpdateAgencyDto } from './agency.service';
-import { AgentSwarmOrchestrationService } from './agent-swarm-orchestration.service';
+import { AgentSwarmOrchestrationService } from '../agents/AgentSwarmOrchestrationService';
 
 // Analytics types
 export interface AgencyAnalytics {
@@ -84,12 +84,12 @@ export class EnhancedAgencyService {
 
   async createAgency(dto: CreateAgencyDto): Promise<AgencyProfile> {
     const agency = await this.agencyService.createAgency(dto);
-    
+
     // Initialize swarm orchestration for the new agency
     if (agency.settings.features.enableA2ACommunication) {
       await this.initializeSwarm(agency.id);
     }
-    
+
     return agency;
   }
 
@@ -114,24 +114,27 @@ export class EnhancedAgencyService {
   /**
    * Initialize swarm orchestration for an agency
    */
-  async initializeSwarm(agencyId: string, config?: { 
-    maxConcurrentExecutions?: number;
-    enableAutoScaling?: boolean;
-  }): Promise<SwarmInitializationResult> {
+  async initializeSwarm(
+    agencyId: string,
+    config?: {
+      maxConcurrentExecutions?: number;
+      enableAutoScaling?: boolean;
+    },
+  ): Promise<SwarmInitializationResult> {
     this.logger.log(`Initializing swarm for agency: ${agencyId}`);
-    
+
     try {
       // Verify agency exists
       const agency = await this.agencyService.getAgency(agencyId);
-      
+
       // Initialize via swarm service
       await this.swarmService.initializeSwarm();
-      
+
       // Get current status
       const status = await this.swarmService.getSwarmStatus();
-      
+
       this.eventEmitter.emit('agency.swarm.initialized', { agencyId, status });
-      
+
       return {
         success: true,
         agencyId,
@@ -156,11 +159,11 @@ export class EnhancedAgencyService {
    */
   async disableSwarm(agencyId: string): Promise<{ success: boolean; message: string }> {
     this.logger.log(`Disabling swarm for agency: ${agencyId}`);
-    
+
     try {
       // In production, would terminate all executions for this agency
       this.eventEmitter.emit('agency.swarm.disabled', { agencyId });
-      
+
       return {
         success: true,
         message: `Swarm disabled for agency ${agencyId}`,
@@ -187,7 +190,7 @@ export class EnhancedAgencyService {
   }> {
     try {
       const status = await this.swarmService.getSwarmStatus();
-      
+
       return {
         agencyId,
         swarmEnabled: true,
@@ -217,26 +220,29 @@ export class EnhancedAgencyService {
   /**
    * Register service providers for an agency
    */
-  async registerProviders(agencyId: string, providers: Omit<ProviderRegistration, 'id'>[]): Promise<{
+  async registerProviders(
+    agencyId: string,
+    providers: Omit<ProviderRegistration, 'id'>[],
+  ): Promise<{
     success: boolean;
     registered: ProviderRegistration[];
   }> {
     this.logger.log(`Registering ${providers.length} providers for agency: ${agencyId}`);
-    
+
     // Verify agency exists
     await this.agencyService.getAgency(agencyId);
-    
+
     const registered: ProviderRegistration[] = providers.map((p, idx) => ({
       ...p,
       id: `${agencyId}_provider_${Date.now()}_${idx}`,
     }));
-    
+
     // Store providers
     const existing = this.providers.get(agencyId) || [];
     this.providers.set(agencyId, [...existing, ...registered]);
-    
+
     this.eventEmitter.emit('agency.providers.registered', { agencyId, providers: registered });
-    
+
     return {
       success: true,
       registered,
@@ -246,22 +252,25 @@ export class EnhancedAgencyService {
   /**
    * Get providers for an agency
    */
-  async getProviders(agencyId: string, filters?: {
-    type?: ProviderRegistration['type'];
-    active?: boolean;
-  }): Promise<ProviderRegistration[]> {
+  async getProviders(
+    agencyId: string,
+    filters?: {
+      type?: ProviderRegistration['type'];
+      active?: boolean;
+    },
+  ): Promise<ProviderRegistration[]> {
     const allProviders = this.providers.get(agencyId) || [];
-    
+
     let filtered = allProviders;
-    
+
     if (filters?.type) {
-      filtered = filtered.filter(p => p.type === filters.type);
+      filtered = filtered.filter((p) => p.type === filters.type);
     }
-    
+
     if (filters?.active !== undefined) {
-      filtered = filtered.filter(p => p.isActive === filters.active);
+      filtered = filtered.filter((p) => p.isActive === filters.active);
     }
-    
+
     return filtered;
   }
 
@@ -274,15 +283,15 @@ export class EnhancedAgencyService {
    */
   async getAnalytics(agencyId: string, timeframe: string = '30d'): Promise<AgencyAnalytics> {
     this.logger.log(`Getting analytics for agency: ${agencyId}, timeframe: ${timeframe}`);
-    
+
     const agency = await this.agencyService.getAgency(agencyId);
     const swarmStatus = await this.getSwarmStatus(agencyId);
-    
+
     // Get agents for this agency (would filter by organizationId in production)
     const agents = await this.prisma.agent.findMany({
       take: 100,
     });
-    
+
     // Get tasks (would filter by agency in production)
     const tasks = await this.prisma.task.findMany({
       where: {
@@ -291,31 +300,32 @@ export class EnhancedAgencyService {
         },
       },
     });
-    
-    const completedTasks = tasks.filter(t => t.status === 'COMPLETED');
-    const failedTasks = tasks.filter(t => t.status === 'FAILED');
-    
+
+    const completedTasks = tasks.filter((t) => t.status === 'COMPLETED');
+    const failedTasks = tasks.filter((t) => t.status === 'FAILED');
+
     // Calculate average duration
-    const tasksWithDuration = tasks.filter(t => t.startTime && t.endTime);
-    const avgDuration = tasksWithDuration.length > 0
-      ? tasksWithDuration.reduce((sum, t) => {
-          const duration = new Date(t.endTime!).getTime() - new Date(t.startTime!).getTime();
-          return sum + duration;
-        }, 0) / tasksWithDuration.length
-      : 0;
-    
+    const tasksWithDuration = tasks.filter((t) => t.startTime && t.endTime);
+    const avgDuration =
+      tasksWithDuration.length > 0
+        ? tasksWithDuration.reduce((sum, t) => {
+            const duration = new Date(t.endTime!).getTime() - new Date(t.startTime!).getTime();
+            return sum + duration;
+          }, 0) / tasksWithDuration.length
+        : 0;
+
     // Aggregate agent types
     const byType: Record<string, number> = {};
-    agents.forEach(a => {
+    agents.forEach((a) => {
       byType[a.type] = (byType[a.type] || 0) + 1;
     });
-    
+
     return {
       agencyId,
       period: timeframe,
       agents: {
         total: agents.length,
-        active: agents.filter(a => a.status === 'ACTIVE').length,
+        active: agents.filter((a) => a.status === 'ACTIVE').length,
         byType,
       },
       tasks: {
@@ -340,15 +350,15 @@ export class EnhancedAgencyService {
   private getDateFromTimeframe(timeframe: string): Date {
     const now = new Date();
     const match = timeframe.match(/^(\d+)([dhwmy])$/);
-    
+
     if (!match) {
       // Default to 30 days
       return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
-    
+
     const amount = parseInt(match[1], 10);
     const unit = match[2];
-    
+
     switch (unit) {
       case 'd':
         return new Date(now.getTime() - amount * 24 * 60 * 60 * 1000);

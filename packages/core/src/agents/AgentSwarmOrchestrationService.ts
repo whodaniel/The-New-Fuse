@@ -51,6 +51,31 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
     this.setMaxListeners(100);
   }
 
+  async initializeSwarm(): Promise<void> {
+    return this.start();
+  }
+
+  async getSwarmStatus(): Promise<{
+    activeExecutions: number;
+    totalAgents: number;
+    onlineAgents: number;
+    busyAgents: number;
+  }> {
+    const agents = this.getAllAgents();
+    const activeExecutions = Array.from(this.executions.values()).filter(
+      (e) => e.status === 'running',
+    ).length;
+
+    return {
+      activeExecutions,
+      totalAgents: agents.length,
+      onlineAgents: agents.filter(
+        (a) => a.status === AgentStatus.IDLE || a.status === AgentStatus.BUSY,
+      ).length,
+      busyAgents: agents.filter((a) => a.status === AgentStatus.BUSY).length,
+    };
+  }
+
   async start(): Promise<void> {
     if (this.state === ServiceState.RUNNING) {
       this.logger.warn('AgentSwarmOrchestrationService is already running');
@@ -125,19 +150,19 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
   }
 
   getAvailableAgents(): Agent[] {
-    return Array.from(this.agents.values()).filter(agent => agent.status === AgentStatus.IDLE);
+    return Array.from(this.agents.values()).filter((agent) => agent.status === AgentStatus.IDLE);
   }
 
   // Swarm execution management
   async createExecution(
     name: string,
     tasks: Omit<SwarmTask, 'id' | 'status' | 'createdAt'>[],
-    config: SwarmConfiguration
+    config: SwarmConfiguration,
   ): Promise<string> {
     const executionId = `swarm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Create tasks
-    const swarmTasks = tasks.map(task => ({
+    const swarmTasks = tasks.map((task) => ({
       ...task,
       id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       status: TaskStatus.PENDING,
@@ -145,7 +170,7 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
     }));
 
     // Store tasks
-    swarmTasks.forEach(task => {
+    swarmTasks.forEach((task) => {
       this.tasks.set(task.id, task);
       this.taskQueue.push(task.id);
     });
@@ -155,7 +180,7 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
       name,
       description: `Swarm execution with ${swarmTasks.length} tasks`,
       agents: Array.from(this.agents.keys()),
-      tasks: swarmTasks.map(t => t.id),
+      tasks: swarmTasks.map((t) => t.id),
       status: 'pending',
       startTime: new Date(),
       results: {},
@@ -163,8 +188,10 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
     };
 
     this.executions.set(executionId, execution);
-    
-    this.logger.log(`Created swarm execution: ${name} (${executionId}) with ${swarmTasks.length} tasks`);
+
+    this.logger.log(
+      `Created swarm execution: ${name} (${executionId}) with ${swarmTasks.length} tasks`,
+    );
     this.emit('executionCreated', execution);
 
     return executionId;
@@ -177,7 +204,10 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
     }
 
     if (execution.status !== 'pending') {
-      throw new BaseError(`Execution ${executionId} is not in pending state`, 'INVALID_EXECUTION_STATE');
+      throw new BaseError(
+        `Execution ${executionId} is not in pending state`,
+        'INVALID_EXECUTION_STATE',
+      );
     }
 
     execution.status = 'running';
@@ -198,7 +228,7 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
       execution.endTime = new Date();
 
       // Cancel all pending tasks for this execution
-      execution.tasks.forEach(taskId => {
+      execution.tasks.forEach((taskId) => {
         const task = this.tasks.get(taskId);
         if (task && task.status === TaskStatus.PENDING) {
           task.status = TaskStatus.CANCELLED;
@@ -227,8 +257,8 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
       return null;
     }
 
-    const tasks = execution.tasks.map(taskId => this.tasks.get(taskId)).filter(Boolean);
-    const agents = execution.agents.map(agentId => this.agents.get(agentId)).filter(Boolean);
+    const tasks = execution.tasks.map((taskId) => this.tasks.get(taskId)).filter(Boolean);
+    const agents = execution.agents.map((agentId) => this.agents.get(agentId)).filter(Boolean);
 
     return {
       execution,
@@ -254,25 +284,33 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
 
     try {
       await this.executeSwarmStrategy(execution, config);
-      
+
       execution.status = 'completed';
       execution.endTime = new Date();
-      
+
       this.logger.log(`Completed swarm execution: ${execution.name} (${executionId})`);
       this.emit('executionCompleted', execution);
     } catch (error) {
       execution.status = 'failed';
       execution.endTime = new Date();
-      
-      this.logger.error(`Failed swarm execution: ${execution.name} (${executionId})`, error as Error);
+
+      this.logger.error(
+        `Failed swarm execution: ${execution.name} (${executionId})`,
+        error as Error,
+      );
       this.emit('executionFailed', execution);
       throw error;
     }
   }
 
-  private async executeSwarmStrategy(execution: SwarmExecution, config: SwarmConfiguration): Promise<void> {
-    const tasks = execution.tasks.map(taskId => this.tasks.get(taskId)).filter(Boolean) as SwarmTask[];
-    
+  private async executeSwarmStrategy(
+    execution: SwarmExecution,
+    config: SwarmConfiguration,
+  ): Promise<void> {
+    const tasks = execution.tasks
+      .map((taskId) => this.tasks.get(taskId))
+      .filter(Boolean) as SwarmTask[];
+
     switch (config.strategy.type) {
       case 'sequential':
         await this.executeSequential(tasks, config);
@@ -287,13 +325,16 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
         await this.executeHierarchical(tasks, config);
         break;
       default:
-        throw new BaseError(`Unsupported strategy type: ${config.strategy.type}`, 'UNSUPPORTED_STRATEGY');
+        throw new BaseError(
+          `Unsupported strategy type: ${config.strategy.type}`,
+          'UNSUPPORTED_STRATEGY',
+        );
     }
   }
 
   private async executeSequential(tasks: SwarmTask[], config: SwarmConfiguration): Promise<void> {
     this.logger.debug('Executing tasks sequentially');
-    
+
     for (const task of tasks) {
       await this.executeTask(task, config);
     }
@@ -301,17 +342,17 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
 
   private async executeParallel(tasks: SwarmTask[], config: SwarmConfiguration): Promise<void> {
     this.logger.debug('Executing tasks in parallel');
-    
-    const promises = tasks.map(task => this.executeTask(task, config));
+
+    const promises = tasks.map((task) => this.executeTask(task, config));
     await Promise.allSettled(promises);
   }
 
   private async executePipeline(tasks: SwarmTask[], config: SwarmConfiguration): Promise<void> {
     this.logger.debug('Executing tasks in pipeline');
-    
+
     // Sort tasks by dependencies
     const sortedTasks = this.topologicalSort(tasks);
-    
+
     for (const task of sortedTasks) {
       await this.executeTask(task, config);
     }
@@ -319,10 +360,10 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
 
   private async executeHierarchical(tasks: SwarmTask[], config: SwarmConfiguration): Promise<void> {
     this.logger.debug('Executing tasks hierarchically');
-    
+
     // Group tasks by priority and execute high priority first
     const tasksByPriority = this.groupTasksByPriority(tasks);
-    
+
     for (const priority of ['urgent', 'high', 'medium', 'low']) {
       const priorityTasks = tasksByPriority[priority] || [];
       if (priorityTasks.length > 0) {
@@ -348,18 +389,18 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
     try {
       // Execute task (this would integrate with actual agent execution)
       const result = await this.performTaskExecution(task, agent);
-      
+
       task.status = TaskStatus.COMPLETED;
       task.completedAt = new Date();
       task.result = result;
-      
+
       this.logger.debug(`Completed task: ${task.name}`);
       this.emit('taskCompleted', { task, agent, result });
     } catch (error) {
       task.status = TaskStatus.FAILED;
       task.completedAt = new Date();
       task.error = (error as Error).message;
-      
+
       this.logger.error(`Failed task: ${task.name}`, error as Error);
       this.emit('taskFailed', { task, agent, error });
       throw error;
@@ -368,12 +409,10 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
 
   private findSuitableAgent(task: SwarmTask, config: SwarmConfiguration): Agent | undefined {
     const availableAgents = this.getAvailableAgents();
-    
+
     // Filter agents by required capabilities
-    const capableAgents = availableAgents.filter(agent =>
-      task.requiredCapabilities.every(capability =>
-        agent.capabilities.includes(capability)
-      )
+    const capableAgents = availableAgents.filter((agent) =>
+      task.requiredCapabilities.every((capability) => agent.capabilities.includes(capability)),
     );
 
     if (capableAgents.length === 0) {
@@ -396,8 +435,12 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
   private selectBestCapabilityMatch(agents: Agent[], task: SwarmTask): Agent {
     // Select agent with most matching capabilities
     return agents.reduce((best, current) => {
-      const bestMatches = best.capabilities.filter(cap => task.requiredCapabilities.includes(cap)).length;
-      const currentMatches = current.capabilities.filter(cap => task.requiredCapabilities.includes(cap)).length;
+      const bestMatches = best.capabilities.filter((cap) =>
+        task.requiredCapabilities.includes(cap),
+      ).length;
+      const currentMatches = current.capabilities.filter((cap) =>
+        task.requiredCapabilities.includes(cap),
+      ).length;
       return currentMatches > bestMatches ? current : best;
     });
   }
@@ -414,8 +457,8 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
   private async performTaskExecution(task: SwarmTask, agent: Agent): Promise<any> {
     // Simulate task execution - in production, this would delegate to the actual agent
     const executionTime = Math.random() * 2000 + 500; // 500-2500ms
-    await new Promise(resolve => setTimeout(resolve, executionTime));
-    
+    await new Promise((resolve) => setTimeout(resolve, executionTime));
+
     return {
       success: true,
       executionTime,
@@ -430,7 +473,7 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
     const sorted: SwarmTask[] = [];
     const visited = new Set<string>();
     const visiting = new Set<string>();
-    const taskMap = new Map(tasks.map(task => [task.id, task]));
+    const taskMap = new Map(tasks.map((task) => [task.id, task]));
 
     const visit = (taskId: string) => {
       if (visiting.has(taskId)) {
@@ -444,11 +487,11 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
       if (!task) return;
 
       visiting.add(taskId);
-      
+
       for (const depId of task.dependencies) {
         visit(depId);
       }
-      
+
       visiting.delete(taskId);
       visited.add(taskId);
       sorted.push(task);
@@ -462,29 +505,35 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
   }
 
   private groupTasksByPriority(tasks: SwarmTask[]): Record<string, SwarmTask[]> {
-    return tasks.reduce((groups, task) => {
-      const priority = task.priority;
-      if (!groups[priority]) {
-        groups[priority] = [];
-      }
-      groups[priority].push(task);
-      return groups;
-    }, {} as Record<string, SwarmTask[]>);
+    return tasks.reduce(
+      (groups, task) => {
+        const priority = task.priority;
+        if (!groups[priority]) {
+          groups[priority] = [];
+        }
+        groups[priority].push(task);
+        return groups;
+      },
+      {} as Record<string, SwarmTask[]>,
+    );
   }
 
   private calculateExecutionStatistics(execution: SwarmExecution): any {
-    const tasks = execution.tasks.map(taskId => this.tasks.get(taskId)).filter(Boolean) as SwarmTask[];
-    
-    const completed = tasks.filter(t => t.status === TaskStatus.COMPLETED).length;
-    const failed = tasks.filter(t => t.status === TaskStatus.FAILED).length;
-    const pending = tasks.filter(t => t.status === TaskStatus.PENDING).length;
-    const inProgress = tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length;
+    const tasks = execution.tasks
+      .map((taskId) => this.tasks.get(taskId))
+      .filter(Boolean) as SwarmTask[];
 
-    const totalDuration = execution.endTime && execution.startTime
-      ? execution.endTime.getTime() - execution.startTime.getTime()
-      : execution.startTime 
-        ? Date.now() - execution.startTime.getTime()
-        : 0;
+    const completed = tasks.filter((t) => t.status === TaskStatus.COMPLETED).length;
+    const failed = tasks.filter((t) => t.status === TaskStatus.FAILED).length;
+    const pending = tasks.filter((t) => t.status === TaskStatus.PENDING).length;
+    const inProgress = tasks.filter((t) => t.status === TaskStatus.IN_PROGRESS).length;
+
+    const totalDuration =
+      execution.endTime && execution.startTime
+        ? execution.endTime.getTime() - execution.startTime.getTime()
+        : execution.startTime
+          ? Date.now() - execution.startTime.getTime()
+          : 0;
 
     return {
       totalTasks: tasks.length,
@@ -495,12 +544,12 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
       successRate: tasks.length > 0 ? (completed / tasks.length) * 100 : 0,
       totalDuration,
       averageTaskDuration: this.calculateAverageTaskDuration(tasks),
-      agentsUsed: new Set(tasks.map(t => t.assignedAgentId).filter(Boolean)).size,
+      agentsUsed: new Set(tasks.map((t) => t.assignedAgentId).filter(Boolean)).size,
     };
   }
 
   private calculateAverageTaskDuration(tasks: SwarmTask[]): number {
-    const completedTasks = tasks.filter(t => t.completedAt && t.startedAt);
+    const completedTasks = tasks.filter((t) => t.completedAt && t.startedAt);
     if (completedTasks.length === 0) return 0;
 
     const totalDuration = completedTasks.reduce((sum, task) => {
@@ -518,20 +567,21 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
   private async processTaskQueue(): Promise<void> {
     while (this.isProcessing && this.state === ServiceState.RUNNING) {
       if (this.taskQueue.length === 0) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
         continue;
       }
 
       // Process tasks that are ready (dependencies met)
       const readyTasks = this.getReadyTasks();
-      
+
       for (const taskId of readyTasks) {
         const task = this.tasks.get(taskId);
         if (task && task.status === TaskStatus.PENDING) {
           // Find execution for this task
-          const execution = Array.from(this.executions.values())
-            .find(exec => exec.tasks.includes(taskId));
-          
+          const execution = Array.from(this.executions.values()).find((exec) =>
+            exec.tasks.includes(taskId),
+          );
+
           if (execution && execution.status === 'running') {
             const config = execution.metadata?.config as SwarmConfiguration;
             if (config) {
@@ -545,19 +595,19 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
         }
       }
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   }
 
   private getReadyTasks(): string[] {
-    return this.taskQueue.filter(taskId => {
+    return this.taskQueue.filter((taskId) => {
       const task = this.tasks.get(taskId);
       if (!task || task.status !== TaskStatus.PENDING) {
         return false;
       }
 
       // Check if all dependencies are completed
-      return task.dependencies.every(depId => {
+      return task.dependencies.every((depId) => {
         const depTask = this.tasks.get(depId);
         return depTask && depTask.status === TaskStatus.COMPLETED;
       });

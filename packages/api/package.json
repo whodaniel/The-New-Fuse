@@ -51,6 +51,7 @@
     "@nestjs/swagger": "^11.2.1",
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/throttler": "^6.5.0",
+    "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:*",

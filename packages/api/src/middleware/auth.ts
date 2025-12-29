@@ -20,9 +20,10 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
     const token = authHeader.split(' ')[1];
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      return res.status(500).json({
+      res.status(500).json({
         message: 'Internal server error: JWT secret is not configured.',
       });
+      return;
     }
 
     const decoded = jwt.verify(token, secret) as DecodedToken;

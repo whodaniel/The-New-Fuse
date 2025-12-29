@@ -17,18 +17,18 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": [
-    "src/types/llm.types.ts",
-    "src/types/memory.types.ts",
-    "src/types/messages.ts",
-    "src/types/multi-agent-chat.types.ts",
-    "src/utils/correlation-id.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "src/prisma/**/*",
+    "src/database/DatabaseMonitor.ts",
+    "src/database/TransactionManager.ts",
+    "src/services/AgentMetadataManager.ts",
+    "src/communication/MessagingService.ts",
+    "src/communication/NotificationService.ts"
   ],
   "references": [
     {

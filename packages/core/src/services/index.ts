@@ -8,4 +8,4 @@ export * from './PromptService';
 // Agency Services (Multi-tenant white-label management)
 export * from './agency.service';
 export * from './enhanced-agency.service';
-export * from './agent-swarm-orchestration.service';
+export * from '../agents/AgentSwarmOrchestrationService';
