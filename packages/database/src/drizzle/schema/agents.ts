@@ -145,8 +145,10 @@ export const agentDirectoryEntries = pgTable('agent_directory_entries', {
   tags: jsonb('tags').$type<string[]>().default([]).notNull(),
   isPublic: boolean('is_public').default(false).notNull(),
   isVerified: boolean('is_verified').default(false).notNull(),
+  featured: boolean('featured').default(false).notNull(),
   rating: real('rating').default(0).notNull(),
   usageCount: integer('usage_count').default(0).notNull(),
+  lastActiveAt: timestamp('last_active_at').defaultNow(),
   searchableData: text('searchable_data'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -167,6 +169,22 @@ export const agentPromptVersions = pgTable('agent_prompt_versions', {
   performanceMetrics: jsonb('performance_metrics'),
   massStage: varchar('mass_stage', { length: 50 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// =============================================================================
+// AGENT METRICS
+// =============================================================================
+
+export const agentMetrics = pgTable('agent_metrics', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  registrationId: uuid('registration_id')
+    .notNull()
+    .references(() => agentRegistrations.id, { onDelete: 'cascade' }),
+  metricType: varchar('metric_type', { length: 100 }).notNull(),
+  value: real('value').notNull(),
+  unit: varchar('unit', { length: 50 }),
+  tags: jsonb('tags').default({}),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
 });
 
 // =============================================================================
@@ -206,6 +224,7 @@ export const agentRegistrationsRelations = relations(agentRegistrations, ({ one,
   }),
   capabilities: many(agentCapabilityRegistry),
   onboardingEvents: many(agentOnboardingEvents),
+  metrics: many(agentMetrics),
 }));
 
 export const agentCapabilityRegistryRelations = relations(agentCapabilityRegistry, ({ one }) => ({
@@ -218,6 +237,13 @@ export const agentCapabilityRegistryRelations = relations(agentCapabilityRegistr
 export const agentOnboardingEventsRelations = relations(agentOnboardingEvents, ({ one }) => ({
   registration: one(agentRegistrations, {
     fields: [agentOnboardingEvents.registrationId],
+    references: [agentRegistrations.id],
+  }),
+}));
+
+export const agentMetricsRelations = relations(agentMetrics, ({ one }) => ({
+  registration: one(agentRegistrations, {
+    fields: [agentMetrics.registrationId],
     references: [agentRegistrations.id],
   }),
 }));

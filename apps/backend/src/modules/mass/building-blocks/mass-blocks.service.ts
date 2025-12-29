@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../../prisma/prisma.service';
 
 export interface MassBlockConfig {
   type: 'aggregate' | 'reflect' | 'debate' | 'custom' | 'tool-use';
@@ -20,7 +19,7 @@ export interface MassBlockResult {
 export class MassBlocksService {
   private readonly logger = new Logger(MassBlocksService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor() {}
 
   async executeBlock(
     agentId: string,

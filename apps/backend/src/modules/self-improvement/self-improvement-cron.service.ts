@@ -11,12 +11,15 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { 
-  drizzleAgentRepository, 
-  drizzleTaskRepository, 
-  db, 
+import {
+  and,
+  db,
+  desc,
   drizzleSchema,
-  and, eq, lt, desc, sql
+  eq,
+  lt,
+  sql,
+  type DrizzleTask as Task,
 } from '@the-new-fuse/database';
 
 const { agents, tasks, agentRegistrations } = drizzleSchema;
@@ -43,7 +46,12 @@ interface SkillPerformance {
 export class SelfImprovementCronService {
   private readonly logger = new Logger(SelfImprovementCronService.name);
   private readonly skillsPath = path.join(process.cwd(), '.agent', 'skills');
-  private readonly patternsPath = path.join(process.cwd(), '.agent', 'context', 'pattern-library.md');
+  private readonly patternsPath = path.join(
+    process.cwd(),
+    '.agent',
+    'context',
+    'pattern-library.md'
+  );
 
   constructor() {}
 
@@ -63,10 +71,12 @@ export class SelfImprovementCronService {
       const staleRegistrations = await db
         .select()
         .from(agentRegistrations)
-        .where(and(
-          lt(agentRegistrations.lastHeartbeat, staleThreshold),
-          eq(agentRegistrations.isOnline, true)
-        ));
+        .where(
+          and(
+            lt(agentRegistrations.lastHeartbeat, staleThreshold),
+            eq(agentRegistrations.isOnline, true)
+          )
+        );
 
       if (staleRegistrations.length > 0) {
         this.logger.warn(`[Health] Found ${staleRegistrations.length} stale agent registrations`);
@@ -111,10 +121,7 @@ export class SelfImprovementCronService {
       const recentTasks = await db
         .select()
         .from(tasks)
-        .where(and(
-          sql`${tasks.createdAt} >= ${sixHoursAgo}`,
-          eq(tasks.status, 'COMPLETED')
-        ))
+        .where(and(sql`${tasks.createdAt} >= ${sixHoursAgo}`, eq(tasks.status, 'COMPLETED')))
         .orderBy(desc(tasks.createdAt))
         .limit(1000);
 
@@ -135,10 +142,12 @@ export class SelfImprovementCronService {
         await this.updatePatternLibrary(patterns);
 
         // Check if any pattern is frequent enough to warrant a new skill
-        const frequentPatterns = patterns.filter(p => p.occurrences >= 5 && p.successRate >= 0.8);
+        const frequentPatterns = patterns.filter((p) => p.occurrences >= 5 && p.successRate >= 0.8);
 
         if (frequentPatterns.length > 0) {
-          this.logger.log(`[Patterns] ${frequentPatterns.length} patterns qualify for skill creation`);
+          this.logger.log(
+            `[Patterns] ${frequentPatterns.length} patterns qualify for skill creation`
+          );
 
           // TODO: Trigger skill-builder meta-skill
           // Create a task for skill-builder to generate new skills
@@ -183,17 +192,19 @@ export class SelfImprovementCronService {
       this.logger.log(`[Daily] Analyzing ${dailyTasks.length} tasks`);
 
       // Calculate success metrics
-      const completed = dailyTasks.filter(t => t.status === 'COMPLETED').length;
-      const failed = dailyTasks.filter(t => t.status === 'FAILED').length;
+      const completed = dailyTasks.filter((t) => t.status === 'COMPLETED').length;
+      const failed = dailyTasks.filter((t) => t.status === 'FAILED').length;
       const successRate = dailyTasks.length > 0 ? completed / dailyTasks.length : 0;
 
-      this.logger.log(`[Daily] Success rate: ${(successRate * 100).toFixed(2)}% (${completed}/${dailyTasks.length})`);
+      this.logger.log(
+        `[Daily] Success rate: ${(successRate * 100).toFixed(2)}% (${completed}/${dailyTasks.length})`
+      );
 
       // Analyze skill performance
       const skillPerformance = await this.analyzeSkillPerformance(dailyTasks);
 
       // Identify underperforming skills (success rate < 70%)
-      const underperforming = skillPerformance.filter(s => s.successRate < 0.7);
+      const underperforming = skillPerformance.filter((s) => s.successRate < 0.7);
 
       if (underperforming.length > 0) {
         this.logger.warn(`[Daily] ${underperforming.length} underperforming skills`);
@@ -211,7 +222,7 @@ export class SelfImprovementCronService {
       }
 
       // Identify high-performing skills to study
-      const highPerforming = skillPerformance.filter(s => s.successRate >= 0.95 && s.uses >= 5);
+      const highPerforming = skillPerformance.filter((s) => s.successRate >= 0.95 && s.uses >= 5);
 
       if (highPerforming.length > 0) {
         this.logger.log(`[Daily] ${highPerforming.length} high-performing skills to study`);
@@ -245,7 +256,7 @@ export class SelfImprovementCronService {
       const skillUsage = await this.analyzeSkillUsage(skills);
 
       // Find unused skills (>30 days)
-      const unusedSkills = skillUsage.filter(s => {
+      const unusedSkills = skillUsage.filter((s) => {
         const daysSinceUse = s.lastUsed
           ? (Date.now() - s.lastUsed.getTime()) / (24 * 60 * 60 * 1000)
           : 9999;
@@ -256,7 +267,9 @@ export class SelfImprovementCronService {
         this.logger.warn(`[Weekly] ${unusedSkills.length} skills unused for >30 days`);
 
         for (const skill of unusedSkills) {
-          this.logger.log(`[Weekly] Unused: ${skill.skillName} (last used: ${skill.lastUsed || 'never'})`);
+          this.logger.log(
+            `[Weekly] Unused: ${skill.skillName} (last used: ${skill.lastUsed || 'never'})`
+          );
 
           // TODO: Archive to .agent/archive/
           // Could move skills that haven't been used to an archive
@@ -285,7 +298,10 @@ export class SelfImprovementCronService {
       const totalAgentsResult = await db.select({ count: sql<number>`count(*)` }).from(agents);
       const totalAgents = Number(totalAgentsResult[0]?.count || 0);
 
-      const activeAgentsResult = await db.select({ count: sql<number>`count(*)` }).from(agents).where(eq(agents.status, 'ACTIVE'));
+      const activeAgentsResult = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(agents)
+        .where(eq(agents.status, 'ACTIVE'));
       const activeAgents = Number(activeAgentsResult[0]?.count || 0);
 
       this.logger.log(`[Weekly] Meta-metrics:`);
@@ -310,7 +326,7 @@ export class SelfImprovementCronService {
     const tasksByAgent: Record<string, Task[]> = {};
 
     for (const task of tasks) {
-      const key = task.agentId || task.userId || 'unknown';
+      const key = task.assignedToId || task.userId || 'unknown';
       if (!tasksByAgent[key]) {
         tasksByAgent[key] = [];
       }
@@ -327,7 +343,7 @@ export class SelfImprovementCronService {
       // Look for sequences (window of 3 tasks)
       for (let i = 0; i < agentTasks.length - 2; i++) {
         const sequence = agentTasks.slice(i, i + 3);
-        const pattern = sequence.map(t => t.type || 'unknown').join(' → ');
+        const pattern = sequence.map((t) => t.type || 'unknown').join(' → ');
 
         if (!patterns.has(pattern)) {
           patterns.set(pattern, {
@@ -341,15 +357,17 @@ export class SelfImprovementCronService {
         const patternData = patterns.get(pattern)!;
         patternData.occurrences++;
 
-        const allCompleted = sequence.every(t => t.status === 'COMPLETED');
+        const allCompleted = sequence.every((t) => t.status === 'COMPLETED');
         if (allCompleted) {
-          patternData.successRate = (patternData.successRate * (patternData.occurrences - 1) + 1) / patternData.occurrences;
+          patternData.successRate =
+            (patternData.successRate * (patternData.occurrences - 1) + 1) / patternData.occurrences;
         } else {
-          patternData.successRate = (patternData.successRate * (patternData.occurrences - 1)) / patternData.occurrences;
+          patternData.successRate =
+            (patternData.successRate * (patternData.occurrences - 1)) / patternData.occurrences;
         }
 
         if (patternData.examples.length < 3) {
-          patternData.examples.push(sequence.map(t => t.title).join(' → '));
+          patternData.examples.push(sequence.map((t) => t.title).join(' → '));
         }
       }
     }
@@ -385,7 +403,10 @@ export class SelfImprovementCronService {
    * Analyze skill performance from tasks
    */
   private async analyzeSkillPerformance(tasks: Task[]): Promise<SkillPerformance[]> {
-    const skillStats: Map<string, { uses: number; successes: number; durations: number[]; lastUsed: Date }> = new Map();
+    const skillStats: Map<
+      string,
+      { uses: number; successes: number; durations: number[]; lastUsed: Date }
+    > = new Map();
 
     for (const task of tasks) {
       // Extract skill from task metadata or description
@@ -393,7 +414,12 @@ export class SelfImprovementCronService {
       if (!skillName) continue;
 
       if (!skillStats.has(skillName)) {
-        skillStats.set(skillName, { uses: 0, successes: 0, durations: [], lastUsed: task.createdAt });
+        skillStats.set(skillName, {
+          uses: 0,
+          successes: 0,
+          durations: [],
+          lastUsed: task.createdAt,
+        });
       }
 
       const stats = skillStats.get(skillName)!;
@@ -403,8 +429,8 @@ export class SelfImprovementCronService {
         stats.successes++;
       }
 
-      if (task.completedAt && task.startTime) {
-        const duration = task.completedAt.getTime() - task.startTime.getTime();
+      if (task.endTime && task.startTime) {
+        const duration = task.endTime.getTime() - task.startTime.getTime();
         stats.durations.push(duration);
       }
 
@@ -417,9 +443,10 @@ export class SelfImprovementCronService {
       skillName,
       uses: stats.uses,
       successRate: stats.uses > 0 ? stats.successes / stats.uses : 0,
-      avgDuration: stats.durations.length > 0
-        ? stats.durations.reduce((a, b) => a + b, 0) / stats.durations.length
-        : 0,
+      avgDuration:
+        stats.durations.length > 0
+          ? stats.durations.reduce((a, b) => a + b, 0) / stats.durations.length
+          : 0,
       lastUsed: stats.lastUsed,
     }));
   }
@@ -454,11 +481,7 @@ export class SelfImprovementCronService {
    */
   private async analyzeSkillUsage(skills: string[]): Promise<SkillPerformance[]> {
     // Get all tasks to analyze skill usage
-    const allTasks = await db
-      .select()
-      .from(tasks)
-      .orderBy(desc(tasks.createdAt))
-      .limit(10000);
+    const allTasks = await db.select().from(tasks).orderBy(desc(tasks.createdAt)).limit(10000);
 
     return this.analyzeSkillPerformance(allTasks);
   }
@@ -472,10 +495,7 @@ export class SelfImprovementCronService {
     const failedTasks = await db
       .select()
       .from(tasks)
-      .where(and(
-        eq(tasks.status, 'FAILED'),
-        sql`${tasks.createdAt} >= ${oneWeekAgo}`
-      ));
+      .where(and(eq(tasks.status, 'FAILED'), sql`${tasks.createdAt} >= ${oneWeekAgo}`));
 
     // Group by task type/description
     const failureTypes: Map<string, number> = new Map();

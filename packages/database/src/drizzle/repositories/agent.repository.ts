@@ -4,7 +4,14 @@
  */
 import { and, desc, eq, isNull, like, or, sql } from 'drizzle-orm';
 import { db } from '../client';
-import { agentCapabilityRegistry, agentDirectoryEntries, agentMetadata, agentOnboardingEvents, agentRegistrations, agents } from '../schema';
+import {
+  agentCapabilityRegistry,
+  agentDirectoryEntries,
+  agentMetadata,
+  agentOnboardingEvents,
+  agentRegistrations,
+  agents,
+} from '../schema';
 import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types';
 
 /**
@@ -280,7 +287,9 @@ export class DrizzleAgentRepository {
     return db
       .select()
       .from(agents)
-      .where(and(eq(agents.status, status), eq(agents.userId, userId), isNull(agents.deletedAt)))
+      .where(
+        and(eq(agents.status, status as any), eq(agents.userId, userId), isNull(agents.deletedAt))
+      )
       .orderBy(desc(agents.updatedAt));
   }
 
@@ -298,14 +307,20 @@ export class DrizzleAgentRepository {
     }
 
     if (query.type) {
-      conditions.push(eq(agents.type, query.type));
+      conditions.push(eq(agents.type, query.type as any));
     }
 
     if (query.capability) {
-      conditions.push(sql`${agents.capabilities}::jsonb @> ${JSON.stringify([query.capability])}::jsonb`);
+      conditions.push(
+        sql`${agents.capabilities}::jsonb @> ${JSON.stringify([query.capability])}::jsonb`
+      );
     }
 
-    return db.select().from(agents).where(and(...conditions)).orderBy(desc(agents.createdAt));
+    return db
+      .select()
+      .from(agents)
+      .where(and(...conditions))
+      .orderBy(desc(agents.createdAt));
   }
 
   /**
@@ -331,7 +346,7 @@ export class DrizzleAgentRepository {
   async updateStatus(id: string, status: string): Promise<Agent | null> {
     const [agent] = await db
       .update(agents)
-      .set({ status, updatedAt: new Date() })
+      .set({ status: status as any, updatedAt: new Date() })
       .where(eq(agents.id, id))
       .returning();
 
@@ -352,10 +367,7 @@ export class DrizzleAgentRepository {
     isOnline: boolean;
     metadata: any;
   }) {
-    const [registration] = await db
-      .insert(agentRegistrations)
-      .values(data)
-      .returning();
+    const [registration] = await db.insert(agentRegistrations).values(data).returning();
     return registration;
   }
 
@@ -409,10 +421,7 @@ export class DrizzleAgentRepository {
     parameters?: any;
     verificationStatus: string;
   }) {
-    const [capability] = await db
-      .insert(agentCapabilityRegistry)
-      .values(data)
-      .returning();
+    const [capability] = await db.insert(agentCapabilityRegistry).values(data).returning();
     return capability;
   }
 
@@ -425,10 +434,7 @@ export class DrizzleAgentRepository {
     message: string;
     eventData?: any;
   }) {
-    const [event] = await db
-      .insert(agentOnboardingEvents)
-      .values(data)
-      .returning();
+    const [event] = await db.insert(agentOnboardingEvents).values(data).returning();
     return event;
   }
 
@@ -447,10 +453,7 @@ export class DrizzleAgentRepository {
     usageCount: number;
     searchableData?: string;
   }) {
-    const [entry] = await db
-      .insert(agentDirectoryEntries)
-      .values(data)
-      .returning();
+    const [entry] = await db.insert(agentDirectoryEntries).values(data).returning();
     return entry;
   }
 

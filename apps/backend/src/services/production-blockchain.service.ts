@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service';
+import { agentNftRepository, drizzleAgentRepository } from '@the-new-fuse/database';
+import { Contract, Wallet } from 'ethers';
 import { BlockchainUtilService } from './blockchain-util.service';
-import { Wallet, Contract } from 'ethers';
 
 export interface AgentNFTCreationRequest {
   agentId: string;
@@ -18,7 +18,7 @@ export interface AgentNFTResult {
   blockNumber: number;
   gasUsed: string;
   gasPrice: string;
-  agentNFT: any; // Prisma AgentNFT model
+  agentNFT: any;
 }
 
 export interface TransactionValidationResult {
@@ -34,9 +34,8 @@ export class ProductionBlockchainService {
   private readonly logger = new Logger(ProductionBlockchainService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-    private readonly blockchainUtil: BlockchainUtilService,
+    private readonly blockchainUtil: BlockchainUtilService
   ) {}
 
   /**
@@ -53,18 +52,14 @@ export class ProductionBlockchainService {
       }
 
       // Get agent details
-      const agent = await this.prisma.agent.findUnique({
-        where: { id: request.agentId }
-      });
+      const agent = await drizzleAgentRepository.findById(request.agentId);
 
       if (!agent) {
         throw new Error(`Agent not found: ${request.agentId}`);
       }
 
       // Check if agent is already minted
-      const existingNft = await this.prisma.agentNFT.findUnique({
-        where: { agentId: request.agentId }
-      });
+      const existingNft = await agentNftRepository.findByAgentId(request.agentId);
 
       if (existingNft) {
         throw new Error(`Agent ${request.agentId} is already minted as NFT`);
@@ -92,7 +87,9 @@ export class ProductionBlockchainService {
         [request.ownerAddress, request.metadataUri || this.generateMetadataURI(request.agentId)]
       );
 
-      this.logger.log(`Estimated gas: ${gasEstimate.gasLimit.toString()}, Cost: ${gasEstimate.estimatedCost.toString()} wei`);
+      this.logger.log(
+        `Estimated gas: ${gasEstimate.gasLimit.toString()}, Cost: ${gasEstimate.estimatedCost.toString()} wei`
+      );
 
       // Perform blockchain transaction
       const tx = await agentNftContract.mint(
@@ -102,7 +99,7 @@ export class ProductionBlockchainService {
           gasLimit: gasEstimate.gasLimit,
           maxFeePerGas: gasEstimate.maxFeePerGas,
           maxPriorityFeePerGas: gasEstimate.maxPriorityFeePerGas,
-          value: 0
+          value: 0,
         }
       );
 
@@ -124,20 +121,18 @@ export class ProductionBlockchainService {
       }
 
       // Create Agent NFT record in database
-      const agentNFT = await this.prisma.agentNFT.create({
-        data: {
-          agentId: request.agentId,
-          tokenId: tokenId,
-          contractAddress: agentNftContract.target.toString(),
-          smartAccountAddress: request.smartAccountAddress,
-          metadataUri: request.metadataUri || this.generateMetadataURI(request.agentId),
-          isFractionalized: false,
-          totalShares: 0,
-        },
-        include: {
-          agent: true
-        }
-      });
+      const agentNFT = await agentNftRepository.create({
+        agentId: request.agentId,
+        tokenId: tokenId,
+        contractAddress: agentNftContract.target.toString(),
+        smartAccountAddress: request.smartAccountAddress,
+        metadataUri: request.metadataUri || this.generateMetadataURI(request.agentId),
+        isFractionalized: false,
+        totalShares: 0,
+      } as any);
+      // We need to return with agent included, but create usually returns raw
+      // Fetch it back with agent
+      const fullAgentNFT = await agentNftRepository.findFullDetailsByAgentId(request.agentId);
 
       this.logger.log(`Agent NFT created successfully - Token ID: ${tokenId}, Tx: ${tx.hash}`);
 
@@ -148,9 +143,8 @@ export class ProductionBlockchainService {
         blockNumber: receipt.blockNumber,
         gasUsed: receipt.gasUsed.toString(),
         gasPrice: gasEstimate.gasPrice.toString(),
-        agentNFT
+        agentNFT: fullAgentNFT,
       };
-
     } catch (error: any) {
       this.logger.error(`Failed to create Agent NFT: ${error.message}`, error.stack);
       throw new Error(`Failed to create Agent NFT: ${error.message}`);
@@ -160,7 +154,9 @@ export class ProductionBlockchainService {
   /**
    * Validate Agent NFT creation request
    */
-  private async validateAgentNFTCreation(request: AgentNFTCreationRequest): Promise<TransactionValidationResult> {
+  private async validateAgentNFTCreation(
+    request: AgentNFTCreationRequest
+  ): Promise<TransactionValidationResult> {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -176,9 +172,7 @@ export class ProductionBlockchainService {
 
     // Check if agent exists
     if (request.agentId) {
-      const agent = await this.prisma.agent.findUnique({
-        where: { id: request.agentId }
-      });
+      const agent = await drizzleAgentRepository.findById(request.agentId);
 
       if (!agent) {
         errors.push(`Agent not found: ${request.agentId}`);
@@ -196,9 +190,7 @@ export class ProductionBlockchainService {
 
     // Check if agent is already minted
     if (request.agentId) {
-      const existingNft = await this.prisma.agentNFT.findUnique({
-        where: { agentId: request.agentId }
-      });
+      const existingNft = await agentNftRepository.findByAgentId(request.agentId);
 
       if (existingNft) {
         errors.push('Agent is already minted as NFT');
@@ -208,7 +200,7 @@ export class ProductionBlockchainService {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -216,7 +208,8 @@ export class ProductionBlockchainService {
    * Generate metadata URI for agent
    */
   private generateMetadataURI(agentId: string): string {
-    const baseUrl = this.configService.get<string>('METADATA_BASE_URL') || 'https://metadata.thenewfuse.com';
+    const baseUrl =
+      this.configService.get<string>('METADATA_BASE_URL') || 'https://metadata.thenewfuse.com';
     return `${baseUrl}/agents/${agentId}`;
   }
 
@@ -225,34 +218,35 @@ export class ProductionBlockchainService {
    */
   private getAgentNFTABI() {
     return [
-      "function mint(address to, string memory tokenURI) public returns (uint256)",
-      "function setTokenURI(uint256 tokenId, string memory tokenURI) public",
-      "function ownerOf(uint256 tokenId) public view returns (address)",
-      "function getAgent(uint256 tokenId) public view returns (tuple(string name, string description, string agentType, string[] capabilities, uint256 shares, bool isFractionalized))",
-      "function transferFractionalShare(uint256 tokenId, address from, address to, uint256 shareAmount) external",
-      "function setMarketplaceAuthorization(address marketplace, bool authorized) external",
-      "function safeTransferFrom(address from, address to, uint256 tokenId) public",
-      "function approve(address to, uint256 tokenId) public",
-      "function getApproved(uint256 tokenId) public view returns (address)",
-      "function setApprovalForAll(address operator, bool approved) public",
-      "function isApprovedForAll(address owner, address operator) public view returns (bool)",
-      "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
-      "event FractionalShareTransferred(uint256 indexed tokenId, address indexed from, address indexed to, uint256 shareAmount)",
-      "event MarketplaceAuthorizationSet(address indexed marketplace, bool authorized)"
+      'function mint(address to, string memory tokenURI) public returns (uint256)',
+      'function setTokenURI(uint256 tokenId, string memory tokenURI) public',
+      'function ownerOf(uint256 tokenId) public view returns (address)',
+      'function getAgent(uint256 tokenId) public view returns (tuple(string name, string description, string agentType, string[] capabilities, uint256 shares, bool isFractionalized))',
+      'function transferFractionalShare(uint256 tokenId, address from, address to, uint256 shareAmount) external',
+      'function setMarketplaceAuthorization(address marketplace, bool authorized) external',
+      'function safeTransferFrom(address from, address to, uint256 tokenId) public',
+      'function approve(address to, uint256 tokenId) public',
+      'function getApproved(uint256 tokenId) public view returns (address)',
+      'function setApprovalForAll(address operator, bool approved) public',
+      'function isApprovedForAll(address owner, address operator) public view returns (bool)',
+      'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
+      'event FractionalShareTransferred(uint256 indexed tokenId, address indexed from, address indexed to, uint256 shareAmount)',
+      'event MarketplaceAuthorizationSet(address indexed marketplace, bool authorized)',
     ];
   }
 
   /**
    * Update Agent NFT metadata with production error handling
    */
-  async updateAgentNFTMetadata(agentId: string, newMetadataUri: string): Promise<{ transactionHash: string, blockNumber: number }> {
+  async updateAgentNFTMetadata(
+    agentId: string,
+    newMetadataUri: string
+  ): Promise<{ transactionHash: string; blockNumber: number }> {
     try {
       this.logger.log(`Updating metadata for agent ${agentId}`);
 
       // Get agent NFT
-      const agentNFT = await this.prisma.agentNFT.findUnique({
-        where: { agentId }
-      });
+      const agentNFT = await agentNftRepository.findByAgentId(agentId);
 
       if (!agentNFT) {
         throw new Error(`Agent NFT not found for agent ${agentId}`);
@@ -300,18 +294,14 @@ export class ProductionBlockchainService {
       }
 
       // Update database
-      await this.prisma.agentNFT.update({
-        where: { agentId },
-        data: { metadataUri: newMetadataUri }
-      });
+      await agentNftRepository.update(agentId, { metadataUri: newMetadataUri } as any);
 
       this.logger.log(`Metadata updated successfully for agent ${agentId} - Tx: ${tx.hash}`);
 
       return {
         transactionHash: tx.hash,
-        blockNumber: receipt.blockNumber
+        blockNumber: receipt.blockNumber,
       };
-
     } catch (error: any) {
       this.logger.error(`Failed to update Agent NFT metadata: ${error.message}`, error.stack);
       throw new Error(`Failed to update metadata: ${error.message}`);
@@ -323,26 +313,7 @@ export class ProductionBlockchainService {
    */
   async getAgentNFTDetails(agentId: string) {
     try {
-      const agentNFT = await this.prisma.agentNFT.findUnique({
-        where: { agentId },
-        include: {
-          agent: true,
-          fractionalShares: {
-            include: {
-              agentNFT: {
-                include: {
-                  agent: true
-                }
-              }
-            }
-          },
-          revenueStreams: {
-            include: {
-              distributions: true
-            }
-          }
-        }
-      });
+      const agentNFT = await agentNftRepository.findFullDetailsByAgentId(agentId);
 
       if (!agentNFT) {
         return null;
@@ -351,17 +322,13 @@ export class ProductionBlockchainService {
       // Get blockchain data
       const config = this.blockchainUtil.getConfig();
       const provider = this.blockchainUtil.getProvider();
-      
-      const contract = new Contract(
-        agentNFT.contractAddress,
-        this.getAgentNFTABI(),
-        provider
-      );
+
+      const contract = new Contract(agentNFT.contractAddress, this.getAgentNFTABI(), provider);
 
       // Get owner and on-chain data
       const [owner, onChainAgent] = await Promise.all([
         contract.ownerOf(BigInt(agentNFT.tokenId)),
-        contract.getAgent(BigInt(agentNFT.tokenId)).catch(() => null)
+        contract.getAgent(BigInt(agentNFT.tokenId)).catch(() => null),
       ]);
 
       return {
@@ -370,10 +337,9 @@ export class ProductionBlockchainService {
           owner,
           onChainAgent,
           contractAddress: agentNFT.contractAddress,
-          tokenId: agentNFT.tokenId
-        }
+          tokenId: agentNFT.tokenId,
+        },
       };
-
     } catch (error: any) {
       this.logger.error(`Failed to get Agent NFT details: ${error.message}`, error.stack);
       throw new Error(`Failed to get Agent NFT details: ${error.message}`);
@@ -393,7 +359,9 @@ export class ProductionBlockchainService {
         const result = await this.createAgentNFT(request);
         results.push(result);
       } catch (error: any) {
-        this.logger.error(`Failed to process NFT creation for agent ${request.agentId}: ${error.message}`);
+        this.logger.error(
+          `Failed to process NFT creation for agent ${request.agentId}: ${error.message}`
+        );
         errors.push(`Agent ${request.agentId}: ${error.message}`);
       }
     }
@@ -417,12 +385,12 @@ export class ProductionBlockchainService {
   }> {
     try {
       const status = await this.blockchainUtil.getTransactionStatus(txHash);
-      
+
       if (!status.transaction) {
         return {
           status: 'failed',
           confirmations: 0,
-          error: 'Transaction not found'
+          error: 'Transaction not found',
         };
       }
 
@@ -432,7 +400,7 @@ export class ProductionBlockchainService {
             status: 'confirmed',
             confirmations: status.receipt.confirmations,
             blockNumber: status.receipt.blockNumber,
-            gasUsed: status.receipt.gasUsed
+            gasUsed: status.receipt.gasUsed,
           };
         } else {
           return {
@@ -440,22 +408,21 @@ export class ProductionBlockchainService {
             confirmations: status.receipt.confirmations,
             blockNumber: status.receipt.blockNumber,
             gasUsed: status.receipt.gasUsed,
-            error: 'Transaction execution failed'
+            error: 'Transaction execution failed',
           };
         }
       }
 
       return {
         status: 'pending',
-        confirmations: 0
+        confirmations: 0,
       };
-
     } catch (error: any) {
       this.logger.error(`Failed to monitor transaction ${txHash}: ${error.message}`);
       return {
         status: 'failed',
         confirmations: 0,
-        error: error.message
+        error: error.message,
       };
     }
   }

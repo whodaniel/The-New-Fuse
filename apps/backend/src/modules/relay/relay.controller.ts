@@ -8,16 +8,16 @@
  */
 
 import {
-  Controller,
-  Get,
-  Post,
-  Delete,
   Body,
-  Param,
-  Query,
-  HttpStatus,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
+  HttpStatus,
   Logger,
+  Param,
+  Post,
+  Query,
 } from '@nestjs/common';
 import { RelayService } from './relay.service';
 
@@ -91,10 +91,7 @@ export class RelayController {
   // ========================================
 
   @Get('agents')
-  async getAllAgents(
-    @Query('type') type?: string,
-    @Query('capability') capability?: string,
-  ) {
+  async getAllAgents(@Query('type') type?: string, @Query('capability') capability?: string) {
     let agents;
 
     if (type) {
@@ -187,7 +184,7 @@ export class RelayController {
       dto.source,
       dto.type,
       dto.payload,
-      dto.filter,
+      dto.filter
     );
 
     return {

@@ -1,12 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
 import {
-  TopologyOptimizationConfig,
-  WorkflowTopology,
-  WorkflowNode,
-  WorkflowEdge,
+  agentPromptVersionRepository,
+  drizzleAgentRepository,
+  validationDatasetRepository,
+  workflowTopologyRepository,
+} from '@the-new-fuse/database';
+import {
   PerformanceMetrics,
-  MassBlockType
+  TopologyOptimizationConfig,
+  WorkflowEdge,
+  WorkflowNode,
+  WorkflowTopology,
 } from '@the-new-fuse/types';
 import { EvaluationHarnessService } from './prompt-optimizer.service';
 
@@ -14,10 +18,7 @@ import { EvaluationHarnessService } from './prompt-optimizer.service';
 export class TopologyOptimizerService {
   private readonly logger = new Logger(TopologyOptimizerService.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly evaluationHarness: EvaluationHarnessService
-  ) {}
+  constructor(private readonly evaluationHarness: EvaluationHarnessService) {}
 
   async optimizeTopology(
     agentIds: string[],
@@ -28,10 +29,10 @@ export class TopologyOptimizerService {
     try {
       // Get optimized agents from Stage 1
       const agents = await this.getOptimizedAgents(agentIds, config.userId);
-      
+
       // Calculate influence scores for each agent
       const influenceScores = await this.calculateInfluenceScores(agents, config);
-      
+
       // Generate candidate topologies based on influence scores
       const candidateTopologies = await this.generateCandidateTopologies(
         agents,
@@ -43,20 +44,24 @@ export class TopologyOptimizerService {
       const evaluationResults = await Promise.all(
         candidateTopologies.map(async (topology, index) => {
           const metrics = await this.evaluateTopology(topology, config);
-          
+
           return {
             topology,
             metrics,
-            candidateIndex: index
+            candidateIndex: index,
           };
         })
       );
 
       // Select best performing topology
       const bestTopology = this.selectBestTopology(evaluationResults);
-      
+
       // Save the optimized topology
-      const savedTopology = await this.saveTopology(bestTopology.topology, bestTopology.metrics, config.userId);
+      const savedTopology = await this.saveTopology(
+        bestTopology.topology,
+        bestTopology.metrics,
+        config.userId
+      );
 
       this.logger.log(
         `Stage 2 optimization completed. Best topology accuracy: ${bestTopology.metrics.accuracy}`
@@ -70,28 +75,36 @@ export class TopologyOptimizerService {
   }
 
   private async getOptimizedAgents(agentIds: string[], userId: string): Promise<any[]> {
-    return this.prisma.agent.findMany({
-      where: {
-        id: { in: agentIds },
-        userId
-      },
-      include: {
-        promptVersions: {
-          where: { massStage: 'block_level' },
-          orderBy: { versionNumber: 'desc' },
-          take: 1
-        }
-      }
-    });
+    // Manually fetch agents and their latest prompt versions
+    const agents = await Promise.all(
+      agentIds.map(async (id) => {
+        const agent = await drizzleAgentRepository.findById(id);
+        if (!agent || agent.userId !== userId) return null;
+
+        // Fetch latest block-level prompt version
+        const latestPrompt = await agentPromptVersionRepository.findLatestByAgentId(
+          id,
+          'block_level'
+        );
+
+        return {
+          ...agent,
+          promptVersions: latestPrompt ? [latestPrompt] : [],
+        };
+      })
+    );
+
+    return agents.filter(Boolean);
   }
 
-  private async calculateInfluenceScores(agents: any[], config: TopologyOptimizationConfig): Promise<Record<string, number>> {
+  private async calculateInfluenceScores(
+    agents: any[],
+    config: TopologyOptimizationConfig
+  ): Promise<Record<string, number>> {
     const scores: Record<string, number> = {};
-    
+
     // Get validation dataset
-    const dataset = await this.prisma.validationDataset.findUnique({
-      where: { id: config.validationDatasetId }
-    });
+    const dataset = await validationDatasetRepository.findById(config.validationDatasetId);
 
     if (!dataset) {
       throw new Error(`Validation dataset ${config.validationDatasetId} not found`);
@@ -99,10 +112,12 @@ export class TopologyOptimizerService {
 
     // Baseline performance with just the first agent
     const baselineAgent = agents[0];
+    const datasetItems = (dataset.items as any[]) || [];
+
     const baselineMetrics = await this.evaluationHarness.evaluatePrompt(
       baselineAgent.id,
       this.getLatestPrompt(baselineAgent),
-      dataset.items as any[],
+      datasetItems,
       config
     );
 
@@ -112,14 +127,16 @@ export class TopologyOptimizerService {
         const agentMetrics = await this.evaluationHarness.evaluatePrompt(
           agent.id,
           this.getLatestPrompt(agent),
-          dataset.items as any[],
+          datasetItems,
           config
         );
 
         // Influence = (Agent Performance - Baseline Performance) / Baseline Performance
-        const influence = baselineMetrics.accuracy > 0 ? 
-          (agentMetrics.accuracy - baselineMetrics.accuracy) / baselineMetrics.accuracy : 0;
-        
+        const influence =
+          baselineMetrics.accuracy > 0
+            ? (agentMetrics.accuracy - baselineMetrics.accuracy) / baselineMetrics.accuracy
+            : 0;
+
         scores[agent.id] = Math.max(0, influence); // Only positive influence
       } catch (error) {
         this.logger.warn(`Failed to calculate influence for agent ${agent.id}:`, error);
@@ -137,19 +154,19 @@ export class TopologyOptimizerService {
         instruction: {
           roleDefinition: latestVersion.instruction,
           taskGuidance: '',
-          outputFormat: ''
+          outputFormat: '',
         },
-        exemplars: latestVersion.exemplars || []
+        exemplars: latestVersion.exemplars || [],
       };
     }
-    
+
     return {
       instruction: {
         roleDefinition: agent.systemPrompt || 'You are a helpful AI assistant.',
         taskGuidance: '',
-        outputFormat: ''
+        outputFormat: '',
       },
-      exemplars: []
+      exemplars: [],
     };
   }
 
@@ -159,20 +176,18 @@ export class TopologyOptimizerService {
     config: TopologyOptimizationConfig
   ): Promise<WorkflowTopology[]> {
     const candidates: WorkflowTopology[] = [];
-    
+
     // Generate different topology patterns
-    const patterns = [
-      'linear',
-      'parallel', 
-      'hierarchical',
-      'debate',
-      'reflect',
-      'aggregate'
-    ];
+    const patterns = ['linear', 'parallel', 'hierarchical', 'debate', 'reflect', 'aggregate'];
 
     for (const pattern of patterns) {
       try {
-        const topology = await this.generateTopologyByPattern(pattern, agents, influenceScores, config);
+        const topology = await this.generateTopologyByPattern(
+          pattern,
+          agents,
+          influenceScores,
+          config
+        );
         if (topology) {
           candidates.push(topology);
         }
@@ -200,8 +215,12 @@ export class TopologyOptimizerService {
     influenceScores: Record<string, number>,
     config: TopologyOptimizationConfig
   ): Promise<WorkflowTopology> {
-    const topAgents = this.selectTopAgentsByInfluence(agents, influenceScores, config.maxAgents || 5);
-    
+    const topAgents = this.selectTopAgentsByInfluence(
+      agents,
+      influenceScores,
+      config.maxAgents || 5
+    );
+
     switch (pattern) {
       case 'linear':
         return this.createLinearTopology(topAgents, config);
@@ -220,18 +239,25 @@ export class TopologyOptimizerService {
     }
   }
 
-  private selectTopAgentsByInfluence(agents: any[], influenceScores: Record<string, number>, maxAgents: number): any[] {
+  private selectTopAgentsByInfluence(
+    agents: any[],
+    influenceScores: Record<string, number>,
+    maxAgents: number
+  ): any[] {
     return agents
       .sort((a, b) => (influenceScores[b.id] || 0) - (influenceScores[a.id] || 0))
       .slice(0, maxAgents);
   }
 
-  private createLinearTopology(agents: any[], config: TopologyOptimizationConfig): WorkflowTopology {
+  private createLinearTopology(
+    agents: any[],
+    config: TopologyOptimizationConfig
+  ): WorkflowTopology {
     const nodes: WorkflowNode[] = agents.map((agent, index) => ({
       id: `node_${index}`,
       agentBlueprintId: agent.id,
       type: 'predictor',
-      position: { x: index * 200, y: 100 }
+      position: { x: index * 200, y: 100 },
     }));
 
     const edges: WorkflowEdge[] = [];
@@ -239,7 +265,7 @@ export class TopologyOptimizerService {
       edges.push({
         id: `edge_${i}`,
         sourceNodeId: nodes[i].id,
-        targetNodeId: nodes[i + 1].id
+        targetNodeId: nodes[i + 1].id,
       });
     }
 
@@ -252,16 +278,19 @@ export class TopologyOptimizerService {
       massOptimized: true,
       userId: config.userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
-  private createParallelTopology(agents: any[], config: TopologyOptimizationConfig): WorkflowTopology {
+  private createParallelTopology(
+    agents: any[],
+    config: TopologyOptimizationConfig
+  ): WorkflowTopology {
     const nodes: WorkflowNode[] = agents.map((agent, index) => ({
       id: `node_${index}`,
       agentBlueprintId: agent.id,
       type: 'predictor',
-      position: { x: 200, y: index * 100 }
+      position: { x: 200, y: index * 100 },
     }));
 
     // Add aggregator node
@@ -270,17 +299,17 @@ export class TopologyOptimizerService {
       agentBlueprintId: agents[0].id, // Use first agent as aggregator
       type: 'aggregate',
       nodeSpecificConfig: {
-        agentIds: agents.map(a => a.id),
+        agentIds: agents.map((a) => a.id),
         aggregationStrategy: 'majority_vote',
-        parallelExecution: true
+        parallelExecution: true,
       },
-      position: { x: 400, y: (agents.length - 1) * 50 }
+      position: { x: 400, y: (agents.length - 1) * 50 },
     });
 
     const edges: WorkflowEdge[] = agents.map((_, index) => ({
       id: `edge_${index}`,
       sourceNodeId: `node_${index}`,
-      targetNodeId: 'aggregator'
+      targetNodeId: 'aggregator',
     }));
 
     return {
@@ -292,28 +321,33 @@ export class TopologyOptimizerService {
       massOptimized: true,
       userId: config.userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
-  private createDebateTopology(agents: any[], config: TopologyOptimizationConfig): WorkflowTopology {
+  private createDebateTopology(
+    agents: any[],
+    config: TopologyOptimizationConfig
+  ): WorkflowTopology {
     if (agents.length < 2) {
       throw new Error('Debate topology requires at least 2 agents');
     }
 
     const debateAgents = agents.slice(0, Math.min(4, agents.length)); // Max 4 debaters
-    
-    const nodes: WorkflowNode[] = [{
-      id: 'debate_node',
-      agentBlueprintId: debateAgents[0].id,
-      type: 'debate',
-      nodeSpecificConfig: {
-        debaterAgentIds: debateAgents.map(a => a.id),
-        debateRounds: 3,
-        votingStrategy: 'majority'
+
+    const nodes: WorkflowNode[] = [
+      {
+        id: 'debate_node',
+        agentBlueprintId: debateAgents[0].id,
+        type: 'debate',
+        nodeSpecificConfig: {
+          debaterAgentIds: debateAgents.map((a) => a.id),
+          debateRounds: 3,
+          votingStrategy: 'majority',
+        },
+        position: { x: 200, y: 200 },
       },
-      position: { x: 200, y: 200 }
-    }];
+    ];
 
     return {
       id: '',
@@ -324,26 +358,31 @@ export class TopologyOptimizerService {
       massOptimized: true,
       userId: config.userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
-  private createReflectTopology(agents: any[], config: TopologyOptimizationConfig): WorkflowTopology {
+  private createReflectTopology(
+    agents: any[],
+    config: TopologyOptimizationConfig
+  ): WorkflowTopology {
     if (agents.length < 2) {
       throw new Error('Reflect topology requires at least 2 agents');
     }
 
-    const nodes: WorkflowNode[] = [{
-      id: 'reflect_node',
-      agentBlueprintId: agents[0].id,
-      type: 'reflect',
-      nodeSpecificConfig: {
-        predictorAgentId: agents[0].id,
-        reflectorAgentId: agents[1].id,
-        maxRounds: 3
+    const nodes: WorkflowNode[] = [
+      {
+        id: 'reflect_node',
+        agentBlueprintId: agents[0].id,
+        type: 'reflect',
+        nodeSpecificConfig: {
+          predictorAgentId: agents[0].id,
+          reflectorAgentId: agents[1].id,
+          maxRounds: 3,
+        },
+        position: { x: 200, y: 200 },
       },
-      position: { x: 200, y: 200 }
-    }];
+    ];
 
     return {
       id: '',
@@ -354,22 +393,27 @@ export class TopologyOptimizerService {
       massOptimized: true,
       userId: config.userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
-  private createAggregateTopology(agents: any[], config: TopologyOptimizationConfig): WorkflowTopology {
-    const nodes: WorkflowNode[] = [{
-      id: 'aggregate_node',
-      agentBlueprintId: agents[0].id,
-      type: 'aggregate',
-      nodeSpecificConfig: {
-        agentIds: agents.map(a => a.id),
-        aggregationStrategy: 'weighted_average',
-        parallelExecution: true
+  private createAggregateTopology(
+    agents: any[],
+    config: TopologyOptimizationConfig
+  ): WorkflowTopology {
+    const nodes: WorkflowNode[] = [
+      {
+        id: 'aggregate_node',
+        agentBlueprintId: agents[0].id,
+        type: 'aggregate',
+        nodeSpecificConfig: {
+          agentIds: agents.map((a) => a.id),
+          aggregationStrategy: 'weighted_average',
+          parallelExecution: true,
+        },
+        position: { x: 200, y: 200 },
       },
-      position: { x: 200, y: 200 }
-    }];
+    ];
 
     return {
       id: '',
@@ -380,11 +424,14 @@ export class TopologyOptimizerService {
       massOptimized: true,
       userId: config.userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
-  private createHierarchicalTopology(agents: any[], config: TopologyOptimizationConfig): WorkflowTopology {
+  private createHierarchicalTopology(
+    agents: any[],
+    config: TopologyOptimizationConfig
+  ): WorkflowTopology {
     const nodes: WorkflowNode[] = [];
     const edges: WorkflowEdge[] = [];
 
@@ -399,7 +446,7 @@ export class TopologyOptimizerService {
         id: `input_${index}`,
         agentBlueprintId: agent.id,
         type: 'predictor',
-        position: { x: index * 150, y: 50 }
+        position: { x: index * 150, y: 50 },
       });
     });
 
@@ -409,11 +456,11 @@ export class TopologyOptimizerService {
       agentBlueprintId: middleAgent.id,
       type: 'aggregate',
       nodeSpecificConfig: {
-        agentIds: inputLayer.map(a => a.id),
+        agentIds: inputLayer.map((a) => a.id),
         aggregationStrategy: 'weighted_average',
-        parallelExecution: false
+        parallelExecution: false,
       },
-      position: { x: 200, y: 200 }
+      position: { x: 200, y: 200 },
     });
 
     // Final node
@@ -421,7 +468,7 @@ export class TopologyOptimizerService {
       id: 'final',
       agentBlueprintId: finalAgent.id,
       type: 'predictor',
-      position: { x: 200, y: 350 }
+      position: { x: 200, y: 350 },
     });
 
     // Connect input layer to middle
@@ -429,7 +476,7 @@ export class TopologyOptimizerService {
       edges.push({
         id: `edge_input_${index}`,
         sourceNodeId: `input_${index}`,
-        targetNodeId: 'middle'
+        targetNodeId: 'middle',
       });
     });
 
@@ -437,7 +484,7 @@ export class TopologyOptimizerService {
     edges.push({
       id: 'edge_middle_final',
       sourceNodeId: 'middle',
-      targetNodeId: 'final'
+      targetNodeId: 'final',
     });
 
     return {
@@ -449,7 +496,7 @@ export class TopologyOptimizerService {
       massOptimized: true,
       userId: config.userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
@@ -460,7 +507,11 @@ export class TopologyOptimizerService {
   ): WorkflowTopology {
     // Create weighted random selection based on influence scores
     const totalInfluence = Object.values(influenceScores).reduce((sum, score) => sum + score, 0);
-    const selectedAgents = this.weightedRandomSelection(agents, influenceScores, Math.min(4, agents.length));
+    const selectedAgents = this.weightedRandomSelection(
+      agents,
+      influenceScores,
+      Math.min(4, agents.length)
+    );
 
     // Randomly choose a pattern for the selected agents
     const patterns = ['linear', 'parallel', 'reflect', 'aggregate'];
@@ -469,17 +520,24 @@ export class TopologyOptimizerService {
     return this.generateTopologyByPattern(randomPattern, selectedAgents, influenceScores, config);
   }
 
-  private weightedRandomSelection(agents: any[], influenceScores: Record<string, number>, count: number): any[] {
+  private weightedRandomSelection(
+    agents: any[],
+    influenceScores: Record<string, number>,
+    count: number
+  ): any[] {
     const selected = [];
     const available = [...agents];
 
     for (let i = 0; i < count && available.length > 0; i++) {
-      const totalWeight = available.reduce((sum, agent) => sum + (influenceScores[agent.id] || 0.1), 0);
+      const totalWeight = available.reduce(
+        (sum, agent) => sum + (influenceScores[agent.id] || 0.1),
+        0
+      );
       let random = Math.random() * totalWeight;
-      
+
       let selectedIndex = 0;
       for (let j = 0; j < available.length; j++) {
-        random -= (influenceScores[available[j].id] || 0.1);
+        random -= influenceScores[available[j].id] || 0.1;
         if (random <= 0) {
           selectedIndex = j;
           break;
@@ -493,11 +551,12 @@ export class TopologyOptimizerService {
     return selected;
   }
 
-  private async evaluateTopology(topology: WorkflowTopology, config: TopologyOptimizationConfig): Promise<PerformanceMetrics> {
+  private async evaluateTopology(
+    topology: WorkflowTopology,
+    config: TopologyOptimizationConfig
+  ): Promise<PerformanceMetrics> {
     // Get validation dataset
-    const dataset = await this.prisma.validationDataset.findUnique({
-      where: { id: config.validationDatasetId }
-    });
+    const dataset = await validationDatasetRepository.findById(config.validationDatasetId);
 
     if (!dataset) {
       throw new Error(`Validation dataset ${config.validationDatasetId} not found`);
@@ -516,37 +575,39 @@ export class TopologyOptimizerService {
     const sorted = evaluationResults.sort((a, b) => {
       const aScore = a.metrics.accuracy || 0;
       const bScore = b.metrics.accuracy || 0;
-      
+
       if (Math.abs(aScore - bScore) < 0.01) {
         // Tie-break by efficiency (lower latency + cost)
         const aEfficiency = (a.metrics.latency || 1000) + (a.metrics.cost || 1) * 1000;
         const bEfficiency = (b.metrics.latency || 1000) + (b.metrics.cost || 1) * 1000;
         return aEfficiency - bEfficiency;
       }
-      
+
       return bScore - aScore;
     });
 
     return sorted[0];
   }
 
-  private async saveTopology(topology: WorkflowTopology, metrics: PerformanceMetrics, userId: string): Promise<WorkflowTopology> {
-    const saved = await this.prisma.workflowTopology.create({
-      data: {
-        name: topology.name,
-        description: topology.description,
-        nodes: topology.nodes as any,
-        edges: topology.edges as any,
-        performanceMetrics: metrics as any,
-        massOptimized: true,
-        userId
-      }
+  private async saveTopology(
+    topology: WorkflowTopology,
+    metrics: PerformanceMetrics,
+    userId: string
+  ): Promise<WorkflowTopology> {
+    const saved = await workflowTopologyRepository.create({
+      name: topology.name,
+      description: topology.description,
+      nodes: topology.nodes as any,
+      edges: topology.edges as any,
+      performanceMetrics: metrics as any,
+      massOptimized: true,
+      userId,
     });
 
     return {
       ...topology,
       id: saved.id,
-      performanceMetrics: metrics
+      performanceMetrics: metrics,
     };
   }
 }

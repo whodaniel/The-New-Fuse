@@ -4,8 +4,28 @@
  */
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 import { db } from '../client';
-import { chatMessages, chatRooms, chats, messages } from '../schema';
-import type { Chat, ChatMessage, ChatRoom, Message, NewChat, NewChatMessage, NewChatRoom, NewMessage } from '../types';
+import {
+  chatMessages,
+  chatRoomParticipants,
+  chatRooms,
+  chats,
+  messages,
+  readReceipts,
+} from '../schema';
+import type {
+  Chat,
+  ChatMessage,
+  ChatRoom,
+  ChatRoomParticipant,
+  Message,
+  NewChat,
+  NewChatMessage,
+  NewChatRoom,
+  NewChatRoomParticipant,
+  NewMessage,
+  NewReadReceipt,
+  ReadReceipt,
+} from '../types';
 
 /**
  * Chat Repository - provides data access for Chat entities
@@ -17,6 +37,83 @@ export class DrizzleChatRepository {
   async createChat(data: NewChat): Promise<Chat> {
     const [chat] = await db.insert(chats).values(data).returning();
     return chat;
+  }
+
+  // ... (Keep existing methods until end of class)
+
+  /**
+   * Find participants by room ID
+   */
+  async findParticipantsByRoomId(roomId: string): Promise<ChatRoomParticipant[]> {
+    return db.select().from(chatRoomParticipants).where(eq(chatRoomParticipants.roomId, roomId));
+  }
+
+  /**
+   * Add participant to room
+   */
+  async addParticipant(data: NewChatRoomParticipant): Promise<ChatRoomParticipant> {
+    const [participant] = await db.insert(chatRoomParticipants).values(data).returning();
+    return participant;
+  }
+
+  /**
+   * Find participant
+   */
+  async findParticipant(roomId: string, userId: string): Promise<ChatRoomParticipant | null> {
+    const [participant] = await db
+      .select()
+      .from(chatRoomParticipants)
+      .where(and(eq(chatRoomParticipants.roomId, roomId), eq(chatRoomParticipants.userId, userId)));
+    return participant ?? null;
+  }
+
+  /**
+   * Update participant
+   */
+  async updateParticipant(
+    roomId: string,
+    userId: string,
+    data: Partial<NewChatRoomParticipant>
+  ): Promise<ChatRoomParticipant | null> {
+    const [participant] = await db
+      .update(chatRoomParticipants)
+      .set(data)
+      .where(and(eq(chatRoomParticipants.roomId, roomId), eq(chatRoomParticipants.userId, userId)))
+      .returning();
+    return participant ?? null;
+  }
+
+  /**
+   * Remove participant
+   */
+  async removeParticipant(roomId: string, userId: string): Promise<boolean> {
+    const result = await db
+      .delete(chatRoomParticipants)
+      .where(and(eq(chatRoomParticipants.roomId, roomId), eq(chatRoomParticipants.userId, userId)))
+      .returning();
+    return result.length > 0;
+  }
+
+  /**
+   * Upsert read receipt
+   */
+  async upsertReadReceipt(data: NewReadReceipt): Promise<ReadReceipt> {
+    const [existing] = await db
+      .select()
+      .from(readReceipts)
+      .where(and(eq(readReceipts.messageId, data.messageId), eq(readReceipts.userId, data.userId)));
+
+    if (existing) {
+      const [updated] = await db
+        .update(readReceipts)
+        .set({ readAt: new Date() })
+        .where(eq(readReceipts.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(readReceipts).values(data).returning();
+      return created;
+    }
   }
 
   /**
@@ -114,13 +211,14 @@ export class DrizzleChatRepository {
   /**
    * Find messages by room ID
    */
-  async findMessagesByRoomId(roomId: string, limit = 100): Promise<Message[]> {
+  async findMessagesByRoomId(roomId: string, limit = 100, offset = 0): Promise<Message[]> {
     return db
       .select()
       .from(messages)
       .where(and(eq(messages.roomId, roomId), eq(messages.isDeleted, false)))
       .orderBy(desc(messages.timestamp))
-      .limit(limit);
+      .limit(limit)
+      .offset(offset);
   }
 
   /**
@@ -132,7 +230,7 @@ export class DrizzleChatRepository {
       .set({
         content,
         isEdited: true,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(messages.id, id))
       .returning();
@@ -159,12 +257,7 @@ export class DrizzleChatRepository {
   async deleteExpiredMessages(): Promise<number> {
     const result = await db
       .delete(messages)
-      .where(
-        and(
-          eq(messages.isEphemeral, true),
-          sql`${messages.expiresAt} < NOW()`
-        )
-      )
+      .where(and(eq(messages.isEphemeral, true), sql`${messages.expiresAt} < NOW()`))
       .returning();
 
     return result.length;
@@ -263,12 +356,7 @@ export class DrizzleChatRepository {
     return db
       .select()
       .from(chatMessages)
-      .where(
-        and(
-          eq(chatMessages.userId, userId),
-          sql`${chatMessages.expiresAt} > NOW()`
-        )
-      )
+      .where(and(eq(chatMessages.userId, userId), sql`${chatMessages.expiresAt} > NOW()`))
       .orderBy(desc(chatMessages.createdAt))
       .limit(limit);
   }
@@ -307,6 +395,58 @@ export class DrizzleChatRepository {
       .where(and(eq(messages.roomId, roomId), eq(messages.isDeleted, false)));
 
     return result[0]?.count ?? 0;
+  }
+
+  /**
+   * Search messages across rooms
+   */
+  async searchMessages(
+    query: string,
+    roomId?: string,
+    senderId?: string,
+    limit = 50,
+    offset = 0
+  ): Promise<{ items: Message[]; total: number }> {
+    const filters = [
+      sql`${messages.content} ILIKE ${'%' + query + '%'}`,
+      eq(messages.isDeleted, false),
+    ];
+
+    if (roomId) filters.push(eq(messages.roomId, roomId));
+    if (senderId) filters.push(eq(messages.senderId, senderId));
+
+    const [items, countResult] = await Promise.all([
+      db
+        .select()
+        .from(messages)
+        .where(and(...filters))
+        .orderBy(desc(messages.timestamp))
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: db.$count(messages) })
+        .from(messages)
+        .where(and(...filters)),
+    ]);
+
+    return {
+      items,
+      total: countResult[0]?.count ?? 0,
+    };
+  }
+
+  /**
+   * Find rooms joined by user
+   */
+  async findJoinedRooms(userId: string): Promise<ChatRoom[]> {
+    const rows = await db
+      .select({ room: chatRooms })
+      .from(chatRooms)
+      .innerJoin(chatRoomParticipants, eq(chatRooms.id, chatRoomParticipants.roomId))
+      .where(and(eq(chatRoomParticipants.userId, userId), isNull(chatRooms.deletedAt)))
+      .orderBy(desc(chatRooms.lastMessageAt));
+
+    return rows.map((r) => r.room);
   }
 }
 

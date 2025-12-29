@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { drizzleChatRepository } from '@the-new-fuse/database/drizzle';
-import type { ChatMessage } from '@the-new-fuse/database/drizzle';
+import type { DrizzleChatMessage as ChatMessage } from '@the-new-fuse/database';
+import { drizzleChatRepository } from '@the-new-fuse/database';
 
 export enum MessageRole {
-  USER = "user",
-  ASSISTANT = "assistant",
-  // Add other roles if applicable
+  USER = 'USER',
+  ASSISTANT = 'ASSISTANT',
+  SYSTEM = 'SYSTEM',
+  AGENT = 'AGENT',
+  TOOL = 'TOOL',
 }
 
 @Injectable()
@@ -20,25 +22,35 @@ export class ChatService {
       userId,
       role,
       content,
-      expiresAt
-    });
+      expiresAt,
+    } as any);
   }
 
   async getMessages(userId: string, limit = 100): Promise<ChatMessage[]> {
     return drizzleChatRepository.findChatMessagesByUserId(userId, limit);
   }
-  
-  async getMessagesBetweenAgents(fromAgentId: string, toAgentId: string, limit = 100): Promise<ChatMessage[]> {
+
+  async getMessagesBetweenAgents(
+    fromAgentId: string,
+    toAgentId: string,
+    limit = 100
+  ): Promise<ChatMessage[]> {
     // Note: The ChatMessage schema doesn't have fromAgentId/toAgentId fields
     // This is a placeholder implementation that needs schema updates
     return drizzleChatRepository.findChatMessagesByUserId(fromAgentId, limit);
   }
-  
+
   async getChatHistory(
     userId: string,
     page = 1,
     pageSize = 20
-  ): Promise<{ messages: ChatMessage[]; total: number; hasMore: boolean; currentPage: number; pageSize: number }> {
+  ): Promise<{
+    messages: ChatMessage[];
+    total: number;
+    hasMore: boolean;
+    currentPage: number;
+    pageSize: number;
+  }> {
     // For now, use separate queries instead of transaction
     // TODO: Implement transaction support in Drizzle if needed
     const allMessages = await drizzleChatRepository.findChatMessagesByUserId(userId, 1000);

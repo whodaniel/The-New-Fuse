@@ -5,7 +5,14 @@
 import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { db } from '../client';
 import { pipelines, taskExecutions, tasks } from '../schema';
-import type { NewPipeline, NewTask, NewTaskExecution, Pipeline, Task, TaskExecution } from '../types';
+import type {
+  NewPipeline,
+  NewTask,
+  NewTaskExecution,
+  Pipeline,
+  Task,
+  TaskExecution,
+} from '../types';
 
 /**
  * Task Repository - provides data access for Task entities
@@ -57,7 +64,7 @@ export class DrizzleTaskRepository {
    * Find tasks by status
    */
   async findTasksByStatus(status: string, userId?: string): Promise<Task[]> {
-    const conditions = [eq(tasks.status, status), isNull(tasks.deletedAt)];
+    const conditions = [eq(tasks.status, status as any), isNull(tasks.deletedAt)];
 
     if (userId) {
       conditions.push(eq(tasks.userId, userId));
@@ -74,7 +81,7 @@ export class DrizzleTaskRepository {
    * Find tasks by multiple statuses
    */
   async findTasksByStatuses(statuses: string[], userId?: string): Promise<Task[]> {
-    const conditions = [inArray(tasks.status, statuses), isNull(tasks.deletedAt)];
+    const conditions = [inArray(tasks.status, statuses as any[]), isNull(tasks.deletedAt)];
 
     if (userId) {
       conditions.push(eq(tasks.userId, userId));
@@ -102,7 +109,7 @@ export class DrizzleTaskRepository {
    * Find tasks by priority
    */
   async findTasksByPriority(priority: string, userId?: string): Promise<Task[]> {
-    const conditions = [eq(tasks.priority, priority), isNull(tasks.deletedAt)];
+    const conditions = [eq(tasks.priority, priority as any), isNull(tasks.deletedAt)];
 
     if (userId) {
       conditions.push(eq(tasks.userId, userId));
@@ -134,7 +141,7 @@ export class DrizzleTaskRepository {
   async updateTaskStatus(id: string, status: string): Promise<Task | null> {
     const updateData: any = {
       status,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Set timestamps based on status
@@ -144,11 +151,7 @@ export class DrizzleTaskRepository {
       updateData.endTime = new Date();
     }
 
-    const [task] = await db
-      .update(tasks)
-      .set(updateData)
-      .where(eq(tasks.id, id))
-      .returning();
+    const [task] = await db.update(tasks).set(updateData).where(eq(tasks.id, id)).returning();
 
     return task ?? null;
   }
@@ -288,7 +291,10 @@ export class DrizzleTaskRepository {
   /**
    * Update execution
    */
-  async updateExecution(id: string, data: Partial<NewTaskExecution>): Promise<TaskExecution | null> {
+  async updateExecution(
+    id: string,
+    data: Partial<NewTaskExecution>
+  ): Promise<TaskExecution | null> {
     const [execution] = await db
       .update(taskExecutions)
       .set(data)
@@ -307,7 +313,7 @@ export class DrizzleTaskRepository {
       .set({
         status: 'COMPLETED',
         output,
-        completedAt: new Date()
+        completedAt: new Date(),
       })
       .where(eq(taskExecutions.id, id))
       .returning();
@@ -324,7 +330,7 @@ export class DrizzleTaskRepository {
       .set({
         status: 'FAILED',
         error,
-        completedAt: new Date()
+        completedAt: new Date(),
       })
       .where(eq(taskExecutions.id, id))
       .returning();

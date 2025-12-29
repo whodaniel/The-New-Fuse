@@ -1,17 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { drizzleUserRepository } from '@the-new-fuse/database';
 import { encodeFunctionData, parseEther } from 'viem';
-import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuctionRelayerService {
   private readonly logger = new Logger(AuctionRelayerService.name);
-  private readonly ENSO_API_URL = "https://api.enso.finance/v1/shortcuts/route";
+  private readonly ENSO_API_URL = 'https://api.enso.finance/v1/shortcuts/route';
 
-  constructor(
-    private prisma: PrismaService,
-    private config: ConfigService
-  ) {}
+  constructor(private config: ConfigService) {}
 
   /**
    * Relays a bid using off-chain "Fuse Credits" via Enso Shortcuts
@@ -26,28 +23,30 @@ export class AuctionRelayerService {
     }
 
     // 1. Verify Credits in DB
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await drizzleUserRepository.findById(userId);
     if (!user) throw new Error('User not found');
-    
+
     // Assuming 'credits' or similar field exists, or use a workaround if schema not updated yet.
     // For now, using a placeholder check.
-    const userCredits = (user as any).fuseCredits || 0; 
-    
+    const userCredits = (user as any).fuseCredits || 0;
+
     if (userCredits < bidCredits) {
-      throw new Error("Insufficient Fuse Credits");
+      throw new Error('Insufficient Fuse Credits');
     }
 
     // 2. Prepare Transaction Data (using viem)
     const data = encodeFunctionData({
-      abi: [{
-        inputs: [{ name: "_id", type: "uint256" }],
-        name: "placeBid",
-        outputs: [],
-        stateMutability: "payable",
-        type: "function"
-      }],
-      functionName: "placeBid",
-      args: [BigInt(auctionId)]
+      abi: [
+        {
+          inputs: [{ name: '_id', type: 'uint256' }],
+          name: 'placeBid',
+          outputs: [],
+          stateMutability: 'payable',
+          type: 'function',
+        },
+      ],
+      functionName: 'placeBid',
+      args: [BigInt(auctionId)],
     });
 
     // 3. Create Enso Intent (Platform pays gas)
@@ -56,18 +55,18 @@ export class AuctionRelayerService {
       from: TREASURY_ADDRESS,
       to: AUCTION_ADDRESS,
       data: data,
-      value: parseEther(bidCredits.toString()).toString()
+      value: parseEther(bidCredits.toString()).toString(),
     };
 
     try {
       // 4. Execute via Enso
       const response = await fetch(this.ENSO_API_URL, {
         method: 'POST',
-        headers: { 
-          'Authorization': `Bearer ${ENSO_KEY}`,
-          'Content-Type': 'application/json'
+        headers: {
+          Authorization: `Bearer ${ENSO_KEY}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(intentPayload)
+        body: JSON.stringify(intentPayload),
       });
 
       const result = await response.json();
@@ -76,7 +75,7 @@ export class AuctionRelayerService {
         // 5. Update DB (Debit credits)
         // using raw update safely or prisma update if schema matches
         // await this.prisma.user.update(...)
-        
+
         this.logger.log(`Bid relayed successfully: ${result.txHash}`);
         return result.txHash;
       } else {

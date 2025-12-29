@@ -1,94 +1,70 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Agent, AgentStatus } from '@the-new-fuse/database/generated/prisma';
-import { CreateAgentDto, UpdateAgentDto, AgentResponseDto } from '@the-new-fuse/types';
+import { drizzleAgentRepository } from '@the-new-fuse/database';
+import { CreateAgentDto, UpdateAgentDto } from '@the-new-fuse/types';
 
 @Injectable()
 export class AgentService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor() {}
 
-  async createAgent(data: CreateAgentDto, userId: string): Promise<Agent> {
+  async createAgent(data: CreateAgentDto, userId: string): Promise<any> {
     const agentData = {
       name: data.name,
       type: data.type,
       description: data.description,
       systemPrompt: data.systemPrompt,
-      capabilities: data.capabilities || [],
+      capabilities: (data.capabilities || []) as string[],
       config: data.configuration || {},
       provider: data.provider || 'default',
       userId,
-      status: AgentStatus.INACTIVE,
+      status: 'INACTIVE',
     };
-    
-    return this.prisma.agent.create({
-      data: agentData
-    });
+
+    return drizzleAgentRepository.create(agentData);
   }
 
-  async getAgents(userId: string): Promise<Agent[]> {
-    return this.prisma.agent.findMany({
-      where: { userId }
-    });
+  async getAgents(userId: string): Promise<any[]> {
+    return drizzleAgentRepository.findByUserId(userId);
   }
 
-  async getAgentById(id: string, userId: string): Promise<Agent | null> {
-    return this.prisma.agent.findFirst({
-      where: {
-        id,
-        userId
-      }
-    });
-  }
-  
-  async updateAgentStatus(id: string, status: AgentStatus, userId: string): Promise<Agent | null> {
-    const updatedAgent = await this.prisma.agent.update({
-      where: {
-        id,
-        userId
-      },
-      data: { 
-        status
-      }
-    });
-    
-    return updatedAgent;
+  async getAgentById(id: string, userId: string): Promise<any | null> {
+    const agent = await drizzleAgentRepository.findById(id);
+    if (!agent || agent.userId !== userId) {
+      return null;
+    }
+    return agent;
   }
 
-  async updateAgent(id: string, data: UpdateAgentDto, userId: string): Promise<Agent> {
+  async updateAgentStatus(id: string, status: string, userId: string): Promise<any | null> {
+    const agent = await this.getAgentById(id, userId);
+    if (!agent) {
+      throw new Error('Agent not found');
+    }
+    return drizzleAgentRepository.updateStatus(id, status);
+  }
+
+  async updateAgent(id: string, data: UpdateAgentDto, userId: string): Promise<any> {
+    const agent = await this.getAgentById(id, userId);
+    if (!agent) {
+      throw new Error('Agent not found');
+    }
+
     const updateData: any = {
       ...data,
     };
 
-
-    return this.prisma.agent.update({
-      where: {
-        id,
-        userId
-      },
-      data: updateData
-    });
-  }
-  
-  async deleteAgent(id: string, userId: string): Promise<Agent> {
-    return this.prisma.agent.delete({
-      where: {
-        id,
-        userId
-      }
-    });
+    return drizzleAgentRepository.update(id, updateData);
   }
 
-  private transformToDto(agent: Agent): AgentResponseDto {
-    return {
-      id: agent.id,
-      name: agent.name,
-      description: agent.description || undefined,
-      type: agent.type as any, // Type conversion needed between Prisma and types package
-      status: agent.status as any, // Type conversion needed between Prisma and types package
-      capabilities: agent.capabilities as any, // Type conversion needed between Prisma and types package
-      provider: agent.provider || undefined,
-      createdAt: agent.createdAt,
-      updatedAt: agent.updatedAt,
-    };
+  async deleteAgent(id: string, userId: string): Promise<any> {
+    const agent = await this.getAgentById(id, userId);
+    if (!agent) {
+      throw new Error('Agent not found');
+    }
+    await drizzleAgentRepository.hardDelete(id);
+    return agent;
   }
+
+  // transformToDto not strictly needed if we return the raw object which matches mostly,
+  // or the controller handles it.
+  // Keeping it simplistic for now.
 }

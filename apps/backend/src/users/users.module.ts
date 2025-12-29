@@ -1,20 +1,14 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
+import { EventBus } from '../events/event-bus.service';
+import { LoggingService } from '../services/logging.service';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggingService } from '../services/logging.service';
-import { EventBus } from '../events/event-bus.service';
-import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [AuthModule],
   controllers: [UsersController],
-  providers: [
-    UsersService,
-    PrismaService,
-    LoggingService,
-    EventBus
-  ],
+  providers: [UsersService, LoggingService, EventBus],
   exports: [UsersService],
 })
 export class UsersModule {}

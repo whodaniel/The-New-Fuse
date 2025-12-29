@@ -44,6 +44,18 @@ export class DrizzleUserRepository {
   }
 
   /**
+   * Find user by wallet address
+   */
+  async findByWalletAddress(walletAddress: string): Promise<User | null> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(and(eq(users.walletAddress, walletAddress), isNull(users.deletedAt)));
+
+    return user ?? null;
+  }
+
+  /**
    * Find user by username
    */
   async findByUsername(username: string): Promise<User | null> {
@@ -90,7 +102,7 @@ export class DrizzleUserRepository {
     return db
       .select()
       .from(users)
-      .where(and(eq(users.role, role), isNull(users.deletedAt)))
+      .where(and(eq(users.role, role as any), isNull(users.deletedAt)))
       .orderBy(desc(users.createdAt));
   }
 
@@ -199,6 +211,33 @@ export class DrizzleUserRepository {
   }
 
   /**
+   * Alias for softDelete - preferred method for deleting users
+   */
+  async delete(id: string): Promise<boolean> {
+    return this.softDelete(id);
+  }
+
+  /**
+   * Find all users with optional pagination
+   */
+  async findAll(limit?: number, offset?: number): Promise<User[]> {
+    let query = db
+      .select()
+      .from(users)
+      .where(isNull(users.deletedAt))
+      .orderBy(desc(users.createdAt));
+
+    if (limit !== undefined) {
+      query = query.limit(limit) as any;
+    }
+    if (offset !== undefined) {
+      query = query.offset(offset) as any;
+    }
+
+    return query;
+  }
+
+  /**
    * Hard delete user (use with caution)
    */
   async hardDelete(id: string): Promise<boolean> {
@@ -247,10 +286,7 @@ export class DrizzleUserRepository {
    * Find session by token
    */
   async findSessionByToken(token: string) {
-    const [session] = await db
-      .select()
-      .from(authSessions)
-      .where(eq(authSessions.token, token));
+    const [session] = await db.select().from(authSessions).where(eq(authSessions.token, token));
 
     return session ?? null;
   }

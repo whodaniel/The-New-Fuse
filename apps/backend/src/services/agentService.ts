@@ -1,121 +1,96 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Agent } from '@the-new-fuse/database/generated/prisma';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { drizzleAgentRepository } from '@the-new-fuse/database';
+import { Agent, AgentCapability, AgentStatus, AgentType } from '@the-new-fuse/types';
 
 @Injectable()
 export class AgentService {
-  constructor(private prisma: PrismaService) {}
+  constructor() {}
 
-  async createAgent(data: any, userId: string) {
-    // Add userId to the data
+  private transformAgent(agent: any): Agent {
+    if (!agent) return null as any;
+    return {
+      id: agent.id,
+      name: agent.name,
+      description: agent.description || undefined,
+      systemPrompt: agent.systemPrompt || undefined,
+      capabilities: ((agent.capabilities as string[]) || []).map((cap) => cap as AgentCapability),
+      status: agent.status as AgentStatus,
+      configuration: agent.config as any,
+      createdAt: agent.createdAt,
+      updatedAt: agent.updatedAt,
+      type: agent.type as AgentType,
+    };
+  }
+
+  async createAgent(data: any, userId: string): Promise<Agent> {
     const agentData = {
       ...data,
       userId,
+      roles: data.roles || ['USER'],
+      capabilities: data.capabilities || [],
     };
-    
-    const agent = await this.prisma.agent.create({
-      data: agentData
-    });
-    
-    return agent;
+
+    const agent = await drizzleAgentRepository.create(agentData);
+    return this.transformAgent(agent);
   }
 
-  async getAgents(userId: string) {
-    const agents = await this.prisma.agent.findMany({
-      where: {
-        userId
-      }
-    });
-    
-    return agents;
+  async getAgents(userId: string): Promise<Agent[]> {
+    const agents = await drizzleAgentRepository.findByUserId(userId);
+    return agents.map((a) => this.transformAgent(a));
   }
 
-  async getAgentById(id: string, userId: string) {
-    const agent = await this.prisma.agent.findFirst({
-      where: {
-        id,
-        userId
-      }
-    });
-    
-    return agent;
+  async getAgentById(id: string, userId: string): Promise<Agent | null> {
+    const agent = await drizzleAgentRepository.findById(id);
+    if (agent && agent.userId === userId) {
+      return this.transformAgent(agent);
+    }
+    return null;
   }
 
-  async createAgentsInTransaction(agents: any[]) {
-    return await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const createdAgents: Agent[] = [];
-      
-      for (const agent of agents) {
-        const createdAgent = await tx.agent.create({
-          data: agent
-        });
-        
-        createdAgents.push(createdAgent);
-      }
-      
-      return createdAgents;
-    });
+  async createAgentsInTransaction(agents: any[]): Promise<Agent[]> {
+    const createdAgents: Agent[] = [];
+    for (const agent of agents) {
+      const createdAgent = await drizzleAgentRepository.create(agent);
+      createdAgents.push(this.transformAgent(createdAgent));
+    }
+    return createdAgents;
   }
 
-  async updateAgentStatus(id: string, status: string, userId: string) {
-    await this.prisma.agent.update({
-      where: {
-        id,
-        userId
-      },
-      data: {
-        status: status as any
-      }
-    });
-    
-    return this.getAgentById(id, userId);
+  async updateAgentStatus(id: string, status: string, userId: string): Promise<Agent | null> {
+    const agent = await this.getAgentById(id, userId);
+    if (!agent) {
+      throw new NotFoundException('Agent not found');
+    }
+    const updated = await drizzleAgentRepository.updateStatus(id, status);
+    return this.transformAgent(updated);
   }
 
-  async getActiveAgents(userId: string) {
-    const agents = await this.prisma.agent.findMany({
-      where: {
-        userId,
-        status: 'ACTIVE'
-      }
-    });
-    
-    return agents;
+  async getActiveAgents(userId: string): Promise<Agent[]> {
+    const agents = await drizzleAgentRepository.findByStatusAndUserId('ACTIVE', userId);
+    return agents.map((a) => this.transformAgent(a));
   }
 
-  async getAgentsByCapability(capability: string, userId: string) {
-    const agents = await this.prisma.agent.findMany({
-      where: {
-        userId,
-        capabilities: {
-          has: capability as any
-        }
-      }
-    });
-    
-    return agents;
+  async getAgentsByCapability(capability: string, userId: string): Promise<Agent[]> {
+    const agents = await drizzleAgentRepository.findByCapability(capability, userId);
+    return agents.map((a) => this.transformAgent(a));
   }
 
-  async updateAgent(id: string, data: any, userId: string) {
-    const agent = await this.prisma.agent.update({
-      where: {
-        id,
-        userId
-      },
-      data
-    });
-    
-    return agent;
+  async updateAgent(id: string, data: any, userId: string): Promise<Agent | null> {
+    const agent = await this.getAgentById(id, userId);
+    if (!agent) {
+      throw new NotFoundException('Agent not found');
+    }
+    const updated = await drizzleAgentRepository.update(id, data);
+    return this.transformAgent(updated);
   }
 
-  async deleteAgent(id: string, userId: string) {
+  async deleteAgent(id: string, userId: string): Promise<boolean> {
     try {
-      await this.prisma.agent.delete({
-        where: {
-          id,
-          userId
-        }
-      });
-      return true;
+      const agent = await this.getAgentById(id, userId);
+      if (!agent) {
+        throw new NotFoundException('Agent not found');
+      }
+      return await drizzleAgentRepository.hardDelete(id);
     } catch (error) {
       console.error(`Error deleting agent: ${error}`);
       return false;

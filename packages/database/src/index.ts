@@ -71,10 +71,32 @@ export {
 // Export Drizzle schema tables (prefixed to avoid conflicts with Prisma types)
 export * as drizzleSchema from './drizzle/schema';
 
+// Export commonly used schema tables directly for convenience
+export {
+  agentCapabilityRegistry,
+  agentDirectoryEntries,
+  agentMetrics,
+  agentNfts,
+  agentOnboardingEvents,
+  agentRegistrations,
+  agents,
+  chatRoomParticipants,
+  chatRooms,
+  fractionalShares,
+  marketplaceListings,
+  marketplaceOffers,
+  messages,
+  notifications,
+  revenueDistributions,
+  revenueStreams,
+  users,
+} from './drizzle/schema';
+
 // Export Drizzle inferred types (prefixed with 'Drizzle' to avoid conflicts)
 export type {
   Agent as DrizzleAgent,
   Chat as DrizzleChat,
+  ChatMessage as DrizzleChatMessage,
   Message as DrizzleMessage,
   Task as DrizzleTask,
   User as DrizzleUser,
@@ -82,6 +104,7 @@ export type {
   WorkflowExecution as DrizzleWorkflowExecution,
   NewAgent,
   NewChat,
+  NewChatMessage,
   NewMessage,
   NewTask,
   NewUser,
@@ -90,7 +113,26 @@ export type {
 } from './drizzle/types';
 
 // Export Drizzle repositories
-export { DrizzleAgentRepository, drizzleAgentRepository } from './drizzle/repositories';
+export {
+  DrizzleAgentRepository,
+  DrizzleChatRepository,
+  DrizzleTaskRepository,
+  DrizzleUserRepository,
+  DrizzleWorkflowRepository,
+  agentNftRepository,
+  agentPromptVersionRepository,
+  drizzleAgentRepository,
+  drizzleChatRepository,
+  drizzleTaskRepository,
+  drizzleUserRepository,
+  drizzleWorkflowRepository,
+  fractionalShareRepository,
+  optimizationJobRepository,
+  revenueDistributionRepository,
+  revenueStreamRepository,
+  validationDatasetRepository,
+  workflowTopologyRepository,
+} from './drizzle/repositories';
 
 // Export Drizzle query utilities
 export {

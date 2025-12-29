@@ -22,12 +22,17 @@ async function bootstrap(): Promise<void> {
   // Performance
   app.use(compression());
 
-  // Validation
+  // Validation - Global validation pipe with strict settings
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
+      transform: true, // Automatically transform payloads to DTO instances
+      whitelist: true, // Strip properties that don't have decorators
+      forbidNonWhitelisted: true, // Throw error if non-whitelisted properties are present
+      disableErrorMessages: configService.get('NODE_ENV') === 'production', // Hide detailed errors in production
+      validationError: {
+        target: false, // Don't expose the target object in errors
+        value: false, // Don't expose the value in errors
+      },
     })
   );
 

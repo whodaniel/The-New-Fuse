@@ -1,23 +1,36 @@
-import { Injectable, Logger, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
-import { Agent, CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentType, AgentStatus, AgentCapability } from '@the-new-fuse/types';
-import { drizzleAgentRepository } from '@the-new-fuse/database/drizzle';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { drizzleAgentRepository } from '@the-new-fuse/database';
+import {
+  Agent,
+  AgentCapability,
+  AgentStatus,
+  AgentType,
+  CreateAgentDto,
+  UpdateAgentDto,
+} from '@the-new-fuse/types';
 
 @Injectable()
 export class AgentService {
   private readonly logger = new Logger(AgentService.name);
 
-  private transformAgent(agent: Agent): Agent {
+  private transformAgent(agent: any): Agent {
     return {
       id: agent.id,
       name: agent.name,
       description: agent.description || undefined,
       systemPrompt: agent.systemPrompt || undefined,
-      capabilities: (agent.capabilities as string[]).map(cap => cap as AgentCapability) || [],
-      status: agent.status,
-      configuration: agent.config,
+      capabilities: ((agent.capabilities as string[]) || []).map((cap) => cap as AgentCapability),
+      status: agent.status as AgentStatus,
+      configuration: agent.config as any,
       createdAt: agent.createdAt,
       updatedAt: agent.updatedAt,
-      type: agent.type as AgentType
+      type: agent.type as AgentType,
     };
   }
 
@@ -40,7 +53,7 @@ export class AgentService {
         status: AgentStatus.INACTIVE,
         config: data.configuration as any,
         provider: data.provider || 'default',
-        userId
+        userId,
       });
 
       this.logger.log(`Created agent: ${agent.id} (${agent.name})`);
@@ -55,12 +68,16 @@ export class AgentService {
     }
   }
 
-  async getAgents(userId: string, page: number = 1, limit: number = 50): Promise<{ data: Agent[], pagination: any }> {
+  async getAgents(
+    userId: string,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ data: Agent[]; pagination: any }> {
     try {
       const { data, total } = await drizzleAgentRepository.findWithPagination(userId, page, limit);
 
       return {
-        data: data.map(a => this.transformAgent(a)),
+        data: data.map((a) => this.transformAgent(a)),
         pagination: {
           page,
           limit,
@@ -106,7 +123,7 @@ export class AgentService {
       // Update the agent
       const agent = await drizzleAgentRepository.update(id, {
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
 
       if (!agent) {
@@ -143,7 +160,7 @@ export class AgentService {
   async getAgentsByCapability(capability: string, userId: string): Promise<Agent[]> {
     try {
       const agents = await drizzleAgentRepository.findByCapability(capability, userId);
-      return agents.map(a => this.transformAgent(a));
+      return agents.map((a) => this.transformAgent(a));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to get agents by capability: ${errorMessage}`);
@@ -154,7 +171,7 @@ export class AgentService {
   async getActiveAgents(userId: string): Promise<Agent[]> {
     try {
       const agents = await drizzleAgentRepository.findByStatusAndUserId(AgentStatus.ACTIVE, userId);
-      return agents.map(a => this.transformAgent(a));
+      return agents.map((a) => this.transformAgent(a));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to get active agents: ${errorMessage}`);
@@ -191,18 +208,21 @@ export class AgentService {
     return { status: agent.status };
   }
 
-  async searchAgents(query: { name?: string; type?: AgentType; capability?: AgentCapability }, userId: string): Promise<Agent[]> {
+  async searchAgents(
+    query: { name?: string; type?: AgentType; capability?: AgentCapability },
+    userId: string
+  ): Promise<Agent[]> {
     try {
       const agents = await drizzleAgentRepository.searchAgents(userId, {
         name: query.name,
         type: query.type,
         capability: query.capability,
       });
-      return agents.map(a => this.transformAgent(a));
+      return agents.map((a) => this.transformAgent(a));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to search agents: ${errorMessage}`);
       throw new InternalServerErrorException('Failed to search for agents');
     }
   }
-} 
+}

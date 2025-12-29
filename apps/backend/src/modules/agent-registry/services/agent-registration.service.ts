@@ -1,8 +1,7 @@
-import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { drizzleAgentRepository } from '@the-new-fuse/database/drizzle';
-import { RegisterAgentDto, AgentRegistrationResponseDto } from '../dto';
-import { IRegistrationData } from '../interfaces/agent-registry.interfaces';
+import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { drizzleAgentRepository } from '@the-new-fuse/database';
 import { randomBytes } from 'crypto';
+import { AgentRegistrationResponseDto, RegisterAgentDto } from '../dto';
 
 @Injectable()
 export class AgentRegistrationService {
@@ -13,7 +12,7 @@ export class AgentRegistrationService {
    */
   async registerAgent(
     data: RegisterAgentDto,
-    userId: string,
+    userId: string
   ): Promise<AgentRegistrationResponseDto> {
     this.logger.log(`Registering new agent: ${data.name}`);
 
@@ -69,8 +68,8 @@ export class AgentRegistrationService {
               description: cap.description,
               parameters: cap.parameters || {},
               verificationStatus: 'PENDING',
-            }),
-          ),
+            })
+          )
         );
       }
 
@@ -206,7 +205,8 @@ export class AgentRegistrationService {
    * Generate welcome message
    */
   private generateWelcomeMessage(agentName: string): string {
-    return `Welcome to The New Fuse, ${agentName}! 🎉\n\n` +
+    return (
+      `Welcome to The New Fuse, ${agentName}! 🎉\n\n` +
       `You have successfully registered with our agent ecosystem. We're excited to have you onboard!\n\n` +
       `The New Fuse is a comprehensive platform that enables agents to collaborate, share capabilities, ` +
       `and execute complex workflows together. You'll have access to powerful tools, APIs, and a ` +
@@ -216,7 +216,8 @@ export class AgentRegistrationService {
       `- Framework orientation and documentation\n` +
       `- Integration with existing agents\n` +
       `- Assignment of your first tasks\n\n` +
-      `Let's get started! 🚀`;
+      `Let's get started! 🚀`
+    );
   }
 
   /**

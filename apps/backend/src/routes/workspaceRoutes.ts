@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { User } from '../types/auth'; // Import User for mock user typing
 
@@ -6,13 +6,12 @@ import { User } from '../types/auth'; // Import User for mock user typing
 // @UseGuards(AuthGuard)
 @Controller('workspace')
 export class WorkspaceController {
-
   // GET /api/workspace/overview
   @Get('overview')
   async getOverview(@Req() req: Request) {
     try {
       // Mock user for development if not authenticated
-      const user = req.user as User || {
+      const user = (req.user as User) || {
         id: 'dev-user',
         email: 'dev@local',
         name: 'Dev User',
@@ -29,14 +28,26 @@ export class WorkspaceController {
             activeAgents: 12,
             activeTasks: 34,
             recentActivity: [
-              { id: 1, type: 'agent_created', message: 'New agent created', timestamp: new Date().toISOString() },
-              { id: 2, type: 'task_completed', message: 'Task completed successfully', timestamp: new Date().toISOString() },
-            ]
-          }
-        }
+              {
+                id: 1,
+                type: 'agent_created',
+                message: 'New agent created',
+                timestamp: new Date().toISOString(),
+              },
+              {
+                id: 2,
+                type: 'task_completed',
+                message: 'Task completed successfully',
+                timestamp: new Date().toISOString(),
+              },
+            ],
+          },
+        },
       };
     } catch (error) {
-      throw new Error(`Failed to get workspace overview: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to get workspace overview: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -53,20 +64,22 @@ export class WorkspaceController {
             totalTasks: 156,
             completedTasks: 134,
             successRate: 85.9,
-            averageResponseTime: 2.3
+            averageResponseTime: 2.3,
           },
           chartData: {
             daily: [
               { date: '2024-01-01', agents: 10, tasks: 45 },
               { date: '2024-01-02', agents: 12, tasks: 52 },
               { date: '2024-01-03', agents: 11, tasks: 38 },
-            ]
-          }
-        }
+            ],
+          },
+        },
       };
     } catch (error) {
-       throw new Error(`Failed to fetch workspace analytics: ${error instanceof Error ? error.message : 'Unknown error'}`);
-     }
+      throw new Error(
+        `Failed to fetch workspace analytics: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
   }
 
   // GET /api/workspace/members
@@ -78,19 +91,21 @@ export class WorkspaceController {
         data: {
           members: [
             {
-              id: req.user?.id || 'dev-user',
-              name: req.user?.name || 'Dev User',
-              email: req.user?.email || 'dev@local',
+              id: (req.user as any)?.id || 'dev-user',
+              name: (req.user as any)?.name || 'Dev User',
+              email: (req.user as any)?.email || 'dev@local',
               role: 'admin',
               joinedAt: '2024-01-01T00:00:00Z',
-              lastActive: new Date().toISOString()
-            }
+              lastActive: new Date().toISOString(),
+            },
           ],
-          total: 1
-        }
+          total: 1,
+        },
       };
     } catch (error) {
-      throw new Error(`Failed to fetch workspace members: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to fetch workspace members: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -109,18 +124,20 @@ export class WorkspaceController {
             notifications: {
               email: true,
               push: true,
-              slack: false
+              slack: false,
             },
             integrations: {
               slack: false,
               discord: false,
-              teams: false
-            }
-          }
-        }
+              teams: false,
+            },
+          },
+        },
       };
     } catch (error) {
-      throw new Error(`Failed to fetch workspace settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to fetch workspace settings: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -129,7 +146,7 @@ export class WorkspaceController {
   async updateSettings(@Body() body: any, @Req() req: Request) {
     try {
       const { workspaceName, description, timezone, language, notifications, integrations } = body;
-      
+
       // Here you would normally update the database
       return {
         success: true,
@@ -140,11 +157,13 @@ export class WorkspaceController {
           timezone,
           language,
           notifications,
-          integrations
-        }
+          integrations,
+        },
       };
     } catch (error) {
-      throw new Error(`Failed to update workspace settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update workspace settings: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 }

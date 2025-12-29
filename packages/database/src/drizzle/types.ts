@@ -8,6 +8,7 @@ import {
   agentDirectoryEntries,
   agentMemories,
   agentMetadata,
+  agentMetrics,
   agentNfts,
   agentOnboardingEvents,
   agentPromptVersions,
@@ -17,6 +18,7 @@ import {
   authSessions,
   businessMetrics,
   chatMessages,
+  chatRoomParticipants,
   chatRooms,
   chats,
   codeExecutionSessions,
@@ -33,6 +35,7 @@ import {
   promptSnippets,
   promptTemplates,
   promptVersions,
+  readReceipts,
   registeredEntities,
   resourceAllocations,
   revenueDistributions,
@@ -96,6 +99,9 @@ export type NewAgentDirectoryEntry = InferInsertModel<typeof agentDirectoryEntri
 export type AgentPromptVersion = InferSelectModel<typeof agentPromptVersions>;
 export type NewAgentPromptVersion = InferInsertModel<typeof agentPromptVersions>;
 
+export type AgentMetric = InferSelectModel<typeof agentMetrics>;
+export type NewAgentMetric = InferInsertModel<typeof agentMetrics>;
+
 // =============================================================================
 // CHAT TYPES
 // =============================================================================
@@ -111,6 +117,12 @@ export type NewMessage = InferInsertModel<typeof messages>;
 
 export type ChatMessage = InferSelectModel<typeof chatMessages>;
 export type NewChatMessage = InferInsertModel<typeof chatMessages>;
+
+export type ChatRoomParticipant = InferSelectModel<typeof chatRoomParticipants>;
+export type NewChatRoomParticipant = InferInsertModel<typeof chatRoomParticipants>;
+
+export type ReadReceipt = InferSelectModel<typeof readReceipts>;
+export type NewReadReceipt = InferInsertModel<typeof readReceipts>;
 
 // =============================================================================
 // WORKFLOW TYPES

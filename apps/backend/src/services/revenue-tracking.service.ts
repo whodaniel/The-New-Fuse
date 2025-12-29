@@ -1,8 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { SmartContractService } from './smart-contract.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ethers, BigNumberish, formatEther, parseEther, toBigInt, EventFragment } from 'ethers';
+import {
+  agentNftRepository,
+  revenueDistributionRepository,
+  revenueStreamRepository,
+} from '@the-new-fuse/database';
+import { formatEther, parseEther } from 'ethers';
+import { SmartContractService } from './smart-contract.service';
 
 export interface RevenueEvent {
   agentId: string;
@@ -28,27 +32,16 @@ export interface DistributionResult {
 export class RevenueTrackingService {
   private readonly logger = new Logger(RevenueTrackingService.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly smartContractService: SmartContractService,
-  ) {}
+  constructor(private readonly smartContractService: SmartContractService) {}
 
   async trackRevenue(data: RevenueEvent): Promise<void> {
-    this.logger.log(`Tracking revenue for agent ${data.agentId}: ${data.amount} ${data.tokenAddress}`);
+    this.logger.log(
+      `Tracking revenue for agent ${data.agentId}: ${data.amount} ${data.tokenAddress}`
+    );
 
     try {
       // Find the agent NFT
-      const agentNft = await this.prisma.agentNFT.findUnique({
-        where: { agentId: data.agentId },
-        include: {
-          revenueStreams: {
-            where: { 
-              isActive: true,
-              tokenAddress: data.tokenAddress 
-            }
-          }
-        }
-      });
+      const agentNft = await agentNftRepository.findByAgentId(data.agentId);
 
       if (!agentNft) {
         this.logger.warn(`Agent NFT not found for agent ${data.agentId}`);
@@ -56,38 +49,38 @@ export class RevenueTrackingService {
       }
 
       // Find or create revenue stream
-      let revenueStream = agentNft.revenueStreams.find(stream => 
-        stream.tokenAddress.toLowerCase() === data.tokenAddress.toLowerCase()
+      const revenueStreams = agentNft.revenueStreams || [];
+      let revenueStream = revenueStreams.find(
+        (stream) => stream.tokenAddress.toLowerCase() === data.tokenAddress.toLowerCase()
       );
 
       if (!revenueStream) {
-        revenueStream = await this.prisma.revenueStream.create({
-          data: {
-            agentNFTId: agentNft.id,
-            streamName: `${data.source} Revenue`,
-            tokenAddress: data.tokenAddress,
-            totalRevenue: '0',
-            distributedRevenue: '0',
-            distributionThreshold: parseEther('0.1').toString(), // Default threshold
-          }
+        revenueStream = await revenueStreamRepository.create({
+          agentNFTId: agentNft.id,
+          streamName: `${data.source} Revenue`,
+          tokenAddress: data.tokenAddress,
+          totalRevenue: '0',
+          distributedRevenue: '0',
+          distributionThreshold: parseEther('0.1').toString(), // Default threshold
         });
       }
 
       // Update revenue stream
-      await this.prisma.revenueStream.update({
-        where: { id: revenueStream.id },
-        data: {
-          totalRevenue: {
-            increment: data.amount
-          }
-        }
+      // Calculate new total revenue using BigInt
+      // Drizzle returns decimal as string usually
+      const currentTotal = BigInt(revenueStream.totalRevenue.toString());
+      const addition = BigInt(data.amount);
+      const newTotal = (currentTotal + addition).toString();
+
+      await revenueStreamRepository.update(revenueStream.id, {
+        totalRevenue: newTotal,
       });
 
       // Add revenue to smart contract if it's an active NFT
       if (agentNft.isFractionalized) {
         try {
           await this.smartContractService.addRevenue(
-            parseInt(revenueStream.id), // This would need to be the on-chain stream ID
+            parseInt(revenueStream.id), // This assumes stream.id matches on-chain ID logic, which might need adjustment if using UUID
             formatEther(data.amount),
             data.tokenAddress
           );
@@ -108,18 +101,9 @@ export class RevenueTrackingService {
 
   async checkAndTriggerDistribution(revenueStreamId: string): Promise<void> {
     try {
-      const revenueStream = await this.prisma.revenueStream.findUnique({
-        where: { id: revenueStreamId },
-        include: {
-          agentNFT: {
-            include: {
-              fractionalShares: true
-            }
-          }
-        }
-      });
+      const revenueStream = await revenueStreamRepository.findWithNftAndShares(revenueStreamId);
 
-      if (!revenueStream || !revenueStream.isActive || !revenueStream.agentNFT.isFractionalized) {
+      if (!revenueStream || !revenueStream.isActive || !revenueStream.agentNFT?.isFractionalized) {
         return;
       }
 
@@ -141,71 +125,56 @@ export class RevenueTrackingService {
     this.logger.log(`Distributing revenue for stream ${revenueStreamId}`);
 
     try {
-      const revenueStream = await this.prisma.revenueStream.findUnique({
-        where: { id: revenueStreamId },
-        include: {
-          agentNFT: {
-            include: {
-              fractionalShares: true
-            }
-          }
-        }
-      });
+      const revenueStream = await revenueStreamRepository.findWithNftAndShares(revenueStreamId);
 
-      if (!revenueStream || !revenueStream.agentNFT.isFractionalized) {
+      if (!revenueStream || !revenueStream.agentNFT?.isFractionalized) {
         throw new Error('Revenue stream not found or not fractionalized');
       }
 
       const totalRevenue = parseEther(revenueStream.totalRevenue.toString());
       const distributedRevenue = parseEther(revenueStream.distributedRevenue.toString());
       const pendingRevenue = totalRevenue - distributedRevenue;
-      const distributionThreshold = parseEther(revenueStream.distributionThreshold.toString());
 
       if (pendingRevenue <= 0) {
         throw new Error('No pending revenue to distribute');
       }
 
       // Calculate distribution amounts
-      const totalShares = revenueStream.agentNFT.fractionalShares
-        .reduce((sum, share) => sum + Number(share.shareAmount), 0); // Convert Decimal to Number for sum
+      const shares = revenueStream.agentNFT.fractionalShares || [];
+      const totalShares = shares.reduce((sum, share) => sum + Number(share.shareAmount), 0);
 
-      const totalSharesBigInt = BigInt(totalShares);
+      const totalSharesBigInt = BigInt(totalShares); // Assuming integer shares or scaled
 
-      const recipients = revenueStream.agentNFT.fractionalShares.map(share => {
-        const shareAmountBigInt = BigInt(share.shareAmount.toString()); // Convert Decimal to BigInt
+      const recipients = shares.map((share) => {
+        const shareAmountBigInt = BigInt(share.shareAmount.toString());
         const amount = (pendingRevenue * shareAmountBigInt) / totalSharesBigInt;
-        
+
         return {
           address: share.ownerAddress,
           amount: amount.toString(),
-          sharePercentage: (Number(share.shareAmount) / totalShares) * 100
+          sharePercentage: (Number(share.shareAmount) / totalShares) * 100,
         };
       });
 
       // Distribute revenue through smart contract
       const { distributedAmount, txHash } = await this.smartContractService.distributeRevenue(
-        parseInt(revenueStreamId) // This would need to be the on-chain stream ID
+        parseInt(revenueStreamId) // Assuming ID logic matches
       );
 
       const blockNumber = await this.smartContractService.getBlockNumber();
 
       // Record the distribution in database
-      await this.prisma.revenueDistribution.create({
-        data: {
-          revenueStreamId,
-          txHash,
-          totalAmount: pendingRevenue.toString(),
-          distributedTo: recipients.map(r => ({ address: r.address, amount: r.amount })),
-          blockNumber,
-        }
+      await revenueDistributionRepository.create({
+        revenueStreamId,
+        txHash,
+        totalAmount: pendingRevenue.toString(),
+        distributedTo: recipients.map((r) => ({ address: r.address, amount: r.amount })) as any,
+        blockNumber,
       });
 
       // Update revenue stream
-      await this.prisma.revenueStream.update({
-        where: { id: revenueStreamId },
-        data: {
-          distributedRevenue: totalRevenue.toString()
-        }
+      await revenueStreamRepository.update(revenueStreamId, {
+        distributedRevenue: totalRevenue.toString(),
       });
 
       const result: DistributionResult = {
@@ -213,10 +182,12 @@ export class RevenueTrackingService {
         totalAmount: pendingRevenue.toString(),
         recipients,
         txHash,
-        blockNumber
+        blockNumber,
       };
 
-      this.logger.log(`Revenue distributed successfully: ${formatEther(pendingRevenue)} ETH to ${recipients.length} recipients`);
+      this.logger.log(
+        `Revenue distributed successfully: ${formatEther(pendingRevenue)} ETH to ${recipients.length} recipients`
+      );
       return result;
     } catch (error) {
       this.logger.error('Failed to distribute revenue:', error);
@@ -240,7 +211,7 @@ export class RevenueTrackingService {
 
       // Scan for revenue events in the new blocks
       await this.processRevenueEvents(lastProcessedBlock + 1, currentBlock);
-      
+
       // Update the last processed block
       await this.updateLastProcessedBlock(currentBlock);
 
@@ -255,66 +226,48 @@ export class RevenueTrackingService {
     try {
       const { createPublicClient, http, parseAbi } = await import('viem');
       const { mainnet } = await import('viem/chains');
-      
+
       // Create public client for event scanning
       const publicClient = createPublicClient({
         chain: mainnet,
-        transport: http()
+        transport: http(),
       });
 
-      // Revenue distributor contract address
       const revenueDistributorAddress = process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS;
       if (!revenueDistributorAddress) {
         this.logger.warn('Revenue distributor contract address not configured');
         return;
       }
 
-      // Revenue added event ABI
       const revenueDistributorAbi = parseAbi([
-        'event RevenueAdded(uint256 indexed streamId, uint256 amount)'
+        'event RevenueAdded(uint256 indexed streamId, uint256 amount)',
       ]);
 
-      // Listen for RevenueAdded events
       const logs = await publicClient.getLogs({
         address: revenueDistributorAddress as `0x${string}`,
-        event: revenueDistributorAbi.find(
-          (event) => event.name === 'RevenueAdded'
-        ),
+        event: revenueDistributorAbi.find((event) => event.name === 'RevenueAdded'),
         fromBlock: BigInt(fromBlock),
-        toBlock: BigInt(toBlock)
+        toBlock: BigInt(toBlock),
       });
 
-      // Process each revenue event
       for (const logItem of logs) {
         try {
           const log = logItem as any;
           const { streamId, amount } = log.args;
-          
-          // Find the agent NFT for this stream
-          const revenueStream = await this.prisma.revenueStream.findFirst({
-            where: {
-              // Assuming streamId matches database ID or there's a mapping
-              id: streamId.toString()
-            },
-            include: {
-              agentNFT: {
-                include: { agent: true }
-              }
-            }
-          });
+
+          const revenueStream = await revenueStreamRepository.findWithAgent(streamId.toString());
 
           if (revenueStream && revenueStream.agentNFT) {
-            // Create revenue event
             const revenueEvent: RevenueEvent = {
-              agentId: revenueStream.agentNFT?.agent?.id || '',
+              agentId: revenueStream.agentNFT.agent?.id || '',
               amount: amount.toString(),
               tokenAddress: revenueStream.tokenAddress,
               source: 'blockchain_event',
               metadata: {
                 streamId: streamId.toString(),
                 blockNumber: log.blockNumber.toString(),
-                transactionHash: log.transactionHash
-              }
+                transactionHash: log.transactionHash,
+              },
             };
 
             await this.trackRevenue(revenueEvent);
@@ -324,21 +277,19 @@ export class RevenueTrackingService {
         }
       }
 
-      this.logger.log(`Processed ${logs.length} revenue events from blocks ${fromBlock} to ${toBlock}`);
+      this.logger.log(
+        `Processed ${logs.length} revenue events from blocks ${fromBlock} to ${toBlock}`
+      );
     } catch (error) {
       this.logger.error('Failed to process revenue events:', error);
     }
   }
 
-
-
   private async getLastProcessedBlock(): Promise<number> {
-    // This would be stored in a configuration table or cache
     return parseInt(process.env.LAST_PROCESSED_BLOCK || '0');
   }
 
   private async updateLastProcessedBlock(blockNumber: number): Promise<void> {
-    // Update the last processed block in storage
     process.env.LAST_PROCESSED_BLOCK = blockNumber.toString();
   }
 
@@ -348,21 +299,7 @@ export class RevenueTrackingService {
     this.logger.log('Checking for pending revenue distributions...');
 
     try {
-      const pendingStreams = await this.prisma.revenueStream.findMany({
-        where: {
-          isActive: true,
-          agentNFT: {
-            isFractionalized: true
-          }
-        },
-        include: {
-          agentNFT: {
-            include: {
-              fractionalShares: true
-            }
-          }
-        }
-      });
+      const pendingStreams = await revenueStreamRepository.findPendingDistributions();
 
       for (const stream of pendingStreams) {
         await this.checkAndTriggerDistribution(stream.id);
@@ -375,38 +312,33 @@ export class RevenueTrackingService {
   }
 
   // Analytics and reporting methods
-  async getRevenueAnalytics(agentNftId: string, timeframe: 'day' | 'week' | 'month' | 'year' = 'month') {
+  async getRevenueAnalytics(
+    agentNftId: string,
+    timeframe: 'day' | 'week' | 'month' | 'year' = 'month'
+  ) {
     try {
       const startDate = this.getStartDate(timeframe);
-      
-      const revenueStreams = await this.prisma.revenueStream.findMany({
-        where: {
-          agentNFTId: agentNftId,
-          createdAt: {
-            gte: startDate
-          }
-        },
-        include: {
-          distributions: {
-            where: {
-              createdAt: {
-                gte: startDate
-              }
-            }
-          }
-        }
-      });
+
+      const revenueStreams = await revenueStreamRepository.findWithDistributionsByTime(
+        agentNftId,
+        startDate
+      );
 
       const totalRevenue = revenueStreams.reduce(
-        (sum, stream) => sum + parseFloat(formatEther(BigInt(stream.totalRevenue.toString() || '0'))), 0
+        (sum, stream) =>
+          sum + parseFloat(formatEther(BigInt(stream.totalRevenue.toString() || '0'))),
+        0
       );
 
       const totalDistributed = revenueStreams.reduce(
-        (sum, stream) => sum + parseFloat(formatEther(BigInt(stream.distributedRevenue.toString() || '0'))), 0
+        (sum, stream) =>
+          sum + parseFloat(formatEther(BigInt(stream.distributedRevenue.toString() || '0'))),
+        0
       );
 
       const distributionCount = revenueStreams.reduce(
-        (sum, stream) => sum + stream.distributions.length, 0
+        (sum, stream) => sum + (stream.distributions?.length || 0),
+        0
       );
 
       return {
@@ -417,7 +349,7 @@ export class RevenueTrackingService {
         pendingRevenue: totalRevenue - totalDistributed,
         distributionCount,
         averageDistribution: distributionCount > 0 ? totalDistributed / distributionCount : 0,
-        streams: revenueStreams.length
+        streams: revenueStreams.length,
       };
     } catch (error) {
       this.logger.error('Failed to get revenue analytics:', error);

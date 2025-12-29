@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import { db, sql } from '@the-new-fuse/database/drizzle';
+import { db, sql } from '@the-new-fuse/database';
 
 export async function setupTestModule() {
   const moduleRef = await Test.createTestingModule({

@@ -7,6 +7,7 @@
 export { SkillsMCPServer } from './SkillsMCPServer.js';
 
 // CLI execution
+import { fileURLToPath } from 'url';
 import { SkillsMCPServer } from './SkillsMCPServer.js';
 
 async function main() {
@@ -14,7 +15,10 @@ async function main() {
   await server.start();
 }
 
-if (require.main === module) {
+// ES module equivalent of require.main === module
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isMainModule) {
   main().catch((error) => {
     console.error('[Skills MCP] Fatal error:', error);
     process.exit(1);

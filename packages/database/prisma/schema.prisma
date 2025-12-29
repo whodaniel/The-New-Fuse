@@ -970,6 +970,7 @@ model AgentRegistration {
   agent            Agent                     @relation(fields: [agentId], references: [id], onDelete: Cascade)
   capabilities     AgentCapabilityRegistry[]
   onboardingEvents AgentOnboardingEvent[]
+  agentMetrics     AgentMetrics[]
 
   @@map("agent_registrations")
 }
@@ -1005,23 +1006,39 @@ model AgentOnboardingEvent {
 }
 
 model AgentDirectoryEntry {
-  id             String   @id @default(uuid())
-  agentId        String   @unique
+  id             String    @id @default(uuid())
+  agentId        String    @unique
   displayName    String
   description    String?
   category       String
   tags           String[]
-  isPublic       Boolean  @default(false)
-  isVerified     Boolean  @default(false)
-  rating         Float    @default(0)
-  usageCount     Int      @default(0)
-  searchableData String?  @db.Text
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isPublic       Boolean   @default(false)
+  isVerified     Boolean   @default(false)
+  featured       Boolean   @default(false)
+  rating         Float     @default(0)
+  usageCount     Int       @default(0)
+  lastActiveAt   DateTime?
+  searchableData String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
   @@map("agent_directory_entries")
+}
+
+model AgentMetrics {
+  id             String   @id @default(uuid())
+  registrationId String
+  metricType     String
+  value          Float
+  unit           String?
+  tags           Json?
+  timestamp      DateTime @default(now())
+
+  registration AgentRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@map("agent_metrics")
 }
 
 // =============================================================================
@@ -1133,13 +1150,13 @@ model ErrorLog {
 // =============================================================================
 
 model Workspace {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String?
-  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relationships
   projects Project[]

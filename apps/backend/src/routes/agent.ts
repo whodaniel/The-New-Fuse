@@ -1,13 +1,9 @@
 import express from 'express';
 import { auth } from '../middleware/auth';
 import { AgentService } from '../services/agentService';
-import { PrismaService } from '../prisma/prisma.service';
-import { ConfigService } from '@nestjs/config';
 
 const router = express.Router();
-const prismaService = new PrismaService();
-const configService = new ConfigService();
-const agentService = new AgentService(prismaService, configService);
+const agentService = new AgentService();
 
 // Protected routes - require authentication
 router.use((req, res, next) => auth(req, res, next));
@@ -21,7 +17,7 @@ router.get('/', async (req: any, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching agents',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 });
@@ -35,7 +31,7 @@ router.post('/', async (req: any, res) => {
     res.status(500).json({
       success: false,
       message: 'Error creating agent',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 });
@@ -47,7 +43,7 @@ router.get('/:id', async (req: any, res) => {
     if (!agent) {
       return res.status(404).json({
         success: false,
-        message: 'Agent not found'
+        message: 'Agent not found',
       });
     }
     res.json({ success: true, agent });
@@ -55,7 +51,7 @@ router.get('/:id', async (req: any, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching agent',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 });
@@ -67,7 +63,7 @@ router.put('/:id', async (req: any, res) => {
     if (!agent) {
       return res.status(404).json({
         success: false,
-        message: 'Agent not found'
+        message: 'Agent not found',
       });
     }
     res.json({ success: true, agent });
@@ -75,7 +71,7 @@ router.put('/:id', async (req: any, res) => {
     res.status(500).json({
       success: false,
       message: 'Error updating agent',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 });
@@ -86,13 +82,13 @@ router.delete('/:id', async (req: any, res) => {
     await agentService.deleteAgent(req.params.id, req.user.id);
     res.json({
       success: true,
-      message: 'Agent deleted successfully'
+      message: 'Agent deleted successfully',
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Error deleting agent',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 });

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Logger, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
+import { drizzleUserRepository } from '@the-new-fuse/database';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';

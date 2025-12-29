@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { db, desc, eq, notifications } from '@the-new-fuse/database';
 import { EventBus } from '../events/event-bus.service';
-import { LoggingService } from '../services/logging.service';
 import { EmailService } from '../services/email.service';
-import { NotificationSentEvent } from './events/notification.events';
-import { PrismaService } from '../prisma/prisma.service';
+import { LoggingService } from '../services/logging.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class NotificationService {
@@ -12,36 +11,42 @@ export class NotificationService {
     private usersService: UsersService,
     private eventBus: EventBus,
     private logger: LoggingService,
-    private emailService: EmailService,
-    private prisma: PrismaService
+    private emailService: EmailService
   ) {}
 
   async sendNotification(userId: string, type: string, title: string, message: string) {
-    await this.prisma.notification.create({
-      data: {
+    const [notification] = await db
+      .insert(notifications)
+      .values({
         userId,
         type,
         title,
-        message
-      }
-    });
+        message,
+        read: false,
+      } as any)
+      .returning();
 
     // Log notification sent
     console.log(`Notification sent to user ${userId}: ${type}`);
+
+    return notification;
   }
 
   async getUserNotifications(userId: string) {
-    return this.prisma.notification.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      take: 50
+    return db.query.notifications.findMany({
+      where: eq(notifications.userId, userId),
+      orderBy: [desc(notifications.createdAt)],
+      limit: 50,
     });
   }
 
   async markAsRead(userId: string, notificationId: string) {
-    return this.prisma.notification.update({
-      where: { id: notificationId, userId },
-      data: { read: true }
-    });
+    const [updated] = await db
+      .update(notifications)
+      .set({ read: true, updatedAt: new Date() })
+      .where(eq(notifications.id, notificationId))
+      .returning();
+
+    return updated;
   }
 }

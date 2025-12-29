@@ -1,11 +1,15 @@
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import {
+  agentPromptVersionRepository,
+  drizzleAgentRepository,
+  validationDatasetRepository,
+} from '@the-new-fuse/database';
+import {
   AgentPromptVersion,
   MassOptimizationConfig,
   PerformanceMetrics,
   PromptDefinition,
 } from '@the-new-fuse/types';
-import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class LlmInteractionService {
@@ -233,7 +237,6 @@ export class PromptOptimizerService {
   private readonly logger = new Logger(PromptOptimizerService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
     @Inject(forwardRef(() => LlmInteractionService))
     private readonly llmService: LlmInteractionService,
     @Inject(forwardRef(() => EvaluationHarnessService))
@@ -248,32 +251,40 @@ export class PromptOptimizerService {
 
     try {
       // Get the agent and its current prompt
-      const agent = await this.prisma.agent.findUnique({
-        where: { id: agentId },
-        include: { promptVersions: true },
-      });
+      // const agent = await this.prisma.agent.findUnique({
+      //   where: { id: agentId },
+      //   include: { promptVersions: true },
+      // });
+      const agent = await drizzleAgentRepository.findById(agentId);
 
       if (!agent) {
         throw new Error(`Agent ${agentId} not found`);
       }
 
+      // Manually fetch prompt versions
+      const promptVersions = await agentPromptVersionRepository.findByAgentId(agentId);
+      const agentWithPrompts = {
+        ...agent,
+        promptVersions,
+      };
+
       // Get validation dataset
-      const dataset = await this.prisma.validationDataset.findUnique({
-        where: { id: config.validationDatasetId },
-      });
+      const dataset = await validationDatasetRepository.findById(config.validationDatasetId);
 
       if (!dataset) {
         throw new Error(`Validation dataset ${config.validationDatasetId} not found`);
       }
 
       // Get current best prompt
-      const currentPrompt = this.getCurrentPrompt(agent);
+      const currentPrompt = this.getCurrentPrompt(agentWithPrompts);
 
       // Generate candidate prompts using MIPRO-inspired optimization
+      // Note: items might be generic jsonb, need casting if typed
+      const datasetItems = (dataset.items as any[]) || [];
       const candidatePrompts = await this.generateCandidatePrompts(
         currentPrompt,
         config,
-        dataset.items[0] // Use first item as example for prompt generation
+        datasetItems[0] // Use first item as example for prompt generation
       );
 
       // Evaluate all candidates
@@ -282,7 +293,7 @@ export class PromptOptimizerService {
           const metrics = await this.evaluationHarness.evaluatePrompt(
             agentId,
             candidate,
-            dataset.items as any[],
+            datasetItems,
             config
           );
 
@@ -310,7 +321,7 @@ export class PromptOptimizerService {
           `Best accuracy: ${bestCandidate.metrics.accuracy}`
       );
 
-      return newVersion;
+      return newVersion as any as AgentPromptVersion;
     } catch (error) {
       this.logger.error(`Stage 1 optimization failed for agent ${agentId}:`, error);
       throw error;
@@ -319,9 +330,8 @@ export class PromptOptimizerService {
 
   private getCurrentPrompt(agent: any): PromptDefinition {
     // Get the latest prompt version or use system prompt as base
-    const latestVersion = agent.promptVersions?.sort(
-      (a, b) => b.versionNumber - a.versionNumber
-    )[0];
+    // Note: promptVersions are already sorted by version desc in repository
+    const latestVersion = agent.promptVersions?.[0];
 
     if (latestVersion) {
       return {
@@ -490,22 +500,22 @@ Return as JSON array of strings.
     massStage: string
   ): Promise<AgentPromptVersion> {
     // Get next version number
-    const latestVersion = await this.prisma.agentPromptVersion.findFirst({
-      where: { agentId },
-      orderBy: { versionNumber: 'desc' },
-    });
+    // const latestVersion = await this.prisma.agentPromptVersion.findFirst({
+    //   where: { agentId },
+    //   orderBy: { versionNumber: 'desc' },
+    // });
+    const latestVersion = await agentPromptVersionRepository.findLatestByAgentId(agentId);
 
     const nextVersion = (latestVersion?.versionNumber || 0) + 1;
 
-    return this.prisma.agentPromptVersion.create({
-      data: {
-        agentId,
-        versionNumber: nextVersion,
-        instruction: prompt.instruction.roleDefinition,
-        exemplars: prompt.exemplars,
-        performanceMetrics: metrics as any,
-        massStage,
-      },
-    });
+    // return this.prisma.agentPromptVersion.create({
+    return agentPromptVersionRepository.create({
+      agentId,
+      versionNumber: nextVersion,
+      instruction: prompt.instruction.roleDefinition,
+      exemplars: prompt.exemplars as any, // Cast for jsonb compatibility
+      performanceMetrics: metrics as any,
+      massStage,
+    }) as any as AgentPromptVersion;
   }
 }

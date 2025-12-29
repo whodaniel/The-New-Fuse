@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
 import {
+  agentPromptVersionRepository,
+  drizzleAgentRepository,
+  optimizationJobRepository,
+} from '@the-new-fuse/database';
+import {
+  AgentPromptVersion,
   MassOptimizationConfig,
-  TopologyOptimizationConfig,
   OptimizationJob,
-  WorkflowTopology,
-  AgentPromptVersion
+  TopologyOptimizationConfig,
 } from '@the-new-fuse/types';
 import { PromptOptimizerService } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
@@ -16,7 +19,6 @@ export class MassOrchestrationService {
   private readonly logger = new Logger(MassOrchestrationService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
     private readonly promptOptimizer: PromptOptimizerService,
     private readonly topologyOptimizer: TopologyOptimizerService,
     private readonly workflowOptimizer: WorkflowPromptOptimizerService
@@ -41,7 +43,7 @@ export class MassOrchestrationService {
         agentId,
         optimizedPromptVersion: optimizedPrompt,
         performanceImprovement: this.calculateImprovement(optimizedPrompt),
-        completedAt: new Date()
+        completedAt: new Date(),
       });
 
       await this.updateJobStatus(job.id, 'completed');
@@ -75,7 +77,7 @@ export class MassOrchestrationService {
         agentIds,
         optimizedTopology,
         topologyMetrics: optimizedTopology.performanceMetrics,
-        completedAt: new Date()
+        completedAt: new Date(),
       });
 
       await this.updateJobStatus(job.id, 'completed');
@@ -102,14 +104,17 @@ export class MassOrchestrationService {
     try {
       await this.updateJobStatus(job.id, 'running');
 
-      const optimizedWorkflow = await this.workflowOptimizer.optimizeWorkflowPrompts(topologyId, config);
+      const optimizedWorkflow = await this.workflowOptimizer.optimizeWorkflowPrompts(
+        topologyId,
+        config
+      );
 
       await this.updateJobResults(job.id, {
         stage: 'workflow_level',
         topologyId,
         optimizedWorkflow,
         finalMetrics: optimizedWorkflow.performanceMetrics,
-        completedAt: new Date()
+        completedAt: new Date(),
       });
 
       await this.updateJobStatus(job.id, 'completed');
@@ -137,12 +142,12 @@ export class MassOrchestrationService {
       // Stage 1: Optimize each agent's prompts
       this.logger.log('Running MASS Stage 1 for all agents...');
       const stage1Jobs = await Promise.all(
-        agentIds.map(agentId => this.optimizeAgentPrompt(agentId, config))
+        agentIds.map((agentId) => this.optimizeAgentPrompt(agentId, config))
       );
-      jobIds.push(...stage1Jobs.map(job => job.id));
+      jobIds.push(...stage1Jobs.map((job) => job.id));
 
       // Wait for all Stage 1 jobs to complete
-      await this.waitForJobsCompletion(stage1Jobs.map(job => job.id));
+      await this.waitForJobsCompletion(stage1Jobs.map((job) => job.id));
 
       // Stage 2: Optimize topology
       this.logger.log('Running MASS Stage 2 for topology optimization...');
@@ -172,7 +177,7 @@ export class MassOrchestrationService {
 
       return {
         finalTopologyId: topologyId,
-        jobIds
+        jobIds,
       };
     } catch (error) {
       this.logger.error('Full MASS optimization failed:', error);
@@ -185,50 +190,46 @@ export class MassOrchestrationService {
     sourceAgentId: string,
     config: MassOptimizationConfig
   ): Promise<{ optimizedAgent: any; optimizationJob: OptimizationJob }> {
-    const sourceAgent = await this.prisma.agent.findUnique({
-      where: { id: sourceAgentId }
-    });
+    const sourceAgent = await drizzleAgentRepository.findById(sourceAgentId);
 
     if (!sourceAgent) {
       throw new Error(`Source agent ${sourceAgentId} not found`);
     }
 
     // Create new optimized agent
-    const optimizedAgent = await this.prisma.agent.create({
-      data: {
-        name: `${sourceAgent.name} (MASS Optimized)`,
-        description: `${sourceAgent.description || ''} - Optimized using MASS framework`,
-        type: sourceAgent.type,
-        systemPrompt: sourceAgent.systemPrompt,
-        capabilities: sourceAgent.capabilities,
-        status: 'INACTIVE',
-        config: sourceAgent.config,
-        userId: config.userId,
-        massOptimized: true,
-        parentAgentId: sourceAgentId
-      }
-    });
+    const optimizedAgent = await drizzleAgentRepository.create({
+      name: `${sourceAgent.name} (MASS Optimized)`,
+      description: `${sourceAgent.description || ''} - Optimized using MASS framework`,
+      type: sourceAgent.type,
+      systemPrompt: sourceAgent.systemPrompt,
+      capabilities: sourceAgent.capabilities as string[],
+      status: 'INACTIVE',
+      config: sourceAgent.config,
+      userId: config.userId,
+      provider: sourceAgent.provider,
+    } as any);
 
     // Start optimization
     const optimizationJob = await this.optimizeAgentPrompt(optimizedAgent.id, config);
 
     return {
       optimizedAgent,
-      optimizationJob
+      optimizationJob,
     };
   }
 
   // Get optimization job status
   async getOptimizationJob(jobId: string): Promise<OptimizationJob> {
-    const job = await this.prisma.optimizationJob.findUnique({
-      where: { id: jobId }
-    });
+    const job = await optimizationJobRepository.findById(jobId);
 
     if (!job) {
       throw new Error(`Optimization job ${jobId} not found`);
     }
 
-    return job as OptimizationJob;
+    // Cast or map if needed. OptimizationJob type vs Drizzle result.
+    // Drizzle result has keys: id, type, etc. 'results' and 'config' are jsonb.
+    // Assuming OptimizationJob interface matches or is compatible.
+    return job as any as OptimizationJob;
   }
 
   // Get all optimization jobs for a user
@@ -237,41 +238,26 @@ export class MassOrchestrationService {
     status?: string,
     type?: string
   ): Promise<OptimizationJob[]> {
-    const where: any = { userId };
-    
-    if (status) where.status = status;
-    if (type) where.type = type;
-
-    const jobs = await this.prisma.optimizationJob.findMany({
-      where,
-      orderBy: { createdAt: 'desc' }
-    });
-
-    return jobs as OptimizationJob[];
+    const jobs = await optimizationJobRepository.findByUser(userId, status, type);
+    return jobs as any as OptimizationJob[];
   }
 
   // Get optimization history for an agent
-  async getAgentOptimizationHistory(agentId: string, userId: string): Promise<{
+  async getAgentOptimizationHistory(
+    agentId: string,
+    userId: string
+  ): Promise<{
     promptVersions: AgentPromptVersion[];
     optimizationJobs: OptimizationJob[];
   }> {
     const [promptVersions, optimizationJobs] = await Promise.all([
-      this.prisma.agentPromptVersion.findMany({
-        where: { agentId },
-        orderBy: { versionNumber: 'desc' }
-      }),
-      this.prisma.optimizationJob.findMany({
-        where: {
-          targetId: agentId,
-          userId
-        },
-        orderBy: { createdAt: 'desc' }
-      })
+      agentPromptVersionRepository.findByAgentId(agentId),
+      optimizationJobRepository.findByTargetId(agentId, userId),
     ]);
 
     return {
-      promptVersions: promptVersions as AgentPromptVersion[],
-      optimizationJobs: optimizationJobs as OptimizationJob[]
+      promptVersions: promptVersions as any as AgentPromptVersion[],
+      optimizationJobs: optimizationJobs as any as OptimizationJob[],
     };
   }
 
@@ -281,50 +267,52 @@ export class MassOrchestrationService {
     targetId: string,
     config: any
   ): Promise<OptimizationJob> {
-    const job = await this.prisma.optimizationJob.create({
-      data: {
-        type,
-        targetId,
-        status: 'pending',
-        config: config as any,
-        userId: config.userId
-      }
-    });
+    const job = await optimizationJobRepository.create({
+      type,
+      targetId,
+      status: 'pending',
+      config: config as any,
+      userId: config.userId,
+    } as any);
 
-    return job as OptimizationJob;
+    return job as any as OptimizationJob;
   }
 
-  private async updateJobStatus(jobId: string, status: string, errorMessage?: string): Promise<void> {
+  private async updateJobStatus(
+    jobId: string,
+    status: string,
+    errorMessage?: string
+  ): Promise<void> {
     const updateData: any = {
       status,
-      updatedAt: new Date()
     };
 
     if (errorMessage) {
-      updateData.results = { error: errorMessage };
+      // We need to fetch current results, append error, or just set result error?
+      // Repo 'update' just sets fields.
+      // Let's assume we can merge or just overwrite 'results' with error if failed.
+      // But preserving specific logic:
+      const job = await optimizationJobRepository.findById(jobId);
+      const results = (job?.results as any) || {};
+      results.error = errorMessage;
+      updateData.results = results;
     }
 
-    await this.prisma.optimizationJob.update({
-      where: { id: jobId },
-      data: updateData
-    });
+    await optimizationJobRepository.update(jobId, updateData);
   }
 
   private async updateJobResults(jobId: string, results: any): Promise<void> {
-    await this.prisma.optimizationJob.update({
-      where: { id: jobId },
-      data: {
-        results: results as any,
-        updatedAt: new Date()
-      }
-    });
+    await optimizationJobRepository.update(jobId, { results } as any);
   }
 
   private calculateImprovement(optimizedPrompt: any): number {
     // Calculate performance improvement percentage
     if (optimizedPrompt.performanceMetrics?.accuracy && optimizedPrompt.baselineMetrics?.accuracy) {
-      return ((optimizedPrompt.performanceMetrics.accuracy - optimizedPrompt.baselineMetrics.accuracy) 
-        / optimizedPrompt.baselineMetrics.accuracy) * 100;
+      return (
+        ((optimizedPrompt.performanceMetrics.accuracy - optimizedPrompt.baselineMetrics.accuracy) /
+          optimizedPrompt.baselineMetrics.accuracy) *
+        100
+      );
     }
     return 0;
   }
@@ -335,23 +323,23 @@ export class MassOrchestrationService {
     const startTime = Date.now();
 
     while (Date.now() - startTime < maxWaitTime) {
-      const jobs = await Promise.all(
-        jobIds.map(id => this.getOptimizationJob(id))
-      );
+      const jobs = await Promise.all(jobIds.map((id) => this.getOptimizationJob(id)));
 
-      const allCompleted = jobs.every(job => 
-        job.status === 'completed' || job.status === 'failed'
+      const allCompleted = jobs.every(
+        (job) => job.status === 'completed' || job.status === 'failed'
       );
 
       if (allCompleted) {
-        const failedJobs = jobs.filter(job => job.status === 'failed');
+        const failedJobs = jobs.filter((job) => job.status === 'failed');
         if (failedJobs.length > 0) {
-          throw new Error(`Some optimization jobs failed: ${failedJobs.map(j => j.id).join(', ')}`);
+          throw new Error(
+            `Some optimization jobs failed: ${failedJobs.map((j) => j.id).join(', ')}`
+          );
         }
         return;
       }
 
-      await new Promise(resolve => setTimeout(resolve, checkInterval));
+      await new Promise((resolve) => setTimeout(resolve, checkInterval));
     }
 
     throw new Error(`Timeout waiting for optimization jobs to complete: ${jobIds.join(', ')}`);

@@ -1,16 +1,15 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
-import { LoggingService } from '../services/logging.service';
-import { comparePasswords } from '../utils/auth.utils';
+import { drizzleUserRepository } from '@the-new-fuse/database';
 import { EventBus } from '../events/event-bus.service';
-import { UserLoginEvent } from './events/auth.events';
 import { IdentityService } from '../services/identity.service';
+import { LoggingService } from '../services/logging.service';
+import { comparePasswords, hashPassword } from '../utils/auth.utils';
+import { UserLoginEvent } from './events/auth.events';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
     private jwtService: JwtService,
     private logger: LoggingService,
     private eventBus: EventBus,
@@ -18,8 +17,8 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
-    if (user && await comparePasswords(password, user.password)) {
+    const user = await drizzleUserRepository.findByEmail(email);
+    if (user && (await comparePasswords(password, user.hashedPassword))) {
       await this.eventBus.publish(new UserLoginEvent(user));
       return user;
     }
@@ -33,24 +32,27 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name
-      }
+        name: user.name,
+      },
     };
   }
 
   async register(email: string, password: string, name: string) {
     // Check if user already exists
-    const existingUser = await this.usersService.findByEmail(email);
+    const existingUser = await drizzleUserRepository.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
-    // Create user (password will be hashed in UsersService)
-    const user = await this.usersService.create({
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Create user
+    const user = await drizzleUserRepository.create({
       email,
-      password,
+      hashedPassword,
       name,
-    });
+    } as Parameters<typeof drizzleUserRepository.create>[0]);
 
     // Generate JWT token
     const payload = { email: user.email, sub: user.id };
@@ -61,8 +63,8 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name
-      }
+        name: user.name,
+      },
     };
   }
 
@@ -80,38 +82,37 @@ export class AuthService {
   async findOrCreateUnstoppableDomainsUser(
     domain: string,
     walletAddress: string,
-    walletType?: string,
+    walletType?: string
   ) {
     this.logger.log(`Authenticating Unstoppable Domain: ${domain}`);
 
     // Try to find user by wallet address first
-    let user = await this.usersService.findByWalletAddress(walletAddress);
+    let user = await drizzleUserRepository.findByWalletAddress(walletAddress);
 
     if (!user) {
       // 1. Mint Machine ID (e.g. usr_xyz.thenewfuse.com)
       const machineId = await this.identityService.mintMachineID(walletAddress);
-      
-      // 2. Create new user with Unstoppable Domain + Machine ID
-      // We store the Machine ID as a property if the schema supports it, 
-      // or we can just log it for now as the "Internal ID".
-      // Assuming 'name' is the display name (UD domain).
-      user = await this.usersService.create({
-        email: `${domain}@unstoppabledomains.com`, // Use domain as email
-        name: domain, 
-        password: null, // No password for UD users
-        walletAddress,
-        walletType,
-        authProvider: 'unstoppable-domains',
-        // machineId: machineId // TODO: Add to schema
-      });
 
-      this.logger.log(`Created new user for Unstoppable Domain: ${domain} with Machine ID: ${machineId}`);
+      // 2. Create new user with Unstoppable Domain + Machine ID
+      user = await drizzleUserRepository.create({
+        email: `${domain}@unstoppabledomains.com`, // Use domain as email
+        name: domain,
+        hashedPassword: '', // No password for UD users
+        walletAddress,
+        // walletType, // TODO: Add to schema if needed
+        // authProvider: 'unstoppable-domains', // TODO: Add to schema if needed
+        // machineId: machineId // TODO: Add to schema
+      } as Parameters<typeof drizzleUserRepository.create>[0]);
+
+      this.logger.log(
+        `Created new user for Unstoppable Domain: ${domain} with Machine ID: ${machineId}`
+      );
     } else {
       // Update existing user's domain if changed
       if (user.name !== domain) {
-        user = await this.usersService.update(user.id, {
+        user = await drizzleUserRepository.update(user.id, {
           name: domain,
-        });
+        } as Parameters<typeof drizzleUserRepository.update>[1]);
       }
       this.logger.log(`Found existing user for wallet: ${walletAddress}`);
     }

@@ -7,19 +7,19 @@
  * - Status updates
  */
 
+import { Logger } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import {
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
-  OnGatewayInit,
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  MessageBody,
-  ConnectedSocket,
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { RelayService } from './relay.service';
 
 interface AgentSocket extends Socket {
@@ -33,9 +33,7 @@ interface AgentSocket extends Socket {
     methods: ['GET', 'POST'],
   },
 })
-export class RelayGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class RelayGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
@@ -44,7 +42,7 @@ export class RelayGateway
 
   constructor(
     private readonly relayService: RelayService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   afterInit(server: Server) {
@@ -85,7 +83,7 @@ export class RelayGateway
       type: string;
       capabilities: string[];
       metadata?: Record<string, unknown>;
-    },
+    }
   ) {
     this.logger.log(`Agent registration: ${data.id} from socket ${client.id}`);
 
@@ -120,7 +118,7 @@ export class RelayGateway
   @SubscribeMessage('agent:unregister')
   async handleAgentUnregistration(
     @ConnectedSocket() client: AgentSocket,
-    @MessageBody() data: { id: string },
+    @MessageBody() data: { id: string }
   ) {
     const result = await this.relayService.unregisterAgent(data.id);
     this.connectedAgents.delete(client.id);
@@ -135,7 +133,7 @@ export class RelayGateway
   @SubscribeMessage('agent:heartbeat')
   async handleHeartbeat(
     @ConnectedSocket() client: AgentSocket,
-    @MessageBody() data: { agentId: string; status?: string },
+    @MessageBody() data: { agentId: string; status?: string }
   ) {
     // Update last seen
     const agent = await this.relayService.getAgent(data.agentId);
@@ -159,7 +157,7 @@ export class RelayGateway
       source: string;
       target?: string;
       payload: unknown;
-    },
+    }
   ) {
     this.logger.debug(`Message from ${data.source} to ${data.target || 'broadcast'}`);
 
@@ -198,13 +196,13 @@ export class RelayGateway
       type: string;
       payload: unknown;
       filter?: { type?: string; capability?: string };
-    },
+    }
   ) {
     const messageIds = await this.relayService.broadcastMessage(
       data.source,
       data.type,
       data.payload,
-      data.filter,
+      data.filter
     );
 
     // Broadcast to appropriate rooms
@@ -236,9 +234,7 @@ export class RelayGateway
   }
 
   @SubscribeMessage('agents:list')
-  async handleAgentsList(
-    @MessageBody() filter?: { type?: string; capability?: string },
-  ) {
+  async handleAgentsList(@MessageBody() filter?: { type?: string; capability?: string }) {
     let agents;
 
     if (filter?.type) {

@@ -1,48 +1,34 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { drizzleUserRepository } from '@the-new-fuse/database';
 import { RedisService } from '../services/redis.service';
 
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly redisService: RedisService,
-  ) {}
+  constructor(private readonly redisService: RedisService) {}
 
   async findOne(id: string) {
-    return this.prisma.user.findUnique({
-      where: { id },
-    });
+    return drizzleUserRepository.findById(id);
   }
 
   async findByEmail(email: string) {
-    return this.prisma.user.findUnique({
-      where: { email },
-    });
+    return drizzleUserRepository.findByEmail(email);
   }
 
   async create(userData: any) {
-    return this.prisma.user.create({
-      data: userData,
-    });
+    return drizzleUserRepository.create(userData);
   }
 
   async update(id: string, userData: any) {
-    return this.prisma.user.update({
-      where: { id },
-      data: userData,
-    });
+    return drizzleUserRepository.update(id, userData);
   }
 
   async delete(id: string) {
-    return this.prisma.user.delete({
-      where: { id },
-    });
+    return drizzleUserRepository.delete(id);
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return drizzleUserRepository.findAll();
   }
 }

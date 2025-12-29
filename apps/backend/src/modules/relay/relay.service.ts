@@ -12,8 +12,8 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-// Types for relay integration (we'll define these inline to avoid import issues)
-interface RelayConfig {
+// Types for relay integration
+export interface RelayConfig {
   id: string;
   version: string;
   workspaceDir: string;
@@ -39,7 +39,7 @@ interface RelayConfig {
   };
 }
 
-interface Agent {
+export interface Agent {
   id: string;
   name: string;
   type: string;
@@ -49,7 +49,7 @@ interface Agent {
   metadata?: Record<string, unknown>;
 }
 
-interface RelayMessage {
+export interface RelayMessage {
   id: string;
   type: string;
   source: string;
@@ -59,7 +59,7 @@ interface RelayMessage {
   metadata?: Record<string, unknown>;
 }
 
-interface SystemStatus {
+export interface SystemStatus {
   relayId: string;
   uptime: number;
   agentCount: number;

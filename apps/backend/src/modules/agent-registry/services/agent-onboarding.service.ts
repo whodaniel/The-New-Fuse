@@ -1,16 +1,21 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { IOnboardingContext, ICapabilityTestResult } from '../interfaces/agent-registry.interfaces';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  agentCapabilityRegistry,
+  agentOnboardingEvents,
+  agentRegistrations,
+  agents,
+  db,
+  desc,
+  eq,
+} from '@the-new-fuse/database';
+import { ICapabilityTestResult, IOnboardingContext } from '../interfaces/agent-registry.interfaces';
 
 @Injectable()
 export class AgentOnboardingService {
   private readonly logger = new Logger(AgentOnboardingService.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private readonly eventEmitter: EventEmitter2) {}
 
   /**
    * Start onboarding process for an agent
@@ -18,44 +23,47 @@ export class AgentOnboardingService {
   async startOnboarding(registrationId: string): Promise<IOnboardingContext> {
     this.logger.log(`Starting onboarding for registration: ${registrationId}`);
 
-    const registration = await this.prisma.agentRegistration.findUnique({
-      where: { id: registrationId },
-      include: { agent: true },
+    const registration = await db.query.agentRegistrations.findFirst({
+      where: eq(agentRegistrations.id, registrationId),
     });
 
     if (!registration) {
       throw new NotFoundException('Registration not found');
     }
 
-    // Update onboarding status
-    await this.prisma.agentRegistration.update({
-      where: { id: registrationId },
-      data: {
-        onboardingStatus: 'WELCOME_SENT',
-        onboardingStep: 'welcome',
-        onboardingProgress: 10,
-      },
+    const agent = await db.query.agents.findFirst({
+      where: eq(agents.id, registration.agentId),
     });
+
+    // Update onboarding status
+    await db
+      .update(agentRegistrations)
+      .set({
+        onboardingStatus: 'WELCOME_SENT',
+        onboardingProgress: 10,
+        updatedAt: new Date(),
+      })
+      .where(eq(agentRegistrations.id, registrationId));
 
     // Create welcome event
     await this.createOnboardingEvent(
       registrationId,
       'WELCOME_MESSAGE_SENT',
       'Welcome message sent to agent',
-      { step: 'welcome' },
+      { step: 'welcome' }
     );
 
     // Emit event for welcome message
     this.eventEmitter.emit('agent.onboarding.started', {
       registrationId,
       agentId: registration.agentId,
-      agentName: registration.agent.name,
+      agentName: agent?.name,
     });
 
     return {
       registrationId,
       agentId: registration.agentId,
-      agentName: registration.agent.name,
+      agentName: agent?.name || 'Unknown',
       currentStep: 'welcome',
       progress: 10,
       data: {},
@@ -68,8 +76,8 @@ export class AgentOnboardingService {
   async testCapabilities(registrationId: string): Promise<ICapabilityTestResult[]> {
     this.logger.log(`Testing capabilities for registration: ${registrationId}`);
 
-    const capabilities = await this.prisma.agentCapabilityRegistry.findMany({
-      where: { registrationId },
+    const capabilities = await db.query.agentCapabilityRegistry.findMany({
+      where: eq(agentCapabilityRegistry.registrationId, registrationId),
     });
 
     const results: ICapabilityTestResult[] = [];
@@ -80,35 +88,34 @@ export class AgentOnboardingService {
       results.push(testResult);
 
       // Update capability status
-      await this.prisma.agentCapabilityRegistry.update({
-        where: { id: capability.id },
-        data: {
+      await db
+        .update(agentCapabilityRegistry)
+        .set({
           verificationStatus: testResult.passed ? 'VERIFIED' : 'FAILED',
-          verifiedAt: testResult.passed ? new Date() : null,
-          testResults: testResult as any,
-        },
-      });
+          updatedAt: new Date(),
+        })
+        .where(eq(agentCapabilityRegistry.id, capability.id));
 
       // Create event
       await this.createOnboardingEvent(
         registrationId,
         testResult.passed ? 'CAPABILITY_VERIFIED' : 'CAPABILITY_FAILED',
         `Capability ${capability.capabilityName} ${testResult.passed ? 'verified' : 'failed'}`,
-        { capability: capability.capabilityName, result: testResult },
+        { capability: capability.capabilityName, result: testResult }
       );
     }
 
     // Update onboarding progress
     const allPassed = results.every((r) => r.passed);
-    await this.prisma.agentRegistration.update({
-      where: { id: registrationId },
-      data: {
+    await db
+      .update(agentRegistrations)
+      .set({
         onboardingStatus: 'CAPABILITIES_TESTED',
-        onboardingStep: 'capabilities_verified',
         onboardingProgress: 30,
         verificationStatus: allPassed ? 'VERIFIED' : 'FAILED',
-      },
-    });
+        updatedAt: new Date(),
+      })
+      .where(eq(agentRegistrations.id, registrationId));
 
     return results;
   }
@@ -119,18 +126,21 @@ export class AgentOnboardingService {
   async completeStep(
     registrationId: string,
     stepId: string,
-    stepData?: Record<string, any>,
+    stepData?: Record<string, any>
   ): Promise<IOnboardingContext> {
     this.logger.log(`Completing step ${stepId} for registration: ${registrationId}`);
 
-    const registration = await this.prisma.agentRegistration.findUnique({
-      where: { id: registrationId },
-      include: { agent: true },
+    const registration = await db.query.agentRegistrations.findFirst({
+      where: eq(agentRegistrations.id, registrationId),
     });
 
     if (!registration) {
       throw new NotFoundException('Registration not found');
     }
+
+    const agent = await db.query.agents.findFirst({
+      where: eq(agents.id, registration.agentId),
+    });
 
     // Calculate progress based on step
     const progressMap: Record<string, number> = {
@@ -157,22 +167,21 @@ export class AgentOnboardingService {
     }
 
     // Update registration
-    const updated = await this.prisma.agentRegistration.update({
-      where: { id: registrationId },
-      data: {
-        onboardingStep: stepId,
+    await db
+      .update(agentRegistrations)
+      .set({
         onboardingProgress: progress,
         onboardingStatus,
-        orientationCompleted: stepId === 'orientation_completed' || stepId === 'ready',
-      },
-    });
+        updatedAt: new Date(),
+      })
+      .where(eq(agentRegistrations.id, registrationId));
 
     // Update agent status if ready
     if (stepId === 'ready') {
-      await this.prisma.agent.update({
-        where: { id: registration.agentId },
-        data: { status: 'READY' },
-      });
+      await db
+        .update(agents)
+        .set({ status: 'READY' as any, updatedAt: new Date() })
+        .where(eq(agents.id, registration.agentId));
     }
 
     // Create event
@@ -180,7 +189,7 @@ export class AgentOnboardingService {
       registrationId,
       'ORIENTATION_STEP_COMPLETED',
       `Completed step: ${stepId}`,
-      { step: stepId, data: stepData },
+      { step: stepId, data: stepData }
     );
 
     // Emit event
@@ -194,7 +203,7 @@ export class AgentOnboardingService {
     return {
       registrationId,
       agentId: registration.agentId,
-      agentName: registration.agent.name,
+      agentName: agent?.name || 'Unknown',
       currentStep: stepId,
       progress,
       data: stepData || {},
@@ -205,36 +214,42 @@ export class AgentOnboardingService {
    * Get onboarding progress
    */
   async getOnboardingProgress(registrationId: string) {
-    const registration = await this.prisma.agentRegistration.findUnique({
-      where: { id: registrationId },
-      include: {
-        agent: true,
-        capabilities: true,
-        onboardingEvents: {
-          orderBy: { timestamp: 'desc' },
-        },
-      },
+    const registration = await db.query.agentRegistrations.findFirst({
+      where: eq(agentRegistrations.id, registrationId),
     });
 
     if (!registration) {
       throw new NotFoundException('Registration not found');
     }
 
+    const agent = await db.query.agents.findFirst({
+      where: eq(agents.id, registration.agentId),
+    });
+
+    const capabilities = await db.query.agentCapabilityRegistry.findMany({
+      where: eq(agentCapabilityRegistry.registrationId, registrationId),
+    });
+
+    const onboardingEvents = await db.query.agentOnboardingEvents.findMany({
+      where: eq(agentOnboardingEvents.registrationId, registrationId),
+      orderBy: [desc(agentOnboardingEvents.timestamp)],
+    });
+
     return {
       registrationId: registration.id,
       agentId: registration.agentId,
-      agentName: registration.agent.name,
-      currentStep: registration.onboardingStep,
+      agentName: agent?.name,
+      currentStep: null, // Could add to schema if needed
       progress: registration.onboardingProgress,
       status: registration.onboardingStatus,
       verificationStatus: registration.verificationStatus,
-      orientationCompleted: registration.orientationCompleted,
-      capabilities: registration.capabilities.map((cap) => ({
+      orientationCompleted: registration.onboardingProgress >= 70,
+      capabilities: capabilities.map((cap) => ({
         name: cap.capabilityName,
         type: cap.capabilityType,
         verified: cap.verificationStatus === 'VERIFIED',
       })),
-      events: registration.onboardingEvents,
+      events: onboardingEvents,
       createdAt: registration.createdAt,
       updatedAt: registration.updatedAt,
     };
@@ -268,15 +283,13 @@ export class AgentOnboardingService {
     registrationId: string,
     eventType: string,
     message: string,
-    eventData?: any,
+    eventData?: any
   ) {
-    return this.prisma.agentOnboardingEvent.create({
-      data: {
-        registrationId,
-        eventType: eventType as any,
-        message,
-        eventData: eventData || {},
-      },
-    });
+    return db.insert(agentOnboardingEvents).values({
+      registrationId,
+      eventType,
+      message,
+      eventData: eventData || {},
+    } as any);
   }
 }

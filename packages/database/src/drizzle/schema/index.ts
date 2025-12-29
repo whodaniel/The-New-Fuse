@@ -11,6 +11,7 @@ export * from './agents';
 export * from './chat';
 export * from './code-execution';
 export * from './marketplace';
+export * from './mass';
 export * from './system';
 export * from './tasks';
 export * from './users';

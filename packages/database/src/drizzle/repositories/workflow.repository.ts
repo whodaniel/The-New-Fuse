@@ -13,7 +13,7 @@ import type {
   Workflow,
   WorkflowExecution,
   WorkflowStep,
-  WorkflowTemplate
+  WorkflowTemplate,
 } from '../types';
 
 /**
@@ -55,7 +55,7 @@ export class DrizzleWorkflowRepository {
 
     return {
       ...workflow,
-      steps
+      steps,
     };
   }
 
@@ -88,7 +88,7 @@ export class DrizzleWorkflowRepository {
     return db
       .select()
       .from(workflows)
-      .where(and(eq(workflows.status, status), isNull(workflows.deletedAt)))
+      .where(and(eq(workflows.status, status as any), isNull(workflows.deletedAt)))
       .orderBy(desc(workflows.updatedAt));
   }
 
@@ -125,7 +125,7 @@ export class DrizzleWorkflowRepository {
       .set({
         executionCount: sql`${workflows.executionCount} + 1`,
         lastExecutedAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(workflows.id, id));
   }
@@ -136,7 +136,7 @@ export class DrizzleWorkflowRepository {
   async activateWorkflow(id: string): Promise<Workflow | null> {
     const [workflow] = await db
       .update(workflows)
-      .set({ isActive: true, status: 'ACTIVE', updatedAt: new Date() })
+      .set({ isActive: true, status: 'ACTIVE' as any, updatedAt: new Date() })
       .where(eq(workflows.id, id))
       .returning();
 
@@ -149,7 +149,7 @@ export class DrizzleWorkflowRepository {
   async deactivateWorkflow(id: string): Promise<Workflow | null> {
     const [workflow] = await db
       .update(workflows)
-      .set({ isActive: false, status: 'INACTIVE', updatedAt: new Date() })
+      .set({ isActive: false, status: 'INACTIVE' as any, updatedAt: new Date() })
       .where(eq(workflows.id, id))
       .returning();
 
@@ -181,10 +181,7 @@ export class DrizzleWorkflowRepository {
    * Find step by ID
    */
   async findStepById(id: string): Promise<WorkflowStep | null> {
-    const [step] = await db
-      .select()
-      .from(workflowSteps)
-      .where(eq(workflowSteps.id, id));
+    const [step] = await db.select().from(workflowSteps).where(eq(workflowSteps.id, id));
 
     return step ?? null;
   }
@@ -217,10 +214,7 @@ export class DrizzleWorkflowRepository {
    * Delete step
    */
   async deleteStep(id: string): Promise<boolean> {
-    const result = await db
-      .delete(workflowSteps)
-      .where(eq(workflowSteps.id, id))
-      .returning();
+    const result = await db.delete(workflowSteps).where(eq(workflowSteps.id, id)).returning();
 
     return result.length > 0;
   }
@@ -276,7 +270,7 @@ export class DrizzleWorkflowRepository {
     return db
       .select()
       .from(workflowExecutions)
-      .where(eq(workflowExecutions.status, status))
+      .where(eq(workflowExecutions.status, status as any))
       .orderBy(desc(workflowExecutions.startedAt))
       .limit(limit);
   }
@@ -284,7 +278,10 @@ export class DrizzleWorkflowRepository {
   /**
    * Update execution
    */
-  async updateExecution(id: string, data: Partial<NewWorkflowExecution>): Promise<WorkflowExecution | null> {
+  async updateExecution(
+    id: string,
+    data: Partial<NewWorkflowExecution>
+  ): Promise<WorkflowExecution | null> {
     const [execution] = await db
       .update(workflowExecutions)
       .set(data)
@@ -303,7 +300,7 @@ export class DrizzleWorkflowRepository {
       .set({
         status: 'COMPLETED',
         output,
-        completedAt: new Date()
+        completedAt: new Date(),
       })
       .where(eq(workflowExecutions.id, id))
       .returning();
@@ -320,7 +317,7 @@ export class DrizzleWorkflowRepository {
       .set({
         status: 'FAILED',
         error,
-        completedAt: new Date()
+        completedAt: new Date(),
       })
       .where(eq(workflowExecutions.id, id))
       .returning();
@@ -385,7 +382,7 @@ export class DrizzleWorkflowRepository {
       .update(workflowTemplates)
       .set({
         usageCount: sql`${workflowTemplates.usageCount} + 1`,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(workflowTemplates.id, id));
   }
@@ -393,7 +390,10 @@ export class DrizzleWorkflowRepository {
   /**
    * Update template
    */
-  async updateTemplate(id: string, data: Partial<NewWorkflowTemplate>): Promise<WorkflowTemplate | null> {
+  async updateTemplate(
+    id: string,
+    data: Partial<NewWorkflowTemplate>
+  ): Promise<WorkflowTemplate | null> {
     const [template] = await db
       .update(workflowTemplates)
       .set({ ...data, updatedAt: new Date() })

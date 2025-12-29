@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggingService } from '../services/logging.service';
+import { db, drizzleUserRepository, users } from '@the-new-fuse/database';
+import { desc, eq } from 'drizzle-orm';
 import { EventBus } from '../events/event-bus.service';
-import { UserCreatedEvent, UserUpdatedEvent, UserDeletedEvent } from './events/user.events';
+import { LoggingService } from '../services/logging.service';
 import { hashPassword } from '../utils/auth.utils';
+import { UserCreatedEvent, UserDeletedEvent, UserUpdatedEvent } from './events/user.events';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
     private logger: LoggingService,
     private eventBus: EventBus
   ) {
@@ -17,46 +17,43 @@ export class UsersService {
 
   async create(data: any) {
     const hashedPassword = await hashPassword(data.password);
-    
-    const user = await this.prisma.user.create({
-      data: {
-        ...data,
-        password: hashedPassword
-      }
-    });
+
+    const user = await drizzleUserRepository.create({
+      ...data,
+      hashedPassword: hashedPassword,
+    } as any);
 
     // Publish user created event with timestamp
     const event = new UserCreatedEvent(user);
     await this.eventBus.publish(event);
-    
+
     return this.sanitizeUser(user);
   }
 
   async findAll(page: number = 1, limit: number = 50) {
     const skip = (page - 1) * limit;
 
-    // Use select to fetch only needed fields for better performance
-    const [users, total] = await Promise.all([
-      this.prisma.user.findMany({
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          lastLogin: true,
-          createdAt: true,
-          updatedAt: true,
-          emailVerified: true,
-        },
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-      }),
-      this.prisma.user.count(),
-    ]);
+    // Use Drizzle to fetch users with pagination
+    const allUsers = await db.query.users.findMany({
+      limit: limit,
+      offset: skip,
+      orderBy: [desc(users.createdAt)],
+      columns: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        lastLogin: true,
+        createdAt: true,
+        updatedAt: true,
+        emailVerified: true,
+      },
+    });
+
+    const total = await drizzleUserRepository.count();
 
     return {
-      data: users,
+      data: allUsers,
       pagination: {
         page,
         limit,
@@ -67,9 +64,9 @@ export class UsersService {
   }
 
   async findById(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-      select: {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, id),
+      columns: {
         id: true,
         email: true,
         name: true,
@@ -84,9 +81,9 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    return this.prisma.user.findUnique({
-      where: { email },
-      select: {
+    return db.query.users.findFirst({
+      where: eq(users.email, email),
+      columns: {
         id: true,
         email: true,
         name: true,
@@ -97,43 +94,41 @@ export class UsersService {
   }
 
   async update(id: string, data: any) {
-    const user = await this.prisma.user.update({
-      where: { id },
-      data
-    });
+    const user = await drizzleUserRepository.update(id, data);
 
-    // Publish user updated event with timestamp
-    const event = new UserUpdatedEvent(user);
-    await this.eventBus.publish(event);
-    
-    return this.sanitizeUser(user);
+    if (user) {
+      // Publish user updated event with timestamp
+      const event = new UserUpdatedEvent(user);
+      await this.eventBus.publish(event);
+    }
+
+    return user ? this.sanitizeUser(user) : null;
   }
 
   async delete(id: string) {
-    await this.prisma.user.delete({ where: { id } });
-    
+    await drizzleUserRepository.delete(id);
+
     // Publish user deleted event
     await this.eventBus.publish(new UserDeletedEvent(id));
-    
+
     return { success: true };
   }
 
   sanitizeUser(user: any) {
-    const { password, ...sanitizedUser } = user;
+    const { hashedPassword, password, ...sanitizedUser } = user;
     return sanitizedUser;
   }
 
   async getProfile(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-      select: {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, id),
+      columns: {
         id: true,
         email: true,
         name: true,
         createdAt: true,
         updatedAt: true,
-        // Add profile fields if they exist in your schema
-      }
+      },
     });
 
     if (!user) {
@@ -144,19 +139,12 @@ export class UsersService {
   }
 
   async updateProfile(id: string, profileData: any) {
-    const user = await this.prisma.user.update({
-      where: { id },
-      data: profileData,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-        updatedAt: true,
-      }
-    });
+    const user = await drizzleUserRepository.update(id, profileData);
 
-    this.logger.log(`Profile updated for user ${id}`);
+    if (user) {
+      this.logger.log(`Profile updated for user ${id}`);
+    }
+
     return user;
   }
 }

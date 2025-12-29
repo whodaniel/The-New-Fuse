@@ -385,3 +385,185 @@ final approval
 - Sessions designed to be complementary, not overlapping
 - Review outputs when complete to coordinate any conflicts
 - This represents a comprehensive overhaul of the entire website
+
+---
+
+# Self-Improvement Cycle: Performance Optimization Sessions
+
+**Date:** December 29, 2025 **Initiated by:** Self-Improvement Autonomous Agent
+Swarm **Delegation Type:** parallel-specialized **Total New Sessions:** 5
+
+## 🚀 Performance Optimization Sessions
+
+### Session P1: Chat Rooms N+1 Query Optimization
+
+- **ID**: _Launching - check `jules remote list`_
+- **Status**: ⏳ Running
+- **Priority**: 🔴 HIGH (Performance Critical)
+- **Task**: Eliminate N+1 queries in chat-rooms.service.ts
+- **Scope**: apps/backend/src/modules/chat-rooms/chat-rooms.service.ts (lines
+  127-134)
+- **Target**: <50ms query time, single database query
+- **Estimated Completion**: 2-4 hours
+
+**Deliverables**:
+
+- New ChatRepository.getBatchRoomStats(roomIds) method
+- Database indexes on chatRoomParticipants.roomId, chatRoomMessages.roomId
+- Integration test with 100+ rooms
+- Performance comparison (before/after)
+
+---
+
+### Session P2: MASS Orchestration N+1 Query Optimization
+
+- **ID**: _Launching - check `jules remote list`_
+- **Status**: ⏳ Running
+- **Priority**: 🔴 HIGH (Performance Critical)
+- **Task**: Optimize N+1 queries in mass-orchestration.service.ts
+- **Scope**: apps/backend/src/modules/mass/mass-orchestration.service.ts (lines
+  142-145, 320-322)
+- **Target**: 90%+ query reduction, <20ms batch queries
+- **Estimated Completion**: 2-4 hours
+
+**Deliverables**:
+
+- Batch job query: getOptimizationJobs(jobIds)
+- Redis cache layer (5-second TTL)
+- Exponential backoff polling
+- Cache hit rate >80%
+
+---
+
+### Session P3: Redis Distributed Locking
+
+- **ID**: 3193647945647588831
+- **Status**: ⏳ Running
+- **URL**: https://jules.google.com/session/3193647945647588831
+- **Priority**: 🔴 HIGH (Reliability Critical)
+- **Task**: Implement distributed locking to prevent race conditions
+- **Scope**: New apps/backend/src/services/redis-lock.service.ts
+- **Target**: Zero race conditions in concurrent job processing
+- **Estimated Completion**: 3-5 hours
+
+**Deliverables**:
+
+- RedisLockService (acquireLock, releaseLock, extendLock)
+- Lua scripts for atomic operations
+- Integration with mass-orchestration and orchestrator services
+- Performance test: 100 concurrent lock requests
+
+---
+
+### Session P4: Database Performance Indexes
+
+- **ID**: 18240486726753962910
+- **Status**: ⏳ Running
+- **URL**: https://jules.google.com/session/18240486726753962910
+- **Priority**: 🟡 MEDIUM (Performance Enhancement)
+- **Task**: Add 10+ missing database indexes
+- **Scope**: packages/database/migrations/
+- **Target**: >50% query performance improvement
+- **Estimated Completion**: 2-3 hours
+
+**Deliverables**:
+
+- Migration with CREATE INDEX CONCURRENTLY for 10+ tables
+- Indexes: chatRoomParticipants, chatRoomMessages, agentRegistrations,
+  readReceipts, tasks, agents, sessions
+- Rollback migration
+- Performance testing script
+
+---
+
+### Session P5: Memory Leak Fixes in Relay Service
+
+- **ID**: 11963783244046736017
+- **Status**: ⏳ Running
+- **URL**: https://jules.google.com/session/11963783244046736017
+- **Priority**: 🔴 HIGH (Stability Critical)
+- **Task**: Eliminate memory leaks from unbounded collections
+- **Scope**: apps/backend/src/modules/relay/relay.service.ts (lines 78-79)
+- **Target**: Stable memory over 24-hour period
+- **Estimated Completion**: 3-4 hours
+
+**Deliverables**:
+
+- TTL-based cleanup (15-minute agent TTL)
+- LRU eviction (10,000 agents max)
+- Message queue limits (1,000 messages max)
+- Memory monitoring and metrics
+- 24-hour stress test
+
+---
+
+## 📊 Performance Impact Summary
+
+| Metric                | Before           | After (Target) | Improvement         |
+| --------------------- | ---------------- | -------------- | ------------------- |
+| Chat room queries     | 1+2N queries     | 1 query        | **95%** reduction   |
+| MASS job polling      | 200 queries      | 20 queries     | **90%** reduction   |
+| Chat room query time  | 200-500ms        | <50ms          | **90%** faster      |
+| MASS batch query time | N/A              | <20ms          | **New capability**  |
+| Race condition risk   | High             | Zero           | **100%** safe       |
+| Memory leaks          | Unbounded growth | Stable         | **Leak eliminated** |
+| OOM crash risk        | High             | Zero           | **100%** stable     |
+
+---
+
+## ⏭️ Next Steps (Performance Sessions)
+
+1. **Monitor Sessions** (every 30-60 min):
+
+   ```bash
+   jules remote list --session
+   ```
+
+2. **Get Session URLs** for P1 & P2:
+
+   ```bash
+   jules remote list --session | grep "Optimize N+1"
+   ```
+
+3. **Pull Results** (when complete, 2-5 hours):
+
+   ```bash
+   jules remote pull --session 3193647945647588831  # P3 Locking
+   jules remote pull --session 18240486726753962910 # P4 Indexes
+   jules remote pull --session 11963783244046736017 # P5 Memory
+   # Plus P1 & P2 (get IDs from jules remote list)
+   ```
+
+4. **Review & Test**:
+   - Examine all code changes
+   - Run test suite: `pnpm test`
+   - Performance benchmarks
+   - Load testing
+
+5. **Apply Changes** (after review):
+
+   ```bash
+   jules remote pull --session [ID] --apply
+   ```
+
+6. **Deploy**:
+   - Create PR with all performance improvements
+   - Deploy to staging
+   - Monitor metrics
+   - Production deployment
+
+---
+
+## 🔗 Session URLs
+
+- **P3 (Redis Locking)**: https://jules.google.com/session/3193647945647588831
+- **P4 (DB Indexes)**: https://jules.google.com/session/18240486726753962910
+- **P5 (Memory Leaks)**: https://jules.google.com/session/11963783244046736017
+- **P1 & P2**: Run `jules remote list --session` to get URLs
+
+---
+
+**Performance Optimization Launch**: 2025-12-29 **Part of**: Autonomous
+Self-Improvement Cycle **Analyzer Agent Findings**: 4 high-priority performance
+issues → 5 Jules sessions **Expected Tech Debt Reduction**: 160 hours → 20 hours
+(-88%)

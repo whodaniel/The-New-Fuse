@@ -1,5 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ethers, JsonRpcProvider, ZeroAddress, Contract, Wallet, BigNumberish, AbiCoder } from 'ethers';
+import {
+  AbiCoder,
+  BigNumberish,
+  Contract,
+  ethers,
+  JsonRpcProvider,
+  Wallet,
+  ZeroAddress,
+} from 'ethers';
 
 export interface TransactionOptions {
   gasLimit?: BigNumberish;
@@ -46,7 +54,7 @@ export class BlockchainUtilService {
     try {
       const rpcUrl = process.env.RPC_URL || 'https://mainnet.infura.io/v3/YOUR_PROJECT_ID';
       this.provider = new JsonRpcProvider(rpcUrl);
-      
+
       this.config = {
         rpcUrl,
         chainId: parseInt(process.env.CHAIN_ID || '1'),
@@ -58,9 +66,9 @@ export class BlockchainUtilService {
           marketplace: process.env.MARKETPLACE_CONTRACT_ADDRESS || ZeroAddress,
           revenueDistributor: process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS || ZeroAddress,
           smartAccountFactory: process.env.SMART_ACCOUNT_FACTORY_ADDRESS || ZeroAddress,
-        }
+        },
       };
-      
+
       this.logger.log(`Blockchain provider initialized for ${this.config.name}`);
     } catch (error) {
       this.logger.error('Failed to initialize blockchain provider:', error);
@@ -81,37 +89,47 @@ export class BlockchainUtilService {
       // Get current gas price
       const feeData = await this.provider.getFeeData();
       const gasPrice = feeData.gasPrice || 0n; // gasPrice is BigInt
-      
+
       // Estimate base gas
-      const gasLimit = options.gasLimit || 
-        await this.provider.estimateGas({
+      const gasLimit =
+        options.gasLimit ||
+        (await this.provider.estimateGas({
           to: contractAddress,
-          data: ethers.id(method).substring(0, 10) + 
-            new AbiCoder().encode(params.map(p => 
-              typeof p === 'bigint' ? 'uint256' : // Assuming BigInt for uint256
-              typeof p === 'string' && ethers.isAddress(p) ? 'address' : 'string'
-            ), params).substring(2)
-        });
+          data:
+            ethers.id(method).substring(0, 10) +
+            new AbiCoder()
+              .encode(
+                params.map((p) =>
+                  typeof p === 'bigint'
+                    ? 'uint256' // Assuming BigInt for uint256
+                    : typeof p === 'string' && ethers.isAddress(p)
+                      ? 'address'
+                      : 'string'
+                ),
+                params
+              )
+              .substring(2),
+        }));
 
       // Add 20% buffer for safety
       const safeGasLimit = (BigInt(gasLimit) * 120n) / 100n;
-      
+
       // Calculate dynamic fees
       const latestBlock = await this.provider.getBlock('latest');
       const baseFee = latestBlock?.baseFeePerGas || gasPrice; // baseFeePerGas is BigInt
-      const priorityFee = (gasPrice - baseFee) * 50n / 100n; // 50% of spread as priority
+      const priorityFee = ((gasPrice - baseFee) * 50n) / 100n; // 50% of spread as priority
       const maxPriorityFeePerGas = BigInt(options.maxPriorityFeePerGas || priorityFee);
       const maxFeePerGas = (baseFee * 120n) / 100n + maxPriorityFeePerGas;
-      
+
       // Calculate estimated cost
       const estimatedCost = safeGasLimit * maxFeePerGas;
-      
+
       return {
         gasLimit: safeGasLimit,
         gasPrice,
         maxFeePerGas,
         maxPriorityFeePerGas,
-        estimatedCost
+        estimatedCost,
       };
     } catch (error) {
       this.logger.error('Gas estimation failed:', error);
@@ -136,22 +154,24 @@ export class BlockchainUtilService {
 
       // Get gas estimate
       const gasEstimate = await this.estimateGas(to, 'transfer', [to, '0'], options);
-      
+
       // Merge options
       const txOptions = {
         gasLimit: gasEstimate.gasLimit,
         maxFeePerGas: gasEstimate.maxFeePerGas,
         maxPriorityFeePerGas: gasEstimate.maxPriorityFeePerGas,
-        ...options
+        ...options,
       };
 
-      this.logger.log(`Sending transaction to ${to} with gas limit ${txOptions.gasLimit?.toString()}`);
+      this.logger.log(
+        `Sending transaction to ${to} with gas limit ${txOptions.gasLimit?.toString()}`
+      );
 
       // Send transaction
       const tx = await signer.sendTransaction({
         to,
         data,
-        ...txOptions
+        ...txOptions,
       });
 
       this.logger.log(`Transaction sent: ${tx.hash}`);
@@ -172,17 +192,13 @@ export class BlockchainUtilService {
   ): Promise<ethers.TransactionReceipt | null> {
     try {
       this.logger.log(`Waiting for ${confirmations} confirmations for tx: ${txHash}`);
-      
-      const receipt = await this.provider.waitForTransaction(
-        txHash, 
-        confirmations, 
-        timeout
-      );
-      
+
+      const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeout);
+
       if (receipt === null || receipt.status === 0) {
         throw new Error('Transaction failed during execution or timed out');
       }
-      
+
       this.logger.log(`Transaction confirmed: ${txHash}`);
       return receipt;
     } catch (error) {
@@ -199,7 +215,7 @@ export class BlockchainUtilService {
       const [network, feeData, block] = await Promise.all([
         this.provider.getNetwork(),
         this.provider.getFeeData(), // Use getFeeData for gas price
-        this.provider.getBlock('latest')
+        this.provider.getBlock('latest'),
       ]);
 
       const gasPrice = feeData.gasPrice; // bigint | null
@@ -213,14 +229,14 @@ export class BlockchainUtilService {
         gasPrice: {
           wei: gasPrice?.toString() || '0',
           gwei: ethers.formatUnits(gasPrice || 0n, 'gwei'),
-          ether: ethers.formatEther(gasPrice || 0n)
+          ether: ethers.formatEther(gasPrice || 0n),
         },
         block: {
           number: block?.number || 0,
           timestamp: block?.timestamp || 0,
           baseFeePerGas: baseFeePerGas?.toString() || '0',
-          difficulty: block?.difficulty?.toString() || '0'
-        }
+          difficulty: block?.difficulty?.toString() || '0',
+        },
       };
     } catch (error) {
       this.logger.error('Failed to get network info:', error);
@@ -263,16 +279,12 @@ export class BlockchainUtilService {
   /**
    * Get contract instance with error handling
    */
-  getContract(
-    address: string,
-    abi: any[],
-    signer?: ethers.Signer
-  ): Contract {
+  getContract(address: string, abi: any[], signer?: ethers.Signer): Contract {
     try {
       if (!this.isValidAddress(address)) {
         throw new Error('Invalid contract address');
       }
-      
+
       if (address === ZeroAddress) {
         throw new Error('Contract address is zero address');
       }
@@ -304,28 +316,32 @@ export class BlockchainUtilService {
     try {
       const [tx, receipt] = await Promise.all([
         this.provider.getTransaction(txHash),
-        this.provider.getTransactionReceipt(txHash)
+        this.provider.getTransactionReceipt(txHash),
       ]);
 
       return {
-        transaction: tx ? {
-          hash: tx.hash,
-          from: tx.from,
-          to: tx.to,
-          value: tx.value.toString(),
-          gasLimit: tx.gasLimit?.toString(),
-          gasPrice: tx.gasPrice?.toString(),
-          nonce: tx.nonce,
-          status: tx.confirmations > 0 ? 'confirmed' : 'pending'
-        } : null,
-        receipt: receipt ? {
-          transactionHash: receipt.hash,
-          blockNumber: receipt.blockNumber,
-          status: receipt.status === 1 ? 'success' : 'failed',
-          gasUsed: receipt.gasUsed.toString(),
-          cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
-          confirmations: await receipt.confirmations()
-        } : null
+        transaction: tx
+          ? {
+              hash: tx.hash,
+              from: tx.from,
+              to: tx.to,
+              value: tx.value.toString(),
+              gasLimit: tx.gasLimit?.toString(),
+              gasPrice: tx.gasPrice?.toString(),
+              nonce: tx.nonce,
+              status: (await tx.confirmations()) > 0 ? 'confirmed' : 'pending',
+            }
+          : null,
+        receipt: receipt
+          ? {
+              transactionHash: receipt.hash,
+              blockNumber: receipt.blockNumber,
+              status: receipt.status === 1 ? 'success' : 'failed',
+              gasUsed: receipt.gasUsed.toString(),
+              cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
+              confirmations: await receipt.confirmations(),
+            }
+          : null,
       };
     } catch (error) {
       this.logger.error('Failed to get transaction status:', error);

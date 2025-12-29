@@ -1,5 +1,15 @@
-import { IsString, IsOptional, IsBoolean, IsEnum, IsArray, IsInt, Min, Max, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export enum ChatRoomType {
   PUBLIC = 'PUBLIC',
@@ -111,15 +121,32 @@ export class UpdateChatRoomDto {
   @IsString()
   purpose?: string;
 
+  @ApiPropertyOptional({ description: 'Chat room type', enum: ChatRoomType })
+  @IsOptional()
+  @IsEnum(ChatRoomType)
+  type?: ChatRoomType;
+
   @ApiPropertyOptional({ description: 'Is private' })
   @IsOptional()
   @IsBoolean()
   isPrivate?: boolean;
 
+  @ApiPropertyOptional({ description: 'Is ephemeral (auto-delete)' })
+  @IsOptional()
+  @IsBoolean()
+  isEphemeral?: boolean;
+
   @ApiPropertyOptional({ description: 'Is active' })
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @ApiPropertyOptional({ description: 'Maximum participants' })
+  @IsOptional()
+  @IsInt()
+  @Min(2)
+  @Max(1000)
+  maxParticipants?: number;
 
   @ApiPropertyOptional({ description: 'Room settings' })
   @IsOptional()
@@ -141,7 +168,11 @@ export class AddParticipantDto {
   @IsString()
   agentId?: string;
 
-  @ApiProperty({ description: 'Participant role', enum: ChatRoomParticipantRole, default: ChatRoomParticipantRole.PARTICIPANT })
+  @ApiProperty({
+    description: 'Participant role',
+    enum: ChatRoomParticipantRole,
+    default: ChatRoomParticipantRole.PARTICIPANT,
+  })
   @IsEnum(ChatRoomParticipantRole)
   role: ChatRoomParticipantRole;
 

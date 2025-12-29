@@ -25,6 +25,7 @@ export const users = pgTable('users', {
   refreshToken: text('refresh_token'),
   deletedAt: timestamp('deleted_at'),
   emailVerified: boolean('email_verified').default(false).notNull(),
+  walletAddress: varchar('wallet_address', { length: 255 }).unique(),
 });
 
 // =============================================================================

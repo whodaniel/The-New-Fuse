@@ -2,7 +2,16 @@
  * Drizzle ORM Schema - Chat System
  */
 import { relations, sql } from 'drizzle-orm';
-import { boolean, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { agents } from './agents';
 import { messageRoleEnum } from './enums';
 import { users } from './users';
@@ -31,7 +40,12 @@ export const chatRooms = pgTable('chat_rooms', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
+  topic: text('topic'),
+  purpose: text('purpose'),
+  type: varchar('type', { length: 50 }).default('GENERAL'),
   isPrivate: boolean('is_private').default(false).notNull(),
+  isEphemeral: boolean('is_ephemeral').default(false).notNull(),
+  maxParticipants: integer('max_participants').default(50),
   ownerId: uuid('owner_id')
     .notNull()
     .references(() => users.id),
@@ -40,6 +54,7 @@ export const chatRooms = pgTable('chat_rooms', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   lastMessageAt: timestamp('last_message_at'),
+  expiresAt: timestamp('expires_at'),
   isActive: boolean('is_active').default(true).notNull(),
   deletedAt: timestamp('deleted_at'),
 });
@@ -97,14 +112,6 @@ export const chatsRelations = relations(chats, ({ one, many }) => ({
   messages: many(messages),
 }));
 
-export const chatRoomsRelations = relations(chatRooms, ({ one, many }) => ({
-  owner: one(users, {
-    fields: [chatRooms.ownerId],
-    references: [users.id],
-  }),
-  messages: many(messages),
-}));
-
 export const messagesRelations = relations(messages, ({ one, many }) => ({
   sender: one(users, {
     fields: [messages.senderId],
@@ -128,4 +135,61 @@ export const messagesRelations = relations(messages, ({ one, many }) => ({
     relationName: 'messageReplies',
   }),
   replies: many(messages, { relationName: 'messageReplies' }),
+  readReceipts: many(readReceipts),
+}));
+
+export const chatRoomParticipants = pgTable('chat_room_participants', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  roomId: uuid('room_id')
+    .notNull()
+    .references(() => chatRooms.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  role: varchar('role', { length: 50 }).default('MEMBER').notNull(),
+  joinedAt: timestamp('joined_at').defaultNow().notNull(),
+  lastReadAt: timestamp('last_read_at'),
+  metadata: jsonb('metadata'),
+});
+
+export const readReceipts = pgTable('read_receipts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  messageId: uuid('message_id')
+    .notNull()
+    .references(() => messages.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  readAt: timestamp('read_at').defaultNow().notNull(),
+});
+
+export const chatRoomParticipantsRelations = relations(chatRoomParticipants, ({ one }) => ({
+  room: one(chatRooms, {
+    fields: [chatRoomParticipants.roomId],
+    references: [chatRooms.id],
+  }),
+  user: one(users, {
+    fields: [chatRoomParticipants.userId],
+    references: [users.id],
+  }),
+}));
+
+export const readReceiptsRelations = relations(readReceipts, ({ one }) => ({
+  message: one(messages, {
+    fields: [readReceipts.messageId],
+    references: [messages.id],
+  }),
+  user: one(users, {
+    fields: [readReceipts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const chatRoomsRelations = relations(chatRooms, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [chatRooms.ownerId],
+    references: [users.id],
+  }),
+  messages: many(messages),
+  participants: many(chatRoomParticipants),
 }));

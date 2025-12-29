@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
+import { drizzleUserRepository } from '@the-new-fuse/database';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

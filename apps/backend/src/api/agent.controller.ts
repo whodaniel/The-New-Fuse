@@ -10,14 +10,39 @@ import {
   Put,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import {
-  Agent,
-  AgentCapability,
-  AgentStatus,
-  AgentType,
-} from '@the-new-fuse/database/generated/prisma';
+import { db, drizzleAgentRepository, drizzleUserRepository } from '@the-new-fuse/database';
 import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
-import { PrismaService } from '../prisma/prisma.service';
+
+// Define local enums to avoid Prisma dependency
+export enum AgentType {
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  TASK_BASED = 'TASK_BASED',
+  AUTONOMOUS = 'AUTONOMOUS',
+  REACTIVE = 'REACTIVE',
+  HYBRID = 'HYBRID',
+}
+
+export enum AgentStatus {
+  INACTIVE = 'INACTIVE',
+  ACTIVE = 'ACTIVE',
+  BUSY = 'BUSY',
+  READY = 'READY',
+  OFFLINE = 'OFFLINE',
+  ERROR = 'ERROR',
+}
+
+export enum AgentCapability {
+  TEXT_GENERATION = 'TEXT_GENERATION',
+  CODE_GENERATION = 'CODE_GENERATION',
+  IMAGE_GENERATION = 'IMAGE_GENERATION',
+  DATA_ANALYSIS = 'DATA_ANALYSIS',
+  WEB_BROWSING = 'WEB_BROWSING',
+  FILE_OPERATIONS = 'FILE_OPERATIONS',
+  API_INTEGRATION = 'API_INTEGRATION',
+  MEMORY = 'MEMORY',
+  PLANNING = 'PLANNING',
+  TOOL_USE = 'TOOL_USE',
+}
 
 export class CreateAgentDto {
   @IsString()
@@ -53,9 +78,6 @@ export class UpdateAgentDto {
   @IsString()
   description?: string;
 
-  // The gateway sends capabilities as strings. We will try to map them to AgentCapability if possible,
-  // otherwise we can just ignore or store them in config if we wanted, but Prisma expects specific enums for the capabilities field.
-  // For now we allow string[] and validation will fail if they don't match the enum.
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -65,7 +87,6 @@ export class UpdateAgentDto {
   @IsString()
   systemPrompt?: string;
 
-  // Configuration fields from Gateway
   @IsOptional()
   @IsString()
   configPath?: string;
@@ -82,69 +103,57 @@ export class UpdateAgentDto {
 @ApiTags('Agents')
 @Controller('api/agents')
 export class AgentController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor() {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new agent' })
   @ApiBody({ type: CreateAgentDto })
-  async createAgent(@Body() data: CreateAgentDto): Promise<Agent> {
+  async createAgent(@Body() data: CreateAgentDto): Promise<any> {
     // If userId is not provided, we need a fallback or throw error.
-    // For now, let's assume a default user or provided in body.
-    // In a real app, this should come from AuthGuard user.
     if (!data.userId) {
       // Trying to find a default user or first user to assign
-      const user = await this.prisma.user.findFirst();
+      const allUsers = await drizzleUserRepository.findAll(1, 0);
+      const user = allUsers[0];
       if (!user) {
         throw new HttpException('No user found to assign agent to', HttpStatus.BAD_REQUEST);
       }
       data.userId = user.id;
     }
 
-    return this.prisma.agent.create({
-      data: {
-        name: data.name,
-        type: data.type,
-        status: AgentStatus.INACTIVE,
-        description: data.description,
-        capabilities: data.capabilities || [],
-        systemPrompt: data.systemPrompt,
-        userId: data.userId,
-      },
-    });
+    return drizzleAgentRepository.create({
+      name: data.name,
+      type: data.type as any,
+      status: AgentStatus.INACTIVE as any,
+      description: data.description,
+      capabilities: data.capabilities || [],
+      systemPrompt: data.systemPrompt,
+      userId: data.userId,
+    } as any);
   }
 
   @Get()
   @ApiOperation({ summary: 'List all agents' })
-  async getAgents(): Promise<Agent[]> {
-    return this.prisma.agent.findMany();
+  async getAgents(): Promise<any[]> {
+    return db.query.agents.findMany();
   }
 
   @Get('active')
   @ApiOperation({ summary: 'List active agents' })
-  async getActiveAgents(): Promise<Agent[]> {
-    return this.prisma.agent.findMany({
-      where: {
-        status: {
-          not: AgentStatus.OFFLINE,
-        },
-      },
-    });
+  async getActiveAgents(): Promise<any[]> {
+    return drizzleAgentRepository.findByStatus('ACTIVE');
   }
 
   @Get('discover')
   @ApiOperation({ summary: 'Discover agents' })
-  async discoverAgents(): Promise<Agent[]> {
-    // Alias for getAgents for now, or could implement filtering logic
-    return this.prisma.agent.findMany();
+  async discoverAgents(): Promise<any[]> {
+    return db.query.agents.findMany();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get agent by ID' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
-  async getAgentById(@Param('id') id: string): Promise<Agent> {
-    const agent = await this.prisma.agent.findUnique({
-      where: { id },
-    });
+  async getAgentById(@Param('id') id: string): Promise<any> {
+    const agent = await drizzleAgentRepository.findById(id);
 
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
@@ -155,10 +164,8 @@ export class AgentController {
   @Put(':id')
   @ApiOperation({ summary: 'Update agent / Configure agent' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
-  async updateAgent(@Param('id') id: string, @Body() updates: UpdateAgentDto): Promise<Agent> {
-    const agent = await this.prisma.agent.findUnique({
-      where: { id },
-    });
+  async updateAgent(@Param('id') id: string, @Body() updates: UpdateAgentDto): Promise<any> {
+    const agent = await drizzleAgentRepository.findById(id);
 
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
@@ -198,10 +205,7 @@ export class AgentController {
       data.config = newConfig;
     }
 
-    return this.prisma.agent.update({
-      where: { id },
-      data,
-    });
+    return drizzleAgentRepository.update(id, data);
   }
 
   @Put(':id/status')
@@ -209,34 +213,29 @@ export class AgentController {
   async updateAgentStatus(
     @Param('id') id: string,
     @Body('status') status: AgentStatus
-  ): Promise<Agent> {
-    const agent = await this.prisma.agent.findUnique({
-      where: { id },
-    });
+  ): Promise<any> {
+    const agent = await drizzleAgentRepository.findById(id);
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
     }
 
-    return this.prisma.agent.update({
-      where: { id },
-      data: { status },
-    });
+    return drizzleAgentRepository.update(id, { status: status as any });
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete agent' })
   async deleteAgent(@Param('id') id: string): Promise<{ message: string }> {
     try {
-      await this.prisma.agent.delete({
-        where: { id },
-      });
-      return { message: 'Agent deleted successfully' };
-    } catch (error) {
-      // P2025 is Prisma error for Record to delete does not exist.
-      if (error.code === 'P2025') {
+      const deleted = await drizzleAgentRepository.softDelete(id);
+      if (!deleted) {
         throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
       }
-      throw error;
+      return { message: 'Agent deleted successfully' };
+    } catch (error: any) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Error deleting agent', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

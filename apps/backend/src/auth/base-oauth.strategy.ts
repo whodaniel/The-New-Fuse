@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
+import { drizzleUserRepository } from '@the-new-fuse/database';
 import { VerifyCallback } from 'passport-oauth2';
 
 /**

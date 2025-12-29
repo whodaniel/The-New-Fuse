@@ -1,7 +1,6 @@
+import { drizzleUserRepository } from '@the-new-fuse/database';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
-import crypto from 'crypto';
 
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
@@ -22,11 +21,10 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      scope: ['profile', 'email']
+      scope: ['profile', 'email'],
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-
         // Check if user exists
         let user = await drizzleUserRepository.findByEmail(profile.emails![0].value);
 
@@ -40,9 +38,10 @@ passport.use(
           });
         } else {
           // Update user to link Google account if not already linked
-          user = await drizzleUserRepository.update(user.id, {
-            emailVerified: true
-          }) || user;
+          user =
+            (await drizzleUserRepository.update(user.id, {
+              emailVerified: true,
+            })) || user;
         }
 
         return done(null, user);
