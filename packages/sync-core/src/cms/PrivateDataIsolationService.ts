@@ -1,36 +1,23 @@
 /**
  * Private Data Isolation Service
- * 
+ *
  * Ensures private data isolation using existing tenant patterns.
  * Implements data segregation, access control, and audit logging
  * to maintain privacy boundaries and security compliance.
  */
 
-import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { createHash } from 'crypto';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { 
-  PrivacyBoundary,
-  ContentItem,
-  ProjectConfiguration,
-  PrivacyLevel,
-  Restriction,
-  RestrictionType,
-  CMSEvent,
-  CMSEventType
-} from './types';
-import { createHash } from 'crypto';
+import { ContentItem, PrivacyBoundary, PrivacyLevel, Restriction, RestrictionType } from './types';
 
 export class PrivateDataIsolationService {
   private prisma: PrismaClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
 
-  constructor(
-    prisma: PrismaClient,
-    redis: RedisService,
-    syncOrchestrator: SyncOrchestrator
-  ) {
+  constructor(prisma: PrismaClient, redis: RedisService, syncOrchestrator: SyncOrchestrator) {
     this.prisma = prisma;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
@@ -58,7 +45,7 @@ export class PrivateDataIsolationService {
       userId,
       dataTypes,
       restrictions,
-      auditRequired: true
+      auditRequired: true,
     };
 
     // Store privacy boundary using existing tenant patterns
@@ -68,11 +55,7 @@ export class PrivateDataIsolationService {
     await this.setupTenantKeyspaceIsolation(tenantId, dataTypes);
 
     // Sync privacy boundary across environments
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'privacy_boundary',
-      privacyBoundary
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'privacy_boundary', privacyBoundary);
 
     // Emit privacy boundary creation event
     await this.emitPrivacyEvent({
@@ -81,8 +64,8 @@ export class PrivateDataIsolationService {
       tenantId,
       metadata: {
         dataTypes,
-        restrictionCount: restrictions.length
-      }
+        restrictionCount: restrictions.length,
+      },
     });
 
     return privacyBoundary;
@@ -100,7 +83,7 @@ export class PrivateDataIsolationService {
   ): Promise<boolean> {
     // Get privacy boundary for tenant
     const privacyBoundary = await this.getPrivacyBoundary(tenantId);
-    
+
     if (!privacyBoundary) {
       // No specific boundary, use default tenant isolation
       return await this.validateDefaultTenantAccess(userId, tenantId, operation);
@@ -133,13 +116,13 @@ export class PrivateDataIsolationService {
   async isolatePrivateContent(contentId: string, userId: string): Promise<void> {
     // Get content details
     const content = await this.getContentDetails(contentId);
-    
+
     if (!content) {
       throw new Error('Content not found');
     }
 
     // Verify user owns the content or has admin rights
-    if (content.ownerId !== userId && !await this.isUserAdmin(userId)) {
+    if (content.ownerId !== userId && !(await this.isUserAdmin(userId))) {
       throw new Error('Insufficient permissions to isolate content');
     }
 
@@ -156,15 +139,11 @@ export class PrivateDataIsolationService {
     await this.revokeAllSharingPermissions(contentId);
 
     // Sync isolation update (only to owner's environments)
-    await this.syncOrchestrator.syncTenantData(
-      userId,
-      'content_isolated',
-      {
-        contentId,
-        isolatedAt: new Date(),
-        isolatedBy: userId
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(userId, 'content_isolated', {
+      contentId,
+      isolatedAt: new Date(),
+      isolatedBy: userId,
+    });
 
     // Emit isolation event
     await this.emitPrivacyEvent({
@@ -173,8 +152,8 @@ export class PrivateDataIsolationService {
       tenantId: userId,
       metadata: {
         contentId,
-        previousPrivacy: content.privacy
-      }
+        previousPrivacy: content.privacy,
+      },
     });
   }
 
@@ -192,7 +171,7 @@ export class PrivateDataIsolationService {
 
     // Check for privacy boundary violations
     const privacyBoundary = await this.getPrivacyBoundary(tenantId);
-    
+
     if (privacyBoundary) {
       // Audit data access patterns
       const accessViolations = await this.auditDataAccessPatterns(tenantId, privacyBoundary);
@@ -228,7 +207,7 @@ export class PrivateDataIsolationService {
     return {
       compliant,
       violations,
-      recommendations
+      recommendations,
     };
   }
 
@@ -239,11 +218,11 @@ export class PrivateDataIsolationService {
   async encryptSensitiveData(data: any, tenantId: string): Promise<string> {
     // Get tenant-specific encryption key
     const encryptionKey = await this.getTenantEncryptionKey(tenantId);
-    
+
     // Serialize and encrypt data
     const serializedData = JSON.stringify(data);
     const encrypted = await this.encrypt(serializedData, encryptionKey);
-    
+
     return encrypted;
   }
 
@@ -251,24 +230,28 @@ export class PrivateDataIsolationService {
    * Decrypt sensitive data for authorized access
    * Requirement 13.4: Maintain security during data access
    */
-  async decryptSensitiveData(encryptedData: string, tenantId: string, userId: string): Promise<any> {
+  async decryptSensitiveData(
+    encryptedData: string,
+    tenantId: string,
+    userId: string
+  ): Promise<any> {
     // Validate user has access to tenant data
     const hasAccess = await this.validateDataAccess(userId, tenantId, 'sensitive', 'read');
-    
+
     if (!hasAccess) {
       throw new Error('Unauthorized access to sensitive data');
     }
 
     // Get tenant-specific encryption key
     const encryptionKey = await this.getTenantEncryptionKey(tenantId);
-    
+
     // Decrypt and deserialize data
     const decrypted = await this.decrypt(encryptedData, encryptionKey);
     const data = JSON.parse(decrypted);
-    
+
     // Log sensitive data access
     await this.logSensitiveDataAccess(userId, tenantId);
-    
+
     return data;
   }
 
@@ -278,17 +261,18 @@ export class PrivateDataIsolationService {
     // Check if user is owner of tenant or has admin rights
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true, roles: true }
+      select: { role: true, roles: true },
     });
 
     if (!user) {
       throw new Error('User not found');
     }
 
-    const isAdmin = user.roles.includes(UserRole.ADMIN) || 
-                   user.roles.includes(UserRole.SUPER_ADMIN) ||
-                   user.role === UserRole.ADMIN ||
-                   user.role === UserRole.SUPER_ADMIN;
+    const isAdmin =
+      user.roles.includes(UserRole.ADMIN) ||
+      user.roles.includes(UserRole.SUPER_ADMIN) ||
+      user.role === UserRole.ADMIN ||
+      user.role === UserRole.SUPER_ADMIN;
 
     const isTenantOwner = tenantId === userId || tenantId === `tenant_${userId}`;
 
@@ -346,7 +330,7 @@ export class PrivateDataIsolationService {
   private async getPrivacyBoundary(tenantId: string): Promise<PrivacyBoundary | null> {
     const cacheKey = `privacy_boundary:${tenantId}`;
     const cached = await this.redis.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -365,7 +349,7 @@ export class PrivateDataIsolationService {
       userId: row.user_id,
       dataTypes: JSON.parse(row.data_types),
       restrictions: JSON.parse(row.restrictions),
-      auditRequired: row.audit_required
+      auditRequired: row.audit_required,
     };
 
     // Cache for 5 minutes
@@ -405,14 +389,14 @@ export class PrivateDataIsolationService {
     switch (restriction.type) {
       case RestrictionType.ROLE_BASED:
         return await this.validateRoleRestriction(userId, restriction.value);
-      
+
       case RestrictionType.TIME_WINDOW:
         return this.validateTimeWindowRestriction(restriction.value);
-      
+
       case RestrictionType.IP_ADDRESS:
         // Would need request context for IP validation
         return true; // Skip for now
-      
+
       default:
         return true;
     }
@@ -421,7 +405,7 @@ export class PrivateDataIsolationService {
   private async validateRoleRestriction(userId: string, allowedRole: string): Promise<boolean> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true, roles: true }
+      select: { role: true, roles: true },
     });
 
     if (!user) {
@@ -439,27 +423,33 @@ export class PrivateDataIsolationService {
 
     if (timeWindow.includes(':')) {
       const [dayPart, timePart] = timeWindow.split(':');
-      
+
       if (dayPart.includes('-')) {
         // Day range specified
         const [startDay, endDay] = dayPart.split('-');
         const dayMap: Record<string, number> = {
-          'SUN': 0, 'MON': 1, 'TUE': 2, 'WED': 3, 'THU': 4, 'FRI': 5, 'SAT': 6
+          SUN: 0,
+          MON: 1,
+          TUE: 2,
+          WED: 3,
+          THU: 4,
+          FRI: 5,
+          SAT: 6,
         };
-        
+
         const startDayNum = dayMap[startDay];
         const endDayNum = dayMap[endDay];
-        
+
         if (currentDay < startDayNum || currentDay > endDayNum) {
           return false;
         }
       }
-      
+
       // Check time range
       const [startTime, endTime] = (timePart || timeWindow).split('-');
       const startHour = parseInt(startTime.split(':')[0]);
       const endHour = parseInt(endTime.split(':')[0]);
-      
+
       return currentHour >= startHour && currentHour <= endHour;
     }
 
@@ -489,24 +479,26 @@ export class PrivateDataIsolationService {
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       version: row.version,
-      checksum: row.checksum
+      checksum: row.checksum,
     };
   }
 
   private async isUserAdmin(userId: string): Promise<boolean> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true, roles: true }
+      select: { role: true, roles: true },
     });
 
     if (!user) {
       return false;
     }
 
-    return user.roles.includes(UserRole.ADMIN) || 
-           user.roles.includes(UserRole.SUPER_ADMIN) ||
-           user.role === UserRole.ADMIN ||
-           user.role === UserRole.SUPER_ADMIN;
+    return (
+      user.roles.includes(UserRole.ADMIN) ||
+      user.roles.includes(UserRole.SUPER_ADMIN) ||
+      user.role === UserRole.ADMIN ||
+      user.role === UserRole.SUPER_ADMIN
+    );
   }
 
   private async updateContentPrivacy(contentId: string, privacy: PrivacyLevel): Promise<void> {
@@ -545,9 +537,12 @@ export class PrivateDataIsolationService {
     `;
   }
 
-  private async auditDataAccessPatterns(tenantId: string, boundary: PrivacyBoundary): Promise<string[]> {
+  private async auditDataAccessPatterns(
+    tenantId: string,
+    boundary: PrivacyBoundary
+  ): Promise<string[]> {
     const violations: string[] = [];
-    
+
     // Check for unauthorized access attempts
     const unauthorizedAccess = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as count FROM auth_events 
@@ -558,15 +553,20 @@ export class PrivateDataIsolationService {
     `;
 
     if (unauthorizedAccess[0]?.count > 0) {
-      violations.push(`${unauthorizedAccess[0].count} unauthorized access attempts in last 24 hours`);
+      violations.push(
+        `${unauthorizedAccess[0].count} unauthorized access attempts in last 24 hours`
+      );
     }
 
     return violations;
   }
 
-  private async auditSharingViolations(tenantId: string, boundary: PrivacyBoundary): Promise<string[]> {
+  private async auditSharingViolations(
+    tenantId: string,
+    boundary: PrivacyBoundary
+  ): Promise<string[]> {
     const violations: string[] = [];
-    
+
     // Check for content shared outside privacy boundaries
     const sharedContent = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as count FROM personal_content pc
@@ -582,19 +582,24 @@ export class PrivateDataIsolationService {
     return violations;
   }
 
-  private async auditSyncViolations(tenantId: string, boundary: PrivacyBoundary): Promise<string[]> {
+  private async auditSyncViolations(
+    tenantId: string,
+    boundary: PrivacyBoundary
+  ): Promise<string[]> {
     const violations: string[] = [];
-    
+
     // Check sync state for privacy violations
     const syncViolations = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as count FROM sync_states 
       WHERE tenant_id = ${tenantId}
-      AND resource_type IN (${boundary.dataTypes.map(dt => `'${dt}'`).join(',')})
+      AND resource_type IN (${boundary.dataTypes.map((dt) => `'${dt}'`).join(',')})
       AND synced_by != ${boundary.userId}
     `;
 
     if (syncViolations[0]?.count > 0) {
-      violations.push(`${syncViolations[0].count} restricted data types synced by unauthorized users`);
+      violations.push(
+        `${syncViolations[0].count} restricted data types synced by unauthorized users`
+      );
     }
 
     return violations;
@@ -608,7 +613,7 @@ export class PrivateDataIsolationService {
       AND owner_id NOT IN (SELECT id FROM users WHERE id = owner_id)
     `;
 
-    return orphaned.map(row => row.id);
+    return orphaned.map((row) => row.id);
   }
 
   private async findWeakPrivacySettings(tenantId: string): Promise<string[]> {
@@ -620,19 +625,19 @@ export class PrivateDataIsolationService {
       AND JSON_LENGTH(JSON_EXTRACT(sharing_settings, '$.permissions')) > 5
     `;
 
-    return weak.map(row => row.id);
+    return weak.map((row) => row.id);
   }
 
   private async getTenantEncryptionKey(tenantId: string): Promise<string> {
     // Get or generate tenant-specific encryption key
     const cacheKey = `encryption_key:${tenantId}`;
     let key = await this.redis.get(cacheKey);
-    
+
     if (!key) {
       key = this.generateEncryptionKey(tenantId);
       await this.redis.setex(cacheKey, 3600, key); // Cache for 1 hour
     }
-    
+
     return key;
   }
 
@@ -690,9 +695,9 @@ export class PrivateDataIsolationService {
           dataType,
           operation,
           allowed,
-          timestamp: new Date()
-        }
-      }
+          timestamp: new Date(),
+        },
+      },
     });
   }
 
@@ -711,9 +716,9 @@ export class PrivateDataIsolationService {
           compliant,
           violations,
           recommendations,
-          auditedAt: new Date()
-        }
-      }
+          auditedAt: new Date(),
+        },
+      },
     });
   }
 
@@ -724,9 +729,9 @@ export class PrivateDataIsolationService {
         type: 'SENSITIVE_DATA_ACCESS',
         details: {
           tenantId,
-          accessedAt: new Date()
-        }
-      }
+          accessedAt: new Date(),
+        },
+      },
     });
   }
 
@@ -736,11 +741,14 @@ export class PrivateDataIsolationService {
     tenantId: string;
     metadata: Record<string, any>;
   }): Promise<void> {
-    await this.redis.publish('privacy_events', JSON.stringify({
-      ...event,
-      timestamp: new Date()
-    }));
-    
+    await this.redis.publish(
+      'privacy_events',
+      JSON.stringify({
+        ...event,
+        timestamp: new Date(),
+      })
+    );
+
     await this.prisma.authEvent.create({
       data: {
         userId: event.userId,
@@ -748,9 +756,9 @@ export class PrivateDataIsolationService {
         details: {
           tenantId: event.tenantId,
           metadata: event.metadata,
-          timestamp: new Date()
-        }
-      }
+          timestamp: new Date(),
+        },
+      },
     });
   }
 }

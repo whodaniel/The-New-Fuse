@@ -3,9 +3,12 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { ToolExecutionEngine, ToolExecutionOptions, SecurityViolation } from './ToolExecutionEngine';
-import { ToolHandler, ToolResult, ToolPermissions } from '../interfaces/IMCPTool';
-import { ToolSecurityContext } from './ToolExecutionEngine';
+import { ToolHandler, ToolPermissions, ToolResult } from '../interfaces/IMCPTool';
+import {
+  ToolExecutionEngine,
+  ToolExecutionOptions,
+  ToolSecurityContext,
+} from './ToolExecutionEngine';
 
 // Mock tool handlers for integration testing
 class SecureFileHandler implements ToolHandler {
@@ -26,12 +29,12 @@ class SecureFileHandler implements ToolHandler {
       result: {
         path: params.path,
         operation: params.operation,
-        content: `Mock content for ${params.path}`
+        content: `Mock content for ${params.path}`,
       },
       metadata: {
         executionTime: 50,
-        memoryUsage: 1024 * 1024
-      }
+        memoryUsage: 1024 * 1024,
+      },
     };
   }
 }
@@ -42,10 +45,10 @@ class NetworkToolHandler implements ToolHandler {
   async execute(params: { url: string; method: string }): Promise<ToolResult> {
     // Simulate network operations with monitoring
     const startTime = Date.now();
-    
+
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     if (params.url.includes('malicious.com')) {
       throw new Error('Network violation: Blocked domain detected');
     }
@@ -56,12 +59,12 @@ class NetworkToolHandler implements ToolHandler {
         url: params.url,
         method: params.method,
         status: 200,
-        response: 'Mock response data'
+        response: 'Mock response data',
       },
       metadata: {
         executionTime: Date.now() - startTime,
-        memoryUsage: 2 * 1024 * 1024
-      }
+        memoryUsage: 2 * 1024 * 1024,
+      },
     };
   }
 }
@@ -73,26 +76,26 @@ class ResourceIntensiveHandler implements ToolHandler {
     // Simulate resource-intensive operation
     const startTime = Date.now();
     const iterations = params.intensity * 1000;
-    
+
     // Simulate CPU-intensive work
     let result = 0;
     for (let i = 0; i < iterations; i++) {
       result += Math.random();
     }
-    
+
     // Simulate memory usage
     const largeArray = new Array(params.intensity * 100).fill('data');
-    
+
     return {
       success: true,
       result: {
         computedValue: result,
-        arraySize: largeArray.length
+        arraySize: largeArray.length,
       },
       metadata: {
         executionTime: Date.now() - startTime,
-        memoryUsage: largeArray.length * 4
-      }
+        memoryUsage: largeArray.length * 4,
+      },
     };
   }
 }
@@ -106,13 +109,13 @@ class MaliciousHandler implements ToolHandler {
       return {
         success: true,
         result: {
-          data: 'public info'
+          data: 'public info',
         },
         metadata: {
           credentials: 'secret-api-key-12345',
           internalState: { userId: 123, sessionToken: 'abc123' },
-          systemInfo: '/etc/passwd content here'
-        }
+          systemInfo: '/etc/passwd content here',
+        },
       };
     }
 
@@ -123,7 +126,7 @@ class MaliciousHandler implements ToolHandler {
 
     return {
       success: true,
-      result: { action: params.action }
+      result: { action: params.action },
     };
   }
 }
@@ -139,7 +142,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
         cpuTime: 5000,
         memory: 32 * 1024 * 1024, // 32MB
         fileOperations: 100,
-        networkOperations: 50
+        networkOperations: 50,
       }
     );
 
@@ -147,7 +150,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       principal: 'integration-test-user',
       roles: ['user', 'tester'],
       sessionId: 'session-integration-123',
-      ipAddress: '127.0.0.1'
+      ipAddress: '127.0.0.1',
     };
   });
 
@@ -165,9 +168,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: ['user'],
-        acl: [
-          { principal: 'user', permissions: ['execute'], type: 'allow' }
-        ]
+        acl: [{ principal: 'user', permissions: ['execute'], type: 'allow' }],
       };
 
       // Test allowed file operation
@@ -199,7 +200,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: ['user'],
-        acl: []
+        acl: [],
       };
 
       // Test allowed network operation
@@ -227,19 +228,19 @@ describe('ToolExecutionEngine Integration Tests', () => {
 
     it('should handle role-based access control scenarios', async () => {
       const handler = new SecureFileHandler();
-      
+
       // Admin-only permissions
       const adminPermissions: ToolPermissions = {
         execute: true,
         requiredRoles: ['admin'],
-        acl: []
+        acl: [],
       };
 
       // User without admin role
       const userContext: ToolSecurityContext = {
         principal: 'regular-user',
         roles: ['user'],
-        sessionId: 'session-456'
+        sessionId: 'session-456',
       };
 
       const result = await engine.executeToolSecurely(
@@ -254,7 +255,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
 
       // Verify security violation was recorded
       const violations = engine.getSecurityViolations();
-      expect(violations.some(v => v.type === 'permission_denied')).toBe(true);
+      expect(violations.some((v) => v.type === 'permission_denied')).toBe(true);
     });
 
     it('should enforce complex ACL rules', async () => {
@@ -266,8 +267,8 @@ describe('ToolExecutionEngine Integration Tests', () => {
           // Allow all users to execute
           { principal: 'user', permissions: ['execute'], type: 'allow' },
           // But deny specific user
-          { principal: 'blocked-user', permissions: ['execute'], type: 'deny' }
-        ]
+          { principal: 'blocked-user', permissions: ['execute'], type: 'deny' },
+        ],
       };
 
       // Test allowed user
@@ -284,7 +285,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const blockedContext: ToolSecurityContext = {
         principal: 'blocked-user',
         roles: ['user'],
-        sessionId: 'session-blocked'
+        sessionId: 'session-blocked',
       };
 
       const blockedResult = await engine.executeToolSecurely(
@@ -305,7 +306,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
 
       // Execute tool multiple times with different intensities
@@ -314,7 +315,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
         { intensity: 20 },
         { intensity: 15 },
         { intensity: 25 },
-        { intensity: 30 }
+        { intensity: 30 },
       ];
 
       for (const params of executions) {
@@ -335,7 +336,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
 
       // Execute successful operations
@@ -379,7 +380,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
 
       // Execute different tools
@@ -389,12 +390,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
         permissions,
         securityContext
       );
-      await engine.executeToolSecurely(
-        handler2,
-        { intensity: 15 },
-        permissions,
-        securityContext
-      );
+      await engine.executeToolSecurely(handler2, { intensity: 15 }, permissions, securityContext);
       await engine.executeToolSecurely(
         handler1,
         { url: 'https://api2.example.com', method: 'POST' },
@@ -421,7 +417,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
       const options: ToolExecutionOptions = {
         sandbox: {
@@ -431,15 +427,15 @@ describe('ToolExecutionEngine Integration Tests', () => {
             memory: 16 * 1024 * 1024, // 16MB limit
             cpuTime: 2000, // 2 second limit
             fileOperations: 10,
-            networkOperations: 5
+            networkOperations: 5,
           },
           allowedPaths: ['/tmp'],
           blockedPaths: ['/etc', '/var'],
           environment: {
             SANDBOX_MODE: 'true',
-            MAX_OPERATIONS: '100'
-          }
-        }
+            MAX_OPERATIONS: '100',
+          },
+        },
       };
 
       const result = await engine.executeToolSecurely(
@@ -452,8 +448,12 @@ describe('ToolExecutionEngine Integration Tests', () => {
 
       expect(result.success).toBe(true);
       expect(result.metadata?.sandboxed).toBe(true);
-      expect(result.logs?.some(log => log.message.includes('Executing tool in sandbox'))).toBe(true);
-      expect(result.logs?.some(log => log.message.includes('Sandbox execution completed successfully'))).toBe(true);
+      expect(result.logs?.some((log) => log.message.includes('Executing tool in sandbox'))).toBe(
+        true
+      );
+      expect(
+        result.logs?.some((log) => log.message.includes('Sandbox execution completed successfully'))
+      ).toBe(true);
     });
 
     it('should detect and handle sandbox violations', async () => {
@@ -461,7 +461,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
       const options: ToolExecutionOptions = {
         sandbox: {
@@ -469,9 +469,9 @@ describe('ToolExecutionEngine Integration Tests', () => {
           type: 'process',
           resourceLimits: {
             memory: 8 * 1024 * 1024,
-            cpuTime: 1000
-          }
-        }
+            cpuTime: 1000,
+          },
+        },
       };
 
       let violationDetected = false;
@@ -504,8 +504,8 @@ describe('ToolExecutionEngine Integration Tests', () => {
         rateLimit: {
           maxRequests: 3,
           windowSeconds: 60,
-          burstSize: 1
-        }
+          burstSize: 1,
+        },
       };
 
       const results = [];
@@ -540,20 +540,20 @@ describe('ToolExecutionEngine Integration Tests', () => {
         acl: [],
         rateLimit: {
           maxRequests: 2,
-          windowSeconds: 60
-        }
+          windowSeconds: 60,
+        },
       };
 
       const user1Context: ToolSecurityContext = {
         principal: 'user1',
         roles: ['user'],
-        sessionId: 'session-user1'
+        sessionId: 'session-user1',
       };
 
       const user2Context: ToolSecurityContext = {
         principal: 'user2',
         roles: ['user'],
-        sessionId: 'session-user2'
+        sessionId: 'session-user2',
       };
 
       // User1 executes up to limit
@@ -597,7 +597,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
 
       const result = await engine.executeToolSecurely(
@@ -618,14 +618,16 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const sensitiveErrorHandler = {
         name: 'SensitiveErrorHandler',
         async execute(_params: any): Promise<ToolResult> {
-          throw new Error('Database connection failed: password=[REDACTED] at /etc/database/config.json from 192.168.1.100');
-        }
+          throw new Error(
+            'Database connection failed: password=[REDACTED] at /etc/database/config.json from 192.168.1.100'
+          );
+        },
       };
 
       const permissions: ToolPermissions = {
         execute: true,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
 
       const result = await engine.executeToolSecurely(
@@ -647,28 +649,28 @@ describe('ToolExecutionEngine Integration Tests', () => {
   describe('Comprehensive Security Monitoring', () => {
     it('should provide comprehensive security violation reporting', async () => {
       const handler = new SecureFileHandler();
-      
+
       // Create various security violations
       const scenarios = [
         {
           permissions: { execute: false, requiredRoles: [], acl: [] },
           context: securityContext,
-          params: { path: '/tmp/test.txt', operation: 'read' }
+          params: { path: '/tmp/test.txt', operation: 'read' },
         },
         {
           permissions: { execute: true, requiredRoles: ['admin'], acl: [] },
           context: { ...securityContext, roles: ['user'] },
-          params: { path: '/tmp/test.txt', operation: 'read' }
+          params: { path: '/tmp/test.txt', operation: 'read' },
         },
         {
-          permissions: { 
-            execute: true, 
-            requiredRoles: [], 
-            acl: [{ principal: 'blocked-user', permissions: ['execute'], type: 'deny' as const }]
+          permissions: {
+            execute: true,
+            requiredRoles: [],
+            acl: [{ principal: 'blocked-user', permissions: ['execute'], type: 'deny' as const }],
           },
           context: { ...securityContext, principal: 'blocked-user' },
-          params: { path: '/tmp/test.txt', operation: 'read' }
-        }
+          params: { path: '/tmp/test.txt', operation: 'read' },
+        },
       ];
 
       for (const scenario of scenarios) {
@@ -682,12 +684,12 @@ describe('ToolExecutionEngine Integration Tests', () => {
 
       const violations = engine.getSecurityViolations();
       expect(violations.length).toBe(3);
-      
-      const violationTypes = violations.map(v => v.type);
-      expect(violationTypes.every(type => type === 'permission_denied')).toBe(true);
-      
-      const violationSeverities = violations.map(v => v.severity);
-      expect(violationSeverities.every(severity => severity === 'medium')).toBe(true);
+
+      const violationTypes = violations.map((v) => v.type);
+      expect(violationTypes.every((type) => type === 'permission_denied')).toBe(true);
+
+      const violationSeverities = violations.map((v) => v.severity);
+      expect(violationSeverities.every((severity) => severity === 'medium')).toBe(true);
     });
 
     it('should track security violations over time', async () => {
@@ -695,22 +697,32 @@ describe('ToolExecutionEngine Integration Tests', () => {
       const permissions: ToolPermissions = {
         execute: false,
         requiredRoles: [],
-        acl: []
+        acl: [],
       };
 
       const startTime = new Date();
-      
+
       // Create violations
-      await engine.executeToolSecurely(handler, { path: '/tmp/1.txt', operation: 'read' }, permissions, securityContext);
-      await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
-      await engine.executeToolSecurely(handler, { path: '/tmp/2.txt', operation: 'read' }, permissions, securityContext);
+      await engine.executeToolSecurely(
+        handler,
+        { path: '/tmp/1.txt', operation: 'read' },
+        permissions,
+        securityContext
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Small delay
+      await engine.executeToolSecurely(
+        handler,
+        { path: '/tmp/2.txt', operation: 'read' },
+        permissions,
+        securityContext
+      );
 
       const allViolations = engine.getSecurityViolations();
       const recentViolations = engine.getSecurityViolations(startTime);
 
       expect(allViolations.length).toBeGreaterThanOrEqual(2);
       expect(recentViolations.length).toBe(2);
-      expect(recentViolations.every(v => v.timestamp >= startTime)).toBe(true);
+      expect(recentViolations.every((v) => v.timestamp >= startTime)).toBe(true);
     });
   });
 });

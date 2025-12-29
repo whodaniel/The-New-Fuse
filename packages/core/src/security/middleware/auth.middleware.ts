@@ -36,7 +36,10 @@ export class AuthMiddleware implements NestMiddleware {
       await this.securityService.audit('auth.success', { userId: req.user.id });
       next();
     } catch (error) {
-      await this.securityService.audit('auth.failure', { reason: 'Invalid token', error: error.message });
+      await this.securityService.audit('auth.failure', {
+        reason: 'Invalid token',
+        error: error.message,
+      });
       throw new UnauthorizedException('Invalid token');
     }
   }
