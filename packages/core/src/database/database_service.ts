@@ -32,8 +32,8 @@ export class DatabaseService {
 
   async updateUser(data: any, id: any): any {
     return this.prisma.user.update({
-where: { id },
-  }      data
+      where: { id },
+      data,
     });
   }
 
@@ -47,10 +47,10 @@ where: { id },
 
   async health(): Promise<any> {
     try {
-await this.prisma.$queryRaw`SELECT 1`;
-  }      return true;
+      await this.prisma.$queryRaw`SELECT 1`;
+      return true;
     } catch (error) {
-return false;
-  }}
+      return false;
+    }
   }
 }
