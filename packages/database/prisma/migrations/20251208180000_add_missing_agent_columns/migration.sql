@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "agents" ADD COLUMN IF NOT EXISTS "systemPrompt" TEXT;
-ALTER TABLE "agents" ADD COLUMN IF NOT EXISTS "config" JSONB;
-ALTER TABLE "agents" ADD COLUMN IF NOT EXISTS "deletedAt" TIMESTAMP(3);

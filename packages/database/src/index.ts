@@ -1,57 +1,12 @@
 /**
- * This file serves as the main entry point for the database package.
- * It exports both Prisma (for backward compatibility) and Drizzle ORM modules.
+ * Database Package - Drizzle ORM
  *
- * Migration Strategy:
- * 1. Prisma exports are kept for existing code during migration
- * 2. Drizzle exports are available for new code and gradual migration
- * 3. Once migration is complete, Prisma exports can be removed
+ * This package provides database access using Drizzle ORM.
+ * Prisma has been completely removed in favor of Drizzle.
  */
 
 // =============================================================================
-// PRISMA EXPORTS (Backward Compatibility - Will be deprecated)
-// =============================================================================
-
-// Export core types and client from our custom types file
-export type {
-  Agent,
-  Task,
-  // Core models
-  User,
-  // Workflow models
-  Workflow,
-  WorkflowExecution,
-} from './types';
-
-export {
-  AgentStatus,
-  AgentType,
-  Prisma,
-  // Prisma client and namespace
-  PrismaClient,
-  TaskPriority,
-  TaskStatus,
-  // Enums
-  UserRole,
-  WorkflowExecutionStatus,
-  WorkflowStatus,
-} from './types';
-
-// Export database module and services (Prisma-based)
-export * from './database.module';
-export * from './prisma.service';
-
-// Export Prisma repositories
-export * from './repositories/agent.repository';
-export * from './repositories/base.repository';
-export * from './repositories/chat-message.repository';
-export * from './repositories/task.repository';
-export * from './repositories/user.repository';
-export * from './repositories/workflow-execution.repository';
-export * from './repositories/workflow.repository';
-
-// =============================================================================
-// DRIZZLE ORM EXPORTS (New - Recommended for new code)
+// DRIZZLE ORM EXPORTS
 // =============================================================================
 
 // Export Drizzle client, module, and schema
@@ -68,7 +23,7 @@ export {
   type Transaction,
 } from './drizzle';
 
-// Export Drizzle schema tables (prefixed to avoid conflicts with Prisma types)
+// Export Drizzle schema tables
 export * as drizzleSchema from './drizzle/schema';
 
 // Export commonly used schema tables directly for convenience
@@ -90,18 +45,23 @@ export {
   revenueDistributions,
   revenueStreams,
   users,
+  workspaces,
+  tasks,
+  workflows,
+  workflowExecutions,
 } from './drizzle/schema';
 
-// Export Drizzle inferred types (prefixed with 'Drizzle' to avoid conflicts)
+// Export Drizzle inferred types
 export type {
-  Agent as DrizzleAgent,
-  Chat as DrizzleChat,
-  ChatMessage as DrizzleChatMessage,
-  Message as DrizzleMessage,
-  Task as DrizzleTask,
-  User as DrizzleUser,
-  Workflow as DrizzleWorkflow,
-  WorkflowExecution as DrizzleWorkflowExecution,
+  Agent,
+  Chat,
+  ChatMessage,
+  Message,
+  Task,
+  User,
+  Workflow,
+  WorkflowExecution,
+  Workspace,
   NewAgent,
   NewChat,
   NewChatMessage,
@@ -110,6 +70,7 @@ export type {
   NewUser,
   NewWorkflow,
   NewWorkflowExecution,
+  NewWorkspace,
 } from './drizzle/types';
 
 // Export Drizzle repositories
@@ -157,3 +118,14 @@ export {
   or,
   sql,
 } from 'drizzle-orm';
+
+// Re-export enums from types for backward compatibility
+export {
+  AgentStatus,
+  AgentType,
+  TaskPriority,
+  TaskStatus,
+  UserRole,
+  WorkflowExecutionStatus,
+  WorkflowStatus,
+} from './drizzle/types';
