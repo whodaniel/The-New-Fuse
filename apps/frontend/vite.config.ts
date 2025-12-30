@@ -16,12 +16,15 @@ export default defineConfig(({ mode }) => {
     // In development, try to detect the actual host
     if (isDev) {
       const host = env.VITE_HOST || env.HOST || 'localhost';
+      // HMR should use the same port as the dev server (3000), not a separate port
       const port = parseInt(env.VITE_PORT || env.PORT || '3000');
 
       return {
         host,
         port,
         protocol: 'ws' as const,
+        // Add client configuration to prevent connection errors
+        clientPort: port,
       };
     }
     return false; // Disable HMR in production
@@ -65,13 +68,16 @@ export default defineConfig(({ mode }) => {
     ].filter(Boolean),
     resolve: {
       // Force all packages to use the same React instance to prevent
-      // "Cannot read properties of null (reading 'useRef')" errors
+      // "Cannot read properties of null (reading 'useRef')" and createContext errors
       dedupe: [
         'react',
         'react-dom',
         'react-router-dom',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
+        '@types/react',
+        '@types/react-dom',
+        'scheduler',
       ],
       alias: {
         '@': path.resolve(__dirname, 'src'),
