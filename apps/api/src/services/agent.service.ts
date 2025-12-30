@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { AgentRepository } from '@the-new-fuse/database';
-import { Prisma } from '@the-new-fuse/database/generated/prisma';
+// Prisma types removed during Drizzle migration - using generic types
 import {
   AgentCapability,
   AgentResponseDto,
@@ -20,14 +20,13 @@ export class AgentService {
         throw new BadRequestException('userId is required to create an agent');
       }
 
-      const agentData: Prisma.AgentCreateInput = {
+      const agentData: any = {
         name: createAgentDto.name,
         type: createAgentDto.type as any,
         description: createAgentDto.description,
         systemPrompt: createAgentDto.systemPrompt,
-        capabilities:
-          createAgentDto.capabilities as unknown as Prisma.AgentCreateInput['capabilities'],
-        config: createAgentDto.configuration as Prisma.InputJsonValue,
+        capabilities: createAgentDto.capabilities as any,
+        config: createAgentDto.configuration as any,
         provider: createAgentDto.provider,
         status: AgentStatus.INACTIVE as any,
         user: {
@@ -59,7 +58,7 @@ export class AgentService {
   ): Promise<{ data: AgentResponseDto[]; total: number; page: number; limit: number }> {
     try {
       const skip = (page - 1) * limit;
-      const whereClause: Prisma.AgentWhereInput = {
+      const whereClause: any = {
         ...filters,
         ...(userId && { userId }),
         deletedAt: null,
@@ -128,11 +127,11 @@ export class AgentService {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      const updateData: Prisma.AgentUpdateInput = {
+      const updateData: any = {
         name: updateAgentDto.name,
         description: updateAgentDto.description,
         systemPrompt: updateAgentDto.systemPrompt,
-        config: updateAgentDto.configuration as Prisma.InputJsonValue,
+        config: updateAgentDto.configuration as any,
         // If metadata needs to be stored, it should go in config or a specific JSON field
         // role: updateAgentDto.role, // Field does not exist in Prisma schema
         type: updateAgentDto.type as any,
@@ -340,7 +339,7 @@ export class AgentService {
   ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
       const skip = (page - 1) * limit;
-      const whereClause: Prisma.AgentWhereInput = {
+      const whereClause: any = {
         userId,
         deletedAt: null,
         OR: [

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
-import { User, Prisma } from '@the-new-fuse/database/generated/prisma';
+import { PrismaService, User } from '@the-new-fuse/database';
+// Prisma types removed during Drizzle migration
 
 @Injectable()
 export class UserService {
@@ -12,19 +12,19 @@ export class UserService {
 
   async findOne(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: { id }
+      where: { id },
     });
   }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
   }
 
   async findByUsername(username: string): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: { username }
+      where: { username },
     });
   }
 
@@ -67,14 +67,14 @@ export class UserService {
       where: { id },
       data: {
         ...updateData,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
   }
 
   async delete(id: string): Promise<User> {
     return this.prisma.user.delete({
-      where: { id }
+      where: { id },
     });
   }
 }

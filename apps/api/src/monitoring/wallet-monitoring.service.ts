@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { PrismaService } from '@the-new-fuse/database';
-import { TransactionStatus } from '@the-new-fuse/database/generated/prisma';
+import { PrismaService, TransactionStatus } from '@the-new-fuse/database';
 
 export interface SecurityAlert {
   type:

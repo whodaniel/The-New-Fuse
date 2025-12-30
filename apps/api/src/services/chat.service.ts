@@ -1,22 +1,19 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
-import { ChatRoom, Message, MessageRole } from '@the-new-fuse/database/generated/prisma';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ChatRoom, Message, MessageRole, PrismaService } from '@the-new-fuse/database';
 
 /**
  * ChatRoomService handles multi-user chat room operations.
- * 
+ *
  * This service works with ChatRoom model for collaborative conversations
  * between multiple users and/or agents.
- * 
+ *
  * Note: For 1:1 agent conversations, see modules/chat/chat.service.ts
  */
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Get all chat rooms with pagination
@@ -29,7 +26,7 @@ export class ChatService {
 
     const [rooms, total] = await Promise.all([
       this.prisma.chatRoom.findMany({
-        where: { 
+        where: {
           isActive: true,
           deletedAt: null,
         },
@@ -52,7 +49,7 @@ export class ChatService {
         orderBy: { lastMessageAt: 'desc' },
       }),
       this.prisma.chatRoom.count({
-        where: { 
+        where: {
           isActive: true,
           deletedAt: null,
         },
@@ -68,16 +65,18 @@ export class ChatService {
   async getRoom(roomId: string, includeMessages: boolean = false): Promise<ChatRoom> {
     const room = await this.prisma.chatRoom.findUnique({
       where: { id: roomId },
-      include: includeMessages ? {
-        messages: {
-          take: 50,
-          orderBy: { timestamp: 'desc' },
-          include: {
-            sender: true,
-            agent: true,
-          },
-        },
-      } : undefined,
+      include: includeMessages
+        ? {
+            messages: {
+              take: 50,
+              orderBy: { timestamp: 'desc' },
+              include: {
+                sender: true,
+                agent: true,
+              },
+            },
+          }
+        : undefined,
     });
 
     if (!room) {
@@ -92,11 +91,11 @@ export class ChatService {
    */
   async getMessages(
     roomId: string,
-    options: { limit: number; offset: number },
+    options: { limit: number; offset: number }
   ): Promise<Message[]> {
     // Verify room exists
     await this.getRoom(roomId);
-    
+
     return this.prisma.message.findMany({
       where: { roomId },
       take: options.limit,
@@ -124,7 +123,7 @@ export class ChatService {
   ): Promise<Message> {
     // Verify room exists
     const room = await this.getRoom(roomId);
-    
+
     const message = await this.prisma.message.create({
       data: {
         content,
@@ -190,7 +189,7 @@ export class ChatService {
       this.prisma.chatRoom.count(),
       this.prisma.message.count(),
       this.prisma.chatRoom.count({
-        where: { 
+        where: {
           isActive: true,
           deletedAt: null,
         },

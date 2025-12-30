@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, Request, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { MessageRole } from '@the-new-fuse/database';
 import { ChatService } from './chat.service';
-import { MessageRole } from '@the-new-fuse/database/generated/prisma';
 
 // Mock auth guard for compatibility - replace with actual auth guard
 class MockAuthGuard {
@@ -34,7 +44,7 @@ export class ChatController {
   @Post()
   @ApiOperation({ summary: 'Create new chat with an agent' })
   async createChat(
-    @Body() createChatDto: { agentId: string; title?: string }, 
+    @Body() createChatDto: { agentId: string; title?: string },
     @Request() req: any
   ) {
     const userId = req.user?.id || 'default-user';
@@ -55,29 +65,30 @@ export class ChatController {
   async getMessages(
     @Param('id') chatId: string,
     @Query('limit') limit?: number,
-    @Query('cursor') cursor?: string,
+    @Query('cursor') cursor?: string
   ) {
-    return this.chatService.getMessages(chatId, { 
-      limit: limit ? Number(limit) : undefined, 
-      cursor 
+    return this.chatService.getMessages(chatId, {
+      limit: limit ? Number(limit) : undefined,
+      cursor,
     });
   }
 
   @Post(':id/messages')
   @ApiOperation({ summary: 'Add message to chat' })
   async addMessage(
-    @Param('id') chatId: string, 
-    @Body() messageData: { 
-      content: string; 
+    @Param('id') chatId: string,
+    @Body()
+    messageData: {
+      content: string;
       role?: 'USER' | 'AGENT' | 'SYSTEM';
       agentId?: string;
       metadata?: Record<string, unknown>;
     },
-    @Request() req: any,
+    @Request() req: any
   ) {
     const userId = req.user?.id || 'default-user';
     return this.chatService.addMessage(
-      chatId, 
+      chatId,
       messageData.content,
       MessageRole[messageData.role || 'USER'],
       {
@@ -93,26 +104,26 @@ export class ChatController {
   async generateResponse(
     @Param('id') chatId: string,
     @Body() generateDto: { prompt: string; agentId: string },
-    @Request() req: any,
+    @Request() req: any
   ) {
     const userId = req.user?.id || 'default-user';
     const response = await this.chatService.generateAgentResponse(
-      generateDto.prompt, 
-      generateDto.agentId, 
+      generateDto.prompt,
+      generateDto.agentId,
       userId
     );
-    
+
     return { response, chatId };
   }
 
   // ============================================================================
   // TODO: Future Endpoints - Requires Schema Updates
   // ============================================================================
-  // 
+  //
   // The following endpoints are planned but require Prisma schema updates:
   //
   // POST /chat/:id/automate - Start automated conversation between agents
-  // POST /chat/rules - Create conversation routing rules  
+  // POST /chat/rules - Create conversation routing rules
   // GET /chat/rules/all - Get all conversation rules
   // POST /chat/synthesis - Create AI synthesis/summary job
   // GET /chat/synthesis/all - Get all synthesis jobs

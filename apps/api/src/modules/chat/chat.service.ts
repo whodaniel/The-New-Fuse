@@ -1,14 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { MessageRole, PrismaService } from '@the-new-fuse/database';
 import { AgentsService } from '../../agents/agents.service';
-import { MessageRole } from '@the-new-fuse/database/generated/prisma';
 
 /**
  * ChatService handles agent-based chat conversations.
- * 
+ *
  * Note: This service works with the Chat model (agent conversations).
  * For multi-user chat rooms, see ChatRoom model and related services.
- * 
+ *
  * Schema notes:
  * - Chat: Single agent per chat, optional userId
  * - Message: Uses senderId for user, agentId for agent, chatId to connect to Chat
@@ -19,7 +18,7 @@ export class ChatService {
 
   constructor(
     private prisma: PrismaService,
-    private agentsService: AgentsService,
+    private agentsService: AgentsService
   ) {}
 
   /**
@@ -45,7 +44,7 @@ export class ChatService {
           agent: true,
         },
       });
-      
+
       return chats;
     } catch (error) {
       this.logger.error('Error fetching chats:', error);
@@ -59,7 +58,7 @@ export class ChatService {
   async findOne(id: string, userId: string) {
     try {
       const chat = await this.prisma.chat.findFirst({
-        where: { 
+        where: {
           id,
           agent: {
             userId: userId,
@@ -76,11 +75,11 @@ export class ChatService {
           agent: true,
         },
       });
-      
+
       if (!chat) {
         return null;
       }
-      
+
       return chat;
     } catch (error) {
       this.logger.error('Error fetching chat:', error);
@@ -113,7 +112,7 @@ export class ChatService {
           agent: true,
         },
       });
-      
+
       return chat;
     } catch (error) {
       this.logger.error('Error creating chat:', error);
@@ -125,7 +124,7 @@ export class ChatService {
    * Add a message to a chat
    */
   async addMessage(
-    chatId: string, 
+    chatId: string,
     content: string,
     role: MessageRole,
     options?: {
@@ -149,7 +148,7 @@ export class ChatService {
           sender: true,
         },
       });
-      
+
       return message;
     } catch (error) {
       this.logger.error('Error adding message:', error);
@@ -175,7 +174,7 @@ export class ChatService {
           sender: true,
         },
       });
-      
+
       return messages;
     } catch (error) {
       this.logger.error('Error fetching messages:', error);
@@ -192,18 +191,19 @@ export class ChatService {
       const agent = await this.prisma.agent.findFirst({
         where: { id: agentId, userId },
       });
-      
+
       if (!agent) {
         throw new Error('Agent not found');
       }
 
       // TODO: Replace with actual AI service integration
-      const systemPrompt = (agent.config as Record<string, unknown>)?.systemPrompt as string 
-        || agent.systemPrompt 
-        || 'You are a helpful assistant.';
-      
+      const systemPrompt =
+        ((agent.config as Record<string, unknown>)?.systemPrompt as string) ||
+        agent.systemPrompt ||
+        'You are a helpful assistant.';
+
       const response = await this.mockAIResponse(prompt, systemPrompt);
-      
+
       return response;
     } catch (error) {
       this.logger.error('Error generating agent response:', error);
@@ -216,8 +216,8 @@ export class ChatService {
    */
   private async mockAIResponse(prompt: string, _systemPrompt: string): Promise<string> {
     // Simulate AI processing time
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
+
     // Return a mock response based on the prompt
     const responses = [
       `Based on your message about "${prompt.substring(0, 30)}...", I can help you with that.`,
@@ -225,7 +225,7 @@ export class ChatService {
       `That's an interesting question about "${prompt.substring(0, 40)}...". Here's my perspective:`,
       `Regarding your inquiry, I'd like to share some thoughts.`,
     ];
-    
+
     return responses[Math.floor(Math.random() * responses.length)];
   }
 
@@ -262,9 +262,9 @@ export class ChatService {
   // ============================================================================
   // TODO: Future Features - Requires Schema Updates
   // ============================================================================
-  // 
+  //
   // The following features are planned but require Prisma schema updates:
-  // 
+  //
   // 1. ConversationRule - For defining routing/automation rules between agents
   //    Suggested schema:
   //    model ConversationRule {

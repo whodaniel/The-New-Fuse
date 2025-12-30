@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { PrismaService, User } from '@the-new-fuse/database';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { User, Prisma } from '@the-new-fuse/database/generated/prisma';
+// Prisma types removed during Drizzle migration
 
 @Injectable()
 export class AuthService {
@@ -45,14 +45,21 @@ export class AuthService {
     return {
       user,
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 
   async login({ email, password }: { email: string; password: string }) {
     const user = await this.prisma.user.findUnique({
       where: { email },
-      select: { id: true, hashedPassword: true, refreshToken: true, email: true, name: true, role: true },
+      select: {
+        id: true,
+        hashedPassword: true,
+        refreshToken: true,
+        email: true,
+        name: true,
+        role: true,
+      },
     });
     if (!user) {
       throw new Error('Invalid email or password');
@@ -83,7 +90,7 @@ export class AuthService {
     return {
       user,
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 
@@ -132,7 +139,7 @@ export class AuthService {
 
       return {
         accessToken,
-        refreshToken: newRefreshToken
+        refreshToken: newRefreshToken,
       };
     } catch (error) {
       throw new Error('Invalid refresh token');
