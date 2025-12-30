@@ -1,23 +1,23 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { PrismaModule } from '../prisma/prisma.module';
-import { ConfigModule } from '@nestjs/config';
-import { RolesGuard } from './guards/roles.guard';
-import { FirebaseAuthGuard } from './firebase-auth.guard';
-import { AgentJwtStrategy } from './agent-jwt.strategy';
-import { GoogleStrategy } from './google.strategy';
-import { GitHubStrategy } from './github.strategy';
-import { UsersService } from '../users/users.service';
-import { LoggingService } from '../services/logging.service';
+import { DrizzleModule } from '@the-new-fuse/database';
 import { EventBus } from '../events/event-bus.service';
 import { IdentityService } from '../services/identity.service';
+import { LoggingService } from '../services/logging.service';
+import { UsersService } from '../users/users.service';
+import { AgentJwtStrategy } from './agent-jwt.strategy';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { FirebaseAuthGuard } from './firebase-auth.guard';
+import { GitHubStrategy } from './github.strategy';
+import { GoogleStrategy } from './google.strategy';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
-    PrismaModule,
+    DrizzleModule.forRootAsync(),
     ConfigModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({

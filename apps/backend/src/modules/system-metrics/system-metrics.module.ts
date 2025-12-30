@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
+import { DrizzleModule } from '@the-new-fuse/database';
 import { AuthModule } from '../../auth/auth.module';
-import { PrismaModule } from '../../prisma/prisma.module';
 import { SystemMetricsController } from './system-metrics.controller';
 import { SystemMetricsService } from './system-metrics.service';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [DrizzleModule.forRootAsync(), AuthModule],
   controllers: [SystemMetricsController],
   providers: [SystemMetricsService],
   exports: [SystemMetricsService],

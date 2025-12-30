@@ -1,19 +1,16 @@
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { DrizzleModule } from '@the-new-fuse/database';
 import { AgentRegistryController } from './agent-registry.controller';
 import {
-  AgentRegistrationService,
+  AgentDirectoryService,
   AgentOnboardingService,
   AgentOrientationService,
-  AgentDirectoryService,
+  AgentRegistrationService,
 } from './services';
-import { PrismaModule } from '../../prisma/prisma.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
-  imports: [
-    PrismaModule,
-    EventEmitterModule.forRoot(),
-  ],
+  imports: [DrizzleModule.forRootAsync(), EventEmitterModule.forRoot()],
   controllers: [AgentRegistryController],
   providers: [
     AgentRegistrationService,

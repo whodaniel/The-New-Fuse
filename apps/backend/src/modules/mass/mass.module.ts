@@ -1,8 +1,15 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../../prisma/prisma.module';
+import { DrizzleModule } from '@the-new-fuse/database';
 import { AggregateService } from './building-blocks/aggregate.service';
 import { CustomAgentService } from './building-blocks/custom-agent.service';
 import { DebateService } from './building-blocks/debate.service';
+import {
+  AgentExecutorService,
+  AggregateBlock,
+  DebateBlock,
+  MassBlocksService,
+  ReflectBlock,
+} from './building-blocks/mass-blocks.service';
 import { ReflectService } from './building-blocks/reflect.service';
 import { ToolUseService } from './building-blocks/tool-use.service';
 import { MassOrchestrationService } from './mass-orchestration.service';
@@ -14,16 +21,9 @@ import {
 } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
 import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
-import {
-  AggregateBlock,
-  AgentExecutorService,
-  MassBlocksService,
-  ReflectBlock,
-  DebateBlock
-} from './building-blocks/mass-blocks.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DrizzleModule.forRootAsync()],
   controllers: [MassController],
   providers: [
     MassOrchestrationService,

@@ -22,7 +22,7 @@ import { RelayModule } from './modules/relay/relay.module';
 import { SelfImprovementModule } from './modules/self-improvement/self-improvement.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
-import { PrismaModule } from './prisma/prisma.module';
+// PrismaModule removed - migrated to DrizzleModule
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
 
@@ -55,9 +55,8 @@ import { UsersModule } from './users/users.module';
         },
       }),
     }),
-    // Database modules - both Prisma and Drizzle during transition
-    PrismaModule, // Legacy - can be removed after full migration
-    DrizzleModule.forRootAsync(), // New - production ready
+    // Database module - Drizzle ORM
+    DrizzleModule.forRootAsync(),
     AuthModule,
     UsersModule,
     ApiModule,

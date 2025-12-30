@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AgentService } from './agent.service';
+import { DrizzleModule } from '@the-new-fuse/database';
 import { AgentController } from './agent.controller';
-import { PrismaModule } from '../../prisma/prisma.module';
+import { AgentService } from './agent.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DrizzleModule.forRootAsync()],
   controllers: [AgentController],
   providers: [AgentService],
-  exports: [AgentService]
+  exports: [AgentService],
 })
-export class AgentModule {} 
+export class AgentModule {}
