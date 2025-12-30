@@ -13,6 +13,7 @@
 export {
   DRIZZLE_CLIENT,
   DrizzleModule,
+  DrizzleModule as DatabaseModule, // Alias for backward compatibility
   DrizzleService,
   db,
   queryClient,
