@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
-import { DatabaseService } from './database.service';
+import { DatabaseService, PrismaService } from './database.service';
 
 // Injection token for the Drizzle client
 export const DRIZZLE_CLIENT = Symbol('DRIZZLE_CLIENT');
@@ -21,6 +21,12 @@ export interface DrizzleModuleOptions {
   idleTimeout?: number;
   connectTimeout?: number;
 }
+
+// Provider alias for backwards compatibility with PrismaService imports
+const PrismaServiceProvider: Provider = {
+  provide: PrismaService,
+  useExisting: DatabaseService,
+};
 
 /**
  * Drizzle Database Module for NestJS
@@ -38,6 +44,8 @@ export interface DrizzleModuleOptions {
  * constructor(@Inject(DRIZZLE_CLIENT) private db: DrizzleClient) {}
  * // OR use DatabaseService:
  * constructor(private db: DatabaseService) {}
+ * // OR use PrismaService (deprecated alias):
+ * constructor(private prisma: PrismaService) {}
  * ```
  */
 @Global()
@@ -67,8 +75,8 @@ export class DrizzleModule {
 
     return {
       module: DrizzleModule,
-      providers: [drizzleProvider, DatabaseService],
-      exports: [DRIZZLE_CLIENT, DatabaseService],
+      providers: [drizzleProvider, DatabaseService, PrismaServiceProvider],
+      exports: [DRIZZLE_CLIENT, DatabaseService, PrismaService],
     };
   }
 
@@ -100,8 +108,8 @@ export class DrizzleModule {
     return {
       module: DrizzleModule,
       imports: [ConfigModule],
-      providers: [drizzleProvider, DatabaseService],
-      exports: [DRIZZLE_CLIENT, DatabaseService],
+      providers: [drizzleProvider, DatabaseService, PrismaServiceProvider],
+      exports: [DRIZZLE_CLIENT, DatabaseService, PrismaService],
     };
   }
 }
