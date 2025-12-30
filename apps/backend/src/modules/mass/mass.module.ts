@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { DrizzleModule } from '@the-new-fuse/database';
 import { AggregateService } from './building-blocks/aggregate.service';
 import { CustomAgentService } from './building-blocks/custom-agent.service';
@@ -21,12 +22,14 @@ import {
 } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
 import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
+import { RedisLockService } from '../../services/redis-lock.service';
 
 @Module({
-  imports: [DrizzleModule.forRootAsync()],
+  imports: [ConfigModule, DrizzleModule.forRootAsync()],
   controllers: [MassController],
   providers: [
     MassOrchestrationService,
+    RedisLockService,
     PromptOptimizerService,
     EvaluationHarnessService,
     LlmInteractionService,
