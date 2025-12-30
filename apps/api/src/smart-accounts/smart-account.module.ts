@@ -1,13 +1,13 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { SmartAccountService } from './smart-account.service';
 import { SmartAccountController } from './smart-account.controller';
 import { Web3authModule } from '../web3auth/web3auth.module';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseModule } from '@the-new-fuse/database';
 
 @Module({
-  imports: [Web3authModule],
+  imports: [Web3authModule, DatabaseModule],
   controllers: [SmartAccountController],
-  providers: [SmartAccountService, PrismaService],
+  providers: [SmartAccountService],
   exports: [SmartAccountService]
 })
 export class SmartAccountModule {}
