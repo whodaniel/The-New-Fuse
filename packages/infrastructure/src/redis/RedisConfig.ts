@@ -90,7 +90,20 @@ export class RedisConfig {
     };
   }
 
-  getConnectionOptions() {
+  getConnectionOptions(): {
+    host: string;
+    port: number;
+    password?: string;
+    db: number;
+    connectTimeout?: number;
+    lazyConnect?: boolean;
+    maxRetriesPerRequest?: number;
+    retryDelayOnFailover: number;
+    retryAttempts: number;
+    family: number;
+    keepAlive: number;
+    keyPrefix: string;
+  } | null {
     const config = this.getConfiguration();
 
     // Check if Redis is explicitly disabled

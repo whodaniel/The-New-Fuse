@@ -1,40 +1,52 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import Redis, { Cluster } from 'ioredis';
 import { RedisConfig } from './RedisConfig';
-import { 
-  QueueTask, 
-  SearchResult, 
-  CacheOptions, 
-  PubSubMessage, 
-  RedisHealth, 
+import {
+  CacheOptions,
+  PubSubMessage,
+  QueueTask,
+  RedisHealth,
   RedisMetrics,
+  RedisOperationLog,
   RedisOperationType,
-  RedisOperationLog 
+  SearchResult,
 } from './types';
 
 @Injectable()
 export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(UnifiedRedisService.name);
-  
+
   private mainClient!: Redis | Cluster;
   private pubSubClient!: Redis | Cluster;
   private subscribers: Map<string, Redis | Cluster> = new Map();
   private patternSubscribers: Map<string, Redis | Cluster> = new Map();
-  
+
   private metrics: RedisMetrics = {
     operations: {
-      get: 0, set: 0, del: 0, hget: 0, hset: 0,
-      lpush: 0, rpop: 0, publish: 0
+      get: 0,
+      set: 0,
+      del: 0,
+      hget: 0,
+      hset: 0,
+      lpush: 0,
+      rpop: 0,
+      publish: 0,
     },
     performance: {
-      avgLatency: 0, maxLatency: 0, errorRate: 0
+      avgLatency: 0,
+      maxLatency: 0,
+      errorRate: 0,
     },
     memory: {
-      used: 0, peak: 0, fragmentation: 0
+      used: 0,
+      peak: 0,
+      fragmentation: 0,
     },
     connections: {
-      active: 0, total: 0, rejected: 0
-    }
+      active: 0,
+      total: 0,
+      rejected: 0,
+    },
   };
 
   private operationLogs: RedisOperationLog[] = [];
@@ -61,17 +73,23 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   private async initializeConnections() {
     const config = this.redisConfig.getConnectionOptions();
-    
+
+    // If Redis is disabled, skip initialization
+    if (!config) {
+      this.logger.warn('Redis is disabled - connections will not be initialized');
+      return;
+    }
+
     try {
       if (this.redisConfig.isClusterMode()) {
         const nodes = this.redisConfig.getClusterNodes();
         this.mainClient = new Redis.Cluster(nodes, {
           redisOptions: config,
-          ...this.redisConfig.getConfiguration().cluster
+          ...this.redisConfig.getConfiguration().cluster,
         });
         this.pubSubClient = new Redis.Cluster(nodes, {
           redisOptions: config,
-          ...this.redisConfig.getConfiguration().cluster
+          ...this.redisConfig.getConfiguration().cluster,
         });
       } else {
         this.mainClient = new Redis(config);
@@ -79,10 +97,10 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       }
 
       this.setupEventHandlers();
-      
+
       await this.mainClient.ping();
       await this.pubSubClient.ping();
-      
+
       this.logger.log('Redis connections established successfully');
     } catch (error) {
       this.logger.error('Failed to initialize Redis connections', error);
@@ -116,18 +134,24 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     executor: () => Promise<T>
   ): Promise<T> {
     const startTime = Date.now();
-    
+
     try {
       const result = await executor();
       const duration = Date.now() - startTime;
-      
+
       this.logOperation(operation, key, duration, true);
       this.updateMetrics(operation, duration);
-      
+
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      this.logOperation(operation, key, duration, false, error instanceof Error ? error.message : String(error));
+      this.logOperation(
+        operation,
+        key,
+        duration,
+        false,
+        error instanceof Error ? error.message : String(error)
+      );
       this.metrics.performance.errorRate++;
       throw error;
     }
@@ -146,11 +170,11 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       duration,
       success,
       error,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     this.operationLogs.push(log);
-    
+
     if (this.operationLogs.length > this.MAX_LOG_SIZE) {
       this.operationLogs = this.operationLogs.slice(-this.MAX_LOG_SIZE);
     }
@@ -160,13 +184,14 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     if (operation in this.metrics.operations) {
       this.metrics.operations[operation as keyof typeof this.metrics.operations]++;
     }
-    
+
     this.metrics.performance.maxLatency = Math.max(this.metrics.performance.maxLatency, duration);
-    
+
     const totalOps = Object.values(this.metrics.operations).reduce((sum, count) => sum + count, 0);
-    this.metrics.performance.avgLatency = totalOps > 0 
-      ? (this.metrics.performance.avgLatency * (totalOps - 1) + duration) / totalOps
-      : duration;
+    this.metrics.performance.avgLatency =
+      totalOps > 0
+        ? (this.metrics.performance.avgLatency * (totalOps - 1) + duration) / totalOps
+        : duration;
   }
 
   // Core Redis Operations
@@ -205,7 +230,11 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
   // Hash Operations
   async hset(key: string, field: string, value: string): Promise<void>;
   async hset(key: string, data: Record<string, string>): Promise<void>;
-  async hset(key: string, fieldOrData: string | Record<string, string>, value?: string): Promise<void> {
+  async hset(
+    key: string,
+    fieldOrData: string | Record<string, string>,
+    value?: string
+  ): Promise<void> {
     await this.executeOperation('hset', key, async () => {
       if (typeof fieldOrData === 'string' && value !== undefined) {
         await this.mainClient.hset(key, fieldOrData, value);
@@ -316,20 +345,27 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
         return;
       }
 
-      const subscriber = this.pubSubClient instanceof Redis.Cluster 
-        ? new Redis.Cluster(this.redisConfig.getClusterNodes(), {
-            redisOptions: this.redisConfig.getConnectionOptions()
-          })
-        : new Redis(this.redisConfig.getConnectionOptions());
+      const config = this.redisConfig.getConnectionOptions();
+      if (!config) {
+        this.logger.warn('Redis is disabled - cannot subscribe to channel');
+        return;
+      }
+
+      const subscriber =
+        this.pubSubClient instanceof Redis.Cluster
+          ? new Redis.Cluster(this.redisConfig.getClusterNodes(), {
+              redisOptions: config,
+            })
+          : new Redis(config);
 
       await subscriber.subscribe(channel);
-      
+
       subscriber.on('message', (ch: string, message: string) => {
         if (ch === channel) {
           callback({
             channel: ch,
             message,
-            timestamp: new Date()
+            timestamp: new Date(),
           });
         }
       });
@@ -346,21 +382,28 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
         return;
       }
 
-      const subscriber = this.pubSubClient instanceof Redis.Cluster 
-        ? new Redis.Cluster(this.redisConfig.getClusterNodes(), {
-            redisOptions: this.redisConfig.getConnectionOptions()
-          })
-        : new Redis(this.redisConfig.getConnectionOptions());
+      const config = this.redisConfig.getConnectionOptions();
+      if (!config) {
+        this.logger.warn('Redis is disabled - cannot psubscribe to pattern');
+        return;
+      }
+
+      const subscriber =
+        this.pubSubClient instanceof Redis.Cluster
+          ? new Redis.Cluster(this.redisConfig.getClusterNodes(), {
+              redisOptions: config,
+            })
+          : new Redis(config);
 
       await subscriber.psubscribe(pattern);
-      
+
       subscriber.on('pmessage', (p: string, ch: string, message: string) => {
         if (p === pattern) {
           callback({
             channel: ch,
             pattern: p,
             message,
-            timestamp: new Date()
+            timestamp: new Date(),
           });
         }
       });
@@ -399,7 +442,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     return this.executeOperation('keys', pattern, async () => {
       const keys = await this.mainClient.keys(pattern);
       if (keys.length === 0) return [];
-      
+
       const values = await this.mainClient.mget(...keys);
       return values.filter((value) => value !== null) as string[];
     });
@@ -424,7 +467,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       retryCount: task.retryCount || 0,
       maxRetries: task.maxRetries || 3,
     };
-    
+
     const taskStr = JSON.stringify(taskData);
     await this.zadd(queueName, priority, taskStr);
   }
@@ -432,22 +475,22 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
   async dequeue<T>(queueName: string): Promise<QueueTask<T> | null> {
     const result = await this.zpopmax(queueName);
     if (result.length === 0) return null;
-    
+
     const taskStr = result[0];
     return JSON.parse(taskStr) as QueueTask<T>;
   }
 
   async requeueWithBackoff<T>(
-    queueName: string, 
-    task: QueueTask<T>, 
+    queueName: string,
+    task: QueueTask<T>,
     retryPenalty: number = 2
   ): Promise<void> {
     const newPriority = (task.priority || 1) * Math.pow(retryPenalty, task.retryCount || 0);
     const updatedTask: QueueTask<T> = {
       ...task,
-      retryCount: (task.retryCount || 0) + 1
+      retryCount: (task.retryCount || 0) + 1,
     };
-    
+
     await this.enqueue(queueName, updatedTask, newPriority);
   }
 
@@ -456,12 +499,14 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     const data = {
       vector,
       metadata: metadata || {},
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     await this.set(key, JSON.stringify(data));
   }
 
-  async vectorGet(key: string): Promise<{ vector: number[]; metadata?: Record<string, any> } | null> {
+  async vectorGet(
+    key: string
+  ): Promise<{ vector: number[]; metadata?: Record<string, any> } | null> {
     const data = await this.get(key);
     return data ? JSON.parse(data) : null;
   }
@@ -470,7 +515,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     const pattern = 'vector:*';
     const keys = await this.mainClient.keys(pattern);
     const results: SearchResult[] = [];
-    
+
     for (const key of keys.slice(0, limit)) {
       const data = await this.vectorGet(key);
       if (data) {
@@ -479,62 +524,58 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
           id: key,
           score: similarity,
           vector: data.vector,
-          metadata: data.metadata
+          metadata: data.metadata,
         });
       }
     }
-    
+
     return results.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
   private calculateCosineSimilarity(a: number[], b: number[]): number {
     if (a.length !== b.length) return 0;
-    
+
     const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
     const magnitudeA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
     const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
-    
+
     if (magnitudeA === 0 || magnitudeB === 0) return 0;
     return dotProduct / (magnitudeA * magnitudeB);
   }
 
   // Caching Layer (high-level abstraction)
-  async cache<T>(
-    key: string, 
-    factory: () => Promise<T>, 
-    options: CacheOptions = {}
-  ): Promise<T> {
+  async cache<T>(key: string, factory: () => Promise<T>, options: CacheOptions = {}): Promise<T> {
     const cacheKey = options.namespace ? `${options.namespace}:${key}` : key;
-    
+
     const cached = await this.get(cacheKey);
     if (cached) {
       return JSON.parse(cached);
     }
-    
+
     const result = await factory();
     const serialized = JSON.stringify(result);
-    
+
     if (options.ttl) {
       await this.set(cacheKey, serialized, options.ttl);
     } else {
       await this.set(cacheKey, serialized);
     }
-    
+
     if (options.tags) {
       for (const tag of options.tags) {
         await this.lpush(`cache:tags:${tag}`, cacheKey);
       }
     }
-    
+
     return result;
   }
 
   async invalidateByTag(tag: string): Promise<void> {
     const tagKey = `cache:tags:${tag}`;
     const keys = await this.lrange(tagKey, 0, -1);
-    
+
     if (keys.length > 0) {
-      await Promise.all(keys.map(key => this.del(key)));
+      await Promise.all(keys.map((key) => this.del(key)));
       await this.del(tagKey);
     }
   }
@@ -561,14 +602,14 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       const startTime = Date.now();
       await this.ping();
       const latency = Date.now() - startTime;
-      
+
       const info = await this.mainClient.info();
       const lines = info.split('\r\n');
-      
+
       let memoryUsage = 0;
       let connectedClients = 0;
       let uptime = 0;
-      
+
       for (const line of lines) {
         if (line.startsWith('used_memory:')) {
           memoryUsage = parseInt(line.split(':')[1]);
@@ -578,13 +619,13 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
           uptime = parseInt(line.split(':')[1]);
         }
       }
-      
+
       return {
         status: 'healthy',
         latency,
         memoryUsage,
         connectedClients,
-        uptime
+        uptime,
       };
     } catch (error) {
       return {
@@ -593,7 +634,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
         memoryUsage: 0,
         connectedClients: 0,
         uptime: 0,
-        lastError: error instanceof Error ? error.message : String(error)
+        lastError: error instanceof Error ? error.message : String(error),
       };
     }
   }
@@ -612,15 +653,15 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
         await subscriber.quit();
       }
       this.subscribers.clear();
-      
+
       for (const patternSubscriber of this.patternSubscribers.values()) {
         await patternSubscriber.quit();
       }
       this.patternSubscribers.clear();
-      
+
       await this.mainClient.quit();
       await this.pubSubClient.quit();
-      
+
       this.logger.log('All Redis connections closed');
     } catch (error) {
       this.logger.error('Error closing Redis connections', error);
