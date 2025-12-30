@@ -101,6 +101,17 @@ export {
   workflowTopologyRepository,
 } from './drizzle/repositories';
 
+// Export backwards compatibility repository aliases
+export {
+  AgentRepository,
+  ChatMessageRepository,
+  ChatRepository,
+  TaskRepository,
+  UserRepository,
+  WorkflowExecutionRepository,
+  WorkflowRepository,
+} from './drizzle/compatibility';
+
 // Export Drizzle query utilities
 export {
   and,
