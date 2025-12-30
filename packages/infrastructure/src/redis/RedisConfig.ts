@@ -15,7 +15,7 @@ export class RedisConfig {
 
   private parseRedisConfig() {
     let redisUrl = this.configService.get<string>('REDIS_URL');
-    
+
     if (redisUrl) {
       // Trim whitespace
       redisUrl = redisUrl.trim();
@@ -28,20 +28,23 @@ export class RedisConfig {
       if (firstIndex !== -1 && secondIndex !== -1) {
         // If a duplicated prefix is found, take only the first valid URL
         redisUrl = redisUrl.substring(0, secondIndex);
-        console.warn(`[RedisConfig] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`);
+        console.warn(
+          `[RedisConfig] Detected duplicated REDIS_URL in environment variable. Using only the first occurrence: ${redisUrl}`
+        );
       }
 
       try {
         const url = new URL(redisUrl);
-        
+
         // Parse database index safely
-        const dbFromPath = url.pathname && url.pathname.length > 1 
-          ? parseInt(url.pathname.slice(1), 10) 
-          : 0;
-        
+        const dbFromPath =
+          url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : 0;
+
         const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
 
-        console.log(`[RedisConfig] Using REDIS_URL: ${url.hostname}:${url.port || 6379} (db: ${db})`);
+        console.log(
+          `[RedisConfig] Using REDIS_URL: ${url.hostname}:${url.port || 6379} (db: ${db})`
+        );
 
         return {
           host: url.hostname,
@@ -50,10 +53,13 @@ export class RedisConfig {
           db,
         };
       } catch (error) {
-        console.error('[RedisConfig] Failed to parse REDIS_URL, falling back to individual env vars:', error);
+        console.error(
+          '[RedisConfig] Failed to parse REDIS_URL, falling back to individual env vars:',
+          error
+        );
       }
     }
-    
+
     return {
       host: this.configService.get<string>('REDIS_HOST', 'localhost'),
       port: this.configService.get<number>('REDIS_PORT', 6379),
@@ -64,7 +70,7 @@ export class RedisConfig {
 
   getConfiguration(): RedisConfiguration {
     const { host, port, password, db } = this.parseRedisConfig();
-    
+
     return {
       host,
       port,
@@ -86,6 +92,14 @@ export class RedisConfig {
 
   getConnectionOptions() {
     const config = this.getConfiguration();
+
+    // Check if Redis is explicitly disabled
+    const redisEnabled = this.configService.get<string>('REDIS_ENABLED', 'true');
+    if (redisEnabled === 'false') {
+      console.log('[RedisConfig] Redis is explicitly disabled via REDIS_ENABLED=false');
+      return null;
+    }
+
     return {
       host: config.host,
       port: config.port,
@@ -108,6 +122,6 @@ export class RedisConfig {
 
   getClusterNodes(): string[] {
     const nodesStr = this.configService.get<string>('REDIS_CLUSTER_NODES', '');
-    return nodesStr ? nodesStr.split(',').map(node => node.trim()) : [];
+    return nodesStr ? nodesStr.split(',').map((node) => node.trim()) : [];
   }
 }

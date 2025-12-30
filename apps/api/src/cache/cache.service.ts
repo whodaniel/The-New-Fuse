@@ -4,10 +4,21 @@ import { Redis } from 'ioredis';
 
 @Injectable()
 export class CacheService {
-  private client: Redis;
+  private client: Redis | null = null;
   private logger = new Logger(CacheService.name);
+  private enabled = true;
 
   constructor(private configService: ConfigService) {
+    // Check if Redis is explicitly disabled
+    const redisEnabled = configService.get<string>('REDIS_ENABLED', 'true');
+    if (redisEnabled === 'false') {
+      this.logger.warn(
+        '[CacheService] Redis is disabled via REDIS_ENABLED=false. Cache operations will be no-ops.'
+      );
+      this.enabled = false;
+      return;
+    }
+
     // Parse Redis connection - support both REDIS_URL and individual env vars
     let redisUrl = configService.get('REDIS_URL');
 
@@ -84,26 +95,32 @@ export class CacheService {
   }
 
   async get(key: string): Promise<string | null> {
+    if (!this.enabled || !this.client) return null;
     return this.client.get(key);
   }
 
   async set(key: string, value: string): Promise<'OK'> {
+    if (!this.enabled || !this.client) return 'OK';
     return this.client.set(key, value);
   }
 
   async del(key: string): Promise<number> {
+    if (!this.enabled || !this.client) return 0;
     return this.client.del(key);
   }
 
   async sadd(key: string, member: string): Promise<number> {
+    if (!this.enabled || !this.client) return 0;
     return this.client.sadd(key, member);
   }
 
   async srem(key: string, member: string): Promise<number> {
+    if (!this.enabled || !this.client) return 0;
     return this.client.srem(key, member);
   }
 
   async scard(key: string): Promise<number> {
+    if (!this.enabled || !this.client) return 0;
     return this.client.scard(key);
   }
 }
