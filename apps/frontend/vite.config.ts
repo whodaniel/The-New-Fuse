@@ -3,6 +3,7 @@ import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
@@ -32,6 +33,15 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths({
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
+      }),
+      // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
+      nodePolyfills({
+        include: ['buffer', 'process', 'stream', 'util'],
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true,
+        },
       }),
       // Generate bundle analysis report in production
       isProduction &&
