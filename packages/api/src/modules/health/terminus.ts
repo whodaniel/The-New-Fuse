@@ -72,8 +72,20 @@ export class PrismaHealthIndicator extends HealthIndicator {
 
   async pingCheck(key: string, prismaService: any): Promise<Record<string, any>> {
     try {
-      await prismaService.$queryRaw`SELECT 1`;
-      return this.getStatus(key, true);
+      if (typeof prismaService.healthCheck === 'function') {
+        const isHealthy = await prismaService.healthCheck();
+        if (isHealthy) {
+          return this.getStatus(key, true);
+        }
+        throw new Error('Database health check failed');
+      }
+      
+      if (typeof prismaService.$queryRaw === 'function') {
+        await prismaService.$queryRaw`SELECT 1`;
+        return this.getStatus(key, true);
+      }
+      
+      throw new Error('Service does not support health check methods');
     } catch (e) {
       return this.getStatus(key, false, { message: e instanceof Error ? e.message : 'Unknown error' });
     }

@@ -1,4 +1,4 @@
-import { AgentStatus } from '@the-new-fuse/database/generated/prisma';
+import { AgentStatus } from '@the-new-fuse/types';
 
 export { AgentStatus };
 

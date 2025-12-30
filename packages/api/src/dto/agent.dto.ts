@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsEnum, IsArray, IsObject, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AgentStatus } from '@the-new-fuse/database/generated/prisma';
+import { AgentStatus } from '@the-new-fuse/types';
+
 
 export class CreateAgentDto {
   @ApiProperty({ description: 'Agent name' })

@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { PrismaClient } from '../../../database/generated/prisma';
-import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto';
-import { Resource, SearchResult, ResourceAction } from '../types';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+
 import * as semver from 'semver';
+import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto';
+import { Resource, ResourceAction, SearchResult } from '../types';
 
 @Injectable()
 export class ResourceRegistryService {
@@ -186,9 +187,10 @@ export class ResourceRegistryService {
     }
 
     // Build updated searchable text
-    const searchableText = dto.name || dto.description || dto.tags || dto.keywords
-      ? this.buildSearchableText({ ...existing, ...dto } as CreateResourceDto)
-      : undefined;
+    const searchableText =
+      dto.name || dto.description || dto.tags || dto.keywords
+        ? this.buildSearchableText({ ...existing, ...dto } as CreateResourceDto)
+        : undefined;
 
     const data: any = {
       ...(dto.name && { name: dto.name }),
@@ -299,7 +301,7 @@ export class ResourceRegistryService {
     action: ResourceAction,
     accessorId?: string,
     accessorType: string = 'system',
-    metadata?: any,
+    metadata?: any
   ): Promise<void> {
     await (this.prisma as any).resourceAccessLog.create({
       data: {
@@ -363,12 +365,9 @@ export class ResourceRegistryService {
   // Private helper methods
 
   private buildSearchableText(dto: Partial<CreateResourceDto>): string {
-    const parts = [
-      dto.name,
-      dto.description,
-      ...(dto.tags || []),
-      ...(dto.keywords || []),
-    ].filter(Boolean);
+    const parts = [dto.name, dto.description, ...(dto.tags || []), ...(dto.keywords || [])].filter(
+      Boolean
+    );
 
     return parts.join(' ').toLowerCase();
   }
