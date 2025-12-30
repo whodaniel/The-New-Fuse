@@ -12,10 +12,10 @@
     }
   },
   "scripts": {
-    "prebuild": "rimraf dist tsconfig.tsbuildinfo",
+    "prebuild": "rm -rf dist tsconfig.tsbuildinfo 2>/dev/null || true",
     "build": "tsc --build --verbose",
     "build:watch": "tsc --build --watch",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo 2>/dev/null || true",
     "type-check": "tsc --noEmit",
     "lint": "eslint src/**/*.ts",
     "test": "echo 'No tests specified for types package'",
