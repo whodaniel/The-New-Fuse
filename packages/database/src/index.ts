@@ -133,3 +133,19 @@ export {
   workflowExecutionStatusEnum,
   workflowStatusEnum,
 } from './drizzle/schema';
+
+// Re-export TypeScript enum type aliases for type annotations
+export type {
+  AgentStatus,
+  AgentType,
+  MarketplaceStatus,
+  MessageRole,
+  OfferStatus,
+  TaskPriority,
+  TaskStatus,
+  TransactionStatus,
+  UserRole,
+  WalletType,
+  WorkflowExecutionStatus,
+  WorkflowStatus,
+} from './drizzle/types';
