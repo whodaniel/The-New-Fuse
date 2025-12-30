@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { AgentRepository } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 // Prisma types removed during Drizzle migration - using generic types
 import {
   AgentCapability,
@@ -12,7 +12,11 @@ import {
 
 @Injectable()
 export class AgentService {
-  constructor(private agentRepository: AgentRepository) {}
+  constructor(private db: DatabaseService) {}
+
+  private get agentRepository() {
+    return this.db.agents;
+  }
 
   async createAgent(createAgentDto: CreateAgentDto, userId: string): Promise<AgentResponseDto> {
     try {
