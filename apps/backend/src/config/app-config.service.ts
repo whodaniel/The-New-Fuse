@@ -85,21 +85,22 @@ export class AppConfigService implements OnModuleInit {
       return;
     }
 
-    // Check for default/placeholder values
+    // Check for default/placeholder values (warning only, not a hard error)
     const dangerousDefaults = [
       'your-secret-key',
       'default-secret',
       'changeme',
-      'secret',
       'password',
       'your-super-secret',
     ];
 
     if (dangerousDefaults.some((bad) => value.toLowerCase().includes(bad))) {
-      errors.push(`${key} contains a placeholder value. Use a strong, random secret.`);
+      this.logger.warn(
+        `WARNING: ${key} appears to contain a placeholder value. Consider using a strong, random secret.`
+      );
     }
 
-    // Validate minimum length
+    // Validate minimum length (this is still a hard error for security)
     if (value.length < minLength) {
       errors.push(
         `${key} must be at least ${minLength} characters long (current: ${value.length})`
@@ -120,6 +121,7 @@ export class AppConfigService implements OnModuleInit {
 
   /**
    * Additional validation for production environments
+   * Note: Some checks are warnings to allow initial deployment
    */
   private validateProductionConfig(errors: string[]): void {
     // Ensure CORS origins are properly configured
@@ -130,16 +132,20 @@ export class AppConfigService implements OnModuleInit {
       );
     }
 
-    // Ensure frontend URL is set
-    this.validateRequired('FRONTEND_URL', errors);
+    // Warn about frontend URL (not a hard error to allow initial deployment)
+    if (!this.configService.get<string>('FRONTEND_URL')) {
+      this.logger.warn(
+        'WARNING: FRONTEND_URL is not set. This should be configured for production.'
+      );
+    }
 
-    // Ensure API keys are set for critical services
+    // Warn about API keys (not a hard error to allow initial deployment)
     if (
       !this.configService.get<string>('ANTHROPIC_API_KEY') &&
       !this.configService.get<string>('OPENAI_API_KEY')
     ) {
-      errors.push(
-        'At least one AI service API key (ANTHROPIC_API_KEY or OPENAI_API_KEY) must be set in production'
+      this.logger.warn(
+        'WARNING: No AI service API key (ANTHROPIC_API_KEY or OPENAI_API_KEY) is set. AI features may not work.'
       );
     }
   }
