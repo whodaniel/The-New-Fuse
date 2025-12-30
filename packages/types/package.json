@@ -31,7 +31,6 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@the-new-fuse/prompt-templating": "workspace:*",
     "zod": "^3.22.4"
   }
 }

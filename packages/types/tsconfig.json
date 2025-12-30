@@ -12,9 +12,5 @@
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [
-    {
-      "path": "../prompt-templating"
-    }
-  ]
+  "references": []
 }
