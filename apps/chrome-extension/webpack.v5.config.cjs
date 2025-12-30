@@ -20,7 +20,7 @@ module.exports = (env, argv) => {
 
     output: {
       path: path.resolve(__dirname, 'dist-v5'),
-      filename: '[name].js',
+      filename: '[name].[contenthash].js',
       clean: true,
     },
 
