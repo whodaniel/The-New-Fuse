@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { AGUIModule } from '@the-new-fuse/ag-ui-core';
@@ -10,7 +11,6 @@ import { AuthModule } from './auth/auth.module';
 import { CacheController } from './cache/cache.controller';
 import { CacheModule } from './cache/cache.module';
 import { AppConfigModule } from './config/app-config.module';
-import { AppConfigService } from './config/app-config.service';
 import { EventBus } from './events/event-bus.service';
 import { JobsModule } from './jobs/jobs.module';
 import { AgentExecutionsModule } from './modules/agent-executions/agent-executions.module';
@@ -43,15 +43,17 @@ import { UsersModule } from './users/users.module';
       verboseMemoryLeak: true,
     }),
 
-    // JWT Module with secure configuration from AppConfigService
+    // JWT Module with secure configuration
+    // NOTE: Using ConfigService directly because JwtModule.registerAsync factory
+    // runs before AppConfigService.onModuleInit() completes validation
     JwtModule.registerAsync({
-      imports: [AppConfigModule],
-      inject: [AppConfigService],
-      useFactory: (appConfig: AppConfigService) => ({
-        secret: appConfig.jwtSecret,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'development-jwt-secret-change-in-production',
         signOptions: {
-          expiresIn: appConfig.jwtExpiresIn,
-          issuer: appConfig.jwtIssuer,
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
+          issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
         },
       }),
     }),
