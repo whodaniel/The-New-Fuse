@@ -266,9 +266,9 @@ export default defineConfig(({ mode }) => {
             }
 
             // State management - split into separate chunks to avoid conflicts
-            if (id.includes('node_modules/@reduxjs/') || id.includes('node_modules/react-redux')) {
-              return 'redux-vendor';
-            }
+            // if (id.includes('node_modules/@reduxjs/') || id.includes('node_modules/react-redux')) {
+            //   return 'redux-vendor';
+            // }
             if (id.includes('node_modules/zustand')) {
               return 'zustand-vendor';
             }

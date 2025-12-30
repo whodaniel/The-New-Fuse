@@ -9,6 +9,7 @@
  */
 
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
+import './guard'; // MUST BE FIRST
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
 import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';

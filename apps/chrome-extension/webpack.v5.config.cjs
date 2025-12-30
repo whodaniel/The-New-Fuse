@@ -67,6 +67,11 @@ module.exports = (env, argv) => {
           { from: './src/v5/native-host', to: 'native-host', noErrorOnMissing: true },
         ],
       }),
+      // Polyfill Buffer and process
+      new (require('webpack').ProvidePlugin)({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser',
+      }),
     ],
 
     optimization: {
