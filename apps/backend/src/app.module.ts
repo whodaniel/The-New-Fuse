@@ -12,7 +12,7 @@ import { CacheController } from './cache/cache.controller';
 import { CacheModule } from './cache/cache.module';
 import { AppConfigModule } from './config/app-config.module';
 import { EventBus } from './events/event-bus.service';
-import { JobsModule } from './jobs/jobs.module';
+// import { JobsModule } from './jobs/jobs.module'; // Temporarily disabled - requires Redis
 import { AgentExecutionsModule } from './modules/agent-executions/agent-executions.module';
 import { FilesModule } from './modules/files/files.module';
 import { MassModule } from './modules/mass/mass.module';
@@ -50,7 +50,8 @@ import { UsersModule } from './users/users.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'development-jwt-secret-change-in-production',
+        secret:
+          configService.get<string>('JWT_SECRET') || 'development-jwt-secret-change-in-production',
         signOptions: {
           expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
           issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
@@ -63,7 +64,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     ApiModule,
     MassModule,
-    JobsModule,
+    // JobsModule, // Temporarily disabled - requires Redis/Bull which causes dependency injection errors on Railway
     AgentExecutionsModule,
     WorkflowTemplatesModule,
     FilesModule,
