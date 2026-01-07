@@ -57,7 +57,6 @@ import {
   workflowTemplates,
   workspaces,
 } from './schema';
-import { julesConfigs, julesSessions, julesUsageLogs } from './schema/jules';
 
 // =============================================================================
 // USER TYPES
@@ -415,16 +414,3 @@ export type OfferStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED' | 'E
 export type WalletType = 'SMART_ACCOUNT' | 'EOA' | 'MULTI_SIG';
 
 export type TransactionStatus = 'PENDING' | 'CONFIRMED' | 'FAILED' | 'CANCELLED';
-
-// =============================================================================
-// JULES TYPES
-// =============================================================================
-
-export type JulesConfig = InferSelectModel<typeof julesConfigs>;
-export type NewJulesConfig = InferInsertModel<typeof julesConfigs>;
-
-export type JulesSession = InferSelectModel<typeof julesSessions>;
-export type NewJulesSession = InferInsertModel<typeof julesSessions>;
-
-export type JulesUsageLog = InferSelectModel<typeof julesUsageLogs>;
-export type NewJulesUsageLog = InferInsertModel<typeof julesUsageLogs>;

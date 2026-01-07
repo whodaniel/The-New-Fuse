@@ -34,8 +34,6 @@ import {
   DrizzleWorkflowRepository,
   drizzleWorkspaceRepository,
   DrizzleWorkspaceRepository,
-  drizzleJulesRepository,
-  DrizzleJulesRepository,
 } from './repositories';
 
 @Injectable()
@@ -153,13 +151,6 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get workspaces(): DrizzleWorkspaceRepository {
     return drizzleWorkspaceRepository;
-  }
-
-  /**
-   * Jules repository for Jules integration operations
-   */
-  get jules(): DrizzleJulesRepository {
-    return drizzleJulesRepository;
   }
 
   // ==========================================================================

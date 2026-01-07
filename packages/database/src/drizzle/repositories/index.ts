@@ -10,4 +10,3 @@ export { DrizzleTaskRepository, drizzleTaskRepository } from './task.repository'
 export { DrizzleUserRepository, drizzleUserRepository } from './user.repository';
 export { DrizzleWorkflowRepository, drizzleWorkflowRepository } from './workflow.repository';
 export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository';
-export { DrizzleJulesRepository, drizzleJulesRepository } from './DrizzleJulesRepository';
