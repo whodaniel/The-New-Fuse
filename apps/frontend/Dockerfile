@@ -54,6 +54,11 @@ RUN npm run build || pnpm run build
 # If running from app root, build output is in dist - this logic handles both cases
 RUN if [ -d "apps/frontend/dist" ]; then rm -rf dist && mv apps/frontend/dist ./dist; fi
 
+# Normalize nginx.conf location
+# If running from monorepo root, nginx.conf is in apps/frontend/nginx.conf
+# If running from app root, nginx.conf is in ./nginx.conf
+RUN if [ -f "apps/frontend/nginx.conf" ]; then cp apps/frontend/nginx.conf ./nginx.conf; fi
+
 # Stage 2: Production stage with nginx
 FROM nginx:alpine AS runner
 
