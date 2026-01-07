@@ -1,21 +1,22 @@
-import { IsString, IsNotEmpty, IsOptional, IsArray, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { BaseEntity } from './core/base-types';
-import { AgentCapability, AgentStatus, AgentRole } from './core/enums';
+import { AgentCapability, AgentRole, AgentStatus } from './core/enums';
 
 // Re-export the enums for external use
-export { AgentCapability, AgentStatus, AgentRole };
+export { AgentCapability, AgentRole, AgentStatus };
 
 export enum AgentType {
-  BASIC = "BASIC",
-  CHAT = "CHAT",
-  WORKFLOW = "WORKFLOW",
-  TASK = "TASK",
-  ASSISTANT = "ASSISTANT",
-  ANALYSIS = "ANALYSIS",
-  CONVERSATIONAL = "CONVERSATIONAL",
-  IDE_EXTENSION = "IDE_EXTENSION",
-  API = "API"
+  BASIC = 'BASIC',
+  CHAT = 'CHAT',
+  WORKFLOW = 'WORKFLOW',
+  TASK = 'TASK',
+  ASSISTANT = 'ASSISTANT',
+  ANALYSIS = 'ANALYSIS',
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  IDE_EXTENSION = 'IDE_EXTENSION',
+  API = 'API',
+  GITHUB_JULES = 'GITHUB_JULES',
 }
 
 // Changed from interface to class that implements BaseEntity
@@ -62,21 +63,36 @@ export class CreateAgentDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ required: false, description: "The system-level instructions for the agent" })
+  @ApiProperty({ required: false, description: 'The system-level instructions for the agent' })
   @IsString()
   @IsOptional()
   systemPrompt?: string;
 
-  @ApiProperty({ required: false, isArray: true, enum: AgentCapability, description: "The agent's capabilities" })
+  @ApiProperty({
+    required: false,
+    isArray: true,
+    enum: AgentCapability,
+    description: "The agent's capabilities",
+  })
   @IsArray()
   @IsOptional()
   capabilities?: AgentCapability[];
 
-  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Agent-specific configuration' })
+  @ApiProperty({
+    required: false,
+    type: 'object',
+    additionalProperties: true,
+    description: 'Agent-specific configuration',
+  })
   @IsOptional()
   configuration?: unknown;
 
-  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Arbitrary metadata' })
+  @ApiProperty({
+    required: false,
+    type: 'object',
+    additionalProperties: true,
+    description: 'Arbitrary metadata',
+  })
   @IsOptional()
   metadata?: unknown;
 
@@ -115,17 +131,27 @@ export class UpdateAgentDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ required: false, description: "The system-level instructions for the agent" })
+  @ApiProperty({ required: false, description: 'The system-level instructions for the agent' })
   @IsString()
   @IsOptional()
   systemPrompt?: string;
 
-  @ApiProperty({ required: false, isArray: true, enum: AgentCapability, description: "The agent's capabilities" })
+  @ApiProperty({
+    required: false,
+    isArray: true,
+    enum: AgentCapability,
+    description: "The agent's capabilities",
+  })
   @IsArray()
   @IsOptional()
   capabilities?: AgentCapability[];
 
-  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Agent-specific configuration' })
+  @ApiProperty({
+    required: false,
+    type: 'object',
+    additionalProperties: true,
+    description: 'Agent-specific configuration',
+  })
   @IsOptional()
   configuration?: unknown;
 
@@ -134,7 +160,12 @@ export class UpdateAgentDto {
   @IsOptional()
   status?: AgentStatus;
 
-  @ApiProperty({ required: false, type: 'object', additionalProperties: true, description: 'Arbitrary metadata' })
+  @ApiProperty({
+    required: false,
+    type: 'object',
+    additionalProperties: true,
+    description: 'Arbitrary metadata',
+  })
   @IsOptional()
   metadata?: unknown;
 
@@ -188,4 +219,3 @@ export class AgentResponseDto {
     this.updatedAt = data.updatedAt || new Date();
   }
 }
-

@@ -50,26 +50,30 @@ ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 RUN echo "Building with NODE_ENV=$NODE_ENV" && pnpm run build -- --mode production
 
 #------------------------------------------------------------------------------
-# Runner stage - Production image
+# Runner stage - Production image with nginx
 #------------------------------------------------------------------------------
-FROM node:${NODE_VERSION}-alpine AS runner
-
-# Install serve globally for serving static files
-RUN npm install -g serve
+FROM nginx:alpine AS runner
 
 WORKDIR /app
 
 # Copy built files from builder stage
 COPY --from=builder /app/apps/frontend/dist ./dist
 
+# Copy nginx configuration
+COPY apps/frontend/nginx.conf /etc/nginx/nginx.template.conf
+
+# Create temp directories for nginx (non-root mode)
+RUN mkdir -p /tmp/client_body /tmp/proxy /tmp/fastcgi /tmp/uwsgi /tmp/scgi && \
+    chmod -R 777 /tmp/client_body /tmp/proxy /tmp/fastcgi /tmp/uwsgi /tmp/scgi && \
+    chmod -R 755 /app/dist
+
 # Expose port (Railway will inject PORT env var)
 EXPOSE ${PORT:-3000}
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/health || exit 1
 
-# Start command - serve the built static files
-# -s enables SPA mode (serves index.html for all routes)
-# -n disables clipboard notifications
-CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
+# Start command - substitute PORT env var and start nginx
+# This replaces ${PORT} in nginx config with actual PORT value from Railway
+CMD ["sh", "-c", "envsubst '$$PORT' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]

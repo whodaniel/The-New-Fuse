@@ -25,6 +25,9 @@ import {
   codeExecutionUsage,
   errorLogs,
   fractionalShares,
+  julesConfigs,
+  julesSessions,
+  julesUsageLogs,
   llmConfigs,
   loginAttempts,
   marketplaceListings,
@@ -163,6 +166,19 @@ export type NewCodeExecutionUsage = InferInsertModel<typeof codeExecutionUsage>;
 
 export type CodeExecutionSession = InferSelectModel<typeof codeExecutionSessions>;
 export type NewCodeExecutionSession = InferInsertModel<typeof codeExecutionSessions>;
+
+// =============================================================================
+// JULES INTEGRATION TYPES
+// =============================================================================
+
+export type JulesConfig = InferSelectModel<typeof julesConfigs>;
+export type NewJulesConfig = InferInsertModel<typeof julesConfigs>;
+
+export type JulesSession = InferSelectModel<typeof julesSessions>;
+export type NewJulesSession = InferInsertModel<typeof julesSessions>;
+
+export type JulesUsageLog = InferSelectModel<typeof julesUsageLogs>;
+export type NewJulesUsageLog = InferInsertModel<typeof julesUsageLogs>;
 
 // =============================================================================
 // MARKETPLACE TYPES

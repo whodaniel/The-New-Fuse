@@ -1,134 +1,167 @@
 /**
  * Drizzle ORM Schema - Jules Integration
+ * Manages Jules (Google's coding agent) configurations, sessions, and usage tracking
  */
-import { relations, desc } from 'drizzle-orm';
-import {
-  boolean,
-  decimal,
-  index,
-  integer,
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { jsonb, pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { agents } from './agents';
 import { tasks } from './tasks';
+import { users } from './users';
 
 // =============================================================================
-// PLACEHOLDER TENANTS TABLE
+// JULES-SPECIFIC ENUMS
 // =============================================================================
-// This is a placeholder to satisfy foreign key constraints.
-// A proper tenants table should be defined elsewhere.
-export const tenants = pgTable('tenants', {
+
+export const julesConfigTypeEnum = pgEnum('jules_config_type', [
+  'DISABLED',
+  'BYOK', // Bring Your Own Key - customer provides their own Jules API key
+  'PLATFORM', // Use platform's Jules API key
+]);
+
+export const julesSessionStatusEnum = pgEnum('jules_session_status', [
+  'PENDING',
+  'IN_PROGRESS',
+  'NEEDS_APPROVAL',
+  'USER_INPUT_REQUIRED',
+  'COMPLETED',
+  'FAILED',
+  'CANCELLED',
+]);
+
+// =============================================================================
+// JULES_CONFIGS
+// Multi-tenant Jules configuration (API keys, webhooks, preferences)
+// =============================================================================
+
+export const julesConfigs = pgTable('jules_configs', {
   id: uuid('id').primaryKey().defaultRandom(),
-  // other tenant-specific fields would go here
+
+  // Multi-tenant support
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+
+  // Configuration type
+  configType: julesConfigTypeEnum('config_type').default('DISABLED').notNull(),
+
+  // BYOK: encrypted API key (customer's own Jules key)
+  apiKeyEncrypted: text('api_key_encrypted'),
+
+  // Webhook configuration
+  webhookSecret: varchar('webhook_secret', { length: 255 }),
+
+  // Preferences
+  preferences: jsonb('preferences').$type<{
+    autoApprove?: boolean;
+    maxConcurrentSessions?: number;
+    defaultTimeout?: number;
+    notifyOnCompletion?: boolean;
+  }>(),
+
+  // Audit
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at'),
 });
 
 // =============================================================================
-// JULES CONFIGS
+// JULES_SESSIONS
+// Links TNF tasks to Jules sessions with status tracking
 // =============================================================================
-export const julesConfigs = pgTable('jules_configs', {
+
+export const julesSessions = pgTable('jules_sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
-  tenantId: uuid('tenant_id')
-    .unique()
+
+  // Jules session ID (from Jules API)
+  julesSessionId: varchar('jules_session_id', { length: 255 }).unique().notNull(),
+
+  // Link to TNF task
+  taskId: uuid('task_id')
     .notNull()
-    .references(() => tenants.id, { onDelete: 'cascade' }),
-  configType: varchar('config_type', {
-    enum: ['own_key', 'platform', 'disabled'],
-  })
-    .default('disabled')
-    .notNull(),
-  apiKeyEncrypted: text('api_key_encrypted'),
-  webhookSecret: varchar('webhook_secret', { length: 255 }),
-  preferences: jsonb('preferences').default({}).notNull(),
+    .references(() => tasks.id, { onDelete: 'cascade' }),
+
+  // Which agent delegated this task to Jules
+  delegatedByAgentId: uuid('delegated_by_agent_id')
+    .notNull()
+    .references(() => agents.id),
+
+  // Multi-tenant support
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+
+  // Session status
+  status: julesSessionStatusEnum('status').default('PENDING').notNull(),
+
+  // Session metadata
+  metadata: jsonb('metadata').$type<{
+    prompt?: string;
+    conversationId?: string;
+    webhookContext?: string;
+    approvalCount?: number;
+    lastWebhookAt?: string;
+  }>(),
+
+  // Result from Jules
+  result: jsonb('result'),
+  error: text('error'),
+
+  // Timing
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+
+  // Audit
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at'),
+});
+
+// =============================================================================
+// JULES_USAGE_LOGS
+// Usage tracking for billing (BYOK vs platform key)
+// =============================================================================
+
+export const julesUsageLogs = pgTable('jules_usage_logs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  // Link to session
+  sessionId: uuid('session_id')
+    .notNull()
+    .references(() => julesSessions.id, { onDelete: 'cascade' }),
+
+  // Multi-tenant support
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+
+  // Usage type (for billing)
+  usageType: varchar('usage_type', { length: 50 }).notNull(), // 'BYOK' or 'PLATFORM'
+
+  // Metrics
+  metrics: jsonb('metrics').$type<{
+    apiCalls?: number;
+    tokensUsed?: number;
+    durationSeconds?: number;
+    webhookCount?: number;
+  }>(),
+
+  // Audit
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // =============================================================================
-// JULES SESSIONS
-// =============================================================================
-export const julesSessions = pgTable(
-  'jules_sessions',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    taskId: uuid('task_id')
-      .notNull()
-      .references(() => tasks.id, { onDelete: 'cascade' }),
-    julesSessionId: varchar('jules_session_id', { length: 255 }).unique().notNull(),
-    tenantId: uuid('tenant_id')
-      .notNull()
-      .references(() => tenants.id, { onDelete: 'cascade' }),
-    delegatedByAgentId: uuid('delegated_by_agent_id').references(() => agents.id, {
-      onDelete: 'set null',
-    }),
-    conversationId: varchar('conversation_id', { length: 255 }),
-    status: varchar('status', {
-      enum: ['pending', 'in_progress', 'needs_approval', 'completed', 'failed'],
-    })
-      .default('pending')
-      .notNull(),
-    metadata: jsonb('metadata').default({}).notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  },
-  (table) => {
-    return {
-      taskIdIdx: index('idx_jules_sessions_task_id').on(table.taskId),
-      julesSessionIdIdx: index('idx_jules_sessions_jules_session_id').on(table.julesSessionId),
-      tenantIdIdx: index('idx_jules_sessions_tenant_id').on(table.tenantId),
-    };
-  }
-);
-
-// =============================================================================
-// JULES USAGE LOGS
-// =============================================================================
-export const julesUsageLogs = pgTable(
-  'jules_usage_logs',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    tenantId: uuid('tenant_id')
-      .notNull()
-      .references(() => tenants.id, { onDelete: 'cascade' }),
-    sessionId: uuid('session_id').references(() => julesSessions.id, { onDelete: 'set null' }),
-    julesSessionId: varchar('jules_session_id', { length: 255 }).notNull(),
-    usedCustomerKey: boolean('used_customer_key').default(false).notNull(),
-    startedAt: timestamp('started_at').defaultNow().notNull(),
-    completedAt: timestamp('completed_at'),
-    durationMinutes: integer('duration_minutes'),
-    billableAmount: decimal('billable_amount', { precision: 10, scale: 2 }),
-    metadata: jsonb('metadata').default({}).notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-  },
-  (table) => {
-    return {
-      tenantIdCreatedAtIdx: index('idx_jules_usage_logs_tenant_id_created_at').on(
-        table.tenantId,
-        desc(table.createdAt)
-      ),
-    };
-  }
-);
-
-// =============================================================================
 // RELATIONS
 // =============================================================================
+
 export const julesConfigsRelations = relations(julesConfigs, ({ one }) => ({
-  tenant: one(tenants, {
-    fields: [julesConfigs.tenantId],
-    references: [tenants.id],
+  user: one(users, {
+    fields: [julesConfigs.userId],
+    references: [users.id],
   }),
 }));
 
 export const julesSessionsRelations = relations(julesSessions, ({ one }) => ({
-  tenant: one(tenants, {
-    fields: [julesSessions.tenantId],
-    references: [tenants.id],
-  }),
   task: one(tasks, {
     fields: [julesSessions.taskId],
     references: [tasks.id],
@@ -137,21 +170,19 @@ export const julesSessionsRelations = relations(julesSessions, ({ one }) => ({
     fields: [julesSessions.delegatedByAgentId],
     references: [agents.id],
   }),
+  user: one(users, {
+    fields: [julesSessions.userId],
+    references: [users.id],
+  }),
 }));
 
 export const julesUsageLogsRelations = relations(julesUsageLogs, ({ one }) => ({
-  tenant: one(tenants, {
-    fields: [julesUsageLogs.tenantId],
-    references: [tenants.id],
-  }),
   session: one(julesSessions, {
     fields: [julesUsageLogs.sessionId],
     references: [julesSessions.id],
   }),
-}));
-
-export const tenantsRelations = relations(tenants, ({ one, many }) => ({
-  julesConfig: one(julesConfigs),
-  julesSessions: many(julesSessions),
-  julesUsageLogs: many(julesUsageLogs),
+  user: one(users, {
+    fields: [julesUsageLogs.userId],
+    references: [users.id],
+  }),
 }));

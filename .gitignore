@@ -94,3 +94,15 @@ apps/electron-desktop/out/
 *.app
 *.exe
 *.AppImage
+
+# AI-generated content and temporary data
+data/video-reports/
+data/video-transcripts/
+data/*-state.json
+data/AI_Knowledge_Base.md
+data/IMPLEMENTATION-PLAN.md
+AI_Knowledge_Base.md
+ai_video_library.html
+*.md.backup
+*-state.json
+packages/testing/performance-reports/

@@ -1,7 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jest-environment-jsdom',
   roots: ['<rootDir>/src/', '<rootDir>/test/'],
   testMatch: ['**/?(*.)+(spec|test).ts'],
   transform: {
@@ -9,7 +9,7 @@ module.exports = {
       'ts-jest',
       {
         tsconfig: '<rootDir>/tsconfig.spec.json',
-        useESM: true,
+        isolatedModules: true,
       },
     ],
   },
@@ -18,20 +18,20 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@types/(.*)$': '<rootDir>/src/types/$1',
+    '^@the-new-fuse/a2a-core/(.*)$': '<rootDir>/../../packages/a2a-core/src/$1',
+    '^@the-new-fuse/database/(.*)$': '<rootDir>/../../packages/database/src/$1',
+    '^@the-new-fuse/types/(.*)$': '<rootDir>/../../packages/types/src/$1',
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js', '<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js', 'tsconfig-paths/register'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/**/index.ts'],
   globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-      isolatedModules: true,
-      useESM: true,
-    },
+    TextEncoder: require('util').TextEncoder,
+    TextDecoder: require('util').TextDecoder,
   },
   testEnvironmentOptions: {
     url: 'http://localhost',
   },
-  // Enable ESM support
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  moduleDirectories: ['node_modules', '<rootDir>'],
+  modulePaths: ['<rootDir>', '<rootDir>/../../packages'],
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
 };
