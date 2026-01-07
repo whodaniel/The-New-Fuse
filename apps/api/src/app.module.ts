@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
 
 import { DrizzleModule } from '@the-new-fuse/database/drizzle';
@@ -13,7 +12,6 @@ import { BrowserHubSwarmModule } from './agents/browser-hub-swarm.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CacheService } from './cache/cache.service';
-import { getDatabaseConfig } from './config/database.config';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
 import { HealthController } from './controllers/health.controller';
@@ -66,14 +64,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
       isGlobal: true,
       load: [llmProviderConfig, securityConfig],
     }) as any,
-    // Provide TypeORM DataSource for modules using @InjectRepository/Repository
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => getDatabaseConfig(configService),
-    }) as any,
-    // Database modules - both Prisma and Drizzle during transition
-
+    // Database modules - Drizzle ORM (production ready)
     DrizzleModule.forRootAsync(), // New Drizzle ORM - production ready
     JwtModule.registerAsync({
       imports: [ConfigModule],
