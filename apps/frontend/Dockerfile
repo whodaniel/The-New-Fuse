@@ -82,6 +82,7 @@ EXPOSE ${PORT:-3000}
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/health || exit 1
 
-# Start command - substitute PORT env var and start nginx
-# This replaces ${PORT:-3000} in nginx config with actual PORT value
-CMD ["sh", "-c", "envsubst '$$PORT' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+# Start command - substitute environment variables and start nginx
+# Set defaults for PORT and BACKEND_URL if not provided
+# Then use envsubst to replace variables in nginx config
+CMD ["sh", "-c", "export PORT=${PORT:-3000} && export BACKEND_URL=${BACKEND_URL:-http://backend:3001} && envsubst '$$PORT $$BACKEND_URL' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
