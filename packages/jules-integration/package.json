@@ -13,10 +13,12 @@
   "dependencies": {
     "@the-new-fuse/agent": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/relay-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "ioredis": "^5.3.2",
     "axios": "^1.6.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "redis": "^4.6.0"
   },
   "devDependencies": {
     "@types/uuid": "^9.0.7",

@@ -1,4 +1,4 @@
-import { DatabaseService } from '@the-new-fuse/database';
+import { DatabaseService, type Task } from '@the-new-fuse/database';
 import { TNFEnvelope, TNFMessageBuilder } from '@the-new-fuse/relay-core';
 import type { RedisClientType } from 'redis';
 
@@ -20,14 +20,14 @@ interface JulesWebhookPayload {
   timestamp: string;
 }
 
-// This is a simplified Task type. I'll need to see where the actual type is defined.
-interface Task {
-  id: string;
-  title: string | null;
-  status: string;
-}
-
-type TaskStatus = 'IN_PROGRESS' | 'BLOCKED' | 'COMPLETED' | 'FAILED';
+type JulesSessionStatus =
+  | 'PENDING'
+  | 'IN_PROGRESS'
+  | 'NEEDS_APPROVAL'
+  | 'USER_INPUT_REQUIRED'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELLED';
 
 export class JulesWebhookHandler {
   constructor(
@@ -53,15 +53,15 @@ export class JulesWebhookHandler {
       return;
     }
 
-    const task = await this.db.tasks.findById(taskId);
+    const task = await this.db.tasks.findTaskById(taskId);
 
     if (!task) {
       console.error(`Task not found for id: ${taskId}`);
       return;
     }
 
-    const newStatus = this.mapJulesStatusToTaskStatus(payload.state);
-    await this.updateTaskStatus(julesSession.julesSessionId, newStatus);
+    const newStatus = this.mapJulesStatusToSessionStatus(payload.state);
+    await this.updateSessionStatus(julesSession.julesSessionId, newStatus);
 
     // Log usage start if it's the first webhook for the session
     if (julesSession.status === 'PENDING') {
@@ -133,7 +133,10 @@ export class JulesWebhookHandler {
     }
   }
 
-  private async updateTaskStatus(julesSessionId: string, status: TaskStatus): Promise<void> {
+  private async updateSessionStatus(
+    julesSessionId: string,
+    status: JulesSessionStatus
+  ): Promise<void> {
     await this.db.jules.updateSessionByJulesSessionId(julesSessionId, { status });
   }
 
@@ -184,15 +187,15 @@ Error: ${payload.message}
 Session: https://jules.google.com/session/${payload.sessionId}`;
   }
 
-  private mapJulesStatusToTaskStatus(julesStatus: string): TaskStatus {
-    const JULES_TO_TNF_STATUS = {
+  private mapJulesStatusToSessionStatus(julesStatus: string): JulesSessionStatus {
+    const JULES_STATUS_MAP = {
       IN_PROGRESS: 'IN_PROGRESS',
-      NEEDS_APPROVAL: 'BLOCKED',
-      USER_INPUT_REQUIRED: 'BLOCKED',
+      NEEDS_APPROVAL: 'NEEDS_APPROVAL',
+      USER_INPUT_REQUIRED: 'USER_INPUT_REQUIRED',
       COMPLETED: 'COMPLETED',
       FAILED: 'FAILED',
     } as const;
-    return JULES_TO_TNF_STATUS[julesStatus as keyof typeof JULES_TO_TNF_STATUS];
+    return JULES_STATUS_MAP[julesStatus as keyof typeof JULES_STATUS_MAP] as JulesSessionStatus;
   }
 
   private createTnfEnvelope(
