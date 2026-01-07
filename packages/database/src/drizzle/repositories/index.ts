@@ -3,6 +3,7 @@
  */
 export { DrizzleAgentRepository, drizzleAgentRepository } from './agent.repository';
 export { DrizzleChatRepository, drizzleChatRepository } from './chat.repository';
+export { DrizzleJulesRepository, drizzleJulesRepository } from './jules.repository';
 export * from './marketplace.repository';
 export * from './mass.repository';
 export { DrizzleTaskRepository, drizzleTaskRepository } from './task.repository';

@@ -128,7 +128,7 @@ export class JulesAgentAdapter {
         ...((createdTask.metadata as object) || {}),
         julesSessionId,
       },
-      status: TaskStatus.RUNNING,
+      status: TaskStatus.IN_PROGRESS,
     });
 
     // 7. Update agent status to BUSY

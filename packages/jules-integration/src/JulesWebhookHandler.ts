@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { DatabaseService } from '@the-new-fuse/database';
 import { TNFEnvelope, TNFMessageBuilder } from '@the-new-fuse/relay-core';
 import type { RedisClientType } from 'redis';
 
@@ -23,7 +23,7 @@ interface JulesWebhookPayload {
 // This is a simplified Task type. I'll need to see where the actual type is defined.
 interface Task {
   id: string;
-  title: string;
+  title: string | null;
   status: string;
 }
 
@@ -31,7 +31,7 @@ type TaskStatus = 'IN_PROGRESS' | 'BLOCKED' | 'COMPLETED' | 'FAILED';
 
 export class JulesWebhookHandler {
   constructor(
-    private db: PrismaClient,
+    private db: DatabaseService,
     private redis: RedisClientType,
     private julesUsageTracker: JulesUsageTracker
   ) {}
@@ -46,16 +46,14 @@ export class JulesWebhookHandler {
 
     const { tenantId, taskId, conversationId } = context;
 
-    const julesSession = await this.db.julesSession.findUnique({
-      where: { julesSessionId: payload.sessionId },
-    });
+    const julesSession = await this.db.jules.findSessionByJulesSessionId(payload.sessionId);
 
     if (!julesSession) {
       console.warn(`Jules session not found for id: ${payload.sessionId}`);
       return;
     }
 
-    const task = await this.db.task.findUnique({ where: { id: taskId } });
+    const task = await this.db.tasks.findById(taskId);
 
     if (!task) {
       console.error(`Task not found for id: ${taskId}`);
@@ -136,10 +134,7 @@ export class JulesWebhookHandler {
   }
 
   private async updateTaskStatus(julesSessionId: string, status: TaskStatus): Promise<void> {
-    await this.db.julesSession.update({
-      where: { julesSessionId },
-      data: { status },
-    });
+    await this.db.jules.updateSessionByJulesSessionId(julesSessionId, { status });
   }
 
   private async publishToRelay(envelope: TNFEnvelope): Promise<void> {

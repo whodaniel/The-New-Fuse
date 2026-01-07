@@ -24,6 +24,8 @@ import {
   DrizzleAgentRepository,
   drizzleChatRepository,
   DrizzleChatRepository,
+  drizzleJulesRepository,
+  DrizzleJulesRepository,
   drizzleTaskRepository,
   DrizzleTaskRepository,
   drizzleUserRepository,
@@ -114,6 +116,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get agents(): DrizzleAgentRepository {
     return drizzleAgentRepository;
+  }
+
+  /**
+   * Jules repository for Jules integration operations
+   */
+  get jules(): DrizzleJulesRepository {
+    return drizzleJulesRepository;
   }
 
   /**

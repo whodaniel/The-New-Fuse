@@ -10,6 +10,7 @@ export * from './enums';
 export * from './agents';
 export * from './chat';
 export * from './code-execution';
+export * from './jules';
 export * from './marketplace';
 export * from './mass';
 export * from './system';
