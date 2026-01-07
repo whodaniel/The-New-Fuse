@@ -1,0 +1,24 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Task {
+  id        String   @id @default(cuid())
+  title     String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JulesSession {
+  id                  String   @id @default(cuid())
+  julesSessionId      String   @unique
+  status              String
+  delegatedByAgentId  String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
