@@ -22,7 +22,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.24.0",
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "@the-new-fuse/database": "workspace:*",
     "chokidar": "^4.0.3",
     "ethers": "^6.15.0",

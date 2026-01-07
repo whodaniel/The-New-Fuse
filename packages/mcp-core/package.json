@@ -82,7 +82,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.24.0",
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "ajv": "^8.17.1",
     "ws": "^8.18.3",
     "uuid": "^13.0.0",
