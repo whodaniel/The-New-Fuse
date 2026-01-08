@@ -7,10 +7,10 @@ import { BrandConsistencyController } from './brand-consistency.controller';
 @Module({
   imports: [
     DatabaseModule,
-    EventEmitterModule.forRoot()
+    EventEmitterModule, // Configured at root app.module level
   ],
   controllers: [BrandConsistencyController],
   providers: [BrandConsistencyAgentService],
-  exports: [BrandConsistencyAgentService]
+  exports: [BrandConsistencyAgentService],
 })
 export class BrandConsistencyAgentModule {}

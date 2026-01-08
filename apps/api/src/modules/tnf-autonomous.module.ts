@@ -379,7 +379,7 @@ import { TNFAutonomousController } from '../controllers/tnf-autonomous.controlle
  * Main module that wires everything together
  */
 @Module({
-  imports: [EventEmitterModule.forRoot(), ScheduleModule.forRoot()],
+  imports: [EventEmitterModule, ScheduleModule.forRoot()], // EventEmitterModule configured at root
   controllers: [TNFAutonomousController],
   providers: [
     {

@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
@@ -64,6 +65,13 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
       isGlobal: true,
       load: [llmProviderConfig, securityConfig],
     }) as any,
+    // Event Emitter for inter-service communication (must be configured at root level)
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: '.',
+      maxListeners: 20,
+      verboseMemoryLeak: true,
+    }),
     // Database modules - Drizzle ORM (production ready)
     DrizzleModule.forRootAsync(), // New Drizzle ORM - production ready
     JwtModule.registerAsync({

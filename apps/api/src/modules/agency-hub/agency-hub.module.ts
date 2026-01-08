@@ -4,20 +4,20 @@ import { DatabaseModule } from '@the-new-fuse/database';
 // import { AgencyHubModule as CoreAgencyHubModule } from '../../types/core';
 
 // Import existing controllers to maintain compatibility
-import { AgencyController } from './controllers/agency.controller';
-import { SwarmController } from './controllers/swarm.controller';
-import { ServiceRequestController } from './controllers/service-request.controller';
-import { AnalyticsController } from './controllers/analytics.controller';
 import { A2AMessageBrokerController } from './controllers/a2a-broker.controller';
+import { AgencyController } from './controllers/agency.controller';
+import { AnalyticsController } from './controllers/analytics.controller';
+import { ServiceRequestController } from './controllers/service-request.controller';
+import { SwarmController } from './controllers/swarm.controller';
 
 // Services - The Three Pillars of TNF Agent
-import { AgentSwarmOrchestrationService } from './services/agent-swarm-orchestration.service';
 import { A2AMessageBrokerService } from './services/a2a-message-broker.service';
+import { AgentSwarmOrchestrationService } from './services/agent-swarm-orchestration.service';
 
 @Module({
   imports: [
-    // Required dependencies
-    EventEmitterModule.forRoot(),
+    // Required dependencies - EventEmitterModule configured at root app.module level
+    EventEmitterModule,
     DatabaseModule,
   ],
   controllers: [
@@ -37,10 +37,6 @@ import { A2AMessageBrokerService } from './services/a2a-message-broker.service';
     A2AMessageBrokerService,
     // Note: Pillar 2 (Heartbeat) is integrated into the Orchestrator via setInterval
   ],
-  exports: [
-    AgentSwarmOrchestrationService,
-    A2AMessageBrokerService
-  ]
+  exports: [AgentSwarmOrchestrationService, A2AMessageBrokerService],
 })
 export class AgencyHubModule {}
-
