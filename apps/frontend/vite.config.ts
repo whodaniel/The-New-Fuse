@@ -213,6 +213,9 @@ export default defineConfig(({ mode }) => {
           chunkFileNames: 'assets/js/[name].[hash].js',
           entryFileNames: 'assets/js/[name].[hash].js',
           // Advanced chunk splitting strategy
+          // Simplify chunk splitting to avoid circular dependency issues
+          manualChunks: undefined,
+          /*
           manualChunks: (id) => {
             // Core React runtime and routing - loaded on every page
             if (
@@ -298,6 +301,7 @@ export default defineConfig(({ mode }) => {
               return 'vendor';
             }
           },
+          */
           // Optimize chunk loading with smart imports
           inlineDynamicImports: false,
           // Better mangling for production
