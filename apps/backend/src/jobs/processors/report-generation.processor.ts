@@ -1,9 +1,10 @@
-import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
-import { Logger, Injectable } from '@nestjs/common';
+import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
+import { Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
+import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service';
+import { EmailService } from '../../services/email.service';
 import { QueueName } from '../constants/queue-names';
 import { ReportGenerationJobData } from '../interfaces/job-data.interface';
-import { EmailService } from '../../services/email.service';
 
 /**
  * Report generation job processor
@@ -14,16 +15,17 @@ import { EmailService } from '../../services/email.service';
 export class ReportGenerationProcessor {
   private readonly logger = new Logger(ReportGenerationProcessor.name);
 
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly systemMetricsService: SystemMetricsService
+  ) {}
 
   /**
    * Process report generation job
    */
   @Process('generate-report')
   async handleGenerateReport(job: Job<ReportGenerationJobData>) {
-    this.logger.log(
-      `Processing generate-report job ${job.id} for type ${job.data.reportType}`,
-    );
+    this.logger.log(`Processing generate-report job ${job.id} for type ${job.data.reportType}`);
 
     try {
       const { reportType, userId, parameters, format, emailOnComplete, email } = job.data;
@@ -109,9 +111,7 @@ export class ReportGenerationProcessor {
    */
   @Process('scheduled-report')
   async handleScheduledReport(job: Job<ReportGenerationJobData & { schedule: string }>) {
-    this.logger.log(
-      `Processing scheduled-report job ${job.id} for type ${job.data.reportType}`,
-    );
+    this.logger.log(`Processing scheduled-report job ${job.id} for type ${job.data.reportType}`);
 
     try {
       // Generate the report using the main handler
@@ -170,14 +170,17 @@ export class ReportGenerationProcessor {
   private async generateSystemMetricsReport(parameters: Record<string, any>) {
     this.logger.debug('Generating system metrics report');
 
-    // TODO: Replace with actual system metrics
+    const metrics = await this.systemMetricsService.getMetrics();
+
     return {
-      recordCount: 100,
+      recordCount: 1,
       data: {
-        cpuUsage: 45.5,
-        memoryUsage: 60.2,
-        diskUsage: 35.8,
-        networkTraffic: 1024000,
+        cpuUsage: metrics.cpu.usagePercent,
+        memoryUsage: metrics.memory.usagePercent,
+        diskUsage: metrics.disk?.usagePercent || 0,
+        networkTraffic: metrics.network?.totalTraffic || 0,
+        uptime: metrics.uptime,
+        status: metrics.status,
       },
     };
   }
@@ -257,7 +260,7 @@ export class ReportGenerationProcessor {
   @OnQueueCompleted()
   onCompleted(job: Job, result: any) {
     this.logger.log(
-      `Report generation job ${job.id} completed. Type: ${result.reportType}, Records: ${result.recordCount}`,
+      `Report generation job ${job.id} completed. Type: ${result.reportType}, Records: ${result.recordCount}`
     );
   }
 
@@ -268,7 +271,7 @@ export class ReportGenerationProcessor {
   onFailed(job: Job, error: Error) {
     this.logger.error(
       `Report generation job ${job.id} failed after ${job.attemptsMade} attempts. Error: ${error.message}`,
-      error.stack,
+      error.stack
     );
   }
 
