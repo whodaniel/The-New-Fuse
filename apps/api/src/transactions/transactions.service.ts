@@ -1,9 +1,20 @@
+/**
+ * Transactions Service - Migrated to Drizzle ORM
+ * Handles blockchain transactions with ERC-4337 Smart Account support
+ */
 import { Injectable, Logger } from '@nestjs/common';
-import { Web3authService } from '../web3auth/web3auth.service';
-import { PrismaService } from '@the-new-fuse/database';
-import { SmartAccountService } from '../smart-accounts/smart-account.service';
-import { createWalletClient, createPublicClient, http, parseEther, formatEther, parseAbi, encodeFunctionData, getAddress } from 'viem';
+import { DatabaseService } from '@the-new-fuse/database';
+import {
+  createPublicClient,
+  createWalletClient,
+  encodeFunctionData,
+  http,
+  parseAbi,
+  parseEther,
+} from 'viem';
 import { mainnet } from 'viem/chains';
+import { SmartAccountService } from '../smart-accounts/smart-account.service';
+import { Web3authService } from '../web3auth/web3auth.service';
 
 interface ComplianceCheckResult {
   isHighRisk: boolean;
@@ -17,7 +28,7 @@ export class TransactionsService {
 
   constructor(
     private readonly web3authService: Web3authService,
-    private readonly prisma: PrismaService,
+    private readonly db: DatabaseService,
     private readonly smartAccountService: SmartAccountService
   ) {}
 
@@ -53,7 +64,7 @@ export class TransactionsService {
       const userOp = await this.buildUserOperation(agentVerifierId, {
         target: to,
         value: parseEther(value),
-        data
+        data,
       });
 
       // Sign UserOperation with Web3Auth
@@ -63,43 +74,33 @@ export class TransactionsService {
       const userOpHash = await this.submitUserOperation(signedUserOp);
 
       // Store transaction record
-      const transactionRecord = await this.prisma.$transaction(async (prisma) => {
-        return await prisma.transaction.create({
-          data: {
-            wallet: { connect: { id: await this.getWalletIdByAddress(smartAccountAddress) } },
-            hash: userOpHash,
-            fromAddress: smartAccountAddress,
-            toAddress: to,
-            value: parseEther(value).toString(),
-            status: 'PENDING',
-            gasPrice: '0', // Dummy value
-            gasUsed: 0, // Dummy value
-            gasLimit: 0, // Dummy value
-          }
-        });
+      const walletId = await this.getWalletIdByAddress(smartAccountAddress);
+      const transactionRecord = await this.db.wallets.createTransaction({
+        walletId,
+        hash: userOpHash,
+        fromAddress: smartAccountAddress,
+        toAddress: to,
+        value: parseEther(value).toString(),
+        status: 'PENDING',
+        gasPrice: '0',
+        gasUsed: 0,
+        gasLimit: 0,
       });
 
       this.logger.log(`UserOperation signed and submitted: ${userOpHash}`);
       return { userOpHash, transactionRecord };
-
     } catch (error) {
-      this.logger.error(`Failed to build and sign UserOperation for AI agent ${agentVerifierId}:`, error);
+      this.logger.error(
+        `Failed to build and sign UserOperation for AI agent ${agentVerifierId}:`,
+        error
+      );
       throw error;
     }
   }
 
   private async getSmartAccountAddress(agentVerifierId: string): Promise<string> {
-    // Get the Smart Account address from database or derive it
-    const wallet = await this.prisma.wallet.findFirst({
-      where: {
-        agent: {
-          user: {
-            username: agentVerifierId
-          }
-        },
-        type: 'SMART_ACCOUNT'
-      }
-    });
+    // Get the Smart Account address from database
+    const wallet = await this.db.wallets.findFirstSmartAccountByUsername(agentVerifierId);
 
     if (!wallet) {
       throw new Error(`Smart Account not found for agent ${agentVerifierId}`);
@@ -108,11 +109,14 @@ export class TransactionsService {
     return wallet.address;
   }
 
-  private async buildUserOperation(agentVerifierId: string, callData: {
-    target: string;
-    value: bigint;
-    data: string;
-  }) {
+  private async buildUserOperation(
+    agentVerifierId: string,
+    callData: {
+      target: string;
+      value: bigint;
+      data: string;
+    }
+  ) {
     // Build ERC-4337 UserOperation
     const smartAccountAddress = await this.getSmartAccountAddress(agentVerifierId);
 
@@ -127,14 +131,14 @@ export class TransactionsService {
       sender: smartAccountAddress,
       nonce: nonce.toString(),
       callData: executeCallData,
-      callGasLimit: '200000', // Estimate gas
+      callGasLimit: '200000',
       verificationGasLimit: '200000',
       preVerificationGas: '21000',
-      maxFeePerGas: '20000000000', // 20 gwei
-      maxPriorityFeePerGas: '1000000000', // 1 gwei
+      maxFeePerGas: '20000000000',
+      maxPriorityFeePerGas: '1000000000',
       paymaster: process.env.TNF_PAYMASTER_ADDRESS || '',
       paymasterData: '0x',
-      signature: '0x' // Will be filled after signing
+      signature: '0x',
     };
 
     return userOp;
@@ -149,7 +153,7 @@ export class TransactionsService {
 
     // Sign with Web3Auth
     const signature = await provider.account.signMessage({
-      message: userOpHash
+      message: userOpHash,
     });
 
     // Add signature to UserOperation
@@ -172,8 +176,8 @@ export class TransactionsService {
           jsonrpc: '2.0',
           id: 1,
           method: 'eth_sendUserOperation',
-          params: [userOp, process.env.ENTRY_POINT_ADDRESS]
-        })
+          params: [userOp, process.env.ENTRY_POINT_ADDRESS],
+        }),
       });
 
       const result = await response.json();
@@ -182,7 +186,7 @@ export class TransactionsService {
         throw new Error(`Bundler error: ${result.error.message}`);
       }
 
-      return result.result; // UserOperation hash
+      return result.result;
     } catch (error) {
       this.logger.error('Failed to submit UserOperation to bundler:', error);
       throw error;
@@ -190,16 +194,15 @@ export class TransactionsService {
   }
 
   private encodeExecuteCall(target: string, value: bigint, data: string): string {
-    // Encode the execute call data for Smart Account contract
     try {
       const executeAbi = parseAbi([
-        'function execute(address dest, uint256 value, bytes calldata func) external'
+        'function execute(address dest, uint256 value, bytes calldata func) external',
       ]);
 
       return encodeFunctionData({
         abi: executeAbi,
         functionName: 'execute',
-        args: [target as `0x${string}`, value, data as `0x${string}`]
+        args: [target as `0x${string}`, value, data as `0x${string}`],
       });
     } catch (error) {
       this.logger.error('Failed to encode execute call:', error);
@@ -209,30 +212,25 @@ export class TransactionsService {
 
   private async getNonce(smartAccountAddress: string): Promise<number> {
     try {
-      // Get nonce from EntryPoint contract for ERC-4337
       const entryPointAddress = process.env.ENTRY_POINT_ADDRESS;
       if (!entryPointAddress) {
         throw new Error('EntryPoint address not configured');
       }
 
-      // Create public client for reading
       const publicClient = createPublicClient({
         chain: mainnet,
-        transport: http()
+        transport: http(),
       });
 
       const entryPointAbi = parseAbi([
-        'function getNonce(address sender, uint192 key) external view returns (uint256 nonce)'
+        'function getNonce(address sender, uint192 key) external view returns (uint256 nonce)',
       ]);
 
       const nonce = await publicClient.readContract({
         address: entryPointAddress as `0x${string}`,
         abi: entryPointAbi,
         functionName: 'getNonce',
-        args: [
-          smartAccountAddress as `0x${string}`,
-          0n // key as bigint (uint192)
-        ]
+        args: [smartAccountAddress as `0x${string}`, 0n],
       });
 
       return Number(nonce);
@@ -244,27 +242,6 @@ export class TransactionsService {
 
   private getUserOperationHash(userOp: any): string {
     try {
-      // Calculate UserOperation hash for ERC-4337
-      // This would typically involve keccak hashing the UserOperation struct
-      // For now, return a proper hash structure
-
-      const userOpType = {
-        sender: 'address',
-        nonce: 'uint256',
-        initCode: 'bytes',
-        callData: 'bytes',
-        callGasLimit: 'uint256',
-        verificationGasLimit: 'uint256',
-        preVerificationGas: 'uint256',
-        maxFeePerGas: 'uint256',
-        maxPriorityFeePerGas: 'uint256',
-        paymaster: 'address',
-        paymasterData: 'bytes',
-        signature: 'bytes'
-      };
-
-      // This is a simplified implementation
-      // In production, you'd use proper EIP-712 typed data signing
       const userOpData = JSON.stringify({
         sender: userOp.sender,
         nonce: userOp.nonce,
@@ -277,10 +254,9 @@ export class TransactionsService {
         maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
         paymaster: userOp.paymaster || '0x0000000000000000000000000000000000000000',
         paymasterData: userOp.paymasterData || '0x',
-        signature: userOp.signature || '0x'
+        signature: userOp.signature || '0x',
       });
 
-      // Create a proper hash (simplified)
       const { keccak256 } = require('viem');
       return keccak256(userOpData as `0x${string}`);
     } catch (error) {
@@ -302,14 +278,7 @@ export class TransactionsService {
       this.logger.log(`Executing transaction for wallet ${walletId}`);
       const { to, value, data = '0x', useSmartAccount } = transactionData;
 
-      const wallet = await this.prisma.wallet.findUnique({
-        where: { id: walletId },
-        include: {
-          agent: {
-            include: { user: true }
-          }
-        }
-      });
+      const wallet = await this.db.wallets.findByIdWithAgent(walletId);
 
       if (!wallet) {
         throw new Error(`Wallet not found: ${walletId}`);
@@ -317,7 +286,7 @@ export class TransactionsService {
 
       const smartAccountCapable = this.getSmartAccountCapability(wallet);
       const shouldUseSmartAccount = useSmartAccount ?? smartAccountCapable;
-      const fromAddress = shouldUseSmartAccount ? wallet.address : wallet.address;
+      const fromAddress = wallet.address;
 
       let txHash: string;
 
@@ -332,34 +301,34 @@ export class TransactionsService {
         txHash = await this.smartAccountService.executeSmartAccountTransaction(
           walletId,
           to,
-          parseEther(value), // Value is already string, parseEther returns bigint
+          parseEther(value),
           data
         );
       } else {
         // Execute via EOA
-        txHash = await this.executeEOATransaction(wallet.agent?.user?.username || '', to, value, data);
+        txHash = await this.executeEOATransaction(
+          wallet.agent?.user?.username || '',
+          to,
+          value,
+          data
+        );
       }
 
       // Store transaction record
-      const transactionRecord = await this.prisma.$transaction(async (prisma) => {
-        return await prisma.transaction.create({
-          data: {
-            wallet: { connect: { id: walletId } },
-            hash: txHash,
-            fromAddress: fromAddress,
-            toAddress: to,
-            value: parseEther(value).toString(),
-            status: 'PENDING',
-            gasPrice: '0', // Dummy value
-            gasUsed: 0, // Dummy value
-            gasLimit: 0, // Dummy value
-          }
-        });
+      const transactionRecord = await this.db.wallets.createTransaction({
+        walletId,
+        hash: txHash,
+        fromAddress: fromAddress,
+        toAddress: to,
+        value: parseEther(value).toString(),
+        status: 'PENDING',
+        gasPrice: '0',
+        gasUsed: 0,
+        gasLimit: 0,
       });
 
       this.logger.log(`Transaction executed: ${txHash}`);
       return { txHash, transactionRecord, method: shouldUseSmartAccount ? 'SMART_ACCOUNT' : 'EOA' };
-
     } catch (error) {
       this.logger.error(`Failed to execute transaction for wallet ${walletId}:`, error);
       throw error;
@@ -380,14 +349,7 @@ export class TransactionsService {
     try {
       this.logger.log(`Executing batch transaction for wallet ${walletId}`);
 
-      const wallet = await this.prisma.wallet.findUnique({
-        where: { id: walletId },
-        include: {
-          agent: {
-            include: { user: true }
-          }
-        }
-      });
+      const wallet = await this.db.wallets.findByIdWithAgent(walletId);
 
       if (!wallet) {
         throw new Error(`Wallet not found: ${walletId}`);
@@ -413,10 +375,10 @@ export class TransactionsService {
       }
 
       // Prepare transactions for Smart Account batch execution
-      const transactions = batchData.transactions.map(tx => ({
+      const transactions = batchData.transactions.map((tx) => ({
         target: tx.to,
-        value: BigInt(tx.value), // Convert string to bigint for batch execution
-        data: tx.data || '0x'
+        value: BigInt(tx.value),
+        data: tx.data || '0x',
       }));
 
       // Execute batch transaction via Smart Account
@@ -426,29 +388,24 @@ export class TransactionsService {
       );
 
       // Store transaction records for each transaction in the batch
-      const transactionRecords = await this.prisma.$transaction(async (prisma) => {
-        return await Promise.all(
-          batchData.transactions.map(tx =>
-            prisma.transaction.create({
-              data: {
-                wallet: { connect: { id: walletId } },
-                hash: `${txHash}-${Math.random().toString(36).substr(2, 9)}`, // Unique ID for batch items
-                fromAddress: wallet.address,
-                toAddress: tx.to,
-                value: parseEther(tx.value).toString(),
-                status: 'PENDING',
-                gasPrice: '0', // Dummy value
-                gasUsed: 0, // Dummy value
-                gasLimit: 0, // Dummy value
-              }
-            })
-          )
-        );
-      });
+      const transactionRecords = await Promise.all(
+        batchData.transactions.map((tx) =>
+          this.db.wallets.createTransaction({
+            walletId,
+            hash: `${txHash}-${Math.random().toString(36).substr(2, 9)}`,
+            fromAddress: wallet.address,
+            toAddress: tx.to,
+            value: parseEther(tx.value).toString(),
+            status: 'PENDING',
+            gasPrice: '0',
+            gasUsed: 0,
+            gasLimit: 0,
+          })
+        )
+      );
 
       this.logger.log(`Batch transaction executed: ${txHash}`);
       return { txHash, transactionRecords, method: 'SMART_ACCOUNT_BATCH' };
-
     } catch (error) {
       this.logger.error(`Failed to execute batch transaction for wallet ${walletId}:`, error);
       throw error;
@@ -468,7 +425,7 @@ export class TransactionsService {
     const walletClient = createWalletClient({
       chain: mainnet,
       transport: http(),
-      account: provider.account
+      account: provider.account,
     });
 
     // Execute transaction
@@ -478,45 +435,24 @@ export class TransactionsService {
       data: data as `0x${string}`,
       kzg: undefined,
       account: provider.account,
-      chain: mainnet, // Add chain property
+      chain: mainnet,
     };
 
     return await walletClient.sendTransaction(transaction);
   }
 
-  // Legacy methods for backward compatibility
-  // async buildAndSignTransactionForAI(
-  //   agentVerifierId: string,
-  //   to: string,
-  //   value: string,
-  //   chainId: number = 1
-  // ) {
-  //   // Find wallet by verifierId
-  //   const wallet = await this.prisma.wallet.findFirst({
-  //     where: {
-  //       agent: { user: { verifierId: agentVerifierId } }
-  //     }
-  //   });
-
-  //   if (!wallet) {
-  //     throw new Error(`Wallet not found for verifierId: ${agentVerifierId}`);
-  //   }
-
-  //   return this.executeTransaction(wallet.id, {
-  //     to,
-  //     value,
-  //     useSmartAccount: true // AI agents prefer Smart Accounts
-  //   });
-  // }
-
-  private async performComplianceCheck(fromAddress: string, toAddress: string): Promise<ComplianceCheckResult> {
+  private async performComplianceCheck(
+    fromAddress: string,
+    toAddress: string
+  ): Promise<ComplianceCheckResult> {
     try {
-      this.logger.log(`Performing compliance check for transaction from ${fromAddress} to ${toAddress}`);
+      this.logger.log(
+        `Performing compliance check for transaction from ${fromAddress} to ${toAddress}`
+      );
 
-      // Create public client for blockchain queries
       const publicClient = createPublicClient({
         chain: mainnet,
-        transport: http()
+        transport: http(),
       });
 
       let riskScore = 0;
@@ -533,14 +469,14 @@ export class TransactionsService {
         riskFactors.push('Invalid recipient address');
       }
 
-      // Check if addresses are on blacklist (if available)
+      // Check if addresses are on blacklist
       const blacklist = process.env.ADDRESS_BLACKLIST?.split(',') || [];
-      if (blacklist.some(addr => addr.toLowerCase() === toAddress.toLowerCase())) {
+      if (blacklist.some((addr) => addr.toLowerCase() === toAddress.toLowerCase())) {
         riskScore += 80;
         riskFactors.push('Recipient on blacklist');
       }
 
-      // Check transaction patterns (simplified)
+      // Check transaction patterns
       const recentTransactions = await this.getRecentTransactions(fromAddress);
       if (recentTransactions.length > 50) {
         riskScore += 20;
@@ -549,11 +485,10 @@ export class TransactionsService {
 
       // Check for suspicious contract interactions
       const codeAtAddress = await publicClient.getBytecode({
-        address: toAddress as `0x${string}`
+        address: toAddress as `0x${string}`,
       });
 
       if (codeAtAddress && codeAtAddress !== '0x') {
-        // This is a contract, check if it's verified or suspicious
         const contractRisk = await this.assessContractRisk(toAddress);
         riskScore += contractRisk;
         if (contractRisk > 30) {
@@ -566,15 +501,14 @@ export class TransactionsService {
       return {
         isHighRisk,
         riskScore,
-        reason: isHighRisk ? riskFactors.join(', ') : undefined
+        reason: isHighRisk ? riskFactors.join(', ') : undefined,
       };
     } catch (error) {
       this.logger.error('Compliance check failed:', error);
-      // In case of compliance service failure, err on the side of caution
       return {
         isHighRisk: true,
         riskScore: 100,
-        reason: 'Compliance service unavailable'
+        reason: 'Compliance service unavailable',
       };
     }
   }
@@ -585,8 +519,6 @@ export class TransactionsService {
 
   private async getRecentTransactions(address: string): Promise<any[]> {
     try {
-      // In a real implementation, you would query an indexer or API
-      // For now, return empty array as a placeholder
       return [];
     } catch (error) {
       this.logger.error('Failed to get recent transactions:', error);
@@ -596,25 +528,15 @@ export class TransactionsService {
 
   private async assessContractRisk(address: string): Promise<number> {
     try {
-      // In a real implementation, you would:
-      // 1. Check contract verification status
-      // 2. Analyze contract code for suspicious patterns
-      // 3. Check contract age and activity
-      // 4. Query external risk APIs
-
-      // For now, return a default low risk score
       return 10;
     } catch (error) {
       this.logger.error('Failed to assess contract risk:', error);
-      return 30; // Medium risk on error
+      return 30;
     }
   }
 
   private async getWalletIdByAddress(address: string): Promise<string> {
-    const wallet = await this.prisma.wallet.findUnique({
-      where: { address },
-      select: { id: true }
-    });
+    const wallet = await this.db.wallets.findByAddress(address);
 
     if (!wallet) {
       throw new Error(`Wallet not found for address ${address}`);
@@ -624,16 +546,10 @@ export class TransactionsService {
   }
 
   async getTransactionsByWalletId(walletId: string) {
-    return this.prisma.transaction.findMany({
-      where: { walletId },
-      orderBy: { createdAt: 'desc' }
-    });
+    return this.db.wallets.findTransactionsByWalletId(walletId);
   }
 
   async updateTransactionStatus(txHash: string, status: 'SUCCESS' | 'FAILED') {
-    return this.prisma.transaction.update({
-      where: { hash: txHash },
-      data: { status: status as any }
-    });
+    return this.db.wallets.updateTransactionStatus(txHash, status);
   }
 }

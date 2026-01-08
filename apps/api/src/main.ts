@@ -117,7 +117,7 @@ async function bootstrap(): Promise<void> {
   }
 
   // Enhanced security headers
-  app.use((req, res, next) => {
+  app.use((req: any, res: any, next: any) => {
     // Content Security Policy
     res.setHeader(
       'Content-Security-Policy',

@@ -1,31 +1,28 @@
+/**
+ * UserService - Migrated to Drizzle ORM
+ * Handles user CRUD operations
+ */
 import { Injectable } from '@nestjs/common';
-import { PrismaService, User } from '@the-new-fuse/database';
-// Prisma types removed during Drizzle migration
+import { DatabaseService, User } from '@the-new-fuse/database';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private db: DatabaseService) {}
 
   async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+    return this.db.users.findAll();
   }
 
   async findOne(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: { id },
-    });
+    return this.db.users.findById(id);
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: { email },
-    });
+    return this.db.users.findByEmail(email);
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: { username },
-    });
+    return this.db.users.findByUsername(username);
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
@@ -37,14 +34,11 @@ export class UserService {
   }
 
   async createUser(email: string, hashedPassword: string, username: string): Promise<User> {
-    return this.prisma.user.create({
-      data: {
-        email,
-        hashedPassword,
-        username,
-        role: 'USER',
-        // Add other required fields if any, based on your schema.prisma
-      },
+    return this.db.users.create({
+      email,
+      hashedPassword,
+      username,
+      role: 'USER',
     });
   }
 
@@ -60,22 +54,17 @@ export class UserService {
     }
   }
 
-  async update(id: string, data: Partial<User>): Promise<User> {
-    // Remove any readonly/computed fields that Prisma doesn't allow in updates
+  async update(id: string, data: Partial<User>): Promise<User | null> {
+    // Remove any readonly/computed fields
     const { id: _id, createdAt, ...updateData } = data as any;
-    return this.prisma.user.update({
-      where: { id },
-      data: {
-        ...updateData,
-        updatedAt: new Date(),
-      },
+    return this.db.users.update(id, {
+      ...updateData,
+      updatedAt: new Date(),
     });
   }
 
-  async delete(id: string): Promise<User> {
-    return this.prisma.user.delete({
-      where: { id },
-    });
+  async delete(id: string): Promise<boolean> {
+    return this.db.users.softDelete(id);
   }
 }
 

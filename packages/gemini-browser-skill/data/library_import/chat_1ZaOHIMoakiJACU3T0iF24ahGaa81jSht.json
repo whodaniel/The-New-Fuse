@@ -1,0 +1,19 @@
+{
+  "id": "1ZaOHIMoakiJACU3T0iF24ahGaa81jSht",
+  "url": "https://aistudio.google.com/app/prompts/1ZaOHIMoakiJACU3T0iF24ahGaa81jSht",
+  "importedAt": "2026-01-07T20:31:27.739Z",
+  "turns": [
+    {
+      "role": "model",
+      "text": "editmore_vert"
+    },
+    {
+      "role": "model",
+      "text": "more_vert"
+    },
+    {
+      "role": "model",
+      "text": "editmore_vertthumb_upthumb_down"
+    }
+  ]
+}

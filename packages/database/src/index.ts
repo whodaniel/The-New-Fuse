@@ -12,8 +12,8 @@
 // Export Drizzle client, module, and schema
 export {
   DRIZZLE_CLIENT,
-  DrizzleModule,
-  DrizzleModule as DatabaseModule, // Alias for backward compatibility
+  DrizzleModule as DatabaseModule,
+  DrizzleModule, // Alias for backward compatibility
   DrizzleService,
   db,
   queryClient,
@@ -66,11 +66,13 @@ export type {
   NewChatMessage,
   NewMessage,
   NewTask,
+  NewTaskExecution,
   NewUser,
   NewWorkflow,
   NewWorkflowExecution,
   NewWorkspace,
   Task,
+  TaskExecution,
   User,
   Workflow,
   WorkflowExecution,

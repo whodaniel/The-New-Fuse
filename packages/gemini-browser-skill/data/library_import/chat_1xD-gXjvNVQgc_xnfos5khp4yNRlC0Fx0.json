@@ -1,0 +1,31 @@
+{
+  "id": "1xD-gXjvNVQgc_xnfos5khp4yNRlC0Fx0",
+  "url": "https://aistudio.google.com/app/prompts/1xD-gXjvNVQgc_xnfos5khp4yNRlC0Fx0",
+  "importedAt": "2026-01-07T20:55:19.371Z",
+  "turns": [
+    {
+      "role": "model",
+      "text": "editmore_vert"
+    },
+    {
+      "role": "model",
+      "text": "more_vert"
+    },
+    {
+      "role": "model",
+      "text": "editmore_vert"
+    },
+    {
+      "role": "model",
+      "text": "editmore_vert"
+    },
+    {
+      "role": "model",
+      "text": "more_vert"
+    },
+    {
+      "role": "model",
+      "text": "editmore_vertthumb_upthumb_down"
+    }
+  ]
+}

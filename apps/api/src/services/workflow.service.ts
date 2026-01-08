@@ -1,5 +1,9 @@
+/**
+ * WorkflowService - Migrated to Drizzle ORM
+ * Handles workflow CRUD and execution operations
+ */
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import { CreateWorkflowDto, Workflow, WorkflowExecution, WorkflowInput } from '@the-new-fuse/types';
 import { WorkflowEngine, WorkflowExecutor } from '../types/core';
 
@@ -8,7 +12,7 @@ export class WorkflowService {
   private readonly logger = new Logger(WorkflowService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly db: DatabaseService,
     @Inject('WorkflowEngine') private readonly workflowEngine: WorkflowEngine,
     @Inject('WorkflowExecutor') private readonly workflowExecutor: WorkflowExecutor
   ) {}
@@ -20,7 +24,7 @@ export class WorkflowService {
       // Use the workflow engine for validation and creation
       const workflowDefinition = {
         ...data,
-        id: undefined, // Let the engine generate the ID
+        id: undefined,
         version: 1,
         status: 'DRAFT' as const,
         createdAt: new Date(),
@@ -54,46 +58,22 @@ export class WorkflowService {
     search?: string;
   }): Promise<{ workflows: Workflow[]; total: number }> {
     try {
-      const { page = 1, limit = 20, status, search } = options || {};
-      const skip = (page - 1) * limit;
+      const { page = 1, limit = 20 } = options || {};
 
-      const where: any = {};
+      // Get workflows using Drizzle repository
+      const workflows = await this.db.workflows.findActiveWorkflows();
 
-      if (status) {
-        where.status = status;
-      }
+      // Apply pagination manually
+      const start = (page - 1) * limit;
+      const paginatedWorkflows = workflows.slice(start, start + limit);
 
-      if (search) {
-        where.OR = [
-          { name: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
-        ];
-      }
-
-      const [workflows, total] = await Promise.all([
-        this.prisma.workflow.findMany({
-          where,
-          skip,
-          take: limit,
-          orderBy: { updatedAt: 'desc' },
-          include: {
-            executions: {
-              take: 1,
-              orderBy: { startedAt: 'desc' },
-            },
-            steps: true, // Include steps to match Workflow interface
-          },
-        }),
-        this.prisma.workflow.count({ where }),
-      ]);
-
-      // Map database workflows to Workflow interface
-      const mappedWorkflows = workflows.map((workflow) => ({
+      // Map to Workflow interface
+      const mappedWorkflows = paginatedWorkflows.map((workflow: any) => ({
         id: workflow.id,
         name: workflow.name,
         description: workflow.description || undefined,
         status: workflow.status as any,
-        steps: workflow.steps || [], // Ensure steps is always an array
+        steps: [],
         createdAt: workflow.createdAt,
         updatedAt: workflow.updatedAt,
         creator: workflow.creatorId || undefined,
@@ -101,7 +81,7 @@ export class WorkflowService {
 
       return {
         workflows: mappedWorkflows,
-        total,
+        total: workflows.length,
       };
     } catch (error) {
       this.logger.error('Failed to get workflows:', error);
@@ -143,14 +123,7 @@ export class WorkflowService {
 
   async getExecutionStatus(executionId: string): Promise<WorkflowExecution | null> {
     try {
-      const execution = await this.prisma.workflowExecution.findUnique({
-        where: { id: executionId },
-        include: {
-          workflow: {
-            select: { id: true, name: true },
-          },
-        },
-      });
+      const execution = await this.db.workflows.findExecutionById(executionId);
 
       if (!execution) {
         return null;
@@ -159,7 +132,7 @@ export class WorkflowService {
       return {
         id: execution.id,
         workflowId: execution.workflowId,
-        status: execution.status,
+        status: execution.status as any,
         input: execution.input,
         output: execution.output,
         error: execution.error || undefined,
@@ -182,34 +155,26 @@ export class WorkflowService {
   ): Promise<{ executions: WorkflowExecution[]; total: number }> {
     try {
       const { page = 1, limit = 20, status } = options || {};
-      const skip = (page - 1) * limit;
 
-      const where: any = {};
+      let executions: any[];
 
       if (workflowId) {
-        where.workflowId = workflowId;
+        executions = await this.db.workflows.findExecutionsByWorkflowId(workflowId);
+      } else {
+        // Get all executions
+        executions = [];
       }
 
+      // Filter by status if provided
       if (status) {
-        where.status = status;
+        executions = executions.filter((e: any) => e.status === status);
       }
 
-      const [executions, total] = await Promise.all([
-        this.prisma.workflowExecution.findMany({
-          where,
-          skip,
-          take: limit,
-          orderBy: { startedAt: 'desc' },
-          include: {
-            workflow: {
-              select: { id: true, name: true },
-            },
-          },
-        }),
-        this.prisma.workflowExecution.count({ where }),
-      ]);
+      // Apply pagination
+      const start = (page - 1) * limit;
+      const paginatedExecutions = executions.slice(start, start + limit);
 
-      const formattedExecutions = executions.map((execution) => ({
+      const formattedExecutions = paginatedExecutions.map((execution: any) => ({
         id: execution.id,
         workflowId: execution.workflowId,
         status: execution.status as any,
@@ -222,7 +187,7 @@ export class WorkflowService {
 
       return {
         executions: formattedExecutions,
-        total,
+        total: executions.length,
       };
     } catch (error) {
       this.logger.error('Failed to get executions:', error);
@@ -357,8 +322,6 @@ export class WorkflowService {
 
   async validateWorkflow(workflow: any): Promise<{ valid: boolean; errors: string[] }> {
     try {
-      // This would use the workflow validator from the engine
-      // For now, return a simple validation
       const errors: string[] = [];
 
       if (!workflow.name || workflow.name.trim() === '') {

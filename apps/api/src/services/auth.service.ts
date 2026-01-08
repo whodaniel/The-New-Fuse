@@ -1,36 +1,36 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
-import { LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
-import { compare, hash } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { DatabaseService, User } from '@the-new-fuse/database';
+import { compare, hash } from 'bcrypt';
+import { LoginDto, RegisterDto, TokenDto } from '../dtos/auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly db: DatabaseService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async validateToken(token: string): Promise<User> {
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      return this.userRepository.findOneOrFail({ where: { id: payload.sub } });
+      const user = await this.db.users.findById(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      return user;
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
     }
   }
 
   async login(loginDto: LoginDto): Promise<TokenDto> {
-    const user = await this.userRepository.findOne({
-      where: { email: loginDto.email },
-    });
+    const user = await this.db.users.findByEmail(loginDto.email);
 
-    if (!user || !(await compare(loginDto.password, user.password))) {
+    // Note: Drizzle User type includes hashedPassword
+    if (!user || !user.hashedPassword || !(await compare(loginDto.password, user.hashedPassword))) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -38,21 +38,26 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<TokenDto> {
-    const existingUser = await this.userRepository.findOne({
-      where: [{ email: registerDto.email }, { username: registerDto.username }],
-    });
+    const existingUser = await this.db.users.findByEmailOrUsername(registerDto.email);
+    // Also check username if separated in future, but findByEmailOrUsername handles both usually implies one arg.
+    // DrizzleUserRepository.findByEmailOrUsername takes string.
+    // If we want to check both independently:
+    const existingUsername = await this.db.users.findByUsername(registerDto.username);
 
-    if (existingUser) {
+    if (existingUser || existingUsername) {
       throw new UnauthorizedException('User already exists');
     }
 
     const hashedPassword = await hash(registerDto.password, 10);
-    const user = this.userRepository.create({
+    const user = await this.db.users.create({
       ...registerDto,
-      password: hashedPassword,
-    });
+      hashedPassword,
+      // Default fields
+      role: 'USER',
+      isActive: true,
+      emailVerified: false,
+    } as any); // Casting as any to match NewUser exact shape if needed, or rely on partial
 
-    await this.userRepository.save(user);
     return this.generateTokens(user);
   }
 
@@ -62,9 +67,8 @@ export class AuthService {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
       });
 
-      const user = await this.userRepository.findOneOrFail({
-        where: { id: payload.sub },
-      });
+      const user = await this.db.users.findById(payload.sub);
+      if (!user) throw new Error('User not found');
 
       return this.generateTokens(user);
     } catch (error) {

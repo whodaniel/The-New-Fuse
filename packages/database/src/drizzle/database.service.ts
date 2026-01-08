@@ -26,10 +26,14 @@ import {
   DrizzleChatRepository,
   drizzleJulesRepository,
   DrizzleJulesRepository,
+  drizzleLLMConfigRepository,
+  DrizzleLLMConfigRepository,
   drizzleTaskRepository,
   DrizzleTaskRepository,
   drizzleUserRepository,
   DrizzleUserRepository,
+  drizzleWalletRepository,
+  DrizzleWalletRepository,
   drizzleWebhookRepository,
   DrizzleWebhookRepository,
   drizzleWorkflowRepository,
@@ -160,6 +164,20 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get webhooks(): DrizzleWebhookRepository {
     return drizzleWebhookRepository;
+  }
+
+  /**
+   * Wallet repository for wallet and transaction operations
+   */
+  get wallets(): DrizzleWalletRepository {
+    return drizzleWalletRepository;
+  }
+
+  /**
+   * LLM Config repository for LLM provider configuration
+   */
+  get llmConfigs(): DrizzleLLMConfigRepository {
+    return drizzleLLMConfigRepository;
   }
 
   // ==========================================================================

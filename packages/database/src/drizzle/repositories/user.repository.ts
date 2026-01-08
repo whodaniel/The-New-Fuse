@@ -2,7 +2,7 @@
  * User Repository - Drizzle ORM Implementation
  * Migrated from Prisma to Drizzle using the Repository Pattern
  */
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { db } from '../client';
 import { authSessions, users } from '../schema';
 import type { NewUser, User } from '../types';
@@ -235,6 +235,18 @@ export class DrizzleUserRepository {
     }
 
     return query;
+  }
+
+  /**
+   * Find users by IDs
+   */
+  async findUsersByIds(ids: string[]): Promise<User[]> {
+    if (ids.length === 0) return [];
+
+    return db
+      .select()
+      .from(users)
+      .where(and(inArray(users.id, ids), isNull(users.deletedAt)));
   }
 
   /**

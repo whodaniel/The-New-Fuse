@@ -40,10 +40,15 @@
  * GET /monitoring/app-metrics
  */
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { SecureAuthGuard, AdminOnly, SetRateLimitTier, RateLimitTier } from '../guards/secure-auth.guard';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as os from 'os';
 import * as process from 'process';
+import {
+  AdminOnly,
+  RateLimitTier,
+  SecureAuthGuard,
+  SetRateLimitTier,
+} from '../guards/secure-auth.guard';
 
 @ApiTags('monitoring')
 @Controller('monitoring')
@@ -52,13 +57,12 @@ import * as process from 'process';
 @SetRateLimitTier(RateLimitTier.ADMIN)
 @ApiBearerAuth()
 export class MonitoringController {
-
   /**
    * Constructor for MonitoringController
-   * 
+   *
    * Initializes the monitoring controller with performance tracking capabilities.
    * This controller provides real-time system and application metrics.
-   * 
+   *
    * @example
    * const controller = new MonitoringController();
    */
@@ -66,11 +70,11 @@ export class MonitoringController {
 
   /**
    * Get real-time system performance metrics
-   * 
+   *
    * Collects and returns comprehensive performance metrics including CPU usage,
    * memory consumption, event loop latency, and system resource utilization.
    * This endpoint is optimized for high-frequency monitoring and dashboard updates.
-   * 
+   *
    * @returns Promise containing performance metrics
    * @returns.cpu - CPU usage statistics and load averages
    * @returns.memory - Memory usage and garbage collection metrics
@@ -78,10 +82,10 @@ export class MonitoringController {
    * @returns.uptime - System and process uptime information
    * @returns.connections - Active connection counts
    * @returns.timestamp - Metrics collection timestamp
-   * 
+   *
    * @api
    * GET /monitoring/metrics
-   * 
+   *
    * @example
    * // Performance metrics response
    * {
@@ -118,14 +122,14 @@ export class MonitoringController {
   async getMetrics() {
     // Simulate event loop lag measurement
     const eventLoopLag = await this.measureEventLoopLag();
-    
+
     return {
       timestamp: new Date().toISOString(),
       cpu: {
         usage: await this.getCPUUsage(),
         loadAverage: os.loadavg(),
         cores: os.cpus().length,
-        model: os.cpus()[0]?.model || 'Unknown'
+        model: os.cpus()[0]?.model || 'Unknown',
       },
       memory: {
         used: os.totalmem() - os.freemem(),
@@ -133,40 +137,42 @@ export class MonitoringController {
         percentage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100),
         heapUsed: process.memoryUsage().heapUsed,
         heapTotal: process.memoryUsage().heapTotal,
-        heapPercentage: Math.round((process.memoryUsage().heapUsed / process.memoryUsage().heapTotal) * 100)
+        heapPercentage: Math.round(
+          (process.memoryUsage().heapUsed / process.memoryUsage().heapTotal) * 100
+        ),
       },
       eventLoop: {
         lag: eventLoopLag,
-        delay: this.measureEventLoopDelay()
+        delay: this.measureEventLoopDelay(),
       },
       uptime: {
         system: os.uptime(),
-        process: process.uptime()
+        process: process.uptime(),
       },
       connections: {
         active: 142, // Mock data - would be collected from actual connection pool
-        total: 1200  // Mock data - would be collected from actual connection pool
-      }
+        total: 1200, // Mock data - would be collected from actual connection pool
+      },
     };
   }
 
   /**
    * Get memory usage and garbage collection statistics
-   * 
+   *
    * Provides detailed memory analysis including heap usage, garbage collection
    * frequency, and memory growth trends. This information is crucial for
    * identifying memory leaks and optimizing memory usage.
-   * 
+   *
    * @returns Promise containing memory statistics
    * @returns.heap - V8 heap memory usage details
    * @returns.external - External memory usage
    * @returns.arrayBuffers - Array buffer memory usage
    * @returns.gc - Garbage collection statistics
    * @returns.trends - Memory usage trends over time
-   * 
+   *
    * @api
    * GET /monitoring/memory
-   * 
+   *
    * @example
    * // Memory statistics response
    * {
@@ -195,14 +201,14 @@ export class MonitoringController {
   async getMemory() {
     const memUsage = process.memoryUsage();
     const gcStats = await this.getGCStatistics();
-    
+
     return {
       timestamp: new Date().toISOString(),
       heap: {
         used: memUsage.heapUsed,
         total: memUsage.heapTotal,
         percentage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100),
-        segments: this.estimateHeapSegments()
+        segments: this.estimateHeapSegments(),
       },
       external: memUsage.external,
       arrayBuffers: memUsage.arrayBuffers,
@@ -210,28 +216,28 @@ export class MonitoringController {
       trends: {
         growth: this.analyzeMemoryGrowth(),
         lastHour: this.getMemoryTrend(3600),
-        lastDay: this.getMemoryTrend(86400)
-      }
+        lastDay: this.getMemoryTrend(86400),
+      },
     };
   }
 
   /**
    * Get application-specific monitoring metrics
-   * 
+   *
    * Collects application-level metrics including request rates, response times,
    * error rates, and business logic performance. These metrics are essential
    * for understanding application health from a user perspective.
-   * 
+   *
    * @returns Promise containing application metrics
    * @returns.requests - HTTP request statistics
    * @returns.responses - Response time and status metrics
    * @returns.errors - Error tracking and analysis
    * @returns.throughput - Requests per second and data transfer rates
    * @returns.businessLogic - Application-specific business metrics
-   * 
+   *
    * @api
    * GET /monitoring/app-metrics
-   * 
+   *
    * @example
    * // Application metrics response
    * {
@@ -276,52 +282,52 @@ export class MonitoringController {
       requests: {
         total: 15420,
         rate: 12.5,
-        peakRate: 45.2
+        peakRate: 45.2,
       },
       responses: {
         avgTime: 245,
         p50: 180,
         p95: 890,
-        p99: 1450
+        p99: 1450,
       },
       errors: {
         total: 23,
         rate: 0.02,
         types: {
           '4xx': 15,
-          '5xx': 8
-        }
+          '5xx': 8,
+        },
       },
       throughput: {
         requestsPerSec: 12.5,
         dataInMB: 245.8,
-        dataOutMB: 892.3
+        dataOutMB: 892.3,
       },
       businessLogic: {
         agentsActive: 38,
         workflowsRunning: 12,
-        chatSessions: 25
-      }
+        chatSessions: 25,
+      },
     };
   }
 
   /**
    * Get comprehensive system health overview
-   * 
+   *
    * Provides a consolidated health check that combines multiple monitoring
    * perspectives. This endpoint is designed for health monitoring systems,
    * load balancers, and status page aggregators.
-   * 
+   *
    * @returns Promise containing health status
    * @returns.status - Overall system health status
    * @returns.score - Health score (0-100)
    * @returns.checks - Individual health check results
    * @returns.alerts - Active alerts or warnings
    * @returns.summary - Brief health summary
-   * 
+   *
    * @api
    * GET /monitoring/health
-   * 
+   *
    * @example
    * // Health overview response
    * {
@@ -349,43 +355,43 @@ export class MonitoringController {
   async getHealth() {
     const memoryUsage = Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100);
     const cpuUsage = await this.getCPUUsage();
-    
+
     const checks = {
       memory: memoryUsage < 80 ? 'healthy' : memoryUsage < 90 ? 'warning' : 'critical',
       cpu: cpuUsage < 70 ? 'healthy' : cpuUsage < 90 ? 'warning' : 'critical',
       database: 'healthy', // Would be checked in production
-      services: 'healthy'  // Would be checked in production
+      services: 'healthy', // Would be checked in production
     };
-    
+
     const alerts: Array<{ type: string; message: string; metric: string; value: number }> = [];
     if (memoryUsage >= 80) {
       alerts.push({
         type: memoryUsage >= 90 ? 'critical' : 'warning',
         message: 'High memory usage detected',
         metric: 'memory',
-        value: memoryUsage
+        value: memoryUsage,
       });
     }
-    
+
     if (cpuUsage >= 70) {
       alerts.push({
         type: cpuUsage >= 90 ? 'critical' : 'warning',
         message: 'High CPU usage detected',
         metric: 'cpu',
-        value: cpuUsage
+        value: cpuUsage,
       });
     }
-    
+
     const score = this.calculateHealthScore(checks);
     const status = score >= 90 ? 'healthy' : score >= 70 ? 'degraded' : 'unhealthy';
-    
+
     return {
       timestamp: new Date().toISOString(),
       status,
       score,
       checks,
       alerts,
-      summary: this.generateHealthSummary(status, alerts)
+      summary: this.generateHealthSummary(status, alerts),
     };
   }
 
@@ -393,10 +399,10 @@ export class MonitoringController {
 
   /**
    * Measure event loop lag
-   * 
+   *
    * Measures the delay in the Node.js event loop to identify performance
    * issues and blocking operations.
-   * 
+   *
    * @returns Promise resolving to event loop lag in milliseconds
    */
   private async measureEventLoopLag(): Promise<number> {
@@ -412,10 +418,10 @@ export class MonitoringController {
 
   /**
    * Measure event loop delay
-   * 
+   *
    * Calculates the current event loop delay based on the time since
    * the last tick.
-   * 
+   *
    * @returns Event loop delay in milliseconds
    */
   private measureEventLoopDelay(): number {
@@ -426,9 +432,9 @@ export class MonitoringController {
 
   /**
    * Get current CPU usage percentage
-   * 
+   *
    * Calculates the current CPU usage percentage using a sample-based approach.
-   * 
+   *
    * @returns Promise resolving to CPU usage percentage
    */
   private async getCPUUsage(): Promise<number> {
@@ -439,10 +445,10 @@ export class MonitoringController {
       setTimeout(() => {
         const currentUsage = process.cpuUsage(startUsage);
         const currentTime = process.hrtime(startTime);
-        
+
         const totalTime = currentTime[0] * 1e9 + currentTime[1];
         const totalUsage = currentUsage.user + currentUsage.system;
-        
+
         const cpuPercent = Math.round((totalUsage / totalTime) * 100);
         resolve(Math.min(cpuPercent, 100));
       }, 100);
@@ -451,10 +457,10 @@ export class MonitoringController {
 
   /**
    * Get garbage collection statistics
-   * 
+   *
    * Collects V8 garbage collection metrics including collection count
    * and timing information.
-   * 
+   *
    * @returns Promise resolving to GC statistics
    */
   private async getGCStatistics() {
@@ -462,15 +468,15 @@ export class MonitoringController {
     return {
       collections: 45,
       totalTime: 1230,
-      avgTime: 27.3
+      avgTime: 27.3,
     };
   }
 
   /**
    * Estimate heap segments
-   * 
+   *
    * Provides an estimate of V8 heap segments based on memory usage patterns.
-   * 
+   *
    * @returns Estimated number of heap segments
    */
   private estimateHeapSegments(): number {
@@ -483,9 +489,9 @@ export class MonitoringController {
 
   /**
    * Analyze memory growth trend
-   * 
+   *
    * Analyzes recent memory usage patterns to identify growth trends.
-   * 
+   *
    * @returns Memory growth trend description
    */
   private analyzeMemoryGrowth(): string {
@@ -495,9 +501,9 @@ export class MonitoringController {
 
   /**
    * Get memory trend for specific time period
-   * 
+   *
    * Calculates memory usage change over a specified time period.
-   * 
+   *
    * @param seconds - Time period in seconds
    * @returns Memory trend string
    */
@@ -509,30 +515,32 @@ export class MonitoringController {
 
   /**
    * Calculate overall health score
-   * 
+   *
    * Calculates a composite health score based on individual check results.
-   * 
+   *
    * @param checks - Individual health check results
    * @returns Health score (0-100)
    */
   private calculateHealthScore(checks: Record<string, string>): number {
     const weights = { healthy: 100, warning: 60, critical: 20 };
-    const values = Object.values(checks).map(status => weights[status] || 0);
+    const values = Object.values(checks).map(
+      (status) => weights[status as keyof typeof weights] || 0
+    );
     return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
   }
 
   /**
    * Generate health summary
-   * 
+   *
    * Creates a human-readable summary of the overall system health.
-   * 
+   *
    * @param status - Overall health status
    * @param alerts - Array of active alerts
    * @returns Health summary string
    */
   private generateHealthSummary(status: string, alerts: any[]): string {
     if (status === 'healthy') {
-      return alerts.length > 0 
+      return alerts.length > 0
         ? 'System is healthy with minor concerns'
         : 'System is operating normally';
     }
