@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Define the base URL for your API. Adjust if needed.
-const API_BASE_URL = process.env.VITE_API_BASE_URL || '/api'; // Example: http://localhost:8080/api
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'; // Example: http://localhost:8080/api
 
 const fetcher = axios.create({
   baseURL: API_BASE_URL,
