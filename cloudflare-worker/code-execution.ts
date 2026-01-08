@@ -473,22 +473,26 @@ async function executeRuby(
       // Handle puts statements (Ruby's print)
       if (trimmedLine.startsWith('puts ')) {
         const content = trimmedLine.substring(5).trim();
-        output.push(`[log] ${content}`);
+        const value = safeEvaluateRuby(content, context);
+        output.push(`[log] ${value}`);
         continue;
       }
 
       // SECURITY FIX: Removed eval() - Ruby simulation should use safe parsing
       // Handle variable assignments
       if (trimmedLine.includes('=') && !trimmedLine.includes('==')) {
-        const [varName, value] = trimmedLine.split('=').map(s => s.trim());
-        try {
-          // Only allow simple literal assignments (numbers, strings, booleans)
-          context[varName] = JSON.parse(value);
-        } catch {
-          context[varName] = value; // Store as string if not valid JSON
-        }
+        const parts = trimmedLine.split('=');
+        const varName = parts[0].trim();
+        const valueStr = parts.slice(1).join('=').trim();
+
+        const value = safeEvaluateRuby(valueStr, context);
+        context[varName] = value;
+        result = value;
         continue;
       }
+
+      // Handle implicit returns / expressions
+      result = safeEvaluateRuby(trimmedLine, context);
     }
 
     return { result };
@@ -632,4 +636,35 @@ async function executeCss(
   } catch (error) {
     return { error };
   }
+}
+
+/**
+ * Safely evaluate a Ruby value or expression
+ */
+function safeEvaluateRuby(expression: string, context: Record<string, any>): any {
+  const trimmed = expression.trim();
+
+  // Handle numbers
+  if (trimmed !== '' && !isNaN(Number(trimmed))) {
+    return Number(trimmed);
+  }
+
+  // Handle booleans/nil
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'nil') return null;
+
+  // Handle strings (double and single quotes)
+  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+      (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    return trimmed.substring(1, trimmed.length - 1);
+  }
+
+  // Handle variables
+  if (Object.prototype.hasOwnProperty.call(context, trimmed)) {
+    return context[trimmed];
+  }
+
+  // Return original string if no match
+  return trimmed;
 }
