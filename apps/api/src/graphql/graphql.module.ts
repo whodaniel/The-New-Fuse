@@ -5,7 +5,6 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DiscoveryModule } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
 import { Request, Response } from 'express';
@@ -30,10 +29,9 @@ import { SecurityLoggingService } from '../security/security-logging.service';
 @Module({
   imports: [
     ConfigModule,
-    DiscoveryModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [ConfigModule, DiscoveryModule],
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         autoSchemaFile:
           configService.get('NODE_ENV') === 'production'
