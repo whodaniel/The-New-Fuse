@@ -77,7 +77,7 @@ async function main() {
 
     // Iterate
     // Note: Doing this via new tabs is safer to assume list doesn't refresh
-    const hrefs = [];
+    const hrefs: string[] = [];
     for (let i = 0; i < count; i++) {
       const href = await rows.nth(i).getAttribute('href');
       if (href) hrefs.push(href);
@@ -121,7 +121,7 @@ async function processChatLink(context: BrowserContext, url: string) {
       // Try to find user prompts and model responses
       // Selectors are tricky, we'll try to grab all text organized by structure
 
-      const history = [];
+      const history: { role: string; text: string }[] = [];
       const turns = document.querySelectorAll('ms-chat-turn');
 
       if (turns.length > 0) {
