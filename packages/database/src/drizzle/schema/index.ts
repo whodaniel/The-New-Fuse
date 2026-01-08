@@ -19,4 +19,3 @@ export * from './users';
 export * from './wallets';
 export * from './workflows';
 export * from './workspace';
-export * from './jules';
