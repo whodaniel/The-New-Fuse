@@ -1,8 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseModule } from '@the-new-fuse/database';
-import { ChatRoom } from '../entities/chat-room.entity';
-import { Message } from '../entities/message.entity';
 import { WebSocketGateway } from '../gateways/websocket.gateway';
 import {
   WORKFLOW_ENGINE_PROVIDER,
@@ -16,7 +13,8 @@ import { TNFMCPController } from './TNFMCPController';
 import { TNFMCPService } from './TNFMCPService';
 
 @Module({
-  imports: [DatabaseModule, TypeOrmModule.forFeature([ChatRoom, Message])],
+  // DatabaseModule provides PrismaService (Drizzle-backed) for all services
+  imports: [DatabaseModule],
   providers: [
     TNFMCPService,
     AgentService,
