@@ -1,6 +1,9 @@
 import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '@the-new-fuse/database';
+import { agents, transactions, wallets } from '@the-new-fuse/database/drizzle/schema';
 import { Job } from 'bull';
+import { count, eq, inArray, sql } from 'drizzle-orm';
 import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service';
 import { EmailService } from '../../services/email.service';
 import { QueueName } from '../constants/queue-names';
@@ -17,7 +20,8 @@ export class ReportGenerationProcessor {
 
   constructor(
     private readonly emailService: EmailService,
-    private readonly systemMetricsService: SystemMetricsService
+    private readonly systemMetricsService: SystemMetricsService,
+    private readonly db: DatabaseService
   ) {}
 
   /**
@@ -52,7 +56,7 @@ export class ReportGenerationProcessor {
           reportData = await this.generateSystemMetricsReport(parameters);
           break;
         case 'revenue':
-          reportData = await this.generateRevenueReport(parameters);
+          reportData = await this.generateRevenueReport(parameters, userId);
           break;
         default:
           throw new Error(`Unknown report type: ${reportType}`);
@@ -188,16 +192,69 @@ export class ReportGenerationProcessor {
   /**
    * Generate revenue report
    */
-  private async generateRevenueReport(parameters: Record<string, any>) {
+  private async generateRevenueReport(parameters: Record<string, any>, userId?: string) {
     this.logger.debug('Generating revenue report');
 
-    // TODO: Replace with actual revenue data
+    if (!userId) {
+      throw new Error('UserId is required for revenue report');
+    }
+
+    // 1. Get Agent IDs for user
+    const userAgents = await this.db.client
+      .select({ id: agents.id })
+      .from(agents)
+      .where(eq(agents.userId, userId));
+
+    const agentIds = userAgents.map((a) => a.id);
+
+    if (agentIds.length === 0) {
+      return {
+        recordCount: 0,
+        data: {
+          totalRevenue: 0,
+          transactions: 0,
+          averageTransactionValue: 0,
+        },
+      };
+    }
+
+    // 2. Get Wallet IDs for agents
+    const agentWallets = await this.db.client
+      .select({ id: wallets.id })
+      .from(wallets)
+      .where(inArray(wallets.agentId, agentIds));
+
+    const walletIds = agentWallets.map((w) => w.id);
+
+    if (walletIds.length === 0) {
+      return {
+        recordCount: 0,
+        data: {
+          totalRevenue: 0,
+          transactions: 0,
+          averageTransactionValue: 0,
+        },
+      };
+    }
+
+    // 3. Aggregate transactions
+    const result = await this.db.client
+      .select({
+        totalRevenue: sql<number>`sum(${transactions.value})`,
+        txCount: count(transactions.id),
+        avgValue: sql<number>`avg(${transactions.value})`,
+      })
+      .from(transactions)
+      .where(inArray(transactions.walletId, walletIds));
+
+    const stats = result[0];
+
     return {
-      recordCount: 75,
+      recordCount: Number(stats.txCount),
       data: {
-        totalRevenue: 125000,
-        transactions: 75,
-        averageTransactionValue: 1666.67,
+        totalRevenue: Number(stats.totalRevenue) || 0,
+        transactions: Number(stats.txCount),
+        averageTransactionValue: Number(stats.avgValue) || 0,
       },
     };
   }

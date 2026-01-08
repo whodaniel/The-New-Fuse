@@ -45,25 +45,32 @@ export default {
 
     // Validate API key
     const authHeader = request.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.substring(7) !== env.API_KEY) {
+    if (
+      !authHeader ||
+      !authHeader.startsWith('Bearer ') ||
+      authHeader.substring(7) !== env.API_KEY
+    ) {
       return new Response('Unauthorized', { status: 401 });
     }
 
     try {
       // Parse request body
-      const requestData = await request.json() as ExecutionRequest;
+      const requestData = (await request.json()) as ExecutionRequest;
 
       // Validate request
       if (!requestData.code || !requestData.clientId) {
-        return new Response(JSON.stringify({
-          success: false,
-          output: [],
-          error: { message: 'Invalid request: code and clientId are required' },
-          metrics: { executionTime: 0, memoryUsage: 0 }
-        }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({
+            success: false,
+            output: [],
+            error: { message: 'Invalid request: code and clientId are required' },
+            metrics: { executionTime: 0, memoryUsage: 0 },
+          }),
+          {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
       }
 
       // Execute code
@@ -71,25 +78,28 @@ export default {
 
       // Return result
       return new Response(JSON.stringify(result), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     } catch (error: unknown) {
       // Handle unexpected errors
-      return new Response(JSON.stringify({
-        success: false,
-        output: [],
-        error: {
-          message: (error as Error).message || 'Unknown error',
-          stack: error.stack,
-          type: error.name
-        },
-        metrics: { executionTime: 0, memoryUsage: 0 }
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          output: [],
+          error: {
+            message: (error as Error).message || 'Unknown error',
+            stack: error.stack,
+            type: error.name,
+          },
+          metrics: { executionTime: 0, memoryUsage: 0 },
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
-  }
+  },
 };
 
 /**
@@ -111,25 +121,74 @@ async function executeCode(request: ExecutionRequest): Promise<ExecutionResponse
     // Create execution environment based on language
     switch (request.language) {
       case CodeExecutionLanguage.JAVASCRIPT:
-        ({ result, error } = await executeJavaScript(request.code, output, timeout, memoryLimit, allowedModules, context));
+        ({ result, error } = await executeJavaScript(
+          request.code,
+          output,
+          timeout,
+          memoryLimit,
+          allowedModules,
+          context
+        ));
         break;
       case CodeExecutionLanguage.TYPESCRIPT:
-        ({ result, error } = await executeTypeScript(request.code, output, timeout, memoryLimit, allowedModules, context));
+        ({ result, error } = await executeTypeScript(
+          request.code,
+          output,
+          timeout,
+          memoryLimit,
+          allowedModules,
+          context
+        ));
         break;
       case CodeExecutionLanguage.PYTHON:
-        ({ result, error } = await executePython(request.code, output, timeout, memoryLimit, allowedModules, context));
+        ({ result, error } = await executePython(
+          request.code,
+          output,
+          timeout,
+          memoryLimit,
+          allowedModules,
+          context
+        ));
         break;
       case CodeExecutionLanguage.RUBY:
-        ({ result, error } = await executeRuby(request.code, output, timeout, memoryLimit, allowedModules, context));
+        ({ result, error } = await executeRuby(
+          request.code,
+          output,
+          timeout,
+          memoryLimit,
+          allowedModules,
+          context
+        ));
         break;
       case CodeExecutionLanguage.SHELL:
-        ({ result, error } = await executeShell(request.code, output, timeout, memoryLimit, allowedModules, context));
+        ({ result, error } = await executeShell(
+          request.code,
+          output,
+          timeout,
+          memoryLimit,
+          allowedModules,
+          context
+        ));
         break;
       case CodeExecutionLanguage.HTML:
-        ({ result, error } = await executeHtml(request.code, output, timeout, memoryLimit, allowedModules, context));
+        ({ result, error } = await executeHtml(
+          request.code,
+          output,
+          timeout,
+          memoryLimit,
+          allowedModules,
+          context
+        ));
         break;
       case CodeExecutionLanguage.CSS:
-        ({ result, error } = await executeCss(request.code, output, timeout, memoryLimit, allowedModules, context));
+        ({ result, error } = await executeCss(
+          request.code,
+          output,
+          timeout,
+          memoryLimit,
+          allowedModules,
+          context
+        ));
         break;
       default:
         throw new Error(`Unsupported language: ${request.language}`);
@@ -152,15 +211,17 @@ async function executeCode(request: ExecutionRequest): Promise<ExecutionResponse
       success: !error,
       output,
       result: error ? undefined : result,
-      error: error ? {
-        message: error.message || 'Unknown error',
-        stack: error.stack,
-        type: error.name
-      } : undefined,
+      error: error
+        ? {
+            message: error.message || 'Unknown error',
+            stack: error.stack,
+            type: error.name,
+          }
+        : undefined,
       metrics: {
         executionTime,
-        memoryUsage
-      }
+        memoryUsage,
+      },
     };
   } catch (e) {
     // Handle unexpected errors
@@ -170,12 +231,12 @@ async function executeCode(request: ExecutionRequest): Promise<ExecutionResponse
       error: {
         message: e.message || 'Unknown error',
         stack: e.stack,
-        type: e.name
+        type: e.name,
       },
       metrics: {
         executionTime: Date.now() - startTime,
-        memoryUsage: 0
-      }
+        memoryUsage: 0,
+      },
     };
   }
 }
@@ -190,59 +251,59 @@ async function executeJavaScript(
   memoryLimit: number,
   allowedModules: string[],
   context: Record<string, any>
-): Promise<{ result?: any, error?: Error }> {
+): Promise<{ result?: any; error?: Error }> {
   try {
     // Security: Validate and sanitize code
     if (typeof code !== 'string' || code.length > 10000) {
       throw new Error('Code must be a string with maximum length of 10000 characters');
     }
-    
+
     // Check for dangerous patterns in the code
     const dangerousPatterns = [
-      /require\s*\(/,           // require()
-      /import\s+/,              // import statements
-      /eval\s*\(/,              // eval()
-      /Function\s*\(/,          // Function constructor
-      /process\./,              // process object
-      /global\./,               // global object
-      /window\./,               // window object
-      /document\./,             // document object
-      /XMLHttpRequest/,         // XHR
-      /fetch\s*\(/,             // fetch API
-      /setTimeout\s*\(/,        // setTimeout (we'll provide our own safe version)
-      /setInterval\s*\(/,       // setInterval
-      /constructor/,            // constructor
-      /__proto__/,              // __proto__
-      /prototype/,              // prototype
-      /class\s+/,               // class declarations
-      /fs\./,                   // File system
-      /child_process/,          // Child process
-      /exec\s*\(/,              // exec()
-      /spawn\s*\(/,             // spawn()
-      /fs\.readFile/,           // File read
-      /fs\.writeFile/,          // File write
-      /fs\.unlink/,             // File delete
-      /fs\.rmdir/,              // Directory delete
-      /open\s*\(/,              // window.open
-      /location\./,             // window.location
-      /navigator\./,            // window.navigator
-      /localStorage/,           // localStorage
-      /sessionStorage/,         // sessionStorage
-      /cookie/,                 // document.cookie
-      /indexedDB/,              // indexedDB
-      /ServiceWorker/,          // Service Workers
-      /Worker\s*\(/,            // Web Workers
-      /SharedArrayBuffer/,      // SharedArrayBuffer
-      /Atomics/,                // Atomics
-      /WebAssembly/,            // WebAssembly
+      /require\s*\(/, // require()
+      /import\s+/, // import statements
+      /eval\s*\(/, // eval()
+      /Function\s*\(/, // Function constructor
+      /process\./, // process object
+      /global\./, // global object
+      /window\./, // window object
+      /document\./, // document object
+      /XMLHttpRequest/, // XHR
+      /fetch\s*\(/, // fetch API
+      /setTimeout\s*\(/, // setTimeout (we'll provide our own safe version)
+      /setInterval\s*\(/, // setInterval
+      /constructor/, // constructor
+      /__proto__/, // __proto__
+      /prototype/, // prototype
+      /class\s+/, // class declarations
+      /fs\./, // File system
+      /child_process/, // Child process
+      /exec\s*\(/, // exec()
+      /spawn\s*\(/, // spawn()
+      /fs\.readFile/, // File read
+      /fs\.writeFile/, // File write
+      /fs\.unlink/, // File delete
+      /fs\.rmdir/, // Directory delete
+      /open\s*\(/, // window.open
+      /location\./, // window.location
+      /navigator\./, // window.navigator
+      /localStorage/, // localStorage
+      /sessionStorage/, // sessionStorage
+      /cookie/, // document.cookie
+      /indexedDB/, // indexedDB
+      /ServiceWorker/, // Service Workers
+      /Worker\s*\(/, // Web Workers
+      /SharedArrayBuffer/, // SharedArrayBuffer
+      /Atomics/, // Atomics
+      /WebAssembly/, // WebAssembly
     ];
-    
+
     for (const pattern of dangerousPatterns) {
       if (pattern.test(code)) {
         throw new Error(`Code contains potentially dangerous patterns: ${pattern.source}`);
       }
     }
-    
+
     // Create a secure context with limited capabilities
     const secureContext: Record<string, any> = {
       console: {
@@ -307,10 +368,12 @@ async function executeJavaScript(
               ${userCode}
             })
           `;
-          
+
           // Use Function constructor only with our controlled parameters
           // This is safer because we're not injecting user input into the function parameters
-          const executorFn = new Function('allowedScope', `
+          const executorFn = new Function(
+            'allowedScope',
+            `
             'use strict';
             return (function() {
               const { ${Object.keys(scope).join(', ')} } = allowedScope;
@@ -318,12 +381,13 @@ async function executeJavaScript(
                 ${userCode}
               })();
             });
-          `);
-          
+          `
+          );
+
           const innerFn = executorFn(scope);
           return innerFn.call(scope);
         };
-        
+
         const result = safeExecutor(code, restrictedScope);
         resolve(result);
       } catch (e) {
@@ -336,7 +400,7 @@ async function executeJavaScript(
       executionPromise,
       new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error(`Execution timed out after ${timeout}ms`)), timeout);
-      })
+      }),
     ]);
 
     return { result };
@@ -356,7 +420,7 @@ async function executeTypeScript(
   memoryLimit: number,
   allowedModules: string[],
   context: Record<string, any>
-): Promise<{ result?: any, error?: Error }> {
+): Promise<{ result?: any; error?: Error }> {
   // For now, just treat TypeScript as JavaScript
   // In a real implementation, we would transpile TypeScript to JavaScript first
   return executeJavaScript(code, output, timeout, memoryLimit, allowedModules, context);
@@ -373,7 +437,7 @@ async function executePython(
   memoryLimit: number,
   allowedModules: string[],
   context: Record<string, any>
-): Promise<{ result?: any, error?: Error }> {
+): Promise<{ result?: any; error?: Error }> {
   try {
     // In a real implementation, we would use a Python runtime like Pyodide
     // For now, we'll simulate Python execution with a simple parser
@@ -403,7 +467,7 @@ async function executePython(
       // SECURITY FIX: Removed eval() - Python simulation should use safe parsing
       // Handle variable assignments
       if (trimmedLine.includes('=') && !trimmedLine.includes('==')) {
-        const [varName, value] = trimmedLine.split('=').map(s => s.trim());
+        const [varName, value] = trimmedLine.split('=').map((s) => s.trim());
         try {
           // Only allow simple literal assignments (numbers, strings, booleans)
           context[varName] = JSON.parse(value);
@@ -450,7 +514,7 @@ async function executeRuby(
   memoryLimit: number,
   allowedModules: string[],
   context: Record<string, any>
-): Promise<{ result?: any, error?: Error }> {
+): Promise<{ result?: any; error?: Error }> {
   try {
     // In a real implementation, we would use a Ruby runtime
     // For now, we'll simulate Ruby execution
@@ -473,28 +537,66 @@ async function executeRuby(
       // Handle puts statements (Ruby's print)
       if (trimmedLine.startsWith('puts ')) {
         const content = trimmedLine.substring(5).trim();
-        output.push(`[log] ${content}`);
+        const value = safeEvaluateRuby(content, context);
+        output.push(`[log] ${value}`);
         continue;
       }
 
       // SECURITY FIX: Removed eval() - Ruby simulation should use safe parsing
       // Handle variable assignments
       if (trimmedLine.includes('=') && !trimmedLine.includes('==')) {
-        const [varName, value] = trimmedLine.split('=').map(s => s.trim());
-        try {
-          // Only allow simple literal assignments (numbers, strings, booleans)
-          context[varName] = JSON.parse(value);
-        } catch {
-          context[varName] = value; // Store as string if not valid JSON
-        }
+        const [varName, valueStr] = trimmedLine.split('=').map((s) => s.trim());
+        const value = safeEvaluateRuby(valueStr, context);
+        context[varName] = value;
+        result = value; // Assignment evaluates to value
         continue;
       }
+
+      // Handle expressions (implicit return)
+      result = safeEvaluateRuby(trimmedLine, context);
     }
 
     return { result };
   } catch (error) {
     return { error };
   }
+}
+
+/**
+ * Safely evaluate a Ruby expression in a simulated environment
+ *
+ * @param expression The expression to evaluate
+ * @param context The current execution context with variables
+ * @returns The evaluated value or the original expression string
+ */
+function safeEvaluateRuby(expression: string, context: Record<string, any>): any {
+  const trimmed = expression.trim();
+
+  // Handle numbers
+  if (trimmed !== '' && !isNaN(Number(trimmed))) {
+    return Number(trimmed);
+  }
+
+  // Handle booleans/nil
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'nil') return null;
+
+  // Handle strings (double and single quotes)
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.substring(1, trimmed.length - 1);
+  }
+
+  // Handle variables
+  if (Object.prototype.hasOwnProperty.call(context, trimmed)) {
+    return context[trimmed];
+  }
+
+  // Return original string if no match
+  return trimmed;
 }
 
 /**
@@ -508,7 +610,7 @@ async function executeShell(
   memoryLimit: number,
   allowedModules: string[],
   context: Record<string, any>
-): Promise<{ result?: any, error?: Error }> {
+): Promise<{ result?: any; error?: Error }> {
   try {
     // In a real implementation, we would use a secure shell environment
     // For now, we'll simulate shell execution
@@ -570,7 +672,7 @@ async function executeHtml(
   memoryLimit: number,
   allowedModules: string[],
   context: Record<string, any>
-): Promise<{ result?: any, error?: Error }> {
+): Promise<{ result?: any; error?: Error }> {
   try {
     // In a real implementation, we would use a headless browser
     // For now, we'll simulate HTML execution
@@ -612,7 +714,7 @@ async function executeCss(
   memoryLimit: number,
   allowedModules: string[],
   context: Record<string, any>
-): Promise<{ result?: any, error?: Error }> {
+): Promise<{ result?: any; error?: Error }> {
   try {
     // In a real implementation, we would use a CSS parser
     // For now, we'll simulate CSS execution
@@ -621,11 +723,11 @@ async function executeCss(
 
     // Parse CSS to extract structure
     const result = {
-      selectors: (code.match(/[^{}]+(?=\{)/g) || []).map(s => s.trim()),
-      properties: (code.match(/[^:]+:[^;]+/g) || []).map(s => s.trim()),
-      mediaQueries: (code.match(/@media[^{]+\{/g) || []).map(s => s.trim()),
-      keyframes: (code.match(/@keyframes[^{]+\{/g) || []).map(s => s.trim()),
-      imports: (code.match(/@import[^;]+;/g) || []).map(s => s.trim()),
+      selectors: (code.match(/[^{}]+(?=\{)/g) || []).map((s) => s.trim()),
+      properties: (code.match(/[^:]+:[^;]+/g) || []).map((s) => s.trim()),
+      mediaQueries: (code.match(/@media[^{]+\{/g) || []).map((s) => s.trim()),
+      keyframes: (code.match(/@keyframes[^{]+\{/g) || []).map((s) => s.trim()),
+      imports: (code.match(/@import[^;]+;/g) || []).map((s) => s.trim()),
     };
 
     return { result };

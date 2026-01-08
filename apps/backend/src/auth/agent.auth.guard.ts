@@ -4,14 +4,24 @@
  * Handles both JWT tokens and agent-specific API keys
  */
 
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { DatabaseService } from '@the-new-fuse/database';
 
 @Injectable()
 export class AgentAuthGuard implements CanActivate {
   private readonly logger = new Logger(AgentAuthGuard.name);
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly db: DatabaseService
+  ) {}
 
   /**
    * Determines if the current request is authorized for agent access
@@ -20,7 +30,7 @@ export class AgentAuthGuard implements CanActivate {
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    
+
     try {
       // Try to authenticate with JWT token first
       const token = this.extractTokenFromHeader(request);
@@ -37,7 +47,6 @@ export class AgentAuthGuard implements CanActivate {
       // No valid authentication method found
       this.logger.debug('No valid authentication credentials found');
       throw new UnauthorizedException('Agent authentication required');
-
     } catch (error) {
       this.logger.debug(`Agent authentication failed: ${(error as Error).message}`);
       throw new UnauthorizedException(`Agent authentication failed: ${(error as Error).message}`);
@@ -75,7 +84,7 @@ export class AgentAuthGuard implements CanActivate {
   private async validateJwtToken(token: string, request: any): Promise<boolean> {
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      
+
       // Ensure this is an agent token
       if (!payload.agentId || payload.type !== 'agent') {
         throw new UnauthorizedException('Invalid agent token');
@@ -91,7 +100,6 @@ export class AgentAuthGuard implements CanActivate {
 
       this.logger.debug(`Agent authenticated via JWT: ${payload.agentId}`);
       return true;
-
     } catch (_error) {
       throw new UnauthorizedException('Invalid or expired agent token');
     }
@@ -104,33 +112,50 @@ export class AgentAuthGuard implements CanActivate {
    * @returns Promise<boolean>
    */
   private async validateAgentApiKey(apiKey: string, request: any): Promise<boolean> {
-    // In a real implementation, this would validate against a database
-    // For now, we'll implement basic validation logic
-    
     if (!apiKey || apiKey.length < 32) {
       throw new UnauthorizedException('Invalid agent API key format');
     }
 
-    // TODO: Implement actual API key validation against database
-    // This should check if the API key exists and is active
-    
-    // Mock validation for development
-    if (apiKey.startsWith('agent_') && apiKey.length >= 32) {
-      // Extract agent info from API key (in real implementation, query database)
-      const agentId = apiKey.split('_')[1] || 'unknown';
-      
+    try {
+      // Check if the API key exists in agent registrations
+      const registration = await this.db.agents.findRegistrationByToken(apiKey);
+
+      if (!registration) {
+        this.logger.warn(`Invalid API key attempt: ${apiKey.substring(0, 8)}...`);
+        throw new UnauthorizedException('Invalid agent API key');
+      }
+
+      // Fetch the associated agent to ensure it exists and get details
+      const agent = await this.db.agents.findById(registration.agentId);
+
+      if (!agent) {
+        this.logger.error(`Orphaned registration found for agentId: ${registration.agentId}`);
+        throw new UnauthorizedException('Agent not found');
+      }
+
+      // Check if agent is active (optional, but recommended based on task description)
+      // We allow 'ACTIVE' and potentially other non-disabled statuses.
+      // For now, if the agent exists and has a registration, we consider it valid unless suspended.
+      if (agent.status === 'SUSPENDED' || agent.status === 'ARCHIVED') {
+        throw new UnauthorizedException('Agent is not active');
+      }
+
       request.agent = {
-        id: agentId,
-        agencyId: 'default', // Would come from database
-        capabilities: ['read', 'write'], // Would come from database
-        permissions: ['agent:communicate'], // Would come from database
+        id: agent.id,
+        agencyId: agent.userId, // Using userId as agencyId for now
+        capabilities: (agent.capabilities as string[]) || [],
+        permissions: ['agent:communicate'], // Default permission, could be expanded later
         apiKey: apiKey,
       };
 
-      this.logger.debug(`Agent authenticated via API key: ${agentId}`);
+      this.logger.debug(`Agent authenticated via API key: ${agent.id}`);
       return true;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      this.logger.error(`Database error during API key validation: ${(error as Error).message}`);
+      throw new UnauthorizedException('Authentication service unavailable');
     }
-
-    throw new UnauthorizedException('Invalid agent API key');
   }
 }

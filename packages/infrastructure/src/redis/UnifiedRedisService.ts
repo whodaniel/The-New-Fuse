@@ -51,6 +51,14 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   private operationLogs: RedisOperationLog[] = [];
   private readonly MAX_LOG_SIZE = 1000;
+  private _isConnected = false;
+
+  /**
+   * Check if Redis is connected and available
+   */
+  get isConnected(): boolean {
+    return this._isConnected;
+  }
 
   constructor(private readonly redisConfig: RedisConfig) {
     console.log('[UnifiedRedisService] Constructor called');
@@ -77,6 +85,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     // If Redis is disabled, skip initialization
     if (!config) {
       this.logger.warn('Redis is disabled - connections will not be initialized');
+      this._isConnected = false;
       return;
     }
 
@@ -101,11 +110,38 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       await this.mainClient.ping();
       await this.pubSubClient.ping();
 
+      this._isConnected = true;
       this.logger.log('Redis connections established successfully');
     } catch (error) {
-      this.logger.error('Failed to initialize Redis connections', error);
-      throw error;
+      this._isConnected = false;
+      // Log error but don't crash the application - operate in degraded mode
+      this.logger.warn('Failed to initialize Redis connections - operating in degraded mode');
+      this.logger.warn(
+        'Redis connection error:',
+        error instanceof Error ? error.message : String(error)
+      );
+      this.logger.warn('Features requiring Redis will be unavailable until connection is restored');
+
+      // Set up dummy clients that will fail gracefully on operations
+      if (!this.mainClient) {
+        this.mainClient = this.createDummyClient();
+      }
+      if (!this.pubSubClient) {
+        this.pubSubClient = this.createDummyClient();
+      }
     }
+  }
+
+  /**
+   * Create a dummy Redis client that fails gracefully for when Redis is unavailable
+   */
+  private createDummyClient(): Redis {
+    const client = new Redis({
+      lazyConnect: true,
+      maxRetriesPerRequest: 1,
+      retryStrategy: () => null, // Never retry
+    });
+    return client;
   }
 
   private setupEventHandlers() {

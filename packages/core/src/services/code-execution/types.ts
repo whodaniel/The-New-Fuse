@@ -9,6 +9,7 @@ export enum CodeExecutionLanguage {
   JAVASCRIPT = 'javascript',
   TYPESCRIPT = 'typescript',
   PYTHON = 'python',
+  RUBY = 'ruby',
   SHELL = 'shell',
   HTML = 'html',
   CSS = 'css',
