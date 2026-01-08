@@ -11,6 +11,7 @@
     "@nestjs/common": "^11.1.10",
     "@nestjs/config": "4.0.2",
     "@nestjs/core": "^11.1.10",
+    "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/graphql": "^13.2.3",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "2.1.0",
