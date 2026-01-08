@@ -57,7 +57,10 @@ export class DirectorServiceProvider implements OnModuleInit {
   private config: TNFAutonomousConfig;
   private redis: Redis | null = null;
 
-  constructor(config?: Partial<TNFAutonomousConfig>) {
+  constructor(
+    private readonly swarmProvider: AgentSwarmProvider,
+    config?: Partial<TNFAutonomousConfig>,
+  ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
 
@@ -148,8 +151,8 @@ export class DirectorServiceProvider implements OnModuleInit {
   }
 
   private async performHealthCheck(): Promise<{ status: string; agents: number }> {
-    // TODO: Connect to AgentSwarmOrchestrationService
-    return { status: 'healthy', agents: 0 };
+    const stats = this.swarmProvider.getStatistics();
+    return { status: 'healthy', agents: stats.onlineAgents };
   }
 
   private async discoverTasks(): Promise<Array<{ id: string; name: string; data?: any }>> {
@@ -434,7 +437,9 @@ import { TNFAutonomousController } from '../controllers/tnf-autonomous.controlle
     },
     {
       provide: DirectorServiceProvider,
-      useFactory: () => new DirectorServiceProvider(DEFAULT_CONFIG),
+      useFactory: (swarm: AgentSwarmProvider) =>
+        new DirectorServiceProvider(swarm, DEFAULT_CONFIG),
+      inject: [AgentSwarmProvider],
     },
     {
       provide: BMADServiceProvider,
