@@ -24,6 +24,7 @@ import { JobsMonitoringController } from './jobs-monitoring.controller';
 // Import email service
 import { SystemMetricsModule } from '../modules/system-metrics/system-metrics.module';
 import { EmailService } from '../services/email.service';
+import { CacheModule } from '../cache/cache.module';
 
 /**
  * Jobs module
@@ -66,6 +67,8 @@ import { EmailService } from '../services/email.service';
         ...QUEUE_SETTINGS[QueueName.CLEANUP],
       }
     ),
+    // Import CacheModule for DataSyncProcessor
+    CacheModule,
   ],
   controllers: [JobsMonitoringController],
   providers: [
