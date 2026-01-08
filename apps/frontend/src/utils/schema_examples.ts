@@ -1,7 +1,4 @@
-export {}
-exports.TOOL_SCHEMA = exports.MESSAGE_SCHEMA = exports.ERROR_SCHEMA = exports.ANALYSIS_SCHEMA = void 0;
-exports.ANALYSIS_SCHEMA = {
-    type: "object",
+type: "object",
     properties: {
         summary: {
             type: "string",
@@ -40,7 +37,7 @@ exports.ANALYSIS_SCHEMA = {
     },
     required: ["summary", "findings"]
 };
-exports.ERROR_SCHEMA = {
+
     type: "object",
     properties: {
         error_code: {
@@ -68,7 +65,7 @@ exports.ERROR_SCHEMA = {
     },
     required: ["error_code", "message"]
 };
-exports.MESSAGE_SCHEMA = {
+
     type: "object",
     properties: {
         id: {
@@ -99,7 +96,7 @@ exports.MESSAGE_SCHEMA = {
     },
     required: ["id", "type", "content"]
 };
-exports.TOOL_SCHEMA = {
+
     type: "object",
     properties: {
         name: {
@@ -137,4 +134,4 @@ exports.TOOL_SCHEMA = {
     },
     required: ["name", "description", "parameters", "returns"]
 };
-export {};
+;

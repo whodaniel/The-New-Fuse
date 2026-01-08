@@ -1,5 +1,5 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AgentTraining = void 0;
+
 import react_1 from 'react';
 import react_query_1 from '@tanstack/react-query';
 import Card_1 from '../../../core/Card';
@@ -10,7 +10,7 @@ import FileUpload_1 from '../../chat/FileUpload';
 import agentService_1 from '../../../../services/api/agentService';
 import react_hot_toast_1 from 'react-hot-toast';
 import recharts_1 from 'recharts';
-const AgentTraining = ({ agentId }) => {
+export const AgentTraining = ({ agentId }) => {
     const [trainingConfig, setTrainingConfig] = (0, react_1.useState)({
         model: 'gpt-4',
         epochs: 10,
@@ -206,6 +206,5 @@ const AgentTraining = ({ agentId }) => {
       </div>
     </Card_1.Card>);
 };
-exports.AgentTraining = AgentTraining;
-exports.default = exports.AgentTraining;
-export {};
+
+;

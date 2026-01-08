@@ -1,12 +1,11 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DynamicKnowledgeGraph = DynamicKnowledgeGraph;
 import react_1 from 'react';
 import react_force_graph_1 from 'react-force-graph';
 import card_1 from '@/components/ui/card';
 import websocket_1 from '../services/websocket';
-function DynamicKnowledgeGraph() {
+export function DynamicKnowledgeGraph() {
     const fgRef = (0, react_1.useRef)();
     const [graphData, setGraphData] = (0, react_1.useState)({ nodes: [], links: [] });
     (0, react_1.useEffect)(() => {
@@ -29,4 +28,4 @@ function DynamicKnowledgeGraph() {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;

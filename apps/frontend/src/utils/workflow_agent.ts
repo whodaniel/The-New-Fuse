@@ -1,21 +1,22 @@
-export {}
-exports.WorkflowAgentError = exports.BaseWorkflowAgent = void 0;
-class BaseWorkflowAgent {
-    constructor(name, capabilities) {
+export class BaseWorkflowAgent {
+    name: string;
+    capabilities: string[];
+
+    constructor(name: string, capabilities: string[]) {
         this.name = name;
         this.capabilities = [...capabilities];
     }
-    async start() {
+
+    async start(): Promise<void> {
     }
-    async stop() {
+
+    async stop(): Promise<void> {
     }
 }
-exports.BaseWorkflowAgent = BaseWorkflowAgent;
-class WorkflowAgentError extends Error {
-    constructor(message) {
+
+export class WorkflowAgentError extends Error {
+    constructor(message: string) {
         super(message);
         this.name = 'WorkflowAgentError';
     }
-}
-exports.WorkflowAgentError = WorkflowAgentError;
-export {};
+};

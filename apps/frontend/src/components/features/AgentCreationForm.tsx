@@ -226,5 +226,5 @@ const AgentCreationForm = () => {
             </form>
         </div>);
 };
-exports.default = AgentCreationForm;
-export {};
+
+;

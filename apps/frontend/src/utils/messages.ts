@@ -1,7 +1,3 @@
-export {}
-exports.MessageBuilder = exports.MessageThread = exports.ContentType = exports.MessageRole = void 0;
-exports.createTool = createTool;
-
 export enum MessageRole {
     SYSTEM = "system",
     USER = "user",
@@ -16,7 +12,7 @@ export enum ContentType {
     TOOL_USE = "tool_use",
     TOOL_RESULT = "tool_result"
 }
-class MessageThread {
+export class MessageThread {
     constructor() {
         this.messages = [];
     }
@@ -30,8 +26,7 @@ class MessageThread {
         this.messages = [];
     }
 }
-exports.MessageThread = MessageThread;
-class MessageBuilder {
+export class MessageBuilder {
     static createMessage(role, content, metadata, tool_uses) {
         return {
             id: crypto.randomUUID(),
@@ -44,12 +39,11 @@ class MessageBuilder {
         };
     }
 }
-exports.MessageBuilder = MessageBuilder;
-function createTool(name, description, properties): any {
+export function createTool(name, description, properties): any {
     return {
         name,
         description,
         properties
     };
 }
-export {};
+;

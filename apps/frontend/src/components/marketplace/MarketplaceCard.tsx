@@ -1,10 +1,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MarketplaceCard = void 0;
+
 import react_1 from 'react';
 import lucide_react_1 from 'lucide-react';
 import Card_1 from '../ui/Card/Card';
 import Button_1 from '../ui/Button/Button';
-const MarketplaceCard = ({ item, onPurchase, onPreview, }) => {
+export const MarketplaceCard = ({ item, onPurchase, onPreview, }) => {
     const formatPrice = (price) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -79,5 +79,4 @@ const MarketplaceCard = ({ item, onPurchase, onPreview, }) => {
       </Card_1.CardFooter>
     </Card_1.Card>);
 };
-exports.MarketplaceCard = MarketplaceCard;
-export {};
+;

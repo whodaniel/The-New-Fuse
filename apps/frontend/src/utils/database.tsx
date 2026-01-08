@@ -1,7 +1,3 @@
-export {}
-exports.dbConfig = exports.DatabaseConfig = void 0;
-exports.initDb = initDb;
-exports.getDb = getDb;
 import { createPool, Pool, PoolConfig } from 'mysql2/promise';
 import { Redis } from 'ioredis';
 import { Logger } from '@nestjs/common';
@@ -150,9 +146,6 @@ export class DatabaseConfig extends EventEmitter {
   }
 }
 
-exports.DatabaseConfig = DatabaseConfig;
-exports.dbConfig = new DatabaseConfig();
-
 async function initDb(): any {
   const defaultShards = {
     main: {
@@ -162,8 +155,8 @@ async function initDb(): any {
   await exports.dbConfig.initShards(defaultShards);
 }
 
-function getDb(): any {
+export function getDb(): any {
   return exports.dbConfig;
 }
 
-export {};
+;

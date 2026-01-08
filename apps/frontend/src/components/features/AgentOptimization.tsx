@@ -1,5 +1,5 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AgentOptimization = void 0;
+
 import react_1 from 'react';
 import react_query_1 from '@tanstack/react-query';
 import Card_1 from '../../../core/Card';
@@ -9,7 +9,7 @@ import Input_1 from '../../../core/Input';
 import agentService_1 from '../../../../services/api/agentService';
 import react_hot_toast_1 from 'react-hot-toast';
 import recharts_1 from 'recharts';
-const AgentOptimization = ({ agentId }) => {
+export const AgentOptimization = ({ agentId }) => {
     var _a, _b, _c, _d;
     const [optimizationConfig, setOptimizationConfig] = (0, react_1.useState)({
         target: 'accuracy',
@@ -154,6 +154,5 @@ const AgentOptimization = ({ agentId }) => {
       </div>
     </Card_1.Card>);
 };
-exports.AgentOptimization = AgentOptimization;
-exports.default = exports.AgentOptimization;
-export {};
+
+;

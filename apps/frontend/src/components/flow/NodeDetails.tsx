@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NodeDetails = void 0;
+
 import react_1 from 'react';
 import react_router_dom_1 from 'react-router-dom';
 import core_1 from '@/components/core';
-const NodeDetails = ({ nodes, onNodeUpdate }) => {
+export const NodeDetails = ({ nodes, onNodeUpdate }) => {
     var _a, _b, _c;
     const { nodeId } = (0, react_router_dom_1.useParams)();
     const node = nodes.find((n) => n.id === nodeId);
@@ -61,5 +61,4 @@ const NodeDetails = ({ nodes, onNodeUpdate }) => {
       </core_1.CardContent>
     </core_1.Card>);
 };
-exports.NodeDetails = NodeDetails;
-export {};
+;

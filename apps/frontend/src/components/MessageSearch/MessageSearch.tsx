@@ -80,5 +80,5 @@ const MessageSearch = () => {
       </ui_1.CardContent>
     </ui_1.Card>);
 };
-exports.default = MessageSearch;
-export {};
+
+;

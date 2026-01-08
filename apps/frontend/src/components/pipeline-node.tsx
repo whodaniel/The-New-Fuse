@@ -1,11 +1,10 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PipelineNode = PipelineNode;
 import react_1 from 'react';
 import framer_motion_1 from 'framer-motion';
 import card_1 from '@/components/ui/card';
-function PipelineNode({ node, onDrag, onConnect }) {
+export function PipelineNode({ node, onDrag, onConnect }) {
     const handleDragEnd = (event, info) => {
         onDrag({ x: info.point.x, y: info.point.y });
     };
@@ -28,4 +27,4 @@ function PipelineNode({ node, onDrag, onConnect }) {
       </card_1.Card>
     </framer_motion_1.motion.div>);
 }
-export {};
+;

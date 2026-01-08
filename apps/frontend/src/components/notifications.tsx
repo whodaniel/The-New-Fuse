@@ -1,12 +1,9 @@
-
 'use client';
-export {}
-exports.Notifications = Notifications;
 import react_1 from 'react';
 import toast_1 from '@/components/ui/toast';
 import use_toast_1 from '@/components/ui/use-toast';
 import websocket_1 from '../services/websocket';
-function Notifications(): any {
+export function Notifications(): any {
     const { toast } = (0, use_toast_1.useToast)();
     (0, react_1.useEffect)(() => {
         websocket_1.webSocketService.on('notification', (data) => {
@@ -24,4 +21,4 @@ function Notifications(): any {
       <toast_1.ToastViewport />
     </toast_1.ToastProvider>);
 }
-export {};
+;

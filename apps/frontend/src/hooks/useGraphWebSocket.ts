@@ -1,7 +1,5 @@
-export {}
-exports.useGraphWebSocket = useGraphWebSocket;
 import react_1 from 'react';
-function useGraphWebSocket({ url, autoConnect = true, reconnectInterval = 3000, maxReconnectAttempts = 5, }): any {
+export function useGraphWebSocket({ url, autoConnect = true, reconnectInterval = 3000, maxReconnectAttempts = 5, }): any {
     var _a;
     const [state, setState] = (0, react_1.useState)({
         data: { nodes: [], edges: [] },
@@ -113,4 +111,4 @@ function useGraphWebSocket({ url, autoConnect = true, reconnectInterval = 3000, 
         expandNode,
         filterGraph, isConnected: ((_a = wsRef.current) === null || _a === void 0 ? void 0 : _a.readyState) === WebSocket.OPEN });
 }
-export {};
+;

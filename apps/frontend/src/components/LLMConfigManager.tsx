@@ -1,9 +1,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LLMConfigManager = LLMConfigManager;
 import react_1 from 'react';
 import providers_1 from '../../services/llm/providers';
 import ui_1 from '../ui';
-function LLMConfigManager({ currentConfig, onConfigUpdate }) {
+export function LLMConfigManager({ currentConfig, onConfigUpdate }) {
     const [config, setConfig] = (0, react_1.useState)(currentConfig);
     const [isValidating, setIsValidating] = (0, react_1.useState)(false);
     const [validationError, setValidationError] = (0, react_1.useState)(null);
@@ -89,4 +88,4 @@ function LLMConfigManager({ currentConfig, onConfigUpdate }) {
       </div>
     </ui_1.Card>);
 }
-export {};
+;

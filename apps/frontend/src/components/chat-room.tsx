@@ -1,7 +1,6 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatRoom = ChatRoom;
 import react_1 from 'react';
 import card_1 from '@/components/ui/card';
 import button_1 from '@/components/ui/button';
@@ -9,7 +8,7 @@ import input_1 from '@/components/ui/input';
 import scroll_area_1 from '@/components/ui/scroll-area';
 import avatar_1 from '@/components/ui/avatar';
 import websocket_1 from '../services/websocket';
-function ChatRoom({ roomId, agents }) {
+export function ChatRoom({ roomId, agents }) {
     const [messages, setMessages] = (0, react_1.useState)([]);
     const [input, setInput] = (0, react_1.useState)('');
     (0, react_1.useEffect)(() => {
@@ -50,4 +49,4 @@ function ChatRoom({ roomId, agents }) {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;

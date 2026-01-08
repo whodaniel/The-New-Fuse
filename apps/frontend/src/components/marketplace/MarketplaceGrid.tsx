@@ -1,10 +1,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MarketplaceGrid = void 0;
+
 import react_1 from 'react';
 import MarketplaceCard_1 from './MarketplaceCard';
 import FilterBar_1 from './FilterBar';
 import useToast_1 from '@/hooks/useToast';
-const MarketplaceGrid = ({ initialItems, categories, tags, }) => {
+export const MarketplaceGrid = ({ initialItems, categories, tags, }) => {
     const [items, setItems] = (0, react_1.useState)(initialItems);
     const [filteredItems, setFilteredItems] = (0, react_1.useState)(initialItems);
     const [searchQuery, setSearchQuery] = (0, react_1.useState)('');
@@ -80,5 +80,4 @@ const MarketplaceGrid = ({ initialItems, categories, tags, }) => {
         </div>)}
     </div>);
 };
-exports.MarketplaceGrid = MarketplaceGrid;
-export {};
+;

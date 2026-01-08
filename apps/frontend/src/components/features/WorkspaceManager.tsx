@@ -1,10 +1,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkspaceManager = void 0;
+
 import react_1 from 'react';
 import Card_1 from '../../../core/Card';
 import Button_1 from '../../../core/Button';
 import Input_1 from '../../../core/Input';
-const WorkspaceManager = () => {
+export const WorkspaceManager = () => {
     const [workspaces, setWorkspaces] = react_1.default.useState([]);
     const [showCreateForm, setShowCreateForm] = react_1.default.useState(false);
     const [newWorkspace, setNewWorkspace] = react_1.default.useState({
@@ -75,6 +75,5 @@ const WorkspaceManager = () => {
       </div>
     </div>);
 };
-exports.WorkspaceManager = WorkspaceManager;
-exports.default = exports.WorkspaceManager;
-export {};
+
+;

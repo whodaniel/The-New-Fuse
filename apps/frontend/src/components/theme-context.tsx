@@ -1,9 +1,6 @@
-export {}
-exports.ThemeProvider = ThemeProvider;
-exports.useTheme = useTheme;
 import react_1 from 'react';
 const ThemeContext = (0, react_1.createContext)(undefined);
-function ThemeProvider({ children }): any {
+export function ThemeProvider({ children }): any {
     const [theme, setTheme] = (0, react_1.useState)(() => {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme)
@@ -23,11 +20,11 @@ function ThemeProvider({ children }): any {
       {children}
     </ThemeContext.Provider>);
 }
-function useTheme(): any {
+export function useTheme(): any {
     const context = (0, react_1.useContext)(ThemeContext);
     if (context === undefined) {
         throw new Error('useTheme must be used within a ThemeProvider');
     }
     return context;
 }
-export {};
+;

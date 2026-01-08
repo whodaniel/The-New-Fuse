@@ -1,11 +1,9 @@
-export {}
-exports.ClientBridge = exports.RedisConfig = void 0;
 import ioredis_1 from 'ioredis';
 import uuid_1 from 'uuid';
 import logging_config_1 from './logging_config';
 import events_1 from 'events';
 const logger = (0, logging_config_1.setupLogging)('redis_client');
-class RedisConfig {
+export class RedisConfig {
     constructor({ host = 'localhost', port = 6379, password, db = 0, tls = false } = {}) {
         this.host = host;
         this.port = port;
@@ -35,8 +33,7 @@ class RedisConfig {
         };
     }
 }
-exports.RedisConfig = RedisConfig;
-class ClientBridge extends events_1.EventEmitter {
+export class ClientBridge extends events_1.EventEmitter {
     constructor(config, instanceId) {
         super();
         this.config = config;
@@ -200,7 +197,6 @@ class ClientBridge extends events_1.EventEmitter {
         logger.info('Bridge stopped');
     }
 }
-exports.ClientBridge = ClientBridge;
 if (require.main === module) {
     const run = async () => {
         const config = new RedisConfig();
@@ -226,4 +222,4 @@ if (require.main === module) {
     };
     run();
 }
-export {};
+;

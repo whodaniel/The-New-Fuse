@@ -1,14 +1,13 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebhookManager = WebhookManager;
 import react_1 from 'react';
 import card_1 from '@/components/ui/card';
 import button_1 from '@/components/ui/button';
 import input_1 from '@/components/ui/input';
 import label_1 from '@/components/ui/label';
 import websocket_1 from '../services/websocket';
-function WebhookManager() {
+export function WebhookManager() {
     const [webhookUrl, setWebhookUrl] = (0, react_1.useState)('');
     const handleAddWebhook = () => {
         if (webhookUrl) {
@@ -31,4 +30,4 @@ function WebhookManager() {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;

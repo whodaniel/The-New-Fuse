@@ -1,14 +1,13 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AIAssistant = AIAssistant;
 import react_1 from 'react';
 import lucide_react_1 from 'lucide-react';
 import button_1 from '@/components/ui/button';
 import card_1 from '@/components/ui/card';
 import input_1 from '@/components/ui/input';
 import websocket_1 from '../services/websocket';
-function AIAssistant() {
+export function AIAssistant() {
     const [isOpen, setIsOpen] = (0, react_1.useState)(false);
     const [messages, setMessages] = (0, react_1.useState)([]);
     const [input, setInput] = (0, react_1.useState)('');
@@ -52,4 +51,4 @@ function AIAssistant() {
         </card_1.Card>)}
     </div>);
 }
-export {};
+;

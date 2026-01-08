@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkflowNode = void 0;
+
 import react_1 from 'react';
 import reactflow_1 from 'reactflow';
 import WorkflowContext_1 from '@/contexts/WorkflowContext';
@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Button_1 from '@/components/ui/Button';
 import lucide_react_1 from 'lucide-react';
 import DropdownMenu_1 from '@/components/ui/DropdownMenu';
-exports.WorkflowNode = (0, react_1.memo)(({ id, data, selected }) => {
+
     const { actions: { removeNode, updateNode, executeNode }, isReadOnly, } = (0, WorkflowContext_1.useWorkflow)();
     const handleExecute = (0, react_1.useCallback)(() => {
         executeNode(id);
@@ -93,4 +93,4 @@ exports.WorkflowNode = (0, react_1.memo)(({ id, data, selected }) => {
       <reactflow_1.Handle type="source" position={reactflow_1.Position.Bottom} className="w-3 h-3 bg-blue-500"/>
     </Card>);
 });
-export {};
+;

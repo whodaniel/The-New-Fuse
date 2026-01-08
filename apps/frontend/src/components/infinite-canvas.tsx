@@ -1,14 +1,13 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InfiniteCanvas = InfiniteCanvas;
 import react_1 from 'react';
 import framer_motion_1 from 'framer-motion';
 import pipeline_node_1 from './pipeline-node';
 import node_connection_1 from './node-connection';
 import button_1 from '@/components/ui/button';
 import lucide_react_1 from 'lucide-react';
-function InfiniteCanvas() {
+export function InfiniteCanvas() {
     const [nodes, setNodes] = (0, react_1.useState)([]);
     const [connections, setConnections] = (0, react_1.useState)([]);
     const [scale, setScale] = (0, react_1.useState)(1);
@@ -59,4 +58,4 @@ function InfiniteCanvas() {
       </div>
     </div>);
 }
-export {};
+;

@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkflowEdge = void 0;
+
 import react_1 from 'react';
 import reactflow_1 from 'reactflow';
 import WorkflowContext_1 from '@/contexts/WorkflowContext';
 import Button_1 from '@/components/ui/Button';
 import lucide_react_1 from 'lucide-react';
-exports.WorkflowEdge = (0, react_1.memo)(({ id, source, target, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, style = {}, markerEnd, }) => {
+
     const { actions: { removeEdge }, isReadOnly } = (0, WorkflowContext_1.useWorkflow)();
     const [edgePath, labelX, labelY] = (0, reactflow_1.getBezierPath)({
         sourceX,
@@ -48,4 +48,4 @@ exports.WorkflowEdge = (0, react_1.memo)(({ id, source, target, sourceX, sourceY
     </>);
 });
 exports.WorkflowEdge.displayName = 'WorkflowEdge';
-export {};
+;

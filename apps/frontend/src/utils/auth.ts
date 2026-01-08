@@ -1,4 +1,4 @@
-export {};
+;
 // exports.AuthManagerImpl = void 0; // Cleaned up exports
 import bcryptjs_1 from 'bcryptjs';
 import jsonwebtoken_1 from 'jsonwebtoken';
@@ -18,7 +18,7 @@ class AuthenticationError extends Error {
 
 // AuthError and UserExistsError are removed
 
-class AuthManagerImpl {
+export class AuthManagerImpl {
   constructor(db, secretKey, tokenExpireMinutes = 60) {
     this.db = db;
     this.secretKey = secretKey;
@@ -68,4 +68,4 @@ export { AuthManagerImpl };
 // The line `exports.AuthManagerImpl = exports.UserExistsError = exports.AuthError = void 0;`
 // should ideally become `exports.AuthManagerImpl = void 0;` or be handled by the build system.
 // For now, I will leave it and it can be cleaned in a separate step if needed.
-export {};
+;
