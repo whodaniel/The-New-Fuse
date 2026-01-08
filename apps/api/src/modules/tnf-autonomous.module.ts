@@ -12,6 +12,7 @@
 
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { Redis } from 'ioredis';
 // ScheduleModule is configured at root AppModule level
 
 // Note: These are implemented but may need path adjustments based on your build setup
@@ -54,6 +55,7 @@ export class DirectorServiceProvider implements OnModuleInit {
   private cycleCount = 0;
   private intervalHandle: NodeJS.Timeout | null = null;
   private config: TNFAutonomousConfig;
+  private redis: Redis | null = null;
 
   constructor(config?: Partial<TNFAutonomousConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -72,6 +74,21 @@ export class DirectorServiceProvider implements OnModuleInit {
       return;
     }
 
+    if (this.config.redisEnabled && !this.redis) {
+      try {
+        this.redis = new Redis({
+          host: this.config.redisHost,
+          port: this.config.redisPort,
+        });
+        this.redis.on('error', (err) => {
+          this.logger.error('Redis error', err);
+        });
+        this.logger.log('Redis connected for task discovery');
+      } catch (error) {
+        this.logger.error('Failed to connect to Redis', error);
+      }
+    }
+
     this.isRunning = true;
     this.logger.log(`🚀 Director started with ${this.config.directorCycleIntervalMs}ms cycle`);
 
@@ -88,6 +105,10 @@ export class DirectorServiceProvider implements OnModuleInit {
     if (this.intervalHandle) {
       clearInterval(this.intervalHandle);
       this.intervalHandle = null;
+    }
+    if (this.redis) {
+      await this.redis.quit();
+      this.redis = null;
     }
     this.isRunning = false;
     this.logger.log('⏹️ Director stopped');
@@ -131,12 +152,37 @@ export class DirectorServiceProvider implements OnModuleInit {
     return { status: 'healthy', agents: 0 };
   }
 
-  private async discoverTasks(): Promise<Array<{ id: string; name: string }>> {
-    // TODO: Connect to task queue
-    return [];
+  private async discoverTasks(): Promise<Array<{ id: string; name: string; data?: any }>> {
+    if (!this.redis) return [];
+
+    const tasks: Array<{ id: string; name: string; data?: any }> = [];
+    const limit = 5; // Fetch up to 5 tasks per cycle
+
+    for (let i = 0; i < limit; i++) {
+      try {
+        // Use RPOPLPUSH to safely move task from queue to processing
+        const result = await this.redis.rpoplpush('task:queue', 'task:processing');
+        if (!result) break;
+
+        const taskData = JSON.parse(result);
+        tasks.push({
+          id: taskData.id,
+          name: taskData.type || 'Unnamed Task',
+          data: taskData,
+        });
+      } catch (err) {
+        this.logger.error(`Failed to fetch/parse task: ${err}`);
+      }
+    }
+
+    if (tasks.length > 0) {
+      this.logger.log(`Discovered ${tasks.length} tasks`);
+    }
+
+    return tasks;
   }
 
-  private async executeTasks(tasks: Array<{ id: string; name: string }>): Promise<number> {
+  private async executeTasks(tasks: Array<{ id: string; name: string; data?: any }>): Promise<number> {
     // TODO: Execute via CascadeService
     return tasks.length;
   }
