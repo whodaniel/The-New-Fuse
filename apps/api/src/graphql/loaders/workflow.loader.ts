@@ -1,80 +1,65 @@
+/**
+ * Workflow DataLoader - Migrated to Drizzle ORM
+ * Provides efficient batched loading of workflows for GraphQL resolvers
+ */
 import { Injectable, Scope } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import type { Workflow } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import DataLoader from 'dataloader';
-import { In, Repository } from 'typeorm';
-import { WorkflowStep } from '../../entities/workflow-step.entity';
-import { Workflow } from '../../entities/workflow.entity';
+
+// WorkflowStep type from the database types
+type WorkflowStep = any; // Since WorkflowStep might not be directly exported
 
 @Injectable({ scope: Scope.REQUEST })
 export class WorkflowLoader {
-  constructor(
-    @InjectRepository(Workflow)
-    private readonly workflowRepository: Repository<Workflow>,
-    @InjectRepository(WorkflowStep)
-    private readonly workflowStepRepository: Repository<WorkflowStep>
-  ) {}
+  private readonly batchWorkflows: DataLoader<string, Workflow | null>;
+  private readonly batchWorkflowsByUser: DataLoader<string, Workflow[]>;
+  private readonly batchStepsByWorkflow: DataLoader<string, WorkflowStep[]>;
 
-  private readonly batchWorkflows = new DataLoader<string, Workflow>(
-    async (workflowIds: readonly string[]) => {
-      const workflows = await this.workflowRepository.find({
-        where: { id: In([...workflowIds]) },
-      });
+  constructor(private readonly db: DatabaseService) {
+    this.batchWorkflows = new DataLoader<string, Workflow | null>(
+      async (workflowIds: readonly string[]) => {
+        // Load each workflow individually since there's no batch method
+        const results = await Promise.all(
+          workflowIds.map((id) => this.db.workflows.findWorkflowById(id))
+        );
+        return results;
+      }
+    );
 
-      const workflowMap = new Map(workflows.map((workflow) => [workflow.id, workflow]));
-      return workflowIds.map((id) => workflowMap.get(id) || null) as Workflow[];
-    }
-  );
+    this.batchWorkflowsByUser = new DataLoader<string, Workflow[]>(
+      async (userIds: readonly string[]) => {
+        const workflowsByUser = new Map<string, Workflow[]>();
 
-  private readonly batchWorkflowsByUser = new DataLoader<string, Workflow[]>(
-    async (userIds: readonly string[]) => {
-      const workflows = await this.workflowRepository.find({
-        where: { creator: { id: In([...userIds]) } },
-        relations: ['creator'],
-      });
-
-      const workflowsByUser = new Map<string, Workflow[]>();
-      workflows.forEach((workflow) => {
-        const userId = workflow.creator?.id;
-        if (userId) {
-          if (!workflowsByUser.has(userId)) {
-            workflowsByUser.set(userId, []);
-          }
-          workflowsByUser.get(userId)!.push(workflow);
+        for (const userId of userIds) {
+          const workflows = await this.db.workflows.findWorkflowsByCreatorId(userId);
+          workflowsByUser.set(userId, workflows);
         }
-      });
 
-      return userIds.map((userId) => workflowsByUser.get(userId) || []);
-    }
-  );
+        return userIds.map((userId) => workflowsByUser.get(userId) || []);
+      }
+    );
 
-  private readonly batchStepsByWorkflow = new DataLoader<string, WorkflowStep[]>(
-    async (workflowIds: readonly string[]) => {
-      const steps = await this.workflowStepRepository.find({
-        where: { workflow: { id: In([...workflowIds]) } },
-        relations: ['workflow', 'agent'],
-      });
+    this.batchStepsByWorkflow = new DataLoader<string, WorkflowStep[]>(
+      async (workflowIds: readonly string[]) => {
+        const stepsByWorkflow = new Map<string, WorkflowStep[]>();
 
-      const stepsByWorkflow = new Map<string, WorkflowStep[]>();
-      steps.forEach((step) => {
-        const workflowId = step.workflow?.id;
-        if (workflowId) {
-          if (!stepsByWorkflow.has(workflowId)) {
-            stepsByWorkflow.set(workflowId, []);
-          }
-          stepsByWorkflow.get(workflowId)!.push(step);
+        for (const workflowId of workflowIds) {
+          const steps = await this.db.workflows.findStepsByWorkflowId(workflowId);
+          stepsByWorkflow.set(workflowId, steps);
         }
-      });
 
-      return workflowIds.map((workflowId) => stepsByWorkflow.get(workflowId) || []);
-    }
-  );
+        return workflowIds.map((workflowId) => stepsByWorkflow.get(workflowId) || []);
+      }
+    );
+  }
 
-  async load(workflowId: string): Promise<Workflow> {
+  async load(workflowId: string): Promise<Workflow | null> {
     return this.batchWorkflows.load(workflowId);
   }
 
-  async loadMany(workflowIds: string[]): Promise<Workflow[]> {
-    return this.batchWorkflows.loadMany(workflowIds) as Promise<Workflow[]>;
+  async loadMany(workflowIds: string[]): Promise<(Workflow | null)[]> {
+    return this.batchWorkflows.loadMany(workflowIds) as Promise<(Workflow | null)[]>;
   }
 
   async loadByUserId(userId: string): Promise<Workflow[]> {

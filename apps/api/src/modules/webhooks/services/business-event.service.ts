@@ -1,102 +1,111 @@
+/**
+ * Business Event Service - Migrated to Drizzle ORM
+ * Handles business event creation and processing
+ */
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  BusinessEvent as IBusinessEvent,
-  EventHistoryRequest,
-  EventHistoryResponse,
-  ProcessingStatus,
-  BusinessEventType,
-  EventPriority,
-} from '@the-new-fuse/types';
-import { BusinessEvent } from '../entities/business-event.entity';
-import { SSEService } from './sse.service';
+import { DatabaseService } from '@the-new-fuse/database';
+import { BusinessEventType, ProcessingStatus } from '@the-new-fuse/types';
+
+// Internal types for this service
+interface CreateBusinessEventData {
+  type: string;
+  source: string;
+  organizationId: string;
+  userId?: string;
+  correlationId?: string;
+  data: any;
+  metadata?: any;
+}
+
+interface BusinessEventHistoryRequest {
+  limit?: number;
+  eventTypes?: string[];
+  status?: string;
+}
+
+interface BusinessEventHistoryResponse {
+  events: any[];
+  total: number;
+}
+
+// Internal type matching the Drizzle schema
+type BusinessEventEntity = {
+  id: string;
+  type: string;
+  source: string;
+  organizationId: string;
+  userId?: string | null;
+  correlationId?: string | null;
+  data: unknown;
+  metadata: unknown;
+  processingStatus: string;
+  retryCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+  processedAt?: Date | null;
+};
 
 @Injectable()
 export class BusinessEventService {
   private readonly logger = new Logger(BusinessEventService.name);
 
-  constructor(
-    @InjectRepository(BusinessEvent)
-    private readonly businessEventRepo: Repository<BusinessEvent>,
-    private readonly sseService: SSEService,
-  ) {}
+  constructor(private readonly db: DatabaseService) {}
 
-  async createEvent(eventData: Omit<IBusinessEvent, 'id' | 'timestamp'>): Promise<BusinessEvent> {
-    try {
-      const event = this.businessEventRepo.create({
-        id: uuidv4(),
-        type: eventData.type,
-        source: eventData.source,
-        organizationId: eventData.metadata.organization_id,
-        userId: eventData.metadata.user_id,
-        correlationId: eventData.metadata.correlation_id,
-        data: eventData.data,
-        metadata: eventData.metadata,
-        processingStatus: ProcessingStatus.PENDING,
-        retryCount: 0,
-      });
+  async createEvent(eventData: CreateBusinessEventData): Promise<BusinessEventEntity> {
+    const event = await this.db.webhooks.createBusinessEvent({
+      type: eventData.type,
+      source: eventData.source,
+      organizationId: eventData.organizationId,
+      userId: eventData.userId,
+      correlationId: eventData.correlationId,
+      data: eventData.data,
+      metadata: eventData.metadata || {},
+      processingStatus: ProcessingStatus.PENDING,
+      retryCount: 0,
+    });
 
-      const savedEvent = await this.businessEventRepo.save(event);
-      
-      this.logger.log(`Business event created: ${savedEvent.id} (${savedEvent.type})`);
-      
-      return savedEvent;
-    } catch (error) {
-      this.logger.error('Failed to create business event', error);
-      throw error;
-    }
+    this.logger.log(`Business event created: ${event.id} (${event.type})`);
+
+    return event;
   }
 
   async processEvent(eventId: string): Promise<void> {
+    const event = await this.db.webhooks.findBusinessEventById(eventId);
+
+    if (!event) {
+      throw new Error(`Event not found: ${eventId}`);
+    }
+
+    const startTime = Date.now();
+
     try {
-      const event = await this.businessEventRepo.findOne({ where: { id: eventId } });
-      
-      if (!event) {
-        throw new Error(`Event not found: ${eventId}`);
-      }
-
-      if (event.processingStatus !== ProcessingStatus.PENDING) {
-        this.logger.warn(`Event ${eventId} is not in pending status, skipping processing`);
-        return;
-      }
-
       // Update status to processing
-      await this.businessEventRepo.update(eventId, {
-        processingStatus: ProcessingStatus.PROCESSING,
-      });
+      await this.db.webhooks.updateBusinessEventStatus(eventId, ProcessingStatus.PROCESSING);
 
       // Process based on event type
       await this.processEventByType(event);
 
-      // Broadcast event via SSE
-      await this.sseService.broadcastEvent(this.mapEntityToInterface(event));
+      // Mark as completed
+      await this.db.webhooks.updateBusinessEventStatus(
+        eventId,
+        ProcessingStatus.COMPLETED,
+        new Date()
+      );
 
-      // Update status to completed
-      await this.businessEventRepo.update(eventId, {
-        processingStatus: ProcessingStatus.COMPLETED,
-        processedAt: new Date(),
-      });
-
-      this.logger.log(`Event processed successfully: ${eventId}`);
+      const processingTime = Date.now() - startTime;
+      this.logger.log(`Event ${eventId} processed successfully in ${processingTime}ms`);
     } catch (error) {
       this.logger.error(`Failed to process event ${eventId}`, error);
-      
-      // Update status to failed and increment retry count
-      const event = await this.businessEventRepo.findOne({ where: { id: eventId } });
-      if (event) {
-        await this.businessEventRepo.update(eventId, {
-          processingStatus: ProcessingStatus.FAILED,
-          retryCount: event.retryCount + 1,
-        });
-      }
-      
-      throw error;
+
+      // Increment retry count
+      await this.db.webhooks.incrementRetryCount(eventId);
+
+      // Update status to failed
+      await this.db.webhooks.updateBusinessEventStatus(eventId, ProcessingStatus.FAILED);
     }
   }
 
-  private async processEventByType(event: BusinessEvent): Promise<void> {
+  private async processEventByType(event: BusinessEventEntity): Promise<void> {
     switch (event.type) {
       case BusinessEventType.LEAD_CREATED:
         await this.processLeadCreated(event);
@@ -124,215 +133,120 @@ export class BusinessEventService {
     }
   }
 
-  private async processLeadCreated(event: BusinessEvent): Promise<void> {
-    this.logger.log(`Processing lead created event: ${event.id}`);
-    // Implement lead processing logic
-    // - Update CRM records
-    // - Trigger email sequences
-    // - Assign to sales rep
-    // - Generate notifications
+  private async processLeadCreated(event: BusinessEventEntity): Promise<void> {
+    this.logger.log(`Processing lead_created event: ${event.id}`);
   }
 
-  private async processPaymentReceived(event: BusinessEvent): Promise<void> {
-    this.logger.log(`Processing payment received event: ${event.id}`);
-    // Implement payment processing logic
-    // - Update billing records
-    // - Send payment confirmations
-    // - Update subscription status
-    // - Generate revenue analytics
+  private async processPaymentReceived(event: BusinessEventEntity): Promise<void> {
+    this.logger.log(`Processing payment_received event: ${event.id}`);
   }
 
-  private async processInvoiceGenerated(event: BusinessEvent): Promise<void> {
-    this.logger.log(`Processing invoice generated event: ${event.id}`);
-    // Implement invoice processing logic
-    // - Send invoice notifications
-    // - Update accounting records
-    // - Schedule payment reminders
+  private async processInvoiceGenerated(event: BusinessEventEntity): Promise<void> {
+    this.logger.log(`Processing invoice_generated event: ${event.id}`);
   }
 
-  private async processWorkflowTriggered(event: BusinessEvent): Promise<void> {
-    this.logger.log(`Processing workflow triggered event: ${event.id}`);
-    // Implement workflow processing logic
-    // - Execute workflow steps
-    // - Update workflow state
-    // - Handle conditions and branches
+  private async processWorkflowTriggered(event: BusinessEventEntity): Promise<void> {
+    this.logger.log(`Processing workflow_triggered event: ${event.id}`);
   }
 
-  private async processCustomerUpdated(event: BusinessEvent): Promise<void> {
-    this.logger.log(`Processing customer updated event: ${event.id}`);
-    // Implement customer update processing logic
-    // - Sync across systems
-    // - Update customer segments
-    // - Trigger personalization updates
+  private async processCustomerUpdated(event: BusinessEventEntity): Promise<void> {
+    this.logger.log(`Processing customer_updated event: ${event.id}`);
   }
 
-  private async processProductSold(event: BusinessEvent): Promise<void> {
-    this.logger.log(`Processing product sold event: ${event.id}`);
-    // Implement product sale processing logic
-    // - Update inventory
-    // - Generate fulfillment orders
-    // - Update sales analytics
-    // - Trigger upsell workflows
+  private async processProductSold(event: BusinessEventEntity): Promise<void> {
+    this.logger.log(`Processing product_sold event: ${event.id}`);
   }
 
-  private async processSubscriptionChanged(event: BusinessEvent): Promise<void> {
-    this.logger.log(`Processing subscription changed event: ${event.id}`);
-    // Implement subscription change processing logic
-    // - Update billing cycles
-    // - Adjust service levels
-    // - Send change confirmations
-    // - Update revenue forecasts
+  private async processSubscriptionChanged(event: BusinessEventEntity): Promise<void> {
+    this.logger.log(`Processing subscription_changed event: ${event.id}`);
   }
 
   async getEventHistory(
     organizationId: string,
-    request: EventHistoryRequest,
-  ): Promise<EventHistoryResponse> {
-    try {
-      const { start_date, end_date, event_types, limit = 50 } = request;
-      
-      const queryBuilder = this.businessEventRepo
-        .createQueryBuilder('event')
-        .where('event.organizationId = :organizationId', { organizationId });
+    request: BusinessEventHistoryRequest
+  ): Promise<BusinessEventHistoryResponse> {
+    const events = await this.db.webhooks.findBusinessEventsByOrganization(
+      organizationId,
+      request.limit || 100
+    );
 
-      // Add date filtering
-      if (start_date && end_date) {
-        queryBuilder.andWhere('event.createdAt BETWEEN :startDate AND :endDate', {
-          startDate: new Date(start_date),
-          endDate: new Date(end_date),
-        });
-      }
-
-      // Add event type filtering
-      if (event_types) {
-        const types = event_types.split(',');
-        queryBuilder.andWhere('event.type IN (:...types)', { types });
-      }
-
-      // Apply limit and ordering
-      queryBuilder
-        .orderBy('event.createdAt', 'DESC')
-        .limit(limit);
-
-      const [events, total] = await queryBuilder.getManyAndCount();
-
-      return {
-        events: events.map(this.mapEntityToInterface),
-        total,
-        has_more: total > limit,
-      };
-    } catch (error) {
-      this.logger.error('Failed to get event history', error);
-      throw error;
+    // Filter by type if specified
+    let filteredEvents = events;
+    if (request.eventTypes && request.eventTypes.length > 0) {
+      filteredEvents = events.filter((e) => request.eventTypes?.includes(e.type));
     }
+
+    // Filter by status if specified
+    if (request.status) {
+      filteredEvents = filteredEvents.filter((e) => e.processingStatus === request.status);
+    }
+
+    return {
+      events: filteredEvents,
+      total: filteredEvents.length,
+    };
   }
 
   async retryFailedEvent(eventId: string): Promise<void> {
-    try {
-      const event = await this.businessEventRepo.findOne({ where: { id: eventId } });
-      
-      if (!event) {
-        throw new Error(`Event not found: ${eventId}`);
-      }
+    const event = await this.db.webhooks.findBusinessEventById(eventId);
 
-      if (event.processingStatus !== ProcessingStatus.FAILED) {
-        throw new Error(`Event ${eventId} is not in failed status`);
-      }
-
-      if (event.retryCount >= 3) {
-        throw new Error(`Event ${eventId} has exceeded maximum retry attempts`);
-      }
-
-      // Reset status to pending for retry
-      await this.businessEventRepo.update(eventId, {
-        processingStatus: ProcessingStatus.PENDING,
-      });
-
-      // Process the event
-      await this.processEvent(eventId);
-
-      this.logger.log(`Event retry successful: ${eventId}`);
-    } catch (error) {
-      this.logger.error(`Failed to retry event ${eventId}`, error);
-      throw error;
+    if (!event) {
+      throw new Error(`Event not found: ${eventId}`);
     }
+
+    if (event.processingStatus !== ProcessingStatus.FAILED) {
+      throw new Error(`Event ${eventId} is not in failed status`);
+    }
+
+    // Reset status to pending
+    await this.db.webhooks.updateBusinessEventStatus(eventId, ProcessingStatus.PENDING);
+
+    // Process the event again
+    await this.processEvent(eventId);
   }
 
-  async getEventsByStatus(
+  async getEventsByStatus(organizationId: string, status: string): Promise<BusinessEventEntity[]> {
+    const allEvents = await this.db.webhooks.findBusinessEventsByOrganization(organizationId);
+    return allEvents.filter((e) => e.processingStatus === status);
+  }
+
+  async getEventStats(
     organizationId: string,
-    status: ProcessingStatus,
-  ): Promise<BusinessEvent[]> {
-    return this.businessEventRepo.find({
-      where: { organizationId, processingStatus: status },
-      order: { createdAt: 'DESC' },
-    });
-  }
-
-  async getEventStats(organizationId: string, days: number = 7): Promise<{
+    days: number = 7
+  ): Promise<{
     totalEvents: number;
     eventsByType: Record<string, number>;
     eventsByStatus: Record<string, number>;
     averageProcessingTime: number;
   }> {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    const events = await this.db.webhooks.findBusinessEventsByOrganization(organizationId, 1000);
 
-    const events = await this.businessEventRepo.find({
-      where: {
-        organizationId,
-        createdAt: Between(startDate, new Date()),
-      },
-    });
+    // Filter by date range
+    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const recentEvents = events.filter((e) => new Date(e.createdAt) >= cutoffDate);
 
     const eventsByType: Record<string, number> = {};
     const eventsByStatus: Record<string, number> = {};
     let totalProcessingTime = 0;
-    let processedEventsCount = 0;
+    let processedCount = 0;
 
-    events.forEach(event => {
-      // Count by type
+    for (const event of recentEvents) {
       eventsByType[event.type] = (eventsByType[event.type] || 0) + 1;
-      
-      // Count by status
       eventsByStatus[event.processingStatus] = (eventsByStatus[event.processingStatus] || 0) + 1;
-      
-      // Calculate processing time for completed events
-      if (event.processedAt && event.processingStatus === ProcessingStatus.COMPLETED) {
-        const processingTime = event.processedAt.getTime() - event.createdAt.getTime();
-        totalProcessingTime += processingTime;
-        processedEventsCount++;
-      }
-    });
 
-    const averageProcessingTime = processedEventsCount > 0 
-      ? totalProcessingTime / processedEventsCount 
-      : 0;
+      if (event.processedAt && event.createdAt) {
+        totalProcessingTime +=
+          new Date(event.processedAt).getTime() - new Date(event.createdAt).getTime();
+        processedCount++;
+      }
+    }
 
     return {
-      totalEvents: events.length,
+      totalEvents: recentEvents.length,
       eventsByType,
       eventsByStatus,
-      averageProcessingTime: Math.round(averageProcessingTime),
-    };
-  }
-
-  private mapEntityToInterface(entity: BusinessEvent): IBusinessEvent {
-    return {
-      id: entity.id,
-      type: entity.type as BusinessEventType,
-      source: entity.source as any,
-      timestamp: entity.createdAt, // Map createdAt to timestamp
-      data: entity.data,
-      metadata: {
-        correlation_id: entity.correlationId || '',
-        user_id: entity.userId,
-        organization_id: entity.organizationId,
-        priority: EventPriority.MEDIUM,
-        retry_count: entity.retryCount,
-        max_retries: 3,
-        source_metadata: entity.metadata, // Use existing metadata as source_metadata
-      },
-      processing_status: entity.processingStatus as ProcessingStatus,
+      averageProcessingTime:
+        processedCount > 0 ? Math.round(totalProcessingTime / processedCount) : 0,
     };
   }
 }

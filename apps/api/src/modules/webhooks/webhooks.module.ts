@@ -1,12 +1,10 @@
+/**
+ * Webhooks Module - Migrated to Drizzle ORM
+ * Provides webhook management and business event processing
+ */
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AiInsight } from './entities/ai-insight.entity';
-import { BusinessAnalytics } from './entities/business-analytics.entity';
-import { BusinessEvent } from './entities/business-event.entity';
-import { SseSubscription } from './entities/sse-subscription.entity';
-import { WebhookConfiguration } from './entities/webhook-configuration.entity';
-import { WebhookDeliveryLog } from './entities/webhook-delivery-log.entity';
+import { DatabaseModule } from '@the-new-fuse/database';
 import { BusinessEventService } from './services/business-event.service';
 import { IntegrationService } from './services/integration.service';
 import { SSEService } from './services/sse.service';
@@ -17,14 +15,7 @@ import { WebhooksService } from './webhooks.service';
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([
-      BusinessEvent,
-      WebhookConfiguration,
-      SseSubscription,
-      WebhookDeliveryLog,
-      BusinessAnalytics,
-      AiInsight,
-    ]),
+    DatabaseModule, // Provides DatabaseService with Drizzle repositories
   ],
   controllers: [WebhooksController],
   providers: [

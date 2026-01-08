@@ -1,26 +1,24 @@
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
+/**
+ * GraphQL Module - Migrated to Drizzle ORM
+ * Provides GraphQL API with Apollo Server using Drizzle for database access
+ */
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DatabaseModule } from '@the-new-fuse/database';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { JwtModule } from '@nestjs/jwt';
+import { DatabaseModule } from '@the-new-fuse/database';
+import { Request, Response } from 'express';
 import { join } from 'path';
 
-// Entities
-import { User } from '../entities/user.entity';
-import { Agent } from '../entities/agent.entity';
-import { Workflow } from '../entities/workflow.entity';
-import { WorkflowStep } from '../entities/workflow-step.entity';
-
 // Resolvers
-import { UserResolver } from './resolvers/user.resolver';
 import { AgentResolver } from './resolvers/agent.resolver';
+import { UserResolver } from './resolvers/user.resolver';
 import { WorkflowResolver } from './resolvers/workflow.resolver';
 
 // Loaders
-import { UserLoader } from './loaders/user.loader';
 import { AgentLoader } from './loaders/agent.loader';
+import { UserLoader } from './loaders/user.loader';
 import { WorkflowLoader } from './loaders/workflow.loader';
 
 // Guards
@@ -35,13 +33,14 @@ import { SecurityLoggingService } from '../security/security-logging.service';
       driver: ApolloDriver,
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        autoSchemaFile: configService.get('NODE_ENV') === 'production' 
-          ? true 
-          : join(process.cwd(), 'apps/api/src/graphql/schema.gql'),
+        autoSchemaFile:
+          configService.get('NODE_ENV') === 'production'
+            ? true
+            : join(process.cwd(), 'apps/api/src/graphql/schema.gql'),
         sortSchema: true,
         playground: configService.get('NODE_ENV') !== 'production',
         introspection: configService.get('NODE_ENV') !== 'production',
-        context: ({ req, res }) => ({ req, res }),
+        context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
         formatError: (error) => {
           // Log GraphQL errors
           console.error('GraphQL Error:', error);
@@ -65,8 +64,7 @@ import { SecurityLoggingService } from '../security/security-logging.service';
       }),
       inject: [ConfigService],
     }),
-    // TypeORM repositories for GraphQL resolvers
-    TypeOrmModule.forFeature([User, Agent, Workflow, WorkflowStep]),
+    // Drizzle database module (replaces TypeORM)
     DatabaseModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -94,10 +92,6 @@ import { SecurityLoggingService } from '../security/security-logging.service';
     // Security
     SecurityLoggingService,
   ],
-  exports: [
-    UserResolver,
-    AgentResolver,
-    WorkflowResolver,
-  ],
+  exports: [UserResolver, AgentResolver, WorkflowResolver],
 })
 export class GraphqlModule {}

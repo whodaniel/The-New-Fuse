@@ -17,5 +17,6 @@ export * from './system';
 export * from './tasks';
 export * from './users';
 export * from './wallets';
+export * from './webhooks';
 export * from './workflows';
 export * from './workspace';

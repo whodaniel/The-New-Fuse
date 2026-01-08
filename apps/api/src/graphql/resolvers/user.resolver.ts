@@ -1,38 +1,30 @@
-import {
-  Resolver,
-  Query,
-  ResolveField,
-  Parent,
-  Args,
-  ID,
-  Context,
-} from '@nestjs/graphql';
+/**
+ * User Resolver - Migrated to Drizzle ORM
+ * GraphQL resolver for User type queries and mutations
+ */
 import { UseGuards } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../../entities/user.entity';
-import { UserType } from '../types/user.type';
-import { AgentType } from '../types/agent.type';
-import { WorkflowType } from '../types/workflow.type';
+import { Args, Context, ID, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import type { User } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
 import { AgentLoader } from '../loaders/agent.loader';
 import { WorkflowLoader } from '../loaders/workflow.loader';
+import { AgentType } from '../types/agent.type';
+import { UserType } from '../types/user.type';
+import { WorkflowType } from '../types/workflow.type';
 
 @Resolver(() => UserType)
 export class UserResolver {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly db: DatabaseService,
     private readonly agentLoader: AgentLoader,
-    private readonly workflowLoader: WorkflowLoader,
+    private readonly workflowLoader: WorkflowLoader
   ) {}
 
   @Query(() => UserType, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async user(
-    @Args('id', { type: () => ID }) id: string,
-  ): Promise<User | null> {
-    return this.userRepository.findOne({ where: { id } });
+  async user(@Args('id', { type: () => ID }) id: string): Promise<User | null> {
+    return this.db.users.findById(id);
   }
 
   @Query(() => UserType, { nullable: true })
@@ -40,16 +32,13 @@ export class UserResolver {
   async me(@Context() context: any): Promise<User | null> {
     const userId = context.req.user?.id;
     if (!userId) return null;
-    return this.userRepository.findOne({ where: { id: userId } });
+    return this.db.users.findById(userId);
   }
 
   @Query(() => [UserType])
   @UseGuards(GqlAuthGuard)
   async users(): Promise<User[]> {
-    return this.userRepository.find({
-      take: 100,
-      order: { createdAt: 'DESC' },
-    });
+    return this.db.users.findAll(100);
   }
 
   @ResolveField(() => [AgentType])
@@ -64,10 +53,8 @@ export class UserResolver {
 
   @ResolveField(() => String, { nullable: true })
   fullName(@Parent() user: User): string | null {
-    if (user.firstName && user.lastName) {
-      return `${user.firstName} ${user.lastName}`;
-    }
-    return user.firstName || user.lastName || null;
+    // Drizzle schema uses 'name' field instead of firstName/lastName
+    return user.name || null;
   }
 
   @ResolveField(() => String, { nullable: true })
@@ -77,6 +64,8 @@ export class UserResolver {
 
   @ResolveField(() => String, { nullable: true })
   metadata(@Parent() user: User): string | null {
-    return user.metadata ? JSON.stringify(user.metadata) : null;
+    // Use settings if metadata is not available in schema
+    const settings = (user as any).settings;
+    return settings ? JSON.stringify(settings) : null;
   }
 }

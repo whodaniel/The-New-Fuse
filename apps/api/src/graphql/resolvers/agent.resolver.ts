@@ -1,128 +1,118 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  ResolveField,
-  Parent,
-  Args,
-  ID,
-  Context,
-} from '@nestjs/graphql';
+/**
+ * Agent Resolver - Migrated to Drizzle ORM
+ * GraphQL resolver for Agent type queries and mutations
+ */
 import { UseGuards } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Agent } from '../../entities/agent.entity';
-import { User } from '../../entities/user.entity';
-import { AgentType, AgentStatus } from '../types/agent.type';
-import { UserType } from '../types/user.type';
-import { CreateAgentInput, UpdateAgentInput } from '../types/input.types';
+import {
+  Args,
+  Context,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
+import type { Agent, NewAgent, User } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
 import { UserLoader } from '../loaders/user.loader';
+import { AgentStatus, AgentType } from '../types/agent.type';
+import { CreateAgentInput, UpdateAgentInput } from '../types/input.types';
+import { UserType } from '../types/user.type';
 
 @Resolver(() => AgentType)
 export class AgentResolver {
   constructor(
-    @InjectRepository(Agent)
-    private readonly agentRepository: Repository<Agent>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly userLoader: UserLoader,
+    private readonly db: DatabaseService,
+    private readonly userLoader: UserLoader
   ) {}
 
   @Query(() => AgentType, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async agent(
-    @Args('id', { type: () => ID }) id: string,
-  ): Promise<Agent | null> {
-    return this.agentRepository.findOne({
-      where: { id },
-      relations: ['owner'],
-    });
+  async agent(@Args('id', { type: () => ID }) id: string): Promise<Agent | null> {
+    return this.db.agents.findById(id);
   }
 
   @Query(() => [AgentType])
   @UseGuards(GqlAuthGuard)
   async agents(
-    @Args('userId', { type: () => ID, nullable: true }) userId?: string,
+    @Args('userId', { type: () => ID, nullable: true }) userId?: string
   ): Promise<Agent[]> {
     if (userId) {
-      return this.agentRepository.find({
-        where: { owner: { id: userId } },
-        relations: ['owner'],
-        order: { createdAt: 'DESC' },
-      });
+      return this.db.agents.findByUserId(userId);
     }
-    return this.agentRepository.find({
-      relations: ['owner'],
-      take: 100,
-      order: { createdAt: 'DESC' },
-    });
+    return this.db.agents.findAll(100);
   }
 
   @Mutation(() => AgentType)
   @UseGuards(GqlAuthGuard)
   async createAgent(
     @Args('input') input: CreateAgentInput,
-    @Context() context: any,
+    @Context() context: any
   ): Promise<Agent> {
     const userId = context.req.user?.id;
-    const owner = await this.userRepository.findOne({ where: { id: userId } });
+    const owner = await this.db.users.findById(userId);
 
     if (!owner) {
       throw new Error('User not found');
     }
 
-    const agent = this.agentRepository.create({
+    const agentData: NewAgent = {
       name: input.name,
       type: input.type as any,
       description: input.description,
       capabilities: input.capabilities || [],
       config: input.config ? JSON.parse(input.config) : {},
-      owner,
-      isActive: true,
-    });
+      userId: owner.id,
+    };
 
-    return this.agentRepository.save(agent);
+    return this.db.agents.create(agentData);
   }
 
   @Mutation(() => AgentType)
   @UseGuards(GqlAuthGuard)
-  async updateAgent(
-    @Args('input') input: UpdateAgentInput,
-  ): Promise<Agent> {
-    const agent = await this.agentRepository.findOne({
-      where: { id: input.id },
-    });
+  async updateAgent(@Args('input') input: UpdateAgentInput): Promise<Agent> {
+    const agent = await this.db.agents.findById(input.id);
 
     if (!agent) {
       throw new Error('Agent not found');
     }
 
-    if (input.name !== undefined) agent.name = input.name;
-    if (input.description !== undefined) agent.description = input.description;
-    if (input.capabilities !== undefined) agent.capabilities = input.capabilities;
-    if (input.isActive !== undefined) agent.isActive = input.isActive;
+    const updates: Partial<NewAgent> = {};
+    if (input.name !== undefined) updates.name = input.name;
+    if (input.description !== undefined) updates.description = input.description;
+    if (input.capabilities !== undefined) updates.capabilities = input.capabilities;
 
-    return this.agentRepository.save(agent);
+    const updated = await this.db.agents.update(input.id, updates);
+    if (!updated) {
+      throw new Error('Failed to update agent');
+    }
+    return updated;
   }
 
   @ResolveField(() => UserType)
-  async owner(@Parent() agent: Agent): Promise<User> {
-    if (agent.owner && typeof agent.owner === 'object') return agent.owner;
-    if (agent.owner && typeof agent.owner === 'string') {
-      return this.userLoader.load(agent.owner);
+  async owner(@Parent() agent: Agent): Promise<User | null> {
+    if (agent.userId) {
+      return this.userLoader.load(agent.userId);
     }
-    throw new Error('Owner not found');
+    return null;
   }
 
   @ResolveField(() => AgentStatus)
   status(@Parent() agent: Agent): AgentStatus {
-    if (!agent.isActive) return AgentStatus.INACTIVE;
+    // Check agent status field if available, otherwise use defaults
+    const agentStatus = (agent as any).status;
 
-    const lastActive = agent.lastActiveAt;
+    if (agentStatus === 'INACTIVE' || agentStatus === 'OFFLINE') {
+      return AgentStatus.INACTIVE;
+    }
+
+    // Use updatedAt as a proxy for last activity if lastActiveAt doesn't exist
+    const lastActive = (agent as any).lastActiveAt || agent.updatedAt;
     if (!lastActive) return AgentStatus.ACTIVE;
 
-    const minutesSinceActive = (Date.now() - lastActive.getTime()) / 1000 / 60;
+    const minutesSinceActive = (Date.now() - new Date(lastActive).getTime()) / 1000 / 60;
     if (minutesSinceActive > 30) return AgentStatus.INACTIVE;
 
     return AgentStatus.ACTIVE;
@@ -135,6 +125,8 @@ export class AgentResolver {
 
   @ResolveField(() => String, { nullable: true })
   metadata(@Parent() agent: Agent): string | null {
-    return agent.metadata ? JSON.stringify(agent.metadata) : null;
+    // Use a type assertion since metadata may not exist in the minimal Agent type
+    const agentMetadata = (agent as any).metadata;
+    return agentMetadata ? JSON.stringify(agentMetadata) : null;
   }
 }

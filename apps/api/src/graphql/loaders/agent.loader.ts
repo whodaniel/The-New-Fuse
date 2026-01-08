@@ -1,55 +1,43 @@
+/**
+ * Agent DataLoader - Migrated to Drizzle ORM
+ * Provides efficient batched loading of agents for GraphQL resolvers
+ */
 import { Injectable, Scope } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import type { Agent } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import DataLoader from 'dataloader';
-import { In, Repository } from 'typeorm';
-import { Agent } from '../../entities/agent.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AgentLoader {
-  constructor(
-    @InjectRepository(Agent)
-    private readonly agentRepository: Repository<Agent>
-  ) {}
+  private readonly batchAgents: DataLoader<string, Agent | null>;
+  private readonly batchAgentsByUser: DataLoader<string, Agent[]>;
 
-  private readonly batchAgents = new DataLoader<string, Agent>(
-    async (agentIds: readonly string[]) => {
-      const agents = await this.agentRepository.find({
-        where: { id: In([...agentIds]) },
-      });
+  constructor(private readonly db: DatabaseService) {
+    this.batchAgents = new DataLoader<string, Agent | null>(async (agentIds: readonly string[]) => {
+      // Load each agent individually since there's no batch method
+      const results = await Promise.all(agentIds.map((id) => this.db.agents.findById(id)));
+      return results;
+    });
 
-      const agentMap = new Map(agents.map((agent) => [agent.id, agent]));
-      return agentIds.map((id) => agentMap.get(id) || null) as Agent[];
-    }
-  );
-
-  private readonly batchAgentsByUser = new DataLoader<string, Agent[]>(
-    async (userIds: readonly string[]) => {
-      const agents = await this.agentRepository.find({
-        where: { owner: { id: In([...userIds]) } },
-        relations: ['owner'],
-      });
-
+    this.batchAgentsByUser = new DataLoader<string, Agent[]>(async (userIds: readonly string[]) => {
+      // For each userId, fetch agents owned by that user
       const agentsByUser = new Map<string, Agent[]>();
-      agents.forEach((agent) => {
-        const userId = agent.owner?.id;
-        if (userId) {
-          if (!agentsByUser.has(userId)) {
-            agentsByUser.set(userId, []);
-          }
-          agentsByUser.get(userId)!.push(agent);
-        }
-      });
+
+      for (const userId of userIds) {
+        const agents = await this.db.agents.findByUserId(userId);
+        agentsByUser.set(userId, agents);
+      }
 
       return userIds.map((userId) => agentsByUser.get(userId) || []);
-    }
-  );
+    });
+  }
 
-  async load(agentId: string): Promise<Agent> {
+  async load(agentId: string): Promise<Agent | null> {
     return this.batchAgents.load(agentId);
   }
 
-  async loadMany(agentIds: string[]): Promise<Agent[]> {
-    return this.batchAgents.loadMany(agentIds) as Promise<Agent[]>;
+  async loadMany(agentIds: string[]): Promise<(Agent | null)[]> {
+    return this.batchAgents.loadMany(agentIds) as Promise<(Agent | null)[]>;
   }
 
   async loadByUserId(userId: string): Promise<Agent[]> {

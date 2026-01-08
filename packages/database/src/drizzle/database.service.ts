@@ -30,6 +30,8 @@ import {
   DrizzleTaskRepository,
   drizzleUserRepository,
   DrizzleUserRepository,
+  drizzleWebhookRepository,
+  DrizzleWebhookRepository,
   drizzleWorkflowRepository,
   DrizzleWorkflowRepository,
   drizzleWorkspaceRepository,
@@ -151,6 +153,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get workspaces(): DrizzleWorkspaceRepository {
     return drizzleWorkspaceRepository;
+  }
+
+  /**
+   * Webhook repository for webhook and business event operations
+   */
+  get webhooks(): DrizzleWebhookRepository {
+    return drizzleWebhookRepository;
   }
 
   // ==========================================================================

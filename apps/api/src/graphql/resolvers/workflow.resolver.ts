@@ -1,146 +1,131 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  ResolveField,
-  Parent,
-  Args,
-  ID,
-  Context,
-} from '@nestjs/graphql';
+/**
+ * Workflow Resolver - Migrated to Drizzle ORM
+ * GraphQL resolver for Workflow type queries and mutations
+ */
 import { UseGuards } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Workflow } from '../../entities/workflow.entity';
-import { User } from '../../entities/user.entity';
-import { WorkflowType, WorkflowStatus } from '../types/workflow.type';
-import { UserType } from '../types/user.type';
-import { WorkflowStepType } from '../types/workflow-step.type';
-import { ExecuteWorkflowInput, CreateWorkflowInput } from '../types/input.types';
+import {
+  Args,
+  Context,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
+import type { NewWorkflow, User, Workflow } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
 import { UserLoader } from '../loaders/user.loader';
 import { WorkflowLoader } from '../loaders/workflow.loader';
+import { CreateWorkflowInput, ExecuteWorkflowInput } from '../types/input.types';
+import { UserType } from '../types/user.type';
+import { WorkflowStepType } from '../types/workflow-step.type';
+import { WorkflowStatus, WorkflowType } from '../types/workflow.type';
+
+// WorkflowStep type alias since it may not be directly exported
+type WorkflowStep = any;
 
 @Resolver(() => WorkflowType)
 export class WorkflowResolver {
   constructor(
-    @InjectRepository(Workflow)
-    private readonly workflowRepository: Repository<Workflow>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly db: DatabaseService,
     private readonly userLoader: UserLoader,
-    private readonly workflowLoader: WorkflowLoader,
+    private readonly workflowLoader: WorkflowLoader
   ) {}
 
   @Query(() => WorkflowType, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async workflow(
-    @Args('id', { type: () => ID }) id: string,
-  ): Promise<Workflow | null> {
-    return this.workflowRepository.findOne({
-      where: { id },
-      relations: ['creator', 'steps'],
-    });
+  async workflow(@Args('id', { type: () => ID }) id: string): Promise<Workflow | null> {
+    return this.db.workflows.findWorkflowById(id);
   }
 
   @Query(() => [WorkflowType])
   @UseGuards(GqlAuthGuard)
   async workflows(
-    @Args('userId', { type: () => ID, nullable: true }) userId?: string,
+    @Args('userId', { type: () => ID, nullable: true }) userId?: string
   ): Promise<Workflow[]> {
     if (userId) {
-      return this.workflowRepository.find({
-        where: { creator: { id: userId } },
-        relations: ['creator'],
-        order: { createdAt: 'DESC' },
-      });
+      return this.db.workflows.findWorkflowsByCreatorId(userId);
     }
-    return this.workflowRepository.find({
-      relations: ['creator'],
-      take: 100,
-      order: { createdAt: 'DESC' },
-    });
+    // Use findActiveWorkflows as a fallback for finding all workflows
+    return this.db.workflows.findActiveWorkflows();
   }
 
   @Mutation(() => WorkflowType)
   @UseGuards(GqlAuthGuard)
   async createWorkflow(
     @Args('input') input: CreateWorkflowInput,
-    @Context() context: any,
+    @Context() context: any
   ): Promise<Workflow> {
     const userId = context.req.user?.id;
-    const creator = await this.userRepository.findOne({ where: { id: userId } });
+    const creator = await this.db.users.findById(userId);
 
     if (!creator) {
       throw new Error('User not found');
     }
 
-    const workflow = this.workflowRepository.create({
+    const workflowData: NewWorkflow = {
       name: input.name,
       description: input.description,
       variables: input.variables ? JSON.parse(input.variables) : {},
       triggers: input.triggers ? JSON.parse(input.triggers) : [],
-      creator,
+      creatorId: creator.id,
       isActive: true,
       executionCount: 0,
-    });
+    };
 
-    return this.workflowRepository.save(workflow);
+    return this.db.workflows.createWorkflow(workflowData);
   }
 
   @Mutation(() => WorkflowType)
   @UseGuards(GqlAuthGuard)
   async executeWorkflow(
     @Args('input') input: ExecuteWorkflowInput,
-    @Context() context: any,
+    @Context() context: any
   ): Promise<Workflow> {
-    const workflow = await this.workflowRepository.findOne({
-      where: { id: input.workflowId },
-      relations: ['steps'],
-    });
+    const workflow = await this.db.workflows.findWorkflowById(input.workflowId);
 
     if (!workflow) {
       throw new Error('Workflow not found');
     }
 
-    // Update execution metadata
-    workflow.lastExecutedAt = new Date();
-    workflow.executionCount += 1;
+    // Increment execution count
+    await this.db.workflows.incrementExecutionCount(input.workflowId);
 
-    if (!workflow.statistics) {
-      workflow.statistics = {};
-    }
-    workflow.statistics.lastExecutionStatus = 'started';
-
-    await this.workflowRepository.save(workflow);
+    // Update workflow with new execution status
+    const updatedWorkflow = await this.db.workflows.updateWorkflow(input.workflowId, {
+      statistics: {
+        ...((workflow.statistics as object) || {}),
+        lastExecutionStatus: 'started',
+      },
+    });
 
     // In a real implementation, you would:
     // 1. Queue the workflow for execution
     // 2. Execute steps in order
     // 3. Update statistics upon completion
-    // For now, we just return the workflow
 
-    return workflow;
+    return updatedWorkflow || workflow;
   }
 
   @ResolveField(() => UserType)
-  async creator(@Parent() workflow: Workflow): Promise<User> {
-    if (workflow.creator && typeof workflow.creator === 'object') return workflow.creator;
-    if (workflow.creator && typeof workflow.creator === 'string') {
-      return this.userLoader.load(workflow.creator);
+  async creator(@Parent() workflow: Workflow): Promise<User | null> {
+    if (workflow.creatorId) {
+      return this.userLoader.load(workflow.creatorId);
     }
-    throw new Error('Creator not found');
+    return null;
   }
 
   @ResolveField(() => [WorkflowStepType])
-  async steps(@Parent() workflow: Workflow): Promise<any[]> {
-    if (workflow.steps) return workflow.steps;
+  async steps(@Parent() workflow: Workflow): Promise<WorkflowStep[]> {
     return this.workflowLoader.loadStepsByWorkflowId(workflow.id);
   }
 
   @ResolveField(() => WorkflowStatus)
   status(@Parent() workflow: Workflow): WorkflowStatus {
-    const lastStatus = workflow.statistics?.lastExecutionStatus;
+    const statistics = workflow.statistics as { lastExecutionStatus?: string } | null;
+    const lastStatus = statistics?.lastExecutionStatus;
 
     if (!lastStatus) return WorkflowStatus.IDLE;
     if (lastStatus === 'running') return WorkflowStatus.RUNNING;

@@ -24,7 +24,7 @@ import { UserManagementController } from './controllers/user-management.controll
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
-// import { GraphqlModule } from './graphql/graphql.module'; // Temporarily disabled - uses TypeORM
+import { GraphqlModule } from './graphql/graphql.module'; // Migrated to Drizzle ORM
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
@@ -38,9 +38,9 @@ import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.modu
 import { ExportModule } from './modules/export/export.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { SecurityModule } from './modules/security/security.module';
-// import { TaskModule } from './modules/task/task.module'; // Temporarily disabled - uses TypeORM
+import { TaskModule } from './modules/task/task.module'; // Migrated to Drizzle ORM
 import { TNFAutonomousModule } from './modules/tnf-autonomous.module';
-// import { WebhooksModule } from './modules/webhooks/webhooks.module'; // Temporarily disabled - uses TypeORM
+import { WebhooksModule } from './modules/webhooks/webhooks.module'; // Migrated to Drizzle ORM
 import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { SmartAccountModule } from './smart-accounts/smart-account.module';
@@ -94,7 +94,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     AgentsModule, // Self-Improvement Agents Module
     AgencyHubModule, // Agency Hub with Swarm coordination
     ChatModule,
-    // TaskModule, // Temporarily disabled - uses TypeORM repositories (Task, TaskExecution)
+    TaskModule, // Task management - Migrated to Drizzle ORM
     EntityDiscoveryModule,
     ClaudeDevAutomationModule,
     AdminModule, // Admin operations and role management
@@ -102,7 +102,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     SecurityModule, // Security testing and validation
     TNFMCPModule, // Add The New Fuse MCP Module
     A2ACoreModule.forRoot(), // Add A2A Protocol Module
-    // WebhooksModule, // Temporarily disabled - uses TypeORM repositories
+    WebhooksModule, // Webhook management - Migrated to Drizzle ORM
     WalletsModule, // Web3Auth Wallet Module
     TransactionsModule, // Blockchain Transaction Module
     Web3authModule, // Web3Auth Integration Module
@@ -112,7 +112,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     PromptTemplatesModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
-    // GraphqlModule, // Temporarily disabled - uses TypeORM repositories (agent, user, workflow)
+    GraphqlModule, // GraphQL API - Migrated to Drizzle ORM
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
   ],
   controllers: [
