@@ -12,7 +12,7 @@
 
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ScheduleModule } from '@nestjs/schedule';
+// ScheduleModule is configured at root AppModule level
 
 // Note: These are implemented but may need path adjustments based on your build setup
 // Import paths reference the actual file locations
@@ -379,7 +379,7 @@ import { TNFAutonomousController } from '../controllers/tnf-autonomous.controlle
  * Main module that wires everything together
  */
 @Module({
-  imports: [EventEmitterModule, ScheduleModule.forRoot()], // EventEmitterModule configured at root
+  imports: [EventEmitterModule], // EventEmitterModule and ScheduleModule configured at root AppModule
   controllers: [TNFAutonomousController],
   providers: [
     {

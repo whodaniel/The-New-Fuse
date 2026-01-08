@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
 
@@ -74,6 +75,8 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     }),
     // Database modules - Drizzle ORM (production ready)
     DrizzleModule.forRootAsync(), // New Drizzle ORM - production ready
+    // Schedule module for cron jobs and intervals (must be at root level)
+    ScheduleModule.forRoot(),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
