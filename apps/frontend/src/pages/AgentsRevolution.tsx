@@ -68,7 +68,9 @@ const transformAgent = (agent: Agent): UIAgent => {
   return {
     id: agent.id,
     name: agent.name,
-    tagline: agent.description?.split('.')[0] || 'AI-powered agent',
+    tagline: agent.model
+      ? `Powered by ${agent.model}`
+      : agent.description?.split('.')[0] || 'AI-powered agent',
     description: agent.description || 'No description available',
     category: agent.type || 'General',
     status: agent.status === 'active' ? 'Active' : agent.status === 'error' ? 'Error' : 'Paused',
