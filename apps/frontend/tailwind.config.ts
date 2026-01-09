@@ -17,11 +17,13 @@ export default {
         heading: ['"Outfit"', 'sans-serif'],
       },
       spacing: {
-        xs: '4px',
-        sm: '8px',
-        md: '16px',
-        lg: '24px',
-        xl: '32px',
+        // Using numeric naming to avoid conflicts with Tailwind's built-in size tokens (sm, md, lg, xl)
+        // which are used for max-w-*, width, and other utilities
+        '1': '4px',
+        '2': '8px',
+        '4': '16px',
+        '6': '24px',
+        '8': '32px',
       },
       fontSize: {
         // World-class typography scale

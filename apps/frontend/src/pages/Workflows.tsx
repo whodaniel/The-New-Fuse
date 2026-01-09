@@ -8,7 +8,7 @@ export default function Workflows() {
   return (
     <div className="space-y-6 lg:space-y-8 animate-fade-in">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-slide-in-down">
+      <div className="flex flex-col gap-4 animate-slide-in-down">
         <div className="flex-1 min-w-0">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Intelligence Orchestration
@@ -17,13 +17,15 @@ export default function Workflows() {
             Coordinate and automate multi-agent workflows
           </p>
         </div>
-        <Link to="/workflows/builder" className="w-full sm:w-auto">
-          <PremiumButton size="lg" variant="gradient" fullWidth className="sm:w-auto">
-            <Zap className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Orchestrate New Intelligence</span>
-            <span className="sm:hidden">New Workflow</span>
-          </PremiumButton>
-        </Link>
+        <div className="shrink-0">
+          <Link to="/workflows/builder">
+            <PremiumButton size="lg" variant="gradient">
+              <Zap className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Orchestrate New Intelligence</span>
+              <span className="sm:hidden">New Workflow</span>
+            </PremiumButton>
+          </Link>
+        </div>
       </div>
 
       {/* Active Workflows Grid */}

@@ -100,20 +100,24 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   }[changeType];
 
   return (
-    <GlassCard gradient={gradient} className="relative overflow-hidden">
+    <GlassCard gradient={gradient} className="relative overflow-hidden p-6">
       {/* Gradient overlay */}
       <div
-        className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradientClasses[gradient]} opacity-10 rounded-full blur-2xl`}
+        className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradientClasses[gradient]} opacity-10 rounded-full blur-2xl pointer-events-none`}
       />
 
       <div className="relative z-10">
-        {Icon && (
-          <div className="mb-3">
-            <Icon className={`w-8 h-8 text-${gradient}-400`} />
-          </div>
-        )}
-        <p className="text-base font-medium text-gray-400 mb-2">{label}</p>
-        <p className="text-4xl font-bold text-white mb-3">{value}</p>
+        <div className="flex items-start justify-between mb-4">
+          <p className="text-sm font-medium text-gray-400">{label}</p>
+          {Icon && (
+            <div
+              className={`w-10 h-10 rounded-lg bg-gradient-to-br ${gradientClasses[gradient]} flex items-center justify-center shrink-0`}
+            >
+              <Icon className="w-5 h-5 text-white" />
+            </div>
+          )}
+        </div>
+        <p className="text-3xl sm:text-4xl font-bold text-white mb-2">{value}</p>
         {change && <p className={`text-sm ${changeColorClass}`}>{change}</p>}
       </div>
     </GlassCard>
