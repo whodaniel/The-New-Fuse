@@ -39,12 +39,14 @@ export default defineConfig(({ mode }) => {
       }),
       // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
       nodePolyfills({
-        include: ['buffer', 'process', 'stream', 'util'],
+        include: ['buffer', 'process', 'stream', 'util', 'crypto'],
         globals: {
           Buffer: true,
           global: true,
           process: true,
         },
+        // Enable protocol imports (node:crypto, node:buffer, etc.)
+        protocolImports: true,
       }),
       // Generate bundle analysis report in production
       isProduction &&

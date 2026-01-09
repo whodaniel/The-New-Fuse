@@ -4,28 +4,83 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Global CommonJS require() shim for bundled dependencies (ethers.js, bn.js, etc.) -->
+    <script>
+      // Shim for CommonJS require() calls that can't be polyfilled at build time
+      // Some libraries use eval("require(...)") which bypasses Vite's transforms
+      (function () {
+        if (typeof window.require === 'undefined') {
+          // Create a stub that returns empty modules for common Node.js modules
+          const emptyModule = {};
+          const bufferModule = {
+            Buffer: typeof Buffer !== 'undefined' ? Buffer : { from: () => [], alloc: () => [] },
+          };
+
+          window.require = function (moduleName) {
+            console.warn(
+              '[The New Fuse] CommonJS require() called for:',
+              moduleName,
+              '- returning stub'
+            );
+
+            // Return appropriate stubs for known modules
+            if (moduleName === 'crypto') {
+              return (
+                window.crypto || {
+                  createHash: () => ({ update: () => ({ digest: () => '' }), digest: () => '' }),
+                  randomBytes: (size) => new Uint8Array(size),
+                }
+              );
+            }
+            if (moduleName === 'buffer' || moduleName === 'buffer/') {
+              return bufferModule;
+            }
+            if (moduleName === 'bn.js') {
+              // Return a minimal BN stub - the real BN should be bundled
+              return class BN {
+                constructor(val) {
+                  this.value = val;
+                }
+              };
+            }
+            if (moduleName === '@emotion/is-prop-valid') {
+              return { default: () => true };
+            }
+
+            return emptyModule;
+          };
+          window.require.main = null;
+          console.log('[The New Fuse] CommonJS require() shim installed');
+        }
+      })();
+    </script>
+
     <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
     <script>
-      (function() {
+      (function () {
         try {
           const originalDefine = customElements.define;
-          customElements.define = function(name, constructor, options) {
+          customElements.define = function (name, constructor, options) {
             if (customElements.get(name)) {
-              console.warn(`[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`);
+              console.warn(
+                `[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`
+              );
               return;
             }
             try {
               originalDefine.call(this, name, constructor, options);
             } catch (e) {
               if (e.message.includes('already been defined')) {
-                 console.warn(`[The New Fuse] Custom element '${name}' collision caught in try-catch.`);
-                 return;
+                console.warn(
+                  `[The New Fuse] Custom element '${name}' collision caught in try-catch.`
+                );
+                return;
               }
               throw e;
             }
           };
           console.log('[The New Fuse] Custom Element Guard activated.');
-        } catch(e) {
+        } catch (e) {
           console.error('[The New Fuse] Failed to activate Custom Element Guard', e);
         }
       })();
@@ -136,7 +191,10 @@
       rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
     />
     <noscript
       ><link
