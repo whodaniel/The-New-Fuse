@@ -1,22 +1,28 @@
-import { EnhancedDatabaseService } from '@/core/database/enhanced-database.service';
-import { DatabaseStats, DatabaseConfig } from '@/types/database';
+// NOTE: @/core/database and @/core/services modules do not exist in this Vite frontend
+// The frontend only makes API calls to the backend, it doesn't directly access databases
+import { DatabaseConfig, DatabaseStats } from '@/types/database';
 import { handleApiResponse } from '@/utils/api';
-import { LoggingService } from '@/core/services/LoggingService.ts';
-import { MetricsService } from '@/core/services/MetricsService.ts';
 
 const API_BASE = '/api/database';
 const RETRY_ATTEMPTS = 3;
 const RETRY_DELAY = 1000;
 
+// Simple logger for browser environment
+const logger = {
+  error: (msg: string, data?: unknown) => console.error(`[DatabaseService] ${msg}`, data),
+  info: (msg: string, data?: unknown) => console.info(`[DatabaseService] ${msg}`, data),
+};
+
+// Simple metrics stub for browser environment
+const metrics = {
+  recordDbOperation: (_status: string, _duration?: number, _success?: boolean) => {},
+};
+
 export class DatabaseService {
   private static instance: DatabaseService;
-  private enhancedDb: EnhancedDatabaseService;
-  private logger: LoggingService;
-  private metrics: MetricsService;
 
   private constructor() {
-    this.logger = new LoggingService('DatabaseService');
-    this.metrics = new MetricsService();
+    // No longer instantiates non-existent services
   }
 
   static getInstance(): DatabaseService {
@@ -27,31 +33,28 @@ export class DatabaseService {
   }
 
   private static async withRetry<T>(operation: () => Promise<T>): Promise<T> {
-    let lastError: Error;
-    
+    let lastError: Error | undefined;
+
     for (let attempt = 1; attempt <= RETRY_ATTEMPTS; attempt++) {
       try {
         const startTime = Date.now();
         const result = await operation();
         const duration = Date.now() - startTime;
-        
-        DatabaseService.getInstance().metrics.recordDbOperation('success', duration);
+
+        metrics.recordDbOperation('success', duration);
         return result;
       } catch (error) {
         lastError = error as Error;
-        DatabaseService.getInstance().logger.error('Database operation failed', { 
-          error,
-          attempt 
-        });
-        DatabaseService.getInstance().metrics.recordDbOperation('error');
-        
+        logger.error('Database operation failed', { error, attempt });
+        metrics.recordDbOperation('error');
+
         if (attempt < RETRY_ATTEMPTS) {
           await new Promise((resolve: any) => setTimeout(resolve, RETRY_DELAY * attempt));
         }
       }
     }
-    
-    throw lastError;
+
+    throw lastError!;
   }
 
   static async getStats(): Promise<DatabaseStats> {
@@ -95,20 +98,20 @@ export class DatabaseService {
       return handleApiResponse(response);
     });
   }
-  
+
   static async checkConnection(): Promise<boolean> {
     try {
       const response = await fetch(`${API_BASE}/check`);
-      const result = await handleApiResponse<{connected: boolean}>(response);
-      DatabaseService.getInstance().metrics.recordDbOperation('connection_check', undefined, result.connected);
+      const result = await handleApiResponse<{ connected: boolean }>(response);
+      metrics.recordDbOperation('connection_check', undefined, result.connected);
       return result.connected;
     } catch (error) {
-      DatabaseService.getInstance().logger.error('Database connection check failed:', { error });
-      DatabaseService.getInstance().metrics.recordDbOperation('connection_check', undefined, false);
+      logger.error('Database connection check failed:', { error });
+      metrics.recordDbOperation('connection_check', undefined, false);
       return false;
     }
   }
-  
+
   static async getQueryStats(): Promise<{
     totalQueries: number;
     averageTime: number;
@@ -120,11 +123,13 @@ export class DatabaseService {
     });
   }
 
-  static async getLogs(limit: number = 100): Promise<Array<{
-    timestamp: string;
-    level: string;
-    message: string;
-  }>> {
+  static async getLogs(limit: number = 100): Promise<
+    Array<{
+      timestamp: string;
+      level: string;
+      message: string;
+    }>
+  > {
     return this.withRetry(async () => {
       const response = await fetch(`${API_BASE}/logs?limit=${limit}`);
       return handleApiResponse(response);
