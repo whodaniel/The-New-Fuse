@@ -821,7 +821,7 @@ const io = new SocketIOServer(server, {
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  transports: ['websocket', 'polling'], // Fallback to polling if WebSocket fails
+  transports: ['polling', 'websocket'], // Polling MUST be first for Railway
   path: '/socket.io/',
   pingTimeout: 60000,
   pingInterval: 25000,
