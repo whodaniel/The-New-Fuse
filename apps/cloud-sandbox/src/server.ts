@@ -240,7 +240,19 @@ async function captureAndBroadcast(action: string) {
   try {
     const screenshot = await activePage.screenshot({ type: 'jpeg', quality: 60, scale: 'css' });
     const base64 = screenshot.toString('base64');
-    broadcastToHeartbeat('screenshot', { action, image: `data:image/jpeg;base64,${base64}` });
+    const imageUri = `data:image/jpeg;base64,${base64}`;
+
+    // Broadcast to legacy heartbeat clients
+    broadcastToHeartbeat('screenshot', { action, image: imageUri });
+
+    // Broadcast to new Socket.IO Live View
+    if (typeof broadcastScreenshotToLiveView === 'function') {
+      broadcastScreenshotToLiveView(imageUri, action);
+    } else {
+      // Fallback if not physically hoisted or circular dep issues (runtime safety)
+      const globalBroadcast = (global as any).broadcastScreenshotToLiveView;
+      if (globalBroadcast) globalBroadcast(imageUri, action);
+    }
   } catch (e) {
     console.error('Snapshot failed:', e);
   }
