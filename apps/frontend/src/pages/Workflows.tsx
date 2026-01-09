@@ -10,7 +10,7 @@ export default function Workflows() {
       {/* Header Section */}
       <div className="flex flex-col gap-4 animate-slide-in-down">
         <div className="flex-1 min-w-0">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Intelligence Orchestration
           </h1>
           <p className="text-slate-300 text-sm sm:text-base mt-2">
@@ -46,8 +46,8 @@ export default function Workflows() {
                 <div
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
                     workflow % 3 === 0
-                      ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30'
-                      : 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30'
+                      ? 'bg-linear-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30'
+                      : 'bg-linear-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30'
                   }`}
                 >
                   {workflow % 3 === 0 ? 'Draft' : 'Active'}
@@ -60,13 +60,13 @@ export default function Workflows() {
 
               {/* Agent Count */}
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
                   A1
                 </div>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white text-xs font-bold">
                   A2
                 </div>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-linear-to-r from-green-500 to-emerald-500 flex items-center justify-center text-white text-xs font-bold">
                   A3
                 </div>
                 <span className="text-xs text-slate-400">+2 more agents</span>
@@ -90,7 +90,7 @@ export default function Workflows() {
       {/* Workflow Builder Section */}
       <GlassCard className="animate-slide-in-up" style={{ animationDelay: '0.1s' }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
             <Activity className="w-5 h-5 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-white">Workflow Builder</h2>
@@ -111,7 +111,7 @@ export default function Workflows() {
       {/* Recent Executions */}
       <GlassCard className="animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-white">Recent Executions</h2>
@@ -138,10 +138,10 @@ export default function Workflows() {
                     <span
                       className={`px-3 py-1 text-xs font-medium rounded-full ${
                         execution % 3 === 0
-                          ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30'
+                          ? 'bg-linear-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30'
                           : execution % 3 === 1
-                            ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30'
-                            : 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30'
+                            ? 'bg-linear-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30'
+                            : 'bg-linear-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30'
                       }`}
                     >
                       {execution % 3 === 0

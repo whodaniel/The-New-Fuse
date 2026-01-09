@@ -84,7 +84,7 @@ const Register: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black flex items-center justify-center p-4 sm:p-6 lg:p-8"
+      className="min-h-screen bg-linear-to-br from-black via-zinc-900 to-black flex items-center justify-center p-4 sm:p-6 lg:p-8"
       style={{ minWidth: '320px' }}
     >
       <div className="w-full max-w-md lg:max-w-lg mx-auto" style={{ minWidth: '300px' }}>
