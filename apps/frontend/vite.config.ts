@@ -139,6 +139,7 @@ export default defineConfig(({ mode }) => {
         'react',
         'react-dom',
         'react-router-dom',
+        '@emotion/is-prop-valid',
       ],
       exclude: [
         '@firebase/app-types',
