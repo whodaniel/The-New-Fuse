@@ -96,6 +96,7 @@ try {
 
 import express from 'express';
 import { chromium } from 'playwright';
+import { Server as SocketIOServer } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { WebSocketServer } from 'ws';
 
@@ -781,6 +782,94 @@ app.post('/audit/agents', async (_req, res) => {
 
 const server = createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws' });
+
+// Simple test WebSocket endpoint for debugging
+const testWss = new WebSocketServer({ server, path: '/ws-test' });
+testWss.on('connection', (ws) => {
+  console.log('🧪 Test WS client connected');
+  ws.send(JSON.stringify({ type: 'hello', message: 'Connection successful!' }));
+
+  ws.on('message', (data) => {
+    console.log('🧪 Test WS received:', data.toString());
+    ws.send(JSON.stringify({ type: 'echo', received: data.toString() }));
+  });
+
+  ws.on('close', () => {
+    console.log('🧪 Test WS client disconnected');
+  });
+});
+
+// ============================================================================
+// SOCKET.IO LIVE VIEW SERVER (Better Railway compatibility)
+// ============================================================================
+
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: '*', // Allow all origins for now - tighten in production
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+  transports: ['websocket', 'polling'], // Fallback to polling if WebSocket fails
+  path: '/socket.io/',
+  pingTimeout: 60000,
+  pingInterval: 25000,
+});
+
+// Track connected Live View monitors
+const liveViewMonitors = new Map<string, { socketId: string; tenantId?: string }>();
+
+io.on('connection', (socket) => {
+  const clientId = socket.id;
+  console.log(`📺 Socket.IO client connected: ${clientId}`);
+
+  // Send welcome message
+  socket.emit('welcome', {
+    message: 'Connected to TNF Cloud Sandbox Live View',
+    clientId,
+    transport: socket.conn.transport.name,
+  });
+
+  // Handle monitor registration
+  socket.on('register_monitor', (data: { tenantId?: string }) => {
+    liveViewMonitors.set(clientId, { socketId: clientId, tenantId: data?.tenantId });
+    console.log(`📺 Monitor registered: ${clientId}, tenant: ${data?.tenantId || 'default'}`);
+
+    // Join tenant-specific room if provided
+    if (data?.tenantId) {
+      socket.join(`tenant:${data.tenantId}`);
+    } else {
+      socket.join('global'); // Default room for all viewers
+    }
+
+    socket.emit('registered', { success: true, monitors: liveViewMonitors.size });
+  });
+
+  socket.on('disconnect', (reason) => {
+    liveViewMonitors.delete(clientId);
+    console.log(`📺 Monitor disconnected: ${clientId} (${reason})`);
+  });
+});
+
+// Function to broadcast screenshots to Live View monitors via Socket.IO
+function broadcastScreenshotToLiveView(screenshot: string, action: string, tenantId?: string) {
+  const payload = {
+    type: 'screenshot',
+    image: screenshot,
+    action,
+    timestamp: Date.now(),
+  };
+
+  if (tenantId) {
+    io.to(`tenant:${tenantId}`).emit('screenshot', payload);
+  } else {
+    io.to('global').emit('screenshot', payload);
+  }
+
+  console.log(`📷 Broadcast screenshot to ${liveViewMonitors.size} monitors (action: ${action})`);
+}
+
+// Export for use in browser tools
+(global as any).broadcastScreenshotToLiveView = broadcastScreenshotToLiveView;
 
 // ============================================================================
 // HEARTBEAT MONITORING SYSTEM

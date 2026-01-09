@@ -13,69 +13,84 @@ export default function LiveViewPage() {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Cloud Sandbox URL - this should match your Railway deployment
-  // Using /ws endpoint for Railway compatibility (not /ws/heartbeat)
-  const CLOUD_SANDBOX_URL = 'wss://tnf-cloud-sandbox-v2-production.up.railway.app/ws';
+  const CLOUD_SANDBOX_URL = 'https://tnf-cloud-sandbox-v2-production.up.railway.app';
+  /**
+   * IMPORTANT: We use Socket.IO with polling as the primary transport because
+   * Railway's edge proxy often drops or fails to upgrade WebSocket connections directly.
+   * This ensures a reliable connection is established.
+   */
 
   const addLog = (action: string, details?: string) => {
     const time = new Date().toLocaleTimeString();
     setLogs((prev) => [{ time, action, details }, ...prev.slice(0, 99)]);
   };
 
-  const connect = () => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+  const connect = async () => {
+    // Dynamically import socket.io-client to avoid SSR issues if any
+    const { io } = await import('socket.io-client');
+    
+    if (wsRef.current?.connected) return;
 
-    addLog('System', `Connecting to Cloud Sandbox...`);
+    addLog('System', `Connecting to Cloud Sandbox (Socket.IO)...`);
     setStatus('connecting');
 
     try {
-      const ws = new WebSocket(CLOUD_SANDBOX_URL);
-      wsRef.current = ws;
+      const socket = io(CLOUD_SANDBOX_URL, {
+        path: '/socket.io/',
+        // CRITICAL: Prioritize polling to bypass Railway WebSocket handshake failures
+        transports: ['polling', 'websocket'],
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000
+      });
+      
+      // Store socket instance in ref (casting to any to avoid strict type checks momentarily)
+      wsRef.current = socket as any;
 
-      ws.onopen = () => {
+      socket.on('connect', () => {
         setStatus('connected');
-        addLog('System', 'Connected to Cloud Sandbox');
-
+        addLog('System', `Connected to Cloud Sandbox via ${socket.io.engine.transport.name}`);
+        
         // Register as a monitor
-        ws.send(
-          JSON.stringify({
-            type: 'register_monitor',
-            payload: { id: 'web-viewer-' + Math.random().toString(36).substr(2, 9) },
-          })
-        );
-      };
+        socket.emit('register_monitor', {
+           id: 'web-viewer-' + Math.random().toString(36).substr(2, 9) 
+        });
+      });
+      
+      socket.io.engine.on('upgrade', (transport) => {
+         addLog('System', `Transport upgraded to ${transport.name}`);
+      });
 
-      ws.onclose = () => {
+      socket.on('disconnect', (reason) => {
         setStatus('disconnected');
-        addLog('System', 'Disconnected. Retrying in 5s...');
-        reconnectTimeoutRef.current = setTimeout(connect, 5000);
-      };
+        addLog('System', `Disconnected: ${reason}`);
+      });
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        addLog('Error', 'Connection error');
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-
-          if (data.type === 'screenshot' && data.payload?.image) {
-            setScreenshot(data.payload.image);
-            addLog('Screenshot', `Updated from ${data.payload.action || 'agent action'}`);
-          } else if (data.type === 'health_update') {
-            // Health updates are silent
-          } else if (data.type === 'agent_activity') {
-            addLog(data.payload?.action || 'Activity', data.payload?.details);
-          }
-        } catch (e) {
-          console.error('Parse error', e);
+      socket.on('connect_error', (error) => {
+        console.error('Socket error:', error);
+        // Only log if we aren't already disconnected to avoid spam
+        if (status !== 'disconnected') {
+           addLog('Error', `Connection error: ${error.message}`);
         }
-      };
+      });
+
+      socket.on('screenshot', (data) => {
+        if (data && data.image) {
+          setScreenshot(data.image);
+          addLog('Screenshot', `Updated from ${data.action || 'agent action'}`);
+        }
+      });
+      
+      socket.on('activity', (data) => {
+         addLog('Activity', data.message || JSON.stringify(data));
+      });
+
     } catch (error) {
-      console.error('Connection error:', error);
+      console.error('Connection setup error:', error);
       setStatus('disconnected');
-      addLog('Error', 'Failed to connect');
-      reconnectTimeoutRef.current = setTimeout(connect, 5000);
+      addLog('Error', 'Failed to setup connection');
     }
   };
 
@@ -84,10 +99,8 @@ export default function LiveViewPage() {
 
     return () => {
       if (wsRef.current) {
-        wsRef.current.close();
-      }
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
+        // Safe disconnection
+        (wsRef.current as any).disconnect();
       }
     };
   }, []);
