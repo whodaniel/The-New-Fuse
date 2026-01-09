@@ -80,7 +80,9 @@ const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
 const SSOPage = lazy(() => import('./pages/auth/SSO'));
 const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
 const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
-const UnstoppableDomainsCallbackPage = lazy(() => import('./pages/auth/UnstoppableDomainsCallback'));
+const UnstoppableDomainsCallbackPage = lazy(
+  () => import('./pages/auth/UnstoppableDomainsCallback')
+);
 
 // Landing components
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
@@ -121,7 +123,9 @@ const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
 // Admin pages that exist
 const AdminOnboardingPage = lazy(() => import('./pages/Admin/Onboarding'));
 const AdminDashboardPage = lazy(() => import('./pages/Admin/Dashboard'));
-const ExperimentalFeaturesPage = () => <div className="p-8 text-white">Experimental Features Config (Coming Soon)</div>;
+const ExperimentalFeaturesPage = () => (
+  <div className="p-8 text-white">Experimental Features Config (Coming Soon)</div>
+);
 
 // Legal pages
 const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
@@ -177,6 +181,9 @@ const UserProfilePage = lazy(() => import('./components/profile/UserProfilePage'
 
 // Main workspace page
 const MainPage = lazy(() => import('./pages/Main'));
+
+// Live View - Real-time AI browser activity viewer
+const LiveViewPage = lazy(() => import('./pages/LiveView'));
 
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
@@ -453,6 +460,16 @@ export default function ComprehensiveRouter() {
 
             {/* Main workspace page */}
             <Route path="/main" element={<MainPage />} />
+
+            {/* Live View - Real-time AI browser activity */}
+            <Route
+              path="/live-view"
+              element={
+                <Suspense fallback={<LoadingFallback name="Live View" />}>
+                  <LiveViewPage />
+                </Suspense>
+              }
+            />
 
             {/* Additional missing routes */}
             <Route

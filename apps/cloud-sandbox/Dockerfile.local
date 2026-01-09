@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y curl && \
 
 WORKDIR /app
 
-# Copy cloud-sandbox files (Assuming Root Context)
+# Copy cloud-sandbox files (Repository Root Context)
+# Railway sets root directory to / so we need full paths
 COPY apps/cloud-sandbox/package.json ./
 COPY apps/cloud-sandbox/tsconfig.json ./
 COPY apps/cloud-sandbox/src ./src
@@ -20,14 +21,11 @@ RUN npm install
 # Build
 RUN npm run build
 
-# Setup for Run
-# Copy manual start script if needed, but we rely on server.ts logic
-# Ensure we have a non-root user setup if desired, but for now root is fine in this contained sandbox environment?
-# The original Dockerfile used root. The Railway one used app-user.
-# Let's use root to avoid permission issues for now, or stick to app-user if creating writable paths.
-# My server.ts handles paths assuming app-user or writable /tmp.
-# Let's stick to root to be safe against EACCES, or create app-user and ensure home dir is used.
-# server.ts uses process.env.HOME.
+# Verify LIVE VIEW code is present
+RUN grep "LIVE VIEW" dist/server.js || echo "Warning: LIVE VIEW not found in build"
+
+# Verify public folder is present
+RUN ls -la public/ || echo "Warning: public folder not found"
 
 # Create app-user
 RUN addgroup --system app-user && adduser --system --ingroup app-user app-user

@@ -1,4 +1,4 @@
-console.log('!!! SERVER STARTING - VERSION 15 (FIXED) !!!');
+console.log('!!! SERVER STARTING - VERSION 16 (LIVE VIEW) !!!');
 /**
  * The New Fuse - Cloud Sandbox MCP Server
  * Handles WebSocket connections from local Tauri bridge sidecars
@@ -12,6 +12,10 @@ console.log('!!! SERVER STARTING - VERSION 15 (FIXED) !!!');
 import { exec } from 'child_process';
 import { promises as fs } from 'fs';
 import { createServer } from 'http';
+import { join } from 'path';
+// ============================================================================
+// LIVE VIEW & BROADCASTING
+// ============================================================================
 import { promisify } from 'util';
 
 // Self-healing: Install Playwright browsers if missing
@@ -213,8 +217,47 @@ async function getPage(): Promise<Page> {
 }
 
 // ============================================================================
-// STATE
+// LIVE VIEW & BROADCASTING
 // ============================================================================
+
+// Helper to broadcast to heartbeat clients
+function broadcastToHeartbeat(type: string, payload: any) {
+  const msg = JSON.stringify({ type, payload, timestamp: new Date().toISOString() });
+  for (const client of heartbeatClients.values()) {
+    if (client.ws.readyState === 1) {
+      // OPEN
+      client.ws.send(msg);
+    }
+  }
+}
+
+// Helper to capture and broadcast screenshot
+async function captureAndBroadcast(action: string) {
+  if (!activePage) {
+    return;
+  }
+  try {
+    const screenshot = await activePage.screenshot({ type: 'jpeg', quality: 60, scale: 'css' });
+    const base64 = screenshot.toString('base64');
+    broadcastToHeartbeat('screenshot', { action, image: `data:image/jpeg;base64,${base64}` });
+  } catch (e) {
+    console.error('Snapshot failed:', e);
+  }
+}
+
+// Wrapper for tool handlers to auto-screenshot
+const withBroadcast = (actionName: string, handler: (params: any) => Promise<any>) => {
+  return async (params: any) => {
+    try {
+      const result = await handler(params);
+      // Fire and forget screenshot
+      captureAndBroadcast(actionName).catch(console.error);
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  };
+};
 
 const clients = new Map<string, ConnectedClient>();
 
@@ -242,7 +285,7 @@ const tools: ToolHandler[] = [
       },
       required: ['url'],
     },
-    handler: async (params) => {
+    handler: withBroadcast('navigate', async (params) => {
       try {
         const page = await getPage();
         const waitUntil =
@@ -254,7 +297,7 @@ const tools: ToolHandler[] = [
         const err = error as { message: string };
         return { success: false, error: err.message };
       }
-    },
+    }),
   },
   {
     name: 'browser_screenshot',
@@ -297,7 +340,7 @@ const tools: ToolHandler[] = [
       },
       required: ['selector'],
     },
-    handler: async (params) => {
+    handler: withBroadcast('click', async (params) => {
       try {
         const page = await getPage();
         await page.click(params.selector as string, { timeout: 10000 });
@@ -306,7 +349,7 @@ const tools: ToolHandler[] = [
         const err = error as { message: string };
         return { success: false, error: err.message };
       }
-    },
+    }),
   },
   {
     name: 'browser_type',
@@ -320,7 +363,7 @@ const tools: ToolHandler[] = [
       },
       required: ['selector', 'text'],
     },
-    handler: async (params) => {
+    handler: withBroadcast('type', async (params) => {
       try {
         const page = await getPage();
         const selector = params.selector as string;
@@ -333,7 +376,7 @@ const tools: ToolHandler[] = [
         const err = error as { message: string };
         return { success: false, error: err.message };
       }
-    },
+    }),
   },
   {
     name: 'browser_get_content',
@@ -368,7 +411,7 @@ const tools: ToolHandler[] = [
       },
       required: ['script'],
     },
-    handler: async (params) => {
+    handler: withBroadcast('evaluate', async (params) => {
       try {
         const page = await getPage();
         const result = await page.evaluate(params.script as string);
@@ -377,7 +420,7 @@ const tools: ToolHandler[] = [
         const err = error as { message: string };
         return { success: false, error: err.message };
       }
-    },
+    }),
   },
   {
     name: 'browser_wait',
@@ -597,6 +640,69 @@ async function handleMCPMessage(client: ConnectedClient, message: MCPMessage): P
 
 const app = express();
 
+// Enable CORS for all origins to allow WebSocket connections from external viewers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Upgrade, Connection'
+  );
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+// Serve viewer manually to debug
+app.get('/viewer', (req, res) => {
+  const p = join(process.cwd(), 'public', 'viewer.html');
+  console.log(`Attempting to serve viewer from: ${p}`);
+  res.sendFile(p);
+});
+
+// Resolve public path relative to CWD /app
+const publicPath = join(process.cwd(), 'public');
+console.log(`📂 Serving static files from: ${publicPath}`);
+app.use(express.static(join(process.cwd(), 'public')));
+app.use('/public', express.static(join(process.cwd(), 'public')));
+
+try {
+  import('fs').then((fs) => {
+    if (fs.existsSync(publicPath)) {
+      console.log('📂 Public dir contents:', fs.readdirSync(publicPath));
+    } else {
+      console.error(`❌ Public dir ${publicPath} does not exist!`);
+      // Try to find it
+      const tryPaths = ['public', 'src/public', '../public', '/app/public'];
+      for (const p of tryPaths) {
+        if (fs.existsSync(p)) {
+          console.log(`found candidate: ${p}`);
+        }
+      }
+    }
+  });
+} catch (e) {
+  console.error(e);
+}
+
+app.get('/debug-fs', async (_req, res) => {
+  const fs = await import('fs');
+  const recursiveList = (dir: string): any[] => {
+    try {
+      return fs.readdirSync(dir).map((f) => {
+        const full = join(dir, f);
+        const stat = fs.statSync(full);
+        return stat.isDirectory() ? { name: f, children: recursiveList(full) } : f;
+      });
+    } catch (e) {
+      return [`error: ${e}`];
+    }
+  };
+  res.json({ cwd: process.cwd(), __dirname, files: recursiveList(process.cwd()) });
+});
+
 // Health check endpoint
 app.get('/health', (_req, res) => {
   res.json({
@@ -618,14 +724,11 @@ app.get('/', (_req, res) => {
   });
 });
 
-// FORCE ENV VAR
-process.env.PLAYWRIGHT_BROWSERS_PATH = '/ms-playwright';
-
 app.post('/audit/agents', async (_req, res) => {
   console.log('🕵️ Starting Agent Page Audit...');
   console.log('User:', process.env.USER || 'unknown');
   console.log('Home:', process.env.HOME);
-  console.log('PLAYWRIGHT_BROWSERS_PATH (forced):', process.env.PLAYWRIGHT_BROWSERS_PATH);
+  console.log('PLAYWRIGHT_BROWSERS_PATH (Current):', process.env.PLAYWRIGHT_BROWSERS_PATH);
 
   try {
     const fs = await import('fs');
@@ -971,9 +1074,11 @@ console.log('💓 Heartbeat monitoring started');
 // MAIN WebSocket connection handling
 // ============================================================================
 
-// WebSocket connection handling
+// WebSocket connection handling - supports both MCP clients and Live View monitors
 wss.on('connection', (ws) => {
   const clientId = uuidv4();
+  let isMonitor = false; // Track if this is a Live View monitor client
+
   const client: ConnectedClient = {
     id: clientId,
     ws,
@@ -986,12 +1091,35 @@ wss.on('connection', (ws) => {
 
   ws.on('message', async (data) => {
     try {
-      const message: MCPMessage = JSON.parse(data.toString());
+      const message = JSON.parse(data.toString());
       client.lastActivity = new Date();
 
-      console.log(`📨 Received: ${message.method || 'response'} from ${clientId}`);
+      // Check if this is a monitor registration message (from Live View viewer)
+      if (message.type === 'register_monitor') {
+        isMonitor = true;
+        // Add to heartbeat clients for broadcast (using the HeartbeatClient interface)
+        const monitorClient: HeartbeatClient = {
+          id: clientId,
+          ws,
+          type: 'monitor',
+        };
+        heartbeatClients.set(clientId, monitorClient);
+        console.log(`📺 Monitor registered: ${clientId} (Live View client)`);
 
-      const response = await handleMCPMessage(client, message);
+        // Send welcome message
+        ws.send(
+          JSON.stringify({
+            type: 'welcome',
+            payload: { clientId, message: 'Connected to TNF Cloud Sandbox Live View' },
+          })
+        );
+        return;
+      }
+
+      // Regular MCP message handling
+      console.log(`📨 Received: ${(message as MCPMessage).method || 'response'} from ${clientId}`);
+
+      const response = await handleMCPMessage(client, message as MCPMessage);
       ws.send(JSON.stringify(response));
     } catch (error: unknown) {
       console.error('Message handling error:', error);
@@ -1006,12 +1134,19 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     clients.delete(clientId);
+    if (isMonitor) {
+      heartbeatClients.delete(clientId);
+      console.log(`📺 Monitor disconnected: ${clientId}`);
+    }
     console.log(`❌ Client disconnected: ${clientId} (Remaining: ${clients.size})`);
   });
 
   ws.on('error', (error) => {
     console.error(`WebSocket error for ${clientId}:`, error);
     clients.delete(clientId);
+    if (isMonitor) {
+      heartbeatClients.delete(clientId);
+    }
   });
 });
 

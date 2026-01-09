@@ -1,0 +1,204 @@
+import { useEffect, useRef, useState } from 'react';
+
+/**
+ * Live View Page - Shows real-time AI browser activity from the Cloud Sandbox
+ * This page connects to the TNF Cloud Sandbox WebSocket to display live screenshots
+ * and activity logs as AI agents interact with the browser.
+ */
+export default function LiveViewPage() {
+  const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+  const [logs, setLogs] = useState<Array<{ time: string; action: string; details?: string }>>([]);
+  const [screenshot, setScreenshot] = useState<string | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cloud Sandbox URL - this should match your Railway deployment
+  // Using /ws endpoint for Railway compatibility (not /ws/heartbeat)
+  const CLOUD_SANDBOX_URL = 'wss://tnf-cloud-sandbox-v2-production.up.railway.app/ws';
+
+  const addLog = (action: string, details?: string) => {
+    const time = new Date().toLocaleTimeString();
+    setLogs((prev) => [{ time, action, details }, ...prev.slice(0, 99)]);
+  };
+
+  const connect = () => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+
+    addLog('System', `Connecting to Cloud Sandbox...`);
+    setStatus('connecting');
+
+    try {
+      const ws = new WebSocket(CLOUD_SANDBOX_URL);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        setStatus('connected');
+        addLog('System', 'Connected to Cloud Sandbox');
+
+        // Register as a monitor
+        ws.send(
+          JSON.stringify({
+            type: 'register_monitor',
+            payload: { id: 'web-viewer-' + Math.random().toString(36).substr(2, 9) },
+          })
+        );
+      };
+
+      ws.onclose = () => {
+        setStatus('disconnected');
+        addLog('System', 'Disconnected. Retrying in 5s...');
+        reconnectTimeoutRef.current = setTimeout(connect, 5000);
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        addLog('Error', 'Connection error');
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+
+          if (data.type === 'screenshot' && data.payload?.image) {
+            setScreenshot(data.payload.image);
+            addLog('Screenshot', `Updated from ${data.payload.action || 'agent action'}`);
+          } else if (data.type === 'health_update') {
+            // Health updates are silent
+          } else if (data.type === 'agent_activity') {
+            addLog(data.payload?.action || 'Activity', data.payload?.details);
+          }
+        } catch (e) {
+          console.error('Parse error', e);
+        }
+      };
+    } catch (error) {
+      console.error('Connection error:', error);
+      setStatus('disconnected');
+      addLog('Error', 'Failed to connect');
+      reconnectTimeoutRef.current = setTimeout(connect, 5000);
+    }
+  };
+
+  useEffect(() => {
+    connect();
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const statusColors = {
+    connecting: 'bg-yellow-500',
+    connected: 'bg-green-500',
+    disconnected: 'bg-red-500',
+  };
+
+  const statusLabels = {
+    connecting: 'Connecting...',
+    connected: 'Connected',
+    disconnected: 'Disconnected',
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+          <div>
+            <h1 className="text-2xl font-bold">AI Browser Live View</h1>
+            <p className="text-gray-400 text-sm">Real-time view of AI agent browser activity</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-3 h-3 rounded-full ${statusColors[status]} ${status === 'connected' ? 'animate-pulse' : ''}`}
+            />
+            <span className="text-sm text-gray-300">{statusLabels[status]}</span>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Browser View */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-800 rounded-xl overflow-hidden shadow-2xl border border-gray-700">
+              <div className="bg-gray-700 px-4 py-2 flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                </div>
+                <span className="text-gray-400 text-sm ml-2">AI Browser View</span>
+              </div>
+              <div className="aspect-video bg-black flex items-center justify-center">
+                {screenshot ? (
+                  <img
+                    src={screenshot}
+                    alt="Live Browser View"
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <div className="text-center text-gray-500">
+                    <svg
+                      className="w-16 h-16 mx-auto mb-4 opacity-50"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <p>Waiting for AI agent activity...</p>
+                    <p className="text-sm mt-2 text-gray-600">
+                      Screenshots will appear here when an AI interacts with the browser
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Activity Log */}
+          <div className="lg:col-span-1">
+            <div className="bg-gray-800 rounded-xl border border-gray-700 h-full flex flex-col">
+              <div className="px-4 py-3 border-b border-gray-700">
+                <h2 className="font-semibold">Activity Log</h2>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4 space-y-2 max-h-[500px] font-mono text-sm">
+                {logs.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No activity yet</p>
+                ) : (
+                  logs.map((log, i) => (
+                    <div key={i} className="border-b border-gray-700/50 pb-2">
+                      <span className="text-gray-500">{log.time}</span>
+                      <span className="text-blue-400 ml-2 font-bold">{log.action}</span>
+                      {log.details && <span className="text-gray-400 ml-2">{log.details}</span>}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Section */}
+        <div className="mt-6 bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+          <h3 className="font-semibold mb-2">About Live View</h3>
+          <p className="text-gray-400 text-sm">
+            This page shows real-time screenshots of AI agents interacting with web browsers in the
+            TNF Cloud Sandbox. When an agent navigates, clicks, types, or takes any browser action,
+            a screenshot is captured and streamed here.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

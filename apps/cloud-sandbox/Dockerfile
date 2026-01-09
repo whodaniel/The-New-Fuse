@@ -12,15 +12,27 @@ WORKDIR /app
 COPY package.json ./
 COPY tsconfig.json ./
 # Force cache bust
-RUN echo "CacheBust: V15-${RANDOM}"
+RUN echo "CacheBust: V16-${RANDOM}"
 
 COPY src ./src
+# Verify code update
+RUN grep "LIVE VIEW" src/server.ts
+COPY public ./public
+# Copy scripts folder which is required by postinstall
+COPY scripts ./scripts
+COPY start-custom.sh ./start-custom.sh
+
 
 # Install dependencies
 RUN npm install
 
 # Build
 RUN npm run build
+# Debug build output
+RUN echo "=== SRC SERVER.TS ==="
+RUN grep "PLAYWRIGHT_BROWSERS_PATH" src/server.ts || true
+RUN echo "=== DIST SERVER.JS ==="
+RUN cat dist/server.js | grep "LIVE VIEW" || (echo "FAILED TO FIND LIVE VIEW IN DIST" && exit 1)
 
 # Setup user
 RUN addgroup --system app-user && adduser --system --ingroup app-user app-user

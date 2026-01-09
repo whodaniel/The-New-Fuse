@@ -1,12 +1,5 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "./Dockerfile"
-watchPatterns = ["src/**", "package.json", "tsconfig.json"]
+dockerfilePath = "./Dockerfile.local"
+watchPatterns = ["src/**", "package.json", "tsconfig.json", "public/**"]
 
-[deploy]
-# Use custom start script that runs from fresh build and manages browser install
-startCommand = "sh /start-custom.sh"
-healthcheckPath = "/health"
-healthcheckTimeout = 30
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 3
