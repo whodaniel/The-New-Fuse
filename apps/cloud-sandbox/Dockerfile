@@ -1,34 +1,35 @@
-# The New Fuse - Cloud Sandbox with Playwright
-# MCP server with headless browser automation for Railway deployment
-
 FROM mcr.microsoft.com/playwright:v1.40.0-jammy
 
 # Install Node.js 22
 RUN apt-get update && apt-get install -y curl && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+    npm install -g pnpm
 
-# Create app directory
 WORKDIR /app
 
-# Copy only cloud-sandbox files
+# Copy files (assuming build context is app directory)
 COPY package.json ./
 COPY tsconfig.json ./
+# Force cache bust
+RUN echo "CacheBust: V15-${RANDOM}"
+
 COPY src ./src
 
-# Install dependencies (including Playwright)
+# Install dependencies
 RUN npm install
 
-# Build TypeScript
-RUN npx tsc
+# Build
+RUN npm run build
 
-# Expose MCP server port
-EXPOSE 8080
+# Setup user
+RUN addgroup --system app-user && adduser --system --ingroup app-user app-user
+RUN mkdir -p /home/app-user/pw-browsers && chown -R app-user:app-user /home/app-user
+RUN mkdir -p /home/app-user/.npm-cache && chown -R app-user:app-user /home/app-user
+RUN mkdir -p /app/pw-browsers && chown -R app-user:app-user /app
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+USER app-user
+ENV HOME=/home/app-user
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/app-user/pw-browsers
 
-# Start MCP server
 CMD ["node", "dist/server.js"]

@@ -1,19 +1,101 @@
+console.log('!!! SERVER STARTING - VERSION 15 (FIXED) !!!');
 /**
  * The New Fuse - Cloud Sandbox MCP Server
  * Handles WebSocket connections from local Tauri bridge sidecars
  * Provides shell command execution, file system, and browser automation capabilities
  */
 
+// CRITICAL: Set Playwright browser path BEFORE importing playwright
+// This must be at the very top of the file
+// process.env.PLAYWRIGHT_BROWSERS_PATH = '/ms-playwright';
+
 import { exec } from 'child_process';
 import { promises as fs } from 'fs';
 import { createServer } from 'http';
 import { promisify } from 'util';
 
+// Self-healing: Install Playwright browsers if missing
+try {
+  console.log('📦 checking/installing Playwright browsers...');
+
+  // Set writable paths for non-root user
+  // Use HOME directory which should be writable
+  const homeDir = process.env.HOME || '/home/app-user';
+  const localBrowsersPath = `${homeDir}/pw-browsers`;
+  const npmCachePath = `${homeDir}/.npm-cache`;
+
+  console.log(`📂 Configuration:
+    - PLAYWRIGHT_BROWSERS_PATH: ${localBrowsersPath}
+    - NPM_CONFIG_CACHE: ${npmCachePath}
+  `);
+
+  process.env.PLAYWRIGHT_BROWSERS_PATH = localBrowsersPath;
+  process.env.NPM_CONFIG_CACHE = npmCachePath;
+
+  // Create directories using execSync (safe, synchronous)
+  try {
+    console.log(`Creation ${localBrowsersPath}...`);
+    // Need execSync from import, will add later
+    const { execSync: es } = await import('child_process');
+    es(`mkdir -p "${localBrowsersPath}"`, { stdio: 'inherit' });
+    console.log(`Creation ${npmCachePath}...`);
+    es(`mkdir -p "${npmCachePath}"`, { stdio: 'inherit' });
+  } catch (e) {
+    console.error('⚠️ Failed to create directories:', e);
+  }
+
+  // Attempt installation ASYNC
+  console.log('Running playwright install (ASYNC)...');
+
+  // Check if binary exists using shell
+  let useBinary = false;
+  try {
+    // Use test command to check presence
+    const { execSync: es } = await import('child_process');
+    es('[ -f ./node_modules/.bin/playwright ]');
+    useBinary = true;
+  } catch {}
+
+  const cmd = useBinary
+    ? './node_modules/.bin/playwright install chromium'
+    : 'npx --yes playwright install chromium';
+
+  console.log(`Executing: ${cmd}`);
+
+  const installProcess = exec(cmd, {
+    env: {
+      ...process.env,
+      NPM_CONFIG_CACHE: npmCachePath,
+      PLAYWRIGHT_BROWSERS_PATH: localBrowsersPath,
+    },
+  });
+
+  installProcess.stdout?.on('data', (d: any) => console.log(`📦 Install: ${d.toString().trim()}`));
+  installProcess.stderr?.on('data', (d: any) =>
+    console.error(`📦 Install Err: ${d.toString().trim()}`)
+  );
+
+  installProcess.on('exit', (code: any) => {
+    console.log(`✅ Browser installation completed with code ${code}`);
+    try {
+      // Async read dir
+      fs.readdir(localBrowsersPath)
+        .then((files) => console.log('📂 Browser dir content:', files))
+        .catch((e) => console.log('Empty browser dir', e));
+    } catch (e) {
+      console.log('Read failed', e);
+    }
+  });
+} catch (e) {
+  console.error('❌ Browser installation setup failed:', e);
+}
+
 import express from 'express';
-import { Browser, Page, chromium } from 'playwright';
+import { chromium } from 'playwright';
 import { v4 as uuidv4 } from 'uuid';
 import { WebSocketServer } from 'ws';
 
+import type { Browser, Page } from 'playwright';
 import type { WebSocket } from 'ws';
 
 const execAsync = promisify(exec);
@@ -55,9 +137,68 @@ let activePage: Page | null = null;
 async function getBrowser(): Promise<Browser> {
   if (!browser) {
     console.log('🌐 Launching headless Chromium...');
+    console.log('PLAYWRIGHT_BROWSERS_PATH:', process.env.PLAYWRIGHT_BROWSERS_PATH);
+
+    const fsSync = await import('fs');
+
+    // Scan standard Playwright cache locations
+    const cachePaths = [
+      '/ms-playwright',
+      '/root/.cache/ms-playwright',
+      '/home/pwuser/.cache/ms-playwright',
+    ];
+    for (const p of cachePaths) {
+      if (fsSync.existsSync(p)) {
+        console.log(`📂 Contents of ${p}:`, fsSync.readdirSync(p));
+      } else {
+        console.log(`❌ ${p} DOES NOT EXIST`);
+      }
+    }
+
+    // Extensive list of possible chromium locations
+    const possiblePaths = [
+      '/ms-playwright/chromium-1091/chrome-linux/chrome',
+      '/root/.cache/ms-playwright/chromium-1091/chrome-linux/chrome',
+      '/home/pwuser/.cache/ms-playwright/chromium-1091/chrome-linux/chrome',
+      '/ms-playwright/chromium-1088/chrome-linux/chrome',
+      '/usr/bin/chromium',
+      '/usr/bin/chromium-browser',
+      '/usr/bin/google-chrome',
+      '/usr/bin/google-chrome-stable',
+    ];
+
+    let execPath: string | undefined;
+    for (const path of possiblePaths) {
+      if (fsSync.existsSync(path)) {
+        execPath = path;
+        console.log(`✅ Found Chromium at: ${path}`);
+        break;
+      }
+    }
+
+    // Fallback to Playwright's own detection
+    if (!execPath) {
+      try {
+        const detected = chromium.executablePath();
+        console.log(`Playwright detected: ${detected}`);
+        if (fsSync.existsSync(detected)) {
+          execPath = detected;
+        }
+      } catch (e) {
+        console.log('Detection failed:', e);
+      }
+    }
+
+    console.log(`Using executable: ${execPath || 'none'}`);
+
+    if (!execPath) {
+      throw new Error('No Chromium found');
+    }
+
     browser = await chromium.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      executablePath: execPath,
     });
   }
   return browser;
@@ -256,10 +397,9 @@ const tools: ToolHandler[] = [
             timeout: (params.timeout as number) || 10000,
           });
           return { success: true, found: params.selector };
-        } else {
-          await page.waitForTimeout((params.timeout as number) || 1000);
-          return { success: true, waited: params.timeout };
         }
+        await page.waitForTimeout((params.timeout as number) || 1000);
+        return { success: true, waited: params.timeout };
       } catch (error: unknown) {
         const err = error as { message: string };
         return { success: false, error: err.message };
@@ -476,6 +616,64 @@ app.get('/', (_req, res) => {
     tools: tools.map((t) => t.name),
     websocket: '/ws',
   });
+});
+
+// FORCE ENV VAR
+process.env.PLAYWRIGHT_BROWSERS_PATH = '/ms-playwright';
+
+app.post('/audit/agents', async (_req, res) => {
+  console.log('🕵️ Starting Agent Page Audit...');
+  console.log('User:', process.env.USER || 'unknown');
+  console.log('Home:', process.env.HOME);
+  console.log('PLAYWRIGHT_BROWSERS_PATH (forced):', process.env.PLAYWRIGHT_BROWSERS_PATH);
+
+  try {
+    const fs = await import('fs');
+    if (fs.existsSync('/ms-playwright')) {
+      console.log('✅ /ms-playwright exists! Contents:', fs.readdirSync('/ms-playwright'));
+    } else {
+      console.log('❌ /ms-playwright DOES NOT EXIST');
+    }
+  } catch (e) {
+    console.log('Error checking path:', e);
+  }
+
+  try {
+    const page = await getPage();
+    const report: any[] = [];
+
+    // 1. Navigate
+    console.log('Navigate -> https://thenewfuse.com/agents');
+    await page.goto('https://thenewfuse.com/agents', { waitUntil: 'domcontentloaded' });
+    report.push({ step: 'Navigate', url: page.url(), title: await page.title() });
+
+    // 2. Search
+    console.log('Search -> Typing "Dev"');
+    const searchSelector = 'input[placeholder*="Search"], input[type="text"]';
+    try {
+      await page.waitForSelector(searchSelector, { timeout: 5000 });
+      await page.fill(searchSelector, '');
+      await page.type(searchSelector, 'Dev');
+      await page.waitForTimeout(2000);
+
+      const ssPath = '/tmp/audit_agents_search.png';
+      await page.screenshot({ path: ssPath });
+      report.push({ step: 'Search', status: 'Success', screenshot: ssPath });
+    } catch (e) {
+      report.push({ step: 'Search', status: 'Failed', error: (e as Error).message });
+    }
+
+    // 3. Verify Content
+    const content = await page.textContent('body');
+    const hasDev = content?.includes('Dev') || false;
+    report.push({ step: 'Verification', foundKeyword: hasDev });
+
+    console.log('✅ Audit Complete');
+    res.json({ success: true, report });
+  } catch (error) {
+    console.error('❌ Audit Failed:', error);
+    res.status(500).json({ success: false, error: (error as Error).message });
+  }
 });
 
 const server = createServer(app);

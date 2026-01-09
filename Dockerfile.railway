@@ -16,6 +16,11 @@ WORKDIR /app
 # Copy all source files
 COPY . .
 
+# Copy explicit config files to ensure they are available
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
+COPY scripts ./scripts
+
 # Install all dependencies
 RUN pnpm install --frozen-lockfile || (echo "Lockfile compatibility issue detected, recreating lockfile..." && pnpm install --force)
 

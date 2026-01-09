@@ -4,7 +4,8 @@ dockerfilePath = "./Dockerfile"
 watchPatterns = ["src/**", "package.json", "tsconfig.json"]
 
 [deploy]
-startCommand = "node dist/server.js"
+# Use custom start script that runs from fresh build and manages browser install
+startCommand = "sh /start-custom.sh"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"

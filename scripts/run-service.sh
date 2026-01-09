@@ -64,6 +64,24 @@ else
     exec node dist/main.js
   elif [ -f "dist/server.js" ]; then
     echo "Found dist/server.js in current directory"
+    # For cloud-sandbox, install Playwright browsers at runtime
+    if [ "$SERVICE_PATH" = "cloud-sandbox" ]; then
+      echo "📦 Installing Playwright browsers for cloud-sandbox..."
+
+      # Define a local writable path for browsers
+      export PLAYWRIGHT_BROWSERS_PATH="$(pwd)/pw-browsers"
+
+      # Create directory
+      mkdir -p "$PLAYWRIGHT_BROWSERS_PATH"
+
+      echo "📂 Installing to: $PLAYWRIGHT_BROWSERS_PATH"
+
+      # Install
+      npx playwright install chromium --with-deps 2>&1 || echo "Warning: Browser installation may have failed"
+
+      echo "✅ Playwright installation complete"
+      ls -la "$PLAYWRIGHT_BROWSERS_PATH" || echo "Browser directory check failed"
+    fi
     exec node dist/server.js
   elif [ -f "dist/src/main.js" ]; then
     echo "Found dist/src/main.js in current directory"

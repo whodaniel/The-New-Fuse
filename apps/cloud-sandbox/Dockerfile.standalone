@@ -1,0 +1,40 @@
+FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+
+# Install Node.js 22
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g pnpm
+
+WORKDIR /app
+
+# Copy cloud-sandbox files (Assuming Root Context)
+COPY apps/cloud-sandbox/package.json ./
+COPY apps/cloud-sandbox/tsconfig.json ./
+COPY apps/cloud-sandbox/src ./src
+
+# Install dependencies (using npm to avoid pnpm workspace complexity for this standalone app)
+RUN npm install
+
+# Build
+RUN npm run build
+
+# Setup for Run
+# Copy manual start script if needed, but we rely on server.ts logic
+# Ensure we have a non-root user setup if desired, but for now root is fine in this contained sandbox environment?
+# The original Dockerfile used root. The Railway one used app-user.
+# Let's use root to avoid permission issues for now, or stick to app-user if creating writable paths.
+# My server.ts handles paths assuming app-user or writable /tmp.
+# Let's stick to root to be safe against EACCES, or create app-user and ensure home dir is used.
+# server.ts uses process.env.HOME.
+
+# Create app-user
+RUN addgroup --system app-user && adduser --system --ingroup app-user app-user
+RUN mkdir -p /home/app-user/pw-browsers && chown -R app-user:app-user /home/app-user
+RUN mkdir -p /app/pw-browsers && chown -R app-user:app-user /app
+
+USER app-user
+ENV HOME=/home/app-user
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/app-user/pw-browsers
+
+CMD ["node", "dist/server.js"]
