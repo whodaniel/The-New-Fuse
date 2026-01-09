@@ -110,7 +110,7 @@ const WorkflowBuilder: React.FC = () => {
                 <Input
                   value={workflowName}
                   onChange={(e) => setWorkflowName(e.target.value)}
-                  className="text-lg md:text-xl font-bold border-none h-auto p-0 focus-visible:ring-0 w-full bg-transparent text-white placeholder:text-gray-400"
+                  className="text-lg md:text-xl font-bold !border-none h-auto p-0 focus-visible:ring-0 w-full !bg-transparent !text-white placeholder:text-gray-400"
                   placeholder="Untitled Workflow"
                 />
                 <p className="text-muted-foreground text-xs md:text-sm truncate">
