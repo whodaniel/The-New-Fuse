@@ -1,5 +1,6 @@
 // Central barrel export for all utilities - improves import efficiency
 // This preserves all existing functionality while improving developer experience
+// Build cache bust: 2026-01-08T21:15:00 - Node.js module fixes
 
 // Core utilities
 export * from './cn';
