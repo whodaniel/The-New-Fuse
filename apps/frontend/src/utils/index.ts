@@ -19,7 +19,7 @@ export * from './encryption';
 export * from './security';
 
 // Data handling
-export * from './database';
+// Note: './database' removed - uses Node.js-only modules (mysql2, ioredis, @nestjs/common)
 export * from './storage';
 export * from './validation';
 

@@ -101,6 +101,10 @@ export default defineConfig(({ mode }) => {
         winston: path.resolve(__dirname, 'src/stubs/winston.ts'),
         'winston-daily-rotate-file': path.resolve(__dirname, 'src/stubs/winston.ts'),
         ioredis: path.resolve(__dirname, 'src/stubs/empty.ts'),
+        // Additional Node.js modules that should not be in browser bundles
+        'mysql2/promise': path.resolve(__dirname, 'src/stubs/empty.ts'),
+        mysql2: path.resolve(__dirname, 'src/stubs/empty.ts'),
+        '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
       },
     },
     define: {
