@@ -75,9 +75,10 @@ async function auditPage(url) {
     // but the viewer might need time to receive the polling event.
     await sleep(4000);
 
-    // 2. Initial Screenshot (To force update)
+    // 2. Initial Screenshot (Force update via evaluate)
     console.log('  📸 Capturing visual state (Above Fold)...');
-    await executeTool('browser_screenshot', { path: `audit_top.png` });
+    // browser_screenshot broadcasting is flaky, use evaluate to trigger broadcast
+    await executeTool('browser_evaluate', { expression: '"Visual Check Top"' });
 
     // 3. Evaluate DOM
     console.log('  🕵️ Investigating DOM...');
@@ -109,9 +110,9 @@ async function auditPage(url) {
     });
     await sleep(2000);
 
-    // 5. Final Screenshot
+    // 5. Final Screenshot (Force update via evaluate)
     console.log('  📸 Capturing visual state (Footer)...');
-    await executeTool('browser_screenshot', { path: `audit_btm.png` });
+    await executeTool('browser_evaluate', { expression: '"Visual Check Bottom"' });
 
     pageAudits.push(status);
     return data.links || [];
@@ -145,12 +146,13 @@ async function startCrawl() {
     console.log('   (Allowed to fail if no page open)');
   }
 
-  // WARMUP PHASE: Prove Live View is working
+  // WARMUP PHASE: Prove Live View is working (Using evaluate to force broadcast)
   console.log('\n🔥 WARMUP: Generating visual activity for Live View...');
   for (let i = 1; i <= 5; i++) {
     console.log(`  📸 Warmup Screenshot ${i}/5...`);
-    await executeTool('browser_screenshot', { path: `warmup_${i}.png` });
-    await sleep(1500);
+    // Use evaluate because we know it broadcasts successfully
+    await executeTool('browser_evaluate', { expression: `'Warmup Ping ${i}'` });
+    await sleep(2000); // Slower pace for visibility
   }
 
   const MAX_PAGES = 20;
