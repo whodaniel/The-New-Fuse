@@ -81,7 +81,12 @@ async function getBrowser(): Promise<Browser> {
 
     browser = await chromium.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--remote-debugging-port=9222', // Expose Chrome DevTools Protocol for Antigravity
+      ],
       // executablePath: execPath, // Use bundled playwright
     });
   }
@@ -692,6 +697,57 @@ app.get('/', (_req, res) => {
     tools: tools.map((t) => t.name),
     websocket: '/ws',
   });
+});
+
+/**
+ * Chrome DevTools endpoint for Antigravity integration
+ * Returns browser status and instructions for direct access via CDP
+ */
+app.get('/api/browser/devtools', async (_req, res) => {
+  try {
+    const b = await getBrowser();
+    const page = await getPage();
+
+    // Get CDP endpoint info from the browser
+    // Note: Playwright browsers expose CDP on port 9222 internally
+    const cdpEndpoint = `http://localhost:9222/json/version`;
+
+    res.json({
+      success: true,
+      status: 'Browser is running with Chrome DevTools Protocol enabled',
+      cdpPort: 9222,
+      publicEndpoint: `wss://${process.env.RAILWAY_PUBLIC_DOMAIN || req.get('host')}/devtools`,
+      localEndpoint: 'ws://localhost:9222',
+      browserInfo: {
+        type: 'Chromium',
+        headless: true,
+        version: await b.version(),
+      },
+      instructions: [
+        'The browser is running with --remote-debugging-port=9222',
+        'Use Chrome DevTools MCP server in Antigravity to connect',
+        'You can access console, network, performance, and screenshots in real-time'
+      ],
+      capabilities: [
+        'Console messages (list_console_messages)',
+        'Network requests (list_network_requests)',
+        'Screenshots (take_screenshot)',
+        'Performance traces (performance_start_trace)',
+        'Script evaluation (evaluate_script)'
+      ],
+      usage: {
+        antigravity: 'Connect using chrome-devtools-mcp with BROWSER_WS_ENDPOINT',
+        curl: `curl ${cdpEndpoint}`,
+        chrome: 'chrome://inspect/#devices → Configure → localhost:9222'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      hint: 'Browser may not be initialized yet. Try navigating to a page first.'
+    });
+  }
 });
 
 app.post('/audit/agents', async (_req, res) => {
