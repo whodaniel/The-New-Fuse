@@ -668,6 +668,38 @@ app.use((req, res, next) => {
   }
 });
 
+// ============================================================================
+// HTTP FALLBACK FOR AGENTS (Bypass Proxy Issues)
+// Hosted HIGH in the stack to avoid 'static' middleware interference
+// ============================================================================
+
+app.use(express.json()); // Ensure body parsing is enabled globally
+
+app.get('/ping', (req, res) => res.send('pong'));
+
+app.post('/api/agent/call', async (req, res) => {
+  try {
+    const message = req.body;
+    const clientId = 'http-agent-' + new Date().getTime();
+
+    console.log(`📨 Received via HTTP: ${(message as MCPMessage).method || 'response'}`);
+
+    // Create ephemeral client context with Mock WS
+    const client: ConnectedClient = {
+      id: clientId,
+      ws: { send: () => {}, readyState: 1 } as any,
+      authenticated: true,
+      lastActivity: new Date(),
+    };
+
+    const response = await handleMCPMessage(client, message as MCPMessage);
+    res.json(response);
+  } catch (error) {
+    console.error('HTTP Agent Error:', error);
+    res.status(500).json({ error: { code: -32603, message: 'Internal error' } });
+  }
+});
+
 // Serve viewer manually to debug
 app.get('/viewer', (req, res) => {
   const p = join(process.cwd(), 'public', 'viewer.html');
