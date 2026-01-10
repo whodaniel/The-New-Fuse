@@ -816,6 +816,38 @@ testWss.on('connection', (ws) => {
 });
 
 // ============================================================================
+// HTTP FALLBACK FOR AGENTS (Bypass Proxy Issues)
+// ============================================================================
+
+app.use(express.json()); // Ensure body parsing is enabled
+
+app.post('/api/agent/call', async (req, res) => {
+  try {
+    const message = req.body;
+    const clientId = 'http-agent-' + new Date().getTime();
+
+    // Create ephemeral client context
+    const client: ConnectedClient = {
+      id: clientId,
+      ws: {
+        // Mock WS for handler compatibility
+        send: () => {},
+        readyState: 1,
+      } as any,
+      authenticated: true,
+      lastActivity: new Date(),
+    };
+
+    console.log(`📨 Received via HTTP: ${(message as MCPMessage).method || 'response'}`);
+    const response = await handleMCPMessage(client, message as MCPMessage);
+    res.json(response);
+  } catch (error) {
+    console.error('HTTP Agent Error:', error);
+    res.status(500).json({ error: { code: -32603, message: 'Internal error' } });
+  }
+});
+
+// ============================================================================
 // SOCKET.IO LIVE VIEW SERVER (Better Railway compatibility)
 // ============================================================================
 
