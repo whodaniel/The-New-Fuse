@@ -330,7 +330,7 @@ const tools: ToolHandler[] = [
         },
       },
     },
-    handler: async (params) => {
+    handler: withBroadcast('screenshot', async (params) => {
       try {
         const page = await getPage();
         const path = (params.path as string) || '/tmp/screenshot.png';
@@ -341,7 +341,7 @@ const tools: ToolHandler[] = [
         const err = error as { message: string };
         return { success: false, error: err.message };
       }
-    },
+    }),
   },
   {
     name: 'browser_click',
@@ -349,15 +349,15 @@ const tools: ToolHandler[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        selector: { type: 'string', description: 'CSS selector of element to click' },
+        selector: { type: 'string', description: 'CSS selector to click' },
       },
       required: ['selector'],
     },
     handler: withBroadcast('click', async (params) => {
       try {
         const page = await getPage();
-        await page.click(params.selector as string, { timeout: 10000 });
-        return { success: true, selector: params.selector };
+        await page.click(params.selector as string);
+        return { success: true };
       } catch (error: unknown) {
         const err = error as { message: string };
         return { success: false, error: err.message };
@@ -366,25 +366,20 @@ const tools: ToolHandler[] = [
   },
   {
     name: 'browser_type',
-    description: 'Type text into an input field',
+    description: 'Type text into an element',
     inputSchema: {
       type: 'object',
       properties: {
-        selector: { type: 'string', description: 'CSS selector of input field' },
+        selector: { type: 'string', description: 'CSS selector' },
         text: { type: 'string', description: 'Text to type' },
-        clear: { type: 'boolean', description: 'Clear field before typing', default: true },
       },
       required: ['selector', 'text'],
     },
     handler: withBroadcast('type', async (params) => {
       try {
         const page = await getPage();
-        const selector = params.selector as string;
-        if (params.clear !== false) {
-          await page.fill(selector, '');
-        }
-        await page.type(selector, params.text as string);
-        return { success: true, selector, text: params.text };
+        await page.fill(params.selector as string, params.text as string);
+        return { success: true };
       } catch (error: unknown) {
         const err = error as { message: string };
         return { success: false, error: err.message };
