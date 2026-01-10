@@ -28,15 +28,15 @@ import { promisify } from 'util';
 // }
 
 import express from 'express';
-import { chromium } from 'playwright';
+// import { chromium } from 'playwright';
 import { Server as SocketIOServer } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import type { WebSocket } from 'ws';
 import { WebSocketServer } from 'ws';
 
-import type { Browser, Page } from 'playwright';
-// type Browser = any;
-// type Page = any;
+// import type { Browser, Page } from 'playwright';
+type Browser = any;
+type Page = any;
 
 const execAsync = promisify(exec);
 
@@ -74,6 +74,14 @@ interface ToolHandler {
 let browser: Browser | null = null;
 let activePage: Page | null = null;
 
+async function getBrowser(): Promise<Browser> {
+  throw new Error('Browser automation disabled for stability testing');
+}
+
+async function getPage(): Promise<Page> {
+  throw new Error('Browser automation disabled for stability testing');
+}
+/*
 async function getBrowser(): Promise<Browser> {
   if (!browser) {
     console.log('🌐 Launching headless Chromium...');
@@ -130,6 +138,7 @@ async function getPage(): Promise<Page> {
   }
   return activePage;
 }
+*/
 
 // ============================================================================
 // LIVE VIEW & BROADCASTING
@@ -716,7 +725,7 @@ app.get('/api/browser/devtools', async (_req, res) => {
       success: true,
       status: 'Browser is running with Chrome DevTools Protocol enabled',
       cdpPort: 9222,
-      publicEndpoint: `wss://${process.env.RAILWAY_PUBLIC_DOMAIN || req.get('host')}/devtools`,
+      publicEndpoint: `wss://${process.env.RAILWAY_PUBLIC_DOMAIN || _req.get('host')}/devtools`,
       localEndpoint: 'ws://localhost:9222',
       browserInfo: {
         type: 'Chromium',
@@ -726,26 +735,26 @@ app.get('/api/browser/devtools', async (_req, res) => {
       instructions: [
         'The browser is running with --remote-debugging-port=9222',
         'Use Chrome DevTools MCP server in Antigravity to connect',
-        'You can access console, network, performance, and screenshots in real-time'
+        'You can access console, network, performance, and screenshots in real-time',
       ],
       capabilities: [
         'Console messages (list_console_messages)',
         'Network requests (list_network_requests)',
         'Screenshots (take_screenshot)',
         'Performance traces (performance_start_trace)',
-        'Script evaluation (evaluate_script)'
+        'Script evaluation (evaluate_script)',
       ],
       usage: {
         antigravity: 'Connect using chrome-devtools-mcp with BROWSER_WS_ENDPOINT',
         curl: `curl ${cdpEndpoint}`,
-        chrome: 'chrome://inspect/#devices → Configure → localhost:9222'
-      }
+        chrome: 'chrome://inspect/#devices → Configure → localhost:9222',
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: error.message,
-      hint: 'Browser may not be initialized yet. Try navigating to a page first.'
+      hint: 'Browser may not be initialized yet. Try navigating to a page first.',
     });
   }
 });
