@@ -78,6 +78,30 @@
             min-height: 400px;
         }
 
+        .badge {
+            background: #333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #aaa;
+            display: none;
+        }
+        .view-mode-select {
+            background: #222;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 12px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .view-mode-select:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
         .logs {
             margin-top: 20px;
             background: #1a1a1a;
@@ -104,14 +128,20 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>TNF Cloud Sandbox Live View</h1>
-            <div id="connection-status" class="status disconnected">
-                <div class="indicator"></div>
-                <span id="status-text">Disconnected</span>
-                <span id="transport-badge" class="transport-badge" style="display: none;"></span>
+        <div class="header">
+            <div class="title">TNF Cloud Sandbox Live View</div>
+            <div class="controls">
+                <select id="view-mode" class="view-mode-select">
+                    <option value="stream">📡 Realtime Stream</option>
+                    <option value="snapshots">📸 Snapshots Only</option>
+                </select>
+                <div id="status" class="status disconnected">
+                    <span id="status-dot" class="status-dot"></span>
+                    <span id="status-text">Disconnected</span>
+                </div>
+                <span id="transport-badge" class="badge">POLLING</span>
             </div>
-        </header>
+        </div>
 
         <div class="viewer-card">
             <img id="browser-view" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' width='800' height='600'%3E%3Crect width='800' height='600' fill='%23111'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23333' font-family='sans-serif' font-size='24'%3EWaiting for agent activity...%3C/text%3E%3C/svg%3E" alt="Live Browser View">
@@ -211,10 +241,24 @@
                 addLog('Error', `Connection error: ${error.message}`, 'error');
             });
 
+            const viewModeEl = document.getElementById('view-mode');
+            let currentViewMode = 'stream';
+
+            viewModeEl.addEventListener('change', (e) => {
+                currentViewMode = e.target.value;
+                addLog('System', `View mode changed to: ${currentViewMode}`);
+            });
+
             socket.on('screenshot', (data) => {
                 if (data && data.image) {
+                    // Filter based on view mode
+                    if (currentViewMode === 'snapshots' && data.action === 'screencast') {
+                        return; // Ignore stream frames in snapshot mode
+                    }
+
                     screenshotCount++;
                     imgEl.src = data.image;
+
                     // Don't spam logs for video stream
                     if (data.action !== 'screencast') {
                         addLog('Screenshot', `#${screenshotCount} from ${data.action || 'agent action'}`);
