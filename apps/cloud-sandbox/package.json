@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "npx tsx src/server.ts"
   },
   "dependencies": {
     "express": "^4.21.0",
