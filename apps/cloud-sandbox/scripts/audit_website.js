@@ -90,8 +90,14 @@ async function auditPage(url) {
       })()`,
     });
 
-    const data = JSON.parse(evaluation.output || '{}');
+    const response = JSON.parse(evaluation.output || '{}');
+    if (!response.success || !response.result) {
+      console.warn('   ⚠️ Evaluation failed or empty:', response.error || 'No result');
+      return [];
+    }
+    const data = response.result;
     console.log(`  ✅ Title: ${data.pageTitle}`);
+    console.log(`  🔗 Found ${data.links ? data.links.length : 0} links`);
 
     // 4. Scroll
     console.log('  📜 Scrolling...');
