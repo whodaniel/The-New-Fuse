@@ -49,6 +49,8 @@ async function executeTool(name, args) {
     arguments: args,
   });
 
+  // console.log(`DEBUG Tool ${name} raw:`, JSON.stringify(result).substring(0, 100) + '...');
+
   if (result.content && result.content[0] && result.content[0].text) {
     return { output: result.content[0].text };
   }
@@ -90,6 +92,7 @@ async function auditPage(url) {
       })()`,
     });
 
+    console.log('  DEBUG Evaluation Output:', evaluation.output);
     const response = JSON.parse(evaluation.output || '{}');
     if (!response.success || !response.result) {
       console.warn('   ⚠️ Evaluation failed or empty:', response.error || 'No result');
@@ -135,9 +138,19 @@ async function startCrawl() {
   // Force a clear screenshot at start
   console.log('📸 Taking Initial Connectivity Screenshot...');
   try {
+    await executeTool('browser_navigate', { url: TARGET_DOMAIN });
+    await sleep(2000);
     await executeTool('browser_screenshot', { path: 'connect.png' });
   } catch (e) {
     console.log('   (Allowed to fail if no page open)');
+  }
+
+  // WARMUP PHASE: Prove Live View is working
+  console.log('\n🔥 WARMUP: Generating visual activity for Live View...');
+  for (let i = 1; i <= 5; i++) {
+    console.log(`  📸 Warmup Screenshot ${i}/5...`);
+    await executeTool('browser_screenshot', { path: `warmup_${i}.png` });
+    await sleep(1500);
   }
 
   const MAX_PAGES = 20;
@@ -147,9 +160,11 @@ async function startCrawl() {
     const nextUrl = queues.shift();
     if (nextUrl && nextUrl.startsWith(TARGET_DOMAIN) && !visitedUrls.has(nextUrl)) {
       const links = await auditPage(nextUrl);
-      links.forEach((l) => {
-        if (!visitedUrls.has(l) && !queues.includes(l)) queues.push(l);
-      });
+      if (links) {
+        links.forEach((l) => {
+          if (!visitedUrls.has(l) && !queues.includes(l)) queues.push(l);
+        });
+      }
       count++;
     } else {
       // if loop hits already visited
