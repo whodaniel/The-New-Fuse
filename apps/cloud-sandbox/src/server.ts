@@ -19,80 +19,13 @@ import { join } from 'path';
 import { promisify } from 'util';
 
 // Self-healing: Install Playwright browsers if missing
-try {
-  console.log('📦 checking/installing Playwright browsers...');
-
-  // Set writable paths for non-root user
-  // Use HOME directory which should be writable
-  const homeDir = process.env.HOME || '/home/app-user';
-  const localBrowsersPath = `${homeDir}/pw-browsers`;
-  const npmCachePath = `${homeDir}/.npm-cache`;
-
-  console.log(`📂 Configuration:
-    - PLAYWRIGHT_BROWSERS_PATH: ${localBrowsersPath}
-    - NPM_CONFIG_CACHE: ${npmCachePath}
-  `);
-
-  process.env.PLAYWRIGHT_BROWSERS_PATH = localBrowsersPath;
-  process.env.NPM_CONFIG_CACHE = npmCachePath;
-
-  // Create directories using execSync (safe, synchronous)
-  try {
-    console.log(`Creation ${localBrowsersPath}...`);
-    // Need execSync from import, will add later
-    const { execSync: es } = await import('child_process');
-    es(`mkdir -p "${localBrowsersPath}"`, { stdio: 'inherit' });
-    console.log(`Creation ${npmCachePath}...`);
-    es(`mkdir -p "${npmCachePath}"`, { stdio: 'inherit' });
-  } catch (e) {
-    console.error('⚠️ Failed to create directories:', e);
-  }
-
-  // Attempt installation ASYNC
-  console.log('Running playwright install (ASYNC)...');
-
-  // Check if binary exists using shell
-  let useBinary = false;
-  try {
-    // Use test command to check presence
-    const { execSync: es } = await import('child_process');
-    es('[ -f ./node_modules/.bin/playwright ]');
-    useBinary = true;
-  } catch {}
-
-  const cmd = useBinary
-    ? './node_modules/.bin/playwright install chromium'
-    : 'npx --yes playwright install chromium';
-
-  console.log(`Executing: ${cmd}`);
-
-  const installProcess = exec(cmd, {
-    env: {
-      ...process.env,
-      NPM_CONFIG_CACHE: npmCachePath,
-      PLAYWRIGHT_BROWSERS_PATH: localBrowsersPath,
-    },
-  });
-
-  installProcess.stdout?.on('data', (d: any) => console.log(`📦 Install: ${d.toString().trim()}`));
-  installProcess.stderr?.on('data', (d: any) =>
-    console.error(`📦 Install Err: ${d.toString().trim()}`)
-  );
-
-  installProcess.on('exit', (code: any) => {
-    console.log(`✅ Browser installation completed with code ${code}`);
-    try {
-      // Async read dir
-      fs.readdir(localBrowsersPath)
-        .then((files) => console.log('📂 Browser dir content:', files))
-        .catch((e) => console.log('Empty browser dir', e));
-    } catch (e) {
-      console.log('Read failed', e);
-    }
-  });
-} catch (e) {
-  console.error('❌ Browser installation setup failed:', e);
-}
+// REMOVED for stability: Railway usage should rely on pre-installed browsers or configured environment.
+// Auto-installing on every boot causes timeouts and crashes (Exit 137/OOM).
+// try {
+//   console.log('📦 checking/installing Playwright browsers - SKIPPED for stability');
+// } catch (e) {
+//   console.error('❌ Browser installation setup failed:', e);
+// }
 
 import express from 'express';
 import { chromium } from 'playwright';
