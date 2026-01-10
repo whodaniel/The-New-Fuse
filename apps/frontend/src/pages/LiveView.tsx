@@ -37,8 +37,9 @@ export default function LiveViewPage() {
     try {
       const socket = io(CLOUD_SANDBOX_URL, {
         path: '/socket.io/',
-        // CRITICAL: Prioritize polling to bypass Railway WebSocket handshake failures
-        transports: ['polling', 'websocket'],
+        // CRITICAL: Force polling to bypass Railway WebSocket handshake failures
+        transports: ['polling'],
+        upgrade: false, // Disable upgrade to WebSocket to avoid console errors
         reconnection: true,
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,

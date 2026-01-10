@@ -1,0 +1,156 @@
+// HTTP Based Audit Script to Bypass WebSocket issues
+// Uses built-in fetch (Node 18+)
+
+// Configuration
+const HTML_ENDPOINT = 'https://tnf-cloud-sandbox-v2-production.up.railway.app/api/agent/call';
+const TARGET_DOMAIN = 'https://thenewfuse.com';
+
+// State
+let messageId = 0;
+const visitedUrls = new Set();
+const queues = [TARGET_DOMAIN];
+const pageAudits = [];
+
+console.log(`🕵️ Starting QA Audit Agent (HTTP Mode) for ${TARGET_DOMAIN}`);
+console.log(`🔌 Using Endpoint: ${HTML_ENDPOINT}`);
+
+async function sendRequest(method, params) {
+  const id = (messageId++).toString();
+  const payload = {
+    jsonrpc: '2.0',
+    id,
+    method,
+    params: method === 'tools/call' ? params : params || {},
+  };
+
+  try {
+    const response = await fetch(HTML_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.result;
+  } catch (e) {
+    console.error(`❌ Connection Error: ${e.message}`);
+    throw e;
+  }
+}
+
+async function executeTool(name, args) {
+  const result = await sendRequest('tools/call', {
+    name,
+    arguments: args,
+  });
+
+  if (result.content && result.content[0] && result.content[0].text) {
+    return { output: result.content[0].text };
+  }
+  return result;
+}
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function auditPage(url) {
+  visitedUrls.add(url);
+  console.log(`\n🔍 Analyzing: ${url}`);
+
+  const status = { url, checks: [], score: 100 };
+
+  try {
+    // 1. Navigate
+    console.log('  👉 Navigating...');
+    await executeTool('browser_navigate', { url });
+    // Note: The screenshot happens automatically in the server upon navigate,
+    // but the viewer might need time to receive the polling event.
+    await sleep(4000);
+
+    // 2. Initial Screenshot (To force update)
+    console.log('  📸 Capturing visual state (Above Fold)...');
+    await executeTool('browser_screenshot', { path: `audit_top.png` });
+
+    // 3. Evaluate DOM
+    console.log('  🕵️ Investigating DOM...');
+    const evaluation = await executeTool('browser_evaluate', {
+      expression: `(function() {
+        // Simple extraction for demo
+        const links = Array.from(document.querySelectorAll('a')).map(a => a.href);
+        const images = Array.from(document.querySelectorAll('img'));
+        const brokenImages = images.filter(i => i.naturalWidth === 0).length;
+        const pageTitle = document.title;
+        return { links, brokenImages, pageTitle };
+      })()`,
+    });
+
+    const data = JSON.parse(evaluation.output || '{}');
+    console.log(`  ✅ Title: ${data.pageTitle}`);
+
+    // 4. Scroll
+    console.log('  📜 Scrolling...');
+    await executeTool('browser_evaluate', {
+      expression: 'window.scrollTo(0, document.body.scrollHeight)',
+    });
+    await sleep(2000);
+
+    // 5. Final Screenshot
+    console.log('  📸 Capturing visual state (Footer)...');
+    await executeTool('browser_screenshot', { path: `audit_btm.png` });
+
+    pageAudits.push(status);
+    return data.links || [];
+  } catch (e) {
+    console.error(`  ❌ Failed to audit ${url}:`, e.message);
+    return [];
+  }
+}
+
+async function startCrawl() {
+  console.log('🚀 Initializing Agent Protocol (HTTP)...');
+  try {
+    // Optional initialize
+    await sendRequest('initialize', {
+      protocolVersion: '2024-11-05',
+      capabilities: {},
+      clientInfo: { name: 'qa-audit-bot-http', version: '1.0.0' },
+    });
+    console.log('✅ Initialize success');
+  } catch (e) {
+    console.warn('⚠️ Initialize skipped/failed:', e.message);
+  }
+
+  // Force a clear screenshot at start
+  console.log('📸 Taking Initial Connectivity Screenshot...');
+  try {
+    await executeTool('browser_screenshot', { path: 'connect.png' });
+  } catch (e) {
+    console.log('   (Allowed to fail if no page open)');
+  }
+
+  const MAX_PAGES = 20;
+  let count = 0;
+
+  while (queues.length > 0 && count < MAX_PAGES) {
+    const nextUrl = queues.shift();
+    if (nextUrl && nextUrl.startsWith(TARGET_DOMAIN) && !visitedUrls.has(nextUrl)) {
+      const links = await auditPage(nextUrl);
+      links.forEach((l) => {
+        if (!visitedUrls.has(l) && !queues.includes(l)) queues.push(l);
+      });
+      count++;
+    } else {
+      // if loop hits already visited
+    }
+  }
+
+  console.log('\n✅ Audit Complete.');
+}
+
+startCrawl().catch((e) => console.error('Fatal:', e));
