@@ -800,36 +800,6 @@ const testWss = new WebSocketServer({ server, path: '/ws-test' });
 testWss.on('connection', (ws) => {
   console.log('🧪 Test WS client connected');
   ws.send(JSON.stringify({ type: 'hello', message: 'Connection successful!' }));
-});
-
-// Broadcast test endpoint
-app.post('/debug-broadcast', async (req, res) => {
-  console.log('🧪 Triggering manual broadcast...');
-  try {
-    const page = await getPage();
-    // Ensure we have something on the page (e.g. time)
-    await page.evaluate(() => {
-      document.body.innerHTML += `<div style="position:fixed;top:0;left:0;background:red;color:white;padding:20px;z-index:9999">TEST BROADCAST ${new Date().toISOString()}</div>`;
-    });
-
-    // Manually call broadcast
-    const screenshot = await page.screenshot({ type: 'jpeg', quality: 60, scale: 'css' });
-    const base64 = screenshot.toString('base64');
-    const imageUri = `data:image/jpeg;base64,${base64}`;
-
-    if (typeof broadcastScreenshotToLiveView === 'function') {
-      broadcastScreenshotToLiveView(imageUri, 'manual_test');
-      res.json({ success: true, message: 'Broadcast sent' });
-    } else {
-      res.status(500).json({ success: false, error: 'Broadcast function not found' });
-    }
-  } catch (e) {
-    console.error('Broadcast failed:', e);
-    res.status(500).json({ success: false, error: (e as Error).message });
-  }
-});
-  console.log('🧪 Test WS client connected');
-  ws.send(JSON.stringify({ type: 'hello', message: 'Connection successful!' }));
 
   ws.on('message', (data) => {
     console.log('🧪 Test WS received:', data.toString());
