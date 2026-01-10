@@ -862,7 +862,49 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', (reason) => {
     liveViewMonitors.delete(clientId);
+    clients.delete(clientId); // Remove from agent clients if registered
     console.log(`📺 Monitor disconnected: ${clientId} (${reason})`);
+  });
+
+  // ==========================================================================
+  // HYBRID AGENT SUPPORT (Socket.IO -> MCP)
+  // This allows agents to connect via Polling if WebSockets are blocked by proxies
+  // ==========================================================================
+
+  socket.on('agent_message', async (data: any) => {
+    try {
+      // Create a persistent client wrapper if it doesn't exist
+      if (!clients.has(clientId)) {
+        // Mock the WebSocket interface for the MCP handler
+        const mockWs: any = {
+          send: (msg: string) => socket.emit('agent_response', JSON.parse(msg)),
+          readyState: 1,
+        };
+
+        const client: ConnectedClient = {
+          id: clientId,
+          ws: mockWs,
+          authenticated: true,
+          lastActivity: new Date(),
+        };
+        clients.set(clientId, client);
+        console.log(`🔌 Hybrid Socket.IO Agent connected: ${clientId}`);
+      }
+
+      const client = clients.get(clientId)!;
+      client.lastActivity = new Date();
+
+      console.log(
+        `📨 Received via Socket.IO: ${(data as MCPMessage).method || 'response'} from ${clientId}`
+      );
+
+      const response = await handleMCPMessage(client, data as MCPMessage);
+      // Send response back via specific event
+      socket.emit('agent_response', response);
+    } catch (error) {
+      console.error('Socket.IO Agent Error:', error);
+      socket.emit('agent_error', { code: -32700, message: 'Parse error' });
+    }
   });
 });
 
