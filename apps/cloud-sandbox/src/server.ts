@@ -455,8 +455,8 @@ const tools: ToolHandler[] = [
     },
   },
   {
-    name: 'echo',
-    description: 'Echo back a message (for testing)',
+    name: 'echo_test',
+    description: 'Echo back a message (for testing deployment freshness)',
     inputSchema: {
       type: 'object',
       properties: {
