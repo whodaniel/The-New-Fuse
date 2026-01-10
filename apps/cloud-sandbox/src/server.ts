@@ -1371,9 +1371,9 @@ process.on('SIGTERM', () => {
 
 // Start server
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
+server.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`🚀 TNF Cloud Sandbox running on port ${PORT}`);
-  console.log(`📡 WebSocket endpoint: ws://localhost:${PORT}/ws`);
-  console.log(`💓 Heartbeat endpoint: ws://localhost:${PORT}/ws/heartbeat`);
+  console.log(`📡 WebSocket endpoint: ws://0.0.0.0:${PORT}/ws`);
+  console.log(`💓 Heartbeat endpoint: ws://0.0.0.0:${PORT}/ws/heartbeat`);
   console.log(`🔧 Available tools: ${tools.map((t) => t.name).join(', ')}`);
 });
