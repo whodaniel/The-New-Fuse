@@ -213,6 +213,36 @@ async function getPage(): Promise<Page> {
   if (!activePage) {
     const b = await getBrowser();
     activePage = await b.newPage();
+
+    // Enable CDP Screencasting for Realtime View
+    try {
+      const client = await activePage.context().newCDPSession(activePage);
+      await client.send('Page.startScreencast', { format: 'jpeg', quality: 50 });
+
+      let lastFrame = 0;
+      client.on('Page.screencastFrame', async ({ data, sessionId }) => {
+        const now = Date.now();
+        // Throttle to ~4fps to respect polling/bandwidth limits
+        if (now - lastFrame > 250) {
+          lastFrame = now;
+          const uri = `data:image/jpeg;base64,${data}`;
+          if (typeof broadcastScreenshotToLiveView === 'function') {
+            broadcastScreenshotToLiveView(uri, 'screencast');
+          } else {
+            const globalBroadcast = (global as any).broadcastScreenshotToLiveView;
+            if (globalBroadcast) globalBroadcast(uri, 'screencast');
+          }
+        }
+        try {
+          await client.send('Page.screencastFrameAck', { sessionId });
+        } catch (e) {
+          // Ignore ack errors
+        }
+      });
+      console.log('🎥 CDP Screencasting started');
+    } catch (e) {
+      console.error('❌ Failed to start CDP Screencast:', e);
+    }
   }
   return activePage;
 }
@@ -557,6 +587,27 @@ const tools: ToolHandler[] = [
     },
     handler: async (params) => {
       return { success: true, echo: params.message };
+    },
+  },
+  {
+    name: 'broadcast_log',
+    description: 'Broadcast a log message to the Live View',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', description: 'Log message' },
+        level: { type: 'string', description: 'Log level (info, warn, error)', default: 'info' },
+      },
+      required: ['message'],
+    },
+    handler: async (params) => {
+      // Direct broadcast to Socket.IO 'global' room
+      // We need to access 'io' or use a global helper.
+      // Since io is defined later, we use a global helper similar to broadcastScreenshot.
+      if ((global as any).broadcastLogToLiveView) {
+        (global as any).broadcastLogToLiveView(params.message, params.level || 'info');
+      }
+      return { success: true };
     },
   },
 ];
@@ -987,6 +1038,11 @@ function broadcastScreenshotToLiveView(screenshot: string, action: string, tenan
 
 // Export for use in browser tools
 (global as any).broadcastScreenshotToLiveView = broadcastScreenshotToLiveView;
+
+function broadcastLogToLiveView(message: string, level: string = 'info') {
+  io.to('global').emit('activity', { message: `[${level.toUpperCase()}] ${message}` });
+}
+(global as any).broadcastLogToLiveView = broadcastLogToLiveView;
 
 // ============================================================================
 // HEARTBEAT MONITORING SYSTEM

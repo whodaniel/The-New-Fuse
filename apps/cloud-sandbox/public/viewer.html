@@ -215,7 +215,10 @@
                 if (data && data.image) {
                     screenshotCount++;
                     imgEl.src = data.image;
-                    addLog('Screenshot', `#${screenshotCount} from ${data.action || 'agent action'}`);
+                    // Don't spam logs for video stream
+                    if (data.action !== 'screencast') {
+                        addLog('Screenshot', `#${screenshotCount} from ${data.action || 'agent action'}`);
+                    }
                 }
             });
 
