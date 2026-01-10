@@ -793,7 +793,11 @@ app.post('/audit/agents', async (_req, res) => {
 });
 
 const server = createServer(app);
-const wss = new WebSocketServer({ server, path: '/ws' });
+const wss = new WebSocketServer({
+  server,
+  path: '/ws',
+  perMessageDeflate: false,
+});
 
 // Simple test WebSocket endpoint for debugging
 const testWss = new WebSocketServer({ server, path: '/ws-test' });
