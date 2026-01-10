@@ -28,15 +28,15 @@ import { promisify } from 'util';
 // }
 
 import express from 'express';
-// import { chromium } from 'playwright';
+import { chromium } from 'playwright';
 import { Server as SocketIOServer } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import type { WebSocket } from 'ws';
 import { WebSocketServer } from 'ws';
 
-// import type { Browser, Page } from 'playwright';
-type Browser = any;
-type Page = any;
+import type { Browser, Page } from 'playwright';
+// type Browser = any;
+// type Page = any;
 
 const execAsync = promisify(exec);
 
@@ -75,78 +75,14 @@ let browser: Browser | null = null;
 let activePage: Page | null = null;
 
 async function getBrowser(): Promise<Browser> {
-  throw new Error('Browser automation disabled for stability');
-}
-
-async function getPage(): Promise<Page> {
-  throw new Error('Browser automation disabled for stability');
-}
-/*
-async function getBrowser(): Promise<Browser> {
   if (!browser) {
     console.log('🌐 Launching headless Chromium...');
-    console.log('PLAYWRIGHT_BROWSERS_PATH:', process.env.PLAYWRIGHT_BROWSERS_PATH);
-
-    const fsSync = await import('fs');
-
-    // Scan standard Playwright cache locations
-    const cachePaths = [
-      '/ms-playwright',
-      '/root/.cache/ms-playwright',
-      '/home/pwuser/.cache/ms-playwright',
-    ];
-    for (const p of cachePaths) {
-      if (fsSync.existsSync(p)) {
-        console.log(`📂 Contents of ${p}:`, fsSync.readdirSync(p));
-      } else {
-        console.log(`❌ ${p} DOES NOT EXIST`);
-      }
-    }
-
-    // Extensive list of possible chromium locations
-    const possiblePaths = [
-      '/ms-playwright/chromium-1091/chrome-linux/chrome',
-      '/root/.cache/ms-playwright/chromium-1091/chrome-linux/chrome',
-      '/home/pwuser/.cache/ms-playwright/chromium-1091/chrome-linux/chrome',
-      '/ms-playwright/chromium-1088/chrome-linux/chrome',
-      '/usr/bin/chromium',
-      '/usr/bin/chromium-browser',
-      '/usr/bin/google-chrome',
-      '/usr/bin/google-chrome-stable',
-    ];
-
-    let execPath: string | undefined;
-    for (const path of possiblePaths) {
-      if (fsSync.existsSync(path)) {
-        execPath = path;
-        console.log(`✅ Found Chromium at: ${path}`);
-        break;
-      }
-    }
-
-    // Fallback to Playwright's own detection
-    if (!execPath) {
-      try {
-        const detected = chromium.executablePath();
-        console.log(`Playwright detected: ${detected}`);
-        if (fsSync.existsSync(detected)) {
-          execPath = detected;
-        }
-      } catch (e) {
-        console.log('Detection failed:', e);
-      }
-    }
-
-    console.log(`Using executable: ${execPath || 'none'}`);
-
-    if (!execPath) {
-      throw new Error('No Chromium found');
-    }
+    // console.log('PLAYWRIGHT_BROWSERS_PATH:', process.env.PLAYWRIGHT_BROWSERS_PATH);
 
     browser = await chromium.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      executablePath: execPath,
+      // executablePath: execPath, // Use bundled playwright
     });
   }
   return browser;
@@ -189,7 +125,6 @@ async function getPage(): Promise<Page> {
   }
   return activePage;
 }
-*/
 
 // ============================================================================
 // LIVE VIEW & BROADCASTING

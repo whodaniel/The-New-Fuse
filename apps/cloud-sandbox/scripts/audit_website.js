@@ -2,7 +2,7 @@
 // Uses built-in fetch (Node 18+)
 
 // Configuration
-const HTML_ENDPOINT = 'https://tnf-cloud-sandbox-v2-production.up.railway.app/api/agent/call';
+const HTML_ENDPOINT = 'https://live.thenewfuse.com/api/agent/call';
 const TARGET_DOMAIN = 'https://thenewfuse.com';
 
 // State
@@ -63,7 +63,7 @@ async function sleep(ms) {
 
 // Helper to log to both Console and Live View
 async function log(msg, level = 'info') {
-  log(msg); // Local console
+  console.log(msg); // Local console
   try {
     // Fire and forget broadcast (don't await to avoid slowing down crawl)
     sendRequest('tools/call', {
