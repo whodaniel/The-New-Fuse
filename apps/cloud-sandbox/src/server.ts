@@ -804,12 +804,15 @@ app.post('/audit/agents', async (_req, res) => {
 });
 
 const server = createServer(app);
+/*
 const wss = new WebSocketServer({
   server,
   path: '/ws',
   perMessageDeflate: false,
 });
+*/
 
+/*
 // Simple test WebSocket endpoint for debugging
 const testWss = new WebSocketServer({ server, path: '/ws-test' });
 testWss.on('connection', (ws) => {
@@ -825,6 +828,7 @@ testWss.on('connection', (ws) => {
     console.log('🧪 Test WS client disconnected');
   });
 });
+*/
 
 // ============================================================================
 // HTTP FALLBACK FOR AGENTS (Bypass Proxy Issues)
@@ -1269,6 +1273,7 @@ console.log('💓 Heartbeat monitoring started');
 // MAIN WebSocket connection handling
 // ============================================================================
 
+/*
 // WebSocket connection handling - supports both MCP clients and Live View monitors
 wss.on('connection', (ws) => {
   const clientId = uuidv4();
@@ -1344,6 +1349,7 @@ wss.on('connection', (ws) => {
     }
   });
 });
+*/
 
 // Cleanup on shutdown
 process.on('SIGTERM', () => {
