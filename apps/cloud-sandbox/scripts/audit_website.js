@@ -78,12 +78,12 @@ async function auditPage(url) {
     // 2. Initial Screenshot (Force update via evaluate)
     console.log('  📸 Capturing visual state (Above Fold)...');
     // browser_screenshot broadcasting is flaky, use evaluate to trigger broadcast
-    await executeTool('browser_evaluate', { expression: '"Visual Check Top"' });
+    await executeTool('browser_evaluate', { script: '"Visual Check Top"' });
 
     // 3. Evaluate DOM
     console.log('  🕵️ Investigating DOM...');
     const evaluation = await executeTool('browser_evaluate', {
-      expression: `(function() {
+      script: `(function() {
         // Simple extraction for demo
         const links = Array.from(document.querySelectorAll('a')).map(a => a.href);
         const images = Array.from(document.querySelectorAll('img'));
@@ -106,13 +106,13 @@ async function auditPage(url) {
     // 4. Scroll
     console.log('  📜 Scrolling...');
     await executeTool('browser_evaluate', {
-      expression: 'window.scrollTo(0, document.body.scrollHeight)',
+      script: 'window.scrollTo(0, document.body.scrollHeight)',
     });
     await sleep(2000);
 
     // 5. Final Screenshot (Force update via evaluate)
     console.log('  📸 Capturing visual state (Footer)...');
-    await executeTool('browser_evaluate', { expression: '"Visual Check Bottom"' });
+    await executeTool('browser_evaluate', { script: '"Visual Check Bottom"' });
 
     pageAudits.push(status);
     return data.links || [];
@@ -151,7 +151,7 @@ async function startCrawl() {
   for (let i = 1; i <= 5; i++) {
     console.log(`  📸 Warmup Screenshot ${i}/5...`);
     // Use evaluate because we know it broadcasts successfully
-    await executeTool('browser_evaluate', { expression: `'Warmup Ping ${i}'` });
+    await executeTool('browser_evaluate', { script: `'Warmup Ping ${i}'` });
     await sleep(2000); // Slower pace for visibility
   }
 
