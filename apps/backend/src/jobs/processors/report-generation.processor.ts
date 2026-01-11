@@ -1,9 +1,9 @@
 import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
-import { agents, transactions, wallets } from '@the-new-fuse/database/drizzle/schema';
+import { agents, transactions, wallets, users } from '@the-new-fuse/database/drizzle/schema';
 import { Job } from 'bull';
-import { count, eq, inArray, sql } from 'drizzle-orm';
+import { and, count, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service';
 import { EmailService } from '../../services/email.service';
 import { QueueName } from '../constants/queue-names';
@@ -138,14 +138,34 @@ export class ReportGenerationProcessor {
   private async generateUserActivityReport(parameters: Record<string, any>) {
     this.logger.debug('Generating user activity report');
 
-    // TODO: Replace with actual database queries
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const [totalUsersResult] = await this.db.client
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(isNull(users.deletedAt));
+    const totalUsers = Number(totalUsersResult?.count ?? 0);
+
+    const [activeUsersResult] = await this.db.client
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(and(eq(users.isActive, true), isNull(users.deletedAt)));
+    const activeUsers = Number(activeUsersResult?.count ?? 0);
+
+    const [newUsersResult] = await this.db.client
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(and(gte(users.createdAt, thirtyDaysAgo), isNull(users.deletedAt)));
+    const newUsers = Number(newUsersResult?.count ?? 0);
+
     return {
-      recordCount: 150,
+      recordCount: totalUsers,
       data: {
-        totalUsers: 150,
-        activeUsers: 120,
-        newUsers: 15,
-        averageSessionDuration: 1200,
+        totalUsers,
+        activeUsers,
+        newUsers,
+        averageSessionDuration: 0, // Not tracked currently
       },
     };
   }
