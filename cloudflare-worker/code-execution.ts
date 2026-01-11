@@ -735,3 +735,34 @@ async function executeCss(
     return { error };
   }
 }
+
+/**
+ * Safely evaluate a Ruby value or expression
+ */
+function safeEvaluateRuby(expression: string, context: Record<string, any>): any {
+  const trimmed = expression.trim();
+
+  // Handle numbers
+  if (trimmed !== '' && !isNaN(Number(trimmed))) {
+    return Number(trimmed);
+  }
+
+  // Handle booleans/nil
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'nil') return null;
+
+  // Handle strings (double and single quotes)
+  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+      (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    return trimmed.substring(1, trimmed.length - 1);
+  }
+
+  // Handle variables
+  if (Object.prototype.hasOwnProperty.call(context, trimmed)) {
+    return context[trimmed];
+  }
+
+  // Return original string if no match
+  return trimmed;
+}
