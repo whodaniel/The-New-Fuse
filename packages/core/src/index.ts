@@ -20,3 +20,6 @@ export * from './memory/MemorySystem';
 
 // Services
 export * from './services/PromptService';
+
+// Cascade
+export * from './services/CascadeService';

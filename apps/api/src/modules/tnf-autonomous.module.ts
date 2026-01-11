@@ -13,7 +13,7 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { Redis } from 'ioredis';
-import { CascadeService, CascadeMode, CascadeStep, CascadeContext } from '@the-new-fuse/core/src/services/CascadeService';
+import { CascadeService, CascadeMode, CascadeStep, CascadeContext } from '@the-new-fuse/core';
 // ScheduleModule is configured at root AppModule level
 
 // Note: These are implemented but may need path adjustments based on your build setup
