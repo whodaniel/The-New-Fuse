@@ -39,6 +39,7 @@ export {
   agentOnboardingEvents,
   agentRegistrations,
   agents,
+  authSessions,
   chatRoomParticipants,
   chatRooms,
   fractionalShares,
