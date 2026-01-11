@@ -228,8 +228,8 @@ export default function ComprehensiveRouter() {
   return (
     <div>
       {/* Conditional Navigation - only show SmartNavigation on public pages if needed,
-           or we can let PremiumLayout handle it for auth pages */}
-      {isPublicRoute && <SmartNavigation />}
+           and explicitly hide it on Auth pages (Login, Register, etc) for a clean UX */}
+      {isPublicRoute && !location.pathname.startsWith('/auth') && !['/login', '/register', '/onboarding'].includes(location.pathname) && <SmartNavigation />}
 
       <Layout>
         <Suspense fallback={<LoadingFallback name="Page" />}>

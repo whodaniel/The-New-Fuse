@@ -12,7 +12,7 @@ function SmartNavigation() {
 
   // Check if user has admin role
   const isAdmin = user?.role === 'admin' || user?.role === 'administrator';
-  const isPublicPage = ['/', '/login', '/register', '/legal/privacy', '/legal/terms', '/brand', '/design-system'].includes(location.pathname);
+  const isPublicPage = ['/', '/login', '/register', '/legal/privacy', '/legal/terms', '/brand', '/design-system'].includes(location.pathname) || location.pathname.startsWith('/auth');
 
   const toggleDropdown = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
