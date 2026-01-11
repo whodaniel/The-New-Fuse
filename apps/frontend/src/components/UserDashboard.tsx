@@ -1,10 +1,9 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserDashboard = UserDashboard;
 import react_1 from 'react';
 import card_1 from '@/components/ui/card';
-function UserDashboard() {
+export function UserDashboard() {
     const [earnings, setEarnings] = (0, react_1.useState)(0);
     const mockApps = [
         { id: 1, name: 'Cool Chat App', downloads: 100, earnings: 50 },
@@ -33,4 +32,4 @@ function UserDashboard() {
       </div>
     </div>);
 }
-export {};
+;

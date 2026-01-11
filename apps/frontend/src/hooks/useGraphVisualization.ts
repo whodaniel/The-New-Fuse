@@ -1,8 +1,6 @@
-export {}
-exports.useGraphVisualization = useGraphVisualization;
 import react_1 from 'react';
 import useSocket_1 from './useSocket';
-function useGraphVisualization(initialNodes = [], initialEdges = []): any {
+export function useGraphVisualization(initialNodes = [], initialEdges = []): any {
     const socket = (0, useSocket_1.useSocket)();
     const [nodes, setNodes] = (0, react_1.useState)(initialNodes);
     const [edges, setEdges] = (0, react_1.useState)(initialEdges);
@@ -143,4 +141,4 @@ function useGraphVisualization(initialNodes = [], initialEdges = []): any {
         exportGraph
     };
 }
-export {};
+;

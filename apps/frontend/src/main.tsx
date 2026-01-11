@@ -16,7 +16,14 @@ if (typeof customElements !== 'undefined') {
     options?: ElementDefinitionOptions
   ) {
     if (!customElements.get(name)) {
-      originalDefine(name, constructor, options);
+      try {
+        originalDefine(name, constructor, options);
+      } catch (error) {
+        console.warn(
+          `[The New Fuse] Custom Element Guard: Error defining "${name}", likely duplicate`,
+          error
+        );
+      }
     } else {
       console.warn(
         `[The New Fuse] Custom Element Guard: "${name}" already defined, skipping duplicate registration`

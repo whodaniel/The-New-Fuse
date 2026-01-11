@@ -1,13 +1,12 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PredictiveTaskAllocator = PredictiveTaskAllocator;
 import react_1 from 'react';
 import button_1 from '@/components/ui/button';
 import card_1 from '@/components/ui/card';
 import table_1 from '@/components/ui/table';
 import websocket_1 from '../services/websocket';
-function PredictiveTaskAllocator() {
+export function PredictiveTaskAllocator() {
     const [tasks, setTasks] = (0, react_1.useState)([]);
     const [agents, setAgents] = (0, react_1.useState)([]);
     const [allocations, setAllocations] = (0, react_1.useState)([]);
@@ -52,4 +51,4 @@ function PredictiveTaskAllocator() {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;

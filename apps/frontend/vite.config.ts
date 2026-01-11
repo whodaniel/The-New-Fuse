@@ -39,12 +39,14 @@ export default defineConfig(({ mode }) => {
       }),
       // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
       nodePolyfills({
-        include: ['buffer', 'process', 'stream', 'util'],
+        include: ['buffer', 'process', 'stream', 'util', 'crypto'],
         globals: {
           Buffer: true,
           global: true,
           process: true,
         },
+        // Enable protocol imports (node:crypto, node:buffer, etc.)
+        protocolImports: true,
       }),
       // Generate bundle analysis report in production
       isProduction &&
@@ -96,11 +98,17 @@ export default defineConfig(({ mode }) => {
         ),
         '@the-new-fuse/config': path.resolve(__dirname, '../../config'),
         '@the-new-fuse/a2a-react': path.resolve(__dirname, '../../packages/a2a-react/src'),
-        '@the-new-fuse/a2a-core': path.resolve(__dirname, '../../packages/a2a-core/src'),
+        '@the-new-fuse/a2a-core': path.resolve(__dirname, '../../packages/a2a-core/src/types.ts'),
         // Stub Node.js-only modules for browser compatibility
         winston: path.resolve(__dirname, 'src/stubs/winston.ts'),
         'winston-daily-rotate-file': path.resolve(__dirname, 'src/stubs/winston.ts'),
         ioredis: path.resolve(__dirname, 'src/stubs/empty.ts'),
+        // Additional Node.js modules that should not be in browser bundles
+        'mysql2/promise': path.resolve(__dirname, 'src/stubs/empty.ts'),
+        mysql2: path.resolve(__dirname, 'src/stubs/empty.ts'),
+        '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
+        // Stub @uauth/js which has browser-incompatible @unstoppabledomains/resolution deps
+        '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
       },
     },
     define: {
@@ -131,6 +139,7 @@ export default defineConfig(({ mode }) => {
         'react',
         'react-dom',
         'react-router-dom',
+        '@emotion/is-prop-valid',
       ],
       exclude: [
         '@firebase/app-types',
@@ -213,6 +222,9 @@ export default defineConfig(({ mode }) => {
           chunkFileNames: 'assets/js/[name].[hash].js',
           entryFileNames: 'assets/js/[name].[hash].js',
           // Advanced chunk splitting strategy
+          // Simplify chunk splitting to avoid circular dependency issues
+          manualChunks: undefined,
+          /*
           manualChunks: (id) => {
             // Core React runtime and routing - loaded on every page
             if (
@@ -298,6 +310,7 @@ export default defineConfig(({ mode }) => {
               return 'vendor';
             }
           },
+          */
           // Optimize chunk loading with smart imports
           inlineDynamicImports: false,
           // Better mangling for production

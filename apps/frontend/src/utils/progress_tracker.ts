@@ -1,7 +1,5 @@
-export {}
-exports.ProgressTracker = void 0;
 import logging_config_1 from './logging_config';
-class ProgressTracker {
+export class ProgressTracker {
     constructor() {
         this.tasks = {};
         this.metrics = {};
@@ -131,5 +129,4 @@ class ProgressTracker {
         return this.metrics[taskId] || null;
     }
 }
-exports.ProgressTracker = ProgressTracker;
-export {};
+;

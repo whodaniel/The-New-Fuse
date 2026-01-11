@@ -10,12 +10,11 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppStack_Label = AppStack_Label;
 import react_1 from 'react';
-function AppStack_Label(_a) {
+export function AppStack_Label(_a) {
     var { children } = _a, props = __rest(_a, ["children"]);
     return (<label {...props}>
       {children}
     </label>);
 }
-export {};
+;

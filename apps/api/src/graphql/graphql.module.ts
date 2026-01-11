@@ -7,7 +7,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
-import { DatabaseModule } from '@the-new-fuse/database';
 import { Request, Response } from 'express';
 import { join } from 'path';
 
@@ -29,6 +28,7 @@ import { SecurityLoggingService } from '../security/security-logging.service';
 
 @Module({
   imports: [
+    ConfigModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [ConfigModule],
@@ -64,8 +64,8 @@ import { SecurityLoggingService } from '../security/security-logging.service';
       }),
       inject: [ConfigService],
     }),
-    // Drizzle database module (replaces TypeORM)
-    DatabaseModule,
+    // Drizzle database module - already global from AppModule
+    // DatabaseModule removed to avoid DI conflicts
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { PrismaService } from '@the-new-fuse/database';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DatabaseService } from '@the-new-fuse/database';
 
 /**
  * Health Controller
@@ -49,15 +49,13 @@ import { PrismaService } from '@the-new-fuse/database';
 export class HealthController {
   /**
    * Constructor for HealthController
-   * 
+   *
    * @param prisma - Prisma service for database connectivity testing
-   * 
+   *
    * @example
    * const controller = new HealthController(prisma);
    */
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly db: DatabaseService) {}
 
   @Get()
   @ApiOperation({ summary: 'Health check endpoint' })
@@ -86,10 +84,10 @@ export class HealthController {
    * GET /health
    * @security PUBLIC - No authentication required
    * @rateLimit - High frequency allowed (unlimited for monitoring)
-   * 
+   *
    * @monitoring This endpoint is designed for high-frequency monitoring.
    * Response time should be under 100ms for optimal monitoring performance.
-   * 
+   *
    * @example
    * // Successful health check response
    * {
@@ -97,7 +95,7 @@ export class HealthController {
    *   "database": "connected",
    *   "timestamp": "2025-11-05T02:17:55.000Z"
    * }
-   * 
+   *
    * @example
    * // Failed health check response
    * {
@@ -109,10 +107,10 @@ export class HealthController {
    */
   async check() {
     try {
-      // Test database connectivity with a simple Prisma query
+      // Test database connectivity with a simple query
       // This validates that the database is reachable and responsive
-      await this.prisma.$queryRaw`SELECT 1`;
-      
+      await this.db.executeRaw('SELECT 1');
+
       return {
         status: 'ok',
         database: 'connected',
@@ -122,7 +120,7 @@ export class HealthController {
       // Log error for debugging but don't throw exception
       // This allows the health endpoint to always respond
       console.error('Health check failed:', error);
-      
+
       return {
         status: 'error',
         database: 'disconnected',

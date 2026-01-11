@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { InputSanitizationService } from '../security/input-sanitization.service';
 
 export interface SecurityValidationOptions {
@@ -16,9 +16,7 @@ export interface SecurityValidationOptions {
 
 @Injectable()
 export class SecurityValidationMiddleware implements NestMiddleware {
-  constructor(
-    private readonly sanitizationService: InputSanitizationService
-  ) {}
+  constructor(private readonly sanitizationService: InputSanitizationService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
     const startTime = Date.now();
@@ -33,24 +31,25 @@ export class SecurityValidationMiddleware implements NestMiddleware {
     this.addRequestId(req);
 
     // Add processing time tracking
-    req['startTime'] = startTime;
+    (req as any)['startTime'] = startTime;
 
     next();
   }
 
   private addSecurityHeaders(res: Response): void {
     // Content Security Policy
-    res.setHeader('Content-Security-Policy',
+    res.setHeader(
+      'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-      "style-src 'self' 'unsafe-inline'; " +
-      "img-src 'self' data: https:; " +
-      "font-src 'self'; " +
-      "connect-src 'self' wss: https:; " +
-      "frame-src 'none'; " +
-      "object-src 'none'; " +
-      "base-uri 'self'; " +
-      "form-action 'self';"
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src 'self' 'unsafe-inline'; " +
+        "img-src 'self' data: https:; " +
+        "font-src 'self'; " +
+        "connect-src 'self' wss: https:; " +
+        "frame-src 'none'; " +
+        "object-src 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self';"
     );
 
     // X-Frame-Options
@@ -66,9 +65,7 @@ export class SecurityValidationMiddleware implements NestMiddleware {
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
     // Permissions-Policy
-    res.setHeader('Permissions-Policy',
-      'geolocation=(), microphone=(), camera=(), payment=()'
-    );
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=()');
 
     // Cache-Control
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -82,7 +79,7 @@ export class SecurityValidationMiddleware implements NestMiddleware {
       const sanitizedQuery = this.sanitizeObject(req.query, {
         sanitize: true,
         maxLength: 1000,
-        strictMode: true
+        strictMode: true,
       });
       // Clear and repopulate instead of direct assignment
       for (const key of Object.keys(req.query)) {
@@ -96,7 +93,7 @@ export class SecurityValidationMiddleware implements NestMiddleware {
       req.body = this.sanitizeObject(req.body, {
         sanitize: true,
         maxLength: 10000,
-        strictMode: true
+        strictMode: true,
       });
     }
 
@@ -105,7 +102,7 @@ export class SecurityValidationMiddleware implements NestMiddleware {
       const sanitizedParams = this.sanitizeObject(req.params, {
         sanitize: true,
         maxLength: 500,
-        strictMode: true
+        strictMode: true,
       });
       for (const key of Object.keys(req.params)) {
         delete (req.params as any)[key];
@@ -127,7 +124,7 @@ export class SecurityValidationMiddleware implements NestMiddleware {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => this.sanitizeObject(item, options));
+      return obj.map((item) => this.sanitizeObject(item, options));
     }
 
     if (typeof obj === 'object') {
@@ -195,8 +192,8 @@ export class SecurityValidationMiddleware implements NestMiddleware {
   }
 
   private addRequestId(req: Request): void {
-    req['requestId'] = this.generateRequestId();
-    req['timestamp'] = new Date().toISOString();
+    (req as any)['requestId'] = this.generateRequestId();
+    (req as any)['timestamp'] = new Date().toISOString();
   }
 
   private generateRequestId(): string {
@@ -206,16 +203,23 @@ export class SecurityValidationMiddleware implements NestMiddleware {
   private getSafeHeaders(headers: any): any {
     const safeHeaders: any = {};
     const allowedHeaders = [
-      'accept', 'accept-language', 'accept-encoding', 'authorization',
-      'cache-control', 'content-type', 'content-length', 'user-agent',
-      'x-requested-with', 'x-api-key', 'x-client-version'
+      'accept',
+      'accept-language',
+      'accept-encoding',
+      'authorization',
+      'cache-control',
+      'content-type',
+      'content-length',
+      'user-agent',
+      'x-requested-with',
+      'x-api-key',
+      'x-client-version',
     ];
 
     for (const [key, value] of Object.entries(headers)) {
       if (allowedHeaders.includes(key.toLowerCase())) {
-        safeHeaders[key] = typeof value === 'string'
-          ? this.sanitizationService.sanitizeText(value)
-          : value;
+        safeHeaders[key] =
+          typeof value === 'string' ? this.sanitizationService.sanitizeText(value) : value;
       }
     }
 
@@ -246,7 +250,8 @@ export class SecurityValidationMiddleware implements NestMiddleware {
   }
 
   private isIPAddress(str: string): boolean {
-    const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    const ipv4Regex =
+      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^::$/;
     return ipv4Regex.test(str) || ipv6Regex.test(str);
   }

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClusterDetails = void 0;
+
 import react_1 from 'react';
 import react_chartjs_2_1 from 'react-chartjs-2';
-const ClusterDetails = ({ cluster, onClose }) => {
+export const ClusterDetails = ({ cluster, onClose }) => {
     const [searchTerm, setSearchTerm] = (0, react_1.useState)('');
     const filteredItems = cluster.items.filter(item => typeof item.content === 'string'
         ? item.content.toLowerCase().includes(searchTerm.toLowerCase())
@@ -112,5 +112,4 @@ const ClusterDetails = ({ cluster, onClose }) => {
             `}</style>
         </div>);
 };
-exports.ClusterDetails = ClusterDetails;
-export {};
+;

@@ -1,5 +1,4 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatInterface = ChatInterface;
 import react_1 from 'react';
 import card_1 from './ui/card';
 import input_1 from './ui/input';
@@ -13,7 +12,7 @@ import EnhancedChatBubble_1 from './chat/EnhancedChatBubble';
 import typing_indicator_1 from './typing-indicator';
 import agent_selector_1 from './agent-selector';
 import message_utils_1 from '../utils/message-utils';
-function ChatInterface() {
+export function ChatInterface() {
     var _a;
     const [input, setInput] = (0, react_1.useState)('');
     const scrollRef = (0, react_1.useRef)(null);
@@ -104,4 +103,4 @@ function ChatInterface() {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;

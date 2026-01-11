@@ -1,5 +1,5 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AgentCollaboration = void 0;
+
 import react_1 from 'react';
 import react_query_1 from '@tanstack/react-query';
 import Card_1 from '../../../core/Card';
@@ -8,7 +8,7 @@ import Select_1 from '../../../core/Select';
 import agentService_1 from '../../../../services/api/agentService';
 import websocket_1 from '../../../../services/websocket';
 import react_hot_toast_1 from 'react-hot-toast';
-const AgentCollaboration = () => {
+export const AgentCollaboration = () => {
     const [selectedAgents, setSelectedAgents] = (0, react_1.useState)([]);
     const [collaboratingAgents, setCollaboratingAgents] = (0, react_1.useState)([]);
     const [isCollaborating, setIsCollaborating] = (0, react_1.useState)(false);
@@ -142,6 +142,5 @@ const AgentCollaboration = () => {
         </div>)}
     </Card_1.Card>);
 };
-exports.AgentCollaboration = AgentCollaboration;
-exports.default = exports.AgentCollaboration;
-export {};
+
+;

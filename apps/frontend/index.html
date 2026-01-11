@@ -4,28 +4,158 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Global CommonJS require() shim for bundled dependencies (ethers.js, bn.js, etc.) -->
+    <script>
+      // Shim for CommonJS require() calls that can't be polyfilled at build time
+      // Some libraries use eval("require(...)") which bypasses Vite's transforms
+      (function () {
+        if (typeof window.require === 'undefined') {
+          // Create a stub that returns empty modules for common Node.js modules
+          const emptyModule = {};
+          const bufferModule = {
+            Buffer: typeof Buffer !== 'undefined' ? Buffer : { from: () => [], alloc: () => [] },
+          };
+
+          window.require = function (moduleName) {
+            console.warn(
+              '[The New Fuse] CommonJS require() called for:',
+              moduleName,
+              '- returning stub'
+            );
+
+            // Return appropriate stubs for known modules
+            if (moduleName === 'crypto') {
+              return (
+                window.crypto || {
+                  createHash: () => ({ update: () => ({ digest: () => '' }), digest: () => '' }),
+                  randomBytes: (size) => new Uint8Array(size),
+                }
+              );
+            }
+            if (moduleName === 'buffer' || moduleName === 'buffer/') {
+              return bufferModule;
+            }
+            if (moduleName === 'bn.js') {
+              // Return a functional BN implementation using BigInt
+              // This handles the eval("require('bn.js')") pattern in some crypto libs
+              if (window._BNCache) return window._BNCache;
+              
+              class BN {
+                constructor(number, base, endian) {
+                  if (number instanceof BN) {
+                    this.value = number.value;
+                  } else if (typeof number === 'bigint') {
+                    this.value = number;
+                  } else if (typeof number === 'number') {
+                    this.value = BigInt(number);
+                  } else if (typeof number === 'string') {
+                    const b = base || 10;
+                    this.value = BigInt(b === 16 ? '0x' + number.replace(/^0x/i, '') : number);
+                  } else if (number && number.length !== undefined) {
+                    // Array or Buffer
+                    let hex = '0x';
+                    for (let i = 0; i < number.length; i++) hex += number[i].toString(16).padStart(2, '0');
+                    this.value = BigInt(hex);
+                  } else {
+                    this.value = BigInt(0);
+                  }
+                }
+                clone() { return new BN(this.value); }
+                add(b) { return new BN(this.value + new BN(b).value); }
+                sub(b) { return new BN(this.value - new BN(b).value); }
+                mul(b) { return new BN(this.value * new BN(b).value); }
+                div(b) { return new BN(this.value / new BN(b).value); }
+                mod(b) { return new BN(this.value % new BN(b).value); }
+                pow(b) { return new BN(this.value ** new BN(b).value); }
+                sqr() { return new BN(this.value * this.value); }
+                neg() { return new BN(-this.value); }
+                abs() { return new BN(this.value < 0n ? -this.value : this.value); }
+                isZero() { return this.value === 0n; }
+                isNeg() { return this.value < 0n; }
+                cmp(b) { const bv = new BN(b).value; return this.value < bv ? -1 : this.value > bv ? 1 : 0; }
+                lt(b) { return this.cmp(b) < 0; }
+                lte(b) { return this.cmp(b) <= 0; }
+                gt(b) { return this.cmp(b) > 0; }
+                gte(b) { return this.cmp(b) >= 0; }
+                eq(b) { return this.cmp(b) === 0; }
+                toNumber() { return Number(this.value); }
+                toString(base) {
+                  const b = base || 10;
+                  if (b === 16) return this.value.toString(16);
+                  return this.value.toString();
+                }
+                toArray(endian, length) {
+                  let hex = this.value.toString(16);
+                  if (hex.length % 2) hex = '0' + hex;
+                  const arr = [];
+                  for (let i = 0; i < hex.length; i += 2) arr.push(parseInt(hex.substr(i, 2), 16));
+                  if (length && arr.length < length) {
+                    while (arr.length < length) arr.unshift(0);
+                  }
+                  if (endian === 'le') arr.reverse();
+                  return arr;
+                }
+                toBuffer(endian, length) { return new Uint8Array(this.toArray(endian, length)); }
+                bitLength() { return this.value.toString(2).length; }
+                byteLength() { return Math.ceil(this.bitLength() / 8); }
+                and(b) { return new BN(this.value & new BN(b).value); }
+                or(b) { return new BN(this.value | new BN(b).value); }
+                xor(b) { return new BN(this.value ^ new BN(b).value); }
+                shln(n) { return new BN(this.value << BigInt(n)); }
+                shrn(n) { return new BN(this.value >> BigInt(n)); }
+                static isBN(obj) { return obj instanceof BN; }
+                static red(m) { return { prime: null, m: new BN(m) }; }
+                toRed(ctx) { this._red = ctx; return this; }
+                fromRed() { return this.clone(); }
+                redAdd(b) { return this.add(b).mod(this._red?.m || new BN(1)); }
+                redSub(b) { return this.sub(b).mod(this._red?.m || new BN(1)); }
+                redMul(b) { return this.mul(b).mod(this._red?.m || new BN(1)); }
+                redSqr() { return this.sqr().mod(this._red?.m || new BN(1)); }
+                redPow(b) { return this.pow(b).mod(this._red?.m || new BN(1)); }
+              }
+              BN.BN = BN;
+              BN.wordSize = 26;
+              window._BNCache = BN;
+              return BN;
+            }
+            if (moduleName === '@emotion/is-prop-valid') {
+              return { default: () => true };
+            }
+
+            return emptyModule;
+          };
+          window.require.main = null;
+          console.log('[The New Fuse] CommonJS require() shim installed');
+        }
+      })();
+    </script>
+
     <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
     <script>
-      (function() {
+      (function () {
         try {
           const originalDefine = customElements.define;
-          customElements.define = function(name, constructor, options) {
+          customElements.define = function (name, constructor, options) {
             if (customElements.get(name)) {
-              console.warn(`[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`);
+              console.warn(
+                `[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`
+              );
               return;
             }
             try {
               originalDefine.call(this, name, constructor, options);
             } catch (e) {
               if (e.message.includes('already been defined')) {
-                 console.warn(`[The New Fuse] Custom element '${name}' collision caught in try-catch.`);
-                 return;
+                console.warn(
+                  `[The New Fuse] Custom element '${name}' collision caught in try-catch.`
+                );
+                return;
               }
               throw e;
             }
           };
           console.log('[The New Fuse] Custom Element Guard activated.');
-        } catch(e) {
+        } catch (e) {
           console.error('[The New Fuse] Failed to activate Custom Element Guard', e);
         }
       })();
@@ -136,7 +266,10 @@
       rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
     />
     <noscript
       ><link

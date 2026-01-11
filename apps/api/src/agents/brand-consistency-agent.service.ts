@@ -12,7 +12,8 @@
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService, desc, eq } from '@the-new-fuse/database';
+import { promptTemplates, promptVersions } from '@the-new-fuse/database/drizzle/schema';
 
 // Agent Configuration
 export interface BrandConsistencyConfig {
@@ -104,11 +105,11 @@ export class BrandConsistencyAgentService implements OnModuleInit {
 
   // Brand configuration (TNF Design System)
   private brandConfig: BrandConsistencyConfig = {
-    primaryColor: '#6366f1',      // Indigo
-    secondaryColor: '#8b5cf6',    // Purple
-    accentColor: '#06b6d4',       // Cyan
-    backgroundColor: '#0f172a',   // Slate-900
-    textColor: '#f8fafc',         // Slate-50
+    primaryColor: '#6366f1', // Indigo
+    secondaryColor: '#8b5cf6', // Purple
+    accentColor: '#06b6d4', // Cyan
+    backgroundColor: '#0f172a', // Slate-900
+    textColor: '#f8fafc', // Slate-50
 
     fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
     headingFont: "'Outfit', 'Inter', sans-serif",
@@ -119,7 +120,7 @@ export class BrandConsistencyAgentService implements OnModuleInit {
       lg: '1.125rem',
       xl: '1.25rem',
       '2xl': '1.5rem',
-      '3xl': '1.875rem'
+      '3xl': '1.875rem',
     },
 
     spacingUnit: 4,
@@ -131,25 +132,25 @@ export class BrandConsistencyAgentService implements OnModuleInit {
         color: '#ffffff',
         borderRadius: '0.5rem',
         padding: '0.75rem 1.5rem',
-        fontWeight: '600'
+        fontWeight: '600',
       },
       secondary: {
         background: 'transparent',
         color: '#6366f1',
         border: '2px solid #6366f1',
         borderRadius: '0.5rem',
-        padding: '0.75rem 1.5rem'
+        padding: '0.75rem 1.5rem',
       },
       ghost: {
         background: 'transparent',
         color: '#94a3b8',
         borderRadius: '0.5rem',
-        padding: '0.5rem 1rem'
-      }
+        padding: '0.5rem 1rem',
+      },
     },
 
     animationDuration: '200ms',
-    animationEasing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+    animationEasing: 'cubic-bezier(0.4, 0, 0.2, 1)',
   };
 
   // Learning state
@@ -163,8 +164,8 @@ export class BrandConsistencyAgentService implements OnModuleInit {
     performanceMetrics: {
       averageAnalysisTime: 0,
       issueDetectionAccuracy: 0.85,
-      fixSuccessRate: 0
-    }
+      fixSuccessRate: 0,
+    },
   };
 
   // Analysis cache
@@ -200,7 +201,7 @@ RULES:
 - Identify inconsistent component patterns`;
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly db: DatabaseService,
     private readonly eventEmitter: EventEmitter2
   ) {}
 
@@ -214,7 +215,7 @@ RULES:
     this.eventEmitter.emit('agent.ready', {
       agentId: this.agentId,
       agentName: this.agentName,
-      capabilities: ['brand-analysis', 'style-enforcement', 'self-improvement']
+      capabilities: ['brand-analysis', 'style-enforcement', 'self-improvement'],
     });
 
     this.logger.log(`${this.agentName} initialized and ready`);
@@ -226,39 +227,44 @@ RULES:
   private async initializePromptTemplate(): Promise<void> {
     try {
       // Check if prompt template exists
-      const existing = await this.prisma.promptTemplate.findFirst({
-        where: { name: `${this.agentName}-CorePrompt` }
+      const existing = await this.db.client.query.promptTemplates.findFirst({
+        where: eq(promptTemplates.name, `${this.agentName}-CorePrompt`),
       });
 
       if (!existing) {
         // Create initial prompt template
-        await this.prisma.promptTemplate.create({
-          data: {
+        const [template] = await this.db.client
+          .insert(promptTemplates)
+          .values({
             name: `${this.agentName}-CorePrompt`,
             description: 'Core prompt for the Brand Consistency Agent',
             category: 'Agent-System',
             isPublic: false,
             tags: ['agent', 'brand', 'self-improving'],
             analytics: {},
-            versions: {
-              create: {
-                version: 1,
-                content: this.corePrompt,
-                label: 'Genesis',
-                variables: {},
-                changelog: 'Initial prompt creation',
-                isActive: true
-              }
-            }
-          }
-        });
+          })
+          .returning();
+
+        if (template) {
+          await this.db.client.insert(promptVersions).values({
+            templateId: template.id,
+            version: 1,
+            content: this.corePrompt,
+            label: 'Genesis',
+            variables: {},
+            changelog: 'Initial prompt creation',
+            isActive: true,
+          });
+        }
+
         this.logger.log('Created initial prompt template');
       } else {
         // Load the latest version
-        const latestVersion = await this.prisma.promptVersion.findFirst({
-          where: { templateId: existing.id },
-          orderBy: { version: 'desc' }
+        const latestVersion = await this.db.client.query.promptVersions.findFirst({
+          where: eq(promptVersions.templateId, existing.id),
+          orderBy: [desc(promptVersions.version)],
         });
+
         if (latestVersion) {
           this.corePrompt = latestVersion.content;
           this.learningState.currentPromptVersion = latestVersion.version;
@@ -266,7 +272,7 @@ RULES:
         this.logger.log(`Loaded prompt template v${this.learningState.currentPromptVersion}`);
       }
     } catch (error) {
-      this.logger.warn('Could not initialize prompt template in database, using default');
+      this.logger.warn('Could not initialize prompt template in database: ' + error);
     }
   }
 
@@ -281,7 +287,7 @@ RULES:
       capabilities: ['brand-analysis', 'style-enforcement', 'self-improvement'],
       status: 'active',
       learningState: this.learningState,
-      brandConfig: this.brandConfig
+      brandConfig: this.brandConfig,
     };
   }
 
@@ -319,15 +325,17 @@ RULES:
       issues,
       suggestions,
       consistencyScore,
-      lastAnalyzed: new Date()
+      lastAnalyzed: new Date(),
     };
 
     // Update learning state
     this.learningState.totalAnalyses++;
     const analysisTime = Date.now() - startTime;
     this.learningState.performanceMetrics.averageAnalysisTime =
-      (this.learningState.performanceMetrics.averageAnalysisTime * (this.learningState.totalAnalyses - 1) + analysisTime)
-      / this.learningState.totalAnalyses;
+      (this.learningState.performanceMetrics.averageAnalysisTime *
+        (this.learningState.totalAnalyses - 1) +
+        analysisTime) /
+      this.learningState.totalAnalyses;
 
     // Cache the analysis
     this.analysisCache.set(componentPath, analysis);
@@ -336,10 +344,12 @@ RULES:
     this.eventEmitter.emit('brand.analysis.complete', {
       agentId: this.agentId,
       analysis,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
-    this.logger.log(`Analysis complete: ${consistencyScore.toFixed(0)}% consistent, ${issues.length} issues found`);
+    this.logger.log(
+      `Analysis complete: ${consistencyScore.toFixed(0)}% consistent, ${issues.length} issues found`
+    );
 
     return analysis;
   }
@@ -358,7 +368,10 @@ RULES:
       this.brandConfig.accentColor.toLowerCase(),
       this.brandConfig.backgroundColor.toLowerCase(),
       this.brandConfig.textColor.toLowerCase(),
-      '#ffffff', '#000000', '#f8fafc', '#94a3b8' // Common allowed colors
+      '#ffffff',
+      '#000000',
+      '#f8fafc',
+      '#94a3b8', // Common allowed colors
     ];
 
     for (const match of matches) {
@@ -370,7 +383,7 @@ RULES:
           description: `Hardcoded color ${color} not in brand palette`,
           location: `Position ${match.index}`,
           currentValue: color,
-          expectedValue: this.findClosestBrandColor(color)
+          expectedValue: this.findClosestBrandColor(color),
         });
       }
     }
@@ -393,7 +406,7 @@ RULES:
           description: `Non-brand font detected: ${match[1]}`,
           location: `Position ${match.index}`,
           currentValue: match[1],
-          expectedValue: this.brandConfig.fontFamily
+          expectedValue: this.brandConfig.fontFamily,
         });
       }
     }
@@ -412,7 +425,7 @@ RULES:
           description: `Non-standard font size: ${size}`,
           location: `Position ${match.index}`,
           currentValue: size,
-          expectedValue: 'Use brand scale (xs-3xl)'
+          expectedValue: 'Use brand scale (xs-3xl)',
         });
       }
     }
@@ -435,7 +448,7 @@ RULES:
           description: `Spacing ${value}px not on ${this.brandConfig.spacingUnit}px grid`,
           location: `Position ${match.index}`,
           currentValue: `${value}px`,
-          expectedValue: `${Math.round(value / this.brandConfig.spacingUnit) * this.brandConfig.spacingUnit}px`
+          expectedValue: `${Math.round(value / this.brandConfig.spacingUnit) * this.brandConfig.spacingUnit}px`,
         });
       }
     }
@@ -458,7 +471,7 @@ RULES:
           description: `Non-standard transition duration: ${duration}ms`,
           location: `Position ${match.index}`,
           currentValue: `${duration}ms`,
-          expectedValue: this.brandConfig.animationDuration
+          expectedValue: this.brandConfig.animationDuration,
         });
       }
     }
@@ -467,7 +480,11 @@ RULES:
   /**
    * Check pattern consistency (buttons, cards, etc.)
    */
-  private checkPatternConsistency(code: string, issues: BrandIssue[], suggestions: BrandSuggestion[]): void {
+  private checkPatternConsistency(
+    code: string,
+    issues: BrandIssue[],
+    suggestions: BrandSuggestion[]
+  ): void {
     // Check for gradient usage in buttons
     if (code.includes('button') || code.includes('Button')) {
       if (!code.includes('gradient') && code.includes('background')) {
@@ -475,7 +492,7 @@ RULES:
           type: 'enhancement',
           description: 'Consider using gradient for primary buttons',
           code: `background: linear-gradient(135deg, ${this.brandConfig.primaryColor}, ${this.brandConfig.secondaryColor})`,
-          impact: 'medium'
+          impact: 'medium',
         });
       }
     }
@@ -487,7 +504,7 @@ RULES:
           type: 'enhancement',
           description: 'Consider adding glassmorphism effect to cards',
           code: 'backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.1);',
-          impact: 'low'
+          impact: 'low',
         });
       }
     }
@@ -504,7 +521,7 @@ RULES:
           description: `Non-standard border-radius: ${match[1]}${match[2]}`,
           location: `Position ${match.index}`,
           currentValue: `${match[1]}${match[2]}`,
-          expectedValue: this.brandConfig.borderRadius
+          expectedValue: this.brandConfig.borderRadius,
         });
       }
     }
@@ -528,9 +545,15 @@ RULES:
     let deductions = 0;
     for (const issue of issues) {
       switch (issue.severity) {
-        case 'critical': deductions += 15; break;
-        case 'major': deductions += 8; break;
-        case 'minor': deductions += 3; break;
+        case 'critical':
+          deductions += 15;
+          break;
+        case 'major':
+          deductions += 8;
+          break;
+        case 'minor':
+          deductions += 3;
+          break;
       }
     }
 
@@ -582,7 +605,7 @@ RULES:
     this.eventEmitter.emit('agent.improved', {
       agentId: this.agentId,
       learningState: this.learningState,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -605,22 +628,21 @@ PERFORMANCE INSIGHTS:
 
     try {
       // Save new version to database
-      const template = await this.prisma.promptTemplate.findFirst({
-        where: { name: `${this.agentName}-CorePrompt` }
+      const template = await this.db.client.query.promptTemplates.findFirst({
+        where: eq(promptTemplates.name, `${this.agentName}-CorePrompt`),
       });
 
       if (template) {
         const newVersion = this.learningState.currentPromptVersion + 1;
-        await this.prisma.promptVersion.create({
-          data: {
-            templateId: template.id,
-            version: newVersion,
-            content: evolvedPrompt,
-            label: `Evolution-${newVersion}`,
-            variables: {},
-            changelog: `Auto-evolved with ${this.learningState.patternsLearned.length} learned patterns`,
-            isActive: true
-          }
+
+        await this.db.client.insert(promptVersions).values({
+          templateId: template.id,
+          version: newVersion,
+          content: evolvedPrompt,
+          label: `Evolution-${newVersion}`,
+          variables: {},
+          changelog: `Auto-evolved with ${this.learningState.patternsLearned.length} learned patterns`,
+          isActive: true,
         });
 
         this.corePrompt = evolvedPrompt;
@@ -630,7 +652,7 @@ PERFORMANCE INSIGHTS:
         this.logger.log(`Prompt evolved to version ${newVersion}`);
       }
     } catch (error) {
-      this.logger.warn('Could not save evolved prompt to database');
+      this.logger.warn('Could not save evolved prompt to database: ' + error);
     }
   }
 
@@ -646,7 +668,7 @@ PERFORMANCE INSIGHTS:
         averageConsistency: 0,
         issuesByType: {},
         criticalIssues: 0,
-        suggestions: []
+        suggestions: [],
       };
     }
 
@@ -664,10 +686,11 @@ PERFORMANCE INSIGHTS:
 
     return {
       totalComponents: analyses.length,
-      averageConsistency: analyses.reduce((sum, a) => sum + a.consistencyScore, 0) / analyses.length,
+      averageConsistency:
+        analyses.reduce((sum, a) => sum + a.consistencyScore, 0) / analyses.length,
       issuesByType,
       criticalIssues,
-      suggestions: allSuggestions.slice(0, 10) // Top 10 suggestions
+      suggestions: allSuggestions.slice(0, 10), // Top 10 suggestions
     };
   }
 

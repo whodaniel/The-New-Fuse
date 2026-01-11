@@ -90,7 +90,7 @@ export class ChatController {
     return this.chatService.addMessage(
       chatId,
       messageData.content,
-      MessageRole[messageData.role || 'USER'],
+      (messageData.role as MessageRole) || ('USER' as MessageRole),
       {
         senderId: userId,
         agentId: messageData.agentId,

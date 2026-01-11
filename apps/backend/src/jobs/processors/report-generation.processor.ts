@@ -1,9 +1,13 @@
-import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
-import { Logger, Injectable } from '@nestjs/common';
+import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
+import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '@the-new-fuse/database';
+import { agents, transactions, wallets, users } from '@the-new-fuse/database/drizzle/schema';
 import { Job } from 'bull';
+import { and, count, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
+import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service';
+import { EmailService } from '../../services/email.service';
 import { QueueName } from '../constants/queue-names';
 import { ReportGenerationJobData } from '../interfaces/job-data.interface';
-import { EmailService } from '../../services/email.service';
 
 /**
  * Report generation job processor
@@ -14,16 +18,18 @@ import { EmailService } from '../../services/email.service';
 export class ReportGenerationProcessor {
   private readonly logger = new Logger(ReportGenerationProcessor.name);
 
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly systemMetricsService: SystemMetricsService,
+    private readonly db: DatabaseService
+  ) {}
 
   /**
    * Process report generation job
    */
   @Process('generate-report')
   async handleGenerateReport(job: Job<ReportGenerationJobData>) {
-    this.logger.log(
-      `Processing generate-report job ${job.id} for type ${job.data.reportType}`,
-    );
+    this.logger.log(`Processing generate-report job ${job.id} for type ${job.data.reportType}`);
 
     try {
       const { reportType, userId, parameters, format, emailOnComplete, email } = job.data;
@@ -44,13 +50,13 @@ export class ReportGenerationProcessor {
           reportData = await this.generateUserActivityReport(parameters);
           break;
         case 'agent-performance':
-          reportData = await this.generateAgentPerformanceReport(parameters);
+          reportData = await this.generateAgentPerformanceReport(parameters, userId);
           break;
         case 'system-metrics':
           reportData = await this.generateSystemMetricsReport(parameters);
           break;
         case 'revenue':
-          reportData = await this.generateRevenueReport(parameters);
+          reportData = await this.generateRevenueReport(parameters, userId);
           break;
         default:
           throw new Error(`Unknown report type: ${reportType}`);
@@ -109,9 +115,7 @@ export class ReportGenerationProcessor {
    */
   @Process('scheduled-report')
   async handleScheduledReport(job: Job<ReportGenerationJobData & { schedule: string }>) {
-    this.logger.log(
-      `Processing scheduled-report job ${job.id} for type ${job.data.reportType}`,
-    );
+    this.logger.log(`Processing scheduled-report job ${job.id} for type ${job.data.reportType}`);
 
     try {
       // Generate the report using the main handler
@@ -134,14 +138,34 @@ export class ReportGenerationProcessor {
   private async generateUserActivityReport(parameters: Record<string, any>) {
     this.logger.debug('Generating user activity report');
 
-    // TODO: Replace with actual database queries
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const [totalUsersResult] = await this.db.client
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(isNull(users.deletedAt));
+    const totalUsers = Number(totalUsersResult?.count ?? 0);
+
+    const [activeUsersResult] = await this.db.client
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(and(eq(users.isActive, true), isNull(users.deletedAt)));
+    const activeUsers = Number(activeUsersResult?.count ?? 0);
+
+    const [newUsersResult] = await this.db.client
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(and(gte(users.createdAt, thirtyDaysAgo), isNull(users.deletedAt)));
+    const newUsers = Number(newUsersResult?.count ?? 0);
+
     return {
-      recordCount: 150,
+      recordCount: totalUsers,
       data: {
-        totalUsers: 150,
-        activeUsers: 120,
-        newUsers: 15,
-        averageSessionDuration: 1200,
+        totalUsers,
+        activeUsers,
+        newUsers,
+        averageSessionDuration: 0, // Not tracked currently
       },
     };
   }
@@ -149,19 +173,50 @@ export class ReportGenerationProcessor {
   /**
    * Generate agent performance report
    */
-  private async generateAgentPerformanceReport(parameters: Record<string, any>) {
-    this.logger.debug('Generating agent performance report');
+  private async generateAgentPerformanceReport(parameters: Record<string, any>, userId: string) {
+    this.logger.debug(`Generating agent performance report for user ${userId}`);
 
-    // TODO: Replace with actual agent metrics
-    return {
-      recordCount: 50,
-      data: {
-        totalAgents: 50,
-        averageExecutionTime: 5000,
-        successRate: 95.5,
-        failureRate: 4.5,
-      },
-    };
+    try {
+        const result = await this.databaseService.client.execute(sql`
+            SELECT
+                COUNT(DISTINCT a.id)::int as "totalAgents",
+                COALESCE(AVG(EXTRACT(EPOCH FROM (we.completed_at - we.started_at)) * 1000), 0)::float as "averageExecutionTime",
+                COALESCE(
+                    (SUM(CASE WHEN we.status = 'COMPLETED' THEN 1 ELSE 0 END)::float / NULLIF(COUNT(we.id), 0)) * 100,
+                    0
+                )::float as "successRate",
+                COALESCE(
+                    (SUM(CASE WHEN we.status = 'FAILED' THEN 1 ELSE 0 END)::float / NULLIF(COUNT(we.id), 0)) * 100,
+                    0
+                )::float as "failureRate",
+                COUNT(we.id)::int as "totalExecutions"
+            FROM agents a
+            LEFT JOIN workflows w ON w.agent_id = a.id
+            LEFT JOIN workflow_executions we ON we.workflow_id = w.id
+            WHERE a.user_id = ${userId} AND a.deleted_at IS NULL
+        `);
+
+        const stats = result[0] || {
+            totalAgents: 0,
+            averageExecutionTime: 0,
+            successRate: 0,
+            failureRate: 0,
+            totalExecutions: 0
+        };
+
+        return {
+          recordCount: stats.totalAgents,
+          data: {
+            totalAgents: stats.totalAgents,
+            averageExecutionTime: Math.round(stats.averageExecutionTime),
+            successRate: parseFloat(Number(stats.successRate).toFixed(2)),
+            failureRate: parseFloat(Number(stats.failureRate).toFixed(2)),
+          },
+        };
+    } catch (error) {
+        this.logger.error(`Failed to generate agent performance report: ${error.message}`, error.stack);
+        throw error;
+    }
   }
 
   /**
@@ -170,14 +225,17 @@ export class ReportGenerationProcessor {
   private async generateSystemMetricsReport(parameters: Record<string, any>) {
     this.logger.debug('Generating system metrics report');
 
-    // TODO: Replace with actual system metrics
+    const metrics = await this.systemMetricsService.getMetrics();
+
     return {
-      recordCount: 100,
+      recordCount: 1,
       data: {
-        cpuUsage: 45.5,
-        memoryUsage: 60.2,
-        diskUsage: 35.8,
-        networkTraffic: 1024000,
+        cpuUsage: metrics.cpu.usagePercent,
+        memoryUsage: metrics.memory.usagePercent,
+        diskUsage: metrics.disk?.usagePercent || 0,
+        networkTraffic: metrics.network?.totalTraffic || 0,
+        uptime: metrics.uptime,
+        status: metrics.status,
       },
     };
   }
@@ -185,16 +243,69 @@ export class ReportGenerationProcessor {
   /**
    * Generate revenue report
    */
-  private async generateRevenueReport(parameters: Record<string, any>) {
+  private async generateRevenueReport(parameters: Record<string, any>, userId?: string) {
     this.logger.debug('Generating revenue report');
 
-    // TODO: Replace with actual revenue data
+    if (!userId) {
+      throw new Error('UserId is required for revenue report');
+    }
+
+    // 1. Get Agent IDs for user
+    const userAgents = await this.db.client
+      .select({ id: agents.id })
+      .from(agents)
+      .where(eq(agents.userId, userId));
+
+    const agentIds = userAgents.map((a) => a.id);
+
+    if (agentIds.length === 0) {
+      return {
+        recordCount: 0,
+        data: {
+          totalRevenue: 0,
+          transactions: 0,
+          averageTransactionValue: 0,
+        },
+      };
+    }
+
+    // 2. Get Wallet IDs for agents
+    const agentWallets = await this.db.client
+      .select({ id: wallets.id })
+      .from(wallets)
+      .where(inArray(wallets.agentId, agentIds));
+
+    const walletIds = agentWallets.map((w) => w.id);
+
+    if (walletIds.length === 0) {
+      return {
+        recordCount: 0,
+        data: {
+          totalRevenue: 0,
+          transactions: 0,
+          averageTransactionValue: 0,
+        },
+      };
+    }
+
+    // 3. Aggregate transactions
+    const result = await this.db.client
+      .select({
+        totalRevenue: sql<number>`sum(${transactions.value})`,
+        txCount: count(transactions.id),
+        avgValue: sql<number>`avg(${transactions.value})`,
+      })
+      .from(transactions)
+      .where(inArray(transactions.walletId, walletIds));
+
+    const stats = result[0];
+
     return {
-      recordCount: 75,
+      recordCount: Number(stats.txCount),
       data: {
-        totalRevenue: 125000,
-        transactions: 75,
-        averageTransactionValue: 1666.67,
+        totalRevenue: Number(stats.totalRevenue) || 0,
+        transactions: Number(stats.txCount),
+        averageTransactionValue: Number(stats.avgValue) || 0,
       },
     };
   }
@@ -257,7 +368,7 @@ export class ReportGenerationProcessor {
   @OnQueueCompleted()
   onCompleted(job: Job, result: any) {
     this.logger.log(
-      `Report generation job ${job.id} completed. Type: ${result.reportType}, Records: ${result.recordCount}`,
+      `Report generation job ${job.id} completed. Type: ${result.reportType}, Records: ${result.recordCount}`
     );
   }
 
@@ -268,7 +379,7 @@ export class ReportGenerationProcessor {
   onFailed(job: Job, error: Error) {
     this.logger.error(
       `Report generation job ${job.id} failed after ${job.attemptsMade} attempts. Error: ${error.message}`,
-      error.stack,
+      error.stack
     );
   }
 

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MemoryVisualizer = void 0;
+
 import react_1 from 'react';
 import d3 from 'd3';
-const MemoryVisualizer = ({ clusters, onClusterSelect, onItemSelect, width = 800, height = 600 }) => {
+export const MemoryVisualizer = ({ clusters, onClusterSelect, onItemSelect, width = 800, height = 600 }) => {
     const svgRef = (0, react_1.useRef)(null);
     const [nodes, setNodes] = (0, react_1.useState)([]);
     const [links, setLinks] = (0, react_1.useState)([]);
@@ -139,5 +139,4 @@ const MemoryVisualizer = ({ clusters, onClusterSelect, onItemSelect, width = 800
             `}</style>
         </div>);
 };
-exports.MemoryVisualizer = MemoryVisualizer;
-export {};
+;

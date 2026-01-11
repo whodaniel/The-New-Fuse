@@ -2,9 +2,22 @@
  * Workflow Controller - Production ready REST API for workflow management
  */
 
-import { Controller, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
+import { DatabaseService, and, desc, eq, ilike, or, sql } from '@the-new-fuse/database';
 import { Request, Response } from 'express';
+// import { workflows, workflowExecutions, workflowSteps } from '@the-new-fuse/database/drizzle/schema'; // This is fine if exported, or use database package exports
+import { workflowExecutions, workflows } from '@the-new-fuse/database'; // Verify if schema tables are exported directly from index
 
 type DatabaseWhere = Record<string, any>;
 
@@ -12,45 +25,58 @@ type DatabaseWhere = Record<string, any>;
 export class WorkflowController {
   private logger = new Logger(WorkflowController.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly db: DatabaseService) {}
 
   // GET /api/workflows
-  async getWorkflows(req: Request, res: Response): Promise<void> {
+  @Get()
+  async getWorkflows(@Query() query: any, @Res() res: Response): Promise<void> {
     try {
-      const { page = 1, limit = 20, status, search } = req.query;
+      const { page = 1, limit = 20, status, search } = query;
       const skip = (Number(page) - 1) * Number(limit);
 
-      const where: DatabaseWhere = {};
+      const conditions = [sql`${workflows.deletedAt} IS NULL`];
 
       if (status) {
-        where.status = status;
+        conditions.push(eq(workflows.status, status));
       }
 
       if (search) {
-        where.OR = [
-          { name: { contains: search as string, mode: 'insensitive' } },
-          { description: { contains: search as string, mode: 'insensitive' } },
-        ];
+        conditions.push(
+          or(
+            ilike(workflows.name, `%${search}%`),
+            ilike(workflows.description, `%${search}%`)
+          ) as any
+        );
       }
 
-      const [workflows, total] = await Promise.all([
-        this.prisma.workflow.findMany({
-          where,
-          skip,
-          take: Number(limit),
-          orderBy: { updatedAt: 'desc' },
-          include: {
-            executions: {
-              take: 1,
-              orderBy: { startedAt: 'desc' },
-            },
+      const whereClause = and(...conditions);
+
+      // Fetch workflows with query builder for relational data
+      // Using Relational Query API if possible, or query builder
+      const result = await this.db.client.query.workflows.findMany({
+        where: whereClause,
+        orderBy: [desc(workflows.updatedAt)],
+        limit: Number(limit),
+        offset: skip,
+        with: {
+          executions: {
+            limit: 1,
+            orderBy: (executions, { desc }) => [desc(executions.startedAt)],
           },
-        }),
-        this.prisma.workflow.count({ where }),
-      ]);
+        },
+      });
+
+      // Get total count
+      // Drizzle count is a bit manual
+      const [countResult] = await this.db.client
+        .select({ count: sql<number>`cast(count(*) as int)` })
+        .from(workflows)
+        .where(whereClause);
+
+      const total = countResult?.count ?? 0;
 
       res.json({
-        workflows,
+        workflows: result,
         pagination: {
           page: Number(page),
           limit: Number(limit),
@@ -65,16 +91,18 @@ export class WorkflowController {
   }
 
   // GET /api/workflows/:id
-  async getWorkflow(req: Request, res: Response): Promise<void> {
+  @Get(':id')
+  async getWorkflow(@Param('id') id: string, @Res() res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-
-      const workflow = await this.prisma.workflow.findUnique({
-        where: { id },
-        include: {
+      const workflow = await this.db.client.query.workflows.findFirst({
+        where: eq(workflows.id, id),
+        with: {
           executions: {
-            orderBy: { startedAt: 'desc' },
-            take: 10,
+            orderBy: (executions, { desc }) => [desc(executions.startedAt)],
+            limit: 10,
+          },
+          steps: {
+            orderBy: (steps, { asc }) => [asc(steps.order)],
           },
         },
       });
@@ -92,10 +120,15 @@ export class WorkflowController {
   }
 
   // POST /api/workflows
-  async createWorkflow(req: Request, res: Response): Promise<void> {
+  @Post()
+  async createWorkflow(
+    @Body() workflowData: any,
+    @Res() res: Response,
+    @Query() req: any
+  ): Promise<void> {
+    // Using @Query for req hack or inject Request properly
+    // Assuming Request is injected via context if properly typed, but cleaner to use @Req() or standard Express request
     try {
-      const workflowData = req.body;
-
       // Basic validation - ensure required fields are present
       if (!workflowData.name) {
         res.status(400).json({
@@ -105,20 +138,21 @@ export class WorkflowController {
         return;
       }
 
-      const workflow = await this.prisma.workflow.create({
-        data: {
-          name: workflowData.name,
-          description: workflowData.description || '',
-          definition: {
-            nodes: workflowData.nodes || [],
-            edges: workflowData.edges || [],
-            version: workflowData.version || 1,
-            tags: workflowData.tags || [],
-          },
-          status: workflowData.status || 'DRAFT', // Use allowed enum value
-          creatorId: req.user?.id,
+      const userId = workflowData.userId; // Or extract from request if auth setup matches
+
+      const workflow = await this.db.workflows.createWorkflow({
+        name: workflowData.name,
+        description: workflowData.description || '',
+        definition: {
+          nodes: workflowData.nodes || [],
+          edges: workflowData.edges || [],
+          version: workflowData.version || 1,
+          tags: workflowData.tags || [],
         },
-      });
+        status: workflowData.status || 'DRAFT',
+        creatorId: userId,
+        usageCount: 0,
+      } as any); // Cast as needed for optional fields
 
       this.logger.log(`Created workflow: ${workflow.name} (${workflow.id})`);
       res.status(201).json(workflow);
@@ -129,11 +163,13 @@ export class WorkflowController {
   }
 
   // PATCH /api/workflows/:id
-  async updateWorkflow(req: Request, res: Response): Promise<void> {
+  @Patch(':id')
+  async updateWorkflow(
+    @Param('id') id: string,
+    @Body() updates: any,
+    @Res() res: Response
+  ): Promise<void> {
     try {
-      const { id } = req.params;
-      const updates = req.body;
-
       // Basic validation - ensure name is provided if being updated
       if (updates.name === '') {
         res.status(400).json({
@@ -143,77 +179,78 @@ export class WorkflowController {
         return;
       }
 
-      const workflow = await this.prisma.workflow.update({
-        where: { id },
-        data: {
-          ...(updates.name && { name: updates.name }),
-          ...(updates.description !== undefined && { description: updates.description }),
-          // Note: This overwrites definition. Real implementation should merge.
-          ...((updates.nodes || updates.edges) && { 
-            definition: {
-              nodes: updates.nodes || [],
-              edges: updates.edges || [],
-              version: updates.version || 1,
-              tags: updates.tags || [],
-            }
-          }),
-          ...(updates.status && { status: updates.status }),
-        },
-      });
-
-      this.logger.log(`Updated workflow: ${workflow.name} (${workflow.id})`);
-      res.json(workflow);
-    } catch (error: unknown) {
-      this.logger.error(`Failed to update workflow: ${error}`);
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
-        res.status(404).json({ error: 'Workflow not found' });
-      } else {
-        res.status(500).json({ error: 'Failed to update workflow' });
-      }
-    }
-  }
-
-  // DELETE /api/workflows/:id
-  async deleteWorkflow(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-
-      await this.prisma.workflow.delete({
-        where: { id },
-      });
-
-      this.logger.log(`Deleted workflow: ${id}`);
-      res.status(204).send();
-    } catch (error: unknown) {
-      this.logger.error(`Failed to delete workflow: ${error}`);
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
-        res.status(404).json({ error: 'Workflow not found' });
-      } else {
-        res.status(500).json({ error: 'Failed to delete workflow' });
-      }
-    }
-  }
-
-  // POST /api/workflows/execute
-  async executeWorkflow(req: Request, res: Response): Promise<void> {
-    try {
-      const { workflowId, input = {} } = req.body;
-
-      if (!workflowId) {
-        res.status(400).json({ error: 'workflowId is required' });
-        return;
+      const updateData: any = {};
+      if (updates.name) updateData.name = updates.name;
+      if (updates.description !== undefined) updateData.description = updates.description;
+      if (updates.status) updateData.status = updates.status;
+      if (updates.nodes || updates.edges) {
+        updateData.definition = {
+          nodes: updates.nodes || [],
+          edges: updates.edges || [],
+          version: updates.version || 1,
+          tags: updates.tags || [],
+        };
       }
 
-      const workflow = await this.prisma.workflow.findUnique({
-        where: { id: workflowId },
-      });
+      const workflow = await this.db.workflows.updateWorkflow(id, updateData);
 
       if (!workflow) {
         res.status(404).json({ error: 'Workflow not found' });
         return;
       }
 
-      // Basic validation - ensure workflow has nodes
+      this.logger.log(`Updated workflow: ${workflow.name} (${workflow.id})`);
+      res.json(workflow);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to update workflow: ${error}`);
+      res.status(500).json({ error: 'Failed to update workflow' });
+    }
+  }
+
+  // DELETE /api/workflows/:id
+  @Delete(':id')
+  async deleteWorkflow(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    try {
+      const deleted = await this.db.workflows.softDeleteWorkflow(id);
+
+      if (!deleted) {
+        // Check if it exists at all
+        const exists = await this.db.workflows.findWorkflowById(id);
+        if (!exists) {
+          res.status(404).json({ error: 'Workflow not found' });
+          return;
+        }
+        res.status(500).json({ error: 'Failed to delete workflow' });
+        return;
+      }
+
+      this.logger.log(`Deleted workflow: ${id}`);
+      res.status(204).send();
+    } catch (error: unknown) {
+      this.logger.error(`Failed to delete workflow: ${error}`);
+      res.status(500).json({ error: 'Failed to delete workflow' });
+    }
+  }
+
+  // POST /api/workflows/execute
+  @Post('execute')
+  async executeWorkflow(@Body() body: any, @Res() res: Response): Promise<void> {
+    try {
+      const { workflowId, input = {} } = body;
+
+      if (!workflowId) {
+        res.status(400).json({ error: 'workflowId is required' });
+        return;
+      }
+
+      const workflow = await this.db.workflows.findWorkflowById(workflowId);
+
+      if (!workflow) {
+        res.status(404).json({ error: 'Workflow not found' });
+        return;
+      }
+
+      // Basic validation - ensure workflow has definition
       const definition = workflow.definition as any;
       const nodes = definition?.nodes || [];
       if (!nodes || nodes.length === 0) {
@@ -224,36 +261,33 @@ export class WorkflowController {
       }
 
       // Create execution record
-      const execution = await this.prisma.workflowExecution.create({
-        data: {
-          workflowId: workflowId,
-          status: 'RUNNING',
-          input: input,
-          startedAt: new Date(),
-          // createdBy: removed as it doesn't exist on schema
-        },
-      });
+      const execution = await this.db.workflows.createExecution({
+        workflowId: workflowId,
+        status: 'RUNNING',
+        input: input,
+        startedAt: new Date(),
+      } as any);
 
       this.logger.log(`Started execution: ${execution.id} for workflow: ${workflowId}`);
       res.status(201).json(execution);
     } catch (error: unknown) {
       this.logger.error(`Failed to execute workflow: ${error}`);
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
-        res.status(404).json({ error: 'Workflow not found' });
-      } else {
-        res.status(500).json({ error: 'Failed to execute workflow' });
-      }
+      res.status(500).json({ error: 'Failed to execute workflow' });
     }
   }
 
   // GET /api/workflows/executions/:executionId
-  async getExecution(req: Request, res: Response): Promise<void> {
+  @Get('executions/:executionId')
+  async getExecution(
+    @Param('executionId') executionId: string,
+    @Res() res: Response
+  ): Promise<void> {
     try {
-      const { executionId } = req.params;
-
-      const execution = await this.prisma.workflowExecution.findUnique({
-        where: { id: executionId },
-        include: {
+      // findExecutionById in repo doesn't include workflow relation.
+      // Use query builder
+      const execution = await this.db.client.query.workflowExecutions.findFirst({
+        where: eq(workflowExecutions.id, executionId),
+        with: {
           workflow: true,
         },
       });
@@ -271,39 +305,47 @@ export class WorkflowController {
   }
 
   // GET /api/workflows/executions or /api/workflows/:workflowId/executions
-  async getExecutions(req: Request, res: Response): Promise<void> {
+  // NestJS routing order matters. Using different method names or paths.
+  // Original was vague. Let's assume standard query params.
+  @Get('executions')
+  async getExecutions(@Query() query: any, @Res() res: Response): Promise<void> {
     try {
-      const { workflowId } = req.params;
-      const { page = 1, limit = 20, status } = req.query;
+      const { workflowId, page = 1, limit = 20, status } = query;
       const skip = (Number(page) - 1) * Number(limit);
 
-      const where: DatabaseWhere = {};
+      const conditions = [];
 
       if (workflowId) {
-        where.workflowId = workflowId;
+        conditions.push(eq(workflowExecutions.workflowId, workflowId));
       }
 
       if (status) {
-        where.status = status;
+        conditions.push(eq(workflowExecutions.status, status));
       }
 
-      const [executions, total] = await Promise.all([
-        this.prisma.workflowExecution.findMany({
-          where,
-          skip,
-          take: Number(limit),
-          orderBy: { startedAt: 'desc' },
-          include: {
-            workflow: {
-              select: { id: true, name: true },
-            },
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+      const result = await this.db.client.query.workflowExecutions.findMany({
+        where: whereClause,
+        offset: skip,
+        limit: Number(limit),
+        orderBy: [desc(workflowExecutions.startedAt)],
+        with: {
+          workflow: {
+            columns: { id: true, name: true },
           },
-        }),
-        this.prisma.workflowExecution.count({ where }),
-      ]);
+        },
+      });
+
+      const [countResult] = await this.db.client
+        .select({ count: sql<number>`cast(count(*) as int)` })
+        .from(workflowExecutions)
+        .where(whereClause);
+
+      const total = countResult?.count ?? 0;
 
       res.json({
-        executions,
+        executions: result,
         pagination: {
           page: Number(page),
           limit: Number(limit),
@@ -318,83 +360,88 @@ export class WorkflowController {
   }
 
   // POST /api/workflows/executions/:executionId/cancel
-  async cancelExecution(req: Request, res: Response): Promise<void> {
+  @Post('executions/:executionId/cancel')
+  async cancelExecution(
+    @Param('executionId') executionId: string,
+    @Res() res: Response
+  ): Promise<void> {
     try {
-      const { executionId } = req.params;
+      // Drizzle update
+      const [execution] = await this.db.client
+        .update(workflowExecutions)
+        .set({ status: 'CANCELLED', completedAt: new Date() })
+        .where(eq(workflowExecutions.id, executionId))
+        .returning();
 
-      const execution = await this.prisma.workflowExecution.update({
-        where: { id: executionId },
-        data: {
-          status: 'CANCELLED',
-          completedAt: new Date(),
-        },
-      });
+      if (!execution) {
+        res.status(404).json({ error: 'Execution not found' });
+        return;
+      }
 
       this.logger.log(`Cancelled execution: ${executionId}`);
       res.json(execution);
     } catch (error: unknown) {
       this.logger.error(`Failed to cancel execution: ${error}`);
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
-        res.status(404).json({ error: 'Execution not found' });
-      } else {
-        res.status(500).json({ error: 'Failed to cancel execution' });
-      }
+      res.status(500).json({ error: 'Failed to cancel execution' });
     }
   }
 
   // POST /api/workflows/executions/:executionId/pause
-  async pauseExecution(req: Request, res: Response): Promise<void> {
+  @Post('executions/:executionId/pause')
+  async pauseExecution(
+    @Param('executionId') executionId: string,
+    @Res() res: Response
+  ): Promise<void> {
     try {
-      const { executionId } = req.params;
+      const [execution] = await this.db.client
+        .update(workflowExecutions)
+        .set({ status: 'PAUSED' })
+        .where(eq(workflowExecutions.id, executionId))
+        .returning();
 
-      const execution = await this.prisma.workflowExecution.update({
-        where: { id: executionId },
-        data: {
-          status: 'PAUSED',
-        },
-      });
+      if (!execution) {
+        res.status(404).json({ error: 'Execution not found' });
+        return;
+      }
 
       this.logger.log(`Paused execution: ${executionId}`);
       res.json(execution);
     } catch (error: unknown) {
       this.logger.error(`Failed to pause execution: ${error}`);
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
-        res.status(404).json({ error: 'Execution not found' });
-      } else {
-        res.status(500).json({ error: 'Failed to pause execution' });
-      }
+      res.status(500).json({ error: 'Failed to pause execution' });
     }
   }
 
   // POST /api/workflows/executions/:executionId/resume
-  async resumeExecution(req: Request, res: Response): Promise<void> {
+  @Post('executions/:executionId/resume')
+  async resumeExecution(
+    @Param('executionId') executionId: string,
+    @Res() res: Response
+  ): Promise<void> {
     try {
-      const { executionId } = req.params;
+      const [execution] = await this.db.client
+        .update(workflowExecutions)
+        .set({ status: 'RUNNING' })
+        .where(eq(workflowExecutions.id, executionId))
+        .returning();
 
-      const execution = await this.prisma.workflowExecution.update({
-        where: { id: executionId },
-        data: {
-          status: 'RUNNING',
-        },
-      });
+      if (!execution) {
+        res.status(404).json({ error: 'Execution not found' });
+        return;
+      }
 
       this.logger.log(`Resumed execution: ${executionId}`);
       res.json(execution);
     } catch (error: unknown) {
       this.logger.error(`Failed to resume execution: ${error}`);
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
-        res.status(404).json({ error: 'Execution not found' });
-      } else {
-        res.status(500).json({ error: 'Failed to resume execution' });
-      }
+      res.status(500).json({ error: 'Failed to resume execution' });
     }
   }
 
   // POST /api/workflows/validate
-  async validateWorkflow(req: Request, res: Response): Promise<void> {
+  @Post('validate')
+  async validateWorkflow(@Body() workflow: any, @Res() res: Response): Promise<void> {
     try {
-      const workflow = req.body;
-
       // Basic validation
       const errors: string[] = [];
 
@@ -421,10 +468,11 @@ export class WorkflowController {
   }
 
   // GET /api/workflows/templates
+  @Get('templates')
   async getTemplates(_req: Request, res: Response): Promise<void> {
     try {
-      // WorkflowTemplate model doesn't exist in schema - returning empty array
-      res.json([]);
+      const templates = await this.db.workflows.findPublicTemplates();
+      res.json(templates);
     } catch (error) {
       this.logger.error(`Failed to get workflow templates: ${error}`);
       res.status(500).json({ error: 'Failed to get templates' });
@@ -432,10 +480,16 @@ export class WorkflowController {
   }
 
   // GET /api/workflows/templates/:id
-  async getTemplate(_req: Request, res: Response): Promise<void> {
+  @Get('templates/:id')
+  async getTemplate(@Param('id') id: string, res: Response): Promise<void> {
     try {
-      // WorkflowTemplate model doesn't exist in schema
-      res.status(404).json({ error: 'Template not found' });
+      const template = await this.db.workflows.findTemplateById(id);
+
+      if (!template) {
+        res.status(404).json({ error: 'Template not found' });
+        return;
+      }
+      res.json(template);
     } catch (error) {
       this.logger.error(`Failed to get template: ${error}`);
       res.status(500).json({ error: 'Failed to get template' });
@@ -443,10 +497,35 @@ export class WorkflowController {
   }
 
   // POST /api/workflows/from-template
-  async createFromTemplate(_req: Request, res: Response): Promise<void> {
+  @Post('from-template')
+  async createFromTemplate(@Body() body: any, @Res() res: Response): Promise<void> {
     try {
-      // WorkflowTemplate model doesn't exist in schema
-      res.status(404).json({ error: 'Template functionality not available' });
+      const { templateId, name, userId } = body;
+
+      if (!templateId) {
+        res.status(400).json({ error: 'templateId required' });
+        return;
+      }
+
+      const template = await this.db.workflows.findTemplateById(templateId);
+      if (!template) {
+        res.status(404).json({ error: 'Template not found' });
+        return;
+      }
+
+      const workflow = await this.db.workflows.createWorkflow({
+        name: name || template.name,
+        description: template.description || '',
+        definition: template.definition,
+        status: 'DRAFT',
+        creatorId: userId,
+        usageCount: 0,
+      } as any);
+
+      // Increment usage
+      await this.db.workflows.incrementTemplateUsage(templateId);
+
+      res.status(201).json(workflow);
     } catch (error: unknown) {
       this.logger.error(`Failed to create workflow from template: ${error}`);
       res.status(500).json({ error: 'Failed to create workflow from template' });

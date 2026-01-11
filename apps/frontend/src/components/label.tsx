@@ -9,13 +9,11 @@ var __rest = (this && this.__rest) || function (s, e): any {
         }
     return t;
 };
-export {}
-exports.Label = Label;
 import react_1 from 'react';
-function Label(_a): any {
+export function Label(_a): any {
     var { children } = _a, props = __rest(_a, ["children"]);
     return (<label {...props}>
       {children}
     </label>);
 }
-export {};
+;

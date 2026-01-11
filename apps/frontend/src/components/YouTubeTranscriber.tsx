@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.YouTubeTranscriber = void 0;
+
 import axios_1 from 'axios';
-class YouTubeTranscriber {
+export class YouTubeTranscriber {
     isValidYouTubeUrl(url) {
         const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
         return youtubeRegex.test(url);
@@ -26,6 +26,5 @@ class YouTubeTranscriber {
         return urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop() || '';
     }
 }
-exports.YouTubeTranscriber = YouTubeTranscriber;
 
-export {};
+;

@@ -83,13 +83,16 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-md lg:max-w-lg">
+    <div
+      className="min-h-screen bg-linear-to-br from-black via-zinc-900 to-black flex items-center justify-center p-4 sm:p-6 lg:p-8"
+      style={{ minWidth: '320px' }}
+    >
+      <div className="w-full max-w-md lg:max-w-lg mx-auto" style={{ minWidth: '300px' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="space-y-6 lg:space-y-8"
+          className="space-y-6 lg:space-y-8 w-full"
         >
           {/* Logo/Brand */}
           <div className="text-center">
@@ -99,7 +102,7 @@ const Register: React.FC = () => {
 
           {/* Main Card */}
           <GlassCard className="w-full p-6 sm:p-8 lg:p-10 backdrop-blur-xl border-zinc-800/50">
-            <div className="space-y-6">
+            <div className="space-y-6 w-full">
               {/* Header */}
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold text-white">Create your account</h1>
@@ -157,7 +160,9 @@ const Register: React.FC = () => {
                   label="Confirm Password"
                   placeholder="••••••••"
                   value={confirmPassword}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setConfirmPassword(e.target.value)
+                  }
                   required
                   icon={Lock}
                   iconPosition="left"

@@ -67,3 +67,7 @@ watchPaths = ["apps/cloud-sandbox/**", "packages/**"]
 healthcheckPath = "/health"
 restartPolicyType = "ON_FAILURE"
 
+[services.tnf-cloud-sandbox-v2]
+builder = "DOCKERFILE"
+build = { dockerfilePath = "apps/cloud-sandbox/Dockerfile.standalone", watchPaths = ["apps/cloud-sandbox/**"] }
+deploy = { healthcheckPath = "/health", restartPolicyType = "ON_FAILURE" }

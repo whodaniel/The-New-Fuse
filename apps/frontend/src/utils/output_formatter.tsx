@@ -1,13 +1,11 @@
-export {}
-exports.OutputFormatter = exports.OutputFormat = void 0;
-let OutputFormat;
+export let OutputFormat;
 (function (OutputFormat): any {
     OutputFormat["JSON"] = "json";
     OutputFormat["TEXT"] = "text";
     OutputFormat["MARKDOWN"] = "markdown";
     OutputFormat["HTML"] = "html";
 })(OutputFormat || (exports.OutputFormat = OutputFormat = {}));
-class OutputFormatter {
+export class OutputFormatter {
     constructor(default_schema) {
         this.default_schema = default_schema || {
             format: OutputFormat.JSON,
@@ -94,5 +92,4 @@ class OutputFormatter {
             .replace(/\n{3,}/g, '\n\n');
     }
 }
-exports.OutputFormatter = OutputFormatter;
-export {};
+;

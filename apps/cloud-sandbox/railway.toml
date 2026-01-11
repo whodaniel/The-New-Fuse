@@ -1,11 +1,5 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "./Dockerfile"
-watchPatterns = ["src/**", "package.json", "tsconfig.json"]
+dockerfilePath = "./Dockerfile.local"
+watchPatterns = ["src/**", "package.json", "tsconfig.json", "public/**"]
 
-[deploy]
-startCommand = "node dist/server.js"
-healthcheckPath = "/health"
-healthcheckTimeout = 30
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 3

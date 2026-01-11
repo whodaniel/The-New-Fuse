@@ -24,7 +24,6 @@ import { UserManagementController } from './controllers/user-management.controll
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
-import { GraphqlModule } from './graphql/graphql.module'; // Migrated to Drizzle ORM
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
@@ -112,7 +111,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     PromptTemplatesModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
-    GraphqlModule, // GraphQL API - Migrated to Drizzle ORM
+    // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
   ],
   controllers: [

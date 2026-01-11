@@ -23,7 +23,6 @@
     "@nestjs/swagger": "11.2.3",
     "@nestjs/throttler": "^6.5.0",
     "@nestjs/websockets": "^11.1.10",
-    "@prisma/client": "^7.2.0",
     "@the-new-fuse/a2a-core": "workspace:*",
     "@the-new-fuse/api-types": "workspace:*",
     "@the-new-fuse/core": "workspace:*",

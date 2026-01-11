@@ -1,32 +1,31 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Redis } from 'ioredis';
 import { Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
-import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
 import {
-  AgentRegistration,
   A2AMessage,
-  AgentHeartbeat,
-  AgentStatus,
   A2AMessageType,
   A2APriority,
-  AgentCapabilities,
-  RoutingRule,
-  LoadBalancingStrategy,
-  AgentType,
   A2AResponse,
-  A2AConfig
+  AgentCapabilities,
+  AgentHeartbeat,
+  AgentRegistration,
+  AgentStatus,
+  LoadBalancingStrategy,
+  RoutingRule,
 } from './types';
-
 
 @Injectable()
 export class A2AService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(A2AService.name);
-  
+
   private agentRegistry: Map<string, AgentCapabilities> = new Map();
   private activeConnections: Map<string, any> = new Map(); // WebSocket connections
   private messageRoutes: Map<string, RoutingRule> = new Map();
-  private pendingResponses: Map<string, { resolve: Function; reject: Function; timeout: NodeJS.Timeout }> = new Map();
+  private pendingResponses: Map<
+    string,
+    { resolve: Function; reject: Function; timeout: NodeJS.Timeout }
+  > = new Map();
   private conversationContexts: Map<string, any> = new Map();
 
   // Performance metrics
@@ -56,6 +55,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   private metricsInterval?: NodeJS.Timeout;
 
   private redis: Redis;
+  private redisConnected = false;
 
   constructor(
     private configService: ConfigService,
@@ -67,10 +67,38 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       port: this.configService.get('REDIS_PORT') || 6379,
       password: this.configService.get('REDIS_PASSWORD'),
       db: this.configService.get('REDIS_DB') || 0,
+      lazyConnect: true, // Don't connect immediately - wait for first use
+      maxRetriesPerRequest: 1, // Limit retries to prevent blocking
+      retryStrategy: (times: number) => {
+        if (times > 3) {
+          this.logger.warn('Redis connection failed after 3 attempts - operating in degraded mode');
+          return null; // Stop retrying
+        }
+        return Math.min(times * 200, 2000); // Exponential backoff
+      },
+    });
+
+    // Handle Redis connection events
+    this.redis.on('connect', () => {
+      this.redisConnected = true;
+      this.logger.log('A2A Service Redis connected');
+    });
+
+    this.redis.on('error', (error: Error) => {
+      this.redisConnected = false;
+      this.logger.warn('A2A Service Redis error (degraded mode):', error.message);
+    });
+
+    this.redis.on('close', () => {
+      this.redisConnected = false;
     });
   }
 
-  async createPayment(paymentDetails: { amount: number; currency: string; recipient: string }): Promise<any> {
+  async createPayment(paymentDetails: {
+    amount: number;
+    currency: string;
+    recipient: string;
+  }): Promise<any> {
     const paymentRequest = {
       value: paymentDetails.amount,
       currency: paymentDetails.currency,
@@ -89,10 +117,10 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   private async initializeService(): Promise<void> {
     // Load agent registry from cache
     await this.loadAgentRegistry();
-    
+
     // Initialize routing rules
     this.initializeDefaultRoutes();
-    
+
     // Set up message processing
     this.setupMessageProcessing();
   }
@@ -182,7 +210,6 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       });
 
       this.logger.log(`Agent registered: ${registration.agentId} (${registration.type})`);
-
     } catch (error) {
       this.logger.error('Error registering agent:', (error as Error).message);
       throw error;
@@ -195,18 +222,17 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       if (agent) {
         agent.isOnline = false;
         agent.lastSeen = Date.now();
-        
+
         // Remove from active connections
         this.activeConnections.delete(agentId);
-        
+
         // Update cache
         await this.redis.setex(`agent:${agentId}`, 3600, JSON.stringify(agent));
-        
+
         this.logger.log(`Agent unregistered: ${agentId}`);
         return true;
       }
       return false;
-
     } catch (error) {
       this.logger.error('Error unregistering agent:', error);
       return false;
@@ -236,11 +262,10 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       } else {
         return await this.queueMessage(targetAgent, optimizedMessage);
       }
-
     } catch (error) {
       this.logger.error('Error sending A2A message:', error);
       this.metrics.errorRate++;
-      
+
       return {
         messageId: message.id,
         success: false,
@@ -320,16 +345,16 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     switch (strategy) {
       case LoadBalancingStrategy.ROUND_ROBIN:
         return this.selectRoundRobin(agents);
-      
+
       case LoadBalancingStrategy.LEAST_LOADED:
         return this.selectLeastLoaded(agents);
-      
+
       case LoadBalancingStrategy.FASTEST_RESPONSE:
         return this.selectFastestResponse(agents);
-      
+
       case LoadBalancingStrategy.CAPABILITY_MATCH:
         return this.selectBestCapabilityMatch(agents);
-      
+
       default:
         return agents[0];
     }
@@ -446,7 +471,10 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Immediate and queued message sending
-  private async sendImmediateMessage(targetAgent: string, message: A2AMessage): Promise<A2AResponse> {
+  private async sendImmediateMessage(
+    targetAgent: string,
+    message: A2AMessage
+  ): Promise<A2AResponse> {
     const startTime = Date.now();
 
     try {
@@ -458,10 +486,9 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
 
       // Fallback to HTTP/REST API
       return await this.sendViaHTTP(targetAgent, message);
-
     } catch (error) {
       this.logger.error(`Error sending immediate message to ${targetAgent}:`, error);
-      
+
       return {
         messageId: message.id,
         success: false,
@@ -476,16 +503,19 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     try {
       // Add to job queue for processing
       // Queue message for processing (simplified implementation)
-      await this.redis.lpush('message_queue', JSON.stringify({
-        id: message.id,
-        type: 'a2a_message',
-        payload: {
-          targetAgent,
-          message,
-        },
-        agentId: message.fromAgent,
-        priority: message.priority,
-      }));
+      await this.redis.lpush(
+        'message_queue',
+        JSON.stringify({
+          id: message.id,
+          type: 'a2a_message',
+          payload: {
+            targetAgent,
+            message,
+          },
+          agentId: message.fromAgent,
+          priority: message.priority,
+        })
+      );
 
       return {
         messageId: message.id,
@@ -494,10 +524,9 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
         processingTime: 0,
         agentStatus: AgentStatus.ONLINE,
       };
-
     } catch (error) {
       this.logger.error('Error queuing A2A message:', error);
-      
+
       return {
         messageId: message.id,
         success: false,
@@ -542,8 +571,9 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   // Broadcast messaging
   async broadcastMessage(message: A2AMessage): Promise<A2AResponse[]> {
     const responses: A2AResponse[] = [];
-    const onlineAgents = Array.from(this.agentRegistry.values())
-      .filter(agent => agent.isOnline && agent.id !== message.fromAgent);
+    const onlineAgents = Array.from(this.agentRegistry.values()).filter(
+      (agent) => agent.isOnline && agent.id !== message.fromAgent
+    );
 
     // Send to all online agents in parallel
     const sendPromises = onlineAgents.map(async (agent) => {
@@ -552,7 +582,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     });
 
     const results = await Promise.allSettled(sendPromises);
-    
+
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         responses.push(result.value);
@@ -573,7 +603,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   // Conversation management
   async startConversation(participants: string[], context?: any): Promise<string> {
     const conversationId = this.generateConversationId();
-    
+
     this.conversationContexts.set(conversationId, {
       id: conversationId,
       participants,
@@ -592,11 +622,11 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     if (conversation) {
       conversation.isActive = false;
       conversation.endedAt = Date.now();
-      
+
       // Archive conversation
       await this.redis.setex(`conversation:${conversationId}`, 86400, JSON.stringify(conversation));
       this.conversationContexts.delete(conversationId);
-      
+
       this.metrics.activeConversations--;
       return true;
     }
@@ -605,7 +635,13 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
 
   // Utility methods
   private validateMessage(message: A2AMessage): boolean {
-    return !!(message.id && message.fromAgent && message.toAgent && message.type && message.payload);
+    return !!(
+      message.id &&
+      message.fromAgent &&
+      message.toAgent &&
+      message.type &&
+      message.payload
+    );
   }
 
   private generateMessageId(): string {
@@ -673,7 +709,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     const staleThreshold = this.config.heartbeatInterval * 3; // 3 missed heartbeats
 
     for (const [agentId, agent] of this.agentRegistry) {
-      if (agent.isOnline && (now - agent.lastSeen) > staleThreshold) {
+      if (agent.isOnline && now - agent.lastSeen > staleThreshold) {
         agent.isOnline = false;
         this.activeConnections.delete(agentId);
         this.logger.warn(`Agent marked as offline due to stale heartbeat: ${agentId}`);
@@ -696,7 +732,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     return {
       ...this.metrics,
       registeredAgents: this.agentRegistry.size,
-      onlineAgents: Array.from(this.agentRegistry.values()).filter(a => a.isOnline).length,
+      onlineAgents: Array.from(this.agentRegistry.values()).filter((a) => a.isOnline).length,
       activeConnections: this.activeConnections.size,
       pendingResponses: this.pendingResponses.size,
     };
@@ -708,19 +744,19 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     if (!agent) {
       throw new Error(`Agent not found: ${agentId}`);
     }
-    
+
     // Update in memory registry
     agent.isOnline = status === AgentStatus.ONLINE;
     agent.lastSeen = Date.now();
     this.agentRegistry.set(agentId, agent);
-    
+
     // Update in Redis
     await this.redis.setex(
       `agent:status:${agentId}`,
       3600,
       JSON.stringify({ status, timestamp: Date.now() })
     );
-    
+
     this.logger.log(`Agent status updated: ${agentId} -> ${status}`);
   }
 
@@ -733,22 +769,22 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     let filteredAgents = agents;
 
     if (criteria?.type) {
-      filteredAgents = filteredAgents.filter(agent => agent.type === criteria.type);
+      filteredAgents = filteredAgents.filter((agent) => agent.type === criteria.type);
     }
 
     if (criteria?.status) {
       const isOnline = criteria.status === AgentStatus.ONLINE;
-      filteredAgents = filteredAgents.filter(agent => agent.isOnline === isOnline);
+      filteredAgents = filteredAgents.filter((agent) => agent.isOnline === isOnline);
     }
 
     if (criteria?.capabilities) {
-      filteredAgents = filteredAgents.filter(agent =>
-        criteria.capabilities!.some(cap => agent.capabilities.includes(cap))
+      filteredAgents = filteredAgents.filter((agent) =>
+        criteria.capabilities!.some((cap) => agent.capabilities.includes(cap))
       );
     }
 
     // Convert AgentCapabilities to AgentRegistration format
-    return filteredAgents.map(agent => ({
+    return filteredAgents.map((agent) => ({
       agentId: agent.id,
       name: agent.id, // Using id as name since we don't store name separately
       type: agent.type,
@@ -927,8 +963,9 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       preferredAgent?: string;
     }
   ): Promise<void> {
-    const capableAgents = Array.from(this.agentRegistry.values())
-      .filter(agent => agent.capabilities.includes(targetCapability) && agent.isOnline);
+    const capableAgents = Array.from(this.agentRegistry.values()).filter(
+      (agent) => agent.capabilities.includes(targetCapability) && agent.isOnline
+    );
 
     if (capableAgents.length === 0) {
       throw new Error(`No agents found with capability: ${targetCapability}`);
@@ -937,7 +974,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     // Choose agent based on preference or load balancing
     let targetAgent = capableAgents[0];
     if (options?.preferredAgent) {
-      const preferred = capableAgents.find(agent => agent.id === options.preferredAgent);
+      const preferred = capableAgents.find((agent) => agent.id === options.preferredAgent);
       if (preferred) {
         targetAgent = preferred;
       }
@@ -962,10 +999,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     await this.sendMessage(message);
   }
 
-  async createAgentCommunicationChannel(
-    agentIds: string[],
-    topic?: string
-  ): Promise<string> {
+  async createAgentCommunicationChannel(agentIds: string[], topic?: string): Promise<string> {
     return this.startConversation(agentIds, { topic });
   }
 
@@ -993,7 +1027,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   async getSystemStats(): Promise<any> {
     return {
       totalAgents: this.agentRegistry.size,
-      onlineAgents: Array.from(this.agentRegistry.values()).filter(a => a.isOnline).length,
+      onlineAgents: Array.from(this.agentRegistry.values()).filter((a) => a.isOnline).length,
       activeConnections: this.activeConnections.size,
       activeConversations: this.conversationContexts.size,
       pendingResponses: this.pendingResponses.size,
@@ -1019,11 +1053,11 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);
     }
-    
+
     if (this.registryCleanupInterval) {
       clearInterval(this.registryCleanupInterval);
     }
-    
+
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
     }

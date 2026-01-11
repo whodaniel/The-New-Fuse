@@ -1,13 +1,12 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GPUManager = GPUManager;
 import react_1 from 'react';
 import card_1 from '@/components/ui/card';
 import button_1 from '@/components/ui/button';
 import table_1 from '@/components/ui/table';
 import websocket_1 from '../services/websocket';
-function GPUManager() {
+export function GPUManager() {
     const [gpus, setGPUs] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
         websocket_1.webSocketService.send('getAvailableGPUs', {});
@@ -49,4 +48,4 @@ function GPUManager() {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;

@@ -1,0 +1,39 @@
+FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+
+# Install Node.js 22
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g pnpm
+
+WORKDIR /app
+
+# Copy cloud-sandbox files (Repository Root Context)
+# Railway sets root directory to / so we need full paths
+COPY apps/cloud-sandbox/package.json ./
+COPY apps/cloud-sandbox/tsconfig.json ./
+COPY apps/cloud-sandbox/src ./src
+COPY apps/cloud-sandbox/public ./public
+
+# Install dependencies (using npm to avoid pnpm workspace complexity for this standalone app)
+RUN npm install
+
+# Build
+RUN npm run build
+
+# Verify LIVE VIEW code is present
+RUN grep "LIVE VIEW" dist/server.js || echo "Warning: LIVE VIEW not found in build"
+
+# Verify public folder is present
+RUN ls -la public/ || echo "Warning: public folder not found"
+
+# Create app-user
+RUN addgroup --system app-user && adduser --system --ingroup app-user app-user
+RUN mkdir -p /home/app-user/pw-browsers && chown -R app-user:app-user /home/app-user
+RUN mkdir -p /app/pw-browsers && chown -R app-user:app-user /app
+
+USER app-user
+ENV HOME=/home/app-user
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/app-user/pw-browsers
+
+CMD ["node", "dist/server.js"]

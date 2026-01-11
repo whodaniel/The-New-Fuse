@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FlowContainer = void 0;
+
 import react_1 from 'react';
 import react_router_dom_1 from 'react-router-dom';
 import lucide_react_1 from 'lucide-react';
@@ -10,7 +10,7 @@ import useFlowRouter_1 from '../../hooks/useFlowRouter';
 import useFlowMemory_1 from '../../hooks/useFlowMemory';
 import VectorMemoryContext_1 from '../../contexts/VectorMemoryContext';
 import core_1 from '@/components/core';
-const FlowContainer = ({ initialNodes = [], initialEdges = [], onSave, }) => {
+export const FlowContainer = ({ initialNodes = [], initialEdges = [], onSave, }) => {
     const [nodes, setNodes] = (0, react_1.useState)(initialNodes);
     const [edges, setEdges] = (0, react_1.useState)(initialEdges);
     const navigate = (0, react_router_dom_1.useNavigate)();
@@ -92,5 +92,4 @@ const FlowContainer = ({ initialNodes = [], initialEdges = [], onSave, }) => {
       </div>
     </div>);
 };
-exports.FlowContainer = FlowContainer;
-export {};
+;

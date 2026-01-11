@@ -1,28 +1,30 @@
-import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
-import { ScheduleModule } from '@nestjs/schedule';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { getBullConfig, QUEUE_SETTINGS } from './jobs.config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { QueueName } from './constants/queue-names';
+import { getBullConfig, QUEUE_SETTINGS } from './jobs.config';
 
 // Processors
-import { EmailProcessor } from './processors/email.processor';
 import { AgentExecutionProcessor } from './processors/agent-execution.processor';
-import { ReportGenerationProcessor } from './processors/report-generation.processor';
-import { DataSyncProcessor } from './processors/data-sync.processor';
 import { CleanupProcessor } from './processors/cleanup.processor';
+import { DataSyncProcessor } from './processors/data-sync.processor';
+import { EmailProcessor } from './processors/email.processor';
+import { ReportGenerationProcessor } from './processors/report-generation.processor';
 
 // Services
-import { JobMetricsService } from './services/job-metrics.service';
-import { JobSchedulerService } from './services/job-scheduler.service';
 import { GracefulShutdownService } from './services/graceful-shutdown.service';
+import { JobMetricsService } from './services/job-metrics.service';
 import { JobQueueService } from './services/job-queue.service';
+import { JobSchedulerService } from './services/job-scheduler.service';
 
 // Controller
 import { JobsMonitoringController } from './jobs-monitoring.controller';
 
 // Import email service
+import { SystemMetricsModule } from '../modules/system-metrics/system-metrics.module';
 import { EmailService } from '../services/email.service';
+import { CacheModule } from '../cache/cache.module';
 
 /**
  * Jobs module
@@ -32,6 +34,9 @@ import { EmailService } from '../services/email.service';
   imports: [
     // Import config module
     ConfigModule,
+
+    // Import system metrics module
+    SystemMetricsModule,
 
     // Import schedule module for cron jobs
     ScheduleModule.forRoot(),
@@ -60,8 +65,10 @@ import { EmailService } from '../services/email.service';
       {
         name: QueueName.CLEANUP,
         ...QUEUE_SETTINGS[QueueName.CLEANUP],
-      },
+      }
     ),
+    // Import CacheModule for DataSyncProcessor
+    CacheModule,
   ],
   controllers: [JobsMonitoringController],
   providers: [

@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface PortRegistration {
   id: string;
@@ -69,7 +69,7 @@ class PortManagementApi {
 
   async findAvailablePort(serviceName: string, environment: string): Promise<number> {
     const response = await axios.get(`${API_BASE_URL}/api/ports/find-available`, {
-      params: { serviceName, environment }
+      params: { serviceName, environment },
     });
     return response.data.port;
   }
@@ -86,7 +86,7 @@ class PortManagementApi {
 
     const wsUrl = `${API_BASE_URL.replace('http', 'ws')}/api/ports/ws`;
     this.wsConnection = new WebSocket(wsUrl);
-    
+
     return this.wsConnection;
   }
 

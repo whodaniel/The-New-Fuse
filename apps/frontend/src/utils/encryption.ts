@@ -1,10 +1,8 @@
-export {}
-exports.verifyMessageSignature = exports.createMessageSignature = exports.E2EEncryption = exports.MessageEncryption = void 0;
 // NOTE: This is a browser-only file. For all Node.js/server cryptography, use src/utils/cryptoUtils.ts exclusively.
 // If you need browser crypto, consider using the Web Crypto API or a browser polyfill, and document it here.
 import crypto_js_1 from 'crypto-js';
 // Deprecated: Use centralized cryptoUtils.ts for all Node/server cryptography.
-class MessageEncryption {
+export class MessageEncryption {
     constructor(encryptionKey) {
         this.key = encryptionKey;
     }
@@ -38,8 +36,7 @@ class MessageEncryption {
         return crypto_js_1.default.SHA256(baseString).toString();
     }
 }
-exports.MessageEncryption = MessageEncryption;
-class E2EEncryption {
+export class E2EEncryption {
     constructor() {
         this.keyPair = null;
     }
@@ -106,14 +103,11 @@ class E2EEncryption {
         }
     }
 }
-exports.E2EEncryption = E2EEncryption;
-const createMessageSignature = (message, userId): any => {
+export const createMessageSignature = (message, userId): any => {
     return crypto_js_1.default.HmacSHA256(message, userId).toString();
 };
-exports.createMessageSignature = createMessageSignature;
-const verifyMessageSignature = (message, signature, userId): any => {
+export const verifyMessageSignature = (message, signature, userId): any => {
     const computedSignature = (0, exports.createMessageSignature)(message, userId);
     return computedSignature === signature;
 };
-exports.verifyMessageSignature = verifyMessageSignature;
-export {};
+;

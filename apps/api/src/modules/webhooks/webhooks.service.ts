@@ -12,7 +12,7 @@ import {
   WebhookRegistrationResponse,
   WebhookStatusResponse,
 } from '@the-new-fuse/types';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { BusinessEventService } from './services/business-event.service';
 import { IntegrationService } from './services/integration.service';
 import { WebhookSecurityService } from './services/webhook-security.service';
@@ -31,7 +31,7 @@ export class WebhooksService {
   async registerWebhook(request: WebhookRegistrationRequest): Promise<WebhookRegistrationResponse> {
     try {
       // Generate webhook URL
-      const webhookId = uuidv4();
+      const webhookId = randomUUID();
       const webhookUrl = `${process.env.API_BASE_URL}/webhooks/incoming/${request.source}`;
 
       // Create webhook configuration
@@ -99,7 +99,10 @@ export class WebhooksService {
       );
 
       // Save business event
-      const savedEvent = await this.businessEventService.createEvent(businessEvent);
+      const savedEvent = await this.businessEventService.createEvent({
+        ...businessEvent,
+        organizationId: config.organizationId,
+      } as any);
 
       // Process event asynchronously
       setImmediate(() => {

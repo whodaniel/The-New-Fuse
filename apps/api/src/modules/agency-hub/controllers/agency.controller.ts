@@ -1,29 +1,35 @@
 /**
  * Agency Controller
- * 
+ *
  * REST API endpoints for agency (white-label instance) management.
  * Integrates with the local AgencyService.
  */
 
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
+  BadRequestException,
   Body,
-  Param,
-  Query,
-  UseGuards,
-  HttpStatus,
+  Controller,
+  Delete,
+  Get,
   HttpException,
+  HttpStatus,
   Logger,
   NotFoundException,
-  BadRequestException,
+  Param,
+  Post,
+  Put,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PrismaService } from '@the-new-fuse/database';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { DatabaseService } from '@the-new-fuse/database';
 
 // Local services
 import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service';
@@ -118,8 +124,8 @@ class AgencyServiceLocal {
   private readonly logger = new Logger(AgencyServiceLocal.name);
 
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly db: DatabaseService,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   async createAgency(dto: CreateAgencyDto): Promise<AgencyProfile> {
@@ -129,30 +135,26 @@ class AgencyServiceLocal {
       throw new BadRequestException('Slug must be lowercase alphanumeric with optional hyphens');
     }
 
-    const existingWorkspace = await this.prisma.workspace.findFirst({
-      where: { name: dto.slug },
-    });
+    const existingWorkspace = await this.db.workspaces.findByName(dto.slug);
 
     if (existingWorkspace) {
       throw new BadRequestException(`Agency slug "${dto.slug}" is already taken`);
     }
 
-    const workspace = await this.prisma.workspace.create({
-      data: {
-        name: dto.slug,
-        description: JSON.stringify({
-          displayName: dto.name,
-          description: dto.description,
-          type: 'AGENCY',
-          settings: { ...DEFAULT_SETTINGS, ...dto.settings },
-          licenseId: null,
-          licenseStatus: 'none',
-          revenueShare: { house: 60, investors: 30, affiliates: 10 },
-          agentLimit: 5,
-          userLimit: 10,
-        }),
-        ownerId: dto.ownerId,
-      },
+    const workspace = await this.db.workspaces.create({
+      name: dto.slug,
+      description: JSON.stringify({
+        displayName: dto.name,
+        description: dto.description,
+        type: 'AGENCY',
+        settings: { ...DEFAULT_SETTINGS, ...dto.settings },
+        licenseId: null,
+        licenseStatus: 'none',
+        revenueShare: { house: 60, investors: 30, affiliates: 10 },
+        agentLimit: 5,
+        userLimit: 10,
+      }),
+      ownerId: dto.ownerId,
     });
 
     this.eventEmitter.emit('agency.created', { agencyId: workspace.id, slug: dto.slug });
@@ -160,20 +162,14 @@ class AgencyServiceLocal {
   }
 
   async getAgency(agencyId: string): Promise<AgencyProfile> {
-    const workspace = await this.prisma.workspace.findUnique({
-      where: { id: agencyId },
-      include: { owner: { select: { email: true } } },
-    });
+    const workspace = await this.db.workspaces.findByIdWithOwner(agencyId);
 
     if (!workspace) throw new NotFoundException(`Agency not found: ${agencyId}`);
     return this.workspaceToAgencyProfile(workspace);
   }
 
   async getAgencyBySlug(slug: string): Promise<AgencyProfile> {
-    const workspace = await this.prisma.workspace.findFirst({
-      where: { name: slug },
-      include: { owner: { select: { email: true } } },
-    });
+    const workspace = await this.db.workspaces.findByNameWithOwner(slug);
 
     if (!workspace) throw new NotFoundException(`Agency not found: ${slug}`);
     return this.workspaceToAgencyProfile(workspace);
@@ -182,7 +178,7 @@ class AgencyServiceLocal {
   async updateAgency(agencyId: string, dto: UpdateAgencyDto): Promise<AgencyProfile> {
     const existing = await this.getAgency(agencyId);
     const parsedDesc = this.parseWorkspaceDescription(existing);
-    
+
     const updatedDescription = {
       ...parsedDesc,
       ...(dto.name && { displayName: dto.name }),
@@ -191,37 +187,41 @@ class AgencyServiceLocal {
       ...(dto.isActive !== undefined && { isActive: dto.isActive }),
     };
 
-    const workspace = await this.prisma.workspace.update({
-      where: { id: agencyId },
-      data: { description: JSON.stringify(updatedDescription) },
-      include: { owner: { select: { email: true } } },
+    const workspace = await this.db.workspaces.update(agencyId, {
+      description: JSON.stringify(updatedDescription),
     });
 
+    if (!workspace) throw new NotFoundException(`Agency not found: ${agencyId}`);
+
+    // Drizzle update returns the record, need to fetch owner info separately or mock it if we trust the update
+    // For consistency with getAgency, let's fetch it again properly
+    const fullWorkspace = await this.db.workspaces.findByIdWithOwner(agencyId);
+
+    if (!fullWorkspace) throw new NotFoundException(`Agency not found after update: ${agencyId}`);
+
     this.eventEmitter.emit('agency.updated', { agencyId, changes: dto });
-    return this.workspaceToAgencyProfile(workspace);
+    return this.workspaceToAgencyProfile(fullWorkspace);
   }
 
   async deleteAgency(agencyId: string): Promise<void> {
     const agency = await this.getAgency(agencyId);
-    await this.prisma.workspace.delete({ where: { id: agencyId } });
+    await this.db.workspaces.delete(agencyId);
     this.eventEmitter.emit('agency.deleted', { agencyId, slug: agency.slug });
   }
 
   async listAgenciesForOwner(ownerId: string): Promise<AgencyProfile[]> {
-    const workspaces = await this.prisma.workspace.findMany({
-      where: { ownerId },
-      include: { owner: { select: { email: true } } },
-      orderBy: { createdAt: 'desc' },
-    });
+    const workspaces = await this.db.workspaces.findByOwnerWithOwner(ownerId);
 
     return workspaces
-      .filter(w => {
+      .filter((w) => {
         try {
           const desc = JSON.parse(w.description || '{}');
           return desc.type === 'AGENCY';
-        } catch { return false; }
+        } catch {
+          return false;
+        }
       })
-      .map(w => this.workspaceToAgencyProfile(w));
+      .map((w) => this.workspaceToAgencyProfile(w));
   }
 
   async getAgencyStats(agencyId: string): Promise<AgencyProfile['stats']> {
@@ -234,12 +234,14 @@ class AgencyServiceLocal {
       if (typeof workspace === 'string') return JSON.parse(workspace);
       if (workspace.description) return JSON.parse(workspace.description);
       return {};
-    } catch { return {}; }
+    } catch {
+      return {};
+    }
   }
 
   private workspaceToAgencyProfile(workspace: any): AgencyProfile {
     const desc = this.parseWorkspaceDescription(workspace);
-    
+
     return {
       id: workspace.id,
       name: desc.displayName || workspace.name,
@@ -281,8 +283,12 @@ class UpdateAgencyApiDto {
   name?: string;
   description?: string;
   settings?: {
-    branding?: { primaryColor?: string; secondaryColor?: string; logoUrl?: string; };
-    features?: { enableAgentMarketplace?: boolean; enableWorkflowBuilder?: boolean; enableA2ACommunication?: boolean; };
+    branding?: { primaryColor?: string; secondaryColor?: string; logoUrl?: string };
+    features?: {
+      enableAgentMarketplace?: boolean;
+      enableWorkflowBuilder?: boolean;
+      enableA2ACommunication?: boolean;
+    };
   };
   isActive?: boolean;
 }
@@ -314,11 +320,11 @@ export class AgencyController {
   private readonly agencyService: AgencyServiceLocal;
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly db: DatabaseService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly swarmService: AgentSwarmOrchestrationService,
+    private readonly swarmService: AgentSwarmOrchestrationService
   ) {
-    this.agencyService = new AgencyServiceLocal(prisma, eventEmitter);
+    this.agencyService = new AgencyServiceLocal(db, eventEmitter);
   }
 
   @Post()
@@ -327,7 +333,7 @@ export class AgencyController {
   @ApiResponse({ status: 400, description: 'Invalid input or slug already taken' })
   async createAgency(
     @Body() dto: CreateAgencyApiDto,
-    @Query('ownerId') ownerId: string,
+    @Query('ownerId') ownerId: string
   ): Promise<AgencyProfile> {
     try {
       if (!ownerId) {
@@ -385,10 +391,7 @@ export class AgencyController {
         return await this.agencyService.getAgencyBySlug(agencyId);
       }
     } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Agency not found',
-        HttpStatus.NOT_FOUND
-      );
+      throw new HttpException((error as Error).message || 'Agency not found', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -451,14 +454,14 @@ export class AgencyController {
     try {
       // Verify agency exists
       await this.agencyService.getAgency(agencyId);
-      
+
       // Initialize swarm for this agency
       await this.swarmService.initializeAgencySwarm(agencyId);
       const result = await this.swarmService.initializeSwarm();
       const status = await this.swarmService.getSwarmStatus(agencyId);
-      
+
       this.logger.log(`Swarm initialized for agency ${agencyId}`);
-      
+
       return {
         success: true,
         agencyId,
@@ -484,9 +487,9 @@ export class AgencyController {
     try {
       // Verify agency exists
       await this.agencyService.getAgency(agencyId);
-      
+
       const status = await this.swarmService.getSwarmStatus(agencyId);
-      
+
       return {
         agencyId,
         swarmEnabled: status.isSwarmEnabled,
@@ -518,15 +521,15 @@ export class AgencyController {
     try {
       // Verify agency exists
       await this.agencyService.getAgency(agencyId);
-      
+
       // In production, would persist these providers
       const registered = dto.providers.map((p, idx) => ({
         id: `${agencyId}_provider_${Date.now()}_${idx}`,
         ...p,
       }));
-      
+
       this.logger.log(`Registered ${registered.length} providers for agency ${agencyId}`);
-      
+
       return {
         success: true,
         registered: registered.length,
@@ -554,7 +557,7 @@ export class AgencyController {
     try {
       // Verify agency exists
       await this.agencyService.getAgency(agencyId);
-      
+
       // In production, would fetch from database
       // For now, return empty array - providers are ephemeral
       return {
@@ -590,45 +593,40 @@ export class AgencyController {
     try {
       const agency = await this.agencyService.getAgency(agencyId);
       const swarmStatus = await this.swarmService.getSwarmStatus(agencyId);
-      
+
       // Get date range
       const now = new Date();
       const startDate = this.getDateFromTimeframe(timeframe, now);
-      
-      // Fetch analytics data
-      const agents = await this.prisma.agent.findMany({
-        take: 100,
-      });
-      
-      const tasks = await this.prisma.task.findMany({
-        where: {
-          createdAt: { gte: startDate },
-        },
-      });
-      
-      const completedTasks = tasks.filter(t => t.status === 'COMPLETED');
-      const failedTasks = tasks.filter(t => t.status === 'FAILED');
-      
+
+      // Fetch analytics data using Drizzle
+      const agents = await this.db.agents.findAll(100);
+
+      // Tasks filtering
+      const tasks = await this.db.tasks.findTasksCreatedAfter(startDate);
+
+      const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED');
+      const failedTasks = tasks.filter((t: any) => t.status === 'FAILED');
+
       const byType: Record<string, number> = {};
-      agents.forEach(a => {
-        byType[a.type] = (byType[a.type] || 0) + 1;
+      agents.forEach((a: any) => {
+        const type = a.type || 'unknown';
+        byType[type] = (byType[type] || 0) + 1;
       });
-      
+
       return {
         agencyId,
         period: timeframe,
         agents: {
           total: agents.length,
-          active: agents.filter(a => a.status === 'ACTIVE').length,
+          active: agents.filter((a: any) => a.status === 'ACTIVE').length,
           byType,
         },
         tasks: {
           total: tasks.length,
           completed: completedTasks.length,
           failed: failedTasks.length,
-          successRate: tasks.length > 0 
-            ? Math.round((completedTasks.length / tasks.length) * 100) 
-            : 0,
+          successRate:
+            tasks.length > 0 ? Math.round((completedTasks.length / tasks.length) * 100) : 0,
         },
         swarm: {
           enabled: swarmStatus.isSwarmEnabled,
@@ -669,14 +667,14 @@ export class AgencyController {
 
   private getDateFromTimeframe(timeframe: string, now: Date): Date {
     const match = timeframe.match(/^(\d+)([dhwmy])$/);
-    
+
     if (!match) {
       return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
-    
+
     const amount = parseInt(match[1], 10);
     const unit = match[2];
-    
+
     switch (unit) {
       case 'd':
         return new Date(now.getTime() - amount * 24 * 60 * 60 * 1000);

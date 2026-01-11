@@ -1,34 +1,34 @@
 import {
-  Controller,
-  Post,
-  Get,
   Body,
-  Param,
-  Query,
+  Controller,
+  Get,
   Headers,
-  UseGuards,
-  Res,
-  Req,
-  Logger,
   HttpException,
   HttpStatus,
+  Logger,
+  Param,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { WebhooksService } from './webhooks.service';
-import { BusinessEventService } from './services/business-event.service';
-import { SSEService } from './services/sse.service';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
-  WebhookRegistrationRequest,
-  WebhookRegistrationResponse,
-  WebhookEventResponse,
-  WebhookStatusResponse,
+  BusinessEventType,
   EventHistoryRequest,
   EventHistoryResponse,
   IntegrationSource,
-  BusinessEventType, // Add BusinessEventType import
+  WebhookEventResponse,
+  WebhookRegistrationRequest,
+  WebhookRegistrationResponse,
+  WebhookStatusResponse,
 } from '@the-new-fuse/types';
+import { Response } from 'express';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { BusinessEventService } from './services/business-event.service';
+import { SSEService } from './services/sse.service';
+import { WebhooksService } from './webhooks.service';
 
 @ApiTags('webhooks')
 @Controller('webhooks')
@@ -38,7 +38,7 @@ export class WebhooksController {
   constructor(
     private readonly webhooksService: WebhooksService,
     private readonly businessEventService: BusinessEventService,
-    private readonly sseService: SSEService,
+    private readonly sseService: SSEService
   ) {}
 
   @Post('register')
@@ -47,16 +47,13 @@ export class WebhooksController {
   @ApiOperation({ summary: 'Register a new webhook configuration' })
   @ApiResponse({ status: 201, description: 'Webhook registered successfully' })
   async registerWebhook(
-    @Body() request: WebhookRegistrationRequest,
+    @Body() request: WebhookRegistrationRequest
   ): Promise<WebhookRegistrationResponse> {
     try {
       return await this.webhooksService.registerWebhook(request);
     } catch (error) {
       this.logger.error('Failed to register webhook', error);
-      throw new HttpException(
-        'Failed to register webhook',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Failed to register webhook', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -66,17 +63,14 @@ export class WebhooksController {
   async handleWebhook(
     @Param('source') source: IntegrationSource,
     @Body() payload: any,
-    @Headers() headers: Record<string, string>,
+    @Headers() headers: Record<string, string>
   ): Promise<WebhookEventResponse> {
     try {
       const signature = this.extractSignature(headers, source);
       return await this.webhooksService.handleWebhook(source, payload, signature);
     } catch (error) {
       this.logger.error(`Failed to handle webhook from ${source}`, error);
-      throw new HttpException(
-        'Failed to process webhook',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Failed to process webhook', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -85,17 +79,12 @@ export class WebhooksController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get webhook configuration status' })
   @ApiResponse({ status: 200, description: 'Webhook status retrieved' })
-  async getWebhookStatus(
-    @Param('id') id: string,
-  ): Promise<WebhookStatusResponse> {
+  async getWebhookStatus(@Param('id') id: string): Promise<WebhookStatusResponse> {
     try {
       return await this.webhooksService.getWebhookStatus(id);
     } catch (error) {
       this.logger.error(`Failed to get webhook status for ${id}`, error);
-      throw new HttpException(
-        'Failed to retrieve webhook status',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('Failed to retrieve webhook status', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -106,17 +95,17 @@ export class WebhooksController {
   @ApiResponse({ status: 200, description: 'Event history retrieved' })
   async getEventHistory(
     @Query() request: EventHistoryRequest,
-    @Req() req: any,
+    @Req() req: any
   ): Promise<EventHistoryResponse> {
     try {
       const organizationId = req.user.organizationId;
-      return await this.businessEventService.getEventHistory(organizationId, request);
+      return (await this.businessEventService.getEventHistory(
+        organizationId,
+        request
+      )) as unknown as EventHistoryResponse;
     } catch (error) {
       this.logger.error('Failed to get event history', error);
-      throw new HttpException(
-        'Failed to retrieve event history',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Failed to retrieve event history', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -129,7 +118,7 @@ export class WebhooksController {
     @Req() req: any,
     @Res() res: Response,
     @Query('event_types') eventTypes?: string,
-    @Query('filters') filters?: string,
+    @Query('filters') filters?: string
   ): Promise<void> {
     try {
       const userId = req.user.id;
@@ -144,7 +133,7 @@ export class WebhooksController {
       res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        Connection: 'keep-alive',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Cache-Control',
       });
@@ -154,13 +143,10 @@ export class WebhooksController {
         id: clientId,
         userId,
         organizationId,
-        subscriptions: [{
-          eventTypes: parsedEventTypes.map(type => type as BusinessEventType),
-          filters: parsedFilters,
-          priority: 'medium' as any,
-        }],
+        eventTypes: parsedEventTypes.map((type) => type as BusinessEventType),
+        filters: parsedFilters,
+        connectedAt: new Date(),
         response: res as any,
-        lastHeartbeat: new Date(),
       });
 
       // Handle client disconnect
@@ -179,7 +165,6 @@ export class WebhooksController {
       req.on('close', () => {
         clearInterval(heartbeatInterval);
       });
-
     } catch (error) {
       this.logger.error('Failed to establish SSE connection', error);
       res.status(500).json({ error: 'Failed to establish SSE connection' });
@@ -197,10 +182,7 @@ export class WebhooksController {
       return { success: true };
     } catch (error) {
       this.logger.error(`Failed to retry event ${eventId}`, error);
-      throw new HttpException(
-        'Failed to retry event',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Failed to retry event', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

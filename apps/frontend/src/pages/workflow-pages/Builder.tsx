@@ -101,7 +101,7 @@ const WorkflowBuilder: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/workflows')}
-                className="flex-shrink-0"
+                className="shrink-0"
               >
                 <ChevronLeft className="h-4 w-4 md:mr-1" />
                 <span className="hidden md:inline">Back</span>
@@ -110,7 +110,7 @@ const WorkflowBuilder: React.FC = () => {
                 <Input
                   value={workflowName}
                   onChange={(e) => setWorkflowName(e.target.value)}
-                  className="text-lg md:text-xl font-bold border-none h-auto p-0 focus-visible:ring-0 w-full"
+                  className="text-lg md:text-xl font-bold border-none! h-auto p-0 focus-visible:ring-0 w-full bg-transparent! text-white! placeholder:text-gray-400"
                   placeholder="Untitled Workflow"
                 />
                 <p className="text-muted-foreground text-xs md:text-sm truncate">
@@ -118,7 +118,7 @@ const WorkflowBuilder: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 md:gap-2 shrink-0">
               {/* Panel toggle buttons */}
               <Button
                 variant="ghost"

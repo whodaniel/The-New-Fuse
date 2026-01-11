@@ -1,8 +1,6 @@
-export {}
-exports.useGraphAnalysis = useGraphAnalysis;
 import react_1 from 'react';
 import useSocket_1 from './useSocket';
-function useGraphAnalysis(initialNodes = [], initialEdges = [], options = {}): any {
+export function useGraphAnalysis(initialNodes = [], initialEdges = [], options = {}): any {
     const { autoAnalyze = false, analysisInterval = 5000, algorithms = ['all'] } = options;
     const socket = (0, useSocket_1.useSocket)();
     const [state, setState] = (0, react_1.useState)({
@@ -79,4 +77,4 @@ function useGraphAnalysis(initialNodes = [], initialEdges = [], options = {}): a
         getCommunityNodes,
         getMetricsSummary });
 }
-export {};
+;

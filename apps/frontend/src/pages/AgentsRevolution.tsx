@@ -68,7 +68,9 @@ const transformAgent = (agent: Agent): UIAgent => {
   return {
     id: agent.id,
     name: agent.name,
-    tagline: agent.description?.split('.')[0] || 'AI-powered agent',
+    tagline: agent.model
+      ? `Powered by ${agent.model}`
+      : agent.description?.split('.')[0] || 'AI-powered agent',
     description: agent.description || 'No description available',
     category: agent.type || 'General',
     status: agent.status === 'active' ? 'Active' : agent.status === 'error' ? 'Error' : 'Paused',
@@ -176,7 +178,7 @@ export const AgentsRevolution = () => {
             <h1 className="text-7xl lg:text-8xl font-black mb-6 leading-none">
               <span className="text-white">AI Agents</span>
               <br />
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 That Actually Work
               </span>
             </h1>
@@ -244,14 +246,14 @@ export const AgentsRevolution = () => {
             >
               {/* Gradient Overlay on Hover */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${agent.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+                className={`absolute inset-0 bg-linear-to-br ${agent.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
               />
 
               <div className="relative z-10 space-y-6">
                 {/* Header */}
                 <div className="flex justify-between items-start">
                   <div
-                    className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${agent.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transform transition-transform`}
+                    className={`w-20 h-20 rounded-2xl bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-2xl group-hover:scale-110 transform transition-transform`}
                   >
                     <agent.icon className="w-10 h-10 text-white" />
                   </div>
@@ -272,7 +274,7 @@ export const AgentsRevolution = () => {
 
                 {/* Content */}
                 <div>
-                  <h3 className="text-4xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all">
+                  <h3 className="text-4xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all">
                     {agent.name}
                   </h3>
                   <p className="text-xl font-semibold text-blue-400 mb-4">{agent.tagline}</p>

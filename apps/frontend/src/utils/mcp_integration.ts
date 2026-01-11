@@ -1,12 +1,10 @@
-export {}
-exports.MCPWorkflowAdapter = void 0;
 import logger_1 from './logger';
 import messages_1 from './messages';
 import output_formatter_1 from './output_formatter';
 import workflow_manager_1 from './workflow_manager';
 import enhanced_communication_1 from './enhanced_communication';
 const logger = new logger_1.Logger('MCPWorkflowAdapter');
-class MCPWorkflowAdapter {
+export class MCPWorkflowAdapter {
     constructor() {
         this.commBus = new enhanced_communication_1.EnhancedCommunicationBus();
         this.workflowManager = new workflow_manager_1.WorkflowManager(this.commBus);
@@ -153,5 +151,4 @@ class MCPWorkflowAdapter {
             .map(agent => agent.stop()));
     }
 }
-exports.MCPWorkflowAdapter = MCPWorkflowAdapter;
-export {};
+;

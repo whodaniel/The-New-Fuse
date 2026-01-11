@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import { UnifiedMonitoringService } from '../types/core';
 import { AgentFactory } from './agent.factory';
 import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
@@ -8,7 +8,7 @@ import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
 @Injectable()
 export class AgentsService {
   constructor(
-    private prisma: PrismaService,
+    private db: DatabaseService,
     private config: ConfigService,
     private agentFactory: AgentFactory,
     @Optional()
@@ -18,12 +18,10 @@ export class AgentsService {
 
   async create(userId: string, dto: CreateAgentDto) {
     try {
-      const agent = await this.prisma.agent.create({
-        data: {
-          ...(dto as any),
-          userId,
-          config: this.agentFactory.getDefaultConfig(dto.type) as any,
-        },
+      const agent = await this.db.agents.create({
+        ...(dto as any),
+        userId,
+        config: this.agentFactory.getDefaultConfig(dto.type) as any,
       });
 
       this.monitoring?.recordMetric('agent.created', 1, {
@@ -39,34 +37,43 @@ export class AgentsService {
   }
 
   async findAll(userId: string) {
-    return this.prisma.agent.findMany({
-      where: { userId },
-      include: {
-        chats: {
-          take: 1,
-          orderBy: { updatedAt: 'desc' },
-        },
-      },
-    });
+    const agents = await this.db.agents.findByUserId(userId);
+
+    // Enrich with latest chat for compatibility
+    const enrichedAgents = await Promise.all(
+      agents.map(async (agent: any) => {
+        // Assuming findChatsByAgentId exists and returns chats sorted by date or we sort here
+        // The repository method findChatsByAgentId sorts by createdAt desc usually?
+        // Let's rely on finding standard chats
+        let chats: any[] = [];
+        try {
+          chats = await this.db.chats.findChatsByAgentId(agent.id);
+        } catch (e) {
+          // ignore if fails
+        }
+
+        return {
+          ...agent,
+          chats: chats.slice(0, 1),
+        };
+      })
+    );
+
+    return enrichedAgents;
   }
 
   async update(id: string, userId: string, dto: UpdateAgentDto) {
-    const agent = await this.prisma.agent.findFirst({
-      where: { id, userId },
-    });
-
-    if (!agent) {
+    // Verify ownership
+    const agent = await this.db.agents.findById(id);
+    if (!agent || agent.userId !== userId) {
       throw new NotFoundException('Agent not found');
     }
 
-    return this.prisma.agent.update({
-      where: { id },
-      data: {
-        name: dto.name,
-        description: dto.description,
-        capabilities: dto.capabilities as any,
-        config: dto.config,
-      },
+    return this.db.agents.update(id, {
+      name: dto.name,
+      description: dto.description,
+      capabilities: dto.capabilities as any,
+      config: dto.config,
     });
   }
 }

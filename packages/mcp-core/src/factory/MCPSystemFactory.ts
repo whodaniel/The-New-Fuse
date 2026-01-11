@@ -474,13 +474,265 @@ class MCPSystemImpl implements MCPSystem {
   }
 
   /**
+   * Register relay-specific resources
+   */
+  private async registerRelayResources(): Promise<void> {
+    // Check if already registered to avoid duplicates (e.g. if using RelayBridge)
+    const registeredResources = this.server.getRegisteredResources();
+    if (registeredResources.some(r => r.uri === 'relay://agents')) {
+      this.log('debug', 'Relay resources already registered, skipping');
+      return;
+    }
+
+    const registry = this.components.relay?.agentRegistry;
+    const heartbeatService = this.components.relay?.heartbeatService;
+
+    // Register agent registry resource
+    if (registry) {
+      this.server.registerResource({
+        uri: 'relay://agents',
+        name: 'Agent Registry',
+        description: 'Access to the Master Agent Registry',
+        handler: {
+          read: async () => {
+            const agents = registry.getAllAgents?.() || [];
+            return {
+              uri: 'relay://agents',
+              mimeType: 'application/json',
+              content: JSON.stringify(agents, null, 2),
+              metadata: {
+                count: agents.length,
+                generated: new Date().toISOString()
+              }
+            };
+          }
+        }
+      });
+    }
+
+    // Register heartbeat status resource
+    if (heartbeatService) {
+      this.server.registerResource({
+        uri: 'relay://heartbeat',
+        name: 'Heartbeat Status',
+        description: 'Current heartbeat monitoring status',
+        handler: {
+          read: async () => {
+             let status;
+             if (heartbeatService.getStagnationStatus) {
+               status = await heartbeatService.getStagnationStatus();
+             } else {
+               status = {
+                active: true,
+                lastCheck: new Date().toISOString(),
+                monitoredAgents: 0
+               };
+             }
+
+            return {
+              uri: 'relay://heartbeat',
+              mimeType: 'application/json',
+              content: JSON.stringify(status, null, 2),
+              metadata: {
+                generated: new Date().toISOString()
+              }
+            };
+          }
+        }
+      });
+    }
+
+    // Register relay configuration resource
+    this.server.registerResource({
+      uri: 'relay://config',
+      name: 'Relay Configuration',
+      description: 'Current relay configuration',
+      handler: {
+        read: () => Promise.resolve({
+          uri: 'relay://config',
+          mimeType: 'application/json',
+          content: JSON.stringify({
+            relay: this.config.relay
+          }, null, 2),
+          metadata: {
+            generated: new Date().toISOString()
+          }
+        })
+      }
+    });
+
+    this.log('debug', 'Registered relay-specific resources');
+  }
+
+  /**
+   * Register relay-specific tools
+   */
+  private async registerRelayTools(): Promise<void> {
+    // Check if already registered
+    const registeredTools = this.server.getRegisteredTools();
+    if (registeredTools.some(t => t.name === 'relay-agent-lookup')) {
+      this.log('debug', 'Relay tools already registered, skipping');
+      return;
+    }
+
+    const registry = this.components.relay?.agentRegistry;
+    const heartbeatService = this.components.relay?.heartbeatService;
+
+    // Register agent lookup tool
+    if (registry) {
+      this.server.registerTool({
+        name: 'relay-agent-lookup',
+        description: 'Look up agent information from the registry',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            agentId: { type: 'string' },
+            includeMetadata: { type: 'boolean', default: false }
+          },
+          required: ['agentId']
+        },
+        handler: {
+          execute: async (params: { agentId: string; includeMetadata?: boolean }) => {
+            try {
+              // Try getAgentProfile first (MasterAgentRegistry), fallback to getAgent (Legacy)
+              const agentProfile = registry.getAgentProfile?.(params.agentId);
+              const legacyAgent = registry.getAgent?.(params.agentId);
+              const resultAgent = agentProfile || legacyAgent;
+
+              if (!resultAgent) {
+                return {
+                  success: false,
+                  error: `Agent not found: ${params.agentId}`
+                };
+              }
+
+              const result = params.includeMetadata ? resultAgent : {
+                id: resultAgent.id,
+                name: resultAgent.name,
+                type: resultAgent.type,
+                status: resultAgent.status,
+                lastSeen: resultAgent.lastSeen
+              };
+
+              return {
+                success: true,
+                result
+              };
+            } catch (error) {
+              return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Agent lookup failed'
+              };
+            }
+          }
+        }
+      });
+
+      // Register agent registration tool
+      this.server.registerTool({
+        name: 'relay-agent-register',
+        description: 'Register a new agent with the relay system',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            agentData: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                type: { type: 'string' },
+                capabilities: { type: 'object' } // Accept object for capabilities
+              },
+              required: ['name', 'type']
+            }
+          },
+          required: ['agentData']
+        },
+        handler: {
+          execute: async (params: { agentData: any }) => {
+            try {
+              const registrationResult = await registry.registerAgent?.(params.agentData);
+
+              return {
+                success: true,
+                result: registrationResult || {
+                  registered: true,
+                  timestamp: new Date().toISOString()
+                }
+              };
+            } catch (error) {
+              return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Agent registration failed'
+              };
+            }
+          }
+        }
+      });
+    }
+
+    // Register heartbeat trigger tool
+    if (heartbeatService) {
+      this.server.registerTool({
+        name: 'relay-heartbeat-trigger',
+        description: 'Trigger a heartbeat check for an agent',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            agentId: { type: 'string' },
+            force: { type: 'boolean', default: false }
+          },
+          required: ['agentId']
+        },
+        handler: {
+          execute: async (params: { agentId: string; force?: boolean }) => {
+            try {
+              if (heartbeatService.recordHeartbeat) {
+                  // recordHeartbeat might be sync or async
+                  await Promise.resolve(heartbeatService.recordHeartbeat(params.agentId));
+              }
+
+              const result = {
+                agentId: params.agentId,
+                heartbeatSent: true,
+                timestamp: new Date().toISOString(),
+                forced: params.force || false
+              };
+
+              return {
+                success: true,
+                result
+              };
+            } catch (error) {
+              return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Heartbeat trigger failed'
+              };
+            }
+          }
+        }
+      });
+    }
+
+    this.log('debug', 'Registered relay-specific tools');
+  }
+
+  /**
    * Start additional components
    */
   private async startAdditionalComponents(): Promise<void> {
     // Start relay integration if enabled
     if (this.config.relay?.enabled && this.components.relay?.agentRegistry) {
       this.log('info', 'Starting relay integration...');
-      // TODO: Initialize relay integration
+
+      try {
+        await this.registerRelayResources();
+        await this.registerRelayTools();
+
+        this.log('info', 'Relay integration started successfully');
+      } catch (error) {
+        this.log('error', 'Failed to start relay integration', error);
+      }
     }
     
     // Start workflow integration if enabled
@@ -513,7 +765,7 @@ class MCPSystemImpl implements MCPSystem {
     
     if (this.config.relay?.enabled) {
       this.log('info', 'Stopping relay integration...');
-      // TODO: Stop relay integration
+      // Relay integration resources are cleaned up when server stops
     }
   }
 

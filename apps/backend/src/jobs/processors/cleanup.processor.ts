@@ -3,6 +3,9 @@ import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { QueueName } from '../constants/queue-names';
 import { CleanupJobData } from '../interfaces/job-data.interface';
+import { DatabaseService } from '@the-new-fuse/database';
+import { authSessions } from '@the-new-fuse/database';
+import { lt } from 'drizzle-orm';
 
 /**
  * Cleanup job processor
@@ -11,6 +14,8 @@ import { CleanupJobData } from '../interfaces/job-data.interface';
 @Processor(QueueName.CLEANUP)
 export class CleanupProcessor {
   private readonly logger = new Logger(CleanupProcessor.name);
+
+  constructor(private readonly db: DatabaseService) {}
 
   /**
    * Process cleanup job
@@ -57,7 +62,7 @@ export class CleanupProcessor {
         processedCount: result.processedCount,
         cleanedAt: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Cleanup failed: ${error.message}`, error.stack);
       throw error;
     }
@@ -113,16 +118,13 @@ export class CleanupProcessor {
 
     const now = new Date();
 
-    // TODO: Implement actual token cleanup
-    // Example: await this.prisma.token.deleteMany({
-    //   where: { expiresAt: { lt: now } }
-    // });
-
-    await this.sleep(800);
+    const result = await this.db.client
+      .delete(authSessions)
+      .where(lt(authSessions.expiresAt, now));
 
     return {
-      processedCount: 200,
-      removedCount: 180,
+      processedCount: (result as any).rowCount,
+      removedCount: (result as any).rowCount,
     };
   }
 

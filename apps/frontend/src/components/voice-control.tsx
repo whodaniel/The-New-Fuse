@@ -1,13 +1,12 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VoiceControl = VoiceControl;
 import react_1 from 'react';
 import button_1 from '@/components/ui/button';
 import card_1 from '@/components/ui/card';
 import lucide_react_1 from 'lucide-react';
 import websocket_1 from '../services/websocket';
-function VoiceControl() {
+export function VoiceControl() {
     const [isListening, setIsListening] = (0, react_1.useState)(false);
     const [transcript, setTranscript] = (0, react_1.useState)('');
     (0, react_1.useEffect)(() => {
@@ -69,4 +68,4 @@ function VoiceControl() {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;

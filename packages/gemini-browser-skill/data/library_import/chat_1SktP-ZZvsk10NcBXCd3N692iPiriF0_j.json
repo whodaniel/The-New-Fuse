@@ -1,0 +1,19 @@
+{
+  "id": "1SktP-ZZvsk10NcBXCd3N692iPiriF0_j",
+  "url": "https://aistudio.google.com/app/prompts/1SktP-ZZvsk10NcBXCd3N692iPiriF0_j",
+  "importedAt": "2026-01-07T20:47:35.314Z",
+  "turns": [
+    {
+      "role": "model",
+      "text": "editmore_vertUser\"What'sOpen?\": A hyper-simple app. It just shows you a list of nearby coffee shops, bars, and restaurants that are open right now, sorted by closing time."
+    },
+    {
+      "role": "model",
+      "text": "editmore_vertModelThat's a fantastic idea for an app! It addresses a real need for quick, relevant information. I can even envision a minimalist icon for it: "
+    },
+    {
+      "role": "model",
+      "text": "more_vertdownloadfullscreenthumb_upthumb_down"
+    }
+  ]
+}

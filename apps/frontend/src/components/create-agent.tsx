@@ -1,14 +1,13 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateAgent = CreateAgent;
 import react_1 from 'react';
 import button_1 from '@/components/ui/button';
 import input_1 from '@/components/ui/input';
 import label_1 from '@/components/ui/label';
 import select_1 from '@/components/ui/select';
 import card_1 from '@/components/ui/card';
-function CreateAgent() {
+export function CreateAgent() {
     const [name, setName] = (0, react_1.useState)('');
     const [type, setType] = (0, react_1.useState)('');
     const handleSubmit = (e) => {
@@ -47,4 +46,4 @@ function CreateAgent() {
       </form>
     </card_1.Card>);
 }
-export {};
+;

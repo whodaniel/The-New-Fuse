@@ -42,7 +42,7 @@ export class ResponseSanitizationService {
       maskChar: '*',
       maxDepth: 10,
       sensitiveDataPatterns: this.defaultSensitivePatterns,
-      ...options
+      ...options,
     };
 
     return this.sanitizeObject(data, sanitizedOptions, 0) as T;
@@ -56,7 +56,7 @@ export class ResponseSanitizationService {
       excludeFields: ['password_hash', 'salt', 'created_at', 'updated_at'],
       maskFields: ['email', 'phone', 'address'],
       maxDepth: 5,
-      ...options
+      ...options,
     };
 
     return this.sanitizeResponse(data, dbOptions);
@@ -70,7 +70,7 @@ export class ResponseSanitizationService {
       excludeFields: isOwner ? [] : ['phone', 'address', 'date_of_birth', 'ssn'],
       maskFields: isOwner ? ['email'] : ['email', 'first_name', 'last_name'],
       maskChar: '*',
-      maxDepth: 3
+      maxDepth: 3,
     };
 
     return this.sanitizeResponse(data, userOptions);
@@ -80,7 +80,7 @@ export class ResponseSanitizationService {
    * Sanitize API error responses
    */
   sanitizeError(error: any): any {
-    const sanitized = {
+    const sanitized: any = {
       message: this.sanitizeErrorMessage(error.message),
       statusCode: error.statusCode || 500,
       timestamp: new Date().toISOString(),
@@ -102,7 +102,7 @@ export class ResponseSanitizationService {
     const logOptions: ResponseSanitizationOptions = {
       excludeFields: ['password', 'token', 'secret', 'key'],
       maskFields: ['email', 'user_id', 'session_id', 'ip_address'],
-      maxDepth: 5
+      maxDepth: 5,
     };
 
     return this.sanitizeResponse(data, logOptions);
@@ -126,26 +126,26 @@ export class ResponseSanitizationService {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => this.sanitizeObject(item, options, depth + 1));
+      return obj.map((item) => this.sanitizeObject(item, options, depth + 1));
     }
 
     if (typeof obj === 'object') {
       const sanitized: any = {};
-      
+
       for (const [key, value] of Object.entries(obj)) {
         const sanitizedKey = this.sanitizeString(key, options);
-        
+
         if (!sanitizedKey) {
           continue; // Skip invalid keys
         }
 
         // Check if field should be excluded
-        if (options.excludeFields?.some(field => this.matchesPattern(field, sanitizedKey))) {
+        if (options.excludeFields?.some((field) => this.matchesPattern(field, sanitizedKey))) {
           continue;
         }
 
         // Check if field should be masked
-        if (options.maskFields?.some(field => this.matchesPattern(field, sanitizedKey))) {
+        if (options.maskFields?.some((field) => this.matchesPattern(field, sanitizedKey))) {
           sanitized[sanitizedKey] = this.maskValue(value, options.maskChar || '*');
           continue;
         }
@@ -159,7 +159,7 @@ export class ResponseSanitizationService {
         // Recursively sanitize the value
         sanitized[sanitizedKey] = this.sanitizeObject(value, options, depth + 1);
       }
-      
+
       return sanitized;
     }
 
@@ -172,9 +172,7 @@ export class ResponseSanitizationService {
     }
 
     // Remove control characters and limit length
-    return str
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-      .substring(0, 10000);
+    return str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').substring(0, 10000);
   }
 
   private maskValue(value: any, maskChar: string): string {
@@ -207,7 +205,7 @@ export class ResponseSanitizationService {
   }
 
   private isSensitiveField(fieldName: string, patterns: RegExp[]): boolean {
-    return patterns.some(pattern => pattern.test(fieldName));
+    return patterns.some((pattern) => pattern.test(fieldName));
   }
 
   private sanitizeErrorMessage(message: string): string {
@@ -230,8 +228,8 @@ export class ResponseSanitizationService {
 
     return stackTrace
       .split('\n')
-      .filter(line => !line.includes('node_modules')) // Remove external stack traces
-      .map(line => {
+      .filter((line) => !line.includes('node_modules')) // Remove external stack traces
+      .map((line) => {
         // Mask file paths
         return line.replace(/File\s+"([^"]+)"/g, 'File "[masked]"');
       })
@@ -251,16 +249,28 @@ export class ResponseSanitizationService {
    */
   removePII(data: any): any {
     const piiFields = [
-      'ssn', 'social_security_number', 'socialSecurityNumber',
-      'credit_card', 'creditCard', 'cvv', 'pin',
-      'date_of_birth', 'dateOfBirth', 'dob',
-      'passport', 'driver_license', 'driverLicense',
-      'bank_account', 'bankAccount', 'routing_number', 'routingNumber'
+      'ssn',
+      'social_security_number',
+      'socialSecurityNumber',
+      'credit_card',
+      'creditCard',
+      'cvv',
+      'pin',
+      'date_of_birth',
+      'dateOfBirth',
+      'dob',
+      'passport',
+      'driver_license',
+      'driverLicense',
+      'bank_account',
+      'bankAccount',
+      'routing_number',
+      'routingNumber',
     ];
 
     const options: ResponseSanitizationOptions = {
       excludeFields: piiFields,
-      maxDepth: 5
+      maxDepth: 5,
     };
 
     return this.sanitizeResponse(data, options);

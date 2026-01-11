@@ -1,27 +1,27 @@
 /**
  * WebSocket Service Module
- * 
+ *
  * @description
  * Provides a comprehensive WebSocket service for real-time communication
  * between the frontend and backend services. Manages connection lifecycle,
  * event handling, reconnection logic, and agent-to-agent messaging.
- * 
+ *
  * This service implements the singleton pattern to ensure consistent
  * WebSocket connections across the application and provides methods
  * for sending messages, handling events, and managing connection state.
- * 
+ *
  * @since 1.0.0
  * @author Frontend Team
  * @example
  * ```typescript
  * const wsService = WebSocketService.getInstance();
- * 
+ *
  * // Connect to WebSocket
  * await wsService.connect();
- * 
+ *
  * // Send a message
  * await wsService.send('agent:chat', { message: 'Hello agent!' });
- * 
+ *
  * // Listen for responses
  * wsService.on('agent:response', (data) => {
  *   console.log('Received response:', data);
@@ -29,9 +29,9 @@
  * ```
  */
 
+import { EventEmitter } from 'events';
 import { io, Socket } from 'socket.io-client';
 import { logger } from '../utils/logger';
-import { EventEmitter } from 'events';
 
 // ============================================================================
 // Types and Interfaces
@@ -115,12 +115,12 @@ export interface WebSocketServiceEvents {
 
 /**
  * Comprehensive WebSocket service for real-time communication
- * 
+ *
  * @description
  * Manages WebSocket connections, event handling, message sending,
  * and reconnection logic. Provides a singleton service that can be
  * used across the entire application for consistent communication.
- * 
+ *
  * @features
  * - Singleton pattern for consistent connections
  * - Automatic reconnection with exponential backoff
@@ -129,18 +129,18 @@ export interface WebSocketServiceEvents {
  * - Connection state monitoring
  * - Error handling and recovery
  * - Authentication support
- * 
+ *
  * @example
  * ```typescript
  * // Basic usage
  * const wsService = WebSocketService.getInstance();
  * await wsService.connect();
- * 
+ *
  * // Listen for events
  * wsService.on('agent:message', (data) => {
  *   console.log('Agent message:', data);
  * });
- * 
+ *
  * // Send message
  * await wsService.send('agent:chat', {
  *   senderId: 'user-agent',
@@ -151,37 +151,37 @@ export interface WebSocketServiceEvents {
 export class WebSocketService {
   /** Singleton instance */
   private static instance: WebSocketService;
-  
+
   /** Socket.IO client instance */
   private socket: Socket;
-  
+
   /** Event emitter for service-level events */
   private eventEmitter: EventEmitter;
-  
+
   /** Connection configuration */
   private config: WebSocketConfig;
-  
+
   /** Whether service is connecting */
   private isConnecting: boolean = false;
-  
+
   /** Connection attempt counter */
   private reconnectionAttempts: number = 0;
-  
+
   /** Maximum reconnection attempts */
   private maxReconnectionAttempts: number = 5;
-  
+
   /** Event handler registry */
   private eventHandlers: Map<string, Set<Function>> = new Map();
 
   /**
    * Private constructor for singleton pattern
-   * 
+   *
    * @param config - WebSocket configuration options
    */
   private constructor(config: Partial<WebSocketConfig> = {}) {
     // Default configuration
     this.config = {
-      url: process.env.REACT_APP_API_URL || 'http://localhost:3001',
+      url: import.meta.env.VITE_WS_URL || 'ws://localhost:3001',
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       autoConnect: false,
@@ -191,7 +191,7 @@ export class WebSocketService {
 
     // Initialize event emitter
     this.eventEmitter = new EventEmitter();
-    
+
     // Initialize socket with configuration
     this.socket = io(this.config.url, {
       reconnectionAttempts: this.config.reconnectionAttempts,
@@ -208,14 +208,14 @@ export class WebSocketService {
 
   /**
    * Get the singleton instance of WebSocketService
-   * 
+   *
    * @description
    * Returns the existing instance or creates a new one if none exists.
    * This ensures consistent WebSocket connections across the application.
-   * 
+   *
    * @param config - Optional configuration for new instance
    * @returns WebSocketService singleton instance
-   * 
+   *
    * @example
    * ```typescript
    * const wsService = WebSocketService.getInstance();
@@ -231,16 +231,16 @@ export class WebSocketService {
 
   /**
    * Connect to the WebSocket server
-   * 
+   *
    * @description
    * Establishes connection to the WebSocket server with the configured
    * settings. Handles connection state management and error handling.
-   * 
+   *
    * @param eventHandlers - Optional event handlers for connection events
    * @returns Promise that resolves when connected or rejects on error
-   * 
+   *
    * @throws {Error} If connection fails or times out
-   * 
+   *
    * @example
    * ```typescript
    * await wsService.connect({
@@ -276,31 +276,31 @@ export class WebSocketService {
         clearTimeout(timeoutId);
         this.isConnecting = false;
         this.reconnectionAttempts = 0;
-        
+
         logger.info('WebSocket connected successfully');
         this.eventEmitter.emit('connectionStateChanged', true);
-        
+
         // Call provided event handler
         eventHandlers.onConnect?.();
-        
+
         resolve();
       };
 
       const onError = (error: Error) => {
         clearTimeout(timeoutId);
         this.isConnecting = false;
-        
-        logger.error('WebSocket connection error', { error: error.message });
-        
+
+        logger.error('WebSocket connection error', error, { error: error.message });
+
         // Call provided event handler
         eventHandlers.onError?.(error);
-        
+
         reject(error);
       };
 
       this.socket.once('connect', onConnect);
       this.socket.once('connect_error', onError);
-      
+
       // Register provided event handlers
       Object.entries(eventHandlers).forEach(([event, handler]) => {
         if (handler && event !== 'onConnect' && event !== 'onError') {
@@ -314,13 +314,13 @@ export class WebSocketService {
 
   /**
    * Disconnect from the WebSocket server
-   * 
+   *
    * @description
    * Gracefully disconnects from the WebSocket server and cleans up
    * event handlers and connection state.
-   * 
+   *
    * @param reason - Optional reason for disconnection
-   * 
+   *
    * @example
    * ```typescript
    * await wsService.disconnect('User logged out');
@@ -333,35 +333,35 @@ export class WebSocketService {
     }
 
     logger.info('Disconnecting from WebSocket server', { reason });
-    
+
     // Clear all custom event handlers
     this.clearEventHandlers();
-    
+
     // Disconnect socket
     this.socket.disconnect();
-    
+
     // Reset state
     this.isConnecting = false;
     this.reconnectionAttempts = 0;
-    
+
     // Emit connection state change
     this.eventEmitter.emit('connectionStateChanged', false);
   }
 
   /**
    * Send a message through the WebSocket
-   * 
+   *
    * @description
    * Sends a message to the server with the specified event and data.
    * Returns a promise that resolves when the message is sent successfully.
-   * 
+   *
    * @param event - Event name to emit
    * @param data - Data to send with the event
    * @param callback - Optional callback when server acknowledges receipt
    * @returns Promise that resolves when message is sent
-   * 
+   *
    * @throws {Error} If not connected or message sending fails
-   * 
+   *
    * @example
    * ```typescript
    * // Send agent message
@@ -373,24 +373,20 @@ export class WebSocketService {
    * });
    * ```
    */
-  async send(
-    event: string,
-    data: any,
-    callback?: (response?: any) => void
-  ): Promise<void> {
+  async send(event: string, data: any, callback?: (response?: any) => void): Promise<void> {
     if (!this.socket.connected) {
       throw new Error('WebSocket not connected. Call connect() first.');
     }
 
     try {
       logger.debug('Sending WebSocket message', { event, data });
-      
+
       return new Promise((resolve, reject) => {
         this.socket.emit(event, data, (response?: any) => {
           if (callback) {
             callback(response);
           }
-          
+
           if (response && response.error) {
             reject(new Error(response.error));
           } else {
@@ -398,29 +394,33 @@ export class WebSocketService {
           }
         });
       });
-    } catch (error) {
-      logger.error('Failed to send WebSocket message', { event, error });
+    } catch (error: any) {
+      logger.error(
+        'Failed to send WebSocket message',
+        error instanceof Error ? error : new Error(String(error)),
+        { event }
+      );
       throw error;
     }
   }
 
   /**
    * Register an event listener
-   * 
+   *
    * @description
    * Registers a callback function to handle messages from the server
    * with the specified event name.
-   * 
+   *
    * @param event - Event name to listen for
    * @param callback - Callback function to execute when event is received
    * @returns Function to remove the event listener
-   * 
+   *
    * @example
    * ```typescript
    * const removeListener = wsService.on('agent:message', (data) => {
    *   console.log('Received agent message:', data);
    * });
-   * 
+   *
    * // Remove listener when done
    * removeListener();
    * ```
@@ -428,13 +428,13 @@ export class WebSocketService {
   on(event: string, callback: Function): () => void {
     // Register with Socket.IO
     this.socket.on(event, callback as any);
-    
+
     // Register with service event emitter
     if (!this.eventHandlers.has(event)) {
       this.eventHandlers.set(event, new Set());
     }
     this.eventHandlers.get(event)!.add(callback);
-    
+
     // Return remover function
     return () => {
       this.socket.off(event, callback as any);
@@ -444,10 +444,10 @@ export class WebSocketService {
 
   /**
    * Remove an event listener
-   * 
+   *
    * @description
    * Removes a previously registered event listener.
-   * 
+   *
    * @param event - Event name
    * @param callback - Callback function to remove
    */
@@ -458,14 +458,14 @@ export class WebSocketService {
 
   /**
    * Send agent-to-agent message
-   * 
+   *
    * @description
    * Specialized method for sending messages between agents with
    * proper message structure and validation.
-   * 
+   *
    * @param message - Agent message data
    * @returns Promise that resolves when message is sent
-   * 
+   *
    * @example
    * ```typescript
    * await wsService.sendAgentMessage({
@@ -495,12 +495,12 @@ export class WebSocketService {
 
   /**
    * Get current connection status
-   * 
+   *
    * @description
    * Returns information about the current WebSocket connection state.
-   * 
+   *
    * @returns Connection status information
-   * 
+   *
    * @example
    * ```typescript
    * const status = wsService.getStatus();
@@ -524,7 +524,7 @@ export class WebSocketService {
 
   /**
    * Setup core event handlers for the WebSocket connection
-   * 
+   *
    * @private
    */
   private setupCoreEventHandlers(): void {
@@ -544,11 +544,11 @@ export class WebSocketService {
     // Connection error
     this.socket.on('connect_error', (error: Error) => {
       this.reconnectionAttempts++;
-      logger.error('WebSocket connection error', {
+      logger.error('WebSocket connection error', error, {
         error: error.message,
         attempt: this.reconnectionAttempts,
       });
-      
+
       this.eventEmitter.emit('error', error);
     });
 
@@ -594,7 +594,7 @@ export class WebSocketService {
 
   /**
    * Clear all registered event handlers
-   * 
+   *
    * @private
    */
   private clearEventHandlers(): void {
@@ -608,10 +608,10 @@ export class WebSocketService {
 
   /**
    * Service-level event emitter access
-   * 
+   *
    * @description
    * Allows listening to service-level events like connection state changes.
-   * 
+   *
    * @param event - Event name
    * @param callback - Event handler
    * @returns Function to remove the listener
@@ -631,7 +631,7 @@ export class WebSocketService {
 
 /**
  * Generate a unique message ID
- * 
+ *
  * @private
  * @returns Unique message identifier string
  */
@@ -644,9 +644,3 @@ function generateMessageId(): string {
 // ============================================================================
 
 export default WebSocketService;
-export type {
-  WebSocketConfig,
-  WebSocketEventHandlers,
-  AgentMessage,
-  WebSocketServiceEvents,
-};

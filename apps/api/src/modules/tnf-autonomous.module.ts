@@ -12,6 +12,8 @@
 
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { Redis } from 'ioredis';
+import { CascadeService, CascadeMode, CascadeStep, CascadeContext } from '@the-new-fuse/core/src/services/CascadeService';
 // ScheduleModule is configured at root AppModule level
 
 // Note: These are implemented but may need path adjustments based on your build setup
@@ -54,8 +56,13 @@ export class DirectorServiceProvider implements OnModuleInit {
   private cycleCount = 0;
   private intervalHandle: NodeJS.Timeout | null = null;
   private config: TNFAutonomousConfig;
+  private redis: Redis | null = null;
 
-  constructor(config?: Partial<TNFAutonomousConfig>) {
+  constructor(
+    private readonly swarmProvider: AgentSwarmProvider,
+    private readonly cascadeService: CascadeService,
+    config?: Partial<TNFAutonomousConfig>,
+  ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
 
@@ -70,6 +77,21 @@ export class DirectorServiceProvider implements OnModuleInit {
     if (this.isRunning) {
       this.logger.warn('Director already running');
       return;
+    }
+
+    if (this.config.redisEnabled && !this.redis) {
+      try {
+        this.redis = new Redis({
+          host: this.config.redisHost,
+          port: this.config.redisPort,
+        });
+        this.redis.on('error', (err) => {
+          this.logger.error('Redis error', err);
+        });
+        this.logger.log('Redis connected for task discovery');
+      } catch (error) {
+        this.logger.error('Failed to connect to Redis', error);
+      }
     }
 
     this.isRunning = true;
@@ -88,6 +110,10 @@ export class DirectorServiceProvider implements OnModuleInit {
     if (this.intervalHandle) {
       clearInterval(this.intervalHandle);
       this.intervalHandle = null;
+    }
+    if (this.redis) {
+      await this.redis.quit();
+      this.redis = null;
     }
     this.isRunning = false;
     this.logger.log('⏹️ Director stopped');
@@ -127,18 +153,76 @@ export class DirectorServiceProvider implements OnModuleInit {
   }
 
   private async performHealthCheck(): Promise<{ status: string; agents: number }> {
-    // TODO: Connect to AgentSwarmOrchestrationService
-    return { status: 'healthy', agents: 0 };
+    const stats = this.swarmProvider.getStatistics();
+    return { status: 'healthy', agents: stats.onlineAgents };
   }
 
-  private async discoverTasks(): Promise<Array<{ id: string; name: string }>> {
-    // TODO: Connect to task queue
-    return [];
+  private async discoverTasks(): Promise<Array<{ id: string; name: string; data?: any }>> {
+    if (!this.redis) return [];
+
+    const tasks: Array<{ id: string; name: string; data?: any }> = [];
+    const limit = 5; // Fetch up to 5 tasks per cycle
+
+    for (let i = 0; i < limit; i++) {
+      try {
+        // Use RPOPLPUSH to safely move task from queue to processing
+        const result = await this.redis.rpoplpush('task:queue', 'task:processing');
+        if (!result) break;
+
+        const taskData = JSON.parse(result);
+        tasks.push({
+          id: taskData.id,
+          name: taskData.type || 'Unnamed Task',
+          data: taskData,
+        });
+      } catch (err) {
+        this.logger.error(`Failed to fetch/parse task: ${err}`);
+      }
+    }
+
+    if (tasks.length > 0) {
+      this.logger.log(`Discovered ${tasks.length} tasks`);
+    }
+
+    return tasks;
   }
 
-  private async executeTasks(tasks: Array<{ id: string; name: string }>): Promise<number> {
-    // TODO: Execute via CascadeService
-    return tasks.length;
+  private async executeTasks(tasks: Array<{ id: string; name: string; data?: any }>): Promise<number> {
+    if (tasks.length === 0) return 0;
+
+    const controllerName = `director-cycle-${Date.now()}`;
+    const controller = this.cascadeService.createController(controllerName, CascadeMode.PARALLEL, {
+      failOnError: false,
+      timeout: 60000,
+    });
+
+    for (const task of tasks) {
+      this.cascadeService.addStep(controller.id, {
+        name: task.name,
+        handler: async (input: any, context: CascadeContext) => {
+          this.logger.log(`Executing task via Cascade: ${task.name} (${task.id})`);
+          // Placeholder for actual task execution logic
+          // In a real implementation, this would delegate to specific agents or services
+          // based on task.data.type or similar fields
+          return { success: true, taskId: task.id };
+        },
+      });
+    }
+
+    try {
+      this.logger.log(`Executing Cascade controller: ${controller.id} with ${tasks.length} tasks`);
+      const results = await this.cascadeService.executeController(controller.id, {});
+
+      // Count successful executions (non-null results in PARALLEL mode)
+      const successCount = Array.isArray(results)
+        ? results.filter(r => r !== null).length
+        : (results ? 1 : 0);
+
+      return successCount;
+    } catch (error) {
+      this.logger.error(`Cascade execution failed`, error);
+      return 0;
+    }
   }
 
   private async performReflection(): Promise<void> {
@@ -388,7 +472,9 @@ import { TNFAutonomousController } from '../controllers/tnf-autonomous.controlle
     },
     {
       provide: DirectorServiceProvider,
-      useFactory: () => new DirectorServiceProvider(DEFAULT_CONFIG),
+      useFactory: (swarm: AgentSwarmProvider, cascadeService: CascadeService) =>
+        new DirectorServiceProvider(swarm, cascadeService, DEFAULT_CONFIG),
+      inject: [AgentSwarmProvider, CascadeService],
     },
     {
       provide: BMADServiceProvider,
@@ -397,6 +483,10 @@ import { TNFAutonomousController } from '../controllers/tnf-autonomous.controlle
     {
       provide: AgentSwarmProvider,
       useFactory: () => new AgentSwarmProvider(DEFAULT_CONFIG),
+    },
+    {
+      provide: CascadeService,
+      useClass: CascadeService,
     },
   ],
   exports: [

@@ -1,42 +1,36 @@
+/**
+ * AgentService - Migrated to Drizzle ORM
+ * Simple agent CRUD operations
+ */
 import { Injectable } from '@nestjs/common';
-import { Agent, PrismaService } from '@the-new-fuse/database';
-// Prisma types removed during Drizzle migration - using generic types for inputs
+import { Agent, DatabaseService } from '@the-new-fuse/database';
 
 @Injectable()
 export class AgentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private db: DatabaseService) {}
 
   async findAll(): Promise<Agent[]> {
-    return this.prisma.agent.findMany();
+    return this.db.agents.findAll();
   }
 
   async findOne(id: string): Promise<Agent | null> {
-    return this.prisma.agent.findUnique({
-      where: { id },
-    });
+    return this.db.agents.findById(id);
   }
 
   async create(data: any): Promise<Agent> {
-    return this.prisma.agent.create({
-      data,
-    });
+    return this.db.agents.create(data);
   }
 
-  async update(id: string, data: Partial<Agent>): Promise<Agent> {
-    // Remove readonly/relational fields that Prisma doesn't accept in updates
+  async update(id: string, data: Partial<Agent>): Promise<Agent | null> {
+    // Remove readonly/relational fields that shouldn't be updated
     const { id: _id, createdAt: _createdAt, userId: _userId, ...updateData } = data as any;
-    return this.prisma.agent.update({
-      where: { id },
-      data: {
-        ...updateData,
-        updatedAt: new Date(),
-      },
+    return this.db.agents.update(id, {
+      ...updateData,
+      updatedAt: new Date(),
     });
   }
 
-  async delete(id: string): Promise<Agent> {
-    return this.prisma.agent.delete({
-      where: { id },
-    });
+  async delete(id: string): Promise<boolean> {
+    return this.db.agents.softDelete(id);
   }
 }

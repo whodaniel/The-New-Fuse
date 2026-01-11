@@ -1,13 +1,12 @@
 "use strict";
 'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VoiceControlledCommander = VoiceControlledCommander;
 import react_1 from 'react';
 import button_1 from '@/components/ui/button';
 import card_1 from '@/components/ui/card';
 import lucide_react_1 from 'lucide-react';
 import websocket_1 from '../services/websocket';
-function VoiceControlledCommander() {
+export function VoiceControlledCommander() {
     const [isListening, setIsListening] = (0, react_1.useState)(false);
     const [transcript, setTranscript] = (0, react_1.useState)('');
     const [response, setResponse] = (0, react_1.useState)('');
@@ -70,4 +69,4 @@ function VoiceControlledCommander() {
       </card_1.CardContent>
     </card_1.Card>);
 }
-export {};
+;
