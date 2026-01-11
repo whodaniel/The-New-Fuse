@@ -33,8 +33,10 @@ RUN npm install --legacy-peer-deps || pnpm install --no-frozen-lockfile --ignore
 
 # Build the application
 ENV NODE_ENV=production
-ENV VITE_API_URL=https://api.thenewfuse.com
-ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
+# Use relative paths so nginx can proxy to the backend
+# Previously these were hardcoded to api.thenewfuse.com which doesn't exist in DNS
+ENV VITE_API_URL=/api
+ENV VITE_BACKEND_URL=/api
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
 # Build foundational packages first to ensure they're available
