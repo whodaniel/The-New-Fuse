@@ -217,7 +217,9 @@ export default function ComprehensiveRouter() {
       '/design-system',
     ].includes(location.pathname) ||
     location.pathname.startsWith('/auth') ||
-    location.pathname.startsWith('/legal');
+    location.pathname.startsWith('/legal') ||
+    location.pathname.startsWith('/onboarding') ||
+    location.pathname === '/404';
 
   // Routes that have their own complete layout and shouldn't be wrapped in PremiumLayout
   const hasOwnLayout = ['/workflows/builder'].includes(location.pathname);
@@ -228,8 +230,12 @@ export default function ComprehensiveRouter() {
   return (
     <div>
       {/* Conditional Navigation - only show SmartNavigation on public pages if needed,
-           and explicitly hide it on Auth pages (Login, Register, etc) for a clean UX */}
-      {isPublicRoute && !location.pathname.startsWith('/auth') && !['/login', '/register', '/onboarding'].includes(location.pathname) && <SmartNavigation />}
+           and explicitly hide it on Auth, Onboarding, and 404 pages for a clean UX */}
+      {isPublicRoute && 
+        !location.pathname.startsWith('/auth') && 
+        !location.pathname.startsWith('/onboarding') && 
+        !['/404', '/login', '/register'].includes(location.pathname) && 
+        <SmartNavigation />}
 
       <Layout>
         <Suspense fallback={<LoadingFallback name="Page" />}>
