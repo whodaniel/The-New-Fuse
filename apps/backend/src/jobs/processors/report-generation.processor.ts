@@ -50,7 +50,7 @@ export class ReportGenerationProcessor {
           reportData = await this.generateUserActivityReport(parameters);
           break;
         case 'agent-performance':
-          reportData = await this.generateAgentPerformanceReport(parameters);
+          reportData = await this.generateAgentPerformanceReport(parameters, userId);
           break;
         case 'system-metrics':
           reportData = await this.generateSystemMetricsReport(parameters);
@@ -173,19 +173,50 @@ export class ReportGenerationProcessor {
   /**
    * Generate agent performance report
    */
-  private async generateAgentPerformanceReport(parameters: Record<string, any>) {
-    this.logger.debug('Generating agent performance report');
+  private async generateAgentPerformanceReport(parameters: Record<string, any>, userId: string) {
+    this.logger.debug(`Generating agent performance report for user ${userId}`);
 
-    // TODO: Replace with actual agent metrics
-    return {
-      recordCount: 50,
-      data: {
-        totalAgents: 50,
-        averageExecutionTime: 5000,
-        successRate: 95.5,
-        failureRate: 4.5,
-      },
-    };
+    try {
+        const result = await this.databaseService.client.execute(sql`
+            SELECT
+                COUNT(DISTINCT a.id)::int as "totalAgents",
+                COALESCE(AVG(EXTRACT(EPOCH FROM (we.completed_at - we.started_at)) * 1000), 0)::float as "averageExecutionTime",
+                COALESCE(
+                    (SUM(CASE WHEN we.status = 'COMPLETED' THEN 1 ELSE 0 END)::float / NULLIF(COUNT(we.id), 0)) * 100,
+                    0
+                )::float as "successRate",
+                COALESCE(
+                    (SUM(CASE WHEN we.status = 'FAILED' THEN 1 ELSE 0 END)::float / NULLIF(COUNT(we.id), 0)) * 100,
+                    0
+                )::float as "failureRate",
+                COUNT(we.id)::int as "totalExecutions"
+            FROM agents a
+            LEFT JOIN workflows w ON w.agent_id = a.id
+            LEFT JOIN workflow_executions we ON we.workflow_id = w.id
+            WHERE a.user_id = ${userId} AND a.deleted_at IS NULL
+        `);
+
+        const stats = result[0] || {
+            totalAgents: 0,
+            averageExecutionTime: 0,
+            successRate: 0,
+            failureRate: 0,
+            totalExecutions: 0
+        };
+
+        return {
+          recordCount: stats.totalAgents,
+          data: {
+            totalAgents: stats.totalAgents,
+            averageExecutionTime: Math.round(stats.averageExecutionTime),
+            successRate: parseFloat(Number(stats.successRate).toFixed(2)),
+            failureRate: parseFloat(Number(stats.failureRate).toFixed(2)),
+          },
+        };
+    } catch (error) {
+        this.logger.error(`Failed to generate agent performance report: ${error.message}`, error.stack);
+        throw error;
+    }
   }
 
   /**
