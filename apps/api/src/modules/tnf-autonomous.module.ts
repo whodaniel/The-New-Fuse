@@ -13,6 +13,7 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { Redis } from 'ioredis';
+import { CascadeService, CascadeMode, CascadeStep, CascadeContext } from '@the-new-fuse/core/src/services/CascadeService';
 // ScheduleModule is configured at root AppModule level
 
 // Note: These are implemented but may need path adjustments based on your build setup
@@ -59,6 +60,7 @@ export class DirectorServiceProvider implements OnModuleInit {
 
   constructor(
     private readonly swarmProvider: AgentSwarmProvider,
+    private readonly cascadeService: CascadeService,
     config?: Partial<TNFAutonomousConfig>,
   ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -186,8 +188,41 @@ export class DirectorServiceProvider implements OnModuleInit {
   }
 
   private async executeTasks(tasks: Array<{ id: string; name: string; data?: any }>): Promise<number> {
-    // TODO: Execute via CascadeService
-    return tasks.length;
+    if (tasks.length === 0) return 0;
+
+    const controllerName = `director-cycle-${Date.now()}`;
+    const controller = this.cascadeService.createController(controllerName, CascadeMode.PARALLEL, {
+      failOnError: false,
+      timeout: 60000,
+    });
+
+    for (const task of tasks) {
+      this.cascadeService.addStep(controller.id, {
+        name: task.name,
+        handler: async (input: any, context: CascadeContext) => {
+          this.logger.log(`Executing task via Cascade: ${task.name} (${task.id})`);
+          // Placeholder for actual task execution logic
+          // In a real implementation, this would delegate to specific agents or services
+          // based on task.data.type or similar fields
+          return { success: true, taskId: task.id };
+        },
+      });
+    }
+
+    try {
+      this.logger.log(`Executing Cascade controller: ${controller.id} with ${tasks.length} tasks`);
+      const results = await this.cascadeService.executeController(controller.id, {});
+
+      // Count successful executions (non-null results in PARALLEL mode)
+      const successCount = Array.isArray(results)
+        ? results.filter(r => r !== null).length
+        : (results ? 1 : 0);
+
+      return successCount;
+    } catch (error) {
+      this.logger.error(`Cascade execution failed`, error);
+      return 0;
+    }
   }
 
   private async performReflection(): Promise<void> {
@@ -437,9 +472,9 @@ import { TNFAutonomousController } from '../controllers/tnf-autonomous.controlle
     },
     {
       provide: DirectorServiceProvider,
-      useFactory: (swarm: AgentSwarmProvider) =>
-        new DirectorServiceProvider(swarm, DEFAULT_CONFIG),
-      inject: [AgentSwarmProvider],
+      useFactory: (swarm: AgentSwarmProvider, cascadeService: CascadeService) =>
+        new DirectorServiceProvider(swarm, cascadeService, DEFAULT_CONFIG),
+      inject: [AgentSwarmProvider, CascadeService],
     },
     {
       provide: BMADServiceProvider,
@@ -448,6 +483,10 @@ import { TNFAutonomousController } from '../controllers/tnf-autonomous.controlle
     {
       provide: AgentSwarmProvider,
       useFactory: () => new AgentSwarmProvider(DEFAULT_CONFIG),
+    },
+    {
+      provide: CascadeService,
+      useClass: CascadeService,
     },
   ],
   exports: [
