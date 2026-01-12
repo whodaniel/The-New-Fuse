@@ -48,12 +48,12 @@ export class RedisRelayBridge extends EventEmitter {
   }
 
   private setupErrorHandlers(): void {
-    this.redisClient.on('error', (err) => {
+    this.redisClient.on('error', (err: Error) => {
       console.error('[Redis-Bridge] Client error:', err);
       this.emit('error', err);
     });
 
-    this.redisSubscriber.on('error', (err) => {
+    this.redisSubscriber.on('error', (err: Error) => {
       console.error('[Redis-Bridge] Subscriber error:', err);
       this.emit('error', err);
     });
@@ -133,7 +133,7 @@ export class RedisRelayBridge extends EventEmitter {
   async subscribeToAgent(agentId: string, callback: (envelope: TNFEnvelope) => void): Promise<void> {
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
     
-    await this.redisSubscriber.subscribe(channel, (message) => {
+    await this.redisSubscriber.subscribe(channel, (message: string) => {
       try {
         const envelope = validateTNFEnvelope(JSON.parse(message));
         console.log(`[Redis-Bridge] Received from ${channel}:`, envelope.id);

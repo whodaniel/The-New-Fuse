@@ -583,12 +583,12 @@ export const UnifiedAgentCreator: React.FC = () => {
           agentId,
           agentConfig,
           terminalType: selectedTerminalType,
-          relayEndpoint: 'ws://localhost:8080/relay',
+          relayEndpoint: import.meta.env.VITE_RELAY_URL || 'ws://localhost:8080/relay',
           capabilities: agentConfig.capabilities || {},
           environment: {
             TNF_WORKSPACE: process.env.TNF_WORKSPACE || process.env.WORKSPACE_PATH || '/app',
             TNF_AGENT_ID: agentId,
-            TNF_RELAY_ENDPOINT: 'ws://localhost:8080/relay',
+            TNF_RELAY_ENDPOINT: import.meta.env.VITE_RELAY_URL || 'ws://localhost:8080/relay',
             TNF_MASTER_REGISTRY: 'true',
           },
         }),
@@ -606,7 +606,7 @@ export const UnifiedAgentCreator: React.FC = () => {
         lastActivity: new Date(),
         relayConnection: {
           connected: false,
-          endpoint: 'ws://localhost:8080/relay',
+          endpoint: import.meta.env.VITE_RELAY_URL || 'ws://localhost:8080/relay',
           lastHeartbeat: new Date(),
         },
       };
