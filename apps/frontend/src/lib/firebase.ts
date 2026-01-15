@@ -41,6 +41,9 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize Cloud Firestore and get a reference to the service
+// Use initializeFirestore to ensure settings are applied and service is registered
+// We import 'firebase/firestore' just in case bundler tree-shaking is too aggressive
+import 'firebase/firestore'; 
 export const db = getFirestore(app);
 
 // Google Auth Provider

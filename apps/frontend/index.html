@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Content Security Policy: Allow unsafe-eval/inline as requested for legacy dependency support -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: wss:; connect-src 'self' https: wss:; img-src 'self' https: data: blob:; worker-src 'self' blob:;" />
 
     <!-- Global CommonJS require() shim for bundled dependencies (ethers.js, bn.js, etc.) -->
     <script>
@@ -17,11 +19,11 @@
           };
 
           window.require = function (moduleName) {
-            console.warn(
-              '[The New Fuse] CommonJS require() called for:',
-              moduleName,
-              '- returning stub'
-            );
+            // Suppress warnings for expected browser-incompatible modules
+            const ignoredModules = ['fs', 'path', 'os', 'crypto', 'buffer'];
+            if (!ignoredModules.includes(moduleName) && !moduleName.startsWith('node:')) {
+               console.warn('[The New Fuse] CommonJS require() called for:', moduleName);
+            }
 
             // Return appropriate stubs for known modules
             if (moduleName === 'crypto') {
@@ -134,26 +136,45 @@
     <script>
       (function () {
         try {
+          // Store original reference immediately
           const originalDefine = customElements.define;
-          customElements.define = function (name, constructor, options) {
+          // Create a safe define wrapper
+          const safeDefine = function (name, constructor, options) {
+            // 1. Check if already defined
             if (customElements.get(name)) {
               console.warn(
                 `[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`
               );
               return;
             }
+            // 2. Try to define, catching specific intersection/duplicate errors
             try {
-              originalDefine.call(this, name, constructor, options);
+              originalDefine.call(customElements, name, constructor, options);
             } catch (e) {
-              if (e.message.includes('already been defined')) {
+              if (
+                e.message && (
+                  e.message.includes('already been defined') || 
+                  e.message.includes('has already been used') ||
+                  e.message.includes('NotSupportedError') // Common for duplicates
+                )
+              ) {
                 console.warn(
-                  `[The New Fuse] Custom element '${name}' collision caught in try-catch.`
+                  `[The New Fuse] Custom element '${name}' collision caught in try-catch:`, e.message
                 );
                 return;
               }
+              // Rethrow other errors
               throw e;
             }
           };
+
+          // Override global define
+          Object.defineProperty(customElements, 'define', {
+            value: safeDefine,
+            configurable: true,
+            writable: true
+          });
+          
           console.log('[The New Fuse] Custom Element Guard activated.');
         } catch (e) {
           console.error('[The New Fuse] Failed to activate Custom Element Guard', e);
