@@ -31,7 +31,7 @@ export function isValidUrl(url: string): boolean {
  * Check if an object has all required fields
  */
 export function hasRequiredFields<T>(obj: T, fields: (keyof T)[]): boolean {
-  return fields.every(field => isDefined(obj[field]));
+  return fields.every((field) => isDefined(obj[field]));
 }
 
 /**

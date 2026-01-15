@@ -14,6 +14,7 @@
     "baseUrl": ".",
     "paths": {
       "@the-new-fuse/feature-tracker": ["../feature-tracker/src"],
+      "@the-new-fuse/types": ["../types/src"],
       "@the-new-fuse/types/*": ["../types/*"]
     }
   },

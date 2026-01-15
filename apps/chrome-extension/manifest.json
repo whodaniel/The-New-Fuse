@@ -51,7 +51,7 @@
   ],
 
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:* https://*.thenewfuse.com wss://*.thenewfuse.com https://the-new-fuse-api.railway.app wss://the-new-fuse-api.railway.app https://chat.openai.com https://claude.ai https://gemini.google.com https://www.perplexity.ai;"
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:* https://chat.openai.com https://claude.ai https://gemini.google.com https://www.perplexity.ai;"
   },
 
   "commands": {

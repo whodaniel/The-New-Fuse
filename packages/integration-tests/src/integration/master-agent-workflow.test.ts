@@ -1,6 +1,6 @@
 /**
  * Master Agent Registry + Workflow Engine Integration Tests
- * 
+ *
  * Tests the integration between the Master Agent Registry and Workflow Engine,
  * validating agent task assignment, execution, handoffs, and monitoring
  */
@@ -16,7 +16,7 @@ enum WorkflowNodeType {
   CONDITION = 'CONDITION',
   PARALLEL = 'PARALLEL',
   SEQUENTIAL = 'SEQUENTIAL',
-  CUSTOM = 'CUSTOM'
+  CUSTOM = 'CUSTOM',
 }
 
 describe('Master Agent Registry + Workflow Engine Integration', () => {
@@ -34,7 +34,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Create workflow with agent tasks
       const { workflow, builder } = await TestHelpers.createTestWorkflow('Agent Task Test');
-      
+
       // Add agent task nodes
       const processTaskNode = builder.addNode(
         WorkflowNodeType.AGENT_TASK,
@@ -45,7 +45,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           task: 'Process the input data and clean it',
           priority: 'high',
           expectedDuration: 5,
-          instructions: 'Remove null values and normalize formats'
+          instructions: 'Remove null values and normalize formats',
         }
       );
 
@@ -58,7 +58,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           task: 'Analyze the processed data for patterns',
           priority: 'medium',
           expectedDuration: 10,
-          instructions: 'Look for trends and anomalies'
+          instructions: 'Look for trends and anomalies',
         }
       );
 
@@ -69,15 +69,14 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Save and execute workflow
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
-      const executionId = await env.workflowEngine.engine.executeWorkflow(
-        savedWorkflow.id,
-        { data: TestHelpers.generateTestData(50) }
-      );
+      const executionId = await env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
+        data: TestHelpers.generateTestData(50),
+      });
 
       // Verify task assignment
       await TestHelpers.waitForCondition(async () => {
         const dataAgentProfile = await env.agentRegistry.getAgentProfile(dataAgent.agentId);
-        return dataAgentProfile?.todoList.some(todo => todo.category === 'task') || false;
+        return dataAgentProfile?.todoList.some((todo) => todo.category === 'task') || false;
       });
 
       const dataAgentProfile = await env.agentRegistry.getAgentProfile(dataAgent.agentId);
@@ -101,18 +100,20 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       await env.agentRegistry.updateAgentCapabilities(fileAgent.agentId, {
         fileOperations: true,
         dataProcessing: true,
-        apiCalls: false
+        apiCalls: false,
       });
 
       await env.agentRegistry.updateAgentCapabilities(apiAgent.agentId, {
         fileOperations: false,
         dataProcessing: false,
-        apiCalls: true
+        apiCalls: true,
       });
 
       // Create workflow that requires specific capabilities
-      const { workflow, builder } = await TestHelpers.createTestWorkflow('Capability Matching Test');
-      
+      const { workflow, builder } = await TestHelpers.createTestWorkflow(
+        'Capability Matching Test'
+      );
+
       const fileTaskNode = builder.addNode(
         WorkflowNodeType.AGENT_TASK,
         'File Processing',
@@ -121,7 +122,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           task: 'Read and process files',
           requiredCapabilities: ['fileOperations'],
           priority: 'medium',
-          expectedDuration: 3
+          expectedDuration: 3,
         }
       );
 
@@ -133,7 +134,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           task: 'Make API calls to external service',
           requiredCapabilities: ['apiCalls'],
           priority: 'medium',
-          expectedDuration: 5
+          expectedDuration: 5,
         }
       );
 
@@ -150,7 +151,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       await TestHelpers.waitForCondition(async () => {
         const fileAgentProfile = await env.agentRegistry.getAgentProfile(fileAgent.agentId);
         const apiAgentProfile = await env.agentRegistry.getAgentProfile(apiAgent.agentId);
-        return (fileAgentProfile?.todoList.length > 0 || apiAgentProfile?.todoList.length > 0);
+        return fileAgentProfile?.todoList.length > 0 || apiAgentProfile?.todoList.length > 0;
       });
 
       // Verify correct agent assignment based on capabilities
@@ -158,7 +159,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       void fileAgentProfile; // Used for verification
 
       // File agent should get the file processing task
-      const fileTask = fileAgentProfile.todoList.find(todo => 
+      const fileTask = fileAgentProfile.todoList.find((todo) =>
         todo.content.includes('Read and process files')
       );
       expect(fileTask).toBeDefined();
@@ -177,7 +178,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Create workflow with handoff
       const { workflow, builder } = await TestHelpers.createTestWorkflow('Agent Handoff Test');
-      
+
       const primaryTaskNode = builder.addNode(
         WorkflowNodeType.AGENT_TASK,
         'Primary Task',
@@ -186,7 +187,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           agentId: primaryAgent.agentId,
           task: 'Initial data processing',
           priority: 'high',
-          expectedDuration: 3
+          expectedDuration: 3,
         }
       );
 
@@ -199,7 +200,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           toAgentId: secondaryAgent.agentId,
           handoffTemplateId: 'data-processing-handoff',
           preserveContext: true,
-          stagnationThresholdMs: 30000
+          stagnationThresholdMs: 30000,
         }
       );
 
@@ -211,7 +212,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           agentId: secondaryAgent.agentId,
           task: 'Continue processing with handoff context',
           priority: 'medium',
-          expectedDuration: 5
+          expectedDuration: 5,
         }
       );
 
@@ -219,14 +220,18 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       builder.addConnection(workflow.definition.nodes[0].id, 'output', primaryTaskNode.id, 'task');
       builder.addConnection(primaryTaskNode.id, 'result', handoffNode.id, 'fromAgent');
       builder.addConnection(handoffNode.id, 'toAgent', secondaryTaskNode.id, 'task');
-      builder.addConnection(secondaryTaskNode.id, 'result', workflow.definition.nodes[1].id, 'input');
+      builder.addConnection(
+        secondaryTaskNode.id,
+        'result',
+        workflow.definition.nodes[1].id,
+        'input'
+      );
 
       // Execute workflow
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
-      const executionId = await env.workflowEngine.engine.executeWorkflow(
-        savedWorkflow.id,
-        { initialData: 'test-data-for-handoff' }
-      );
+      const executionId = await env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
+        initialData: 'test-data-for-handoff',
+      });
 
       // Wait for execution to start
       await TestHelpers.waitForCondition(async () => {
@@ -241,6 +246,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Check if agents have appropriate tasks
       const primaryAgentProfile = await env.agentRegistry.getAgentProfile(primaryAgent.agentId);
+      const secondaryAgentProfile = await env.agentRegistry.getAgentProfile(secondaryAgent.agentId);
       void secondaryAgentProfile; // Used for verification
 
       expect(primaryAgentProfile.todoList.length).toBeGreaterThan(0);
@@ -254,57 +260,62 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       const agents = await Promise.all([
         TestHelpers.createTestAgent('Agent1', 'PROCESSOR'),
         TestHelpers.createTestAgent('Agent2', 'PROCESSOR'),
-        TestHelpers.createTestAgent('Agent3', 'PROCESSOR')
+        TestHelpers.createTestAgent('Agent3', 'PROCESSOR'),
       ]);
 
       // Create workflow with parallel agent coordination
       const { workflow, builder } = await TestHelpers.createTestWorkflow('Agent Coordination Test');
-      
+
       const coordinationNode = builder.addNode(
         WorkflowNodeType.AGENT_COORDINATION,
         'Parallel Processing',
         { x: 200, y: 100 },
         {
           coordinationType: 'parallel',
-          agentIds: agents.map(a => a.agentId),
+          agentIds: agents.map((a) => a.agentId),
           task: 'Process data chunk in parallel',
-          maxConcurrency: 3
+          maxConcurrency: 3,
         }
       );
 
       // Connect coordination node
-      builder.addConnection(workflow.definition.nodes[0].id, 'output', coordinationNode.id, 'agents');
-      builder.addConnection(coordinationNode.id, 'results', workflow.definition.nodes[1].id, 'input');
+      builder.addConnection(
+        workflow.definition.nodes[0].id,
+        'output',
+        coordinationNode.id,
+        'agents'
+      );
+      builder.addConnection(
+        coordinationNode.id,
+        'results',
+        workflow.definition.nodes[1].id,
+        'input'
+      );
 
       // Execute workflow
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
       const testData = TestHelpers.generateTestData(300); // Large dataset for parallel processing
-      
-      void await env.workflowEngine.engine.executeWorkflow(
-        savedWorkflow.id,
-        { data: testData }
-      );
+
+      void (await env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, { data: testData }));
 
       // Wait for coordination to start
       await TestHelpers.waitForCondition(async () => {
         const agentProfiles = await Promise.all(
-          agents.map(a => env.agentRegistry.getAgentProfile(a.agentId))
+          agents.map((a) => env.agentRegistry.getAgentProfile(a.agentId))
         );
-        return agentProfiles.some(profile => profile?.todoList.length > 0);
+        return agentProfiles.some((profile) => profile?.todoList.length > 0);
       });
 
       // Verify all agents received coordination tasks
       const agentProfiles = await Promise.all(
-        agents.map(a => env.agentRegistry.getAgentProfile(a.agentId))
+        agents.map((a) => env.agentRegistry.getAgentProfile(a.agentId))
       );
 
       agentProfiles.forEach((profile) => {
         expect(profile.todoList.length).toBeGreaterThan(0);
-        const coordinationTask = profile.todoList.find(todo => 
-          todo.category === 'coordination'
-        );
+        const coordinationTask = profile.todoList.find((todo) => todo.category === 'coordination');
         expect(coordinationTask).toBeDefined();
-        expect(coordinationTask.context.participantAgents).toEqual(agents.map(a => a.agentId));
+        expect(coordinationTask.context.participantAgents).toEqual(agents.map((a) => a.agentId));
       });
     });
   });
@@ -316,7 +327,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Create workflow with long-running task
       const { workflow, builder } = await TestHelpers.createTestWorkflow('Heartbeat Monitor Test');
-      
+
       const longTaskNode = builder.addNode(
         WorkflowNodeType.AGENT_TASK,
         'Long Running Task',
@@ -325,7 +336,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           agentId: agent.agentId,
           task: 'Process large dataset (long running)',
           priority: 'low',
-          expectedDuration: 30 // 30 minutes (will be interrupted for test)
+          expectedDuration: 30, // 30 minutes (will be interrupted for test)
         }
       );
 
@@ -335,10 +346,9 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Execute workflow
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
-      const executionId = await env.workflowEngine.engine.executeWorkflow(
-        savedWorkflow.id,
-        { largeDataset: TestHelpers.generateTestData(1000) }
-      );
+      const executionId = await env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
+        largeDataset: TestHelpers.generateTestData(1000),
+      });
 
       // Wait for task assignment
       await TestHelpers.waitForCondition(async () => {
@@ -354,12 +364,14 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       // Simulate heartbeat
       await env.heartbeatService.recordActivity(agent.agentId, 'task_progress', {
         workflowExecutionId: executionId,
-        progress: 25
+        progress: 25,
       });
 
       // Verify heartbeat was recorded
       const updatedHealth = await env.heartbeatService.getAgentHealth(agent.agentId);
-      expect(updatedHealth.lastHeartbeat.getTime()).toBeGreaterThan(agentHealth.lastHeartbeat.getTime());
+      expect(updatedHealth.lastHeartbeat.getTime()).toBeGreaterThan(
+        agentHealth.lastHeartbeat.getTime()
+      );
     });
 
     test('should detect and handle agent stagnation during workflow execution', async () => {
@@ -367,8 +379,10 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       const agent = await TestHelpers.createTestAgent('StagnantAgent', 'STAGNANT_TEST');
 
       // Create workflow
-      const { workflow, builder } = await TestHelpers.createTestWorkflow('Stagnation Detection Test');
-      
+      const { workflow, builder } = await TestHelpers.createTestWorkflow(
+        'Stagnation Detection Test'
+      );
+
       const taskNode = builder.addNode(
         WorkflowNodeType.AGENT_TASK,
         'Task That Will Stagnate',
@@ -377,7 +391,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           agentId: agent.agentId,
           task: 'Task that will simulate stagnation',
           priority: 'medium',
-          expectedDuration: 1 // Short duration to trigger stagnation quickly
+          expectedDuration: 1, // Short duration to trigger stagnation quickly
         }
       );
 
@@ -397,12 +411,12 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Don't send heartbeats to simulate stagnation
       // Wait for stagnation detection (longer than stagnation threshold)
-      await new Promise(resolve => setTimeout(resolve, 35000)); // 35 seconds
+      await new Promise((resolve) => setTimeout(resolve, 35000)); // 35 seconds
 
       // Check if stagnation was detected
       const stagnationStatus = await env.heartbeatService.getStagnationStatus();
-      const agentStagnation = stagnationStatus.find(s => s.agentId === agent.agentId);
-      
+      const agentStagnation = stagnationStatus.find((s) => s.agentId === agent.agentId);
+
       expect(agentStagnation).toBeDefined();
       expect(agentStagnation.isStagnant).toBe(true);
       expect(agentStagnation.stagnantDuration).toBeGreaterThan(30000);
@@ -417,7 +431,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Create workflow with error handling
       const { workflow, builder } = await TestHelpers.createTestWorkflow('Error Handling Test');
-      
+
       const primaryTaskNode = builder.addNode(
         WorkflowNodeType.AGENT_TASK,
         'Primary Task (May Fail)',
@@ -427,7 +441,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
           task: 'Task that may fail',
           priority: 'high',
           expectedDuration: 5,
-          fallbackAgentId: backupAgent.agentId
+          fallbackAgentId: backupAgent.agentId,
         }
       );
 
@@ -457,8 +471,9 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       // Verify execution handled the failure appropriately
       const execution = await env.workflowEngine.engine.getExecutionStatus(executionId);
       expect(execution).toBeDefined();
-      
+
       // Check if backup agent was engaged (if fallback is implemented)
+      const backupAgentProfile = await env.agentRegistry.getAgentProfile(backupAgent.agentId);
       void backupAgentProfile; // Used for fallback verification
       // Note: Fallback behavior depends on implementation details
     });
@@ -468,7 +483,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
     test('should handle multiple concurrent workflows with agent task assignment', async () => {
       // Create pool of agents
       const agentPool = await Promise.all(
-        Array.from({ length: 5 }, (_, i) => 
+        Array.from({ length: 5 }, (_, i) =>
           TestHelpers.createTestAgent(`PoolAgent${i}`, 'POOL_AGENT')
         )
       );
@@ -476,8 +491,10 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       // Create multiple workflows
       const workflows = await Promise.all(
         Array.from({ length: 10 }, async (_, i) => {
-          const { workflow, builder } = await TestHelpers.createTestWorkflow(`Concurrent Workflow ${i}`);
-          
+          const { workflow, builder } = await TestHelpers.createTestWorkflow(
+            `Concurrent Workflow ${i}`
+          );
+
           const taskNode = builder.addNode(
             WorkflowNodeType.AGENT_TASK,
             `Concurrent Task ${i}`,
@@ -486,7 +503,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
               task: `Process data batch ${i}`,
               priority: 'medium',
               expectedDuration: 2,
-              agentType: 'POOL_AGENT' // Let system choose from pool
+              agentType: 'POOL_AGENT', // Let system choose from pool
             }
           );
 
@@ -499,7 +516,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       );
 
       // Execute all workflows concurrently
-      const executionPromises = workflows.map(wf => 
+      const executionPromises = workflows.map((wf) =>
         env.workflowEngine.engine.executeWorkflow(wf.id, { data: TestHelpers.generateTestData(10) })
       );
 
@@ -508,7 +525,7 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
       // Wait for all executions to start
       await TestHelpers.waitForCondition(async () => {
         const agentProfiles = await Promise.all(
-          agentPool.map(a => env.agentRegistry.getAgentProfile(a.agentId))
+          agentPool.map((a) => env.agentRegistry.getAgentProfile(a.agentId))
         );
         const totalTasks = agentProfiles.reduce((sum, profile) => sum + profile.todoList.length, 0);
         return totalTasks >= 5; // At least some tasks distributed
@@ -516,16 +533,19 @@ describe('Master Agent Registry + Workflow Engine Integration', () => {
 
       // Verify task distribution across agent pool
       const agentProfiles = await Promise.all(
-        agentPool.map(a => env.agentRegistry.getAgentProfile(a.agentId))
+        agentPool.map((a) => env.agentRegistry.getAgentProfile(a.agentId))
       );
 
-      const totalAssignedTasks = agentProfiles.reduce((sum, profile) => sum + profile.todoList.length, 0);
+      const totalAssignedTasks = agentProfiles.reduce(
+        (sum, profile) => sum + profile.todoList.length,
+        0
+      );
       expect(totalAssignedTasks).toBeGreaterThan(0);
       expect(totalAssignedTasks).toBeLessThanOrEqual(10); // No more than number of workflows
 
       // Verify all executions were created
       expect(executionIds).toHaveLength(10);
-      executionIds.forEach(id => expect(id).toBeDefined());
+      executionIds.forEach((id) => expect(id).toBeDefined());
     });
   });
 });
