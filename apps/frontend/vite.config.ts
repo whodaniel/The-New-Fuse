@@ -136,6 +136,7 @@ export default defineConfig(({ mode }) => {
         'firebase',
         '@firebase/app',
         '@firebase/auth',
+        'firebase/firestore',
         'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
         'react',
         'react-dom',
