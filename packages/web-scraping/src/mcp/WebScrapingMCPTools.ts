@@ -1,19 +1,26 @@
 /**
  * MCP Tools for Web Scraping
- * 
+ *
  * Provides MCP-compatible tools for AI agents to scrape websites
  * and access the internet with full security and monitoring.
  */
 
-import { ToolHandler, ToolResult } from '@the-new-fuse/mcp-core';
+import { ToolResult } from '@the-new-fuse/mcp-core';
 import { WebScrapingService } from '../core/WebScrapingService';
 import { ProxyService } from '../proxy/ProxyService';
 import {
-  WebScrapingConfig,
   ContentExtractionOptions,
   ProxyRequest,
-  SecurityPolicy
+  SecurityPolicy,
+  WebScrapingConfig,
 } from '../types';
+
+/**
+ * Simple handler interface for web scraping tools
+ */
+interface SimpleToolHandler {
+  execute: (params: any) => Promise<ToolResult>;
+}
 
 export class WebScrapingMCPTools {
   private readonly webScrapingService: WebScrapingService;
@@ -31,14 +38,14 @@ export class WebScrapingMCPTools {
     name: string;
     description: string;
     inputSchema: any;
-    handler: ToolHandler;
+    handler: SimpleToolHandler;
   }> {
     return [
       this.getSimpleScrapeTool(),
       this.getFullScrapeTool(),
       this.getAutoScrapeTool(),
       this.getProxyTool(),
-      this.getWebsiteAnalysisTool()
+      this.getWebsiteAnalysisTool(),
     ];
   }
 
@@ -54,15 +61,15 @@ export class WebScrapingMCPTools {
         properties: {
           url: {
             type: 'string',
-            description: 'The URL to scrape'
+            description: 'The URL to scrape',
           },
           config: {
             type: 'object',
             properties: {
               timeout: { type: 'number', description: 'Request timeout in milliseconds' },
               userAgent: { type: 'string', description: 'User agent string' },
-              headers: { type: 'object', description: 'Additional headers' }
-            }
+              headers: { type: 'object', description: 'Additional headers' },
+            },
           },
           extraction: {
             type: 'object',
@@ -70,15 +77,15 @@ export class WebScrapingMCPTools {
               mainContentOnly: { type: 'boolean', description: 'Extract main content only' },
               removeScripts: { type: 'boolean', description: 'Remove scripts and styles' },
               maxTextLength: { type: 'number', description: 'Maximum text length' },
-              selectors: { 
-                type: 'array', 
+              selectors: {
+                type: 'array',
                 items: { type: 'string' },
-                description: 'CSS selectors to extract specific content'
-              }
-            }
-          }
+                description: 'CSS selectors to extract specific content',
+              },
+            },
+          },
         },
-        required: ['url']
+        required: ['url'],
       },
       handler: {
         execute: async (params: {
@@ -104,14 +111,14 @@ export class WebScrapingMCPTools {
                 images: result.images?.slice(0, 10), // Limit images
                 statusCode: result.statusCode,
                 executionTime: result.metadata?.executionTime,
-                method: result.metadata?.method
+                method: result.metadata?.method,
               },
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_simple',
                 timestamp: new Date().toISOString(),
-                success: result.success
-              }
+                success: result.success,
+              },
             };
           } catch (error) {
             return {
@@ -120,12 +127,12 @@ export class WebScrapingMCPTools {
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_simple',
-                timestamp: new Date().toISOString()
-              }
+                timestamp: new Date().toISOString(),
+              },
             };
           }
-        }
-      }
+        },
+      },
     };
   }
 
@@ -141,7 +148,7 @@ export class WebScrapingMCPTools {
         properties: {
           url: {
             type: 'string',
-            description: 'The URL to scrape'
+            description: 'The URL to scrape',
           },
           config: {
             type: 'object',
@@ -153,10 +160,10 @@ export class WebScrapingMCPTools {
                 type: 'object',
                 properties: {
                   width: { type: 'number' },
-                  height: { type: 'number' }
-                }
-              }
-            }
+                  height: { type: 'number' },
+                },
+              },
+            },
           },
           extraction: {
             type: 'object',
@@ -164,15 +171,15 @@ export class WebScrapingMCPTools {
               mainContentOnly: { type: 'boolean', description: 'Extract main content only' },
               includeScreenshot: { type: 'boolean', description: 'Include page screenshot' },
               maxTextLength: { type: 'number', description: 'Maximum text length' },
-              selectors: { 
-                type: 'array', 
+              selectors: {
+                type: 'array',
                 items: { type: 'string' },
-                description: 'CSS selectors to extract specific content'
-              }
-            }
-          }
+                description: 'CSS selectors to extract specific content',
+              },
+            },
+          },
         },
-        required: ['url']
+        required: ['url'],
       },
       handler: {
         execute: async (params: {
@@ -201,14 +208,14 @@ export class WebScrapingMCPTools {
                 executionTime: result.metadata?.executionTime,
                 resourcesLoaded: result.metadata?.resourcesLoaded,
                 jsErrors: result.metadata?.jsErrors,
-                method: result.metadata?.method
+                method: result.metadata?.method,
               },
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_full',
                 timestamp: new Date().toISOString(),
-                success: result.success
-              }
+                success: result.success,
+              },
             };
           } catch (error) {
             return {
@@ -217,12 +224,12 @@ export class WebScrapingMCPTools {
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_full',
-                timestamp: new Date().toISOString()
-              }
+                timestamp: new Date().toISOString(),
+              },
             };
           }
-        }
-      }
+        },
+      },
     };
   }
 
@@ -238,24 +245,24 @@ export class WebScrapingMCPTools {
         properties: {
           url: {
             type: 'string',
-            description: 'The URL to scrape'
+            description: 'The URL to scrape',
           },
           config: {
             type: 'object',
             properties: {
               timeout: { type: 'number', description: 'Request timeout in milliseconds' },
-              preferFast: { type: 'boolean', description: 'Prefer fast method over completeness' }
-            }
+              preferFast: { type: 'boolean', description: 'Prefer fast method over completeness' },
+            },
           },
           extraction: {
             type: 'object',
             properties: {
               mainContentOnly: { type: 'boolean', description: 'Extract main content only' },
-              maxTextLength: { type: 'number', description: 'Maximum text length' }
-            }
-          }
+              maxTextLength: { type: 'number', description: 'Maximum text length' },
+            },
+          },
         },
-        required: ['url']
+        required: ['url'],
       },
       handler: {
         execute: async (params: {
@@ -282,14 +289,14 @@ export class WebScrapingMCPTools {
                 statusCode: result.statusCode,
                 executionTime: result.metadata?.executionTime,
                 method: result.metadata?.method,
-                methodUsed: result.metadata?.method === 'fetch' ? 'simple' : 'full'
+                methodUsed: result.metadata?.method === 'fetch' ? 'simple' : 'full',
               },
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_auto',
                 timestamp: new Date().toISOString(),
-                success: result.success
-              }
+                success: result.success,
+              },
             };
           } catch (error) {
             return {
@@ -298,12 +305,12 @@ export class WebScrapingMCPTools {
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'scrape_website_auto',
-                timestamp: new Date().toISOString()
-              }
+                timestamp: new Date().toISOString(),
+              },
             };
           }
-        }
-      }
+        },
+      },
     };
   }
 
@@ -319,29 +326,29 @@ export class WebScrapingMCPTools {
         properties: {
           url: {
             type: 'string',
-            description: 'The URL to request'
+            description: 'The URL to request',
           },
           method: {
             type: 'string',
             enum: ['GET', 'POST', 'PUT', 'DELETE'],
-            description: 'HTTP method'
+            description: 'HTTP method',
           },
           headers: {
             type: 'object',
-            description: 'Request headers'
+            description: 'Request headers',
           },
           body: {
             type: 'string',
-            description: 'Request body (for POST/PUT)'
+            description: 'Request body (for POST/PUT)',
           },
           config: {
             type: 'object',
             properties: {
-              timeout: { type: 'number', description: 'Request timeout in milliseconds' }
-            }
-          }
+              timeout: { type: 'number', description: 'Request timeout in milliseconds' },
+            },
+          },
         },
-        required: ['url']
+        required: ['url'],
       },
       handler: {
         execute: async (params: ProxyRequest): Promise<ToolResult> => {
@@ -355,7 +362,7 @@ export class WebScrapingMCPTools {
                 headers: result.headers,
                 body: result.body,
                 contentType: result.contentType,
-                executionTime: result.metadata.executionTime
+                executionTime: result.metadata.executionTime,
               },
               error: result.error,
               metadata: {
@@ -363,8 +370,8 @@ export class WebScrapingMCPTools {
                 toolName: 'proxy_web_request',
                 timestamp: new Date().toISOString(),
                 url: result.metadata.url,
-                method: result.metadata.method
-              }
+                method: result.metadata.method,
+              },
             };
           } catch (error) {
             return {
@@ -373,12 +380,12 @@ export class WebScrapingMCPTools {
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'proxy_web_request',
-                timestamp: new Date().toISOString()
-              }
+                timestamp: new Date().toISOString(),
+              },
             };
           }
-        }
-      }
+        },
+      },
     };
   }
 
@@ -394,14 +401,14 @@ export class WebScrapingMCPTools {
         properties: {
           url: {
             type: 'string',
-            description: 'The URL to analyze'
+            description: 'The URL to analyze',
           },
           includeScreenshot: {
             type: 'boolean',
-            description: 'Include a screenshot of the page'
-          }
+            description: 'Include a screenshot of the page',
+          },
         },
-        required: ['url']
+        required: ['url'],
       },
       handler: {
         execute: async (params: {
@@ -412,10 +419,10 @@ export class WebScrapingMCPTools {
             const result = await this.webScrapingService.scrapeFull(
               params.url,
               { enableJavaScript: true },
-              { 
+              {
                 includeMetadata: params.includeScreenshot,
                 mainContentOnly: false,
-                removeScripts: false
+                removeScripts: false,
               }
             );
 
@@ -431,9 +438,11 @@ export class WebScrapingMCPTools {
               loadTime: result.metadata?.executionTime,
               resourcesLoaded: result.metadata?.resourcesLoaded,
               screenshot: result.screenshot,
-              mainContent: result.text?.substring(0, 1000) + (result.text && result.text.length > 1000 ? '...' : ''),
+              mainContent:
+                result.text?.substring(0, 1000) +
+                (result.text && result.text.length > 1000 ? '...' : ''),
               topLinks: result.links?.slice(0, 10),
-              topImages: result.images?.slice(0, 5)
+              topImages: result.images?.slice(0, 5),
             };
 
             return {
@@ -443,8 +452,8 @@ export class WebScrapingMCPTools {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'analyze_website',
                 timestamp: new Date().toISOString(),
-                success: result.success
-              }
+                success: result.success,
+              },
             };
           } catch (error) {
             return {
@@ -453,12 +462,12 @@ export class WebScrapingMCPTools {
               metadata: {
                 executionId: `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 toolName: 'analyze_website',
-                timestamp: new Date().toISOString()
-              }
+                timestamp: new Date().toISOString(),
+              },
             };
           }
-        }
-      }
+        },
+      },
     };
   }
 
@@ -468,7 +477,7 @@ export class WebScrapingMCPTools {
   getStatistics() {
     return {
       webScraping: this.webScrapingService.getStatistics(),
-      proxy: this.proxyService.getStatistics()
+      proxy: this.proxyService.getStatistics(),
     };
   }
 

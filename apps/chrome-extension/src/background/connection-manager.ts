@@ -38,7 +38,7 @@ export const DEFAULT_CONNECTION_SETTINGS: ConnectionSettings = {
   wsHost: CONFIG.WS_HOST,
   wsPort: CONFIG.WS_PORT,
   useCompression: CONFIG.ENABLE_COMPRESSION,
-  relayUrl: 'ws://localhost:3001/ws', // TNF Relay WebSocket endpoint
+  relayUrl: 'wss://relay.thenewfuse.com/ws', // TNF Relay WebSocket endpoint
   autoConnect: true,
   maxRetryAttempts: CONFIG.MAX_RETRY_ATTEMPTS,
   retryDelay: CONFIG.RETRY_DELAY,
@@ -152,7 +152,10 @@ export class ConnectionManager {
       }
 
       // Create WebSocket URL
-      const wsUrl = `${this.settings.wsProtocol}://${this.settings.wsHost}:${this.settings.wsPort}`;
+      // Use the configured relayUrl if available, otherwise construct from legacy settings
+      const wsUrl =
+        this.settings.relayUrl ||
+        `${this.settings.wsProtocol}://${this.settings.wsHost}:${this.settings.wsPort}`;
       connectionLogger.info(`Connecting to WebSocket server at ${wsUrl}`);
 
       // Verify server is available before connecting (optional check)

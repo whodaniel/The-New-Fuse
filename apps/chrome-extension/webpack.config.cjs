@@ -12,9 +12,9 @@ module.exports = (env, argv) => {
     mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
     entry: {
-      popup: './src/popup/popup-fallback.js',
-      background: './src/background.ts',
-      content: './src/v5/content/index.ts',
+      popup: './src/popup/index.ts',
+      background: './src/background/index.ts',
+      content: './src/content/index.ts',
       options: './src/options/index.ts',
       floatingPanel: './src/floatingPanel/EnhancedFloatingPanel.tsx',
     },
@@ -99,17 +99,7 @@ module.exports = (env, argv) => {
       }),
     ],
     optimization: {
-      minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            compress: {
-              drop_console: isProduction,
-              pure_funcs: isProduction ? ['console.log', 'console.debug'] : [],
-            },
-          },
-        }),
-        new CssMinimizerPlugin(),
-      ],
+      minimize: isProduction,
       splitChunks: {
         chunks: 'all',
         maxInitialRequests: 3,

@@ -1,9 +1,9 @@
 // Shared configuration between Chrome extension and VS Code extension
 export const CONFIG = {
   // WebSocket Configuration
-  WS_PORT: 3712,
-  WS_HOST: 'localhost',
-  WS_PROTOCOL: 'ws',
+  WS_PORT: 443,
+  WS_HOST: 'relay.thenewfuse.com',
+  WS_PROTOCOL: 'wss',
 
   // Connection Settings
   MAX_RETRY_ATTEMPTS: 5,

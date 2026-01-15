@@ -17,6 +17,7 @@ export type AgentPlatform =
   | 'api-gateway'
   | 'backend-service'
   | 'saas'
+  | 'browser-page'
   | 'unknown';
 
 export interface Agent {
@@ -53,6 +54,7 @@ export interface FederationChannel {
   description?: string;
   members: string[];
   createdAt: number;
+  createdBy?: string;
   isPrivate: boolean;
   topic?: string;
   metadata?: Record<string, unknown>;

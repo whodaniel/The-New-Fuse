@@ -176,7 +176,6 @@ graph TD
 
 - NestJS framework
 - TypeScript
-- Prisma ORM (migrating to Drizzle ORM)
 - Drizzle ORM
 - PostgreSQL database
 - Redis caching
@@ -353,10 +352,13 @@ pnpm run docker:test
 
 ### Essential Documentation
 
-- **[Documentation Map](./DOCUMENTATION_MAP.md)** - Complete map of all 1,200+ docs with navigation paths
-- **[Documentation Index](./DOCUMENTATION_INDEX.md)** - Organized index by category
+- **[Documentation Map](./DOCUMENTATION_MAP.md)** - Complete map of all 1,200+
+  docs with navigation paths
+- **[Documentation Index](./DOCUMENTATION_INDEX.md)** - Organized index by
+  category
 - **[Quick Start Guide](./QUICK_START_GUIDE.md)** - 7-day path to launch
-- **[Production Readiness](./PRODUCTION_READINESS.md)** - Current production status
+- **[Production Readiness](./PRODUCTION_READINESS.md)** - Current production
+  status
 
 ### Getting Started
 
@@ -449,18 +451,14 @@ pnpm run test:integration # Integration tests
 pnpm run test:e2e         # End-to-end tests
 ```
 
-### Database
-
 ```bash
-# Drizzle ORM (New)
-pnpm run db:generate:drizzle # Generate Drizzle schema
-pnpm run db:migrate:drizzle  # Run Drizzle migrations
-
-# Prisma ORM (Legacy)
-pnpm run db:generate      # Generate Prisma client
-pnpm run db:migrate       # Run migrations
-pnpm run db:studio        # Open Prisma Studio
-pnpm run db:reset         # Reset database with seed data
+# Drizzle ORM Database Commands
+pnpm run db:generate     # Generate Drizzle schema from changes
+pnpm run db:migrate      # Run Drizzle migrations
+pnpm run db:push         # Push schema directly (dev only)
+pnpm run db:pull         # Introspect existing database
+pnpm run db:studio       # Open Drizzle Studio (DB GUI)
+pnpm run db:check        # Check schema validity
 ```
 
 ### Quality
@@ -596,7 +594,7 @@ pnpm run build
 ### Type Errors
 
 ```bash
-# Regenerate Prisma client
+# Regenerate Drizzle types
 pnpm run db:generate
 
 # Run type check
@@ -606,17 +604,21 @@ pnpm run type-check
 ## Related Documentation
 
 ### Core Documentation
-- [Documentation Map](./DOCUMENTATION_MAP.md) - Complete navigation guide for all 1,200+ docs
+
+- [Documentation Map](./DOCUMENTATION_MAP.md) - Complete navigation guide for
+  all 1,200+ docs
 - [Quick Start Guide](./QUICK_START_GUIDE.md) - 7-day path to production
 - [Production Readiness](./PRODUCTION_READINESS.md) - Current status and roadmap
 
 ### Developer Resources
+
 - [Architecture Standards](./docs/architecture/ARCHITECTURE_STANDARDS.md)
 - [API Usage Guide](./docs/API_USAGE_GUIDE.md)
 - [Agent Development Guide](./docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md)
 - [Testing Best Practices](./docs/testing/BEST_PRACTICES.md)
 
 ### Deployment Resources
+
 - [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
 - [Railway Deployment](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
 - [Docker Best Practices](./docs/DOCKER_BEST_PRACTICES.md)

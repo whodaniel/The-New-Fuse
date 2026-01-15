@@ -12,8 +12,8 @@ const TNF_WEBHOOK_BASE_URL =
 export class JulesAgentAdapter {
   constructor(
     private agentRegistry: RedisAgentRegistry,
-    private agentRepo: DrizzleAgentRepository,
-    private taskRepo: DrizzleTaskRepository,
+    private agentRepo: InstanceType<typeof DrizzleAgentRepository>,
+    private taskRepo: InstanceType<typeof DrizzleTaskRepository>,
     private redis: Redis // Redis can be used for other things, like distributed locks
   ) {}
 

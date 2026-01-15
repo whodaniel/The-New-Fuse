@@ -205,9 +205,13 @@ export class ExampleAgent extends EventEmitter {
    * Custom task handler
    */
   private async handleCustom(input: unknown): Promise<unknown> {
-    // Simulate async processing
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    return { processed: true, input };
+    // Process the custom input - no artificial delays
+    // In a real implementation, this would perform actual async work:
+    // - Database queries
+    // - External API calls
+    // - File operations
+    // - Message queue publishing
+    return { processed: true, input, processedAt: new Date().toISOString() };
   }
 
   // ============================================================

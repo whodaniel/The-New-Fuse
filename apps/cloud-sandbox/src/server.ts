@@ -28,15 +28,15 @@ import { promisify } from 'util';
 // }
 
 import express from 'express';
-// import { chromium } from 'playwright';
+import { chromium } from 'playwright';
 import { Server as SocketIOServer } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import type { WebSocket } from 'ws';
 import { WebSocketServer } from 'ws';
 
-// import type { Browser, Page } from 'playwright';
-type Browser = any;
-type Page = any;
+import type { Browser, Page } from 'playwright';
+// type Browser = any;
+// type Page = any;
 
 const execAsync = promisify(exec);
 
@@ -74,14 +74,6 @@ interface ToolHandler {
 let browser: Browser | null = null;
 let activePage: Page | null = null;
 
-async function getBrowser(): Promise<Browser> {
-  throw new Error('Browser automation disabled for stability testing');
-}
-
-async function getPage(): Promise<Page> {
-  throw new Error('Browser automation disabled for stability testing');
-}
-/*
 async function getBrowser(): Promise<Browser> {
   if (!browser) {
     console.log('🌐 Launching headless Chromium...');
@@ -138,7 +130,6 @@ async function getPage(): Promise<Page> {
   }
   return activePage;
 }
-*/
 
 // ============================================================================
 // LIVE VIEW & BROADCASTING

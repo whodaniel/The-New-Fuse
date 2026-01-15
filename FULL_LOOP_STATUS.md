@@ -14,7 +14,7 @@ have been resolved.
 | **Backend API**       | API       | **ACTIVE**   | `https://the-new-fuse-api.railway.app`          | Verified online.                                  |
 | **Relay Server**      | WebSocket | **ACTIVE**   | `wss://relay.thenewfuse.com`                    | DNS & Connection Verified.                        |
 | **VS Code Extension** | Client    | **BUILT**    | `apps/vscode-extension/the-new-fuse-9.0.0.vsix` | **Action:** Install manually.                     |
-| **Chrome Extension**  | Client    | **BUILT**    | `apps/chrome-extension/dist/`                   | **Action:** Load unpacked in Chrome.              |
+| **Chrome Extension**  | Client    | **VERIFIED** | `apps/chrome-extension/dist-v5`                 | **Action:** Load "dist-v5" unpacked.              |
 | **TNF CLI**           | Tool      | **VERIFIED** | `packages/relay-core`                           | Binary verified as `standalone-relay.js`.         |
 | **Desktop App**       | Client    | **SKIPPED**  | `apps/electron-desktop`                         | Skipped to conserve disk space.                   |
 
@@ -33,7 +33,7 @@ Relay server. You must trigger a redeploy on Railway.
 railway up --service frontend
 ```
 
-**Or via Git:** Push the committed changes (see below) to your repository.
+**Or via Git:** Push the committed changes to your repository.
 
 ### B. Install VS Code Extension
 
@@ -43,12 +43,15 @@ The extension has been successfully packaged. Install it in your local VS Code:
 code --install-extension apps/vscode-extension/the-new-fuse-9.0.0.vsix
 ```
 
-### C. Install Chrome Extension
+### C. Install Chrome Extension (Use v5)
 
 1. Open Chrome and navigate to `chrome://extensions`.
 2. Enable **Developer Mode** (top right toggle).
 3. Click **Load unpacked**.
-4. Select the directory: `apps/chrome-extension/dist`
+4. Select the directory:
+   `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension/dist-v5`
+   _(Note: This version has been patched to allow connections to the production
+   relay)._
 
 ### D. Verify Connectivity
 
@@ -69,9 +72,8 @@ code --install-extension apps/vscode-extension/the-new-fuse-9.0.0.vsix
 - **VS Code**: Vendored `@modelcontextprotocol/sdk` to bypass `pnpm` module
   resolution issues. Fixed missing transitive dependencies (`ajv-formats`) by
   mirroring them from `node_modules`.
-- **Chrome Extension**: Fixed critical Webpack errors by manually resolving and
-  injecting missing dependencies (`css-minimizer-webpack-plugin`, `ts-loader`,
-  `react` suite) into a clean build environment.
+- **Chrome Extension**: Recovered valid `dist-v5` artifact and patched
+  `manifest.json` to allow secure connections to `relay.thenewfuse.com`.
 - **TNF CLI**: Restored functionality by fixing missing `@redis/client`
   dependencies.
 

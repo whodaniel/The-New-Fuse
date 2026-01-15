@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ApiError } from './error.middleware';
 
 /**
@@ -60,7 +60,10 @@ export function validateBody(schema: ValidationSchema) {
       // String validations
       if (rules.type === 'string') {
         if (rules.minLength !== undefined && value.length < rules.minLength) {
-          errors.push({ field, message: `${field} must be at least ${rules.minLength} characters` });
+          errors.push({
+            field,
+            message: `${field} must be at least ${rules.minLength} characters`,
+          });
         }
         if (rules.maxLength !== undefined && value.length > rules.maxLength) {
           errors.push({ field, message: `${field} must be at most ${rules.maxLength} characters` });
@@ -135,7 +138,7 @@ export function validateParams(schema: ValidationSchema) {
             errors.push({ field, message: `${field} must be a number` });
             continue;
           }
-          
+
           // Number validations
           if (rules.min !== undefined && num < rules.min) {
             errors.push({ field, message: `${field} must be at least ${rules.min}` });
@@ -147,12 +150,15 @@ export function validateParams(schema: ValidationSchema) {
       } else {
         // String validations
         if (rules.minLength !== undefined && value.length < rules.minLength) {
-          errors.push({ field, message: `${field} must be at least ${rules.minLength} characters` });
+          errors.push({
+            field,
+            message: `${field} must be at least ${rules.minLength} characters`,
+          });
         }
         if (rules.maxLength !== undefined && value.length > rules.maxLength) {
           errors.push({ field, message: `${field} must be at most ${rules.maxLength} characters` });
         }
-        if (rules.pattern && !rules.pattern.test(value)) {
+        if (rules.pattern && !rules.pattern.test(value as string)) {
           errors.push({ field, message: `${field} has an invalid format` });
         }
       }

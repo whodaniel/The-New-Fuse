@@ -29,7 +29,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.10",
     "@nestjs/event-emitter": "^3.0.1",
-    "@nestjs/schedule": "^6.0.1",
+    "@nestjs/schedule": "^4.1.1",
     "@the-new-fuse/core-vector-db": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",

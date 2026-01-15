@@ -44,6 +44,7 @@ export class EnhancedFloatingPanel {
   // Unique panel identifier
   private readonly panelId: string;
   private readonly hostName: string;
+  private myAgentId: string | null = null;
 
   // Data
   private connectionStatus: ConnectionStatus = 'disconnected';
@@ -76,6 +77,10 @@ export class EnhancedFloatingPanel {
       ) => void)
     | null = null;
 
+  private storageListener:
+    | ((changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => void)
+    | null = null;
+
   // Flag to track if extension context is valid
   private isContextValid = true;
 
@@ -90,7 +95,7 @@ export class EnhancedFloatingPanel {
     this.panelId = `${this.hostName}-${Math.random().toString(36).substring(2, 8)}`;
 
     this.state = {
-      mode: options.mode || 'collapsed',
+      mode: options.mode || 'expanded', // UPDATED: Default to expanded
       position: options.position || { x: 20, y: 20 },
       size: options.size || { width: 360, height: 480 },
       activeTab: 'chat',
@@ -152,6 +157,7 @@ export class EnhancedFloatingPanel {
         this.connectionStatus = response.connectionStatus || 'disconnected';
         this.agents = response.agents || [];
         this.channels = response.channels || [];
+        this.myAgentId = response.agentId || null;
 
         // Restore current channel if we have one stored
         chrome.storage.local.get(['fuse_current_channel'], (result) => {
@@ -650,6 +656,183 @@ export class EnhancedFloatingPanel {
   }
 
   /**
+   * Apply position and size from state
+   */
+  private applyPositionAndSize(): void {
+    if (!this.container) return;
+
+    const { position, size, mode } = this.state;
+    const isCollapsed = mode === 'collapsed';
+    const isMinimized = mode === 'minimized';
+
+    if (isMinimized) {
+      // Minimized size is fixed in CSS
+      this.container.style.width = '';
+      this.container.style.height = '';
+
+      // Keep position but clamp to screen
+      const maxX = window.innerWidth - 48; // 48 is width
+      const maxY = window.innerHeight - 48; // 48 is height
+
+      const x = Math.min(Math.max(0, position.x), maxX);
+      const y = Math.min(Math.max(0, position.y), maxY);
+
+      this.container.style.left = `${x}px`;
+      this.container.style.top = `${y}px`;
+      return;
+    }
+
+    if (isCollapsed) {
+      this.container.style.height = `${COLLAPSED_HEIGHT}px`;
+      this.container.style.width = `${size.width}px`;
+    } else {
+      this.container.style.height = `${size.height}px`;
+      this.container.style.width = `${size.width}px`;
+    }
+
+    // Clamp position
+    const maxX = window.innerWidth - size.width;
+    const maxY = window.innerHeight - (isCollapsed ? COLLAPSED_HEIGHT : size.height);
+
+    const x = Math.min(Math.max(0, position.x), maxX);
+    const y = Math.min(Math.max(0, position.y), maxY);
+
+    this.container.style.left = `${x}px`;
+    this.container.style.top = `${y}px`;
+  }
+
+  /**
+   * Setup event listeners
+   */
+  private setupListeners(): void {
+    if (!this.container) return;
+
+    // Drag handling
+    const header = this.container.querySelector('[data-drag-handle]');
+    if (header) {
+      header.addEventListener('mousedown', (e: Event) => {
+        this.startDrag(e as MouseEvent);
+      });
+    }
+
+    // Resize handling
+    const resizeHandles = this.container.querySelectorAll('[data-resize]');
+    resizeHandles.forEach((handle) => {
+      handle.addEventListener('mousedown', (e: Event) => {
+        const edge = (e.currentTarget as HTMLElement).dataset.resize || '';
+        this.startResize(e as MouseEvent, edge);
+      });
+    });
+
+    // Content clicks (delegation)
+    this.container.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+
+      // Handle action buttons
+      const actionBtn = target.closest('[data-action]');
+      if (actionBtn) {
+        const action = (actionBtn as HTMLElement).dataset.action || '';
+        this.handleAction(action);
+        return;
+      }
+
+      // Handle tabs
+      const tabBtn = target.closest('[data-tab]');
+      if (tabBtn) {
+        const tab = (tabBtn as HTMLElement).dataset.tab as PanelTab;
+        this.switchTab(tab);
+        return;
+      }
+
+      // Handle channel selection
+      if (target.matches('.fcp6-channel')) {
+        const channelId = target.dataset.channel;
+        if (channelId) {
+          // If clicking generic channel row, select it
+          this.selectChannel(channelId);
+        }
+      }
+    });
+
+    // Input handling
+    this.container.addEventListener('keydown', (e) => {
+      const target = e.target as HTMLElement;
+
+      // Send message on Enter (without Shift)
+      if (target.dataset.input === 'message' && e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        this.sendMessage();
+      }
+
+      // Create channel on Enter
+      if (target.id === 'fuse-new-channel-name' && e.key === 'Enter') {
+        e.preventDefault();
+        this.submitCreateChannel();
+      }
+    });
+
+    // Channel selector change
+    const channelSelect = this.container.querySelector('#fuse-channel-select');
+    if (channelSelect) {
+      channelSelect.addEventListener('change', (e) => {
+        const select = e.target as HTMLSelectElement;
+        this.selectChannel(select.value || null);
+      });
+    }
+
+    // Listen for storage changes to sync across tabs
+    this.storageListener = (changes, areaName) => {
+      if (areaName === 'local' && changes.fuse_current_channel) {
+        const newChannel = changes.fuse_current_channel.newValue;
+        if (newChannel !== this.currentChannel) {
+          console.log('[FuseConnect] Syncing channel from storage:', newChannel);
+          this.currentChannel = newChannel;
+          this.update();
+        }
+      }
+    };
+    chrome.storage.onChanged.addListener(this.storageListener);
+  }
+
+  /**
+   * Start dragging
+   */
+  private startDrag(e: MouseEvent): void {
+    if ((e.target as HTMLElement).closest('button')) return; // Don't drag if clicking buttons
+
+    this.dragState = {
+      isDragging: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      startPosX: this.state.position.x,
+      startPosY: this.state.position.y,
+    };
+
+    const onMove = (e: MouseEvent) => {
+      if (!this.dragState.isDragging || !this.container) return;
+
+      const deltaX = e.clientX - this.dragState.startX;
+      const deltaY = e.clientY - this.dragState.startY;
+
+      this.state.position.x = this.dragState.startPosX + deltaX;
+      this.state.position.y = this.dragState.startPosY + deltaY;
+
+      this.container.style.left = `${this.state.position.x}px`;
+      this.container.style.top = `${this.state.position.y}px`;
+    };
+
+    const onUp = () => {
+      this.dragState.isDragging = false;
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      this.saveState();
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }
+
+  /**
    * Render panel HTML
    */
   private render(): string {
@@ -758,6 +941,35 @@ export class EnhancedFloatingPanel {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   }
+  /**
+   * Render input area
+   */
+  private renderInputArea(): string {
+    return `
+      <div class="fcp6-input-area">
+        <div class="fcp6-input-row">
+          <textarea
+            class="fcp6-input"
+            data-input="message"
+            placeholder="Type a message..."
+            rows="1"
+            style="min-height: 42px;"
+          ></textarea>
+          <button class="fcp6-send-btn" data-action="send" title="Send">
+            ➤
+          </button>
+        </div>
+        <div class="fcp6-input-hint">
+          <button class="fcp6-btn" data-action="inject-to-chat" style="padding: 2px 6px; height: auto; font-size: 10px;">
+            Inject to Page
+          </button>
+          <span style="flex: 1;"></span>
+          <span>Press Enter to send</span>
+        </div>
+      </div>
+    `;
+  }
+
   /**
    * Render minimized state
    */
@@ -921,17 +1133,54 @@ export class EnhancedFloatingPanel {
       this.messages.length > 0
         ? this.messages
             .slice(-50) // Get last 50 messages
-            .map(
-              (msg) => `
-          <div class="fcp6-chat-card" data-msg-id="${msg.id}">
+            .map((msg) => {
+              // Resolve Sender Name and ID
+              let senderName = msg.from;
+              let senderId = msg.from;
+              let isMe = false;
+
+              if (
+                msg.from === 'You' ||
+                msg.from === 'You (Fuse)' ||
+                (this.myAgentId && msg.from === this.myAgentId)
+              ) {
+                senderName = 'You';
+                senderId = this.myAgentId || 'unknown-id';
+                isMe = true;
+              } else {
+                // Try to resolve name from agents list
+                const agent = this.agents.find((a) => a.id === msg.from);
+                if (agent) {
+                  senderName = agent.name;
+                  senderId = agent.id;
+                }
+              }
+
+              // Metadata ID check (if present)
+              if (msg.metadata && typeof msg.metadata.senderId === 'string') {
+                senderId = msg.metadata.senderId;
+              }
+
+              // Shorten ID for display
+              const shortId = senderId.length > 8 ? senderId.substring(0, 6) + '...' : senderId;
+
+              return `
+            <div class="fcp6-chat-card" data-msg-id="${msg.id}">
             <div class="fcp6-chat-header">
-              <span class="fcp6-chat-from">${this.escapeHtml(msg.from)}</span>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(senderId)}">
+                  ${this.escapeHtml(senderName)}
+                </span>
+                <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 4px; border-radius: 3px; color: rgba(255,255,255,0.4);" title="${this.escapeHtml(senderId)}">
+                  #${this.escapeHtml(shortId)}
+                </span>
+              </div>
               <span class="fcp6-chat-time">${this.formatTime(msg.timestamp)}</span>
             </div>
             <div class="fcp6-chat-content" style="user-select: text; -webkit-user-select: text; cursor: text;">${this.escapeHtml(msg.content)}</div>
           </div>
-        `
-            )
+        `;
+            })
             .join('')
         : `<div class="fcp6-empty"><div class="fcp6-empty-icon">💬</div><p>No messages yet</p><p style="font-size: 11px; opacity: 0.6;">Send a message to start chatting</p></div>`;
 
@@ -940,6 +1189,7 @@ export class EnhancedFloatingPanel {
       <div class="fcp6-chat-scroll" id="fuse-chat-scroll" style="flex: 1; overflow-y: auto; max-height: 300px; padding-right: 4px;">
         ${messagesHtml}
       </div>
+      </div>
     `;
   }
 
@@ -947,51 +1197,47 @@ export class EnhancedFloatingPanel {
    * Render channels tab
    */
   private renderChannelsTab(): string {
-    // Channel creation form
-    const createFormHtml = `
-      <div class="fcp6-create-channel-form" style="margin-bottom: 12px; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px;">Create New Channel</div>
-        <div style="display: flex; gap: 8px;">
-          <input type="text"
-            id="fuse-new-channel-name"
-            placeholder="Channel name..."
-            style="flex: 1; padding: 8px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: rgba(0,0,0,0.3); color: white; font-size: 12px;"
-          />
-          <button class="fcp6-send-btn" data-action="submit-create-channel" style="padding: 8px 12px;">
-            Create
-          </button>
-        </div>
-      </div>
-    `;
-
-    if (this.channels.length === 0) {
-      return `
-        ${createFormHtml}
-        <div class="fcp6-empty">
-          <div class="fcp6-empty-icon">📢</div>
-          <p>No channels yet</p>
-          <p style="font-size: 11px; opacity: 0.6;">Create a channel to sync messages to relay</p>
-        </div>
-      `;
-    }
-
     return `
-      ${createFormHtml}
-      <div class="fcp6-section-title">Your Channels</div>
-      ${this.channels
-        .map(
-          (ch) => `
-        <div class="fcp6-channel ${this.currentChannel === ch.id ? 'active' : ''}" data-channel="${ch.id}" data-action="join-channel">
-          <span class="fcp6-channel-icon">${ch.isPrivate ? '🔒' : '#'}</span>
-          <div class="fcp6-channel-info">
-            <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
-            <div class="fcp6-channel-members">${ch.members.length} members</div>
+      <div class="fcp6-section-title">Active Channels</div>
+      <div class="fcp6-list">
+        ${
+          this.channels.length > 0
+            ? this.channels
+                .map(
+                  (ch) => `
+          <div class="fcp6-channel ${this.currentChannel === ch.id ? 'active' : ''}" data-channel="${ch.id}">
+            <div class="fcp6-channel-icon">${ch.isPrivate ? '🔒' : '#'}</div>
+            <div class="fcp6-channel-info">
+              <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
+              <div class="fcp6-channel-members">${ch.members.length} active agents</div>
+            </div>
+            ${this.currentChannel === ch.id ? '<div class="fcp6-badge">✓</div>' : ''}
           </div>
-          ${this.currentChannel === ch.id ? '<span style="color: #0f8;">✓ Active</span>' : ''}
-        </div>
-      `
-        )
-        .join('')}
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty">No active channels</div>'
+        }
+      </div>
+
+      <div class="fcp6-section-title" style="margin-top: 16px;">Create Channel</div>
+      <div class="fcp6-input-row">
+        <input type="text" id="fuse-new-channel-name" class="fcp6-input" placeholder="New channel name..." style="min-height: 36px;">
+        <button class="fcp6-btn" style="width: auto; padding: 0 12px; background: rgba(0,217,255,0.2); color: #00D9FF;" id="fuse-btn-create-channel">Create</button>
+      </div>
+      <script>
+        document.getElementById('fuse-btn-create-channel').onclick = () => {
+           const input = document.getElementById('fuse-new-channel-name');
+           if(input && input.value.trim()) {
+               const name = input.value.trim();
+               // We can't easily call class methods from inline script without binding exposed
+               // but we have a keydown listener on the input that calls submitCreateChannel
+               // Let's trigger that event
+               const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+               input.dispatchEvent(event);
+           }
+        };
+      </script>
     `;
   }
 
@@ -999,61 +1245,31 @@ export class EnhancedFloatingPanel {
    * Render agents tab
    */
   private renderAgentsTab(): string {
-    if (this.agents.length === 0) {
-      return `
-        <div class="fcp6-empty">
-          <div class="fcp6-empty-icon">🤖</div>
-          <p>No agents connected</p>
-          <p style="font-size: 11px; margin-top: 4px;">Connect to the relay to see agents</p>
-        </div>
-      `;
-    }
-
     return `
       <div class="fcp6-section-title">Connected Agents (${this.agents.length})</div>
-      ${this.agents
-        .map(
-          (agent) => `
-        <div class="fcp6-agent" data-agent="${agent.id}">
-          <div class="fcp6-agent-avatar">${this.getAgentIcon(agent.platform)}</div>
-          <div style="flex: 1;">
-            <div class="fcp6-agent-name">${agent.name}</div>
-            <div class="fcp6-agent-platform">${agent.platform}</div>
+      <div class="fcp6-list">
+        ${
+          this.agents.length > 0
+            ? this.agents
+                .map(
+                  (agent) => `
+          <div class="fcp6-agent">
+            <div class="fcp6-agent-avatar">${this.getAgentIcon(agent.platform || 'unknown')}</div>
+            <div class="fcp6-channel-info">
+              <div class="fcp6-agent-name">
+                ${this.escapeHtml(agent.name)}
+                ${agent.id === this.myAgentId ? '<span class="fcp6-badge" style="position:static; display:inline-block; margin-left:6px; background:rgba(0,217,255,0.2); color:#00D9FF;">YOU</span>' : ''}
+              </div>
+              <div class="fcp6-agent-platform">${agent.platform} • ${agent.status}</div>
+            </div>
           </div>
-          <span class="fcp6-status-dot ${agent.status}"></span>
-        </div>
-      `
-        )
-        .join('')}
-    `;
-  }
-
-  /**
-   * Render notifications tab
-   */
-  private renderNotificationsTab(): string {
-    if (this.notifications.length === 0) {
-      return `
-        <div class="fcp6-empty">
-          <div class="fcp6-empty-icon">🔔</div>
-          <p>No notifications</p>
-        </div>
-      `;
-    }
-
-    return this.notifications
-      .map(
-        (n) => `
-      <div class="fcp6-notification ${n.read ? '' : 'unread'}" data-notification="${n.id}">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-          <strong>${n.title}</strong>
-          <span style="font-size: 10px; color: rgba(255,255,255,0.4);">${this.formatTime(n.timestamp)}</span>
-        </div>
-        <div style="font-size: 12px; color: rgba(255,255,255,0.7);">${n.message}</div>
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty">No other agents connected</div>'
+        }
       </div>
-    `
-      )
-      .join('');
+    `;
   }
 
   /**
@@ -1061,68 +1277,72 @@ export class EnhancedFloatingPanel {
    */
   private renderServicesTab(): string {
     const services = [
-      {
-        id: 'relay',
-        name: 'TNF Relay',
-        icon: '🔌',
-        status: this.serviceStatuses.get('relay') || 'unknown',
-        port: 3001,
-      },
-      {
-        id: 'api',
-        name: 'API Server',
-        icon: '🌐',
-        status: this.serviceStatuses.get('api') || 'unknown',
-        port: 3001,
-      },
-      {
-        id: 'frontend',
-        name: 'Frontend',
-        icon: '🖥️',
-        status: this.serviceStatuses.get('frontend') || 'unknown',
-        port: 3000,
-      },
+      { id: 'relay', name: 'Relay Server', icon: '📡' },
+      { id: 'vector-db', name: 'Vector DB', icon: '🧠' },
+      { id: 'fs-server', name: 'File System', icon: '📂' },
     ];
 
     return `
-      <div class="fcp6-services-header">
-        <h4 style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Service Management</h4>
-      </div>
-      ${services
-        .map(
-          (svc) => `
-        <div class="fcp6-service-card" data-service="${svc.id}">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 20px;">${svc.icon}</span>
-            <div style="flex: 1;">
-              <div style="font-weight: 600;">${svc.name}</div>
-              <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Port ${svc.port}</div>
+      <div class="fcp6-section-title">Core Banking Services</div>
+      <div class="fcp6-list">
+        ${services
+          .map((svc) => {
+            const status = this.serviceStatuses.get(svc.id) || 'unknown';
+            return `
+          <div class="fcp6-agent">
+            <div class="fcp6-agent-avatar" style="background: rgba(255,255,255,0.1);">${svc.icon}</div>
+            <div class="fcp6-channel-info">
+              <div class="fcp6-agent-name">${svc.name}</div>
+              <div class="fcp6-agent-platform">
+                <span class="fcp6-status-dot ${status === 'online' ? 'connected' : 'disconnected'}"></span>
+                ${status.toUpperCase()}
+              </div>
             </div>
-            <span class="fcp6-status-dot ${svc.status}"></span>
+            <div style="display:flex; gap:4px;">
+               <button class="fcp6-btn" data-action="restart-${svc.id}-service" title="Restart">↺</button>
+            </div>
           </div>
-          <div class="fcp6-service-actions">
-            <button class="fcp6-service-btn" data-action="start-service" data-service="${svc.id}" title="Start">▶️</button>
-            <button class="fcp6-service-btn" data-action="stop-service" data-service="${svc.id}" title="Stop">⏹️</button>
-            <button class="fcp6-service-btn" data-action="restart-service" data-service="${svc.id}" title="Restart">🔄</button>
+        `;
+          })
+          .join('')}
+      </div>
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button class="fcp6-btn" data-action="check-health" style="flex:1; width:auto;">Check Health</button>
+        <button class="fcp6-btn" data-action="start-all-services" style="flex:1; width:auto;">Start All</button>
+      </div>
+       <div style="margin-top:12px;">
+        <button class="fcp6-btn" data-action="open-terminal" style="width:100%;">Open Terminal</button>
+      </div>
+    `;
+  }
+
+  /**
+   * Render notifications tab
+   */
+  private renderNotificationsTab(): string {
+    // Mark as read when viewing
+    setTimeout(() => this.markNotificationsRead(), 1000);
+
+    return `
+      <div class="fcp6-section-title">Notifications</div>
+      <div class="fcp6-list">
+        ${
+          this.notifications.length > 0
+            ? this.notifications
+                .map(
+                  (n) => `
+          <div class="fcp6-notification ${!n.read ? 'unread' : ''}">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-weight:600; font-size:11px;">${this.escapeHtml(n.title)}</span>
+              <span style="font-size:9px; opacity:0.5;">${this.formatTime(n.timestamp)}</span>
+            </div>
+            <div style="font-size:11px; opacity:0.8;">${this.escapeHtml(n.message)}</div>
           </div>
-        </div>
-      `
-        )
-        .join('')}
-      <div style="margin-top: 12px;">
-        <button class="fcp6-btn fcp6-btn-primary" data-action="start-all-services" style="width: 100%;">
-          🚀 Start All Services
-        </button>
-      </div>
-      <div style="margin-top: 8px;">
-        <button class="fcp6-btn fcp6-btn-secondary" data-action="open-terminal" style="width: 100%;">
-          💻 Open Terminal
-        </button>
-      </div>
-      <div style="margin-top: 8px;">
-        <button class="fcp6-btn fcp6-btn-secondary" data-action="check-health" style="width: 100%;">
-          🩺 Check Health
-        </button>
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty">No notifications</div>'
+        }
       </div>
     `;
   }
@@ -1132,291 +1352,42 @@ export class EnhancedFloatingPanel {
    */
   private renderSettingsTab(): string {
     return `
-      <div class="fcp6-settings-section">
-        <h4 style="margin: 0 0 10px 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Connection</h4>
-        <div class="fcp6-setting-row">
-          <label>Relay URL</label>
-          <input type="text" class="fcp6-setting-input" data-setting="relayUrl" value="ws://localhost:3001/ws" />
+      <div class="fcp6-section-title">Panel Settings</div>
+      <div style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+
+        <div style="margin-bottom: 12px;">
+          <label style="display:block; font-size:11px; margin-bottom:4px; opacity:0.7;">Opacity</label>
+          <input type="range" data-setting="opacity" min="0.2" max="1" step="0.1" value="${this.state.opacity || 1}" style="width:100%;">
         </div>
-        <div class="fcp6-setting-row">
-          <label>Auto-Reconnect</label>
-          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="autoReconnect" checked />
+
+        <div style="margin-bottom: 12px; display:flex; align-items:center;">
+          <input type="checkbox" data-setting="alwaysOnTop" ${this.state.isPinned ? 'checked' : ''} style="margin-right:8px;">
+          <label style="font-size:11px;">Always on Top (Pin)</label>
+        </div>
+
+         <div style="margin-bottom: 12px; display:flex; align-items:center;">
+          <input type="checkbox" data-setting="autoReconnect" checked style="margin-right:8px;">
+          <label style="font-size:11px;">Auto-Reconnect Relay</label>
+        </div>
+
+         <div style="margin-bottom: 12px; display:flex; align-items:center;">
+          <input type="checkbox" data-setting="debugMode" style="margin-right:8px;">
+          <label style="font-size:11px;">Debug Mode</label>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:16px;">
+           <button class="fcp6-btn" data-action="save-settings" style="flex:1; width:auto; background:rgba(0,217,255,0.2); color:#00D9FF;">Save</button>
+           <button class="fcp6-btn" data-action="reset-settings" style="flex:1; width:auto;">Reset</button>
         </div>
       </div>
 
-      <div class="fcp6-settings-section">
-        <h4 style="margin: 0 0 10px 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Panel</h4>
-        <div class="fcp6-setting-row">
-          <label>Opacity</label>
-          <input type="range" class="fcp6-setting-range" data-setting="opacity" min="0.5" max="1" step="0.1" value="${this.state.opacity}" />
-        </div>
-        <div class="fcp6-setting-row">
-          <label>Always on Top</label>
-          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="alwaysOnTop" ${this.state.isPinned ? 'checked' : ''} />
-        </div>
-      </div>
-
-      <div class="fcp6-settings-section">
-        <h4 style="margin: 0 0 10px 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Debug</h4>
-        <div class="fcp6-setting-row">
-          <label>Debug Mode</label>
-          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="debugMode" />
-        </div>
-        <div class="fcp6-setting-row">
-          <label>Show Element Refs</label>
-          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="showRefs" />
-        </div>
-      </div>
-
-      <div style="margin-top: 12px;">
-        <button class="fcp6-btn fcp6-btn-secondary" data-action="save-settings" style="width: 100%;">
-          💾 Save Settings
-        </button>
-      </div>
-      <div style="margin-top: 8px;">
-        <button class="fcp6-btn fcp6-btn-danger" data-action="reset-settings" style="width: 100%;">
-          🗑️ Reset to Defaults
-        </button>
-      </div>
+      <div class="fcp6-section-title" style="margin-top:16px;">Connection</div>
+       <div style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+          <label style="display:block; font-size:11px; margin-bottom:4px; opacity:0.7;">Relay Server URL</label>
+          <input type="text" data-setting="relayUrl" value="ws://localhost:3001/ws" class="fcp6-input" style="width:100%; margin-bottom:8px;">
+       </div>
     `;
   }
-
-  /**
-   * Render input area
-   */
-  private renderInputArea(): string {
-    const hasChat = !!this.chatElements;
-    const isConnected = this.connectionStatus === 'connected';
-
-    return `
-      <div class="fcp6-input-area" id="fuse-input-area" data-testid="fuse-input-area">
-        <div class="fcp6-input-row">
-          <textarea class="fcp6-input" id="fuse-message-input" data-testid="fuse-message-input" placeholder="${hasChat ? 'Type message to send...' : 'No chat detected on this page'}" rows="1" data-input="message" aria-label="Message input" ${!hasChat ? 'disabled' : ''}></textarea>
-          <button class="fcp6-send-btn" id="fuse-btn-send" data-testid="fuse-btn-send" data-action="send-message" title="Send message" aria-label="Send message" ${!hasChat ? 'disabled' : ''}>
-            ${hasChat ? '➤' : '⚠️'}
-          </button>
-        </div>
-        <div class="fcp6-input-hint">
-          ${
-            hasChat
-              ? `<span style="color: rgba(0,255,136,0.7);">●</span> Chat detected ${isConnected ? '• Will sync to relay' : ''}`
-              : `<span style="color: rgba(255,100,100,0.7);">●</span> No chat interface detected on this page`
-          }
-        </div>
-      </div>
-    `;
-  }
-
-  /**
-   * Apply position and size
-   */
-  private applyPositionAndSize(): void {
-    if (!this.container) return;
-
-    this.container.style.right = `${this.state.position.x}px`;
-    this.container.style.top = `${this.state.position.y}px`;
-    this.container.style.width = `${this.state.size.width}px`;
-    this.container.style.height =
-      this.state.mode === 'collapsed' ? `${COLLAPSED_HEIGHT}px` : `${this.state.size.height}px`;
-  }
-
-  /**
-   * Setup event listeners
-   */
-  private setupListeners(): void {
-    if (!this.container) return;
-
-    // Click handlers
-    this.container.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-
-      // Action buttons
-      const action = target.closest('[data-action]')?.getAttribute('data-action');
-      if (action) this.handleAction(action);
-
-      // Tab clicks
-      const tab = target.closest('[data-tab]')?.getAttribute('data-tab') as PanelTab;
-      if (tab) this.switchTab(tab);
-
-      // Channel clicks
-      const channel = target.closest('[data-channel]')?.getAttribute('data-channel');
-      if (channel) this.joinChannel(channel);
-    });
-
-    // Channel selector change handler
-    this.container.addEventListener('change', (e) => {
-      const target = e.target as HTMLSelectElement;
-      if (target.id === 'fuse-channel-select') {
-        const selectedChannel = target.value || null;
-        this.selectChannel(selectedChannel);
-      }
-    });
-
-    // Drag handling
-    this.container.addEventListener('mousedown', (e) => {
-      const target = e.target as HTMLElement;
-
-      // Check for drag handle
-      if (target.closest('[data-drag-handle]') && !target.closest('[data-action]')) {
-        this.startDrag(e);
-      }
-
-      // Check for resize handle
-      const resize = target.getAttribute('data-resize');
-      if (resize) {
-        this.startResize(e, resize);
-      }
-    });
-
-    // Message input - Enter to send
-    this.container.addEventListener('keydown', (e) => {
-      const target = e.target as HTMLElement;
-      if (target.getAttribute('data-input') === 'message' && e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        this.handleAction('send-message');
-      }
-    });
-
-    // Chrome message listener - store reference for cleanup
-    this.chromeMessageListener = (message, sender, sendResponse) => {
-      this.handleChromeMessage(message);
-      sendResponse({ received: true });
-      return true;
-    };
-    chrome.runtime.onMessage.addListener(this.chromeMessageListener);
-  }
-
-  /**
-   * Start dragging
-   */
-  private startDrag(e: MouseEvent): void {
-    if (this.state.isPinned) return;
-
-    this.dragState = {
-      isDragging: true,
-      startX: e.clientX,
-      startY: e.clientY,
-      startPosX: this.state.position.x,
-      startPosY: this.state.position.y,
-    };
-
-    let rafId: number | null = null;
-    const onMove = (e: MouseEvent) => {
-      if (!this.dragState.isDragging || !this.container) return;
-
-      const clientX = e.clientX;
-      const clientY = e.clientY;
-
-      if (rafId) return;
-
-      rafId = requestAnimationFrame(() => {
-        const deltaX = this.dragState.startX - clientX;
-        const deltaY = clientY - this.dragState.startY;
-
-        this.state.position = {
-          x: Math.max(0, this.dragState.startPosX + deltaX),
-          y: Math.max(0, this.dragState.startPosY + deltaY),
-        };
-
-        this.container!.style.right = `${this.state.position.x}px`;
-        this.container!.style.top = `${this.state.position.y}px`;
-        rafId = null;
-      });
-    };
-
-    const onUp = () => {
-      this.dragState.isDragging = false;
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-      this.saveState();
-    };
-
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-  }
-
-  /**
-   * Handle action buttons
-   */
-  private handleAction(action: string): void {
-    switch (action) {
-      case 'toggle':
-        this.state.mode = this.state.mode === 'collapsed' ? 'expanded' : 'collapsed';
-        this.update();
-        this.saveState();
-        break;
-      case 'minimize':
-        this.state.mode = 'minimized';
-        this.update();
-        this.saveState();
-        break;
-      case 'expand':
-        this.state.mode = 'expanded';
-        this.update();
-        this.saveState();
-        break;
-      case 'pin':
-        this.state.isPinned = !this.state.isPinned;
-        this.update();
-        break;
-      case 'send':
-        this.sendMessage();
-        break;
-      case 'send-message':
-        this.sendUnifiedMessage();
-        break;
-      case 'inject-to-chat':
-        this.injectToPageChat();
-        break;
-      case 'create-channel':
-        this.createChannel();
-        break;
-      case 'submit-create-channel':
-        this.submitCreateChannel();
-        break;
-      // Service actions
-      case 'start-service':
-      case 'stop-service':
-      case 'restart-service':
-        this.handleServiceAction(action);
-        break;
-      case 'start-all-services':
-        this.startAllServices();
-        break;
-      case 'open-terminal':
-        this.openTerminal();
-        break;
-      case 'check-health':
-        this.checkServiceHealth();
-        break;
-      // Settings actions
-      case 'save-settings':
-        this.saveSettings();
-        break;
-      case 'reset-settings':
-        this.resetSettings();
-        break;
-    }
-  }
-
-  /**
-   * Switch active tab
-   */
-  private switchTab(tab: PanelTab): void {
-    this.state.activeTab = tab;
-    if (tab === 'notifications') {
-      this.markNotificationsRead();
-    }
-    this.update();
-  }
-
-  /**
-   * Send message
-   */
   private sendMessage(): void {
     const input = this.container?.querySelector('[data-input="message"]') as HTMLTextAreaElement;
     if (!input || !input.value.trim()) return;
@@ -1424,21 +1395,42 @@ export class EnhancedFloatingPanel {
     const content = input.value.trim();
     input.value = '';
 
-    // Send via relay to agents
-    chrome.runtime.sendMessage({
+    const metadata = {
+      senderId: this.myAgentId || 'unknown',
+      source: 'floating-panel',
+    };
+
+    // 1. Send via relay to agents (Broadcast)
+    this.safeSendMessage({
       type: 'BROADCAST_MESSAGE',
       content,
       channel: this.currentChannel,
+      metadata,
     });
 
-    // Add to local messages
+    // 2. Inject into page chat (Submit to Page)
+    this.safeSendMessage(
+      {
+        type: 'INJECT_MESSAGE',
+        content,
+        metadata,
+      },
+      (response) => {
+        if (!response?.success) {
+          console.warn('[FuseConnect] Failed to inject message to page:', response?.error);
+        }
+      }
+    );
+
+    // 3. Add to local messages
     this.messages.push({
       id: Date.now().toString(),
-      from: 'You',
-      to: 'relay',
+      from: this.myAgentId || 'You',
+      to: 'AI',
       content,
       timestamp: Date.now(),
       type: 'text',
+      metadata,
     });
     this.update();
   }
@@ -1453,22 +1445,29 @@ export class EnhancedFloatingPanel {
     const content = input.value.trim();
     input.value = '';
 
+    const metadata = {
+      senderId: this.myAgentId || 'unknown',
+      source: 'floating-panel-inject-only',
+    };
+
     // Send to content script to inject into page chat
-    chrome.runtime.sendMessage(
+    this.safeSendMessage(
       {
         type: 'INJECT_MESSAGE',
         content,
+        metadata,
       },
       (response) => {
         if (response?.success) {
           // Add to local messages
           this.messages.push({
             id: Date.now().toString(),
-            from: 'You (Fuse)',
+            from: this.myAgentId || 'You (Fuse)',
             to: 'page',
             content,
             timestamp: Date.now(),
             type: 'text',
+            metadata,
           });
           this.update();
         } else {
@@ -1490,15 +1489,21 @@ export class EnhancedFloatingPanel {
 
     console.log('[FuseConnect] Sending unified message:', content.substring(0, 50));
 
+    const metadata = {
+      senderId: this.myAgentId || 'unknown',
+      source: 'floating-panel-unified',
+    };
+
     // Add user message to local display immediately with unique ID
     const msgId = `user-${Date.now()}`;
     this.messages.push({
       id: msgId,
-      from: 'You',
+      from: this.myAgentId || 'You',
       to: 'AI',
       content,
       timestamp: Date.now(),
       type: 'text',
+      metadata,
     });
     this.update();
 
@@ -1518,10 +1523,11 @@ export class EnhancedFloatingPanel {
           }
         }
 
-        chrome.runtime.sendMessage({
+        this.safeSendMessage({
           type: 'BROADCAST_MESSAGE',
           content: `[User → AI] ${content}`,
           channel: this.currentChannel,
+          metadata,
         });
       } else {
         console.log('[FuseConnect] Skipping duplicate user message broadcast');
@@ -1529,10 +1535,11 @@ export class EnhancedFloatingPanel {
     }
 
     // Inject message into page chat
-    chrome.runtime.sendMessage(
+    this.safeSendMessage(
       {
         type: 'INJECT_MESSAGE',
         content,
+        metadata,
       },
       (response) => {
         if (!response?.success) {
@@ -1557,7 +1564,7 @@ export class EnhancedFloatingPanel {
     this.currentChannel = channelId;
     // Persist channel selection for background script access
     chrome.storage.local.set({ fuse_current_channel: channelId });
-    chrome.runtime.sendMessage({
+    this.safeSendMessage({
       type: 'CHANNEL_JOIN',
       channelId,
     });
@@ -1579,13 +1586,13 @@ export class EnhancedFloatingPanel {
     chrome.storage.local.set({ fuse_current_channel: channelId });
 
     if (channelId) {
-      chrome.runtime.sendMessage({
+      this.safeSendMessage({
         type: 'CHANNEL_JOIN',
         channelId,
         panelId: this.panelId,
       });
     } else {
-      chrome.runtime.sendMessage({
+      this.safeSendMessage({
         type: 'CHANNEL_LEAVE',
         channelId: previousChannel,
         panelId: this.panelId,
@@ -1601,7 +1608,7 @@ export class EnhancedFloatingPanel {
   private createChannel(): void {
     const name = prompt('Enter channel name:');
     if (name) {
-      chrome.runtime.sendMessage({
+      this.safeSendMessage({
         type: 'CHANNEL_CREATE',
         name,
       });
@@ -1613,6 +1620,13 @@ export class EnhancedFloatingPanel {
    */
   private submitCreateChannel(): void {
     const input = this.container?.querySelector('#fuse-new-channel-name') as HTMLInputElement;
+    console.log(
+      '[FuseConnect] submitCreateChannel called. Input found:',
+      !!input,
+      'Value:',
+      input?.value
+    );
+
     if (!input || !input.value.trim()) {
       console.warn('[FuseConnect] No channel name entered');
       return;
@@ -1743,7 +1757,7 @@ export class EnhancedFloatingPanel {
 
     const actionType = action.replace('-service', '').toUpperCase();
 
-    chrome.runtime.sendMessage(
+    this.safeSendMessage(
       {
         type: 'SERVICE_CONTROL',
         action: actionType,
@@ -1770,7 +1784,7 @@ export class EnhancedFloatingPanel {
    * Start all services
    */
   private startAllServices(): void {
-    chrome.runtime.sendMessage(
+    this.safeSendMessage(
       {
         type: 'SERVICE_CONTROL',
         action: 'START_ALL',
@@ -1796,7 +1810,7 @@ export class EnhancedFloatingPanel {
    * Open terminal with relay command
    */
   private openTerminal(): void {
-    chrome.runtime.sendMessage({
+    this.safeSendMessage({
       type: 'OPEN_TERMINAL',
       command: 'pnpm relay:start',
     });
@@ -1807,7 +1821,7 @@ export class EnhancedFloatingPanel {
    */
   private checkServiceHealth(): void {
     // Request health check from background script
-    chrome.runtime.sendMessage(
+    this.safeSendMessage(
       {
         type: 'CHECK_SERVICE_HEALTH',
       },
@@ -1879,7 +1893,7 @@ export class EnhancedFloatingPanel {
     });
 
     // Send to background for relay URL update
-    chrome.runtime.sendMessage({
+    this.safeSendMessage({
       type: 'UPDATE_SETTINGS',
       settings,
     });
@@ -1921,7 +1935,7 @@ export class EnhancedFloatingPanel {
       this.update();
     });
 
-    chrome.runtime.sendMessage({
+    this.safeSendMessage({
       type: 'UPDATE_SETTINGS',
       settings: defaults,
     });
@@ -1950,73 +1964,74 @@ export class EnhancedFloatingPanel {
         this.update();
         break;
       case 'NEW_MESSAGE':
-        // Add to local messages display WITH DEDUPLICATION
+        // MULTI-AGENT COLLABORATION:
+        // This is a chatroom model. Every participant (human + AI agents) should see all messages.
+        // Messages from OTHER agents should be injected into our local chat so our AI can respond.
+        // Messages from OURSELVES should NOT be re-injected (prevents loops).
+
         if (message.message) {
           const msg = message.message;
 
-          // CRITICAL: Skip messages that are echoes from our own agent
-          // This prevents the feedback loop where we receive our own broadcasts
-          const isOwnMessage =
-            msg.from === 'You' ||
-            msg.from === 'Browser Agent' ||
-            msg.from?.includes('Browser Agent');
+          // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
+          // This is set by the originating tab when broadcasting
+          const isFromSelf = msg.metadata?.senderId === this.myAgentId;
 
-          // Also check for duplicate content within last 5 seconds
+          // FALLBACK SELF-DETECTION: Check common self-identifiers
+          const isFromSelfFallback =
+            msg.from === 'You' || msg.from === this.myAgentId || msg.from?.includes(this.panelId);
+
+          const isOwnMessage = isFromSelf || isFromSelfFallback;
+
+          // Content deduplication (prevent exact duplicate messages in short window)
           const isDuplicate = this.messages.some(
-            (m) => m.content === msg.content && Date.now() - m.timestamp < 5000
+            (m) => m.content === msg.content && Date.now() - m.timestamp < 3000
           );
 
-          // Skip if it's our own echo OR if it's a duplicate
-          if (isOwnMessage || isDuplicate) {
-            console.log('[FuseConnect] Skipping message echo/duplicate:', {
-              from: msg.from,
-              isOwn: isOwnMessage,
-              isDup: isDuplicate,
-            });
+          if (isDuplicate) {
+            console.log('[FuseConnect] Skipping duplicate message');
             break;
           }
 
+          // Add ALL messages to chat display (this is a chatroom - everyone sees everything)
           this.messages.push(msg);
           if (this.messages.length > 50) this.messages.shift();
           this.update();
 
-          // Auto-inject into page chat if message is from an external agent (not from this panel)
-          // IMPORTANT: Skip injection for messages that originated from AI responses to prevent feedback loops
-          const isFromExternalAgent =
-            msg.from && !msg.from.includes('You') && !msg.from.includes('AI (Page)');
+          // INJECTION LOGIC for multi-agent collaboration:
+          // - If message is from SELF: Don't inject (we already sent it or it's our AI's response)
+          // - If message is from ANOTHER agent: INJECT so our AI can see and respond
+          //
+          // The key distinction: isOwnMessage means this message originated from THIS tab.
+          // If it's from another tab/agent, we want our AI to see it and potentially respond.
 
-          // Check if this is an AI response echo (would cause feedback loop)
-          const isAIResponseEcho =
-            msg.content?.startsWith('[AI Response]') ||
-            msg.content?.startsWith('[AI → User]') ||
-            msg.content?.startsWith('[User → AI]') ||
-            msg.from?.includes('Browser Agent') ||
-            msg.messageType === 'ai-response';
-
-          console.log('[FuseConnect] NEW_MESSAGE auto-inject check:', {
+          console.log('[FuseConnect] NEW_MESSAGE processing:', {
             from: msg.from,
-            isFromExternalAgent,
-            isAIResponseEcho,
-            hasContent: !!msg.content,
+            isOwnMessage,
+            senderId: msg.metadata?.senderId,
+            myAgentId: this.myAgentId,
+            messageType: msg.messageType,
             contentPreview: msg.content?.substring(0, 50),
           });
 
-          if (isFromExternalAgent && msg.content && !isAIResponseEcho) {
-            console.log('[FuseConnect] Auto-injecting external message into page chat:', msg.from);
+          if (!isOwnMessage && msg.content) {
+            // This message is from ANOTHER participant - inject it into our chat
+            console.log(
+              '[FuseConnect] Injecting external message from:',
+              msg.from,
+              msg.metadata?.platform
+            );
 
-            // Inject the message content into the page's AI chat
-            chrome.runtime.sendMessage(
+            this.safeSendMessage(
               {
                 type: 'INJECT_MESSAGE',
                 content: msg.content,
-                autoForward: true, // Flag to indicate this came from relay
+                autoForward: true,
               },
               (response) => {
                 if (response?.success) {
                   console.log('[FuseConnect] External message injected successfully');
                 } else {
                   console.warn('[FuseConnect] Failed to inject external message:', response?.error);
-                  // Update the message to show it failed
                   const idx = this.messages.findIndex((m) => m.id === msg.id);
                   if (idx >= 0) {
                     this.messages[idx].content = `❌ ${msg.content} (failed to inject)`;
@@ -2025,11 +2040,19 @@ export class EnhancedFloatingPanel {
                 }
               }
             );
+          } else if (isOwnMessage) {
+            console.log('[FuseConnect] Not injecting own message (self-detection)');
           }
         }
         break;
       case 'CHANNELS_UPDATE':
         this.channels = message.channels || [];
+        this.update();
+        break;
+      case 'JOINED_CHANNELS_UPDATE':
+        // Update any local state tracking joined channels if necessary
+        // For now, we mainly rely on currentChannel, but this ensures we have the data
+        console.log('[FuseConnect] Joined channels updated:', message.joinedChannels);
         this.update();
         break;
       case 'NOTIFICATION':
@@ -2044,7 +2067,7 @@ export class EnhancedFloatingPanel {
         this.update();
         break;
       case 'RESPONSE_COMPLETE':
-        // AI response received - add to messages so it shows in chat
+        // RESTORED FROM BACKUP: Only add to local UI, do NOT broadcast
         console.log('[FuseConnect] RESPONSE_COMPLETE received:', {
           hasContent: !!message.content,
           connectionStatus: this.connectionStatus,
@@ -2058,7 +2081,6 @@ export class EnhancedFloatingPanel {
               : (message as any).content?.substring(0, 500) || 'Response received';
 
           // Strip any relay prefixes from the response content
-          // (prevents echoing back prefixed messages that were displayed on the page)
           responseContent = responseContent
             .replace(/^\[User → AI\]\s*/g, '')
             .replace(/^\[AI → User\]\s*/g, '')
@@ -2076,8 +2098,8 @@ export class EnhancedFloatingPanel {
             break;
           }
 
-          // Deduplicate - check if we already have this response (within last 5 seconds)
-          const recentDuplicate = this.messages.find(
+          // Check for duplicate
+          const recentDuplicate = this.messages.some(
             (m) =>
               m.from === 'AI (Page)' &&
               m.content === responseContent &&
@@ -2094,14 +2116,13 @@ export class EnhancedFloatingPanel {
               type: 'text',
             });
             this.update();
-
-            // NOTE: We do NOT broadcast to relay here anymore!
-            // The background script's RESPONSE_COMPLETE handler already
-            // forwards AI responses to the relay. Doing it here again
-            // would cause duplicate messages.
           } else {
             console.log('[FuseConnect] Skipping duplicate response');
           }
+
+          // NOTE: We do NOT broadcast AI responses automatically.
+          // This was causing the self-injection loop.
+          // Users can manually share AI responses if desired.
         }
         break;
     }
@@ -2128,15 +2149,64 @@ export class EnhancedFloatingPanel {
   /**
    * Update UI
    */
+  /**
+   * Update UI
+   */
   private update(): void {
     if (!this.container) return;
-    this.container.innerHTML = this.render();
-    this.applyPositionAndSize();
 
-    // Auto-scroll chat to show latest messages (scroll to bottom since newest are at bottom)
+    // Save scroll position if chat is open
+    let scrollTop = 0;
     const chatScroll = this.container.querySelector('#fuse-chat-scroll');
     if (chatScroll) {
-      chatScroll.scrollTop = chatScroll.scrollHeight;
+      scrollTop = chatScroll.scrollTop;
+    }
+
+    // Save input value
+    const input = this.container.querySelector('[data-input="message"]') as HTMLTextAreaElement;
+    const inputValue = input ? input.value : '';
+
+    // Save channel name input value
+    const channelInput = this.container.querySelector('#fuse-new-channel-name') as HTMLInputElement;
+    const channelInputValue = channelInput ? channelInput.value : '';
+
+    // Re-render
+    this.container.innerHTML = this.render();
+
+    // Restore input value
+    const newInput = this.container.querySelector('[data-input="message"]') as HTMLTextAreaElement;
+    if (newInput && inputValue) {
+      newInput.value = inputValue;
+    }
+
+    // Restore channel name input value
+    const newChannelInput = this.container.querySelector(
+      '#fuse-new-channel-name'
+    ) as HTMLInputElement;
+    if (newChannelInput && channelInputValue) {
+      newChannelInput.value = channelInputValue;
+      // If it had focus, we should try to restore focus too, but simple value restore helps most
+    }
+
+    // Apply styles/position
+    this.applyPositionAndSize();
+
+    // Re-attach listeners
+    this.setupListeners();
+
+    // Restore scroll position or scroll to bottom if it was at bottom
+    const newChatScroll = this.container.querySelector('#fuse-chat-scroll');
+    if (newChatScroll) {
+      // If was near bottom, scroll to bottom (auto-scroll)
+      // Otherwise restore position
+      const wasNearBottom =
+        chatScroll && chatScroll.scrollHeight - chatScroll.scrollTop - chatScroll.clientHeight < 50;
+
+      if (wasNearBottom) {
+        newChatScroll.scrollTop = newChatScroll.scrollHeight;
+      } else {
+        newChatScroll.scrollTop = scrollTop;
+      }
     }
   }
 
@@ -2178,6 +2248,15 @@ export class EnhancedFloatingPanel {
   }
 
   /**
+   * Set the Page Agent ID for this panel
+   */
+  setAgentId(id: string): void {
+    console.log('[FuseConnect] Panel assigned Agent ID:', id);
+    this.myAgentId = id;
+    this.update(); // Update UI if needed (e.g. to show ID)
+  }
+
+  /**
    * Update streaming state
    */
   updateStreamingState(state: StreamingState): void {
@@ -2194,8 +2273,9 @@ export class EnhancedFloatingPanel {
     }
     if (this.container) {
       this.container.style.display = 'block';
-      this.state.mode = this.state.mode === 'hidden' ? 'collapsed' : this.state.mode;
+      this.state.mode = 'expanded'; // FORCE expanded on show
       this.applyPositionAndSize();
+      this.update(); // Add update to ensure render state matches
     }
   }
 
@@ -2216,54 +2296,13 @@ export class EnhancedFloatingPanel {
   }
 
   /**
-   * Handle messages from background/popup
+   * Handle messages from background/popup/content script
    */
   handleMessage(message: Record<string, unknown>): void {
-    switch (message.type) {
-      case 'CONNECTION_STATUS':
-        this.connectionStatus = message.status as ConnectionStatus;
-        this.update();
-        break;
-
-      case 'AGENTS_UPDATE':
-        this.agents = (message.agents as Agent[]) || [];
-        this.update();
-        break;
-
-      case 'CHANNELS_UPDATE':
-        this.channels = (message.channels as FederationChannel[]) || [];
-        this.update();
-        break;
-
-      case 'NEW_MESSAGE':
-        const newMsg = message.message as AgentMessage;
-        if (newMsg) {
-          this.messages.push(newMsg);
-          if (this.messages.length > 50) {
-            this.messages.shift();
-          }
-          this.update();
-        }
-        break;
-
-      case 'NOTIFICATION':
-        const notif = message.notification as Notification;
-        if (notif) {
-          this.notifications.unshift(notif);
-          if (!notif.read) {
-            this.unreadCount++;
-          }
-          this.update();
-        }
-        break;
-
-      case 'RESPONSE_COMPLETE':
-        // Handled in handleChromeMessage - delegating there to avoid duplicates
-        this.handleChromeMessage(message as any);
-        break;
-    }
+    this.handleChromeMessage(message as any);
   }
 
+  /**
   /**
    * Destroy panel
    */
@@ -2274,6 +2313,12 @@ export class EnhancedFloatingPanel {
       this.chromeMessageListener = null;
     }
 
+    // Remove storage listener
+    if (this.storageListener) {
+      chrome.storage.onChanged.removeListener(this.storageListener);
+      this.storageListener = null;
+    }
+
     // Clear health poll interval
     if (this.healthPollInterval) {
       clearInterval(this.healthPollInterval);
@@ -2282,6 +2327,110 @@ export class EnhancedFloatingPanel {
 
     this.container?.remove();
     document.getElementById('fuse-connect-styles-v6')?.remove();
+  }
+
+  /**
+   * Handle generic actions from data-action attributes
+   */
+  private handleAction(action: string): void {
+    switch (action) {
+      case 'send':
+        this.sendMessage();
+        break;
+      case 'pin':
+        this.togglePin();
+        break;
+      case 'minimize':
+        this.minimize();
+        break;
+      case 'toggle':
+        this.toggleCollapse();
+        break;
+      case 'expand':
+        this.expand();
+        break;
+      case 'select-channel':
+        // Handled by change listener, but good to have case
+        break;
+      case 'inject-to-chat':
+        this.injectToPageChat();
+        break;
+      default:
+        // Check if it's a service action
+        if (action.endsWith('-service')) {
+          this.handleServiceAction(action);
+        } else if (action === 'start-all-services') {
+          this.startAllServices();
+        } else if (action === 'open-terminal') {
+          this.openTerminal();
+        } else if (action === 'check-health') {
+          this.checkServiceHealth();
+        } else if (action === 'save-settings') {
+          this.saveSettings();
+        } else if (action === 'reset-settings') {
+          this.resetSettings();
+        }
+    }
+  }
+
+  /**
+   * Switch tab
+   */
+  private switchTab(tab: PanelTab): void {
+    this.state.activeTab = tab;
+    // Persist active tab
+    this.saveState();
+    this.update();
+  }
+
+  /**
+   * Toggle pin state
+   */
+  private togglePin(): void {
+    this.state.isPinned = !this.state.isPinned;
+    const btn = this.container?.querySelector('#fuse-btn-pin');
+    if (btn) {
+      btn.innerHTML = this.state.isPinned ? '📌' : '📍';
+    }
+    this.saveState();
+  }
+
+  /**
+   * Minimize panel
+   */
+  private minimize(): void {
+    this.state.mode = 'minimized';
+    this.saveState();
+    this.update();
+  }
+
+  /**
+   * Expand panel
+   */
+  private expand(): void {
+    this.state.mode = 'expanded';
+    this.saveState();
+    this.update();
+  }
+
+  /**
+   * Toggle collapse state
+   */
+  private toggleCollapse(): void {
+    if (this.state.mode === 'collapsed') {
+      this.state.mode = 'expanded';
+    } else {
+      this.state.mode = 'collapsed';
+    }
+    this.saveState();
+    this.update();
+  }
+
+  /**
+   * Save state to storage
+   */
+  private saveState(): void {
+    chrome.storage.local.set({ fuse_panel_state: this.state });
   }
 }
 

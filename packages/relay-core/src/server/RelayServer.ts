@@ -1,42 +1,40 @@
-
 /**
  * Unified Relay Server for The New Fuse Framework
- * 
+ *
  * Consolidates functionality from:
  * - comprehensive-tnf-relay.js
- * - enhanced-tnf-relay.js  
+ * - enhanced-tnf-relay.js
  * - basic-relay.js
  * - relay-adapter.js
  * - message-bridge.js
  */
 
 import { EventEmitter } from 'events';
-import { 
-  RelayConfig, 
-  Agent, 
-  RelayMessage, 
-  Transport, 
-  SystemStatus,
-  InterceptRule 
-} from '../types/index.js';
-import { WebSocketTransport } from '../transports/WebSocketTransport.js';
-import { HTTPTransport } from '../transports/HTTPTransport.js';
-import { FileTransport } from '../transports/FileTransport.js';
-import { MCPTransport } from '../transports/MCPTransport.js';
-import { RedisTransport } from '../transports/RedisTransport.js';
 import { UnifiedBridge } from '../adapters/UnifiedBridge.js';
-import { AgentRegistry } from '../utils/AgentRegistry.js';
-import { MessageRouter } from '../utils/MessageRouter.js';
-import { Logger } from '../utils/Logger.js';
-import { ProtocolTranslator } from '../protocols/ProtocolTranslator.js';
+import { createAuthService, JWTAuthService } from '../auth/JWTAuthService.js';
 import { A2AProtocolAdapter } from '../protocols/A2AProtocolAdapter.js';
 import { AnthropicXmlAdapter } from '../protocols/AnthropicXmlAdapter.js';
-import { OpenAIAdapter } from '../protocols/OpenAIAdapter.js';
-import { LangchainAdapter } from '../protocols/LangchainAdapter.js';
 import { CrewAIAdapter } from '../protocols/CrewAIAdapter.js';
+import { LangchainAdapter } from '../protocols/LangchainAdapter.js';
+import { OpenAIAdapter } from '../protocols/OpenAIAdapter.js';
+import { ProtocolTranslator } from '../protocols/ProtocolTranslator.js';
 import { OrchestratorIntegrationService } from '../services/OrchestratorIntegrationService.js';
-import { CleanupService } from '../services/CleanupService.js';
-import { HeartbeatMonitoringService } from '../services/HeartbeatMonitoringService.js';
+import { FileTransport } from '../transports/FileTransport.js';
+import { HTTPTransport } from '../transports/HTTPTransport.js';
+import { MCPTransport } from '../transports/MCPTransport.js';
+import { RedisTransport } from '../transports/RedisTransport.js';
+import { WebSocketTransport } from '../transports/WebSocketTransport.js';
+import {
+  Agent,
+  InterceptRule,
+  RelayConfig,
+  RelayMessage,
+  SystemStatus,
+  Transport,
+} from '../types/index.js';
+import { AgentRegistry } from '../utils/AgentRegistry.js';
+import { Logger } from '../utils/Logger.js';
+import { MessageRouter } from '../utils/MessageRouter.js';
 
 export class RelayServer extends EventEmitter {
   private config: RelayConfig;
@@ -50,6 +48,7 @@ export class RelayServer extends EventEmitter {
   private isRunning: boolean = false;
   private interceptedMessages: RelayMessage[] = [];
   private orchestratorService: OrchestratorIntegrationService;
+  private authService: JWTAuthService;
 
   constructor(config: RelayConfig) {
     super();
@@ -60,28 +59,32 @@ export class RelayServer extends EventEmitter {
     this.messageRouter = new MessageRouter(this.logger);
     this.bridge = new UnifiedBridge(this.logger);
     this.protocolTranslator = new ProtocolTranslator(this.logger);
-    
+    this.authService = createAuthService();
+
     // Initialize orchestrator integration service
-    this.orchestratorService = new OrchestratorIntegrationService({
-      workspaceRoot: config.workspaceDir,
-      enableHeartbeatMonitoring: true,
-      enableCleanup: true,
-      enableStatePreservation: true,
-      redis: config.redis || { host: 'localhost', port: 6379, database: 0 },
-      heartbeat: {
-        intervalMs: 30000, // 30 seconds
-        timeoutMs: 120000, // 2 minutes
-        maxRetries: 3,
-        escalationDelay: 300000, // 5 minutes
-        stagnationThresholdMs: 900000 // 15 minutes
+    this.orchestratorService = new OrchestratorIntegrationService(
+      {
+        workspaceRoot: config.workspaceDir,
+        enableHeartbeatMonitoring: true,
+        enableCleanup: true,
+        enableStatePreservation: true,
+        redis: config.redis || { host: 'localhost', port: 6379, database: 0 },
+        heartbeat: {
+          intervalMs: 30000, // 30 seconds
+          timeoutMs: 120000, // 2 minutes
+          maxRetries: 3,
+          escalationDelay: 300000, // 5 minutes
+          stagnationThresholdMs: 900000, // 15 minutes
+        },
+        cleanup: {
+          backupDirectory: `${config.workspaceDir}/backups`,
+          dryRun: false,
+          createBackups: true,
+        },
       },
-      cleanup: {
-        backupDirectory: `${config.workspaceDir}/backups`,
-        dryRun: false,
-        createBackups: true
-      }
-    }, this.logger);
-    
+      this.logger
+    );
+
     this.systemStatus = {
       startTime: new Date().toISOString(),
       isRunning: false,
@@ -89,7 +92,7 @@ export class RelayServer extends EventEmitter {
       interceptCount: 0,
       messageCount: 0,
       agents: 0,
-      uptime: 0
+      uptime: 0,
     };
 
     this.setupEventHandlers();
@@ -123,32 +126,34 @@ export class RelayServer extends EventEmitter {
   async start(): Promise<boolean> {
     try {
       this.logger.info(`Starting Unified TNF Relay Server v${this.config.version}`);
-      
+
       // Initialize transports based on config
       await this.initializeTransports();
-      
+
       // Start all enabled transports
       await this.startTransports();
-      
+
       // Start agent discovery
       await this.agentRegistry.startDiscovery();
 
       // Initialize protocol adapters
       this.initializeProtocolAdapters();
-      
+
       // Initialize orchestrator services
       await this.orchestratorService.initialize();
-      
+
       this.isRunning = true;
       this.systemStatus.isRunning = true;
       this.systemStatus.startTime = new Date().toISOString();
-      
+
       this.logger.info('Unified TNF Relay Server started successfully');
       this.emit('started');
-      
+
       return true;
     } catch (error) {
-      this.logger.error(`Failed to start relay server: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to start relay server: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.emit('error', error);
       return false;
     }
@@ -157,25 +162,27 @@ export class RelayServer extends EventEmitter {
   async stop(): Promise<void> {
     try {
       this.logger.info('Stopping Unified TNF Relay Server');
-      
+
       // Stop all transports
       for (const transport of this.transports.values()) {
         await transport.stop();
       }
-      
+
       // Stop agent discovery
       await this.agentRegistry.stopDiscovery();
-      
+
       // Shutdown orchestrator services
       await this.orchestratorService.shutdown();
-      
+
       this.isRunning = false;
       this.systemStatus.isRunning = false;
-      
+
       this.logger.info('Unified TNF Relay Server stopped');
       this.emit('stopped');
     } catch (error) {
-      this.logger.error(`Error stopping relay server: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Error stopping relay server: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.emit('error', error);
     }
   }
@@ -185,17 +192,17 @@ export class RelayServer extends EventEmitter {
     if (this.config.transports.websocket) {
       const wsTransport = new WebSocketTransport({
         port: this.config.ports.websocket,
-        logger: this.logger
+        logger: this.logger,
       });
       this.transports.set('websocket', wsTransport);
     }
 
-    // HTTP Transport  
+    // HTTP Transport
     if (this.config.transports.http) {
       const httpTransport = new HTTPTransport({
         port: this.config.ports.http,
         interceptRules: this.config.interceptRules,
-        logger: this.logger
+        logger: this.logger,
       });
       this.transports.set('http', httpTransport);
     }
@@ -204,7 +211,7 @@ export class RelayServer extends EventEmitter {
     if (this.config.transports.file) {
       const fileTransport = new FileTransport({
         workspaceDir: this.config.workspaceDir,
-        logger: this.logger
+        logger: this.logger,
       });
       this.transports.set('file', fileTransport);
     }
@@ -214,7 +221,7 @@ export class RelayServer extends EventEmitter {
       const mcpTransport = new MCPTransport({
         relayId: this.config.id,
         version: this.config.version,
-        logger: this.logger
+        logger: this.logger,
       });
       this.transports.set('mcp', mcpTransport);
     }
@@ -228,8 +235,8 @@ export class RelayServer extends EventEmitter {
           agentCommunication: 'tnf:agents',
           workflowExecution: 'tnf:workflows',
           systemEvents: 'tnf:system',
-          heartbeat: 'tnf:heartbeat'
-        }
+          heartbeat: 'tnf:heartbeat',
+        },
       });
       this.transports.set('redis', redisTransport);
     }
@@ -253,17 +260,16 @@ export class RelayServer extends EventEmitter {
           this.logger.warn(`Failed to start transport: ${name}`);
         }
       } catch (error) {
-        this.logger.error(`Error starting transport ${name}: ${error instanceof Error ? error.message : String(error)}`);
+        this.logger.error(
+          `Error starting transport ${name}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }
 
   private async handleMessage(message: RelayMessage): Promise<void> {
     try {
-      const translatedMessage = await this.protocolTranslator.translate(
-        message,
-        'a2a-v2.0'
-      );
+      const translatedMessage = await this.protocolTranslator.translate(message, 'a2a-v2.0');
       this.logger.debug(
         `Received message: ${translatedMessage.type} from ${translatedMessage.source}`
       );
@@ -281,32 +287,74 @@ export class RelayServer extends EventEmitter {
           break;
         default:
           // Route message through message router
-          await this.messageRouter.route(
-            translatedMessage,
-            this.transports,
-            this.agentRegistry
-          );
+          await this.messageRouter.route(translatedMessage, this.transports, this.agentRegistry);
       }
     } catch (error) {
-      this.logger.error(`Error handling message: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Error handling message: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.emit('messageError', { message, error });
     }
   }
 
   private async handleAgentRegistration(message: RelayMessage): Promise<void> {
-    const { payload } = message;
+    const { payload, metadata } = message;
+
+    // Check for JWT token in payload or metadata
+    const token = payload.token || metadata?.token;
+    let verifiedToken = null;
+
+    if (token) {
+      this.logger.info(`Authenticating agent ${message.source} via JWT...`);
+      verifiedToken = this.authService.verifyToken(token);
+
+      if (!verifiedToken) {
+        this.logger.warn(
+          `Failed authentication for agent ${message.source}. Invalid or expired token.`
+        );
+
+        // Send registration error
+        const errorMessage: RelayMessage = {
+          id: `error_${Date.now()}`,
+          type: 'REGISTRATION_ERROR',
+          source: this.config.id,
+          target: message.source,
+          payload: {
+            error: 'Invalid or expired authentication token',
+            code: 'AUTH_FAILED',
+          },
+          timestamp: new Date().toISOString(),
+        };
+
+        await this.messageRouter.route(errorMessage, this.transports, this.agentRegistry);
+        return;
+      }
+
+      this.logger.info(
+        `Successfully authenticated agent ${message.source} (${verifiedToken.agentId})`
+      );
+    } else {
+      this.logger.warn(
+        `Agent ${message.source} registering without authentication token. Security should be enforced in production.`
+      );
+    }
+
     const agent: Agent = {
-      id: payload.id || message.source,
-      type: payload.type,
-      capabilities: payload.capabilities || [],
+      id: verifiedToken?.agentId || payload.id || message.source,
+      type: verifiedToken?.platform || payload.type,
+      capabilities: verifiedToken?.capabilities || payload.capabilities || [],
       registeredAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
       status: 'connected',
-      metadata: payload.metadata
+      metadata: {
+        ...(payload.metadata || {}),
+        authenticated: !!verifiedToken,
+        tokenClaims: verifiedToken,
+      },
     };
 
     await this.agentRegistry.registerAgent(agent);
-    
+
     // Send registration confirmation
     const confirmationMessage: RelayMessage = {
       id: `confirm_${Date.now()}`,
@@ -317,10 +365,11 @@ export class RelayServer extends EventEmitter {
         relayInfo: {
           id: this.config.id,
           version: this.config.version,
-          capabilities: this.getRelayCapabilities()
-        }
+          capabilities: this.getRelayCapabilities(),
+          authenticated: !!verifiedToken,
+        },
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     await this.messageRouter.route(confirmationMessage, this.transports, this.agentRegistry);
@@ -338,19 +387,20 @@ export class RelayServer extends EventEmitter {
   public getRelayCapabilities(): string[] {
     return [
       'agent_discovery',
-      'message_routing', 
+      'message_routing',
       'protocol_translation',
       'workflow_execution',
       'api_interception',
       'multi_transport_support',
-      'real_time_communication'
+      'real_time_communication',
     ];
   }
 
   public getSystemStatus(): SystemStatus {
     this.systemStatus.uptime = Date.now() - new Date(this.systemStatus.startTime).getTime();
-    this.systemStatus.activeConnections = Array.from(this.transports.values())
-      .filter(transport => transport.isConnected()).length;
+    this.systemStatus.activeConnections = Array.from(this.transports.values()).filter((transport) =>
+      transport.isConnected()
+    ).length;
     return { ...this.systemStatus };
   }
 
@@ -379,27 +429,29 @@ export class RelayServer extends EventEmitter {
   private initializeProtocolAdapters(): void {
     // Register all protocol adapters for comprehensive framework support
     this.logger.info('Initializing protocol adapters');
-    
+
     // Core A2A adapter
     const a2aAdapter = new A2AProtocolAdapter();
     this.protocolTranslator.registerAdapter(a2aAdapter);
-    
+
     // Anthropic XML adapter
     const anthropicAdapter = new AnthropicXmlAdapter(this.logger);
     this.protocolTranslator.registerAdapter(anthropicAdapter);
-    
+
     // OpenAI Assistant adapter
     const openaiAdapter = new OpenAIAdapter(this.logger);
     this.protocolTranslator.registerAdapter(openaiAdapter);
-    
+
     // Langchain adapter
     const langchainAdapter = new LangchainAdapter(this.logger);
     this.protocolTranslator.registerAdapter(langchainAdapter);
-    
+
     // CrewAI adapter
     const crewaiAdapter = new CrewAIAdapter(this.logger);
     this.protocolTranslator.registerAdapter(crewaiAdapter);
-    
-    this.logger.info('Protocol adapters initialized: A2A, Anthropic XML, OpenAI, Langchain, CrewAI');
+
+    this.logger.info(
+      'Protocol adapters initialized: A2A, Anthropic XML, OpenAI, Langchain, CrewAI'
+    );
   }
 }

@@ -1,348 +1,1351 @@
-(() => {
-  'use strict';
-  const e = new (class {
+/******/ (() => {
+  // webpackBootstrap
+  /******/ 'use strict'; // ./src/v5/content/adapters/SimpleChatBridge.ts
+
+  /**
+   * Fuse Connect v5 - Simple Chat Bridge
+   *
+   * RESTORED FROM BACKUP: Using simple selector approach that actually works.
+   */
+  class SimpleChatBridge {
     constructor() {
-      ((this.lastResponseText = ''),
-        (this.responseObserver = null),
-        (this.callbacks = {}),
-        (this.isWaitingForResponse = !1),
-        (this.responseCheckInterval = null));
+      this.lastResponseText = '';
+      this.responseObserver = null;
+      this.callbacks = {};
+      this.isWaitingForResponse = false;
+      this.responseCheckInterval = null;
     }
-    init(e) {
-      ((this.callbacks = e), console.log('[SimpleChatBridge] Initialized'));
+    /**
+     * Initialize the bridge with callbacks
+     */
+    init(callbacks) {
+      this.callbacks = callbacks;
+      console.log('[SimpleChatBridge] Initialized');
     }
+    /**
+     * Find chat elements on the page - Enhanced with platform-specific selectors
+     */
     findElements() {
-      const e = document.querySelector(
-          'div.ql-editor.textarea, div[contenteditable="true"][role="textbox"], div[contenteditable="true"][data-placeholder]'
-        ),
-        t = document.querySelector(
-          'button[aria-label*="Send" i], button[aria-label*="send" i], button[data-testid*="send" i], button.send-button'
-        ),
-        n = !(!e || !t);
-      return (
-        console.log('[SimpleChatBridge] Elements found:', {
-          hasInput: !!e,
-          hasSendButton: !!t,
-          isReady: n,
-        }),
-        { input: e, sendButton: t, isReady: n }
-      );
-    }
-    async sendMessage(e) {
-      const { input: t, sendButton: n, isReady: s } = this.findElements();
-      if (!s || !t || !n)
-        return (
-          console.error('[SimpleChatBridge] Chat elements not ready'),
-          this.callbacks.onError?.('Chat elements not found'),
-          !1
-        );
-      try {
-        (t.focus(),
-          await this.delay(100),
-          'true' === t.getAttribute('contenteditable')
-            ? ((t.innerHTML = ''),
-              (t.textContent = e),
-              t.dispatchEvent(
-                new InputEvent('input', {
-                  bubbles: !0,
-                  cancelable: !0,
-                  inputType: 'insertText',
-                  data: e,
-                })
-              ))
-            : ((t.value = e), t.dispatchEvent(new Event('input', { bubbles: !0 }))),
-          await this.delay(200));
-        const s = this.countModelResponses();
-        return (
-          console.log('[SimpleChatBridge] Responses before send:', s),
-          n.click(),
-          console.log('[SimpleChatBridge] Message sent:', e.substring(0, 50)),
-          this.startWatchingForResponse(s),
-          !0
-        );
-      } catch (e) {
-        return (
-          console.error('[SimpleChatBridge] Error sending message:', e),
-          this.callbacks.onError?.(`Send failed: ${e}`),
-          !1
-        );
+      // Platform-specific selectors (most reliable first)
+      const inputSelectors = [
+        // Gemini-specific (high priority) - these match the actual Gemini DOM
+        '.ql-editor.textarea[contenteditable="true"]',
+        'rich-textarea .ql-editor[contenteditable="true"]',
+        'rich-textarea [contenteditable="true"]',
+        'div.ql-editor.textarea',
+        // Gemini with data attributes
+        'div[contenteditable="true"][data-placeholder*="Enter"]',
+        'div[contenteditable="true"][aria-label*="prompt" i]',
+        // ChatGPT-specific
+        '#prompt-textarea',
+        'textarea[data-id="root"]',
+        'textarea[placeholder*="Message" i]',
+        // Claude-specific
+        'div[contenteditable="true"][aria-label*="Message" i]',
+        // Generic fallbacks
+        'div[contenteditable="true"][role="textbox"]',
+        'div[contenteditable="true"][data-placeholder]',
+        'div[contenteditable="true"]:not([role="button"])',
+        'textarea[placeholder*="Ask" i]',
+      ];
+      const sendButtonSelectors = [
+        // Gemini-specific
+        'button[aria-label*="Send" i]',
+        'button[aria-label*="submit" i]',
+        'button[data-testid*="send" i]',
+        'button.send-button-container button',
+        // ChatGPT-specific
+        'button[data-testid="send-button"]',
+        // Generic
+        'button.send-button',
+        'button[type="submit"]',
+      ];
+      // Try each input selector - first pass with visibility, second pass without
+      let input = null;
+      // First try: visible elements only
+      for (const selector of inputSelectors) {
+        try {
+          const el = document.querySelector(selector);
+          if (el && this.isVisible(el)) {
+            input = el;
+            break;
+          }
+        } catch (e) {
+          // Invalid selector, skip
+        }
       }
+      // Fallback: any matching element (visibility check may have failed)
+      if (!input) {
+        for (const selector of inputSelectors) {
+          try {
+            const el = document.querySelector(selector);
+            if (el) {
+              input = el;
+              console.log(
+                '[SimpleChatBridge] Using fallback input (no visibility check):',
+                selector
+              );
+              break;
+            }
+          } catch (e) {
+            // Invalid selector, skip
+          }
+        }
+      }
+      // Try each button selector with same fallback logic
+      let sendButton = null;
+      for (const selector of sendButtonSelectors) {
+        try {
+          const el = document.querySelector(selector);
+          if (el && this.isVisible(el)) {
+            sendButton = el;
+            break;
+          }
+        } catch (e) {
+          // Invalid selector, skip
+        }
+      }
+      // Fallback for button
+      if (!sendButton) {
+        for (const selector of sendButtonSelectors) {
+          try {
+            const el = document.querySelector(selector);
+            if (el) {
+              sendButton = el;
+              console.log(
+                '[SimpleChatBridge] Using fallback button (no visibility check):',
+                selector
+              );
+              break;
+            }
+          } catch (e) {
+            // Invalid selector, skip
+          }
+        }
+      }
+      const isReady = !!(input && sendButton);
+      // Only log details when state changes or during debugging
+      if (!isReady) {
+        console.log('[SimpleChatBridge] Elements found:', {
+          hasInput: !!input,
+          hasSendButton: !!sendButton,
+          isReady,
+        });
+      }
+      return { input, sendButton, isReady };
     }
+    /**
+     * Check if element is visible (relaxed check)
+     */
+    isVisible(el) {
+      // Try getBoundingClientRect first
+      try {
+        const rect = el.getBoundingClientRect();
+        // Element has no size - might still be valid if it's a contenteditable
+        if (rect.width > 0 && rect.height > 0) {
+          const style = window.getComputedStyle(el);
+          return style.display !== 'none' && style.visibility !== 'hidden';
+        }
+      } catch (e) {
+        // getBoundingClientRect failed
+      }
+      return false;
+    }
+    /**
+     * Count model responses (for detecting new responses)
+     */
     countModelResponses() {
       return document.querySelectorAll('model-response').length;
     }
+    /**
+     * Get latest response text
+     */
     getLatestResponse() {
-      const e = document.querySelectorAll('model-response');
-      if (0 === e.length) return null;
-      const t = e[e.length - 1],
-        n = t.querySelector('.markdown');
-      if (!n) return (t.textContent || '').trim() || null;
-      const s = n.cloneNode(!0);
-      s.querySelectorAll('button, [role="button"], .chip, [class*="action"]').forEach((e) =>
-        e.remove()
-      );
-      const a = (s.textContent || '').trim();
-      return a.length > 0 ? a : null;
+      const responses = document.querySelectorAll('model-response');
+      if (responses.length === 0) return null;
+      const lastResponse = responses[responses.length - 1];
+      const markdown = lastResponse.querySelector('.markdown');
+      if (!markdown) {
+        return (lastResponse.textContent || '').trim() || null;
+      }
+      // Clone and clean up the markdown content
+      const clone = markdown.cloneNode(true);
+      clone
+        .querySelectorAll('button, [role="button"], .chip, [class*="action"]')
+        .forEach((el) => el.remove());
+      const text = (clone.textContent || '').trim();
+      return text.length > 0 ? text : null;
     }
+    /**
+     * Check if AI is currently streaming a response
+     */
     isStreaming() {
-      const e = [
+      const streamingIndicators = [
         'span[class*="cursor"][class*="blink"]',
         '[class*="thinking"]',
         '[class*="loading-spinner"]',
         '[class*="generating"]',
       ];
-      for (const t of e) if (document.querySelector(t)) return !0;
-      return !1;
+      for (const selector of streamingIndicators) {
+        if (document.querySelector(selector)) return true;
+      }
+      return false;
     }
-    startWatchingForResponse(e) {
-      this.isWaitingForResponse = !0;
-      let t = 0,
-        n = '';
-      ((this.responseCheckInterval = window.setInterval(() => {
-        if (this.countModelResponses() > e) {
-          const e = this.getLatestResponse(),
-            s = this.isStreaming();
-          (console.log('[SimpleChatBridge] Checking response...', {
-            newContent: !!e,
-            streaming: s,
-            contentLength: e?.length || 0,
-          }),
-            e &&
-              (e !== n || s
-                ? ((t = 0), (n = e))
-                : (t++,
-                  t >= 2 &&
-                    (this.stopWatching(),
-                    e !== this.lastResponseText &&
-                      ((this.lastResponseText = e),
-                      console.log('[SimpleChatBridge] Response complete!', e.substring(0, 100)),
-                      this.callbacks.onResponse?.(e))))));
+    /**
+     * Send a message to the AI - RESTORED FROM BACKUP
+     */
+    async sendMessage(text) {
+      const { input, sendButton, isReady } = this.findElements();
+      if (!isReady || !input || !sendButton) {
+        console.error('[SimpleChatBridge] Chat elements not ready');
+        this.callbacks.onError?.('Chat elements not found');
+        return false;
+      }
+      try {
+        input.focus();
+        await this.delay(100);
+        // Input simulation
+        if (input.getAttribute('contenteditable') === 'true') {
+          input.innerHTML = '';
+          input.textContent = text;
+          input.dispatchEvent(
+            new InputEvent('input', {
+              bubbles: true,
+              cancelable: true,
+              inputType: 'insertText',
+              data: text,
+            })
+          );
+        } else {
+          input.value = text;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
         }
-      }, 1e3)),
-        setTimeout(() => {
-          this.isWaitingForResponse &&
-            (console.warn('[SimpleChatBridge] Response timeout'),
-            this.stopWatching(),
-            this.callbacks.onError?.('Response timeout'));
-        }, 6e4));
+        await this.delay(200);
+        // Count responses before sending
+        const responsesBefore = this.countModelResponses();
+        console.log('[SimpleChatBridge] Responses before send:', responsesBefore);
+        // Click send button
+        sendButton.click();
+        console.log('[SimpleChatBridge] Message sent:', text.substring(0, 50));
+        // Start watching for response
+        this.startWatchingForResponse(responsesBefore);
+        return true;
+      } catch (error) {
+        console.error('[SimpleChatBridge] Error sending message:', error);
+        this.callbacks.onError?.(`Send failed: ${error}`);
+        return false;
+      }
     }
+    /**
+     * Inject message (alias for sendMessage)
+     */
+    async injectMessage(text) {
+      return this.sendMessage(text);
+    }
+    /**
+     * Start watching for AI response
+     */
+    startWatchingForResponse(responsesBefore) {
+      this.isWaitingForResponse = true;
+      let stableCount = 0;
+      let lastContent = '';
+      this.responseCheckInterval = window.setInterval(() => {
+        // Check if new response appeared
+        if (this.countModelResponses() > responsesBefore) {
+          const content = this.getLatestResponse();
+          const streaming = this.isStreaming();
+          console.log('[SimpleChatBridge] Checking response...', {
+            newContent: !!content,
+            streaming,
+            contentLength: content?.length || 0,
+          });
+          if (content) {
+            if (content !== lastContent || streaming) {
+              // Still streaming or content changed
+              stableCount = 0;
+              lastContent = content;
+            } else {
+              // Content is stable
+              stableCount++;
+              if (stableCount >= 2) {
+                this.stopWatching();
+                if (content !== this.lastResponseText) {
+                  this.lastResponseText = content;
+                  console.log('[SimpleChatBridge] Response complete!', content.substring(0, 100));
+                  this.callbacks.onResponse?.(content);
+                }
+              }
+            }
+          }
+        }
+      }, 1000);
+      // Timeout after 60 seconds
+      setTimeout(() => {
+        if (this.isWaitingForResponse) {
+          console.warn('[SimpleChatBridge] Response timeout');
+          this.stopWatching();
+          this.callbacks.onError?.('Response timeout');
+        }
+      }, 60000);
+    }
+    /**
+     * Stop watching for response
+     */
     stopWatching() {
-      ((this.isWaitingForResponse = !1),
-        this.responseCheckInterval &&
-          (clearInterval(this.responseCheckInterval), (this.responseCheckInterval = null)));
+      this.isWaitingForResponse = false;
+      if (this.responseCheckInterval) {
+        clearInterval(this.responseCheckInterval);
+        this.responseCheckInterval = null;
+      }
     }
+    /**
+     * Get last response
+     */
     getLastResponse() {
       return this.getLatestResponse();
     }
+    /**
+     * Destroy/cleanup
+     */
     destroy() {
-      (this.stopWatching(),
-        this.responseObserver &&
-          (this.responseObserver.disconnect(), (this.responseObserver = null)));
+      this.stopWatching();
+      if (this.responseObserver) {
+        this.responseObserver.disconnect();
+        this.responseObserver = null;
+      }
     }
-    delay(e) {
-      return new Promise((t) => setTimeout(t, e));
+    /**
+     * Delay helper
+     */
+    delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     }
-  })();
+  }
+  // Export singleton instance
+  const simpleChatBridge = new SimpleChatBridge();
+  /* harmony default export */ const adapters_SimpleChatBridge =
+    /* unused pure expression or super */ null && simpleChatBridge; // ./src/v5/content/guard.ts
+
+  /**
+   * Custom Element Guard for Chrome Extension
+   * Prevents the "A custom element with name ... has already been defined" error
+   * by patching customElements.define to safely check existence first.
+   */
   try {
-    const e = customElements.define;
-    customElements.define.__isSafeGuarded ||
-      ((customElements.define = function (t, n, s) {
-        if (!customElements.get(t))
+    const originalDefine =
+      typeof customElements !== 'undefined' && customElements ? customElements.define : undefined;
+    if (originalDefine) {
+      // Only patch if not already patched (check for our marker)
+      if (
+        typeof customElements !== 'undefined' &&
+        customElements &&
+        customElements.define &&
+        !customElements.define.__isSafeGuarded
+      ) {
+        customElements.define = function (name, constructor, options) {
+          if (customElements.get(name)) {
+            // If in development, log a warning, otherwise fail silently to prevent crash
+            if (false) // removed by dead control flow
+            {
+            }
+            return;
+          }
           try {
-            e.call(this, t, n, s);
+            originalDefine.call(this, name, constructor, options);
           } catch (e) {
-            if (e.message && e.message.includes('already been defined'))
-              return void console.warn(`[FuseConnect Guard] Collision caught for '${t}'.`);
+            if (e.message && e.message.includes('already been defined')) {
+              console.warn(`[FuseConnect Guard] Collision caught for '${name}'.`);
+              return;
+            }
             throw e;
           }
-      }),
-      (customElements.define.__isSafeGuarded = !0),
-      console.log('[FuseConnect] Custom Element Guard activated'));
+        };
+        // Mark as guarded
+        customElements.define.__isSafeGuarded = true;
+        console.log('[FuseConnect] Custom Element Guard activated');
+      }
+    }
   } catch (e) {
     console.error('[FuseConnect] Failed to activate Custom Element Guard', e);
-  }
-  class t {
-    constructor(e = {}) {
-      ((this.container = null),
-        (this.dragState = { isDragging: !1, startX: 0, startY: 0, startPosX: 0, startPosY: 0 }),
-        (this.resizeState = {
-          isResizing: !1,
-          startX: 0,
-          startY: 0,
-          startWidth: 0,
-          startHeight: 0,
-          edge: '',
-        }),
-        (this.connectionStatus = 'disconnected'),
-        (this.chatElements = null),
-        (this.streamingState = null),
-        (this.agents = []),
-        (this.channels = []),
-        (this.currentChannel = null),
-        (this.messages = []),
-        (this.notifications = []),
-        (this.unreadCount = 0),
-        (this.recentBroadcasts = new Map()),
-        (this.serviceStatuses = new Map([
-          ['relay', 'unknown'],
-          ['api', 'unknown'],
-          ['frontend', 'unknown'],
-        ])),
-        (this.healthPollInterval = null),
-        (this.chromeMessageListener = null),
-        (this.isContextValid = !0),
-        (this.cleanupInterval = null),
-        (this.CLEANUP_INTERVAL_MS = 3e4),
-        (this.BROADCAST_DEDUP_WINDOW_MS = 1e4),
-        (this.hostName = window.location.hostname.replace(/\./g, '-')),
-        (this.panelId = `${this.hostName}-${Math.random().toString(36).substring(2, 8)}`),
-        (this.state = {
-          mode: e.mode || 'collapsed',
-          position: e.position || { x: 20, y: 20 },
-          size: e.size || { width: 360, height: 480 },
-          activeTab: 'chat',
-          isDragging: !1,
-          isResizing: !1,
-          isPinned: !1,
-          opacity: 1,
-        }),
-        console.log(`[FuseConnect] Panel initialized with ID: ${this.panelId}`),
-        this.loadState(),
-        this.inject(),
-        this.setupListeners(),
-        this.requestConnectionState(),
-        this.startCleanupInterval());
+  } // ./src/v5/content/injectable/FloatingPanel.ts
+
+  /**
+   * Fuse Connect v6 - Enhanced Floating Panel
+   * Fully draggable, resizable, with federation channels and notifications
+   */
+  const PANEL_MIN_WIDTH = 300;
+  const PANEL_MIN_HEIGHT = 200;
+  const PANEL_MAX_WIDTH = 600;
+  const PANEL_MAX_HEIGHT = 800;
+  const COLLAPSED_HEIGHT = 48;
+  class EnhancedFloatingPanel {
+    constructor(options = {}) {
+      this.container = null;
+      this.dragState = { isDragging: false, startX: 0, startY: 0, startPosX: 0, startPosY: 0 };
+      this.resizeState = {
+        isResizing: false,
+        startX: 0,
+        startY: 0,
+        startWidth: 0,
+        startHeight: 0,
+        edge: '',
+      };
+      this.myAgentId = null;
+      // Data
+      this.connectionStatus = 'disconnected';
+      this.chatElements = null;
+      this.streamingState = null;
+      this.agents = [];
+      this.channels = [];
+      this.currentChannel = null;
+      this.messages = [];
+      this.notifications = [];
+      this.unreadCount = 0;
+      // Track recently broadcast messages to prevent duplicates
+      this.recentBroadcasts = new Map();
+      // Service health tracking
+      this.serviceStatuses = new Map([
+        ['relay', 'unknown'],
+        ['api', 'unknown'],
+        ['frontend', 'unknown'],
+      ]);
+      this.healthPollInterval = null;
+      // Track Chrome message listener for cleanup
+      this.chromeMessageListener = null;
+      this.storageListener = null;
+      // Flag to track if extension context is valid
+      this.isContextValid = true;
+      // Cleanup timer to prevent memory leaks
+      this.cleanupInterval = null;
+      this.CLEANUP_INTERVAL_MS = 30000; // 30 seconds
+      this.BROADCAST_DEDUP_WINDOW_MS = 10000; // 10 seconds
+      // Generate unique panel ID based on hostname and random suffix
+      this.hostName = window.location.hostname.replace(/\./g, '-');
+      this.panelId = `${this.hostName}-${Math.random().toString(36).substring(2, 8)}`;
+      this.state = {
+        mode: options.mode || 'expanded', // UPDATED: Default to expanded
+        position: options.position || { x: 20, y: 20 },
+        size: options.size || { width: 360, height: 480 },
+        activeTab: 'chat',
+        isDragging: false,
+        isResizing: false,
+        isPinned: false,
+        opacity: 1,
+      };
+      console.log(`[FuseConnect] Panel initialized with ID: ${this.panelId}`);
+      this.loadState();
+      this.inject();
+      this.setupListeners();
+      // Request current connection state from background script
+      this.requestConnectionState();
+      // Start periodic cleanup to prevent memory leaks
+      this.startCleanupInterval();
     }
+    /**
+     * Start periodic cleanup of stale data
+     */
     startCleanupInterval() {
       this.cleanupInterval = setInterval(() => {
-        const e = Date.now();
-        for (const [t, n] of this.recentBroadcasts.entries())
-          e - n > this.BROADCAST_DEDUP_WINDOW_MS && this.recentBroadcasts.delete(t);
-        (this.messages.length > 100 && (this.messages = this.messages.slice(-50)),
-          this.notifications.length > 50 && (this.notifications = this.notifications.slice(-25)));
+        const now = Date.now();
+        let cleaned = 0;
+        // Clean up old broadcast entries
+        for (const [key, time] of this.recentBroadcasts.entries()) {
+          if (now - time > this.BROADCAST_DEDUP_WINDOW_MS) {
+            this.recentBroadcasts.delete(key);
+            cleaned++;
+          }
+        }
+        // Trim messages array if it gets too long
+        if (this.messages.length > 100) {
+          this.messages = this.messages.slice(-50);
+        }
+        // Trim notifications array
+        if (this.notifications.length > 50) {
+          this.notifications = this.notifications.slice(-25);
+        }
       }, this.CLEANUP_INTERVAL_MS);
     }
+    /**
+     * Request connection state from background script
+     * This ensures the panel gets the correct state when created
+     */
     requestConnectionState() {
-      chrome.runtime.sendMessage({ type: 'GET_STATE' }, (e) => {
-        e &&
-          (console.log('[FuseConnect] Received state from background:', e),
-          (this.connectionStatus = e.connectionStatus || 'disconnected'),
-          (this.agents = e.agents || []),
-          (this.channels = e.channels || []),
-          chrome.storage.local.get(['fuse_current_channel'], (e) => {
-            (e.fuse_current_channel && (this.currentChannel = e.fuse_current_channel),
-              this.update());
-          }));
+      chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
+        if (response) {
+          console.log('[FuseConnect] Received state from background:', response);
+          this.connectionStatus = response.connectionStatus || 'disconnected';
+          this.agents = response.agents || [];
+          this.channels = response.channels || [];
+          this.myAgentId = response.agentId || null;
+          // Restore current channel if we have one stored
+          chrome.storage.local.get(['fuse_current_channel'], (result) => {
+            if (result.fuse_current_channel) {
+              this.currentChannel = result.fuse_current_channel;
+            }
+            this.update();
+          });
+        }
       });
     }
+    /**
+     * Load saved state
+     */
     async loadState() {
       try {
-        const e = await chrome.storage.local.get(['fuse_panel_state']);
-        e.fuse_panel_state && (this.state = { ...this.state, ...e.fuse_panel_state });
-      } catch (e) {}
+        const result = await chrome.storage.local.get(['fuse_panel_state']);
+        if (result.fuse_panel_state) {
+          this.state = { ...this.state, ...result.fuse_panel_state };
+        }
+      } catch (e) {
+        // Storage not available
+      }
     }
+    /**
+     * Save state
+     */
     async saveState() {
       try {
         await chrome.storage.local.set({ fuse_panel_state: this.state });
-      } catch (e) {}
+      } catch (e) {
+        // Storage not available
+      }
     }
+    /**
+     * Inject panel into page
+     */
     inject() {
-      (document.getElementById('fuse-connect-panel-v6')?.remove(),
-        (this.container = document.createElement('div')),
-        (this.container.id = 'fuse-connect-panel-v6'),
-        (this.container.innerHTML = this.render()),
-        this.injectStyles(),
-        document.body.appendChild(this.container),
-        this.applyPositionAndSize());
+      // Remove existing
+      document.getElementById('fuse-connect-panel-v6')?.remove();
+      // Create container
+      this.container = document.createElement('div');
+      this.container.id = 'fuse-connect-panel-v6';
+      this.container.innerHTML = this.render();
+      // Inject styles
+      this.injectStyles();
+      // Add to page
+      document.body.appendChild(this.container);
+      // Apply position and size
+      this.applyPositionAndSize();
     }
+    /**
+     * Inject CSS
+     */
     injectStyles() {
       if (document.getElementById('fuse-connect-styles-v6')) return;
-      const e = document.createElement('style');
-      ((e.id = 'fuse-connect-styles-v6'),
-        (e.textContent = this.getStyles()),
-        document.head.appendChild(e));
+      const style = document.createElement('style');
+      style.id = 'fuse-connect-styles-v6';
+      style.textContent = this.getStyles();
+      document.head.appendChild(style);
     }
+    /**
+     * Get CSS styles
+     */
     getStyles() {
-      return "\n      /* Fuse Connect v6 - Enhanced Panel Styles */\n\n      #fuse-connect-panel-v6 {\n        position: fixed !important;\n        z-index: 2147483647 !important;\n        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;\n        font-size: 13px !important;\n        line-height: 1.4 !important;\n        color: #fff !important;\n        pointer-events: auto !important;\n        user-select: none !important;\n      }\n\n      #fuse-connect-panel-v6 * {\n        box-sizing: border-box !important;\n      }\n\n      .fcp6-panel {\n        width: 100%;\n        height: 100%;\n        background: linear-gradient(135deg, rgba(10,10,15,0.98) 0%, rgba(18,18,26,0.98) 100%) !important;\n        border: 1px solid rgba(0,217,255,0.3) !important;\n        border-radius: 16px !important;\n        box-shadow:\n          0 0 40px rgba(0,217,255,0.2),\n          0 20px 60px rgba(0,0,0,0.6),\n          inset 0 1px 0 rgba(255,255,255,0.1) !important;\n        backdrop-filter: blur(20px) !important;\n        overflow: hidden !important;\n        display: flex !important;\n        flex-direction: column !important;\n      }\n\n      .fcp6-panel.collapsed {\n        height: 48px !important;\n      }\n\n      .fcp6-panel.minimized {\n        width: 48px !important;\n        height: 48px !important;\n        border-radius: 50% !important;\n      }\n\n      /* Header */\n      .fcp6-header {\n        display: flex !important;\n        align-items: center !important;\n        justify-content: space-between !important;\n        padding: 10px 14px !important;\n        background: linear-gradient(90deg, rgba(0,217,255,0.15) 0%, rgba(157,78,221,0.15) 100%) !important;\n        border-bottom: 1px solid rgba(0,217,255,0.2) !important;\n        cursor: move !important;\n        min-height: 46px !important;\n      }\n\n      .fcp6-logo {\n        display: flex !important;\n        align-items: center !important;\n        gap: 8px !important;\n      }\n\n      .fcp6-icon {\n        width: 26px !important;\n        height: 26px !important;\n        background: linear-gradient(135deg, #00D9FF 0%, #9D4EDD 100%) !important;\n        border-radius: 6px !important;\n        display: flex !important;\n        align-items: center !important;\n        justify-content: center !important;\n        font-size: 14px !important;\n        box-shadow: 0 0 15px rgba(0,217,255,0.4) !important;\n      }\n\n      .fcp6-title {\n        font-size: 13px !important;\n        font-weight: 600 !important;\n        background: linear-gradient(90deg, #00D9FF, #9D4EDD) !important;\n        -webkit-background-clip: text !important;\n        -webkit-text-fill-color: transparent !important;\n        background-clip: text !important;\n      }\n\n      .fcp6-status-dot {\n        width: 8px !important;\n        height: 8px !important;\n        border-radius: 50% !important;\n        margin-left: 8px !important;\n      }\n\n      .fcp6-status-dot.connected { background: #00FF88 !important; box-shadow: 0 0 8px rgba(0,255,136,0.6) !important; }\n      .fcp6-status-dot.disconnected { background: #FF3366 !important; }\n      .fcp6-status-dot.connecting { background: #FFB800 !important; animation: fcp6-pulse 1s infinite !important; }\n\n      @keyframes fcp6-pulse {\n        0%, 100% { opacity: 1; }\n        50% { opacity: 0.4; }\n      }\n\n      .fcp6-controls {\n        display: flex !important;\n        gap: 4px !important;\n      }\n\n      .fcp6-btn {\n        width: 26px !important;\n        height: 26px !important;\n        border: none !important;\n        border-radius: 6px !important;\n        background: rgba(255,255,255,0.08) !important;\n        color: rgba(255,255,255,0.7) !important;\n        cursor: pointer !important;\n        display: flex !important;\n        align-items: center !important;\n        justify-content: center !important;\n        font-size: 12px !important;\n        transition: all 0.2s ease !important;\n      }\n\n      .fcp6-btn:hover {\n        background: rgba(0,217,255,0.3) !important;\n        color: #00D9FF !important;\n      }\n\n      .fcp6-badge {\n        position: absolute !important;\n        top: -4px !important;\n        right: -4px !important;\n        min-width: 16px !important;\n        height: 16px !important;\n        background: #FF006E !important;\n        border-radius: 8px !important;\n        font-size: 10px !important;\n        font-weight: 600 !important;\n        display: flex !important;\n        align-items: center !important;\n        justify-content: center !important;\n        padding: 0 4px !important;\n      }\n\n      /* Tabs */\n      .fcp6-tabs {\n        display: flex !important;\n        padding: 4px !important;\n        gap: 2px !important;\n        background: rgba(0,0,0,0.2) !important;\n        border-bottom: 1px solid rgba(255,255,255,0.05) !important;\n      }\n\n      .fcp6-tab {\n        flex: 1 !important;\n        padding: 8px 4px !important;\n        border: none !important;\n        border-radius: 6px !important;\n        background: transparent !important;\n        color: rgba(255,255,255,0.5) !important;\n        font-size: 11px !important;\n        font-weight: 500 !important;\n        cursor: pointer !important;\n        transition: all 0.2s ease !important;\n        display: flex !important;\n        flex-direction: column !important;\n        align-items: center !important;\n        gap: 2px !important;\n      }\n\n      .fcp6-tab:hover {\n        background: rgba(255,255,255,0.05) !important;\n        color: rgba(255,255,255,0.8) !important;\n      }\n\n      .fcp6-tab.active {\n        background: linear-gradient(135deg, rgba(0,217,255,0.2) 0%, rgba(157,78,221,0.2) 100%) !important;\n        color: #00D9FF !important;\n        border: 1px solid rgba(0,217,255,0.3) !important;\n      }\n\n      .fcp6-tab-icon {\n        font-size: 14px !important;\n      }\n\n      /* Content */\n      .fcp6-content {\n        flex: 1 !important;\n        overflow-y: auto !important;\n        padding: 12px !important;\n      }\n\n      .fcp6-content::-webkit-scrollbar {\n        width: 5px !important;\n      }\n\n      .fcp6-content::-webkit-scrollbar-thumb {\n        background: rgba(0,217,255,0.3) !important;\n        border-radius: 3px !important;\n      }\n\n      /* Input area */\n      .fcp6-input-area {\n        padding: 10px !important;\n        border-top: 1px solid rgba(255,255,255,0.05) !important;\n        background: rgba(0,0,0,0.2) !important;\n      }\n\n      .fcp6-input-row {\n        display: flex !important;\n        gap: 8px !important;\n      }\n\n      .fcp6-input {\n        flex: 1 !important;\n        padding: 10px 12px !important;\n        border: 1px solid rgba(0,217,255,0.2) !important;\n        border-radius: 8px !important;\n        background: rgba(0,0,0,0.3) !important;\n        color: #fff !important;\n        font-size: 13px !important;\n        outline: none !important;\n        resize: none !important;\n      }\n\n      .fcp6-input:focus {\n        border-color: #00D9FF !important;\n        box-shadow: 0 0 0 2px rgba(0,217,255,0.2) !important;\n      }\n\n      .fcp6-send-btn {\n        padding: 10px 16px !important;\n        border: none !important;\n        border-radius: 8px !important;\n        background: linear-gradient(135deg, #00D9FF 0%, #9D4EDD 100%) !important;\n        color: #fff !important;\n        font-weight: 600 !important;\n        cursor: pointer !important;\n        transition: all 0.2s ease !important;\n      }\n\n      .fcp6-send-btn:hover {\n        box-shadow: 0 0 20px rgba(0,217,255,0.5) !important;\n        transform: translateY(-1px) !important;\n      }\n\n      .fcp6-inject-btn {\n        padding: 10px !important;\n        border: none !important;\n        border-radius: 8px !important;\n        background: linear-gradient(135deg, #00FF88 0%, #00D9FF 100%) !important;\n        color: #fff !important;\n        font-size: 16px !important;\n        cursor: pointer !important;\n        transition: all 0.2s ease !important;\n      }\n\n      .fcp6-inject-btn:hover {\n        box-shadow: 0 0 20px rgba(0,255,136,0.5) !important;\n        transform: translateY(-1px) !important;\n      }\n\n      .fcp6-input-hint {\n        margin-top: 6px !important;\n        font-size: 10px !important;\n        color: rgba(255,255,255,0.5) !important;\n        display: flex !important;\n        align-items: center !important;\n        gap: 4px !important;\n      }\n\n      /* Chat card */\n      .fcp6-chat-card {\n        padding: 10px !important;\n        background: rgba(255,255,255,0.03) !important;\n        border-radius: 8px !important;\n        margin-bottom: 8px !important;\n        border: 1px solid rgba(255,255,255,0.05) !important;\n      }\n\n      .fcp6-chat-header {\n        display: flex !important;\n        justify-content: space-between !important;\n        margin-bottom: 4px !important;\n        font-size: 11px !important;\n      }\n\n      .fcp6-chat-from {\n        color: #00D9FF !important;\n        font-weight: 500 !important;\n      }\n\n      .fcp6-chat-time {\n        color: rgba(255,255,255,0.3) !important;\n      }\n\n      .fcp6-chat-content {\n        color: rgba(255,255,255,0.8) !important;\n        word-break: break-word !important;\n      }\n\n      /* Channel list */\n      .fcp6-channel {\n        display: flex !important;\n        align-items: center !important;\n        gap: 10px !important;\n        padding: 10px !important;\n        background: rgba(255,255,255,0.03) !important;\n        border-radius: 8px !important;\n        margin-bottom: 6px !important;\n        cursor: pointer !important;\n        transition: all 0.2s ease !important;\n      }\n\n      .fcp6-channel:hover, .fcp6-channel.active {\n        background: rgba(0,217,255,0.1) !important;\n        border: 1px solid rgba(0,217,255,0.3) !important;\n      }\n\n      .fcp6-channel-icon {\n        font-size: 18px !important;\n      }\n\n      .fcp6-channel-info {\n        flex: 1 !important;\n      }\n\n      .fcp6-channel-name {\n        font-weight: 500 !important;\n      }\n\n      .fcp6-channel-members {\n        font-size: 11px !important;\n        color: rgba(255,255,255,0.4) !important;\n      }\n\n      /* Agent card */\n      .fcp6-agent {\n        display: flex !important;\n        align-items: center !important;\n        gap: 10px !important;\n        padding: 10px !important;\n        background: rgba(255,255,255,0.03) !important;\n        border-radius: 8px !important;\n        margin-bottom: 6px !important;\n      }\n\n      .fcp6-agent-avatar {\n        width: 36px !important;\n        height: 36px !important;\n        border-radius: 8px !important;\n        background: linear-gradient(135deg, #9D4EDD 0%, #00D9FF 100%) !important;\n        display: flex !important;\n        align-items: center !important;\n        justify-content: center !important;\n        font-size: 16px !important;\n      }\n\n      .fcp6-agent-name {\n        font-weight: 500 !important;\n      }\n\n      .fcp6-agent-platform {\n        font-size: 11px !important;\n        color: rgba(255,255,255,0.4) !important;\n      }\n\n      /* Notification */\n      .fcp6-notification {\n        padding: 10px !important;\n        background: rgba(255,255,255,0.03) !important;\n        border-radius: 8px !important;\n        margin-bottom: 8px !important;\n        border-left: 3px solid #00D9FF !important;\n      }\n\n      .fcp6-notification.unread {\n        background: rgba(0,217,255,0.1) !important;\n      }\n\n      /* Detection status */\n      .fcp6-detection {\n        padding: 10px !important;\n        background: rgba(0,255,136,0.1) !important;\n        border: 1px solid rgba(0,255,136,0.3) !important;\n        border-radius: 8px !important;\n        margin-bottom: 12px !important;\n      }\n\n      .fcp6-detection.streaming {\n        border-color: #FFB800 !important;\n        background: rgba(255,184,0,0.1) !important;\n      }\n\n      /* Resize handles */\n      .fcp6-resize-handle {\n        position: absolute !important;\n        background: transparent !important;\n      }\n\n      .fcp6-resize-handle.left {\n        left: 0 !important;\n        top: 10% !important;\n        width: 6px !important;\n        height: 80% !important;\n        cursor: ew-resize !important;\n      }\n\n      .fcp6-resize-handle.bottom {\n        bottom: 0 !important;\n        left: 10% !important;\n        width: 80% !important;\n        height: 6px !important;\n        cursor: ns-resize !important;\n      }\n\n      .fcp6-resize-handle.corner {\n        left: 0 !important;\n        bottom: 0 !important;\n        width: 16px !important;\n        height: 16px !important;\n        cursor: nwse-resize !important;\n      }\n    ";
+      return `
+      /* Fuse Connect v6 - Enhanced Panel Styles */
+
+      #fuse-connect-panel-v6 {
+        position: fixed !important;
+        z-index: 2147483647 !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        color: #fff !important;
+        pointer-events: auto !important;
+        user-select: none !important;
+      }
+
+      #fuse-connect-panel-v6 * {
+        box-sizing: border-box !important;
+      }
+
+      .fcp6-panel {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(10,10,15,0.98) 0%, rgba(18,18,26,0.98) 100%) !important;
+        border: 1px solid rgba(0,217,255,0.3) !important;
+        border-radius: 16px !important;
+        box-shadow:
+          0 0 40px rgba(0,217,255,0.2),
+          0 20px 60px rgba(0,0,0,0.6),
+          inset 0 1px 0 rgba(255,255,255,0.1) !important;
+        backdrop-filter: blur(20px) !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+
+      .fcp6-panel.collapsed {
+        height: ${COLLAPSED_HEIGHT}px !important;
+      }
+
+      .fcp6-panel.minimized {
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 50% !important;
+      }
+
+      /* Header */
+      .fcp6-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 10px 14px !important;
+        background: linear-gradient(90deg, rgba(0,217,255,0.15) 0%, rgba(157,78,221,0.15) 100%) !important;
+        border-bottom: 1px solid rgba(0,217,255,0.2) !important;
+        cursor: move !important;
+        min-height: 46px !important;
+      }
+
+      .fcp6-logo {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+      }
+
+      .fcp6-icon {
+        width: 26px !important;
+        height: 26px !important;
+        background: linear-gradient(135deg, #00D9FF 0%, #9D4EDD 100%) !important;
+        border-radius: 6px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 14px !important;
+        box-shadow: 0 0 15px rgba(0,217,255,0.4) !important;
+      }
+
+      .fcp6-title {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        background: linear-gradient(90deg, #00D9FF, #9D4EDD) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+      }
+
+      .fcp6-status-dot {
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        margin-left: 8px !important;
+      }
+
+      .fcp6-status-dot.connected { background: #00FF88 !important; box-shadow: 0 0 8px rgba(0,255,136,0.6) !important; }
+      .fcp6-status-dot.disconnected { background: #FF3366 !important; }
+      .fcp6-status-dot.connecting { background: #FFB800 !important; animation: fcp6-pulse 1s infinite !important; }
+
+      @keyframes fcp6-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+
+      .fcp6-controls {
+        display: flex !important;
+        gap: 4px !important;
+      }
+
+      .fcp6-btn {
+        width: 26px !important;
+        height: 26px !important;
+        border: none !important;
+        border-radius: 6px !important;
+        background: rgba(255,255,255,0.08) !important;
+        color: rgba(255,255,255,0.7) !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 12px !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .fcp6-btn:hover {
+        background: rgba(0,217,255,0.3) !important;
+        color: #00D9FF !important;
+      }
+
+      .fcp6-badge {
+        position: absolute !important;
+        top: -4px !important;
+        right: -4px !important;
+        min-width: 16px !important;
+        height: 16px !important;
+        background: #FF006E !important;
+        border-radius: 8px !important;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 4px !important;
+      }
+
+      /* Tabs */
+      .fcp6-tabs {
+        display: flex !important;
+        padding: 4px !important;
+        gap: 2px !important;
+        background: rgba(0,0,0,0.2) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+      }
+
+      .fcp6-tab {
+        flex: 1 !important;
+        padding: 8px 4px !important;
+        border: none !important;
+        border-radius: 6px !important;
+        background: transparent !important;
+        color: rgba(255,255,255,0.5) !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 2px !important;
+      }
+
+      .fcp6-tab:hover {
+        background: rgba(255,255,255,0.05) !important;
+        color: rgba(255,255,255,0.8) !important;
+      }
+
+      .fcp6-tab.active {
+        background: linear-gradient(135deg, rgba(0,217,255,0.2) 0%, rgba(157,78,221,0.2) 100%) !important;
+        color: #00D9FF !important;
+        border: 1px solid rgba(0,217,255,0.3) !important;
+      }
+
+      .fcp6-tab-icon {
+        font-size: 14px !important;
+      }
+
+      /* Content */
+      .fcp6-content {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+
+      .fcp6-content::-webkit-scrollbar {
+        width: 5px !important;
+      }
+
+      .fcp6-content::-webkit-scrollbar-thumb {
+        background: rgba(0,217,255,0.3) !important;
+        border-radius: 3px !important;
+      }
+
+      /* Input area */
+      .fcp6-input-area {
+        padding: 10px !important;
+        border-top: 1px solid rgba(255,255,255,0.05) !important;
+        background: rgba(0,0,0,0.2) !important;
+      }
+
+      .fcp6-input-row {
+        display: flex !important;
+        gap: 8px !important;
+      }
+
+      .fcp6-input {
+        flex: 1 !important;
+        padding: 10px 12px !important;
+        border: 1px solid rgba(0,217,255,0.2) !important;
+        border-radius: 8px !important;
+        background: rgba(0,0,0,0.3) !important;
+        color: #fff !important;
+        font-size: 13px !important;
+        outline: none !important;
+        resize: none !important;
+      }
+
+      .fcp6-input:focus {
+        border-color: #00D9FF !important;
+        box-shadow: 0 0 0 2px rgba(0,217,255,0.2) !important;
+      }
+
+      .fcp6-send-btn {
+        padding: 10px 16px !important;
+        border: none !important;
+        border-radius: 8px !important;
+        background: linear-gradient(135deg, #00D9FF 0%, #9D4EDD 100%) !important;
+        color: #fff !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .fcp6-send-btn:hover {
+        box-shadow: 0 0 20px rgba(0,217,255,0.5) !important;
+        transform: translateY(-1px) !important;
+      }
+
+      .fcp6-inject-btn {
+        padding: 10px !important;
+        border: none !important;
+        border-radius: 8px !important;
+        background: linear-gradient(135deg, #00FF88 0%, #00D9FF 100%) !important;
+        color: #fff !important;
+        font-size: 16px !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .fcp6-inject-btn:hover {
+        box-shadow: 0 0 20px rgba(0,255,136,0.5) !important;
+        transform: translateY(-1px) !important;
+      }
+
+      .fcp6-input-hint {
+        margin-top: 6px !important;
+        font-size: 10px !important;
+        color: rgba(255,255,255,0.5) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+      }
+
+      /* Chat card */
+      .fcp6-chat-card {
+        padding: 10px !important;
+        background: rgba(255,255,255,0.03) !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+        border: 1px solid rgba(255,255,255,0.05) !important;
+      }
+
+      .fcp6-chat-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-bottom: 4px !important;
+        font-size: 11px !important;
+      }
+
+      .fcp6-chat-from {
+        color: #00D9FF !important;
+        font-weight: 500 !important;
+      }
+
+      .fcp6-chat-time {
+        color: rgba(255,255,255,0.3) !important;
+      }
+
+      .fcp6-chat-content {
+        color: rgba(255,255,255,0.8) !important;
+        word-break: break-word !important;
+      }
+
+      /* Channel list */
+      .fcp6-channel {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 10px !important;
+        background: rgba(255,255,255,0.03) !important;
+        border-radius: 8px !important;
+        margin-bottom: 6px !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .fcp6-channel:hover, .fcp6-channel.active {
+        background: rgba(0,217,255,0.1) !important;
+        border: 1px solid rgba(0,217,255,0.3) !important;
+      }
+
+      .fcp6-channel-icon {
+        font-size: 18px !important;
+      }
+
+      .fcp6-channel-info {
+        flex: 1 !important;
+      }
+
+      .fcp6-channel-name {
+        font-weight: 500 !important;
+      }
+
+      .fcp6-channel-members {
+        font-size: 11px !important;
+        color: rgba(255,255,255,0.4) !important;
+      }
+
+      /* Agent card */
+      .fcp6-agent {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 10px !important;
+        background: rgba(255,255,255,0.03) !important;
+        border-radius: 8px !important;
+        margin-bottom: 6px !important;
+      }
+
+      .fcp6-agent-avatar {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 8px !important;
+        background: linear-gradient(135deg, #9D4EDD 0%, #00D9FF 100%) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 16px !important;
+      }
+
+      .fcp6-agent-name {
+        font-weight: 500 !important;
+      }
+
+      .fcp6-agent-platform {
+        font-size: 11px !important;
+        color: rgba(255,255,255,0.4) !important;
+      }
+
+      /* Notification */
+      .fcp6-notification {
+        padding: 10px !important;
+        background: rgba(255,255,255,0.03) !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+        border-left: 3px solid #00D9FF !important;
+      }
+
+      .fcp6-notification.unread {
+        background: rgba(0,217,255,0.1) !important;
+      }
+
+      /* Detection status */
+      .fcp6-detection {
+        padding: 10px !important;
+        background: rgba(0,255,136,0.1) !important;
+        border: 1px solid rgba(0,255,136,0.3) !important;
+        border-radius: 8px !important;
+        margin-bottom: 12px !important;
+      }
+
+      .fcp6-detection.streaming {
+        border-color: #FFB800 !important;
+        background: rgba(255,184,0,0.1) !important;
+      }
+
+      /* Resize handles */
+      .fcp6-resize-handle {
+        position: absolute !important;
+        background: transparent !important;
+      }
+
+      .fcp6-resize-handle.left {
+        left: 0 !important;
+        top: 10% !important;
+        width: 6px !important;
+        height: 80% !important;
+        cursor: ew-resize !important;
+      }
+
+      .fcp6-resize-handle.bottom {
+        bottom: 0 !important;
+        left: 10% !important;
+        width: 80% !important;
+        height: 6px !important;
+        cursor: ns-resize !important;
+      }
+
+      .fcp6-resize-handle.corner {
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 16px !important;
+        height: 16px !important;
+        cursor: nwse-resize !important;
+      }
+    `;
     }
+    /**
+     * Apply position and size from state
+     */
+    applyPositionAndSize() {
+      if (!this.container) return;
+      const { position, size, mode } = this.state;
+      const isCollapsed = mode === 'collapsed';
+      const isMinimized = mode === 'minimized';
+      if (isMinimized) {
+        // Minimized size is fixed in CSS
+        this.container.style.width = '';
+        this.container.style.height = '';
+        // Keep position but clamp to screen
+        const maxX = window.innerWidth - 48; // 48 is width
+        const maxY = window.innerHeight - 48; // 48 is height
+        const x = Math.min(Math.max(0, position.x), maxX);
+        const y = Math.min(Math.max(0, position.y), maxY);
+        this.container.style.left = `${x}px`;
+        this.container.style.top = `${y}px`;
+        return;
+      }
+      if (isCollapsed) {
+        this.container.style.height = `${COLLAPSED_HEIGHT}px`;
+        this.container.style.width = `${size.width}px`;
+      } else {
+        this.container.style.height = `${size.height}px`;
+        this.container.style.width = `${size.width}px`;
+      }
+      // Clamp position
+      const maxX = window.innerWidth - size.width;
+      const maxY = window.innerHeight - (isCollapsed ? COLLAPSED_HEIGHT : size.height);
+      const x = Math.min(Math.max(0, position.x), maxX);
+      const y = Math.min(Math.max(0, position.y), maxY);
+      this.container.style.left = `${x}px`;
+      this.container.style.top = `${y}px`;
+    }
+    /**
+     * Setup event listeners
+     */
+    setupListeners() {
+      if (!this.container) return;
+      // Drag handling
+      const header = this.container.querySelector('[data-drag-handle]');
+      if (header) {
+        header.addEventListener('mousedown', (e) => {
+          this.startDrag(e);
+        });
+      }
+      // Resize handling
+      const resizeHandles = this.container.querySelectorAll('[data-resize]');
+      resizeHandles.forEach((handle) => {
+        handle.addEventListener('mousedown', (e) => {
+          const edge = e.currentTarget.dataset.resize || '';
+          this.startResize(e, edge);
+        });
+      });
+      // Content clicks (delegation)
+      this.container.addEventListener('click', (e) => {
+        const target = e.target;
+        // Handle action buttons
+        const actionBtn = target.closest('[data-action]');
+        if (actionBtn) {
+          const action = actionBtn.dataset.action || '';
+          this.handleAction(action);
+          return;
+        }
+        // Handle tabs
+        const tabBtn = target.closest('[data-tab]');
+        if (tabBtn) {
+          const tab = tabBtn.dataset.tab;
+          this.switchTab(tab);
+          return;
+        }
+        // Handle channel selection
+        if (target.matches('.fcp6-channel')) {
+          const channelId = target.dataset.channel;
+          if (channelId) {
+            // If clicking generic channel row, select it
+            this.selectChannel(channelId);
+          }
+        }
+      });
+      // Input handling
+      this.container.addEventListener('keydown', (e) => {
+        const target = e.target;
+        // Send message on Enter (without Shift)
+        if (target.dataset.input === 'message' && e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          this.sendMessage();
+        }
+        // Create channel on Enter
+        if (target.id === 'fuse-new-channel-name' && e.key === 'Enter') {
+          e.preventDefault();
+          this.submitCreateChannel();
+        }
+      });
+      // Channel selector change
+      const channelSelect = this.container.querySelector('#fuse-channel-select');
+      if (channelSelect) {
+        channelSelect.addEventListener('change', (e) => {
+          const select = e.target;
+          this.selectChannel(select.value || null);
+        });
+      }
+      // Listen for storage changes to sync across tabs
+      this.storageListener = (changes, areaName) => {
+        if (areaName === 'local' && changes.fuse_current_channel) {
+          const newChannel = changes.fuse_current_channel.newValue;
+          if (newChannel !== this.currentChannel) {
+            console.log('[FuseConnect] Syncing channel from storage:', newChannel);
+            this.currentChannel = newChannel;
+            this.update();
+          }
+        }
+      };
+      chrome.storage.onChanged.addListener(this.storageListener);
+    }
+    /**
+     * Start dragging
+     */
+    startDrag(e) {
+      if (e.target.closest('button')) return; // Don't drag if clicking buttons
+      this.dragState = {
+        isDragging: true,
+        startX: e.clientX,
+        startY: e.clientY,
+        startPosX: this.state.position.x,
+        startPosY: this.state.position.y,
+      };
+      const onMove = (e) => {
+        if (!this.dragState.isDragging || !this.container) return;
+        const deltaX = e.clientX - this.dragState.startX;
+        const deltaY = e.clientY - this.dragState.startY;
+        this.state.position.x = this.dragState.startPosX + deltaX;
+        this.state.position.y = this.dragState.startPosY + deltaY;
+        this.container.style.left = `${this.state.position.x}px`;
+        this.container.style.top = `${this.state.position.y}px`;
+      };
+      const onUp = () => {
+        this.dragState.isDragging = false;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        this.saveState();
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    }
+    /**
+     * Render panel HTML
+     */
     render() {
-      const { mode: e, activeTab: t } = this.state,
-        n = 'collapsed' === e;
-      return 'minimized' === e
-        ? this.renderMinimized()
-        : `\n      <div class="fcp6-panel ${n ? 'collapsed' : ''}" id="fuse-connect-panel" data-testid="fuse-connect-panel" aria-label="Fuse Connect Panel">\n        ${this.renderHeader()}\n        ${n ? '' : `\n          ${this.renderTabs()}\n          <div class="fcp6-content" id="fuse-panel-content" data-testid="fuse-panel-content">\n            ${this.renderTabContent(t)}\n          </div>\n          ${'chat' === t ? this.renderInputArea() : ''}\n        `}\n        ${n ? '' : this.renderResizeHandles()}\n      </div>\n    `;
+      const { mode, activeTab } = this.state;
+      const isCollapsed = mode === 'collapsed';
+      const isMinimized = mode === 'minimized';
+      if (isMinimized) {
+        return this.renderMinimized();
+      }
+      return `
+      <div class="fcp6-panel ${isCollapsed ? 'collapsed' : ''}" id="fuse-connect-panel" data-testid="fuse-connect-panel" aria-label="Fuse Connect Panel">
+        ${this.renderHeader()}
+        ${
+          !isCollapsed
+            ? `
+          ${this.renderTabs()}
+          <div class="fcp6-content" id="fuse-panel-content" data-testid="fuse-panel-content">
+            ${this.renderTabContent(activeTab)}
+          </div>
+          ${activeTab === 'chat' ? this.renderInputArea() : ''}
+        `
+            : ''
+        }
+        ${!isCollapsed ? this.renderResizeHandles() : ''}
+      </div>
+    `;
     }
+    // ... (keeping other methods as is, assuming they are not in the ReplaceContent unless needed)
+    // Wait, I need to replace renderResizeHandles and startResize too.
+    // I will just replace the specific blocks.
+    /**
+     * Render resize handles
+     */
     renderResizeHandles() {
-      return '\n      <div class="fcp6-resize-handle left" data-resize="left"></div>\n      <div class="fcp6-resize-handle bottom" data-resize="bottom"></div>\n      <div class="fcp6-resize-handle corner" data-resize="corner"></div>\n    ';
+      return `
+      <div class="fcp6-resize-handle left" data-resize="left"></div>
+      <div class="fcp6-resize-handle bottom" data-resize="bottom"></div>
+      <div class="fcp6-resize-handle corner" data-resize="corner"></div>
+    `;
     }
-    startResize(e, t) {
+    // ...
+    /**
+     * Start resizing
+     */
+    startResize(e, edge) {
       this.resizeState = {
-        isResizing: !0,
+        isResizing: true,
         startX: e.clientX,
         startY: e.clientY,
         startWidth: this.state.size.width,
         startHeight: this.state.size.height,
-        edge: t,
+        edge,
       };
-      let n = null;
-      const s = (e) => {
-          if (!this.resizeState.isResizing || !this.container) return;
-          const s = e.clientX,
-            a = e.clientY;
-          n ||
-            (n = requestAnimationFrame(() => {
-              const e = this.resizeState.startX - s,
-                i = a - this.resizeState.startY;
-              if (t.includes('left') || 'corner' === t) {
-                const t = Math.min(600, Math.max(300, this.resizeState.startWidth + e));
-                ((this.state.size.width = t), (this.container.style.width = `${t}px`));
-              }
-              if (t.includes('bottom') || 'corner' === t) {
-                const e = Math.min(800, Math.max(200, this.resizeState.startHeight + i));
-                ((this.state.size.height = e), (this.container.style.height = `${e}px`));
-              }
-              n = null;
-            }));
-        },
-        a = () => {
-          ((this.resizeState.isResizing = !1),
-            n && (cancelAnimationFrame(n), (n = null)),
-            document.removeEventListener('mousemove', s),
-            document.removeEventListener('mouseup', a),
-            this.saveState());
-        };
-      (document.addEventListener('mousemove', s), document.addEventListener('mouseup', a));
+      let rafId = null;
+      const onMove = (e) => {
+        if (!this.resizeState.isResizing || !this.container) return;
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          const deltaX = this.resizeState.startX - clientX;
+          const deltaY = clientY - this.resizeState.startY;
+          if (edge.includes('left') || edge === 'corner') {
+            const newWidth = Math.min(
+              PANEL_MAX_WIDTH,
+              Math.max(PANEL_MIN_WIDTH, this.resizeState.startWidth + deltaX)
+            );
+            this.state.size.width = newWidth;
+            this.container.style.width = `${newWidth}px`;
+          }
+          if (edge.includes('bottom') || edge === 'corner') {
+            const newHeight = Math.min(
+              PANEL_MAX_HEIGHT,
+              Math.max(PANEL_MIN_HEIGHT, this.resizeState.startHeight + deltaY)
+            );
+            this.state.size.height = newHeight;
+            this.container.style.height = `${newHeight}px`;
+          }
+          rafId = null;
+        });
+      };
+      const onUp = () => {
+        this.resizeState.isResizing = false;
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        this.saveState();
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
     }
+    /**
+     * Render input area
+     */
+    renderInputArea() {
+      return `
+      <div class="fcp6-input-area">
+        <div class="fcp6-input-row">
+          <textarea
+            class="fcp6-input"
+            data-input="message"
+            placeholder="Type a message..."
+            rows="1"
+            style="min-height: 42px;"
+          ></textarea>
+          <button class="fcp6-send-btn" data-action="send" title="Send">
+            ➤
+          </button>
+        </div>
+        <div class="fcp6-input-hint">
+          <button class="fcp6-btn" data-action="inject-to-chat" style="padding: 2px 6px; height: auto; font-size: 10px;">
+            Inject to Page
+          </button>
+          <span style="flex: 1;"></span>
+          <span>Press Enter to send</span>
+        </div>
+      </div>
+    `;
+    }
+    /**
+     * Render minimized state
+     */
     renderMinimized() {
-      return `\n      <div class="fcp6-panel minimized" id="fuse-panel-minimized" data-testid="fuse-panel-minimized" data-action="expand" aria-label="Expand Fuse Connect Panel">\n        <div class="fcp6-icon">⚡</div>\n        ${this.unreadCount > 0 ? `<span class="fcp6-badge">${this.unreadCount}</span>` : ''}\n      </div>\n    `;
+      return `
+      <div class="fcp6-panel minimized" id="fuse-panel-minimized" data-testid="fuse-panel-minimized" data-action="expand" aria-label="Expand Fuse Connect Panel">
+        <div class="fcp6-icon">⚡</div>
+        ${this.unreadCount > 0 ? `<span class="fcp6-badge">${this.unreadCount}</span>` : ''}
+      </div>
+    `;
     }
+    /**
+     * Render header
+     */
     renderHeader() {
-      const e = this.panelId.split('-').pop() || this.panelId;
-      return `\n      <div class="fcp6-header" data-drag-handle>\n        <div class="fcp6-logo">\n          <div class="fcp6-icon">⚡</div>\n          <span class="fcp6-title">FUSE CONNECT</span>\n          <span class="fcp6-status-dot ${this.connectionStatus}"></span>\n        </div>\n        <div class="fcp6-controls">\n          <span style="font-size: 9px; color: rgba(255,255,255,0.4); margin-right: 8px;" title="Panel ID: ${this.panelId}">\n            #${e}\n          </span>\n          <button class="fcp6-btn" id="fuse-btn-pin" data-testid="fuse-btn-pin" data-action="pin" title="Pin panel" aria-label="Pin panel">${this.state.isPinned ? '📌' : '📍'}</button>\n          <button class="fcp6-btn" id="fuse-btn-minimize" data-testid="fuse-btn-minimize" data-action="minimize" title="Minimize" aria-label="Minimize panel">−</button>\n          <button class="fcp6-btn" id="fuse-btn-toggle" data-testid="fuse-btn-toggle" data-action="toggle" title="${'collapsed' === this.state.mode ? 'Expand' : 'Collapse'}" aria-label="${'collapsed' === this.state.mode ? 'Expand panel' : 'Collapse panel'}">\n            ${'collapsed' === this.state.mode ? '▼' : '▲'}\n          </button>\n        </div>\n      </div>\n      ${'collapsed' !== this.state.mode ? this.renderChannelSelector() : ''}\n    `;
+      const shortId = this.panelId.split('-').pop() || this.panelId;
+      return `
+      <div class="fcp6-header" data-drag-handle>
+        <div class="fcp6-logo">
+          <div class="fcp6-icon">⚡</div>
+          <span class="fcp6-title">FUSE CONNECT</span>
+          <span class="fcp6-status-dot ${this.connectionStatus}"></span>
+        </div>
+        <div class="fcp6-controls">
+          <span style="font-size: 9px; color: rgba(255,255,255,0.4); margin-right: 8px;" title="Panel ID: ${this.panelId}">
+            #${shortId}
+          </span>
+          <button class="fcp6-btn" id="fuse-btn-pin" data-testid="fuse-btn-pin" data-action="pin" title="Pin panel" aria-label="Pin panel">${this.state.isPinned ? '📌' : '📍'}</button>
+          <button class="fcp6-btn" id="fuse-btn-minimize" data-testid="fuse-btn-minimize" data-action="minimize" title="Minimize" aria-label="Minimize panel">−</button>
+          <button class="fcp6-btn" id="fuse-btn-toggle" data-testid="fuse-btn-toggle" data-action="toggle" title="${this.state.mode === 'collapsed' ? 'Expand' : 'Collapse'}" aria-label="${this.state.mode === 'collapsed' ? 'Expand panel' : 'Collapse panel'}">
+            ${this.state.mode === 'collapsed' ? '▼' : '▲'}
+          </button>
+        </div>
+      </div>
+      ${this.state.mode !== 'collapsed' ? this.renderChannelSelector() : ''}
+    `;
     }
+    /**
+     * Render channel selector bar
+     */
     renderChannelSelector() {
-      return (
-        this.channels.find((e) => e.id === this.currentChannel),
-        `\n      <div class="fcp6-channel-selector" style="\n        padding: 6px 12px;\n        background: rgba(0,0,0,0.3);\n        border-bottom: 1px solid rgba(255,255,255,0.1);\n        display: flex;\n        align-items: center;\n        gap: 8px;\n        font-size: 11px;\n      ">\n        <span style="color: rgba(255,255,255,0.5);">Sync to:</span>\n        <select id="fuse-channel-select" data-action="select-channel" style="\n          flex: 1;\n          padding: 4px 8px;\n          border-radius: 4px;\n          border: 1px solid rgba(255,255,255,0.2);\n          background: rgba(0,0,0,0.4);\n          color: white;\n          font-size: 11px;\n          cursor: pointer;\n        ">\n          <option value="" ${this.currentChannel ? '' : 'selected'}>-- None (local only) --</option>\n          ${this.channels.map((e) => `\n            <option value="${e.id}" ${this.currentChannel === e.id ? 'selected' : ''}>\n              ${e.isPrivate ? '🔒' : '#'} ${this.escapeHtml(e.name)}\n            </option>\n          `).join('')}\n        </select>\n        <span style="color: ${this.currentChannel ? '#0f8' : 'rgba(255,255,255,0.3)'}; font-size: 10px;">\n          ${this.currentChannel ? '● Syncing' : '○ Local'}\n        </span>\n      </div>\n    `
-      );
+      const currentChannelName =
+        this.channels.find((c) => c.id === this.currentChannel)?.name || 'No channel';
+      return `
+      <div class="fcp6-channel-selector" style="
+        padding: 6px 12px;
+        background: rgba(0,0,0,0.3);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+      ">
+        <span style="color: rgba(255,255,255,0.5);">Sync to:</span>
+        <select id="fuse-channel-select" data-action="select-channel" style="
+          flex: 1;
+          padding: 4px 8px;
+          border-radius: 4px;
+          border: 1px solid rgba(255,255,255,0.2);
+          background: rgba(0,0,0,0.4);
+          color: white;
+          font-size: 11px;
+          cursor: pointer;
+        ">
+          <option value="" ${!this.currentChannel ? 'selected' : ''}>-- None (local only) --</option>
+          ${this.channels
+            .map(
+              (ch) => `
+            <option value="${ch.id}" ${this.currentChannel === ch.id ? 'selected' : ''}>
+              ${ch.isPrivate ? '🔒' : '#'} ${this.escapeHtml(ch.name)}
+            </option>
+          `
+            )
+            .join('')}
+        </select>
+        <span style="color: ${this.currentChannel ? '#0f8' : 'rgba(255,255,255,0.3)'}; font-size: 10px;">
+          ${this.currentChannel ? '● Syncing' : '○ Local'}
+        </span>
+      </div>
+    `;
     }
+    /**
+     * Render tabs
+     */
     renderTabs() {
-      return `\n      <div class="fcp6-tabs">\n        ${[
+      const tabs = [
         { id: 'chat', icon: '💬', label: 'Chat' },
         { id: 'agents', icon: '🤖', label: 'Agents' },
         { id: 'channels', icon: '📢', label: 'Channels' },
         { id: 'services', icon: '⚙️', label: 'Services' },
         { id: 'notifications', icon: '🔔', label: 'Alerts' },
         { id: 'settings', icon: '🔧', label: 'Settings' },
-      ]
-        .map(
-          (e) =>
-            `\n          <button class="fcp6-tab ${this.state.activeTab === e.id ? 'active' : ''}" data-tab="${e.id}">\n            <span class="fcp6-tab-icon">${e.icon}</span>\n            <span>${e.label}</span>\n            ${'notifications' === e.id && this.unreadCount > 0 ? `<span class="fcp6-badge">${this.unreadCount}</span>` : ''}\n          </button>\n        `
-        )
-        .join('')}\n      </div>\n    `;
+      ];
+      return `
+      <div class="fcp6-tabs">
+        ${tabs
+          .map(
+            (tab) => `
+          <button class="fcp6-tab ${this.state.activeTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">
+            <span class="fcp6-tab-icon">${tab.icon}</span>
+            <span>${tab.label}</span>
+            ${tab.id === 'notifications' && this.unreadCount > 0 ? `<span class="fcp6-badge">${this.unreadCount}</span>` : ''}
+          </button>
+        `
+          )
+          .join('')}
+      </div>
+    `;
     }
-    renderTabContent(e) {
-      switch (e) {
+    /**
+     * Render tab content
+     */
+    renderTabContent(tab) {
+      switch (tab) {
         case 'chat':
           return this.renderChatTab();
         case 'channels':
@@ -359,1989 +1362,3053 @@
           return '';
       }
     }
+    /**
+     * Render chat tab
+     */
     renderChatTab() {
-      let e = '';
+      // Detection status
+      let detectionHtml = '';
       if (this.chatElements) {
-        const t = this.streamingState?.isStreaming;
-        e = `\n        <div class="fcp6-detection ${t ? 'streaming' : ''}">\n          <div style="display: flex; justify-content: space-between; align-items: center;">\n            <span>${t ? '🔄 AI is responding...' : '✅ Chat detected'}</span>\n            <span style="font-size: 11px; color: rgba(255,255,255,0.5);">\n              ${Math.round(100 * this.chatElements.confidence)}% confidence\n            </span>\n          </div>\n        </div>\n      `;
+        const isStreaming = this.streamingState?.isStreaming;
+        detectionHtml = `
+        <div class="fcp6-detection ${isStreaming ? 'streaming' : ''}">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${isStreaming ? '🔄 AI is responding...' : '✅ Chat detected'}</span>
+            <span style="font-size: 11px; color: rgba(255,255,255,0.5);">
+              ${Math.round(this.chatElements.confidence * 100)}% confidence
+            </span>
+          </div>
+        </div>
+      `;
       }
-      return `\n      ${e}\n      <div class="fcp6-chat-scroll" id="fuse-chat-scroll" style="flex: 1; overflow-y: auto; max-height: 300px; padding-right: 4px;">\n        ${
+      // Messages - render in a scrollable container (oldest first, newest at bottom)
+      const messagesHtml =
         this.messages.length > 0
           ? this.messages
-              .slice(-50)
-              .map(
-                (e) =>
-                  `\n          <div class="fcp6-chat-card" data-msg-id="${e.id}">\n            <div class="fcp6-chat-header">\n              <span class="fcp6-chat-from">${this.escapeHtml(e.from)}</span>\n              <span class="fcp6-chat-time">${this.formatTime(e.timestamp)}</span>\n            </div>\n            <div class="fcp6-chat-content" style="user-select: text; -webkit-user-select: text; cursor: text;">${this.escapeHtml(e.content)}</div>\n          </div>\n        `
-              )
+              .slice(-50) // Get last 50 messages
+              .map((msg) => {
+                // Resolve Sender Name and ID
+                let senderName = msg.from;
+                let senderId = msg.from;
+                let isMe = false;
+                if (
+                  msg.from === 'You' ||
+                  msg.from === 'You (Fuse)' ||
+                  (this.myAgentId && msg.from === this.myAgentId)
+                ) {
+                  senderName = 'You';
+                  senderId = this.myAgentId || 'unknown-id';
+                  isMe = true;
+                } else {
+                  // Try to resolve name from agents list
+                  const agent = this.agents.find((a) => a.id === msg.from);
+                  if (agent) {
+                    senderName = agent.name;
+                    senderId = agent.id;
+                  }
+                }
+                // Metadata ID check (if present)
+                if (msg.metadata && typeof msg.metadata.senderId === 'string') {
+                  senderId = msg.metadata.senderId;
+                }
+                // Shorten ID for display
+                const shortId = senderId.length > 8 ? senderId.substring(0, 6) + '...' : senderId;
+                return `
+            <div class="fcp6-chat-card" data-msg-id="${msg.id}">
+            <div class="fcp6-chat-header">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(senderId)}">
+                  ${this.escapeHtml(senderName)}
+                </span>
+                <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 4px; border-radius: 3px; color: rgba(255,255,255,0.4);" title="${this.escapeHtml(senderId)}">
+                  #${this.escapeHtml(shortId)}
+                </span>
+              </div>
+              <span class="fcp6-chat-time">${this.formatTime(msg.timestamp)}</span>
+            </div>
+            <div class="fcp6-chat-content" style="user-select: text; -webkit-user-select: text; cursor: text;">${this.escapeHtml(msg.content)}</div>
+          </div>
+        `;
+              })
               .join('')
-          : '<div class="fcp6-empty"><div class="fcp6-empty-icon">💬</div><p>No messages yet</p><p style="font-size: 11px; opacity: 0.6;">Send a message to start chatting</p></div>'
-      }\n      </div>\n    `;
+          : `<div class="fcp6-empty"><div class="fcp6-empty-icon">💬</div><p>No messages yet</p><p style="font-size: 11px; opacity: 0.6;">Send a message to start chatting</p></div>`;
+      return `
+      ${detectionHtml}
+      <div class="fcp6-chat-scroll" id="fuse-chat-scroll" style="flex: 1; overflow-y: auto; max-height: 300px; padding-right: 4px;">
+        ${messagesHtml}
+      </div>
+      </div>
+    `;
     }
+    /**
+     * Render channels tab
+     */
     renderChannelsTab() {
-      const e =
-        '\n      <div class="fcp6-create-channel-form" style="margin-bottom: 12px; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px;">\n        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px;">Create New Channel</div>\n        <div style="display: flex; gap: 8px;">\n          <input type="text"\n            id="fuse-new-channel-name"\n            placeholder="Channel name..."\n            style="flex: 1; padding: 8px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: rgba(0,0,0,0.3); color: white; font-size: 12px;"\n          />\n          <button class="fcp6-send-btn" data-action="submit-create-channel" style="padding: 8px 12px;">\n            Create\n          </button>\n        </div>\n      </div>\n    ';
-      return 0 === this.channels.length
-        ? `\n        ${e}\n        <div class="fcp6-empty">\n          <div class="fcp6-empty-icon">📢</div>\n          <p>No channels yet</p>\n          <p style="font-size: 11px; opacity: 0.6;">Create a channel to sync messages to relay</p>\n        </div>\n      `
-        : `\n      ${e}\n      <div class="fcp6-section-title">Your Channels</div>\n      ${this.channels.map((e) => `\n        <div class="fcp6-channel ${this.currentChannel === e.id ? 'active' : ''}" data-channel="${e.id}" data-action="join-channel">\n          <span class="fcp6-channel-icon">${e.isPrivate ? '🔒' : '#'}</span>\n          <div class="fcp6-channel-info">\n            <div class="fcp6-channel-name">${this.escapeHtml(e.name)}</div>\n            <div class="fcp6-channel-members">${e.members.length} members</div>\n          </div>\n          ${this.currentChannel === e.id ? '<span style="color: #0f8;">✓ Active</span>' : ''}\n        </div>\n      `).join('')}\n    `;
-    }
-    renderAgentsTab() {
-      return 0 === this.agents.length
-        ? '\n        <div class="fcp6-empty">\n          <div class="fcp6-empty-icon">🤖</div>\n          <p>No agents connected</p>\n          <p style="font-size: 11px; margin-top: 4px;">Connect to the relay to see agents</p>\n        </div>\n      '
-        : `\n      <div class="fcp6-section-title">Connected Agents (${this.agents.length})</div>\n      ${this.agents.map((e) => `\n        <div class="fcp6-agent" data-agent="${e.id}">\n          <div class="fcp6-agent-avatar">${this.getAgentIcon(e.platform)}</div>\n          <div style="flex: 1;">\n            <div class="fcp6-agent-name">${e.name}</div>\n            <div class="fcp6-agent-platform">${e.platform}</div>\n          </div>\n          <span class="fcp6-status-dot ${e.status}"></span>\n        </div>\n      `).join('')}\n    `;
-    }
-    renderNotificationsTab() {
-      return 0 === this.notifications.length
-        ? '\n        <div class="fcp6-empty">\n          <div class="fcp6-empty-icon">🔔</div>\n          <p>No notifications</p>\n        </div>\n      '
-        : this.notifications
-            .map(
-              (e) =>
-                `\n      <div class="fcp6-notification ${e.read ? '' : 'unread'}" data-notification="${e.id}">\n        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">\n          <strong>${e.title}</strong>\n          <span style="font-size: 10px; color: rgba(255,255,255,0.4);">${this.formatTime(e.timestamp)}</span>\n        </div>\n        <div style="font-size: 12px; color: rgba(255,255,255,0.7);">${e.message}</div>\n      </div>\n    `
-            )
-            .join('');
-    }
-    renderServicesTab() {
-      return `\n      <div class="fcp6-services-header">\n        <h4 style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Service Management</h4>\n      </div>\n      ${[
-        {
-          id: 'relay',
-          name: 'TNF Relay',
-          icon: '🔌',
-          status: this.serviceStatuses.get('relay') || 'unknown',
-          port: 3001,
-        },
-        {
-          id: 'api',
-          name: 'API Server',
-          icon: '🌐',
-          status: this.serviceStatuses.get('api') || 'unknown',
-          port: 3001,
-        },
-        {
-          id: 'frontend',
-          name: 'Frontend',
-          icon: '🖥️',
-          status: this.serviceStatuses.get('frontend') || 'unknown',
-          port: 3e3,
-        },
-      ]
-        .map(
-          (e) =>
-            `\n        <div class="fcp6-service-card" data-service="${e.id}">\n          <div style="display: flex; align-items: center; gap: 10px;">\n            <span style="font-size: 20px;">${e.icon}</span>\n            <div style="flex: 1;">\n              <div style="font-weight: 600;">${e.name}</div>\n              <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Port ${e.port}</div>\n            </div>\n            <span class="fcp6-status-dot ${e.status}"></span>\n          </div>\n          <div class="fcp6-service-actions">\n            <button class="fcp6-service-btn" data-action="start-service" data-service="${e.id}" title="Start">▶️</button>\n            <button class="fcp6-service-btn" data-action="stop-service" data-service="${e.id}" title="Stop">⏹️</button>\n            <button class="fcp6-service-btn" data-action="restart-service" data-service="${e.id}" title="Restart">🔄</button>\n          </div>\n        </div>\n      `
-        )
-        .join(
-          ''
-        )}\n      <div style="margin-top: 12px;">\n        <button class="fcp6-btn fcp6-btn-primary" data-action="start-all-services" style="width: 100%;">\n          🚀 Start All Services\n        </button>\n      </div>\n      <div style="margin-top: 8px;">\n        <button class="fcp6-btn fcp6-btn-secondary" data-action="open-terminal" style="width: 100%;">\n          💻 Open Terminal\n        </button>\n      </div>\n      <div style="margin-top: 8px;">\n        <button class="fcp6-btn fcp6-btn-secondary" data-action="check-health" style="width: 100%;">\n          🩺 Check Health\n        </button>\n      </div>\n    `;
-    }
-    renderSettingsTab() {
-      return `\n      <div class="fcp6-settings-section">\n        <h4 style="margin: 0 0 10px 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Connection</h4>\n        <div class="fcp6-setting-row">\n          <label>Relay URL</label>\n          <input type="text" class="fcp6-setting-input" data-setting="relayUrl" value="ws://localhost:3001/ws" />\n        </div>\n        <div class="fcp6-setting-row">\n          <label>Auto-Reconnect</label>\n          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="autoReconnect" checked />\n        </div>\n      </div>\n\n      <div class="fcp6-settings-section">\n        <h4 style="margin: 0 0 10px 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Panel</h4>\n        <div class="fcp6-setting-row">\n          <label>Opacity</label>\n          <input type="range" class="fcp6-setting-range" data-setting="opacity" min="0.5" max="1" step="0.1" value="${this.state.opacity}" />\n        </div>\n        <div class="fcp6-setting-row">\n          <label>Always on Top</label>\n          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="alwaysOnTop" ${this.state.isPinned ? 'checked' : ''} />\n        </div>\n      </div>\n\n      <div class="fcp6-settings-section">\n        <h4 style="margin: 0 0 10px 0; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase;">Debug</h4>\n        <div class="fcp6-setting-row">\n          <label>Debug Mode</label>\n          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="debugMode" />\n        </div>\n        <div class="fcp6-setting-row">\n          <label>Show Element Refs</label>\n          <input type="checkbox" class="fcp6-setting-checkbox" data-setting="showRefs" />\n        </div>\n      </div>\n\n      <div style="margin-top: 12px;">\n        <button class="fcp6-btn fcp6-btn-secondary" data-action="save-settings" style="width: 100%;">\n          💾 Save Settings\n        </button>\n      </div>\n      <div style="margin-top: 8px;">\n        <button class="fcp6-btn fcp6-btn-danger" data-action="reset-settings" style="width: 100%;">\n          🗑️ Reset to Defaults\n        </button>\n      </div>\n    `;
-    }
-    renderInputArea() {
-      const e = !!this.chatElements,
-        t = 'connected' === this.connectionStatus;
-      return `\n      <div class="fcp6-input-area" id="fuse-input-area" data-testid="fuse-input-area">\n        <div class="fcp6-input-row">\n          <textarea class="fcp6-input" id="fuse-message-input" data-testid="fuse-message-input" placeholder="${e ? 'Type message to send...' : 'No chat detected on this page'}" rows="1" data-input="message" aria-label="Message input" ${e ? '' : 'disabled'}></textarea>\n          <button class="fcp6-send-btn" id="fuse-btn-send" data-testid="fuse-btn-send" data-action="send-message" title="Send message" aria-label="Send message" ${e ? '' : 'disabled'}>\n            ${e ? '➤' : '⚠️'}\n          </button>\n        </div>\n        <div class="fcp6-input-hint">\n          ${e ? '<span style="color: rgba(0,255,136,0.7);">●</span> Chat detected ' + (t ? '• Will sync to relay' : '') : '<span style="color: rgba(255,100,100,0.7);">●</span> No chat interface detected on this page'}\n        </div>\n      </div>\n    `;
-    }
-    applyPositionAndSize() {
-      this.container &&
-        ((this.container.style.right = `${this.state.position.x}px`),
-        (this.container.style.top = `${this.state.position.y}px`),
-        (this.container.style.width = `${this.state.size.width}px`),
-        (this.container.style.height =
-          'collapsed' === this.state.mode ? '48px' : `${this.state.size.height}px`));
-    }
-    setupListeners() {
-      this.container &&
-        (this.container.addEventListener('click', (e) => {
-          const t = e.target,
-            n = t.closest('[data-action]')?.getAttribute('data-action');
-          n && this.handleAction(n);
-          const s = t.closest('[data-tab]')?.getAttribute('data-tab');
-          s && this.switchTab(s);
-          const a = t.closest('[data-channel]')?.getAttribute('data-channel');
-          a && this.joinChannel(a);
-        }),
-        this.container.addEventListener('change', (e) => {
-          const t = e.target;
-          if ('fuse-channel-select' === t.id) {
-            const e = t.value || null;
-            this.selectChannel(e);
-          }
-        }),
-        this.container.addEventListener('mousedown', (e) => {
-          const t = e.target;
-          t.closest('[data-drag-handle]') && !t.closest('[data-action]') && this.startDrag(e);
-          const n = t.getAttribute('data-resize');
-          n && this.startResize(e, n);
-        }),
-        this.container.addEventListener('keydown', (e) => {
-          'message' !== e.target.getAttribute('data-input') ||
-            'Enter' !== e.key ||
-            e.shiftKey ||
-            (e.preventDefault(), this.handleAction('send-message'));
-        }),
-        (this.chromeMessageListener = (e, t, n) => (
-          this.handleChromeMessage(e),
-          n({ received: !0 }),
-          !0
-        )),
-        chrome.runtime.onMessage.addListener(this.chromeMessageListener));
-    }
-    startDrag(e) {
-      if (this.state.isPinned) return;
-      this.dragState = {
-        isDragging: !0,
-        startX: e.clientX,
-        startY: e.clientY,
-        startPosX: this.state.position.x,
-        startPosY: this.state.position.y,
-      };
-      let t = null;
-      const n = (e) => {
-          if (!this.dragState.isDragging || !this.container) return;
-          const n = e.clientX,
-            s = e.clientY;
-          t ||
-            (t = requestAnimationFrame(() => {
-              const e = this.dragState.startX - n,
-                a = s - this.dragState.startY;
-              ((this.state.position = {
-                x: Math.max(0, this.dragState.startPosX + e),
-                y: Math.max(0, this.dragState.startPosY + a),
-              }),
-                (this.container.style.right = `${this.state.position.x}px`),
-                (this.container.style.top = `${this.state.position.y}px`),
-                (t = null));
-            }));
-        },
-        s = () => {
-          ((this.dragState.isDragging = !1),
-            t && (cancelAnimationFrame(t), (t = null)),
-            document.removeEventListener('mousemove', n),
-            document.removeEventListener('mouseup', s),
-            this.saveState());
+      return `
+      <div class="fcp6-section-title">Active Channels</div>
+      <div class="fcp6-list">
+        ${
+          this.channels.length > 0
+            ? this.channels
+                .map(
+                  (ch) => `
+          <div class="fcp6-channel ${this.currentChannel === ch.id ? 'active' : ''}" data-channel="${ch.id}">
+            <div class="fcp6-channel-icon">${ch.isPrivate ? '🔒' : '#'}</div>
+            <div class="fcp6-channel-info">
+              <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
+              <div class="fcp6-channel-members">${ch.members.length} active agents</div>
+            </div>
+            ${this.currentChannel === ch.id ? '<div class="fcp6-badge">✓</div>' : ''}
+          </div>
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty">No active channels</div>'
+        }
+      </div>
+
+      <div class="fcp6-section-title" style="margin-top: 16px;">Create Channel</div>
+      <div class="fcp6-input-row">
+        <input type="text" id="fuse-new-channel-name" class="fcp6-input" placeholder="New channel name..." style="min-height: 36px;">
+        <button class="fcp6-btn" style="width: auto; padding: 0 12px; background: rgba(0,217,255,0.2); color: #00D9FF;" id="fuse-btn-create-channel">Create</button>
+      </div>
+      <script>
+        document.getElementById('fuse-btn-create-channel').onclick = () => {
+           const input = document.getElementById('fuse-new-channel-name');
+           if(input && input.value.trim()) {
+               const name = input.value.trim();
+               // We can't easily call class methods from inline script without binding exposed
+               // but we have a keydown listener on the input that calls submitCreateChannel
+               // Let's trigger that event
+               const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+               input.dispatchEvent(event);
+           }
         };
-      (document.addEventListener('mousemove', n), document.addEventListener('mouseup', s));
+      </script>
+    `;
     }
-    handleAction(e) {
-      switch (e) {
-        case 'toggle':
-          ((this.state.mode = 'collapsed' === this.state.mode ? 'expanded' : 'collapsed'),
-            this.update(),
-            this.saveState());
-          break;
-        case 'minimize':
-          ((this.state.mode = 'minimized'), this.update(), this.saveState());
-          break;
-        case 'expand':
-          ((this.state.mode = 'expanded'), this.update(), this.saveState());
-          break;
-        case 'pin':
-          ((this.state.isPinned = !this.state.isPinned), this.update());
-          break;
-        case 'send':
-          this.sendMessage();
-          break;
-        case 'send-message':
-          this.sendUnifiedMessage();
-          break;
-        case 'inject-to-chat':
-          this.injectToPageChat();
-          break;
-        case 'create-channel':
-          this.createChannel();
-          break;
-        case 'submit-create-channel':
-          this.submitCreateChannel();
-          break;
-        case 'start-service':
-        case 'stop-service':
-        case 'restart-service':
-          this.handleServiceAction(e);
-          break;
-        case 'start-all-services':
-          this.startAllServices();
-          break;
-        case 'open-terminal':
-          this.openTerminal();
-          break;
-        case 'check-health':
-          this.checkServiceHealth();
-          break;
-        case 'save-settings':
-          this.saveSettings();
-          break;
-        case 'reset-settings':
-          this.resetSettings();
-      }
+    /**
+     * Render agents tab
+     */
+    renderAgentsTab() {
+      return `
+      <div class="fcp6-section-title">Connected Agents (${this.agents.length})</div>
+      <div class="fcp6-list">
+        ${
+          this.agents.length > 0
+            ? this.agents
+                .map(
+                  (agent) => `
+          <div class="fcp6-agent">
+            <div class="fcp6-agent-avatar">${this.getAgentIcon(agent.platform || 'unknown')}</div>
+            <div class="fcp6-channel-info">
+              <div class="fcp6-agent-name">
+                ${this.escapeHtml(agent.name)}
+                ${agent.id === this.myAgentId ? '<span class="fcp6-badge" style="position:static; display:inline-block; margin-left:6px; background:rgba(0,217,255,0.2); color:#00D9FF;">YOU</span>' : ''}
+              </div>
+              <div class="fcp6-agent-platform">${agent.platform} • ${agent.status}</div>
+            </div>
+          </div>
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty">No other agents connected</div>'
+        }
+      </div>
+    `;
     }
-    switchTab(e) {
-      ((this.state.activeTab = e),
-        'notifications' === e && this.markNotificationsRead(),
-        this.update());
+    /**
+     * Render services tab
+     */
+    renderServicesTab() {
+      const services = [
+        { id: 'relay', name: 'Relay Server', icon: '📡' },
+        { id: 'vector-db', name: 'Vector DB', icon: '🧠' },
+        { id: 'fs-server', name: 'File System', icon: '📂' },
+      ];
+      return `
+      <div class="fcp6-section-title">Core Banking Services</div>
+      <div class="fcp6-list">
+        ${services
+          .map((svc) => {
+            const status = this.serviceStatuses.get(svc.id) || 'unknown';
+            return `
+          <div class="fcp6-agent">
+            <div class="fcp6-agent-avatar" style="background: rgba(255,255,255,0.1);">${svc.icon}</div>
+            <div class="fcp6-channel-info">
+              <div class="fcp6-agent-name">${svc.name}</div>
+              <div class="fcp6-agent-platform">
+                <span class="fcp6-status-dot ${status === 'online' ? 'connected' : 'disconnected'}"></span>
+                ${status.toUpperCase()}
+              </div>
+            </div>
+            <div style="display:flex; gap:4px;">
+               <button class="fcp6-btn" data-action="restart-${svc.id}-service" title="Restart">↺</button>
+            </div>
+          </div>
+        `;
+          })
+          .join('')}
+      </div>
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button class="fcp6-btn" data-action="check-health" style="flex:1; width:auto;">Check Health</button>
+        <button class="fcp6-btn" data-action="start-all-services" style="flex:1; width:auto;">Start All</button>
+      </div>
+       <div style="margin-top:12px;">
+        <button class="fcp6-btn" data-action="open-terminal" style="width:100%;">Open Terminal</button>
+      </div>
+    `;
+    }
+    /**
+     * Render notifications tab
+     */
+    renderNotificationsTab() {
+      // Mark as read when viewing
+      setTimeout(() => this.markNotificationsRead(), 1000);
+      return `
+      <div class="fcp6-section-title">Notifications</div>
+      <div class="fcp6-list">
+        ${
+          this.notifications.length > 0
+            ? this.notifications
+                .map(
+                  (n) => `
+          <div class="fcp6-notification ${!n.read ? 'unread' : ''}">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-weight:600; font-size:11px;">${this.escapeHtml(n.title)}</span>
+              <span style="font-size:9px; opacity:0.5;">${this.formatTime(n.timestamp)}</span>
+            </div>
+            <div style="font-size:11px; opacity:0.8;">${this.escapeHtml(n.message)}</div>
+          </div>
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty">No notifications</div>'
+        }
+      </div>
+    `;
+    }
+    /**
+     * Render settings tab
+     */
+    renderSettingsTab() {
+      return `
+      <div class="fcp6-section-title">Panel Settings</div>
+      <div style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+
+        <div style="margin-bottom: 12px;">
+          <label style="display:block; font-size:11px; margin-bottom:4px; opacity:0.7;">Opacity</label>
+          <input type="range" data-setting="opacity" min="0.2" max="1" step="0.1" value="${this.state.opacity || 1}" style="width:100%;">
+        </div>
+
+        <div style="margin-bottom: 12px; display:flex; align-items:center;">
+          <input type="checkbox" data-setting="alwaysOnTop" ${this.state.isPinned ? 'checked' : ''} style="margin-right:8px;">
+          <label style="font-size:11px;">Always on Top (Pin)</label>
+        </div>
+
+         <div style="margin-bottom: 12px; display:flex; align-items:center;">
+          <input type="checkbox" data-setting="autoReconnect" checked style="margin-right:8px;">
+          <label style="font-size:11px;">Auto-Reconnect Relay</label>
+        </div>
+
+         <div style="margin-bottom: 12px; display:flex; align-items:center;">
+          <input type="checkbox" data-setting="debugMode" style="margin-right:8px;">
+          <label style="font-size:11px;">Debug Mode</label>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:16px;">
+           <button class="fcp6-btn" data-action="save-settings" style="flex:1; width:auto; background:rgba(0,217,255,0.2); color:#00D9FF;">Save</button>
+           <button class="fcp6-btn" data-action="reset-settings" style="flex:1; width:auto;">Reset</button>
+        </div>
+      </div>
+
+      <div class="fcp6-section-title" style="margin-top:16px;">Connection</div>
+       <div style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+          <label style="display:block; font-size:11px; margin-bottom:4px; opacity:0.7;">Relay Server URL</label>
+          <input type="text" data-setting="relayUrl" value="ws://localhost:3001/ws" class="fcp6-input" style="width:100%; margin-bottom:8px;">
+       </div>
+    `;
     }
     sendMessage() {
-      const e = this.container?.querySelector('[data-input="message"]');
-      if (!e || !e.value.trim()) return;
-      const t = e.value.trim();
-      ((e.value = ''),
-        chrome.runtime.sendMessage({
-          type: 'BROADCAST_MESSAGE',
-          content: t,
-          channel: this.currentChannel,
-        }),
-        this.messages.push({
-          id: Date.now().toString(),
-          from: 'You',
-          to: 'relay',
-          content: t,
-          timestamp: Date.now(),
-          type: 'text',
-        }),
-        this.update());
-    }
-    injectToPageChat() {
-      const e = this.container?.querySelector('[data-input="message"]');
-      if (!e || !e.value.trim()) return;
-      const t = e.value.trim();
-      ((e.value = ''),
-        chrome.runtime.sendMessage({ type: 'INJECT_MESSAGE', content: t }, (e) => {
-          e?.success
-            ? (this.messages.push({
-                id: Date.now().toString(),
-                from: 'You (Fuse)',
-                to: 'page',
-                content: t,
-                timestamp: Date.now(),
-                type: 'text',
-              }),
-              this.update())
-            : console.warn('[FuseConnect] Failed to inject message:', e?.error);
-        }));
-    }
-    sendUnifiedMessage() {
-      const e = this.container?.querySelector('[data-input="message"]');
-      if (!e || !e.value.trim()) return;
-      const t = e.value.trim();
-      ((e.value = ''), console.log('[FuseConnect] Sending unified message:', t.substring(0, 50)));
-      const n = `user-${Date.now()}`;
-      if (
-        (this.messages.push({
-          id: n,
-          from: 'You',
-          to: 'AI',
-          content: t,
-          timestamp: Date.now(),
-          type: 'text',
-        }),
-        this.update(),
-        'connected' === this.connectionStatus && this.currentChannel)
-      ) {
-        const e = `user:${t}`,
-          n = this.recentBroadcasts.get(e);
-        if (!n || Date.now() - n > 3e3) {
-          this.recentBroadcasts.set(e, Date.now());
-          for (const [e, t] of this.recentBroadcasts.entries())
-            Date.now() - t > 1e4 && this.recentBroadcasts.delete(e);
-          chrome.runtime.sendMessage({
-            type: 'BROADCAST_MESSAGE',
-            content: `[User → AI] ${t}`,
-            channel: this.currentChannel,
-          });
-        } else console.log('[FuseConnect] Skipping duplicate user message broadcast');
-      }
-      chrome.runtime.sendMessage({ type: 'INJECT_MESSAGE', content: t }, (e) => {
-        if (!e?.success) {
-          console.warn('[FuseConnect] Failed to inject message:', e?.error);
-          const n = this.messages.find((e) => e.content === t);
-          n && ((n.content = `❌ ${t} (failed to send)`), this.update());
-        }
+      const input = this.container?.querySelector('[data-input="message"]');
+      if (!input || !input.value.trim()) return;
+      const content = input.value.trim();
+      input.value = '';
+      const metadata = {
+        senderId: this.myAgentId || 'unknown',
+        source: 'floating-panel',
+      };
+      // 1. Send via relay to agents (Broadcast)
+      this.safeSendMessage({
+        type: 'BROADCAST_MESSAGE',
+        content,
+        channel: this.currentChannel,
+        metadata,
       });
+      // 2. Inject into page chat (Submit to Page)
+      this.safeSendMessage(
+        {
+          type: 'INJECT_MESSAGE',
+          content,
+          metadata,
+        },
+        (response) => {
+          if (!response?.success) {
+            console.warn('[FuseConnect] Failed to inject message to page:', response?.error);
+          }
+        }
+      );
+      // 3. Add to local messages
+      this.messages.push({
+        id: Date.now().toString(),
+        from: this.myAgentId || 'You',
+        to: 'AI',
+        content,
+        timestamp: Date.now(),
+        type: 'text',
+        metadata,
+      });
+      this.update();
     }
-    joinChannel(e) {
-      ((this.currentChannel = e),
-        chrome.storage.local.set({ fuse_current_channel: e }),
-        chrome.runtime.sendMessage({ type: 'CHANNEL_JOIN', channelId: e }),
-        this.update());
+    /**
+     * Inject message into page chat (sends to detected AI chat input)
+     */
+    injectToPageChat() {
+      const input = this.container?.querySelector('[data-input="message"]');
+      if (!input || !input.value.trim()) return;
+      const content = input.value.trim();
+      input.value = '';
+      const metadata = {
+        senderId: this.myAgentId || 'unknown',
+        source: 'floating-panel-inject-only',
+      };
+      // Send to content script to inject into page chat
+      this.safeSendMessage(
+        {
+          type: 'INJECT_MESSAGE',
+          content,
+          metadata,
+        },
+        (response) => {
+          if (response?.success) {
+            // Add to local messages
+            this.messages.push({
+              id: Date.now().toString(),
+              from: this.myAgentId || 'You (Fuse)',
+              to: 'page',
+              content,
+              timestamp: Date.now(),
+              type: 'text',
+              metadata,
+            });
+            this.update();
+          } else {
+            console.warn('[FuseConnect] Failed to inject message:', response?.error);
+          }
+        }
+      );
     }
-    selectChannel(e) {
-      const t = this.currentChannel;
-      ((this.currentChannel = e),
-        console.log(`[FuseConnect] Panel ${this.panelId} switching channel: ${t} → ${e}`),
-        chrome.storage.local.set({ fuse_current_channel: e }),
-        e
-          ? chrome.runtime.sendMessage({
-              type: 'CHANNEL_JOIN',
-              channelId: e,
-              panelId: this.panelId,
-            })
-          : chrome.runtime.sendMessage({
-              type: 'CHANNEL_LEAVE',
-              channelId: t,
-              panelId: this.panelId,
-            }),
-        this.update());
+    /**
+     * Send unified message - injects to page chat AND syncs to relay if connected
+     */
+    sendUnifiedMessage() {
+      const input = this.container?.querySelector('[data-input="message"]');
+      if (!input || !input.value.trim()) return;
+      const content = input.value.trim();
+      input.value = '';
+      console.log('[FuseConnect] Sending unified message:', content.substring(0, 50));
+      const metadata = {
+        senderId: this.myAgentId || 'unknown',
+        source: 'floating-panel-unified',
+      };
+      // Add user message to local display immediately with unique ID
+      const msgId = `user-${Date.now()}`;
+      this.messages.push({
+        id: msgId,
+        from: this.myAgentId || 'You',
+        to: 'AI',
+        content,
+        timestamp: Date.now(),
+        type: 'text',
+        metadata,
+      });
+      this.update();
+      // If connected to relay and has a channel, sync the user message
+      if (this.connectionStatus === 'connected' && this.currentChannel) {
+        const broadcastKey = `user:${content}`;
+        const lastSent = this.recentBroadcasts.get(broadcastKey);
+        // Only broadcast if we haven't sent this exact message in the last 3 seconds
+        if (!lastSent || Date.now() - lastSent > 3000) {
+          this.recentBroadcasts.set(broadcastKey, Date.now());
+          // Clean up old entries
+          for (const [key, time] of this.recentBroadcasts.entries()) {
+            if (Date.now() - time > 10000) {
+              this.recentBroadcasts.delete(key);
+            }
+          }
+          this.safeSendMessage({
+            type: 'BROADCAST_MESSAGE',
+            content: `[User → AI] ${content}`,
+            channel: this.currentChannel,
+            metadata,
+          });
+        } else {
+          console.log('[FuseConnect] Skipping duplicate user message broadcast');
+        }
+      }
+      // Inject message into page chat
+      this.safeSendMessage(
+        {
+          type: 'INJECT_MESSAGE',
+          content,
+          metadata,
+        },
+        (response) => {
+          if (!response?.success) {
+            console.warn('[FuseConnect] Failed to inject message:', response?.error);
+            // Update message to show error
+            const msg = this.messages.find((m) => m.content === content);
+            if (msg) {
+              msg.content = `❌ ${content} (failed to send)`;
+              this.update();
+            }
+          }
+          // Note: AI response will be captured by the content script's response polling
+          // and forwarded via RESPONSE_COMPLETE message to handleChromeMessage
+        }
+      );
     }
+    /**
+     * Join channel
+     */
+    joinChannel(channelId) {
+      this.currentChannel = channelId;
+      // Persist channel selection for background script access
+      chrome.storage.local.set({ fuse_current_channel: channelId });
+      this.safeSendMessage({
+        type: 'CHANNEL_JOIN',
+        channelId,
+      });
+      this.update();
+    }
+    /**
+     * Select channel from dropdown (can be null to disconnect)
+     */
+    selectChannel(channelId) {
+      const previousChannel = this.currentChannel;
+      this.currentChannel = channelId;
+      console.log(
+        `[FuseConnect] Panel ${this.panelId} switching channel: ${previousChannel} → ${channelId}`
+      );
+      // Persist channel selection for background script access
+      chrome.storage.local.set({ fuse_current_channel: channelId });
+      if (channelId) {
+        this.safeSendMessage({
+          type: 'CHANNEL_JOIN',
+          channelId,
+          panelId: this.panelId,
+        });
+      } else {
+        this.safeSendMessage({
+          type: 'CHANNEL_LEAVE',
+          channelId: previousChannel,
+          panelId: this.panelId,
+        });
+      }
+      this.update();
+    }
+    /**
+     * Create channel (legacy - using prompt)
+     */
     createChannel() {
-      const e = prompt('Enter channel name:');
-      e && chrome.runtime.sendMessage({ type: 'CHANNEL_CREATE', name: e });
+      const name = prompt('Enter channel name:');
+      if (name) {
+        this.safeSendMessage({
+          type: 'CHANNEL_CREATE',
+          name,
+        });
+      }
     }
+    /**
+     * Submit create channel from inline form
+     */
     submitCreateChannel() {
-      const e = this.container?.querySelector('#fuse-new-channel-name');
-      if (!e || !e.value.trim()) return void console.warn('[FuseConnect] No channel name entered');
-      const t = e.value.trim();
-      ((e.value = ''),
-        console.log('[FuseConnect] Creating channel:', t),
-        this.safeSendMessage({ type: 'CHANNEL_CREATE', name: t }, (e) => {
-          (e?.success || e?.channelId) &&
-            console.log('[FuseConnect] Channel created successfully:', e.channelId);
-        }));
-      const n = {
+      const input = this.container?.querySelector('#fuse-new-channel-name');
+      console.log(
+        '[FuseConnect] submitCreateChannel called. Input found:',
+        !!input,
+        'Value:',
+        input?.value
+      );
+      if (!input || !input.value.trim()) {
+        console.warn('[FuseConnect] No channel name entered');
+        return;
+      }
+      const name = input.value.trim();
+      input.value = ''; // Clear input
+      console.log('[FuseConnect] Creating channel:', name);
+      // Use safe send with error handling
+      this.safeSendMessage(
+        {
+          type: 'CHANNEL_CREATE',
+          name,
+        },
+        (response) => {
+          if (response?.success || response?.channelId) {
+            console.log('[FuseConnect] Channel created successfully:', response.channelId);
+            // The channels will be updated via CHANNELS_UPDATE message
+          }
+        }
+      );
+      // Optimistically add the channel to local state for immediate feedback
+      const newChannel = {
         id: `local-${Date.now()}`,
-        name: t,
+        name,
         members: [],
-        isPrivate: !1,
+        isPrivate: false,
         createdAt: Date.now(),
       };
-      (this.channels.push(n), (this.currentChannel = n.id), this.update());
+      this.channels.push(newChannel);
+      this.currentChannel = newChannel.id;
+      this.update();
     }
-    safeSendMessage(e, t) {
-      if (!this.isContextValid)
-        return (
-          console.warn('[FuseConnect] Extension context is invalid, cannot send message'),
-          void this.showContextInvalidatedWarning()
-        );
+    /**
+     * Safely send a message to Chrome runtime, handling context invalidation
+     */
+    safeSendMessage(message, callback) {
+      if (!this.isContextValid) {
+        console.warn('[FuseConnect] Extension context is invalid, cannot send message');
+        this.showContextInvalidatedWarning();
+        return;
+      }
       try {
-        chrome.runtime.sendMessage(e, (e) => {
+        chrome.runtime.sendMessage(message, (response) => {
+          // Check for runtime.lastError which indicates context invalidation
           if (chrome.runtime.lastError) {
-            const e = chrome.runtime.lastError.message || '';
+            const errorMessage = chrome.runtime.lastError.message || '';
             if (
-              e.includes('Extension context invalidated') ||
-              e.includes('Receiving end does not exist')
-            )
-              return (
-                console.error('[FuseConnect] Extension context invalidated:', e),
-                (this.isContextValid = !1),
-                void this.showContextInvalidatedWarning()
-              );
-            console.warn('[FuseConnect] Chrome runtime error:', e);
+              errorMessage.includes('Extension context invalidated') ||
+              errorMessage.includes('Receiving end does not exist')
+            ) {
+              console.error('[FuseConnect] Extension context invalidated:', errorMessage);
+              this.isContextValid = false;
+              this.showContextInvalidatedWarning();
+              return;
+            }
+            console.warn('[FuseConnect] Chrome runtime error:', errorMessage);
           }
-          t && t(e);
+          if (callback) {
+            callback(response);
+          }
         });
-      } catch (e) {
-        (console.error('[FuseConnect] Failed to send message:', e),
-          (this.isContextValid = !1),
-          this.showContextInvalidatedWarning());
+      } catch (error) {
+        console.error('[FuseConnect] Failed to send message:', error);
+        this.isContextValid = false;
+        this.showContextInvalidatedWarning();
       }
     }
+    /**
+     * Show warning that extension context is invalidated and page needs refresh
+     */
     showContextInvalidatedWarning() {
+      // Only show once
       if (this.container?.querySelector('.fcp6-context-warning')) return;
-      const e = document.createElement('div');
-      ((e.className = 'fcp6-context-warning'),
-        (e.innerHTML =
-          '\n      <div style="\n        position: fixed;\n        top: 50%;\n        left: 50%;\n        transform: translate(-50%, -50%);\n        background: linear-gradient(135deg, rgba(255,50,50,0.95) 0%, rgba(180,30,30,0.95) 100%);\n        color: white;\n        padding: 24px 32px;\n        border-radius: 12px;\n        box-shadow: 0 8px 32px rgba(0,0,0,0.4);\n        z-index: 2147483647;\n        text-align: center;\n        font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', sans-serif;\n        max-width: 400px;\n      ">\n        <div style="font-size: 32px; margin-bottom: 12px;">⚠️</div>\n        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Extension Reloaded</div>\n        <div style="font-size: 13px; opacity: 0.9; margin-bottom: 16px;">\n          The Fuse Connect extension was updated. Please refresh this page to continue using it.\n        </div>\n        <button onclick="location.reload()" style="\n          background: white;\n          color: #c00;\n          border: none;\n          padding: 10px 24px;\n          border-radius: 6px;\n          font-weight: 600;\n          cursor: pointer;\n          font-size: 14px;\n        ">Refresh Page</button>\n      </div>\n    '),
-        document.body.appendChild(e));
+      const warning = document.createElement('div');
+      warning.className = 'fcp6-context-warning';
+      warning.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, rgba(255,50,50,0.95) 0%, rgba(180,30,30,0.95) 100%);
+        color: white;
+        padding: 24px 32px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        z-index: 2147483647;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        max-width: 400px;
+      ">
+        <div style="font-size: 32px; margin-bottom: 12px;">⚠️</div>
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Extension Reloaded</div>
+        <div style="font-size: 13px; opacity: 0.9; margin-bottom: 16px;">
+          The Fuse Connect extension was updated. Please refresh this page to continue using it.
+        </div>
+        <button onclick="location.reload()" style="
+          background: white;
+          color: #c00;
+          border: none;
+          padding: 10px 24px;
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 14px;
+        ">Refresh Page</button>
+      </div>
+    `;
+      document.body.appendChild(warning);
     }
-    handleServiceAction(e) {
-      const t = this.container?.querySelector(`[data-action="${e}"]`),
-        n = t?.getAttribute('data-service');
-      if (!n) return;
-      const s = e.replace('-service', '').toUpperCase();
-      chrome.runtime.sendMessage({ type: 'SERVICE_CONTROL', action: s, serviceId: n }, (e) => {
-        (e?.success &&
-          this.addNotification({
-            id: Date.now().toString(),
-            title: 'Service ' + s.toLowerCase() + 'ed',
-            message: `${n} service ${s.toLowerCase()}ed successfully`,
-            type: 'success',
-            priority: 'normal',
-            timestamp: Date.now(),
-            read: !1,
-          }),
-          this.update());
-      });
-    }
-    startAllServices() {
-      chrome.runtime.sendMessage({ type: 'SERVICE_CONTROL', action: 'START_ALL' }, (e) => {
-        (e?.success &&
-          this.addNotification({
-            id: Date.now().toString(),
-            title: 'All Services Started',
-            message: 'All TNF services have been started',
-            type: 'success',
-            priority: 'normal',
-            timestamp: Date.now(),
-            read: !1,
-          }),
-          this.update());
-      });
-    }
-    openTerminal() {
-      chrome.runtime.sendMessage({ type: 'OPEN_TERMINAL', command: 'pnpm relay:start' });
-    }
-    checkServiceHealth() {
-      (chrome.runtime.sendMessage({ type: 'CHECK_SERVICE_HEALTH' }, (e) => {
-        if (e?.services) {
-          for (const [t, n] of Object.entries(e.services)) this.serviceStatuses.set(t, n);
+    /**
+     * Handle service action (start/stop/restart)
+     */
+    handleServiceAction(action) {
+      const target = this.container?.querySelector(`[data-action="${action}"]`);
+      const serviceId = target?.getAttribute('data-service');
+      if (!serviceId) return;
+      const actionType = action.replace('-service', '').toUpperCase();
+      this.safeSendMessage(
+        {
+          type: 'SERVICE_CONTROL',
+          action: actionType,
+          serviceId,
+        },
+        (response) => {
+          if (response?.success) {
+            this.addNotification({
+              id: Date.now().toString(),
+              title: 'Service ' + actionType.toLowerCase() + 'ed',
+              message: `${serviceId} service ${actionType.toLowerCase()}ed successfully`,
+              type: 'success',
+              priority: 'normal',
+              timestamp: Date.now(),
+              read: false,
+            });
+          }
           this.update();
         }
-      }),
-        'connected' === this.connectionStatus
-          ? this.serviceStatuses.set('relay', 'online')
-          : this.serviceStatuses.set('relay', 'offline'),
-        this.update());
+      );
     }
+    /**
+     * Start all services
+     */
+    startAllServices() {
+      this.safeSendMessage(
+        {
+          type: 'SERVICE_CONTROL',
+          action: 'START_ALL',
+        },
+        (response) => {
+          if (response?.success) {
+            this.addNotification({
+              id: Date.now().toString(),
+              title: 'All Services Started',
+              message: 'All TNF services have been started',
+              type: 'success',
+              priority: 'normal',
+              timestamp: Date.now(),
+              read: false,
+            });
+          }
+          this.update();
+        }
+      );
+    }
+    /**
+     * Open terminal with relay command
+     */
+    openTerminal() {
+      this.safeSendMessage({
+        type: 'OPEN_TERMINAL',
+        command: 'pnpm relay:start',
+      });
+    }
+    /**
+     * Check health of all services
+     */
+    checkServiceHealth() {
+      // Request health check from background script
+      this.safeSendMessage(
+        {
+          type: 'CHECK_SERVICE_HEALTH',
+        },
+        (response) => {
+          if (response?.services) {
+            // Update service statuses
+            for (const [serviceId, status] of Object.entries(response.services)) {
+              this.serviceStatuses.set(serviceId, status);
+            }
+            this.update();
+          }
+        }
+      );
+      // Also update relay status based on connection
+      if (this.connectionStatus === 'connected') {
+        this.serviceStatuses.set('relay', 'online');
+      } else {
+        this.serviceStatuses.set('relay', 'offline');
+      }
+      this.update();
+    }
+    /**
+     * Save settings from the settings tab
+     */
     saveSettings() {
-      const e = this.container?.querySelector('[data-setting="relayUrl"]'),
-        t = this.container?.querySelector('[data-setting="autoReconnect"]'),
-        n = this.container?.querySelector('[data-setting="opacity"]'),
-        s = this.container?.querySelector('[data-setting="alwaysOnTop"]'),
-        a = this.container?.querySelector('[data-setting="debugMode"]'),
-        i = {
-          relayUrl: e?.value || 'ws://localhost:3001/ws',
-          autoReconnect: t?.checked ?? !0,
-          opacity: parseFloat(n?.value || '1'),
-          alwaysOnTop: s?.checked ?? !1,
-          debugMode: a?.checked ?? !1,
-        };
-      ((this.state.opacity = i.opacity),
-        (this.state.isPinned = i.alwaysOnTop),
-        this.container && (this.container.style.opacity = String(i.opacity)),
-        chrome.storage.local.set({ fuse_settings: i }, () => {
-          (this.addNotification({
-            id: Date.now().toString(),
-            title: 'Settings Saved',
-            message: 'Your settings have been saved successfully',
-            type: 'success',
-            priority: 'normal',
-            timestamp: Date.now(),
-            read: !1,
-          }),
-            this.update());
-        }),
-        chrome.runtime.sendMessage({ type: 'UPDATE_SETTINGS', settings: i }),
-        this.saveState());
+      const relayUrl = this.container?.querySelector('[data-setting="relayUrl"]');
+      const autoReconnect = this.container?.querySelector('[data-setting="autoReconnect"]');
+      const opacity = this.container?.querySelector('[data-setting="opacity"]');
+      const alwaysOnTop = this.container?.querySelector('[data-setting="alwaysOnTop"]');
+      const debugMode = this.container?.querySelector('[data-setting="debugMode"]');
+      const settings = {
+        relayUrl: relayUrl?.value || 'ws://localhost:3001/ws',
+        autoReconnect: autoReconnect?.checked ?? true,
+        opacity: parseFloat(opacity?.value || '1'),
+        alwaysOnTop: alwaysOnTop?.checked ?? false,
+        debugMode: debugMode?.checked ?? false,
+      };
+      // Update state
+      this.state.opacity = settings.opacity;
+      this.state.isPinned = settings.alwaysOnTop;
+      // Apply opacity
+      if (this.container) {
+        this.container.style.opacity = String(settings.opacity);
+      }
+      // Save to storage
+      chrome.storage.local.set({ fuse_settings: settings }, () => {
+        this.addNotification({
+          id: Date.now().toString(),
+          title: 'Settings Saved',
+          message: 'Your settings have been saved successfully',
+          type: 'success',
+          priority: 'normal',
+          timestamp: Date.now(),
+          read: false,
+        });
+        this.update();
+      });
+      // Send to background for relay URL update
+      this.safeSendMessage({
+        type: 'UPDATE_SETTINGS',
+        settings,
+      });
+      this.saveState();
     }
+    /**
+     * Reset settings to defaults
+     */
     resetSettings() {
       if (!confirm('Are you sure you want to reset all settings to defaults?')) return;
-      const e = {
+      const defaults = {
         relayUrl: 'ws://localhost:3001/ws',
-        autoReconnect: !0,
+        autoReconnect: true,
         opacity: 1,
-        alwaysOnTop: !1,
-        debugMode: !1,
+        alwaysOnTop: false,
+        debugMode: false,
       };
-      ((this.state.opacity = 1),
-        (this.state.isPinned = !1),
-        this.container && (this.container.style.opacity = '1'),
-        chrome.storage.local.set({ fuse_settings: e }, () => {
-          (this.addNotification({
-            id: Date.now().toString(),
-            title: 'Settings Reset',
-            message: 'All settings have been reset to defaults',
-            type: 'info',
-            priority: 'normal',
-            timestamp: Date.now(),
-            read: !1,
-          }),
-            this.update());
-        }),
-        chrome.runtime.sendMessage({ type: 'UPDATE_SETTINGS', settings: e }));
+      this.state.opacity = 1;
+      this.state.isPinned = false;
+      if (this.container) {
+        this.container.style.opacity = '1';
+      }
+      chrome.storage.local.set({ fuse_settings: defaults }, () => {
+        this.addNotification({
+          id: Date.now().toString(),
+          title: 'Settings Reset',
+          message: 'All settings have been reset to defaults',
+          type: 'info',
+          priority: 'normal',
+          timestamp: Date.now(),
+          read: false,
+        });
+        this.update();
+      });
+      this.safeSendMessage({
+        type: 'UPDATE_SETTINGS',
+        settings: defaults,
+      });
     }
+    /**
+     * Mark notifications as read
+     */
     markNotificationsRead() {
-      (this.notifications.forEach((e) => (e.read = !0)), (this.unreadCount = 0), this.update());
+      this.notifications.forEach((n) => (n.read = true));
+      this.unreadCount = 0;
+      this.update();
     }
-    handleChromeMessage(e) {
-      switch (e.type) {
+    /**
+     * Handle Chrome messages
+     */
+    handleChromeMessage(message) {
+      switch (message.type) {
         case 'CONNECTION_STATUS':
-          ((this.connectionStatus = e.status), this.update());
+          this.connectionStatus = message.status;
+          this.update();
           break;
         case 'AGENTS_UPDATE':
-          ((this.agents = e.agents || []), this.update());
+          this.agents = message.agents || [];
+          this.update();
           break;
         case 'NEW_MESSAGE':
-          if (e.message) {
-            const t = e.message,
-              n =
-                'You' === t.from || 'Browser Agent' === t.from || t.from?.includes('Browser Agent'),
-              s = this.messages.some(
-                (e) => e.content === t.content && Date.now() - e.timestamp < 5e3
-              );
-            if (n || s) {
-              console.log('[FuseConnect] Skipping message echo/duplicate:', {
-                from: t.from,
-                isOwn: n,
-                isDup: s,
-              });
+          // MULTI-AGENT COLLABORATION:
+          // This is a chatroom model. Every participant (human + AI agents) should see all messages.
+          // Messages from OTHER agents should be injected into our local chat so our AI can respond.
+          // Messages from OURSELVES should NOT be re-injected (prevents loops).
+          if (message.message) {
+            const msg = message.message;
+            // PRIMARY SELF-DETECTION: Use metadata.senderId (most reliable)
+            // This is set by the originating tab when broadcasting
+            const isFromSelf = msg.metadata?.senderId === this.myAgentId;
+            // FALLBACK SELF-DETECTION: Check common self-identifiers
+            const isFromSelfFallback =
+              msg.from === 'You' || msg.from === this.myAgentId || msg.from?.includes(this.panelId);
+            const isOwnMessage = isFromSelf || isFromSelfFallback;
+            // Content deduplication (prevent exact duplicate messages in short window)
+            const isDuplicate = this.messages.some(
+              (m) => m.content === msg.content && Date.now() - m.timestamp < 3000
+            );
+            if (isDuplicate) {
+              console.log('[FuseConnect] Skipping duplicate message');
               break;
             }
-            (this.messages.push(t),
-              this.messages.length > 50 && this.messages.shift(),
-              this.update());
-            const a = t.from && !t.from.includes('You') && !t.from.includes('AI (Page)'),
-              i =
-                t.content?.startsWith('[AI Response]') ||
-                t.content?.startsWith('[AI → User]') ||
-                t.content?.startsWith('[User → AI]') ||
-                t.from?.includes('Browser Agent') ||
-                'ai-response' === t.messageType;
-            (console.log('[FuseConnect] NEW_MESSAGE auto-inject check:', {
-              from: t.from,
-              isFromExternalAgent: a,
-              isAIResponseEcho: i,
-              hasContent: !!t.content,
-              contentPreview: t.content?.substring(0, 50),
-            }),
-              a &&
-                t.content &&
-                !i &&
-                (console.log(
-                  '[FuseConnect] Auto-injecting external message into page chat:',
-                  t.from
-                ),
-                chrome.runtime.sendMessage(
-                  { type: 'INJECT_MESSAGE', content: t.content, autoForward: !0 },
-                  (e) => {
-                    if (e?.success)
-                      console.log('[FuseConnect] External message injected successfully');
-                    else {
-                      console.warn('[FuseConnect] Failed to inject external message:', e?.error);
-                      const n = this.messages.findIndex((e) => e.id === t.id);
-                      n >= 0 &&
-                        ((this.messages[n].content = `❌ ${t.content} (failed to inject)`),
-                        this.update());
+            // Add ALL messages to chat display (this is a chatroom - everyone sees everything)
+            this.messages.push(msg);
+            if (this.messages.length > 50) this.messages.shift();
+            this.update();
+            // INJECTION LOGIC for multi-agent collaboration:
+            // - If message is from SELF: Don't inject (we already sent it or it's our AI's response)
+            // - If message is from ANOTHER agent: INJECT so our AI can see and respond
+            //
+            // The key distinction: isOwnMessage means this message originated from THIS tab.
+            // If it's from another tab/agent, we want our AI to see it and potentially respond.
+            console.log('[FuseConnect] NEW_MESSAGE processing:', {
+              from: msg.from,
+              isOwnMessage,
+              senderId: msg.metadata?.senderId,
+              myAgentId: this.myAgentId,
+              messageType: msg.messageType,
+              contentPreview: msg.content?.substring(0, 50),
+            });
+            if (!isOwnMessage && msg.content) {
+              // This message is from ANOTHER participant - inject it into our chat
+              console.log(
+                '[FuseConnect] Injecting external message from:',
+                msg.from,
+                msg.metadata?.platform
+              );
+              this.safeSendMessage(
+                {
+                  type: 'INJECT_MESSAGE',
+                  content: msg.content,
+                  autoForward: true,
+                },
+                (response) => {
+                  if (response?.success) {
+                    console.log('[FuseConnect] External message injected successfully');
+                  } else {
+                    console.warn(
+                      '[FuseConnect] Failed to inject external message:',
+                      response?.error
+                    );
+                    const idx = this.messages.findIndex((m) => m.id === msg.id);
+                    if (idx >= 0) {
+                      this.messages[idx].content = `❌ ${msg.content} (failed to inject)`;
+                      this.update();
                     }
                   }
-                )));
+                }
+              );
+            } else if (isOwnMessage) {
+              console.log('[FuseConnect] Not injecting own message (self-detection)');
+            }
           }
           break;
         case 'CHANNELS_UPDATE':
-          ((this.channels = e.channels || []), this.update());
+          this.channels = message.channels || [];
+          this.update();
+          break;
+        case 'JOINED_CHANNELS_UPDATE':
+          // Update any local state tracking joined channels if necessary
+          // For now, we mainly rely on currentChannel, but this ensures we have the data
+          console.log('[FuseConnect] Joined channels updated:', message.joinedChannels);
+          this.update();
           break;
         case 'NOTIFICATION':
-          this.addNotification(e.notification);
+          this.addNotification(message.notification);
           break;
         case 'CHAT_DETECTED':
-          ((this.chatElements = e.elements), this.update());
+          this.chatElements = message.elements;
+          this.update();
           break;
         case 'STREAMING_UPDATE':
-          ((this.streamingState = e.state), this.update());
+          this.streamingState = message.state;
+          this.update();
           break;
         case 'RESPONSE_COMPLETE':
-          if (
-            (console.log('[FuseConnect] RESPONSE_COMPLETE received:', {
-              hasContent: !!e.content,
-              connectionStatus: this.connectionStatus,
-              currentChannel: this.currentChannel,
-            }),
-            e.content)
-          ) {
-            let t =
-              'string' == typeof e.content
-                ? e.content
-                : e.content?.substring(0, 500) || 'Response received';
+          // RESTORED FROM BACKUP: Only add to local UI, do NOT broadcast
+          console.log('[FuseConnect] RESPONSE_COMPLETE received:', {
+            hasContent: !!message.content,
+            connectionStatus: this.connectionStatus,
+            currentChannel: this.currentChannel,
+          });
+          if (message.content) {
+            let responseContent =
+              typeof message.content === 'string'
+                ? message.content
+                : message.content?.substring(0, 500) || 'Response received';
+            // Strip any relay prefixes from the response content
+            responseContent = responseContent
+              .replace(/^\[User → AI\]\s*/g, '')
+              .replace(/^\[AI → User\]\s*/g, '')
+              .replace(/^\[AI Response\]\s*/g, '')
+              .trim();
+            // Skip if content is empty after stripping or if it still contains embedded prefixes
             if (
-              ((t = t
-                .replace(/^\[User → AI\]\s*/g, '')
-                .replace(/^\[AI → User\]\s*/g, '')
-                .replace(/^\[AI Response\]\s*/g, '')
-                .trim()),
-              !t ||
-                t.includes('[User → AI]') ||
-                t.includes('[AI → User]') ||
-                t.includes('[AI Response]'))
+              !responseContent ||
+              responseContent.includes('[User → AI]') ||
+              responseContent.includes('[AI → User]') ||
+              responseContent.includes('[AI Response]')
             ) {
               console.log('[FuseConnect] Skipping response with embedded prefixes');
               break;
             }
-            this.messages.find(
-              (e) => 'AI (Page)' === e.from && e.content === t && Date.now() - e.timestamp < 5e3
-            )
-              ? console.log('[FuseConnect] Skipping duplicate response')
-              : (this.messages.push({
-                  id: `ai-${Date.now()}`,
-                  from: 'AI (Page)',
-                  to: 'You',
-                  content: t,
-                  timestamp: Date.now(),
-                  type: 'text',
-                }),
-                this.update());
+            // Check for duplicate
+            const recentDuplicate = this.messages.some(
+              (m) =>
+                m.from === 'AI (Page)' &&
+                m.content === responseContent &&
+                Date.now() - m.timestamp < 5000
+            );
+            if (!recentDuplicate) {
+              this.messages.push({
+                id: `ai-${Date.now()}`,
+                from: 'AI (Page)',
+                to: 'You',
+                content: responseContent,
+                timestamp: Date.now(),
+                type: 'text',
+              });
+              this.update();
+            } else {
+              console.log('[FuseConnect] Skipping duplicate response');
+            }
+            // NOTE: We do NOT broadcast AI responses automatically.
+            // This was causing the self-injection loop.
+            // Users can manually share AI responses if desired.
+          }
+          break;
+      }
+    }
+    /**
+     * Add notification
+     */
+    addNotification(notification) {
+      this.notifications.unshift(notification);
+      if (this.notifications.length > 50) this.notifications.pop();
+      this.unreadCount++;
+      this.update();
+      // Show desktop notification if enabled
+      if (Notification.permission === 'granted') {
+        new Notification(notification.title, {
+          body: notification.message,
+          icon: chrome.runtime.getURL('icons/icon48.png'),
+        });
+      }
+    }
+    /**
+     * Update UI
+     */
+    /**
+     * Update UI
+     */
+    update() {
+      if (!this.container) return;
+      // Save scroll position if chat is open
+      let scrollTop = 0;
+      const chatScroll = this.container.querySelector('#fuse-chat-scroll');
+      if (chatScroll) {
+        scrollTop = chatScroll.scrollTop;
+      }
+      // Save input value
+      const input = this.container.querySelector('[data-input="message"]');
+      const inputValue = input ? input.value : '';
+      // Save channel name input value
+      const channelInput = this.container.querySelector('#fuse-new-channel-name');
+      const channelInputValue = channelInput ? channelInput.value : '';
+      // Re-render
+      this.container.innerHTML = this.render();
+      // Restore input value
+      const newInput = this.container.querySelector('[data-input="message"]');
+      if (newInput && inputValue) {
+        newInput.value = inputValue;
+      }
+      // Restore channel name input value
+      const newChannelInput = this.container.querySelector('#fuse-new-channel-name');
+      if (newChannelInput && channelInputValue) {
+        newChannelInput.value = channelInputValue;
+        // If it had focus, we should try to restore focus too, but simple value restore helps most
+      }
+      // Apply styles/position
+      this.applyPositionAndSize();
+      // Re-attach listeners
+      this.setupListeners();
+      // Restore scroll position or scroll to bottom if it was at bottom
+      const newChatScroll = this.container.querySelector('#fuse-chat-scroll');
+      if (newChatScroll) {
+        // If was near bottom, scroll to bottom (auto-scroll)
+        // Otherwise restore position
+        const wasNearBottom =
+          chatScroll &&
+          chatScroll.scrollHeight - chatScroll.scrollTop - chatScroll.clientHeight < 50;
+        if (wasNearBottom) {
+          newChatScroll.scrollTop = newChatScroll.scrollHeight;
+        } else {
+          newChatScroll.scrollTop = scrollTop;
+        }
+      }
+    }
+    // Utility methods
+    formatTime(timestamp) {
+      return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    truncate(text, len) {
+      return text.length > len ? text.slice(0, len) + '...' : text;
+    }
+    escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    getAgentIcon(platform) {
+      const icons = {
+        'chrome-extension': '🌐',
+        vscode: '🔷',
+        antigravity: '🌌',
+        'electron-desktop': '🖥️',
+        'theia-ide': '💻',
+        'api-gateway': '🚀',
+        'backend-service': '⚙️',
+        saas: '☁️',
+      };
+      return icons[platform] || '🤖';
+    }
+    /**
+     * Update chat detection state
+     */
+    updateChatElements(elements) {
+      this.chatElements = elements;
+      this.update();
+    }
+    /**
+     * Set the Page Agent ID for this panel
+     */
+    setAgentId(id) {
+      console.log('[FuseConnect] Panel assigned Agent ID:', id);
+      this.myAgentId = id;
+      this.update(); // Update UI if needed (e.g. to show ID)
+    }
+    /**
+     * Update streaming state
+     */
+    updateStreamingState(state) {
+      this.streamingState = state;
+      this.update();
+    }
+    /**
+     * Show the panel
+     */
+    show() {
+      if (!this.container) {
+        this.inject();
+      }
+      if (this.container) {
+        this.container.style.display = 'block';
+        this.state.mode = 'expanded'; // FORCE expanded on show
+        this.applyPositionAndSize();
+        this.update(); // Add update to ensure render state matches
+      }
+    }
+    /**
+     * Hide the panel
+     */
+    hide() {
+      if (this.container) {
+        this.container.style.display = 'none';
+      }
+    }
+    /**
+     * Check if panel is visible
+     */
+    isVisible() {
+      return this.container?.style.display !== 'none';
+    }
+    /**
+     * Handle messages from background/popup/content script
+     */
+    handleMessage(message) {
+      this.handleChromeMessage(message);
+    }
+    /**
+    /**
+     * Destroy panel
+     */
+    destroy() {
+      // Remove Chrome message listener to prevent memory leaks and duplicate handlers
+      if (this.chromeMessageListener) {
+        chrome.runtime.onMessage.removeListener(this.chromeMessageListener);
+        this.chromeMessageListener = null;
+      }
+      // Remove storage listener
+      if (this.storageListener) {
+        chrome.storage.onChanged.removeListener(this.storageListener);
+        this.storageListener = null;
+      }
+      // Clear health poll interval
+      if (this.healthPollInterval) {
+        clearInterval(this.healthPollInterval);
+        this.healthPollInterval = null;
+      }
+      this.container?.remove();
+      document.getElementById('fuse-connect-styles-v6')?.remove();
+    }
+    /**
+     * Handle generic actions from data-action attributes
+     */
+    handleAction(action) {
+      switch (action) {
+        case 'send':
+          this.sendMessage();
+          break;
+        case 'pin':
+          this.togglePin();
+          break;
+        case 'minimize':
+          this.minimize();
+          break;
+        case 'toggle':
+          this.toggleCollapse();
+          break;
+        case 'expand':
+          this.expand();
+          break;
+        case 'select-channel':
+          // Handled by change listener, but good to have case
+          break;
+        case 'inject-to-chat':
+          this.injectToPageChat();
+          break;
+        default:
+          // Check if it's a service action
+          if (action.endsWith('-service')) {
+            this.handleServiceAction(action);
+          } else if (action === 'start-all-services') {
+            this.startAllServices();
+          } else if (action === 'open-terminal') {
+            this.openTerminal();
+          } else if (action === 'check-health') {
+            this.checkServiceHealth();
+          } else if (action === 'save-settings') {
+            this.saveSettings();
+          } else if (action === 'reset-settings') {
+            this.resetSettings();
           }
       }
     }
-    addNotification(e) {
-      (this.notifications.unshift(e),
-        this.notifications.length > 50 && this.notifications.pop(),
-        this.unreadCount++,
-        this.update(),
-        'granted' === Notification.permission &&
-          new Notification(e.title, {
-            body: e.message,
-            icon: chrome.runtime.getURL('icons/icon48.png'),
-          }));
+    /**
+     * Switch tab
+     */
+    switchTab(tab) {
+      this.state.activeTab = tab;
+      // Persist active tab
+      this.saveState();
+      this.update();
     }
-    update() {
-      if (!this.container) return;
-      ((this.container.innerHTML = this.render()), this.applyPositionAndSize());
-      const e = this.container.querySelector('#fuse-chat-scroll');
-      e && (e.scrollTop = e.scrollHeight);
-    }
-    formatTime(e) {
-      return new Date(e).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-    truncate(e, t) {
-      return e.length > t ? e.slice(0, t) + '...' : e;
-    }
-    escapeHtml(e) {
-      const t = document.createElement('div');
-      return ((t.textContent = e), t.innerHTML);
-    }
-    getAgentIcon(e) {
-      return (
-        {
-          'chrome-extension': '🌐',
-          vscode: '🔷',
-          antigravity: '🌌',
-          'electron-desktop': '🖥️',
-          'theia-ide': '💻',
-          'api-gateway': '🚀',
-          'backend-service': '⚙️',
-          saas: '☁️',
-        }[e] || '🤖'
-      );
-    }
-    updateChatElements(e) {
-      ((this.chatElements = e), this.update());
-    }
-    updateStreamingState(e) {
-      ((this.streamingState = e), this.update());
-    }
-    show() {
-      (this.container || this.inject(),
-        this.container &&
-          ((this.container.style.display = 'block'),
-          (this.state.mode = 'hidden' === this.state.mode ? 'collapsed' : this.state.mode),
-          this.applyPositionAndSize()));
-    }
-    hide() {
-      this.container && (this.container.style.display = 'none');
-    }
-    isVisible() {
-      return 'none' !== this.container?.style.display;
-    }
-    handleMessage(e) {
-      switch (e.type) {
-        case 'CONNECTION_STATUS':
-          ((this.connectionStatus = e.status), this.update());
-          break;
-        case 'AGENTS_UPDATE':
-          ((this.agents = e.agents || []), this.update());
-          break;
-        case 'CHANNELS_UPDATE':
-          ((this.channels = e.channels || []), this.update());
-          break;
-        case 'NEW_MESSAGE':
-          const t = e.message;
-          t &&
-            (this.messages.push(t),
-            this.messages.length > 50 && this.messages.shift(),
-            this.update());
-          break;
-        case 'NOTIFICATION':
-          const n = e.notification;
-          n && (this.notifications.unshift(n), n.read || this.unreadCount++, this.update());
-          break;
-        case 'RESPONSE_COMPLETE':
-          this.handleChromeMessage(e);
+    /**
+     * Toggle pin state
+     */
+    togglePin() {
+      this.state.isPinned = !this.state.isPinned;
+      const btn = this.container?.querySelector('#fuse-btn-pin');
+      if (btn) {
+        btn.innerHTML = this.state.isPinned ? '📌' : '📍';
       }
+      this.saveState();
     }
-    destroy() {
-      (this.chromeMessageListener &&
-        (chrome.runtime.onMessage.removeListener(this.chromeMessageListener),
-        (this.chromeMessageListener = null)),
-        this.healthPollInterval &&
-          (clearInterval(this.healthPollInterval), (this.healthPollInterval = null)),
-        this.container?.remove(),
-        document.getElementById('fuse-connect-styles-v6')?.remove());
+    /**
+     * Minimize panel
+     */
+    minimize() {
+      this.state.mode = 'minimized';
+      this.saveState();
+      this.update();
+    }
+    /**
+     * Expand panel
+     */
+    expand() {
+      this.state.mode = 'expanded';
+      this.saveState();
+      this.update();
+    }
+    /**
+     * Toggle collapse state
+     */
+    toggleCollapse() {
+      if (this.state.mode === 'collapsed') {
+        this.state.mode = 'expanded';
+      } else {
+        this.state.mode = 'collapsed';
+      }
+      this.saveState();
+      this.update();
+    }
+    /**
+     * Save state to storage
+     */
+    saveState() {
+      chrome.storage.local.set({ fuse_panel_state: this.state });
     }
   }
-  const n = {
-      a: 'link',
-      button: 'button',
-      input: 'textbox',
-      select: 'combobox',
-      textarea: 'textbox',
-      h1: 'heading',
-      h2: 'heading',
-      h3: 'heading',
-      h4: 'heading',
-      h5: 'heading',
-      h6: 'heading',
-      img: 'image',
-      nav: 'navigation',
-      main: 'main',
-      header: 'banner',
-      footer: 'contentinfo',
-      section: 'region',
-      article: 'article',
-      aside: 'complementary',
-      form: 'form',
-      table: 'table',
-      ul: 'list',
-      ol: 'list',
-      li: 'listitem',
-      label: 'label',
-    },
-    s = ['script', 'style', 'meta', 'link', 'title', 'noscript'],
-    a = ['a', 'button', 'input', 'select', 'textarea', 'details', 'summary'],
-    i = [
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'nav',
-      'main',
-      'header',
-      'footer',
-      'section',
-      'article',
-      'aside',
-    ],
-    o = new (class {
-      constructor() {
-        ((this.elementMap = new Map()),
-          (this.refCounter = 0),
-          window.__fuseElementMap || (window.__fuseElementMap = new Map()),
-          window.__fuseRefCounter || (window.__fuseRefCounter = 0),
-          (this.elementMap = window.__fuseElementMap),
-          (this.refCounter = window.__fuseRefCounter));
+  function createEnhancedFloatingPanel(options) {
+    return new EnhancedFloatingPanel(options);
+  } // ./src/v5/content/utils/AccessibilityTree.ts
+
+  /**
+   * Fuse Connect v6 - Accessibility Tree Generator
+   * Generates a structured tree of interactive elements on any page
+   * Inspired by Claude extension's accessibility-tree.js
+   */
+  // Role mapping based on HTML elements
+  const ROLE_MAP = {
+    a: 'link',
+    button: 'button',
+    input: 'textbox',
+    select: 'combobox',
+    textarea: 'textbox',
+    h1: 'heading',
+    h2: 'heading',
+    h3: 'heading',
+    h4: 'heading',
+    h5: 'heading',
+    h6: 'heading',
+    img: 'image',
+    nav: 'navigation',
+    main: 'main',
+    header: 'banner',
+    footer: 'contentinfo',
+    section: 'region',
+    article: 'article',
+    aside: 'complementary',
+    form: 'form',
+    table: 'table',
+    ul: 'list',
+    ol: 'list',
+    li: 'listitem',
+    label: 'label',
+  };
+  // Elements to skip
+  const SKIP_ELEMENTS = ['script', 'style', 'meta', 'link', 'title', 'noscript'];
+  // Interactive elements
+  const INTERACTIVE_ELEMENTS = ['a', 'button', 'input', 'select', 'textarea', 'details', 'summary'];
+  // Landmark elements
+  const LANDMARK_ELEMENTS = [
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'nav',
+    'main',
+    'header',
+    'footer',
+    'section',
+    'article',
+    'aside',
+  ];
+  class AccessibilityTreeGenerator {
+    constructor() {
+      this.elementMap = new Map();
+      this.refCounter = 0;
+      // Initialize global map for cross-session persistence
+      if (!window.__fuseElementMap) {
+        window.__fuseElementMap = new Map();
       }
-      generateTree(e = {}) {
-        const { filter: t = 'all', maxDepth: n = 15, refId: s } = e,
-          a = [],
-          i = [];
-        try {
-          if (s) {
-            const e = this.elementMap.get(s);
-            if (!e)
-              return {
-                tree: '',
-                nodes: [],
-                viewport: this.getViewport(),
-                error: `Element with ref_id '${s}' not found. It may have been removed from the page.`,
-              };
-            const o = e.ref.deref();
-            if (!o)
-              return (
-                this.elementMap.delete(s),
-                {
-                  tree: '',
-                  nodes: [],
-                  viewport: this.getViewport(),
-                  error: `Element with ref_id '${s}' no longer exists in the DOM.`,
-                }
-              );
-            this.processElement(o, 0, n, t, void 0 !== s, a, i);
-          } else document.body && this.processElement(document.body, 0, n, t, !1, a, i);
-          (this.cleanupRefs(), (window.__fuseRefCounter = this.refCounter));
-          const e = a.join('\n');
-          return e.length > 5e4
-            ? {
-                tree: '',
-                nodes: [],
-                viewport: this.getViewport(),
-                error: `Output exceeds 50000 character limit (${e.length} characters). Try using a smaller depth or focusing on a specific element.`,
-              }
-            : { tree: e, nodes: i, viewport: this.getViewport() };
-        } catch (e) {
+      if (!window.__fuseRefCounter) {
+        window.__fuseRefCounter = 0;
+      }
+      this.elementMap = window.__fuseElementMap;
+      this.refCounter = window.__fuseRefCounter;
+    }
+    /**
+     * Generate accessibility tree
+     */
+    generateTree(options = {}) {
+      const { filter = 'all', maxDepth = 15, refId } = options;
+      const lines = [];
+      const nodes = [];
+      try {
+        // If refId provided, start from that element
+        if (refId) {
+          const ref = this.elementMap.get(refId);
+          if (!ref) {
+            return {
+              tree: '',
+              nodes: [],
+              viewport: this.getViewport(),
+              error: `Element with ref_id '${refId}' not found. It may have been removed from the page.`,
+            };
+          }
+          const element = ref.ref.deref();
+          if (!element) {
+            this.elementMap.delete(refId);
+            return {
+              tree: '',
+              nodes: [],
+              viewport: this.getViewport(),
+              error: `Element with ref_id '${refId}' no longer exists in the DOM.`,
+            };
+          }
+          this.processElement(element, 0, maxDepth, filter, refId !== undefined, lines, nodes);
+        } else {
+          // Start from body
+          if (document.body) {
+            this.processElement(document.body, 0, maxDepth, filter, false, lines, nodes);
+          }
+        }
+        // Cleanup stale refs
+        this.cleanupRefs();
+        // Update global counter
+        window.__fuseRefCounter = this.refCounter;
+        const tree = lines.join('\n');
+        // Check size limit
+        if (tree.length > 50000) {
           return {
             tree: '',
             nodes: [],
             viewport: this.getViewport(),
-            error: `Error generating accessibility tree: ${e instanceof Error ? e.message : 'Unknown error'}`,
+            error: `Output exceeds 50000 character limit (${tree.length} characters). Try using a smaller depth or focusing on a specific element.`,
           };
         }
+        return { tree, nodes, viewport: this.getViewport() };
+      } catch (error) {
+        return {
+          tree: '',
+          nodes: [],
+          viewport: this.getViewport(),
+          error: `Error generating accessibility tree: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        };
       }
-      processElement(e, t, n, a, i, o, r) {
-        if (t > n) return;
-        if (!e || !e.tagName) return;
-        const c = e.tagName.toLowerCase();
-        if (s.includes(c)) return;
-        const l = this.shouldIncludeElement(e, a, i);
-        if (l) {
-          const n = this.getRole(e),
-            s = this.getLabel(e),
-            a = this.getOrCreateRefId(e);
-          let i = '  '.repeat(t) + n;
-          (s && (i += ` "${s.replace(/\s+/g, ' ').substring(0, 100).replace(/"/g, '\\"')}"`),
-            (i += ` [${a}]`));
-          const c = this.getImportantAttributes(e);
-          for (const [e, t] of Object.entries(c)) i += ` ${e}="${t}"`;
-          (o.push(i), r.push({ role: n, label: s, refId: a, depth: t, attributes: c }));
+    }
+    /**
+     * Process a single element
+     */
+    processElement(element, depth, maxDepth, filter, hasRefId, lines, nodes) {
+      if (depth > maxDepth) return;
+      if (!element || !element.tagName) return;
+      const tagName = element.tagName.toLowerCase();
+      if (SKIP_ELEMENTS.includes(tagName)) return;
+      const shouldInclude = this.shouldIncludeElement(element, filter, hasRefId);
+      if (shouldInclude) {
+        const role = this.getRole(element);
+        const label = this.getLabel(element);
+        const refId = this.getOrCreateRefId(element);
+        // Build tree line
+        let line = '  '.repeat(depth) + role;
+        if (label) {
+          const cleanLabel = label.replace(/\s+/g, ' ').substring(0, 100).replace(/"/g, '\\"');
+          line += ` "${cleanLabel}"`;
         }
-        if (e.children && t < n)
-          for (let s = 0; s < e.children.length; s++) {
-            const c = e.children[s];
-            this.processElement(c, l ? t + 1 : t, n, a, i, o, r);
-          }
-      }
-      shouldIncludeElement(e, t, n) {
-        if ((e.tagName.toLowerCase(), 'all' !== t && !n)) {
-          if ('true' === e.getAttribute('aria-hidden')) return !1;
-          if (!this.isVisible(e)) return !1;
-          if (!this.isInViewport(e)) return !1;
+        line += ` [${refId}]`;
+        // Add important attributes
+        const attrs = this.getImportantAttributes(element);
+        for (const [key, value] of Object.entries(attrs)) {
+          line += ` ${key}="${value}"`;
         }
-        if ('interactive' === t) return this.isInteractive(e);
-        if (this.isInteractive(e)) return !0;
-        if (this.isLandmark(e)) return !0;
-        if (this.getLabel(e).length > 0) return !0;
-        const s = this.getRole(e);
-        return 'generic' !== s && 'image' !== s;
+        lines.push(line);
+        nodes.push({
+          role,
+          label,
+          refId,
+          depth,
+          attributes: attrs,
+        });
       }
-      getRole(e) {
-        const t = e.getAttribute('role');
-        if (t) return t;
-        const s = e.tagName.toLowerCase(),
-          a = e.getAttribute('type');
-        return 'input' === s
-          ? 'submit' === a || 'button' === a
-            ? 'button'
-            : 'checkbox' === a
-              ? 'checkbox'
-              : 'radio' === a
-                ? 'radio'
-                : 'file' === a
-                  ? 'button'
-                  : 'textbox'
-          : n[s] || 'generic';
-      }
-      getLabel(e) {
-        const t = e.tagName.toLowerCase();
-        if ('select' === t) {
-          const t = e,
-            n = t.querySelector('option[selected]') || t.options[t.selectedIndex];
-          if (n?.textContent?.trim()) return n.textContent.trim();
-        }
-        const n = e.getAttribute('aria-label');
-        if (n?.trim()) return n.trim();
-        const s = e.getAttribute('placeholder');
-        if (s?.trim()) return s.trim();
-        const a = e.getAttribute('title');
-        if (a?.trim()) return a.trim();
-        const i = e.getAttribute('alt');
-        if (i?.trim()) return i.trim();
-        if (e.id) {
-          const t = document.querySelector(`label[for="${e.id}"]`);
-          if (t?.textContent?.trim()) return t.textContent.trim();
-        }
-        if ('input' === t) {
-          const t = e,
-            n = e.getAttribute('type') || '',
-            s = e.getAttribute('value');
-          if ('submit' === n && s?.trim()) return s.trim();
-          if (t.value && t.value.length < 50 && t.value.trim()) return t.value.trim();
-        }
-        if (['button', 'a', 'summary'].includes(t)) {
-          let t = '';
-          for (let n = 0; n < e.childNodes.length; n++) {
-            const s = e.childNodes[n];
-            s.nodeType === Node.TEXT_NODE && (t += s.textContent || '');
-          }
-          if (t.trim()) return t.trim();
-        }
-        if (t.match(/^h[1-6]$/)) {
-          const t = e.textContent;
-          if (t?.trim()) return t.trim().substring(0, 100);
-        }
-        let o = '';
-        for (let t = 0; t < e.childNodes.length; t++) {
-          const n = e.childNodes[t];
-          n.nodeType === Node.TEXT_NODE && (o += n.textContent || '');
-        }
-        if (o.trim() && o.trim().length >= 3) {
-          const e = o.trim();
-          return e.length > 100 ? e.substring(0, 100) + '...' : e;
-        }
-        return '';
-      }
-      getOrCreateRefId(e) {
-        for (const [t, n] of this.elementMap.entries()) if (n.ref.deref() === e) return t;
-        const t = 'fuse_ref_' + ++this.refCounter;
-        return (
-          this.elementMap.set(t, {
-            ref: new WeakRef(e),
-            role: this.getRole(e),
-            label: this.getLabel(e),
-          }),
-          t
-        );
-      }
-      getElementByRefId(e) {
-        const t = this.elementMap.get(e);
-        if (!t) return null;
-        return t.ref.deref() || (this.elementMap.delete(e), null);
-      }
-      getImportantAttributes(e) {
-        const t = {},
-          n = e.getAttribute('href');
-        n && (t.href = n);
-        const s = e.getAttribute('type');
-        s && (t.type = s);
-        const a = e.getAttribute('placeholder');
-        return (
-          a && (t.placeholder = a),
-          e.hasAttribute('disabled') && (t.disabled = 'true'),
-          e.checked && (t.checked = 'true'),
-          t
-        );
-      }
-      isVisible(e) {
-        const t = window.getComputedStyle(e);
-        return (
-          'none' !== t.display &&
-          'hidden' !== t.visibility &&
-          '0' !== t.opacity &&
-          e.offsetWidth > 0 &&
-          e.offsetHeight > 0
-        );
-      }
-      isInViewport(e) {
-        const t = e.getBoundingClientRect();
-        return (
-          t.top < window.innerHeight && t.bottom > 0 && t.left < window.innerWidth && t.right > 0
-        );
-      }
-      isInteractive(e) {
-        const t = e.tagName.toLowerCase();
-        return (
-          !!a.includes(t) ||
-          !!e.getAttribute('onclick') ||
-          null !== e.getAttribute('tabindex') ||
-          'button' === e.getAttribute('role') ||
-          'link' === e.getAttribute('role') ||
-          'true' === e.getAttribute('contenteditable')
-        );
-      }
-      isLandmark(e) {
-        const t = e.tagName.toLowerCase();
-        return i.includes(t) || null !== e.getAttribute('role');
-      }
-      getViewport() {
-        return { width: window.innerWidth, height: window.innerHeight };
-      }
-      cleanupRefs() {
-        for (const [e, t] of this.elementMap.entries()) t.ref.deref() || this.elementMap.delete(e);
-      }
-      async clickElement(e) {
-        const t = this.getElementByRefId(e);
-        if (!t) return !1;
-        try {
-          return (t.focus(), t.click(), !0);
-        } catch {
-          return !1;
-        }
-      }
-      async typeIntoElement(e, t, n = {}) {
-        const s = this.getElementByRefId(e);
-        if (!s) return !1;
-        try {
-          return (
-            s.focus(),
-            s instanceof HTMLInputElement || s instanceof HTMLTextAreaElement
-              ? (n.clear && (s.value = ''),
-                (s.value += t),
-                s.dispatchEvent(new InputEvent('input', { bubbles: !0, data: t })),
-                s.dispatchEvent(new Event('change', { bubbles: !0 })))
-              : 'true' === s.getAttribute('contenteditable') &&
-                (n.clear && (s.innerHTML = ''),
-                (s.textContent = (s.textContent || '') + t),
-                s.dispatchEvent(new InputEvent('input', { bubbles: !0 }))),
-            !0
+      // Process children
+      if (element.children && depth < maxDepth) {
+        for (let i = 0; i < element.children.length; i++) {
+          const child = element.children[i];
+          this.processElement(
+            child,
+            shouldInclude ? depth + 1 : depth,
+            maxDepth,
+            filter,
+            hasRefId,
+            lines,
+            nodes
           );
-        } catch {
-          return !1;
         }
       }
-    })(),
-    r = new (class {
-      constructor() {
-        ((this.lastMousePosition = { x: 0, y: 0 }),
-          (this.isMoving = !1),
-          document.addEventListener('mousemove', (e) => {
-            this.isMoving || (this.lastMousePosition = { x: e.clientX, y: e.clientY });
-          }));
+    }
+    /**
+     * Determine if element should be included
+     */
+    shouldIncludeElement(element, filter, hasRefId) {
+      const tagName = element.tagName.toLowerCase();
+      // Skip hidden elements unless we have a specific refId
+      if (filter !== 'all' && !hasRefId) {
+        if (element.getAttribute('aria-hidden') === 'true') return false;
+        if (!this.isVisible(element)) return false;
+        if (!this.isInViewport(element)) return false;
       }
-      async randomDelay(e, t) {
-        const n = this.randomBetween(e, t);
-        await this.sleep(n);
+      // Interactive filter
+      if (filter === 'interactive') {
+        return this.isInteractive(element);
       }
-      async humanDelay(e = 500) {
-        const t = 0.4 * e,
-          n = this.gaussianRandom(e, t);
-        await this.sleep(Math.max(50, n));
+      // Include interactive elements
+      if (this.isInteractive(element)) return true;
+      // Include landmarks
+      if (this.isLandmark(element)) return true;
+      // Include elements with labels
+      if (this.getLabel(element).length > 0) return true;
+      // Include elements with explicit roles
+      const role = this.getRole(element);
+      return role !== 'generic' && role !== 'image';
+    }
+    /**
+     * Get element role
+     */
+    getRole(element) {
+      // Check for explicit role
+      const ariaRole = element.getAttribute('role');
+      if (ariaRole) return ariaRole;
+      const tagName = element.tagName.toLowerCase();
+      const type = element.getAttribute('type');
+      // Special handling for input types
+      if (tagName === 'input') {
+        if (type === 'submit' || type === 'button') return 'button';
+        if (type === 'checkbox') return 'checkbox';
+        if (type === 'radio') return 'radio';
+        if (type === 'file') return 'button';
+        return 'textbox';
       }
-      async microPause() {
-        await this.randomDelay(100, 500);
+      return ROLE_MAP[tagName] || 'generic';
+    }
+    /**
+     * Get element label
+     */
+    getLabel(element) {
+      const tagName = element.tagName.toLowerCase();
+      // Select elements - use selected option
+      if (tagName === 'select') {
+        const select = element;
+        const option =
+          select.querySelector('option[selected]') || select.options[select.selectedIndex];
+        if (option?.textContent?.trim()) return option.textContent.trim();
       }
-      async thinkingPause() {
-        await this.randomDelay(500, 2e3);
+      // Aria-label
+      const ariaLabel = element.getAttribute('aria-label');
+      if (ariaLabel?.trim()) return ariaLabel.trim();
+      // Placeholder
+      const placeholder = element.getAttribute('placeholder');
+      if (placeholder?.trim()) return placeholder.trim();
+      // Title
+      const title = element.getAttribute('title');
+      if (title?.trim()) return title.trim();
+      // Alt (for images)
+      const alt = element.getAttribute('alt');
+      if (alt?.trim()) return alt.trim();
+      // Associated label
+      if (element.id) {
+        const label = document.querySelector(`label[for="${element.id}"]`);
+        if (label?.textContent?.trim()) return label.textContent.trim();
       }
-      async moveMouse(e, t) {
-        const n = t?.duration ?? this.randomBetween(200, 500),
-          s = t?.steps ?? Math.max(10, Math.floor(n / 16)),
-          a = { ...this.lastMousePosition },
-          i = this.generateBezierControlPoints(a, e);
-        this.isMoving = !0;
-        for (let t = 0; t <= s; t++) {
-          const o = t / s,
-            r = this.bezierPoint(o, a, i[0], i[1], e),
-            c = this.randomBetween(-2, 2),
-            l = { x: r.x + c, y: r.y + c };
-          (this.dispatchMouseEvent('mousemove', l),
-            (this.lastMousePosition = l),
-            await this.sleep(n / s));
-        }
-        this.isMoving = !1;
+      // Input value
+      if (tagName === 'input') {
+        const input = element;
+        const type = element.getAttribute('type') || '';
+        const value = element.getAttribute('value');
+        if (type === 'submit' && value?.trim()) return value.trim();
+        if (input.value && input.value.length < 50 && input.value.trim()) return input.value.trim();
       }
-      async moveToElement(e) {
-        const t = e.getBoundingClientRect(),
-          n = t.left + this.randomBetween(0.2 * t.width, 0.8 * t.width),
-          s = t.top + this.randomBetween(0.2 * t.height, 0.8 * t.height);
-        await this.moveMouse({ x: n, y: s });
-      }
-      async humanClick(e, t = {}) {
-        const {
-          moveFirst: n = !0,
-          prePauseMin: s = 50,
-          prePauseMax: a = 150,
-          postPauseMin: i = 50,
-          postPauseMax: o = 200,
-        } = t;
-        n && (await this.moveToElement(e), await this.randomDelay(s, a));
-        const r = e.getBoundingClientRect(),
-          c = r.left + r.width / 2,
-          l = r.top + r.height / 2;
-        (this.dispatchMouseEvent('mousedown', { x: c, y: l }, e),
-          await this.sleep(this.randomBetween(50, 120)),
-          this.dispatchMouseEvent('mouseup', { x: c, y: l }, e),
-          this.dispatchMouseEvent('click', { x: c, y: l }, e),
-          await this.randomDelay(i, o));
-      }
-      async humanDoubleClick(e) {
-        (await this.humanClick(e, { postPauseMin: 50, postPauseMax: 150 }),
-          await this.humanClick(e, { moveFirst: !1 }),
-          this.dispatchMouseEvent('dblclick', this.lastMousePosition, e));
-      }
-      async humanType(e, t, n = {}) {
-        const {
-          minDelay: s = 50,
-          maxDelay: a = 150,
-          typoChance: i = 0.02,
-          correctTypos: o = !0,
-          pauseOnPunctuation: r = !0,
-        } = n;
-        (e.focus(), await this.microPause());
-        const c = ['.', ',', '!', '?', ';', ':'];
-        for (let n = 0; n < t.length; n++) {
-          const l = t[n];
-          if (i > 0 && Math.random() < i && o) {
-            const t = this.getNearbyKeys(l);
-            if (t.length > 0) {
-              const n = t[Math.floor(Math.random() * t.length)];
-              (await this.typeCharacter(e, n),
-                await this.randomDelay(100, 300),
-                await this.typeBackspace(e),
-                await this.randomDelay(50, 150));
-            }
+      // Text content for buttons/links
+      if (['button', 'a', 'summary'].includes(tagName)) {
+        let text = '';
+        for (let i = 0; i < element.childNodes.length; i++) {
+          const node = element.childNodes[i];
+          if (node.nodeType === Node.TEXT_NODE) {
+            text += node.textContent || '';
           }
-          await this.typeCharacter(e, l);
-          let d = this.randomBetween(s, a);
-          (r && c.includes(l) && (d += this.randomBetween(100, 400)),
-            Math.random() < 0.05 && (d += this.randomBetween(200, 600)),
-            await this.sleep(d));
+        }
+        if (text.trim()) return text.trim();
+      }
+      // Headings - full text content
+      if (tagName.match(/^h[1-6]$/)) {
+        const text = element.textContent;
+        if (text?.trim()) return text.trim().substring(0, 100);
+      }
+      // Direct text nodes
+      let directText = '';
+      for (let i = 0; i < element.childNodes.length; i++) {
+        const node = element.childNodes[i];
+        if (node.nodeType === Node.TEXT_NODE) {
+          directText += node.textContent || '';
         }
       }
-      async typeCharacter(e, t) {
-        const n = t.charCodeAt(0);
-        (e.dispatchEvent(
-          new KeyboardEvent('keydown', {
-            key: t,
-            code: `Key${t.toUpperCase()}`,
-            keyCode: n,
-            which: n,
-            bubbles: !0,
-            cancelable: !0,
-          })
-        ),
-          e.dispatchEvent(
-            new KeyboardEvent('keypress', {
-              key: t,
-              code: `Key${t.toUpperCase()}`,
-              keyCode: n,
-              which: n,
-              bubbles: !0,
-              cancelable: !0,
-            })
-          ),
-          e instanceof HTMLInputElement || e instanceof HTMLTextAreaElement
-            ? ((e.value += t), e.dispatchEvent(new Event('input', { bubbles: !0 })))
-            : 'true' === e.getAttribute('contenteditable') &&
-              document.execCommand('insertText', !1, t),
-          e.dispatchEvent(
-            new KeyboardEvent('keyup', {
-              key: t,
-              code: `Key${t.toUpperCase()}`,
-              keyCode: n,
-              which: n,
-              bubbles: !0,
-              cancelable: !0,
-            })
-          ));
+      if (directText.trim() && directText.trim().length >= 3) {
+        const text = directText.trim();
+        return text.length > 100 ? text.substring(0, 100) + '...' : text;
       }
-      async typeBackspace(e) {
-        (e.dispatchEvent(
-          new KeyboardEvent('keydown', {
-            key: 'Backspace',
-            code: 'Backspace',
-            keyCode: 8,
-            which: 8,
-            bubbles: !0,
-            cancelable: !0,
-          })
-        ),
-          e instanceof HTMLInputElement || e instanceof HTMLTextAreaElement
-            ? ((e.value = e.value.slice(0, -1)),
-              e.dispatchEvent(new Event('input', { bubbles: !0 })))
-            : 'true' === e.getAttribute('contenteditable') && document.execCommand('delete', !1),
-          e.dispatchEvent(
-            new KeyboardEvent('keyup', {
-              key: 'Backspace',
-              code: 'Backspace',
-              keyCode: 8,
-              which: 8,
-              bubbles: !0,
-              cancelable: !0,
-            })
-          ));
-      }
-      async humanScroll(e, t = {}) {
-        const { duration: n = 800, easing: s = 'human', addNoise: a = !0 } = t,
-          i = window.scrollY;
-        let o;
-        if ('number' == typeof e) o = e;
-        else {
-          const t = e.getBoundingClientRect();
-          o = i + t.top - window.innerHeight / 3;
-        }
-        const r = o - i,
-          c = performance.now();
-        return new Promise((e) => {
-          const t = () => {
-            const o = performance.now() - c,
-              l = Math.min(o / n, 1);
-            let d;
-            switch (s) {
-              case 'linear':
-                d = l;
-                break;
-              case 'easeInOut':
-                d = this.easeInOutCubic(l);
-                break;
-              default:
-                d = this.humanEasing(l);
-            }
-            let p = i + r * d;
-            (a && l < 1 && (p += this.randomBetween(-3, 3)),
-              window.scrollTo(0, p),
-              l < 1 ? requestAnimationFrame(t) : setTimeout(e, this.randomBetween(100, 300)));
-          };
-          requestAnimationFrame(t);
-        });
-      }
-      async readingScroll(e = 300, t = 1e3) {
-        const n = document.documentElement.scrollHeight,
-          s = window.innerHeight;
-        let a = window.scrollY;
-        for (; a + s < n; ) {
-          const n = e + this.randomBetween(-50, 100);
-          (await this.humanScroll(a + n),
-            (a = window.scrollY),
-            await this.randomDelay(0.5 * t, 1.5 * t));
+      return '';
+    }
+    /**
+     * Get or create a reference ID for an element
+     */
+    getOrCreateRefId(element) {
+      // Check if already mapped
+      for (const [id, ref] of this.elementMap.entries()) {
+        if (ref.ref.deref() === element) {
+          return id;
         }
       }
-      maskWebdriverProperty() {
-        try {
-          Object.defineProperty(navigator, 'webdriver', { get: () => {}, configurable: !0 });
-        } catch (e) {
-          console.warn('[HumanSimulator] Could not mask webdriver property:', e);
+      // Create new ref
+      const refId = `fuse_ref_${++this.refCounter}`;
+      this.elementMap.set(refId, {
+        ref: new WeakRef(element),
+        role: this.getRole(element),
+        label: this.getLabel(element),
+      });
+      return refId;
+    }
+    /**
+     * Get element by ref ID
+     */
+    getElementByRefId(refId) {
+      const ref = this.elementMap.get(refId);
+      if (!ref) return null;
+      const element = ref.ref.deref();
+      if (!element) {
+        this.elementMap.delete(refId);
+        return null;
+      }
+      return element;
+    }
+    /**
+     * Get important attributes for an element
+     */
+    getImportantAttributes(element) {
+      const attrs = {};
+      // Href for links
+      const href = element.getAttribute('href');
+      if (href) attrs.href = href;
+      // Type for inputs
+      const type = element.getAttribute('type');
+      if (type) attrs.type = type;
+      // Placeholder
+      const placeholder = element.getAttribute('placeholder');
+      if (placeholder) attrs.placeholder = placeholder;
+      // Disabled state
+      if (element.hasAttribute('disabled')) attrs.disabled = 'true';
+      // Checked state
+      if (element.checked) attrs.checked = 'true';
+      return attrs;
+    }
+    /**
+     * Check if element is visible
+     */
+    isVisible(element) {
+      const style = window.getComputedStyle(element);
+      if (style.display === 'none') return false;
+      if (style.visibility === 'hidden') return false;
+      if (style.opacity === '0') return false;
+      return element.offsetWidth > 0 && element.offsetHeight > 0;
+    }
+    /**
+     * Check if element is in viewport
+     */
+    isInViewport(element) {
+      const rect = element.getBoundingClientRect();
+      return (
+        rect.top < window.innerHeight &&
+        rect.bottom > 0 &&
+        rect.left < window.innerWidth &&
+        rect.right > 0
+      );
+    }
+    /**
+     * Check if element is interactive
+     */
+    isInteractive(element) {
+      const tagName = element.tagName.toLowerCase();
+      if (INTERACTIVE_ELEMENTS.includes(tagName)) return true;
+      if (element.getAttribute('onclick')) return true;
+      if (element.getAttribute('tabindex') !== null) return true;
+      if (element.getAttribute('role') === 'button') return true;
+      if (element.getAttribute('role') === 'link') return true;
+      if (element.getAttribute('contenteditable') === 'true') return true;
+      return false;
+    }
+    /**
+     * Check if element is a landmark
+     */
+    isLandmark(element) {
+      const tagName = element.tagName.toLowerCase();
+      return LANDMARK_ELEMENTS.includes(tagName) || element.getAttribute('role') !== null;
+    }
+    /**
+     * Get viewport dimensions
+     */
+    getViewport() {
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+    }
+    /**
+     * Cleanup stale references
+     */
+    cleanupRefs() {
+      for (const [id, ref] of this.elementMap.entries()) {
+        if (!ref.ref.deref()) {
+          this.elementMap.delete(id);
         }
       }
-      getRandomUserAgent() {
-        const e = [
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
-        ];
-        return e[Math.floor(Math.random() * e.length)];
+    }
+    /**
+     * Click an element by ref ID
+     */
+    async clickElement(refId) {
+      const element = this.getElementByRefId(refId);
+      if (!element) return false;
+      try {
+        element.focus();
+        element.click();
+        return true;
+      } catch {
+        return false;
       }
-      getRealisticBrowserProfile() {
-        return {
-          screenWidth: [1920, 1680, 1440, 1366, 1280][Math.floor(5 * Math.random())],
-          screenHeight: [1080, 1050, 900, 768][Math.floor(4 * Math.random())],
-          colorDepth: 24,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          language: navigator.language,
-          platform: navigator.platform,
-          doNotTrack: Math.random() > 0.5 ? '1' : null,
-          hardwareConcurrency: [4, 8, 12, 16][Math.floor(4 * Math.random())],
+    }
+    /**
+     * Type into an element by ref ID
+     */
+    async typeIntoElement(refId, text, options = {}) {
+      const element = this.getElementByRefId(refId);
+      if (!element) return false;
+      try {
+        element.focus();
+        if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+          if (options.clear) {
+            element.value = '';
+          }
+          element.value += text;
+          element.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }));
+          element.dispatchEvent(new Event('change', { bubbles: true }));
+        } else if (element.getAttribute('contenteditable') === 'true') {
+          if (options.clear) {
+            element.innerHTML = '';
+          }
+          element.textContent = (element.textContent || '') + text;
+          element.dispatchEvent(new InputEvent('input', { bubbles: true }));
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  }
+  // Export singleton
+  const accessibilityTree = new AccessibilityTreeGenerator(); // ./src/v5/content/utils/HumanBehaviorSimulator.ts
+
+  /**
+   * Fuse Connect v6 - Human Behavior Simulator
+   *
+   * Implements techniques to make browser automation appear more human-like:
+   * - Randomized timing and delays
+   * - Realistic mouse movements with Bezier curves
+   * - Natural typing with variable speed and occasional typos
+   * - Human-like scrolling patterns
+   * - Session management helpers
+   *
+   * Based on 2024 best practices for bypassing bot detection.
+   */
+  class HumanBehaviorSimulator {
+    constructor() {
+      this.lastMousePosition = { x: 0, y: 0 };
+      this.isMoving = false;
+      // Track actual mouse position when available
+      document.addEventListener('mousemove', (e) => {
+        if (!this.isMoving) {
+          this.lastMousePosition = { x: e.clientX, y: e.clientY };
+        }
+      });
+    }
+    // ============================================
+    // TIMING & DELAYS
+    // ============================================
+    /**
+     * Wait for a random duration within a range (human-like variance)
+     */
+    async randomDelay(minMs, maxMs) {
+      const delay = this.randomBetween(minMs, maxMs);
+      await this.sleep(delay);
+    }
+    /**
+     * Human-like delay with natural distribution (more likely to be near middle)
+     */
+    async humanDelay(baseMs = 500) {
+      // Use gaussian-like distribution
+      const variance = baseMs * 0.4;
+      const delay = this.gaussianRandom(baseMs, variance);
+      await this.sleep(Math.max(50, delay));
+    }
+    /**
+     * Add micro-delays between actions (100-500ms)
+     */
+    async microPause() {
+      await this.randomDelay(100, 500);
+    }
+    /**
+     * Add thinking pause (500-2000ms, like a human reading/thinking)
+     */
+    async thinkingPause() {
+      await this.randomDelay(500, 2000);
+    }
+    // ============================================
+    // MOUSE MOVEMENTS
+    // ============================================
+    /**
+     * Move mouse to target using Bezier curve (natural movement)
+     */
+    async moveMouse(target, options) {
+      const duration = options?.duration ?? this.randomBetween(200, 500);
+      const steps = options?.steps ?? Math.max(10, Math.floor(duration / 16));
+      const start = { ...this.lastMousePosition };
+      const controlPoints = this.generateBezierControlPoints(start, target);
+      this.isMoving = true;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const point = this.bezierPoint(t, start, controlPoints[0], controlPoints[1], target);
+        // Add slight noise to make movement less perfect
+        const noise = this.randomBetween(-2, 2);
+        const noisyPoint = {
+          x: point.x + noise,
+          y: point.y + noise,
         };
+        // Dispatch mouse move event
+        this.dispatchMouseEvent('mousemove', noisyPoint);
+        this.lastMousePosition = noisyPoint;
+        await this.sleep(duration / steps);
       }
-      sleep(e) {
-        return new Promise((t) => setTimeout(t, e));
+      this.isMoving = false;
+    }
+    /**
+     * Move to element with human-like behavior
+     */
+    async moveToElement(element) {
+      const rect = element.getBoundingClientRect();
+      // Aim for a random point within the element (not always center)
+      const targetX = rect.left + this.randomBetween(rect.width * 0.2, rect.width * 0.8);
+      const targetY = rect.top + this.randomBetween(rect.height * 0.2, rect.height * 0.8);
+      await this.moveMouse({ x: targetX, y: targetY });
+    }
+    /**
+     * Human-like click with optional movement first
+     */
+    async humanClick(element, options = {}) {
+      const {
+        moveFirst = true,
+        prePauseMin = 50,
+        prePauseMax = 150,
+        postPauseMin = 50,
+        postPauseMax = 200,
+      } = options;
+      // Move to element first (like a human would)
+      if (moveFirst) {
+        await this.moveToElement(element);
+        await this.randomDelay(prePauseMin, prePauseMax);
       }
-      randomBetween(e, t) {
-        return Math.random() * (t - e) + e;
+      const rect = element.getBoundingClientRect();
+      const clickX = rect.left + rect.width / 2;
+      const clickY = rect.top + rect.height / 2;
+      // Dispatch mousedown, mouseup, click sequence
+      this.dispatchMouseEvent('mousedown', { x: clickX, y: clickY }, element);
+      await this.sleep(this.randomBetween(50, 120)); // Hold duration
+      this.dispatchMouseEvent('mouseup', { x: clickX, y: clickY }, element);
+      this.dispatchMouseEvent('click', { x: clickX, y: clickY }, element);
+      await this.randomDelay(postPauseMin, postPauseMax);
+    }
+    /**
+     * Double click with human timing
+     */
+    async humanDoubleClick(element) {
+      await this.humanClick(element, { postPauseMin: 50, postPauseMax: 150 });
+      await this.humanClick(element, { moveFirst: false });
+      this.dispatchMouseEvent('dblclick', this.lastMousePosition, element);
+    }
+    // ============================================
+    // TYPING SIMULATION
+    // ============================================
+    /**
+     * Type text with human-like speed and optional typos
+     */
+    async humanType(element, text, options = {}) {
+      const {
+        minDelay = 50,
+        maxDelay = 150,
+        typoChance = 0.02, // 2% chance of typo
+        correctTypos = true,
+        pauseOnPunctuation = true,
+      } = options;
+      // Focus the element first
+      element.focus();
+      await this.microPause();
+      const punctuation = ['.', ',', '!', '?', ';', ':'];
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        // Occasionally make a typo and correct it
+        if (typoChance > 0 && Math.random() < typoChance && correctTypos) {
+          const nearbyKeys = this.getNearbyKeys(char);
+          if (nearbyKeys.length > 0) {
+            const typoChar = nearbyKeys[Math.floor(Math.random() * nearbyKeys.length)];
+            await this.typeCharacter(element, typoChar);
+            await this.randomDelay(100, 300);
+            await this.typeBackspace(element);
+            await this.randomDelay(50, 150);
+          }
+        }
+        // Type the actual character
+        await this.typeCharacter(element, char);
+        // Variable delay between keystrokes
+        let delay = this.randomBetween(minDelay, maxDelay);
+        // Longer pause after punctuation (thinking time)
+        if (pauseOnPunctuation && punctuation.includes(char)) {
+          delay += this.randomBetween(100, 400);
+        }
+        // Occasional longer pauses (like thinking)
+        if (Math.random() < 0.05) {
+          delay += this.randomBetween(200, 600);
+        }
+        await this.sleep(delay);
       }
-      gaussianRandom(e, t) {
-        const n = Math.random(),
-          s = Math.random();
-        return Math.sqrt(-2 * Math.log(n)) * Math.cos(2 * Math.PI * s) * t + e;
+    }
+    /**
+     * Type a single character with proper events
+     */
+    async typeCharacter(element, char) {
+      const keyCode = char.charCodeAt(0);
+      // Dispatch key events
+      element.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: char,
+          code: `Key${char.toUpperCase()}`,
+          keyCode,
+          which: keyCode,
+          bubbles: true,
+          cancelable: true,
+        })
+      );
+      element.dispatchEvent(
+        new KeyboardEvent('keypress', {
+          key: char,
+          code: `Key${char.toUpperCase()}`,
+          keyCode,
+          which: keyCode,
+          bubbles: true,
+          cancelable: true,
+        })
+      );
+      // Update input value
+      if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+        element.value += char;
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+      } else if (element.getAttribute('contenteditable') === 'true') {
+        // For contenteditable, insert text at cursor
+        document.execCommand('insertText', false, char);
       }
-      generateBezierControlPoints(e, t) {
-        const n = t.x - e.x,
-          s = t.y - e.y;
-        return [
-          {
-            x: e.x + 0.3 * n + this.randomBetween(-30, 30),
-            y: e.y + 0.1 * s + this.randomBetween(-30, 30),
-          },
-          {
-            x: e.x + 0.7 * n + this.randomBetween(-30, 30),
-            y: e.y + 0.9 * s + this.randomBetween(-30, 30),
-          },
-        ];
+      element.dispatchEvent(
+        new KeyboardEvent('keyup', {
+          key: char,
+          code: `Key${char.toUpperCase()}`,
+          keyCode,
+          which: keyCode,
+          bubbles: true,
+          cancelable: true,
+        })
+      );
+    }
+    /**
+     * Type backspace
+     */
+    async typeBackspace(element) {
+      element.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Backspace',
+          code: 'Backspace',
+          keyCode: 8,
+          which: 8,
+          bubbles: true,
+          cancelable: true,
+        })
+      );
+      if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+        element.value = element.value.slice(0, -1);
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+      } else if (element.getAttribute('contenteditable') === 'true') {
+        document.execCommand('delete', false);
       }
-      bezierPoint(e, t, n, s, a) {
-        const i = e * e,
-          o = i * e,
-          r = 1 - e,
-          c = r * r,
-          l = c * r;
-        return {
-          x: l * t.x + 3 * c * e * n.x + 3 * r * i * s.x + o * a.x,
-          y: l * t.y + 3 * c * e * n.y + 3 * r * i * s.y + o * a.y,
-        };
+      element.dispatchEvent(
+        new KeyboardEvent('keyup', {
+          key: 'Backspace',
+          code: 'Backspace',
+          keyCode: 8,
+          which: 8,
+          bubbles: true,
+          cancelable: true,
+        })
+      );
+    }
+    // ============================================
+    // SCROLLING
+    // ============================================
+    /**
+     * Human-like scroll to position
+     */
+    async humanScroll(target, options = {}) {
+      const { duration = 800, easing = 'human', addNoise = true } = options;
+      const startY = window.scrollY;
+      let endY;
+      if (typeof target === 'number') {
+        endY = target;
+      } else {
+        const rect = target.getBoundingClientRect();
+        endY = startY + rect.top - window.innerHeight / 3; // Scroll element to upper third
       }
-      dispatchMouseEvent(e, t, n) {
-        const s = new MouseEvent(e, {
-          bubbles: !0,
-          cancelable: !0,
-          clientX: t.x,
-          clientY: t.y,
-          view: window,
-        });
-        (n || document.elementFromPoint(t.x, t.y) || document.body).dispatchEvent(s);
-      }
-      easeInOutCubic(e) {
-        return e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;
-      }
-      humanEasing(e) {
-        return 1 - Math.pow(1 - e, 3);
-      }
-      getNearbyKeys(e) {
-        return (
-          {
-            q: ['w', 'a'],
-            w: ['q', 'e', 's'],
-            e: ['w', 'r', 'd'],
-            r: ['e', 't', 'f'],
-            t: ['r', 'y', 'g'],
-            y: ['t', 'u', 'h'],
-            u: ['y', 'i', 'j'],
-            i: ['u', 'o', 'k'],
-            o: ['i', 'p', 'l'],
-            p: ['o', 'l'],
-            a: ['q', 's', 'z'],
-            s: ['a', 'w', 'd', 'x'],
-            d: ['s', 'e', 'f', 'c'],
-            f: ['d', 'r', 'g', 'v'],
-            g: ['f', 't', 'h', 'b'],
-            h: ['g', 'y', 'j', 'n'],
-            j: ['h', 'u', 'k', 'm'],
-            k: ['j', 'i', 'l'],
-            l: ['k', 'o', 'p'],
-            z: ['a', 'x'],
-            x: ['z', 's', 'c'],
-            c: ['x', 'd', 'v'],
-            v: ['c', 'f', 'b'],
-            b: ['v', 'g', 'n'],
-            n: ['b', 'h', 'm'],
-            m: ['n', 'j'],
-          }[e.toLowerCase()] || []
-        );
-      }
-    })(),
-    c = new (class {
-      constructor() {
-        ((this.lastDetection = null), (this.bypassAttempts = 0), (this.maxAttempts = 3));
-      }
-      detectCaptcha() {
-        console.log('[CaptchaHandler] Scanning for CAPTCHA challenges...');
-        const e = this.detectRecaptchaV2();
-        if (e.detected) return ((this.lastDetection = e), e);
-        const t = this.detectRecaptchaV3();
-        if (t.detected) return ((this.lastDetection = t), t);
-        const n = this.detectHCaptcha();
-        if (n.detected) return ((this.lastDetection = n), n);
-        const s = this.detectCloudflareTurnstile();
-        if (s.detected) return ((this.lastDetection = s), s);
-        const a = this.detectCloudflareChallenge();
-        if (a.detected) return ((this.lastDetection = a), a);
-        const i = this.detectGenericVerification();
-        return i.detected
-          ? ((this.lastDetection = i), i)
-          : { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
-      }
-      async attemptBypass() {
-        const e = this.lastDetection || this.detectCaptcha();
-        if (!e.detected)
-          return {
-            success: !0,
-            type: null,
-            message: 'No CAPTCHA detected',
-            requiresManualIntervention: !1,
-          };
-        if (this.bypassAttempts >= this.maxAttempts)
-          return {
-            success: !1,
-            type: e.type,
-            message: 'Max bypass attempts reached',
-            requiresManualIntervention: !0,
-          };
-        (this.bypassAttempts++,
-          console.log(
-            `[CaptchaHandler] Attempting bypass for ${e.type} (attempt ${this.bypassAttempts}/${this.maxAttempts})`
-          ));
-        try {
-          switch (e.type) {
-            case 'recaptcha-v2':
-              return await this.bypassRecaptchaV2(e);
-            case 'hcaptcha':
-              return await this.bypassHCaptcha(e);
-            case 'cloudflare-turnstile':
-              return await this.bypassTurnstile(e);
-            case 'cloudflare-challenge':
-              return await this.handleCloudflareChallenge(e);
-            case 'generic-checkbox':
-              return await this.bypassGenericCheckbox(e);
+      const distance = endY - startY;
+      const startTime = performance.now();
+      return new Promise((resolve) => {
+        const step = () => {
+          const elapsed = performance.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          let easedProgress;
+          switch (easing) {
+            case 'linear':
+              easedProgress = progress;
+              break;
+            case 'easeInOut':
+              easedProgress = this.easeInOutCubic(progress);
+              break;
+            case 'human':
             default:
-              return {
-                success: !1,
-                type: e.type,
-                message: 'Unknown CAPTCHA type - manual intervention required',
-                requiresManualIntervention: !0,
-              };
+              // Human scrolling is usually fast start, slow end
+              easedProgress = this.humanEasing(progress);
+              break;
           }
-        } catch (t) {
-          return (
-            console.error('[CaptchaHandler] Bypass error:', t),
-            {
-              success: !1,
-              type: e.type,
-              message: `Bypass failed: ${t}`,
-              requiresManualIntervention: !0,
-            }
-          );
-        }
+          let scrollY = startY + distance * easedProgress;
+          // Add slight noise to make scrolling less mechanical
+          if (addNoise && progress < 1) {
+            scrollY += this.randomBetween(-3, 3);
+          }
+          window.scrollTo(0, scrollY);
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            // Small pause after scrolling (like reading)
+            setTimeout(resolve, this.randomBetween(100, 300));
+          }
+        };
+        requestAnimationFrame(step);
+      });
+    }
+    /**
+     * Scroll like reading a page (down in steps)
+     */
+    async readingScroll(stepHeight = 300, pauseMs = 1000) {
+      const pageHeight = document.documentElement.scrollHeight;
+      const viewHeight = window.innerHeight;
+      let currentY = window.scrollY;
+      while (currentY + viewHeight < pageHeight) {
+        const scrollAmount = stepHeight + this.randomBetween(-50, 100);
+        await this.humanScroll(currentY + scrollAmount);
+        currentY = window.scrollY;
+        await this.randomDelay(pauseMs * 0.5, pauseMs * 1.5);
       }
-      async waitForCaptchaSolved(e = 6e4) {
-        const t = Date.now();
-        for (; Date.now() - t < e; ) {
-          if (!this.detectCaptcha().detected)
-            return (
-              console.log('[CaptchaHandler] CAPTCHA solved or no longer detected'),
-              this.resetState(),
-              !0
-            );
-          if (this.checkSuccessIndicators())
-            return (
-              console.log('[CaptchaHandler] Success indicator detected'),
-              this.resetState(),
-              !0
-            );
-          await this.sleep(1e3);
-        }
-        return (console.log('[CaptchaHandler] Timeout waiting for CAPTCHA solution'), !1);
+    }
+    // ============================================
+    // ANTI-DETECTION HELPERS
+    // ============================================
+    /**
+     * Mask navigator.webdriver property
+     */
+    maskWebdriverProperty() {
+      try {
+        Object.defineProperty(navigator, 'webdriver', {
+          get: () => undefined,
+          configurable: true,
+        });
+      } catch (e) {
+        console.warn('[HumanSimulator] Could not mask webdriver property:', e);
       }
-      detectRecaptchaV2() {
-        const e = document.querySelectorAll(
-          'iframe[src*="recaptcha"], iframe[src*="google.com/recaptcha"]'
-        );
-        for (const t of e)
-          if (t.src.includes('anchor') || t.src.includes('bframe'))
+    }
+    /**
+     * Generate realistic user agent rotation
+     */
+    getRandomUserAgent() {
+      const userAgents = [
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+      ];
+      return userAgents[Math.floor(Math.random() * userAgents.length)];
+    }
+    /**
+     * Add realistic browser plugins/languages to mimic real user
+     */
+    getRealisticBrowserProfile() {
+      return {
+        screenWidth: [1920, 1680, 1440, 1366, 1280][Math.floor(Math.random() * 5)],
+        screenHeight: [1080, 1050, 900, 768][Math.floor(Math.random() * 4)],
+        colorDepth: 24,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        language: navigator.language,
+        platform: navigator.platform,
+        doNotTrack: Math.random() > 0.5 ? '1' : null,
+        hardwareConcurrency: [4, 8, 12, 16][Math.floor(Math.random() * 4)],
+      };
+    }
+    // ============================================
+    // PRIVATE HELPERS
+    // ============================================
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+    gaussianRandom(mean, stdev) {
+      const u1 = Math.random();
+      const u2 = Math.random();
+      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+      return z * stdev + mean;
+    }
+    generateBezierControlPoints(start, end) {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      // Control points create a slight curve
+      const cp1 = {
+        x: start.x + dx * 0.3 + this.randomBetween(-30, 30),
+        y: start.y + dy * 0.1 + this.randomBetween(-30, 30),
+      };
+      const cp2 = {
+        x: start.x + dx * 0.7 + this.randomBetween(-30, 30),
+        y: start.y + dy * 0.9 + this.randomBetween(-30, 30),
+      };
+      return [cp1, cp2];
+    }
+    bezierPoint(t, p0, p1, p2, p3) {
+      const t2 = t * t;
+      const t3 = t2 * t;
+      const mt = 1 - t;
+      const mt2 = mt * mt;
+      const mt3 = mt2 * mt;
+      return {
+        x: mt3 * p0.x + 3 * mt2 * t * p1.x + 3 * mt * t2 * p2.x + t3 * p3.x,
+        y: mt3 * p0.y + 3 * mt2 * t * p1.y + 3 * mt * t2 * p2.y + t3 * p3.y,
+      };
+    }
+    dispatchMouseEvent(type, position, target) {
+      const event = new MouseEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        clientX: position.x,
+        clientY: position.y,
+        view: window,
+      });
+      (target || document.elementFromPoint(position.x, position.y) || document.body).dispatchEvent(
+        event
+      );
+    }
+    easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+    humanEasing(t) {
+      // Fast start, gradual slowdown (like real scrolling)
+      return 1 - Math.pow(1 - t, 3);
+    }
+    getNearbyKeys(char) {
+      const keyboard = {
+        q: ['w', 'a'],
+        w: ['q', 'e', 's'],
+        e: ['w', 'r', 'd'],
+        r: ['e', 't', 'f'],
+        t: ['r', 'y', 'g'],
+        y: ['t', 'u', 'h'],
+        u: ['y', 'i', 'j'],
+        i: ['u', 'o', 'k'],
+        o: ['i', 'p', 'l'],
+        p: ['o', 'l'],
+        a: ['q', 's', 'z'],
+        s: ['a', 'w', 'd', 'x'],
+        d: ['s', 'e', 'f', 'c'],
+        f: ['d', 'r', 'g', 'v'],
+        g: ['f', 't', 'h', 'b'],
+        h: ['g', 'y', 'j', 'n'],
+        j: ['h', 'u', 'k', 'm'],
+        k: ['j', 'i', 'l'],
+        l: ['k', 'o', 'p'],
+        z: ['a', 'x'],
+        x: ['z', 's', 'c'],
+        c: ['x', 'd', 'v'],
+        v: ['c', 'f', 'b'],
+        b: ['v', 'g', 'n'],
+        n: ['b', 'h', 'm'],
+        m: ['n', 'j'],
+      };
+      return keyboard[char.toLowerCase()] || [];
+    }
+  }
+  // Export singleton
+  const humanSimulator = new HumanBehaviorSimulator(); // ./src/v5/content/utils/CaptchaHandler.ts
+
+  /**
+   * Fuse Connect v6 - CAPTCHA Handler
+   *
+   * Detects and attempts to handle common CAPTCHA challenges:
+   * - reCAPTCHA v2/v3
+   * - hCaptcha
+   * - Cloudflare Turnstile
+   * - Generic "Verify you are human" prompts
+   *
+   * Uses human behavior simulation to interact naturally with CAPTCHA elements.
+   */
+
+  class CaptchaHandler {
+    constructor() {
+      this.lastDetection = null;
+      this.bypassAttempts = 0;
+      this.maxAttempts = 3;
+    }
+    /**
+     * Detect if a CAPTCHA is present on the page
+     */
+    detectCaptcha() {
+      console.log('[CaptchaHandler] Scanning for CAPTCHA challenges...');
+      // Check for reCAPTCHA v2
+      const recaptchaV2 = this.detectRecaptchaV2();
+      if (recaptchaV2.detected) {
+        this.lastDetection = recaptchaV2;
+        return recaptchaV2;
+      }
+      // Check for reCAPTCHA v3 (invisible, harder to detect)
+      const recaptchaV3 = this.detectRecaptchaV3();
+      if (recaptchaV3.detected) {
+        this.lastDetection = recaptchaV3;
+        return recaptchaV3;
+      }
+      // Check for hCaptcha
+      const hcaptcha = this.detectHCaptcha();
+      if (hcaptcha.detected) {
+        this.lastDetection = hcaptcha;
+        return hcaptcha;
+      }
+      // Check for Cloudflare Turnstile
+      const turnstile = this.detectCloudflareTurnstile();
+      if (turnstile.detected) {
+        this.lastDetection = turnstile;
+        return turnstile;
+      }
+      // Check for Cloudflare challenge page
+      const cfChallenge = this.detectCloudflareChallenge();
+      if (cfChallenge.detected) {
+        this.lastDetection = cfChallenge;
+        return cfChallenge;
+      }
+      // Check for generic "I'm not a robot" checkboxes
+      const genericCheckbox = this.detectGenericVerification();
+      if (genericCheckbox.detected) {
+        this.lastDetection = genericCheckbox;
+        return genericCheckbox;
+      }
+      return {
+        detected: false,
+        type: null,
+        element: null,
+        iframe: null,
+        confidence: 0,
+      };
+    }
+    /**
+     * Attempt to bypass/solve the detected CAPTCHA using human simulation
+     */
+    async attemptBypass() {
+      const detection = this.lastDetection || this.detectCaptcha();
+      if (!detection.detected) {
+        return {
+          success: true,
+          type: null,
+          message: 'No CAPTCHA detected',
+          requiresManualIntervention: false,
+        };
+      }
+      if (this.bypassAttempts >= this.maxAttempts) {
+        return {
+          success: false,
+          type: detection.type,
+          message: 'Max bypass attempts reached',
+          requiresManualIntervention: true,
+        };
+      }
+      this.bypassAttempts++;
+      console.log(
+        `[CaptchaHandler] Attempting bypass for ${detection.type} (attempt ${this.bypassAttempts}/${this.maxAttempts})`
+      );
+      try {
+        switch (detection.type) {
+          case 'recaptcha-v2':
+            return await this.bypassRecaptchaV2(detection);
+          case 'hcaptcha':
+            return await this.bypassHCaptcha(detection);
+          case 'cloudflare-turnstile':
+            return await this.bypassTurnstile(detection);
+          case 'cloudflare-challenge':
+            return await this.handleCloudflareChallenge(detection);
+          case 'generic-checkbox':
+            return await this.bypassGenericCheckbox(detection);
+          default:
             return {
-              detected: !0,
-              type: 'recaptcha-v2',
-              element: document.querySelector('.g-recaptcha, .recaptcha-checkbox'),
-              iframe: t,
-              confidence: 0.95,
+              success: false,
+              type: detection.type,
+              message: 'Unknown CAPTCHA type - manual intervention required',
+              requiresManualIntervention: true,
             };
-        return window.grecaptcha
-          ? {
-              detected: !0,
-              type: 'recaptcha-v2',
-              element: document.querySelector('.g-recaptcha'),
-              iframe: null,
-              confidence: 0.8,
-            }
-          : { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
+        }
+      } catch (error) {
+        console.error('[CaptchaHandler] Bypass error:', error);
+        return {
+          success: false,
+          type: detection.type,
+          message: `Bypass failed: ${error}`,
+          requiresManualIntervention: true,
+        };
       }
-      detectRecaptchaV3() {
-        const e = document.querySelector('.grecaptcha-badge');
-        return e
-          ? { detected: !0, type: 'recaptcha-v3', element: e, iframe: null, confidence: 0.7 }
-          : { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
+    }
+    /**
+     * Wait for CAPTCHA to be solved (by user or automation)
+     */
+    async waitForCaptchaSolved(timeoutMs = 60000) {
+      const startTime = Date.now();
+      while (Date.now() - startTime < timeoutMs) {
+        const detection = this.detectCaptcha();
+        // Check if CAPTCHA is no longer blocking
+        if (!detection.detected) {
+          console.log('[CaptchaHandler] CAPTCHA solved or no longer detected');
+          this.resetState();
+          return true;
+        }
+        // Check for success indicators
+        if (this.checkSuccessIndicators()) {
+          console.log('[CaptchaHandler] Success indicator detected');
+          this.resetState();
+          return true;
+        }
+        await this.sleep(1000);
       }
-      detectHCaptcha() {
-        const e = document.querySelector('iframe[src*="hcaptcha"], iframe[src*="hcaptcha.com"]');
-        return e
-          ? {
-              detected: !0,
-              type: 'hcaptcha',
-              element: document.querySelector('.h-captcha'),
-              iframe: e,
-              confidence: 0.95,
-            }
-          : window.hcaptcha
-            ? {
-                detected: !0,
-                type: 'hcaptcha',
-                element: document.querySelector('.h-captcha'),
-                iframe: null,
-                confidence: 0.8,
-              }
-            : { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
-      }
-      detectCloudflareTurnstile() {
-        const e = document.querySelector('iframe[src*="challenges.cloudflare.com/turnstile"]');
-        if (e)
+      console.log('[CaptchaHandler] Timeout waiting for CAPTCHA solution');
+      return false;
+    }
+    // ============================================
+    // DETECTION METHODS
+    // ============================================
+    detectRecaptchaV2() {
+      // Look for reCAPTCHA iframe
+      const iframes = document.querySelectorAll(
+        'iframe[src*="recaptcha"], iframe[src*="google.com/recaptcha"]'
+      );
+      for (const iframe of iframes) {
+        if (iframe.src.includes('anchor') || iframe.src.includes('bframe')) {
+          // Also look for the checkbox element
+          const checkbox = document.querySelector('.g-recaptcha, .recaptcha-checkbox');
           return {
-            detected: !0,
-            type: 'cloudflare-turnstile',
-            element: e.parentElement,
-            iframe: e,
+            detected: true,
+            type: 'recaptcha-v2',
+            element: checkbox,
+            iframe,
             confidence: 0.95,
           };
-        const t = document.querySelector('.cf-turnstile');
-        return t
-          ? {
-              detected: !0,
-              type: 'cloudflare-turnstile',
-              element: t,
-              iframe: null,
-              confidence: 0.85,
-            }
-          : { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
-      }
-      detectCloudflareChallenge() {
-        return [
-          document.querySelector('#cf-challenge-running'),
-          document.querySelector('.cf-browser-verification'),
-          document.querySelector('[data-ray]'),
-          document.title.includes('Just a moment'),
-          document.title.includes('Checking your browser'),
-        ].filter(Boolean).length >= 2
-          ? {
-              detected: !0,
-              type: 'cloudflare-challenge',
-              element: document.body,
-              iframe: null,
-              confidence: 0.9,
-            }
-          : { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
-      }
-      detectGenericVerification() {
-        const e = document.body.innerText.toLowerCase();
-        if (
-          [
-            'verify you are human',
-            "i'm not a robot",
-            'prove you are not a robot',
-            'human verification',
-            'security check',
-            'bot detection',
-          ].find((t) => e.includes(t))
-        ) {
-          const e = Array.from(document.querySelectorAll('button, input[type="submit"]')).find(
-              (e) =>
-                e.textContent?.toLowerCase().includes('verify') ||
-                e.textContent?.toLowerCase().includes('continue') ||
-                e.textContent?.toLowerCase().includes('confirm')
-            ),
-            t = document.querySelectorAll('input[type="checkbox"]');
-          return {
-            detected: !0,
-            type: 'generic-checkbox',
-            element: e || t[0],
-            iframe: null,
-            confidence: 0.6,
-          };
         }
-        return { detected: !1, type: null, element: null, iframe: null, confidence: 0 };
       }
-      async bypassRecaptchaV2(e) {
-        console.log('[CaptchaHandler] Attempting reCAPTCHA v2 bypass...');
-        const t = document.querySelector('.recaptcha-checkbox-border');
-        if (
-          t &&
-          this.isElementVisible(t) &&
-          (await r.thinkingPause(),
-          await r.humanClick(t),
-          await this.sleep(2e3),
-          !this.detectRecaptchaV2().detected)
-        )
+      // Check for grecaptcha object
+      if (window.grecaptcha) {
+        return {
+          detected: true,
+          type: 'recaptcha-v2',
+          element: document.querySelector('.g-recaptcha'),
+          iframe: null,
+          confidence: 0.8,
+        };
+      }
+      return { detected: false, type: null, element: null, iframe: null, confidence: 0 };
+    }
+    detectRecaptchaV3() {
+      // reCAPTCHA v3 is invisible, look for badge
+      const badge = document.querySelector('.grecaptcha-badge');
+      if (badge) {
+        return {
+          detected: true,
+          type: 'recaptcha-v3',
+          element: badge,
+          iframe: null,
+          confidence: 0.7,
+        };
+      }
+      return { detected: false, type: null, element: null, iframe: null, confidence: 0 };
+    }
+    detectHCaptcha() {
+      // Look for hCaptcha iframe
+      const iframe = document.querySelector('iframe[src*="hcaptcha"], iframe[src*="hcaptcha.com"]');
+      if (iframe) {
+        const checkbox = document.querySelector('.h-captcha');
+        return {
+          detected: true,
+          type: 'hcaptcha',
+          element: checkbox,
+          iframe,
+          confidence: 0.95,
+        };
+      }
+      // Check for hcaptcha object
+      if (window.hcaptcha) {
+        return {
+          detected: true,
+          type: 'hcaptcha',
+          element: document.querySelector('.h-captcha'),
+          iframe: null,
+          confidence: 0.8,
+        };
+      }
+      return { detected: false, type: null, element: null, iframe: null, confidence: 0 };
+    }
+    detectCloudflareTurnstile() {
+      // Look for Turnstile iframe
+      const iframe = document.querySelector('iframe[src*="challenges.cloudflare.com/turnstile"]');
+      if (iframe) {
+        return {
+          detected: true,
+          type: 'cloudflare-turnstile',
+          element: iframe.parentElement,
+          iframe,
+          confidence: 0.95,
+        };
+      }
+      // Look for turnstile container
+      const container = document.querySelector('.cf-turnstile');
+      if (container) {
+        return {
+          detected: true,
+          type: 'cloudflare-turnstile',
+          element: container,
+          iframe: null,
+          confidence: 0.85,
+        };
+      }
+      return { detected: false, type: null, element: null, iframe: null, confidence: 0 };
+    }
+    detectCloudflareChallenge() {
+      // Cloudflare challenge page indicators
+      const indicators = [
+        document.querySelector('#cf-challenge-running'),
+        document.querySelector('.cf-browser-verification'),
+        document.querySelector('[data-ray]'),
+        document.title.includes('Just a moment'),
+        document.title.includes('Checking your browser'),
+      ];
+      const matchCount = indicators.filter(Boolean).length;
+      if (matchCount >= 2) {
+        return {
+          detected: true,
+          type: 'cloudflare-challenge',
+          element: document.body,
+          iframe: null,
+          confidence: 0.9,
+        };
+      }
+      return { detected: false, type: null, element: null, iframe: null, confidence: 0 };
+    }
+    detectGenericVerification() {
+      // Look for common verification patterns
+      const patterns = [
+        'verify you are human',
+        "i'm not a robot",
+        'prove you are not a robot',
+        'human verification',
+        'security check',
+        'bot detection',
+      ];
+      const bodyText = document.body.innerText.toLowerCase();
+      const matchingPattern = patterns.find((p) => bodyText.includes(p));
+      if (matchingPattern) {
+        // Try to find clickable elements
+        const buttons = Array.from(document.querySelectorAll('button, input[type="submit"]'));
+        const verifyButton = buttons.find(
+          (btn) =>
+            btn.textContent?.toLowerCase().includes('verify') ||
+            btn.textContent?.toLowerCase().includes('continue') ||
+            btn.textContent?.toLowerCase().includes('confirm')
+        );
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        return {
+          detected: true,
+          type: 'generic-checkbox',
+          element: verifyButton || checkboxes[0],
+          iframe: null,
+          confidence: 0.6,
+        };
+      }
+      return { detected: false, type: null, element: null, iframe: null, confidence: 0 };
+    }
+    // ============================================
+    // BYPASS METHODS
+    // ============================================
+    async bypassRecaptchaV2(detection) {
+      console.log('[CaptchaHandler] Attempting reCAPTCHA v2 bypass...');
+      // First, try clicking the checkbox if visible
+      const checkbox = document.querySelector('.recaptcha-checkbox-border');
+      if (checkbox && this.isElementVisible(checkbox)) {
+        // Add pre-click delay (human thinking time)
+        await humanSimulator.thinkingPause();
+        // Human-like click
+        await humanSimulator.humanClick(checkbox);
+        // Wait for response
+        await this.sleep(2000);
+        // Check if solved
+        const stillDetected = this.detectRecaptchaV2();
+        if (!stillDetected.detected) {
           return {
-            success: !0,
+            success: true,
             type: 'recaptcha-v2',
             message: 'reCAPTCHA checkbox clicked successfully',
-            requiresManualIntervention: !1,
+            requiresManualIntervention: false,
           };
-        const n = document.querySelector(
-          'iframe[src*="bframe"], iframe[title*="recaptcha challenge"]'
-        );
-        return n && this.isElementVisible(n)
-          ? {
-              success: !1,
-              type: 'recaptcha-v2',
-              message: 'Image challenge detected - manual intervention required',
-              requiresManualIntervention: !0,
-            }
-          : {
-              success: !1,
-              type: 'recaptcha-v2',
-              message: 'Could not interact with reCAPTCHA',
-              requiresManualIntervention: !0,
-            };
-      }
-      async bypassHCaptcha(e) {
-        console.log('[CaptchaHandler] Attempting hCaptcha bypass...');
-        const t = document.querySelector('.hcaptcha-checkbox, #checkbox');
-        return t &&
-          this.isElementVisible(t) &&
-          (await r.thinkingPause(),
-          await r.humanClick(t),
-          await this.sleep(2e3),
-          !this.detectHCaptcha().detected)
-          ? {
-              success: !0,
-              type: 'hcaptcha',
-              message: 'hCaptcha checkbox clicked successfully',
-              requiresManualIntervention: !1,
-            }
-          : {
-              success: !1,
-              type: 'hcaptcha',
-              message: 'hCaptcha requires manual intervention',
-              requiresManualIntervention: !0,
-            };
-      }
-      async bypassTurnstile(e) {
-        return (
-          console.log('[CaptchaHandler] Attempting Cloudflare Turnstile bypass...'),
-          await this.sleep(3e3),
-          this.detectCloudflareTurnstile().detected
-            ? (e.element && (await r.humanClick(e.element), await this.sleep(2e3)),
-              {
-                success: !1,
-                type: 'cloudflare-turnstile',
-                message: 'Turnstile requires manual intervention',
-                requiresManualIntervention: !0,
-              })
-            : {
-                success: !0,
-                type: 'cloudflare-turnstile',
-                message: 'Turnstile auto-solved',
-                requiresManualIntervention: !1,
-              }
-        );
-      }
-      async handleCloudflareChallenge(e) {
-        return (
-          console.log('[CaptchaHandler] Cloudflare challenge page detected, waiting...'),
-          await this.sleep(5e3),
-          document.title.includes('Just a moment') ||
-          document.querySelector('#cf-challenge-running')
-            ? {
-                success: !1,
-                type: 'cloudflare-challenge',
-                message: 'Cloudflare challenge requires patience or manual intervention',
-                requiresManualIntervention: !0,
-              }
-            : {
-                success: !0,
-                type: 'cloudflare-challenge',
-                message: 'Cloudflare challenge passed',
-                requiresManualIntervention: !1,
-              }
-        );
-      }
-      async bypassGenericCheckbox(e) {
-        return (
-          console.log('[CaptchaHandler] Attempting generic verification bypass...'),
-          e.element
-            ? (await r.thinkingPause(),
-              await r.humanClick(e.element),
-              await this.sleep(1500),
-              {
-                success: !0,
-                type: 'generic-checkbox',
-                message: 'Clicked verification element',
-                requiresManualIntervention: !1,
-              })
-            : {
-                success: !1,
-                type: 'generic-checkbox',
-                message: 'No clickable verification element found',
-                requiresManualIntervention: !0,
-              }
-        );
-      }
-      checkSuccessIndicators() {
-        return [
-          document.querySelector('.recaptcha-checkbox-checked'),
-          document.querySelector('[data-success="true"]'),
-          document.querySelector('.success-icon'),
-        ].some((e) => null !== e);
-      }
-      isElementVisible(e) {
-        const t = e.getBoundingClientRect(),
-          n = window.getComputedStyle(e);
-        return (
-          t.width > 0 &&
-          t.height > 0 &&
-          'none' !== n.display &&
-          'hidden' !== n.visibility &&
-          '0' !== n.opacity
-        );
-      }
-      sleep(e) {
-        return new Promise((t) => setTimeout(t, e));
-      }
-      resetState() {
-        ((this.bypassAttempts = 0), (this.lastDetection = null));
-      }
-    })();
-  window.__FUSE_CONNECT_INITIALIZED__
-    ? console.log('[FuseConnect v6] Content script already initialized, skipping duplicate')
-    : ((window.__FUSE_CONNECT_INITIALIZED__ = !0),
-      new (class {
-        constructor() {
-          ((this.panel = null),
-            (this.isInitialized = !1),
-            (this.panelVisible = !1),
-            (this.chatReady = !1),
-            this.init());
         }
-        async init() {
-          'loading' === document.readyState
-            ? document.addEventListener('DOMContentLoaded', () => this.setup())
-            : this.setup();
-        }
-        setup() {
-          this.isInitialized ||
-            ((this.isInitialized = !0),
-            console.log('[FuseConnect v6] Content script initialized (panel hidden by default)'),
-            e.init({
-              onResponse: (e) => {
-                (console.log('[FuseConnect v6] AI Response received, length:', e.length),
-                  this.panel && this.panel.handleMessage({ type: 'RESPONSE_COMPLETE', content: e }),
-                  chrome.runtime.sendMessage({
-                    type: 'RESPONSE_COMPLETE',
-                    content: e.length > 5e4 ? e.substring(0, 5e4) : e,
-                  }));
-              },
-              onError: (e) => {
-                console.error('[FuseConnect v6] Chat bridge error:', e);
-              },
-            }),
-            this.startChatDetection(),
-            setTimeout(() => {
-              this.checkForCaptcha();
-            }, 2e3),
-            this.setupDebugUtils(),
-            this.setupMessageHandlers(),
-            this.setupKeyboardShortcuts(),
-            chrome.runtime.sendMessage({
-              type: 'CONTENT_SCRIPT_READY',
-              url: window.location.href,
-              hostname: window.location.hostname,
-            }));
-        }
-        startChatDetection() {
-          const t = () => {
-            const t = e.findElements();
-            t.isReady &&
-              !this.chatReady &&
-              ((this.chatReady = !0),
-              console.log('[FuseConnect v6] Chat is ready!'),
-              chrome.runtime.sendMessage({
-                type: 'CHAT_DETECTED',
-                elements: {
-                  hasInput: !!t.input,
-                  hasSendButton: !!t.sendButton,
-                  confidence: 1,
-                  isStreaming: !1,
-                },
-              }),
-              this.panel &&
-                this.panel.updateChatElements({
-                  input: t.input,
-                  sendButton: t.sendButton,
-                  messageContainer: null,
-                  lastMessage: null,
-                  isStreaming: !1,
-                  confidence: 1,
-                }));
+      }
+      // If image challenge appears, we need manual intervention
+      const challengeFrame = document.querySelector(
+        'iframe[src*="bframe"], iframe[title*="recaptcha challenge"]'
+      );
+      if (challengeFrame && this.isElementVisible(challengeFrame)) {
+        return {
+          success: false,
+          type: 'recaptcha-v2',
+          message: 'Image challenge detected - manual intervention required',
+          requiresManualIntervention: true,
+        };
+      }
+      return {
+        success: false,
+        type: 'recaptcha-v2',
+        message: 'Could not interact with reCAPTCHA',
+        requiresManualIntervention: true,
+      };
+    }
+    async bypassHCaptcha(detection) {
+      console.log('[CaptchaHandler] Attempting hCaptcha bypass...');
+      // Try to find and click the checkbox
+      const checkbox = document.querySelector('.hcaptcha-checkbox, #checkbox');
+      if (checkbox && this.isElementVisible(checkbox)) {
+        await humanSimulator.thinkingPause();
+        await humanSimulator.humanClick(checkbox);
+        await this.sleep(2000);
+        const stillDetected = this.detectHCaptcha();
+        if (!stillDetected.detected) {
+          return {
+            success: true,
+            type: 'hcaptcha',
+            message: 'hCaptcha checkbox clicked successfully',
+            requiresManualIntervention: false,
           };
-          (t(), setInterval(t, 2e3));
         }
-        setupDebugUtils() {
-          ((window.__FUSE_DEBUG = {
-            getLastResponse: () => {
-              const t = e.getLastResponse();
-              return (console.log('[FuseConnect Debug] Last response:', t), t);
-            },
-            sendTestMessage: (t) => {
-              (console.log('[FuseConnect Debug] Sending test message:', t), e.sendMessage(t));
-            },
-            checkExtensionContext: () => {
-              try {
-                const e = !!chrome.runtime?.id;
-                return (console.log('[FuseConnect Debug] Extension context valid:', e), e);
-              } catch (e) {
-                return (
-                  console.error('[FuseConnect Debug] Extension context check failed:', e),
-                  !1
-                );
-              }
-            },
-            findElements: () => {
-              const t = e.findElements();
-              return (console.log('[FuseConnect Debug] Found elements:', t), t);
-            },
-          }),
-            console.log('[FuseConnect v6] Debug utils available at window.__FUSE_DEBUG'));
-        }
-        showPanel() {
-          if (!this.panel) {
-            this.panel = new t(undefined);
-            const n = e.findElements();
-            n.isReady &&
-              this.panel.updateChatElements({
-                input: n.input,
-                sendButton: n.sendButton,
-                messageContainer: null,
-                lastMessage: null,
-                isStreaming: !1,
-                confidence: 1,
-              });
+      }
+      return {
+        success: false,
+        type: 'hcaptcha',
+        message: 'hCaptcha requires manual intervention',
+        requiresManualIntervention: true,
+      };
+    }
+    async bypassTurnstile(detection) {
+      console.log('[CaptchaHandler] Attempting Cloudflare Turnstile bypass...');
+      // Turnstile often auto-solves, just wait
+      await this.sleep(3000);
+      const stillDetected = this.detectCloudflareTurnstile();
+      if (!stillDetected.detected) {
+        return {
+          success: true,
+          type: 'cloudflare-turnstile',
+          message: 'Turnstile auto-solved',
+          requiresManualIntervention: false,
+        };
+      }
+      // Try clicking the widget
+      if (detection.element) {
+        await humanSimulator.humanClick(detection.element);
+        await this.sleep(2000);
+      }
+      return {
+        success: false,
+        type: 'cloudflare-turnstile',
+        message: 'Turnstile requires manual intervention',
+        requiresManualIntervention: true,
+      };
+    }
+    async handleCloudflareChallenge(detection) {
+      console.log('[CaptchaHandler] Cloudflare challenge page detected, waiting...');
+      // Cloudflare challenges usually auto-complete
+      await this.sleep(5000);
+      // Check if we're still on challenge page
+      const stillChallenging =
+        document.title.includes('Just a moment') || document.querySelector('#cf-challenge-running');
+      if (!stillChallenging) {
+        return {
+          success: true,
+          type: 'cloudflare-challenge',
+          message: 'Cloudflare challenge passed',
+          requiresManualIntervention: false,
+        };
+      }
+      return {
+        success: false,
+        type: 'cloudflare-challenge',
+        message: 'Cloudflare challenge requires patience or manual intervention',
+        requiresManualIntervention: true,
+      };
+    }
+    async bypassGenericCheckbox(detection) {
+      console.log('[CaptchaHandler] Attempting generic verification bypass...');
+      if (detection.element) {
+        await humanSimulator.thinkingPause();
+        await humanSimulator.humanClick(detection.element);
+        await this.sleep(1500);
+        return {
+          success: true,
+          type: 'generic-checkbox',
+          message: 'Clicked verification element',
+          requiresManualIntervention: false,
+        };
+      }
+      return {
+        success: false,
+        type: 'generic-checkbox',
+        message: 'No clickable verification element found',
+        requiresManualIntervention: true,
+      };
+    }
+    // ============================================
+    // HELPERS
+    // ============================================
+    checkSuccessIndicators() {
+      // Check for success checkmarks
+      const successIndicators = [
+        document.querySelector('.recaptcha-checkbox-checked'),
+        document.querySelector('[data-success="true"]'),
+        document.querySelector('.success-icon'),
+      ];
+      return successIndicators.some((el) => el !== null);
+    }
+    isElementVisible(element) {
+      const rect = element.getBoundingClientRect();
+      const style = window.getComputedStyle(element);
+      return (
+        rect.width > 0 &&
+        rect.height > 0 &&
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        style.opacity !== '0'
+      );
+    }
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    resetState() {
+      this.bypassAttempts = 0;
+      this.lastDetection = null;
+    }
+  }
+  // Export singleton
+  const captchaHandler = new CaptchaHandler(); // ./src/v5/content/index.ts
+
+  /**
+   * Fuse Connect v6 - Content Script Entry Point
+   *
+   * SIMPLIFIED VERSION - Uses SimpleChatBridge for direct Gemini interaction.
+   *
+   * The floating panel is NOT auto-injected. It only appears when:
+   * 1. User clicks "Open Panel" button in popup
+   * 2. User presses Ctrl+Shift+F keyboard shortcut
+   */
+
+  // MUST BE FIRST
+
+  class FuseConnectContentScript {
+    constructor() {
+      this.panel = null;
+      this.isInitialized = false;
+      this.panelVisible = false;
+      this.chatReady = false;
+      this.pageAgentId = null;
+      this.init();
+    }
+    async init() {
+      // Wait for DOM
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this.setup());
+      } else {
+        this.setup();
+      }
+    }
+    setup() {
+      if (this.isInitialized) return;
+      this.isInitialized = true;
+      console.log('[FuseConnect v6] Content script initialized (panel AUTO-OPEN disabled)');
+      // Auto-open panel disabled by default per user request
+      // try {
+      //   this.showPanel();
+      // } catch (e) {
+      //   console.error('[FuseConnect v6] Failed to auto-open panel:', e);
+      // }
+      // Initialize the simple chat bridge with callbacks
+      simpleChatBridge.init({
+        onResponse: (content) => {
+          console.log('[FuseConnect v6] AI Response received, length:', content.length);
+          // Forward to panel
+          if (this.panel) {
+            this.panel.handleMessage({
+              type: 'RESPONSE_COMPLETE',
+              content: content,
+            });
           }
-          (this.panel.show(),
-            (this.panelVisible = !0),
-            console.log('[FuseConnect v6] Panel shown'));
-        }
-        hidePanel() {
-          this.panel &&
-            (this.panel.hide(),
-            (this.panelVisible = !1),
-            console.log('[FuseConnect v6] Panel hidden'));
-        }
-        togglePanel() {
-          this.panelVisible ? this.hidePanel() : this.showPanel();
-        }
-        setupMessageHandlers() {
-          chrome.runtime.onMessage.addListener((t, n, s) => {
-            switch (t.type) {
-              case 'TOGGLE_PANEL':
-                return (this.togglePanel(), s({ success: !0, visible: this.panelVisible }), !0);
-              case 'SHOW_PANEL':
-                return (this.showPanel(), s({ success: !0 }), !0);
-              case 'HIDE_PANEL':
-                return (this.hidePanel(), s({ success: !0 }), !0);
-              case 'GET_PANEL_STATUS':
-                return (s({ visible: this.panelVisible, exists: !!this.panel }), !0);
-              case 'INJECT_MESSAGE':
-                return (
-                  this.injectMessage(t.content).then((e) => {
-                    s({ success: e });
-                  }),
-                  !0
-                );
-              case 'GET_LAST_RESPONSE':
-                const n = e.getLastResponse();
-                return (s({ response: n }), !0);
-              case 'GET_CHAT_STATUS':
-                const a = e.findElements();
-                return (
-                  s({ detected: a.isReady, confidence: a.isReady ? 1 : 0, isStreaming: !1 }),
-                  !0
-                );
-              case 'GET_ACCESSIBILITY_TREE':
-                const i = o.generateTree({
-                  filter: t.filter,
-                  maxDepth: t.maxDepth,
-                  refId: t.refId,
-                });
-                return (s(i), !0);
-              case 'CLICK_ELEMENT':
-                return (
-                  o.clickElement(t.refId).then((e) => {
-                    s({ success: e });
-                  }),
-                  !0
-                );
-              case 'TYPE_INTO_ELEMENT':
-                return (
-                  o.typeIntoElement(t.refId, t.text, { clear: t.clear }).then((e) => {
-                    s({ success: e });
-                  }),
-                  !0
-                );
-              case 'GET_ELEMENT_BY_REF':
-                const l = o.getElementByRefId(t.refId);
-                return (
-                  s({
-                    found: !!l,
-                    tagName: l?.tagName,
-                    textContent: l?.textContent?.substring(0, 200),
-                  }),
-                  !0
-                );
-              case 'HUMAN_TYPE':
-                const d = e.findElements(),
-                  p = t.refId ? o.getElementByRefId(t.refId) : d.input;
-                return (
-                  p
-                    ? r
-                        .humanType(p, t.text, {
-                          minDelay: t.minDelay || 50,
-                          maxDelay: t.maxDelay || 150,
-                          typoChance: t.typoChance || 0.02,
-                        })
-                        .then(() => s({ success: !0 }))
-                    : s({ success: !1, error: 'No target element' }),
-                  !0
-                );
-              case 'HUMAN_CLICK':
-                const h = t.refId ? o.getElementByRefId(t.refId) : null;
-                return (
-                  h
-                    ? r.humanClick(h).then(() => s({ success: !0 }))
-                    : s({ success: !1, error: 'No target element' }),
-                  !0
-                );
-              case 'HUMAN_SCROLL':
-                return (
-                  r.humanScroll(t.target || t.y || 500).then(() => {
-                    s({ success: !0 });
-                  }),
-                  !0
-                );
-              case 'DETECT_CAPTCHA':
-                const u = c.detectCaptcha();
-                return (s(u), !0);
-              case 'BYPASS_CAPTCHA':
-                return (
-                  c.attemptBypass().then((e) => {
-                    s(e);
-                  }),
-                  !0
-                );
-              case 'WAIT_FOR_CAPTCHA':
-                return (
-                  c.waitForCaptchaSolved(t.timeout || 6e4).then((e) => {
-                    s({ solved: e });
-                  }),
-                  !0
-                );
-              case 'CONNECTION_STATUS':
-              case 'AGENTS_UPDATE':
-              case 'CHANNELS_UPDATE':
-              case 'NOTIFICATION':
-                return (this.panel && this.panel.handleMessage(t), s({ success: !0 }), !0);
-              case 'NEW_MESSAGE':
-                if ((this.panel && this.panel.handleMessage(t), t.message)) {
-                  const e = t.message,
-                    n =
-                      e.from &&
-                      !e.from.includes('You') &&
-                      !e.from.includes('AI (Page)') &&
-                      !e.from.includes('Browser Agent'),
-                    s =
-                      e.content?.startsWith('[AI Response]') ||
-                      e.content?.startsWith('[AI → User]') ||
-                      e.content?.startsWith('[User → AI]') ||
-                      'ai-response' === e.messageType;
-                  (console.log('[FuseConnect v6] NEW_MESSAGE auto-inject check:', {
-                    from: e.from,
-                    isFromExternalAgent: n,
-                    isAIResponseEcho: s,
-                    hasContent: !!e.content,
-                  }),
-                    n &&
-                      e.content &&
-                      !s &&
-                      (console.log(
-                        '[FuseConnect v6] Auto-injecting external message from:',
-                        e.from
-                      ),
-                      this.injectMessage(e.content).then((e) => {
-                        e
-                          ? console.log('[FuseConnect v6] External message injected successfully')
-                          : console.warn('[FuseConnect v6] Failed to inject external message');
-                      })));
-                }
-                return (s({ success: !0 }), !0);
+          // Forward to background for relay
+          this.safeSendMessage({
+            type: 'RESPONSE_COMPLETE',
+            content: content.length > 50000 ? content.substring(0, 50000) : content,
+          });
+        },
+        onError: (error) => {
+          console.error('[FuseConnect v6] Chat bridge error:', error);
+        },
+      });
+      // Check for chat elements periodically
+      this.startChatDetection();
+      // Auto-detect CAPTCHA on page load (after short delay for iframes to load)
+      setTimeout(() => {
+        this.checkForCaptcha();
+      }, 2000);
+      // Setup debug utilities for console diagnostics
+      this.setupDebugUtils();
+      // Setup message handlers
+      this.setupMessageHandlers();
+      // Setup keyboard shortcuts
+      this.setupKeyboardShortcuts();
+      // Notify background that content script is ready
+      this.safeSendMessage({
+        type: 'CONTENT_SCRIPT_READY',
+        url: window.location.href,
+        hostname: window.location.hostname,
+      });
+    }
+    /**
+     * Periodically check for chat elements
+     */
+    startChatDetection() {
+      const checkElements = () => {
+        const elements = simpleChatBridge.findElements();
+        if (elements.isReady && !this.chatReady) {
+          this.chatReady = true;
+          console.log('[FuseConnect v6] Chat is ready!');
+          // Notify background
+          this.safeSendMessage(
+            {
+              type: 'CHAT_DETECTED',
+              elements: {
+                hasInput: !!elements.input,
+                hasSendButton: !!elements.sendButton,
+                confidence: 1,
+                isStreaming: false,
+              },
+            },
+            (response) => {
+              if (response?.agentId) {
+                this.pageAgentId = response.agentId;
+                console.log('[FuseConnect v6] Assigned Page Agent ID:', this.pageAgentId);
+              }
             }
-          });
-        }
-        setupKeyboardShortcuts() {
-          document.addEventListener('keydown', (e) => {
-            ((e.ctrlKey || e.metaKey) &&
-              e.shiftKey &&
-              'F' === e.key &&
-              (e.preventDefault(), this.togglePanel()),
-              (e.ctrlKey || e.metaKey) &&
-                e.shiftKey &&
-                'I' === e.key &&
-                (e.preventDefault(),
-                navigator.clipboard.readText().then((e) => {
-                  e && this.injectMessage(e);
-                })));
-          });
-        }
-        async injectMessage(t) {
-          console.log('[FuseConnect v6] Injecting message:', t.substring(0, 50));
-          const n = await e.sendMessage(t);
-          return (
-            n
-              ? console.log('[FuseConnect v6] Message sent successfully')
-              : console.error('[FuseConnect v6] Message send failed'),
-            n
           );
+          // Update panel if exists
+          if (this.panel) {
+            this.panel.updateChatElements({
+              input: elements.input,
+              sendButton: elements.sendButton,
+              messageContainer: null,
+              lastMessage: null,
+              isStreaming: false,
+              confidence: 1,
+              detectedAt: Date.now(),
+            });
+          }
+          // Pass agent ID to panel if available
+          if (this.panel && this.pageAgentId) {
+            this.panel.setAgentId(this.pageAgentId);
+          }
         }
-        checkForCaptcha() {
-          const e = c.detectCaptcha();
-          e.detected &&
-            (console.log(
-              `[FuseConnect v6] CAPTCHA detected: ${e.type} (confidence: ${e.confidence})`
-            ),
-            chrome.runtime.sendMessage({
-              type: 'CAPTCHA_DETECTED',
-              captcha: { type: e.type, confidence: e.confidence, url: window.location.href },
-            }));
+      };
+      // Check immediately and every 2 seconds
+      checkElements();
+      setInterval(checkElements, 2000);
+    }
+    /**
+     * Setup debug utilities accessible from browser console
+     */
+    setupDebugUtils() {
+      window.__FUSE_DEBUG = {
+        getLastResponse: () => {
+          const response = simpleChatBridge.getLastResponse();
+          console.log('[FuseConnect Debug] Last response:', response);
+          return response;
+        },
+        sendTestMessage: (msg) => {
+          console.log('[FuseConnect Debug] Sending test message:', msg);
+          simpleChatBridge.sendMessage(msg);
+        },
+        checkExtensionContext: () => {
+          try {
+            const isValid = !!chrome.runtime?.id;
+            console.log('[FuseConnect Debug] Extension context valid:', isValid);
+            return isValid;
+          } catch (e) {
+            console.error('[FuseConnect Debug] Extension context check failed:', e);
+            return false;
+          }
+        },
+        findElements: () => {
+          const elements = simpleChatBridge.findElements();
+          console.log('[FuseConnect Debug] Found elements:', elements);
+          return elements;
+        },
+      };
+      console.log('[FuseConnect v6] Debug utils available at window.__FUSE_DEBUG');
+    }
+    /**
+     * Show or create the floating panel
+     */
+    showPanel() {
+      // SECURITY/UX: Never show floating panel in iframes (like YouTube embeds or ads)
+      if (window.self !== window.top) {
+        return;
+      }
+      if (!this.panel) {
+        this.panel = createEnhancedFloatingPanel();
+        // Update with current detection state
+        const elements = simpleChatBridge.findElements();
+        if (elements.isReady) {
+          this.panel.updateChatElements({
+            input: elements.input,
+            sendButton: elements.sendButton,
+            messageContainer: null,
+            lastMessage: null,
+            isStreaming: false,
+            confidence: 1,
+            detectedAt: Date.now(),
+          });
         }
-      })());
+        // Pass agent ID if we already have it
+        if (this.pageAgentId) {
+          this.panel.setAgentId(this.pageAgentId);
+        }
+      }
+      this.panel.show();
+      this.panelVisible = true;
+      console.log('[FuseConnect v6] Panel shown');
+    }
+    /**
+     * Hide the floating panel
+     */
+    hidePanel() {
+      if (this.panel) {
+        this.panel.hide();
+        this.panelVisible = false;
+        console.log('[FuseConnect v6] Panel hidden');
+      }
+    }
+    /**
+     * Toggle panel visibility
+     */
+    togglePanel() {
+      if (this.panelVisible) {
+        this.hidePanel();
+      } else {
+        this.showPanel();
+      }
+    }
+    setupMessageHandlers() {
+      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        // CRITICAL: Check if extension context is still valid
+        if (!chrome.runtime?.id) {
+          return false;
+        }
+        // Safe wrapper for sendResponse to prevent "Extension context invalidated" errors
+        const safeSendResponse = (response) => {
+          try {
+            if (chrome.runtime?.id) {
+              sendResponse(response);
+            }
+          } catch (e) {
+            // Ignore context invalidation errors - expected during reloads
+            console.debug('[FuseConnect] Context invalidated during response sending');
+          }
+        };
+        try {
+          switch (message.type) {
+            case 'TOGGLE_PANEL':
+              this.togglePanel();
+              safeSendResponse({ success: true, visible: this.panelVisible });
+              return true;
+            case 'SHOW_PANEL':
+              try {
+                this.showPanel();
+                safeSendResponse({ success: true });
+              } catch (e) {
+                console.error('[FuseConnect] Failed to show panel:', e);
+                safeSendResponse({ success: false, error: e.message });
+              }
+              return true;
+            case 'HIDE_PANEL':
+              this.hidePanel();
+              safeSendResponse({ success: true });
+              return true;
+            case 'GET_PANEL_STATUS':
+              safeSendResponse({ visible: this.panelVisible, exists: !!this.panel });
+              return true;
+            case 'INJECT_MESSAGE':
+              this.injectMessage(message.content).then((success) => {
+                safeSendResponse({ success });
+              });
+              return true;
+            case 'GET_LAST_RESPONSE':
+              const response = simpleChatBridge.getLastResponse();
+              safeSendResponse({ response });
+              return true;
+            case 'GET_CHAT_STATUS':
+              const elements = simpleChatBridge.findElements();
+              safeSendResponse({
+                detected: elements.isReady,
+                confidence: elements.isReady ? 1 : 0,
+                isStreaming: false,
+              });
+              return true;
+            // Accessibility tree commands
+            case 'GET_ACCESSIBILITY_TREE':
+              const treeResult = accessibilityTree.generateTree({
+                filter: message.filter,
+                maxDepth: message.maxDepth,
+                refId: message.refId,
+              });
+              safeSendResponse(treeResult);
+              return true;
+            case 'CLICK_ELEMENT':
+              accessibilityTree.clickElement(message.refId).then((success) => {
+                safeSendResponse({ success });
+              });
+              return true;
+            case 'TYPE_INTO_ELEMENT':
+              accessibilityTree
+                .typeIntoElement(message.refId, message.text, {
+                  clear: message.clear,
+                })
+                .then((success) => {
+                  safeSendResponse({ success });
+                });
+              return true;
+            case 'GET_ELEMENT_BY_REF':
+              const el = accessibilityTree.getElementByRefId(message.refId);
+              safeSendResponse({
+                found: !!el,
+                tagName: el?.tagName,
+                textContent: el?.textContent?.substring(0, 200),
+              });
+              return true;
+            // Human simulation commands
+            case 'HUMAN_TYPE':
+              const typeElements = simpleChatBridge.findElements();
+              const typeTarget = message.refId
+                ? accessibilityTree.getElementByRefId(message.refId)
+                : typeElements.input;
+              if (typeTarget) {
+                humanSimulator
+                  .humanType(typeTarget, message.text, {
+                    minDelay: message.minDelay || 50,
+                    maxDelay: message.maxDelay || 150,
+                    typoChance: message.typoChance || 0.02,
+                  })
+                  .then(() => safeSendResponse({ success: true }));
+              } else {
+                safeSendResponse({ success: false, error: 'No target element' });
+              }
+              return true;
+            case 'HUMAN_CLICK':
+              const clickTarget = message.refId
+                ? accessibilityTree.getElementByRefId(message.refId)
+                : null;
+              if (clickTarget) {
+                humanSimulator
+                  .humanClick(clickTarget)
+                  .then(() => safeSendResponse({ success: true }));
+              } else {
+                safeSendResponse({ success: false, error: 'No target element' });
+              }
+              return true;
+            case 'HUMAN_SCROLL':
+              humanSimulator.humanScroll(message.target || message.y || 500).then(() => {
+                safeSendResponse({ success: true });
+              });
+              return true;
+            // CAPTCHA handling commands
+            case 'DETECT_CAPTCHA':
+              const detection = captchaHandler.detectCaptcha();
+              safeSendResponse(detection);
+              return true;
+            case 'BYPASS_CAPTCHA':
+              captchaHandler.attemptBypass().then((result) => {
+                safeSendResponse(result);
+              });
+              return true;
+            case 'WAIT_FOR_CAPTCHA':
+              captchaHandler.waitForCaptchaSolved(message.timeout || 60000).then((solved) => {
+                safeSendResponse({ solved });
+              });
+              return true;
+            // Forward state updates to panel if it exists
+            case 'CONNECTION_STATUS':
+            case 'AGENTS_UPDATE':
+            case 'CHANNELS_UPDATE':
+            case 'JOINED_CHANNELS_UPDATE':
+            case 'NOTIFICATION':
+              if (this.panel) {
+                this.panel.handleMessage(message);
+              }
+              safeSendResponse({ success: true });
+              return true;
+            case 'NEW_MESSAGE':
+              // Forward to panel for display if it exists
+              if (this.panel) {
+                this.panel.handleMessage(message);
+              }
+              // Handle message injection (works even if panel isn't open)
+              if (message.message) {
+                const msg = message.message;
+                // TARGETED INJECTION: If addressed specifically to this page agent
+                if (this.pageAgentId && msg.to === this.pageAgentId && msg.content) {
+                  console.log('[FuseConnect v6] Injecting targeted message:', msg.content);
+                  this.injectMessage(msg.content).then((success) => {
+                    if (success) console.log('[FuseConnect v6] Injection successful');
+                    else console.warn('[FuseConnect v6] Injection failed');
+                  });
+                }
+                // CHANNEL BROADCAST INJECTION: If from external agent on same channel
+                else if (msg.to === 'broadcast' && msg.content && msg.from) {
+                  const isExternalAgent =
+                    msg.from !== 'You' &&
+                    msg.from !== 'Browser Agent' &&
+                    !msg.from.includes('Browser Agent') &&
+                    msg.from !== this.pageAgentId;
+                  const isAIResponseEcho =
+                    msg.content.startsWith('[AI Response]') ||
+                    msg.content.startsWith('[AI → User]') ||
+                    msg.content.startsWith('[User → AI]') ||
+                    msg.messageType === 'ai-response';
+                  if (isExternalAgent && !isAIResponseEcho) {
+                    console.log('[FuseConnect v6] Injecting channel broadcast from:', msg.from);
+                    this.injectMessage(msg.content).then((success) => {
+                      if (success) console.log('[FuseConnect v6] Channel broadcast injected');
+                      else console.warn('[FuseConnect v6] Channel broadcast injection failed');
+                    });
+                  }
+                }
+              }
+              safeSendResponse({ success: true });
+              return true;
+          }
+        } catch (e) {
+          console.error('[FuseConnect] Content script message handler error:', e);
+          // Don't call sendResponse here for async cases as it might be too late,
+          // but for sync cases it prevents the "closed prematurely" error.
+          try {
+            safeSendResponse({ success: false, error: e.message || 'Unknown error' });
+          } catch (ignore) {
+            // ignore if response sent already
+          }
+        }
+      });
+    }
+    /**
+     * Safely send message to background
+     */
+    safeSendMessage(message, callback) {
+      if (!chrome.runtime?.id) return;
+      try {
+        chrome.runtime.sendMessage(message, (response) => {
+          // Access lastError to suppress "Unchecked runtime.lastError" warnings
+          const error = chrome.runtime.lastError;
+          if (callback && !error) {
+            callback(response);
+          }
+        });
+      } catch (e) {
+        // Ignore context invalidated errors
+      }
+    }
+    setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + Shift + F to toggle panel
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F') {
+          e.preventDefault();
+          this.togglePanel();
+        }
+        // Ctrl/Cmd + Shift + I to inject last clipboard as message
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+          e.preventDefault();
+          navigator.clipboard.readText().then((text) => {
+            if (text) this.injectMessage(text);
+          });
+        }
+      });
+    }
+    async injectMessage(content) {
+      console.log('[FuseConnect v6] Injecting message:', content.substring(0, 50));
+      const success = await simpleChatBridge.sendMessage(content);
+      if (success) {
+        console.log('[FuseConnect v6] Message sent successfully');
+      } else {
+        console.error('[FuseConnect v6] Message send failed');
+      }
+      return success;
+    }
+    /**
+     * Check for CAPTCHA on page load and notify if found
+     */
+    checkForCaptcha() {
+      const detection = captchaHandler.detectCaptcha();
+      if (detection.detected) {
+        console.log(
+          `[FuseConnect v6] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`
+        );
+        this.safeSendMessage({
+          type: 'CAPTCHA_DETECTED',
+          captcha: {
+            type: detection.type,
+            confidence: detection.confidence,
+            url: window.location.href,
+          },
+        });
+      }
+    }
+  }
+  // Initialize with guard to prevent multiple instances
+  if (!window.__FUSE_CONNECT_INITIALIZED__) {
+    window.__FUSE_CONNECT_INITIALIZED__ = true;
+    new FuseConnectContentScript();
+  } else {
+    console.log('[FuseConnect v6] Content script already initialized, skipping duplicate');
+  }
+
+  /******/
 })();
 //# sourceMappingURL=index.js.map

@@ -1,2 +1,458 @@
 #!/usr/bin/env node
-const{spawn,exec}=require("child_process"),path=require("path"),fs=require("fs"),os=require("os");function findProjectRoot(){let e=__dirname;const s=[path.resolve(e,"../../../.."),path.resolve(e,"../../.."),path.resolve(os.homedir(),"Desktop/A1-Inter-LLM-Com/The-New-Fuse"),path.resolve(os.homedir(),"projects/The-New-Fuse"),path.resolve(os.homedir(),"The-New-Fuse")];for(const e of s)try{const s=path.join(e,"package.json");if(fs.existsSync(s)){const n=JSON.parse(fs.readFileSync(s,"utf8"));if("the-new-fuse"===n.name||"@the-new-fuse/monorepo"===n.name)return e}}catch(e){}return process.env.TNF_PROJECT_ROOT?process.env.TNF_PROJECT_ROOT:path.resolve(e,"../../../..")}const PROJECT_ROOT=findProjectRoot(),LOG_FILE=path.join(os.homedir(),".tnf-native-host.log"),SERVICES={relay:{name:"TNF Relay",command:"pnpm",args:["run","relay"],cwd:"packages/relay-core",port:3001},backend:{name:"TNF Backend",command:"pnpm",args:["run","dev"],cwd:"apps/backend",port:3e3},frontend:{name:"TNF Frontend",command:"pnpm",args:["run","dev"],cwd:"apps/frontend",port:3002}},runningProcesses=new Map;function log(e){const s=`[${(new Date).toISOString()}] ${e}\n`;try{fs.appendFileSync(LOG_FILE,s)}catch(e){}}function readMessage(){return new Promise((e,s)=>{let n=[],t=null;process.stdin.on("readable",()=>{let r;for(;null!==(r=process.stdin.read());){if(n.push(r),null===t&&Buffer.concat(n).length>=4){const e=Buffer.concat(n);t=e.readUInt32LE(0),n=[e.slice(4)]}if(null!==t&&n.reduce((e,s)=>e+s.length,0)>=t){const r=Buffer.concat(n).slice(0,t);try{const s=JSON.parse(r.toString("utf8"));e(s)}catch(e){s(new Error("Failed to parse message"))}return}}}),process.stdin.on("end",()=>{s(new Error("stdin closed"))})})}function sendMessage(e){const s=JSON.stringify(e),n=Buffer.from(s,"utf8"),t=Buffer.alloc(4);t.writeUInt32LE(n.length,0),process.stdout.write(t),process.stdout.write(n)}function isPortInUse(e){return new Promise(s=>{exec(`lsof -i :${e}`,(e,n)=>{s(!e&&n.trim().length>0)})})}async function getServiceStatus(e){const s=SERVICES[e];if(!s)return{running:!1,error:"Unknown service"};const n=await isPortInUse(s.port),t=runningProcesses.has(e);return{name:s.name,running:n||t,port:s.port,pid:runningProcesses.get(e)?.pid||null}}async function getAllServicesStatus(){const e={};for(const[s]of Object.entries(SERVICES))e[s]=await getServiceStatus(s);return e}async function startService(e){const s=SERVICES[e];if(!s)return{success:!1,error:"Unknown service"};if((await getServiceStatus(e)).running)return{success:!0,message:`${s.name} is already running`,port:s.port};const n=path.join(PROJECT_ROOT,s.cwd);if(!fs.existsSync(n))return{success:!1,error:`Directory not found: ${s.cwd}`};log(`Starting ${s.name} in ${n}...`);try{const t=spawn(s.command,s.args,{cwd:n,detached:!0,stdio:["ignore","pipe","pipe"],shell:!0,env:{...process.env,FORCE_COLOR:"0"}});t.stdout.on("data",s=>{log(`[${e}] ${s.toString().trim()}`)}),t.stderr.on("data",s=>{log(`[${e}] ERROR: ${s.toString().trim()}`)}),t.on("error",s=>{log(`[${e}] Failed to start: ${s.message}`),runningProcesses.delete(e)}),t.on("exit",s=>{log(`[${e}] Exited with code ${s}`),runningProcesses.delete(e)}),t.unref(),runningProcesses.set(e,t),await new Promise(e=>setTimeout(e,3e3));const r=await getServiceStatus(e);return{success:r.running,message:r.running?`${s.name} started successfully`:`${s.name} failed to start`,port:s.port,pid:t.pid}}catch(s){return log(`Error starting ${e}: ${s.message}`),{success:!1,error:s.message}}}async function stopService(e){const s=SERVICES[e];return s?(log(`Stopping ${s.name}...`),new Promise(n=>{exec(`lsof -ti :${s.port} | xargs kill -9 2>/dev/null`,()=>{runningProcesses.delete(e),n({success:!0,message:`${s.name} stopped`})})})):{success:!1,error:"Unknown service"}}async function startAllServices(){const e={};for(const s of Object.keys(SERVICES))e[s]=await startService(s);return e}async function stopAllServices(){const e={};for(const s of Object.keys(SERVICES))e[s]=await stopService(s);return e}async function openTerminalWithCommand(e){const s=`cd "${PROJECT_ROOT}" && ${e}`,n=`\n    tell application "Terminal"\n      activate\n      do script "${s.replace(/"/g,'\\"')}"\n    end tell\n  `;return new Promise(t=>{exec(`osascript -e '${n.replace(/'/g,"'\"'\"'")}'`,(n,r,o)=>{n?(log(`Error opening terminal: ${n.message}`),t({action:"open-terminal_response",success:!1,error:n.message})):(log(`Opened Terminal with command: ${e}`),t({action:"open-terminal_response",success:!0,command:s}))})})}async function openFolder(e){const s=path.isAbsolute(e)?e:path.join(PROJECT_ROOT,e);return new Promise(e=>{exec(`open "${s}"`,n=>{n?(log(`Error opening folder: ${n.message}`),e({action:"open-folder_response",success:!1,error:n.message})):(log(`Opened Finder at: ${s}`),e({action:"open-folder_response",success:!0,path:s}))})})}async function handleMessage(e){log(`Received message: ${JSON.stringify(e)}`);try{switch(e.action){case"ping":return{action:"pong",timestamp:Date.now(),projectRoot:PROJECT_ROOT};case"status":return{action:"status_response",services:await getAllServicesStatus(),projectRoot:PROJECT_ROOT};case"start":return"all"===e.service?{action:"start_response",results:await startAllServices()}:{action:"start_response",result:await startService(e.service)};case"stop":return"all"===e.service?{action:"stop_response",results:await stopAllServices()}:{action:"stop_response",result:await stopService(e.service)};case"restart":return await stopService(e.service),await new Promise(e=>setTimeout(e,1e3)),{action:"restart_response",result:await startService(e.service)};case"logs":const s=e.lines||50;try{return{action:"logs_response",logs:fs.readFileSync(LOG_FILE,"utf8").split("\n").slice(-s)}}catch(e){return{action:"logs_response",logs:[],error:"No logs available"}}case"config":return{action:"config_response",config:{projectRoot:PROJECT_ROOT,services:Object.fromEntries(Object.entries(SERVICES).map(([e,s])=>[e,{name:s.name,port:s.port}]))}};case"open-terminal":return await openTerminalWithCommand(e.command||"pnpm relay:start");case"open-folder":return await openFolder(e.path||PROJECT_ROOT);default:return{action:"error",message:`Unknown action: ${e.action}`}}}catch(e){return log(`Error handling message: ${e.message}`),{action:"error",message:e.message}}}async function main(){log(`Native messaging host started. Project root: ${PROJECT_ROOT}`);try{const e=await readMessage();sendMessage(await handleMessage(e))}catch(e){log(`Error: ${e.message}`),sendMessage({action:"error",message:e.message})}process.exit(0)}main().catch(e=>{log(`Fatal error: ${e.message}`),process.exit(1)});
+
+/**
+ * The New Fuse - Native Messaging Host
+ * Controls TNF services from Chrome Extension
+ *
+ * This host uses relative paths and auto-discovers the project root.
+ */
+
+const { spawn, exec } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
+
+// Auto-discover project root by looking for package.json with "the-new-fuse" name
+function findProjectRoot() {
+  // Start from this script's directory and go up
+  let currentDir = __dirname;
+
+  // Also check common locations
+  const possibleRoots = [
+    path.resolve(currentDir, '../../../..'), // From dist-v5/native-host
+    path.resolve(currentDir, '../../..'), // From src/v5/native-host
+    path.resolve(os.homedir(), 'Desktop/A1-Inter-LLM-Com/The-New-Fuse'),
+    path.resolve(os.homedir(), 'projects/The-New-Fuse'),
+    path.resolve(os.homedir(), 'The-New-Fuse'),
+  ];
+
+  for (const dir of possibleRoots) {
+    try {
+      const pkgPath = path.join(dir, 'package.json');
+      if (fs.existsSync(pkgPath)) {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+        if (pkg.name === 'the-new-fuse' || pkg.name === '@the-new-fuse/monorepo') {
+          return dir;
+        }
+      }
+    } catch (e) {
+      // Continue searching
+    }
+  }
+
+  // Fallback to environment variable
+  if (process.env.TNF_PROJECT_ROOT) {
+    return process.env.TNF_PROJECT_ROOT;
+  }
+
+  // Last resort: go up from script location
+  return path.resolve(currentDir, '../../../..');
+}
+
+const PROJECT_ROOT = findProjectRoot();
+const LOG_FILE = path.join(os.homedir(), '.tnf-native-host.log');
+
+// Service definitions (relative to project root)
+const SERVICES = {
+  relay: {
+    name: 'TNF Relay',
+    command: 'pnpm',
+    args: ['run', 'relay'],
+    cwd: 'packages/relay-core',
+    port: 3001,
+  },
+  backend: {
+    name: 'TNF Backend',
+    command: 'pnpm',
+    args: ['run', 'dev'],
+    cwd: 'apps/backend',
+    port: 3000,
+  },
+  frontend: {
+    name: 'TNF Frontend',
+    command: 'pnpm',
+    args: ['run', 'dev'],
+    cwd: 'apps/frontend',
+    port: 3002,
+  },
+};
+
+// Track running processes
+const runningProcesses = new Map();
+
+// Logging
+function log(message) {
+  const timestamp = new Date().toISOString();
+  const logMsg = `[${timestamp}] ${message}\n`;
+  try {
+    fs.appendFileSync(LOG_FILE, logMsg);
+  } catch (e) {
+    // Ignore log errors
+  }
+}
+
+// Read message from stdin (Chrome native messaging protocol)
+function readMessage() {
+  return new Promise((resolve, reject) => {
+    let chunks = [];
+    let messageLength = null;
+
+    process.stdin.on('readable', () => {
+      let chunk;
+      while ((chunk = process.stdin.read()) !== null) {
+        chunks.push(chunk);
+
+        // First 4 bytes are the message length
+        if (messageLength === null && Buffer.concat(chunks).length >= 4) {
+          const buffer = Buffer.concat(chunks);
+          messageLength = buffer.readUInt32LE(0);
+          chunks = [buffer.slice(4)];
+        }
+
+        // Check if we have the full message
+        if (messageLength !== null) {
+          const totalLength = chunks.reduce((sum, c) => sum + c.length, 0);
+          if (totalLength >= messageLength) {
+            const buffer = Buffer.concat(chunks);
+            const messageBuffer = buffer.slice(0, messageLength);
+            try {
+              const message = JSON.parse(messageBuffer.toString('utf8'));
+              resolve(message);
+            } catch (e) {
+              reject(new Error('Failed to parse message'));
+            }
+            return;
+          }
+        }
+      }
+    });
+
+    process.stdin.on('end', () => {
+      reject(new Error('stdin closed'));
+    });
+  });
+}
+
+// Send message to Chrome (native messaging protocol)
+function sendMessage(message) {
+  const messageString = JSON.stringify(message);
+  const messageBuffer = Buffer.from(messageString, 'utf8');
+  const header = Buffer.alloc(4);
+  header.writeUInt32LE(messageBuffer.length, 0);
+
+  process.stdout.write(header);
+  process.stdout.write(messageBuffer);
+}
+
+// Check if a port is in use
+function isPortInUse(port) {
+  return new Promise((resolve) => {
+    exec(`lsof -i :${port}`, (error, stdout) => {
+      resolve(!error && stdout.trim().length > 0);
+    });
+  });
+}
+
+// Get service status
+async function getServiceStatus(serviceName) {
+  const service = SERVICES[serviceName];
+  if (!service) {
+    return { running: false, error: 'Unknown service' };
+  }
+
+  const portInUse = await isPortInUse(service.port);
+  const processRunning = runningProcesses.has(serviceName);
+
+  return {
+    name: service.name,
+    running: portInUse || processRunning,
+    port: service.port,
+    pid: runningProcesses.get(serviceName)?.pid || null,
+  };
+}
+
+// Get all services status
+async function getAllServicesStatus() {
+  const statuses = {};
+  for (const [name] of Object.entries(SERVICES)) {
+    statuses[name] = await getServiceStatus(name);
+  }
+  return statuses;
+}
+
+// Start a service
+async function startService(serviceName) {
+  const service = SERVICES[serviceName];
+  if (!service) {
+    return { success: false, error: 'Unknown service' };
+  }
+
+  // Check if already running
+  const status = await getServiceStatus(serviceName);
+  if (status.running) {
+    return { success: true, message: `${service.name} is already running`, port: service.port };
+  }
+
+  const cwd = path.join(PROJECT_ROOT, service.cwd);
+
+  // Verify the directory exists
+  if (!fs.existsSync(cwd)) {
+    return { success: false, error: `Directory not found: ${service.cwd}` };
+  }
+
+  log(`Starting ${service.name} in ${cwd}...`);
+
+  try {
+    const proc = spawn(service.command, service.args, {
+      cwd,
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      shell: true,
+      env: { ...process.env, FORCE_COLOR: '0' },
+    });
+
+    proc.stdout.on('data', (data) => {
+      log(`[${serviceName}] ${data.toString().trim()}`);
+    });
+
+    proc.stderr.on('data', (data) => {
+      log(`[${serviceName}] ERROR: ${data.toString().trim()}`);
+    });
+
+    proc.on('error', (error) => {
+      log(`[${serviceName}] Failed to start: ${error.message}`);
+      runningProcesses.delete(serviceName);
+    });
+
+    proc.on('exit', (code) => {
+      log(`[${serviceName}] Exited with code ${code}`);
+      runningProcesses.delete(serviceName);
+    });
+
+    proc.unref();
+    runningProcesses.set(serviceName, proc);
+
+    // Wait a bit for the service to start
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    // Verify it started
+    const newStatus = await getServiceStatus(serviceName);
+
+    return {
+      success: newStatus.running,
+      message: newStatus.running
+        ? `${service.name} started successfully`
+        : `${service.name} failed to start`,
+      port: service.port,
+      pid: proc.pid,
+    };
+  } catch (error) {
+    log(`Error starting ${serviceName}: ${error.message}`);
+    return { success: false, error: error.message };
+  }
+}
+
+// Stop a service
+async function stopService(serviceName) {
+  const service = SERVICES[serviceName];
+  if (!service) {
+    return { success: false, error: 'Unknown service' };
+  }
+
+  log(`Stopping ${service.name}...`);
+
+  return new Promise((resolve) => {
+    exec(`lsof -ti :${service.port} | xargs kill -9 2>/dev/null`, () => {
+      runningProcesses.delete(serviceName);
+      resolve({
+        success: true,
+        message: `${service.name} stopped`,
+      });
+    });
+  });
+}
+
+// Start all services
+async function startAllServices() {
+  const results = {};
+  for (const serviceName of Object.keys(SERVICES)) {
+    results[serviceName] = await startService(serviceName);
+  }
+  return results;
+}
+
+// Stop all services
+async function stopAllServices() {
+  const results = {};
+  for (const serviceName of Object.keys(SERVICES)) {
+    results[serviceName] = await stopService(serviceName);
+  }
+  return results;
+}
+
+// Open Terminal.app with a command (macOS)
+async function openTerminalWithCommand(command) {
+  const fullCommand = `cd "${PROJECT_ROOT}" && ${command}`;
+
+  // AppleScript to open Terminal and run the command
+  const appleScript = `
+    tell application "Terminal"
+      activate
+      do script "${fullCommand.replace(/"/g, '\\"')}"
+    end tell
+  `;
+
+  return new Promise((resolve) => {
+    exec(`osascript -e '${appleScript.replace(/'/g, "'\"'\"'")}'`, (error, stdout, stderr) => {
+      if (error) {
+        log(`Error opening terminal: ${error.message}`);
+        resolve({
+          action: 'open-terminal_response',
+          success: false,
+          error: error.message,
+        });
+      } else {
+        log(`Opened Terminal with command: ${command}`);
+        resolve({
+          action: 'open-terminal_response',
+          success: true,
+          command: fullCommand,
+        });
+      }
+    });
+  });
+}
+
+// Open Finder at a specific path (macOS)
+async function openFolder(folderPath) {
+  const targetPath = path.isAbsolute(folderPath) ? folderPath : path.join(PROJECT_ROOT, folderPath);
+
+  return new Promise((resolve) => {
+    exec(`open "${targetPath}"`, (error) => {
+      if (error) {
+        log(`Error opening folder: ${error.message}`);
+        resolve({
+          action: 'open-folder_response',
+          success: false,
+          error: error.message,
+        });
+      } else {
+        log(`Opened Finder at: ${targetPath}`);
+        resolve({
+          action: 'open-folder_response',
+          success: true,
+          path: targetPath,
+        });
+      }
+    });
+  });
+}
+
+// Handle incoming message
+async function handleMessage(message) {
+  log(`Received message: ${JSON.stringify(message)}`);
+
+  try {
+    switch (message.action) {
+      case 'ping':
+        return { action: 'pong', timestamp: Date.now(), projectRoot: PROJECT_ROOT };
+
+      case 'status':
+        return {
+          action: 'status_response',
+          services: await getAllServicesStatus(),
+          projectRoot: PROJECT_ROOT,
+        };
+
+      case 'start':
+        if (message.service === 'all') {
+          return {
+            action: 'start_response',
+            results: await startAllServices(),
+          };
+        } else {
+          return {
+            action: 'start_response',
+            result: await startService(message.service),
+          };
+        }
+
+      case 'stop':
+        if (message.service === 'all') {
+          return {
+            action: 'stop_response',
+            results: await stopAllServices(),
+          };
+        } else {
+          return {
+            action: 'stop_response',
+            result: await stopService(message.service),
+          };
+        }
+
+      case 'restart':
+        await stopService(message.service);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return {
+          action: 'restart_response',
+          result: await startService(message.service),
+        };
+
+      case 'logs':
+        const lines = message.lines || 50;
+        try {
+          const logContent = fs.readFileSync(LOG_FILE, 'utf8');
+          const logLines = logContent.split('\n').slice(-lines);
+          return { action: 'logs_response', logs: logLines };
+        } catch (e) {
+          return { action: 'logs_response', logs: [], error: 'No logs available' };
+        }
+
+      case 'config':
+        return {
+          action: 'config_response',
+          config: {
+            projectRoot: PROJECT_ROOT,
+            services: Object.fromEntries(
+              Object.entries(SERVICES).map(([k, v]) => [k, { name: v.name, port: v.port }])
+            ),
+          },
+        };
+
+      case 'open-terminal':
+        // Open Terminal.app with the command to start the relay
+        return await openTerminalWithCommand(message.command || 'pnpm relay:start');
+
+      case 'open-folder':
+        // Open Finder at the project root or specified path
+        return await openFolder(message.path || PROJECT_ROOT);
+
+      default:
+        return { action: 'error', message: `Unknown action: ${message.action}` };
+    }
+  } catch (error) {
+    log(`Error handling message: ${error.message}`);
+    return { action: 'error', message: error.message };
+  }
+}
+
+// Main
+async function main() {
+  log(`Native messaging host started. Project root: ${PROJECT_ROOT}`);
+
+  try {
+    const message = await readMessage();
+    const response = await handleMessage(message);
+    sendMessage(response);
+  } catch (error) {
+    log(`Error: ${error.message}`);
+    sendMessage({ action: 'error', message: error.message });
+  }
+
+  process.exit(0);
+}
+
+main().catch((error) => {
+  log(`Fatal error: ${error.message}`);
+  process.exit(1);
+});

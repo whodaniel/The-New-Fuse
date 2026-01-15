@@ -1,13 +1,13 @@
 /**
  * Proxy Service for CORS-free web requests
- * 
+ *
  * Provides serverless-compatible proxy functionality for AI agents
  * to access any website without CORS restrictions.
  */
 
+import { isValidPublicUrl } from '@the-new-fuse/utils';
 import axios from 'axios';
 import { ProxyRequest, ProxyResponse, SecurityPolicy } from '../types';
-import { isValidPublicUrl } from '../../../utils/src/validators.server';
 // Simple error and monitoring implementations for proxy service
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {
@@ -21,7 +21,7 @@ class BaseMonitoringSystem {
     // eslint-disable-next-line no-console
     console.log(`[Proxy Metric] ${name}: ${value}`, tags || {});
   }
-  
+
   getMetrics(): any {
     return { totalRequests: 0, successRate: 1.0, averageResponseTime: 0 };
   }
@@ -46,14 +46,14 @@ export class ProxyService {
         'text/xml',
         'text/css',
         'application/javascript',
-        'text/javascript'
+        'text/javascript',
       ],
       rateLimit: {
         requests: 50,
-        windowMs: 60000 // 1 minute
+        windowMs: 60000, // 1 minute
       },
       contentFiltering: true,
-      ...securityPolicy
+      ...securityPolicy,
     };
   }
 
@@ -79,13 +79,13 @@ export class ProxyService {
         url,
         headers: {
           'User-Agent': config.userAgent || 'Mozilla/5.0 (compatible; TheNewFuse-Proxy/1.0)',
-          ...this.sanitizeHeaders(headers)
+          ...this.sanitizeHeaders(headers),
         },
         timeout: config.timeout || 15000,
         maxRedirects: config.maxRedirects || 5,
         maxContentLength: this.securityPolicy.maxFileSize,
         validateStatus: () => true, // Accept all status codes
-        data: body
+        data: body,
       };
 
       // Make the request
@@ -110,16 +110,15 @@ export class ProxyService {
           url,
           method,
           executionTime: Date.now() - startTime,
-          timestamp: new Date()
-        }
+          timestamp: new Date(),
+        },
       };
 
       this.monitoring.recordMetric('proxy_success', 1, { method });
       return proxyResponse;
-
     } catch (error) {
       this.monitoring.recordMetric('proxy_error', 1, { method });
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Proxy request failed';
       await this.errorHandler.handleError(error as Error, { url, method });
 
@@ -133,8 +132,8 @@ export class ProxyService {
           url,
           method,
           executionTime: Date.now() - startTime,
-          timestamp: new Date()
-        }
+          timestamp: new Date(),
+        },
       };
     }
   }
@@ -155,7 +154,7 @@ export class ProxyService {
 
     // Check domain restrictions
     if (this.securityPolicy.allowedDomains) {
-      const isAllowed = this.securityPolicy.allowedDomains.some(domain =>
+      const isAllowed = this.securityPolicy.allowedDomains.some((domain) =>
         parsedUrl.hostname.endsWith(domain)
       );
       if (!isAllowed) {
@@ -164,7 +163,7 @@ export class ProxyService {
     }
 
     if (this.securityPolicy.blockedDomains) {
-      const isBlocked = this.securityPolicy.blockedDomains.some(domain =>
+      const isBlocked = this.securityPolicy.blockedDomains.some((domain) =>
         parsedUrl.hostname.endsWith(domain)
       );
       if (isBlocked) {
@@ -194,14 +193,14 @@ export class ProxyService {
 
     const now = Date.now();
     const { requests, windowMs } = this.securityPolicy.rateLimit;
-    
+
     const clientData = this.requestCounts.get(clientId);
-    
+
     if (!clientData || now > clientData.resetTime) {
       // Reset or initialize counter
       this.requestCounts.set(clientId, {
         count: 1,
-        resetTime: now + windowMs
+        resetTime: now + windowMs,
       });
       return;
     }
@@ -234,7 +233,7 @@ export class ProxyService {
       'cache-control',
       'content-type',
       'referer',
-      'user-agent'
+      'user-agent',
     ];
 
     for (const [key, value] of Object.entries(headers)) {
@@ -259,7 +258,7 @@ export class ProxyService {
       'cache-control',
       'expires',
       'last-modified',
-      'etag'
+      'etag',
     ];
 
     for (const [key, value] of Object.entries(headers)) {
@@ -299,8 +298,8 @@ export class ProxyService {
       rateLimitInfo: Array.from(this.requestCounts.entries()).map(([clientId, data]) => ({
         clientId,
         requestCount: data.count,
-        resetTime: new Date(data.resetTime)
-      }))
+        resetTime: new Date(data.resetTime),
+      })),
     };
   }
 

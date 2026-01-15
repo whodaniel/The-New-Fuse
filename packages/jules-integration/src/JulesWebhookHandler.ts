@@ -31,7 +31,7 @@ type JulesSessionStatus =
 
 export class JulesWebhookHandler {
   constructor(
-    private db: DatabaseService,
+    private db: InstanceType<typeof DatabaseService>,
     private redis: RedisClientType,
     private julesUsageTracker: JulesUsageTracker
   ) {}

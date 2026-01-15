@@ -3,19 +3,26 @@
  * Handles HubSpot webhook events and converts them to business events
  */
 
+import type {
+  BusinessEvent,
+  BusinessEventType,
+  HubSpotWebhookPayload,
+} from '../types/business-events';
 import type { Env } from '../types/env';
-import type { BusinessEvent, HubSpotWebhookPayload, BusinessEventType, EventPriority } from '../types/business-events';
 import { Logger } from '../utils/Logger';
 import { generateId } from '../utils/helpers';
 
 export class HubSpotBusinessProcessor {
-  constructor(private env: Env, private logger: Logger) {}
+  constructor(
+    private env: Env,
+    private logger: Logger
+  ) {}
 
   async processWebhook(payload: HubSpotWebhookPayload): Promise<BusinessEvent> {
     try {
-      this.logger.info(`Processing HubSpot webhook: ${payload.subscriptionType}`, { 
+      this.logger.info(`Processing HubSpot webhook: ${payload.subscriptionType}`, {
         objectId: payload.objectId,
-        eventId: payload.eventId
+        eventId: payload.eventId,
       });
 
       // Fetch contact data from HubSpot API
@@ -32,9 +39,9 @@ export class HubSpotBusinessProcessor {
           organization_id: payload.portalId.toString(),
           priority: 'medium',
           retry_count: 0,
-          max_retries: 3
+          max_retries: 3,
         },
-        processing_status: 'pending'
+        processing_status: 'pending',
       };
 
       // Process specific subscription types
@@ -57,7 +64,6 @@ export class HubSpotBusinessProcessor {
 
       businessEvent.processing_status = 'completed';
       return businessEvent;
-
     } catch (error) {
       this.logger.error(`Failed to process HubSpot webhook:`, error);
       throw error;
@@ -69,36 +75,51 @@ export class HubSpotBusinessProcessor {
       'contact.creation': 'lead_created',
       'contact.propertyChange': 'customer_updated',
       'deal.creation': 'lead_created',
-      'company.creation': 'customer_updated'
+      'company.creation': 'customer_updated',
     };
     return mapping[subscriptionType] || 'customer_updated';
   }
 
   private async fetchContactData(objectId: number): Promise<any> {
-    try {
-      // In a real implementation, you'd make an API call to HubSpot
-      // const response = await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${objectId}`, {
-      //   headers: { 'Authorization': `Bearer ${this.env.HUBSPOT_API_KEY}` }
-      // });
-      // return await response.json();
+    const apiKey = this.env.HUBSPOT_API_KEY;
 
-      // Mock data for now
+    if (!apiKey) {
+      this.logger.warn('HUBSPOT_API_KEY not configured - contact data will be limited');
+      return { id: objectId };
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.hubapi.com/crm/v3/objects/contacts/${objectId}?properties=email,firstname,lastname,company,lifecyclestage,lead_status,phone,numberofemployees,industry,num_conversion_events`,
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HubSpot API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
       return {
-        id: objectId,
-        email: 'contact@example.com',
-        firstname: 'John',
-        lastname: 'Doe',
-        company: 'Example Corp',
-        lifecyclestage: 'lead',
-        lead_status: 'new'
+        id: data.id,
+        ...data.properties,
       };
     } catch (error) {
       this.logger.error('Failed to fetch contact data from HubSpot:', error);
+      // Return minimal data on error - do not return mock data
       return { id: objectId };
     }
   }
 
-  private async processContactCreation(event: BusinessEvent, _payload: HubSpotWebhookPayload, contactData: any): Promise<void> {
+  private async processContactCreation(
+    event: BusinessEvent,
+    _payload: HubSpotWebhookPayload,
+    contactData: any
+  ): Promise<void> {
     event.data = {
       ...event.data,
       contact_id: contactData.id,
@@ -111,15 +132,19 @@ export class HubSpotBusinessProcessor {
         lead_score: await this.calculateLeadScore(contactData),
         marketing_qualified: this.isMarketingQualified(contactData),
         next_actions: this.generateContactActions(contactData),
-        segmentation: await this.segmentContact(contactData)
-      }
+        segmentation: await this.segmentContact(contactData),
+      },
     };
 
     // Trigger contact enrichment
     await this.triggerContactEnrichment(event);
   }
 
-  private async processContactPropertyChange(event: BusinessEvent, payload: HubSpotWebhookPayload, contactData: any): Promise<void> {
+  private async processContactPropertyChange(
+    event: BusinessEvent,
+    payload: HubSpotWebhookPayload,
+    contactData: any
+  ): Promise<void> {
     event.data = {
       ...event.data,
       contact_id: contactData.id,
@@ -128,16 +153,26 @@ export class HubSpotBusinessProcessor {
       change_source: payload.changeSource,
       business_context: {
         property_impact: this.assessPropertyImpact(payload.propertyName, payload.propertyValue),
-        automation_triggers: this.identifyAutomationTriggers(payload.propertyName, payload.propertyValue),
-        scoring_impact: await this.calculateScoringImpact(payload.propertyName, payload.propertyValue)
-      }
+        automation_triggers: this.identifyAutomationTriggers(
+          payload.propertyName,
+          payload.propertyValue
+        ),
+        scoring_impact: await this.calculateScoringImpact(
+          payload.propertyName,
+          payload.propertyValue
+        ),
+      },
     };
 
     // Check for important property changes
     await this.checkImportantPropertyChanges(event, payload);
   }
 
-  private async processDealCreation(event: BusinessEvent, _payload: HubSpotWebhookPayload, dealData: any): Promise<void> {
+  private async processDealCreation(
+    event: BusinessEvent,
+    _payload: HubSpotWebhookPayload,
+    dealData: any
+  ): Promise<void> {
     event.data = {
       ...event.data,
       deal_id: dealData.id,
@@ -150,15 +185,19 @@ export class HubSpotBusinessProcessor {
         deal_probability: this.calculateDealProbability(dealData),
         revenue_forecast: this.calculateRevenueForecast(dealData),
         sales_activities: this.generateSalesActivities(dealData),
-        risk_assessment: this.assessDealRisk(dealData)
-      }
+        risk_assessment: this.assessDealRisk(dealData),
+      },
     };
 
     // Trigger sales notifications
     await this.triggerSalesNotifications(event, dealData);
   }
 
-  private async processCompanyCreation(event: BusinessEvent, _payload: HubSpotWebhookPayload, companyData: any): Promise<void> {
+  private async processCompanyCreation(
+    event: BusinessEvent,
+    _payload: HubSpotWebhookPayload,
+    companyData: any
+  ): Promise<void> {
     event.data = {
       ...event.data,
       company_id: companyData.id,
@@ -170,8 +209,8 @@ export class HubSpotBusinessProcessor {
         account_score: await this.calculateAccountScore(companyData),
         ideal_customer_profile_match: this.assessICPMatch(companyData),
         expansion_potential: this.assessExpansionPotential(companyData),
-        competitive_landscape: await this.analyzeCompetitiveLandscape(companyData)
-      }
+        competitive_landscape: await this.analyzeCompetitiveLandscape(companyData),
+      },
     };
   }
 
@@ -188,12 +227,12 @@ export class HubSpotBusinessProcessor {
 
     // Lifecycle stage scoring
     const stageScores: Record<string, number> = {
-      'subscriber': 10,
-      'lead': 20,
-      'marketingqualifiedlead': 40,
-      'salesqualifiedlead': 60,
-      'opportunity': 80,
-      'customer': 100
+      subscriber: 10,
+      lead: 20,
+      marketingqualifiedlead: 40,
+      salesqualifiedlead: 60,
+      opportunity: 80,
+      customer: 100,
     };
     score += stageScores[contact.lifecyclestage] || 0;
 
@@ -209,9 +248,11 @@ export class HubSpotBusinessProcessor {
   }
 
   private isMarketingQualified(contact: any): boolean {
-    return contact.lifecyclestage === 'marketingqualifiedlead' ||
-           contact.lifecyclestage === 'salesqualifiedlead' ||
-           contact.lead_status === 'qualified';
+    return (
+      contact.lifecyclestage === 'marketingqualifiedlead' ||
+      contact.lifecyclestage === 'salesqualifiedlead' ||
+      contact.lead_status === 'qualified'
+    );
   }
 
   private generateContactActions(contact: any): string[] {
@@ -249,13 +290,7 @@ export class HubSpotBusinessProcessor {
   }
 
   private assessPropertyImpact(propertyName?: string, propertyValue?: string): string {
-    const highImpactProperties = [
-      'lifecyclestage',
-      'lead_status',
-      'email',
-      'phone',
-      'company'
-    ];
+    const highImpactProperties = ['lifecyclestage', 'lead_status', 'email', 'phone', 'company'];
 
     if (propertyName && highImpactProperties.includes(propertyName)) {
       return 'high';
@@ -278,25 +313,28 @@ export class HubSpotBusinessProcessor {
         triggers.push('email_verification');
         break;
       default:
-        // No specific triggers
+      // No specific triggers
     }
 
     return triggers;
   }
 
-  private async calculateScoringImpact(propertyName?: string, propertyValue?: string): Promise<number> {
+  private async calculateScoringImpact(
+    propertyName?: string,
+    propertyValue?: string
+  ): Promise<number> {
     // Calculate how property change affects lead score
     const scoringRules: Record<string, Record<string, number>> = {
-      'lifecyclestage': {
-        'marketingqualifiedlead': 20,
-        'salesqualifiedlead': 30,
-        'opportunity': 40
+      lifecyclestage: {
+        marketingqualifiedlead: 20,
+        salesqualifiedlead: 30,
+        opportunity: 40,
       },
-      'lead_status': {
-        'qualified': 25,
-        'connected': 15,
-        'open': 10
-      }
+      lead_status: {
+        qualified: 25,
+        connected: 15,
+        open: 10,
+      },
     };
 
     if (propertyName && propertyValue && scoringRules[propertyName]) {
@@ -306,9 +344,12 @@ export class HubSpotBusinessProcessor {
     return 0;
   }
 
-  private async checkImportantPropertyChanges(event: BusinessEvent, payload: HubSpotWebhookPayload): Promise<void> {
+  private async checkImportantPropertyChanges(
+    event: BusinessEvent,
+    payload: HubSpotWebhookPayload
+  ): Promise<void> {
     const importantProperties = ['lifecyclestage', 'lead_status', 'dealstage'];
-    
+
     if (payload.propertyName && importantProperties.includes(payload.propertyName)) {
       event.metadata.priority = 'high';
       event.data.business_context.important_change = true;
@@ -318,13 +359,13 @@ export class HubSpotBusinessProcessor {
   private calculateDealProbability(deal: any): number {
     // Simple deal probability calculation based on stage
     const stageProbabilities: Record<string, number> = {
-      'appointmentscheduled': 0.2,
-      'qualifiedtobuy': 0.4,
-      'presentationscheduled': 0.6,
-      'decisionmakerboughtin': 0.8,
-      'contractsent': 0.9,
-      'closedwon': 1.0,
-      'closedlost': 0.0
+      appointmentscheduled: 0.2,
+      qualifiedtobuy: 0.4,
+      presentationscheduled: 0.6,
+      decisionmakerboughtin: 0.8,
+      contractsent: 0.9,
+      closedwon: 1.0,
+      closedlost: 0.0,
     };
 
     return stageProbabilities[deal.dealstage] || 0.5;
@@ -395,7 +436,11 @@ export class HubSpotBusinessProcessor {
       match += 0.3;
     }
 
-    if (company.numberofemployees && company.numberofemployees >= 50 && company.numberofemployees <= 5000) {
+    if (
+      company.numberofemployees &&
+      company.numberofemployees >= 50 &&
+      company.numberofemployees <= 5000
+    ) {
       match += 0.2;
     }
 
@@ -404,7 +449,7 @@ export class HubSpotBusinessProcessor {
 
   private assessExpansionPotential(company: any): string {
     const score = company.numberofemployees || 0;
-    
+
     if (score > 500) return 'high';
     if (score > 100) return 'medium';
     return 'low';
@@ -415,7 +460,7 @@ export class HubSpotBusinessProcessor {
     return {
       competitive_threats: ['Competitor A', 'Competitor B'],
       market_position: 'strong',
-      differentiation_opportunities: ['feature_gap', 'pricing_advantage']
+      differentiation_opportunities: ['feature_gap', 'pricing_advantage'],
     };
   }
 
@@ -429,7 +474,7 @@ export class HubSpotBusinessProcessor {
 
   async retryProcessing(event: BusinessEvent): Promise<BusinessEvent> {
     event.processing_status = 'processing';
-    
+
     try {
       // Re-process the event
       event.processing_status = 'completed';

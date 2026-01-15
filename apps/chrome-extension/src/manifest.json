@@ -63,7 +63,7 @@
   ],
   "options_page": "options.html",
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:* https://chat.openai.com https://claude.ai https://gemini.google.com;"
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:* wss://relay.thenewfuse.com https://chat.openai.com https://claude.ai https://gemini.google.com;"
   },
   "commands": {
     "toggle-floating-panel": {

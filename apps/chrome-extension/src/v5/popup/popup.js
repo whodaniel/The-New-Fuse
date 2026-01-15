@@ -384,10 +384,26 @@ class FuseConnectPopup {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tabs[0]?.id) {
       try {
+        // Did we inject?
+        const isScriptInjected = await this.checkContentScript(tabs[0].id);
+
+        if (!isScriptInjected) {
+          this.showToast('Injecting content script...');
+          await chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            files: ['content/index.js'],
+          });
+          // Brief wait for initialization
+          await new Promise((r) => setTimeout(r, 500));
+        }
+
         // Send message to content script to show panel
         chrome.tabs.sendMessage(tabs[0].id, { type: 'SHOW_PANEL' }, (response) => {
           if (chrome.runtime.lastError) {
-            this.showToast('Cannot open panel on this page');
+            const err = chrome.runtime.lastError;
+            const errMsg = err.message || JSON.stringify(err);
+            this.showToast(`Cannot open panel: ${errMsg}`);
+            console.error('Fuse Panel Open Error:', errMsg, err);
           } else if (response?.success) {
             this.showToast('Panel opened! (Ctrl+Shift+F to toggle)');
             // Close popup after opening panel
@@ -395,10 +411,20 @@ class FuseConnectPopup {
           }
         });
       } catch (e) {
-        this.showToast('Cannot open panel on this page');
+        this.showToast(`Cannot open panel: ${e.message}`);
+        console.error('Fuse Panel Exception:', e);
       }
     } else {
       this.showToast('No active tab found');
+    }
+  }
+
+  async checkContentScript(tabId) {
+    try {
+      const response = await chrome.tabs.sendMessage(tabId, { type: 'GET_PANEL_STATUS' });
+      return !!response;
+    } catch (e) {
+      return false;
     }
   }
 

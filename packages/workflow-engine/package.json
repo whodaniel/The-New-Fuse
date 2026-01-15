@@ -67,12 +67,8 @@
   ],
   "author": "The New Fuse Team",
   "license": "MIT",
-  "prisma": {
-    "schema": "../database/prisma/schema.prisma"
-  },
   "dependencies": {
     "@nestjs/event-emitter": "^3.0.1",
-    "@prisma/client": "^7.2.0",
     "@the-new-fuse/agent": "workspace:*",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",

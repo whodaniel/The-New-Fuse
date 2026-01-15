@@ -32,9 +32,9 @@ const STORAGE_KEYS = {
 // Default node configuration
 const DEFAULT_NODES = {
   relay: 'ws://localhost:3001/ws',
-  apiGateway: 'http://localhost:3001',
+  apiGateway: 'http://localhost:3000',
   backend: 'http://localhost:3000',
-  saas: 'https://app.thenewfuse.com',
+  saas: 'http://localhost:3002',
 };
 
 // Native messaging host name
@@ -52,7 +52,7 @@ class BackgroundService {
   private channels: Map<string, FederationChannel> = new Map();
   private joinedChannels: Set<string> = new Set();
   private messageQueue: ProtocolMessage[] = [];
-  private autoConnect: boolean = false; // Default to NOT auto-connect
+  private autoConnect: boolean = true; // Default to TRUE for agent operation
   private connectionAttempts: number = 0;
   private maxInitialAttempts: number = 1; // Only try once on startup
 
@@ -191,8 +191,8 @@ class BackgroundService {
       this.joinedChannels = new Set(result[STORAGE_KEYS.joinedChannels]);
     }
 
-    // Load auto-connect preference (default false)
-    this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? false;
+    // Load auto-connect preference (default true)
+    this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? true;
 
     // Also check settings object
     if (result[STORAGE_KEYS.settings]?.autoReconnect !== undefined) {
@@ -374,11 +374,85 @@ class BackgroundService {
             'notifications',
           ],
           channels: Array.from(this.joinedChannels),
+          metadata: {
+            node: {
+              type: 'browser',
+              platform: navigator.platform,
+              userAgent: navigator.userAgent,
+              language: navigator.language,
+            },
+          },
         },
       },
     };
 
     ws.send(JSON.stringify(message));
+  }
+
+  /**
+   * Register a new page agent (for AI chat tabs)
+   */
+  private registerPageAgent(id: string, name: string, platform: string): void {
+    // 1. Create agent object
+    const agent: Agent = {
+      id: id,
+      name: name,
+      platform: 'browser-page',
+      status: 'active',
+      capabilities: ['chat-injection', 'dom-reading'], // Basic capabilities for a page agent
+      channels: [], // Initially no channels
+      metadata: {
+        node: {
+          type: 'browser-tab',
+          platform: platform,
+        },
+      },
+      lastSeen: Date.now(),
+    };
+
+    // 2. Store locally so we know about it
+    this.agents.set(id, agent);
+
+    // 3. Register with Relay (if connected)
+    if (this.primaryConnection?.readyState === WebSocket.OPEN) {
+      // Register the agent
+      const regMessage: ProtocolMessage = {
+        id: crypto.randomUUID(),
+        type: 'AGENT_REGISTER',
+        timestamp: Date.now(),
+        source: this.agentId,
+        payload: {
+          agent: agent,
+        },
+      };
+      this.primaryConnection.send(JSON.stringify(regMessage));
+      console.log(`[FuseConnect v6] Registered Page Agent: ${name} (${id})`);
+
+      // AUTO-JOIN: Join any channels the main browser agent is in
+      // This ensures the new tab immediately is part of the conversation
+      for (const channelId of this.joinedChannels) {
+        const joinMessage: ProtocolMessage = {
+          id: crypto.randomUUID(),
+          type: 'CHANNEL_JOIN',
+          timestamp: Date.now(),
+          source: id, // Use the page agent ID as source for the join
+          payload: {
+            channelId: channelId,
+          },
+        };
+        this.primaryConnection.send(JSON.stringify(joinMessage));
+        console.log(`[FuseConnect v6] Auto-joined Page Agent ${id} to channel ${channelId}`);
+
+        // Update local agent object
+        agent.channels.push(channelId);
+      }
+    }
+
+    // 4. Notify all tabs about the new agent list
+    this.broadcastToTabs({
+      type: 'AGENTS_UPDATE',
+      agents: Array.from(this.agents.values()),
+    });
   }
 
   /**
@@ -407,11 +481,12 @@ class BackgroundService {
         type: 'MESSAGE_SEND',
         timestamp: Date.now(),
         source: this.agentId,
-        channel: data.channel as string,
+        channel: (data.channel as string) || 'general',
         payload: {
           to: data.to,
           content: data.content,
           messageType: data.messageType || 'text',
+          metadata: data.metadata, // <-- INCLUDE SENDER METADATA
         },
       };
     } else {
@@ -420,7 +495,7 @@ class BackgroundService {
         type: data.type as any,
         timestamp: Date.now(),
         source: this.agentId,
-        channel: data.channel as string,
+        channel: (data.channel as string) || 'general',
         payload: data,
       };
     }
@@ -448,12 +523,33 @@ class BackgroundService {
 
   /**
    * Start heartbeat
+   * ORCHESTRATOR FIX: Send heartbeats for all page agents to prevent timeout
    */
   private startHeartbeat(): void {
     if (this.heartbeatTimer) return;
 
     this.heartbeatTimer = setInterval(() => {
+      // Send heartbeat for main browser agent
       this.send({ type: 'HEARTBEAT' });
+
+      // Send heartbeats for all registered page agents (Gemini tabs, etc.)
+      // This prevents the relay from timing out virtual agents
+      for (const [agentId, agent] of this.agents) {
+        if (agentId !== this.agentId && agent.platform === 'browser-page') {
+          // Send heartbeat as if it came from the page agent
+          const heartbeatMessage: ProtocolMessage = {
+            id: crypto.randomUUID(),
+            type: 'HEARTBEAT',
+            timestamp: Date.now(),
+            source: agentId, // Use page agent ID
+            payload: {},
+          };
+
+          if (this.primaryConnection?.readyState === WebSocket.OPEN) {
+            this.primaryConnection.send(JSON.stringify(heartbeatMessage));
+          }
+        }
+      }
     }, 30000) as unknown as number;
   }
 
@@ -558,10 +654,21 @@ class BackgroundService {
    * Handle incoming agent message
    */
   private handleAgentMessage(message: AgentMessage): void {
-    // CRITICAL: Skip messages that originated from THIS agent to prevent feedback loops
+    // CRITICAL: We need to handle 'own' messages if they are on a channel
+    // because "Browser Agent" represents ALL windows/tabs.
+    // If Window A sends a message, it goes to Relay -> Relay broadcasts to Channel -> Browser Agent receives it.
+    // Browser Agent MUST forward this to Window B.
+
+    // Only skip if it's a direct message to self not on a channel (which shouldn't happen much)
+    // or if we rely strictly on content deduplication.
+
     if (message.from === this.agentId || message.from === 'Browser Agent') {
-      console.log('[FuseConnect v6] Skipping own message echo from relay');
-      return;
+      if (!message.channel) {
+        console.log('[FuseConnect v6] Skipping direct self-message echo');
+        return;
+      }
+      // If it IS a channel message, we MUST process it so we can broadcastToTabs
+      // The individual tabs (FloatingPanel) have their own dedup logic to ignore it if they just sent it.
     }
 
     // Deduplication: Create a hash of the message content and check if we've seen it recently
@@ -601,7 +708,7 @@ class BackgroundService {
     }
 
     // Handle commands
-    if (message.to === this.agentId && message.type === 'command') {
+    if ((message.to === this.agentId || message.to === 'broadcast') && message.type === 'command') {
       this.executeCommand(message);
     }
   }
@@ -807,12 +914,15 @@ class BackgroundService {
           return true;
 
         case 'BROADCAST_MESSAGE':
+          // CRITICAL FIX: Preserve the `metadata` including `senderId` so receiving tabs
+          // can identify messages that originated from themselves and avoid self-injection loops.
           this.send({
             type: 'MESSAGE_SEND',
             to: 'broadcast',
             channel: message.channel,
             content: message.content,
             messageType: 'text',
+            metadata: message.metadata, // <-- PRESERVE SENDER INFO
           });
           sendResponse({ success: true });
           break;
@@ -828,13 +938,33 @@ class BackgroundService {
           break;
 
         case 'CHANNEL_CREATE':
+          // Optimistically create channel locally
+          const newChannel: FederationChannel = {
+            id: `local-${Date.now()}`,
+            name: message.name,
+            description: message.description || '',
+            isPrivate: message.isPrivate || false,
+            createdAt: Date.now(),
+            createdBy: this.agentId,
+            members: [this.agentId],
+          };
+
+          this.channels.set(newChannel.id, newChannel);
+          this.joinedChannels.add(newChannel.id);
+          this.broadcastToTabs({
+            type: 'CHANNELS_UPDATE',
+            channels: Array.from(this.channels.values()),
+          });
+          this.saveChannels();
+
+          // Forward to Relay
           this.send({
             type: 'CHANNEL_CREATE',
             name: message.name,
             description: message.description,
             isPrivate: message.isPrivate || false,
           });
-          sendResponse({ success: true });
+          sendResponse({ success: true, channel: newChannel });
           break;
 
         case 'CHANNEL_JOIN':
@@ -844,6 +974,11 @@ class BackgroundService {
             channelId: message.channelId,
           });
           this.saveChannels();
+          // Broadcast to all tabs that we joined a channel
+          this.broadcastToTabs({
+            type: 'JOINED_CHANNELS_UPDATE',
+            joinedChannels: Array.from(this.joinedChannels),
+          });
           sendResponse({ success: true });
           break;
 
@@ -854,6 +989,11 @@ class BackgroundService {
             channelId: message.channelId,
           });
           this.saveChannels();
+          // Broadcast update
+          this.broadcastToTabs({
+            type: 'JOINED_CHANNELS_UPDATE',
+            joinedChannels: Array.from(this.joinedChannels),
+          });
           sendResponse({ success: true });
           break;
 
@@ -862,15 +1002,30 @@ class BackgroundService {
           if (sender.tab?.id) {
             const status =
               this.primaryConnection?.readyState === WebSocket.OPEN ? 'connected' : 'disconnected';
+
+            // Send connection status
             chrome.tabs.sendMessage(sender.tab.id, { type: 'CONNECTION_STATUS', status });
+
+            // Send Agents
             chrome.tabs.sendMessage(sender.tab.id, {
               type: 'AGENTS_UPDATE',
               agents: Array.from(this.agents.values()),
             });
+
+            // Send Channels
             chrome.tabs.sendMessage(sender.tab.id, {
               type: 'CHANNELS_UPDATE',
               channels: Array.from(this.channels.values()),
             });
+
+            // Send Joined Channels
+            chrome.tabs.sendMessage(sender.tab.id, {
+              type: 'JOINED_CHANNELS_UPDATE',
+              joinedChannels: Array.from(this.joinedChannels),
+            });
+
+            // Send currently selected channel per-tab if we track it,
+            // but the UI currently pulls 'fuse_current_channel' from storage itself.
           }
           sendResponse({ success: true });
           break;
@@ -908,42 +1063,108 @@ class BackgroundService {
           return true; // Async response
 
         case 'CHAT_DETECTED':
-        case 'STREAMING_UPDATE':
-          // Forward to other tabs for awareness
-          this.broadcastToTabs(message);
-          sendResponse({ success: true });
+          // 1. Register this tab as a distinct Agent
+          if (sender.tab?.id) {
+            const pageAgentId = `page-agent-${sender.tab.id}-${Math.random().toString(36).substr(2, 5)}`;
+            const hostname = sender.tab.url ? new URL(sender.tab.url).hostname : 'page';
+            // Clean hostname for better display (e.g. "gemini.google.com" -> "Gemini")
+            let platformName = hostname;
+            if (hostname.includes('google.com')) platformName = 'Gemini';
+            else if (hostname.includes('openai.com')) platformName = 'ChatGPT';
+            else if (hostname.includes('claude.ai')) platformName = 'Claude';
+
+            this.registerPageAgent(pageAgentId, `AI Chat (${platformName})`, hostname);
+
+            // 2. Broadcast availability
+            this.broadcastToTabs(message);
+
+            // 3. Return the assigned Agent ID to the tab so it knows who it is
+            sendResponse({ success: true, agentId: pageAgentId });
+          } else {
+            this.broadcastToTabs(message);
+            sendResponse({ success: true });
+          }
           break;
 
+        case 'STREAMING_UPDATE':
+
         case 'RESPONSE_COMPLETE':
-          // Forward to other tabs for awareness
+          // MULTI-AGENT COLLABORATION:
+          // AI responses MUST be broadcast to the channel so OTHER agents can see and respond.
+          // This enables the "chatroom" model where all participants coordinate.
+          //
+          // Key: Include senderId so receiving tabs can identify if this is their OWN response
+          // (which they should NOT re-inject) vs an EXTERNAL agent's response (which they SHOULD inject).
+
+          // Forward to other tabs in this browser
           this.broadcastToTabs(message);
 
-          // ALSO send to relay so other agents can receive it
-          // But use deduplication to prevent echo loops
+          // Broadcast to relay so OTHER agents (in other browsers/instances) can receive
           if (this.primaryConnection?.readyState === WebSocket.OPEN && message.content) {
-            // Create a hash for this AI response to prevent re-sending
-            // Use longer substring (500 chars) for better uniqueness
+            // Deduplication to prevent echo loops
             const responseHash = simpleHash(`ai:${message.content.substring(0, 500)}`);
             const now = Date.now();
 
             if (!this.recentMessageHashes.has(responseHash)) {
               this.recentMessageHashes.set(responseHash, now);
 
-              // Get the current channel from storage or use broadcast
+              // Get sender's agent ID from the message or use the assigned page agent
+              const senderId =
+                message.senderId || sender.tab?.id ? `page-agent-${sender.tab.id}` : this.agentId;
+
               chrome.storage.local.get(['fuse_current_channel'], (result) => {
-                const channel = result.fuse_current_channel || null;
-                // Only send if we have a channel selected
+                let channel = result.fuse_current_channel;
+
+                if (!channel && this.joinedChannels.size > 0) {
+                  channel = Array.from(this.joinedChannels)[0];
+                }
+
                 if (channel) {
+                  // Get platform name for context (inline detection)
+                  const tabUrl = sender.tab?.url || '';
+                  let platformName = message.platform || 'unknown';
+                  if (!message.platform) {
+                    if (tabUrl.includes('gemini.google')) platformName = 'Gemini';
+                    else if (tabUrl.includes('chat.openai') || tabUrl.includes('chatgpt'))
+                      platformName = 'ChatGPT';
+                    else if (tabUrl.includes('claude.ai')) platformName = 'Claude';
+                    else if (tabUrl.includes('copilot')) platformName = 'Copilot';
+                  }
+
+                  // FEDERATION IMPROVEMENT: Include correlation metadata for response matching
+                  const responseMetadata: any = {
+                    senderId: senderId, // KEY: Used to prevent self-injection
+                    senderType: 'ai-agent',
+                    platform: platformName,
+                    isAIResponse: true,
+                    timestamp: Date.now(),
+                  };
+
+                  // Include correlation info if present (from orchestrator requests)
+                  if (message.metadata?.correlationId) {
+                    responseMetadata.correlationId = message.metadata.correlationId;
+                    responseMetadata.taskId = message.metadata.taskId;
+                    responseMetadata.inResponseTo = message.metadata.inResponseTo;
+                    console.log(
+                      '[FuseConnect v6] 🔗 Including correlation in broadcast:',
+                      message.metadata.correlationId
+                    );
+                  }
+
                   this.send({
                     type: 'MESSAGE_SEND',
                     to: 'broadcast',
                     channel: channel,
-                    content: `[AI → User] ${message.content}`, // Send FULL content
+                    content: message.content,
                     messageType: 'ai-response',
+                    metadata: responseMetadata,
                   });
-                  console.log('[FuseConnect v6] AI response forwarded to relay', {
+                  console.log('[FuseConnect v6] AI response broadcast to channel:', {
                     channel,
-                    length: message.content.length,
+                    senderId,
+                    platform: platformName,
+                    contentLength: message.content.length,
+                    hasCorrelation: !!message.metadata?.correlationId,
                   });
                 }
               });

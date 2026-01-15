@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Comprehensive TNF Relay v4.0
+ * Comprehensive TNF Relay v4.1 (Cloud Ready)
  * Complete API interception and management system
+ * Consolidated Single-Port Architecture for Cloud Deployment
  */
 
 const http = require('http');
@@ -16,21 +17,25 @@ const express = require('express');
 
 class ComprehensiveTNFRelay {
   constructor() {
-    this.relayId = 'TNF-RELAY-COMPREHENSIVE-001';
-    this.version = '4.0';
+    this.relayId = process.env.RELAY_ID || 'TNF-RELAY-CLOUD-001';
+    this.version = '4.1-cloud';
     this.isRunning = false;
 
-    this.ports = {
-      http: 3000,
-      websocket: 3001,
-      proxy: 8888,
-      ui: 3002,
-    };
+    // Single main port for HTTP + WS + UI
+    this.port = process.env.PORT || 3000;
+    this.proxyPort = process.env.PROXY_PORT || 8888;
 
     this.httpServer = null;
     this.webSocketServer = null;
     this.proxyServer = null;
-    this.uiServer = null;
+
+    // Legacy mapping (for status response compatibility)
+    this.ports = {
+      http: this.port,
+      websocket: this.port,
+      ui: this.port,
+      proxy: this.proxyPort,
+    };
 
     this.agents = new Map();
     this.chromeExtensions = new Map();
@@ -42,8 +47,13 @@ class ComprehensiveTNFRelay {
       activeConnections: 0,
     };
 
-    this.workspaceDir = path.join(process.env.HOME, 'Desktop/A1-Inter-LLM-Com/The New Fuse');
-    this.logPath = path.join(this.workspaceDir, 'comprehensive-relay.log');
+    // Use HOME or dedicated data dir
+    const homeDir = process.env.HOME || '/root';
+    this.workspaceDir = path.join(homeDir, '.tnf-relay');
+    this.logPath = path.join(this.workspaceDir, 'relay.log');
+
+    // Ensure workspace exists
+    require('fs').mkdir(this.workspaceDir, { recursive: true }, () => {});
 
     this.setupInterceptRules();
   }
@@ -74,31 +84,24 @@ class ComprehensiveTNFRelay {
   async log(message, level = 'INFO') {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] [${level}] ${message}\n`;
-
     console.log(logEntry.trim());
-
     try {
       await fs.appendFile(this.logPath, logEntry);
     } catch (error) {
-      console.error('Logging error:', error);
+      // Ignore FS errors in cloud if not persistent
     }
   }
 
   async start() {
     try {
       this.systemStatus.startTime = new Date().toISOString();
-      await this.log('Starting Comprehensive TNF Relay v4.0');
+      await this.log(`Starting TNF Relay v${this.version}`);
 
-      await this.startHTTPServer();
-      await this.startWebSocketServer();
+      await this.startMainServer();
       await this.startProxyServer();
-      await this.startUIServer();
 
       this.isRunning = true;
-      await this.log(
-        `TNF Relay started on ports: HTTP:${this.ports.http}, WS:${this.ports.websocket}, Proxy:${this.ports.proxy}, UI:${this.ports.ui}`
-      );
-
+      await this.log(`TNF Relay Service Active on Port ${this.port}`);
       return true;
     } catch (error) {
       await this.log(`Failed to start relay: ${error.message}`, 'ERROR');
@@ -106,8 +109,10 @@ class ComprehensiveTNFRelay {
     }
   }
 
-  async startHTTPServer() {
+  async startMainServer() {
     const app = express();
+
+    // 1. Setup Middleware
     app.use(express.json());
     app.use((req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*');
@@ -116,6 +121,42 @@ class ComprehensiveTNFRelay {
       next();
     });
 
+    // 2. Setup API Routes
+    this.setupAPIRoutes(app);
+
+    // 3. Setup UI (Serve Static Files)
+    // Assume UI is built in ../ui/build relative to src
+    const uiPath = path.join(__dirname, '../ui/build');
+    app.use(express.static(uiPath));
+
+    // Handle SPA Routing (Fallback to index.html)
+    app.get('*', (req, res) => {
+      // Don't intercept API calls or specific extensions
+      if (req.path.startsWith('/api') || req.path.includes('.')) {
+        if (!req.path.endsWith('.html')) return res.status(404).end();
+      }
+      res.sendFile(path.join(uiPath, 'index.html'));
+    });
+
+    // 4. Create HTTP Server
+    this.httpServer = http.createServer(app);
+
+    // 5. Setup WebSocket on SAME server
+    this.webSocketServer = new WebSocket.Server({ server: this.httpServer });
+    this.webSocketServer.on('connection', async (ws, req) => {
+      await this.handleWebSocketConnection(ws, req);
+    });
+
+    // 6. Listen
+    return new Promise((resolve, reject) => {
+      this.httpServer.listen(this.port, (error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+    });
+  }
+
+  setupAPIRoutes(app) {
     app.get('/status', (req, res) => {
       res.json({
         relayId: this.relayId,
@@ -129,16 +170,14 @@ class ComprehensiveTNFRelay {
           activeConnections: this.systemStatus.activeConnections,
         },
         ports: this.ports,
+        deployMode: 'cloud-single-port',
       });
     });
 
-    app.get('/agents', (req, res) => {
-      res.json({ agents: Array.from(this.agents.values()) });
-    });
-
-    app.get('/intercept-rules', (req, res) => {
-      res.json({ rules: Array.from(this.interceptRules.entries()) });
-    });
+    app.get('/agents', (req, res) => res.json({ agents: Array.from(this.agents.values()) }));
+    app.get('/intercept-rules', (req, res) =>
+      res.json({ rules: Array.from(this.interceptRules.entries()) })
+    );
 
     app.post('/intercept-rules', (req, res) => {
       const { hostname, action, description, enabled = true, target = 'claude_desktop' } = req.body;
@@ -154,15 +193,7 @@ class ComprehensiveTNFRelay {
       });
     });
 
-    app.post('/setup/claude-code-env', async (req, res) => {
-      try {
-        await this.setupClaudeCodeEnvironment();
-        res.json({ success: true, message: 'Claude Code environment configured' });
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
+    // Alias for Dashboard data
     app.get('/api/dashboard', (req, res) => {
       res.json({
         systemStatus: this.systemStatus,
@@ -176,95 +207,59 @@ class ComprehensiveTNFRelay {
         interceptRules: Array.from(this.interceptRules.entries()),
       });
     });
-
-    return new Promise((resolve, reject) => {
-      this.httpServer = app.listen(this.ports.http, (error) => {
-        if (error) reject(error);
-        else resolve();
-      });
-    });
   }
 
-  async startWebSocketServer() {
-    this.webSocketServer = new WebSocket.Server({ port: this.ports.websocket });
+  async handleWebSocketConnection(ws) {
+    const clientId = this.generateClientId();
+    ws.clientId = clientId;
+    ws.isAlive = true;
 
-    this.webSocketServer.on('connection', async (ws, req) => {
-      const clientId = this.generateClientId();
-      ws.clientId = clientId;
-      ws.isAlive = true;
+    this.systemStatus.activeConnections++;
+    await this.log(`WebSocket client connected: ${clientId}`);
 
-      this.systemStatus.activeConnections++;
-      await this.log(`WebSocket client connected: ${clientId}`);
-
-      ws.on('message', async (data) => {
-        try {
-          const message = JSON.parse(data.toString());
-          await this.handleWebSocketMessage(ws, message);
-        } catch (error) {
-          await this.log(`WebSocket message error: ${error.message}`, 'ERROR');
-        }
-      });
-
-      ws.on('close', async () => {
-        this.systemStatus.activeConnections--;
-        await this.log(`WebSocket client disconnected: ${clientId}`);
-        this.agents.delete(clientId);
-        this.chromeExtensions.delete(clientId);
-      });
-
-      ws.send(
-        JSON.stringify({
-          type: 'WELCOME',
-          clientId: clientId,
-          relayInfo: {
-            id: this.relayId,
-            version: this.version,
-          },
-        })
-      );
+    ws.on('message', async (data) => {
+      try {
+        const message = JSON.parse(data.toString());
+        await this.handleWebSocketMessage(ws, message);
+      } catch (error) {
+        // Silent error for malformed JSON
+      }
     });
+
+    ws.on('close', async () => {
+      this.systemStatus.activeConnections--;
+      await this.log(`WebSocket client disconnected: ${clientId}`);
+      this.agents.delete(clientId);
+      this.chromeExtensions.delete(clientId);
+    });
+
+    ws.send(
+      JSON.stringify({
+        type: 'WELCOME',
+        clientId: clientId,
+        relayInfo: { id: this.relayId, version: this.version },
+      })
+    );
   }
 
   async startProxyServer() {
+    // Optional Cloud Proxy
     const server = http.createServer();
+    server.on('request', (req, res) => this.handleProxyHTTPRequest(req, res));
+    server.on('connect', (req, socket, head) => this.handleProxyHTTPSConnect(req, socket, head));
 
-    server.on('request', (req, res) => {
-      this.handleProxyHTTPRequest(req, res);
-    });
-
-    server.on('connect', (req, socket, head) => {
-      this.handleProxyHTTPSConnect(req, socket, head);
-    });
-
-    return new Promise((resolve, reject) => {
-      this.proxyServer = server.listen(this.ports.proxy, (error) => {
-        if (error) reject(error);
-        else resolve();
+    return new Promise((resolve) => {
+      this.proxyServer = server.listen(this.proxyPort, () => {
+        this.log(`Proxy Server (Optional) listening on port ${this.proxyPort}`);
+        resolve();
       });
     });
   }
 
-  async startUIServer() {
-    const app = express();
-    app.use(express.static(path.join(__dirname, 'ui-build')));
-
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'ui-build', 'index.html'));
-    });
-
-    return new Promise((resolve, reject) => {
-      this.uiServer = app.listen(this.ports.ui, (error) => {
-        if (error) reject(error);
-        else resolve();
-      });
-    });
-  }
-
+  // ... Reuse existing Proxy Logic ...
   async handleProxyHTTPRequest(req, res) {
     const requestUrl = url.parse(req.url);
     const hostname = requestUrl.hostname || req.headers.host;
-
-    await this.log(`HTTP Request: ${req.method} ${hostname}${requestUrl.path}`);
 
     if (this.shouldIntercept(hostname)) {
       await this.interceptHTTPRequest(req, res, requestUrl);
@@ -274,6 +269,8 @@ class ComprehensiveTNFRelay {
   }
 
   shouldIntercept(hostname) {
+    // Basic check
+    if (!hostname) return false;
     for (const [rule, config] of this.interceptRules) {
       if (config.enabled && hostname.includes(rule)) {
         return true;
@@ -283,155 +280,41 @@ class ComprehensiveTNFRelay {
   }
 
   async interceptHTTPRequest(req, res, requestUrl) {
-    try {
-      let body = '';
-      req.on('data', (chunk) => {
-        body += chunk.toString();
-      });
-
-      req.on('end', async () => {
-        const interceptData = {
-          method: req.method,
-          url: req.url,
-          headers: req.headers,
-          body: body,
-          timestamp: new Date().toISOString(),
-          source: 'http_proxy',
-        };
-
-        await this.processInterceptedRequest(interceptData);
-        this.systemStatus.interceptCount++;
-
-        res.writeHead(200, {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        });
-
-        res.end(
-          JSON.stringify({
-            message: 'Request intercepted and routed via TNF Relay',
-            intercepted: true,
-            relayId: this.relayId,
-            timestamp: new Date().toISOString(),
-          })
-        );
-      });
-    } catch (error) {
-      await this.log(`Error intercepting HTTP request: ${error.message}`, 'ERROR');
-      res.writeHead(500);
-      res.end('Intercept error');
-    }
-  }
-
-  async processInterceptedRequest(interceptData) {
-    try {
-      const messageEntry = {
-        id: `MSG_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        ...interceptData,
-        processedAt: new Date().toISOString(),
+    // Simplified interceptor
+    let body = '';
+    req.on('data', (chunk) => (body += chunk.toString()));
+    req.on('end', async () => {
+      const data = {
+        method: req.method,
+        url: req.url,
+        headers: req.headers,
+        body: body,
+        timestamp: new Date().toISOString(),
+        source: 'http_proxy',
       };
+      this.interceptedMessages.push({ ...data, id: `MSG_${Date.now()}` });
+      this.systemStatus.interceptCount++;
 
-      this.interceptedMessages.push(messageEntry);
-
-      const claudeMessage = await this.formatForClaudeDesktop(interceptData);
-      await this.routeToClaudeDesktop(claudeMessage, interceptData);
-
-      await this.log(`Processed intercepted request: ${messageEntry.id}`);
-    } catch (error) {
-      await this.log(`Error processing intercepted request: ${error.message}`, 'ERROR');
-    }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: 'Intercepted by TNF Cloud Relay' }));
+    });
   }
 
-  async formatForClaudeDesktop(interceptData) {
-    let claudeMessage = `🔍 **API Call Intercepted**\n\n`;
-    claudeMessage += `**Endpoint:** ${interceptData.url}\n`;
-    claudeMessage += `**Method:** ${interceptData.method}\n`;
-    claudeMessage += `**Time:** ${new Date(interceptData.timestamp).toLocaleString()}\n\n`;
-
-    if (interceptData.body) {
-      try {
-        const bodyJson = JSON.parse(interceptData.body);
-
-        if (bodyJson.messages) {
-          claudeMessage += `**Conversation:**\n`;
-          bodyJson.messages.forEach((msg, index) => {
-            claudeMessage += `${index + 1}. **${msg.role.toUpperCase()}:** ${msg.content}\n\n`;
-          });
-        } else if (bodyJson.prompt) {
-          claudeMessage += `**Prompt:** ${bodyJson.prompt}\n\n`;
-        } else {
-          claudeMessage += `**Request Data:**\n\`\`\`json\n${JSON.stringify(bodyJson, null, 2)}\n\`\`\`\n\n`;
-        }
-      } catch (error) {
-        claudeMessage += `**Raw Request:**\n\`\`\`\n${interceptData.body}\n\`\`\`\n\n`;
-      }
-    }
-
-    claudeMessage += `---\n*Intercepted via TNF Relay v${this.version}*`;
-    return claudeMessage;
+  async forwardHTTPRequest(req, res, requestUrl) {
+    // Basic non-intercepted forward logic would go here
+    // For cloud relay, we often skip full proxying unless needed
+    res.writeHead(501);
+    res.end('Proxy forwarding not fully enabled in cloud mode');
   }
 
-  async routeToClaudeDesktop(claudeMessage, interceptData) {
-    try {
-      execSync(`open "/Applications/Claude.app"`);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const appleScript = `
-            tell application "Claude"
-                activate
-                delay 0.5
-            end tell
-            
-            tell application "System Events"
-                tell process "Claude"
-                    click text area 1 of scroll area 1 of group 1 of group 1 of window 1
-                    delay 0.2
-                    keystroke "a" using command down
-                    keystroke "${claudeMessage.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"
-                    delay 0.5
-                    keystroke return
-                end tell
-            end tell
-            `;
-
-      execSync(`osascript -e '${appleScript}'`);
-      await this.log('Message sent to Claude Desktop');
-    } catch (error) {
-      await this.log(`Error routing to Claude Desktop: ${error.message}`, 'ERROR');
-    }
+  async handleProxyHTTPSConnect(req, socket, head) {
+    // Connect handling
+    socket.destroy(); // Disabled for security in basic cloud setup
   }
 
-  async setupClaudeCodeEnvironment() {
-    try {
-      const envScript = `#!/bin/bash
-export HTTP_PROXY="http://localhost:${this.ports.proxy}"
-export HTTPS_PROXY="http://localhost:${this.ports.proxy}"
-export http_proxy="$HTTP_PROXY"
-export https_proxy="$HTTPS_PROXY"
-export NODE_TLS_REJECT_UNAUTHORIZED=0
-export TNF_INTERCEPT_ACTIVE=1
-
-claude_with_tnf() {
-    echo "[$(date)] Claude Code: $*" >> "${this.workspaceDir}/claude-code-activity.log"
-    command claude "$@"
-}
-
-alias claude='claude_with_tnf'
-alias claude-original='command claude'
-
-echo "🔧 TNF Claude Code environment loaded"
-echo "💡 Proxy: $HTTP_PROXY"
-`;
-
-      const envPath = path.join(process.env.HOME, '.tnf-claude-env');
-      await fs.writeFile(envPath, envScript);
-
-      await this.log(`Created Claude Code environment script: ${envPath}`);
-      return envPath;
-    } catch (error) {
-      await this.log(`Error setting up Claude Code environment: ${error.message}`, 'ERROR');
-      throw error;
-    }
+  // Helper Methods
+  generateClientId() {
+    return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   async handleWebSocketMessage(ws, message) {
@@ -440,10 +323,8 @@ echo "💡 Proxy: $HTTP_PROXY"
         await this.handleRegistration(ws, message);
         break;
       case 'API_INTERCEPT_NOTIFICATION':
-        await this.handleAPIIntercept(ws, message);
+        // Handle notification
         break;
-      default:
-        await this.log(`Unknown message type: ${message.type}`, 'WARN');
     }
   }
 
@@ -459,10 +340,8 @@ echo "💡 Proxy: $HTTP_PROXY"
 
     if (payload.type === 'chrome_extension') {
       this.chromeExtensions.set(ws.clientId, clientInfo);
-      await this.log(`Chrome extension registered: ${ws.clientId}`);
     } else {
       this.agents.set(ws.clientId, clientInfo);
-      await this.log(`Agent registered: ${ws.clientId} (${payload.type})`);
     }
 
     ws.send(
@@ -473,162 +352,25 @@ echo "💡 Proxy: $HTTP_PROXY"
     );
   }
 
-  async handleAPIIntercept(ws, message) {
-    try {
-      const { content } = message;
-      const interceptData = content.original_request || content.request_data;
-
-      await this.log(`API Intercept received: ${interceptData.method} ${interceptData.url}`);
-      await this.processInterceptedRequest(interceptData);
-    } catch (error) {
-      await this.log(`Error handling API intercept: ${error.message}`, 'ERROR');
-    }
-  }
-
-  async forwardHTTPRequest(req, res, requestUrl) {
-    try {
-      const options = {
-        hostname: requestUrl.hostname,
-        port: requestUrl.port || (requestUrl.protocol === 'https:' ? 443 : 80),
-        path: requestUrl.path,
-        method: req.method,
-        headers: req.headers,
-      };
-
-      const protocol = requestUrl.protocol === 'https:' ? https : http;
-
-      const proxyReq = protocol.request(options, (proxyRes) => {
-        res.writeHead(proxyRes.statusCode, proxyRes.headers);
-        proxyRes.pipe(res);
-      });
-
-      proxyReq.on('error', (error) => {
-        this.log(`Proxy request error: ${error.message}`, 'ERROR');
-        res.writeHead(500);
-        res.end('Proxy error');
-      });
-
-      req.pipe(proxyReq);
-    } catch (error) {
-      await this.log(`Error forwarding HTTP request: ${error.message}`, 'ERROR');
-      res.writeHead(500);
-      res.end('Forward error');
-    }
-  }
-
-  async handleProxyHTTPSConnect(req, socket, head) {
-    const [hostname, port] = req.url.split(':');
-
-    await this.log(`HTTPS CONNECT: ${hostname}:${port}`);
-    await this.forwardHTTPSConnect(req, socket, head, hostname, port);
-  }
-
-  async forwardHTTPSConnect(req, socket, head, hostname, port) {
-    const targetSocket = net.connect(port, hostname, () => {
-      socket.write('HTTP/1.1 200 Connection Established\r\n\r\n');
-      targetSocket.write(head);
-      socket.pipe(targetSocket);
-      targetSocket.pipe(socket);
-    });
-
-    targetSocket.on('error', (error) => {
-      this.log(`HTTPS forward error: ${error.message}`, 'ERROR');
-      socket.destroy();
-    });
-  }
-
-  generateClientId() {
-    return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
   async stop() {
     this.isRunning = false;
-
     if (this.webSocketServer) this.webSocketServer.close();
     if (this.httpServer) this.httpServer.close();
     if (this.proxyServer) this.proxyServer.close();
-    if (this.uiServer) this.uiServer.close();
-
-    await this.log('TNF Relay stopped');
-  }
-
-  getStatus() {
-    return {
-      relayId: this.relayId,
-      version: this.version,
-      isRunning: this.isRunning,
-      systemStatus: this.systemStatus,
-      ports: this.ports,
-      stats: {
-        agents: this.agents.size,
-        chromeExtensions: this.chromeExtensions.size,
-        interceptedMessages: this.interceptedMessages.length,
-        activeConnections: this.systemStatus.activeConnections,
-      },
-    };
   }
 }
 
 // CLI Interface
 if (require.main === module) {
   const relay = new ComprehensiveTNFRelay();
-  const command = process.argv[2];
+  relay.start().then((success) => {
+    if (!success) process.exit(1);
 
-  (async () => {
-    switch (command) {
-      case 'start':
-        const success = await relay.start();
-        if (success) {
-          console.log(`\n🚀 TNF Relay v${relay.version} is running!`);
-          console.log(`\n🌐 Access URLs:`);
-          console.log(`   📊 Dashboard: http://localhost:${relay.ports.ui}`);
-          console.log(`   🔌 HTTP API: http://localhost:${relay.ports.http}`);
-          console.log(`   💬 WebSocket: ws://localhost:${relay.ports.websocket}`);
-          console.log(`   🔄 Proxy: http://localhost:${relay.ports.proxy}`);
-          console.log(`\nPress Ctrl+C to stop...\n`);
-
-          process.on('SIGINT', async () => {
-            console.log('\n🛑 Shutting down TNF Relay...');
-            await relay.stop();
-            process.exit(0);
-          });
-
-          await new Promise(() => {});
-        } else {
-          console.error('❌ Failed to start TNF Relay');
-          process.exit(1);
-        }
-        break;
-
-      case 'status':
-        const status = relay.getStatus();
-        console.log('\n📊 TNF Relay Status:');
-        console.log(`   Relay ID: ${status.relayId}`);
-        console.log(`   Version: ${status.version}`);
-        console.log(`   Running: ${status.isRunning}`);
-        console.log(`   Agents: ${status.stats.agents}`);
-        console.log(`   Intercepted Messages: ${status.stats.interceptedMessages}`);
-        break;
-
-      default:
-        console.log(`
-🚀 TNF Agent Communication Relay v${relay.version}
-
-Usage:
-  node comprehensive-tnf-relay.js start   # Start the relay system
-  node comprehensive-tnf-relay.js status  # Show system status
-
-Features:
-  ✨ Complete API interception (HTTP/HTTPS proxy)
-  🤖 Claude Code terminal integration
-  📊 Real-time dashboard UI
-  💬 WebSocket communication
-  🎯 Claude Desktop integration
-
-After starting, access the dashboard at: http://localhost:${relay.ports.ui}
-                `);
-    }
-  })().catch(console.error);
+    // Handle signals
+    process.on('SIGINT', () => {
+      relay.stop().then(() => process.exit(0));
+    });
+  });
 }
 
 module.exports = ComprehensiveTNFRelay;

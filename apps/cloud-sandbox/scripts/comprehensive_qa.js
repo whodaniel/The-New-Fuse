@@ -5,16 +5,22 @@
  * Reports findings in real-time via Chrome DevTools Protocol
  */
 
-const axios = require('axios');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const SANDBOX_URL = process.env.SANDBOX_URL || 'https://tnf-cloud-sandbox-v2-production.up.railway.app';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const SANDBOX_URL =
+  process.env.SANDBOX_URL || 'https://tnf-cloud-sandbox-v2-production.up.railway.app';
 const TARGET_SITE = 'https://thenewfuse.com';
 
 // QA Test Configuration
 const QA_CONFIG = {
-  maxDepth: 3,              // How deep to crawl (3 levels from homepage)
-  maxPagesPerLevel: 10,     // Max pages to test per depth level
-  testTimeout: 30000,       // 30 seconds per page
+  maxDepth: 3, // How deep to crawl (3 levels from homepage)
+  maxPagesPerLevel: 10, // Max pages to test per depth level
+  testTimeout: 30000, // 30 seconds per page
   screenshotInterval: 5000, // Screenshot every 5 seconds
   validateForms: true,
   validateLinks: true,
@@ -23,7 +29,7 @@ const QA_CONFIG = {
   validateComponents: true,
   validateAccessibility: true,
   validatePerformance: true,
-  validateSecurity: true
+  validateSecurity: true,
 };
 
 // Test Results Storage
@@ -41,23 +47,62 @@ const qaResults = {
     accessibilityIssues: [],
     formValidationIssues: [],
     buttonIssues: [],
-    componentIssues: []
-  }
+    componentIssues: [],
+  },
 };
 
+let messageId = 0;
+
 /**
- * Call MCP tool on Railway sandbox
+ * Call MCP tool on Railway sandbox using JSON-RPC
  */
-async function callTool(toolName, params = {}) {
+async function callTool(toolName, args = {}) {
+  const id = (messageId++).toString();
+  const payload = {
+    jsonrpc: '2.0',
+    id,
+    method: 'tools/call',
+    params: {
+      name: toolName,
+      arguments: args,
+    },
+  };
+
   try {
-    const response = await axios.post(`${SANDBOX_URL}/api/agent/call`, {
-      tool: toolName,
-      params: params
-    }, {
-      timeout: QA_CONFIG.testTimeout
+    const response = await fetch(`${SANDBOX_URL}/api/agent/call`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(QA_CONFIG.testTimeout),
     });
 
-    return response.data;
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      return { success: false, error: data.error.message || data.error };
+    }
+
+    const result = data.result;
+
+    // Normalize result
+    if (result && result.content && result.content[0] && result.content[0].text) {
+      try {
+        // Some tools might return JSON string in text
+        const parsed = JSON.parse(result.content[0].text);
+        return { success: true, result: parsed };
+      } catch (e) {
+        // Or just plain text
+        return { success: true, result: result.content[0].text };
+      }
+    }
+
+    return { success: true, result: result };
   } catch (error) {
     console.error(`❌ Tool call failed: ${toolName}`, error.message);
     return { success: false, error: error.message };
@@ -73,12 +118,12 @@ async function navigateToPage(url) {
   const navResult = await callTool('browser_navigate', { url });
 
   if (!navResult.success) {
-    console.error(`❌ Navigation failed: ${navResult.error}`);
+    console.error(`❌ Navigation failed: ${JSON.stringify(navResult.error)}`);
     return null;
   }
 
   // Wait for page to be fully loaded
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 
   // Take initial screenshot
   await callTool('browser_screenshot', { filename: `qa_${Date.now()}.png` });
@@ -92,17 +137,25 @@ async function navigateToPage(url) {
 async function extractLinks() {
   const result = await callTool('browser_evaluate', {
     script: `
-      Array.from(document.querySelectorAll('a[href]')).map(a => ({
+      JSON.stringify(Array.from(document.querySelectorAll('a[href]')).map(a => ({
         href: a.href,
         text: a.textContent.trim(),
         target: a.target,
         rel: a.rel,
         visible: a.offsetParent !== null
-      }))
-    `
+      })))
+    `,
   });
 
-  return result.success ? result.result : [];
+  if (result.success && Array.isArray(result.result)) {
+    return result.result;
+  }
+
+  if (result.success && typeof result.result === 'string' && result.result.includes('disabled')) {
+    console.log('⚠️  Link extraction skipped (Automation Disabled)');
+  }
+
+  return [];
 }
 
 /**
@@ -111,7 +164,7 @@ async function extractLinks() {
 async function extractButtons() {
   const result = await callTool('browser_evaluate', {
     script: `
-      Array.from(document.querySelectorAll('button, [role="button"], input[type="button"], input[type="submit"]')).map(btn => ({
+      JSON.stringify(Array.from(document.querySelectorAll('button, [role="button"], input[type="button"], input[type="submit"]').map(btn => ({
         type: btn.tagName,
         text: btn.textContent?.trim() || btn.value,
         id: btn.id,
@@ -119,11 +172,14 @@ async function extractButtons() {
         disabled: btn.disabled,
         visible: btn.offsetParent !== null,
         hasClickHandler: btn.onclick !== null || btn.getAttribute('onclick') !== null
-      }))
-    `
+      })))
+    `,
   });
 
-  return result.success ? result.result : [];
+  if (result.success && Array.isArray(result.result)) {
+    return result.result;
+  }
+  return [];
 }
 
 /**
@@ -132,7 +188,7 @@ async function extractButtons() {
 async function extractForms() {
   const result = await callTool('browser_evaluate', {
     script: `
-      Array.from(document.querySelectorAll('form')).map(form => ({
+      JSON.stringify(Array.from(document.querySelectorAll('form')).map(form => ({
         action: form.action,
         method: form.method,
         id: form.id,
@@ -145,11 +201,14 @@ async function extractForms() {
           placeholder: input.placeholder,
           value: input.value
         }))
-      }))
-    `
+      })))
+    `,
   });
 
-  return result.success ? result.result : [];
+  if (result.success && Array.isArray(result.result)) {
+    return result.result;
+  }
+  return [];
 }
 
 /**
@@ -159,11 +218,14 @@ async function checkConsoleErrors() {
   const result = await callTool('browser_evaluate', {
     script: `
       window.__qaConsoleErrors = window.__qaConsoleErrors || [];
-      window.__qaConsoleErrors
-    `
+      JSON.stringify(window.__qaConsoleErrors)
+    `,
   });
 
-  return result.success ? result.result : [];
+  if (result.success && Array.isArray(result.result)) {
+    return result.result;
+  }
+  return [];
 }
 
 /**
@@ -172,7 +234,7 @@ async function checkConsoleErrors() {
 async function validateImages() {
   const result = await callTool('browser_evaluate', {
     script: `
-      Array.from(document.querySelectorAll('img')).map(img => ({
+      JSON.stringify(Array.from(document.querySelectorAll('img')).map(img => ({
         src: img.src,
         alt: img.alt,
         naturalWidth: img.naturalWidth,
@@ -180,13 +242,13 @@ async function validateImages() {
         complete: img.complete,
         error: img.complete && img.naturalWidth === 0,
         hasAlt: img.alt && img.alt.trim().length > 0
-      }))
-    `
+      })))
+    `,
   });
 
-  const images = result.success ? result.result : [];
-  const brokenImages = images.filter(img => img.error);
-  const missingAlt = images.filter(img => !img.hasAlt);
+  const images = result.success && Array.isArray(result.result) ? result.result : [];
+  const brokenImages = images.filter((img) => img.error);
+  const missingAlt = images.filter((img) => !img.hasAlt);
 
   return { images, brokenImages, missingAlt };
 }
@@ -218,13 +280,15 @@ async function testButton(button, pageUrl) {
   try {
     const clickResult = await callTool('browser_evaluate', {
       script: `
-        const btn = document.querySelector('button:nth-of-type(${button.index || 1})');
-        if (btn) {
-          btn.click();
-          return { clicked: true, errors: [] };
-        }
-        return { clicked: false, errors: ['Button not found'] };
-      `
+        (function() {
+            const btn = document.querySelector('button:nth-of-type(${button.index || 1})');
+            if (btn) {
+            btn.click();
+            return JSON.stringify({ clicked: true, errors: [] });
+            }
+            return JSON.stringify({ clicked: false, errors: ['Button not found'] });
+        })()
+      `,
     });
 
     if (!clickResult.success || !clickResult.result.clicked) {
@@ -232,17 +296,19 @@ async function testButton(button, pageUrl) {
     }
 
     // Wait for any effects
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Check for console errors after click
     const errors = await checkConsoleErrors();
     if (errors.length > 0) {
-      issues.push({ severity: 'high', message: `Console errors after click: ${errors.join(', ')}` });
+      issues.push({
+        severity: 'high',
+        message: `Console errors after click: ${errors.join(', ')}`,
+      });
     }
 
     // Take screenshot after action
     await callTool('browser_screenshot', { filename: `button_${button.text}_${Date.now()}.png` });
-
   } catch (error) {
     issues.push({ severity: 'high', message: `Click error: ${error.message}` });
   }
@@ -251,7 +317,7 @@ async function testButton(button, pageUrl) {
     button,
     tested: true,
     issues,
-    passed: issues.filter(i => i.severity === 'high').length === 0
+    passed: issues.filter((i) => i.severity === 'high').length === 0,
   };
 }
 
@@ -277,7 +343,10 @@ async function testLink(link, pageUrl) {
       issues.push({ severity: 'low', message: 'External link should open in new tab' });
     }
     if (!link.rel.includes('noopener')) {
-      issues.push({ severity: 'medium', message: 'External link missing rel="noopener" (security)' });
+      issues.push({
+        severity: 'medium',
+        message: 'External link missing rel="noopener" (security)',
+      });
     }
   }
 
@@ -285,7 +354,7 @@ async function testLink(link, pageUrl) {
     link,
     tested: true,
     issues,
-    passed: issues.filter(i => i.severity === 'high').length === 0
+    passed: issues.filter((i) => i.severity === 'high').length === 0,
   };
 }
 
@@ -303,33 +372,41 @@ async function testForm(form, pageUrl) {
   }
 
   // Check required fields
-  const requiredFields = form.inputs.filter(input => input.required);
+  const requiredFields = form.inputs.filter((input) => input.required);
 
   // Try submitting empty form to test validation
   try {
     const submitResult = await callTool('browser_evaluate', {
       script: `
-        const form = document.querySelector('form${form.id ? '#' + form.id : ''}');
-        if (form) {
-          // Try submitting without filling
-          const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-          if (submitBtn) {
-            submitBtn.click();
-            return { submitted: true, validationTriggered: !form.checkValidity() };
-          }
-        }
-        return { submitted: false };
-      `
+        (function() {
+            const form = document.querySelector('form${form.id ? '#' + form.id : ''}');
+            if (form) {
+            // Try submitting without filling
+            const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+            if (submitBtn) {
+                submitBtn.click();
+                return JSON.stringify({ submitted: true, validationTriggered: !form.checkValidity() });
+            }
+            }
+            return JSON.stringify({ submitted: false });
+        })()
+      `,
     });
 
-    if (submitResult.success && requiredFields.length > 0 && !submitResult.result.validationTriggered) {
-      issues.push({ severity: 'high', message: 'Form validation not working (allows empty submit)' });
+    if (
+      submitResult.success &&
+      requiredFields.length > 0 &&
+      !submitResult.result.validationTriggered
+    ) {
+      issues.push({
+        severity: 'high',
+        message: 'Form validation not working (allows empty submit)',
+      });
     }
 
     // Take screenshot of validation state
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await callTool('browser_screenshot', { filename: `form_validation_${Date.now()}.png` });
-
   } catch (error) {
     issues.push({ severity: 'medium', message: `Form test error: ${error.message}` });
   }
@@ -338,7 +415,7 @@ async function testForm(form, pageUrl) {
     form,
     tested: true,
     issues,
-    passed: issues.filter(i => i.severity === 'high').length === 0
+    passed: issues.filter((i) => i.severity === 'high').length === 0,
   };
 }
 
@@ -348,18 +425,20 @@ async function testForm(form, pageUrl) {
 async function measurePerformance(url) {
   const result = await callTool('browser_evaluate', {
     script: `
-      const perf = performance.getEntriesByType('navigation')[0];
-      const paint = performance.getEntriesByType('paint');
+      (function() {
+        const perf = performance.getEntriesByType('navigation')[0];
+        const paint = performance.getEntriesByType('paint');
 
-      ({
-        loadTime: perf ? perf.loadEventEnd - perf.loadEventStart : 0,
-        domContentLoaded: perf ? perf.domContentLoadedEventEnd - perf.domContentLoadedEventStart : 0,
-        firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
-        firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
-        resources: performance.getEntriesByType('resource').length,
-        totalSize: performance.getEntriesByType('resource').reduce((sum, r) => sum + r.transferSize, 0)
-      })
-    `
+        return JSON.stringify({
+            loadTime: perf ? perf.loadEventEnd - perf.loadEventStart : 0,
+            domContentLoaded: perf ? perf.domContentLoadedEventEnd - perf.domContentLoadedEventStart : 0,
+            firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
+            firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
+            resources: performance.getEntriesByType('resource').length,
+            totalSize: performance.getEntriesByType('resource').reduce((sum, r) => sum + r.transferSize, 0)
+        });
+      })()
+    `,
   });
 
   return result.success ? result.result : null;
@@ -385,7 +464,7 @@ async function testPage(url, depth = 0) {
     images: {},
     performance: null,
     consoleErrors: [],
-    passed: false
+    passed: false,
   };
 
   // Navigate to page
@@ -402,7 +481,7 @@ async function testPage(url, depth = 0) {
   const [links, buttons, forms] = await Promise.all([
     extractLinks(),
     extractButtons(),
-    extractForms()
+    extractForms(),
   ]);
 
   console.log(`   ✓ Found ${links.length} links`);
@@ -417,24 +496,24 @@ async function testPage(url, depth = 0) {
 
     if (imageResults.brokenImages.length > 0) {
       console.log(`   ❌ ${imageResults.brokenImages.length} broken images found`);
-      imageResults.brokenImages.forEach(img => {
+      imageResults.brokenImages.forEach((img) => {
         pageResult.issues.push({
           severity: 'high',
           type: 'broken-image',
           message: `Broken image: ${img.src}`,
-          element: img
+          element: img,
         });
       });
     }
 
     if (imageResults.missingAlt.length > 0) {
       console.log(`   ⚠️ ${imageResults.missingAlt.length} images missing alt text`);
-      imageResults.missingAlt.forEach(img => {
+      imageResults.missingAlt.forEach((img) => {
         pageResult.issues.push({
           severity: 'medium',
           type: 'accessibility',
           message: `Image missing alt text: ${img.src}`,
-          element: img
+          element: img,
         });
       });
     }
@@ -450,11 +529,11 @@ async function testPage(url, depth = 0) {
       const testResult = await testButton(button, url);
       buttonTests.push(testResult);
 
-      testResult.issues.forEach(issue => {
+      testResult.issues.forEach((issue) => {
         pageResult.issues.push({
           ...issue,
           type: 'button',
-          element: button
+          element: button,
         });
       });
     }
@@ -471,11 +550,11 @@ async function testPage(url, depth = 0) {
       const testResult = await testLink(link, url);
       linkTests.push(testResult);
 
-      testResult.issues.forEach(issue => {
+      testResult.issues.forEach((issue) => {
         pageResult.issues.push({
           ...issue,
           type: 'link',
-          element: link
+          element: link,
         });
       });
     }
@@ -492,11 +571,11 @@ async function testPage(url, depth = 0) {
       const testResult = await testForm(form, url);
       formTests.push(testResult);
 
-      testResult.issues.forEach(issue => {
+      testResult.issues.forEach((issue) => {
         pageResult.issues.push({
           ...issue,
           type: 'form',
-          element: form
+          element: form,
         });
       });
     }
@@ -511,11 +590,11 @@ async function testPage(url, depth = 0) {
 
   if (consoleErrors.length > 0) {
     console.log(`   ❌ ${consoleErrors.length} console errors found`);
-    consoleErrors.forEach(error => {
+    consoleErrors.forEach((error) => {
       pageResult.issues.push({
         severity: 'high',
         type: 'console-error',
-        message: error
+        message: error,
       });
     });
   }
@@ -535,14 +614,16 @@ async function testPage(url, depth = 0) {
         pageResult.issues.push({
           severity: 'medium',
           type: 'performance',
-          message: `Slow page load: ${perfMetrics.loadTime}ms (>3000ms)`
+          message: `Slow page load: ${perfMetrics.loadTime}ms (>3000ms)`,
         });
       }
     }
   }
 
   // Calculate pass/fail
-  const criticalIssues = pageResult.issues.filter(i => i.severity === 'critical' || i.severity === 'high');
+  const criticalIssues = pageResult.issues.filter(
+    (i) => i.severity === 'critical' || i.severity === 'high'
+  );
   pageResult.passed = criticalIssues.length === 0;
 
   console.log(`\n📊 RESULTS: ${pageResult.passed ? '✅ PASSED' : '❌ FAILED'}`);
@@ -578,15 +659,16 @@ async function crawlSite(startUrl = TARGET_SITE, depth = 0, visited = new Set())
   // Extract internal links to crawl next
   if (depth < QA_CONFIG.maxDepth) {
     const internalLinks = pageResult.links
-      .filter(link =>
-        link.link?.href &&
-        link.link.href.startsWith(TARGET_SITE) &&
-        !visited.has(link.link.href) &&
-        !link.link.href.includes('#') &&
-        !link.link.href.includes('?')
+      .filter(
+        (link) =>
+          link.link?.href &&
+          link.link.href.startsWith(TARGET_SITE) &&
+          !visited.has(link.link.href) &&
+          !link.link.href.includes('#') &&
+          !link.link.href.includes('?')
       )
       .slice(0, QA_CONFIG.maxPagesPerLevel)
-      .map(link => link.link.href);
+      .map((link) => link.link.href);
 
     console.log(`\n🔗 Found ${internalLinks.length} new internal links to crawl`);
 
@@ -613,8 +695,8 @@ function generateReport() {
 
   // Group issues by type
   const issuesByType = {};
-  qaResults.pages.forEach(page => {
-    page.issues.forEach(issue => {
+  qaResults.pages.forEach((page) => {
+    page.issues.forEach((issue) => {
       const type = issue.type || 'other';
       issuesByType[type] = issuesByType[type] || [];
       issuesByType[type].push({ ...issue, page: page.url });
@@ -627,28 +709,30 @@ function generateReport() {
   });
 
   // Pages with issues
-  const failedPages = qaResults.pages.filter(p => !p.passed);
+  const failedPages = qaResults.pages.filter((p) => !p.passed);
   console.log(`\n❌ Failed Pages: ${failedPages.length}`);
-  failedPages.forEach(page => {
+  failedPages.forEach((page) => {
     console.log(`   - ${page.url} (${page.issues.length} issues)`);
   });
 
   // Critical issues
   const criticalIssues = [];
-  qaResults.pages.forEach(page => {
-    page.issues.filter(i => i.severity === 'critical' || i.severity === 'high').forEach(issue => {
-      criticalIssues.push({ ...issue, page: page.url });
-    });
+  qaResults.pages.forEach((page) => {
+    page.issues
+      .filter((i) => i.severity === 'critical' || i.severity === 'high')
+      .forEach((issue) => {
+        criticalIssues.push({ ...issue, page: page.url });
+      });
   });
 
   console.log(`\n🔴 Critical/High Severity Issues: ${criticalIssues.length}`);
-  criticalIssues.slice(0, 10).forEach(issue => {
+  criticalIssues.slice(0, 10).forEach((issue) => {
     console.log(`   - [${issue.page}] ${issue.message}`);
   });
 
   // Save detailed report to file
   const reportPath = `/tmp/qa_report_${Date.now()}.json`;
-  require('fs').writeFileSync(reportPath, JSON.stringify(qaResults, null, 2));
+  fs.writeFileSync(reportPath, JSON.stringify(qaResults, null, 2));
   console.log(`\n💾 Detailed report saved to: ${reportPath}`);
 
   return qaResults;
@@ -674,7 +758,7 @@ async function main() {
           window.__qaConsoleErrors.push(args.join(' '));
           oldError.apply(console, args);
         };
-      `
+      `,
     });
 
     // Start crawling
@@ -686,7 +770,6 @@ async function main() {
     console.log('\n✅ QA test suite completed!\n');
 
     return report;
-
   } catch (error) {
     console.error('\n❌ QA test suite failed:', error);
     throw error;
@@ -694,8 +777,9 @@ async function main() {
 }
 
 // Run if called directly
-if (require.main === module) {
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMainModule) {
   main().catch(console.error);
 }
 
-module.exports = { main, testPage, crawlSite };
+export { crawlSite, main, testPage };

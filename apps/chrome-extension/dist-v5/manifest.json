@@ -32,7 +32,9 @@
       "matches": ["<all_urls>"],
       "js": ["content/index.js"],
       "css": [],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true
     }
   ],
 
@@ -41,7 +43,8 @@
     "activeTab",
     "tabs",
     "notifications",
-    "nativeMessaging"
+    "nativeMessaging",
+    "scripting"
   ],
 
   "host_permissions": [
@@ -54,7 +57,9 @@
     "https://poe.com/*",
     "http://localhost:*/*",
     "ws://localhost:*/*",
-    "wss://localhost:*/*"
+    "wss://localhost:*/*",
+    "wss://relay.thenewfuse.com/*",
+    "https://the-new-fuse-api.railway.app/*"
   ],
 
   "commands": {

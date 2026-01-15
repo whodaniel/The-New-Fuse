@@ -28,12 +28,14 @@
     "ethers": "^6.15.0",
     "express": "^4.22.0",
     "ioredis": "^5.8.1",
+    "jsonwebtoken": "^9.0.2",
     "redis": "^5.10.0",
     "ws": "^8.18.3",
     "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.8.1",
     "@types/ws": "^8.18.1",
     "rimraf": "^6.0.1",

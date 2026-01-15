@@ -1,22 +1,22 @@
 /**
  * Core Web Scraping Service
- * 
+ *
  * Provides unified interface for web scraping with both simple HTTP requests
  * and full browser automation capabilities.
  */
 
+import { isValidPublicUrl } from '@the-new-fuse/utils';
 import axios, { AxiosResponse } from 'axios';
-import puppeteer, { Browser, Page } from 'puppeteer';
 import * as cheerio from 'cheerio';
+import puppeteer, { Browser, Page } from 'puppeteer';
 import urlParse from 'url-parse';
-import { 
-  WebScrapingConfig, 
-  ScrapingResult, 
-  ContentExtractionOptions,
+import {
   BrowserSession,
-  SecurityPolicy
+  ContentExtractionOptions,
+  ScrapingResult,
+  SecurityPolicy,
+  WebScrapingConfig,
 } from '../types';
-import { isValidPublicUrl } from '../../../utils/src/validators.server';
 // Simple error and monitoring implementations for web scraping
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {
@@ -30,7 +30,7 @@ class BaseMonitoringSystem {
     // eslint-disable-next-line no-console
     console.log(`[WebScraping Metric] ${name}: ${value}`, tags || {});
   }
-  
+
   getMetrics(): any {
     return { totalRequests: 0, successRate: 1.0, averageResponseTime: 0 };
   }
@@ -43,10 +43,7 @@ export class WebScrapingService {
   private readonly securityPolicy: SecurityPolicy;
   private readonly defaultConfig: WebScrapingConfig;
 
-  constructor(
-    securityPolicy: SecurityPolicy = {},
-    defaultConfig: WebScrapingConfig = {}
-  ) {
+  constructor(securityPolicy: SecurityPolicy = {}, defaultConfig: WebScrapingConfig = {}) {
     this.errorHandler = new BaseErrorHandler();
     this.monitoring = new BaseMonitoringSystem();
     this.securityPolicy = {
@@ -56,14 +53,14 @@ export class WebScrapingService {
         'text/plain',
         'application/json',
         'application/xml',
-        'text/xml'
+        'text/xml',
       ],
       rateLimit: {
         requests: 100,
-        windowMs: 60000 // 1 minute
+        windowMs: 60000, // 1 minute
       },
       contentFiltering: true,
-      ...securityPolicy
+      ...securityPolicy,
     };
     this.defaultConfig = {
       timeout: 30000,
@@ -71,7 +68,7 @@ export class WebScrapingService {
       maxRedirects: 5,
       enableJavaScript: false,
       viewport: { width: 1920, height: 1080 },
-      ...defaultConfig
+      ...defaultConfig,
     };
   }
 
@@ -79,7 +76,7 @@ export class WebScrapingService {
    * Scrape a webpage using simple HTTP request (fast, no JS)
    */
   async scrapeSimple(
-    url: string, 
+    url: string,
     config: WebScrapingConfig = {},
     extractionOptions: ContentExtractionOptions = {}
   ): Promise<ScrapingResult> {
@@ -98,10 +95,10 @@ export class WebScrapingService {
         maxRedirects: finalConfig.maxRedirects,
         headers: {
           'User-Agent': finalConfig.userAgent,
-          ...finalConfig.headers
+          ...finalConfig.headers,
         },
         validateStatus: () => true, // Accept all status codes
-        maxContentLength: this.securityPolicy.maxFileSize
+        maxContentLength: this.securityPolicy.maxFileSize,
       });
 
       // Validate content type
@@ -126,16 +123,15 @@ export class WebScrapingService {
           executionTime: Date.now() - startTime,
           timestamp: new Date(),
           method: 'fetch',
-          customExtractions: {}
-        }
+          customExtractions: {},
+        },
       };
 
       this.monitoring.recordMetric('web_scraping_success', 1, { method: 'simple' });
       return result;
-
     } catch (error) {
       this.monitoring.recordMetric('web_scraping_error', 1, { method: 'simple' });
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       await this.errorHandler.handleError(error as Error, { url, method: 'simple' });
 
@@ -147,8 +143,8 @@ export class WebScrapingService {
           executionTime: Date.now() - startTime,
           timestamp: new Date(),
           method: 'fetch',
-          customExtractions: {}
-        }
+          customExtractions: {},
+        },
       };
     }
   }
@@ -182,8 +178,8 @@ export class WebScrapingService {
           '--disable-gpu',
           '--no-first-run',
           '--no-zygote',
-          '--single-process'
-        ]
+          '--single-process',
+        ],
       });
 
       page = await browser.newPage();
@@ -212,19 +208,19 @@ export class WebScrapingService {
       // Navigate to page
       const response = await page.goto(url, {
         waitUntil: 'networkidle2',
-        timeout: finalConfig.timeout
+        timeout: finalConfig.timeout,
       });
 
       // Wait for specific selector if provided
       if (finalConfig.waitForSelector) {
         await page.waitForSelector(finalConfig.waitForSelector, {
-          timeout: finalConfig.timeout
+          timeout: finalConfig.timeout,
         });
       }
 
       // Additional wait time if specified
       if (finalConfig.waitTime) {
-        await new Promise(resolve => setTimeout(resolve, finalConfig.waitTime));
+        await new Promise((resolve) => setTimeout(resolve, finalConfig.waitTime));
       }
 
       // Get page content
@@ -234,9 +230,9 @@ export class WebScrapingService {
       // Take screenshot if needed
       let screenshot: string | undefined;
       if (extractionOptions.includeMetadata) {
-        const screenshotBuffer = await page.screenshot({ 
+        const screenshotBuffer = await page.screenshot({
           type: 'png',
-          fullPage: true 
+          fullPage: true,
         });
         screenshot = screenshotBuffer.toString('base64');
       }
@@ -260,16 +256,15 @@ export class WebScrapingService {
           method: 'puppeteer',
           resourcesLoaded: resourcesLoaded.length,
           jsErrors: jsErrors.length > 0 ? jsErrors : undefined,
-          customExtractions: {}
-        }
+          customExtractions: {},
+        },
       };
 
       this.monitoring.recordMetric('web_scraping_success', 1, { method: 'puppeteer' });
       return result;
-
     } catch (error) {
       this.monitoring.recordMetric('web_scraping_error', 1, { method: 'puppeteer' });
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       await this.errorHandler.handleError(error as Error, { url, method: 'puppeteer' });
 
@@ -281,10 +276,9 @@ export class WebScrapingService {
           executionTime: Date.now() - startTime,
           timestamp: new Date(),
           method: 'puppeteer',
-          customExtractions: {}
-        }
+          customExtractions: {},
+        },
       };
-
     } finally {
       // Cleanup
       if (page && !page.isClosed()) {
@@ -307,7 +301,7 @@ export class WebScrapingService {
     // Try simple method first (faster)
     if (!config.enableJavaScript && !config.waitForSelector) {
       const simpleResult = await this.scrapeSimple(url, config, extractionOptions);
-      
+
       // If simple method works and returns content, use it
       if (simpleResult.success && simpleResult.text && simpleResult.text.length > 100) {
         return simpleResult;
@@ -322,7 +316,7 @@ export class WebScrapingService {
    * Extract content from HTML using Cheerio
    */
   private extractContent(
-    $: cheerio.CheerioAPI, 
+    $: cheerio.CheerioAPI,
     options: ContentExtractionOptions
   ): Partial<ScrapingResult> {
     const result: Partial<ScrapingResult> = {};
@@ -336,23 +330,25 @@ export class WebScrapingService {
     result.title = $('title').first().text().trim();
 
     // Extract meta description
-    result.description = $('meta[name="description"]').attr('content') || 
-                        $('meta[property="og:description"]').attr('content') || '';
+    result.description =
+      $('meta[name="description"]').attr('content') ||
+      $('meta[property="og:description"]').attr('content') ||
+      '';
 
     // Extract text content
     let textContent = '';
     if (options.mainContentOnly) {
       // Try to find main content areas
       const mainSelectors = [
-        'main', 
-        '[role="main"]', 
-        '.main-content', 
+        'main',
+        '[role="main"]',
+        '.main-content',
         '#main-content',
         'article',
         '.content',
-        '#content'
+        '#content',
       ];
-      
+
       for (const selector of mainSelectors) {
         const mainElement = $(selector).first();
         if (mainElement.length > 0) {
@@ -360,7 +356,7 @@ export class WebScrapingService {
           break;
         }
       }
-      
+
       // Fallback to body if no main content found
       if (!textContent) {
         textContent = $('body').text();
@@ -385,7 +381,7 @@ export class WebScrapingService {
         result.links!.push({
           href,
           text: $link.text().trim(),
-          title: $link.attr('title')
+          title: $link.attr('title'),
         });
       }
     });
@@ -399,7 +395,7 @@ export class WebScrapingService {
         result.images!.push({
           src,
           alt: $img.attr('alt'),
-          title: $img.attr('title')
+          title: $img.attr('title'),
         });
       }
     });
@@ -413,12 +409,12 @@ export class WebScrapingService {
           customExtractions[selector] = elements.first().text().trim();
         }
       }
-      result.metadata = { 
-        ...(result.metadata || {}), 
-        customExtractions, 
-        executionTime: 0, 
-        timestamp: new Date(), 
-        method: 'fetch' 
+      result.metadata = {
+        ...(result.metadata || {}),
+        customExtractions,
+        executionTime: 0,
+        timestamp: new Date(),
+        method: 'fetch',
       };
     }
 
@@ -438,7 +434,7 @@ export class WebScrapingService {
 
     // Check domain whitelist/blacklist
     if (this.securityPolicy.allowedDomains) {
-      const isAllowed = this.securityPolicy.allowedDomains.some(domain => 
+      const isAllowed = this.securityPolicy.allowedDomains.some((domain) =>
         parsed.hostname.endsWith(domain)
       );
       if (!isAllowed) {
@@ -447,7 +443,7 @@ export class WebScrapingService {
     }
 
     if (this.securityPolicy.blockedDomains) {
-      const isBlocked = this.securityPolicy.blockedDomains.some(domain => 
+      const isBlocked = this.securityPolicy.blockedDomains.some((domain) =>
         parsed.hostname.endsWith(domain)
       );
       if (isBlocked) {

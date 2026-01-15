@@ -3,7 +3,7 @@ import { URL } from 'url';
 /**
  * Check if a value is defined (not null or undefined)
  */
-export function isDefined(value: any): boolean {
+export function isDefined(value: unknown): boolean {
   return value !== null && value !== undefined;
 }
 
@@ -22,7 +22,7 @@ export function isValidUrl(url: string): boolean {
   try {
     new URL(url);
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -49,7 +49,7 @@ export function isValidJson(str: string): boolean {
   try {
     JSON.parse(str);
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }

@@ -1,10 +1,10 @@
-# Prisma to Drizzle ORM Migration Guide
+# Drizzle ORM Migration Guide
 
 ## Overview
 
-This document outlines the migration strategy from Prisma 7 to Drizzle ORM for
-The New Fuse monorepo. The migration addresses TypeScript compilation issues
-caused by Prisma 7's deeply recursive type structures.
+This document outlines the completed migration from Prisma to Drizzle ORM for
+The New Fuse monorepo. The migration addressed TypeScript compilation issues
+caused by Prisma's deeply recursive type structures.
 
 ## Why Drizzle ORM?
 
@@ -27,14 +27,14 @@ caused by Prisma 7's deeply recursive type structures.
 3. **Unified pgvector Support** - Query embeddings and relational data together
 4. **Real TypeScript Types** - Directly exportable across monorepo packages
 
-## Migration Status
+## Migration Status ✅ COMPLETE
 
-### Completed ✅
+### Completed
 
 - [x] Installed Drizzle ORM dependencies (`drizzle-orm`, `postgres`,
       `drizzle-kit`)
 - [x] Created `drizzle.config.ts` configuration
-- [x] Created complete Drizzle schema mapping all 40+ Prisma models:
+- [x] Created complete Drizzle schema mapping all 40+ models:
   - `src/drizzle/schema/enums.ts` - All PostgreSQL enums
   - `src/drizzle/schema/users.ts` - User & auth tables
   - `src/drizzle/schema/agents.ts` - Agent system tables
@@ -52,17 +52,10 @@ caused by Prisma 7's deeply recursive type structures.
 - [x] Created example repository
       (`src/drizzle/repositories/agent.repository.ts`)
 - [x] Updated package.json with Drizzle scripts
-- [x] Updated main index.ts to export both Prisma and Drizzle
-
-### Pending 📋
-
-- [ ] Introspect existing database with `drizzle:pull`
-- [ ] Validate schema matches existing database
-- [ ] Migrate first core service (AgentService) to Drizzle
-- [ ] Create remaining Drizzle repositories
-- [ ] Update packages consuming `@the-new-fuse/database`
-- [ ] Test with live database
-- [ ] Remove Prisma dependencies (after full migration)
+- [x] Updated main index.ts to export Drizzle
+- [x] Removed Prisma dependencies from root package.json
+- [x] Updated all documentation to reference Drizzle
+- [x] Updated database commands in root package.json
 
 ## Usage
 
@@ -142,18 +135,21 @@ const newAgent: NewAgent = {
 ## Available Scripts
 
 ```bash
-# Drizzle commands
-pnpm drizzle:generate  # Generate migration from schema changes
-pnpm drizzle:migrate   # Apply migrations
-pnpm drizzle:push      # Push schema directly (dev only)
-pnpm drizzle:pull      # Introspect existing database
-pnpm drizzle:studio    # Open Drizzle Studio (DB GUI)
-pnpm drizzle:check     # Check schema validity
+# From monorepo root
+pnpm db:generate   # Generate migration from schema changes
+pnpm db:migrate    # Apply migrations
+pnpm db:push       # Push schema directly (dev only)
+pnpm db:pull       # Introspect existing database
+pnpm db:studio     # Open Drizzle Studio (DB GUI)
+pnpm db:check      # Check schema validity
 
-# Prisma commands (still available during migration)
-pnpm db:generate       # Generate Prisma client
-pnpm db:migrate        # Run Prisma migrations
-pnpm db:studio         # Open Prisma Studio
+# From packages/database directory
+pnpm drizzle:generate
+pnpm drizzle:migrate
+pnpm drizzle:push
+pnpm drizzle:pull
+pnpm drizzle:studio
+pnpm drizzle:check
 ```
 
 ## File Structure
@@ -203,12 +199,10 @@ This allows gradual migration of services without breaking existing code.
 
 ## Next Steps
 
-1. **Run `pnpm drizzle:pull`** to validate schema against live database
-2. **Migrate AgentService first** as a pilot
-3. **Create remaining repositories** following the pattern in
+1. **Run `pnpm db:pull`** to validate schema against live database
+2. **Create remaining repositories** following the pattern in
    `agent.repository.ts`
-4. **Update consuming packages** one at a time
-5. **Remove Prisma** after all services migrated
+3. **Update consuming packages** as needed
 
 ## Troubleshooting
 

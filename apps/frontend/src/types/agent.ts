@@ -1,2 +1,1 @@
-export {}
-export {};
+export * from '@the-new-fuse/types';

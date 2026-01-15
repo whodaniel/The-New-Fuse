@@ -20,7 +20,7 @@ module.exports = (env, argv) => {
 
     output: {
       path: path.resolve(__dirname, 'dist-v5'),
-      filename: '[name].[contenthash].js',
+      filename: '[name].js',
       clean: true,
     },
 
@@ -75,7 +75,7 @@ module.exports = (env, argv) => {
     ],
 
     optimization: {
-      minimize: isProduction,
+      minimize: false,
     },
   };
 };

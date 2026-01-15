@@ -3,11 +3,11 @@
 /**
  * TNF Relay Server - Standalone WebSocket Relay
  * Part of @the-new-fuse/relay-core package
- * 
+ *
  * Usage:
  *   pnpm run relay         # Start on default port 3001
  *   PORT=3002 pnpm run relay  # Start on custom port
- * 
+ *
  * Endpoints:
  *   WebSocket: ws://localhost:3001/ws
  *   Health:    http://localhost:3001/health
@@ -15,11 +15,12 @@
  *   Channels:  http://localhost:3001/channels
  */
 
-import WebSocket, { WebSocketServer } from 'ws';
-import http from 'http';
 import { EventEmitter } from 'events';
-import { createRedisRelayBridge, RedisRelayBridge } from './redis-relay-bridge';
+import http from 'http';
+import WebSocket, { WebSocketServer } from 'ws';
+import { createAuthService, JWTAuthService } from './auth/JWTAuthService';
 import { TNFEnvelope } from './protocol/tnf-envelope';
+import { createRedisRelayBridge, RedisRelayBridge } from './redis-relay-bridge';
 
 // Configuration
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -79,10 +80,12 @@ export class TNFRelayServer extends EventEmitter {
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private port: number;
   private bridge: RedisRelayBridge | null = null;
+  private authService: JWTAuthService;
 
   constructor(port: number = PORT) {
     super();
     this.port = port;
+    this.authService = createAuthService();
 
     // Create HTTP server
     this.server = http.createServer(this.handleHttpRequest.bind(this));
@@ -99,15 +102,15 @@ export class TNFRelayServer extends EventEmitter {
     // Initialize Redis Bridge if enabled
     if (process.env.ENABLE_REDIS_BRIDGE === 'true') {
       this.bridge = createRedisRelayBridge();
-      
+
       this.bridge.on('connected', () => console.log('[Relay] Bridge connected to Redis'));
-      
+
       this.bridge.on('egress', (envelope: TNFEnvelope) => {
         // Handle message from Redis -> WebSocket
         this.handleBridgeEgress(envelope);
       });
 
-      this.bridge.connect().catch(err => console.error('[Relay] Failed to connect bridge:', err));
+      this.bridge.connect().catch((err) => console.error('[Relay] Failed to connect bridge:', err));
     }
   }
 
@@ -131,15 +134,17 @@ export class TNFRelayServer extends EventEmitter {
       case '/':
       case '/health':
         res.writeHead(200);
-        res.end(JSON.stringify({
-          status: 'ok',
-          relay: 'running',
-          version: '1.0.0',
-          agents: this.agents.size,
-          channels: this.channels.size,
-          uptime: process.uptime(),
-          timestamp: new Date().toISOString(),
-        }));
+        res.end(
+          JSON.stringify({
+            status: 'ok',
+            relay: 'running',
+            version: '1.0.0',
+            agents: this.agents.size,
+            channels: this.channels.size,
+            uptime: process.uptime(),
+            timestamp: new Date().toISOString(),
+          })
+        );
         break;
 
       case '/agents':
@@ -154,11 +159,13 @@ export class TNFRelayServer extends EventEmitter {
 
       case '/status':
         res.writeHead(200);
-        res.end(JSON.stringify({
-          agents: Array.from(this.agents.values()),
-          channels: Array.from(this.channels.values()),
-          connections: this.sockets.size,
-        }));
+        res.end(
+          JSON.stringify({
+            agents: Array.from(this.agents.values()),
+            channels: Array.from(this.channels.values()),
+            connections: this.sockets.size,
+          })
+        );
         break;
 
       default:
@@ -207,7 +214,11 @@ export class TNFRelayServer extends EventEmitter {
     });
   }
 
-  private handleMessage(ws: WebSocket, message: ProtocolMessage, currentAgentId: string | null): string | null {
+  private handleMessage(
+    ws: WebSocket,
+    message: ProtocolMessage,
+    currentAgentId: string | null
+  ): string | null {
     // Forward to Redis Bridge
     if (this.bridge && currentAgentId && message.type !== 'PING') {
       this.bridge.handleRelayMessage(message, currentAgentId);
@@ -219,19 +230,44 @@ export class TNFRelayServer extends EventEmitter {
 
     switch (type) {
       case 'AGENT_REGISTER': {
+        // Authenticate if token provided
+        const token = (payload as any)?.token || (message as any)?.token;
+        let verifiedToken = null;
+
+        if (token) {
+          console.log(`[Relay] Authenticating agent via JWT...`);
+          verifiedToken = this.authService.verifyToken(token);
+
+          if (!verifiedToken) {
+            console.warn(`[Relay] Authentication failed for agent. Invalid token.`);
+            this.send(ws, {
+              type: 'REGISTRATION_ERROR',
+              payload: {
+                error: 'Invalid or expired authentication token',
+                code: 'AUTH_FAILED',
+              },
+            });
+            return null;
+          }
+          console.log(`[Relay] ✅ Authenticated agent: ${verifiedToken.agentId}`);
+        }
+
         const agentData = (payload as any)?.agent || {};
-        const id = agentData.id || agentId || `agent-${Date.now()}`;
+        const id = verifiedToken?.agentId || agentData.id || agentId || `agent-${Date.now()}`;
 
         const agent: Agent = {
           id,
-          name: agentData.name || 'Unknown Agent',
-          platform: agentData.platform || 'unknown',
+          name: verifiedToken?.name || agentData.name || 'Unknown Agent',
+          platform: verifiedToken?.platform || agentData.platform || 'unknown',
           status: 'active',
-          capabilities: agentData.capabilities || [],
+          capabilities: verifiedToken?.capabilities || agentData.capabilities || [],
           channels: agentData.channels || [],
           connectedAt: Date.now(),
           lastSeen: Date.now(),
-          metadata: agentData.metadata,
+          metadata: {
+            ...agentData.metadata,
+            authenticated: !!verifiedToken,
+          },
         };
 
         this.agents.set(id, agent);
@@ -252,11 +288,26 @@ export class TNFRelayServer extends EventEmitter {
           payload: { channels: Array.from(this.channels.values()) },
         });
 
+        // Send registration confirmation with auth status
+        this.send(ws, {
+          type: 'REGISTRATION_CONFIRMED',
+          payload: {
+            relayInfo: {
+              id: 'relay-standalone',
+              version: '1.0.0',
+              authenticated: !!verifiedToken,
+            },
+          },
+        });
+
         // Notify other agents
-        this.broadcast({
-          type: 'AGENT_STATUS',
-          payload: { agent },
-        }, id);
+        this.broadcast(
+          {
+            type: 'AGENT_STATUS',
+            payload: { agent },
+          },
+          id
+        );
 
         return id;
       }
@@ -329,16 +380,33 @@ export class TNFRelayServer extends EventEmitter {
         const channelId = (payload as any)?.channelId;
         const ch = this.channels.get(channelId);
         if (ch && agentId) {
-          ch.members = ch.members.filter(m => m !== agentId);
+          ch.members = ch.members.filter((m) => m !== agentId);
           const myChannels = this.agentChannels.get(agentId);
           if (myChannels) myChannels.delete(channelId);
         }
         break;
       }
 
+      case 'CHANNEL_DELETE': {
+        const channelId = (payload as any)?.channelId;
+        if (this.channels.has(channelId)) {
+          this.channels.delete(channelId);
+          // Remove from all agent channel sets
+          this.agentChannels.forEach((channels) => channels.delete(channelId));
+
+          console.log(`[Relay] Channel deleted: ${channelId}`);
+
+          this.broadcast({
+            type: 'CHANNEL_LIST',
+            payload: { channels: Array.from(this.channels.values()) },
+          });
+        }
+        break;
+      }
+
       case 'MESSAGE_SEND': {
-        const { to, content, messageType } = payload as any;
-        const msg: Message = {
+        const { to, content, messageType, metadata } = payload as any; // <-- EXTRACT metadata
+        const msg: Message & { metadata?: Record<string, unknown> } = {
           id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           type: messageType || 'text',
           from: agentId || 'unknown',
@@ -346,6 +414,7 @@ export class TNFRelayServer extends EventEmitter {
           content,
           channel,
           timestamp: Date.now(),
+          metadata, // <-- PRESERVE metadata for loop prevention
         };
 
         this.emit('message', msg);
@@ -355,7 +424,7 @@ export class TNFRelayServer extends EventEmitter {
             // Broadcast to channel members
             const ch = this.channels.get(channel);
             if (ch) {
-              ch.members.forEach(memberId => {
+              ch.members.forEach((memberId) => {
                 const memberWs = this.sockets.get(memberId);
                 if (memberWs && memberWs.readyState === WebSocket.OPEN) {
                   this.send(memberWs, {
@@ -402,7 +471,7 @@ export class TNFRelayServer extends EventEmitter {
 
   private handleAgentDisconnect(agentId: string): void {
     console.log(`[Relay] Agent disconnected: ${agentId}`);
-    
+
     const agent = this.agents.get(agentId);
     this.agents.delete(agentId);
     this.sockets.delete(agentId);
@@ -421,11 +490,13 @@ export class TNFRelayServer extends EventEmitter {
 
   private send(ws: WebSocket, message: Partial<ProtocolMessage>): void {
     if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: Date.now(),
-        ...message,
-      }));
+      ws.send(
+        JSON.stringify({
+          id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          timestamp: Date.now(),
+          ...message,
+        })
+      );
     }
   }
 
@@ -461,7 +532,7 @@ export class TNFRelayServer extends EventEmitter {
     const channel = this.channels.get(channelId);
     if (!channel) return;
 
-    channel.members.forEach(memberId => {
+    channel.members.forEach((memberId) => {
       const socket = this.sockets.get(memberId);
       if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify(message));
@@ -571,7 +642,7 @@ export class TNFRelayServer extends EventEmitter {
 // CLI entry point
 if (require.main === module) {
   const relay = new TNFRelayServer(PORT);
-  
+
   relay.start().catch((err) => {
     console.error('[Relay] Failed to start:', err);
     process.exit(1);

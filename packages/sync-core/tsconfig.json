@@ -9,9 +9,7 @@
     "skipLibCheck": true,
     "types": ["node", "jest"]
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",
@@ -27,7 +25,12 @@
     "src/tasks/**/*",
     "src/error/**/*",
     "src/services/ConflictManager.ts",
-    "src/cms/**/*"
+    "src/services/SyncOrchestrator.ts",
+    "src/cms/**/*",
+    "src/database/**/*",
+    "src/integration/**/*",
+    "src/watchers/**/*",
+    "src/performance/**/*"
   ],
   "references": [
     {

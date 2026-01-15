@@ -3,19 +3,26 @@
  * Handles NetSuite webhook events and converts them to business events
  */
 
+import type {
+  BusinessEvent,
+  BusinessEventType,
+  NetSuiteWebhookPayload,
+} from '../types/business-events';
 import type { Env } from '../types/env';
-import type { BusinessEvent, NetSuiteWebhookPayload, BusinessEventType } from '../types/business-events';
 import { Logger } from '../utils/Logger';
 import { generateId } from '../utils/helpers';
 
 export class NetSuiteBusinessProcessor {
-  constructor(private env: Env, private logger: Logger) {}
+  constructor(
+    private env: Env,
+    private logger: Logger
+  ) {}
 
   async processWebhook(payload: NetSuiteWebhookPayload): Promise<BusinessEvent> {
     try {
-      this.logger.info(`Processing NetSuite webhook: ${payload.recordType} ${payload.operation}`, { 
+      this.logger.info(`Processing NetSuite webhook: ${payload.recordType} ${payload.operation}`, {
         recordId: payload.recordId,
-        companyId: payload.companyId
+        companyId: payload.companyId,
       });
 
       const businessEvent: BusinessEvent = {
@@ -29,9 +36,9 @@ export class NetSuiteBusinessProcessor {
           organization_id: payload.companyId,
           priority: 'medium',
           retry_count: 0,
-          max_retries: 3
+          max_retries: 3,
         },
-        processing_status: 'pending'
+        processing_status: 'pending',
       };
 
       // Process specific record types
@@ -60,7 +67,6 @@ export class NetSuiteBusinessProcessor {
 
       businessEvent.processing_status = 'completed';
       return businessEvent;
-
     } catch (error) {
       this.logger.error(`Failed to process NetSuite webhook:`, error);
       throw error;
@@ -69,23 +75,26 @@ export class NetSuiteBusinessProcessor {
 
   private mapNetSuiteEvent(recordType: string, operation: string): BusinessEventType {
     const mapping: Record<string, BusinessEventType> = {
-      'customer_create': 'customer_updated',
-      'customer_update': 'customer_updated',
-      'salesorder_create': 'product_sold',
-      'salesorder_update': 'product_sold',
-      'invoice_create': 'invoice_generated',
-      'payment_create': 'payment_received',
-      'opportunity_create': 'lead_created',
-      'opportunity_update': 'lead_created',
-      'lead_create': 'lead_created',
-      'lead_update': 'lead_created'
+      customer_create: 'customer_updated',
+      customer_update: 'customer_updated',
+      salesorder_create: 'product_sold',
+      salesorder_update: 'product_sold',
+      invoice_create: 'invoice_generated',
+      payment_create: 'payment_received',
+      opportunity_create: 'lead_created',
+      opportunity_update: 'lead_created',
+      lead_create: 'lead_created',
+      lead_update: 'lead_created',
     };
     return mapping[`${recordType}_${operation}`] || 'customer_updated';
   }
 
-  private async processCustomer(event: BusinessEvent, payload: NetSuiteWebhookPayload): Promise<void> {
+  private async processCustomer(
+    event: BusinessEvent,
+    payload: NetSuiteWebhookPayload
+  ): Promise<void> {
     const customer = payload.data;
-    
+
     event.data = {
       ...event.data,
       customer_id: payload.recordId,
@@ -101,8 +110,8 @@ export class NetSuiteBusinessProcessor {
         revenue_potential: await this.calculateRevenuePotential(customer),
         relationship_strength: this.assessRelationshipStrength(customer),
         lifecycle_stage: this.determineLifecycleStage(customer),
-        expansion_opportunities: await this.identifyExpansionOpportunities(customer)
-      }
+        expansion_opportunities: await this.identifyExpansionOpportunities(customer),
+      },
     };
 
     // Trigger customer onboarding or account management workflows
@@ -113,9 +122,12 @@ export class NetSuiteBusinessProcessor {
     }
   }
 
-  private async processSalesOrder(event: BusinessEvent, payload: NetSuiteWebhookPayload): Promise<void> {
+  private async processSalesOrder(
+    event: BusinessEvent,
+    payload: NetSuiteWebhookPayload
+  ): Promise<void> {
     const salesOrder = payload.data;
-    
+
     event.data = {
       ...event.data,
       sales_order_id: payload.recordId,
@@ -129,17 +141,20 @@ export class NetSuiteBusinessProcessor {
         fulfillment_complexity: await this.assessFulfillmentComplexity(salesOrder),
         upsell_opportunities: await this.identifyUpsellOpportunities(salesOrder),
         delivery_prediction: await this.predictDeliveryTime(salesOrder),
-        customer_satisfaction_risk: this.assessSatisfactionRisk(salesOrder)
-      }
+        customer_satisfaction_risk: this.assessSatisfactionRisk(salesOrder),
+      },
     };
 
     // Trigger order fulfillment workflows
     await this.triggerOrderFulfillment(event);
   }
 
-  private async processInvoice(event: BusinessEvent, payload: NetSuiteWebhookPayload): Promise<void> {
+  private async processInvoice(
+    event: BusinessEvent,
+    payload: NetSuiteWebhookPayload
+  ): Promise<void> {
     const invoice = payload.data;
-    
+
     event.data = {
       ...event.data,
       invoice_id: payload.recordId,
@@ -153,17 +168,20 @@ export class NetSuiteBusinessProcessor {
         collection_risk: this.assessCollectionRisk(invoice),
         cash_flow_impact: this.calculateCashFlowImpact(invoice),
         dunning_strategy: this.recommendDunningStrategy(invoice),
-        discount_eligibility: this.assessDiscountEligibility(invoice)
-      }
+        discount_eligibility: this.assessDiscountEligibility(invoice),
+      },
     };
 
     // Trigger payment follow-up workflows
     await this.triggerPaymentFollowUp(event);
   }
 
-  private async processPayment(event: BusinessEvent, payload: NetSuiteWebhookPayload): Promise<void> {
+  private async processPayment(
+    event: BusinessEvent,
+    payload: NetSuiteWebhookPayload
+  ): Promise<void> {
     const payment = payload.data;
-    
+
     event.data = {
       ...event.data,
       payment_id: payload.recordId,
@@ -175,17 +193,20 @@ export class NetSuiteBusinessProcessor {
         payment_efficiency: this.analyzePaymentEfficiency(payment),
         cash_application: await this.optimizeCashApplication(payment),
         customer_payment_behavior: await this.analyzePaymentBehavior(payment),
-        working_capital_impact: this.calculateWorkingCapitalImpact(payment)
-      }
+        working_capital_impact: this.calculateWorkingCapitalImpact(payment),
+      },
     };
 
     // Trigger cash management workflows
     await this.triggerCashManagement(event);
   }
 
-  private async processOpportunity(event: BusinessEvent, payload: NetSuiteWebhookPayload): Promise<void> {
+  private async processOpportunity(
+    event: BusinessEvent,
+    payload: NetSuiteWebhookPayload
+  ): Promise<void> {
     const opportunity = payload.data;
-    
+
     event.data = {
       ...event.data,
       opportunity_id: payload.recordId,
@@ -199,8 +220,8 @@ export class NetSuiteBusinessProcessor {
         competitive_analysis: await this.analyzeCompetitivePosition(opportunity),
         deal_health: this.assessDealHealth(opportunity),
         resource_requirements: this.identifyResourceRequirements(opportunity),
-        risk_factors: this.identifyDealRisks(opportunity)
-      }
+        risk_factors: this.identifyDealRisks(opportunity),
+      },
     };
 
     // Trigger sales enablement workflows
@@ -209,7 +230,7 @@ export class NetSuiteBusinessProcessor {
 
   private async processLead(event: BusinessEvent, payload: NetSuiteWebhookPayload): Promise<void> {
     const lead = payload.data;
-    
+
     event.data = {
       ...event.data,
       lead_id: payload.recordId,
@@ -223,8 +244,8 @@ export class NetSuiteBusinessProcessor {
         conversion_probability: await this.predictConversionProbability(lead),
         ideal_customer_match: this.assessICPMatch(lead),
         nurturing_strategy: this.recommendNurturingStrategy(lead),
-        sales_readiness: this.assessSalesReadiness(lead)
-      }
+        sales_readiness: this.assessSalesReadiness(lead),
+      },
     };
 
     // Trigger lead nurturing workflows
@@ -235,7 +256,7 @@ export class NetSuiteBusinessProcessor {
     if (customer.category) {
       return customer.category;
     }
-    
+
     // Categorize based on revenue or other factors
     const revenue = parseFloat(customer.balance) || 0;
     if (revenue > 1000000) return 'enterprise';
@@ -245,12 +266,12 @@ export class NetSuiteBusinessProcessor {
 
   private async assessAccountHealth(customer: any): Promise<number> {
     let health = 70; // Base health score
-    
+
     if (customer.entitystatus === 'CUSTOMER-Closed Won') health += 20;
     if (customer.balance && parseFloat(customer.balance) > 0) health -= 10;
     if (customer.phone) health += 5;
     if (customer.email) health += 5;
-    
+
     return Math.max(0, Math.min(100, health));
   }
 
@@ -273,22 +294,22 @@ export class NetSuiteBusinessProcessor {
       'LEAD-New': 'lead',
       'PROSPECT-In Discussion': 'prospect',
       'CUSTOMER-Closed Won': 'customer',
-      'CUSTOMER-Closed Lost': 'churned'
+      'CUSTOMER-Closed Lost': 'churned',
     };
     return statusMapping[customer.entitystatus] || 'unknown';
   }
 
   private async identifyExpansionOpportunities(customer: any): Promise<string[]> {
     const opportunities = [];
-    
+
     if (customer.category === 'small_business') {
       opportunities.push('upgrade_to_premium');
     }
-    
+
     if (!customer.subsidiary || customer.subsidiary.length === 1) {
       opportunities.push('multi_location_expansion');
     }
-    
+
     return opportunities;
   }
 
@@ -297,7 +318,7 @@ export class NetSuiteBusinessProcessor {
     return {
       order_size: total > 10000 ? 'large' : total > 1000 ? 'medium' : 'small',
       margin_analysis: this.calculateOrderMargin(salesOrder),
-      value_tier: this.categorizeOrderValue(total)
+      value_tier: this.categorizeOrderValue(total),
     };
   }
 
@@ -331,14 +352,14 @@ export class NetSuiteBusinessProcessor {
     return {
       predicted_payment_date: this.calculatePredictedPaymentDate(invoice),
       payment_probability: customerHistory.reliability || 0.8,
-      early_payment_likelihood: customerHistory.early_payment_rate || 0.2
+      early_payment_likelihood: customerHistory.early_payment_rate || 0.2,
     };
   }
 
   private assessCollectionRisk(invoice: any): string {
     const amount = parseFloat(invoice.total) || 0;
     const daysUntilDue = this.calculateDaysUntilDue(invoice.duedate);
-    
+
     if (amount > 50000 && daysUntilDue < 7) return 'high';
     if (amount > 10000 && daysUntilDue < 3) return 'medium';
     return 'low';
@@ -364,14 +385,14 @@ export class NetSuiteBusinessProcessor {
     return {
       processing_time: 'standard',
       method_efficiency: this.assessPaymentMethodEfficiency(payment.paymentmethod),
-      cost_analysis: this.calculatePaymentCost(payment)
+      cost_analysis: this.calculatePaymentCost(payment),
     };
   }
 
   private async optimizeCashApplication(payment: any): Promise<any> {
     return {
       application_strategy: 'oldest_first',
-      recommended_allocation: this.calculateOptimalAllocation(payment)
+      recommended_allocation: this.calculateOptimalAllocation(payment),
     };
   }
 
@@ -380,7 +401,7 @@ export class NetSuiteBusinessProcessor {
     return {
       payment_pattern: history.pattern || 'irregular',
       preferred_method: history.preferred_method || payment.paymentmethod,
-      timing_preference: history.timing || 'end_of_month'
+      timing_preference: history.timing || 'end_of_month',
     };
   }
 
@@ -397,7 +418,7 @@ export class NetSuiteBusinessProcessor {
     return {
       competitive_threats: ['Competitor A', 'Competitor B'],
       win_probability: 0.7,
-      differentiation_factors: ['pricing', 'features', 'support']
+      differentiation_factors: ['pricing', 'features', 'support'],
     };
   }
 
@@ -415,21 +436,21 @@ export class NetSuiteBusinessProcessor {
   private identifyDealRisks(opportunity: any): string[] {
     const risks = [];
     const probability = parseFloat(opportunity.probability) || 0;
-    
+
     if (probability < 50) risks.push('low_probability');
     if (!opportunity.expectedclosedate) risks.push('no_close_date');
-    
+
     return risks;
   }
 
   private async assessLeadQuality(lead: any): Promise<number> {
     let score = 50; // Base score
-    
+
     if (lead.email) score += 15;
     if (lead.phone) score += 10;
     if (lead.companyname) score += 15;
     if (lead.title && lead.title.includes('Manager')) score += 10;
-    
+
     return Math.min(100, score);
   }
 
@@ -441,11 +462,11 @@ export class NetSuiteBusinessProcessor {
   private assessICPMatch(lead: any): number {
     // Assess how well lead matches Ideal Customer Profile
     let match = 0.5;
-    
+
     if (lead.leadsource === 'Web Direct') match += 0.2;
     if (lead.companyname) match += 0.2;
     if (lead.title) match += 0.1;
-    
+
     return Math.min(1.0, match);
   }
 
@@ -457,8 +478,7 @@ export class NetSuiteBusinessProcessor {
   }
 
   private assessSalesReadiness(lead: any): boolean {
-    return lead.entitystatus === 'LEAD-Qualified' || 
-           (lead.email && lead.phone && lead.companyname);
+    return lead.entitystatus === 'LEAD-Qualified' || (lead.email && lead.phone && lead.companyname);
   }
 
   // Helper methods
@@ -476,15 +496,79 @@ export class NetSuiteBusinessProcessor {
     return 'standard_value';
   }
 
-  private async getCustomerPaymentHistory(_customerId: string): Promise<any> {
-    // Mock payment history - in real implementation, query NetSuite
-    return {
-      reliability: 0.85,
-      early_payment_rate: 0.3,
-      pattern: 'consistent',
-      preferred_method: 'ACH',
-      timing: 'month_end'
-    };
+  private async getCustomerPaymentHistory(customerId: string): Promise<any> {
+    const accountId = this.env.NETSUITE_ACCOUNT_ID;
+    const consumerKey = this.env.NETSUITE_CONSUMER_KEY;
+    const tokenId = this.env.NETSUITE_TOKEN_ID;
+
+    if (!accountId || !consumerKey || !tokenId) {
+      this.logger.warn('NetSuite API credentials not configured - payment history will be empty');
+      return {
+        reliability: null,
+        early_payment_rate: null,
+        pattern: 'unknown',
+        preferred_method: null,
+        timing: null,
+      };
+    }
+
+    try {
+      // Query NetSuite RESTlet for customer payment history
+      const url = `https://${accountId}.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql`;
+
+      const query = `
+        SELECT
+          COUNT(*) as total_payments,
+          AVG(CASE WHEN trandate <= duedate THEN 1 ELSE 0 END) as on_time_rate,
+          AVG(CASE WHEN trandate < duedate - 7 THEN 1 ELSE 0 END) as early_rate,
+          MAX(paymentmethod) as preferred_method
+        FROM transaction
+        WHERE entity = ${customerId}
+          AND type = 'CustPymt'
+          AND trandate >= ADD_MONTHS(SYSDATE, -12)
+      `;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `OAuth oauth_consumer_key="${consumerKey}",oauth_token="${tokenId}",oauth_signature_method="HMAC-SHA256",oauth_version="1.0"`,
+          Prefer: 'transient',
+        },
+        body: JSON.stringify({ q: query }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`NetSuite API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const row = data.items?.[0] || {};
+
+      return {
+        reliability: row.on_time_rate ?? null,
+        early_payment_rate: row.early_rate ?? null,
+        pattern: row.total_payments > 5 ? 'consistent' : 'new',
+        preferred_method: row.preferred_method ?? null,
+        timing: this.inferPaymentTiming(data.items || []),
+      };
+    } catch (error) {
+      this.logger.error('Failed to fetch payment history from NetSuite:', error);
+      return {
+        reliability: null,
+        early_payment_rate: null,
+        pattern: 'unknown',
+        preferred_method: null,
+        timing: null,
+      };
+    }
+  }
+
+  private inferPaymentTiming(payments: any[]): string {
+    if (payments.length === 0) return 'unknown';
+    // Analyze payment dates to infer timing pattern
+    // This would require actual payment date data
+    return 'variable';
   }
 
   private calculatePredictedPaymentDate(invoice: any): Date {
@@ -502,22 +586,22 @@ export class NetSuiteBusinessProcessor {
 
   private assessPaymentMethodEfficiency(method: string): string {
     const efficiency: Record<string, string> = {
-      'ACH': 'high',
-      'Wire': 'high',
-      'Check': 'low',
-      'Credit Card': 'medium'
+      ACH: 'high',
+      Wire: 'high',
+      Check: 'low',
+      'Credit Card': 'medium',
     };
     return efficiency[method] || 'medium';
   }
 
   private calculatePaymentCost(_payment: any): number {
-    return 2.50; // Standard processing cost
+    return 2.5; // Standard processing cost
   }
 
   private calculateOptimalAllocation(_payment: any): any {
     return {
       strategy: 'oldest_invoice_first',
-      allocations: []
+      allocations: [],
     };
   }
 
@@ -552,7 +636,7 @@ export class NetSuiteBusinessProcessor {
 
   async retryProcessing(event: BusinessEvent): Promise<BusinessEvent> {
     event.processing_status = 'processing';
-    
+
     try {
       // Re-process the event
       event.processing_status = 'completed';

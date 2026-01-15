@@ -42,5 +42,12 @@
     { "path": "../database" },
     { "path": "../security" }
   ],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/orchestrator/tnf-router.ts",
+    "src/orchestrator/start.ts"
+  ]
 }

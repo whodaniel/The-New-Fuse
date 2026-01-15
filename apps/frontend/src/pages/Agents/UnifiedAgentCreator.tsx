@@ -417,10 +417,10 @@ export const UnifiedAgentCreator: React.FC = () => {
       // Map quick form data to agent creation DTO
       const agentType =
         quickFormData.type === 'assistant'
-          ? AgentType.BASE
+          ? AgentType.BASIC
           : quickFormData.type === 'specialist'
-            ? AgentType.ENHANCED
-            : AgentType.BASE;
+            ? AgentType.ASSISTANT
+            : AgentType.BASIC;
 
       await agentService.createAgent({
         name: quickFormData.name,
@@ -468,7 +468,7 @@ export const UnifiedAgentCreator: React.FC = () => {
       await agentService.createAgent({
         name: chatContext.suggestedName || 'New Agent',
         description: `Agent created based on chat conversation needs`,
-        type: AgentType.ENHANCED,
+        type: AgentType.ASSISTANT,
         capabilities: getCapabilitiesFromChatContext(chatContext),
         metadata: {
           personalityTraits: ['Helpful', 'Contextual'],

@@ -12,6 +12,7 @@
 
 import { EventEmitter } from 'events';
 
+import { RedisTransportAdapter } from './adapters/RedisTransportAdapter';
 import { BaseBridge, MessageType, Priority } from './index';
 
 // Universal Message Format
@@ -510,8 +511,10 @@ export class UniversalBridge extends BaseBridge {
         return new MemoryTransportAdapter(); // Fallback for now
 
       case 'redis':
-        // Redis adapter would use Redis pub/sub
-        return new MemoryTransportAdapter(); // Fallback for now
+        return new RedisTransportAdapter({
+          redisUrl: config.options.redisUrl,
+          serialization: config.options.serialization,
+        });
 
       case 'mcp':
         // MCP adapter would use Model Context Protocol

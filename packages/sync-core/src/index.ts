@@ -5,16 +5,19 @@ export * from './types';
 export * from './config/SyncRedisConfig';
 
 // Database integration
-export * from './database/SyncDatabaseService';
+// Temporarily disabled - Prisma migration to Drizzle ORM pending
+// export * from './database/SyncDatabaseService';
 
 // Services
 export * from './services/MasterClockService';
-export * from './services/SyncOrchestrator';
+// Temporarily disabled - requires Prisma-based SyncDatabaseService
+// export * from './services/SyncOrchestrator';
 // ConflictManager temporarily disabled - requires BaseErrorHandler refactoring
 // export * from './services/ConflictManager';
 
 // Watchers
-export * from './watchers/EnhancedFileSystemWatcher';
+// Temporarily disabled - requires Prisma-based SyncDatabaseService
+// export * from './watchers/EnhancedFileSystemWatcher';
 
 // Messaging (Task 7 - Sync-aware messaging)
 // Temporarily disabled - requires protocol types refactoring
@@ -45,7 +48,8 @@ export * from './watchers/EnhancedFileSystemWatcher';
 // export * from './error';
 
 // Performance Optimization (Task 13 - Performance optimization and scalability features)
-export * from './performance';
+// Temporarily disabled - requires EnhancedFileSystemWatcher which uses Prisma
+// export * from './performance';
 
 // This package provides the core infrastructure for multi-tenant synchronization
 // integrating with existing Redis and database services
