@@ -21,7 +21,9 @@ import {
 import { FiActivity, FiArrowLeft, FiChevronRight, FiCpu, FiLayers } from 'react-icons/fi';
 
 // Temporary type fix for react-icons in strict mode
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FiArrowLeftFixed = FiArrowLeft as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FiChevronRightFixed = FiChevronRight as any;
 
 import AgentFlowViewer from './components/AgentFlowViewer';
