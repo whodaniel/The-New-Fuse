@@ -37,7 +37,7 @@
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-toast": "^1.2.15",
     "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.4.2",
+    "@react-three/fiber": "^9.5.0",
     "@reactflow/node-resizer": "^2.2.14",
     "@reduxjs/toolkit": "^2.11.2",
     "@tanstack/react-query": "^5.90.16",
