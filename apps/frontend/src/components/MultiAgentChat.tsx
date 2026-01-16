@@ -141,7 +141,7 @@ const AppUI = () => {
       >
         <div className={bubbleClass}>
           {!isYou && !isSystem && <div className="font-bold mb-1">{msg.sender}</div>}
-          <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+          <p className="whitespace-pre-wrap wrap-break-word">{msg.text}</p>
         </div>
       </div>
     );
@@ -214,7 +214,7 @@ const AppUI = () => {
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
       {isAutomating && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-[100]">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-100">
           <div className="w-16 h-16 border-8 border-dashed rounded-full animate-spin border-blue-500"></div>
           <p className="text-white text-xl mt-4">Automating Setup...</p>
         </div>
