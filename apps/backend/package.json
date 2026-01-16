@@ -31,7 +31,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.10",
     "@nestjs/event-emitter": "^3.0.1",
-    "@nestjs/platform-express": "^11.1.10",
+    "@nestjs/platform-express": "^11.1.11",
     "@nestjs/platform-socket.io": "^11.1.10",
     "@nestjs/schedule": "^4.0.2",
     "@nestjs/websockets": "^11.1.10",
