@@ -41,20 +41,24 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize Cloud Firestore and get a reference to the service
-// Use initializeFirestore to ensure settings are applied and service is registered
-// Initialize Cloud Firestore and get a reference to the service
-import { initializeFirestore, getFirestore } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED } from 'firebase/firestore';
 
 let db;
 try {
-  // Use initializeFirestore to ensure settings are applied and service is registered
+  // Initialize Firestore with settings
   db = initializeFirestore(app, {
-    experimentalForceLongPolling: true, // Force long polling to avoid websocket issues in some environments
+    experimentalForceLongPolling: true, // Keep this as it seems intentional for your env
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED
   });
-} catch (error) {
-  console.warn('Firestore initialization error (likely already initialized):', error);
-  // Fallback to getting the existing instance
-  db = getFirestore(app);
+} catch (error: any) {
+  // If already initialized, use the existing instance
+  if (error.code === 'failed-precondition' || error.message?.includes('already exists')) {
+     db = getFirestore(app);
+  } else {
+    console.error('Firestore initialization failed:', error);
+    // Fallback
+    db = getFirestore(app);
+  }
 }
 
 export { db };

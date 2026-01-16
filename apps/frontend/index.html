@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Content Security Policy: Allow unsafe-eval/inline as requested for legacy dependency support -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: wss:; connect-src 'self' https: wss:; img-src 'self' https: data: blob:; worker-src 'self' blob:;" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: wss:; connect-src 'self' https: wss:; img-src 'self' https: data: blob:; worker-src 'self' blob:;"
+    />
 
     <!-- Global CommonJS require() shim for bundled dependencies (ethers.js, bn.js, etc.) -->
     <script>
@@ -22,7 +25,7 @@
             // Suppress warnings for expected browser-incompatible modules
             const ignoredModules = ['fs', 'path', 'os', 'crypto', 'buffer'];
             if (!ignoredModules.includes(moduleName) && !moduleName.startsWith('node:')) {
-               console.warn('[The New Fuse] CommonJS require() called for:', moduleName);
+              console.warn('[The New Fuse] CommonJS require() called for:', moduleName);
             }
 
             // Return appropriate stubs for known modules
@@ -41,7 +44,7 @@
               // Return a functional BN implementation using BigInt
               // This handles the eval("require('bn.js')") pattern in some crypto libs
               if (window._BNCache) return window._BNCache;
-              
+
               class BN {
                 constructor(number, base, endian) {
                   if (number instanceof BN) {
@@ -56,31 +59,71 @@
                   } else if (number && number.length !== undefined) {
                     // Array or Buffer
                     let hex = '0x';
-                    for (let i = 0; i < number.length; i++) hex += number[i].toString(16).padStart(2, '0');
+                    for (let i = 0; i < number.length; i++)
+                      hex += number[i].toString(16).padStart(2, '0');
                     this.value = BigInt(hex);
                   } else {
                     this.value = BigInt(0);
                   }
                 }
-                clone() { return new BN(this.value); }
-                add(b) { return new BN(this.value + new BN(b).value); }
-                sub(b) { return new BN(this.value - new BN(b).value); }
-                mul(b) { return new BN(this.value * new BN(b).value); }
-                div(b) { return new BN(this.value / new BN(b).value); }
-                mod(b) { return new BN(this.value % new BN(b).value); }
-                pow(b) { return new BN(this.value ** new BN(b).value); }
-                sqr() { return new BN(this.value * this.value); }
-                neg() { return new BN(-this.value); }
-                abs() { return new BN(this.value < 0n ? -this.value : this.value); }
-                isZero() { return this.value === 0n; }
-                isNeg() { return this.value < 0n; }
-                cmp(b) { const bv = new BN(b).value; return this.value < bv ? -1 : this.value > bv ? 1 : 0; }
-                lt(b) { return this.cmp(b) < 0; }
-                lte(b) { return this.cmp(b) <= 0; }
-                gt(b) { return this.cmp(b) > 0; }
-                gte(b) { return this.cmp(b) >= 0; }
-                eq(b) { return this.cmp(b) === 0; }
-                toNumber() { return Number(this.value); }
+                clone() {
+                  return new BN(this.value);
+                }
+                add(b) {
+                  return new BN(this.value + new BN(b).value);
+                }
+                sub(b) {
+                  return new BN(this.value - new BN(b).value);
+                }
+                mul(b) {
+                  return new BN(this.value * new BN(b).value);
+                }
+                div(b) {
+                  return new BN(this.value / new BN(b).value);
+                }
+                mod(b) {
+                  return new BN(this.value % new BN(b).value);
+                }
+                pow(b) {
+                  return new BN(this.value ** new BN(b).value);
+                }
+                sqr() {
+                  return new BN(this.value * this.value);
+                }
+                neg() {
+                  return new BN(-this.value);
+                }
+                abs() {
+                  return new BN(this.value < 0n ? -this.value : this.value);
+                }
+                isZero() {
+                  return this.value === 0n;
+                }
+                isNeg() {
+                  return this.value < 0n;
+                }
+                cmp(b) {
+                  const bv = new BN(b).value;
+                  return this.value < bv ? -1 : this.value > bv ? 1 : 0;
+                }
+                lt(b) {
+                  return this.cmp(b) < 0;
+                }
+                lte(b) {
+                  return this.cmp(b) <= 0;
+                }
+                gt(b) {
+                  return this.cmp(b) > 0;
+                }
+                gte(b) {
+                  return this.cmp(b) >= 0;
+                }
+                eq(b) {
+                  return this.cmp(b) === 0;
+                }
+                toNumber() {
+                  return Number(this.value);
+                }
                 toString(base) {
                   const b = base || 10;
                   if (b === 16) return this.value.toString(16);
@@ -97,23 +140,58 @@
                   if (endian === 'le') arr.reverse();
                   return arr;
                 }
-                toBuffer(endian, length) { return new Uint8Array(this.toArray(endian, length)); }
-                bitLength() { return this.value.toString(2).length; }
-                byteLength() { return Math.ceil(this.bitLength() / 8); }
-                and(b) { return new BN(this.value & new BN(b).value); }
-                or(b) { return new BN(this.value | new BN(b).value); }
-                xor(b) { return new BN(this.value ^ new BN(b).value); }
-                shln(n) { return new BN(this.value << BigInt(n)); }
-                shrn(n) { return new BN(this.value >> BigInt(n)); }
-                static isBN(obj) { return obj instanceof BN; }
-                static red(m) { return { prime: null, m: new BN(m) }; }
-                toRed(ctx) { this._red = ctx; return this; }
-                fromRed() { return this.clone(); }
-                redAdd(b) { return this.add(b).mod(this._red?.m || new BN(1)); }
-                redSub(b) { return this.sub(b).mod(this._red?.m || new BN(1)); }
-                redMul(b) { return this.mul(b).mod(this._red?.m || new BN(1)); }
-                redSqr() { return this.sqr().mod(this._red?.m || new BN(1)); }
-                redPow(b) { return this.pow(b).mod(this._red?.m || new BN(1)); }
+                toBuffer(endian, length) {
+                  return new Uint8Array(this.toArray(endian, length));
+                }
+                bitLength() {
+                  return this.value.toString(2).length;
+                }
+                byteLength() {
+                  return Math.ceil(this.bitLength() / 8);
+                }
+                and(b) {
+                  return new BN(this.value & new BN(b).value);
+                }
+                or(b) {
+                  return new BN(this.value | new BN(b).value);
+                }
+                xor(b) {
+                  return new BN(this.value ^ new BN(b).value);
+                }
+                shln(n) {
+                  return new BN(this.value << BigInt(n));
+                }
+                shrn(n) {
+                  return new BN(this.value >> BigInt(n));
+                }
+                static isBN(obj) {
+                  return obj instanceof BN;
+                }
+                static red(m) {
+                  return { prime: null, m: new BN(m) };
+                }
+                toRed(ctx) {
+                  this._red = ctx;
+                  return this;
+                }
+                fromRed() {
+                  return this.clone();
+                }
+                redAdd(b) {
+                  return this.add(b).mod(this._red?.m || new BN(1));
+                }
+                redSub(b) {
+                  return this.sub(b).mod(this._red?.m || new BN(1));
+                }
+                redMul(b) {
+                  return this.mul(b).mod(this._red?.m || new BN(1));
+                }
+                redSqr() {
+                  return this.sqr().mod(this._red?.m || new BN(1));
+                }
+                redPow(b) {
+                  return this.pow(b).mod(this._red?.m || new BN(1));
+                }
               }
               BN.BN = BN;
               BN.wordSize = 26;
@@ -136,37 +214,25 @@
     <script>
       (function () {
         try {
-          // Store original reference immediately
           const originalDefine = customElements.define;
-          // Create a safe define wrapper
           const safeDefine = function (name, constructor, options) {
-            // Debug logging to trace definitions
-            // console.debug(`[The New Fuse] Defining custom element: ${name}`);
-
-            // 1. Check if already defined
             if (customElements.get(name)) {
-              console.warn(
-                `[The New Fuse] Custom element '${name}' is already defined. Ignoring duplicate definition.`
-              );
+              // console.warn(`[The New Fuse] Element '${name}' already defined. Skipping.`);
               return;
             }
-            // 2. Try to define, catching specific intersection/duplicate errors
             try {
               originalDefine.call(customElements, name, constructor, options);
             } catch (e) {
+              const msg = e.message || '';
               if (
-                e.message && (
-                  e.message.includes('already been defined') || 
-                  e.message.includes('has already been used') ||
-                  e.message.includes('NotSupportedError') // Common for duplicates
-                )
+                msg.includes('already been defined') ||
+                msg.includes('has already been used') ||
+                msg.includes('NotSupportedError') ||
+                msg.includes('is already defined') // Catch variation
               ) {
-                console.warn(
-                  `[The New Fuse] Custom element '${name}' collision caught in try-catch:`, e.message
-                );
+                // console.warn(`[The New Fuse] Caught duplicate definition for '${name}'`);
                 return;
               }
-              // Rethrow other errors
               throw e;
             }
           };
@@ -175,12 +241,10 @@
           Object.defineProperty(customElements, 'define', {
             value: safeDefine,
             configurable: true,
-            writable: true
+            writable: true,
           });
-          
-          console.log('[The New Fuse] Custom Element Guard activated.');
         } catch (e) {
-          console.error('[The New Fuse] Failed to activate Custom Element Guard', e);
+          console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
         }
       })();
     </script>
