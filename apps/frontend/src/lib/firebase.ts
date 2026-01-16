@@ -39,10 +39,4 @@ export { signInWithPopup };
 
 export default app;
 
-// Google Auth Provider
-export const googleProvider = new GoogleAuthProvider();
 
-// Export signInWithPopup for convenience
-export { signInWithPopup };
-
-export default app;
