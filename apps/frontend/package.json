@@ -148,7 +148,7 @@
     "rollup-plugin-visualizer": "^6.0.5",
     "selenium-webdriver": "^4.39.0",
     "tailwindcss": "^4.1.14",
-    "ts-jest": "^29.4.5",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vite": "^7.1.12",
