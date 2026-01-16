@@ -20,6 +20,10 @@ import {
 } from '@chakra-ui/react';
 import { FiActivity, FiArrowLeft, FiChevronRight, FiCpu, FiLayers } from 'react-icons/fi';
 
+// Temporary type fix for react-icons in strict mode
+const FiArrowLeftFixed = FiArrowLeft as any;
+const FiChevronRightFixed = FiChevronRight as any;
+
 import AgentFlowViewer from './components/AgentFlowViewer';
 
 function App() {
@@ -40,7 +44,7 @@ function App() {
             </Box>
             {view !== 'dashboard' && (
               <Button
-                leftIcon={<FiArrowLeft />}
+                leftIcon={<FiArrowLeftFixed />}
                 onClick={() => setView('dashboard')}
                 variant="solid"
                 bg="whiteAlpha.300"
@@ -55,7 +59,7 @@ function App() {
           {view !== 'dashboard' && (
             <Breadcrumb
               spacing="8px"
-              separator={<FiChevronRight color="gray.300" />}
+              separator={<FiChevronRightFixed color="gray.300" />}
               mt={4}
               fontSize="sm"
             >
