@@ -140,6 +140,9 @@
           const originalDefine = customElements.define;
           // Create a safe define wrapper
           const safeDefine = function (name, constructor, options) {
+            // Debug logging to trace definitions
+            // console.debug(`[The New Fuse] Defining custom element: ${name}`);
+
             // 1. Check if already defined
             if (customElements.get(name)) {
               console.warn(

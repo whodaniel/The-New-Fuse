@@ -51,10 +51,14 @@ class SimpleChatBridge {
 
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
+      // Gemini 2025+ patterns (highest priority - latest interface)
+      'rich-textarea p[contenteditable="true"]',
+      'rich-textarea p[data-placeholder]',
+      'rich-textarea div[contenteditable="true"]',
+      'rich-textarea [contenteditable="true"]',
       // Gemini-specific (high priority) - EXPANDED for 2024+ Gemini updates
       '.ql-editor.textarea[contenteditable="true"]',
       'rich-textarea .ql-editor[contenteditable="true"]',
-      'rich-textarea [contenteditable="true"]',
       'div.ql-editor.textarea',
       'div.ql-editor[contenteditable="true"]',
       // Gemini 2024+ patterns
@@ -66,6 +70,7 @@ class SimpleChatBridge {
       // Gemini with data attributes
       'div[contenteditable="true"][data-placeholder*="Enter"]',
       'div[contenteditable="true"][aria-label*="prompt" i]',
+      'p[contenteditable="true"][data-placeholder]',
       // ChatGPT-specific
       '#prompt-textarea',
       'textarea[data-id="root"]',
@@ -74,6 +79,7 @@ class SimpleChatBridge {
       'div[contenteditable="true"][aria-label*="Message" i]',
       // Generic fallbacks
       'div[contenteditable="true"][role="textbox"]',
+      'p[contenteditable="true"]',
       'div[contenteditable="true"][data-placeholder]',
       'div[contenteditable="true"]:not([role="button"])',
       'textarea[placeholder*="Ask" i]',
@@ -104,23 +110,33 @@ class SimpleChatBridge {
 
     if (DEBUG) {
       console.log('[SimpleChatBridge DEBUG] Starting element search...');
+      const allContentEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
+      const allButtons = Array.from(document.querySelectorAll('button[aria-label]'));
+
       console.log(
         '[SimpleChatBridge DEBUG] All contenteditable elements:',
-        Array.from(document.querySelectorAll('[contenteditable="true"]')).map((el) => ({
+        allContentEditable.length
+      );
+      allContentEditable.forEach((el, i) => {
+        console.log(`  [${i}]`, {
           tag: el.tagName,
           classes: el.className,
           ariaLabel: el.getAttribute('aria-label'),
           placeholder: el.getAttribute('data-placeholder'),
+          parent: el.parentElement?.tagName,
+          parentClass: el.parentElement?.className,
           visible: this.isVisible(el as HTMLElement),
-        }))
-      );
-      console.log(
-        '[SimpleChatBridge DEBUG] All buttons with aria-label:',
-        Array.from(document.querySelectorAll('button[aria-label]')).map((el) => ({
+        });
+      });
+
+      console.log('[SimpleChatBridge DEBUG] All buttons with aria-label:', allButtons.length);
+      allButtons.forEach((el, i) => {
+        console.log(`  [${i}]`, {
           ariaLabel: el.getAttribute('aria-label'),
+          title: el.getAttribute('title'),
           visible: this.isVisible(el as HTMLElement),
-        }))
-      );
+        });
+      });
     }
 
     // Try each input selector - first pass with visibility, second pass without
@@ -189,10 +205,49 @@ class SimpleChatBridge {
       }
     }
 
+    // ULTRA FALLBACK: If we still don't have elements, try to find the FIRST visible contenteditable
+    // and the FIRST visible button (in desperation mode)
+    if (!input && DEBUG) {
+      console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY contenteditable element...');
+      const allEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
+      for (const el of allEditable) {
+        if (this.isVisible(el as HTMLElement)) {
+          input = el as HTMLElement;
+          console.warn('[SimpleChatBridge] Ultra fallback input found:', {
+            tag: el.tagName,
+            classes: el.className,
+            parent: el.parentElement?.tagName,
+          });
+          break;
+        }
+      }
+    }
+
+    if (!sendButton && DEBUG) {
+      console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY button...');
+      const allButtons = Array.from(document.querySelectorAll('button'));
+      for (const btn of allButtons) {
+        const ariaLabel = btn.getAttribute('aria-label')?.toLowerCase() || '';
+        const title = btn.getAttribute('title')?.toLowerCase() || '';
+        if ((ariaLabel.includes('send') || title.includes('send')) && this.isVisible(btn)) {
+          sendButton = btn;
+          console.warn('[SimpleChatBridge] Ultra fallback button found:', {
+            ariaLabel: btn.getAttribute('aria-label'),
+            title: btn.getAttribute('title'),
+          });
+          break;
+        }
+      }
+    }
+
     const isReady = !!(input && sendButton);
+    const result = { input, sendButton, isReady };
 
     // Enhanced logging with selector diagnostics
-    if (!isReady || DEBUG) {
+    // ONLY log if state changed or debug mode is on to preventing spamming
+    const stateChanged = !this.cachedElements || result.isReady !== this.cachedElements.isReady;
+
+    if (stateChanged || DEBUG) {
       const logData: any = {
         hasInput: !!input,
         hasSendButton: !!sendButton,
@@ -229,23 +284,30 @@ class SimpleChatBridge {
       }
 
       if (!isReady) {
-        console.warn('[SimpleChatBridge] Elements NOT ready:', logData);
+        // Only warn once per page load or on state change to avoid spam
+        if (stateChanged) {
+          console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
+        } else if (DEBUG) {
+          console.warn('[SimpleChatBridge DEBUG] Elements still not ready');
+        }
 
-        // Provide hints for debugging
-        if (!input) {
-          console.warn(
+        // Provide hints for debugging (only once)
+        if (!input && stateChanged) {
+          console.debug(
             '[SimpleChatBridge] 💡 Enable debug mode: window.__FUSE_DEBUG_SELECTORS = true'
           );
-          console.warn(
-            '[SimpleChatBridge] 💡 Then reload the page to see all contenteditable elements'
+          console.debug(
+            '[SimpleChatBridge] 💡 Or check available elements:',
+            'contenteditable count:',
+            document.querySelectorAll('[contenteditable="true"]').length,
+            'buttons with aria-label:',
+            document.querySelectorAll('button[aria-label]').length
           );
         }
       } else {
         console.log('[SimpleChatBridge] ✅ Elements ready:', logData);
       }
     }
-
-    const result = { input, sendButton, isReady };
 
     // Update cache if elements are ready
     if (result.isReady) {

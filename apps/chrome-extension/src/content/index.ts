@@ -14,6 +14,18 @@ import { ElementInfo, ElementSelector, PageElementMapping } from './element-sele
 
 console.log('The New Fuse enhanced content script loaded with floating panel support.');
 
+// Safely patch customElements.define to ignore duplicate element definitions
+if (typeof customElements !== 'undefined') {
+  const originalDefine = customElements.define;
+  customElements.define = function (name, constructor, options) {
+    if (!customElements.get(name)) {
+      originalDefine.call(customElements, name, constructor, options);
+    } else {
+      console.warn(`[The New Fuse] Blocking re-definition of custom element: ${name}`);
+    }
+  };
+}
+
 // Initialize browser control handlers for AI agent automation
 setupBrowserControlHandlers();
 

@@ -9,7 +9,7 @@
  */
 
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
-import './guard'; // MUST BE FIRST
+import './guard'; // MUST BE FIRST - Patches customElements.define
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
 import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';

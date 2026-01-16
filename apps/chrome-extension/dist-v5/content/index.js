@@ -14,6 +14,10 @@
       this.callbacks = {};
       this.isWaitingForResponse = false;
       this.responseCheckInterval = null;
+      // ORCHESTRATOR IMPROVEMENT: Element caching to reduce DOM scanning
+      this.cachedElements = null;
+      this.cacheValidUntil = 0;
+      this.CACHE_DURATION = 10000; // 10 seconds
     }
     /**
      * Initialize the bridge with callbacks
@@ -24,18 +28,38 @@
     }
     /**
      * Find chat elements on the page - Enhanced with platform-specific selectors
+     * ORCHESTRATOR IMPROVEMENT: Added caching to reduce DOM scanning overhead
      */
     findElements() {
+      // Check cache first
+      const now = Date.now();
+      if (this.cachedElements?.isReady && now < this.cacheValidUntil) {
+        return this.cachedElements;
+      }
+      // Enable debug mode via console: window.__FUSE_DEBUG_SELECTORS = true
+      const DEBUG = window.__FUSE_DEBUG_SELECTORS || false;
       // Platform-specific selectors (most reliable first)
       const inputSelectors = [
-        // Gemini-specific (high priority) - these match the actual Gemini DOM
+        // Gemini 2025+ patterns (highest priority - latest interface)
+        'rich-textarea p[contenteditable="true"]',
+        'rich-textarea p[data-placeholder]',
+        'rich-textarea div[contenteditable="true"]',
+        'rich-textarea [contenteditable="true"]',
+        // Gemini-specific (high priority) - EXPANDED for 2024+ Gemini updates
         '.ql-editor.textarea[contenteditable="true"]',
         'rich-textarea .ql-editor[contenteditable="true"]',
-        'rich-textarea [contenteditable="true"]',
         'div.ql-editor.textarea',
+        'div.ql-editor[contenteditable="true"]',
+        // Gemini 2024+ patterns
+        'textarea.ql-editor[contenteditable="true"]',
+        '[data-placeholder*="Ask Gemini" i][contenteditable="true"]',
+        '[data-placeholder*="Enter a prompt" i][contenteditable="true"]',
+        'div[aria-label*="Enter a prompt" i][contenteditable="true"]',
+        'div[aria-label*="Type your message" i][contenteditable="true"]',
         // Gemini with data attributes
         'div[contenteditable="true"][data-placeholder*="Enter"]',
         'div[contenteditable="true"][aria-label*="prompt" i]',
+        'p[contenteditable="true"][data-placeholder]',
         // ChatGPT-specific
         '#prompt-textarea',
         'textarea[data-id="root"]',
@@ -44,22 +68,63 @@
         'div[contenteditable="true"][aria-label*="Message" i]',
         // Generic fallbacks
         'div[contenteditable="true"][role="textbox"]',
+        'p[contenteditable="true"]',
         'div[contenteditable="true"][data-placeholder]',
         'div[contenteditable="true"]:not([role="button"])',
         'textarea[placeholder*="Ask" i]',
+        // Ultra-broad fallback (use with caution)
+        'textarea[contenteditable="true"]',
+        'div.textarea[contenteditable="true"]',
       ];
       const sendButtonSelectors = [
-        // Gemini-specific
+        // Gemini-specific - EXPANDED
         'button[aria-label*="Send" i]',
         'button[aria-label*="submit" i]',
         'button[data-testid*="send" i]',
         'button.send-button-container button',
+        'button[aria-label*="Send message" i]',
+        'button[title*="Send" i]',
+        // Look for SVG send icons
+        'button:has(svg[aria-label*="Send" i])',
+        'button:has(path[d*="M2.01"])', // Common send icon path
         // ChatGPT-specific
         'button[data-testid="send-button"]',
         // Generic
         'button.send-button',
         'button[type="submit"]',
+        // Fallback: buttons near textarea
+        'form button[type="submit"]',
       ];
+      if (DEBUG) {
+        console.log('[SimpleChatBridge DEBUG] Starting element search...');
+        const allContentEditable = Array.from(
+          document.querySelectorAll('[contenteditable="true"]')
+        );
+        const allButtons = Array.from(document.querySelectorAll('button[aria-label]'));
+        console.log(
+          '[SimpleChatBridge DEBUG] All contenteditable elements:',
+          allContentEditable.length
+        );
+        allContentEditable.forEach((el, i) => {
+          console.log(`  [${i}]`, {
+            tag: el.tagName,
+            classes: el.className,
+            ariaLabel: el.getAttribute('aria-label'),
+            placeholder: el.getAttribute('data-placeholder'),
+            parent: el.parentElement?.tagName,
+            parentClass: el.parentElement?.className,
+            visible: this.isVisible(el),
+          });
+        });
+        console.log('[SimpleChatBridge DEBUG] All buttons with aria-label:', allButtons.length);
+        allButtons.forEach((el, i) => {
+          console.log(`  [${i}]`, {
+            ariaLabel: el.getAttribute('aria-label'),
+            title: el.getAttribute('title'),
+            visible: this.isVisible(el),
+          });
+        });
+      }
       // Try each input selector - first pass with visibility, second pass without
       let input = null;
       // First try: visible elements only
@@ -123,31 +188,143 @@
           }
         }
       }
+      // ULTRA FALLBACK: If we still don't have elements, try to find the FIRST visible contenteditable
+      // and the FIRST visible button (in desperation mode)
+      if (!input && DEBUG) {
+        console.warn(
+          '[SimpleChatBridge] Ultra fallback: Looking for ANY contenteditable element...'
+        );
+        const allEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
+        for (const el of allEditable) {
+          if (this.isVisible(el)) {
+            input = el;
+            console.warn('[SimpleChatBridge] Ultra fallback input found:', {
+              tag: el.tagName,
+              classes: el.className,
+              parent: el.parentElement?.tagName,
+            });
+            break;
+          }
+        }
+      }
+      if (!sendButton && DEBUG) {
+        console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY button...');
+        const allButtons = Array.from(document.querySelectorAll('button'));
+        for (const btn of allButtons) {
+          const ariaLabel = btn.getAttribute('aria-label')?.toLowerCase() || '';
+          const title = btn.getAttribute('title')?.toLowerCase() || '';
+          if ((ariaLabel.includes('send') || title.includes('send')) && this.isVisible(btn)) {
+            sendButton = btn;
+            console.warn('[SimpleChatBridge] Ultra fallback button found:', {
+              ariaLabel: btn.getAttribute('aria-label'),
+              title: btn.getAttribute('title'),
+            });
+            break;
+          }
+        }
+      }
       const isReady = !!(input && sendButton);
-      // Only log details when state changes or during debugging
-      if (!isReady) {
-        console.log('[SimpleChatBridge] Elements found:', {
+      const result = { input, sendButton, isReady };
+      // Enhanced logging with selector diagnostics
+      // ONLY log if state changed or debug mode is on to preventing spamming
+      const stateChanged = !this.cachedElements || result.isReady !== this.cachedElements.isReady;
+      if (stateChanged || DEBUG) {
+        const logData = {
           hasInput: !!input,
           hasSendButton: !!sendButton,
           isReady,
-        });
+          url: window.location.href,
+          timestamp: new Date().toISOString(),
+        };
+        // Add which selector matched (if any)
+        if (input) {
+          for (const selector of inputSelectors) {
+            try {
+              if (document.querySelector(selector) === input) {
+                logData.matchedInputSelector = selector;
+                break;
+              }
+            } catch (e) {
+              // Invalid selector
+            }
+          }
+        }
+        if (sendButton) {
+          for (const selector of sendButtonSelectors) {
+            try {
+              if (document.querySelector(selector) === sendButton) {
+                logData.matchedButtonSelector = selector;
+                break;
+              }
+            } catch (e) {
+              // Invalid selector
+            }
+          }
+        }
+        if (!isReady) {
+          // Only warn once per page load or on state change to avoid spam
+          if (stateChanged) {
+            console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
+          } else if (DEBUG) {
+            console.warn('[SimpleChatBridge DEBUG] Elements still not ready');
+          }
+          // Provide hints for debugging (only once)
+          if (!input && stateChanged) {
+            console.debug(
+              '[SimpleChatBridge] 💡 Enable debug mode: window.__FUSE_DEBUG_SELECTORS = true'
+            );
+            console.debug(
+              '[SimpleChatBridge] 💡 Or check available elements:',
+              'contenteditable count:',
+              document.querySelectorAll('[contenteditable="true"]').length,
+              'buttons with aria-label:',
+              document.querySelectorAll('button[aria-label]').length
+            );
+          }
+        } else {
+          console.log('[SimpleChatBridge] ✅ Elements ready:', logData);
+        }
       }
-      return { input, sendButton, isReady };
+      // Update cache if elements are ready
+      if (result.isReady) {
+        this.cachedElements = result;
+        this.cacheValidUntil = Date.now() + this.CACHE_DURATION;
+      }
+      return result;
     }
     /**
-     * Check if element is visible (relaxed check)
+     * Check if element is visible (relaxed check with multiple strategies)
      */
     isVisible(el) {
-      // Try getBoundingClientRect first
+      // Strategy 1: Check if element is connected to DOM and has offsetParent
+      // (offsetParent is null for display:none or detached elements)
+      if (el.offsetParent !== null) {
+        return true;
+      }
+      // Strategy 2: Try getBoundingClientRect
       try {
         const rect = el.getBoundingClientRect();
-        // Element has no size - might still be valid if it's a contenteditable
+        // Element has some dimensions
         if (rect.width > 0 && rect.height > 0) {
           const style = window.getComputedStyle(el);
-          return style.display !== 'none' && style.visibility !== 'hidden';
+          // Not explicitly hidden
+          if (style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0') {
+            return true;
+          }
         }
       } catch (e) {
-        // getBoundingClientRect failed
+        // getBoundingClientRect failed - not necessarily invisible
+      }
+      // Strategy 3: Check if element is in viewport but with zero dimensions
+      // (some chat inputs are positioned off-screen or have min-height only)
+      try {
+        const style = window.getComputedStyle(el);
+        if (style.display !== 'none' && style.visibility !== 'hidden') {
+          // Element exists in layout tree
+          return true;
+        }
+      } catch (e) {
+        // Style check failed
       }
       return false;
     }
@@ -3936,7 +4113,7 @@
    * 2. User presses Ctrl+Shift+F keyboard shortcut
    */
 
-  // MUST BE FIRST
+  // MUST BE FIRST - Patches customElements.define
 
   class FuseConnectContentScript {
     constructor() {
@@ -3945,6 +4122,8 @@
       this.panelVisible = false;
       this.chatReady = false;
       this.pageAgentId = null;
+      // FEDERATION IMPROVEMENT: Track pending requests for response correlation
+      this.pendingRequests = new Map();
       this.init();
     }
     async init() {
@@ -3976,10 +4155,29 @@
               content: content,
             });
           }
-          // Forward to background for relay
+          // FEDERATION IMPROVEMENT: Check for pending request to correlate response
+          const pendingRequest = this.getOldestPendingRequest();
+          const responseMetadata = {
+            agentId: this.pageAgentId,
+            responseType: 'ai-response',
+            timestamp: Date.now(),
+          };
+          if (pendingRequest) {
+            // Correlate this response with the original request
+            responseMetadata.correlationId = pendingRequest.correlationId;
+            responseMetadata.taskId = pendingRequest.taskId;
+            responseMetadata.inResponseTo = pendingRequest.from;
+            console.log(
+              '[FuseConnect v6] 🔗 Correlating response to request:',
+              pendingRequest.correlationId
+            );
+            this.pendingRequests.delete(pendingRequest.correlationId);
+          }
+          // Forward to background for relay with correlation info
           this.safeSendMessage({
             type: 'RESPONSE_COMPLETE',
             content: content.length > 50000 ? content.substring(0, 50000) : content,
+            metadata: responseMetadata,
           });
         },
         onError: (error) => {
@@ -4309,13 +4507,32 @@
                     msg.from !== 'Browser Agent' &&
                     !msg.from.includes('Browser Agent') &&
                     msg.from !== this.pageAgentId;
+                  // ORCHESTRATOR FIX: Allow orchestrator messages even if they look like AI responses
+                  const isOrchestratorTask =
+                    msg.metadata?.source === 'orchestrator' ||
+                    msg.metadata?.taskId ||
+                    msg.metadata?.requiresResponse;
                   const isAIResponseEcho =
-                    msg.content.startsWith('[AI Response]') ||
-                    msg.content.startsWith('[AI → User]') ||
-                    msg.content.startsWith('[User → AI]') ||
-                    msg.messageType === 'ai-response';
+                    (msg.content.startsWith('[AI Response]') ||
+                      msg.content.startsWith('[AI → User]') ||
+                      msg.content.startsWith('[User → AI]') ||
+                      msg.messageType === 'ai-response') &&
+                    !isOrchestratorTask; // Don't filter orchestrator tasks
                   if (isExternalAgent && !isAIResponseEcho) {
                     console.log('[FuseConnect v6] Injecting channel broadcast from:', msg.from);
+                    // FEDERATION IMPROVEMENT: Track orchestrator tasks for response correlation
+                    if (isOrchestratorTask) {
+                      console.log(
+                        '[FuseConnect v6] 🎯 Orchestrator task detected:',
+                        msg.metadata?.taskId
+                      );
+                      // Register this as a pending request so we can correlate the AI response
+                      this.trackPendingRequest({
+                        correlationId: msg.metadata?.correlationId || msg.id || `req-${Date.now()}`,
+                        taskId: msg.metadata?.taskId,
+                        from: msg.from,
+                      });
+                    }
                     this.injectMessage(msg.content).then((success) => {
                       if (success) console.log('[FuseConnect v6] Channel broadcast injected');
                       else console.warn('[FuseConnect v6] Channel broadcast injection failed');
@@ -4371,7 +4588,7 @@
         }
       });
     }
-    async injectMessage(content) {
+    async injectMessage(content, metadata) {
       console.log('[FuseConnect v6] Injecting message:', content.substring(0, 50));
       const success = await simpleChatBridge.sendMessage(content);
       if (success) {
@@ -4380,6 +4597,35 @@
         console.error('[FuseConnect v6] Message send failed');
       }
       return success;
+    }
+    /**
+     * FEDERATION IMPROVEMENT: Track a pending request for response correlation
+     */
+    trackPendingRequest(request) {
+      this.pendingRequests.set(request.correlationId, {
+        ...request,
+        timestamp: Date.now(),
+      });
+      console.log('[FuseConnect v6] 📝 Tracking pending request:', request.correlationId);
+      // Clean up old requests (older than 5 minutes)
+      const now = Date.now();
+      for (const [id, req] of this.pendingRequests) {
+        if (now - req.timestamp > 300000) {
+          this.pendingRequests.delete(id);
+        }
+      }
+    }
+    /**
+     * FEDERATION IMPROVEMENT: Get the oldest pending request for response matching
+     */
+    getOldestPendingRequest() {
+      let oldest = null;
+      for (const req of this.pendingRequests.values()) {
+        if (!oldest || req.timestamp < oldest.timestamp) {
+          oldest = req;
+        }
+      }
+      return oldest;
     }
     /**
      * Check for CAPTCHA on page load and notify if found

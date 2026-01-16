@@ -42,10 +42,22 @@ export const auth = getAuth(app);
 
 // Initialize Cloud Firestore and get a reference to the service
 // Use initializeFirestore to ensure settings are applied and service is registered
-import { initializeFirestore } from 'firebase/firestore';
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true, // Force long polling to avoid websocket issues in some environments
-});
+// Initialize Cloud Firestore and get a reference to the service
+import { initializeFirestore, getFirestore } from 'firebase/firestore';
+
+let db;
+try {
+  // Use initializeFirestore to ensure settings are applied and service is registered
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: true, // Force long polling to avoid websocket issues in some environments
+  });
+} catch (error) {
+  console.warn('Firestore initialization error (likely already initialized):', error);
+  // Fallback to getting the existing instance
+  db = getFirestore(app);
+}
+
+export { db };
 
 // Google Auth Provider
 export const googleProvider = new GoogleAuthProvider();

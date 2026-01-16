@@ -5,7 +5,7 @@
     "esbenp.prettier-vscode",
     "editorconfig.editorconfig",
     "bradlc.vscode-tailwindcss",
-    "prisma.prisma",
+
     "orta.vscode-jest",
     "ms-vscode.vscode-typescript-next"
   ]

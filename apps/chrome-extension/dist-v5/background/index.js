@@ -468,11 +468,30 @@
     }
     /**
      * Start heartbeat
+     * ORCHESTRATOR FIX: Send heartbeats for all page agents to prevent timeout
      */
     startHeartbeat() {
       if (this.heartbeatTimer) return;
       this.heartbeatTimer = setInterval(() => {
+        // Send heartbeat for main browser agent
         this.send({ type: 'HEARTBEAT' });
+        // Send heartbeats for all registered page agents (Gemini tabs, etc.)
+        // This prevents the relay from timing out virtual agents
+        for (const [agentId, agent] of this.agents) {
+          if (agentId !== this.agentId && agent.platform === 'browser-page') {
+            // Send heartbeat as if it came from the page agent
+            const heartbeatMessage = {
+              id: crypto.randomUUID(),
+              type: 'HEARTBEAT',
+              timestamp: Date.now(),
+              source: agentId, // Use page agent ID
+              payload: {},
+            };
+            if (this.primaryConnection?.readyState === WebSocket.OPEN) {
+              this.primaryConnection.send(JSON.stringify(heartbeatMessage));
+            }
+          }
+        }
       }, 30000);
     }
     /**
@@ -990,25 +1009,38 @@
                       else if (tabUrl.includes('claude.ai')) platformName = 'Claude';
                       else if (tabUrl.includes('copilot')) platformName = 'Copilot';
                     }
+                    // FEDERATION IMPROVEMENT: Include correlation metadata for response matching
+                    const responseMetadata = {
+                      senderId: senderId, // KEY: Used to prevent self-injection
+                      senderType: 'ai-agent',
+                      platform: platformName,
+                      isAIResponse: true,
+                      timestamp: Date.now(),
+                    };
+                    // Include correlation info if present (from orchestrator requests)
+                    if (message.metadata?.correlationId) {
+                      responseMetadata.correlationId = message.metadata.correlationId;
+                      responseMetadata.taskId = message.metadata.taskId;
+                      responseMetadata.inResponseTo = message.metadata.inResponseTo;
+                      console.log(
+                        '[FuseConnect v6] 🔗 Including correlation in broadcast:',
+                        message.metadata.correlationId
+                      );
+                    }
                     this.send({
                       type: 'MESSAGE_SEND',
                       to: 'broadcast',
                       channel: channel,
                       content: message.content,
                       messageType: 'ai-response',
-                      metadata: {
-                        senderId: senderId, // KEY: Used to prevent self-injection
-                        senderType: 'ai-agent',
-                        platform: platformName,
-                        isAIResponse: true,
-                        timestamp: Date.now(),
-                      },
+                      metadata: responseMetadata,
                     });
                     console.log('[FuseConnect v6] AI response broadcast to channel:', {
                       channel,
                       senderId,
                       platform: platformName,
                       contentLength: message.content.length,
+                      hasCorrelation: !!message.metadata?.correlationId,
                     });
                   }
                 });
