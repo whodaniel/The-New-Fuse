@@ -16,7 +16,7 @@
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "2.1.0",
     "@nestjs/mongoose": "11.0.4",
-    "@nestjs/platform-express": "^11.1.10",
+    "@nestjs/platform-express": "^11.1.11",
     "@nestjs/platform-socket.io": "^11.1.10",
     "@nestjs/platform-ws": "^11.1.10",
     "@nestjs/schedule": "^6.1.0",
