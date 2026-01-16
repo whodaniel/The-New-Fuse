@@ -29,12 +29,24 @@
 
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "https://gemini.google.com/*",
+        "https://bard.google.com/*",
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://perplexity.ai/*",
+        "https://www.perplexity.ai/*",
+        "https://poe.com/*",
+        "http://localhost:*/*",
+        "https://thenewfuse.com/*",
+        "https://*.thenewfuse.com/*"
+      ],
       "js": ["content/index.js"],
       "css": [],
       "run_at": "document_idle",
-      "all_frames": true,
-      "match_about_blank": true
+      "all_frames": false,
+      "match_about_blank": false
     }
   ],
 
@@ -48,18 +60,10 @@
   ],
 
   "host_permissions": [
-    "https://chatgpt.com/*",
-    "https://chat.openai.com/*",
-    "https://claude.ai/*",
-    "https://gemini.google.com/*",
-    "https://bard.google.com/*",
-    "https://perplexity.ai/*",
-    "https://poe.com/*",
-    "http://localhost:*/*",
+    "<all_urls>",
     "ws://localhost:*/*",
     "wss://localhost:*/*",
-    "wss://relay.thenewfuse.com/*",
-    "https://the-new-fuse-api.railway.app/*"
+    "wss://relay.thenewfuse.com/*"
   ],
 
   "commands": {

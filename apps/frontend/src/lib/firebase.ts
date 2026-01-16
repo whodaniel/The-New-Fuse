@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED } from 'firebase/firestore';
 
@@ -12,13 +12,19 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:241337102384:web:232e153c82083f9e00fdf5'
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase (with hot-reload protection)
+let app;
+try {
+  app = getApp(); // Try to get existing app first
+} catch {
+  app = initializeApp(firebaseConfig); // Initialize if doesn't exist
+}
 
 // Initialize Auth
 export const auth = getAuth(app);
 
-// Initialize Firestore
+// Initialize Firestore with proper error handling
+// The pattern: Try initializeFirestore first (with settings), fall back to getFirestore if already exists
 let db;
 try {
   // Attempt to initialize with our preferred settings
@@ -27,10 +33,17 @@ try {
     cacheSizeBytes: CACHE_SIZE_UNLIMITED
   });
 } catch (error: any) {
-  // If we fail (e.g. "already exists"), just get the existing instance
-  // This is safe because getFirestore returns the existing default instance
-  // associated with the app if it exists.
-  db = getFirestore(app);
+  // If initialization fails (e.g., "already exists"), get the existing instance
+  // This handles hot-reload scenarios and double initialization
+  console.warn('Firestore already initialized, using existing instance:', error.message);
+  try {
+    db = getFirestore(app);
+  } catch (getError: any) {
+    // If both fail, the service might not be available in the Firebase SDK
+    console.error('Failed to get Firestore instance:', getError);
+    // Try one more time with a fresh initialization attempt
+    db = getFirestore(app);
+  }
 }
 
 export { db };

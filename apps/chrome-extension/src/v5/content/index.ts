@@ -314,6 +314,11 @@ class FuseConnectContentScript {
 
       try {
         switch (message.type) {
+          case 'PING':
+            // Used to check if content script is already injected
+            safeSendResponse({ pong: true, initialized: this.isInitialized });
+            return true;
+
           case 'TOGGLE_PANEL':
             this.togglePanel();
             safeSendResponse({ success: true, visible: this.panelVisible });
@@ -481,29 +486,58 @@ class FuseConnectContentScript {
               }
               // CHANNEL BROADCAST INJECTION: If from external agent on same channel
               else if (msg.to === 'broadcast' && msg.content && msg.from) {
+                // CRITICAL FIX: Check both msg.from AND metadata.senderId for self-identification
+                // The senderId in metadata is more reliable as it's set when the message originates
+                const senderFromMetadata = msg.metadata?.senderId;
+                const isSelfMessage =
+                  msg.from === this.pageAgentId ||
+                  senderFromMetadata === this.pageAgentId ||
+                  (senderFromMetadata &&
+                    this.pageAgentId &&
+                    senderFromMetadata.includes(this.pageAgentId.split('-')[2] || '___never___'));
+
                 const isExternalAgent =
                   msg.from !== 'You' &&
                   msg.from !== 'Browser Agent' &&
                   !msg.from.includes('Browser Agent') &&
-                  msg.from !== this.pageAgentId;
+                  !isSelfMessage;
 
-                // ORCHESTRATOR FIX: Allow orchestrator messages even if they look like AI responses
-                const isOrchestratorTask =
-                  msg.metadata?.source === 'orchestrator' ||
-                  msg.metadata?.taskId ||
-                  msg.metadata?.requiresResponse;
+                // Debug logging to trace agent identification
+                console.log('[FuseConnect v6] 📨 Message received:', {
+                  from: msg.from,
+                  senderId: senderFromMetadata,
+                  myAgentId: this.pageAgentId,
+                  isSelfMessage,
+                  isExternalAgent,
+                  messageType: msg.messageType,
+                });
 
-                const isAIResponseEcho =
-                  (msg.content.startsWith('[AI Response]') ||
-                    msg.content.startsWith('[AI → User]') ||
-                    msg.content.startsWith('[User → AI]') ||
-                    msg.messageType === 'ai-response') &&
-                  !isOrchestratorTask; // Don't filter orchestrator tasks
-
-                if (isExternalAgent && !isAIResponseEcho) {
-                  console.log('[FuseConnect v6] Injecting channel broadcast from:', msg.from);
+                // FIXED LOGIC:
+                // - Skip ONLY self-messages (already handled by isExternalAgent check)
+                // - AI responses from OTHER agents SHOULD be injected so our AI can see/respond to them
+                // - This enables true multi-AI conversation
+                if (!isExternalAgent) {
+                  console.log('[FuseConnect v6] ⏭️ Skipping self-message:', {
+                    from: msg.from,
+                    senderId: senderFromMetadata,
+                    myAgentId: this.pageAgentId,
+                    reason: isSelfMessage ? 'same-agent' : 'browser-agent',
+                  });
+                } else {
+                  // This is from an external agent - inject it!
+                  // (Even if it's an AI response - we WANT to inject other AIs' responses)
+                  console.log('[FuseConnect v6] ✅ Injecting message from external agent:', {
+                    from: msg.from,
+                    isAIResponse: msg.messageType === 'ai-response' || msg.metadata?.isAIResponse,
+                    contentPreview: msg.content.substring(0, 50),
+                  });
 
                   // FEDERATION IMPROVEMENT: Track orchestrator tasks for response correlation
+                  const isOrchestratorTask =
+                    msg.metadata?.source === 'orchestrator' ||
+                    msg.metadata?.taskId ||
+                    msg.metadata?.requiresResponse;
+
                   if (isOrchestratorTask) {
                     console.log(
                       '[FuseConnect v6] 🎯 Orchestrator task detected:',
@@ -518,8 +552,8 @@ class FuseConnectContentScript {
                   }
 
                   this.injectMessage(msg.content).then((success) => {
-                    if (success) console.log('[FuseConnect v6] Channel broadcast injected');
-                    else console.warn('[FuseConnect v6] Channel broadcast injection failed');
+                    if (success) console.log('[FuseConnect v6] ✅ Injection successful');
+                    else console.warn('[FuseConnect v6] ⚠️ Injection failed');
                   });
                 }
               }

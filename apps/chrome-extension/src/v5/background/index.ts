@@ -1035,6 +1035,48 @@ class BackgroundService {
           sendResponse({ success: true });
           break;
 
+        case 'ACTIVATE_ON_TAB':
+          // Programmatically inject content script on unknown sites
+          // This allows the extension to work on any AI chat site, not just preset ones
+          chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+            if (tabs[0]?.id) {
+              try {
+                // First check if content script is already injected
+                const checkResult = await chrome.tabs
+                  .sendMessage(tabs[0].id, { type: 'PING' })
+                  .catch(() => null);
+
+                if (checkResult) {
+                  // Already injected, just show the panel
+                  chrome.tabs.sendMessage(tabs[0].id, { type: 'SHOW_PANEL' });
+                  sendResponse({ success: true, alreadyActive: true });
+                } else {
+                  // Inject content script
+                  await chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    files: ['content/index.js'],
+                  });
+                  console.log(`[FuseConnect v6] Content script injected into tab ${tabs[0].id}`);
+
+                  // Wait a moment for initialization, then show panel
+                  setTimeout(() => {
+                    if (tabs[0]?.id) {
+                      chrome.tabs.sendMessage(tabs[0].id, { type: 'SHOW_PANEL' });
+                    }
+                  }, 500);
+
+                  sendResponse({ success: true, injected: true });
+                }
+              } catch (error: any) {
+                console.error('[FuseConnect v6] Failed to activate on tab:', error);
+                sendResponse({ success: false, error: error.message });
+              }
+            } else {
+              sendResponse({ success: false, error: 'No active tab found' });
+            }
+          });
+          return true; // Async response
+
         case 'REQUEST_SYNC':
           if (this.primaryConnection) {
             this.requestSync(this.primaryConnection);
@@ -1108,9 +1150,22 @@ class BackgroundService {
             if (!this.recentMessageHashes.has(responseHash)) {
               this.recentMessageHashes.set(responseHash, now);
 
-              // Get sender's agent ID from the message or use the assigned page agent
-              const senderId =
-                message.senderId || sender.tab?.id ? `page-agent-${sender.tab.id}` : this.agentId;
+              // FIXED: Get sender's agent ID from message metadata (set by content script)
+              // The content script sets metadata.agentId = this.pageAgentId when it detects the AI response
+              let senderId = message.metadata?.agentId || message.senderId;
+
+              // Fallback: construct from tab ID if not provided (shouldn't happen normally)
+              if (!senderId && sender.tab?.id) {
+                senderId = `page-agent-${sender.tab.id}`;
+                console.warn('[FuseConnect v6] Using fallback senderId construction:', senderId);
+              }
+
+              // Final fallback to browser agent
+              if (!senderId) {
+                senderId = this.agentId;
+              }
+
+              console.log('[FuseConnect v6] AI Response from agent:', senderId);
 
               chrome.storage.local.get(['fuse_current_channel'], (result) => {
                 let channel = result.fuse_current_channel;

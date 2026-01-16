@@ -133,10 +133,10 @@ export default defineConfig(({ mode }) => {
     publicDir: 'public',
     optimizeDeps: {
       include: [
-        'firebase',
-        '@firebase/app',
-        '@firebase/auth',
+        'firebase/app',
+        'firebase/auth',
         'firebase/firestore',
+        '@firebase/firestore',
         'framer-motion', // Pre-bundle framer-motion to avoid circular dependency issues
         'react',
         'react-dom',

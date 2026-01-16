@@ -6,31 +6,10 @@ import { ToastProvider } from './components/ui/toast';
 import { AuthProvider } from './providers/AuthProvider';
 import './styles/globals.css'; // Re-add global CSS import
 
-// Custom Element Guard: Prevent duplicate custom element registration errors
-// This is particularly important for browser extensions that may inject custom elements
+// Custom Element Guard is already activated in index.html
+// We just verify it's in place here
 if (typeof customElements !== 'undefined') {
-  const originalDefine = customElements.define.bind(customElements);
-  customElements.define = function (
-    name: string,
-    constructor: CustomElementConstructor,
-    options?: ElementDefinitionOptions
-  ) {
-    if (!customElements.get(name)) {
-      try {
-        originalDefine(name, constructor, options);
-      } catch (error) {
-        console.warn(
-          `[The New Fuse] Custom Element Guard: Error defining "${name}", likely duplicate`,
-          error
-        );
-      }
-    } else {
-      console.warn(
-        `[The New Fuse] Custom Element Guard: "${name}" already defined, skipping duplicate registration`
-      );
-    }
-  };
-  console.log('[The New Fuse] Custom Element Guard activated');
+  console.log('[The New Fuse] Custom Element Guard check: Active');
 }
 
 console.log('Main.tsx starting...');

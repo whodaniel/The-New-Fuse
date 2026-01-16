@@ -3,6 +3,87 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- CRITICAL: Custom Element Guard MUST be first to intercept browser extension scripts -->
+    <script>
+      (function () {
+        try {
+          // Keep track of all registered elements
+          const registeredElements = new Set();
+          const definingElements = new Set();
+
+          // Store original methods
+          const originalDefine = customElements.define.bind(customElements);
+          const originalGet = customElements.get.bind(customElements);
+
+          // Create a safer define function
+          const safeDefine = function (name, constructor, options) {
+            // Double-check if already registered in our tracker
+            if (registeredElements.has(name)) {
+              console.warn(`[The New Fuse] Element '${name}' already in registry. Skipping.`);
+              return;
+            }
+
+            // Check if already defined via native API
+            try {
+              const existing = originalGet(name);
+              if (existing) {
+                console.warn(`[The New Fuse] Element '${name}' already defined in customElements. Skipping.`);
+                registeredElements.add(name);
+                return;
+              }
+            } catch (e) {
+              // Get failed, element doesn't exist - continue
+            }
+
+            // Check if currently being defined (race condition)
+            if (definingElements.has(name)) {
+              console.warn(`[The New Fuse] Element '${name}' is currently being defined. Skipping duplicate.`);
+              return;
+            }
+
+            // Mark as being defined
+            definingElements.add(name);
+
+            try {
+              originalDefine(name, constructor, options);
+              registeredElements.add(name);
+            } catch (e) {
+              const msg = e.message || '';
+              if (
+                msg.includes('already been defined') ||
+                msg.includes('has already been used') ||
+                msg.includes('NotSupportedError') ||
+                msg.includes('is already defined') ||
+                msg.includes('has already been')
+              ) {
+                // Silently handle - element is already defined
+                console.warn(`[The New Fuse] Duplicate definition prevented for '${name}'`);
+                registeredElements.add(name);
+                return;
+              }
+              // Re-throw unexpected errors
+              console.error(`[The New Fuse] Unexpected error defining '${name}':`, e);
+              throw e;
+            } finally {
+              // Remove from defining set
+              definingElements.delete(name);
+            }
+          };
+
+          // Bind the function to customElements to maintain context
+          const boundSafeDefine = safeDefine.bind(customElements);
+
+          // Override with bound function
+          customElements.define = boundSafeDefine;
+
+          console.log('[The New Fuse] Custom Element Guard activated (FIRST)');
+        } catch (e) {
+          console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
+        }
+      })();
+    </script>
+
     <!-- Content Security Policy: Allow unsafe-eval/inline as requested for legacy dependency support -->
     <meta
       http-equiv="Content-Security-Policy"
@@ -211,44 +292,6 @@
     </script>
 
     <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
-    <script>
-      (function () {
-        try {
-          const originalDefine = customElements.define;
-          const safeDefine = function (name, constructor, options) {
-            if (customElements.get(name)) {
-              // console.warn(`[The New Fuse] Element '${name}' already defined. Skipping.`);
-              return;
-            }
-            try {
-              originalDefine.call(customElements, name, constructor, options);
-            } catch (e) {
-              const msg = e.message || '';
-              if (
-                msg.includes('already been defined') ||
-                msg.includes('has already been used') ||
-                msg.includes('NotSupportedError') ||
-                msg.includes('is already defined') // Catch variation
-              ) {
-                // console.warn(`[The New Fuse] Caught duplicate definition for '${name}'`);
-                return;
-              }
-              throw e;
-            }
-          };
-
-          // Override global define
-          Object.defineProperty(customElements, 'define', {
-            value: safeDefine,
-            configurable: true,
-            writable: true,
-          });
-        } catch (e) {
-          console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
-        }
-      })();
-    </script>
-
     <!-- SEO and Meta Information -->
     <title>
       The New Fuse - AI Collaboration Platform | Workflow Automation & Agent Orchestration

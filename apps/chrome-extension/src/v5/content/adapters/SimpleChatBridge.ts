@@ -27,6 +27,30 @@ class SimpleChatBridge {
   private cacheValidUntil: number = 0;
   private readonly CACHE_DURATION = 10000; // 10 seconds
 
+  // Supported AI chat platforms for element detection logging
+  private readonly SUPPORTED_CHAT_PLATFORMS = [
+    'gemini.google.com',
+    'bard.google.com',
+    'chatgpt.com',
+    'chat.openai.com',
+    'claude.ai',
+    'perplexity.ai',
+    'poe.com',
+    'localhost', // Local development
+    'thenewfuse.com', // Our app
+  ];
+
+  /**
+   * Check if current page is a supported chat platform
+   * Used to suppress noisy logging on non-chat sites
+   */
+  private isSupportedPlatform(): boolean {
+    const hostname = window.location.hostname.toLowerCase();
+    return this.SUPPORTED_CHAT_PLATFORMS.some(
+      (platform) => hostname === platform || hostname.endsWith('.' + platform)
+    );
+  }
+
   /**
    * Initialize the bridge with callbacks
    */
@@ -51,6 +75,10 @@ class SimpleChatBridge {
 
     // Platform-specific selectors (most reliable first)
     const inputSelectors = [
+      // The New Fuse (Custom App) - High Priority
+      'input[placeholder="Type a message..."]',
+      'input[placeholder="Type a message..."][type="text"]',
+
       // Gemini 2025+ patterns (highest priority - latest interface)
       'rich-textarea p[contenteditable="true"]',
       'rich-textarea p[data-placeholder]',
@@ -89,6 +117,10 @@ class SimpleChatBridge {
     ];
 
     const sendButtonSelectors = [
+      // The New Fuse (Custom App) - High Priority
+      'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
+      'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
+
       // Gemini-specific - EXPANDED
       'button[aria-label*="Send" i]',
       'button[aria-label*="submit" i]',
@@ -284,25 +316,33 @@ class SimpleChatBridge {
       }
 
       if (!isReady) {
-        // Only warn once per page load or on state change to avoid spam
+        // Content script now only runs on known sites or when explicitly activated
+        // so we always log when elements aren't found (user expects it to work here)
+        const isSupportedSite = this.isSupportedPlatform();
+
         if (stateChanged) {
+          // Add platform info to help debugging on unknown sites
+          logData.isKnownPlatform = isSupportedSite;
           console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
-        } else if (DEBUG) {
-          console.warn('[SimpleChatBridge DEBUG] Elements still not ready');
         }
 
-        // Provide hints for debugging (only once)
+        // Provide hints for debugging (only once per state change)
         if (!input && stateChanged) {
           console.debug(
             '[SimpleChatBridge] 💡 Enable debug mode: window.__FUSE_DEBUG_SELECTORS = true'
           );
           console.debug(
-            '[SimpleChatBridge] 💡 Or check available elements:',
+            '[SimpleChatBridge] 💡 Available elements:',
             'contenteditable count:',
             document.querySelectorAll('[contenteditable="true"]').length,
             'buttons with aria-label:',
             document.querySelectorAll('button[aria-label]').length
           );
+          if (!isSupportedSite) {
+            console.debug(
+              '[SimpleChatBridge] 💡 This is an unknown platform - you may need to add custom selectors'
+            );
+          }
         }
       } else {
         console.log('[SimpleChatBridge] ✅ Elements ready:', logData);
@@ -407,18 +447,21 @@ class SimpleChatBridge {
   }
 
   /**
-   * Send a message to the AI - RESTORED FROM BACKUP
+   * Send a message to the AI - Enhanced with button re-fetch and robust clicking
    */
   async sendMessage(text: string): Promise<boolean> {
-    const { input, sendButton, isReady } = this.findElements();
+    const initialElements = this.findElements();
 
-    if (!isReady || !input || !sendButton) {
+    if (!initialElements.isReady || !initialElements.input) {
       console.error('[SimpleChatBridge] Chat elements not ready');
       this.callbacks.onError?.('Chat elements not found');
       return false;
     }
 
+    const input = initialElements.input;
+
     try {
+      // Focus and clear the input
       input.focus();
       await this.delay(100);
 
@@ -439,14 +482,60 @@ class SimpleChatBridge {
         input.dispatchEvent(new Event('input', { bubbles: true }));
       }
 
-      await this.delay(200);
+      // Wait for UI to react to the text input
+      await this.delay(300);
+
+      // RE-FIND the send button AFTER text input - it may have become enabled
+      // Gemini and other chat UIs often disable the send button until there's text
+      const updatedElements = this.findElements();
+      let sendButton = updatedElements.sendButton;
+
+      if (!sendButton) {
+        console.warn('[SimpleChatBridge] Send button not found after text input, retrying...');
+        await this.delay(200);
+        sendButton = this.findElements().sendButton;
+      }
+
+      if (!sendButton) {
+        console.error('[SimpleChatBridge] Send button still not found');
+        this.callbacks.onError?.('Send button not found');
+        return false;
+      }
+
+      // Wait for button to be enabled (check disabled attribute)
+      let attempts = 0;
+      while (sendButton.hasAttribute('disabled') && attempts < 10) {
+        await this.delay(100);
+        sendButton = this.findElements().sendButton;
+        if (!sendButton) break;
+        attempts++;
+      }
+
+      if (!sendButton || sendButton.hasAttribute('disabled')) {
+        console.error('[SimpleChatBridge] Send button is disabled');
+        this.callbacks.onError?.('Send button is disabled');
+        return false;
+      }
 
       // Count responses before sending
       const responsesBefore = this.countModelResponses();
       console.log('[SimpleChatBridge] Responses before send:', responsesBefore);
 
-      // Click send button
+      // Click the send button using multiple methods for reliability
+      console.log('[SimpleChatBridge] Clicking send button...');
+
+      // Method 1: Direct click
       sendButton.click();
+
+      // Method 2: Dispatch click event (for frameworks that intercept clicks)
+      sendButton.dispatchEvent(
+        new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        })
+      );
+
       console.log('[SimpleChatBridge] Message sent:', text.substring(0, 50));
 
       // Start watching for response
@@ -469,53 +558,110 @@ class SimpleChatBridge {
 
   /**
    * Start watching for AI response
+   * ENHANCED: Longer timeout for image/video generation, better content detection
    */
   startWatchingForResponse(responsesBefore: number): void {
     this.isWaitingForResponse = true;
     let stableCount = 0;
     let lastContent = '';
+    let lastResponseCount = responsesBefore;
 
     this.responseCheckInterval = window.setInterval(() => {
+      const currentResponseCount = this.countModelResponses();
+
       // Check if new response appeared
-      if (this.countModelResponses() > responsesBefore) {
+      if (currentResponseCount > responsesBefore) {
         const content = this.getLatestResponse();
         const streaming = this.isStreaming();
+
+        // Also check for image/media content in the latest response
+        const hasMedia = this.checkForMediaContent();
 
         console.log('[SimpleChatBridge] Checking response...', {
           newContent: !!content,
           streaming,
           contentLength: content?.length || 0,
+          hasMedia,
+          responseCount: currentResponseCount,
         });
 
-        if (content) {
-          if (content !== lastContent || streaming) {
+        if (content || hasMedia) {
+          const currentContentSignature = `${content || ''}-${hasMedia}`;
+
+          if (currentContentSignature !== lastContent || streaming) {
             // Still streaming or content changed
             stableCount = 0;
-            lastContent = content;
+            lastContent = currentContentSignature;
           } else {
             // Content is stable
             stableCount++;
-            if (stableCount >= 2) {
+            if (stableCount >= 3) {
+              // Increased from 2 to 3 for more stability
               this.stopWatching();
-              if (content !== this.lastResponseText) {
-                this.lastResponseText = content;
-                console.log('[SimpleChatBridge] Response complete!', content.substring(0, 100));
-                this.callbacks.onResponse?.(content);
+
+              // For media responses, create a placeholder message
+              const finalContent = content || (hasMedia ? '[AI generated media content]' : null);
+
+              if (finalContent && finalContent !== this.lastResponseText) {
+                this.lastResponseText = finalContent;
+                console.log(
+                  '[SimpleChatBridge] Response complete!',
+                  finalContent.substring(0, 100)
+                );
+                this.callbacks.onResponse?.(finalContent);
               }
             }
           }
         }
+
+        lastResponseCount = currentResponseCount;
       }
     }, 1000);
 
-    // Timeout after 60 seconds
+    // Timeout after 180 seconds (3 minutes) - enough for image/video generation
     setTimeout(() => {
       if (this.isWaitingForResponse) {
-        console.warn('[SimpleChatBridge] Response timeout');
+        console.warn('[SimpleChatBridge] Response timeout (after 180s)');
         this.stopWatching();
-        this.callbacks.onError?.('Response timeout');
+
+        // Even on timeout, try to get whatever response is there
+        const finalContent = this.getLatestResponse();
+        if (finalContent && finalContent !== this.lastResponseText) {
+          console.log(
+            '[SimpleChatBridge] Captured response on timeout:',
+            finalContent.substring(0, 100)
+          );
+          this.lastResponseText = finalContent;
+          this.callbacks.onResponse?.(finalContent);
+        } else {
+          this.callbacks.onError?.('Response timeout');
+        }
       }
-    }, 60000);
+    }, 180000); // 3 minutes
+  }
+
+  /**
+   * Check if the latest response contains media (images, videos)
+   */
+  private checkForMediaContent(): boolean {
+    const responses = document.querySelectorAll('model-response');
+    if (responses.length === 0) return false;
+
+    const lastResponse = responses[responses.length - 1];
+
+    // Check for various media elements
+    const hasImage = lastResponse.querySelector('img') !== null;
+    const hasVideo = lastResponse.querySelector('video') !== null;
+    const hasCanvas = lastResponse.querySelector('canvas') !== null;
+    const hasIframe = lastResponse.querySelector('iframe') !== null;
+
+    // Check for Gemini-specific image generation indicators
+    const hasGeneratedImage =
+      lastResponse.querySelector('[data-generated-image]') !== null ||
+      lastResponse.querySelector('.generated-image') !== null ||
+      lastResponse.querySelector('[class*="image-output"]') !== null;
+
+    return hasImage || hasVideo || hasCanvas || hasIframe || hasGeneratedImage;
   }
 
   /**
