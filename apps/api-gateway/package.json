@@ -30,7 +30,7 @@
     "@nestjs/axios": "^4.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/platform-express": "^11.1.11",
-    "@nestjs/swagger": "^11.2.3",
+    "@nestjs/swagger": "^11.2.4",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "axios": "^1.12.2",
