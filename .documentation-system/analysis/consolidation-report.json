@@ -1,0 +1,2852 @@
+{
+  "metadata": {
+    "timestamp": "2026-01-17T19:38:29.566Z",
+    "processingTime": "0.65s",
+    "originalCount": 93089,
+    "consolidatedCount": 86748,
+    "reductionCount": 6341,
+    "reductionPercentage": "6.8"
+  },
+  "conceptGroups": [
+    {
+      "canonical": "100",
+      "variants": ["100%", "+100%"],
+      "totalFrequency": 9,
+      "sourceCount": 9
+    },
+    {
+      "canonical": "3001",
+      "variants": ["`3001`"],
+      "totalFrequency": 3,
+      "sourceCount": 3
+    },
+    {
+      "canonical": "resolution",
+      "variants": ["resolution:"],
+      "totalFrequency": 32,
+      "sourceCount": 32
+    },
+    {
+      "canonical": "used by",
+      "variants": ["used by:"],
+      "totalFrequency": 4,
+      "sourceCount": 4
+    },
+    {
+      "canonical": "lock",
+      "variants": ["locks"],
+      "totalFrequency": 15,
+      "sourceCount": 13
+    },
+    {
+      "canonical": "build failure",
+      "variants": ["build failures", "build failures:"],
+      "totalFrequency": 16,
+      "sourceCount": 16
+    },
+    {
+      "canonical": "conflict",
+      "variants": ["conflicts"],
+      "totalFrequency": 46,
+      "sourceCount": 40
+    },
+    {
+      "canonical": "api",
+      "variants": ["api:", "apis:", "✅ api", "apis"],
+      "totalFrequency": 549,
+      "sourceCount": 541
+    },
+    {
+      "canonical": "fixed",
+      "variants": ["fixed:"],
+      "totalFrequency": 90,
+      "sourceCount": 90
+    },
+    {
+      "canonical": "readme",
+      "variants": ["readmes"],
+      "totalFrequency": 134,
+      "sourceCount": 131
+    },
+    {
+      "canonical": "build",
+      "variants": ["builds", "build:", "\", \"build/", "`build`"],
+      "totalFrequency": 296,
+      "sourceCount": 259
+    },
+    {
+      "canonical": "overview",
+      "variants": [
+        "overviews",
+        "📊 overview",
+        "🎯 overview",
+        "📋 overview",
+        "overview:",
+        "🌍 overview",
+        "🎯 **overview**"
+      ],
+      "totalFrequency": 318,
+      "sourceCount": 301
+    },
+    {
+      "canonical": "module",
+      "variants": ["modules", "modules:"],
+      "totalFrequency": 58,
+      "sourceCount": 57
+    },
+    {
+      "canonical": "problem",
+      "variants": ["problems", "problem:", "problems:"],
+      "totalFrequency": 67,
+      "sourceCount": 63
+    },
+    {
+      "canonical": "test",
+      "variants": [
+        "tests",
+        "`test`",
+        "\", \"test/",
+        "tests:",
+        "'\n      - 'tests/",
+        "test:"
+      ],
+      "totalFrequency": 447,
+      "sourceCount": 386
+    },
+    {
+      "canonical": "solution",
+      "variants": ["solutions", "solution:", "solutions:", "🛠️ solution"],
+      "totalFrequency": 151,
+      "sourceCount": 122
+    },
+    {
+      "canonical": "result",
+      "variants": [
+        "result:",
+        "results",
+        "🎉 result",
+        "🚀 **result**",
+        "**📊 results:**",
+        "📊 results:",
+        "📊 results",
+        "🎉 **result**",
+        "results:"
+      ],
+      "totalFrequency": 139,
+      "sourceCount": 124
+    },
+    {
+      "canonical": "type",
+      "variants": ["types", "type:", "types/"],
+      "totalFrequency": 437,
+      "sourceCount": 379
+    },
+    {
+      "canonical": "configuration",
+      "variants": [
+        "configurations",
+        "configuration:",
+        "🎛️ configuration",
+        "🔧 configuration",
+        "⚙️ configuration",
+        "**configuration**",
+        "⚙️ **configuration**"
+      ],
+      "totalFrequency": 280,
+      "sourceCount": 240
+    },
+    {
+      "canonical": "updated",
+      "variants": ["updated:"],
+      "totalFrequency": 185,
+      "sourceCount": 184
+    },
+    {
+      "canonical": "added",
+      "variants": ["added:"],
+      "totalFrequency": 123,
+      "sourceCount": 122
+    },
+    {
+      "canonical": "created",
+      "variants": ["created:"],
+      "totalFrequency": 127,
+      "sourceCount": 124
+    },
+    {
+      "canonical": "set",
+      "variants": ["sets"],
+      "totalFrequency": 244,
+      "sourceCount": 239
+    },
+    {
+      "canonical": "removed",
+      "variants": ["removed:"],
+      "totalFrequency": 60,
+      "sourceCount": 59
+    },
+    {
+      "canonical": "files\nmodified",
+      "variants": [
+        "files modified",
+        "files modified:",
+        "📝 files modified",
+        "🔧 files modified",
+        "📁 files modified",
+        "**files modified:**",
+        "**files modified**",
+        "files\nmodified:"
+      ],
+      "totalFrequency": 66,
+      "sourceCount": 51
+    },
+    {
+      "canonical": "error",
+      "variants": ["errors", "error:"],
+      "totalFrequency": 298,
+      "sourceCount": 271
+    },
+    {
+      "canonical": "missing",
+      "variants": ["missing:"],
+      "totalFrequency": 89,
+      "sourceCount": 88
+    },
+    {
+      "canonical": "use",
+      "variants": ["uses"],
+      "totalFrequency": 517,
+      "sourceCount": 487
+    },
+    {
+      "canonical": "node",
+      "variants": ["nodes"],
+      "totalFrequency": 167,
+      "sourceCount": 159
+    },
+    {
+      "canonical": "promise",
+      "variants": ["promises"],
+      "totalFrequency": 108,
+      "sourceCount": 107
+    },
+    {
+      "canonical": "status",
+      "variants": ["status:", "🏆 status"],
+      "totalFrequency": 405,
+      "sourceCount": 357
+    },
+    {
+      "canonical": "fix",
+      "variants": ["fix:"],
+      "totalFrequency": 143,
+      "sourceCount": 138
+    },
+    {
+      "canonical": "note",
+      "variants": ["notes", "note:", "📝 notes", "notes:"],
+      "totalFrequency": 126,
+      "sourceCount": 115
+    },
+    {
+      "canonical": "current status",
+      "variants": [
+        "📊 current status",
+        "🎯 current status",
+        "current status:",
+        "🚀 current status",
+        "✅ current status"
+      ],
+      "totalFrequency": 42,
+      "sourceCount": 35
+    },
+    {
+      "canonical": "issue",
+      "variants": ["issue:", "issues", "issues:"],
+      "totalFrequency": 213,
+      "sourceCount": 180
+    },
+    {
+      "canonical": "impact",
+      "variants": ["impact:"],
+      "totalFrequency": 137,
+      "sourceCount": 120
+    },
+    {
+      "canonical": "priority",
+      "variants": ["priority:"],
+      "totalFrequency": 126,
+      "sourceCount": 117
+    },
+    {
+      "canonical": "high",
+      "variants": [": high", "high:"],
+      "totalFrequency": 179,
+      "sourceCount": 176
+    },
+    {
+      "canonical": "critical",
+      "variants": [": critical", "critical:"],
+      "totalFrequency": 122,
+      "sourceCount": 120
+    },
+    {
+      "canonical": "medium",
+      "variants": ["medium:"],
+      "totalFrequency": 112,
+      "sourceCount": 111
+    },
+    {
+      "canonical": "low",
+      "variants": [": low", "low:"],
+      "totalFrequency": 109,
+      "sourceCount": 106
+    },
+    {
+      "canonical": "code",
+      "variants": ["codes", "code:"],
+      "totalFrequency": 264,
+      "sourceCount": 263
+    },
+    {
+      "canonical": "next step",
+      "variants": [
+        "next steps",
+        "🎯 next steps",
+        "🚀 next steps",
+        "next steps:",
+        "📋 next steps",
+        "⏭️ next steps",
+        "🔄 next steps",
+        "🎯 **next steps**",
+        "next step:",
+        "nextsteps",
+        "🚀 **next steps**",
+        "🔍 next steps",
+        "🔄 **next steps**",
+        "🔨 next steps",
+        "**next steps**",
+        "**🚀 next steps**",
+        "📈 next steps",
+        "📝 next steps",
+        "✅ next steps",
+        "🔮 next steps",
+        "💡 next steps"
+      ],
+      "totalFrequency": 274,
+      "sourceCount": 224
+    },
+    {
+      "canonical": "see",
+      "variants": ["see:", "sees"],
+      "totalFrequency": 96,
+      "sourceCount": 96
+    },
+    {
+      "canonical": "warning",
+      "variants": ["warnings", "⚠️ warning", "warning:", "⚠️ warning:"],
+      "totalFrequency": 39,
+      "sourceCount": 38
+    },
+    {
+      "canonical": "review",
+      "variants": ["reviews"],
+      "totalFrequency": 231,
+      "sourceCount": 222
+    },
+    {
+      "canonical": "developer",
+      "variants": ["developers", "developer:"],
+      "totalFrequency": 57,
+      "sourceCount": 54
+    },
+    {
+      "canonical": "summary",
+      "variants": [
+        "🎉 summary",
+        "🎯 summary",
+        "summary:",
+        "✨ summary",
+        "✅ **summary**",
+        "🎊 summary"
+      ],
+      "totalFrequency": 124,
+      "sourceCount": 110
+    },
+    {
+      "canonical": "related documentation",
+      "variants": ["🔗 related documentation", "📚 related documentation"],
+      "totalFrequency": 23,
+      "sourceCount": 19
+    },
+    {
+      "canonical": "core package",
+      "variants": ["core packages", "core package ⏳"],
+      "totalFrequency": 15,
+      "sourceCount": 14
+    },
+    {
+      "canonical": "testtype",
+      "variants": ["test type", "test types", "test types:"],
+      "totalFrequency": 5,
+      "sourceCount": 5
+    },
+    {
+      "canonical": "date",
+      "variants": ["date:", "[date]:"],
+      "totalFrequency": 236,
+      "sourceCount": 221
+    },
+    {
+      "canonical": "session",
+      "variants": ["session:", "sessions", "sessions:"],
+      "totalFrequency": 87,
+      "sourceCount": 78
+    },
+    {
+      "canonical": "detail",
+      "variants": ["details:", "details"],
+      "totalFrequency": 58,
+      "sourceCount": 56
+    },
+    {
+      "canonical": "what was fixed",
+      "variants": ["what was fixed:", "🔧 what was fixed"],
+      "totalFrequency": 5,
+      "sourceCount": 4
+    },
+    {
+      "canonical": "success",
+      "variants": ["success:", "success! 🎉", "🎉 success!"],
+      "totalFrequency": 58,
+      "sourceCount": 56
+    },
+    {
+      "canonical": "found",
+      "variants": ["found:"],
+      "totalFrequency": 38,
+      "sourceCount": 37
+    },
+    {
+      "canonical": "what changed",
+      "variants": ["what changed:", "what changed?"],
+      "totalFrequency": 4,
+      "sourceCount": 3
+    },
+    {
+      "canonical": "before",
+      "variants": ["before:", "**before:**", "before ❌"],
+      "totalFrequency": 151,
+      "sourceCount": 143
+    },
+    {
+      "canonical": "after",
+      "variants": ["after:", "**after:**", "after ✅"],
+      "totalFrequency": 200,
+      "sourceCount": 192
+    },
+    {
+      "canonical": "commit",
+      "variants": ["commits", "commit:"],
+      "totalFrequency": 50,
+      "sourceCount": 45
+    },
+    {
+      "canonical": "build status",
+      "variants": ["build status:", "**build status**", "📈 build status"],
+      "totalFrequency": 24,
+      "sourceCount": 20
+    },
+    {
+      "canonical": "local",
+      "variants": ["local:"],
+      "totalFrequency": 44,
+      "sourceCount": 44
+    },
+    {
+      "canonical": "railway",
+      "variants": ["railway:"],
+      "totalFrequency": 110,
+      "sourceCount": 110
+    },
+    {
+      "canonical": "why this happened",
+      "variants": ["why this happened:", "🚨 why this happened"],
+      "totalFrequency": 3,
+      "sourceCount": 3
+    },
+    {
+      "canonical": "prevention",
+      "variants": ["prevention:"],
+      "totalFrequency": 21,
+      "sourceCount": 21
+    },
+    {
+      "canonical": "future improvement",
+      "variants": ["future improvements", "future improvements:"],
+      "totalFrequency": 9,
+      "sourceCount": 8
+    },
+    {
+      "canonical": "add",
+      "variants": ["adds", "add:"],
+      "totalFrequency": 371,
+      "sourceCount": 364
+    },
+    {
+      "canonical": "proto definitions",
+      "variants": ["proto-definitions"],
+      "totalFrequency": 2,
+      "sourceCount": 1
+    },
+    {
+      "canonical": "root cause",
+      "variants": [
+        "root cause:",
+        "root causes",
+        "root causes:",
+        "❌ root cause"
+      ],
+      "totalFrequency": 30,
+      "sourceCount": 29
+    },
+    {
+      "canonical": "changes made",
+      "variants": ["changes made:", "✅ changes made"],
+      "totalFrequency": 17,
+      "sourceCount": 16
+    },
+    {
+      "canonical": "import",
+      "variants": ["imports"],
+      "totalFrequency": 71,
+      "sourceCount": 65
+    },
+    {
+      "canonical": "benefit",
+      "variants": [
+        "benefits",
+        "benefits:",
+        "📈 benefits",
+        "✅ benefits",
+        "🎯 benefits"
+      ],
+      "totalFrequency": 71,
+      "sourceCount": 64
+    },
+    {
+      "canonical": "package",
+      "variants": [
+        "packages",
+        "\", \"packages/",
+        "'\n      - 'packages/",
+        "packages:",
+        "package:"
+      ],
+      "totalFrequency": 172,
+      "sourceCount": 140
+    },
+    {
+      "canonical": "deployment status",
+      "variants": [
+        "🎬 deployment status",
+        "deployment status:",
+        "🎯 deployment status",
+        "🔗 deployment status"
+      ],
+      "totalFrequency": 11,
+      "sourceCount": 9
+    },
+    {
+      "canonical": "searchresult",
+      "variants": ["search results"],
+      "totalFrequency": 2,
+      "sourceCount": 2
+    },
+    {
+      "canonical": "file",
+      "variants": ["files", "file:", "files:"],
+      "totalFrequency": 336,
+      "sourceCount": 275
+    },
+    {
+      "canonical": "activation plan",
+      "variants": ["🚀 activation plan"],
+      "totalFrequency": 3,
+      "sourceCount": 2
+    },
+    {
+      "canonical": "agent",
+      "variants": [
+        "agents",
+        "🤖 agents",
+        "agent:",
+        "agents:",
+        "`/agents`",
+        "/agents"
+      ],
+      "totalFrequency": 476,
+      "sourceCount": 354
+    },
+    {
+      "canonical": "discovery service",
+      "variants": ["discovery services"],
+      "totalFrequency": 4,
+      "sourceCount": 4
+    },
+    {
+      "canonical": "skill",
+      "variants": ["skills"],
+      "totalFrequency": 80,
+      "sourceCount": 60
+    },
+    {
+      "canonical": "onboarding flow",
+      "variants": ["onboarding flows"],
+      "totalFrequency": 12,
+      "sourceCount": 12
+    },
+    {
+      "canonical": "discovery",
+      "variants": ["discovery:"],
+      "totalFrequency": 78,
+      "sourceCount": 77
+    },
+    {
+      "canonical": "type system",
+      "variants": ["type systems:"],
+      "totalFrequency": 6,
+      "sourceCount": 5
+    },
+    {
+      "canonical": "communication",
+      "variants": ["communications", "communication:"],
+      "totalFrequency": 164,
+      "sourceCount": 157
+    },
+    {
+      "canonical": "coordination",
+      "variants": ["coordination:"],
+      "totalFrequency": 71,
+      "sourceCount": 71
+    },
+    {
+      "canonical": "feedback",
+      "variants": ["feedback:", "💬 feedback"],
+      "totalFrequency": 31,
+      "sourceCount": 30
+    },
+    {
+      "canonical": "registration",
+      "variants": ["registrations"],
+      "totalFrequency": 82,
+      "sourceCount": 81
+    },
+    {
+      "canonical": "integration",
+      "variants": [
+        "integrations",
+        "integration:",
+        "✅ integrations",
+        "/integrations/"
+      ],
+      "totalFrequency": 386,
+      "sourceCount": 362
+    },
+    {
+      "canonical": "guide",
+      "variants": ["guides"],
+      "totalFrequency": 119,
+      "sourceCount": 112
+    },
+    {
+      "canonical": "documentation",
+      "variants": [
+        "📁 documentation",
+        "📚 documentation",
+        "documentation:",
+        "**documentation**",
+        "📖 documentation",
+        "✅ documentation"
+      ],
+      "totalFrequency": 365,
+      "sourceCount": 338
+    },
+    {
+      "canonical": "analysis",
+      "variants": ["analysis:"],
+      "totalFrequency": 127,
+      "sourceCount": 126
+    },
+    {
+      "canonical": "user",
+      "variants": ["users", "user:"],
+      "totalFrequency": 272,
+      "sourceCount": 239
+    },
+    {
+      "canonical": "post",
+      "variants": ["posts"],
+      "totalFrequency": 174,
+      "sourceCount": 172
+    },
+    {
+      "canonical": "get",
+      "variants": ["gets"],
+      "totalFrequency": 182,
+      "sourceCount": 182
+    },
+    {
+      "canonical": "basic",
+      "variants": ["basics"],
+      "totalFrequency": 86,
+      "sourceCount": 86
+    },
+    {
+      "canonical": "task",
+      "variants": ["tasks", "tasks:", "task:", "`/tasks`", "✅ tasks"],
+      "totalFrequency": 246,
+      "sourceCount": 203
+    },
+    {
+      "canonical": "chat",
+      "variants": ["chats", "/chat"],
+      "totalFrequency": 106,
+      "sourceCount": 104
+    },
+    {
+      "canonical": "router",
+      "variants": ["router:"],
+      "totalFrequency": 24,
+      "sourceCount": 24
+    },
+    {
+      "canonical": "today",
+      "variants": ["today:"],
+      "totalFrequency": 10,
+      "sourceCount": 10
+    }
+  ],
+  "gaps": {
+    "underDocumented": [],
+    "orphanConcepts": [
+      {
+        "concept": "built",
+        "frequency": 62,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "added",
+        "frequency": 123,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "configured",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "files\nmodified",
+        "frequency": 66,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "partial",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "see",
+        "frequency": 96,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "jest",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "related documentation",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "build status",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "prevention",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cannot",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "root cause",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "first",
+        "frequency": 67,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rest",
+        "frequency": 58,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "master",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "running",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "subscribe",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "success metrics",
+        "frequency": 82,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "files created",
+        "frequency": 58,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "developer experience",
+        "frequency": 50,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "started",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "however",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "slack",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "improved",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mode",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "number",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "enter",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "better",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "typography",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "focus",
+        "frequency": 60,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "successfully",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cause",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "expected",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pipeline",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "put",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "in\nprogress",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "replace",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "convert",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "community",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "jsx",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "vite",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rebuild",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "common issues",
+        "frequency": 108,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "force",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "additional resources",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mission accomplished",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "documentation created",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "quickstart",
+        "frequency": 67,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "quick\nreference",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "zero",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fixes",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "changed",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "separate",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "is as follows",
+        "frequency": 98,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "social",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "receive",
+        "frequency": 114,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "analyze input:",
+        "frequency": 86,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "generate report",
+        "frequency": 54,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "conduct",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "write",
+        "frequency": 65,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "format",
+        "frequency": 70,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "websearch",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "collaboration",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pull",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "compare",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "prioritize",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "learning",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "once",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "context\nprotocol",
+        "frequency": 66,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "claude code",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "edit",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "determine",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "please",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "confirm",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "instruction",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "example usage",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "usage example",
+        "frequency": 54,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "look",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "finding",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "strategy",
+        "frequency": 59,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "definition",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "recognition",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "graph",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "notify",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "configuration\nfile",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "blue",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "practice",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ecosystem",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "calculate",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "transaction",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "user experience",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "theme",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "scan",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tracking",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "quality assurance",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "submit",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "run test",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reliability",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "landing",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "dom",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "resolve",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "debugging",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "impact assessment",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "case",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "wcag",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "agentregistry",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "specific",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "deliverable",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "deep",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "code review",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "interface",
+        "frequency": 58,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "math",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "persistent",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "graceful",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "resource management",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "privacy",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "access control",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "logging",
+        "frequency": 71,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "average",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "success rate",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "approach",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "risk",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "unauthorized",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "safety",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "static",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "unique",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "storage",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "api endpoint",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "api documentation",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "diagram",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "professional",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cloud",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "edge",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "grid",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "styling",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "category",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "general",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "performance issue",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reusable",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "categories",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "third",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "clone",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "model context\nprotocol",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rbac",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "owasp",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "enhance",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "navigation",
+        "frequency": 52,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "form",
+        "frequency": 49,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "public",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "license",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sdk",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "limited",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "integration tests",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "invalid",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reduce",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "knowledge",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "risk mitigation",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cleanup",
+        "frequency": 71,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "watch",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mitigation",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "communication guide",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "agent communication guide",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "use case",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "limiting",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "getting started",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "successful",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "join",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "getting help",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tableofcontents",
+        "frequency": 64,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "vision",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "antigravity",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "architecture overview",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "worker",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "message format",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "take",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "implementation steps",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "footer",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gap",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "current state",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "implementation plan",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "password",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "nft",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "overall",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reduction",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "test\ncoverage",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "migrate",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "migration guide",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "type\nsafety",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "connection pooling",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "migration strategy",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "effort",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rollback plan",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "never",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "development workflow",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "availability",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "order",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "short",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "risk assessment",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "january",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "consolidation strategy",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "old",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "verification checklist",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "need help",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "environment variable",
+        "frequency": 89,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "navigate",
+        "frequency": 73,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "installation",
+        "frequency": 60,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "editor",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "restart",
+        "frequency": 50,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "install dependencies",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "adminpanel",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cmd",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "principle",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "slow",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "docker compose",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "right",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tailwind",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "feature flags",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "firebase",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "symptom",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "immediate action",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ssl",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "unit tests",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "connected",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "three",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "prometheus",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "production deployment",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "load testing",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "health\nmonitoring",
+        "frequency": 49,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "centralized",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "performance monitoring",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "efficiency",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "integration testing",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "account",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "bundle",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "key achievement:",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "library",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "technical implementation",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "organization",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "organized",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "scalability",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "modern",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "archive",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "historical",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fully",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "the new fuse platform",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "messaging",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "many",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "august",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "workflowengine",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "easy",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sidebar",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "new feature",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "circuit",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "established",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "guideline",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "todo",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "file structure",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "demo",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "contribution",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "project structure",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "specification",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "maximum",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "individual",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "array",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "api reference",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "observability",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "preference:",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "modify",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "continuous",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "configuration management",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "home",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "foundation",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "maintainability",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fast",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "term",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "task management",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "documented",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "daily",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "severity",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "communicationprotocol",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "security features",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mark",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "encryption",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      }
+    ]
+  },
+  "topConsolidatedConcepts": [
+    {
+      "concept": "api",
+      "frequency": 549,
+      "sources": 541,
+      "variants": 4,
+      "relatedConcepts": 34
+    },
+    {
+      "concept": "use",
+      "frequency": 517,
+      "sources": 487,
+      "variants": 1,
+      "relatedConcepts": 94
+    },
+    {
+      "concept": "agent",
+      "frequency": 476,
+      "sources": 354,
+      "variants": 6,
+      "relatedConcepts": 65
+    },
+    {
+      "concept": "create",
+      "frequency": 450,
+      "sources": 427,
+      "variants": 3,
+      "relatedConcepts": 32
+    },
+    {
+      "concept": "test",
+      "frequency": 447,
+      "sources": 386,
+      "variants": 6,
+      "relatedConcepts": 26
+    },
+    {
+      "concept": "check",
+      "frequency": 439,
+      "sources": 396,
+      "variants": 3,
+      "relatedConcepts": 18
+    },
+    {
+      "concept": "type",
+      "frequency": 437,
+      "sources": 379,
+      "variants": 3,
+      "relatedConcepts": 46
+    },
+    {
+      "concept": "all",
+      "frequency": 414,
+      "sources": 414,
+      "variants": 0,
+      "relatedConcepts": 43
+    },
+    {
+      "concept": "the\nnew fuse",
+      "frequency": 410,
+      "sources": 399,
+      "variants": 3,
+      "relatedConcepts": 16
+    },
+    {
+      "concept": "status",
+      "frequency": 405,
+      "sources": 357,
+      "variants": 2,
+      "relatedConcepts": 18
+    },
+    {
+      "concept": "integration",
+      "frequency": 386,
+      "sources": 362,
+      "variants": 4,
+      "relatedConcepts": 25
+    },
+    {
+      "concept": "update",
+      "frequency": 379,
+      "sources": 335,
+      "variants": 2,
+      "relatedConcepts": 21
+    },
+    {
+      "concept": "add",
+      "frequency": 371,
+      "sources": 364,
+      "variants": 2,
+      "relatedConcepts": 14
+    },
+    {
+      "concept": "documentation",
+      "frequency": 365,
+      "sources": 338,
+      "variants": 6,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "file",
+      "frequency": 336,
+      "sources": 275,
+      "variants": 3,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "service",
+      "frequency": 328,
+      "sources": 252,
+      "variants": 5,
+      "relatedConcepts": 31
+    },
+    {
+      "concept": "overview",
+      "frequency": 318,
+      "sources": 301,
+      "variants": 7,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "run",
+      "frequency": 312,
+      "sources": 284,
+      "variants": 2,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "verify",
+      "frequency": 307,
+      "sources": 307,
+      "variants": 1,
+      "relatedConcepts": 5
+    },
+    {
+      "concept": "error",
+      "frequency": 298,
+      "sources": 271,
+      "variants": 2,
+      "relatedConcepts": 23
+    },
+    {
+      "concept": "feature",
+      "frequency": 297,
+      "sources": 257,
+      "variants": 4,
+      "relatedConcepts": 16
+    },
+    {
+      "concept": "build",
+      "frequency": 296,
+      "sources": 259,
+      "variants": 4,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "web",
+      "frequency": 283,
+      "sources": 283,
+      "variants": 0,
+      "relatedConcepts": 18
+    },
+    {
+      "concept": "workflow",
+      "frequency": 282,
+      "sources": 235,
+      "variants": 6,
+      "relatedConcepts": 19
+    },
+    {
+      "concept": "configuration",
+      "frequency": 280,
+      "sources": 240,
+      "variants": 7,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "next step",
+      "frequency": 274,
+      "sources": 224,
+      "variants": 21,
+      "relatedConcepts": 3
+    },
+    {
+      "concept": "system",
+      "frequency": 274,
+      "sources": 259,
+      "variants": 2,
+      "relatedConcepts": 33
+    },
+    {
+      "concept": "user",
+      "frequency": 272,
+      "sources": 239,
+      "variants": 2,
+      "relatedConcepts": 20
+    },
+    {
+      "concept": "json",
+      "frequency": 271,
+      "sources": 271,
+      "variants": 0,
+      "relatedConcepts": 8
+    },
+    {
+      "concept": "performance",
+      "frequency": 270,
+      "sources": 262,
+      "variants": 4,
+      "relatedConcepts": 11
+    },
+    {
+      "concept": "code",
+      "frequency": 264,
+      "sources": 263,
+      "variants": 2,
+      "relatedConcepts": 27
+    },
+    {
+      "concept": "example",
+      "frequency": 263,
+      "sources": 207,
+      "variants": 4,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "complete",
+      "frequency": 262,
+      "sources": 259,
+      "variants": 2,
+      "relatedConcepts": 5
+    },
+    {
+      "concept": "testing",
+      "frequency": 257,
+      "sources": 243,
+      "variants": 4,
+      "relatedConcepts": 8
+    },
+    {
+      "concept": "implement",
+      "frequency": 256,
+      "sources": 249,
+      "variants": 1,
+      "relatedConcepts": 50
+    },
+    {
+      "concept": "monitoring",
+      "frequency": 255,
+      "sources": 250,
+      "variants": 4,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "task",
+      "frequency": 246,
+      "sources": 203,
+      "variants": 5,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "set",
+      "frequency": 244,
+      "sources": 239,
+      "variants": 1,
+      "relatedConcepts": 18
+    },
+    {
+      "concept": "security",
+      "frequency": 243,
+      "sources": 239,
+      "variants": 1,
+      "relatedConcepts": 9
+    },
+    {
+      "concept": "ensure",
+      "frequency": 242,
+      "sources": 236,
+      "variants": 1,
+      "relatedConcepts": 2
+    },
+    {
+      "concept": "mcp",
+      "frequency": 237,
+      "sources": 237,
+      "variants": 0,
+      "relatedConcepts": 19
+    },
+    {
+      "concept": "date",
+      "frequency": 236,
+      "sources": 221,
+      "variants": 2,
+      "relatedConcepts": 18
+    },
+    {
+      "concept": "step",
+      "frequency": 233,
+      "sources": 205,
+      "variants": 2,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "review",
+      "frequency": 231,
+      "sources": 222,
+      "variants": 1,
+      "relatedConcepts": 11
+    },
+    {
+      "concept": "support",
+      "frequency": 225,
+      "sources": 205,
+      "variants": 5,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "troubleshooting",
+      "frequency": 223,
+      "sources": 193,
+      "variants": 10,
+      "relatedConcepts": 1
+    },
+    {
+      "concept": "database",
+      "frequency": 220,
+      "sources": 211,
+      "variants": 4,
+      "relatedConcepts": 20
+    },
+    {
+      "concept": "monitor",
+      "frequency": 218,
+      "sources": 212,
+      "variants": 1,
+      "relatedConcepts": 14
+    },
+    {
+      "concept": "component",
+      "frequency": 217,
+      "sources": 185,
+      "variants": 3,
+      "relatedConcepts": 20
+    },
+    {
+      "concept": "start",
+      "frequency": 215,
+      "sources": 210,
+      "variants": 3,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "issue",
+      "frequency": 213,
+      "sources": 180,
+      "variants": 3,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "metric",
+      "frequency": 210,
+      "sources": 179,
+      "variants": 6,
+      "relatedConcepts": 14
+    },
+    {
+      "concept": "comprehensive",
+      "frequency": 209,
+      "sources": 209,
+      "variants": 0,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "description",
+      "frequency": 208,
+      "sources": 204,
+      "variants": 2,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "redis",
+      "frequency": 205,
+      "sources": 204,
+      "variants": 1,
+      "relatedConcepts": 23
+    },
+    {
+      "concept": "after",
+      "frequency": 200,
+      "sources": 192,
+      "variants": 3,
+      "relatedConcepts": 5
+    },
+    {
+      "concept": "message",
+      "frequency": 193,
+      "sources": 159,
+      "variants": 1,
+      "relatedConcepts": 25
+    },
+    {
+      "concept": "action",
+      "frequency": 190,
+      "sources": 168,
+      "variants": 3,
+      "relatedConcepts": 12
+    },
+    {
+      "concept": "updated",
+      "frequency": 185,
+      "sources": 184,
+      "variants": 1,
+      "relatedConcepts": 2
+    },
+    {
+      "concept": "management",
+      "frequency": 185,
+      "sources": 185,
+      "variants": 0,
+      "relatedConcepts": 9
+    },
+    {
+      "concept": "new",
+      "frequency": 185,
+      "sources": 172,
+      "variants": 10,
+      "relatedConcepts": 16
+    },
+    {
+      "concept": "input",
+      "frequency": 184,
+      "sources": 180,
+      "variants": 3,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "full",
+      "frequency": 183,
+      "sources": 183,
+      "variants": 0,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "get",
+      "frequency": 182,
+      "sources": 182,
+      "variants": 1,
+      "relatedConcepts": 12
+    },
+    {
+      "concept": "frontend",
+      "frequency": 182,
+      "sources": 177,
+      "variants": 2,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "server",
+      "frequency": 181,
+      "sources": 165,
+      "variants": 1,
+      "relatedConcepts": 11
+    },
+    {
+      "concept": "implementation",
+      "frequency": 180,
+      "sources": 159,
+      "variants": 4,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "high",
+      "frequency": 179,
+      "sources": 176,
+      "variants": 2,
+      "relatedConcepts": 5
+    },
+    {
+      "concept": "real",
+      "frequency": 179,
+      "sources": 179,
+      "variants": 0,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "usage",
+      "frequency": 177,
+      "sources": 170,
+      "variants": 4,
+      "relatedConcepts": 8
+    },
+    {
+      "concept": "architecture",
+      "frequency": 176,
+      "sources": 166,
+      "variants": 4,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "post",
+      "frequency": 174,
+      "sources": 172,
+      "variants": 1,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "package",
+      "frequency": 172,
+      "sources": 140,
+      "variants": 5,
+      "relatedConcepts": 14
+    },
+    {
+      "concept": "resource",
+      "frequency": 172,
+      "sources": 147,
+      "variants": 4,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "tool",
+      "frequency": 171,
+      "sources": 133,
+      "variants": 3,
+      "relatedConcepts": 11
+    },
+    {
+      "concept": "authentication",
+      "frequency": 171,
+      "sources": 168,
+      "variants": 2,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "multi",
+      "frequency": 170,
+      "sources": 170,
+      "variants": 0,
+      "relatedConcepts": 9
+    },
+    {
+      "concept": "node",
+      "frequency": 167,
+      "sources": 159,
+      "variants": 1,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "git",
+      "frequency": 165,
+      "sources": 165,
+      "variants": 0,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "communication",
+      "frequency": 164,
+      "sources": 157,
+      "variants": 2,
+      "relatedConcepts": 21
+    },
+    {
+      "concept": "core",
+      "frequency": 164,
+      "sources": 163,
+      "variants": 2,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "phase",
+      "frequency": 163,
+      "sources": 158,
+      "variants": 2,
+      "relatedConcepts": 11
+    },
+    {
+      "concept": "document",
+      "frequency": 162,
+      "sources": 158,
+      "variants": 2,
+      "relatedConcepts": 13
+    },
+    {
+      "concept": "development",
+      "frequency": 161,
+      "sources": 157,
+      "variants": 3,
+      "relatedConcepts": 5
+    },
+    {
+      "concept": "health",
+      "frequency": 160,
+      "sources": 160,
+      "variants": 0,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "url",
+      "frequency": 158,
+      "sources": 147,
+      "variants": 2,
+      "relatedConcepts": 8
+    },
+    {
+      "concept": "validate",
+      "frequency": 156,
+      "sources": 143,
+      "variants": 1,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "pattern",
+      "frequency": 155,
+      "sources": 128,
+      "variants": 2,
+      "relatedConcepts": 16
+    },
+    {
+      "concept": "main",
+      "frequency": 153,
+      "sources": 153,
+      "variants": 0,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "content",
+      "frequency": 152,
+      "sources": 137,
+      "variants": 2,
+      "relatedConcepts": 5
+    },
+    {
+      "concept": "solution",
+      "frequency": 151,
+      "sources": 122,
+      "variants": 4,
+      "relatedConcepts": 8
+    },
+    {
+      "concept": "before",
+      "frequency": 151,
+      "sources": 143,
+      "variants": 3,
+      "relatedConcepts": 2
+    },
+    {
+      "concept": "validation",
+      "frequency": 150,
+      "sources": 150,
+      "variants": 1,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "conclusion",
+      "frequency": 149,
+      "sources": 125,
+      "variants": 12,
+      "relatedConcepts": 2
+    },
+    {
+      "concept": "production",
+      "frequency": 149,
+      "sources": 146,
+      "variants": 2,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "backend",
+      "frequency": 148,
+      "sources": 145,
+      "variants": 2,
+      "relatedConcepts": 14
+    },
+    {
+      "concept": "event",
+      "frequency": 146,
+      "sources": 128,
+      "variants": 1,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "open",
+      "frequency": 145,
+      "sources": 137,
+      "variants": 1,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "deployment",
+      "frequency": 144,
+      "sources": 134,
+      "variants": 4,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "fix",
+      "frequency": 143,
+      "sources": 138,
+      "variants": 1,
+      "relatedConcepts": 8
+    }
+  ]
+}

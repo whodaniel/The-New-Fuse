@@ -71,3 +71,14 @@ restartPolicyType = "ON_FAILURE"
 builder = "DOCKERFILE"
 build = { dockerfilePath = "apps/cloud-sandbox/Dockerfile.standalone", watchPaths = ["apps/cloud-sandbox/**"] }
 deploy = { healthcheckPath = "/health", restartPolicyType = "ON_FAILURE" }
+
+# Core Vector DB Service
+[services.core-vector-db]
+builder = "DOCKERFILE"
+[services.core-vector-db.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "core-vector-db", SERVICE_NAME = "@the-new-fuse/core-vector-db", SERVICE_ROOT = "packages" }
+watchPaths = ["packages/core-vector-db/**", "packages/core/**"]
+[services.core-vector-db.deploy]
+healthcheckPath = "/health"
+restartPolicyType = "ON_FAILURE"

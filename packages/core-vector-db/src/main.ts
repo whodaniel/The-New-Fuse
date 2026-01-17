@@ -1,6 +1,6 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { Logger } from '@nestjs/common';
 import { join } from 'path';
 import { VectorDatabaseModule } from './vector-database.module';
 
@@ -9,20 +9,33 @@ async function bootstrap() {
 
   // Configuration from environment variables
   const grpcUrl = process.env.GRPC_URL || '0.0.0.0:50051';
-  const protoPath = process.env.PROTO_PATH || join(__dirname, '../../../proto-definitions/proto/vector_store.proto');
+  const protoPath =
+    process.env.PROTO_PATH ||
+    join(__dirname, '../../../proto-definitions/proto/vector_store.proto');
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-  logger.log(`Starting Vector Database gRPC microservice on ${grpcUrl}`);
+  logger.log(`Starting Vector Database service`);
   logger.log(`Using proto file: ${protoPath}`);
 
-  // Create the gRPC microservice
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+  // Create Hybrid Application (HTTP + gRPC)
+  const app = await NestFactory.create(
     VectorDatabaseModule.forRoot({
       vectorDbConfig: {
         provider: (process.env.VECTOR_DB_TYPE as any) || 'qdrant',
         apiKey: process.env.VECTOR_DB_API_KEY || process.env.QDRANT_API_KEY,
-        host: process.env.VECTOR_DB_HOST || process.env.VECTOR_DB_URL || process.env.QDRANT_URL || 'http://localhost:6333',
-        port: process.env.VECTOR_DB_PORT ? parseInt(process.env.VECTOR_DB_PORT) : undefined,
-        database: process.env.VECTOR_DB_DATABASE,
+        connectionString: process.env.DATABASE_URL,
+        host:
+          process.env.VECTOR_DB_HOST ||
+          process.env.VECTOR_DB_URL ||
+          process.env.QDRANT_URL ||
+          process.env.PGHOST ||
+          'http://localhost:6333',
+        port: process.env.VECTOR_DB_PORT
+          ? parseInt(process.env.VECTOR_DB_PORT)
+          : process.env.PGPORT
+            ? parseInt(process.env.PGPORT)
+            : undefined,
+        database: process.env.VECTOR_DB_DATABASE || process.env.PGDATABASE,
         ssl: process.env.VECTOR_DB_SSL === 'true',
         poolSize: process.env.VECTOR_DB_POOL_SIZE ? parseInt(process.env.VECTOR_DB_POOL_SIZE) : 10,
         timeout: process.env.VECTOR_DB_TIMEOUT ? parseInt(process.env.VECTOR_DB_TIMEOUT) : 30000,
@@ -31,28 +44,32 @@ async function bootstrap() {
         provider: 'openai',
         apiKey: process.env.OPENAI_API_KEY || '',
         model: process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small',
-        dimension: process.env.OPENAI_EMBEDDING_DIMENSIONS ? parseInt(process.env.OPENAI_EMBEDDING_DIMENSIONS) : 1536,
+        dimension: process.env.OPENAI_EMBEDDING_DIMENSIONS
+          ? parseInt(process.env.OPENAI_EMBEDDING_DIMENSIONS)
+          : 1536,
       },
-    }),
-    {
-      transport: Transport.GRPC,
-      options: {
-        package: 'vectorstore.v1',
-        protoPath,
-        url: grpcUrl,
-        maxReceiveMessageLength: 1024 * 1024 * 16, // 16MB
-        maxSendMessageLength: 1024 * 1024 * 16, // 16MB
-        keepalive: {
-          keepaliveTimeMs: 120000,
-          keepaliveTimeoutMs: 5000,
-          keepalivePermitWithoutCalls: 1,
-          http2MaxPingsWithoutData: 0,
-          http2MinTimeBetweenPingsMs: 10000,
-          http2MinPingIntervalWithoutDataMs: 5 * 60 * 1000,
-        },
+    })
+  );
+
+  // Connect gRPC microservice
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      package: 'vectorstore.v1',
+      protoPath,
+      url: grpcUrl,
+      maxReceiveMessageLength: 1024 * 1024 * 16, // 16MB
+      maxSendMessageLength: 1024 * 1024 * 16, // 16MB
+      keepalive: {
+        keepaliveTimeMs: 120000,
+        keepaliveTimeoutMs: 5000,
+        keepalivePermitWithoutCalls: 1,
+        http2MaxPingsWithoutData: 0,
+        http2MinTimeBetweenPingsMs: 10000,
+        http2MinPingIntervalWithoutDataMs: 5 * 60 * 1000,
       },
     },
-  );
+  });
 
   // Enable shutdown hooks
   app.enableShutdownHooks();
@@ -68,22 +85,13 @@ async function bootstrap() {
     process.exit(1);
   });
 
-  // Graceful shutdown
-  process.on('SIGTERM', async () => {
-    logger.log('SIGTERM received, shutting down gracefully...');
-    await app.close();
-    process.exit(0);
-  });
+  // Start all microservices
+  await app.startAllMicroservices();
+  logger.log(`gRPC microservice running on ${grpcUrl}`);
 
-  process.on('SIGINT', async () => {
-    logger.log('SIGINT received, shutting down gracefully...');
-    await app.close();
-    process.exit(0);
-  });
-
-  // Start the microservice
-  await app.listen();
-  logger.log('Vector Database gRPC microservice is running');
+  // Start HTTP server for health checks
+  await app.listen(port);
+  logger.log(`HTTP server listening on port ${port}`);
 }
 
 bootstrap().catch((error) => {

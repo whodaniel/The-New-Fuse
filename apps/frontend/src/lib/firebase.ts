@@ -1,6 +1,7 @@
 import { initializeApp, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED } from 'firebase/firestore';
+import 'firebase/firestore'; // Ensure side-effects for component registration
 
 // Default configuration with hardcoded values as fallback
 const firebaseConfig = {
@@ -24,25 +25,28 @@ try {
 export const auth = getAuth(app);
 
 // Initialize Firestore with proper error handling
-// The pattern: Try initializeFirestore first (with settings), fall back to getFirestore if already exists
 let db;
 try {
-  // Attempt to initialize with our preferred settings
-  db = initializeFirestore(app, {
-    experimentalForceLongPolling: true,
-    cacheSizeBytes: CACHE_SIZE_UNLIMITED
-  });
-} catch (error: any) {
-  // If initialization fails (e.g., "already exists"), get the existing instance
-  // This handles hot-reload scenarios and double initialization
-  console.warn('Firestore already initialized, using existing instance:', error.message);
+  // Check if Firestore is already initialized in the default app
   try {
+      db = getFirestore(app);
+      console.log('Firestore already initialized, reusing instance.');
+  } catch (e) {
+      // Not initialized, proceed to initialize
+      db = initializeFirestore(app, {
+        experimentalForceLongPolling: true,
+        cacheSizeBytes: CACHE_SIZE_UNLIMITED
+      });
+  }
+} catch (error: any) {
+  console.warn('Firestore initialization warning:', error.message);
+  try {
+    // If complex initialization failed, try simple getFirestore again as last resort
     db = getFirestore(app);
   } catch (getError: any) {
-    // If both fail, the service might not be available in the Firebase SDK
     console.error('Failed to get Firestore instance:', getError);
-    // Try one more time with a fresh initialization attempt
-    db = getFirestore(app);
+    // If it still fails, it might be that the SDK component isn't registered.
+    // The side-effect import above should prevent this, but if it happens, we can't do much.
   }
 }
 

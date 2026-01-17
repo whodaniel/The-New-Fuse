@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AgentTask } from '../shared/agent-inbox';
 import Redis from 'ioredis';
+import { AgentTask } from '../shared/agent-inbox';
 
 export interface AgentCostModel {
   agentId: string;
@@ -26,9 +26,9 @@ export interface RoutingDecision {
 
 /**
  * CostOptimizedRouter
- * 
+ *
  * Routes tasks to the LOWEST COST agent that meets requirements.
- * 
+ *
  * Priority:
  * 1. Meets capability requirements
  * 2. Meets intelligence requirements
@@ -36,7 +36,7 @@ export interface RoutingDecision {
  * 4. Lowest cost
  * 5. Highest success rate
  * 6. Fastest execution
- * 
+ *
  * This ensures we don't waste expensive GPT-4/Opus calls on simple tasks.
  */
 @Injectable()
@@ -62,15 +62,10 @@ export class CostOptimizedRouter {
       agentId: 'jules-cli',
       costPerTask: 0.01, // $0.01 per task (local execution)
       intelligenceLevel: 2,
-      capabilities: [
-        'file-operations',
-        'simple-analysis',
-        'code-formatting',
-        'basic-refactoring'
-      ],
+      capabilities: ['file-operations', 'simple-analysis', 'code-formatting', 'basic-refactoring'],
       averageExecutionTime: 500,
       successRate: 0.95,
-      maxConcurrency: 10
+      maxConcurrency: 10,
     });
 
     registry.set('codebase-indexer', {
@@ -81,89 +76,123 @@ export class CostOptimizedRouter {
         'ast-parsing',
         'dependency-analysis',
         'synergy-detection',
-        'duplication-detection'
+        'duplication-detection',
       ],
       averageExecutionTime: 5000,
-      successRate: 0.90,
-      maxConcurrency: 3
+      successRate: 0.9,
+      maxConcurrency: 3,
     });
 
     // AI agents (API-based, more expensive)
-    registry.set('claude-3-haiku', {
-      agentId: 'claude-3-haiku',
-      costPerTask: 0.10, // ~$0.10 per task (API cost)
+    // Anthropic Claude Models (as of January 2026)
+    registry.set('claude-3-5-haiku', {
+      agentId: 'claude-3-5-haiku',
+      costPerTask: 0.08, // ~$0.08 per task (most cost-effective Claude)
       intelligenceLevel: 3,
       capabilities: [
         'code-generation',
         'simple-reasoning',
         'text-processing',
-        'basic-debugging'
+        'basic-debugging',
+        'fast-responses',
       ],
-      averageExecutionTime: 2000,
-      successRate: 0.92,
-      maxConcurrency: 5
+      averageExecutionTime: 1500,
+      successRate: 0.93,
+      maxConcurrency: 8,
     });
 
-    registry.set('claude-3-sonnet', {
-      agentId: 'claude-3-sonnet',
-      costPerTask: 0.50, // ~$0.50 per task
+    registry.set('claude-3-5-sonnet', {
+      agentId: 'claude-3-5-sonnet',
+      costPerTask: 0.45, // ~$0.45 per task (production workhorse)
       intelligenceLevel: 4,
       capabilities: [
         'complex-reasoning',
         'code-generation',
         'architecture-design',
         'code-review',
-        'debugging'
+        'debugging',
+        'vision',
+        'prompt-caching',
       ],
-      averageExecutionTime: 5000,
-      successRate: 0.95,
-      maxConcurrency: 3
+      averageExecutionTime: 4000,
+      successRate: 0.96,
+      maxConcurrency: 5,
     });
 
     registry.set('claude-3-opus', {
       agentId: 'claude-3-opus',
-      costPerTask: 2.00, // ~$2.00 per task (expensive!)
+      costPerTask: 1.8, // ~$1.80 per task (premium intelligence)
       intelligenceLevel: 5,
       capabilities: [
         'advanced-reasoning',
         'complex-problem-solving',
         'creative-solutions',
         'system-design',
-        'security-analysis'
+        'security-analysis',
+        'research',
+        'vision',
       ],
-      averageExecutionTime: 10000,
+      averageExecutionTime: 9000,
       successRate: 0.98,
-      maxConcurrency: 2
+      maxConcurrency: 3,
     });
 
-    registry.set('gemini-flash', {
-      agentId: 'gemini-flash',
-      costPerTask: 0.08, // ~$0.08 per task
+    // Google Gemini Models (as of January 2026)
+    registry.set('gemini-2.0-flash', {
+      agentId: 'gemini-2.0-flash',
+      costPerTask: 0.06, // ~$0.06 per task (fastest and cheapest)
       intelligenceLevel: 3,
       capabilities: [
         'fast-reasoning',
         'multimodal',
         'code-generation',
-        'quick-analysis'
+        'quick-analysis',
+        'vision',
+        'audio',
+        'video',
+      ],
+      averageExecutionTime: 1200,
+      successRate: 0.92,
+      maxConcurrency: 10,
+    });
+
+    registry.set('gemini-1.5-flash', {
+      agentId: 'gemini-1.5-flash',
+      costPerTask: 0.07, // ~$0.07 per task
+      intelligenceLevel: 3,
+      capabilities: [
+        'fast-reasoning',
+        'multimodal',
+        'code-generation',
+        'quick-analysis',
+        'vision',
+        'audio',
+        'video',
+        '1m-context',
       ],
       averageExecutionTime: 1500,
       successRate: 0.91,
-      maxConcurrency: 5
+      maxConcurrency: 8,
     });
 
-    registry.set('gemini-pro', {
-      agentId: 'gemini-pro',
-      costPerTask: 0.40, // ~$0.40 per task
+    registry.set('gemini-1.5-pro', {
+      agentId: 'gemini-1.5-pro',
+      costPerTask: 0.35, // ~$0.35 per task
       intelligenceLevel: 4,
       capabilities: [
         'complex-reasoning',
         'multimodal',
         'code-generation',
-        'data-analysis'
+        'data-analysis',
+        'vision',
+        'audio',
+        'video',
+        '2m-context',
+        'grounding',
       ],
-      averageExecutionTime: 4000,
-      successRate: 0.94,
-      maxConcurrency: 3
+      averageExecutionTime: 3500,
+      successRate: 0.95,
+      maxConcurrency: 5,
     });
 
     return registry;
@@ -187,16 +216,16 @@ export class CostOptimizedRouter {
     if (capableAgents.length === 0) {
       throw new Error(
         `No agents found with capabilities: ${requiredCapabilities.join(', ')} ` +
-        `and intelligence >= ${requiredIntelligence}`
+          `and intelligence >= ${requiredIntelligence}`
       );
     }
 
     // 2. Check current load for each agent
-    const agentLoads = await this.getAgentCurrentLoads(capableAgents.map(a => a.agentId));
+    const agentLoads = await this.getAgentCurrentLoads(capableAgents.map((a) => a.agentId));
 
     // 3. Filter out agents at max capacity
     const availableAgents = capableAgents.filter(
-      agent => agentLoads.get(agent.agentId)! < agent.maxConcurrency
+      (agent) => agentLoads.get(agent.agentId)! < agent.maxConcurrency
     );
 
     if (availableAgents.length === 0) {
@@ -206,9 +235,9 @@ export class CostOptimizedRouter {
     }
 
     // 4. Calculate cost-effectiveness score for each
-    const scored = availableAgents.map(agent => ({
+    const scored = availableAgents.map((agent) => ({
       agent,
-      score: this.calculateCostEffectiveness(agent, requiredIntelligence, budget)
+      score: this.calculateCostEffectiveness(agent, requiredIntelligence, budget),
     }));
 
     // 5. Sort by score (higher is better)
@@ -216,16 +245,16 @@ export class CostOptimizedRouter {
 
     // 6. Select best agent
     const selected = scored[0];
-    const alternatives = scored.slice(1, 4).map(s => ({
+    const alternatives = scored.slice(1, 4).map((s) => ({
       agentId: s.agent.agentId,
       cost: s.agent.costPerTask,
       score: s.score,
-      reason: this.getAlternativeReason(s.agent, selected.agent)
+      reason: this.getAlternativeReason(s.agent, selected.agent),
     }));
 
     this.logger.log(
       `✅ Selected ${selected.agent.agentId} for task ${task.id} ` +
-      `(cost: $${selected.agent.costPerTask}, score: ${selected.score.toFixed(2)})`
+        `(cost: $${selected.agent.costPerTask}, score: ${selected.score.toFixed(2)})`
     );
 
     // 7. Record routing decision for analytics
@@ -235,7 +264,7 @@ export class CostOptimizedRouter {
       selectedAgent: selected.agent.agentId,
       cost: selected.agent.costPerTask,
       score: selected.score,
-      alternatives
+      alternatives,
     };
   }
 
@@ -250,10 +279,8 @@ export class CostOptimizedRouter {
 
     for (const agent of this.agentCostRegistry.values()) {
       // Check if agent has ALL required capabilities
-      const hasAllCapabilities = requiredCapabilities.every(cap =>
-        agent.capabilities.some(agentCap => 
-          agentCap.includes(cap) || cap.includes(agentCap)
-        )
+      const hasAllCapabilities = requiredCapabilities.every((cap) =>
+        agent.capabilities.some((agentCap) => agentCap.includes(cap) || cap.includes(agentCap))
       );
 
       // Check if agent meets intelligence requirement
@@ -285,11 +312,15 @@ export class CostOptimizedRouter {
     // Intelligence weight: Prefer exact match, penalize over/under
     const intelligenceDiff = agent.intelligenceLevel - requiredIntelligence;
     const intelligenceWeight =
-      intelligenceDiff === 0 ? 1.5 :  // Perfect match (bonus!)
-      intelligenceDiff === 1 ? 1.2 :  // Slight overkill (ok)
-      intelligenceDiff === 2 ? 1.0 :  // Moderate overkill (acceptable)
-      intelligenceDiff < 0 ? 0 :      // Insufficient (filtered out earlier)
-      0.8;                            // Too much overkill (wasteful)
+      intelligenceDiff === 0
+        ? 1.5 // Perfect match (bonus!)
+        : intelligenceDiff === 1
+          ? 1.2 // Slight overkill (ok)
+          : intelligenceDiff === 2
+            ? 1.0 // Moderate overkill (acceptable)
+            : intelligenceDiff < 0
+              ? 0 // Insufficient (filtered out earlier)
+              : 0.8; // Too much overkill (wasteful)
 
     // Budget fit: Penalize heavily if over budget
     const budgetFit = agent.costPerTask <= budget ? 1.0 : 0.1;
@@ -299,11 +330,11 @@ export class CostOptimizedRouter {
 
     // Combined score
     const score =
-      costScore * 10 +          // Cost is most important (weight: 10x)
-      successScore * 5 +         // Success rate is important (weight: 5x)
-      intelligenceWeight * 3 +   // Intelligence match is important (weight: 3x)
-      budgetFit * 20 +           // Budget fit is critical (weight: 20x)
-      speedBonus * 0.5;          // Speed is nice-to-have (weight: 0.5x)
+      costScore * 10 + // Cost is most important (weight: 10x)
+      successScore * 5 + // Success rate is important (weight: 5x)
+      intelligenceWeight * 3 + // Intelligence match is important (weight: 3x)
+      budgetFit * 20 + // Budget fit is critical (weight: 20x)
+      speedBonus * 0.5; // Speed is nice-to-have (weight: 0.5x)
 
     return score;
   }
@@ -413,10 +444,7 @@ export class CostOptimizedRouter {
   /**
    * Get reason why alternative agent wasn't selected
    */
-  private getAlternativeReason(
-    alternative: AgentCostModel,
-    selected: AgentCostModel
-  ): string {
+  private getAlternativeReason(alternative: AgentCostModel, selected: AgentCostModel): string {
     if (alternative.costPerTask > selected.costPerTask * 2) {
       return `Too expensive ($${alternative.costPerTask} vs $${selected.costPerTask})`;
     }
@@ -455,7 +483,7 @@ export class CostOptimizedRouter {
     return {
       totalRoutings,
       agentUsage,
-      averageCost
+      averageCost,
     };
   }
 
@@ -469,11 +497,11 @@ export class CostOptimizedRouter {
     savingsPercentage: number;
   }> {
     const stats = await this.getRoutingStats();
-    
+
     // Calculate what it would have cost if we always used Claude Opus
     const opusModel = this.agentCostRegistry.get('claude-3-opus')!;
     const worstCaseCost = stats.totalRoutings * opusModel.costPerTask;
-    
+
     // Actual cost
     let actualCost = 0;
     for (const [agentId, count] of stats.agentUsage) {
@@ -482,15 +510,15 @@ export class CostOptimizedRouter {
         actualCost += agent.costPerTask * count;
       }
     }
-    
+
     const savings = worstCaseCost - actualCost;
     const savingsPercentage = worstCaseCost > 0 ? (savings / worstCaseCost) * 100 : 0;
-    
+
     return {
       actualCost,
       worstCaseCost,
       savings,
-      savingsPercentage
+      savingsPercentage,
     };
   }
 }

@@ -1,10 +1,11 @@
-import { Module, DynamicModule } from '@nestjs/common';
-import { VectorDatabaseService } from './vector-database.service';
-import { VectorDatabaseConfig, EmbeddingConfig } from './interface/vector-database.interface';
-import { VectorStoreGrpcController } from './grpc/vector-store-grpc.controller';
+import { DynamicModule, Module } from '@nestjs/common';
+import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
 import { PgVectorDriver } from './drivers/pgvector.driver';
 import { QdrantDriver } from './drivers/qdrant.driver';
-import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
+import { VectorStoreGrpcController } from './grpc/vector-store-grpc.controller';
+import { HealthController } from './health.controller';
+import { EmbeddingConfig, VectorDatabaseConfig } from './interface/vector-database.interface';
+import { VectorDatabaseService } from './vector-database.service';
 
 export interface VectorDatabaseModuleOptions {
   vectorDbConfig: VectorDatabaseConfig;
@@ -16,7 +17,7 @@ export class VectorDatabaseModule {
   static forRoot(options: VectorDatabaseModuleOptions): DynamicModule {
     return {
       module: VectorDatabaseModule,
-      controllers: [VectorStoreGrpcController],
+      controllers: [VectorStoreGrpcController, HealthController],
       providers: [
         {
           provide: 'VECTOR_DB_CONFIG',
@@ -43,12 +44,14 @@ export class VectorDatabaseModule {
   }
 
   static forRootAsync(options: {
-    useFactory: (...args: any[]) => Promise<VectorDatabaseModuleOptions> | VectorDatabaseModuleOptions;
+    useFactory: (
+      ...args: any[]
+    ) => Promise<VectorDatabaseModuleOptions> | VectorDatabaseModuleOptions;
     inject?: any[];
   }): DynamicModule {
     return {
       module: VectorDatabaseModule,
-      controllers: [VectorStoreGrpcController],
+      controllers: [VectorStoreGrpcController, HealthController],
       providers: [
         {
           provide: 'VECTOR_DB_MODULE_OPTIONS',

@@ -28,7 +28,9 @@
             try {
               const existing = originalGet(name);
               if (existing) {
-                console.warn(`[The New Fuse] Element '${name}' already defined in customElements. Skipping.`);
+                console.warn(
+                  `[The New Fuse] Element '${name}' already defined in customElements. Skipping.`
+                );
                 registeredElements.add(name);
                 return;
               }
@@ -38,7 +40,9 @@
 
             // Check if currently being defined (race condition)
             if (definingElements.has(name)) {
-              console.warn(`[The New Fuse] Element '${name}' is currently being defined. Skipping duplicate.`);
+              console.warn(
+                `[The New Fuse] Element '${name}' is currently being defined. Skipping duplicate.`
+              );
               return;
             }
 
@@ -75,9 +79,13 @@
           const boundSafeDefine = safeDefine.bind(customElements);
 
           // Override with bound function
-          customElements.define = boundSafeDefine;
+          Object.defineProperty(customElements, 'define', {
+            value: boundSafeDefine,
+            configurable: false,
+            writable: false,
+          });
 
-          console.log('[The New Fuse] Custom Element Guard activated (FIRST)');
+          console.log('[The New Fuse] Custom Element Guard activated (FIRST) - Registry Locked');
         } catch (e) {
           console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
         }
