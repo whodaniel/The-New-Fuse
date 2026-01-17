@@ -52,6 +52,7 @@ class BackgroundService {
   private channels: Map<string, FederationChannel> = new Map();
   private joinedChannels: Set<string> = new Set();
   private messageQueue: ProtocolMessage[] = [];
+  private pendingPageAgents: Agent[] = []; // Queue for page agents waiting for connection
   private autoConnect: boolean = true; // Default to TRUE for agent operation
   private connectionAttempts: number = 0;
   private maxInitialAttempts: number = 1; // Only try once on startup
@@ -191,6 +192,9 @@ class BackgroundService {
       this.joinedChannels = new Set(result[STORAGE_KEYS.joinedChannels]);
     }
 
+    // Auto-join Red channel
+    this.joinedChannels.add('red');
+
     // Load auto-connect preference (default true)
     this.autoConnect = result[STORAGE_KEYS.autoConnect] ?? true;
 
@@ -240,6 +244,9 @@ class BackgroundService {
 
         // Flush queued messages
         this.flushMessageQueue();
+
+        // Flush pending page agent registrations
+        this.flushPendingPageAgents();
 
         // Request initial state
         this.requestSync(ws);
@@ -413,7 +420,7 @@ class BackgroundService {
     // 2. Store locally so we know about it
     this.agents.set(id, agent);
 
-    // 3. Register with Relay (if connected)
+    // 3. Register with Relay (if connected) OR QUEUE for later
     if (this.primaryConnection?.readyState === WebSocket.OPEN) {
       // Register the agent
       const regMessage: ProtocolMessage = {
@@ -446,6 +453,10 @@ class BackgroundService {
         // Update local agent object
         agent.channels.push(channelId);
       }
+    } else {
+      // NOT CONNECTED: Queue for registration when connection is established
+      console.log(`[FuseConnect v6] Queued Page Agent for later registration: ${name} (${id})`);
+      this.pendingPageAgents.push(agent);
     }
 
     // 4. Notify all tabs about the new agent list
@@ -517,6 +528,47 @@ class BackgroundService {
       const message = this.messageQueue.shift();
       if (message) {
         this.primaryConnection.send(JSON.stringify(message));
+      }
+    }
+  }
+
+  /**
+   * Flush pending page agent registrations
+   * Called when WebSocket connection is established
+   */
+  private flushPendingPageAgents(): void {
+    if (this.primaryConnection?.readyState !== WebSocket.OPEN) return;
+
+    console.log(
+      `[FuseConnect v6] Flushing ${this.pendingPageAgents.length} pending page agent registrations`
+    );
+
+    while (this.pendingPageAgents.length > 0) {
+      const agent = this.pendingPageAgents.shift();
+      if (agent) {
+        // Register the agent
+        const regMessage: ProtocolMessage = {
+          id: crypto.randomUUID(),
+          type: 'AGENT_REGISTER',
+          timestamp: Date.now(),
+          source: this.agentId,
+          payload: { agent },
+        };
+        this.primaryConnection.send(JSON.stringify(regMessage));
+        console.log(`[FuseConnect v6] Registered queued Page Agent: ${agent.name} (${agent.id})`);
+
+        // Auto-join channels
+        for (const channelId of this.joinedChannels) {
+          const joinMessage: ProtocolMessage = {
+            id: crypto.randomUUID(),
+            type: 'CHANNEL_JOIN',
+            timestamp: Date.now(),
+            source: agent.id,
+            payload: { channelId },
+          };
+          this.primaryConnection.send(JSON.stringify(joinMessage));
+          agent.channels.push(channelId);
+        }
       }
     }
   }
@@ -647,6 +699,20 @@ class BackgroundService {
           (message.payload as any).message || 'Unknown error'
         );
         break;
+
+      case 'TASK_ASSIGN':
+        this.broadcastToTabs({
+          type: 'TASK_ASSIGN',
+          task: (message.payload as any).task,
+          channel: message.channel,
+          timestamp: message.timestamp,
+        });
+        this.createNotification(
+          'info',
+          'New Task Assigned',
+          `Task: ${(message.payload as any).task.title}`
+        );
+        break;
     }
   }
 
@@ -667,8 +733,18 @@ class BackgroundService {
         console.log('[FuseConnect v6] Skipping direct self-message echo');
         return;
       }
-      // If it IS a channel message, we MUST process it so we can broadcastToTabs
-      // The individual tabs (FloatingPanel) have their own dedup logic to ignore it if they just sent it.
+
+      // Check for duplication even for self-messages to prevent echo loops
+      const msgHash = simpleHash(
+        `${message.from}:${message.content}:${Math.floor(message.timestamp / 1000)}`
+      );
+      if (this.recentMessageHashes.has(msgHash)) {
+        console.log('[FuseConnect v6] Skipping duplicate self-message on channel');
+        return;
+      }
+
+      // If it IS a channel message and NOT a duplicate, we process it
+      // so we can broadcastToTabs.
     }
 
     // Deduplication: Create a hash of the message content and check if we've seen it recently
@@ -811,12 +887,25 @@ class BackgroundService {
     const tabs = await chrome.tabs.query({});
     for (const tab of tabs) {
       if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, message).catch((err) => {
-          // Ignore "Receiving end does not exist" which is normal for tabs without our content script
-          if (err.message && !err.message.includes('Receiving end does not exist')) {
-            console.warn(`[FuseConnect v6] Failed to broadcast to tab ${tab.id}:`, err);
-          }
-        });
+        // Use a wrapper to catch the specific "Receiving end does not exist" error
+        // which occurs when sending to tabs that don't have our content script loaded
+        try {
+          // WE MUST usage callback style or await the promise to catch the error
+          chrome.tabs.sendMessage(tab.id, message, () => {
+            // Checking lastError inside the callback suppresses the "Unchecked runtime.lastError"
+            const err = chrome.runtime.lastError;
+            if (
+              err &&
+              !err.message?.includes('Receiving end does not exist') &&
+              !err.message?.includes('Could not establish connection')
+            ) {
+              console.warn(`[FuseConnect v6] Failed to broadcast to tab ${tab.id}:`, err);
+            }
+          });
+        } catch (e) {
+          // This catch block might not be reached for async sendMessage errors,
+          // but good for synchronous ones.
+        }
       }
     }
   }
@@ -1150,19 +1239,25 @@ class BackgroundService {
             if (!this.recentMessageHashes.has(responseHash)) {
               this.recentMessageHashes.set(responseHash, now);
 
-              // FIXED: Get sender's agent ID from message metadata (set by content script)
+              // Get sender's agent ID from message metadata (set by content script)
               // The content script sets metadata.agentId = this.pageAgentId when it detects the AI response
               let senderId = message.metadata?.agentId || message.senderId;
 
-              // Fallback: construct from tab ID if not provided (shouldn't happen normally)
+              // Fallback: construct from tab ID if not provided
               if (!senderId && sender.tab?.id) {
                 senderId = `page-agent-${sender.tab.id}`;
-                console.warn('[FuseConnect v6] Using fallback senderId construction:', senderId);
+                console.log('[FuseConnect v6] Using tab-based senderId:', senderId);
               }
 
-              // Final fallback to browser agent
+              // FIXED: Don't drop messages without senderId - use a safe fallback instead
+              // This ensures CLI agents and other sources still work
+              // The content script's isSelfMessage check will prevent loops
               if (!senderId) {
-                senderId = this.agentId;
+                senderId = `ai-response-${Date.now()}`;
+                console.log(
+                  '[FuseConnect v6] Using generated senderId for anonymous response:',
+                  senderId
+                );
               }
 
               console.log('[FuseConnect v6] AI Response from agent:', senderId);

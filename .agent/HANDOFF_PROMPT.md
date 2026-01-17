@@ -1,278 +1,232 @@
-# 🔍 FULL CODEBASE AUDIT - BACKEND & ORPHAN DISCOVERY
+# 🚀 MULTI-AGENT ORCHESTRATION - HANDOFF PROMPT
 
-## The New Fuse - Systematic File-by-File Assessment
+## 🟢 VERIFICATION CHECKLIST (DO THIS FIRST)
+
+1. **Verify Relay is Running with Stall Detection**:
+   - The relay server MUST be restarted to load the new `StallDetector` class.
+   - Run: `curl http://localhost:3001/health` (should return JSON status)
+   - **Action**: Stop the running relay and start it again: `pnpm relay:start`
+
+2. **Verify Chrome Extension**:
+   - Check `chrome://extensions` to ensure "The New Fuse" is loaded.
+   - If you see `[SimpleChatBridge] Elements NOT ready` errors in the console,
+     reload the extension.
+
+3. **Verify File Handoff**:
+   - Read `.agent/handoff_notes.txt` for the detailed session log.
+   - Read `docs/implementation-plan-orchestration.md` for the code you need to
+     write next.
+
+---
+
+## The New Fuse - AI Orchestration System
 
 ---
 
 ## ⚠️ CRITICAL: READ THIS FIRST
 
-**DO NOT** work on frontend pages that have already been refactored. Those are
-DONE.
+**BREAKTHROUGH ACHIEVED**: Autonomous multi-AI conversation is WORKING!
 
-**YOUR MISSION**: Crawl through **EVERY DIRECTORY** in the codebase, assess
-**EVERY FILE**, and determine:
+On January 15-16, 2026, we achieved a major milestone:
 
-1. Is this file used/imported anywhere?
-2. Is this file functional or broken?
-3. Is this file properly integrated into the application?
-4. Does the backend code connect correctly to the frontend?
+- Two Gemini instances in separate Chrome tabs can communicate
+- An external AI (like VSCode's AI assistant) can orchestrate tasks
+- Messages flow through the WebSocket relay at `ws://localhost:3001/ws`
+- Stall detection and auto-recovery has been implemented (needs testing)
 
----
+**READ THESE FILES FIRST**:
 
-## 🎯 PRIMARY TARGETS (In Order)
-
-### 1. Backend API (`apps/api/src/`)
-
-**~26 controllers, ~41 services, numerous modules**
-
-Crawl EVERY file and verify:
-
-- [ ] Controller is registered in its module
-- [ ] Routes are properly decorated (@Get, @Post, etc.)
-- [ ] Service is injectable and used
-- [ ] DTOs exist and match request/response shapes
-- [ ] Database interactions use Prisma correctly
-- [ ] Frontend actually calls these endpoints
-
-```bash
-# List all backend files
-find apps/api/src -type f -name "*.ts" | head -50
-```
-
-### 2. Backend Services (`apps/backend/src/`)
-
-Separate from API - additional backend services
-
-```bash
-find apps/backend/src -type f -name "*.ts" | head -50
-```
-
-### 3. Shared Packages (`packages/*/`)
-
-**~30+ packages** - many may be orphaned or broken
-
-Priority packages to audit:
-
-- `packages/database/` - Prisma schema, migrations, generated types
-- `packages/core/` - Core utilities
-- `packages/types/` - Shared TypeScript types
-- `packages/agent/` - Agent system logic
-- `packages/mcp-core/` - MCP protocol
-- `packages/workflow-engine/` - Workflow execution
-- `packages/security/` - Security utilities
-
-```bash
-# List all packages
-ls -la packages/
-```
-
-### 4. Frontend Components (`apps/frontend/src/components/`)
-
-**~441 component files** - Find orphans!
-
-```bash
-# Find components not imported anywhere
-for file in $(find apps/frontend/src/components -name "*.tsx"); do
-  basename=$(basename "$file" .tsx)
-  if ! grep -r "$basename" apps/frontend/src --include="*.tsx" --include="*.ts" | grep -v "^$file:" > /dev/null 2>&1; then
-    echo "ORPHAN: $file"
-  fi
-done
-```
-
-### 5. Frontend Services (`apps/frontend/src/services/`)
-
-Verify each service:
-
-- [ ] Is exported and used
-- [ ] API endpoints it calls exist in backend
-- [ ] Error handling is implemented
-
-### 6. Frontend Hooks (`apps/frontend/src/hooks/`)
-
-Verify each hook:
-
-- [ ] Is exported and used
-- [ ] Dependencies are properly declared
-- [ ] No broken imports
+1. `.agent/handoff_notes.txt` - Detailed session notes
+2. `docs/implementation-plan-orchestration.md` - What to build next
+3. `docs/multi-agent-breakthrough.md` - Technical documentation
 
 ---
 
-## 📋 FILE ASSESSMENT TEMPLATE
+## 🎯 YOUR MISSION: Continue Orchestration Development
 
-For each file you examine, determine:
+### Phase 1: Robust Messaging (Completed)
 
-```markdown
-## File: [path/to/file.ts]
+- [x] **Relay Stall Detection**: Automatic recovery messages for idle
+      conversations.
+- [x] **Extension Self-Prompting**: Automatic prompting from Chrome extension.
+- [x] **Testing**: Verified stall detection and self-prompting.
 
-### Purpose
+### Phase 2: Orchestration Framework (Completed)
 
-[What does this file do?]
+- [x] **Task Protocol**: Defined `OrchestrationTask` and `TaskResult`
+      interfaces.
+- [x] **State Machine**: Implemented `ConversationStateMachine` to track
+      lifecycle.
+- [x] **Relay Integration**: Relay server now manages conversation phases and
+      broadcasts `phase:changed` events.
+- [x] **Task Dispatch**: Implemented logic to assign tasks to specific agents.
+- [x] **Subscription Registry**: Implemented global state subscription
+      mechanism.
 
-### Status
+### Phase 3: Cloud Integration [Priority: FUTURE]
 
-- [ ] Used/Imported: YES / NO / UNCLEAR
-- [ ] Functional: YES / NO / PARTIAL
-- [ ] Integrated: YES / NO / PARTIAL
-- [ ] Frontend Connected (if backend): YES / NO / N/A
+1.  **Cloud Sandbox V2** - Deploy to Railway
+2.  **Cron Jobs** - Scheduled orchestration
+3.  **Continuous Improvement** - Feedback loops
 
-### Issues Found
+---
 
-1. [Issue description]
-2. [Issue description]
+## 🏗️ Current System State
 
-### Action Required
+### Running Services
 
-- [ ] KEEP - File is good
-- [ ] FIX - File needs repair
-- [ ] DELETE - File is orphan/dead code
-- [ ] INTEGRATE - File exists but not connected
+```
+Relay Server: ws://localhost:3001/ws (6 agents, 2 channels)
+Chrome Extension: Loaded in Chrome
+Frontend: https://thenewfuse.com
+```
+
+### Relay Health Check
+
+```bash
+curl http://localhost:3001/health
+```
+
+### List Agents
+
+```bash
+curl http://localhost:3001/agents
+```
+
+### List Channels
+
+```bash
+curl http://localhost:3001/channels
 ```
 
 ---
 
-## 🔧 AUDIT COMMANDS
+## 📁 Key Files
 
-### Find all TypeScript files in backend
+### Stall Detection (NEW)
 
-```bash
-find apps/api/src -name "*.ts" | wc -l
-find apps/backend/src -name "*.ts" | wc -l
+```
+packages/relay-core/src/services/stall-detector.ts
 ```
 
-### Find all controllers and check if registered
+### Relay Server
 
-```bash
-# List all controllers
-find apps/api/src -name "*.controller.ts"
-
-# For each controller, check if it's in a module
-grep -r "Controller" apps/api/src/**/*.module.ts
+```
+packages/relay-core/src/standalone-relay.ts
 ```
 
-### Find all services and check if injectable
+### Chrome Extension Content Script
 
-```bash
-find apps/api/src -name "*.service.ts"
+```
+apps/chrome-extension/src/v5/content/index.ts
+apps/chrome-extension/src/v5/content/adapters/SimpleChatBridge.ts
 ```
 
-### Check frontend service → backend endpoint connections
+### Existing Orchestration Infrastructure
 
-```bash
-# Find all fetch/axios calls in frontend
-grep -r "fetch\|axios" apps/frontend/src/services/ --include="*.ts"
-
-# Compare to backend routes
-grep -r "@Get\|@Post\|@Put\|@Delete" apps/api/src/
 ```
-
-### Find orphaned frontend components
-
-```bash
-# Components that are never imported
-grep -rL "import" apps/frontend/src/components/*.tsx
+packages/workflow-engine/src/orchestrator/tnf-router.ts
+packages/agent/src/services/RetryService.tsx
+packages/agent/src/services/InterAgentChatService.tsx
 ```
 
 ---
 
-## 🚫 WHAT NOT TO AUDIT (Already Done)
+## 🧪 Orchestration Test Script
 
-These frontend pages were already refactored to Premium Design System - **SKIP
-THEM**:
+```javascript
+// test-orchestration.js
+const WebSocket = require('ws');
+const ws = new WebSocket('ws://localhost:3001/ws');
 
-```
-apps/frontend/src/pages/dashboard/index.tsx ✅
-apps/frontend/src/pages/dashboard/Analytics.tsx ✅
-apps/frontend/src/pages/dashboard/CreateAgent.tsx ✅
-apps/frontend/src/pages/Agents/AgentsPage.tsx ✅
-apps/frontend/src/pages/Agents/index.tsx ✅
-apps/frontend/src/pages/Agents/Detail.tsx ✅
-apps/frontend/src/pages/Agents/New.tsx ✅
-apps/frontend/src/pages/Agents.tsx ✅
-apps/frontend/src/pages/AgentNew.tsx ✅
-apps/frontend/src/pages/AIAgentPortal.tsx ✅
-apps/frontend/src/pages/Settings.tsx ✅
-apps/frontend/src/pages/GeneralSettings.tsx ✅
-apps/frontend/src/pages/Workflows.tsx ✅
-apps/frontend/src/pages/WorkflowsEnhanced.tsx ✅
-apps/frontend/src/pages/WorkflowTemplates.tsx ✅
-apps/frontend/src/pages/Tasks/index.tsx ✅
-apps/frontend/src/pages/WorkspaceChat.tsx ✅
-apps/frontend/src/pages/MetricsDashboard.tsx ✅
-apps/frontend/src/pages/Resources/*.tsx ✅
+const CHANNEL = 'channel-1768536033864'; // Channel Blue
+
+ws.on('open', () => {
+  console.log('Connected!');
+
+  // Register
+  ws.send(
+    JSON.stringify({
+      type: 'AGENT_REGISTER',
+      agent: {
+        id: 'test-orchestrator',
+        name: 'Test Orchestrator',
+        platform: 'automation',
+        capabilities: ['orchestration'],
+      },
+    })
+  );
+
+  // Join channel
+  setTimeout(() => {
+    ws.send(
+      JSON.stringify({
+        type: 'CHANNEL_JOIN',
+        payload: { channelId: CHANNEL },
+      })
+    );
+  }, 500);
+
+  // Send task
+  setTimeout(() => {
+    ws.send(
+      JSON.stringify({
+        type: 'MESSAGE_SEND',
+        channel: CHANNEL,
+        payload: {
+          to: 'broadcast',
+          content: '[ORCHESTRATION] Hello agents! Please acknowledge.',
+          messageType: 'orchestration',
+          metadata: {
+            senderId: 'test-orchestrator',
+            requiresResponse: true,
+          },
+        },
+      })
+    );
+  }, 1000);
+});
+
+ws.on('message', (data) => {
+  const msg = JSON.parse(data);
+  if (msg.type === 'CHANNEL_MESSAGE') {
+    console.log('Received:', msg.payload.content?.substring(0, 100));
+  }
+});
+
+// Run for 2 minutes
+setTimeout(() => process.exit(0), 120000);
 ```
 
 ---
 
-## 📊 DIRECTORY INVENTORY
+## ✅ Success Criteria
 
-Run this first to understand the scope:
+The next session is successful when:
 
-```bash
-echo "=== BACKEND API ===" && find apps/api/src -type f -name "*.ts" | wc -l
-echo "=== BACKEND SERVICES ===" && find apps/backend/src -type f -name "*.ts" 2>/dev/null | wc -l
-echo "=== PACKAGES ===" && ls -d packages/*/ | wc -l
-echo "=== FRONTEND COMPONENTS ===" && find apps/frontend/src/components -type f -name "*.tsx" | wc -l
-echo "=== FRONTEND SERVICES ===" && find apps/frontend/src/services -type f -name "*.ts" 2>/dev/null | wc -l
-echo "=== FRONTEND HOOKS ===" && find apps/frontend/src/hooks -type f -name "*.ts" 2>/dev/null | wc -l
-```
+- [x] Stall detection works (recovery messages sent automatically)
+- [x] Self-prompting implemented in Chrome extension
+- [x] Fixed Gemini conversation leakage (prevented auto-join/injection)
+- [ ] Conversations can run for 10+ minutes without stalling
+- [ ] Task Protocol dispatch logic implemented
+- [ ] Subscription Registry implemented
 
 ---
 
-## 🎯 START HERE
+## ⚠️ Known Issues
 
-1. **Run the inventory command above** to see file counts
-2. **Start with `apps/api/src/controllers/`** - List all controllers, verify
-   each one
-3. **Move to `apps/api/src/services/`** - List all services, verify each one
-4. **Check `apps/api/src/modules/`** - Verify controller/service registration
-5. **Audit `packages/` one by one** - Find broken/orphaned packages
-6. **Scan `apps/frontend/src/components/`** - Find orphaned components
-7. **Verify `apps/frontend/src/services/`** - Check API endpoint connections
+1. **Railway Console Error**: Content script on non-chat sites
+   - Fix: Reload Chrome extension
 
----
+2. **ESLint Warnings**: npm resolver bug
+   - Fix: `rm -rf node_modules && pnpm install`
 
-## ✅ SUCCESS CRITERIA
-
-The audit is complete when:
-
-- [ ] Every backend controller has been verified as registered and functional
-- [ ] Every backend service has been verified as used
-- [ ] API endpoints match frontend service calls
-- [ ] Orphaned frontend components have been removed or integrated
-- [ ] All packages in `packages/` are verified as used or marked for removal
-- [ ] Build passes: `pnpm run build` exit code 0
-
----
-
-## 📝 PROGRESS TRACKING
-
-After each directory audit, log your findings:
-
-```markdown
-## Audit Progress: [Date]
-
-### Completed
-
-- [x] apps/api/src/controllers/ (X files, Y issues)
-- [ ] apps/api/src/services/
-- [ ] packages/database/ ...
-
-### Issues Found
-
-1. [Issue] - [Fix status]
-2. [Issue] - [Fix status]
-
-### Files Removed
-
-- path/to/orphan.ts (reason)
-
-### Build Status: ✅ / ❌
-```
+3. **Conversation Endings**: Still investigating edge cases
+   - Monitor stall detector events for patterns
 
 ---
 
 **PROJECT ROOT**: `/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse`
 
-_Last Updated: December 9, 2024_ _Focus: Backend & Package Audit, Orphan
-Discovery_
+_Last Updated: January 16, 2026_ _Focus: Multi-Agent Orchestration, Stall
+Recovery, Self-Prompting_

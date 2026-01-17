@@ -21,6 +21,7 @@ class SimpleChatBridge {
   private callbacks: ChatBridgeCallbacks = {};
   private isWaitingForResponse = false;
   private responseCheckInterval: number | null = null;
+  private _sendingGuard = false; // Safety guard for UI lag between click and streaming state
 
   // ORCHESTRATOR IMPROVEMENT: Element caching to reduce DOM scanning
   private cachedElements: ChatElements | null = null;
@@ -433,15 +434,21 @@ class SimpleChatBridge {
    * Check if AI is currently streaming a response
    */
   isStreaming(): boolean {
+    if (this._sendingGuard) return true; // Force streaming state if we recently sent a message
+
     const streamingIndicators = [
       'span[class*="cursor"][class*="blink"]',
       '[class*="thinking"]',
       '[class*="loading-spinner"]',
       '[class*="generating"]',
+      'button[aria-label*="Stop response"]',
+      'button[aria-label*="Stop generating"]',
+      '[data-testid*="stop-button"]',
     ];
 
     for (const selector of streamingIndicators) {
-      if (document.querySelector(selector)) return true;
+      const el = document.querySelector(selector);
+      if (el && this.isVisible(el as HTMLElement)) return true;
     }
     return false;
   }
@@ -458,6 +465,13 @@ class SimpleChatBridge {
       return false;
     }
 
+    // Activate Sending Guard (reduced from 10s to 3s for faster federation)
+    // This prevents queue processing during the gap between click and AI streaming start
+    this._sendingGuard = true;
+    setTimeout(() => {
+      this._sendingGuard = false;
+    }, 3000); // 3s protection window - balanced for federation speed vs streaming protection
+
     const input = initialElements.input;
 
     try {
@@ -466,17 +480,35 @@ class SimpleChatBridge {
       await this.delay(100);
 
       // Input simulation
-      if (input.getAttribute('contenteditable') === 'true') {
-        input.innerHTML = '';
-        input.textContent = text;
-        input.dispatchEvent(
-          new InputEvent('input', {
-            bubbles: true,
-            cancelable: true,
-            inputType: 'insertText',
-            data: text,
-          })
-        );
+      if (input.isContentEditable || input.getAttribute('contenteditable') === 'true') {
+        // Use document.execCommand for reliable Rich Text Editor interaction
+        // This simulates actual user typing events better than setting textContent
+
+        // 1. Clear existing content
+        // Try native clear first if safe, otherwise select-all-delete
+        if (input.textContent && input.textContent.length > 0) {
+          document.execCommand('selectAll', false);
+          document.execCommand('delete', false);
+        }
+
+        // 2. Insert new text
+        const success = document.execCommand('insertText', false, text);
+
+        // Fallback if execCommand failed (or was blocked)
+        if (!success || (input.textContent || '').trim() !== text.trim()) {
+          console.warn(
+            '[SimpleChatBridge] execCommand insertText failed, falling back to direct manipulation'
+          );
+          input.textContent = text;
+          input.dispatchEvent(
+            new InputEvent('input', {
+              bubbles: true,
+              cancelable: true,
+              inputType: 'insertText',
+              data: text,
+            })
+          );
+        }
       } else {
         (input as HTMLTextAreaElement).value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -521,21 +553,73 @@ class SimpleChatBridge {
       const responsesBefore = this.countModelResponses();
       console.log('[SimpleChatBridge] Responses before send:', responsesBefore);
 
-      // Click the send button using multiple methods for reliability
-      console.log('[SimpleChatBridge] Clicking send button...');
+      // FIXED: Try send methods ONE AT A TIME, checking for success after each
+      // Previously all methods executed causing multiple sends!
+      console.log('[SimpleChatBridge] Sending message...');
 
-      // Method 1: Direct click
-      sendButton.click();
+      // Helper to check if input was cleared (message was sent)
+      const inputWasCleared = (): boolean => {
+        if (input.isContentEditable || input.getAttribute('contenteditable') === 'true') {
+          return !input.textContent || input.textContent.trim().length === 0;
+        }
+        return (
+          !(input as HTMLTextAreaElement).value ||
+          (input as HTMLTextAreaElement).value.trim().length === 0
+        );
+      };
 
-      // Method 2: Dispatch click event (for frameworks that intercept clicks)
-      sendButton.dispatchEvent(
-        new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          view: window,
-        })
-      );
+      // Method 1: Simulate Enter key press on the input (most reliable for Gemini)
+      const enterEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true,
+      });
+      input.dispatchEvent(enterEvent);
+      console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
 
+      // Wait and check if it worked
+      await this.delay(150);
+      if (inputWasCleared()) {
+        console.log('[SimpleChatBridge] Message sent via Enter key');
+        this.startWatchingForResponse(responsesBefore);
+        return true;
+      }
+
+      // Method 2: Direct button click (if Enter didn't work)
+      if (sendButton) {
+        sendButton.click();
+        console.log('[SimpleChatBridge] Clicked send button directly');
+        await this.delay(150);
+        if (inputWasCleared()) {
+          console.log('[SimpleChatBridge] Message sent via button click');
+          this.startWatchingForResponse(responsesBefore);
+          return true;
+        }
+      }
+
+      // Method 3: Dispatch synthetic MouseEvent on button
+      if (sendButton) {
+        sendButton.dispatchEvent(
+          new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          })
+        );
+        console.log('[SimpleChatBridge] Dispatched MouseEvent click on button');
+        await this.delay(150);
+        if (inputWasCleared()) {
+          console.log('[SimpleChatBridge] Message sent via MouseEvent');
+          this.startWatchingForResponse(responsesBefore);
+          return true;
+        }
+      }
+
+      // If we get here, none of the methods worked but we'll start watching anyway
+      console.warn('[SimpleChatBridge] All send methods attempted, input may not have cleared');
       console.log('[SimpleChatBridge] Message sent:', text.substring(0, 50));
 
       // Start watching for response

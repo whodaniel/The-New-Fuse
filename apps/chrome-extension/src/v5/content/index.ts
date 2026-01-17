@@ -46,6 +46,15 @@ class FuseConnectContentScript {
     }
   > = new Map();
 
+  // FEDERATION IMPROVEMENT: Message Queue for delayed injection
+  private injectionQueue: Array<{
+    content: string;
+    metadata?: any;
+    timestamp: number;
+    attempts: number;
+  }> = [];
+  private isProcessingQueue = false;
+
   constructor() {
     this.init();
   }
@@ -87,6 +96,11 @@ class FuseConnectContentScript {
 
         // FEDERATION IMPROVEMENT: Check for pending request to correlate response
         const pendingRequest = this.getOldestPendingRequest();
+        if (!this.pageAgentId) {
+          console.warn(
+            '[FuseConnect v6] ⚠️ Page Agent ID missing during response! This may cause message drop.'
+          );
+        }
         const responseMetadata: any = {
           agentId: this.pageAgentId,
           responseType: 'ai-response',
@@ -111,6 +125,9 @@ class FuseConnectContentScript {
           content: content.length > 50000 ? content.substring(0, 50000) : content,
           metadata: responseMetadata,
         });
+
+        // Trigger queue processing after response
+        this.processInjectionQueue();
       },
       onError: (error) => {
         console.error('[FuseConnect v6] Chat bridge error:', error);
@@ -460,6 +477,7 @@ class FuseConnectContentScript {
           case 'CHANNELS_UPDATE':
           case 'JOINED_CHANNELS_UPDATE':
           case 'NOTIFICATION':
+          case 'TASK_ASSIGN':
             if (this.panel) {
               this.panel.handleMessage(message);
             }
@@ -489,18 +507,33 @@ class FuseConnectContentScript {
                 // CRITICAL FIX: Check both msg.from AND metadata.senderId for self-identification
                 // The senderId in metadata is more reliable as it's set when the message originates
                 const senderFromMetadata = msg.metadata?.senderId;
-                const isSelfMessage =
-                  msg.from === this.pageAgentId ||
-                  senderFromMetadata === this.pageAgentId ||
-                  (senderFromMetadata &&
-                    this.pageAgentId &&
-                    senderFromMetadata.includes(this.pageAgentId.split('-')[2] || '___never___'));
+                const isStreaming = simpleChatBridge.isStreaming();
 
-                const isExternalAgent =
-                  msg.from !== 'You' &&
-                  msg.from !== 'Browser Agent' &&
-                  !msg.from.includes('Browser Agent') &&
-                  !isSelfMessage;
+                console.log('[FuseConnect v6] 🔍 Msg Check:', {
+                  from: msg.from,
+                  metaSender: senderFromMetadata,
+                  myId: this.pageAgentId,
+                  streaming: isStreaming,
+                });
+
+                // FIXED: Only exact matches count as self-messages
+                // Check BOTH msg.from AND senderId metadata
+                // The senderId in metadata is the ORIGINAL sender (the tab/agent that initiated the message)
+                const isSelfMessage =
+                  msg.from === this.pageAgentId || senderFromMetadata === this.pageAgentId;
+
+                // CRITICAL FIX: Messages come from Browser Agent but the REAL sender is in metadata
+                // We want to BLOCK messages if:
+                // 1. They came from 'You' (user typing in panel)
+                // 2. The senderId matches THIS tab's page agent (our own messages)
+                // We want to ALLOW messages if:
+                // - They came from a DIFFERENT page agent (another tab) or external CLI agent
+                // - Even if msg.from is 'Browser Agent' - that's just the relay!
+                const isFromSelf = isSelfMessage || senderFromMetadata === this.pageAgentId;
+                const isFromYou = msg.from === 'You';
+
+                // An external message is anything NOT from us and NOT from 'You'
+                const isExternalAgent = !isFromYou && !isFromSelf;
 
                 // Debug logging to trace agent identification
                 console.log('[FuseConnect v6] 📨 Message received:', {
@@ -508,6 +541,7 @@ class FuseConnectContentScript {
                   senderId: senderFromMetadata,
                   myAgentId: this.pageAgentId,
                   isSelfMessage,
+                  isFromSelf,
                   isExternalAgent,
                   messageType: msg.messageType,
                 });
@@ -517,13 +551,24 @@ class FuseConnectContentScript {
                 // - AI responses from OTHER agents SHOULD be injected so our AI can see/respond to them
                 // - This enables true multi-AI conversation
                 if (!isExternalAgent) {
-                  console.log('[FuseConnect v6] ⏭️ Skipping self-message:', {
+                  console.log('[FuseConnect v6] ⏭️ Skipping message:', {
                     from: msg.from,
                     senderId: senderFromMetadata,
                     myAgentId: this.pageAgentId,
-                    reason: isSelfMessage ? 'same-agent' : 'browser-agent',
+                    reason: isFromYou ? 'from-you' : isFromSelf ? 'same-agent' : 'unknown',
                   });
                 } else {
+                  // SAFETY CHECK: If AI is actively streaming, DO NOT INJECT IMMEDIATELY.
+                  // Instead, add to queue.
+                  if (isStreaming) {
+                    console.log(
+                      '[FuseConnect v6] ⏳ AI is streaming, QUEUING message for later injection:',
+                      msg.content.substring(0, 50)
+                    );
+                    this.queueMessage(msg.content, msg.metadata);
+                    return;
+                  }
+
                   // This is from an external agent - inject it!
                   // (Even if it's an AI response - we WANT to inject other AIs' responses)
                   console.log('[FuseConnect v6] ✅ Injecting message from external agent:', {
@@ -689,6 +734,75 @@ class FuseConnectContentScript {
         },
       });
     }
+  }
+
+  /**
+   * Queue a message for injection
+   */
+  private queueMessage(content: string, metadata?: any): void {
+    this.injectionQueue.push({
+      content,
+      metadata,
+      timestamp: Date.now(),
+      attempts: 0,
+    });
+    // Try to process immediately (will fail if still streaming, but sets up interval)
+    this.processInjectionQueue();
+  }
+
+  /**
+   * Process the injection queue
+   */
+  private processInjectionQueue(): void {
+    if (this.isProcessingQueue) return;
+    this.isProcessingQueue = true;
+
+    const process = async () => {
+      if (this.injectionQueue.length === 0) {
+        this.isProcessingQueue = false;
+        return;
+      }
+
+      if (simpleChatBridge.isStreaming()) {
+        // Still streaming, wait and retry
+        console.debug('[FuseConnect v6] Queue paused (AI streaming)...');
+        setTimeout(process, 1000);
+        return;
+      }
+
+      // Ready to inject
+      const item = this.injectionQueue.shift();
+      if (item) {
+        console.log(
+          '[FuseConnect v6] 🚀 Processing queued message:',
+          item.content.substring(0, 30)
+        );
+
+        // If it's an orchestrator task, track it again (timestamp refresh)
+        const isOrchestratorTask =
+          item.metadata?.source === 'orchestrator' ||
+          item.metadata?.taskId ||
+          item.metadata?.requiresResponse;
+
+        if (isOrchestratorTask) {
+          this.trackPendingRequest({
+            correlationId: item.metadata?.correlationId || `queued-${Date.now()}`,
+            taskId: item.metadata?.taskId,
+            from: item.metadata?.senderId || 'unknown',
+          });
+        }
+
+        await this.injectMessage(item.content, item.metadata);
+
+        // Wait a bit before next injection to allow UI to update
+        // (Wait longer than the _sendingGuard in SimpleChatBridge to avoid self-blocking)
+        setTimeout(process, 3500);
+      } else {
+        this.isProcessingQueue = false;
+      }
+    };
+
+    process();
   }
 }
 

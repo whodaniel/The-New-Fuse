@@ -55,6 +55,7 @@
     "postcss": "^8.5.3",
     "postcss-loader": "^8.1.1",
     "postcss-preset-env": "^10.1.6",
+    "react-draggable": "^4.5.0",
     "rimraf": "^5.0.5",
     "terser-webpack-plugin": "^5.3.14",
     "ts-loader": "^9.5.4",

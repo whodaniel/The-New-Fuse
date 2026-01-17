@@ -10,6 +10,7 @@ import type {
   DetectedChatElements,
   FederationChannel,
   Notification,
+  OrchestrationTask,
   PanelMode,
   PanelState,
   PanelTab,
@@ -55,6 +56,7 @@ export class EnhancedFloatingPanel {
   private currentChannel: string | null = null;
   private messages: AgentMessage[] = [];
   private notifications: Notification[] = [];
+  private tasks: OrchestrationTask[] = [];
   private unreadCount = 0;
 
   // Track recently broadcast messages to prevent duplicates
@@ -157,7 +159,14 @@ export class EnhancedFloatingPanel {
         this.connectionStatus = response.connectionStatus || 'disconnected';
         this.agents = response.agents || [];
         this.channels = response.channels || [];
-        this.myAgentId = response.agentId || null;
+
+        // CRITICAL FIX: Do NOT overwrite myAgentId if it has already been set by setAgentId()
+        // The response.agentId from GET_STATE is the Browser Agent ID (browser-XXXXX),
+        // NOT the page agent ID (page-agent-XXXXX) which is what we need for self-detection.
+        // Only use response.agentId as a fallback if we don't have one yet AND it's a page-agent.
+        if (!this.myAgentId && response.agentId?.startsWith('page-agent-')) {
+          this.myAgentId = response.agentId;
+        }
 
         // Restore current channel if we have one stored
         chrome.storage.local.get(['fuse_current_channel'], (result) => {
@@ -609,6 +618,37 @@ export class EnhancedFloatingPanel {
         background: rgba(0,217,255,0.1) !important;
       }
 
+      /* Task card */
+      .fcp6-task {
+        padding: 12px !important;
+        background: rgba(255,255,255,0.03) !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+        border-left: 3px solid #9D4EDD !important;
+      }
+
+      .fcp6-task.high { border-left-color: #FF3366 !important; }
+      .fcp6-task.medium { border-left-color: #FFB800 !important; }
+      .fcp6-task.completed { border-left-color: #00FF88 !important; opacity: 0.7 !important; }
+
+      .fcp6-task-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-bottom: 6px !important;
+      }
+
+      .fcp6-task-title {
+        font-weight: 600 !important;
+        font-size: 12px !important;
+      }
+
+      .fcp6-task-meta {
+        font-size: 10px !important;
+        color: rgba(255,255,255,0.5) !important;
+        display: flex !important;
+        gap: 8px !important;
+      }
+
       /* Detection status */
       .fcp6-detection {
         padding: 10px !important;
@@ -732,7 +772,7 @@ export class EnhancedFloatingPanel {
       const actionBtn = target.closest('[data-action]');
       if (actionBtn) {
         const action = (actionBtn as HTMLElement).dataset.action || '';
-        this.handleAction(action);
+        this.handleAction(action, actionBtn as HTMLElement);
         return;
       }
 
@@ -817,8 +857,8 @@ export class EnhancedFloatingPanel {
       this.state.position.x = this.dragState.startPosX + deltaX;
       this.state.position.y = this.dragState.startPosY + deltaY;
 
-      this.container.style.left = `${this.state.position.x}px`;
-      this.container.style.top = `${this.state.position.y}px`;
+      // Update actual element
+      this.applyPositionAndSize();
     };
 
     const onUp = () => {
@@ -1064,6 +1104,7 @@ export class EnhancedFloatingPanel {
       { id: 'chat', icon: '💬', label: 'Chat' },
       { id: 'agents', icon: '🤖', label: 'Agents' },
       { id: 'channels', icon: '📢', label: 'Channels' },
+      { id: 'tasks', icon: '📋', label: 'Tasks' },
       { id: 'services', icon: '⚙️', label: 'Services' },
       { id: 'notifications', icon: '🔔', label: 'Alerts' },
       { id: 'settings', icon: '🔧', label: 'Settings' },
@@ -1097,6 +1138,8 @@ export class EnhancedFloatingPanel {
         return this.renderChannelsTab();
       case 'agents':
         return this.renderAgentsTab();
+      case 'tasks':
+        return this.renderTasksTab();
       case 'notifications':
         return this.renderNotificationsTab();
       case 'services':
@@ -1154,6 +1197,17 @@ export class EnhancedFloatingPanel {
                   senderName = agent.name;
                   senderId = agent.id;
                 }
+              }
+
+              // Handler for System Messages
+              if (msg.metadata?.isSystemMessage) {
+                return `
+                  <div class="fcp6-system-message" style="text-align: center; margin: 8px 0; font-size: 11px; color: rgba(255, 255, 255, 0.5); font-style: italic;">
+                    <span style="background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 10px;">
+                      ${this.escapeHtml(msg.content)}
+                    </span>
+                  </div>
+                 `;
               }
 
               // Metadata ID check (if present)
@@ -1312,6 +1366,55 @@ export class EnhancedFloatingPanel {
       </div>
        <div style="margin-top:12px;">
         <button class="fcp6-btn" data-action="open-terminal" style="width:100%;">Open Terminal</button>
+      </div>
+    `;
+  }
+
+  /**
+   * Render tasks tab
+   */
+  private renderTasksTab(): string {
+    return `
+      <div class="fcp6-section-title">Assigned Tasks (${this.tasks.length})</div>
+      <div class="fcp6-list">
+        ${
+          this.tasks.length > 0
+            ? this.tasks
+                .map(
+                  (task) => `
+          <div class="fcp6-task ${task.priority}" data-task-id="${task.id}">
+            <div class="fcp6-task-header">
+              <span class="fcp6-task-title">#${task.id.split('-').pop()} - ${this.escapeHtml(task.title)}</span>
+              <span class="fcp6-badge" style="background:rgba(255,255,255,0.1);">${task.type}</span>
+            </div>
+            <div class="fcp6-task-meta" style="margin-bottom:6px;">
+              <span>Created ${this.formatTime(task.createdAt)}</span>
+              <span>•</span>
+              <span>By ${task.createdBy || 'Orchestrator'}</span>
+            </div>
+            <div style="font-size:11px; opacity:0.8; margin-bottom:8px;">
+              ${this.escapeHtml(task.description)}
+            </div>
+            ${
+              task.instructions.length > 0
+                ? `<div style="font-size:10px; background:rgba(0,0,0,0.2); padding:6px; border-radius:4px;">
+                  <div style="opacity:0.6; margin-bottom:2px;">INSTRUCTIONS:</div>
+                  <ul style="margin:0; padding-left:16px;">
+                    ${task.instructions.map((i) => `<li>${this.escapeHtml(i)}</li>`).join('')}
+                  </ul>
+                </div>`
+                : ''
+            }
+            <div style="display:flex; gap:6px; margin-top:8px;">
+               <button class="fcp6-btn" data-action="accept-task" data-task-id="${task.id}" style="flex:1; background:rgba(0,217,255,0.2); color:#00D9FF;">Accept</button>
+               <button class="fcp6-btn" data-action="reject-task" data-task-id="${task.id}" style="flex:1;">Reject</button>
+            </div>
+          </div>
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty"><div class="fcp6-empty-icon">✓</div><p>No active tasks</p></div>'
+        }
       </div>
     `;
   }
@@ -1487,10 +1590,26 @@ export class EnhancedFloatingPanel {
     const content = input.value.trim();
     input.value = '';
 
-    console.log('[FuseConnect] Sending unified message:', content.substring(0, 50));
+    // CRITICAL: Ensure we have a valid page agent ID before sending
+    // Without this, the message will have wrong senderId and cause self-injection loops
+    if (!this.myAgentId || !this.myAgentId.startsWith('page-agent-')) {
+      console.error('[FuseConnect] Cannot send message: myAgentId is not set correctly!', {
+        myAgentId: this.myAgentId,
+        expected: 'page-agent-XXXXX',
+      });
+      // Try to recover by requesting page agent ID again
+      alert('Connection not ready. Please wait a moment and try again.');
+      input.value = content; // Put the content back
+      return;
+    }
+
+    console.log('[FuseConnect] Sending unified message:', {
+      content: content.substring(0, 50),
+      myAgentId: this.myAgentId,
+    });
 
     const metadata = {
-      senderId: this.myAgentId || 'unknown',
+      senderId: this.myAgentId, // Guaranteed to be a valid page-agent ID now
       source: 'floating-panel-unified',
     };
 
@@ -1498,7 +1617,7 @@ export class EnhancedFloatingPanel {
     const msgId = `user-${Date.now()}`;
     this.messages.push({
       id: msgId,
-      from: this.myAgentId || 'You',
+      from: this.myAgentId,
       to: 'AI',
       content,
       timestamp: Date.now(),
@@ -2014,31 +2133,22 @@ export class EnhancedFloatingPanel {
           });
 
           if (!isOwnMessage && msg.content) {
-            // This message is from ANOTHER participant - inject it into our chat
+            // This message is from ANOTHER participant.
+            // NOTE: We do NOT need to request injection here because `content/index.ts`
+            // already handles injection for all tabs (active and background) via its own
+            // NEW_MESSAGE handler.
+            //
+            // Requesting injection here causes DOUBLE INJECTION on the active tab:
+            // 1. content/index.ts injects it directly
+            // 2. FloatingPanel adds it here -> sends INJECT_MESSAGE to background -> background sends to active tab -> content/index.ts injects it AGAIN
+            //
+            // This double injection causes race conditions where messages get cleared/overwritten
+            // and often results in the message getting "stuck" in the input field.
+
             console.log(
-              '[FuseConnect] Injecting external message from:',
+              '[FuseConnect] External message received (display only):',
               msg.from,
               msg.metadata?.platform
-            );
-
-            this.safeSendMessage(
-              {
-                type: 'INJECT_MESSAGE',
-                content: msg.content,
-                autoForward: true,
-              },
-              (response) => {
-                if (response?.success) {
-                  console.log('[FuseConnect] External message injected successfully');
-                } else {
-                  console.warn('[FuseConnect] Failed to inject external message:', response?.error);
-                  const idx = this.messages.findIndex((m) => m.id === msg.id);
-                  if (idx >= 0) {
-                    this.messages[idx].content = `❌ ${msg.content} (failed to inject)`;
-                    this.update();
-                  }
-                }
-              }
             );
           } else if (isOwnMessage) {
             console.log('[FuseConnect] Not injecting own message (self-detection)');
@@ -2123,6 +2233,26 @@ export class EnhancedFloatingPanel {
           // NOTE: We do NOT broadcast AI responses automatically.
           // This was causing the self-injection loop.
           // Users can manually share AI responses if desired.
+        }
+        break;
+      case 'TASK_ASSIGN':
+        const task = (message as any).task;
+        if (task) {
+          // Check for duplicate
+          if (!this.tasks.some((t) => t.id === task.id)) {
+            this.tasks.unshift(task);
+            this.unreadCount++;
+            this.addNotification({
+              id: Date.now().toString(),
+              type: 'info',
+              title: 'New Task Assigned',
+              message: task.title,
+              priority: 'normal',
+              timestamp: Date.now(),
+              read: false,
+            });
+            this.update();
+          }
         }
         break;
     }
@@ -2330,9 +2460,10 @@ export class EnhancedFloatingPanel {
   }
 
   /**
+  /**
    * Handle generic actions from data-action attributes
    */
-  private handleAction(action: string): void {
+  private handleAction(action: string, element?: HTMLElement): void {
     switch (action) {
       case 'send':
         this.sendMessage();
@@ -2354,6 +2485,50 @@ export class EnhancedFloatingPanel {
         break;
       case 'inject-to-chat':
         this.injectToPageChat();
+        break;
+      case 'accept-task':
+        if (element && element.dataset.taskId) {
+          const taskId = element.dataset.taskId;
+          const task = this.tasks.find((t) => t.id === taskId);
+          if (task) {
+            // Construct prompt
+            const prompt = `[SYSTEM TASK ASSIGNMENT]\nTitle: ${task.title}\nDescription: ${task.description}\nInstructions:\n${task.instructions.map((i) => `- ${i}`).join('\n')}\n\nPlease execute this task.`;
+
+            // Inject
+            this.safeSendMessage(
+              {
+                type: 'INJECT_MESSAGE',
+                content: prompt,
+                metadata: { isTask: true, taskId: task.id },
+              },
+              (response) => {
+                if (response?.success) {
+                  // Add system message indicating start
+                  this.messages.push({
+                    id: `sys-${Date.now()}`,
+                    from: 'System',
+                    to: 'You',
+                    content: `Task "${task.title}" started.`,
+                    timestamp: Date.now(),
+                    type: 'text',
+                    metadata: { isSystemMessage: true },
+                  });
+                  this.update();
+                }
+              }
+            );
+
+            // Remove from local list (mark as in progress basically)
+            this.tasks = this.tasks.filter((t) => t.id !== taskId);
+            this.update();
+          }
+        }
+        break;
+      case 'reject-task':
+        if (element && element.dataset.taskId) {
+          this.tasks = this.tasks.filter((t) => t.id !== element.dataset.taskId);
+          this.update();
+        }
         break;
       default:
         // Check if it's a service action
@@ -2424,13 +2599,6 @@ export class EnhancedFloatingPanel {
     }
     this.saveState();
     this.update();
-  }
-
-  /**
-   * Save state to storage
-   */
-  private saveState(): void {
-    chrome.storage.local.set({ fuse_panel_state: this.state });
   }
 }
 

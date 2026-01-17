@@ -208,7 +208,14 @@ export interface NotificationSettings {
 // ============================================
 
 export type PanelMode = 'expanded' | 'collapsed' | 'minimized' | 'hidden';
-export type PanelTab = 'chat' | 'agents' | 'channels' | 'notifications' | 'services' | 'settings';
+export type PanelTab =
+  | 'chat'
+  | 'agents'
+  | 'channels'
+  | 'notifications'
+  | 'services'
+  | 'settings'
+  | 'tasks';
 
 export interface PanelPosition {
   x: number;
@@ -318,7 +325,42 @@ export type MessageType =
   | 'WELCOME'
   | 'NODE_STATUS'
   | 'SYNC_REQUEST'
-  | 'SYNC_RESPONSE';
+  | 'SYNC_RESPONSE'
+  | 'TASK_ASSIGN';
+
+// ============================================
+// ORCHESTRATION TYPES
+// ============================================
+
+export interface OrchestrationTask {
+  id: string;
+  type: 'question' | 'generation' | 'analysis' | 'review' | 'continuation';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+
+  // Task definition
+  title: string;
+  description: string;
+  instructions: string[];
+
+  // Targeting
+  targetAgents?: string[];
+  requiredCapabilities?: string[];
+
+  // Response handling
+  requiresResponse: boolean;
+  responseTimeout: number;
+  maxRetries: number;
+
+  // Chaining
+  dependencies?: string[];
+  nextTasks?: string[];
+
+  // Metadata
+  correlationId: string;
+  parentTaskId?: string;
+  createdAt: number;
+  createdBy: string;
+}
 
 export interface ProtocolMessage<T = unknown> {
   id: string;

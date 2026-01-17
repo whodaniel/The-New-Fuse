@@ -14,6 +14,7 @@
       this.callbacks = {};
       this.isWaitingForResponse = false;
       this.responseCheckInterval = null;
+      this._sendingGuard = false; // Safety guard for UI lag between click and streaming state
       // ORCHESTRATOR IMPROVEMENT: Element caching to reduce DOM scanning
       this.cachedElements = null;
       this.cacheValidUntil = 0;
@@ -392,14 +393,19 @@
      * Check if AI is currently streaming a response
      */
     isStreaming() {
+      if (this._sendingGuard) return true; // Force streaming state if we recently sent a message
       const streamingIndicators = [
         'span[class*="cursor"][class*="blink"]',
         '[class*="thinking"]',
         '[class*="loading-spinner"]',
         '[class*="generating"]',
+        'button[aria-label*="Stop response"]',
+        'button[aria-label*="Stop generating"]',
+        '[data-testid*="stop-button"]',
       ];
       for (const selector of streamingIndicators) {
-        if (document.querySelector(selector)) return true;
+        const el = document.querySelector(selector);
+        if (el && this.isVisible(el)) return true;
       }
       return false;
     }
@@ -413,23 +419,44 @@
         this.callbacks.onError?.('Chat elements not found');
         return false;
       }
+      // Activate Sending Guard (reduced from 10s to 3s for faster federation)
+      // This prevents queue processing during the gap between click and AI streaming start
+      this._sendingGuard = true;
+      setTimeout(() => {
+        this._sendingGuard = false;
+      }, 3000); // 3s protection window - balanced for federation speed vs streaming protection
       const input = initialElements.input;
       try {
         // Focus and clear the input
         input.focus();
         await this.delay(100);
         // Input simulation
-        if (input.getAttribute('contenteditable') === 'true') {
-          input.innerHTML = '';
-          input.textContent = text;
-          input.dispatchEvent(
-            new InputEvent('input', {
-              bubbles: true,
-              cancelable: true,
-              inputType: 'insertText',
-              data: text,
-            })
-          );
+        if (input.isContentEditable || input.getAttribute('contenteditable') === 'true') {
+          // Use document.execCommand for reliable Rich Text Editor interaction
+          // This simulates actual user typing events better than setting textContent
+          // 1. Clear existing content
+          // Try native clear first if safe, otherwise select-all-delete
+          if (input.textContent && input.textContent.length > 0) {
+            document.execCommand('selectAll', false);
+            document.execCommand('delete', false);
+          }
+          // 2. Insert new text
+          const success = document.execCommand('insertText', false, text);
+          // Fallback if execCommand failed (or was blocked)
+          if (!success || (input.textContent || '').trim() !== text.trim()) {
+            console.warn(
+              '[SimpleChatBridge] execCommand insertText failed, falling back to direct manipulation'
+            );
+            input.textContent = text;
+            input.dispatchEvent(
+              new InputEvent('input', {
+                bubbles: true,
+                cancelable: true,
+                inputType: 'insertText',
+                data: text,
+              })
+            );
+          }
         } else {
           input.value = text;
           input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -466,18 +493,64 @@
         // Count responses before sending
         const responsesBefore = this.countModelResponses();
         console.log('[SimpleChatBridge] Responses before send:', responsesBefore);
-        // Click the send button using multiple methods for reliability
-        console.log('[SimpleChatBridge] Clicking send button...');
-        // Method 1: Direct click
-        sendButton.click();
-        // Method 2: Dispatch click event (for frameworks that intercept clicks)
-        sendButton.dispatchEvent(
-          new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          })
-        );
+        // FIXED: Try send methods ONE AT A TIME, checking for success after each
+        // Previously all methods executed causing multiple sends!
+        console.log('[SimpleChatBridge] Sending message...');
+        // Helper to check if input was cleared (message was sent)
+        const inputWasCleared = () => {
+          if (input.isContentEditable || input.getAttribute('contenteditable') === 'true') {
+            return !input.textContent || input.textContent.trim().length === 0;
+          }
+          return !input.value || input.value.trim().length === 0;
+        };
+        // Method 1: Simulate Enter key press on the input (most reliable for Gemini)
+        const enterEvent = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          code: 'Enter',
+          keyCode: 13,
+          which: 13,
+          bubbles: true,
+          cancelable: true,
+        });
+        input.dispatchEvent(enterEvent);
+        console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
+        // Wait and check if it worked
+        await this.delay(150);
+        if (inputWasCleared()) {
+          console.log('[SimpleChatBridge] Message sent via Enter key');
+          this.startWatchingForResponse(responsesBefore);
+          return true;
+        }
+        // Method 2: Direct button click (if Enter didn't work)
+        if (sendButton) {
+          sendButton.click();
+          console.log('[SimpleChatBridge] Clicked send button directly');
+          await this.delay(150);
+          if (inputWasCleared()) {
+            console.log('[SimpleChatBridge] Message sent via button click');
+            this.startWatchingForResponse(responsesBefore);
+            return true;
+          }
+        }
+        // Method 3: Dispatch synthetic MouseEvent on button
+        if (sendButton) {
+          sendButton.dispatchEvent(
+            new MouseEvent('click', {
+              bubbles: true,
+              cancelable: true,
+              view: window,
+            })
+          );
+          console.log('[SimpleChatBridge] Dispatched MouseEvent click on button');
+          await this.delay(150);
+          if (inputWasCleared()) {
+            console.log('[SimpleChatBridge] Message sent via MouseEvent');
+            this.startWatchingForResponse(responsesBefore);
+            return true;
+          }
+        }
+        // If we get here, none of the methods worked but we'll start watching anyway
+        console.warn('[SimpleChatBridge] All send methods attempted, input may not have cleared');
         console.log('[SimpleChatBridge] Message sent:', text.substring(0, 50));
         // Start watching for response
         this.startWatchingForResponse(responsesBefore);
@@ -697,6 +770,7 @@
       this.currentChannel = null;
       this.messages = [];
       this.notifications = [];
+      this.tasks = [];
       this.unreadCount = 0;
       // Track recently broadcast messages to prevent duplicates
       this.recentBroadcasts = new Map();
@@ -773,7 +847,13 @@
           this.connectionStatus = response.connectionStatus || 'disconnected';
           this.agents = response.agents || [];
           this.channels = response.channels || [];
-          this.myAgentId = response.agentId || null;
+          // CRITICAL FIX: Do NOT overwrite myAgentId if it has already been set by setAgentId()
+          // The response.agentId from GET_STATE is the Browser Agent ID (browser-XXXXX),
+          // NOT the page agent ID (page-agent-XXXXX) which is what we need for self-detection.
+          // Only use response.agentId as a fallback if we don't have one yet AND it's a page-agent.
+          if (!this.myAgentId && response.agentId?.startsWith('page-agent-')) {
+            this.myAgentId = response.agentId;
+          }
           // Restore current channel if we have one stored
           chrome.storage.local.get(['fuse_current_channel'], (result) => {
             if (result.fuse_current_channel) {
@@ -1214,6 +1294,37 @@
         background: rgba(0,217,255,0.1) !important;
       }
 
+      /* Task card */
+      .fcp6-task {
+        padding: 12px !important;
+        background: rgba(255,255,255,0.03) !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+        border-left: 3px solid #9D4EDD !important;
+      }
+
+      .fcp6-task.high { border-left-color: #FF3366 !important; }
+      .fcp6-task.medium { border-left-color: #FFB800 !important; }
+      .fcp6-task.completed { border-left-color: #00FF88 !important; opacity: 0.7 !important; }
+
+      .fcp6-task-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-bottom: 6px !important;
+      }
+
+      .fcp6-task-title {
+        font-weight: 600 !important;
+        font-size: 12px !important;
+      }
+
+      .fcp6-task-meta {
+        font-size: 10px !important;
+        color: rgba(255,255,255,0.5) !important;
+        display: flex !important;
+        gap: 8px !important;
+      }
+
       /* Detection status */
       .fcp6-detection {
         padding: 10px !important;
@@ -1322,7 +1433,7 @@
         const actionBtn = target.closest('[data-action]');
         if (actionBtn) {
           const action = actionBtn.dataset.action || '';
-          this.handleAction(action);
+          this.handleAction(action, actionBtn);
           return;
         }
         // Handle tabs
@@ -1394,8 +1505,8 @@
         const deltaY = e.clientY - this.dragState.startY;
         this.state.position.x = this.dragState.startPosX + deltaX;
         this.state.position.y = this.dragState.startPosY + deltaY;
-        this.container.style.left = `${this.state.position.x}px`;
-        this.container.style.top = `${this.state.position.y}px`;
+        // Update actual element
+        this.applyPositionAndSize();
       };
       const onUp = () => {
         this.dragState.isDragging = false;
@@ -1618,6 +1729,7 @@
         { id: 'chat', icon: '💬', label: 'Chat' },
         { id: 'agents', icon: '🤖', label: 'Agents' },
         { id: 'channels', icon: '📢', label: 'Channels' },
+        { id: 'tasks', icon: '📋', label: 'Tasks' },
         { id: 'services', icon: '⚙️', label: 'Services' },
         { id: 'notifications', icon: '🔔', label: 'Alerts' },
         { id: 'settings', icon: '🔧', label: 'Settings' },
@@ -1649,6 +1761,8 @@
           return this.renderChannelsTab();
         case 'agents':
           return this.renderAgentsTab();
+        case 'tasks':
+          return this.renderTasksTab();
         case 'notifications':
           return this.renderNotificationsTab();
         case 'services':
@@ -1703,6 +1817,16 @@
                     senderName = agent.name;
                     senderId = agent.id;
                   }
+                }
+                // Handler for System Messages
+                if (msg.metadata?.isSystemMessage) {
+                  return `
+                  <div class="fcp6-system-message" style="text-align: center; margin: 8px 0; font-size: 11px; color: rgba(255, 255, 255, 0.5); font-style: italic;">
+                    <span style="background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 10px;">
+                      ${this.escapeHtml(msg.content)}
+                    </span>
+                  </div>
+                 `;
                 }
                 // Metadata ID check (if present)
                 if (msg.metadata && typeof msg.metadata.senderId === 'string') {
@@ -1853,6 +1977,54 @@
       </div>
        <div style="margin-top:12px;">
         <button class="fcp6-btn" data-action="open-terminal" style="width:100%;">Open Terminal</button>
+      </div>
+    `;
+    }
+    /**
+     * Render tasks tab
+     */
+    renderTasksTab() {
+      return `
+      <div class="fcp6-section-title">Assigned Tasks (${this.tasks.length})</div>
+      <div class="fcp6-list">
+        ${
+          this.tasks.length > 0
+            ? this.tasks
+                .map(
+                  (task) => `
+          <div class="fcp6-task ${task.priority}" data-task-id="${task.id}">
+            <div class="fcp6-task-header">
+              <span class="fcp6-task-title">#${task.id.split('-').pop()} - ${this.escapeHtml(task.title)}</span>
+              <span class="fcp6-badge" style="background:rgba(255,255,255,0.1);">${task.type}</span>
+            </div>
+            <div class="fcp6-task-meta" style="margin-bottom:6px;">
+              <span>Created ${this.formatTime(task.createdAt)}</span>
+              <span>•</span>
+              <span>By ${task.createdBy || 'Orchestrator'}</span>
+            </div>
+            <div style="font-size:11px; opacity:0.8; margin-bottom:8px;">
+              ${this.escapeHtml(task.description)}
+            </div>
+            ${
+              task.instructions.length > 0
+                ? `<div style="font-size:10px; background:rgba(0,0,0,0.2); padding:6px; border-radius:4px;">
+                  <div style="opacity:0.6; margin-bottom:2px;">INSTRUCTIONS:</div>
+                  <ul style="margin:0; padding-left:16px;">
+                    ${task.instructions.map((i) => `<li>${this.escapeHtml(i)}</li>`).join('')}
+                  </ul>
+                </div>`
+                : ''
+            }
+            <div style="display:flex; gap:6px; margin-top:8px;">
+               <button class="fcp6-btn" data-action="accept-task" data-task-id="${task.id}" style="flex:1; background:rgba(0,217,255,0.2); color:#00D9FF;">Accept</button>
+               <button class="fcp6-btn" data-action="reject-task" data-task-id="${task.id}" style="flex:1;">Reject</button>
+            </div>
+          </div>
+        `
+                )
+                .join('')
+            : '<div class="fcp6-empty"><div class="fcp6-empty-icon">✓</div><p>No active tasks</p></div>'
+        }
       </div>
     `;
     }
@@ -2013,16 +2185,31 @@
       if (!input || !input.value.trim()) return;
       const content = input.value.trim();
       input.value = '';
-      console.log('[FuseConnect] Sending unified message:', content.substring(0, 50));
+      // CRITICAL: Ensure we have a valid page agent ID before sending
+      // Without this, the message will have wrong senderId and cause self-injection loops
+      if (!this.myAgentId || !this.myAgentId.startsWith('page-agent-')) {
+        console.error('[FuseConnect] Cannot send message: myAgentId is not set correctly!', {
+          myAgentId: this.myAgentId,
+          expected: 'page-agent-XXXXX',
+        });
+        // Try to recover by requesting page agent ID again
+        alert('Connection not ready. Please wait a moment and try again.');
+        input.value = content; // Put the content back
+        return;
+      }
+      console.log('[FuseConnect] Sending unified message:', {
+        content: content.substring(0, 50),
+        myAgentId: this.myAgentId,
+      });
       const metadata = {
-        senderId: this.myAgentId || 'unknown',
+        senderId: this.myAgentId, // Guaranteed to be a valid page-agent ID now
         source: 'floating-panel-unified',
       };
       // Add user message to local display immediately with unique ID
       const msgId = `user-${Date.now()}`;
       this.messages.push({
         id: msgId,
-        from: this.myAgentId || 'You',
+        from: this.myAgentId,
         to: 'AI',
         content,
         timestamp: Date.now(),
@@ -2477,33 +2664,21 @@
               contentPreview: msg.content?.substring(0, 50),
             });
             if (!isOwnMessage && msg.content) {
-              // This message is from ANOTHER participant - inject it into our chat
+              // This message is from ANOTHER participant.
+              // NOTE: We do NOT need to request injection here because `content/index.ts`
+              // already handles injection for all tabs (active and background) via its own
+              // NEW_MESSAGE handler.
+              //
+              // Requesting injection here causes DOUBLE INJECTION on the active tab:
+              // 1. content/index.ts injects it directly
+              // 2. FloatingPanel adds it here -> sends INJECT_MESSAGE to background -> background sends to active tab -> content/index.ts injects it AGAIN
+              //
+              // This double injection causes race conditions where messages get cleared/overwritten
+              // and often results in the message getting "stuck" in the input field.
               console.log(
-                '[FuseConnect] Injecting external message from:',
+                '[FuseConnect] External message received (display only):',
                 msg.from,
                 msg.metadata?.platform
-              );
-              this.safeSendMessage(
-                {
-                  type: 'INJECT_MESSAGE',
-                  content: msg.content,
-                  autoForward: true,
-                },
-                (response) => {
-                  if (response?.success) {
-                    console.log('[FuseConnect] External message injected successfully');
-                  } else {
-                    console.warn(
-                      '[FuseConnect] Failed to inject external message:',
-                      response?.error
-                    );
-                    const idx = this.messages.findIndex((m) => m.id === msg.id);
-                    if (idx >= 0) {
-                      this.messages[idx].content = `❌ ${msg.content} (failed to inject)`;
-                      this.update();
-                    }
-                  }
-                }
               );
             } else if (isOwnMessage) {
               console.log('[FuseConnect] Not injecting own message (self-detection)');
@@ -2582,6 +2757,26 @@
             // NOTE: We do NOT broadcast AI responses automatically.
             // This was causing the self-injection loop.
             // Users can manually share AI responses if desired.
+          }
+          break;
+        case 'TASK_ASSIGN':
+          const task = message.task;
+          if (task) {
+            // Check for duplicate
+            if (!this.tasks.some((t) => t.id === task.id)) {
+              this.tasks.unshift(task);
+              this.unreadCount++;
+              this.addNotification({
+                id: Date.now().toString(),
+                type: 'info',
+                title: 'New Task Assigned',
+                message: task.title,
+                priority: 'normal',
+                timestamp: Date.now(),
+                read: false,
+              });
+              this.update();
+            }
           }
           break;
       }
@@ -2759,9 +2954,10 @@
       document.getElementById('fuse-connect-styles-v6')?.remove();
     }
     /**
+    /**
      * Handle generic actions from data-action attributes
      */
-    handleAction(action) {
+    handleAction(action, element) {
       switch (action) {
         case 'send':
           this.sendMessage();
@@ -2783,6 +2979,48 @@
           break;
         case 'inject-to-chat':
           this.injectToPageChat();
+          break;
+        case 'accept-task':
+          if (element && element.dataset.taskId) {
+            const taskId = element.dataset.taskId;
+            const task = this.tasks.find((t) => t.id === taskId);
+            if (task) {
+              // Construct prompt
+              const prompt = `[SYSTEM TASK ASSIGNMENT]\nTitle: ${task.title}\nDescription: ${task.description}\nInstructions:\n${task.instructions.map((i) => `- ${i}`).join('\n')}\n\nPlease execute this task.`;
+              // Inject
+              this.safeSendMessage(
+                {
+                  type: 'INJECT_MESSAGE',
+                  content: prompt,
+                  metadata: { isTask: true, taskId: task.id },
+                },
+                (response) => {
+                  if (response?.success) {
+                    // Add system message indicating start
+                    this.messages.push({
+                      id: `sys-${Date.now()}`,
+                      from: 'System',
+                      to: 'You',
+                      content: `Task "${task.title}" started.`,
+                      timestamp: Date.now(),
+                      type: 'text',
+                      metadata: { isSystemMessage: true },
+                    });
+                    this.update();
+                  }
+                }
+              );
+              // Remove from local list (mark as in progress basically)
+              this.tasks = this.tasks.filter((t) => t.id !== taskId);
+              this.update();
+            }
+          }
+          break;
+        case 'reject-task':
+          if (element && element.dataset.taskId) {
+            this.tasks = this.tasks.filter((t) => t.id !== element.dataset.taskId);
+            this.update();
+          }
           break;
         default:
           // Check if it's a service action
@@ -2848,12 +3086,6 @@
       }
       this.saveState();
       this.update();
-    }
-    /**
-     * Save state to storage
-     */
-    saveState() {
-      chrome.storage.local.set({ fuse_panel_state: this.state });
     }
   }
   function createEnhancedFloatingPanel(options) {
@@ -4244,6 +4476,9 @@
       this.pageAgentId = null;
       // FEDERATION IMPROVEMENT: Track pending requests for response correlation
       this.pendingRequests = new Map();
+      // FEDERATION IMPROVEMENT: Message Queue for delayed injection
+      this.injectionQueue = [];
+      this.isProcessingQueue = false;
       this.init();
     }
     async init() {
@@ -4277,6 +4512,11 @@
           }
           // FEDERATION IMPROVEMENT: Check for pending request to correlate response
           const pendingRequest = this.getOldestPendingRequest();
+          if (!this.pageAgentId) {
+            console.warn(
+              '[FuseConnect v6] ⚠️ Page Agent ID missing during response! This may cause message drop.'
+            );
+          }
           const responseMetadata = {
             agentId: this.pageAgentId,
             responseType: 'ai-response',
@@ -4299,6 +4539,8 @@
             content: content.length > 50000 ? content.substring(0, 50000) : content,
             metadata: responseMetadata,
           });
+          // Trigger queue processing after response
+          this.processInjectionQueue();
         },
         onError: (error) => {
           console.error('[FuseConnect v6] Chat bridge error:', error);
@@ -4603,6 +4845,7 @@
             case 'CHANNELS_UPDATE':
             case 'JOINED_CHANNELS_UPDATE':
             case 'NOTIFICATION':
+            case 'TASK_ASSIGN':
               if (this.panel) {
                 this.panel.handleMessage(message);
               }
@@ -4629,23 +4872,36 @@
                   // CRITICAL FIX: Check both msg.from AND metadata.senderId for self-identification
                   // The senderId in metadata is more reliable as it's set when the message originates
                   const senderFromMetadata = msg.metadata?.senderId;
+                  const isStreaming = simpleChatBridge.isStreaming();
+                  console.log('[FuseConnect v6] 🔍 Msg Check:', {
+                    from: msg.from,
+                    metaSender: senderFromMetadata,
+                    myId: this.pageAgentId,
+                    streaming: isStreaming,
+                  });
+                  // FIXED: Only exact matches count as self-messages
+                  // Check BOTH msg.from AND senderId metadata
+                  // The senderId in metadata is the ORIGINAL sender (the tab/agent that initiated the message)
                   const isSelfMessage =
-                    msg.from === this.pageAgentId ||
-                    senderFromMetadata === this.pageAgentId ||
-                    (senderFromMetadata &&
-                      this.pageAgentId &&
-                      senderFromMetadata.includes(this.pageAgentId.split('-')[2] || '___never___'));
-                  const isExternalAgent =
-                    msg.from !== 'You' &&
-                    msg.from !== 'Browser Agent' &&
-                    !msg.from.includes('Browser Agent') &&
-                    !isSelfMessage;
+                    msg.from === this.pageAgentId || senderFromMetadata === this.pageAgentId;
+                  // CRITICAL FIX: Messages come from Browser Agent but the REAL sender is in metadata
+                  // We want to BLOCK messages if:
+                  // 1. They came from 'You' (user typing in panel)
+                  // 2. The senderId matches THIS tab's page agent (our own messages)
+                  // We want to ALLOW messages if:
+                  // - They came from a DIFFERENT page agent (another tab) or external CLI agent
+                  // - Even if msg.from is 'Browser Agent' - that's just the relay!
+                  const isFromSelf = isSelfMessage || senderFromMetadata === this.pageAgentId;
+                  const isFromYou = msg.from === 'You';
+                  // An external message is anything NOT from us and NOT from 'You'
+                  const isExternalAgent = !isFromYou && !isFromSelf;
                   // Debug logging to trace agent identification
                   console.log('[FuseConnect v6] 📨 Message received:', {
                     from: msg.from,
                     senderId: senderFromMetadata,
                     myAgentId: this.pageAgentId,
                     isSelfMessage,
+                    isFromSelf,
                     isExternalAgent,
                     messageType: msg.messageType,
                   });
@@ -4654,13 +4910,23 @@
                   // - AI responses from OTHER agents SHOULD be injected so our AI can see/respond to them
                   // - This enables true multi-AI conversation
                   if (!isExternalAgent) {
-                    console.log('[FuseConnect v6] ⏭️ Skipping self-message:', {
+                    console.log('[FuseConnect v6] ⏭️ Skipping message:', {
                       from: msg.from,
                       senderId: senderFromMetadata,
                       myAgentId: this.pageAgentId,
-                      reason: isSelfMessage ? 'same-agent' : 'browser-agent',
+                      reason: isFromYou ? 'from-you' : isFromSelf ? 'same-agent' : 'unknown',
                     });
                   } else {
+                    // SAFETY CHECK: If AI is actively streaming, DO NOT INJECT IMMEDIATELY.
+                    // Instead, add to queue.
+                    if (isStreaming) {
+                      console.log(
+                        '[FuseConnect v6] ⏳ AI is streaming, QUEUING message for later injection:',
+                        msg.content.substring(0, 50)
+                      );
+                      this.queueMessage(msg.content, msg.metadata);
+                      return;
+                    }
                     // This is from an external agent - inject it!
                     // (Even if it's an AI response - we WANT to inject other AIs' responses)
                     console.log('[FuseConnect v6] ✅ Injecting message from external agent:', {
@@ -4797,6 +5063,65 @@
           },
         });
       }
+    }
+    /**
+     * Queue a message for injection
+     */
+    queueMessage(content, metadata) {
+      this.injectionQueue.push({
+        content,
+        metadata,
+        timestamp: Date.now(),
+        attempts: 0,
+      });
+      // Try to process immediately (will fail if still streaming, but sets up interval)
+      this.processInjectionQueue();
+    }
+    /**
+     * Process the injection queue
+     */
+    processInjectionQueue() {
+      if (this.isProcessingQueue) return;
+      this.isProcessingQueue = true;
+      const process = async () => {
+        if (this.injectionQueue.length === 0) {
+          this.isProcessingQueue = false;
+          return;
+        }
+        if (simpleChatBridge.isStreaming()) {
+          // Still streaming, wait and retry
+          console.debug('[FuseConnect v6] Queue paused (AI streaming)...');
+          setTimeout(process, 1000);
+          return;
+        }
+        // Ready to inject
+        const item = this.injectionQueue.shift();
+        if (item) {
+          console.log(
+            '[FuseConnect v6] 🚀 Processing queued message:',
+            item.content.substring(0, 30)
+          );
+          // If it's an orchestrator task, track it again (timestamp refresh)
+          const isOrchestratorTask =
+            item.metadata?.source === 'orchestrator' ||
+            item.metadata?.taskId ||
+            item.metadata?.requiresResponse;
+          if (isOrchestratorTask) {
+            this.trackPendingRequest({
+              correlationId: item.metadata?.correlationId || `queued-${Date.now()}`,
+              taskId: item.metadata?.taskId,
+              from: item.metadata?.senderId || 'unknown',
+            });
+          }
+          await this.injectMessage(item.content, item.metadata);
+          // Wait a bit before next injection to allow UI to update
+          // (Wait longer than the _sendingGuard in SimpleChatBridge to avoid self-blocking)
+          setTimeout(process, 3500);
+        } else {
+          this.isProcessingQueue = false;
+        }
+      };
+      process();
     }
   }
   // Initialize with guard to prevent multiple instances
