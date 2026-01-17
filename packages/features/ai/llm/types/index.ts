@@ -3,6 +3,7 @@ export interface LLMProviderSettings {
   apiKey?: string;
   modelPref?: string;
   tokenLimit?: number;
+  [key: string]: any;
 }
 
 export interface LLMModel {

@@ -266,8 +266,15 @@ export class GeminiProvider extends LLMProvider {
     parts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }>,
   ): Promise<string> {
     try {
+      // Map generic parts to specific Gemini Part objects
+      const geminiParts = parts.map((p) => {
+        if (p.text) return { text: p.text };
+        if (p.inlineData) return { inlineData: p.inlineData };
+        return { text: '' }; // Fallback for empty parts
+      });
+
       const result = await this.model.generateContent({
-        contents: [{ role: 'user', parts }],
+        contents: [{ role: 'user', parts: geminiParts }],
         generationConfig: {
           maxOutputTokens: this.config.maxTokens || 8192,
           temperature: this.config.temperature ?? 0.7,

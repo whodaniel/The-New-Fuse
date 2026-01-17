@@ -34,6 +34,7 @@
     "@the-new-fuse/core-vector-db": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
     "@types/bcrypt": "^6.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.10",

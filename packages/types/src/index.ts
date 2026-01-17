@@ -1,187 +1,163 @@
 // Core types
 export type {
-  JsonValue,
-  DataMap,
-  UnknownRecord,
-  Primitive,
-  BaseEntity,
-  ISODateTime,
-  UUID,
   BaseConfig,
+  BaseEntity,
   BaseResponse,
-  ValidationResult
+  DataMap,
+  ISODateTime,
+  JsonValue,
+  Primitive,
+  UUID,
+  UnknownRecord,
+  ValidationResult,
 } from './core/base-types';
 
 // User types
-export type {
-  UserRole,
-  UserPreferences
-} from './user';
+export type { UserPreferences, UserRole } from './user';
 
-export {
-  Permission
-} from './user';
+export { Permission } from './user';
 
 // Common types
-export type {
-  ApiResponse,
-  Handler
-} from './common-types';
+export type { ApiResponse, Handler } from './common-types';
 
 // Agent types
-export { // Export classes as values
+export {
   Agent,
+  AgentCapability,
+  AgentResponseDto,
+  AgentRole,
+  AgentStatus,
+  AgentType,
   CreateAgentDto,
   UpdateAgentDto,
-  AgentResponseDto,
-  AgentStatus,
-  AgentRole,
-  AgentType,
-  AgentCapability
 } from './agent';
 // Also export the AgentCapability type for TS consumers
 
 // Messaging types
-export type {
-  AgentMessage,
-  AgentResponse
-} from './messaging';
-export {
-  PriorityQueue
-} from './messaging';
+export { PriorityQueue } from './messaging';
+export type { AgentMessage, AgentResponse } from './messaging';
 
 // Workflow types
 export type {
-  WorkflowStep,
-  WorkflowDefinition,
-  WorkflowInstance,
   CreateWorkflowDefinitionDto,
-  UpdateWorkflowDefinitionDto,
-  StartWorkflowInstanceDto,
-  WorkflowService,
-  Workflow,
   CreateWorkflowDto,
+  StartWorkflowInstanceDto,
+  UpdateWorkflowDefinitionDto,
   UpdateWorkflowDto,
+  Workflow,
+  WorkflowDefinition,
+  WorkflowExecution,
   WorkflowExecutionStatus,
   WorkflowInput,
-  WorkflowExecution
+  WorkflowInstance,
+  WorkflowService,
+  WorkflowStep,
 } from './workflow';
 
-export {  WorkflowStatus  } from './workflow';
+export { WorkflowStatus } from './workflow';
 
 // Task types
 export type {
-  TaskStatusType,
-  TaskPriorityType,
-  TaskTypeValue,
-  TaskMetadata,
-  TaskDependency,
   CreateTaskDto,
-  UpdateTaskDto,
-  TaskService,
+  TaskDependency,
+  TaskFilter,
+  TaskMetadata,
+  TaskPriorityType,
   TaskQuery,
   TaskResult,
-  TaskFilter
+  TaskService,
+  TaskStatusType,
+  TaskTypeValue,
+  UpdateTaskDto,
 } from './tasks';
 
 // MCP types
 export type {
-  MCPMessage,
-  MCPError,
-  MCPTool,
-  MCPResource,
-  RegisteredEntity,
   CreateEntityDto,
-  UpdateEntityDto
+  MCPError,
+  MCPMessage,
+  MCPResource,
+  MCPTool,
+  RegisteredEntity,
+  UpdateEntityDto,
 } from './mcp';
 
-export {
-  parseMCPMessage,
-  createMCPResponse,
-  createMCPError
- } from './mcp';
+export { createMCPError, createMCPResponse, parseMCPMessage } from './mcp';
 
 // WebSocket types
-export type {
-  WebSocketMessage,
-  WebSocketConfig,
-  WebSocketHandler
-} from './websocket';
+export type { WebSocketConfig, WebSocketHandler, WebSocketMessage } from './websocket';
 
 // Message and Communication types
+export { MessageType } from './message';
 export type {
   Message,
-  MessageHandler,
   MessageBroker,
+  MessageHandler,
+  MessageOptions,
   MessageQueue,
   MessageRouter,
-  MessageOptions
 } from './message';
-export { MessageType } from './message';
 
 // Communication types
-export type {
-  Channel,
-  ChannelOptions,
-  CommunicationProtocol
-} from './communication';
 export { WebSocketError } from './communication';
+export type { Channel, ChannelOptions, CommunicationProtocol } from './communication';
 
 // Command and Notification types
 export type {
   Command,
   CommandResult,
   Notification,
+  NotificationAction,
   NotificationOptions,
-  NotificationAction
 } from './commands';
 
 // Task types (additional exports)
-export type { Task, TaskResult as CoreTaskResult } from './task';
 export { TaskStatus, TaskType } from './task';
+export type { TaskResult as CoreTaskResult, Task } from './task';
 
 // Service types
 export type { ServiceStatus } from './services';
 
 // MASS Framework types
 export type {
-  MassOptimizationConfig,
-  TopologyOptimizationConfig,
-  ValidationInputItem,
-  ValidationDataset,
-  PerformanceMetrics,
-  PromptDefinition,
   AgentPromptVersion,
-  WorkflowNode,
-  WorkflowEdge,
-  WorkflowTopology,
-  OptimizationJob,
-  MassBlockType,
-  MassBlockConfig,
-  AggregateConfig,
-  ReflectConfig,
-  DebateConfig,
-  CustomConfig,
-  ToolUseConfig,
   AgentWithMass,
+  AggregateConfig,
   CreateOptimizedAgentDto,
   CreateTopologyDto,
-  OptimizeTopologyDto
+  CustomConfig,
+  DebateConfig,
+  MassBlockConfig,
+  MassBlockType,
+  MassOptimizationConfig,
+  OptimizationJob,
+  OptimizeTopologyDto,
+  PerformanceMetrics,
+  PromptDefinition,
+  ReflectConfig,
+  ToolUseConfig,
+  TopologyOptimizationConfig,
+  ValidationDataset,
+  ValidationInputItem,
+  WorkflowEdge,
+  WorkflowNode,
+  WorkflowTopology,
 } from './mass';
 
 // Other core exports
+export * from './chat';
+export * from './export';
+export * from './llm';
 export * from './marketplace';
 export * from './metrics';
 export * from './security';
 export type { SecurityScheme } from './security';
-export * from './user';
-export * from './state';
-export * from './validation';
-export * from './chat';
 export * from './session';
+export * from './state';
 export * from './suggestion';
-export * from './export';
+export * from './user';
+export * from './validation';
 export * from './webhooks';
 
 // Core enums
-export { SuggestionStatus, SuggestionPriority } from './core/enums';
+export { SuggestionPriority, SuggestionStatus } from './core/enums';
