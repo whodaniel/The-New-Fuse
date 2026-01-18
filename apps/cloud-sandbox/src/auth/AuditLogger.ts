@@ -5,7 +5,6 @@
  * Tracks who did what, when, and with what result for security and compliance.
  */
 
-import { Logger } from '@nestjs/common';
 import type { AuthenticatedUser } from './CloudSandboxAuthGuard';
 
 export interface AuditLog {
@@ -32,7 +31,6 @@ export interface AuditLogStorage {
  * Audit Logger for Cloud Sandbox
  */
 export class AuditLogger {
-  private readonly logger = new Logger(AuditLogger.name);
   private readonly storage?: AuditLogStorage;
   private readonly localBuffer: AuditLog[] = [];
   private readonly bufferSize = 1000;
@@ -150,7 +148,7 @@ export class AuditLogger {
     await this.saveLog(log);
 
     // Log warning for security monitoring
-    this.logger.warn(
+    console.warn(
       `ACCESS DENIED: ${user.type}:${user.id} (${user.role}) attempted ${action} on ${resource} - ${reason}`
     );
   }
@@ -170,12 +168,12 @@ export class AuditLogger {
       try {
         await this.storage.save(log);
       } catch (error) {
-        this.logger.error('Failed to save audit log to storage:', error);
+        console.error('Failed to save audit log to storage:', error);
       }
     }
 
     // Log to console for real-time monitoring
-    this.logger.log(
+    console.log(
       `[${log.eventType}] ${log.userType}:${log.userId} (${log.userRole}) - ${log.action} - ${log.result}`
     );
   }
@@ -230,7 +228,7 @@ export class AuditLogger {
       try {
         return await this.storage.query(filters, limit);
       } catch (error) {
-        this.logger.error('Failed to query audit logs from storage:', error);
+        console.error('Failed to query audit logs from storage:', error);
       }
     }
 

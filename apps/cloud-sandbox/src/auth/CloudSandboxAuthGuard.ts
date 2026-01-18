@@ -12,9 +12,15 @@
  * - Audit logging
  */
 
-import { Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { DatabaseService } from '@the-new-fuse/database';
+import * as jwt from 'jsonwebtoken';
+
+import {
+  drizzleAgentRepository,
+  drizzleUserRepository,
+  drizzleWorkspaceRepository,
+} from '@the-new-fuse/database';
+
+import type { JwtPayload } from 'jsonwebtoken';
 
 export interface AuthenticatedUser {
   id: string;
@@ -36,13 +42,11 @@ export interface AuthenticationResult {
  * Cloud Sandbox Authentication Guard
  */
 export class CloudSandboxAuthGuard {
-  private readonly logger = new Logger(CloudSandboxAuthGuard.name);
-  private readonly jwtService: JwtService;
-  private readonly db: DatabaseService;
+  // Use console or a simple logger wrapper if needed
+  private readonly jwtSecret = process.env.JWT_SECRET || 'dev-secret';
 
-  constructor(jwtService: JwtService, db: DatabaseService) {
-    this.jwtService = jwtService;
-    this.db = db;
+  constructor() {
+    // No dependency injection needed
   }
 
   /**
@@ -71,7 +75,7 @@ export class CloudSandboxAuthGuard {
         error: 'No valid authentication credentials provided',
       };
     } catch (error) {
-      this.logger.error('Authentication error:', error);
+      console.error('Authentication error:', error);
       return {
         authenticated: false,
         error: error instanceof Error ? error.message : 'Authentication failed',
@@ -84,17 +88,25 @@ export class CloudSandboxAuthGuard {
    */
   private async validateJwtToken(token: string): Promise<AuthenticationResult> {
     try {
-      const payload = await this.jwtService.verifyAsync(token);
+      // Verify token
+      const payload = jwt.verify(token, this.jwtSecret) as JwtPayload & {
+        type?: string;
+        agentId?: string;
+        sub?: string;
+        username?: string;
+        permissions?: string[];
+        role?: string;
+      };
 
       // Handle agent tokens
       if (payload.type === 'agent' && payload.agentId) {
-        const agent = await this.db.agents.findById(payload.agentId);
+        const agent = await drizzleAgentRepository.findById(payload.agentId);
 
         if (!agent) {
           return { authenticated: false, error: 'Agent not found' };
         }
 
-        if (agent.status === 'SUSPENDED' || agent.status === 'ARCHIVED') {
+        if (agent.status === 'INACTIVE' || agent.status === 'TERMINATED') {
           return { authenticated: false, error: 'Agent is not active' };
         }
 
@@ -117,7 +129,7 @@ export class CloudSandboxAuthGuard {
 
       // Handle human user tokens
       if (payload.sub && payload.username) {
-        const user = await this.db.users.findById(payload.sub);
+        const user = await drizzleUserRepository.findById(payload.sub);
 
         if (!user) {
           return { authenticated: false, error: 'User not found' };
@@ -148,7 +160,7 @@ export class CloudSandboxAuthGuard {
 
       return { authenticated: false, error: 'Invalid token payload' };
     } catch (error) {
-      this.logger.debug(`JWT validation failed: ${(error as Error).message}`);
+      console.debug(`JWT validation failed: ${(error as Error).message}`);
       return { authenticated: false, error: 'Invalid or expired token' };
     }
   }
@@ -163,20 +175,20 @@ export class CloudSandboxAuthGuard {
 
     try {
       // Find agent registration by API key
-      const registration = await this.db.agents.findRegistrationByToken(apiKey);
+      const registration = await drizzleAgentRepository.findRegistrationByToken(apiKey);
 
       if (!registration) {
-        this.logger.warn(`Invalid API key attempt: ${apiKey.substring(0, 8)}...`);
+        console.warn(`Invalid API key attempt: ${apiKey.substring(0, 8)}...`);
         return { authenticated: false, error: 'Invalid API key' };
       }
 
-      const agent = await this.db.agents.findById(registration.agentId);
+      const agent = await drizzleAgentRepository.findById(registration.agentId);
 
       if (!agent) {
         return { authenticated: false, error: 'Agent not found' };
       }
 
-      if (agent.status === 'SUSPENDED' || agent.status === 'ARCHIVED') {
+      if (agent.status === 'INACTIVE' || agent.status === 'TERMINATED') {
         return { authenticated: false, error: 'Agent is not active' };
       }
 
@@ -195,7 +207,7 @@ export class CloudSandboxAuthGuard {
         },
       };
     } catch (error) {
-      this.logger.error(`API key validation error: ${(error as Error).message}`);
+      console.error(`API key validation error: ${(error as Error).message}`);
       return { authenticated: false, error: 'Authentication service unavailable' };
     }
   }
@@ -205,7 +217,9 @@ export class CloudSandboxAuthGuard {
    */
   private extractBearerToken(headers: Record<string, string>): string | null {
     const authorization = headers.authorization || headers.Authorization;
-    if (!authorization) return null;
+    if (!authorization) {
+      return null;
+    }
 
     const [type, token] = authorization.split(' ');
     return type === 'Bearer' ? token : null;
@@ -222,16 +236,11 @@ export class CloudSandboxAuthGuard {
    * Get tenant ID for an agent
    */
   private async getAgentTenantId(agentId: string): Promise<string> {
-    // First try to find workspace the agent belongs to
-    const workspace = await this.db.workspaces.findByAgentId(agentId);
-    if (workspace) {
-      return workspace.id;
-    }
+    // Get agent to find owner
+    const agent = await drizzleAgentRepository.findById(agentId);
 
-    // Fallback to user's default workspace
-    const agent = await this.db.agents.findById(agentId);
     if (agent?.userId) {
-      const userWorkspace = await this.db.workspaces.findByUserId(agent.userId);
+      const userWorkspace = await drizzleWorkspaceRepository.findByUserId(agent.userId);
       if (userWorkspace) {
         return userWorkspace.id;
       }
@@ -245,7 +254,7 @@ export class CloudSandboxAuthGuard {
    * Get tenant ID for a user
    */
   private async getUserTenantId(userId: string): Promise<string> {
-    const workspace = await this.db.workspaces.findByUserId(userId);
+    const workspace = await drizzleWorkspaceRepository.findByUserId(userId);
     if (workspace) {
       return workspace.id;
     }

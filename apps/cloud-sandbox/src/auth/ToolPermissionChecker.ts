@@ -5,7 +5,6 @@
  * Implements capability-based access control for cloud sandbox tools.
  */
 
-import { Logger } from '@nestjs/common';
 import type { AuthenticatedUser } from './CloudSandboxAuthGuard';
 
 export interface ToolPermissionConfig {
@@ -28,7 +27,6 @@ export interface PermissionCheckResult {
  * Tool Permission Checker
  */
 export class ToolPermissionChecker {
-  private readonly logger = new Logger(ToolPermissionChecker.name);
   private readonly toolPermissions: Map<string, ToolPermissionConfig>;
 
   constructor() {
@@ -46,7 +44,7 @@ export class ToolPermissionChecker {
     const config = this.toolPermissions.get(toolName);
 
     if (!config) {
-      this.logger.warn(`Unknown tool: ${toolName}`);
+      console.warn(`Unknown tool: ${toolName}`);
       return {
         allowed: false,
         reason: 'Unknown tool',
@@ -100,7 +98,7 @@ export class ToolPermissionChecker {
       }
     }
 
-    this.logger.debug(
+    console.debug(
       `Permission granted: ${user.type}:${user.id} -> ${toolName} (role: ${user.role})`
     );
 
@@ -133,7 +131,7 @@ export class ToolPermissionChecker {
       if (isDangerous) {
         // Only SUPER_ADMIN can run potentially dangerous commands
         if (user.role !== 'SUPER_ADMIN') {
-          this.logger.warn(`Blocked dangerous command from ${user.type}:${user.id}: ${command}`);
+          console.warn(`Blocked dangerous command from ${user.type}:${user.id}: ${command}`);
           return {
             allowed: false,
             reason: 'Dangerous command requires SUPER_ADMIN role',
@@ -161,7 +159,7 @@ export class ToolPermissionChecker {
         // Only ADMIN and above can access sensitive files
         const allowedRoles = ['SUPER_ADMIN', 'ADMIN', 'AGENCY_OWNER'];
         if (!allowedRoles.includes(user.role)) {
-          this.logger.warn(`Blocked sensitive file access from ${user.type}:${user.id}: ${path}`);
+          console.warn(`Blocked sensitive file access from ${user.type}:${user.id}: ${path}`);
           return {
             allowed: false,
             reason: 'Sensitive file access requires elevated permissions',
@@ -292,7 +290,7 @@ export class ToolPermissionChecker {
   getAvailableTools(user: AuthenticatedUser): string[] {
     const availableTools: string[] = [];
 
-    for (const [toolName, config] of this.toolPermissions.entries()) {
+    for (const [toolName, _config] of this.toolPermissions.entries()) {
       const check = this.checkPermission(toolName, user);
       if (check.allowed) {
         availableTools.push(toolName);

@@ -45,6 +45,14 @@ export class DrizzleWorkspaceRepository {
   }
 
   /**
+   * Find first workspace by user ID (alias for ownerId)
+   */
+  async findByUserId(userId: string): Promise<Workspace | null> {
+    const userWorkspaces = await this.findByOwner(userId);
+    return userWorkspaces[0] ?? null;
+  }
+
+  /**
    * Update workspace
    */
   async update(id: string, data: Partial<NewWorkspace>): Promise<Workspace | null> {

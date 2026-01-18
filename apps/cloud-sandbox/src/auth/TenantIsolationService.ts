@@ -5,7 +5,6 @@
  * Manages resource quotas, rate limiting, and tenant-scoped data access.
  */
 
-import { Logger } from '@nestjs/common';
 import type { AuthenticatedUser } from './CloudSandboxAuthGuard';
 
 export interface TenantQuota {
@@ -40,7 +39,6 @@ export interface QuotaCheckResult {
  * Tenant Isolation Service
  */
 export class TenantIsolationService {
-  private readonly logger = new Logger(TenantIsolationService.name);
   private readonly quotas: Map<string, TenantQuota> = new Map();
   private readonly usage: Map<string, TenantUsage> = new Map();
   private readonly executionCounts: Map<string, number[]> = new Map();
@@ -321,7 +319,7 @@ export class TenantIsolationService {
           this.executionCounts.set(tenantId, cleaned);
         }
 
-        this.logger.debug('Cleaned up old execution timestamps');
+        console.debug('Cleaned up old execution timestamps');
       },
       5 * 60 * 1000
     );

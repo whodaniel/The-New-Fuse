@@ -77,18 +77,10 @@ The security system provides:
 Add to the top of `server.ts`:
 
 ```typescript
-import { JwtService } from '@nestjs/jwt';
-import { DatabaseService } from '@the-new-fuse/database';
 import { SecureCloudSandboxModule } from './auth/SecureCloudSandboxModule';
 
 // Initialize security module
-const jwtService = new JwtService({
-  secret: process.env.JWT_SECRET || 'your-secret-key',
-  signOptions: { expiresIn: '1h' },
-});
-
-const db = new DatabaseService();
-const securityModule = new SecureCloudSandboxModule(jwtService, db);
+const securityModule = new SecureCloudSandboxModule();
 ```
 
 ### 2. Update ConnectedClient Interface

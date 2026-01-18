@@ -10,9 +10,6 @@
  * This module provides a secure wrapper around MCP tool execution.
  */
 
-import { Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { DatabaseService } from '@the-new-fuse/database';
 import { AuditLogger } from './AuditLogger';
 import {
   AuthenticatedUser,
@@ -47,19 +44,18 @@ export interface SecuredToolExecutionResult {
  * Main entry point for secure MCP tool execution.
  */
 export class SecureCloudSandboxModule {
-  private readonly logger = new Logger(SecureCloudSandboxModule.name);
   private readonly authGuard: CloudSandboxAuthGuard;
   private readonly permissionChecker: ToolPermissionChecker;
   private readonly tenantIsolation: TenantIsolationService;
   private readonly auditLogger: AuditLogger;
 
-  constructor(jwtService: JwtService, db: DatabaseService, auditLogger?: AuditLogger) {
-    this.authGuard = new CloudSandboxAuthGuard(jwtService, db);
+  constructor(auditLogger?: AuditLogger) {
+    this.authGuard = new CloudSandboxAuthGuard();
     this.permissionChecker = new ToolPermissionChecker();
     this.tenantIsolation = new TenantIsolationService();
     this.auditLogger = auditLogger || new AuditLogger();
 
-    this.logger.log('Secure Cloud Sandbox Module initialized');
+    console.log('Secure Cloud Sandbox Module initialized');
   }
 
   /**
