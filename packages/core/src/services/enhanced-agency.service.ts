@@ -287,12 +287,13 @@ export class EnhancedAgencyService {
     const agency = await this.agencyService.getAgency(agencyId);
     const swarmStatus = await this.getSwarmStatus(agencyId);
 
-    // Get agents for this agency (would filter by organizationId in production)
-    const agents = await drizzleAgentRepository.findAll(100);
+    // Get agents for this agency (filtered by owner/tenant)
+    const agents = await drizzleAgentRepository.findAll(agency.ownerId, 100);
 
-    // Get tasks (would filter by agency in production)
+    // Get tasks (filtered by owner/tenant)
     const tasks = await drizzleTaskRepository.findTasksCreatedAfter(
       this.getDateFromTimeframe(timeframe),
+      agency.ownerId,
     );
 
     const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED');

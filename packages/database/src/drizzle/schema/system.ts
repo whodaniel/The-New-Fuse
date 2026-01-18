@@ -59,59 +59,7 @@ export const llmConfigs = pgTable('llm_configs', {
   deletedAt: timestamp('deleted_at'),
 });
 
-// =============================================================================
-// PROMPT TEMPLATE
-// =============================================================================
-
-export const promptTemplates = pgTable('prompt_templates', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  description: text('description'),
-  currentVersionId: uuid('current_version_id'),
-  isPublic: boolean('is_public').default(false).notNull(),
-  category: varchar('category', { length: 100 }),
-  tags: jsonb('tags').$type<string[]>().default([]).notNull(),
-  analytics: jsonb('analytics'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
-
-// =============================================================================
-// PROMPT VERSION
-// =============================================================================
-
-export const promptVersions = pgTable('prompt_versions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  templateId: uuid('template_id')
-    .notNull()
-    .references(() => promptTemplates.id, { onDelete: 'cascade' }),
-  version: integer('version').notNull(),
-  label: varchar('label', { length: 100 }),
-  content: text('content').notNull(),
-  variables: jsonb('variables'),
-  metrics: jsonb('metrics'),
-  changelog: text('changelog'),
-  isActive: boolean('is_active').default(true).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-});
-
-// =============================================================================
-// PROMPT SNIPPET
-// =============================================================================
-
-export const promptSnippets = pgTable('prompt_snippets', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  content: text('content').notNull(),
-  type: varchar('type', { length: 50 }).notNull(),
-  category: varchar('category', { length: 100 }),
-  tags: jsonb('tags').$type<string[]>().default([]).notNull(),
-  usageCount: integer('usage_count').default(0).notNull(),
-  description: text('description'),
-  isStarred: boolean('is_starred').default(false).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+// Prompt definitions moved to ./prompt-templates.ts
 
 // =============================================================================
 // VALIDATION DATASET
@@ -181,13 +129,4 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
 // RELATIONS
 // =============================================================================
 
-export const promptTemplatesRelations = relations(promptTemplates, ({ many }) => ({
-  versions: many(promptVersions),
-}));
-
-export const promptVersionsRelations = relations(promptVersions, ({ one }) => ({
-  template: one(promptTemplates, {
-    fields: [promptVersions.templateId],
-    references: [promptTemplates.id],
-  }),
-}));
+// Prompt relations moved to ./prompt-templates.ts

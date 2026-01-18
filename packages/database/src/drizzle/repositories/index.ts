@@ -7,6 +7,10 @@ export { DrizzleJulesRepository, drizzleJulesRepository } from './jules.reposito
 export { DrizzleLLMConfigRepository, drizzleLLMConfigRepository } from './llm_config.repository';
 export * from './marketplace.repository';
 export * from './mass.repository';
+export {
+  DrizzlePromptTemplateRepository,
+  drizzlePromptTemplateRepository,
+} from './prompt-template.repository';
 export { DrizzleTaskRepository, drizzleTaskRepository } from './task.repository';
 export { DrizzleUserRepository, drizzleUserRepository } from './user.repository';
 export { DrizzleWalletRepository, drizzleWalletRepository } from './wallet.repository';

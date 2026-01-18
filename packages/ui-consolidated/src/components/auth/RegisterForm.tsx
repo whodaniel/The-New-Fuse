@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { useAuthContext } from '../../providers/AuthProvider';
+import { Alert, AlertDescription, AlertTitle } from '../Alert/Alert';
 import { Button } from '../Button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../Card';
 import { Input } from '../Input';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription, 
-  CardContent, 
-  CardFooter 
-} from '../Card';
-import { Alert, AlertTitle, AlertDescription } from '../Alert/Alert';
 
 /**
  * Register form props
@@ -39,11 +32,11 @@ export interface RegisterFormProps {
  * Register form component
  * @param props Register form props
  * @returns Register form component
- * 
+ *
  * @example
  * // Basic usage
  * <RegisterForm onSuccess={() => navigate('/dashboard')} />
- * 
+ *
  * // With cancel button
  * <RegisterForm
  *   onSuccess={() => navigate('/dashboard')}
@@ -58,26 +51,26 @@ export function RegisterForm({
   className,
 }: RegisterFormProps): JSX.Element {
   const { register, isLoading } = useAuthContext();
-  
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    
+
     try {
       setError(null);
       await register(name, email, password);
@@ -86,7 +79,7 @@ export function RegisterForm({
       setError((err as Error).message || 'Failed to register');
     }
   };
-  
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -96,12 +89,12 @@ export function RegisterForm({
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <Alert variant="error">
+            <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          
+
           <Input
             label="Name"
             type="text"
@@ -111,7 +104,7 @@ export function RegisterForm({
             required
             disabled={isLoading}
           />
-          
+
           <Input
             label="Email"
             type="email"
@@ -121,7 +114,7 @@ export function RegisterForm({
             required
             disabled={isLoading}
           />
-          
+
           <Input
             label="Password"
             type="password"
@@ -131,7 +124,7 @@ export function RegisterForm({
             required
             disabled={isLoading}
           />
-          
+
           <Input
             label="Confirm Password"
             type="password"
@@ -142,24 +135,15 @@ export function RegisterForm({
             disabled={isLoading}
           />
         </CardContent>
-        
+
         <CardFooter className="flex justify-between">
           {showCancel && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isLoading}
-            >
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
               Cancel
             </Button>
           )}
-          
-          <Button
-            type="submit"
-            disabled={isLoading}
-            isLoading={isLoading}
-          >
+
+          <Button type="submit" disabled={isLoading} isLoading={isLoading}>
             Create Account
           </Button>
         </CardFooter>

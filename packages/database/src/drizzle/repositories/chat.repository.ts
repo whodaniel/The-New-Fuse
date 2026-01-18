@@ -2,7 +2,7 @@
  * Chat Repository - Drizzle ORM Implementation
  * Provides data access for Chat and Message entities
  */
-import { and, desc, eq, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { db } from '../client';
 import {
   chatMessages,
@@ -297,11 +297,20 @@ export class DrizzleChatRepository {
   /**
    * Find active rooms
    */
-  async findActiveRooms(): Promise<ChatRoom[]> {
+  /**
+   * Find public active rooms
+   */
+  async findPublicActiveRooms(): Promise<ChatRoom[]> {
     return db
       .select()
       .from(chatRooms)
-      .where(and(eq(chatRooms.isActive, true), isNull(chatRooms.deletedAt)))
+      .where(
+        and(
+          eq(chatRooms.isActive, true),
+          eq(chatRooms.isPrivate, false),
+          isNull(chatRooms.deletedAt)
+        )
+      )
       .orderBy(desc(chatRooms.lastMessageAt));
   }
 
@@ -401,6 +410,7 @@ export class DrizzleChatRepository {
    * Search messages across rooms
    */
   async searchMessages(
+    userId: string, // Require User ID
     query: string,
     roomId?: string,
     senderId?: string,
@@ -412,7 +422,24 @@ export class DrizzleChatRepository {
       eq(messages.isDeleted, false),
     ];
 
-    if (roomId) filters.push(eq(messages.roomId, roomId));
+    if (roomId) {
+      // Validation: Ensure user is in the room? (Ideally yes, but lightweight check here)
+      filters.push(eq(messages.roomId, roomId));
+    } else {
+      // Enforce: Search ONLY rooms user has joined
+      const userRooms = await db
+        .select({ id: chatRoomParticipants.roomId })
+        .from(chatRoomParticipants)
+        .where(eq(chatRoomParticipants.userId, userId));
+
+      if (userRooms.length === 0) {
+        return { items: [], total: 0 };
+      }
+
+      const roomIds = userRooms.map((r) => r.id);
+      filters.push(inArray(messages.roomId, roomIds));
+    }
+
     if (senderId) filters.push(eq(messages.senderId, senderId));
 
     const [items, countResult] = await Promise.all([

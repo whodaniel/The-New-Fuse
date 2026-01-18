@@ -73,33 +73,60 @@ export class DrizzleWorkflowRepository {
   /**
    * Find active workflows
    */
-  async findActiveWorkflows(): Promise<Workflow[]> {
+  /**
+   * Find active workflows for a creator
+   */
+  async findActiveWorkflows(creatorId: string): Promise<Workflow[]> {
     return db
       .select()
       .from(workflows)
-      .where(and(eq(workflows.isActive, true), isNull(workflows.deletedAt)))
+      .where(
+        and(
+          eq(workflows.isActive, true),
+          eq(workflows.creatorId, creatorId),
+          isNull(workflows.deletedAt)
+        )
+      )
       .orderBy(desc(workflows.updatedAt));
   }
 
   /**
    * Find workflows by status
    */
-  async findWorkflowsByStatus(status: string): Promise<Workflow[]> {
+  /**
+   * Find workflows by status for a creator
+   */
+  async findWorkflowsByStatus(status: string, creatorId: string): Promise<Workflow[]> {
     return db
       .select()
       .from(workflows)
-      .where(and(eq(workflows.status, status as any), isNull(workflows.deletedAt)))
+      .where(
+        and(
+          eq(workflows.status, status as any),
+          eq(workflows.creatorId, creatorId),
+          isNull(workflows.deletedAt)
+        )
+      )
       .orderBy(desc(workflows.updatedAt));
   }
 
   /**
    * Find workflows by agent ID
    */
-  async findWorkflowsByAgentId(agentId: string): Promise<Workflow[]> {
+  /**
+   * Find workflows by agent ID (must check creator ownership)
+   */
+  async findWorkflowsByAgentId(agentId: string, creatorId: string): Promise<Workflow[]> {
     return db
       .select()
       .from(workflows)
-      .where(and(eq(workflows.agentId, agentId), isNull(workflows.deletedAt)))
+      .where(
+        and(
+          eq(workflows.agentId, agentId),
+          eq(workflows.creatorId, creatorId),
+          isNull(workflows.deletedAt)
+        )
+      )
       .orderBy(desc(workflows.updatedAt));
   }
 

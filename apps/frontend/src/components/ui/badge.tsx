@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface BadgeProps {
+interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   variant?: 'default' | 'secondary' | 'destructive' | 'outline';
   className?: string;
@@ -8,12 +8,13 @@ interface BadgeProps {
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
   const baseStyles = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
-  
+
   const variantStyles = {
     default: 'bg-primary text-primary-foreground hover:bg-primary/80',
     secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
     destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/80',
-    outline: 'text-foreground border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+    outline:
+      'text-foreground border border-input bg-background hover:bg-accent hover:text-accent-foreground',
   };
 
   const appliedStyles = {
@@ -23,11 +24,7 @@ export function Badge({ children, variant = 'default', className = '' }: BadgePr
     outline: 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
   };
 
-  return (
-    <div className={`${baseStyles} ${appliedStyles[variant]} ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`${baseStyles} ${appliedStyles[variant]} ${className}`}>{children}</div>;
 }
 
 export default Badge;

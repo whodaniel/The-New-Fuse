@@ -1,5 +1,12 @@
+import {
+  AgentService,
+  ApiClient,
+  AuthService,
+  TokenStorage,
+  UserService,
+  WorkflowService,
+} from '@the-new-fuse/api-client';
 import React, { createContext, useContext, useMemo } from 'react';
-import { ApiClient, AuthService, UserService, AgentService, WorkflowService, TokenStorage } from '@the-new-fuse/api-client';
 
 /**
  * API context value
@@ -70,11 +77,11 @@ const ApiContext = createContext<ApiContextValue | undefined>(undefined);
 /**
  * Hook to access the API context
  * @returns API context value
- * 
+ *
  * @example
  * // Use API context
  * const { apiClient, authService } = useApi();
- * 
+ *
  * // Make API requests
  * const handleLogin = async () => {
  *   try {
@@ -87,11 +94,11 @@ const ApiContext = createContext<ApiContextValue | undefined>(undefined);
  */
 export function useApi(): ApiContextValue {
   const context = useContext(ApiContext);
-  
+
   if (!context) {
     throw new Error('useApi must be used within an ApiProvider');
   }
-  
+
   return context;
 }
 
@@ -99,7 +106,7 @@ export function useApi(): ApiContextValue {
  * API provider component
  * @param props API provider props
  * @returns API provider component
- * 
+ *
  * @example
  * // Create API client and services
  * const apiClient = new ApiClient({
@@ -110,7 +117,7 @@ export function useApi(): ApiContextValue {
  * const userService = new UserService(apiClient);
  * const agentService = new AgentService(apiClient);
  * const workflowService = new WorkflowService(apiClient);
- * 
+ *
  * // Provide API client and services to the application
  * <ApiProvider
  *   apiClient={apiClient}
@@ -131,7 +138,7 @@ export function ApiProvider({
   agentService,
   workflowService,
   children,
-}: ApiProviderProps): JSX.Element {
+}: ApiProviderProps): React.ReactElement {
   const value = useMemo(
     () => ({
       apiClient,
@@ -143,6 +150,6 @@ export function ApiProvider({
     }),
     [apiClient, tokenStorage, authService, userService, agentService, workflowService]
   );
-  
+
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;
 }

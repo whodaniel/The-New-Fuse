@@ -15,6 +15,7 @@ import {
 import { agents } from './agents';
 import { messageRoleEnum } from './enums';
 import { users } from './users';
+import { projects } from './workspace';
 
 // =============================================================================
 // CHAT
@@ -27,6 +28,7 @@ export const chats = pgTable('chats', {
     .notNull()
     .references(() => agents.id, { onDelete: 'cascade' }),
   userId: uuid('user_id'),
+  projectId: uuid('project_id').references(() => projects.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   deletedAt: timestamp('deleted_at'),
@@ -108,6 +110,10 @@ export const chatsRelations = relations(chats, ({ one, many }) => ({
   agent: one(agents, {
     fields: [chats.agentId],
     references: [agents.id],
+  }),
+  project: one(projects, {
+    fields: [chats.projectId],
+    references: [projects.id],
   }),
   messages: many(messages),
 }));

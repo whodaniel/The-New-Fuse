@@ -29,11 +29,11 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks created after a certain date
    */
-  async findTasksCreatedAfter(date: Date): Promise<Task[]> {
+  async findTasksCreatedAfter(date: Date, userId: string): Promise<Task[]> {
     return db
       .select()
       .from(tasks)
-      .where(and(gte(tasks.createdAt, date), isNull(tasks.deletedAt)))
+      .where(and(gte(tasks.createdAt, date), eq(tasks.userId, userId), isNull(tasks.deletedAt)))
       .orderBy(desc(tasks.createdAt));
   }
 
@@ -74,12 +74,10 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks by status
    */
-  async findTasksByStatus(status: string, userId?: string): Promise<Task[]> {
+  async findTasksByStatus(status: string, userId: string): Promise<Task[]> {
     const conditions = [eq(tasks.status, status as any), isNull(tasks.deletedAt)];
 
-    if (userId) {
-      conditions.push(eq(tasks.userId, userId));
-    }
+    conditions.push(eq(tasks.userId, userId));
 
     return db
       .select()
@@ -91,12 +89,10 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks by multiple statuses
    */
-  async findTasksByStatuses(statuses: string[], userId?: string): Promise<Task[]> {
+  async findTasksByStatuses(statuses: string[], userId: string): Promise<Task[]> {
     const conditions = [inArray(tasks.status, statuses as any[]), isNull(tasks.deletedAt)];
 
-    if (userId) {
-      conditions.push(eq(tasks.userId, userId));
-    }
+    conditions.push(eq(tasks.userId, userId));
 
     return db
       .select()
@@ -119,12 +115,10 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks by priority
    */
-  async findTasksByPriority(priority: string, userId?: string): Promise<Task[]> {
+  async findTasksByPriority(priority: string, userId: string): Promise<Task[]> {
     const conditions = [eq(tasks.priority, priority as any), isNull(tasks.deletedAt)];
 
-    if (userId) {
-      conditions.push(eq(tasks.userId, userId));
-    }
+    conditions.push(eq(tasks.userId, userId));
 
     return db
       .select()

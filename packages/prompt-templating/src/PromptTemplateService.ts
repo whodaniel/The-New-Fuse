@@ -1,335 +1,119 @@
+import { drizzlePromptTemplateRepository } from '@the-new-fuse/database';
 import {
-  PromptTemplate,
-  PromptVersion,
-  PromptSnippet,
   PromptExecutionResult,
-  PromptTemplateService
+  PromptSnippet,
+  PromptTemplate,
+  PromptTemplateService,
+  PromptVersion,
 } from './types';
 
 export class PromptTemplateServiceImpl implements PromptTemplateService {
-  private templates: Map<string, PromptTemplate> = new Map();
-  private versions: Map<string, PromptVersion> = new Map();
-  private snippets: Map<string, PromptSnippet> = new Map();
-  private executionResults: PromptExecutionResult[] = [];
+  private repository = drizzlePromptTemplateRepository;
 
-  constructor() {
-    this.initializeDefaultData();
-  }
-
-  private initializeDefaultData() {
-    // Create default snippets
-    const defaultSnippets: PromptSnippet[] = [
-      {
-        id: 'snippet-1',
-        name: 'System Role',
-        content: 'You are a helpful AI assistant specialized in {{domain}}.',
-        type: 'system',
-        category: 'System',
-        tags: ['role', 'system'],
-        usageCount: 245,
-        description: 'Basic system role with domain specialization',
-        isStarred: true
-      },
-      {
-        id: 'snippet-2',
-        name: 'Context Block',
-        content: '# Context\n{{context_description}}\n\n{{context_data}}',
-        type: 'user',
-        category: 'Context',
-        tags: ['context', 'input'],
-        usageCount: 189,
-        description: 'Structured context injection block'
-      },
-      {
-        id: 'snippet-3',
-        name: 'Task Definition',
-        content: '# Task\n{{task_description}}\n\n## Requirements\n{{requirements}}',
-        type: 'user',
-        category: 'Instructions',
-        tags: ['task', 'requirements'],
-        usageCount: 156,
-        description: 'Structured task definition with requirements'
-      },
-      {
-        id: 'snippet-4',
-        name: 'Output Format',
-        content: '# Output Format\nRespond in the following structure:\n{{format_template}}',
-        type: 'user',
-        category: 'Output',
-        tags: ['format', 'structure'],
-        usageCount: 134,
-        description: 'Output format specification'
-      },
-      {
-        id: 'snippet-5',
-        name: 'Function Call',
-        content: '{{function_name}}({{parameters}})',
-        type: 'function',
-        category: 'Functions',
-        tags: ['function', 'call'],
-        usageCount: 98,
-        description: 'Function invocation template'
-      },
-      {
-        id: 'snippet-6',
-        name: 'Summary Section',
-        content: '# Summary\n{{summary_content}}',
-        type: 'summary',
-        category: 'Content',
-        tags: ['summary', 'content'],
-        usageCount: 87,
-        description: 'Content summary block'
-      }
-    ];
-
-    defaultSnippets.forEach(snippet => {
-      this.snippets.set(snippet.id, snippet);
-    });
-
-    // Create default template
-    const defaultVersion: PromptVersion = {
-      id: 'version-1',
-      version: 1,
-      name: 'Initial Version',
-      label: 'production',
-      content: `You are a helpful AI assistant specialized in {{domain}}.
-
-# Task
-{{task_description}}
-
-## Requirements
-{{requirements}}
-
-# Context
-{{context_description}}
-
-{{context_data}}
-
-# Output Format
-Respond in the following structure:
-{{format_template}}`,
-      variables: {
-        domain: 'general assistance',
-        task_description: 'Help the user with their request',
-        requirements: '- Be helpful and accurate\n- Provide clear explanations\n- Ask for clarification if needed',
-        context_description: 'User context and background information',
-        context_data: '',
-        format_template: 'Provide a clear, structured response'
-      },
-      blocks: [],
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
-      createdBy: 'System',
-      isActive: true,
-      metrics: {
-        successRate: 94.2,
-        totalRuns: 127,
-        avgResponseTime: 1250,
-        lastRun: new Date(Date.now() - 1000 * 60 * 15)
-      },
-      changelog: 'Initial template version'
-    };
-
-    const defaultTemplate: PromptTemplate = {
-      id: 'template-1',
-      name: 'General Assistant Template',
-      description: 'A versatile template for general AI assistance tasks',
-      currentVersion: 'version-1',
-      versions: [defaultVersion],
-      blocks: [],
-      variables: defaultVersion.variables,
-      tags: ['general', 'assistant', 'help'],
-      category: 'General',
-      isPublic: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
-      updatedAt: new Date(),
-      analytics: {
-        totalRuns: 127,
-        successRate: 94.2,
-        popularVariables: ['task_description', 'domain', 'requirements'],
-        recentActivity: [
-          new Date(Date.now() - 1000 * 60 * 15),
-          new Date(Date.now() - 1000 * 60 * 45),
-          new Date(Date.now() - 1000 * 60 * 60 * 2)
-        ]
-      }
-    };
-
-    this.templates.set(defaultTemplate.id, defaultTemplate);
-    this.versions.set(defaultVersion.id, defaultVersion);
-  }
+  constructor() {}
 
   // Template management
-  async createTemplate(template: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<PromptTemplate> {
-    const id = `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const now = new Date();
-    
-    const newTemplate: PromptTemplate = {
-      ...template,
-      id,
-      createdAt: now,
-      updatedAt: now
-    };
-
-    this.templates.set(id, newTemplate);
-    return newTemplate;
+  async createTemplate(
+    template: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<PromptTemplate> {
+    const result = await this.repository.createTemplate(template);
+    return this.mapTemplate(result);
   }
 
-  async getTemplate(id: string): Promise<PromptTemplate | null> {
-    return this.templates.get(id) || null;
+  async getTemplate(id: string, userId: string): Promise<PromptTemplate | null> {
+    const template = await this.repository.findTemplateByIdAndUser(id, userId);
+    return template ? this.mapTemplate(template) : null;
   }
 
-  async updateTemplate(id: string, updates: Partial<PromptTemplate>): Promise<PromptTemplate | null> {
-    const template = this.templates.get(id);
-    if (!template) return null;
-
-    const updatedTemplate: PromptTemplate = {
-      ...template,
-      ...updates,
-      id, // Ensure ID doesn't change
-      updatedAt: new Date()
-    };
-
-    this.templates.set(id, updatedTemplate);
-    return updatedTemplate;
+  async updateTemplate(
+    id: string,
+    updates: Partial<PromptTemplate>
+  ): Promise<PromptTemplate | null> {
+    const result = await this.repository.updateTemplate(id, updates);
+    return result ? this.mapTemplate(result) : null;
   }
 
   async deleteTemplate(id: string): Promise<boolean> {
-    return this.templates.delete(id);
+    return this.repository.deleteTemplate(id);
   }
 
-  async listTemplates(filter?: Partial<PromptTemplate>): Promise<PromptTemplate[]> {
-    const templates = Array.from(this.templates.values());
-    
-    if (!filter) return templates;
-
-    return templates.filter(template => {
-      return Object.entries(filter).every(([key, value]) => {
-        if (value === undefined) return true;
-        return template[key as keyof PromptTemplate] === value;
-      });
-    });
+  async listTemplates(userId: string, filter?: Partial<PromptTemplate>): Promise<PromptTemplate[]> {
+    const results = await this.repository.listTemplates(userId, filter);
+    return results.map((t) => this.mapTemplate(t));
   }
 
   // Version management
-  async createVersion(templateId: string, version: Omit<PromptVersion, 'id' | 'createdAt'>): Promise<PromptVersion> {
-    const template = this.templates.get(templateId);
-    if (!template) throw new Error(`Template not found: ${templateId}`);
-
-    const id = `version-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const now = new Date();
-
-    const newVersion: PromptVersion = {
-      ...version,
-      id,
-      createdAt: now
-    };
-
-    // Add to versions map
-    this.versions.set(id, newVersion);
-
-    // Update template with new version
-    const updatedTemplate = {
-      ...template,
-      versions: [...template.versions, newVersion],
-      updatedAt: now
-    };
-
-    this.templates.set(templateId, updatedTemplate);
-    return newVersion;
+  async createVersion(
+    templateId: string,
+    version: Omit<PromptVersion, 'id' | 'createdAt'>
+  ): Promise<PromptVersion> {
+    const result = await this.repository.createVersion({ ...version, templateId });
+    return this.mapVersion(result);
   }
 
   async getVersion(versionId: string): Promise<PromptVersion | null> {
-    return this.versions.get(versionId) || null;
+    const result = await this.repository.findVersionById(versionId);
+    return result ? this.mapVersion(result) : null;
   }
 
   async setActiveVersion(templateId: string, versionId: string): Promise<PromptTemplate | null> {
-    const template = this.templates.get(templateId);
-    if (!template) return null;
-
-    const version = this.versions.get(versionId);
-    if (!version) return null;
-
-    const updatedTemplate = {
-      ...template,
-      currentVersion: versionId,
-      updatedAt: new Date()
-    };
-
-    this.templates.set(templateId, updatedTemplate);
-    return updatedTemplate;
+    const result = await this.repository.setActiveVersion(templateId, versionId);
+    return result ? this.mapTemplate(result) : null;
   }
 
-  async listVersions(templateId: string): Promise<PromptVersion[]> {
-    const template = this.templates.get(templateId);
-    return template ? template.versions : [];
+  async listVersions(templateId: string, userId: string): Promise<PromptVersion[]> {
+    const results = await this.repository.listVersions(templateId, userId);
+    return results.map((v) => this.mapVersion(v));
   }
 
   // Snippet management
   async createSnippet(snippet: Omit<PromptSnippet, 'id' | 'usageCount'>): Promise<PromptSnippet> {
-    const id = `snippet-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
-    const newSnippet: PromptSnippet = {
-      ...snippet,
-      id,
-      usageCount: 0
-    };
-
-    this.snippets.set(id, newSnippet);
-    return newSnippet;
+    const result = await this.repository.createSnippet(snippet);
+    return this.mapSnippet(result);
   }
 
   async getSnippet(id: string): Promise<PromptSnippet | null> {
-    return this.snippets.get(id) || null;
+    const result = await this.repository.findSnippetById(id);
+    return result ? this.mapSnippet(result) : null;
   }
 
   async updateSnippet(id: string, updates: Partial<PromptSnippet>): Promise<PromptSnippet | null> {
-    const snippet = this.snippets.get(id);
-    if (!snippet) return null;
-
-    const updatedSnippet = {
-      ...snippet,
-      ...updates,
-      id // Ensure ID doesn't change
-    };
-
-    this.snippets.set(id, updatedSnippet);
-    return updatedSnippet;
+    const result = await this.repository.updateSnippet(id, updates);
+    return result ? this.mapSnippet(result) : null;
   }
 
   async deleteSnippet(id: string): Promise<boolean> {
-    return this.snippets.delete(id);
+    return this.repository.deleteSnippet(id);
   }
 
-  async listSnippets(filter?: Partial<PromptSnippet>): Promise<PromptSnippet[]> {
-    const snippets = Array.from(this.snippets.values());
-    
-    if (!filter) return snippets;
-
-    return snippets.filter(snippet => {
-      return Object.entries(filter).every(([key, value]) => {
-        if (value === undefined) return true;
-        return snippet[key as keyof PromptSnippet] === value;
-      });
-    });
+  async listSnippets(userId: string, filter?: Partial<PromptSnippet>): Promise<PromptSnippet[]> {
+    const results = await this.repository.listSnippets(userId, filter);
+    return results.map((s) => this.mapSnippet(s));
   }
 
   async incrementSnippetUsage(id: string): Promise<void> {
-    const snippet = this.snippets.get(id);
-    if (snippet) {
-      snippet.usageCount += 1;
-      this.snippets.set(id, snippet);
-    }
+    await this.repository.incrementSnippetUsage(id);
   }
 
   // Template compilation and execution
-  async compileTemplate(templateId: string, versionId?: string, variables?: Record<string, any>): Promise<string> {
-    const template = this.templates.get(templateId);
+  async compileTemplate(
+    templateId: string,
+    userId: string,
+    versionId?: string,
+    variables?: Record<string, any>
+  ): Promise<string> {
+    const template = await this.getTemplate(templateId, userId);
     if (!template) throw new Error(`Template not found: ${templateId}`);
 
-    const version = versionId 
-      ? this.versions.get(versionId) 
-      : template.versions.find(v => v.id === template.currentVersion);
-    
+    let version: PromptVersion | null;
+    if (versionId) {
+      version = await this.getVersion(versionId);
+    } else {
+      // Find current version from template's currentVersion ID
+      // Note: getTemplate already fetched basic info, but we need the actual version object
+      version = await this.getVersion(template.currentVersion);
+    }
+
     if (!version) throw new Error(`Version not found: ${versionId || template.currentVersion}`);
 
     let compiledContent = version.content;
@@ -344,124 +128,91 @@ Respond in the following structure:
     return compiledContent;
   }
 
-  async executeTemplate(templateId: string, versionId?: string, variables?: Record<string, any>): Promise<PromptExecutionResult> {
+  async executeTemplate(
+    templateId: string,
+    userId: string,
+    versionId?: string,
+    variables?: Record<string, any>
+  ): Promise<PromptExecutionResult> {
     const startTime = Date.now();
-    
+    let success = false;
+    let result: any = null;
+    let error: string | undefined;
+
     try {
-      
-      const responseTime = Date.now() - startTime;
-      
-      // Simulate execution (in real implementation, this would call an LLM)
-      const mockResult = {
-        response: "This is a simulated response based on the compiled template.",
-        tokenUsage: Math.floor(Math.random() * 500) + 100
-      };
+      // In a real implementation, you would call an LLM service here
+      // For now, we simulate success
+      const compiled = await this.compileTemplate(templateId, userId, versionId, variables);
 
-      const result: PromptExecutionResult = {
-        id: `execution-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        templateId,
-        versionId: versionId || this.templates.get(templateId)?.currentVersion || '',
-        executedAt: new Date(),
-        success: true,
-        responseTime,
-        tokenUsage: mockResult.tokenUsage,
-        result: mockResult,
-        variables: variables || {}
+      // ... Call LLM ...
+      result = {
+        response: `Simulated response for ${templateId}`,
+        compiled,
       };
-
-      this.executionResults.push(result);
-      await this.recordExecution(result);
-      
-      return result;
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
-      
-      const result: PromptExecutionResult = {
-        id: `execution-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        templateId,
-        versionId: versionId || '',
-        executedAt: new Date(),
-        success: false,
-        responseTime,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        variables: variables || {}
-      };
-
-      this.executionResults.push(result);
-      await this.recordExecution(result);
-      
-      return result;
+      success = true;
+    } catch (e: any) {
+      error = e.message;
+      success = false;
     }
+
+    const responseTime = Date.now() - startTime;
+
+    // Resolve version ID if missing
+    const finalVersionId =
+      versionId || (await this.getTemplate(templateId, userId))?.currentVersion || '';
+
+    const executionResult: PromptExecutionResult = {
+      id: '', // database will generate ID
+      templateId,
+      versionId: finalVersionId,
+      executedAt: new Date(),
+      success,
+      responseTime,
+      variables: variables || {},
+      result,
+      error,
+    };
+
+    // Save to DB
+    const savedResult = await this.repository.recordExecution(executionResult);
+
+    return {
+      ...executionResult,
+      id: savedResult.id, // Return with DB ID
+    };
   }
 
   // Analytics
   async getTemplateAnalytics(templateId: string): Promise<PromptTemplate['analytics']> {
-    const template = this.templates.get(templateId);
-    return template?.analytics;
+    const analytics = await this.repository.getTemplateAnalytics(templateId);
+    return (analytics as PromptTemplate['analytics']) || undefined;
   }
 
   async recordExecution(result: PromptExecutionResult): Promise<void> {
-    // Update template analytics
-    const template = this.templates.get(result.templateId);
-    if (!template) return;
+    await this.repository.recordExecution(result);
+  }
 
-    const analytics = template.analytics || {
-      totalRuns: 0,
-      successRate: 0,
-      popularVariables: [],
-      recentActivity: []
+  // Mappers to ensure type safety between DB and Domain entities
+  private mapTemplate(dbRecord: any): PromptTemplate {
+    return {
+      ...dbRecord,
+      currentVersion: dbRecord.currentVersionId, // Map DB column to Interface field
+      // versions are typically not loaded by default unless requested, but here we might need them or leave empty
+      versions: dbRecord.versions ? dbRecord.versions.map((v: any) => this.mapVersion(v)) : [],
     };
+  }
 
-    analytics.totalRuns += 1;
-    analytics.recentActivity = [result.executedAt, ...analytics.recentActivity.slice(0, 9)];
-    
-    // Calculate success rate
-    const recentResults = this.executionResults
-      .filter(r => r.templateId === result.templateId)
-      .slice(-100); // Last 100 executions
-    
-    const successCount = recentResults.filter(r => r.success).length;
-    analytics.successRate = Math.round((successCount / recentResults.length) * 100);
+  private mapVersion(dbRecord: any): PromptVersion {
+    return {
+      ...dbRecord,
+      // Ensure specific fields map correctly if needed
+    };
+  }
 
-    // Update version metrics
-    if (result.versionId) {
-      const version = this.versions.get(result.versionId);
-      if (version) {
-        if (!version.metrics) {
-          version.metrics = {
-            successRate: 0,
-            totalRuns: 0,
-            avgResponseTime: 0
-          };
-        }
-
-        version.metrics.totalRuns += 1;
-        version.metrics.lastRun = result.executedAt;
-        
-        // Update response time (simple average)
-        version.metrics.avgResponseTime = Math.round(
-          (version.metrics.avgResponseTime * (version.metrics.totalRuns - 1) + result.responseTime) / 
-          version.metrics.totalRuns
-        );
-
-        // Update success rate
-        const versionResults = this.executionResults
-          .filter(r => r.versionId === result.versionId)
-          .slice(-100);
-        
-        const versionSuccessCount = versionResults.filter(r => r.success).length;
-        version.metrics.successRate = Math.round((versionSuccessCount / versionResults.length) * 100);
-
-        this.versions.set(result.versionId, version);
-      }
-    }
-
-    // Update template
-    this.templates.set(result.templateId, {
-      ...template,
-      analytics,
-      updatedAt: new Date()
-    });
+  private mapSnippet(dbRecord: any): PromptSnippet {
+    return {
+      ...dbRecord,
+    };
   }
 }
 

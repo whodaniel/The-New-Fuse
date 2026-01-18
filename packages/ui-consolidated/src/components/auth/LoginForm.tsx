@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { useAuthContext } from '../../providers/AuthProvider';
+import { Alert, AlertDescription, AlertTitle } from '../Alert/Alert';
 import { Button } from '../Button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../Card';
 import { Input } from '../Input';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription, 
-  CardContent, 
-  CardFooter 
-} from '../Card';
-import { Alert, AlertTitle, AlertDescription } from '../Alert/Alert';
 
 /**
  * Login form props
@@ -39,11 +32,11 @@ export interface LoginFormProps {
  * Login form component
  * @param props Login form props
  * @returns Login form component
- * 
+ *
  * @example
  * // Basic usage
  * <LoginForm onSuccess={() => navigate('/dashboard')} />
- * 
+ *
  * // With cancel button
  * <LoginForm
  *   onSuccess={() => navigate('/dashboard')}
@@ -56,21 +49,21 @@ export function LoginForm({
   onCancel,
   showCancel = false,
   className,
-}: LoginFormProps): JSX.Element {
+}: LoginFormProps): React.ReactElement {
   const { login, isLoading } = useAuthContext();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
     }
-    
+
     try {
       setError(null);
       await login(email, password);
@@ -79,7 +72,7 @@ export function LoginForm({
       setError((err as Error).message || 'Failed to login');
     }
   };
-  
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -89,12 +82,12 @@ export function LoginForm({
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <Alert variant="error">
+            <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          
+
           <Input
             label="Email"
             type="email"
@@ -104,7 +97,7 @@ export function LoginForm({
             required
             disabled={isLoading}
           />
-          
+
           <Input
             label="Password"
             type="password"
@@ -115,24 +108,15 @@ export function LoginForm({
             disabled={isLoading}
           />
         </CardContent>
-        
+
         <CardFooter className="flex justify-between">
           {showCancel && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isLoading}
-            >
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
               Cancel
             </Button>
           )}
-          
-          <Button
-            type="submit"
-            disabled={isLoading}
-            isLoading={isLoading}
-          >
+
+          <Button type="submit" disabled={isLoading} isLoading={isLoading}>
             Sign In
           </Button>
         </CardFooter>

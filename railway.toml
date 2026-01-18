@@ -67,10 +67,17 @@ watchPaths = ["apps/cloud-sandbox/**", "packages/**"]
 healthcheckPath = "/health"
 restartPolicyType = "ON_FAILURE"
 
+# Secure Cloud Sandbox V2 - Production deployment with RBAC and multi-tenant isolation
 [services.tnf-cloud-sandbox-v2]
 builder = "DOCKERFILE"
-build = { dockerfilePath = "apps/cloud-sandbox/Dockerfile.standalone", watchPaths = ["apps/cloud-sandbox/**"] }
-deploy = { healthcheckPath = "/health", restartPolicyType = "ON_FAILURE" }
+[services.tnf-cloud-sandbox-v2.build]
+dockerfilePath = "apps/cloud-sandbox/Dockerfile.railway"
+watchPaths = ["apps/cloud-sandbox/**", "packages/database/**", "packages/types/**"]
+[services.tnf-cloud-sandbox-v2.deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 10
+startCommand = "/app/start.sh"
+restartPolicyType = "ON_FAILURE"
 
 # Core Vector DB Service
 [services.core-vector-db]

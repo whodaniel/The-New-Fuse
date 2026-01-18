@@ -44,6 +44,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@the-new-fuse/api-client": "workspace:*",
+    "@the-new-fuse/api-types": "workspace:*",
     "@the-new-fuse/hooks": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",

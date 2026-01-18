@@ -1,6 +1,15 @@
 export interface PromptBlock {
   id: string;
-  type: 'system' | 'user' | 'assistant' | 'function' | 'variable' | 'condition' | 'summary' | 'context' | 'instruction';
+  type:
+    | 'system'
+    | 'user'
+    | 'assistant'
+    | 'function'
+    | 'variable'
+    | 'condition'
+    | 'summary'
+    | 'context'
+    | 'instruction';
   content: string;
   position: number;
   locked: boolean;
@@ -88,30 +97,45 @@ export interface PromptExecutionResult {
 
 export interface PromptTemplateService {
   // Template management
-  createTemplate(template: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<PromptTemplate>;
-  getTemplate(id: string): Promise<PromptTemplate | null>;
+  createTemplate(
+    template: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<PromptTemplate>;
+  getTemplate(id: string, userId: string): Promise<PromptTemplate | null>;
   updateTemplate(id: string, updates: Partial<PromptTemplate>): Promise<PromptTemplate | null>;
   deleteTemplate(id: string): Promise<boolean>;
-  listTemplates(filter?: Partial<PromptTemplate>): Promise<PromptTemplate[]>;
+  listTemplates(userId: string, filter?: Partial<PromptTemplate>): Promise<PromptTemplate[]>;
 
   // Version management
-  createVersion(templateId: string, version: Omit<PromptVersion, 'id' | 'createdAt'>): Promise<PromptVersion>;
+  createVersion(
+    templateId: string,
+    version: Omit<PromptVersion, 'id' | 'createdAt'>
+  ): Promise<PromptVersion>;
   getVersion(versionId: string): Promise<PromptVersion | null>;
   setActiveVersion(templateId: string, versionId: string): Promise<PromptTemplate | null>;
-  listVersions(templateId: string): Promise<PromptVersion[]>;
+  listVersions(templateId: string, userId: string): Promise<PromptVersion[]>;
 
   // Snippet management
   createSnippet(snippet: Omit<PromptSnippet, 'id' | 'usageCount'>): Promise<PromptSnippet>;
   getSnippet(id: string): Promise<PromptSnippet | null>;
   updateSnippet(id: string, updates: Partial<PromptSnippet>): Promise<PromptSnippet | null>;
   deleteSnippet(id: string): Promise<boolean>;
-  listSnippets(filter?: Partial<PromptSnippet>): Promise<PromptSnippet[]>;
+  listSnippets(userId: string, filter?: Partial<PromptSnippet>): Promise<PromptSnippet[]>;
   incrementSnippetUsage(id: string): Promise<void>;
 
   // Template compilation and execution
-  compileTemplate(templateId: string, versionId?: string, variables?: Record<string, any>): Promise<string>;
-  executeTemplate(templateId: string, versionId?: string, variables?: Record<string, any>): Promise<PromptExecutionResult>;
-  
+  compileTemplate(
+    templateId: string,
+    userId: string,
+    versionId?: string,
+    variables?: Record<string, any>
+  ): Promise<string>;
+  executeTemplate(
+    templateId: string,
+    userId: string,
+    versionId?: string,
+    variables?: Record<string, any>
+  ): Promise<PromptExecutionResult>;
+
   // Analytics
   getTemplateAnalytics(templateId: string): Promise<PromptTemplate['analytics']>;
   recordExecution(result: PromptExecutionResult): Promise<void>;

@@ -29,7 +29,8 @@
     "lucide-react": "^0.546.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.3",
-    "reactflow": "^11.11.4"
+    "reactflow": "^11.11.4",
+    "@the-new-fuse/database": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.2.2",

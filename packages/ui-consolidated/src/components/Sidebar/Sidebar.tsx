@@ -1,71 +1,67 @@
-import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../../utils';
 
 /**
  * Sidebar variants using class-variance-authority
  */
-export const sidebarVariants = cva(
-  'h-full bg-background border-r',
-  {
-    variants: {
-      variant: {
-        default: 'border-border',
-        ghost: 'border-transparent',
-        elevated: 'border-none shadow-lg',
-      },
-      width: {
-        default: 'w-64',
-        sm: 'w-48',
-        lg: 'w-80',
-        collapsed: 'w-16',
-      },
-      position: {
-        left: 'left-0',
-        right: 'right-0 border-l border-r-0',
-      },
-      mobile: {
-        true: 'fixed inset-y-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto',
-        false: 'relative',
-      },
+export const sidebarVariants = cva('h-full bg-background border-r', {
+  variants: {
+    variant: {
+      default: 'border-border',
+      ghost: 'border-transparent',
+      elevated: 'border-none shadow-lg',
     },
-    compoundVariants: [
-      {
-        mobile: true,
-        position: 'left',
-        className: 'left-0',
-      },
-      {
-        mobile: true,
-        position: 'right',
-        className: 'right-0',
-      },
-    ],
-    defaultVariants: {
-      variant: 'default',
-      width: 'default',
+    width: {
+      default: 'w-64',
+      sm: 'w-48',
+      lg: 'w-80',
+      collapsed: 'w-16',
+    },
+    position: {
+      left: 'left-0',
+      right: 'right-0 border-l border-r-0',
+    },
+    mobile: {
+      true: 'fixed inset-y-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto',
+      false: 'relative',
+    },
+  },
+  compoundVariants: [
+    {
+      mobile: true,
       position: 'left',
-      mobile: false,
+      className: 'left-0',
     },
-  }
-);
+    {
+      mobile: true,
+      position: 'right',
+      className: 'right-0',
+    },
+  ],
+  defaultVariants: {
+    variant: 'default',
+    width: 'default',
+    position: 'left',
+    mobile: false,
+  },
+});
 
 /**
  * Sidebar component props
  */
 export interface SidebarProps
-  extends React.HTMLAttributes<HTMLElement>,
-    VariantProps<typeof sidebarVariants> {
+  extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof sidebarVariants> {
   /**
    * Whether the sidebar is open (for mobile)
    */
   open?: boolean;
-  
+
   /**
    * Callback when the sidebar is closed
    */
   onClose?: () => void;
-  
+
   /**
    * Navigation items
    */
@@ -76,32 +72,32 @@ export interface SidebarProps
     key?: string;
     active?: boolean;
   }>;
-  
+
   /**
    * Callback when a navigation item is clicked
    */
   onNavigate?: (href: string) => void;
-  
+
   /**
    * Whether the sidebar is collapsible
    */
   collapsible?: boolean;
-  
+
   /**
    * Whether the sidebar is collapsed
    */
   collapsed?: boolean;
-  
+
   /**
    * Callback when the sidebar is collapsed or expanded
    */
   onCollapse?: (collapsed: boolean) => void;
-  
+
   /**
    * Header content
    */
   header?: React.ReactNode;
-  
+
   /**
    * Footer content
    */
@@ -141,29 +137,32 @@ export interface SidebarProps
  * />
  */
 const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
-  ({
-    className,
-    variant,
-    width,
-    position,
-    mobile,
-    open,
-    onClose,
-    items = [],
-    onNavigate,
-    collapsible = false,
-    collapsed = false,
-    onCollapse,
-    header,
-    footer,
-    children,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      variant,
+      width,
+      position,
+      mobile,
+      open,
+      onClose,
+      items = [],
+      onNavigate,
+      collapsible = false,
+      collapsed = false,
+      onCollapse,
+      header,
+      footer,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     // Handle collapse toggle
     const handleCollapseToggle = () => {
       onCollapse?.(!collapsed);
     };
-    
+
     // Default header
     const defaultHeader = (
       <div className="h-16 flex items-center justify-between px-4 border-b">
@@ -197,9 +196,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
             className="p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             onClick={handleCollapseToggle}
           >
-            <span className="sr-only">
-              {collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            </span>
+            <span className="sr-only">{collapsed ? 'Expand sidebar' : 'Collapse sidebar'}</span>
             <svg
               className="h-6 w-6"
               fill="none"
@@ -227,19 +224,19 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
         )}
       </div>
     );
-    
+
     // Determine sidebar width based on collapsed state
     const sidebarWidth = collapsed ? 'collapsed' : width;
-    
+
     // Determine mobile transform class
     const mobileTransformClass = mobile
       ? open
         ? 'translate-x-0'
         : position === 'left'
-        ? '-translate-x-full'
-        : 'translate-x-full'
+          ? '-translate-x-full'
+          : 'translate-x-full'
       : '';
-    
+
     return (
       <>
         <aside
@@ -256,11 +253,11 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
         >
           {/* Header */}
           {header || defaultHeader}
-          
+
           {/* Navigation */}
           {items.length > 0 && (
             <nav className="p-4 space-y-1" aria-label="Sidebar main navigation">
-              {items.map((item, itemIdx) => (
+              {items.map((item, _itemIdx) => (
                 <a
                   key={item.key || item.href}
                   href={item.href}
@@ -296,20 +293,17 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
               ))}
             </nav>
           )}
-          
+
           {/* Content */}
           {children && <div className="p-4">{children}</div>}
-          
+
           {/* Footer */}
           {footer && <div className="mt-auto p-4 border-t">{footer}</div>}
         </aside>
-        
+
         {/* Overlay for mobile */}
         {mobile && open && (
-          <div
-            className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden"
-            onClick={onClose}
-          />
+          <div className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden" onClick={onClose} />
         )}
       </>
     );

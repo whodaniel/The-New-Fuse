@@ -3,6 +3,23 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./ui/wizard": {
+      "types": "./ui/wizard/index.ts",
+      "import": "./ui/wizard/index.ts",
+      "require": "./ui/wizard/index.ts"
+    },
+    "./ui/*": {
+      "types": "./ui/*/index.ts",
+      "import": "./ui/*/index.ts",
+      "require": "./ui/*/index.ts"
+    }
+  },
   "scripts": {
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
@@ -12,9 +29,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "react": "^18.3.1"
+    "react": "^18.3.1",
+    "lucide-react": "^0.460.0"
   },
   "devDependencies": {
-    "@the-new-fuse/types": "workspace:*"
+    "@the-new-fuse/types": "workspace:*",
+    "@types/react": "^18.3.0"
   }
 }

@@ -13,6 +13,7 @@ export * from './code-execution';
 export * from './jules';
 export * from './marketplace';
 export * from './mass';
+export * from './prompt-templates';
 export * from './system';
 export * from './tasks';
 export * from './users';

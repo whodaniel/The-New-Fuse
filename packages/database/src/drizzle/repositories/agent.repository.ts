@@ -30,13 +30,13 @@ export class DrizzleAgentRepository {
   }
 
   /**
-   * Find agent by ID
+   * Find agent by ID (Safe: Requires userId)
    */
-  async findById(id: string): Promise<Agent | null> {
+  async findById(id: string, userId: string): Promise<Agent | null> {
     const [agent] = await db
       .select()
       .from(agents)
-      .where(and(eq(agents.id, id), isNull(agents.deletedAt)));
+      .where(and(eq(agents.id, id), eq(agents.userId, userId), isNull(agents.deletedAt)));
 
     return agent ?? null;
   }
@@ -45,13 +45,14 @@ export class DrizzleAgentRepository {
    * Find agent by ID with metadata
    */
   async findByIdWithMetadata(
-    id: string
+    id: string,
+    userId: string
   ): Promise<(Agent & { metadata: AgentMetadata | null }) | null> {
     const result = await db
       .select()
       .from(agents)
       .leftJoin(agentMetadata, eq(agents.id, agentMetadata.agentId))
-      .where(and(eq(agents.id, id), isNull(agents.deletedAt)));
+      .where(and(eq(agents.id, id), eq(agents.userId, userId), isNull(agents.deletedAt)));
 
     if (!result[0]) return null;
 
@@ -75,21 +76,21 @@ export class DrizzleAgentRepository {
   /**
    * Find all active agents
    */
-  async findActive(): Promise<Agent[]> {
+  async findActive(userId: string): Promise<Agent[]> {
     return db
       .select()
       .from(agents)
-      .where(and(eq(agents.status, 'ACTIVE'), isNull(agents.deletedAt)));
+      .where(and(eq(agents.status, 'ACTIVE'), eq(agents.userId, userId), isNull(agents.deletedAt)));
   }
 
   /**
    * Find all agents (with optional limit)
    */
-  async findAll(limit?: number): Promise<Agent[]> {
+  async findAll(userId: string, limit?: number): Promise<Agent[]> {
     let query = db
       .select()
       .from(agents)
-      .where(isNull(agents.deletedAt))
+      .where(and(eq(agents.userId, userId), isNull(agents.deletedAt)))
       .orderBy(desc(agents.createdAt));
 
     if (limit) {
@@ -103,11 +104,11 @@ export class DrizzleAgentRepository {
   /**
    * Update an agent
    */
-  async update(id: string, data: Partial<NewAgent>): Promise<Agent | null> {
+  async update(id: string, userId: string, data: Partial<NewAgent>): Promise<Agent | null> {
     const [agent] = await db
       .update(agents)
       .set({ ...data, updatedAt: new Date() })
-      .where(eq(agents.id, id))
+      .where(and(eq(agents.id, id), eq(agents.userId, userId)))
       .returning();
 
     return agent ?? null;
@@ -116,11 +117,11 @@ export class DrizzleAgentRepository {
   /**
    * Soft delete an agent
    */
-  async softDelete(id: string): Promise<boolean> {
+  async softDelete(id: string, userId: string): Promise<boolean> {
     const result = await db
       .update(agents)
       .set({ deletedAt: new Date(), updatedAt: new Date() })
-      .where(eq(agents.id, id))
+      .where(and(eq(agents.id, id), eq(agents.userId, userId)))
       .returning();
 
     return result.length > 0;
@@ -129,8 +130,11 @@ export class DrizzleAgentRepository {
   /**
    * Hard delete an agent (use with caution)
    */
-  async hardDelete(id: string): Promise<boolean> {
-    const result = await db.delete(agents).where(eq(agents.id, id)).returning();
+  async hardDelete(id: string, userId: string): Promise<boolean> {
+    const result = await db
+      .delete(agents)
+      .where(and(eq(agents.id, id), eq(agents.userId, userId)))
+      .returning();
     return result.length > 0;
   }
 
@@ -404,13 +408,17 @@ export class DrizzleAgentRepository {
   /**
    * Find registration by ID
    */
-  async findRegistrationById(id: string) {
-    const [registration] = await db
-      .select()
+  async findRegistrationById(id: string, userId?: string) {
+    // Join to check ownership if userId provided
+    const [row] = await db
+      .select({
+        registration: agentRegistrations,
+      })
       .from(agentRegistrations)
-      .where(eq(agentRegistrations.id, id));
+      .innerJoin(agents, eq(agentRegistrations.agentId, agents.id))
+      .where(and(eq(agentRegistrations.id, id), userId ? eq(agents.userId, userId) : undefined));
 
-    return registration ?? null;
+    return row?.registration ?? null;
   }
 
   /**
@@ -478,13 +486,13 @@ export class DrizzleAgentRepository {
   /**
    * Find registration with related data
    */
-  async findRegistrationWithDetails(registrationId: string) {
-    // First get the registration
-    const registration = await this.findRegistrationById(registrationId);
-    if (!registration) return null;
+  async findRegistrationWithDetails(registrationId: string, userId: string) {
+    // First get the registration (verifying ownership)
+    const registration = await this.findRegistrationById(registrationId, userId);
+    if (!registration || !registration.agentId) return null;
 
-    // Get the agent
-    const agent = await this.findById(registration.agentId);
+    // Get the agent (we know userId matches because findRegistrationById checked it)
+    const agent = await this.findById(registration.agentId, userId);
 
     // Get capabilities
     const capabilities = await db

@@ -6,11 +6,12 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "composite": true,
+    "noEmit": false,
+
+    "composite": false,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
@@ -22,27 +23,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@the-new-fuse/api-client": ["../api-client/src"],
+      "@the-new-fuse/api-types/*": ["../api-types/*"],
       "@the-new-fuse/hooks": ["../hooks/src"],
       "@the-new-fuse/types": ["../types/src"]
     },
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "react"]
   },
-  "include": ["src/**/*"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "../api-client"
-    },
-    {
-      "path": "../hooks"
-    },
-    {
-      "path": "../types"
-    },
-    {
-      "path": "../utils"
-    }
-  ]
+  "include": ["src/**/*"]
+  // references removed
 }

@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "declaration": true,
+    "declaration": false,
     "declarationMap": false,
     "jsx": "react-jsx",
     "strict": true,
@@ -43,10 +43,10 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx"
-  ],
-  "references": [
-    { "path": "../../packages/types" },
-    { "path": "../../packages/utils" },
-    { "path": "./tsconfig.node.json" }
   ]
+  // "references": [
+  //   { "path": "../../packages/types" },
+  //   { "path": "../../packages/utils" },
+  //   { "path": "./tsconfig.node.json" }
+  // ]
 }

@@ -7,9 +7,10 @@
     },
     "outDir": "./dist",
     "rootDir": ".",
-    "types": []
+    "types": [],
+    "jsx": "react-jsx"
   },
-  "files": [],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [{ "path": "./ai/llm" }, { "path": "../types" }]
 }

@@ -65,36 +65,6 @@ export interface WorkflowTemplate {
   metadata?: Record<string, any>;
 }
 
-// Mock data for fallback
-const mockWorkflows: Workflow[] = [
-  {
-    id: 'wf-1',
-    name: 'Content Automation',
-    description: 'Automate content creation and publishing',
-    nodes: [],
-    edges: [],
-    status: 'active',
-    version: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    createdBy: 'user-1',
-    tags: ['content', 'ai'],
-  },
-  {
-    id: 'wf-2',
-    name: 'Data Sync',
-    description: 'Synchronize data between databases',
-    nodes: [],
-    edges: [],
-    status: 'paused',
-    version: 2,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    createdBy: 'user-1',
-    tags: ['data', 'sync'],
-  },
-];
-
 class WorkflowService {
   private baseUrl: string;
   private apiKey?: string;
@@ -112,7 +82,7 @@ class WorkflowService {
     };
 
     if (this.apiKey) {
-      headers['Authorization'] = `Bearer ${this.apiKey}`;
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${this.apiKey}`;
     }
 
     const response = await fetch(url, {
@@ -133,8 +103,8 @@ class WorkflowService {
       const workflows = await this.request<any[]>('/workflows');
       return workflows.map(this.transformWorkflow);
     } catch (error) {
-      console.warn('Failed to fetch workflows, using mock data:', error);
-      return mockWorkflows;
+      console.error('Failed to fetch workflows:', error);
+      throw error;
     }
   }
 
@@ -158,19 +128,8 @@ class WorkflowService {
       });
       return this.transformWorkflow(created);
     } catch (error) {
-      console.warn('Failed to create workflow, using mock response:', error);
-      // Return a mock created workflow
-      return {
-        ...workflow,
-        id: `wf-${Date.now()}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        status: workflow.status || 'draft',
-        version: workflow.version || 1,
-        nodes: workflow.nodes || [],
-        edges: workflow.edges || [],
-        createdBy: 'current-user',
-      } as Workflow;
+      console.error('Failed to create workflow:', error);
+      throw error;
     }
   }
 
@@ -365,7 +324,7 @@ class WorkflowService {
         }
       };
 
-      ws.onerror = (error) => {
+      ws.onerror = (_error) => {
         // Suppress noisy errors in console if it's just a connection refusal (common in dev/demos)
         // console.warn('WebSocket connection error - real-time updates may be unavailable:', error);
       };

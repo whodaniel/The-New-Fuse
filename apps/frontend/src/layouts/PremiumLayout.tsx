@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Toaster } from 'react-hot-toast'; // Added Toaster import
 import { Outlet } from 'react-router-dom';
 import { PremiumHeader } from '../components/Navigation/PremiumHeader';
 import { PremiumSidebar } from '../components/Sidebar/PremiumSidebar';
@@ -13,6 +14,16 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen w-full text-gray-100 font-sans selection:bg-blue-500/30">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#1e293b',
+            color: '#fff',
+            border: '1px solid rgba(255,255,255,0.1)',
+          },
+        }}
+      />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black"

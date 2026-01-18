@@ -7,6 +7,7 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
   ArrowLeft,
+  BookOpen,
   Bot,
   Copy,
   Cpu,
@@ -18,20 +19,34 @@ import {
   Sparkles,
   Terminal,
   Users,
+  Wand,
   Wand2,
   Zap,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // Import existing forms and services
 import { NewAgentForm, agentFormSchema } from '@/components/forms/NewAgentForm';
 import { useToast } from '@/components/ui/toast';
+import { AGENT_CATALOG } from '@/data/agentCatalog';
 import { agentService } from '@/services/agent';
 import { chatApiService } from '@/services/chatApi';
 import { AgentType } from '@/types/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+
+// Wizard System imports
+import {
+  AgentCapabilities,
+  AgentConfiguration,
+  AgentTesting,
+  DEFAULT_WIZARDS,
+  WizardDefinition,
+  WizardProgress,
+  WizardStateManager,
+  WizardStep,
+} from '@the-new-fuse/features/ui/wizard';
 
 // Terminal window management interface
 export interface TerminalAgentWindow {
@@ -81,8 +96,22 @@ export const UnifiedAgentCreator: React.FC = () => {
     | 'terminal-claude'
     | 'terminal-native'
     | 'terminal-integrated'
+    | 'catalog'
+    | 'wizard'
   >('choose');
+
+  // Wizard system state
+  const [wizardManager] = useState(() => {
+    const manager = new WizardStateManager();
+    DEFAULT_WIZARDS.forEach((wizard: WizardDefinition) => manager.registerWizard(wizard));
+    return manager;
+  });
+  const [activeWizard, setActiveWizard] = useState<WizardProgress | null>(null);
+  const [wizardValidationErrors, setWizardValidationErrors] = useState<string[]>([]);
+  const [isWizardValidating, setIsWizardValidating] = useState(false);
   const [step, setStep] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [catalogSearch, setCatalogSearch] = useState('');
 
   // Advanced form setup
   const advancedForm = useForm({
@@ -163,8 +192,8 @@ export const UnifiedAgentCreator: React.FC = () => {
   }>({});
 
   // Terminal window management state
-  const [terminalWindows, setTerminalWindows] = useState<TerminalAgentWindow[]>([]);
-  const [selectedTerminalType, setSelectedTerminalType] = useState<
+  const [_terminalWindows, setTerminalWindows] = useState<TerminalAgentWindow[]>([]);
+  const [selectedTerminalType, _setSelectedTerminalType] = useState<
     'claude-code' | 'native' | 'integrated'
   >('claude-code');
 
@@ -244,7 +273,7 @@ export const UnifiedAgentCreator: React.FC = () => {
 
   // Generate contextual suggestions based on user input
   const generateContextualSuggestions = (goal: ConversationGoal): AgentSuggestion[] => {
-    const { description, context, agentCount } = goal;
+    const { description, context: _context, agentCount } = goal;
     const isMarketingGoal =
       description.toLowerCase().includes('marketing') ||
       description.toLowerCase().includes('campaign');
@@ -391,7 +420,7 @@ export const UnifiedAgentCreator: React.FC = () => {
           description: agent.description,
           type: agent.type as any,
           systemPrompt: agent.systemPrompt,
-          capabilities: agent.capabilities,
+          capabilities: agent.capabilities as any,
           metadata: {
             personalityTraits: agent.personalityTraits,
             role: agent.role,
@@ -426,7 +455,7 @@ export const UnifiedAgentCreator: React.FC = () => {
         name: quickFormData.name,
         description: quickFormData.description,
         type: agentType,
-        capabilities: getDefaultCapabilitiesForRole(quickFormData.role),
+        capabilities: getDefaultCapabilitiesForRole(quickFormData.role) as any,
         metadata: {
           personalityTraits: getDefaultPersonalityForRole(quickFormData.role),
           communicationStyle: 'friendly',
@@ -451,7 +480,7 @@ export const UnifiedAgentCreator: React.FC = () => {
         description: values.description,
         capabilities: values.capabilities,
         metadata: values.metadata,
-        config: values.config,
+        // config removed as it is not in CreateAgentDto
       });
 
       addToast('Agent created successfully!', 'success');
@@ -469,7 +498,7 @@ export const UnifiedAgentCreator: React.FC = () => {
         name: chatContext.suggestedName || 'New Agent',
         description: `Agent created based on chat conversation needs`,
         type: AgentType.ASSISTANT,
-        capabilities: getCapabilitiesFromChatContext(chatContext),
+        capabilities: getCapabilitiesFromChatContext(chatContext) as any,
         metadata: {
           personalityTraits: ['Helpful', 'Contextual'],
           communicationStyle: 'friendly',
@@ -743,6 +772,464 @@ export const UnifiedAgentCreator: React.FC = () => {
     }
   };
 
+  const handleCatalogSelect = (agent: (typeof AGENT_CATALOG)[0]) => {
+    setQuickFormData({
+      name: agent.name,
+      description: agent.description,
+      type: 'assistant', // Default to assistant, user can change
+      role: 'general', // Default to general, capabilities will be refined
+      capabilities: {}, // specialized capabilities can be mapped if needed
+    });
+    // In a real implementation, we would map the catalog tags/type to capabilities
+    // For now, we populate the basics and send them to the quick editor
+    setCurrentPath('quick');
+  };
+
+  // ========== Wizard System Integration ==========
+
+  // Start a wizard flow
+  const startWizardFlow = useCallback(
+    (wizardId: string) => {
+      try {
+        const progress = wizardManager.startWizard(
+          wizardId,
+          'current-user', // In production, use actual user ID
+          'user', // In production, use actual user role
+          {}
+        );
+        setActiveWizard(progress);
+        setWizardValidationErrors([]);
+        setCurrentPath('wizard');
+      } catch (error) {
+        console.error('Failed to start wizard:', error);
+        addToast('Failed to start wizard. Please try again.', 'error');
+      }
+    },
+    [wizardManager, addToast]
+  );
+
+  // Get current wizard step
+  const getCurrentWizardStep = useCallback((): WizardStep | null => {
+    if (!activeWizard) return null;
+    return wizardManager.getCurrentStep('current-user', activeWizard.wizardId);
+  }, [activeWizard, wizardManager]);
+
+  // Get current wizard definition
+  const getCurrentWizardDefinition = useCallback((): WizardDefinition | null => {
+    if (!activeWizard) return null;
+    const wizards = wizardManager.getAvailableWizards('user', 'beginner');
+    return wizards.find((w) => w.id === activeWizard.wizardId) || null;
+  }, [activeWizard, wizardManager]);
+
+  // Handle wizard next step
+  const handleWizardNext = useCallback(async () => {
+    if (!activeWizard) return;
+
+    setIsWizardValidating(true);
+    setWizardValidationErrors([]);
+
+    try {
+      const validation = await wizardManager.validateCurrentStep(
+        'current-user',
+        activeWizard.wizardId
+      );
+
+      if (!validation.valid) {
+        setWizardValidationErrors(validation.errors || ['Validation failed']);
+        setIsWizardValidating(false);
+        return;
+      }
+
+      const updatedProgress = await wizardManager.next('current-user', activeWizard.wizardId);
+      setActiveWizard(updatedProgress);
+
+      // Check if wizard is complete
+      if (updatedProgress.completionPercentage === 100) {
+        await handleWizardComplete(updatedProgress);
+      }
+    } catch (error) {
+      console.error('Wizard next error:', error);
+      setWizardValidationErrors([error instanceof Error ? error.message : 'Failed to proceed']);
+    } finally {
+      setIsWizardValidating(false);
+    }
+  }, [activeWizard, wizardManager]);
+
+  // Handle wizard previous step
+  const handleWizardPrevious = useCallback(() => {
+    if (!activeWizard) return;
+
+    try {
+      const updatedProgress = wizardManager.previous('current-user', activeWizard.wizardId);
+      setActiveWizard(updatedProgress);
+      setWizardValidationErrors([]);
+    } catch (error) {
+      console.error('Wizard previous error:', error);
+    }
+  }, [activeWizard, wizardManager]);
+
+  // Handle wizard skip
+  const handleWizardSkip = useCallback(async () => {
+    if (!activeWizard) return;
+
+    try {
+      const updatedProgress = await wizardManager.skip('current-user', activeWizard.wizardId);
+      setActiveWizard(updatedProgress);
+      setWizardValidationErrors([]);
+    } catch (error) {
+      console.error('Wizard skip error:', error);
+      addToast('Cannot skip this step', 'error');
+    }
+  }, [activeWizard, wizardManager, addToast]);
+
+  // Handle wizard data update
+  const handleWizardDataChange = useCallback(
+    (data: Record<string, unknown>) => {
+      if (!activeWizard) return;
+
+      wizardManager.updateContext('current-user', activeWizard.wizardId, data);
+      // Refresh the progress to get updated context
+      const updatedProgress = wizardManager.getProgress('current-user', activeWizard.wizardId);
+      if (updatedProgress) {
+        setActiveWizard(updatedProgress);
+      }
+    },
+    [activeWizard, wizardManager]
+  );
+
+  // Handle wizard completion
+  const handleWizardComplete = useCallback(
+    async (progress: WizardProgress) => {
+      try {
+        const wizardData = progress.context.data;
+
+        // Create agent from wizard data
+        if (progress.wizardId === 'create-agent') {
+          const agentType = wizardData.agentType as string;
+          const type =
+            agentType === 'assistant'
+              ? AgentType.BASIC
+              : agentType === 'specialist'
+                ? AgentType.ASSISTANT
+                : AgentType.BASIC;
+
+          await agentService.createAgent({
+            name: (wizardData.agentName as string) || 'New Agent',
+            description: (wizardData.agentDescription as string) || '',
+            type,
+            capabilities: (wizardData.capabilities as any) || {},
+            metadata: {
+              provider: wizardData.provider,
+              model: wizardData.model,
+              createdViaWizard: true,
+            },
+          });
+
+          addToast('Agent created successfully!', 'success');
+          navigate('/agents');
+        } else {
+          // For other wizards, just show completion
+          addToast('Wizard completed successfully!', 'success');
+          setCurrentPath('choose');
+        }
+      } catch (error) {
+        console.error('Error completing wizard:', error);
+        addToast('Failed to complete wizard. Please try again.', 'error');
+      }
+    },
+    [addToast, navigate]
+  );
+
+  // Handle wizard cancel
+  const handleWizardCancel = useCallback(() => {
+    if (activeWizard) {
+      wizardManager.resetWizard('current-user', activeWizard.wizardId);
+    }
+    setActiveWizard(null);
+    setWizardValidationErrors([]);
+    setCurrentPath('choose');
+  }, [activeWizard, wizardManager]);
+
+  // Render wizard step content
+  const renderWizardStepContent = useCallback(() => {
+    if (!activeWizard) return null;
+
+    const currentStep = getCurrentWizardStep();
+    if (!currentStep) return null;
+
+    const stepProps = {
+      context: activeWizard.context,
+      onDataChange: handleWizardDataChange,
+      validationErrors: wizardValidationErrors,
+    };
+
+    // Render the appropriate step component based on the component name
+    switch (currentStep.component) {
+      case 'AgentConfiguration':
+        return <AgentConfiguration {...stepProps} />;
+      case 'AgentCapabilities':
+        return <AgentCapabilities {...stepProps} />;
+      case 'AgentTesting':
+        return <AgentTesting {...stepProps} />;
+      default:
+        // Default step content for steps without specific components
+        return (
+          <div className="p-6 bg-gray-50 rounded-lg text-center">
+            <h3 className="text-lg font-semibold mb-2">{currentStep.title}</h3>
+            <p className="text-muted-foreground">{currentStep.description}</p>
+            {currentStep.helpText && (
+              <p className="mt-4 text-sm text-blue-600">{currentStep.helpText}</p>
+            )}
+          </div>
+        );
+    }
+  }, [activeWizard, getCurrentWizardStep, handleWizardDataChange, wizardValidationErrors]);
+
+  // Render wizard guided creation
+  const renderWizardGuided = () => {
+    if (!activeWizard) {
+      // Show wizard selection
+      const availableWizards = wizardManager.getAvailableWizards('user', 'beginner');
+
+      return (
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="mb-6">
+            <Button variant="ghost" onClick={() => setCurrentPath('choose')}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+          </div>
+
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-4">Guided Wizards</h1>
+            <p className="text-muted-foreground">
+              Step-by-step guides to help you accomplish common tasks
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {availableWizards.map((wizard) => (
+              <Card
+                key={wizard.id}
+                className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => startWizardFlow(wizard.id)}
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <Wand className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{wizard.name}</h3>
+                      <Badge variant="secondary">{wizard.category}</Badge>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{wizard.description}</p>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>{wizard.steps.length} steps</span>
+                    {wizard.estimatedTotalTime && (
+                      <>
+                        <span>•</span>
+                        <span>{Math.round(wizard.estimatedTotalTime / 60)} minutes</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Show active wizard
+    const currentStep = getCurrentWizardStep();
+    const wizardDefinition = getCurrentWizardDefinition();
+
+    if (!currentStep || !wizardDefinition) return null;
+
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Wizard Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">{wizardDefinition.name}</h1>
+            <p className="text-muted-foreground">{wizardDefinition.description}</p>
+          </div>
+          <Button variant="ghost" onClick={handleWizardCancel}>
+            Cancel
+          </Button>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="space-y-2">
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all duration-300"
+              style={{ width: `${activeWizard.completionPercentage}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <span>
+              Step {activeWizard.completedSteps.length + 1} of {wizardDefinition.steps.length}
+            </span>
+            <span>{activeWizard.completionPercentage}% Complete</span>
+          </div>
+        </div>
+
+        {/* Step Content */}
+        <Card className="p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold">{currentStep.title}</h2>
+            <p className="text-muted-foreground">{currentStep.description}</p>
+          </div>
+
+          {/* Validation Errors */}
+          {wizardValidationErrors.length > 0 && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              {wizardValidationErrors.map((error, idx) => (
+                <p key={idx} className="text-sm text-red-600">
+                  {error}
+                </p>
+              ))}
+            </div>
+          )}
+
+          {/* Step Component */}
+          {renderWizardStepContent()}
+        </Card>
+
+        {/* Navigation */}
+        <div className="flex justify-between">
+          <div>
+            <Button
+              variant="outline"
+              onClick={handleWizardPrevious}
+              disabled={activeWizard.completedSteps.length === 0}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Previous
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            {currentStep.canSkip && (
+              <Button variant="ghost" onClick={handleWizardSkip}>
+                Skip
+              </Button>
+            )}
+            <Button onClick={handleWizardNext} disabled={isWizardValidating}>
+              {isWizardValidating ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : null}
+              {activeWizard.completionPercentage >= 90 ? 'Complete' : 'Next'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderCatalogSelection = () => {
+    const categories = ['All', ...Array.from(new Set(AGENT_CATALOG.map((a: any) => a.category)))];
+
+    const filteredAgents = AGENT_CATALOG.filter((agent: any) => {
+      const matchesCategory = selectedCategory === 'All' || agent.category === selectedCategory;
+      const matchesSearch =
+        agent.name.toLowerCase().includes(catalogSearch.toLowerCase()) ||
+        agent.description.toLowerCase().includes(catalogSearch.toLowerCase()) ||
+        agent.tags.some((tag: string) => tag.toLowerCase().includes(catalogSearch.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    });
+
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-6">
+          <Button variant="ghost" onClick={() => setCurrentPath('choose')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <div className="flex flex-col md:flex-row md:items-center justify-between mt-4 gap-4">
+            <div>
+              <h1 className="text-3xl font-bold">Agent Catalog</h1>
+              <p className="text-muted-foreground">Browse pre-configured agent templates</p>
+            </div>
+            <div className="relative w-full md:w-72">
+              <Input
+                placeholder="Search templates..."
+                value={catalogSearch}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setCatalogSearch(e.target.value)
+                }
+                className="pl-4"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grow overflow-y-auto pr-2 custom-scrollbar">
+          {categories.map((category) => (
+            <Badge
+              key={category as string}
+              variant={selectedCategory === category ? 'default' : 'outline'}
+              className="cursor-pointer px-3 py-1 text-sm hover:bg-primary/90"
+              onClick={() => setSelectedCategory(category as string)}
+            >
+              {category as string}
+            </Badge>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredAgents.map((agent: any) => (
+            <Card
+              key={agent.id}
+              className="p-6 cursor-pointer hover:shadow-lg transition-all border-l-4 hover:border-l-blue-500 flex flex-col"
+              style={{
+                borderLeftColor:
+                  agent.type === 'claude'
+                    ? '#da7756'
+                    : agent.type === 'pydantic'
+                      ? '#3b82f6'
+                      : '#22c55e',
+              }}
+              onClick={() => handleCatalogSelect(agent)}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <Badge variant="secondary" className="text-xs">
+                  {agent.category}
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className={`text-xs ${
+                    agent.type === 'claude'
+                      ? 'text-orange-600 bg-orange-50'
+                      : agent.type === 'pydantic'
+                        ? 'text-blue-600 bg-blue-50'
+                        : 'text-green-600 bg-green-50'
+                  }`}
+                >
+                  {agent.type}
+                </Badge>
+              </div>
+              <h3 className="font-bold text-lg mb-2">{agent.name}</h3>
+              <p className="text-sm text-muted-foreground mb-4 grow">{agent.description}</p>
+              <div className="flex flex-wrap gap-1 mt-auto">
+                {agent.tags.slice(0, 3).map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+                {agent.tags.length > 3 && (
+                  <span className="text-xs text-gray-400 px-1">+{agent.tags.length - 3}</span>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  };
   const renderPathSelection = () => (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="text-center">
@@ -804,6 +1291,23 @@ export const UnifiedAgentCreator: React.FC = () => {
           </div>
         </Card>
 
+        {/* Template Catalog */}
+        <Card
+          className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+          onClick={() => setCurrentPath('catalog')}
+        >
+          <div className="text-center space-y-4">
+            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto">
+              <BookOpen className="h-6 w-6 text-indigo-600" />
+            </div>
+            <h3 className="text-lg font-semibold">Template Catalog</h3>
+            <p className="text-sm text-muted-foreground">
+              Browse pre-configured agents for Podcast, Marketing, and more
+            </p>
+            <Badge variant="secondary">Browse</Badge>
+          </div>
+        </Card>
+
         {/* Multi-Agent Teams */}
         <Card
           className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
@@ -821,6 +1325,23 @@ export const UnifiedAgentCreator: React.FC = () => {
               Create multiple agents that work together automatically
             </p>
             <Badge variant="secondary">Advanced</Badge>
+          </div>
+        </Card>
+
+        {/* Guided Wizard */}
+        <Card
+          className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 border-yellow-200"
+          onClick={() => setCurrentPath('wizard')}
+        >
+          <div className="text-center space-y-4">
+            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto">
+              <Wand className="h-6 w-6 text-yellow-600" />
+            </div>
+            <h3 className="text-lg font-semibold">Guided Wizard</h3>
+            <p className="text-sm text-muted-foreground">
+              Step-by-step guided creation with contextual help
+            </p>
+            <Badge variant="secondary">Recommended</Badge>
           </div>
         </Card>
       </div>
@@ -918,7 +1439,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setQuickFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="e.g., Code Helper"
             />
           </div>
@@ -927,7 +1450,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
               }
               placeholder="What does this agent do?"
@@ -939,7 +1462,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Type</label>
             <Select
               value={quickFormData.type}
-              onChange={(value) => setQuickFormData((prev) => ({ ...prev, type: value }))}
+              onChange={(value: any) => setQuickFormData((prev) => ({ ...prev, type: value }))}
             >
               <option value="assistant">General Assistant</option>
               <option value="specialist">Specialist</option>
@@ -951,7 +1474,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Primary Role</label>
             <Select
               value={quickFormData.role}
-              onChange={(value) => setQuickFormData((prev) => ({ ...prev, role: value }))}
+              onChange={(value: any) => setQuickFormData((prev) => ({ ...prev, role: value }))}
             >
               <option value="general">General Help</option>
               <option value="coding">Code Assistance</option>
@@ -1002,7 +1525,7 @@ export const UnifiedAgentCreator: React.FC = () => {
               <label className="block text-sm font-medium mb-2">What's your goal?</label>
               <Textarea
                 value={conversationGoal.description}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setConversationGoal((prev) => ({ ...prev, description: e.target.value }))
                 }
                 placeholder="e.g., Plan a product launch, Analyze market data, Create content strategy..."
@@ -1016,7 +1539,7 @@ export const UnifiedAgentCreator: React.FC = () => {
               </label>
               <Textarea
                 value={conversationGoal.context}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setConversationGoal((prev) => ({ ...prev, context: e.target.value }))
                 }
                 placeholder="Any specific requirements, constraints, or details..."
@@ -1029,7 +1552,7 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <label className="block text-sm font-medium mb-2">Number of Agents</label>
                 <Select
                   value={conversationGoal.agentCount.toString()}
-                  onChange={(value) =>
+                  onChange={(value: any) =>
                     setConversationGoal((prev) => ({ ...prev, agentCount: parseInt(value) }))
                   }
                 >
@@ -1044,7 +1567,7 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <label className="block text-sm font-medium mb-2">Complexity Level</label>
                 <Select
                   value={conversationGoal.complexity}
-                  onChange={(value) =>
+                  onChange={(value: any) =>
                     setConversationGoal((prev) => ({ ...prev, complexity: value as any }))
                   }
                 >
@@ -1186,7 +1709,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={chatContext.suggestedName || ''}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setChatContext((prev) => ({ ...prev, suggestedName: e.target.value }))
               }
               placeholder="Name for your new agent"
@@ -1285,7 +1808,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setQuickFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="e.g., Claude CLI Assistant"
             />
           </div>
@@ -1294,7 +1819,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
               }
               placeholder="Describe what this Claude Code CLI agent will do..."
@@ -1316,7 +1841,7 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <div key={key} className="flex items-center space-x-2">
                   <Checkbox
                     checked={quickFormData.capabilities?.[key] || false}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked: boolean) =>
                       setQuickFormData((prev) => ({
                         ...prev,
                         capabilities: { ...prev.capabilities, [key]: checked },
@@ -1401,7 +1926,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setQuickFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="e.g., Terminal Bridge Agent"
             />
           </div>
@@ -1410,7 +1937,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
               }
               placeholder="Describe what this terminal agent will do..."
@@ -1432,7 +1959,7 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <div key={key} className="flex items-center space-x-2">
                   <Checkbox
                     checked={quickFormData.capabilities?.[key] || false}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked: boolean) =>
                       setQuickFormData((prev) => ({
                         ...prev,
                         capabilities: { ...prev.capabilities, [key]: checked },
@@ -1514,7 +2041,9 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Agent Name</label>
             <Input
               value={quickFormData.name}
-              onChange={(e) => setQuickFormData((prev) => ({ ...prev, name: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setQuickFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="e.g., TNF Integrated Agent"
             />
           </div>
@@ -1523,7 +2052,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             <label className="block text-sm font-medium mb-2">Description</label>
             <Textarea
               value={quickFormData.description}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setQuickFormData((prev) => ({ ...prev, description: e.target.value }))
               }
               placeholder="Describe what this integrated agent will do..."
@@ -1547,7 +2076,7 @@ export const UnifiedAgentCreator: React.FC = () => {
                 <div key={key} className="flex items-center space-x-2">
                   <Checkbox
                     checked={quickFormData.capabilities?.[key] || false}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked: boolean) =>
                       setQuickFormData((prev) => ({
                         ...prev,
                         capabilities: { ...prev.capabilities, [key]: checked },
@@ -1622,6 +2151,10 @@ export const UnifiedAgentCreator: React.FC = () => {
         return renderTerminalNative();
       case 'terminal-integrated':
         return renderTerminalIntegrated();
+      case 'catalog':
+        return renderCatalogSelection();
+      case 'wizard':
+        return renderWizardGuided();
       default:
         return renderPathSelection();
     }

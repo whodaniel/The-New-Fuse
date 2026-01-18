@@ -84,6 +84,7 @@ export type {
 export {
   DrizzleAgentRepository,
   DrizzleChatRepository,
+  DrizzlePromptTemplateRepository,
   DrizzleTaskRepository,
   DrizzleUserRepository,
   DrizzleWorkflowRepository,
@@ -92,6 +93,7 @@ export {
   agentPromptVersionRepository,
   drizzleAgentRepository,
   drizzleChatRepository,
+  drizzlePromptTemplateRepository,
   drizzleTaskRepository,
   drizzleUserRepository,
   drizzleWorkflowRepository,

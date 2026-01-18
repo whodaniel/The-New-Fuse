@@ -1,13 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import { ChevronDown, ChevronUp, FileText, Play, Variable, X } from 'lucide-react';
+import React, { useCallback, useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { 
-  Play, 
-  FileText, 
-  Variable, 
-  ChevronDown,
-  ChevronUp,
-  X
-} from 'lucide-react';
 import { PromptTemplate, PromptTemplateService, PromptVersion } from './types';
 
 interface PromptTemplateNodeProps {
@@ -18,6 +11,7 @@ interface PromptTemplateNodeProps {
     variables?: Record<string, any>;
     outputVariable?: string;
     templateService: PromptTemplateService;
+    userId: string; // Required for multi-tenancy
     onTemplateSelect?: (templateId: string) => void;
     onVersionSelect?: (versionId: string) => void;
     onVariableChange?: (variables: Record<string, any>) => void;
@@ -26,11 +20,7 @@ interface PromptTemplateNodeProps {
   selected?: boolean;
 }
 
-export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
-  id,
-  data,
-  selected
-}) => {
+export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({ id, data, selected }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,11 +35,14 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
       setIsLoading(true);
       setError(null);
       try {
-        const allTemplates = await data.templateService.listTemplates();
+        const allTemplates = await data.templateService.listTemplates(data.userId);
         setTemplates(allTemplates);
-        
+
         if (data.templateId) {
-          const loadedTemplate = await data.templateService.getTemplate(data.templateId);
+          const loadedTemplate = await data.templateService.getTemplate(
+            data.templateId,
+            data.userId
+          );
           setTemplate(loadedTemplate);
         }
       } catch (err) {
@@ -60,40 +53,47 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
         setIsLoading(false);
       }
     };
-    
+
     loadTemplates();
   }, [data.templateService, data.templateId, id]);
 
-  const handleTemplateSelect = useCallback(async (templateId: string) => {
-    try {
-      setError(null);
-      const selectedTemplate = await data.templateService.getTemplate(templateId);
-      setTemplate(selectedTemplate);
-      data.onTemplateSelect?.(templateId);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load template';
-      setError(errorMessage);
-      console.error(`Error selecting template for node ${id}:`, err);
-    }
-  }, [data, id]);
+  const handleTemplateSelect = useCallback(
+    async (templateId: string) => {
+      try {
+        setError(null);
+        const selectedTemplate = await data.templateService.getTemplate(templateId, data.userId);
+        setTemplate(selectedTemplate);
+        data.onTemplateSelect?.(templateId);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load template';
+        setError(errorMessage);
+        console.error(`Error selecting template for node ${id}:`, err);
+      }
+    },
+    [data, id]
+  );
 
-  const handleVariableChange = useCallback((key: string, value: string) => {
-    const newVariables = {
-      ...data.variables,
-      [key]: value
-    };
-    data.onVariableChange?.(newVariables);
-  }, [data]);
+  const handleVariableChange = useCallback(
+    (key: string, value: string) => {
+      const newVariables = {
+        ...data.variables,
+        [key]: value,
+      };
+      data.onVariableChange?.(newVariables);
+    },
+    [data]
+  );
 
   const handleExecute = useCallback(async () => {
     if (!data.templateId) return;
-    
+
     setIsExecuting(true);
     setError(null);
     try {
       console.log(`Executing template for node ${id}`);
       const result = await data.templateService.executeTemplate(
         data.templateId,
+        data.userId,
         data.versionId,
         data.variables
       );
@@ -109,7 +109,7 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
 
   const getCurrentVersion = () => {
     if (!template) return null;
-    return data.versionId 
+    return data.versionId
       ? template.versions.find((v: PromptVersion) => v.id === data.versionId)
       : template.versions.find((v: PromptVersion) => v.id === template.currentVersion);
   };
@@ -117,7 +117,7 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
   const currentVersion = getCurrentVersion();
 
   return (
-    <div 
+    <div
       id={`prompt-template-node-${id}`}
       className={`bg-white rounded-lg border-2 shadow-lg transition-all ${
         selected ? 'border-blue-500 shadow-blue-200' : 'border-gray-200'
@@ -145,7 +145,7 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-1">
             <button
               onClick={handleExecute}
@@ -185,7 +185,10 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
 
         {/* Template Selection */}
         <div className="mb-4">
-          <label htmlFor={`template-select-${id}`} className="block text-xs font-medium text-gray-700 mb-1">
+          <label
+            htmlFor={`template-select-${id}`}
+            className="block text-xs font-medium text-gray-700 mb-1"
+          >
             Template
           </label>
           <select
@@ -196,15 +199,20 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
             className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           >
             <option value="">{isLoading ? 'Loading templates...' : 'Select a template...'}</option>
-            {templates.map(t => (
-              <option key={t.id} value={t.id}>{t.name}</option>
+            {templates.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
             ))}
           </select>
         </div>
         {/* Version Selection */}
         {template && (
           <div className="mb-4">
-            <label htmlFor={`version-select-${id}`} className="block text-xs font-medium text-gray-700 mb-1">
+            <label
+              htmlFor={`version-select-${id}`}
+              className="block text-xs font-medium text-gray-700 mb-1"
+            >
               Version
             </label>
             <select
@@ -234,7 +242,10 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 {Object.entries(currentVersion.variables).map(([key, defaultValue]) => (
                   <div key={key}>
-                    <label htmlFor={`variable-input-${id}-${key}`} className="block text-xs text-gray-600 mb-1">
+                    <label
+                      htmlFor={`variable-input-${id}-${key}`}
+                      className="block text-xs text-gray-600 mb-1"
+                    >
                       {key}
                     </label>
                     <input
@@ -250,7 +261,10 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
               </div>
             </div>
             <div className="mb-4">
-              <label htmlFor={`output-variable-input-${id}`} className="block text-xs font-medium text-gray-700 mb-1">
+              <label
+                htmlFor={`output-variable-input-${id}`}
+                className="block text-xs font-medium text-gray-700 mb-1"
+              >
                 Output Variable
               </label>
               <input
@@ -279,9 +293,13 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
             <div className="flex items-center justify-between mb-1">
               <span className="font-medium">Result (Node {id}):</span>
               <div className="flex items-center gap-1">
-                <span className={`px-1 py-0.5 rounded text-xs ${
-                  executionResult.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                }`}>
+                <span
+                  className={`px-1 py-0.5 rounded text-xs ${
+                    executionResult.success
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}
+                >
                   {executionResult.success ? 'Success' : 'Failed'}
                 </span>
                 <button
@@ -305,18 +323,16 @@ export const PromptTemplateNode: React.FC<PromptTemplateNodeProps> = ({
                   <div className="bg-white p-2 rounded border text-gray-800 max-h-20 overflow-y-auto">
                     <div className="font-medium text-xs text-gray-500 mb-1">Output:</div>
                     <div className="text-xs">
-                      {typeof executionResult.result === 'string' 
-                        ? executionResult.result.substring(0, 200) + (executionResult.result.length > 200 ? '...' : '')
-                        : JSON.stringify(executionResult.result, null, 2).substring(0, 200) + '...'
-                      }
+                      {typeof executionResult.result === 'string'
+                        ? executionResult.result.substring(0, 200) +
+                          (executionResult.result.length > 200 ? '...' : '')
+                        : JSON.stringify(executionResult.result, null, 2).substring(0, 200) + '...'}
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="text-red-600">
-                Error: {executionResult.error}
-              </div>
+              <div className="text-red-600">Error: {executionResult.error}</div>
             )}
           </div>
         )}

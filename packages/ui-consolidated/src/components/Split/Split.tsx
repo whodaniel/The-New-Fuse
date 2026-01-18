@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { SplitPane } from './SplitPane';
 import { cn } from '../../utils';
 import './Split.css';
+import { SplitPane } from './SplitPane';
 
 /**
  * Split component props
@@ -77,17 +77,20 @@ export interface SplitProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
  * </Split>
  */
 const Split = React.forwardRef<HTMLDivElement, SplitProps>(
-  ({
-    className,
-    direction = 'horizontal',
-    initialSizes = [50, 50],
-    minSize = 10,
-    resizable = true,
-    gutterSize = 4,
-    onChange,
-    children,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      direction = 'horizontal',
+      initialSizes = [50, 50],
+      minSize = 10,
+      resizable = true,
+      gutterSize = 4,
+      onChange,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const [sizes, setSizes] = React.useState<number[]>(initialSizes);
     // refs for panels and gutters to set CSS variables
@@ -99,14 +102,18 @@ const Split = React.forwardRef<HTMLDivElement, SplitProps>(
 
     // update CSS variables when sizes or gutterSize change
     React.useEffect(() => {
-      panelRefs.current.forEach((el, i) => el?.style.setProperty('--split-panel-basis', `${sizes[i]}%`));
-      gutterRefs.current.forEach(el => el?.style.setProperty('--gutter-size', `${gutterSize}px`));
+      panelRefs.current.forEach((el, i) =>
+        el?.style.setProperty('--split-panel-basis', `${sizes[i]}%`)
+      );
+      gutterRefs.current.forEach((el) => el?.style.setProperty('--gutter-size', `${gutterSize}px`));
     }, [sizes, gutterSize]);
 
     // Validate children
     const childrenArray = React.Children.toArray(children);
     if (childrenArray.length !== initialSizes.length) {
-      console.warn(`Split component expected ${initialSizes.length} children but got ${childrenArray.length}`);
+      console.warn(
+        `Split component expected ${initialSizes.length} children but got ${childrenArray.length}`
+      );
     }
 
     // Handle mouse down on gutter
@@ -126,8 +133,12 @@ const Split = React.forwardRef<HTMLDivElement, SplitProps>(
         if (!containerRef.current) return;
 
         const containerRect = containerRef.current.getBoundingClientRect();
-        const containerSize = direction === 'horizontal' ? containerRect.width : containerRect.height;
-        const mousePosition = direction === 'horizontal' ? e.clientX - containerRect.left : e.clientY - containerRect.top;
+        const containerSize =
+          direction === 'horizontal' ? containerRect.width : containerRect.height;
+        const mousePosition =
+          direction === 'horizontal'
+            ? e.clientX - containerRect.left
+            : e.clientY - containerRect.top;
 
         // Calculate new sizes
         const newSizes = [...sizes];
@@ -137,10 +148,16 @@ const Split = React.forwardRef<HTMLDivElement, SplitProps>(
 
         // Calculate new size for the panel
         const newSizePercentage = (mousePosition / containerSize) * 100;
-        const sizeDiff = newSizePercentage - newSizes.slice(0, panelIndex + 1).reduce((acc, size) => acc + size, 0) + newSizes[panelIndex];
+        const sizeDiff =
+          newSizePercentage -
+          newSizes.slice(0, panelIndex + 1).reduce((acc, size) => acc + size, 0) +
+          newSizes[panelIndex];
 
         // Ensure minimum size
-        if (newSizes[panelIndex] + sizeDiff < minSize || newSizes[nextPanelIndex] - sizeDiff < minSize) {
+        if (
+          newSizes[panelIndex] + sizeDiff < minSize ||
+          newSizes[nextPanelIndex] - sizeDiff < minSize
+        ) {
           return;
         }
 
@@ -150,7 +167,7 @@ const Split = React.forwardRef<HTMLDivElement, SplitProps>(
 
         // Normalize sizes to ensure they sum to 100%
         const newTotalSize = newSizes.reduce((acc, size) => acc + size, 0);
-        const normalizedSizes = newSizes.map(size => (size / newTotalSize) * totalSize);
+        const normalizedSizes = newSizes.map((size) => (size / newTotalSize) * totalSize);
 
         setSizes(normalizedSizes);
         onChange?.(normalizedSizes);
@@ -195,21 +212,24 @@ const Split = React.forwardRef<HTMLDivElement, SplitProps>(
         {childrenArray.map((child, index) => (
           <React.Fragment key={index}>
             <div
-              ref={el => panelRefs.current[index] = el}
-              className={cn(
-                'panel',
-                'flex-shrink-0 overflow-auto',
-              )}
+              ref={(el) => {
+                panelRefs.current[index] = el;
+              }}
+              className={cn('panel', 'flex-shrink-0 overflow-auto')}
             >
               {child}
             </div>
 
             {index < childrenArray.length - 1 && (
               <div
-                ref={el => gutterRefs.current[index] = el}
+                ref={(el) => {
+                  gutterRefs.current[index] = el;
+                }}
                 className={cn(
                   'gutter',
-                  direction === 'horizontal' ? 'gutterHorizontal cursor-col-resize' : 'gutterVertical cursor-row-resize',
+                  direction === 'horizontal'
+                    ? 'gutterHorizontal cursor-col-resize'
+                    : 'gutterVertical cursor-row-resize',
                   resizable ? 'bg-border hover:bg-primary/20' : 'bg-transparent',
                   isDragging && dragIndex === index && 'bg-primary'
                 )}
