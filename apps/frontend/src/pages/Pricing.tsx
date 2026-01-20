@@ -224,9 +224,6 @@ export const Pricing = () => {
                   Contact our sales team
                 </Link>
               </p>
-              <p className="text-sm text-gray-500">
-                All plans include our 30-day money-back guarantee
-              </p>
             </div>
           </div>
         </section>
