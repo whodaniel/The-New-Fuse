@@ -1,15 +1,22 @@
-import { SetMetadata, CanActivate, ExecutionContext, Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  SetMetadata,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { SecurityLoggingService } from '../security/security-logging.service';
 import { Request } from 'express';
+import { SecurityLoggingService } from '../security/security-logging.service';
 
 // Authentication levels
 export enum AuthLevel {
   PUBLIC = 'public',
   USER = 'user',
   ADMIN = 'admin',
-  SYSTEM = 'system'
+  SYSTEM = 'system',
 }
 
 // Rate limit tiers
@@ -18,7 +25,7 @@ export enum RateLimitTier {
   AUTH = 'auth',
   API = 'api',
   ADMIN = 'admin',
-  HEALTH = 'health'
+  HEALTH = 'health',
 }
 
 // Security levels
@@ -26,7 +33,7 @@ export enum SecurityLevelEnum {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 // Type alias for backward compatibility
@@ -90,17 +97,24 @@ export class SecureAuthGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private jwtService: JwtService,
-    private securityLogging: SecurityLoggingService,
+    private securityLogging: SecurityLoggingService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
+
+    // Allow CORS preflight requests
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+
     const handler = context.getHandler();
     const className = context.getClass().name;
 
     // Get security requirements
     const authLevel = this.reflector.get<AuthLevel>(AUTH_LEVEL_KEY, handler) || AuthLevel.PUBLIC;
-    const securityLevel = this.reflector.get<SecurityLevelEnum>(SECURITY_LEVEL_KEY, handler) || SecurityLevelEnum.LOW;
+    const securityLevel =
+      this.reflector.get<SecurityLevelEnum>(SECURITY_LEVEL_KEY, handler) || SecurityLevelEnum.LOW;
     const requireSSL = this.reflector.get<boolean>(REQUIRE_SSL_KEY, handler) || false;
     const auditLog = this.reflector.get<boolean>(AUDIT_LOG_KEY, handler) || false;
     const sensitiveData = this.reflector.get<boolean>(SENSITIVE_DATA_KEY, handler) || false;
@@ -139,11 +153,11 @@ export class SecureAuthGuard implements CanActivate {
     (request as any).user = user;
 
     // Log endpoint access
-    this.logEndpointAccess(request, 'PROTECTED_ACCESS', { 
-      auditLog, 
-      sensitiveData, 
+    this.logEndpointAccess(request, 'PROTECTED_ACCESS', {
+      auditLog,
+      sensitiveData,
       user,
-      securityLevel 
+      securityLevel,
     });
 
     return true;
@@ -154,13 +168,13 @@ export class SecureAuthGuard implements CanActivate {
    */
   private async validateAuthentication(request: Request): Promise<any> {
     const authHeader = request.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return null;
     }
 
     const token = authHeader.substring(7);
-    
+
     try {
       const payload = await this.jwtService.verifyAsync(token);
       return {
@@ -192,16 +206,20 @@ export class SecureAuthGuard implements CanActivate {
     switch (requiredLevel) {
       case AuthLevel.SYSTEM:
         return user.roles?.includes('system') || user.permissions?.includes('system:access');
-      
+
       case AuthLevel.ADMIN:
-        return user.roles?.includes('admin') || user.permissions?.includes('admin:access') || user.roles?.includes('system');
-      
+        return (
+          user.roles?.includes('admin') ||
+          user.permissions?.includes('admin:access') ||
+          user.roles?.includes('system')
+        );
+
       case AuthLevel.USER:
         return true; // Any authenticated user
-      
+
       case AuthLevel.PUBLIC:
         return true;
-      
+
       default:
         return false;
     }
@@ -211,15 +229,21 @@ export class SecureAuthGuard implements CanActivate {
    * Check if request is over SSL/HTTPS
    */
   private isSecure(request: Request): boolean {
-    return request.secure || 
-           request.headers['x-forwarded-proto'] === 'https' ||
-           process.env.NODE_ENV !== 'production'; // Allow HTTP in development
+    return (
+      request.secure ||
+      request.headers['x-forwarded-proto'] === 'https' ||
+      process.env.NODE_ENV !== 'production'
+    ); // Allow HTTP in development
   }
 
   /**
    * Log endpoint access
    */
-  private logEndpointAccess(request: Request & { user?: any; requestId?: string }, event: string, details: any): void {
+  private logEndpointAccess(
+    request: Request & { user?: any; requestId?: string },
+    event: string,
+    details: any
+  ): void {
     this.securityLogging.logApiAccess(request.method, request.path, {
       requestId: request.requestId,
       userId: request.user?.id,
@@ -233,11 +257,13 @@ export class SecureAuthGuard implements CanActivate {
    * Get client IP address
    */
   private getClientIP(request: Request): string {
-    return (request.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
-           request.headers['x-real-ip'] as string ||
-           request.connection.remoteAddress ||
-           request.ip ||
-           'unknown';
+    return (
+      (request.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+      (request.headers['x-real-ip'] as string) ||
+      request.connection.remoteAddress ||
+      request.ip ||
+      'unknown'
+    );
   }
 }
 
