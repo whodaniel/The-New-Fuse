@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DrizzleService } from '@the-new-fuse/database/drizzle';
+import { DatabaseService } from '@the-new-fuse/database/drizzle';
 import { payPalSubscriptions } from '@the-new-fuse/database/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import fetch from 'node-fetch'; // Standard fetch might be available in Node 18+
@@ -14,7 +14,7 @@ export class PayPalService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly db: DrizzleService
+    private readonly db: DatabaseService
   ) {
     const isSandbox = this.configService.get('PAYPAL_MODE') !== 'live';
     this.apiUrl = isSandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
@@ -122,7 +122,7 @@ export class PayPalService {
 
     // Upsert logic
     // Users can only have one active subscription logic for now
-    await this.db.db
+    await this.db.client
       .insert(payPalSubscriptions)
       .values({
         userId,
@@ -150,7 +150,7 @@ export class PayPalService {
   }
 
   private async updateSubscriptionStatus(subscriptionId: string, status: any): Promise<void> {
-    await this.db.db
+    await this.db.client
       .update(payPalSubscriptions)
       .set({ status, updatedAt: new Date() })
       .where(eq(payPalSubscriptions.payPalSubscriptionId, subscriptionId));
