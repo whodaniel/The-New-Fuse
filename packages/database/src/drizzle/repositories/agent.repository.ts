@@ -42,6 +42,18 @@ export class DrizzleAgentRepository {
   }
 
   /**
+   * Find agent by ID (System: internal use only, ignores userId)
+   */
+  async findByIdSystem(id: string): Promise<Agent | null> {
+    const [agent] = await db
+      .select()
+      .from(agents)
+      .where(and(eq(agents.id, id), isNull(agents.deletedAt)));
+
+    return agent ?? null;
+  }
+
+  /**
    * Find agent by ID with metadata
    */
   async findByIdWithMetadata(

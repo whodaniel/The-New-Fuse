@@ -475,6 +475,17 @@ class FuseConnectPopup {
   }
 
   async controlService(action, service) {
+    // Handle AI Studio specific actions
+    if (service === 'ai-studio') {
+      if (action === 'auth') {
+        this.handleAIStudioAuth();
+        return;
+      } else if (action === 'process') {
+        this.handleAIStudioProcess();
+        return;
+      }
+    }
+
     if (!this.state.nativeHostAvailable) {
       this.showToast('Native host not available. Run the install script.');
       return;
@@ -495,6 +506,56 @@ class FuseConnectPopup {
       }
     } catch (e) {
       this.showToast(`Error: ${e.message}`);
+    }
+  }
+
+  async handleAIStudioAuth() {
+    this.showToast('Opening Google OAuth...');
+    try {
+      chrome.runtime.sendMessage({ type: 'AI_STUDIO_AUTH' }, (response) => {
+        if (response?.success) {
+          this.showToast('Authenticated successfully!');
+          this.updateAIStudioStatus('connected');
+        } else {
+          this.showToast('Authentication failed');
+        }
+      });
+    } catch (e) {
+      this.showToast(`Auth error: ${e.message}`);
+    }
+  }
+
+  async handleAIStudioProcess() {
+    this.showToast('Opening AI Studio panel...');
+    try {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            type: 'SHOW_PANEL',
+            activeTab: 'services',
+          },
+          (response) => {
+            if (response?.success) {
+              this.showToast('Panel opened! Check the Services tab.');
+              window.close();
+            }
+          }
+        );
+      }
+    } catch (e) {
+      this.showToast(`Error: ${e.message}`);
+    }
+  }
+
+  updateAIStudioStatus(status) {
+    const statusEl = document.getElementById('service-ai-studio-status');
+    if (statusEl) {
+      const dot = statusEl.querySelector('.status-dot');
+      if (dot) {
+        dot.className = `status-dot ${status === 'connected' ? 'connected' : 'disconnected'}`;
+      }
     }
   }
 

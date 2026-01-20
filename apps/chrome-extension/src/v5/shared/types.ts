@@ -217,6 +217,74 @@ export type PanelTab =
   | 'settings'
   | 'tasks';
 
+// ============================================
+// AI STUDIO TYPES
+// ============================================
+
+export type ProcessingTier = 'metadata' | 'transcript' | 'flash' | 'pro' | 'vision' | 'ai-studio';
+
+export interface AIStudioState {
+  isAuthenticated: boolean;
+  userEmail: string | null;
+  currentPlaylist: YouTubePlaylist | null;
+  videoQueue: VideoQueueItem[];
+  processingTier: ProcessingTier;
+  isProcessing: boolean;
+  isPaused: boolean;
+  currentVideoIndex: number;
+  sessionCost: number;
+  totalCost: number;
+  knowledgeBase: KnowledgeBase;
+  settings: AIStudioSettings;
+}
+
+export interface AIStudioSettings {
+  autoDownloadReports: boolean;
+  autoConsolidateKB: boolean;
+  segmentDuration: number; // seconds
+  defaultTier: ProcessingTier;
+}
+
+export interface VideoQueueItem {
+  id: string;
+  title: string;
+  url: string;
+  duration: number;
+  thumbnail: string;
+  processed: boolean;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  tier?: ProcessingTier;
+  report?: string;
+  cost?: number;
+  error?: string;
+  processedAt?: number;
+}
+
+export interface YouTubePlaylist {
+  id: string;
+  title: string;
+  description: string;
+  videoCount: number;
+  videos: VideoQueueItem[];
+}
+
+export interface KnowledgeBase {
+  concepts: Concept[];
+  totalVideos: number;
+  lastUpdated: number;
+  totalConcepts: number;
+}
+
+export interface Concept {
+  id: string;
+  name: string;
+  description: string;
+  sources: string[]; // video IDs
+  count: number;
+  category?: string;
+  tags?: string[];
+}
+
 export interface PanelPosition {
   x: number;
   y: number;

@@ -9,7 +9,7 @@ export interface SecurityConfig {
     issuer: string;
     audience: string;
   };
-  
+
   // Rate Limiting
   rateLimit: {
     enabled: boolean;
@@ -23,7 +23,7 @@ export interface SecurityConfig {
       health: { requests: number; window: number };
     };
   };
-  
+
   // CORS
   cors: {
     allowedOrigins: string[];
@@ -32,7 +32,7 @@ export interface SecurityConfig {
     credentials: boolean;
     maxAge: number;
   };
-  
+
   // Security Headers
   securityHeaders: {
     contentSecurityPolicy: string;
@@ -43,7 +43,7 @@ export interface SecurityConfig {
     permissionsPolicy: string;
     strictTransportSecurity: string;
   };
-  
+
   // Input Validation
   inputValidation: {
     maxPayloadSize: number;
@@ -52,7 +52,7 @@ export interface SecurityConfig {
     validateFileUploads: boolean;
     maxFileSize: number;
   };
-  
+
   // Session Management
   sessions: {
     secure: boolean;
@@ -60,7 +60,7 @@ export interface SecurityConfig {
     sameSite: 'strict' | 'lax' | 'none';
     maxAge: number;
   };
-  
+
   // Monitoring
   monitoring: {
     logLevel: 'error' | 'warn' | 'info' | 'debug';
@@ -69,7 +69,7 @@ export interface SecurityConfig {
     enableMetrics: boolean;
     enableHealthChecks: boolean;
   };
-  
+
   // SSL/HTTPS
   ssl: {
     required: boolean;
@@ -77,7 +77,7 @@ export interface SecurityConfig {
     includeSubDomains: boolean;
     preload: boolean;
   };
-  
+
   // IP Filtering
   ipFiltering: {
     enabled: boolean;
@@ -90,7 +90,7 @@ export interface SecurityConfig {
 
 export default registerAs('security', (): SecurityConfig => {
   const isProduction = process.env.NODE_ENV === 'production';
-  
+
   return {
     // Authentication Configuration
     jwt: {
@@ -100,7 +100,7 @@ export default registerAs('security', (): SecurityConfig => {
       issuer: process.env.JWT_ISSUER || 'the-new-fuse-api',
       audience: process.env.JWT_AUDIENCE || 'the-new-fuse-clients',
     },
-    
+
     // Rate Limiting Configuration
     rateLimit: {
       enabled: true,
@@ -129,29 +129,32 @@ export default registerAs('security', (): SecurityConfig => {
         },
       },
     },
-    
+
     // CORS Configuration
     cors: {
-      allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || (isProduction 
-        ? ['https://yourdomain.com']
-        : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173']
-      ),
+      allowedOrigins: [
+        ...(process.env.ALLOWED_ORIGINS?.split(',') ||
+          (isProduction
+            ? ['https://yourdomain.com']
+            : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'])),
+        'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+      ],
       allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: [
-        'Content-Type', 
-        'Authorization', 
-        'X-Requested-With', 
-        'X-CSRF-Token', 
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'X-CSRF-Token',
         'X-Request-ID',
-        'X-Client-IP'
+        'X-Client-IP',
       ],
       credentials: true,
       maxAge: 86400, // 24 hours
     },
-    
+
     // Security Headers Configuration
     securityHeaders: {
-      contentSecurityPolicy: 
+      contentSecurityPolicy:
         "default-src 'self'; " +
         "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
         "style-src 'self' 'unsafe-inline'; " +
@@ -162,18 +165,18 @@ export default registerAs('security', (): SecurityConfig => {
         "object-src 'none'; " +
         "base-uri 'self'; " +
         "form-action 'self'; " +
-        "upgrade-insecure-requests;",
-      
+        'upgrade-insecure-requests;',
+
       xFrameOptions: 'DENY',
       xContentTypeOptions: 'nosniff',
       xXSSProtection: '1; mode=block',
       referrerPolicy: 'strict-origin-when-cross-origin',
       permissionsPolicy: 'geolocation=(), microphone=(), camera=(), payment=(), fullscreen=(*)',
-      strictTransportSecurity: isProduction 
+      strictTransportSecurity: isProduction
         ? 'max-age=31536000; includeSubDomains; preload'
         : 'max-age=31536000; includeSubDomains',
     },
-    
+
     // Input Validation Configuration
     inputValidation: {
       maxPayloadSize: parseInt(process.env.MAX_PAYLOAD_SIZE || '') || 10 * 1024 * 1024, // 10MB
@@ -187,7 +190,7 @@ export default registerAs('security', (): SecurityConfig => {
       validateFileUploads: true,
       maxFileSize: 5 * 1024 * 1024, // 5MB
     },
-    
+
     // Session Management
     sessions: {
       secure: isProduction,
@@ -195,7 +198,7 @@ export default registerAs('security', (): SecurityConfig => {
       sameSite: isProduction ? 'strict' : 'lax',
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
-    
+
     // Monitoring Configuration
     monitoring: {
       logLevel: (process.env.LOG_LEVEL as any) || (isProduction ? 'warn' : 'info'),
@@ -204,7 +207,7 @@ export default registerAs('security', (): SecurityConfig => {
       enableMetrics: true,
       enableHealthChecks: true,
     },
-    
+
     // SSL/HTTPS Configuration
     ssl: {
       required: isProduction,
@@ -212,7 +215,7 @@ export default registerAs('security', (): SecurityConfig => {
       includeSubDomains: true,
       preload: true,
     },
-    
+
     // IP Filtering Configuration
     ipFiltering: {
       enabled: true,

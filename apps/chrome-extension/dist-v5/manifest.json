@@ -47,23 +47,66 @@
       "run_at": "document_idle",
       "all_frames": false,
       "match_about_blank": false
+    },
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["content/ai-studio-automation.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.usercontent.goog/*"],
+      "js": ["content/iframe-bridge.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["content/youtube-integration.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://notebooklm.google.com/*"],
+      "js": ["content/notebooklm-integration.js"],
+      "run_at": "document_idle"
     }
   ],
 
   "permissions": [
     "storage",
+    "unlimitedStorage",
     "activeTab",
     "tabs",
     "notifications",
     "nativeMessaging",
-    "scripting"
+    "scripting",
+    "identity",
+    "cookies",
+    "alarms",
+    "contextMenus",
+    "webRequest"
   ],
+
+  "oauth2": {
+    "client_id": "637776200146-52ih7qr2o6961mbs5cb3mg6m0ceheu61.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/youtube.readonly",
+      "https://www.googleapis.com/auth/drive.appdata",
+      "profile",
+      "email"
+    ]
+  },
 
   "host_permissions": [
     "<all_urls>",
     "ws://localhost:*/*",
     "wss://localhost:*/*",
-    "wss://relay.thenewfuse.com/*"
+    "wss://relay.thenewfuse.com/*",
+    "https://*.youtube.com/*",
+    "https://aistudio.google.com/*",
+    "https://notebooklm.google.com/*",
+    "https://www.googleapis.com/*",
+    "https://*.usercontent.goog/*"
   ],
 
   "commands": {

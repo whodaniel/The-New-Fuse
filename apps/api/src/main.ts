@@ -13,8 +13,16 @@ async function bootstrap(): Promise<void> {
     cors: {
       origin:
         process.env.NODE_ENV === 'production'
-          ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']
-          : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
+          ? [
+              ...(process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']),
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+            ]
+          : [
+              'http://localhost:3000',
+              'http://localhost:3001',
+              'http://localhost:5173',
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+            ],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: [

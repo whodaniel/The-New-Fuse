@@ -1,21 +1,21 @@
 # 📊 Video Processing Status Report
 
-_Generated: 1/7/2026, 4:08:29 PM_
+_Generated: 1/18/2026, 7:49:37 PM_
 
 ## 🟢 Summary
 
 | Metric                  |  Count  | Percentage |
 | :---------------------- | :-----: | :--------: |
 | **Total Videos**        | **647** |    100%    |
-| **Analyzed (Imported)** | **75**  |   11.6%    |
-| **Pending (To Do)**     | **572** |   88.4%    |
+| **Analyzed (Imported)** | **93**  |   14.4%    |
+| **Pending (To Do)**     | **554** |   85.6%    |
 | **Needs Visual Review** | **20**  |     -      |
 
 ---
 
 ## 🟡 Action Items
 
-1.  **Run TranscriptProcessorV2** for the **572** pending videos.
+1.  **Run TranscriptProcessorV2** for the **554** pending videos.
     - _Command:_ `./scripts/run-v2.sh --start=633 --end=1` (It will skip
       completed ones if we update the state file, but currently V2 state is
       fresh).
@@ -237,7 +237,6 @@ _Generated: 1/7/2026, 4:08:29 PM_
 | 216 | Context Engineering 101 - The Simple Strategy to 100x AI Cod...  | ⚪ Pending                                          |      -      |
 | 217 | Steal This CTO's Claude Code Playbook for Building AI Coding...  | ⚪ Pending                                          |      -      |
 | 218 | The RIGHT Method for Context Engineering (+3 Advanced Techni...  | ⚪ Pending                                          |      -      |
-| 219 | Open Deep Research                                               | ⚪ Pending                                          |      -      |
 | 220 | AWS Kiro AI IDE: This FULLY FREE AI Editor w/ Claude 4 Sonne...  | ⚪ Pending                                          |      -      |
 | 221 | Vibe-Kanban: SUPERCHARGE Claude Code, Gemini CLI, & ANY AI C...  | ⚪ Pending                                          |      -      |
 | 222 | I Can SEE EVERYTHING: Claude Code Hooks for Multi Agent Obse...  | ⚪ Pending                                          |      -      |
@@ -448,7 +447,6 @@ _Generated: 1/7/2026, 4:08:29 PM_
 | 431 | AI Arty Image Enhancer : This is THE BEST FREE AI Image Enha...  | ⚪ Pending                                          |      -      |
 | 432 | SMARTER: AI Reasoning w Knowledge Graphs + Agents                | ⚪ Pending                                          |      -      |
 | 433 | Leading AI Researcher Announces Breakthrough Open Source Pro...  | ⚪ Pending                                          |      -      |
-| 434 | ULTIMATE Fact Checking AI (Johns Hopkins, Stanford)              | ⚪ Pending                                          |      -      |
 | 435 | Scrape Free Leads Using N8N In Minutes (EASY Beginners Tutor...  | ⚪ Pending                                          |      -      |
 | 436 | NEW 1-Click AI Agent is INSANE (FREE!)! 🤯                       | ⚪ Pending                                          |      -      |
 | 437 | DeepSeek R1 for Structured Agents                                | ⚪ Pending                                          |      -      |
@@ -535,7 +533,6 @@ _Generated: 1/7/2026, 4:08:29 PM_
 | 518 | Free CodeLLM: New Tech for AI Coding                             | ⚪ Pending                                          |      -      |
 | 519 | How to build Skynet = Adaptive Multi AI Agents                   | ⚪ Pending                                          |      -      |
 | 520 | Trending Open Source Projects: From Minecraft Bots To Intell...  | ⚪ Pending                                          |      -      |
-| 521 | Microsoft's Magentic One: This FREE AI AGENT can CONTROL BRO...  | ⚪ Pending                                          |      -      |
 | 522 | AI changes camera angles, edits expressions, FLUX upgrades, ...  | ⚪ Pending                                          |      -      |
 | 523 | Top Trending Open-Source GitHub Projects This Week! #101         | ⚪ Pending                                          |      -      |
 | 524 | AI Agents Create a New World - MBTI Personalities                | ⚪ Pending                                          |      -      |
@@ -586,14 +583,12 @@ _Generated: 1/7/2026, 4:08:29 PM_
 | 571 | GEN-3: The Ultimate Prompting Guide                              | ⚪ Pending                                          |      -      |
 | 574 | How We Created First Fully Autonomous Business With AI           | ⚪ Pending                                          |      -      |
 | 575 | Build Blazing-Fast LLM Apps with Groq, Langflow, & Langchain     | ⚪ Pending                                          |      -      |
-| 576 | Building a Generative UI App With LangChain Python               | ⚪ Pending                                          |      -      |
 | 577 | New Discovery: LLMs have a Performance Phase                     | ⚪ Pending                                          |      -      |
 | 578 | How to Make AI Influencers For FREE (full-process)               | ⚪ Pending                                          |      -      |
 | 579 | How to use Llama 3 API for FREE (Best Open Source AI for bus...  | ⚪ Pending                                          |      -      |
 | 580 | Gold Gang (100% AI)                                              | INSANE AI Music Video + How it was don...           | ⚪ Pending  | -          |
 | 582 | The Manipulation Expert: You're Being Manipulated! Use Jealo...  | ⚪ Pending                                          |      -      |
 | 583 | LCM for Krita - OVERPOWERED!!!!                                  | ⚪ Pending                                          |      -      |
-| 584 | World's First AGI Agent SHOCKS the Entire Industry! (FULLY A...  | ⚪ Pending                                          |      -      |
 | 585 | INSANELY Fast AI Cold Call Agent- built w/ Groq                  | ⚪ Pending                                          |      -      |
 | 586 | How to Start an AI Business in 2025 - STEP BY STEP               | ⚪ Pending                                          |      -      |
 | 587 | This Changed the Way I Use AI Chatbots - One Site, EVERY LLM     | ⚪ Pending                                          |      -      |
@@ -601,7 +596,6 @@ _Generated: 1/7/2026, 4:08:29 PM_
 | 589 | Understanding AI from the nuts and bolts                         | ⚪ Pending                                          |      -      |
 | 590 | 5 Custom GPTs That Will ACTUALLY 10X Your Work                   | ⚪ Pending                                          |      -      |
 | 591 | Surprising New Report Shows You Can Benefit From The AI Boom     | ⚪ Pending                                          |      -      |
-| 592 | The One-Person Business Model (How To Productize Yourself Fu...  | ⚪ Pending                                          |      -      |
 | 593 | 21 Mobile AI Apps You Won't Believe Are Free                     | ⚪ Pending                                          |      -      |
 | 595 | FINALLY! Open-Source "LLaMA Code" Coding Assistant (Tutorial...  | ⚪ Pending                                          |      -      |
 | 596 | Mixtral goes Mainstream with BRAVE!!!                            | ⚪ Pending                                          |      -      |
@@ -667,9 +661,15 @@ _Generated: 1/7/2026, 4:08:29 PM_
 | 60  | Trending Open-Source GitHub Projects This Week: AI Agents, A...  | ✅ Complete                                         |      -      |
 | 90  | UNLOCK the Power of Graph Agents with Neo4J and n8n              | ✅ Complete                                         |      -      |
 | 98  | Context Engineering for AI Agents with LangChain and Manus       | ✅ Complete                                         |      -      |
+| 219 | Open Deep Research                                               | ✅ Complete                                         |      -      |
 | 297 | Master THESE 4 Stages of AI Agents in 2025! (Beginner to PRO...  | ✅ Complete                                         |      -      |
+| 434 | ULTIMATE Fact Checking AI (Johns Hopkins, Stanford)              | ✅ Complete                                         |      -      |
+| 521 | Microsoft's Magentic One: This FREE AI AGENT can CONTROL BRO...  | ✅ Complete                                         |      -      |
 | 572 | How to protect your recently won Social Security Disability ...  | ✅ Complete                                         |      -      |
 | 573 | LangChain Master Class For Beginners 2024 [+20 Examples, Lan...  | ✅ Complete                                         |     14      |
+| 576 | Building a Generative UI App With LangChain Python               | ✅ Complete                                         |      -      |
+| 584 | World's First AGI Agent SHOCKS the Entire Industry! (FULLY A...  | ✅ Complete                                         |      -      |
+| 592 | The One-Person Business Model (How To Productize Yourself Fu...  | ✅ Complete                                         |      -      |
 | 594 | InstantID for Automatic 1111                                     | ✅ Complete                                         |      1      |
 | 611 | ChatGPT Code Interpreter For FREE! - Open Interpreter (Insta...  | ✅ Complete                                         |      -      |
 | 630 | Advanced Premiere Pro for Everyone                               | FREE COURSE                                         | ✅ Complete | -          |

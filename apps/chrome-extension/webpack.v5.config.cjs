@@ -16,6 +16,11 @@ module.exports = (env, argv) => {
       'background/index': './src/v5/background/index.ts',
       'content/index': './src/v5/content/index.ts',
       'popup/popup': './src/v5/popup/popup.js',
+      // AI Studio integrations
+      'content/ai-studio-automation': './src/v5/content/ai-studio/ai-studio.js',
+      'content/youtube-integration': './src/v5/content/ai-studio/youtube.js',
+      'content/notebooklm-integration': './src/v5/content/ai-studio/notebooklm.js',
+      'content/iframe-bridge': './src/v5/content/ai-studio/iframe-bridge.js',
     },
 
     output: {

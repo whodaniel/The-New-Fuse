@@ -100,7 +100,7 @@ export class CloudSandboxAuthGuard {
 
       // Handle agent tokens
       if (payload.type === 'agent' && payload.agentId) {
-        const agent = await drizzleAgentRepository.findById(payload.agentId);
+        const agent = await drizzleAgentRepository.findByIdSystem(payload.agentId);
 
         if (!agent) {
           return { authenticated: false, error: 'Agent not found' };
@@ -182,7 +182,7 @@ export class CloudSandboxAuthGuard {
         return { authenticated: false, error: 'Invalid API key' };
       }
 
-      const agent = await drizzleAgentRepository.findById(registration.agentId);
+      const agent = await drizzleAgentRepository.findByIdSystem(registration.agentId);
 
       if (!agent) {
         return { authenticated: false, error: 'Agent not found' };
@@ -237,7 +237,7 @@ export class CloudSandboxAuthGuard {
    */
   private async getAgentTenantId(agentId: string): Promise<string> {
     // Get agent to find owner
-    const agent = await drizzleAgentRepository.findById(agentId);
+    const agent = await drizzleAgentRepository.findByIdSystem(agentId);
 
     if (agent?.userId) {
       const userWorkspace = await drizzleWorkspaceRepository.findByUserId(agent.userId);

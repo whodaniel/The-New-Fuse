@@ -5,10 +5,22 @@
   "types": "dist/index.d.ts",
   "private": true,
   "exports": {
-    ".": "./dist/index.js",
-    "./drizzle": "./dist/drizzle/index.js",
-    "./drizzle/repositories": "./dist/drizzle/repositories/index.js",
-    "./drizzle/schema": "./dist/drizzle/schema/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./drizzle": {
+      "types": "./dist/drizzle/index.d.ts",
+      "default": "./dist/drizzle/index.js"
+    },
+    "./drizzle/repositories": {
+      "types": "./dist/drizzle/repositories/index.d.ts",
+      "default": "./dist/drizzle/repositories/index.js"
+    },
+    "./drizzle/schema": {
+      "types": "./dist/drizzle/schema/index.d.ts",
+      "default": "./dist/drizzle/schema/index.js"
+    }
   },
   "scripts": {
     "build": "tsc -b",

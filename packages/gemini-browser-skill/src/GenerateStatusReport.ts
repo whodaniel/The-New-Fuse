@@ -63,7 +63,11 @@ function analyze() {
       // Simple title match (case insensitive, partial)
       // This is heuristic but usually effective if titles agree
       // Or if the URL appeared in the prompt (rare)
-      return text.toLowerCase().includes(v.title.toLowerCase().substring(0, 20));
+      return (
+        typeof v?.title === 'string' &&
+        typeof text === 'string' &&
+        text.toLowerCase().includes(v.title.toLowerCase().substring(0, 20))
+      );
     });
 
     if (video) {

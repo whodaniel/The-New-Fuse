@@ -247,10 +247,10 @@ class TranscriptProcessorV2 {
   }
 
   async initialize(): Promise<void> {
-    // Use the SAME profile as the original processor where user is already logged in
-    const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome');
+    // Use a NEW profile to allow trying a different account
+    const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
 
-    console.log('[v2] 🚀 Launching Chrome (using existing login session)...');
+    console.log('[v2] 🚀 Launching Chrome (using clean login session)...');
     fs.mkdirSync(profileDir, { recursive: true });
 
     this.context = await chromium.launchPersistentContext(profileDir, {
@@ -260,44 +260,54 @@ class TranscriptProcessorV2 {
         '--no-first-run',
         '--no-default-browser-check',
         '--disable-blink-features=AutomationControlled',
-        '--disable-infobars',
-        '--exclude-switches=enable-automation',
-        '--use-fake-ui-for-media-stream',
-        '--use-fake-device-for-media-stream',
-        '--disable-background-networking',
-        '--enable-features=NetworkService,NetworkServiceInProcess',
-        '--disable-background-timer-throttling',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-breakpad',
-        '--disable-client-side-phishing-detection',
-        '--disable-component-extensions-with-background-pages',
-        '--disable-default-apps',
-        '--disable-dev-shm-usage',
-        '--disable-extensions',
-        '--disable-features=Translate',
-        '--disable-hang-monitor',
-        '--disable-ipc-flooding-protection',
-        '--disable-popup-blocking',
-        '--disable-prompt-on-repost',
-        '--disable-renderer-backgrounding',
-        '--disable-sync',
-        '--force-color-profile=srgb',
-        '--metrics-recording-only',
-        '--no-service-autorun',
-        '--export-tagged-pdf',
-        '--generate-pdf-document-outline',
-        '--window-position=0,0',
-        '--ignore-certificate-errors',
-        '--allow-running-insecure-content',
-        '--disable-web-security',
+        '--window-size=1280,800',
       ],
-      viewport: { width: 1400, height: 900 },
+      viewport: null,
       ignoreDefaultArgs: ['--enable-automation'],
       userAgent:
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     });
 
     console.log('[v2] ✅ Browser ready');
+  }
+
+  // Browser health check - ensures browser context is alive
+  private async ensureBrowserHealth(): Promise<boolean> {
+    try {
+      if (!this.context) {
+        console.warn('[v2] ⚠️ Browser context is null, reinitializing...');
+        await this.initialize();
+        return true;
+      }
+
+      // Try to check if context is alive by getting pages
+      const pages = await this.context.pages();
+      console.log(`[v2] 🏥 Browser health check: ${pages.length} pages open`);
+
+      // If too many pages accumulated (>50), close them
+      if (pages.length > 50) {
+        console.warn(`[v2] ⚠️ Too many pages open (${pages.length}), cleaning up...`);
+        for (const page of pages) {
+          try {
+            await page.close();
+          } catch (e) {
+            // Ignore close errors
+          }
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('[v2] ❌ Browser health check failed:', error);
+      console.log('[v2] 🔄 Reinitializing browser...');
+      try {
+        await this.context?.close();
+      } catch (e) {
+        /* ignore */
+      }
+      await this.initialize();
+      return true;
+    }
   }
 
   // Helper for human-like delays
@@ -627,6 +637,276 @@ class TranscriptProcessorV2 {
     }
   }
 
+  /**
+   * Automates the process of linking a paid API key if detected as missing.
+   * This prevents "Quota exceeded" errors on the free tier.
+   */
+  private async ensurePaidApiKey(page: Page): Promise<void> {
+    console.log('[v2] 💳 Checking API Key connection...');
+    try {
+      // Look for the "No API Key" card or button
+      const noKeyBtn = page
+        .locator('.paid-api-key-card[aria-label="No API Key"]')
+        .or(page.locator('button', { hasText: 'No API Key' }))
+        .first();
+
+      if (await noKeyBtn.isVisible()) {
+        console.log('[v2] ⚠️ No API Key detected. Attempting to link "The New Fuse"...');
+        await noKeyBtn.click();
+        await page.waitForTimeout(2000);
+
+        // 1. Select Project
+        const projectSelect = page
+          .locator('mat-select[aria-label="Select a paid project"]')
+          .first();
+        if (await projectSelect.isVisible()) {
+          await projectSelect.click();
+          await page.waitForTimeout(1000);
+
+          // Try to click "The New Fuse"
+          const fuseOption = page.locator('mat-option', { hasText: 'The New Fuse' }).first();
+          if (await fuseOption.isVisible()) {
+            await fuseOption.click();
+          } else {
+            // Fallback: Click the first option
+            console.log('[v2] "The New Fuse" not found, selecting first available project.');
+            await page.locator('mat-option').first().click();
+          }
+          await page.waitForTimeout(1000);
+        }
+
+        // 2. Enable "Save paid API key" if not enabled
+        const saveToggle = page
+          .locator('button[role="switch"][aria-labelledby="save-paid-api-key-label"]')
+          .or(page.locator('button[role="switch"]'))
+          .first();
+
+        if (await saveToggle.isVisible()) {
+          const isChecked = await saveToggle.getAttribute('aria-checked');
+          if (isChecked !== 'true') {
+            console.log('[v2] Toggling "Save paid API key"...');
+            await saveToggle.click();
+            await page.waitForTimeout(500);
+          }
+        }
+
+        // 3. Confirm (Select key)
+        const confirmBtn = page
+          .locator('button.ms-button-primary', { hasText: 'Select key' })
+          .first();
+        if (await confirmBtn.isVisible()) {
+          await confirmBtn.click();
+          console.log('[v2] ✅ API Key linked successfully. Reloading to apply changes...');
+          await page.waitForTimeout(3000);
+          await page.reload({ waitUntil: 'domcontentloaded' });
+          await page.waitForTimeout(2000);
+        } else {
+          console.error('[v2] ❌ Could not find "Select key" button.');
+        }
+      } else {
+        console.log('[v2] ✅ API Key appears to be linked.');
+        // Give AI Studio extra time to fully transition to paid mode
+        console.log('[v2] ⏳ Waiting for API transition to complete...');
+        await page.waitForTimeout(3000);
+      }
+    } catch (e) {
+      console.error('[v2] Error checking/linking API Key:', e);
+    }
+  }
+
+  /**
+   * Dynamically selects the requested model from the UI.
+   * If the exact model is not found, tries to find a close match or logs available models.
+   */
+  private async selectBestModel(page: Page, targetModel: string): Promise<void> {
+    console.log(`[v2] 🔍 Attempting to select model: ${targetModel}`);
+    try {
+      // 1. Find all potential dropdown triggers
+      const candidates = page.locator('button, ms-select, mat-select');
+      const count = await candidates.count();
+      let modelSelector: any = null;
+      console.log(`[v2] DEBUG: Found ${count} candidates.`);
+      let bestMatch: any = null;
+      let defaultMatch: any = null;
+
+      for (let i = 0; i < count; i++) {
+        const el = candidates.nth(i);
+        const isVisible = await el.isVisible();
+        if (!isVisible) continue;
+
+        const text = await el.innerText();
+        const label = (await el.getAttribute('aria-label')) || '';
+        const cls = (await el.getAttribute('class')) || '';
+
+        console.log(
+          `[v2] Candidate #${i}: Text="${text.replace(/\n/g, '\\n')}", Label="${label}", Class="${cls}"`
+        );
+
+        // Heuristics to identify the model selector:
+        // - Text contains "Gemini"
+        // - label contains "model" (case-insensitive)
+        // - class contains "model-selector"
+        // - EXCLUDE filter chips
+        if (
+          (text.includes('Gemini') ||
+            label.toLowerCase().includes('model') ||
+            cls.includes('model-selector')) &&
+          !cls.includes('filter-chip')
+        ) {
+          // Exclude commonly confused things if checks are weak
+          if (label.toLowerCase().includes('setting')) continue;
+
+          // Critical: If we want Flash, DO NOT accept Pro card
+          if (
+            targetModel.includes('flash') &&
+            text.toLowerCase().includes('pro') &&
+            !text.toLowerCase().includes('flash')
+          ) {
+            console.log(`[v2] Ignoring Pro candidate #${i} because we want Flash`);
+            continue;
+          }
+
+          // Prioritize exact match (e.g. Flash)
+          if (targetModel.includes('flash') && text.toLowerCase().includes('flash')) {
+            bestMatch = el;
+            console.log(`[v2] Flash MATCH FOUND at #${i}`);
+            break; // Found the best one
+          }
+          if (
+            targetModel.includes('pro') &&
+            text.toLowerCase().includes('pro') &&
+            !targetModel.includes('flash')
+          ) {
+            bestMatch = el;
+            console.log(`[v2] Pro MATCH FOUND at #${i}`);
+            break;
+          }
+
+          // Keep generic match
+          if (!defaultMatch) {
+            defaultMatch = el;
+            console.log(`[v2] Generic MATCH FOUND at #${i} (keeping as backup)`);
+          }
+        }
+      }
+      modelSelector = bestMatch || defaultMatch;
+      if (modelSelector)
+        console.log(
+          `[v2] Selected candidate: ${modelSelector === bestMatch ? 'Best Match' : 'Default Match'}`
+        );
+
+      // FALLBACK: If on dashboard, click "New chat"
+      if (!modelSelector) {
+        const newChatBtn = page.locator('button[aria-label="New chat"]').first();
+        if (await newChatBtn.isVisible()) {
+          console.log('[v2] Model selector not found. Clicking "New chat" to enter editor...');
+          await newChatBtn.click();
+          await page.waitForTimeout(3000);
+
+          // Retry finding selector ONE time (simple recursion with flag could work, but here I'll just copy logic or rely on next steps)
+          // Better: Return and let caller handle? No.
+          // Let's just try to find it again.
+          const retryCandidates = page.locator('button, ms-select, mat-select');
+          const retryCount = await retryCandidates.count();
+          for (let i = 0; i < retryCount; i++) {
+            const el = retryCandidates.nth(i);
+            if (!(await el.isVisible())) continue;
+            const text = await el.innerText();
+            const label = (await el.getAttribute('aria-label')) || '';
+            const cls = (await el.getAttribute('class')) || '';
+
+            if (
+              (text.includes('Gemini') ||
+                label.toLowerCase().includes('model') ||
+                cls.includes('model-selector')) &&
+              !cls.includes('filter-chip')
+            ) {
+              if (!label.toLowerCase().includes('setting')) {
+                modelSelector = el;
+                console.log(`[v2] MATCH FOUND on retry!`);
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      if (modelSelector) {
+        const currentModel = await modelSelector.innerText();
+        console.log(`[v2] Current model selected: ${currentModel}`);
+
+        // If we are already on the target (fuzzy match), skip
+        if (targetModel.includes('flash') && currentModel.toLowerCase().includes('flash')) {
+          console.log('[v2] ✅ "Flash" model already active.');
+          return;
+        }
+
+        await modelSelector.click();
+        await page.waitForTimeout(1000);
+
+        // 2. Scrape available models
+        // Try multiple selectors for options list
+        const options = page.locator('mat-option, [role="option"], .model-option');
+        const optCount = await options.count();
+        const availableModels: string[] = [];
+
+        // Use a Set to avoid duplicates if selectors overlap
+        const modelSet = new Set<string>();
+
+        for (let i = 0; i < optCount; i++) {
+          const text = await options.nth(i).innerText();
+          // Clean up text (remove newlines/descriptions)
+          const cleanText = text.split('\n')[0].trim();
+          availableModels.push(cleanText);
+          modelSet.add(cleanText);
+        }
+
+        console.log(`[v2] 📋 Available Models: ${Array.from(modelSet).join(', ')}`);
+
+        // 3. Select best match
+        let bestMatchIndex = -1;
+
+        // Exact-ish match
+        bestMatchIndex = availableModels.findIndex((m) =>
+          m.toLowerCase().includes(targetModel.toLowerCase())
+        );
+
+        if (bestMatchIndex === -1) {
+          // Fallback for known aliases
+          if (targetModel.includes('flash')) {
+            bestMatchIndex = availableModels.findIndex(
+              (m) => m.toLowerCase().includes('flash') && !m.toLowerCase().includes('legacy')
+            );
+          } else if (targetModel.includes('pro')) {
+            bestMatchIndex = availableModels.findIndex(
+              (m) => m.toLowerCase().includes('pro') && !m.toLowerCase().includes('vision')
+            ); // 'vision' is often older
+          }
+        }
+
+        if (bestMatchIndex !== -1) {
+          console.log(`[v2] 👉 Selecting: ${availableModels[bestMatchIndex]}`);
+          await options.nth(bestMatchIndex).click();
+          await page.waitForTimeout(2000);
+        } else {
+          console.warn(
+            `[v2] ⚠️ Could not find target model ${targetModel}. Keeping current selection.`
+          );
+          await page.keyboard.press('Escape');
+        }
+      } else {
+        console.log(
+          '[v2] ⚠️ Model selector not found (checked all buttons). assuming strict URL param worked.'
+        );
+        const content = await page.content();
+        fs.writeFileSync('ai_studio_dump.html', content);
+        console.log('[v2] Dumped AI Studio HTML to ai_studio_dump.html');
+      }
+    } catch (e) {
+      console.error('[v2] ⚠️ Error selecting model:', e);
+    }
+  }
+
   // --- FIXED PARSING METHOD ---
   async analyzeWithAI(video: VideoEntry): Promise<AnalysisResult | null> {
     if (!this.context || !video.transcript) {
@@ -635,10 +915,24 @@ class TranscriptProcessorV2 {
 
     console.log(`[v2] 🤖 AI Analysis: ${video.title}`);
 
-    // FRESH page for AI Studio
-    const page = await this.context.newPage();
+    let page: Page | null = null;
 
     try {
+      // FRESH page for AI Studio - Check context health first
+      try {
+        page = await this.context.newPage();
+      } catch (contextError) {
+        console.error('[v2] ❌ Browser context is dead, cannot create page:', contextError);
+        // Try to reinitialize
+        console.log('[v2] Attempting to restart browser...');
+        try {
+          await this.context?.close();
+        } catch (e) {
+          /* ignore */
+        }
+        await this.initialize();
+        page = await this.context!.newPage();
+      }
       // Combine transcript
       const fullTranscript = video.transcript.map((s) => s.text).join(' ');
       const truncatedTranscript = fullTranscript.substring(0, 25000); // Stay within limits
@@ -666,6 +960,13 @@ class TranscriptProcessorV2 {
       await page.keyboard.press('Escape');
       await page.waitForTimeout(500);
 
+      // Skip API Key check - use browser session directly
+      // await this.ensurePaidApiKey(page);
+      console.log('[v2] 💳 Using browser session (skipping API key check)');
+
+      // Ensure correct model is selected
+      await this.selectBestModel(page, GEMINI_MODEL);
+
       // Enter prompt
       const textarea = page.locator('textarea[aria-label="Enter a prompt"]');
       await textarea.waitFor({ state: 'visible', timeout: 15000 });
@@ -685,8 +986,31 @@ class TranscriptProcessorV2 {
       const startWait = Date.now();
       const timeout = 2 * 60 * 1000; // 2 minutes
 
+      // Initial longer wait for first request after API key setup
+      await page.waitForTimeout(5000);
+
       while (Date.now() - startWait < timeout) {
         await page.waitForTimeout(3000);
+
+        // Check for error messages (Permission denied, etc.)
+        const errorToast = page
+          .locator('mat-snack-bar-container')
+          .or(page.locator('.error-message'))
+          .or(page.getByText('Permission denied'))
+          .or(page.getByText('Failed to generate'));
+
+        if ((await errorToast.count()) > 0 && (await errorToast.first().isVisible())) {
+          const errorText = await errorToast.first().innerText();
+          console.error(`[v2] ❌ AI Studio Error detected: ${errorText}`);
+          if (errorText.toLowerCase().includes('permission denied')) {
+            console.error(
+              `[v2] 🛑 FATAL ERROR: Account permissions issue. Stopping entire process.`
+            );
+            // We need to exit the entire process so the user can fix the account
+            process.exit(1);
+          }
+          throw new Error(`AI Studio Error: ${errorText}`);
+        }
 
         // Check for completion by looking for the response container
         const responseContainer = page.locator(
@@ -795,7 +1119,6 @@ class TranscriptProcessorV2 {
               };
             }
 
-            await page.close();
             console.log(`[v2] ✅ Analysis complete (quality: ${analysis.qualityScore}%)`);
             return analysis;
           }
@@ -815,15 +1138,21 @@ class TranscriptProcessorV2 {
         }
       }
 
-      await page.close();
       console.log('[v2] ⚠️ Analysis timeout');
       return null;
     } catch (e) {
       console.error('[v2] Analysis error:', e);
-      try {
-        await page.close();
-      } catch (x) {}
       return null;
+    } finally {
+      // GUARANTEED CLEANUP - Always close page, even if errors occur
+      if (page) {
+        try {
+          await page.close();
+          console.log('[v2] 🧹 Page cleaned up');
+        } catch (cleanupError) {
+          console.warn('[v2] ⚠️ Failed to close page during cleanup:', cleanupError);
+        }
+      }
     }
   }
 
@@ -939,7 +1268,11 @@ class TranscriptProcessorV2 {
   }
 
   async processVideo(video: VideoEntry): Promise<boolean> {
-    if (video.status === 'completed' || video.status === 'skipped') {
+    if (
+      video.status === 'completed' ||
+      video.status === 'skipped' ||
+      video.status === 'needs_visual'
+    ) {
       console.log(`[v2] ⏭️ Skipping #${video.index} (${video.status})`);
       return true;
     }
@@ -951,6 +1284,9 @@ class TranscriptProcessorV2 {
       this.saveState();
       return false;
     }
+
+    // HEALTH CHECK - Ensure browser is alive before processing
+    await this.ensureBrowserHealth();
 
     console.log(`\n${'═'.repeat(70)}`);
     console.log(`Video #${video.index}: ${video.title}`);

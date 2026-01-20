@@ -4,9 +4,39 @@
   "version": "4.0.0",
   "description": "Bridge your browser to The New Fuse AI agent network. Enable multi-agent collaboration, federation, and automation across AI platforms.",
 
-  "permissions": ["storage", "activeTab", "scripting", "tabs", "webNavigation"],
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "webNavigation",
+    "identity",
+    "cookies",
+    "alarms",
+    "contextMenus",
+    "webRequest",
+    "notifications"
+  ],
 
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "<all_urls>",
+    "https://*.youtube.com/*",
+    "https://aistudio.google.com/*",
+    "https://notebooklm.google.com/*",
+    "https://www.googleapis.com/*",
+    "https://*.usercontent.goog/*"
+  ],
+
+  "oauth2": {
+    "client_id": "YOUR_GOOGLE_CLOUD_CLIENT_ID_HERE",
+    "scopes": [
+      "https://www.googleapis.com/auth/youtube.readonly",
+      "https://www.googleapis.com/auth/drive.appdata",
+      "profile",
+      "email"
+    ]
+  },
 
   "background": {
     "service_worker": "background.js",
@@ -35,6 +65,28 @@
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_start"
+    },
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["content-scripts/ai-studio/ai-studio.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.usercontent.goog/*"],
+      "js": ["content-scripts/ai-studio/iframe-bridge.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["content-scripts/ai-studio/youtube.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://notebooklm.google.com/*"],
+      "js": ["content-scripts/ai-studio/notebooklm.js"],
+      "run_at": "document_idle"
     }
   ],
 

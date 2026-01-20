@@ -1002,6 +1002,41 @@ class BackgroundService {
           });
           return true;
 
+        case 'AI_STUDIO_AUTH':
+          // Handle AI Studio OAuth2 authentication
+          chrome.identity.getAuthToken({ interactive: true }, (token) => {
+            if (chrome.runtime.lastError) {
+              sendResponse({ success: false, error: chrome.runtime.lastError.message });
+            } else {
+              // Store token and get user info
+              chrome.storage.local.set({ ai_studio_token: token });
+              sendResponse({ success: true, token });
+            }
+          });
+          return true; // Async response
+
+        case 'AI_STUDIO_GET_PLAYLISTS':
+          // Fetch YouTube playlists using stored token
+          chrome.storage.local.get(['ai_studio_token'], (result) => {
+            if (!result.ai_studio_token) {
+              sendResponse({ success: false, error: 'Not authenticated' });
+              return;
+            }
+            // TODO: Implement YouTube API call
+            sendResponse({ success: true, playlists: [] });
+          });
+          return true;
+
+        case 'AI_STUDIO_PROCESS_VIDEO':
+          // Queue video for processing
+          chrome.storage.local.get(['ai_studio_queue'], (result) => {
+            const queue = result.ai_studio_queue || [];
+            queue.push(message.video);
+            chrome.storage.local.set({ ai_studio_queue: queue });
+            sendResponse({ success: true, queueLength: queue.length });
+          });
+          return true;
+
         case 'BROADCAST_MESSAGE':
           // CRITICAL FIX: Preserve the `metadata` including `senderId` so receiving tabs
           // can identify messages that originated from themselves and avoid self-injection loops.

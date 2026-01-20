@@ -1336,8 +1336,13 @@ export class EnhancedFloatingPanel {
       { id: 'fs-server', name: 'File System', icon: '📂' },
     ];
 
+    // Get AI Studio state from storage or defaults
+    const aiStudioAuth = false; // TODO: Load from storage
+    const videoQueueCount = 0; // TODO: Load from storage
+    const processingStatus = 'idle'; // TODO: Load from storage
+
     return `
-      <div class="fcp6-section-title">Core Banking Services</div>
+      <div class="fcp6-section-title">Core Services</div>
       <div class="fcp6-list">
         ${services
           .map((svc) => {
@@ -1366,6 +1371,147 @@ export class EnhancedFloatingPanel {
       </div>
        <div style="margin-top:12px;">
         <button class="fcp6-btn" data-action="open-terminal" style="width:100%;">Open Terminal</button>
+      </div>
+
+      <!-- AI Video Intelligence Section -->
+      <div style="margin-top:20px; padding-top:16px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="fcp6-section-title">🎬 AI Video Intelligence</div>
+
+        ${
+          !aiStudioAuth
+            ? `
+          <div style="padding:12px; background:rgba(0,217,255,0.05); border-radius:8px; margin-top:8px;">
+            <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:8px;">
+              Process YouTube videos through AI Studio
+            </div>
+            <button class="fcp6-btn" data-action="ai-studio-auth" style="width:100%;">
+              🔐 Sign in with Google
+            </button>
+          </div>
+        `
+            : `
+          <!-- Authenticated View -->
+          <div style="margin-top:8px;">
+            <!-- Playlist Selector -->
+            <div style="margin-bottom:8px;">
+              <label style="font-size:11px; color:rgba(255,255,255,0.6); display:block; margin-bottom:4px;">
+                📺 Playlist
+              </label>
+              <select class="fcp6-input" data-action="ai-studio-select-playlist" style="width:100%; padding:6px;">
+                <option value="">Select playlist...</option>
+              </select>
+            </div>
+
+            <!-- Video Queue -->
+            <div style="margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <label style="font-size:11px; color:rgba(255,255,255,0.6);">
+                  📋 Queue (${videoQueueCount})
+                </label>
+                <button class="fcp6-btn" data-action="ai-studio-load-videos" style="padding:4px 8px; font-size:11px;">
+                  Load
+                </button>
+              </div>
+              <div style="max-height:120px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:6px; padding:6px;">
+                ${
+                  videoQueueCount === 0
+                    ? `
+                  <div style="font-size:11px; color:rgba(255,255,255,0.4); text-align:center; padding:12px;">
+                    No videos in queue
+                  </div>
+                `
+                    : `
+                  <!-- Video items will be rendered here -->
+                  <div class="fcp6-video-item">Video 1</div>
+                `
+                }
+              </div>
+            </div>
+
+            <!-- Processing Tier -->
+            <div style="margin-bottom:8px;">
+              <label style="font-size:11px; color:rgba(255,255,255,0.6); display:block; margin-bottom:4px;">
+                🎯 Processing
+              </label>
+              <select class="fcp6-input" data-action="ai-studio-select-tier" style="width:100%; padding:6px; font-size:11px;">
+                <option value="metadata">Metadata (FREE)</option>
+                <option value="transcript">Transcript (FREE)</option>
+                <option value="flash" selected>Gemini Flash ($0.01)</option>
+                <option value="pro">Gemini Pro ($0.15)</option>
+                <option value="vision">Gemini Vision ($0.30)</option>
+                <option value="ai-studio">AI Studio (FREE*)</option>
+              </select>
+            </div>
+
+            <!-- Controls -->
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+              ${
+                processingStatus === 'idle'
+                  ? `
+                <button class="fcp6-btn" data-action="ai-studio-start" style="flex:1; background:rgba(0,255,136,0.2); border:1px solid rgba(0,255,136,0.4);">
+                  ▶ Start
+                </button>
+              `
+                  : `
+                <button class="fcp6-btn" data-action="ai-studio-pause" style="flex:1; background:rgba(255,187,0,0.2);">
+                  ⏸ Pause
+                </button>
+                <button class="fcp6-btn" data-action="ai-studio-stop" style="flex:1; background:rgba(255,51,102,0.2);">
+                  ⏹ Stop
+                </button>
+              `
+              }
+            </div>
+
+            <!-- Progress -->
+            ${
+              processingStatus !== 'idle'
+                ? `
+              <div style="margin-bottom:8px;">
+                <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+                  <div style="height:100%; width:75%; background:linear-gradient(90deg,#00D9FF,#9D4EDD); transition:width 0.3s;"></div>
+                </div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:4px; text-align:center;">
+                  Processing: "How to Build Apps..." (8/10)
+                </div>
+              </div>
+            `
+                : ''
+            }
+
+            <!-- Knowledge Base -->
+            <div style="padding:10px; background:rgba(157,78,221,0.1); border-radius:6px; margin-bottom:8px;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.6); margin-bottom:6px;">
+                🧠 Knowledge Base
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
+                <span style="color:rgba(255,255,255,0.7);">Concepts: <strong>0</strong></span>
+                <span style="color:rgba(255,255,255,0.7);">Videos: <strong>0</strong></span>
+              </div>
+              <div style="display:flex; gap:4px;">
+                <button class="fcp6-btn" data-action="ai-studio-export-kb" style="flex:1; font-size:10px; padding:4px;">
+                  📄 Export
+                </button>
+                <button class="fcp6-btn" data-action="ai-studio-sync-notebook" style="flex:1; font-size:10px; padding:4px;">
+                  🎙️ Podcast
+                </button>
+              </div>
+            </div>
+
+            <!-- Cost Tracking -->
+            <div style="padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-size:10px;">
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.6);">
+                <span>Session:</span>
+                <span style="color:#00ff88;">$0.00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.6); margin-top:2px;">
+                <span>Total:</span>
+                <span style="color:#00D9FF;">$0.00</span>
+              </div>
+            </div>
+          </div>
+        `
+        }
       </div>
     `;
   }
