@@ -11,35 +11,18 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     // Enable CORS with strict configuration
     cors: {
-      origin: (requestOrigin, callback) => {
-        const allowedOrigins = [
-          'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
-          'https://aivideointel.thenewfuse.com',
-          'https://thenewfuse.com',
-        ];
-
-        if (process.env.ALLOWED_ORIGINS) {
-          allowedOrigins.push(...process.env.ALLOWED_ORIGINS.split(','));
-        }
-
-        if (process.env.NODE_ENV !== 'production') {
-          allowedOrigins.push(
-            'http://localhost:3000',
-            'http://localhost:3001',
-            'http://localhost:5173'
-          );
-        }
-
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!requestOrigin) return callback(null, true);
-
-        if (allowedOrigins.includes(requestOrigin)) {
-          callback(null, true);
-        } else {
-          console.warn(`Blocked CORS for origin: ${requestOrigin}`);
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? [
+              ...(process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']),
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+            ]
+          : [
+              'http://localhost:3000',
+              'http://localhost:3001',
+              'http://localhost:5173',
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+            ],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: [

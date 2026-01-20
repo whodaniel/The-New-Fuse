@@ -103,11 +103,6 @@ export class SecureAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    // Allow CORS preflight requests
-    if (request.method === 'OPTIONS') {
-      return true;
-    }
-
     const handler = context.getHandler();
     const className = context.getClass().name;
 
