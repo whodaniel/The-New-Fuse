@@ -61,7 +61,7 @@ export default function LandingPage() {
             </div>
             {/* Hero Image - Responsive */}
             <div className="flex-1 w-full max-w-lg lg:max-w-none animate-slide-in-right">
-              <div className="relative aspect-square md:aspect-video rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm p-8 flex items-center justify-center">
+              <div className="relative aspect-square md:aspect-video rounded-lg bg-linear-to-br from-primary/20 to-accent/20 backdrop-blur-sm p-8 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                     <svg
@@ -101,7 +101,7 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div className="flex-1 animate-slide-in-left">
-              <div className="aspect-video rounded-lg bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
+              <div className="aspect-video rounded-lg bg-linear-to-br from-accent/20 to-primary/20 flex items-center justify-center">
                 <p className="text-muted-foreground">About Illustration</p>
               </div>
             </div>
@@ -122,7 +122,7 @@ export default function LandingPage() {
                 ].map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <svg
-                      className="w-6 h-6 text-primary flex-shrink-0 mt-0.5"
+                      className="w-6 h-6 text-primary shrink-0 mt-0.5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -212,7 +212,7 @@ export default function LandingPage() {
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <svg
-                        className="w-5 h-5 text-primary flex-shrink-0 mt-0.5"
+                        className="w-5 h-5 text-primary shrink-0 mt-0.5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
