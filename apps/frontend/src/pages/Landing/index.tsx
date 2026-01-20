@@ -21,12 +21,6 @@ export default function LandingPage() {
     return new Promise<void>((resolve) => setTimeout(resolve, 1000));
   };
 
-  const handleDemoRequest = async (data: any) => {
-    // TODO: Implement demo request API call
-    console.log('Demo request:', data);
-    return new Promise<void>((resolve) => setTimeout(resolve, 1000));
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Mobile-Optimized Navigation */}
