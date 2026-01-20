@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DrizzleService } from '@the-new-fuse/database/drizzle';
-import { payPalSubscriptions } from '@the-new-fuse/database/src/drizzle/schema';
+import { payPalSubscriptions } from '@the-new-fuse/database/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import fetch from 'node-fetch'; // Standard fetch might be available in Node 18+
 
