@@ -36,6 +36,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-toast": "^1.2.15",
+    "@paypal/react-paypal-js": "^8.8.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@reactflow/node-resizer": "^2.2.14",
