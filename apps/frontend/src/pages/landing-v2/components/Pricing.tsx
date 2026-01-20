@@ -30,9 +30,47 @@ export default function Pricing() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {['Starter', 'Pro', 'Enterprise'].map((plan, i) => (
+        {[
+          {
+            name: 'Starter',
+            price: '$0',
+            features: [
+              'Up to 5 AI Agents',
+              'Basic Workflow Automation',
+              'Community Support',
+              '1,000 Messages/Month',
+            ],
+            cta: 'Get Started',
+            variant: 'secondary',
+          },
+          {
+            name: 'Professional',
+            price: '$30',
+            features: [
+              'Up to 25 AI Agents',
+              'Advanced Workflow Automation',
+              'Priority Support',
+              '10,000 Messages/Month',
+              'API Access',
+            ],
+            cta: 'Get Started',
+            variant: 'primary',
+          },
+          {
+            name: 'Enterprise',
+            price: 'Custom',
+            features: [
+              'Unlimited AI Agents',
+              'Enterprise Workflows',
+              '24/7 Dedicated Support',
+              'Custom Integrations',
+            ],
+            cta: 'Contact Sales',
+            variant: 'secondary',
+          },
+        ].map((plan, i) => (
           <Card
-            key={plan}
+            key={plan.name}
             className={cn(
               'flex flex-col',
               i === 1
@@ -41,26 +79,24 @@ export default function Pricing() {
             )}
           >
             <div className="mb-8">
-              <h3 className="text-xl font-medium text-white mb-2">{plan}</h3>
+              <h3 className="text-xl font-medium text-white mb-2">{plan.name}</h3>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-white">
-                  {i === 0 ? '$0' : i === 1 ? '$49' : 'Custom'}
-                </span>
-                {i !== 2 && <span className="text-white/40">/mo</span>}
+                <span className="text-4xl font-bold text-white">{plan.price}</span>
+                {plan.price !== 'Custom' && <span className="text-white/40">/mo</span>}
               </div>
             </div>
 
             <ul className="space-y-4 mb-8 flex-1">
-              {[1, 2, 3, 4].map((_, idx) => (
+              {plan.features.map((feature, idx) => (
                 <li key={idx} className="flex items-center gap-3 text-sm text-white/70">
                   <Check size={16} className="text-green-400" />
-                  <span>Feature included in {plan}</span>
+                  <span>{feature}</span>
                 </li>
               ))}
             </ul>
 
-            <Button variant={i === 1 ? 'primary' : 'secondary'} className="w-full">
-              {i === 2 ? 'Contact Sales' : 'Get Started'}
+            <Button variant={plan.variant as 'primary' | 'secondary'} className="w-full">
+              {plan.cta}
             </Button>
           </Card>
         ))}

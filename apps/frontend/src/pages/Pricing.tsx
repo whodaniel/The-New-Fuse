@@ -1,3 +1,4 @@
+import { PayPalSubscriptionButton } from '@/components/billing/PayPalSubscriptionButton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,9 +43,19 @@ const PricingCard = ({
           </li>
         ))}
       </ul>
-      <Button asChild className="w-full">
-        <Link to={buttonLink}>{buttonText}</Link>
-      </Button>
+      {popular && title === 'Professional' ? (
+        <PayPalSubscriptionButton
+          onSuccess={(subId) => {
+            console.log('Successfully subscribed:', subId);
+            // Redirect or show success message
+            window.location.href = '/dashboard?subscribed=true';
+          }}
+        />
+      ) : (
+        <Button asChild className="w-full">
+          <Link to={buttonLink}>{buttonText}</Link>
+        </Button>
+      )}
     </CardContent>
   </Card>
 );
@@ -166,7 +177,7 @@ export const Pricing = () => {
               {/* Professional Plan */}
               <PricingCard
                 title="Professional"
-                price="$49"
+                price="$30"
                 description="For growing teams and serious developers"
                 popular={true}
                 features={[

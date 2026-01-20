@@ -31,6 +31,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
 import { AgentModule } from './modules/agent.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { BillingModule } from './modules/billing/billing.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
@@ -113,6 +114,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
     // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
+    BillingModule,
   ],
   controllers: [
     AppController,

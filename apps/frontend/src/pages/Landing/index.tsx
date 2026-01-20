@@ -160,28 +160,44 @@ export default function LandingPage() {
               {
                 name: 'Starter',
                 price: 'Free',
-                features: ['3 AI Agents', 'Basic Workflows', 'Community Support', '1GB Storage'],
+                features: [
+                  'Up to 5 AI Agents',
+                  'Basic Workflow Automation',
+                  'Community Support',
+                  '1,000 Messages/Month',
+                  'Basic Analytics',
+                ],
+                cta: '/auth/register',
+                ctaText: 'Get Started Free',
               },
               {
                 name: 'Pro',
-                price: '$29/mo',
+                price: '$30/mo',
                 features: [
-                  '10 AI Agents',
-                  'Advanced Workflows',
+                  'Up to 25 AI Agents',
+                  'Advanced Workflow Automation',
                   'Priority Support',
-                  '10GB Storage',
+                  '10,000 Messages/Month',
+                  'Advanced Analytics',
+                  'API Access',
                 ],
                 highlighted: true,
+                cta: '/auth/register',
+                ctaText: 'Upgrade to Professional',
               },
               {
                 name: 'Enterprise',
                 price: 'Custom',
                 features: [
-                  'Unlimited Agents',
-                  'Custom Workflows',
-                  'Dedicated Support',
-                  'Unlimited Storage',
+                  'Unlimited AI Agents',
+                  'Enterprise Workflows',
+                  '24/7 Dedicated Support',
+                  'Unlimited Messages',
+                  'Custom Integrations',
+                  'SLA Guarantees',
                 ],
+                cta: '/contact',
+                ctaText: 'Contact Sales',
               },
             ].map((plan, index) => (
               <div
@@ -213,13 +229,14 @@ export default function LandingPage() {
                   ))}
                 </ul>
                 <button
+                  onClick={() => navigate(plan.cta)}
                   className={`w-full min-h-touch rounded-md px-6 py-3 text-base font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                     plan.highlighted
                       ? 'bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary'
                       : 'bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary'
                   }`}
                 >
-                  Get Started
+                  {plan.ctaText}
                 </button>
               </div>
             ))}
