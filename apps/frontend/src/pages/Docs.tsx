@@ -1,135 +1,157 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Book, Code, Globe, Rocket, Terminal } from 'lucide-react';
+import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { BookOpen, Code, FileText, Search } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-export const Docs = () => {
+const DocsPage: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
-      <main className="grow">
-        <section className="py-20 lg:py-32 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white text-center">
-          <div className="container mx-auto px-4">
-            <Badge className="mb-6 bg-white/10 text-white border-white/20">
-              <Book className="w-4 h-4 mr-2" />
-              Comprehensive Documentation
-            </Badge>
-            <h1 className="text-5xl lg:text-7xl font-bold mb-6">Developer Documentation</h1>
-            <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto">
-              Everything you need to build with The New Fuse platform.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
-            >
-              <Link to="/auth/register">
-                <Rocket className="mr-2 h-5 w-5" />
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
-        </section>
-
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Documentation Sections
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Explore our comprehensive documentation
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
-                    <Code className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2 text-gray-900">API Reference</h3>
-                  <p className="text-gray-600 text-sm">
-                    Comprehensive API documentation and examples
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-green-500 to-green-600 flex items-center justify-center mb-4">
-                    <Terminal className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2 text-gray-900">CLI Guide</h3>
-                  <p className="text-gray-600 text-sm">Command-line interface documentation</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4">
-                    <Globe className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2 text-gray-900">SDK Documentation</h3>
-                  <p className="text-gray-600 text-sm">TypeScript/JavaScript SDK reference</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 bg-white text-center">
-          <div className="container mx-auto px-4">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Need Help?</h2>
-            <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-              Check out our documentation or contact support.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold"
-            >
-              <Link to="/auth/register">Get Started</Link>
-            </Button>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center gap-3 mb-4 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <Rocket className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold">The New Fuse</span>
-          </Link>
-          <p className="text-gray-400 text-sm mb-4">AI Agent Orchestration Platform</p>
-          <div className="flex justify-center gap-6 text-sm text-gray-400">
-            <Link to="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <Link to="/pricing" className="hover:text-white transition-colors">
-              Pricing
-            </Link>
-            <Link to="/legal/privacy" className="hover:text-white transition-colors">
-              Privacy
-            </Link>
-            <Link to="/legal/terms" className="hover:text-white transition-colors">
-              Terms
-            </Link>
-          </div>
-          <p className="text-xs text-gray-500 mt-4">
-            © {new Date().getFullYear()} The New Fuse. All rights reserved.
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      <div className="max-w-7xl mx-auto space-y-12">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Documentation
+          </h1>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Everything you need to build, deploy, and scale with The New Fuse.
           </p>
+          <div className="max-w-xl mx-auto relative">
+            <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search documentation..."
+              className="w-full bg-slate-800 border border-slate-700 rounded-full py-3 pl-12 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
-      </footer>
+
+        {/* Quick Links Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <GlassCard className="p-6 hover:border-blue-500/50 transition-colors cursor-pointer group">
+            <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <BookOpen className="w-6 h-6 text-blue-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">Getting Started</h3>
+            <p className="text-gray-400 mb-4">
+              Learn the basics of The New Fuse, from account creation to your first agent.
+            </p>
+            <Link to="/docs/getting-started" className="text-blue-400 font-medium hover:underline">
+              Read Guide &rarr;
+            </Link>
+          </GlassCard>
+
+          <GlassCard className="p-6 hover:border-purple-500/50 transition-colors cursor-pointer group">
+            <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Code className="w-6 h-6 text-purple-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">API Reference</h3>
+            <p className="text-gray-400 mb-4">
+              Detailed documentation for our REST API, including endpoints, authentication, and
+              examples.
+            </p>
+            <Link to="/docs/api" className="text-purple-400 font-medium hover:underline">
+              View API Docs &rarr;
+            </Link>
+          </GlassCard>
+
+          <GlassCard className="p-6 hover:border-green-500/50 transition-colors cursor-pointer group">
+            <div className="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <FileText className="w-6 h-6 text-green-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">Tutorials & Guides</h3>
+            <p className="text-gray-400 mb-4">
+              Step-by-step tutorials for common use cases, from simple workflows to complex agent
+              swarms.
+            </p>
+            <Link to="/docs/tutorials" className="text-green-400 font-medium hover:underline">
+              Browse Tutorials &rarr;
+            </Link>
+          </GlassCard>
+        </div>
+
+        {/* Documentation Sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-1 space-y-4">
+            <h3 className="font-bold text-lg text-white">Categories</h3>
+            <ul className="space-y-2 text-gray-400">
+              <li>
+                <Link to="#" className="hover:text-blue-400 transition-colors">
+                  Platform Overview
+                </Link>
+              </li>
+              <li>
+                <Link to="#" className="hover:text-blue-400 transition-colors">
+                  Agent Management
+                </Link>
+              </li>
+              <li>
+                <Link to="#" className="hover:text-blue-400 transition-colors">
+                  Workflow Builder
+                </Link>
+              </li>
+              <li>
+                <Link to="#" className="hover:text-blue-400 transition-colors">
+                  Integrations
+                </Link>
+              </li>
+              <li>
+                <Link to="#" className="hover:text-blue-400 transition-colors">
+                  Security & Compliance
+                </Link>
+              </li>
+              <li>
+                <Link to="#" className="hover:text-blue-400 transition-colors">
+                  Billing & Plans
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="lg:col-span-3 space-y-8">
+            <section>
+              <h2 className="text-2xl font-bold mb-4">Popular Topics</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  'How to create a custom agent',
+                  'Connecting to external APIs',
+                  'Understanding workflow triggers',
+                  'Managing team permissions',
+                  'Optimizing agent performance',
+                  'Deploying to production',
+                ].map((topic, i) => (
+                  <div
+                    key={i}
+                    className="p-4 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-blue-500/30 transition-colors cursor-pointer"
+                  >
+                    <Link to="#" className="flex items-center justify-between group">
+                      <span className="text-gray-300 group-hover:text-white transition-colors">
+                        {topic}
+                      </span>
+                      <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-blue-400 transition-colors" />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-2xl p-8 border border-white/10">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">Join the Community</h2>
+                  <p className="text-gray-400">
+                    Get help from other developers and share your projects.
+                  </p>
+                </div>
+                <Link to="/community">
+                  <PremiumButton variant="gradient">Visit Community Hub</PremiumButton>
+                </Link>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Docs;
+export default DocsPage;

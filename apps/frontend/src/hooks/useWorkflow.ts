@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Node, Edge, Connection, addEdge } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
-import { workflowService, Workflow, WorkflowExecution } from '@/services/WorkflowService';
+import { workflowService, Workflow, WorkflowExecution, WorkflowTemplate } from '@/services/WorkflowService';
 
 export const useWorkflow = () => {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
@@ -161,6 +161,41 @@ export const useWorkflow = () => {
       setLoading(false);
     }
   }, []);
+
+  // Fetch templates
+  const getTemplates = useCallback(async (): Promise<WorkflowTemplate[]> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const templates = await workflowService.getTemplates();
+      return templates;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to fetch templates'));
+      // Fallback to empty array instead of throwing to prevent UI crash
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Create from template
+  const createFromTemplate = useCallback(async (templateId: string, name: string, description?: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const newWorkflow = await workflowService.createFromTemplate(templateId, name, description);
+      setWorkflows(prev => [...prev, newWorkflow]);
+      setCurrentWorkflow(newWorkflow);
+      return newWorkflow;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to create workflow from template'));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
   
   return {
     workflows,
@@ -175,7 +210,9 @@ export const useWorkflow = () => {
     deleteWorkflow,
     executeWorkflow,
     loadExecutions,
-    getWorkflow
+    getWorkflow,
+    getTemplates,
+    createFromTemplate
   };
 };
 

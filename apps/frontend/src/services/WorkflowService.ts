@@ -3,6 +3,7 @@
  */
 
 import { Edge, Node } from 'reactflow';
+import { DEFAULT_WORKFLOW_TEMPLATES } from '../data/workflowTemplates';
 
 export interface Workflow {
   id: string;
@@ -239,8 +240,8 @@ class WorkflowService {
     try {
       return await this.request<WorkflowTemplate[]>('/workflows/templates');
     } catch (error) {
-      console.error('Failed to fetch workflow templates:', error);
-      throw error;
+      console.warn('Failed to fetch workflow templates from API, using defaults:', error);
+      return DEFAULT_WORKFLOW_TEMPLATES;
     }
   }
 
@@ -248,7 +249,9 @@ class WorkflowService {
     try {
       return await this.request<WorkflowTemplate>(`/workflows/templates/${id}`);
     } catch (error) {
-      console.error(`Failed to fetch template ${id}:`, error);
+      console.warn(`Failed to fetch template ${id} from API, checking defaults:`, error);
+      const template = DEFAULT_WORKFLOW_TEMPLATES.find(t => t.id === id);
+      if (template) return template;
       throw error;
     }
   }
@@ -269,8 +272,30 @@ class WorkflowService {
       });
       return this.transformWorkflow(workflow);
     } catch (error) {
-      console.error(`Failed to create workflow from template ${templateId}:`, error);
-      throw error;
+      console.warn(`Failed to create workflow from template ${templateId} via API, using local logic:`, error);
+
+      const template = DEFAULT_WORKFLOW_TEMPLATES.find(t => t.id === templateId);
+      if (!template) throw new Error('Template not found');
+
+      // Create a new workflow based on the template locally (mocking backend behavior)
+      const newWorkflow: Omit<Workflow, 'id' | 'createdAt' | 'updatedAt'> = {
+        name,
+        description: description || template.description,
+        nodes: template.nodes,
+        edges: template.edges,
+        status: 'draft',
+        version: 1,
+        createdBy: 'current-user',
+        tags: [],
+        metadata: {
+          sourceTemplateId: template.id,
+          ...template.metadata
+        }
+      };
+
+      // In a real app, this would still need to go to the backend to persist
+      // We'll try to create it via the standard createWorkflow method
+      return this.createWorkflow(newWorkflow);
     }
   }
 

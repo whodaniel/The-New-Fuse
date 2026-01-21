@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Download, Palette, Rocket, Sparkles, Type } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SiteFooter } from '@/components/SiteFooter';
 
 /**
  * BRAND IDENTITY & STYLE GUIDE
@@ -368,9 +369,7 @@ export const BrandIdentity = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="py-12 border-t border-white/10 bg-black/40 text-center">
-        <p className="text-gray-500">© 2025 The New Fuse. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 };

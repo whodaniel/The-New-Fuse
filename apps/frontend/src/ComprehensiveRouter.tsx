@@ -92,6 +92,7 @@ const PricingPage = lazy(() => import('./pages/Pricing'));
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
 const SupportPage = lazy(() => import('./pages/Support'));
 const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
+const DocsPage = lazy(() => import('./pages/Docs'));
 const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
@@ -351,6 +352,8 @@ export default function ComprehensiveRouter() {
             <Route path="/support" element={<SupportPage />} />
             <Route path="/contact" element={<SupportPage />} />
             <Route path="/onboarding" element={<OnboardingFlowPage />} />
+            <Route path="/docs" element={<DocsPage />} />
+            <Route path="/docs/*" element={<DocsPage />} />
             {/* Brand Identity / Design System */}
             <Route path="/brand" element={<BrandIdentityPage />} />
             <Route path="/design-system" element={<BrandIdentityPage />} />
