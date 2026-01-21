@@ -1,3 +1,4 @@
+import './lib/firebase'; // Ensure Firebase is initialized early
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -9,16 +10,29 @@ import { unstoppableDomainsService } from './services/unstoppableDomains.service
 
 // Custom Element Guard
 // Prevents collisions with already defined custom elements (like mce-autosize-textarea)
-if (typeof customElements !== 'undefined') {
-  const originalDefine = customElements.define;
-  customElements.define = function (name, constructor, options) {
-    if (customElements.get(name)) {
-      console.warn(`Custom element '${name}' has already been defined. Skipping.`);
-      return;
+try {
+  if (typeof customElements !== 'undefined') {
+    const originalDefine = customElements.define;
+    // Helper to check if property is writable before attempting to overwrite
+    const descriptor = Object.getOwnPropertyDescriptor(customElements, 'define');
+
+    if (!descriptor || descriptor.writable || descriptor.configurable) {
+      customElements.define = function (name, constructor, options) {
+        if (customElements.get(name)) {
+          // Permissive behavior: just return early instead of throwing
+          // console.warn(`Custom element '${name}' has already been defined. Skipping.`);
+          return;
+        }
+        originalDefine.call(customElements, name, constructor, options);
+      };
+      console.log('[The New Fuse] Custom Element Guard initialized');
+    } else {
+      console.warn('[The New Fuse] customElements.define is read-only. Guard skipped.');
     }
-    originalDefine.call(customElements, name, constructor, options);
-  };
-  console.log('[The New Fuse] Custom Element Guard initialized');
+  }
+} catch (error) {
+  // Bypass on Error: Proceed even if the guard fails
+  console.warn('[The New Fuse] Custom Element Guard initialization error:', error);
 }
 
 // Initialize Unstoppable Domains Service
