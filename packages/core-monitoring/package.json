@@ -6,8 +6,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "build:foundation": "tsc",
+    "build": "tsc -p tsconfig.build.json",
+    "build:foundation": "tsc -p tsconfig.build.json",
     "build:watch": "tsc --watch",
     "dev": "tsc --watch",
     "test": "jest --passWithNoTests",
@@ -30,7 +30,7 @@
     "eslint": "^9.38.0",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.7.3"
   },
   "peerDependencies": {
     "@sentry/node": "^8.0.0",
