@@ -13,6 +13,21 @@ import {
   agents,
 } from '../schema';
 import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types';
+import * as crypto from 'crypto';
+
+// HMAC-SHA256 Hashing for Auth Tokens (Deterministic)
+function hashToken(token: string): string {
+  if (!process.env.ENCRYPTION_KEY) return token;
+
+  try {
+    const hmac = crypto.createHmac('sha256', process.env.ENCRYPTION_KEY);
+    hmac.update(token);
+    return `hmac_${hmac.digest('hex')}`;
+  } catch (error) {
+    console.error('Hashing failed:', error);
+    return token;
+  }
+}
 
 /**
  * Agent Repository - provides data access for Agent entities
@@ -401,20 +416,51 @@ export class DrizzleAgentRepository {
     isOnline: boolean;
     metadata: any;
   }) {
-    const [registration] = await db.insert(agentRegistrations).values(data).returning();
-    return registration;
+    // Hash auth token before storage
+    const hashedData = {
+      ...data,
+      authToken: hashToken(data.authToken)
+    };
+    const [registration] = await db.insert(agentRegistrations).values(hashedData).returning();
+
+    // Return the original plain token so the caller can see it once
+    return {
+      ...registration,
+      authToken: data.authToken
+    };
   }
 
   /**
    * Find registration by auth token
    */
   async findRegistrationByToken(token: string) {
-    const [registration] = await db
+    // We need to check both plain token (legacy) and hashed token
+    const hashedToken = hashToken(token);
+
+    // Try hashed match first
+    const [hashedMatch] = await db
+      .select()
+      .from(agentRegistrations)
+      .where(eq(agentRegistrations.authToken, hashedToken));
+
+    if (hashedMatch) {
+      return hashedMatch; // Return with hashed token
+    }
+
+    // Fallback to direct match (legacy/unencrypted)
+    // Note: If hashToken returns token (no key), this duplicates the check, which is fine.
+    const [directMatch] = await db
       .select()
       .from(agentRegistrations)
       .where(eq(agentRegistrations.authToken, token));
 
-    return registration ?? null;
+    // Prevent Pass-the-Hash: If we matched via plaintext but the stored value is a hash,
+    // it means the input token was the hash itself. Reject it.
+    if (directMatch && !directMatch.authToken.startsWith('hmac_')) {
+      return directMatch; // Return as is (legacy plain token)
+    }
+
+    return null;
   }
 
   /**
@@ -430,7 +476,11 @@ export class DrizzleAgentRepository {
       .innerJoin(agents, eq(agentRegistrations.agentId, agents.id))
       .where(and(eq(agentRegistrations.id, id), userId ? eq(agents.userId, userId) : undefined));
 
-    return row?.registration ?? null;
+    if (row?.registration) {
+      return row.registration; // Returns hashed token
+    }
+
+    return null;
   }
 
   /**
