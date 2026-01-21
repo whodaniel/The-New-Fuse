@@ -52,6 +52,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { enhancedNodeTypes } from '../../components/workflow/EnhancedNodeTypes';
+import { detectWorkflowCycles } from '../../utils/workflowValidation';
 
 // Node templates for the library
 interface NodeTemplate {
@@ -272,9 +273,23 @@ const EnhancedWorkflowBuilder: React.FC = () => {
           type: MarkerType.ArrowClosed,
         },
       };
+
+      const potentialEdges = addEdge(edge, edges);
+      const isCyclic = detectWorkflowCycles(nodes, potentialEdges);
+
+      if (isCyclic) {
+        toast.addToast({
+          title: 'Cycle Detected',
+          description: 'This connection would create an infinite loop.',
+          variant: 'destructive',
+          duration: 3000,
+        });
+        return;
+      }
+
       setEdges((eds) => addEdge(edge, eds));
     },
-    [setEdges]
+    [setEdges, edges, nodes, toast]
   );
 
   const addNodeToWorkflow = (template: NodeTemplate) => {

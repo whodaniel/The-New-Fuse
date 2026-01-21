@@ -178,3 +178,57 @@ export const validateWorkflow = (nodes, edges): any => {
     };
 };
 ;
+
+/**
+ * Detects if adding a connection creates a cycle in the workflow graph.
+ * uses Depth-First Search (DFS) algorithm.
+ *
+ * @param nodes List of all nodes in the workflow
+ * @param edges List of all edges in the workflow
+ * @returns true if a cycle is detected, false otherwise
+ */
+export const detectWorkflowCycles = (nodes: any[], edges: any[]): boolean => {
+  const adjList = new Map<string, string[]>();
+
+  // Initialize adjacency list
+  nodes.forEach(node => {
+    adjList.set(node.id, []);
+  });
+
+  // Build the graph
+  edges.forEach(edge => {
+    if (adjList.has(edge.source)) {
+      adjList.get(edge.source)?.push(edge.target);
+    }
+  });
+
+  const visited = new Set<string>();
+  const recursionStack = new Set<string>();
+
+  const dfs = (nodeId: string): boolean => {
+    visited.add(nodeId);
+    recursionStack.add(nodeId);
+
+    const neighbors = adjList.get(nodeId);
+    if (neighbors) {
+      for (const neighbor of neighbors) {
+        if (!visited.has(neighbor)) {
+          if (dfs(neighbor)) return true;
+        } else if (recursionStack.has(neighbor)) {
+          return true;
+        }
+      }
+    }
+
+    recursionStack.delete(nodeId);
+    return false;
+  };
+
+  for (const node of nodes) {
+    if (!visited.has(node.id)) {
+      if (dfs(node.id)) return true;
+    }
+  }
+
+  return false;
+};
