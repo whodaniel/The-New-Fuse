@@ -28,14 +28,15 @@ export const PayPalSubscriptionButton = ({
 
   return (
     <PayPalScriptProvider options={initialOptions}>
-      <div className="w-full max-w-[250px] mx-auto relative z-10 mt-2">
+      <div className="w-full relative z-10 mt-2">
         <PayPalButtons
           style={{
             shape: 'rect',
-            color: 'blue',
-            layout: 'vertical',
+            color: 'white',
+            layout: 'horizontal',
             label: 'subscribe',
             height: 48,
+            tagline: false,
           }}
           createSubscription={(data, actions) => {
             return actions.subscription.create({
