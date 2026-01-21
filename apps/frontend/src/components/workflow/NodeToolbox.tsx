@@ -1,4 +1,3 @@
-import { useAgentsWorkflow, useMcpTools } from '@/hooks';
 import {
   Bell,
   Bot,
@@ -120,8 +119,7 @@ const nodeTypes: NodeTypeItem[] = [
 ];
 
 export const NodeToolbox: React.FC = () => {
-  const { agents, loading: agentsLoading } = useAgentsWorkflow();
-  const { tools, loading: toolsLoading } = useMcpTools();
+  // Hooks removed as they were unused
   // Handle drag start
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string, nodeData: any) => {
     event.dataTransfer.setData('application/reactflow/type', nodeType);
@@ -139,7 +137,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-white/5 hover:border-white/30 transition-colors"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
                   onDragStart(e, node.type, {
@@ -167,7 +165,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-white/5 hover:border-white/30 transition-colors"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
                   onDragStart(e, node.type, {
@@ -195,7 +193,7 @@ export const NodeToolbox: React.FC = () => {
             .map((node: any) => (
               <div
                 key={node.type}
-                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-white/5 hover:border-white/30 transition-colors"
+                className="flex items-center p-2 border border-dashed border-white/20 rounded-md cursor-grab hover:bg-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200"
                 draggable
                 onDragStart={(e) =>
                   onDragStart(e, node.type, {

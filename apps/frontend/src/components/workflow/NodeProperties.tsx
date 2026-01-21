@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAgentsWorkflow, useMcpTools } from '@/hooks';
 import { Save, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Node } from 'reactflow';
+import { Node, useReactFlow } from 'reactflow';
 
 interface NodePropertiesProps {
   node: Node;
@@ -18,6 +18,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
   const { tools } = useMcpTools();
   const [nodeData, setNodeData] = useState<any>(node.data);
   const [activeTab, setActiveTab] = useState('general');
+
+  const { setNodes } = useReactFlow();
 
   useEffect(() => {
     setNodeData(node.data);
@@ -31,8 +33,21 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
   };
 
   const handleSave = () => {
-    // In a real app, this would update the node in the workflow context
     console.log('Saving node data:', nodeData);
+    setNodes((nds) =>
+      nds.map((n) => {
+        if (n.id === node.id) {
+          return {
+            ...n,
+            data: {
+              ...n.data,
+              ...nodeData,
+            },
+          };
+        }
+        return n;
+      })
+    );
   };
 
   const renderAgentProperties = () => {
@@ -45,8 +60,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
           <Select
             id="agent"
             value={nodeData.agentId || ''}
-            onChange={(e) => handleChange('agentId', e.target.value)}
-            className="bg-slate-800/50 border-white/10 text-white"
+            onChange={(value) => handleChange('agentId', value)}
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
           >
             <option value="">Select an agent</option>
             {agents.map((agent) => (
@@ -64,8 +79,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
           <Select
             id="action"
             value={nodeData.action || ''}
-            onChange={(e) => handleChange('action', e.target.value)}
-            className="bg-slate-800/50 border-white/10 text-white"
+            onChange={(value) => handleChange('action', value)}
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
           >
             <option value="">Select an action</option>
             <option value="analyze">Analyze</option>
@@ -85,7 +100,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             value={nodeData.timeout || 60}
             onChange={(e) => handleChange('timeout', parseInt(e.target.value))}
             min={1}
-            className="bg-slate-800/50 border-white/10 text-white"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
           />
         </div>
 
@@ -99,7 +114,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             value={nodeData.retries || 0}
             onChange={(e) => handleChange('retries', parseInt(e.target.value))}
             min={0}
-            className="bg-slate-800/50 border-white/10 text-white"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
           />
         </div>
       </div>
@@ -116,8 +131,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
           <Select
             id="tool"
             value={nodeData.toolId || ''}
-            onChange={(e) => handleChange('toolId', e.target.value)}
-            className="bg-slate-800/50 border-white/10 text-white"
+            onChange={(value) => handleChange('toolId', value)}
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
           >
             <option value="">Select a tool</option>
             {tools.map((tool) => (
@@ -144,7 +159,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               }
             }}
             rows={5}
-            className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500 font-mono text-sm"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500 font-mono text-sm"
           />
         </div>
       </div>
@@ -161,8 +176,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
           <Select
             id="condition"
             value={nodeData.conditionType || 'expression'}
-            onChange={(e) => handleChange('conditionType', e.target.value)}
-            className="bg-slate-800/50 border-white/10 text-white"
+            onChange={(value) => handleChange('conditionType', value)}
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
           >
             <option value="expression">Expression</option>
             <option value="status">Status Check</option>
@@ -180,7 +195,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             onChange={(e) => handleChange('expression', e.target.value)}
             placeholder="result.success === true"
             rows={3}
-            className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500 font-mono text-sm"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500 font-mono text-sm"
           />
           <p className="text-xs text-gray-400 mt-1">
             Use JavaScript expressions to define conditions.
@@ -276,7 +291,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               value={nodeData.label || ''}
               onChange={(e) => handleChange('label', e.target.value)}
               placeholder="Node Label"
-              className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500"
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
             />
           </div>
 
@@ -290,7 +305,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               onChange={(e) => handleChange('description', e.target.value)}
               placeholder="Describe what this node does"
               rows={3}
-              className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500"
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
             />
           </div>
         </TabsContent>
@@ -307,8 +322,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             <Select
               id="errorHandling"
               value={nodeData.errorHandling || 'continue'}
-              onChange={(e) => handleChange('errorHandling', e.target.value)}
-              className="bg-slate-800/50 border-white/10 text-white"
+              onChange={(value) => handleChange('errorHandling', value)}
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
             >
               <option value="continue">Continue Workflow</option>
               <option value="stop">Stop Workflow</option>
@@ -326,7 +341,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               value={nodeData.customId || ''}
               onChange={(e) => handleChange('customId', e.target.value)}
               placeholder="Optional custom identifier"
-              className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500"
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
             />
           </div>
         </TabsContent>

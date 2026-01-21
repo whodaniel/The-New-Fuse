@@ -23,13 +23,12 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
     data,
     inputHandles = [{ id: 'default', label: 'Input' }],
     outputHandles = [{ id: 'default', label: 'Output' }],
-    ..._props
   }) => {
     // Default to expanded so users can see node content immediately
     const [expanded, setExpanded] = useState(true);
 
     return (
-      <div className="relative" style={{ minWidth: '280px', maxWidth: '320px' }}>
+      <div className="relative" style={{ minWidth: '220px', maxWidth: '260px' }}>
         {/* Port labels - Input (left) */}
         {inputHandles.map((handle: any, index: number) => (
           <div

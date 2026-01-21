@@ -7,9 +7,7 @@ import { useWorkflow } from '@/hooks';
 import {
   ChevronLeft,
   Download,
-  PanelLeftClose,
   PanelLeftOpen,
-  PanelRightClose,
   PanelRightOpen,
   Play,
   Redo,
@@ -35,8 +33,8 @@ const WorkflowBuilder: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [showLeftPanel, setShowLeftPanel] = useState(false);
-  const [showRightPanel, setShowRightPanel] = useState(false);
+  const [showLeftPanel, setShowLeftPanel] = useState(true);
+  const [showRightPanel, setShowRightPanel] = useState(true);
 
   // Update workflow name and description when currentWorkflow changes
   useEffect(() => {
@@ -94,7 +92,7 @@ const WorkflowBuilder: React.FC = () => {
     <div className="flex h-screen bg-background overflow-hidden">
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Header */}
-        <div className="border-b border-white/10 p-3 md:p-4 bg-slate-900/60 backdrop-blur-md">
+        <div className="border-b border-white/10 p-2 bg-slate-900/60 backdrop-blur-md h-14 flex flex-col justify-center">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <Button
@@ -119,32 +117,24 @@ const WorkflowBuilder: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-1 md:gap-2 shrink-0">
-              {/* Panel toggle buttons */}
+              {/* Panel toggle buttons - visible on all screens now */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowLeftPanel(!showLeftPanel)}
                 title={showLeftPanel ? 'Hide nodes panel' : 'Show nodes panel'}
-                className="md:hidden"
+                className={showLeftPanel ? 'text-blue-400 bg-blue-400/10' : 'text-gray-400'}
               >
-                {showLeftPanel ? (
-                  <PanelLeftClose className="h-4 w-4" />
-                ) : (
-                  <PanelLeftOpen className="h-4 w-4" />
-                )}
+                <PanelLeftOpen className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowRightPanel(!showRightPanel)}
                 title={showRightPanel ? 'Hide properties panel' : 'Show properties panel'}
-                className="md:hidden"
+                className={showRightPanel ? 'text-blue-400 bg-blue-400/10' : 'text-gray-400'}
               >
-                {showRightPanel ? (
-                  <PanelRightClose className="h-4 w-4" />
-                ) : (
-                  <PanelRightOpen className="h-4 w-4" />
-                )}
+                <PanelRightOpen className="h-4 w-4" />
               </Button>
               {/* Action buttons - hidden on smallest screens */}
               <div className="hidden sm:flex items-center gap-1 md:gap-2">
@@ -218,22 +208,20 @@ const WorkflowBuilder: React.FC = () => {
           {/* Left sidebar - Node toolbox */}
           <div
             className={`${
-              showLeftPanel ? 'translate-x-0' : '-translate-x-full'
-            } absolute md:relative md:translate-x-0 z-20 w-64 lg:w-72 h-full border-r border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-3 md:p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
+              showLeftPanel ? 'w-64 translate-x-0 opacity-100' : 'w-0 -translate-x-full opacity-0'
+            } relative z-20 h-full border-r border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out`}
           >
-            <NodeToolbox />
+            <div className="w-64 p-3 h-full overflow-y-auto">
+              <NodeToolbox />
+            </div>
           </div>
 
-          {/* Overlay for mobile when panels are open */}
-          {(showLeftPanel || showRightPanel) && (
-            <div
-              className="absolute inset-0 bg-black/50 z-10 md:hidden"
-              onClick={() => {
-                setShowLeftPanel(false);
-                setShowRightPanel(false);
-              }}
-            />
-          )}
+          {/* Overlay for mobile when panels are open - only needed for very small screens if we wanted overlapping, 
+              but here we are switching to a flex layout where they take space or don't. 
+              Actually, for mobile we might still want absolute to save space, but the user requested collapsible.
+              Let's stick to the relative flex layout for desktop-like feel, and maybe absolute for mobile?
+              For simplicity and robustness, let's make them collapsible columns. 
+          */}
 
           {/* Center - Workflow canvas */}
           <div className="flex-1 overflow-hidden">
@@ -247,45 +235,47 @@ const WorkflowBuilder: React.FC = () => {
           {/* Right sidebar - Node properties */}
           <div
             className={`${
-              showRightPanel ? 'translate-x-0' : 'translate-x-full'
-            } absolute md:relative md:translate-x-0 right-0 z-20 w-80 lg:w-96 h-full border-l border-white/10 bg-slate-900/95 md:bg-slate-900/60 backdrop-blur-md p-3 md:p-4 overflow-y-auto transition-transform duration-300 ease-in-out`}
+              showRightPanel ? 'w-80 translate-x-0 opacity-100' : 'w-0 translate-x-full opacity-0'
+            } relative right-0 z-20 h-full border-l border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out`}
           >
-            {selectedNode ? (
-              <NodeProperties node={selectedNode} />
-            ) : (
-              <div>
-                <h3 className="font-medium mb-4 text-white">Workflow Properties</h3>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="description" className="text-gray-300">
-                      Description
-                    </Label>
-                    <Input
-                      id="description"
-                      value={workflowDescription}
-                      onChange={(e) => setWorkflowDescription(e.target.value)}
-                      placeholder="Describe the purpose of this workflow"
-                      className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="trigger" className="text-gray-300">
-                      Trigger
-                    </Label>
-                    <select
-                      id="trigger"
-                      aria-label="Workflow trigger type"
-                      className="w-full p-2 border border-white/10 rounded-md bg-slate-800/50 text-white"
-                    >
-                      <option value="manual">Manual</option>
-                      <option value="scheduled">Scheduled</option>
-                      <option value="webhook">Webhook</option>
-                      <option value="event">Event</option>
-                    </select>
+            <div className="w-80 p-3 h-full overflow-y-auto">
+              {selectedNode ? (
+                <NodeProperties node={selectedNode} />
+              ) : (
+                <div>
+                  <h3 className="font-medium mb-4 text-white">Workflow Properties</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="description" className="text-gray-300">
+                        Description
+                      </Label>
+                      <Input
+                        id="description"
+                        value={workflowDescription}
+                        onChange={(e) => setWorkflowDescription(e.target.value)}
+                        placeholder="Describe the purpose of this workflow"
+                        className="bg-slate-800/50 border-white/10 text-white placeholder:text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="trigger" className="text-gray-300">
+                        Trigger
+                      </Label>
+                      <select
+                        id="trigger"
+                        aria-label="Workflow trigger type"
+                        className="w-full p-2 border border-white/10 rounded-md bg-slate-800/50 text-white"
+                      >
+                        <option value="manual">Manual</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="webhook">Webhook</option>
+                        <option value="event">Event</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </main>
