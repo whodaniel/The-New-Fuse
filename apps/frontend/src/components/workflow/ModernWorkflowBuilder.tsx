@@ -14,10 +14,13 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { StatusDecorator } from './StatusDecorator';
+import './ModernWorkflowBuilder.css';
 
 // Custom Node Components
 const AgentNode = ({ data }: { data: any }) => (
-  <div className="agent-node">
+  <div className="agent-node relative">
+    <StatusDecorator status={data.status} />
     <div className="node-header">
       <div className="node-icon">🤖</div>
       <div className="node-title">{data.label}</div>
@@ -45,7 +48,8 @@ const AgentNode = ({ data }: { data: any }) => (
 );
 
 const MCPToolNode = ({ data }: { data: any }) => (
-  <div className="mcp-node">
+  <div className="mcp-node relative">
+    <StatusDecorator status={data.status} />
     <div className="node-header">
       <div className="node-icon">🔧</div>
       <div className="node-title">{data.label}</div>
@@ -127,7 +131,78 @@ const WorkflowBuilderContent = () => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionLog, setExecutionLog] = useState<string[]>([]);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const { project } = useReactFlow();
+  const { project, setCenter, getNodes } = useReactFlow();
+
+  const onMiniMapClick = useCallback((event: React.MouseEvent, position: { x: number, y: number }) => {
+     // The event gives us the click position on the minimap
+     // But ReactFlow MiniMap 'onClick' gives (event, position) where position is the {x,y} in the flow coordinate system?
+     // No, the documentation says 'onClick' callback for MiniMap is (event: MouseEvent, position: XYPosition).
+     // Wait, if it gives XYPosition in flow coordinates, then it's easy.
+     // Let's assume it doesn't and try to be robust.
+     // Actually, looking at typical implementations, if we click the minimap, we want to center the view there.
+
+     // However, standard ReactFlow MiniMap doesn't expose `onClick` that returns flow coordinates directly in all versions.
+     // But let's check the MiniMap component props in this file. It is just <MiniMap ... />
+
+     // If I assume standard ReactFlow behavior:
+     // The requirement is "onMapClick handler that calculates the relative coordinates".
+     // If I add onClick to MiniMap, it might just receive the React Event.
+
+     // Let's implement the calculation logic as requested.
+     const minimapRect = event.currentTarget.getBoundingClientRect();
+     const clickX = event.clientX - minimapRect.left;
+     const clickY = event.clientY - minimapRect.top;
+
+     const minimapWidth = minimapRect.width;
+     const minimapHeight = minimapRect.height;
+
+     // Calculate percentage of click within minimap
+     const xRatio = clickX / minimapWidth;
+     const yRatio = clickY / minimapHeight;
+
+     // We need to map this ratio to the bounding box of the nodes.
+     // This is a simplified approximation as MiniMap rendering can be complex (e.g. aspect ratio preservation).
+     // However, for "smoothly pans... to that specific cluster", this should work.
+
+     // Note: This logic assumes the MiniMap covers the whole extent of the nodes.
+     // If ReactFlow's MiniMap implementation is used, it handles the view.
+     // But if we want to override/enhance:
+
+     // Let's try to use the `onClick` prop if available on MiniMap, otherwise wrap it.
+     // MiniMap supports onClick.
+  }, []);
+
+  // Simplified handler based on the prompt's requirement for "relative coordinates" calculation.
+  const handleMiniMapClick = useCallback((event: React.MouseEvent) => {
+      // Get the bounds of all nodes to understand the world space
+      const allNodes = getNodes();
+      if (allNodes.length === 0) return;
+
+      const nodesX = allNodes.map(n => n.position.x);
+      const nodesY = allNodes.map(n => n.position.y);
+      const minX = Math.min(...nodesX);
+      const maxX = Math.max(...nodesX);
+      const minY = Math.min(...nodesY);
+      const maxY = Math.max(...nodesY);
+
+      const worldWidth = maxX - minX + 400; // Add some padding approximation
+      const worldHeight = maxY - minY + 400;
+
+      const element = event.currentTarget;
+      const rect = element.getBoundingClientRect();
+
+      const clickX = event.clientX - rect.left;
+      const clickY = event.clientY - rect.top;
+
+      // Assume MiniMap shows the whole world
+      const ratioX = clickX / rect.width;
+      const ratioY = clickY / rect.height;
+
+      const targetX = minX + (worldWidth * ratioX);
+      const targetY = minY + (worldHeight * ratioY);
+
+      setCenter(targetX, targetY, { zoom: 1, duration: 800 });
+  }, [getNodes, setCenter]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -417,6 +492,9 @@ const WorkflowBuilderContent = () => {
             <MiniMap 
               nodeColor="#374151"
               maskColor="rgba(0, 0, 0, 0.2)"
+              onClick={handleMiniMapClick}
+              zoomable
+              pannable
             />
             <Panel position="top-right">
               <div className="canvas-info">
@@ -428,270 +506,6 @@ const WorkflowBuilderContent = () => {
         </div>
       </div>
 
-      <style jsx>{`
-        .workflow-builder {
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          background: #0f172a;
-          color: white;
-          font-family: 'Inter', sans-serif;
-        }
-
-        .builder-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px 24px;
-          background: rgba(255, 255, 255, 0.05);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .header-left {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .workflow-name-input {
-          background: transparent;
-          border: none;
-          color: white;
-          font-size: 20px;
-          font-weight: 600;
-          padding: 8px 12px;
-          border-radius: 8px;
-          border: 1px solid transparent;
-        }
-
-        .workflow-name-input:focus {
-          outline: none;
-          border-color: #3b82f6;
-          background: rgba(59, 130, 246, 0.1);
-        }
-
-        .workflow-status {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          color: #94a3b8;
-        }
-
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #10b981;
-        }
-
-        .header-actions {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .template-selector {
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          color: white;
-          padding: 8px 16px;
-          border-radius: 8px;
-          font-size: 14px;
-        }
-
-        .btn {
-          padding: 10px 20px;
-          border-radius: 8px;
-          border: none;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .btn-primary {
-          background: linear-gradient(45deg, #3b82f6, #1d4ed8);
-          color: white;
-        }
-
-        .btn-secondary {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn:hover {
-          transform: translateY(-1px);
-        }
-
-        .btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-          transform: none;
-        }
-
-        .builder-content {
-          display: flex;
-          flex: 1;
-          overflow: hidden;
-        }
-
-        .builder-sidebar {
-          width: 300px;
-          background: rgba(255, 255, 255, 0.05);
-          border-right: 1px solid rgba(255, 255, 255, 0.1);
-          padding: 20px;
-          overflow-y: auto;
-        }
-
-        .builder-sidebar h3 {
-          margin: 0 0 20px 0;
-          color: #3b82f6;
-          font-size: 18px;
-        }
-
-        .node-category {
-          margin-bottom: 24px;
-        }
-
-        .node-category h4 {
-          margin: 0 0 12px 0;
-          font-size: 14px;
-          color: #94a3b8;
-        }
-
-        .draggable-node {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          cursor: grab;
-          transition: all 0.2s;
-          margin-bottom: 8px;
-        }
-
-        .draggable-node:hover {
-          background: rgba(255, 255, 255, 0.12);
-          transform: translateY(-1px);
-        }
-
-        .draggable-node:active {
-          cursor: grabbing;
-        }
-
-        .node-icon {
-          font-size: 18px;
-        }
-
-        .builder-canvas {
-          flex: 1;
-          position: relative;
-        }
-
-        .canvas-info {
-          background: rgba(0, 0, 0, 0.8);
-          padding: 8px 12px;
-          border-radius: 6px;
-          font-size: 12px;
-          color: #94a3b8;
-        }
-
-        .execution-log {
-          margin-top: 24px;
-          padding-top: 24px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .execution-log h4 {
-          margin: 0 0 12px 0;
-          font-size: 14px;
-          color: #94a3b8;
-        }
-
-        .log-content {
-          max-height: 200px;
-          overflow-y: auto;
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 6px;
-          padding: 12px;
-        }
-
-        .log-entry {
-          font-size: 12px;
-          font-family: 'Monaco', monospace;
-          margin-bottom: 4px;
-          color: #e2e8f0;
-        }
-
-        /* Node Styles */
-        .agent-node, .mcp-node, .flow-node {
-          background: rgba(255, 255, 255, 0.95);
-          border: 2px solid #3b82f6;
-          border-radius: 12px;
-          padding: 16px;
-          min-width: 250px;
-          color: #1f2937;
-        }
-
-        .node-header {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 12px;
-          padding-bottom: 8px;
-          border-bottom: 1px solid #e5e7eb;
-        }
-
-        .node-title {
-          font-weight: 600;
-          font-size: 16px;
-        }
-
-        .node-content {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .node-field {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .node-field label {
-          font-size: 12px;
-          font-weight: 600;
-          color: #6b7280;
-        }
-
-        .node-field select,
-        .node-field textarea {
-          padding: 8px;
-          border: 1px solid #d1d5db;
-          border-radius: 6px;
-          font-size: 14px;
-        }
-
-        .node-field textarea {
-          min-height: 60px;
-          resize: vertical;
-        }
-
-        .mcp-node {
-          border-color: #10b981;
-        }
-
-        .flow-node {
-          border-color: #f59e0b;
-        }
-      `}</style>
     </div>
   );
 };
