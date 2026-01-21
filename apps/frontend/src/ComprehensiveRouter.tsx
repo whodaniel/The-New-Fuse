@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import { PremiumLayout } from './layouts/PremiumLayout'; // Import PremiumLayout
+import { PublicLayout } from './layouts/PublicLayout';
 
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
@@ -225,7 +226,12 @@ export default function ComprehensiveRouter() {
   const hasOwnLayout = ['/workflows/builder'].includes(location.pathname);
 
   // Use PremiumLayout for authenticated routes, except those with their own layout
-  const Layout = isPublicRoute || hasOwnLayout ? 'div' : PremiumLayout;
+  let Layout: React.ComponentType<any> = PremiumLayout;
+  if (isPublicRoute && !location.pathname.startsWith('/auth') && !location.pathname.startsWith('/onboarding') && !['/404', '/login', '/register'].includes(location.pathname)) {
+    Layout = PublicLayout;
+  } else if (isPublicRoute || hasOwnLayout) {
+    Layout = ({ children }) => <>{children}</>;
+  }
 
   return (
     <div>
@@ -235,6 +241,8 @@ export default function ComprehensiveRouter() {
         !location.pathname.startsWith('/auth') && 
         !location.pathname.startsWith('/onboarding') && 
         !['/404', '/login', '/register'].includes(location.pathname) && 
+        // Logic handled by PublicLayout now, but kept here for non-PublicLayout routes (like Auth)
+        Layout !== PublicLayout &&
         <SmartNavigation />}
 
       <Layout>

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Check, Rocket } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { SiteFooter } from '@/components/SiteFooter';
 
 const PricingCard = ({
   title,
@@ -275,87 +276,7 @@ export const Pricing = () => {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-border bg-surface/30 py-16">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-4 gap-12 mb-12">
-              <div className="col-span-1 md:col-span-2">
-                <Link to="/" className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-blue-600 flex items-center justify-center">
-                    <Rocket className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="font-heading font-bold text-xl">The New Fuse</span>
-                </Link>
-                <p className="text-muted-foreground max-w-sm">
-                  The ultimate AI agent orchestration platform. Build, deploy, and scale intelligent
-                  workflows with ease.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground mb-4">Product</h4>
-                <ul className="space-y-3 text-muted-foreground text-sm">
-                  <li>
-                    <Link to="/features" className="hover:text-foreground transition-colors">
-                      Features
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/pricing" className="hover:text-foreground transition-colors">
-                      Pricing
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/docs" className="hover:text-foreground transition-colors">
-                      Documentation
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/changelog" className="hover:text-foreground transition-colors">
-                      Changelog
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground mb-4">Company</h4>
-                <ul className="space-y-3 text-muted-foreground text-sm">
-                  <li>
-                    <Link to="/about" className="hover:text-foreground transition-colors">
-                      About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/blog" className="hover:text-foreground transition-colors">
-                      Blog
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/careers" className="hover:text-foreground transition-colors">
-                      Careers
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/contact" className="hover:text-foreground transition-colors">
-                      Contact
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-muted-foreground text-sm">
-                © {new Date().getFullYear()} The New Fuse. All rights reserved.
-              </p>
-              <div className="flex gap-6 text-sm text-muted-foreground">
-                <Link to="/privacy" className="hover:text-foreground transition-colors">
-                  Privacy Policy
-                </Link>
-                <Link to="/terms" className="hover:text-foreground transition-colors">
-                  Terms of Service
-                </Link>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );

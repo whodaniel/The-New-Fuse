@@ -23,7 +23,7 @@ import {
   HeartIcon as HeartSolidIcon,
   StarIcon as StarSolidIcon,
 } from '@heroicons/react/24/solid';
-import { GlassCard } from '@the-new-fuse/ui-consolidated';
+import { GlassCard } from '@/components/ui/premium';
 import React, { useEffect, useState } from 'react';
 
 interface CommunityPost {
