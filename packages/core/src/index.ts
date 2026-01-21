@@ -8,6 +8,8 @@ export * from './utils/logger';
 export * from './modules/llm/llm.module';
 export * from './services/llm-config.service';
 export * from './services/AgentLLMService';
+export * from './llm/providers/AnthropicProvider';
+export * from './llm/providers/GeminiProvider';
 
 // Task
 export * from './task/AgentInbox';

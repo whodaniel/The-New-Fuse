@@ -4,6 +4,7 @@ import {
   GenerativeModel,
   HarmCategory,
   HarmBlockThreshold,
+  Part,
 } from '@google/generative-ai';
 import { LLMProvider } from '../LLMProvider';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
@@ -271,7 +272,7 @@ export class GeminiProvider extends LLMProvider {
         if (p.text) return { text: p.text };
         if (p.inlineData) return { inlineData: p.inlineData };
         return { text: '' }; // Fallback for empty parts
-      });
+      }) as Part[];
 
       const result = await this.model.generateContent({
         contents: [{ role: 'user', parts: geminiParts }],
