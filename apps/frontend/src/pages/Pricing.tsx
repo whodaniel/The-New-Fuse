@@ -1,8 +1,10 @@
 import { PayPalSubscriptionButton } from '@/components/billing/PayPalSubscriptionButton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, CheckCircle, Rocket, Shield } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { ArrowRight, Check, Rocket } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const PricingCard = ({
@@ -13,6 +15,7 @@ const PricingCard = ({
   popular = false,
   buttonText,
   buttonLink,
+  isPro = false,
 }: {
   title: string;
   price: string;
@@ -21,507 +24,332 @@ const PricingCard = ({
   popular?: boolean;
   buttonText: string;
   buttonLink: string;
+  isPro?: boolean;
 }) => (
-  <Card
-    className={`flex flex-col h-full ${popular ? 'border-2 border-blue-500 shadow-xl' : 'border border-gray-200'}`}
+  <motion.div
+    whileHover={{ y: -5 }}
+    className={cn(
+      'relative flex flex-col p-8 rounded-2xl border transition-all duration-300',
+      popular
+        ? 'bg-white/5 border-purple-500/50 shadow-[0_0_50px_-10px_rgba(168,85,247,0.2)]'
+        : 'bg-white/5 border-white/10 hover:border-white/20'
+    )}
   >
-    <CardHeader className="text-center">
-      <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-      {popular && <Badge className="bg-blue-500 text-white mt-2">Most Popular</Badge>}
-      <div className="my-4">
-        <span className="text-4xl font-bold">{price}</span>
-        <span className="text-gray-500">/month</span>
+    {popular && (
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+        <Badge className="bg-linear-to-r from-purple-500 to-blue-500 text-white border-0 px-4 py-1">
+          Most Popular
+        </Badge>
       </div>
-      <CardDescription className="text-sm">{description}</CardDescription>
-    </CardHeader>
-    <CardContent className="grow">
-      <ul className="space-y-3 mb-8">
-        {features.map((feature, index) => (
-          <li key={index} className="flex items-center">
-            <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-            <span className="text-sm">{feature}</span>
-          </li>
-        ))}
-      </ul>
-      {popular && title === 'Professional' ? (
+    )}
+
+    <div className="mb-8">
+      <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
+      <p className="text-gray-400 text-sm h-10">{description}</p>
+    </div>
+
+    <div className="mb-8">
+      <div className="flex items-baseline gap-1">
+        <span className="text-4xl font-bold text-white">{price}</span>
+        {price !== 'Custom' && price !== 'Free' && <span className="text-gray-400">/month</span>}
+      </div>
+    </div>
+
+    <ul className="space-y-4 mb-8 flex-1">
+      {features.map((feature, index) => (
+        <li key={index} className="flex items-start gap-3">
+          <div className="mt-1 bg-green-500/10 rounded-full p-1">
+            <Check className="w-3 h-3 text-green-400" />
+          </div>
+          <span className="text-sm text-gray-300">{feature}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div className="mt-auto">
+      {isPro ? (
         <PayPalSubscriptionButton
           onSuccess={(subId) => {
             console.log('Successfully subscribed:', subId);
-            // Redirect or show success message
             window.location.href = '/dashboard?subscribed=true';
           }}
         />
       ) : (
-        <Button asChild className="w-full">
-          <Link to={buttonLink}>{buttonText}</Link>
+        <Button
+          asChild
+          variant={popular ? 'default' : 'secondary'}
+          className={cn(
+            'w-full h-12 text-base font-semibold transition-all duration-300',
+            popular
+              ? 'bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0'
+              : 'bg-white/10 hover:bg-white/20 text-white border-0'
+          )}
+        >
+          <Link to={buttonLink}>
+            {buttonText}
+            {title === 'Enterprise' && <ArrowRight className="ml-2 w-4 h-4" />}
+          </Link>
         </Button>
       )}
-    </CardContent>
-  </Card>
+    </div>
+  </motion.div>
 );
 
 export const Pricing = () => {
+  const [isAnnual, setIsAnnual] = useState(false);
+
   return (
-    <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white">
-      <main className="grow" role="main">
-        {/* Hero Section */}
-        <section
-          className="relative py-20 lg:py-32 bg-linear-to-br from-indigo-600 via-purple-700 to-blue-800 text-white overflow-hidden"
-          aria-labelledby="pricing-hero-heading"
-        >
-          <div className="absolute inset-0 bg-black/20"></div>
-          <div className="absolute inset-0 bg-linear-to-r from-blue-600/30 to-purple-600/30"></div>
+    <div className="min-h-screen bg-[#0B0F19] text-white selection:bg-purple-500/30">
+      {/* Background Gradients */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[128px]" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[128px]" />
+      </div>
 
-          <div className="relative container mx-auto px-4 text-center">
-            <div className="max-w-5xl mx-auto">
-              <Badge
-                className="mb-6 bg-white/10 text-white border-white/20 hover:bg-white/20"
-                aria-label="Pricing badge"
-              >
-                <Shield className="w-4 h-4 mr-2" aria-hidden="true" />
-                Transparent Pricing
-              </Badge>
-
-              <h1
-                id="pricing-hero-heading"
-                className="text-5xl lg:text-7xl font-bold mb-6 leading-tight"
-              >
-                Simple, Fair Pricing
-                <span className="block bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                  for Every Team
-                </span>
-              </h1>
-
-              <p className="text-xl lg:text-2xl mb-10 text-blue-100 max-w-4xl mx-auto leading-relaxed">
-                Choose the perfect plan for your AI collaboration needs. Start free, scale as you
-                grow.
-              </p>
-
-              <div
-                className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
-                role="group"
-                aria-label="Call to action buttons"
-              >
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
-                  aria-label="Get started with The New Fuse pricing"
-                >
-                  <Link to="/auth/register">
-                    <Rocket
-                      className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
-                      aria-hidden="true"
-                    />
-                    Get Started Free
-                    <ArrowRight
-                      className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
-                  aria-label="Contact sales"
-                >
-                  <Link to="/contact">Contact Sales</Link>
-                </Button>
-              </div>
+      <main className="relative z-10">
+        {/* Navigation Placeholder (Logo) */}
+        <header className="container mx-auto px-6 py-6 flex justify-between items-center">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center">
+              <Rocket className="w-4 h-4 text-white" />
             </div>
-          </div>
-        </section>
-
-        {/* Pricing Plans Section */}
-        <section className="py-20 bg-gray-50" aria-labelledby="pricing-plans-heading">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <Badge className="mb-4" aria-label="Pricing plans">
-                Pricing Plans
-              </Badge>
-              <h2
-                id="pricing-plans-heading"
-                className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
-              >
-                Choose Your Plan
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Simple, transparent pricing with no hidden fees. Cancel anytime.
-              </p>
-            </div>
-
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-screen-2xl mx-auto px-4 lg:px-8"
-              role="list"
-              aria-label="Pricing plans"
+            <span className="font-bold text-xl">The New Fuse</span>
+          </Link>
+          <div className="flex gap-4">
+            <Button
+              variant="ghost"
+              className="text-gray-300 hover:text-white hover:bg-white/10"
+              asChild
             >
-              {/* Free Plan */}
-              <PricingCard
-                title="Starter"
-                price="Free"
-                description="Perfect for individuals and small teams getting started"
-                features={[
-                  'Up to 5 AI agents',
-                  'Basic workflow automation',
-                  'Community support',
-                  '1,000 messages/month',
-                  'Basic analytics',
-                  'Email support',
-                ]}
-                buttonText="Get Started Free"
-                buttonLink="/auth/register"
-              />
-
-              {/* Professional Plan */}
-              <PricingCard
-                title="Professional"
-                price="$30"
-                description="For growing teams and serious developers"
-                popular={true}
-                features={[
-                  'Up to 25 AI agents',
-                  'Advanced workflow automation',
-                  'Priority support',
-                  '10,000 messages/month',
-                  'Advanced analytics',
-                  'API access',
-                  'Team collaboration',
-                  'Custom branding',
-                ]}
-                buttonText="Upgrade to Professional"
-                buttonLink="/auth/register"
-              />
-
-              {/* Enterprise Plan */}
-              <PricingCard
-                title="Enterprise"
-                price="Custom"
-                description="For large organizations with advanced needs"
-                features={[
-                  'Unlimited AI agents',
-                  'Enterprise workflow automation',
-                  '24/7 dedicated support',
-                  'Unlimited messages',
-                  'Advanced analytics & reporting',
-                  'Full API access',
-                  'Team collaboration',
-                  'Custom branding',
-                  'SLA guarantees',
-                  'Custom integrations',
-                  'Dedicated account manager',
-                ]}
-                buttonText="Contact Sales"
-                buttonLink="/contact"
-              />
-            </div>
-
-            <div className="mt-12 text-center">
-              <p className="text-gray-600 mb-4">
-                Need a custom plan?{' '}
-                <Link to="/contact" className="text-blue-600 hover:underline">
-                  Contact our sales team
-                </Link>
-              </p>
-            </div>
+              <Link to="/auth/login">Sign In</Link>
+            </Button>
+            <Button className="bg-white text-black hover:bg-gray-200" asChild>
+              <Link to="/auth/register">Get Started</Link>
+            </Button>
           </div>
+        </header>
+
+        {/* Hero Section */}
+        <section className="pt-20 pb-16 text-center container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Badge className="mb-6 bg-white/5 text-purple-300 border-purple-500/20 hover:bg-white/10 px-4 py-1.5 text-sm">
+              Simple, Transparent Pricing
+            </Badge>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-linear-to-b from-white to-white/70 tracking-tight">
+              Ready to Supercharge <br />
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-blue-400">
+                Your Workflow?
+              </span>
+            </h1>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-12">
+              Join thousands of developers and teams building the future with The New Fuse. Start
+              for free, upgrade when you need to scale.
+            </p>
+
+            {/* Toggle (Visual Only) */}
+            <div className="flex items-center justify-center gap-4 mb-16">
+              <span
+                className={cn('text-sm font-medium', !isAnnual ? 'text-white' : 'text-gray-500')}
+              >
+                Monthly
+              </span>
+              <button
+                onClick={() => setIsAnnual(!isAnnual)}
+                className="w-14 h-8 rounded-full bg-white/10 p-1 relative transition-colors hover:bg-white/20"
+              >
+                <motion.div
+                  className="w-6 h-6 rounded-full bg-white"
+                  animate={{ x: isAnnual ? 24 : 0 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              </button>
+              <span
+                className={cn('text-sm font-medium', isAnnual ? 'text-white' : 'text-gray-500')}
+              >
+                Annual <span className="text-green-400 text-xs ml-1">(Save 20%)</span>
+              </span>
+            </div>
+          </motion.div>
         </section>
 
-        {/* Features Comparison */}
-        <section className="py-20 bg-white" aria-labelledby="features-comparison-heading">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <Badge className="mb-4" aria-label="Features comparison">
-                Features Comparison
-              </Badge>
-              <h2
-                id="features-comparison-heading"
-                className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
-              >
-                What's Included in Each Plan
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Compare features across all our pricing tiers
-              </p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-4 font-semibold">Feature</th>
-                    <th className="text-center p-4 font-semibold">Starter</th>
-                    <th className="text-center p-4 font-semibold">Professional</th>
-                    <th className="text-center p-4 font-semibold">Enterprise</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    {
-                      name: 'AI Agents',
-                      starter: '5',
-                      professional: '25',
-                      enterprise: 'Unlimited',
-                    },
-                    {
-                      name: 'Messages/Month',
-                      starter: '1,000',
-                      professional: '10,000',
-                      enterprise: 'Unlimited',
-                    },
-                    {
-                      name: 'Workflow Automation',
-                      starter: 'Basic',
-                      professional: 'Advanced',
-                      enterprise: 'Enterprise',
-                    },
-                    {
-                      name: 'Support',
-                      starter: 'Community',
-                      professional: 'Priority',
-                      enterprise: '24/7 Dedicated',
-                    },
-                    {
-                      name: 'Analytics',
-                      starter: 'Basic',
-                      professional: 'Advanced',
-                      enterprise: 'Advanced + Custom',
-                    },
-                    { name: 'API Access', starter: '❌', professional: '✅', enterprise: '✅' },
-                    {
-                      name: 'Team Collaboration',
-                      starter: '❌',
-                      professional: '✅',
-                      enterprise: '✅',
-                    },
-                    {
-                      name: 'Custom Branding',
-                      starter: '❌',
-                      professional: '✅',
-                      enterprise: '✅',
-                    },
-                    { name: 'SLA Guarantees', starter: '❌', professional: '❌', enterprise: '✅' },
-                    {
-                      name: 'Custom Integrations',
-                      starter: '❌',
-                      professional: '❌',
-                      enterprise: '✅',
-                    },
-                    {
-                      name: 'Dedicated Account Manager',
-                      starter: '❌',
-                      professional: '❌',
-                      enterprise: '✅',
-                    },
-                  ].map((feature, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-4 font-medium">{feature.name}</td>
-                      <td className="p-4 text-center">{feature.starter}</td>
-                      <td className="p-4 text-center">{feature.professional}</td>
-                      <td className="p-4 text-center">{feature.enterprise}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        {/* Pricing Cards */}
+        <section className="container mx-auto px-4 pb-32">
+          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <PricingCard
+              title="Starter"
+              price="$0"
+              description="Perfect for hobbyists and side projects."
+              buttonText="Get Started Free"
+              buttonLink="/auth/register"
+              features={[
+                'Up to 5 AI Agents',
+                'Basic Workflow Automation',
+                'Community Support',
+                '1,000 Messages/Month',
+                'Basic Analytics',
+              ]}
+            />
+            <PricingCard
+              title="Professional"
+              price="$30"
+              description="For growing teams and serious developers."
+              buttonText="Upgrade to Professional"
+              buttonLink="/auth/register"
+              popular={true}
+              isPro={true}
+              features={[
+                'Up to 25 AI Agents',
+                'Advanced Workflow Automation',
+                'Priority Support',
+                '10,000 Messages/Month',
+                'Full API Access',
+                'Team Collaboration',
+                'Custom Branding',
+              ]}
+            />
+            <PricingCard
+              title="Enterprise"
+              price="Custom"
+              description="Scalable solutions for large organizations."
+              buttonText="Contact Sales"
+              buttonLink="/contact"
+              features={[
+                'Unlimited AI Agents',
+                'Enterprise Security',
+                '24/7 Dedicated Support',
+                'Unlimited Usage',
+                'Custom Integrations',
+                'SLA Guarantees',
+                'On-premise Deployment',
+              ]}
+            />
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 bg-gray-50" aria-labelledby="faq-heading">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <Badge className="mb-4" aria-label="FAQ">
-                FAQ
-              </Badge>
-              <h2 id="faq-heading" className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Have questions about our pricing? We have answers.
-              </p>
-            </div>
-
-            <div className="max-w-4xl mx-auto space-y-6">
-              <div className="border border-gray-200 rounded-lg">
-                <button className="w-full text-left p-4 font-semibold hover:bg-gray-50 transition-colors">
-                  What payment methods do you accept?
-                </button>
-                <div className="p-4 text-gray-600">
-                  We accept all major credit cards (Visa, Mastercard, American Express) and can also
-                  process payments via bank transfer for enterprise plans.
-                </div>
-              </div>
-
-              <div className="border border-gray-200 rounded-lg">
-                <button className="w-full text-left p-4 font-semibold hover:bg-gray-50 transition-colors">
-                  Can I upgrade or downgrade my plan?
-                </button>
-                <div className="p-4 text-gray-600">
-                  Yes, you can upgrade or downgrade your plan at any time. Changes take effect
-                  immediately and billing is prorated.
-                </div>
-              </div>
-
-              <div className="border border-gray-200 rounded-lg">
-                <button className="w-full text-left p-4 font-semibold hover:bg-gray-50 transition-colors">
-                  Do you offer discounts for non-profits or educational institutions?
-                </button>
-                <div className="p-4 text-gray-600">
-                  Yes, we offer special pricing for non-profits, educational institutions, and
-                  open-source projects. Please contact our sales team for details.
-                </div>
-              </div>
-
-              <div className="border border-gray-200 rounded-lg">
-                <button className="w-full text-left p-4 font-semibold hover:bg-gray-50 transition-colors">
-                  What happens if I exceed my plan limits?
-                </button>
-                <div className="p-4 text-gray-600">
-                  If you exceed your plan limits, we'll notify you and give you the option to
-                  upgrade. We won't interrupt your service.
-                </div>
-              </div>
-            </div>
+        <section className="container mx-auto px-4 py-24 border-t border-white/5">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-gray-400">Everything you need to know about billing and plans.</p>
           </div>
-        </section>
 
-        {/* CTA Section */}
-        <section
-          className="py-20 bg-linear-to-r from-blue-600 to-purple-700 text-white"
-          aria-labelledby="pricing-cta-heading"
-        >
-          <div className="container mx-auto px-4 text-center">
-            <div className="max-w-4xl mx-auto">
-              <h2 id="pricing-cta-heading" className="text-4xl lg:text-5xl font-bold mb-6">
-                Ready to Get Started?
-              </h2>
-              <p className="text-xl text-blue-100 mb-10">
-                Choose your plan and start building with The New Fuse today.
-              </p>
-
+          <div className="max-w-3xl mx-auto grid gap-6">
+            {[
+              {
+                q: 'What payment methods do you accept?',
+                a: 'We accept all major credit cards including Visa, Mastercard, and American Express via PayPal. For Enterprise plans, we also support bank transfers.',
+              },
+              {
+                q: 'Can I cancel my subscription anytime?',
+                a: 'Yes, you can cancel your subscription at any time from your dashboard. Your access will continue until the end of the current billing period.',
+              },
+              {
+                q: 'Is there a free trial for the Pro plan?',
+                a: "Currently, we offer a generous Free Starter plan so you can test the platform. When you're ready for more power, you can upgrade to Pro.",
+              },
+              {
+                q: 'Do you offer refunds?',
+                a: "If you're not satisfied with The New Fuse, please contact our support team within 7 days of purchase.",
+              },
+            ].map((faq, i) => (
               <div
-                className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-                role="group"
-                aria-label="Get started actions"
+                key={i}
+                className="bg-white/5 rounded-xl p-6 hover:bg-white/10 transition-colors text-left"
               >
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
-                  aria-label="Get started free with The New Fuse"
-                >
-                  <Link to="/auth/register">
-                    Get Started Free
-                    <ArrowRight
-                      className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
-                  aria-label="Contact sales"
-                >
-                  <Link to="/contact">Contact Sales</Link>
-                </Button>
+                <h3 className="font-semibold text-lg mb-2 text-white">{faq.q}</h3>
+                <p className="text-gray-400 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="border-t border-white/10 bg-[#05080F] py-16">
+          <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-4 gap-12 mb-12">
+              <div className="col-span-1 md:col-span-2">
+                <Link to="/" className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center">
+                    <Rocket className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="font-bold text-xl">The New Fuse</span>
+                </Link>
+                <p className="text-gray-400 max-w-sm">
+                  The ultimate AI agent orchestration platform. Build, deploy, and scale intelligent
+                  workflows with ease.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-4">Product</h4>
+                <ul className="space-y-3 text-gray-400 text-sm">
+                  <li>
+                    <Link to="/features" className="hover:text-white transition-colors">
+                      Features
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/pricing" className="hover:text-white transition-colors">
+                      Pricing
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/docs" className="hover:text-white transition-colors">
+                      Documentation
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/changelog" className="hover:text-white transition-colors">
+                      Changelog
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-4">Company</h4>
+                <ul className="space-y-3 text-gray-400 text-sm">
+                  <li>
+                    <Link to="/about" className="hover:text-white transition-colors">
+                      About
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/blog" className="hover:text-white transition-colors">
+                      Blog
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/careers" className="hover:text-white transition-colors">
+                      Careers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/contact" className="hover:text-white transition-colors">
+                      Contact
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-gray-500 text-sm">
+                © {new Date().getFullYear()} The New Fuse. All rights reserved.
+              </p>
+              <div className="flex gap-6 text-sm text-gray-500">
+                <Link to="/privacy" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+                <Link to="/terms" className="hover:text-white transition-colors">
+                  Terms of Service
+                </Link>
               </div>
             </div>
           </div>
-        </section>
+        </footer>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Brand */}
-            <div className="col-span-2 md:col-span-1">
-              <Link
-                to="/"
-                className="flex items-center gap-3 mb-4 hover:opacity-80 transition-opacity"
-              >
-                <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <Rocket className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">The New Fuse</span>
-              </Link>
-              <p className="text-gray-400 text-sm">AI Agent Orchestration Platform</p>
-            </div>
-
-            {/* Product */}
-            <div>
-              <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <Link to="/dashboard" className="hover:text-white transition-colors">
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/agents" className="hover:text-white transition-colors">
-                    AI Agents
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/workflows" className="hover:text-white transition-colors">
-                    Workflows
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Resources */}
-            <div>
-              <h3 className="font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <Link to="/community" className="hover:text-white transition-colors">
-                    Community
-                  </Link>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/whodaniel/The-New-Fuse"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white transition-colors"
-                  >
-                    GitHub
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <Link to="/legal/privacy" className="hover:text-white transition-colors">
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/legal/terms" className="hover:text-white transition-colors">
-                    Terms
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-8 border-t border-white/10 text-center">
-            <p className="text-xs text-gray-500">
-              © {new Date().getFullYear()} The New Fuse. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
