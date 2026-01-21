@@ -108,13 +108,15 @@ export const Popover = ({
         <div
           ref={popoverRef}
           className={cn(
-            'fixed z-1050 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-200 dark:border-neutral-700',
+            'fixed rounded-lg shadow-2xl border',
+            'bg-slate-900 border-slate-600 text-white',
             'animate-in fade-in-0 zoom-in-95 duration-200',
             className
           )}
           style={{
             top: `${position.top}px`,
             left: `${position.left}px`,
+            zIndex: 9999, // Ensure it's above ReactFlow's z-index
           }}
         >
           {children}
