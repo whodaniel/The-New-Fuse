@@ -8,33 +8,6 @@ import { AuthProvider } from './providers/AuthProvider';
 import './styles/globals.css'; // Re-add global CSS import
 import { unstoppableDomainsService } from './services/unstoppableDomains.service';
 
-// Custom Element Guard
-// Prevents collisions with already defined custom elements (like mce-autosize-textarea)
-try {
-  if (typeof customElements !== 'undefined') {
-    const originalDefine = customElements.define;
-    // Helper to check if property is writable before attempting to overwrite
-    const descriptor = Object.getOwnPropertyDescriptor(customElements, 'define');
-
-    if (!descriptor || descriptor.writable || descriptor.configurable) {
-      customElements.define = function (name, constructor, options) {
-        if (customElements.get(name)) {
-          // Permissive behavior: just return early instead of throwing
-          // console.warn(`Custom element '${name}' has already been defined. Skipping.`);
-          return;
-        }
-        originalDefine.call(customElements, name, constructor, options);
-      };
-      console.log('[The New Fuse] Custom Element Guard initialized');
-    } else {
-      console.warn('[The New Fuse] customElements.define is read-only. Guard skipped.');
-    }
-  }
-} catch (error) {
-  // Bypass on Error: Proceed even if the guard fails
-  console.warn('[The New Fuse] Custom Element Guard initialization error:', error);
-}
-
 // Initialize Unstoppable Domains Service
 const udClientId = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID;
 if (udClientId) {

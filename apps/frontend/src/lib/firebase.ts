@@ -1,6 +1,6 @@
-import { initializeApp, getApp } from 'firebase/app';
+import { initializeApp, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED, Firestore } from 'firebase/firestore';
 
 // Default configuration with hardcoded values as fallback
 const firebaseConfig = {
@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase (with hot-reload protection)
-let app;
+let app: FirebaseApp;
 try {
   app = getApp(); // Try to get existing app first
 } catch {
@@ -24,21 +24,39 @@ try {
 export const auth = getAuth(app);
 
 // Initialize Firestore with proper error handling
-let db;
+let db: Firestore;
+
 try {
-  // Try to initialize with custom settings first
-  db = initializeFirestore(app, {
-    experimentalForceLongPolling: true,
-    cacheSizeBytes: CACHE_SIZE_UNLIMITED
-  });
-} catch (error) {
-  // If it fails (likely because it's already initialized), fallback to getting the instance
-  try {
-    db = getFirestore(app);
-  } catch (getError) {
-    console.error('Failed to get Firestore instance:', getError);
-  }
+  // Try standard initialization first without special settings
+  // This is the safest default behavior
+  db = getFirestore(app);
+} catch (getError) {
+    // If standard initialization fails, it might be because we wanted to configure it first,
+    // or the app is invalid.
+    console.warn('Standard getFirestore failed, attempting initializeFirestore...', getError);
+
+    try {
+        db = initializeFirestore(app, {
+             cacheSizeBytes: CACHE_SIZE_UNLIMITED
+        });
+    } catch (initError) {
+        console.error('Failed to initialize Firestore:', initError);
+        // We cannot recover easily if both fail, but db will be undefined
+    }
 }
+
+// Optional: Apply long polling if really needed, but it should be done via initializeFirestore
+// If we needed experimentalForceLongPolling, we should have done:
+/*
+try {
+    db = initializeFirestore(app, { experimentalForceLongPolling: true });
+} catch (e) {
+    db = getFirestore(app);
+}
+*/
+// However, the previous code was failing in a way that suggested the "Service not available"
+// might be due to race conditions or incorrect usage of getFirestore() after a failed initializeFirestore().
+// By prioritizing getFirestore(app) (which is idempotent if already initialized), we are safer.
 
 export { db };
 export const googleProvider = new GoogleAuthProvider();
