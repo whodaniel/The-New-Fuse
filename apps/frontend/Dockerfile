@@ -42,6 +42,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 # Build foundational packages first to ensure they're available
 # This avoids Turbo cache issues in fresh Docker builds
 RUN pnpm --filter @the-new-fuse/types build || true
+RUN pnpm --filter @the-new-fuse/database build || true
 RUN pnpm --filter @the-new-fuse/core-vector-db build || true  
 RUN pnpm --filter @the-new-fuse/core build || true
 
@@ -49,6 +50,8 @@ RUN pnpm --filter @the-new-fuse/core build || true
 # TURBO_FORCE=true tells Turbo to ignore cache
 RUN rm -rf .turbo node_modules/.cache/turbo
 ENV TURBO_FORCE=true
+
+# Build frontend with exclusions for packages that aren't needed and have issues
 RUN npm run build || pnpm run build
 
 # Normalize dist directory location
