@@ -7,7 +7,7 @@ const nodeDataSchema = z.object({
   type: z.string(),
   status: z.enum(['idle', 'running', 'completed', 'failed']).optional(),
   config: z.record(z.any()).optional(),
-  onUpdate: z.function().optional()
+  onUpdate: z.function().optional(),
 });
 
 // Node schema
@@ -16,17 +16,19 @@ const nodeSchema = z.object({
   type: z.string(),
   position: z.object({
     x: z.number(),
-    y: z.number()
+    y: z.number(),
   }),
   data: nodeDataSchema,
   width: z.number().optional(),
   height: z.number().optional(),
   selected: z.boolean().optional(),
-  positionAbsolute: z.object({
-    x: z.number(),
-    y: z.number()
-  }).optional(),
-  dragging: z.boolean().optional()
+  positionAbsolute: z
+    .object({
+      x: z.number(),
+      y: z.number(),
+    })
+    .optional(),
+  dragging: z.boolean().optional(),
 });
 
 // Edge schema
@@ -40,7 +42,7 @@ const edgeSchema = z.object({
   animated: z.boolean().optional(),
   label: z.string().optional(),
   style: z.record(z.any()).optional(),
-  data: z.record(z.any()).optional()
+  data: z.record(z.any()).optional(),
 });
 
 // Workflow schema
@@ -56,7 +58,7 @@ const workflowSchema = z.object({
   createdBy: z.string().optional(),
   updatedBy: z.string().optional(),
   isPublic: z.boolean().optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
 });
 
 // Workflow execution schema
@@ -68,11 +70,13 @@ const workflowExecutionSchema = z.object({
   endTime: z.number().optional(),
   nodeResults: z.record(z.any()),
   error: z.string().optional(),
-  metrics: z.object({
-    totalExecutionTime: z.number().optional(),
-    nodeExecutionTimes: z.record(z.number()).optional(),
-    successRate: z.number().optional()
-  }).optional()
+  metrics: z
+    .object({
+      totalExecutionTime: z.number().optional(),
+      nodeExecutionTimes: z.record(z.number()).optional(),
+      successRate: z.number().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -109,9 +113,7 @@ export function validateWorkflowWithErrors(workflow: any): ValidationResult {
           if (node && node.id) {
             // Create a user-friendly message
             const fieldPath = err.path.slice(2).join('.');
-            nodeErrors[node.id] = fieldPath
-              ? `${fieldPath}: ${err.message}`
-              : err.message;
+            nodeErrors[node.id] = fieldPath ? `${fieldPath}: ${err.message}` : err.message;
           }
         }
       });

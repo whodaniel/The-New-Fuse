@@ -1,9 +1,8 @@
+import { SiteFooter } from '@/components/SiteFooter';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Download, Palette, Rocket, Sparkles, Type } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { SiteFooter } from '@/components/SiteFooter';
 
 /**
  * BRAND IDENTITY & STYLE GUIDE
@@ -204,7 +203,9 @@ export const BrandIdentity = () => {
           </div>
 
           <div className="mt-12 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl">
-            <h3 className="text-xl font-bold mb-6 text-white">Workflow System Colors (Subtle Palette)</h3>
+            <h3 className="text-xl font-bold mb-6 text-white">
+              Workflow System Colors (Subtle Palette)
+            </h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-indigo-100 p-4 rounded-lg flex items-center gap-3">
                 <div className="w-8 h-8 rounded bg-indigo-600 shrink-0"></div>

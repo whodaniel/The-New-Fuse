@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FiCheckCircle, FiAlertTriangle } from 'react-icons/fi';
-import { Badge, ProgressBar, Alert, Button } from '../ui/design-system';
+import React, { useEffect, useState } from 'react';
+import { FiAlertTriangle, FiCheckCircle } from 'react-icons/fi';
+import { Alert, Badge, Button, ProgressBar } from '../ui/design-system';
 
 interface AIAgentOnboardingProps {
   agentId?: string;
@@ -8,25 +8,29 @@ interface AIAgentOnboardingProps {
 }
 
 export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, onComplete }) => {
-  const [step, setStep] = useState<'detection' | 'registration' | 'capabilities' | 'communication' | 'complete'>('detection');
+  const [step, setStep] = useState<
+    'detection' | 'registration' | 'capabilities' | 'communication' | 'complete'
+  >('detection');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [agentData, setAgentData] = useState<any>({
     id: agentId || `agent-${Date.now()}`,
     capabilities: [],
     communicationChannels: [],
-    registrationComplete: false
+    registrationComplete: false,
   });
-  const [capabilityTests, setCapabilityTests] = useState<{
-    name: string;
-    status: 'pending' | 'running' | 'success' | 'failed';
-    result?: any;
-  }[]>([
+  const [capabilityTests, setCapabilityTests] = useState<
+    {
+      name: string;
+      status: 'pending' | 'running' | 'success' | 'failed';
+      result?: any;
+    }[]
+  >([
     { name: 'file-management', status: 'pending' },
     { name: 'process-management', status: 'pending' },
     { name: 'web-interaction', status: 'pending' },
     { name: 'code-analysis', status: 'pending' },
-    { name: 'api-integration', status: 'pending' }
+    { name: 'api-integration', status: 'pending' },
   ]);
 
   useEffect(() => {
@@ -44,11 +48,11 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       setAgentData((prev: any) => ({
         ...prev,
-        registrationComplete: true
+        registrationComplete: true,
       }));
 
       setStep('capabilities');
@@ -67,23 +71,23 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
       // Run tests sequentially
       for (let i = 0; i < capabilityTests.length; i++) {
         // Update status to running
-        setCapabilityTests(prev => {
+        setCapabilityTests((prev) => {
           const updated = [...prev];
           updated[i] = { ...updated[i], status: 'running' };
           return updated;
         });
 
         // Simulate test execution
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Update with result (randomly success or failure for demo)
         const success = Math.random() > 0.3;
-        setCapabilityTests(prev => {
+        setCapabilityTests((prev) => {
           const updated = [...prev];
           updated[i] = {
             ...updated[i],
             status: success ? 'success' : 'failed',
-            result: success ? { score: Math.floor(Math.random() * 100) } : { error: 'Test failed' }
+            result: success ? { score: Math.floor(Math.random() * 100) } : { error: 'Test failed' },
           };
           return updated;
         });
@@ -92,7 +96,7 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
         if (success) {
           setAgentData((prev: any) => ({
             ...prev,
-            capabilities: [...prev.capabilities, capabilityTests[i].name]
+            capabilities: [...prev.capabilities, capabilityTests[i].name],
           }));
         }
       }
@@ -111,12 +115,12 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       setAgentData((prev: any) => ({
         ...prev,
         communicationChannels: ['http', 'websocket', 'event-stream'],
-        communicationSetupComplete: true
+        communicationSetupComplete: true,
       }));
 
       setStep('complete');
@@ -136,13 +140,19 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
       <h2 className="text-2xl font-bold mb-6 !text-slate-900">AI Agent Onboarding</h2>
 
       <div className="mb-8">
-        <ProgressBar value={(
-          step === 'detection' ? 20 :
-          step === 'registration' ? 40 :
-          step === 'capabilities' ? 60 :
-          step === 'communication' ? 80 :
-          100
-        )} />
+        <ProgressBar
+          value={
+            step === 'detection'
+              ? 20
+              : step === 'registration'
+                ? 40
+                : step === 'capabilities'
+                  ? 60
+                  : step === 'communication'
+                    ? 80
+                    : 100
+          }
+        />
       </div>
 
       {error && (
@@ -158,7 +168,7 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Detecting Agent Type</h3>
           <p className="mb-4 text-gray-600">Analyzing connection patterns and headers...</p>
           <div className="flex justify-center py-4">
-             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
         </div>
       )}
@@ -171,18 +181,22 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
           <div className="flex flex-col gap-4 mb-6">
             <div>
               <p className="font-bold text-slate-900">Agent ID</p>
-              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">{agentData.id}</code>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">
+                {agentData.id}
+              </code>
             </div>
 
             <div>
               <p className="font-bold text-slate-900">Registration Endpoint</p>
-              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">/api/onboarding/ai-agent-registration</code>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">
+                /api/onboarding/ai-agent-registration
+              </code>
             </div>
 
             <div>
               <p className="font-bold text-slate-900">Required Headers</p>
               <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap text-slate-700 border border-gray-200">
-{`Content-Type: application/json
+                {`Content-Type: application/json
 X-Agent-ID: ${agentData.id}
 X-Agent-Type: ai_agent`}
               </pre>
@@ -202,11 +216,16 @@ X-Agent-Type: ai_agent`}
       {step === 'capabilities' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Capability Assessment</h3>
-          <p className="mb-4 text-gray-600">Let's test your agent's capabilities to determine what tools it can use.</p>
+          <p className="mb-4 text-gray-600">
+            Let's test your agent's capabilities to determine what tools it can use.
+          </p>
 
           <div className="flex flex-col gap-4 mb-6">
             {capabilityTests.map((test, index) => (
-              <div key={index} className="flex justify-between items-center w-full p-2 bg-gray-50 rounded border border-gray-100">
+              <div
+                key={index}
+                className="flex justify-between items-center w-full p-2 bg-gray-50 rounded border border-gray-100"
+              >
                 <span className="font-medium">{test.name}</span>
                 <div className="flex items-center gap-2">
                   {test.status === 'pending' && <Badge variant="secondary">Pending</Badge>}
@@ -231,7 +250,7 @@ X-Agent-Type: ai_agent`}
           <Button
             className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={runCapabilityTests}
-            disabled={loading || capabilityTests.some(test => test.status === 'running')}
+            disabled={loading || capabilityTests.some((test) => test.status === 'running')}
           >
             {loading ? 'Running Tests...' : 'Run Capability Tests'}
           </Button>
@@ -241,7 +260,9 @@ X-Agent-Type: ai_agent`}
       {step === 'communication' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Communication Setup</h3>
-          <p className="mb-4 text-gray-600">Set up communication channels between your agent and The New Fuse platform.</p>
+          <p className="mb-4 text-gray-600">
+            Set up communication channels between your agent and The New Fuse platform.
+          </p>
 
           <div className="flex flex-col gap-4 mb-6">
             <div>
@@ -256,7 +277,7 @@ X-Agent-Type: ai_agent`}
             <div>
               <p className="font-bold text-slate-900">Communication Endpoints</p>
               <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap text-slate-700 border border-gray-200">
-{`HTTP: /api/agents/${agentData.id}/messages
+                {`HTTP: /api/agents/${agentData.id}/messages
 WebSocket: ws://your-domain.com/api/agents/${agentData.id}/ws
 Event Stream: /api/agents/${agentData.id}/events`}
               </pre>
@@ -264,7 +285,9 @@ Event Stream: /api/agents/${agentData.id}/events`}
 
             <div>
               <p className="font-bold text-slate-900">Authentication</p>
-              <p className="text-sm text-gray-600 mt-1">Use the agent token provided during registration for all communications.</p>
+              <p className="text-sm text-gray-600 mt-1">
+                Use the agent token provided during registration for all communications.
+              </p>
             </div>
           </div>
 
@@ -281,19 +304,25 @@ Event Stream: /api/agents/${agentData.id}/events`}
       {step === 'complete' && (
         <div>
           <h3 className="text-lg font-bold mb-4 !text-slate-900">Onboarding Complete</h3>
-          <p className="mb-4 text-gray-600">Your AI agent has been successfully onboarded to The New Fuse platform.</p>
+          <p className="mb-4 text-gray-600">
+            Your AI agent has been successfully onboarded to The New Fuse platform.
+          </p>
 
           <div className="flex flex-col gap-4 mb-6">
             <div>
               <p className="font-bold text-slate-900">Agent ID</p>
-              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">{agentData.id}</code>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">
+                {agentData.id}
+              </code>
             </div>
 
             <div>
               <p className="font-bold text-slate-900">Capabilities</p>
               <div className="flex flex-wrap gap-2 mt-2">
                 {agentData.capabilities.map((cap: string, idx: number) => (
-                  <Badge key={idx} variant="success">{cap}</Badge>
+                  <Badge key={idx} variant="success">
+                    {cap}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -302,7 +331,9 @@ Event Stream: /api/agents/${agentData.id}/events`}
               <p className="font-bold text-slate-900">Communication Channels</p>
               <div className="flex gap-2 mt-2">
                 {agentData.communicationChannels.map((channel: string, idx: number) => (
-                  <Badge key={idx} variant="primary">{channel}</Badge>
+                  <Badge key={idx} variant="primary">
+                    {channel}
+                  </Badge>
                 ))}
               </div>
             </div>

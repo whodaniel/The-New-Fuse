@@ -1,25 +1,25 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { ReactFlow, Controls, Background, MiniMap, Panel } from 'reactflow';
-import { useSelector, useDispatch } from 'react-redux';
-import { NodeLibrary } from './NodeLibrary';
-import { ExecutionOverlay } from './ExecutionOverlay';
-import { WorkflowToolbar } from './WorkflowToolbar';
-import { NodeInspector } from './NodeInspector';
-import { ErrorBoundary } from '../shared/ErrorBoundary';
-import { useWorkflowHistory } from '../../hooks/useWorkflowHistory';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Background, Controls, MiniMap, Panel, ReactFlow } from 'reactflow';
 import { useAutoSave } from '../../hooks/useAutoSave';
-import { useWorkflowValidation } from '../../hooks/useWorkflowValidation';
 import { useRealTimeCollaboration } from '../../hooks/useRealTimeCollaboration';
-import { WorkflowAnalytics } from './WorkflowAnalytics';
-import { CUSTOM_NODE_TYPES } from './nodes';
-import { CUSTOM_EDGE_TYPES } from './edges';
+import { useWorkflowHistory } from '../../hooks/useWorkflowHistory';
+import { useWorkflowValidation } from '../../hooks/useWorkflowValidation';
 import type { WorkflowState } from '../../types/workflow';
+import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { ExecutionOverlay } from './ExecutionOverlay';
+import { NodeInspector } from './NodeInspector';
+import { NodeLibrary } from './NodeLibrary';
+import { WorkflowAnalytics } from './WorkflowAnalytics';
+import { WorkflowToolbar } from './WorkflowToolbar';
+import { CUSTOM_EDGE_TYPES } from './edges';
+import { CUSTOM_NODE_TYPES } from './nodes';
 
 export const WorkflowCanvas: React.FC = () => {
   const dispatch = useDispatch();
   const { nodes, edges, selectedNodes } = useSelector((state: WorkflowState) => state.workflow);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  
+
   // Initialize hooks
   const { undo, redo, canUndo, canRedo } = useWorkflowHistory();
   const { saveWorkflow, lastSaved } = useAutoSave();
@@ -29,15 +29,15 @@ export const WorkflowCanvas: React.FC = () => {
     nodes,
     edges,
     onValidate: (isValid) => {
-        // Optional: handle validation state change
-    }
+      // Optional: handle validation state change
+    },
   });
 
   const { collaborators, onUserAction } = useRealTimeCollaboration();
 
   // Inject error data into nodes
   const nodesWithErrors = useMemo(() => {
-    return nodes.map(node => ({
+    return nodes.map((node) => ({
       ...node,
       data: {
         ...node.data,
@@ -47,25 +47,34 @@ export const WorkflowCanvas: React.FC = () => {
   }, [nodes, errors]);
 
   // Node and edge event handlers
-  const onNodesChange = useCallback((changes) => {
-    dispatch({ type: 'UPDATE_NODES', payload: changes });
-    onUserAction('node_change', changes);
-  }, [dispatch, onUserAction]);
+  const onNodesChange = useCallback(
+    (changes) => {
+      dispatch({ type: 'UPDATE_NODES', payload: changes });
+      onUserAction('node_change', changes);
+    },
+    [dispatch, onUserAction]
+  );
 
-  const onEdgesChange = useCallback((changes) => {
-    dispatch({ type: 'UPDATE_EDGES', payload: changes });
-    onUserAction('edge_change', changes);
-  }, [dispatch, onUserAction]);
+  const onEdgesChange = useCallback(
+    (changes) => {
+      dispatch({ type: 'UPDATE_EDGES', payload: changes });
+      onUserAction('edge_change', changes);
+    },
+    [dispatch, onUserAction]
+  );
 
-  const onConnect = useCallback((connection) => {
-    dispatch({ type: 'ADD_EDGE', payload: connection });
-    onUserAction('connect', connection);
-  }, [dispatch, onUserAction]);
+  const onConnect = useCallback(
+    (connection) => {
+      dispatch({ type: 'ADD_EDGE', payload: connection });
+      onUserAction('connect', connection);
+    },
+    [dispatch, onUserAction]
+  );
 
   return (
     <ErrorBoundary>
       <div className="workflow-canvas h-full w-full relative">
-        <WorkflowToolbar 
+        <WorkflowToolbar
           onSave={saveWorkflow}
           canUndo={canUndo}
           canRedo={canRedo}
@@ -76,7 +85,7 @@ export const WorkflowCanvas: React.FC = () => {
         />
 
         <div className="flex h-full">
-          <NodeLibrary 
+          <NodeLibrary
             isPanelOpen={isPanelOpen}
             onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
           />
@@ -90,9 +99,9 @@ export const WorkflowCanvas: React.FC = () => {
               onConnect={onConnect}
               nodeTypes={CUSTOM_NODE_TYPES}
               edgeTypes={CUSTOM_EDGE_TYPES}
-              proOptions={{ 
+              proOptions={{
                 hideAttribution: true,
-                account: 'pro' 
+                account: 'pro',
               }}
               fitView
               selectNodesOnDrag={false}
@@ -102,7 +111,7 @@ export const WorkflowCanvas: React.FC = () => {
               <ExecutionOverlay />
               <Controls showInteractive={true} />
               <Background variant="dots" gap={12} size={1} />
-              <MiniMap 
+              <MiniMap
                 nodeStrokeColor={(n) => {
                   if (n.type === 'input') return '#0041d0';
                   if (n.type === 'output') return '#ff0072';
@@ -119,14 +128,14 @@ export const WorkflowCanvas: React.FC = () => {
                 <WorkflowAnalytics nodes={nodes} edges={edges} />
               </Panel>
 
-              {collaborators.map(user => (
-                <div 
+              {collaborators.map((user) => (
+                <div
                   key={user.id}
                   className="collaborator-cursor"
-                  style={{ 
+                  style={{
                     left: user.position.x,
                     top: user.position.y,
-                    backgroundColor: user.color 
+                    backgroundColor: user.color,
                   }}
                 >
                   {user.name}
@@ -136,10 +145,7 @@ export const WorkflowCanvas: React.FC = () => {
           </div>
 
           {selectedNodes.length > 0 && (
-            <NodeInspector 
-              node={selectedNodes[0]}
-              onUpdate={onNodesChange}
-            />
+            <NodeInspector node={selectedNodes[0]} onUpdate={onNodesChange} />
           )}
         </div>
       </div>

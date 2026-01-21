@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { Link, Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import { PremiumLayout } from './layouts/PremiumLayout'; // Import PremiumLayout
 import { PublicLayout } from './layouts/PublicLayout';
 
@@ -230,7 +230,12 @@ export default function ComprehensiveRouter() {
 
   // Use PremiumLayout for authenticated routes, except those with their own layout
   let Layout: React.ComponentType<any> = PremiumLayout;
-  if (isPublicRoute && !location.pathname.startsWith('/auth') && !location.pathname.startsWith('/onboarding') && !['/404', '/login', '/register'].includes(location.pathname)) {
+  if (
+    isPublicRoute &&
+    !location.pathname.startsWith('/auth') &&
+    !location.pathname.startsWith('/onboarding') &&
+    !['/404', '/login', '/register'].includes(location.pathname)
+  ) {
     Layout = PublicLayout;
   } else if (isPublicRoute || hasOwnLayout) {
     Layout = ({ children }) => <>{children}</>;
@@ -240,13 +245,12 @@ export default function ComprehensiveRouter() {
     <div>
       {/* Conditional Navigation - only show SmartNavigation on public pages if needed,
            and explicitly hide it on Auth, Onboarding, and 404 pages for a clean UX */}
-      {isPublicRoute && 
-        !location.pathname.startsWith('/auth') && 
-        !location.pathname.startsWith('/onboarding') && 
-        !['/404', '/login', '/register'].includes(location.pathname) && 
+      {isPublicRoute &&
+        !location.pathname.startsWith('/auth') &&
+        !location.pathname.startsWith('/onboarding') &&
+        !['/404', '/login', '/register'].includes(location.pathname) &&
         // Logic handled by PublicLayout now, but kept here for non-PublicLayout routes (like Auth)
-        Layout !== PublicLayout &&
-        <SmartNavigation />}
+        Layout !== PublicLayout && <SmartNavigation />}
 
       <Layout>
         <Suspense fallback={<LoadingFallback name="Page" />}>

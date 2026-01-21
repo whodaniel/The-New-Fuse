@@ -1,8 +1,16 @@
-import { useCallback, useState, useEffect } from 'react';
-import type { Node, Edge } from '../types/workflow';
+import { useCallback, useEffect, useState } from 'react';
+import type { Edge, Node } from '../types/workflow';
 import { validateWorkflowWithErrors } from '../utils/workflow-schema-validator';
 
-export const useWorkflowValidation = ({ nodes, edges, onValidate }: { nodes: Node[], edges: Edge[], onValidate?: (isValid: boolean) => void }) => {
+export const useWorkflowValidation = ({
+  nodes,
+  edges,
+  onValidate,
+}: {
+  nodes: Node[];
+  edges: Edge[];
+  onValidate?: (isValid: boolean) => void;
+}) => {
   const [isValid, setIsValid] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({}); // Map of nodeId -> errorMessage
   const [validationErrors, setValidationErrors] = useState<string[]>([]); // Array of general errors
@@ -31,10 +39,11 @@ export const useWorkflowValidation = ({ nodes, edges, onValidate }: { nodes: Nod
         const hasInputs = edges.some((edge: any) => edge.target === node.id);
         const hasOutputs = edges.some((edge: any) => edge.source === node.id);
 
-        if (!hasInputs && !hasOutputs && nodes.length > 1) { // Only check if > 1 node
-           // This is just a warning in the original code, maybe keep it?
-           // The original code treated it as an error string
-           // customErrors.push(`Node "${node.data.label}" is disconnected`);
+        if (!hasInputs && !hasOutputs && nodes.length > 1) {
+          // Only check if > 1 node
+          // This is just a warning in the original code, maybe keep it?
+          // The original code treated it as an error string
+          // customErrors.push(`Node "${node.data.label}" is disconnected`);
         }
       });
 
@@ -53,7 +62,7 @@ export const useWorkflowValidation = ({ nodes, edges, onValidate }: { nodes: Nod
 
   // Original function signature support (if used elsewhere manually)
   const validateWorkflow = useCallback(({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {
-     // This logic is now covered by the useEffect
+    // This logic is now covered by the useEffect
   }, []);
 
   return {

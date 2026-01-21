@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useWorkflow } from '@/hooks';
 import { WorkflowTemplate } from '@/services/WorkflowService';
-import { ArrowRight, ChevronLeft, Copy, Loader2, Plus, Search } from 'lucide-react';
+import { ChevronLeft, Copy, Loader2, Plus, Search } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
@@ -136,7 +136,10 @@ const WorkflowTemplates: React.FC = () => {
                             checked={selectedCategory === null}
                             onChange={() => setSelectedCategory(null)}
                           />
-                          <label htmlFor="category-all" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          <label
+                            htmlFor="category-all"
+                            className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+                          >
                             All Categories
                           </label>
                         </div>
@@ -174,7 +177,10 @@ const WorkflowTemplates: React.FC = () => {
                             checked={selectedComplexity === null}
                             onChange={() => setSelectedComplexity(null)}
                           />
-                          <label htmlFor="complexity-all" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          <label
+                            htmlFor="complexity-all"
+                            className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+                          >
                             All Complexities
                           </label>
                         </div>
@@ -218,12 +224,17 @@ const WorkflowTemplates: React.FC = () => {
 
                 {filteredTemplates.length === 0 ? (
                   <div className="bg-muted/50 border border-border rounded-md p-6 text-center">
-                    <p className="text-muted-foreground">No templates match your search criteria.</p>
+                    <p className="text-muted-foreground">
+                      No templates match your search criteria.
+                    </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredTemplates.map((template) => (
-                      <Card key={template.id} className="overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow">
+                      <Card
+                        key={template.id}
+                        className="overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow"
+                      >
                         <CardHeader className="pb-2">
                           <div className="flex justify-between items-start">
                             <CardTitle className="text-lg line-clamp-1" title={template.name}>
@@ -249,7 +260,9 @@ const WorkflowTemplates: React.FC = () => {
                         <CardContent className="pb-2 grow">
                           <div className="flex items-center text-sm text-muted-foreground">
                             <span className="mr-4">Category: {template.category}</span>
-                            <span>Popularity: <span className="capitalize">{template.popularity}</span></span>
+                            <span>
+                              Popularity: <span className="capitalize">{template.popularity}</span>
+                            </span>
                           </div>
                           <div className="flex items-center text-sm text-muted-foreground mt-1">
                             <span className="mr-4">Nodes: {template.nodes.length}</span>

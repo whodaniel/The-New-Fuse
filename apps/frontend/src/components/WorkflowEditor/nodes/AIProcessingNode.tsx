@@ -1,10 +1,13 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { Handle, Position } from 'reactflow';
 
 export const AIProcessingNode = ({ data, isConnectable }) => {
-  const onParameterChange = useCallback((key, value) => {
-    data.parameters[key] = value;
-  }, [data]);
+  const onParameterChange = useCallback(
+    (key, value) => {
+      data.parameters[key] = value;
+    },
+    [data]
+  );
 
   return (
     <div
@@ -18,18 +21,21 @@ export const AIProcessingNode = ({ data, isConnectable }) => {
         // Apply red glow if error exists
         boxShadow: data.error
           ? '0 0 10px red'
-          : '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+          : '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
       }}
       // Show error message on hover
       title={data.error}
     >
       <Handle type="target" position={Position.Top} isConnectable={isConnectable} />
 
-      <div className="node-header" style={{
-        borderBottom: '1px solid #eee',
-        marginBottom: '10px',
-        paddingBottom: '5px'
-      }}>
+      <div
+        className="node-header"
+        style={{
+          borderBottom: '1px solid #eee',
+          marginBottom: '10px',
+          paddingBottom: '5px',
+        }}
+      >
         <h3 style={{ margin: 0 }}>AI Processing</h3>
       </div>
 
@@ -42,7 +48,7 @@ export const AIProcessingNode = ({ data, isConnectable }) => {
             style={{
               width: '100%',
               padding: '5px',
-              marginTop: '5px'
+              marginTop: '5px',
             }}
           >
             <option value="textAnalysis">Text Analysis</option>
@@ -59,7 +65,7 @@ export const AIProcessingNode = ({ data, isConnectable }) => {
               width: '100%',
               padding: '5px',
               marginTop: '5px',
-              minHeight: '60px'
+              minHeight: '60px',
             }}
           />
         </div>

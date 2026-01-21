@@ -1,10 +1,9 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Dropdown, DropdownOption } from '../Dropdown';
 
 // Mock the Icon component since it's used in Dropdown
 jest.mock('../../Icon', () => ({
-  Icon: ({ name }: { name: string }) => <span data-testid={`icon-${name}`}>{name}</span>
+  Icon: ({ name }: { name: string }) => <span data-testid={`icon-${name}`}>{name}</span>,
 }));
 
 const mockOptions: DropdownOption[] = [

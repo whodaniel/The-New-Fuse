@@ -199,7 +199,9 @@
 }
 
 /* Node Styles */
-.agent-node, .mcp-node, .flow-node {
+.agent-node,
+.mcp-node,
+.flow-node {
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #3b82f6;
   border-radius: 12px;

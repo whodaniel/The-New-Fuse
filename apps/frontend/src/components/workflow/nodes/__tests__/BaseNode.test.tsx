@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { BaseNode } from '../base-node';
 import { ReactFlowProvider } from 'reactflow';
+import { BaseNode } from '../base-node';
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
@@ -23,7 +22,7 @@ describe('BaseNode', () => {
   it('renders without error', () => {
     renderNode({
       id: '1',
-      data: { name: 'Test Node', type: 'test', config: {} }
+      data: { name: 'Test Node', type: 'test', config: {} },
     });
     expect(screen.getByText('Test Node')).toBeInTheDocument();
   });
@@ -32,7 +31,7 @@ describe('BaseNode', () => {
     const errorMsg = 'Validation Failed';
     renderNode({
       id: '1',
-      data: { name: 'Test Node', type: 'test', config: {}, error: errorMsg }
+      data: { name: 'Test Node', type: 'test', config: {}, error: errorMsg },
     });
 
     // Check for the red ring class which indicates error state

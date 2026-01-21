@@ -1,5 +1,4 @@
-
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 interface HistoryState<T> {
   past: T[];

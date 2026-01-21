@@ -9,6 +9,38 @@
  * - Workflow templates
  */
 
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  FiCheckCircle,
+  FiDownload,
+  FiEye,
+  FiGrid,
+  FiPlay,
+  FiPlus,
+  FiRotateCcw,
+  FiRotateCw,
+  FiSave,
+  FiXCircle,
+} from 'react-icons/fi';
+import ReactFlow, {
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  Background,
+  Connection,
+  Controls,
+  Edge,
+  EdgeChange,
+  MarkerType,
+  MiniMap,
+  Node,
+  NodeChange,
+  Panel,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
+} from 'reactflow';
+import 'reactflow/dist/style.css';
 import {
   Alert,
   AlertDescription,
@@ -17,6 +49,7 @@ import {
   Button,
   Card,
   CardContent,
+  LoadingSpinner,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -24,41 +57,26 @@ import {
   ModalHeader,
   ModalOverlay,
   ProgressBar,
-  LoadingSpinner,
 } from '../../components/ui/design-system';
-import { Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, DrawerCloseButton } from '../../components/ui/drawer';
-import { Tooltip } from '../../components/ui/tooltip';
 import { useDisclosure } from '../../components/ui/disclosure';
-import { useToast } from '../../components/ui/toast';
+import {
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+} from '../../components/ui/drawer';
 import { FormControl, FormLabel } from '../../components/ui/form';
 import { Input } from '../../components/ui/input';
 import { Select } from '../../components/ui/select';
 import { Textarea } from '../../components/ui/textarea';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FiDownload, FiEye, FiPlay, FiPlus, FiSave, FiXCircle, FiGrid, FiCheckCircle, FiRotateCcw, FiRotateCw } from 'react-icons/fi';
-import ReactFlow, {
-  addEdge,
-  Background,
-  Connection,
-  Controls,
-  Edge,
-  MarkerType,
-  MiniMap,
-  Node,
-  Panel,
-  ReactFlowProvider,
-  useEdgesState,
-  useNodesState,
-  NodeChange,
-  EdgeChange,
-  applyNodeChanges,
-  applyEdgeChanges,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
+import { useToast } from '../../components/ui/toast';
+import { Tooltip } from '../../components/ui/tooltip';
 import { enhancedNodeTypes } from '../../components/workflow/EnhancedNodeTypes';
-import { detectWorkflowCycles, validateWorkflowDryRun } from '../../utils/workflowValidation';
-import { getLayoutedElements } from '../../utils/workflowLayout';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
+import { getLayoutedElements } from '../../utils/workflowLayout';
+import { detectWorkflowCycles, validateWorkflowDryRun } from '../../utils/workflowValidation';
 
 // Node templates for the library
 interface NodeTemplate {
@@ -194,11 +212,18 @@ const EnhancedWorkflowBuilder: React.FC = () => {
   const [edges, setEdges] = useEdgesState(initialEdges);
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
 
-  const { undo, redo, canUndo, canRedo, takeSnapshot, history } = useUndoRedo({ nodes: [], edges: [] });
+  const { undo, redo, canUndo, canRedo, takeSnapshot, history } = useUndoRedo({
+    nodes: [],
+    edges: [],
+  });
 
   // Initialize history with initial state
   useEffect(() => {
-    if (history.past.length === 0 && history.future.length === 0 && history.present.nodes.length === 0) {
+    if (
+      history.past.length === 0 &&
+      history.future.length === 0 &&
+      history.present.nodes.length === 0
+    ) {
       takeSnapshot({ nodes, edges });
     }
   }, []);
@@ -268,9 +293,11 @@ const EnhancedWorkflowBuilder: React.FC = () => {
       // But calculating stateAfterDeletion is hard here because onNodesDelete receives the deleted nodes,
       // but we need to filter them out from `nodes`.
 
-      const deletedIds = new Set(deleted.map(n => n.id));
-      const remainingNodes = nodes.filter(n => !deletedIds.has(n.id));
-      const remainingEdges = edges.filter(e => !deletedIds.has(e.source) && !deletedIds.has(e.target));
+      const deletedIds = new Set(deleted.map((n) => n.id));
+      const remainingNodes = nodes.filter((n) => !deletedIds.has(n.id));
+      const remainingEdges = edges.filter(
+        (e) => !deletedIds.has(e.source) && !deletedIds.has(e.target)
+      );
 
       takeSnapshot({ nodes: remainingNodes, edges: remainingEdges });
     },
@@ -279,8 +306,8 @@ const EnhancedWorkflowBuilder: React.FC = () => {
 
   const onEdgesDelete = useCallback(
     (deleted: Edge[]) => {
-      const deletedIds = new Set(deleted.map(e => e.id));
-      const remainingEdges = edges.filter(e => !deletedIds.has(e.id));
+      const deletedIds = new Set(deleted.map((e) => e.id));
+      const remainingEdges = edges.filter((e) => !deletedIds.has(e.id));
 
       takeSnapshot({ nodes, edges: remainingEdges });
     },
@@ -767,9 +794,7 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                 <div className="flex flex-col items-start gap-3">
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col items-start gap-0">
-                      <h3 className="text-lg font-bold">
-                        {workflowName}
-                      </h3>
+                      <h3 className="text-lg font-bold">{workflowName}</h3>
                       <p className="text-xs text-gray-600">
                         {nodes.length} nodes, {edges.length} connections
                       </p>
@@ -972,12 +997,8 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       >
                         <CardContent className="p-3">
                           <div className="flex flex-col items-start gap-1">
-                            <h4 className="text-sm font-bold">
-                              {template.label}
-                            </h4>
-                            <p className="text-xs text-gray-600">
-                              {template.description}
-                            </p>
+                            <h4 className="text-sm font-bold">{template.label}</h4>
+                            <p className="text-xs text-gray-600">{template.description}</p>
                             <Badge variant="primary" size="sm">
                               {template.type}
                             </Badge>
@@ -1088,7 +1109,9 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                 <FormLabel>Workflow Name</FormLabel>
                 <Input
                   value={workflowName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWorkflowName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setWorkflowName(e.target.value)
+                  }
                   placeholder="Enter workflow name"
                 />
               </FormControl>
@@ -1097,7 +1120,9 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                 <FormLabel>Description</FormLabel>
                 <Textarea
                   value={workflowDescription}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setWorkflowDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setWorkflowDescription(e.target.value)
+                  }
                   placeholder="Describe what this workflow does"
                   rows={3}
                 />
@@ -1128,13 +1153,19 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                 <Alert
                   key={index}
                   variant={
-                    log.level === 'error' ? 'danger' : log.level === 'success' ? 'success' : 'primary'
+                    log.level === 'error'
+                      ? 'danger'
+                      : log.level === 'success'
+                        ? 'success'
+                        : 'primary'
                   }
                   className="rounded-md"
                 >
                   <div className="flex items-center gap-2">
                     <div className="flex-1">
-                      <AlertTitle className="text-sm">{log.timestamp.toLocaleTimeString()}</AlertTitle>
+                      <AlertTitle className="text-sm">
+                        {log.timestamp.toLocaleTimeString()}
+                      </AlertTitle>
                       <AlertDescription className="text-xs">{log.message}</AlertDescription>
                     </div>
                   </div>

@@ -250,7 +250,7 @@ class WorkflowService {
       return await this.request<WorkflowTemplate>(`/workflows/templates/${id}`);
     } catch (error) {
       console.warn(`Failed to fetch template ${id} from API, checking defaults:`, error);
-      const template = DEFAULT_WORKFLOW_TEMPLATES.find(t => t.id === id);
+      const template = DEFAULT_WORKFLOW_TEMPLATES.find((t) => t.id === id);
       if (template) return template;
       throw error;
     }
@@ -272,9 +272,12 @@ class WorkflowService {
       });
       return this.transformWorkflow(workflow);
     } catch (error) {
-      console.warn(`Failed to create workflow from template ${templateId} via API, using local logic:`, error);
+      console.warn(
+        `Failed to create workflow from template ${templateId} via API, using local logic:`,
+        error
+      );
 
-      const template = DEFAULT_WORKFLOW_TEMPLATES.find(t => t.id === templateId);
+      const template = DEFAULT_WORKFLOW_TEMPLATES.find((t) => t.id === templateId);
       if (!template) throw new Error('Template not found');
 
       // Create a new workflow based on the template locally (mocking backend behavior)
@@ -289,8 +292,8 @@ class WorkflowService {
         tags: [],
         metadata: {
           sourceTemplateId: template.id,
-          ...template.metadata
-        }
+          ...template.metadata,
+        },
       };
 
       // In a real app, this would still need to go to the backend to persist

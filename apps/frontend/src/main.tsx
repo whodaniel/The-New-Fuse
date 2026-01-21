@@ -1,12 +1,12 @@
-import './lib/firebase'; // Ensure Firebase is initialized early
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ToastProvider } from './components/ui/toast';
+import './lib/firebase'; // Ensure Firebase is initialized early
 import { AuthProvider } from './providers/AuthProvider';
-import './styles/globals.css'; // Re-add global CSS import
 import { unstoppableDomainsService } from './services/unstoppableDomains.service';
+import './styles/globals.css'; // Re-add global CSS import
 
 // Initialize Unstoppable Domains Service
 const udClientId = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID;
@@ -14,14 +14,16 @@ if (udClientId) {
   try {
     unstoppableDomainsService.initialize({
       clientID: udClientId,
-      redirectUri: import.meta.env.VITE_UNSTOPPABLE_DOMAINS_REDIRECT_URI || `${window.location.origin}/auth/unstoppable-callback`,
+      redirectUri:
+        import.meta.env.VITE_UNSTOPPABLE_DOMAINS_REDIRECT_URI ||
+        `${window.location.origin}/auth/unstoppable-callback`,
     });
     console.log('[The New Fuse] Unstoppable Domains service initialized');
   } catch (e) {
     console.error('[The New Fuse] Failed to initialize Unstoppable Domains service:', e);
   }
 } else {
-    console.warn('[The New Fuse] Unstoppable Domains Client ID not found. Service not initialized.');
+  console.warn('[The New Fuse] Unstoppable Domains Client ID not found. Service not initialized.');
 }
 
 console.log('Main.tsx starting...');

@@ -1,7 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
-import { Node, Edge, Connection, addEdge } from 'reactflow';
-import { v4 as uuidv4 } from 'uuid';
-import { workflowService, Workflow, WorkflowExecution, WorkflowTemplate } from '@/services/WorkflowService';
+import {
+  Workflow,
+  WorkflowExecution,
+  WorkflowTemplate,
+  workflowService,
+} from '@/services/WorkflowService';
+import { useCallback, useState } from 'react';
 
 export const useWorkflow = () => {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
@@ -9,12 +12,12 @@ export const useWorkflow = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [executions, setExecutions] = useState<WorkflowExecution[]>([]);
-  
+
   // Create a new workflow
   const createWorkflow = useCallback(async (name: string, description?: string) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const newWorkflow = await workflowService.createWorkflow({
         name,
@@ -24,14 +27,14 @@ export const useWorkflow = () => {
             id: 'input-1',
             type: 'input',
             position: { x: 100, y: 100 },
-            data: { 
+            data: {
               name: 'Workflow Input',
               type: 'input',
               config: {
-                inputMapping: {}
-              }
-            }
-          }
+                inputMapping: {},
+              },
+            },
+          },
         ],
         edges: [],
         status: 'draft',
@@ -39,10 +42,10 @@ export const useWorkflow = () => {
         createdBy: 'current-user', // TODO: Get from auth context
         tags: [],
       });
-      
-      setWorkflows(prev => [...prev, newWorkflow]);
+
+      setWorkflows((prev) => [...prev, newWorkflow]);
       setCurrentWorkflow(newWorkflow);
-      
+
       return newWorkflow;
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to create workflow'));
@@ -51,12 +54,12 @@ export const useWorkflow = () => {
       setLoading(false);
     }
   }, []);
-  
+
   // Load workflows from API
   const loadWorkflows = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const fetchedWorkflows = await workflowService.getWorkflows();
       setWorkflows(fetchedWorkflows);
@@ -66,61 +69,65 @@ export const useWorkflow = () => {
       setLoading(false);
     }
   }, []);
-  
+
   // Save a workflow
-  const saveWorkflow = useCallback(async (workflow: Workflow) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const updatedWorkflow = await workflowService.updateWorkflow(workflow.id, workflow);
-      
-      setWorkflows(prev => 
-        prev.map(w => w.id === workflow.id ? updatedWorkflow : w)
-      );
-      
-      if (currentWorkflow?.id === workflow.id) {
-        setCurrentWorkflow(updatedWorkflow);
+  const saveWorkflow = useCallback(
+    async (workflow: Workflow) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const updatedWorkflow = await workflowService.updateWorkflow(workflow.id, workflow);
+
+        setWorkflows((prev) => prev.map((w) => (w.id === workflow.id ? updatedWorkflow : w)));
+
+        if (currentWorkflow?.id === workflow.id) {
+          setCurrentWorkflow(updatedWorkflow);
+        }
+
+        return updatedWorkflow;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to save workflow'));
+        throw err;
+      } finally {
+        setLoading(false);
       }
-      
-      return updatedWorkflow;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to save workflow'));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [currentWorkflow]);
-  
+    },
+    [currentWorkflow]
+  );
+
   // Delete a workflow
-  const deleteWorkflow = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      await workflowService.deleteWorkflow(id);
-      
-      setWorkflows(prev => prev.filter(w => w.id !== id));
-      
-      if (currentWorkflow?.id === id) {
-        setCurrentWorkflow(null);
+  const deleteWorkflow = useCallback(
+    async (id: string) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        await workflowService.deleteWorkflow(id);
+
+        setWorkflows((prev) => prev.filter((w) => w.id !== id));
+
+        if (currentWorkflow?.id === id) {
+          setCurrentWorkflow(null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to delete workflow'));
+        throw err;
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to delete workflow'));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [currentWorkflow]);
-  
+    },
+    [currentWorkflow]
+  );
+
   // Execute a workflow
   const executeWorkflow = useCallback(async (workflowId: string, input?: Record<string, any>) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const execution = await workflowService.executeWorkflow(workflowId, input);
-      setExecutions(prev => [...prev, execution]);
+      setExecutions((prev) => [...prev, execution]);
       return execution;
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to execute workflow'));
@@ -134,7 +141,7 @@ export const useWorkflow = () => {
   const loadExecutions = useCallback(async (workflowId?: string) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const fetchedExecutions = await workflowService.getExecutions(workflowId);
       setExecutions(fetchedExecutions);
@@ -149,7 +156,7 @@ export const useWorkflow = () => {
   const getWorkflow = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const workflow = await workflowService.getWorkflow(id);
       setCurrentWorkflow(workflow);
@@ -180,23 +187,26 @@ export const useWorkflow = () => {
   }, []);
 
   // Create from template
-  const createFromTemplate = useCallback(async (templateId: string, name: string, description?: string) => {
-    setLoading(true);
-    setError(null);
+  const createFromTemplate = useCallback(
+    async (templateId: string, name: string, description?: string) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const newWorkflow = await workflowService.createFromTemplate(templateId, name, description);
-      setWorkflows(prev => [...prev, newWorkflow]);
-      setCurrentWorkflow(newWorkflow);
-      return newWorkflow;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to create workflow from template'));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-  
+      try {
+        const newWorkflow = await workflowService.createFromTemplate(templateId, name, description);
+        setWorkflows((prev) => [...prev, newWorkflow]);
+        setCurrentWorkflow(newWorkflow);
+        return newWorkflow;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to create workflow from template'));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
   return {
     workflows,
     currentWorkflow,
@@ -212,7 +222,7 @@ export const useWorkflow = () => {
     loadExecutions,
     getWorkflow,
     getTemplates,
-    createFromTemplate
+    createFromTemplate,
   };
 };
 

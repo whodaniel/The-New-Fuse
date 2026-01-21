@@ -10,8 +10,8 @@ import ReactFlow, {
   useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { nodeTypes } from './nodes/nodeTypes';
 import { validateWorkflowWithErrors } from '../../utils/workflow-schema-validator';
+import { nodeTypes } from './nodes/nodeTypes';
 
 interface WorkflowCanvasProps {
   onNodeSelect?: (node: Node | null) => void;
@@ -49,17 +49,17 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
       id: 'temp',
       name: 'temp',
       nodes: nodes,
-      edges: edges
+      edges: edges,
     };
 
     const { errors } = validateWorkflowWithErrors(workflowForValidation);
 
-    return nodes.map(node => ({
+    return nodes.map((node) => ({
       ...node,
       data: {
         ...node.data,
-        error: errors[node.id]
-      }
+        error: errors[node.id],
+      },
     }));
   }, [nodes, edges]);
 

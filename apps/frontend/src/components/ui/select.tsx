@@ -29,9 +29,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       return (
         <select
           className={cn(
-            "flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm",
-            "ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-50",
+            'flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm',
+            'ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+            'disabled:cursor-not-allowed disabled:opacity-50',
             className
           )}
           onChange={handleChange}
@@ -117,9 +117,9 @@ const SelectTrigger: React.FC<SelectTriggerProps> = ({ className = '', children 
       ref={ref}
       type="button"
       className={cn(
-        "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm",
-        "ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm',
+        'ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       onClick={() => context.setOpen(!context.open)}
@@ -182,8 +182,8 @@ const SelectContent: React.FC<SelectContentProps> = ({ className = '', children 
     <div
       ref={ref}
       className={cn(
-        "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-background p-1 text-foreground shadow-lg",
-        "animate-in fade-in-0 zoom-in-95",
+        'absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-background p-1 text-foreground shadow-lg',
+        'animate-in fade-in-0 zoom-in-95',
         className
       )}
     >
@@ -210,9 +210,9 @@ const SelectItem: React.FC<SelectItemProps> = ({ value, className = '', children
   return (
     <div
       className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
-        "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        isSelected && "bg-accent text-accent-foreground",
+        'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none',
+        'focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        isSelected && 'bg-accent text-accent-foreground',
         className
       )}
       onClick={() => context.onValueChange?.(value)}
@@ -246,12 +246,7 @@ interface SelectLabelProps {
 
 const SelectLabel: React.FC<SelectLabelProps> = ({ className = '', children }) => {
   return (
-    <div
-      className={cn(
-        "py-1.5 pl-8 pr-2 text-sm font-semibold text-foreground",
-        className
-      )}
-    >
+    <div className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold text-foreground', className)}>
       {children}
     </div>
   );

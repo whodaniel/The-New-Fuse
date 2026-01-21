@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@the-new-fuse/utils';
+import React, { useEffect, useRef, useState } from 'react';
 import { Icon } from '../Icon';
 
 export interface DropdownOption {
@@ -36,14 +36,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<DropdownOption | undefined>(
-    value ? options.find(option => option.value === value) : undefined
+    value ? options.find((option) => option.value === value) : undefined
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Update selected option when value prop changes
   useEffect(() => {
     if (value) {
-      const option = options.find(option => option.value === value);
+      const option = options.find((option) => option.value === value);
       setSelectedOption(option);
     } else {
       setSelectedOption(undefined);
@@ -66,10 +66,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   const handleOptionClick = (option: DropdownOption) => {
     if (option.disabled) return;
-    
+
     setSelectedOption(option);
     setIsOpen(false);
-    
+
     if (onChange) {
       onChange(option.value);
     }
@@ -82,28 +82,21 @@ export const Dropdown: React.FC<DropdownProps> = ({
   };
 
   return (
-    <div 
-      className={cn(
-        "relative w-full", 
-        className
-      )}
-      ref={dropdownRef}
-      style={{ width }}
-    >
+    <div className={cn('relative w-full', className)} ref={dropdownRef} style={{ width }}>
       {label && (
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           {label}
         </label>
       )}
-      
+
       <button
         type="button"
         className={cn(
-          "flex items-center justify-between w-full px-3 py-2 text-left rounded-md border shadow-sm text-sm",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent",
-          disabled && "opacity-50 cursor-not-allowed",
-          error ? "border-red-500" : "border-input",
-          "bg-background text-foreground"
+          'flex items-center justify-between w-full px-3 py-2 text-left rounded-md border shadow-sm text-sm',
+          'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+          disabled && 'opacity-50 cursor-not-allowed',
+          error ? 'border-red-500' : 'border-input',
+          'bg-background text-foreground'
         )}
         onClick={toggleDropdown}
         disabled={disabled}
@@ -112,49 +105,41 @@ export const Dropdown: React.FC<DropdownProps> = ({
           {selectedOption?.icon && (
             <Icon name={selectedOption.icon} size="sm" className="shrink-0" />
           )}
-          <span className={!selectedOption ? "text-gray-400" : ""}>
+          <span className={!selectedOption ? 'text-gray-400' : ''}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
         </div>
-        
-        <Icon 
-          name={isOpen ? "chevron-up" : "chevron-down"} 
-          size="sm" 
-          className="ml-2 shrink-0"
-        />
+
+        <Icon name={isOpen ? 'chevron-up' : 'chevron-down'} size="sm" className="ml-2 shrink-0" />
       </button>
-      
+
       {isOpen && (
-        <div 
+        <div
           className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
           style={{ maxHeight, overflowY: 'auto' }}
         >
           <ul className="py-1">
             {options.map((option) => (
-              <li 
+              <li
                 key={option.value}
                 className={cn(
-                  "flex items-center px-3 py-2 text-sm cursor-pointer",
-                  option.disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 dark:hover:bg-gray-700",
-                  selectedOption?.value === option.value && "bg-primary/10 text-primary"
+                  'flex items-center px-3 py-2 text-sm cursor-pointer',
+                  option.disabled
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700',
+                  selectedOption?.value === option.value && 'bg-primary/10 text-primary'
                 )}
                 onClick={() => handleOptionClick(option)}
               >
-                {option.icon && (
-                  <Icon name={option.icon} size="sm" className="mr-2 shrink-0" />
-                )}
+                {option.icon && <Icon name={option.icon} size="sm" className="mr-2 shrink-0" />}
                 <span className="truncate">{option.label}</span>
               </li>
             ))}
           </ul>
         </div>
       )}
-      
-      {error && (
-        <p className="mt-1 text-xs text-red-500">
-          {error}
-        </p>
-      )}
+
+      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   );
 };

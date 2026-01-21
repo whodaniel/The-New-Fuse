@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { EventBus } from '../events/event-bus.service';
-import { ProfileUpdatedEvent } from './events/profile.events';
 import { StorageService } from '../services/storage.service';
+import { UsersService } from '../users/users.service';
+import { ProfileUpdatedEvent } from './events/profile.events';
 
 @Injectable()
 export class ProfileService {
@@ -32,7 +32,7 @@ export class ProfileService {
     // Add additional profile-related data
     return {
       ...user,
-      fullProfile: true
+      fullProfile: true,
     };
   }
 }

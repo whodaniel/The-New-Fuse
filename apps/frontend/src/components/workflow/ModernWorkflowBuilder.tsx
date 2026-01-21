@@ -1,21 +1,21 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, {
-  Node,
-  Edge,
   addEdge,
-  Connection,
-  useNodesState,
-  useEdgesState,
-  Controls,
   Background,
+  Connection,
+  Controls,
+  Edge,
   MiniMap,
+  Node,
   Panel,
   ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
   useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { StatusDecorator } from './StatusDecorator';
 import './ModernWorkflowBuilder.css';
+import { StatusDecorator } from './StatusDecorator';
 
 // Custom Node Components
 const AgentNode = ({ data }: { data: any }) => (
@@ -28,7 +28,10 @@ const AgentNode = ({ data }: { data: any }) => (
     <div className="node-content">
       <div className="node-field">
         <label>Agent Type:</label>
-        <select value={data.agentType || 'claude'} onChange={(e) => data.onChange?.('agentType', e.target.value)}>
+        <select
+          value={data.agentType || 'claude'}
+          onChange={(e) => data.onChange?.('agentType', e.target.value)}
+        >
           <option value="claude">Claude AI</option>
           <option value="gemini">Gemini</option>
           <option value="chatgpt">ChatGPT</option>
@@ -37,8 +40,8 @@ const AgentNode = ({ data }: { data: any }) => (
       </div>
       <div className="node-field">
         <label>Prompt:</label>
-        <textarea 
-          value={data.prompt || ''} 
+        <textarea
+          value={data.prompt || ''}
           onChange={(e) => data.onChange?.('prompt', e.target.value)}
           placeholder="Enter your prompt here..."
         />
@@ -67,8 +70,8 @@ const MCPToolNode = ({ data }: { data: any }) => (
       </div>
       <div className="node-field">
         <label>Parameters:</label>
-        <textarea 
-          value={data.parameters || ''} 
+        <textarea
+          value={data.parameters || ''}
           onChange={(e) => data.onChange?.('parameters', e.target.value)}
           placeholder="Enter parameters as JSON..."
         />
@@ -86,7 +89,10 @@ const FlowControlNode = ({ data }: { data: any }) => (
     <div className="node-content">
       <div className="node-field">
         <label>Type:</label>
-        <select value={data.type || 'condition'} onChange={(e) => data.onChange?.('type', e.target.value)}>
+        <select
+          value={data.type || 'condition'}
+          onChange={(e) => data.onChange?.('type', e.target.value)}
+        >
           <option value="condition">Condition</option>
           <option value="loop">Loop</option>
           <option value="delay">Delay</option>
@@ -95,8 +101,8 @@ const FlowControlNode = ({ data }: { data: any }) => (
       </div>
       <div className="node-field">
         <label>Configuration:</label>
-        <textarea 
-          value={data.config || ''} 
+        <textarea
+          value={data.config || ''}
           onChange={(e) => data.onChange?.('config', e.target.value)}
           placeholder="Enter configuration..."
         />
@@ -133,53 +139,57 @@ const WorkflowBuilderContent = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { project, setCenter, getNodes } = useReactFlow();
 
-  const onMiniMapClick = useCallback((event: React.MouseEvent, position: { x: number, y: number }) => {
-     // The event gives us the click position on the minimap
-     // But ReactFlow MiniMap 'onClick' gives (event, position) where position is the {x,y} in the flow coordinate system?
-     // No, the documentation says 'onClick' callback for MiniMap is (event: MouseEvent, position: XYPosition).
-     // Wait, if it gives XYPosition in flow coordinates, then it's easy.
-     // Let's assume it doesn't and try to be robust.
-     // Actually, looking at typical implementations, if we click the minimap, we want to center the view there.
+  const onMiniMapClick = useCallback(
+    (event: React.MouseEvent, position: { x: number; y: number }) => {
+      // The event gives us the click position on the minimap
+      // But ReactFlow MiniMap 'onClick' gives (event, position) where position is the {x,y} in the flow coordinate system?
+      // No, the documentation says 'onClick' callback for MiniMap is (event: MouseEvent, position: XYPosition).
+      // Wait, if it gives XYPosition in flow coordinates, then it's easy.
+      // Let's assume it doesn't and try to be robust.
+      // Actually, looking at typical implementations, if we click the minimap, we want to center the view there.
 
-     // However, standard ReactFlow MiniMap doesn't expose `onClick` that returns flow coordinates directly in all versions.
-     // But let's check the MiniMap component props in this file. It is just <MiniMap ... />
+      // However, standard ReactFlow MiniMap doesn't expose `onClick` that returns flow coordinates directly in all versions.
+      // But let's check the MiniMap component props in this file. It is just <MiniMap ... />
 
-     // If I assume standard ReactFlow behavior:
-     // The requirement is "onMapClick handler that calculates the relative coordinates".
-     // If I add onClick to MiniMap, it might just receive the React Event.
+      // If I assume standard ReactFlow behavior:
+      // The requirement is "onMapClick handler that calculates the relative coordinates".
+      // If I add onClick to MiniMap, it might just receive the React Event.
 
-     // Let's implement the calculation logic as requested.
-     const minimapRect = event.currentTarget.getBoundingClientRect();
-     const clickX = event.clientX - minimapRect.left;
-     const clickY = event.clientY - minimapRect.top;
+      // Let's implement the calculation logic as requested.
+      const minimapRect = event.currentTarget.getBoundingClientRect();
+      const clickX = event.clientX - minimapRect.left;
+      const clickY = event.clientY - minimapRect.top;
 
-     const minimapWidth = minimapRect.width;
-     const minimapHeight = minimapRect.height;
+      const minimapWidth = minimapRect.width;
+      const minimapHeight = minimapRect.height;
 
-     // Calculate percentage of click within minimap
-     const xRatio = clickX / minimapWidth;
-     const yRatio = clickY / minimapHeight;
+      // Calculate percentage of click within minimap
+      const xRatio = clickX / minimapWidth;
+      const yRatio = clickY / minimapHeight;
 
-     // We need to map this ratio to the bounding box of the nodes.
-     // This is a simplified approximation as MiniMap rendering can be complex (e.g. aspect ratio preservation).
-     // However, for "smoothly pans... to that specific cluster", this should work.
+      // We need to map this ratio to the bounding box of the nodes.
+      // This is a simplified approximation as MiniMap rendering can be complex (e.g. aspect ratio preservation).
+      // However, for "smoothly pans... to that specific cluster", this should work.
 
-     // Note: This logic assumes the MiniMap covers the whole extent of the nodes.
-     // If ReactFlow's MiniMap implementation is used, it handles the view.
-     // But if we want to override/enhance:
+      // Note: This logic assumes the MiniMap covers the whole extent of the nodes.
+      // If ReactFlow's MiniMap implementation is used, it handles the view.
+      // But if we want to override/enhance:
 
-     // Let's try to use the `onClick` prop if available on MiniMap, otherwise wrap it.
-     // MiniMap supports onClick.
-  }, []);
+      // Let's try to use the `onClick` prop if available on MiniMap, otherwise wrap it.
+      // MiniMap supports onClick.
+    },
+    []
+  );
 
   // Simplified handler based on the prompt's requirement for "relative coordinates" calculation.
-  const handleMiniMapClick = useCallback((event: React.MouseEvent) => {
+  const handleMiniMapClick = useCallback(
+    (event: React.MouseEvent) => {
       // Get the bounds of all nodes to understand the world space
       const allNodes = getNodes();
       if (allNodes.length === 0) return;
 
-      const nodesX = allNodes.map(n => n.position.x);
-      const nodesY = allNodes.map(n => n.position.y);
+      const nodesX = allNodes.map((n) => n.position.x);
+      const nodesY = allNodes.map((n) => n.position.y);
       const minX = Math.min(...nodesX);
       const maxX = Math.max(...nodesX);
       const minY = Math.min(...nodesY);
@@ -198,11 +208,13 @@ const WorkflowBuilderContent = () => {
       const ratioX = clickX / rect.width;
       const ratioY = clickY / rect.height;
 
-      const targetX = minX + (worldWidth * ratioX);
-      const targetY = minY + (worldHeight * ratioY);
+      const targetX = minX + worldWidth * ratioX;
+      const targetY = minY + worldHeight * ratioY;
 
       setCenter(targetX, targetY, { zoom: 1, duration: 800 });
-  }, [getNodes, setCenter]);
+    },
+    [getNodes, setCenter]
+  );
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -234,17 +246,15 @@ const WorkflowBuilderContent = () => {
         id: `${type}-${Date.now()}`,
         type,
         position,
-        data: { 
+        data: {
           label: `${type.charAt(0).toUpperCase() + type.slice(1)} Node`,
           onChange: (field: string, value: string) => {
             setNodes((nds) =>
               nds.map((node) =>
-                node.id === newNode.id
-                  ? { ...node, data: { ...node.data, [field]: value } }
-                  : node
+                node.id === newNode.id ? { ...node, data: { ...node.data, [field]: value } } : node
               )
             );
-          }
+          },
         },
       };
 
@@ -298,13 +308,17 @@ const WorkflowBuilderContent = () => {
 
       if (response.ok) {
         const result = await response.json();
-        setExecutionLog(prev => [...prev, '✅ Workflow executed successfully!', JSON.stringify(result, null, 2)]);
+        setExecutionLog((prev) => [
+          ...prev,
+          '✅ Workflow executed successfully!',
+          JSON.stringify(result, null, 2),
+        ]);
       } else {
-        setExecutionLog(prev => [...prev, '❌ Workflow execution failed']);
+        setExecutionLog((prev) => [...prev, '❌ Workflow execution failed']);
       }
     } catch (error) {
       console.error('Error executing workflow:', error);
-      setExecutionLog(prev => [...prev, `❌ Error: ${error}`]);
+      setExecutionLog((prev) => [...prev, `❌ Error: ${error}`]);
     } finally {
       setIsExecuting(false);
     }
@@ -315,9 +329,36 @@ const WorkflowBuilderContent = () => {
       'ai-research': {
         nodes: [
           { id: 'start', type: 'input', position: { x: 100, y: 100 }, data: { label: '🚀 Start' } },
-          { id: 'research', type: 'agent', position: { x: 300, y: 100 }, data: { label: 'Research Agent', agentType: 'perplexity', prompt: 'Research the given topic and provide comprehensive information' } },
-          { id: 'analyze', type: 'agent', position: { x: 500, y: 100 }, data: { label: 'Analysis Agent', agentType: 'claude', prompt: 'Analyze the research data and extract key insights' } },
-          { id: 'report', type: 'agent', position: { x: 700, y: 100 }, data: { label: 'Report Generator', agentType: 'chatgpt', prompt: 'Generate a comprehensive report based on the analysis' } },
+          {
+            id: 'research',
+            type: 'agent',
+            position: { x: 300, y: 100 },
+            data: {
+              label: 'Research Agent',
+              agentType: 'perplexity',
+              prompt: 'Research the given topic and provide comprehensive information',
+            },
+          },
+          {
+            id: 'analyze',
+            type: 'agent',
+            position: { x: 500, y: 100 },
+            data: {
+              label: 'Analysis Agent',
+              agentType: 'claude',
+              prompt: 'Analyze the research data and extract key insights',
+            },
+          },
+          {
+            id: 'report',
+            type: 'agent',
+            position: { x: 700, y: 100 },
+            data: {
+              label: 'Report Generator',
+              agentType: 'chatgpt',
+              prompt: 'Generate a comprehensive report based on the analysis',
+            },
+          },
         ],
         edges: [
           { id: 'e1', source: 'start', target: 'research' },
@@ -328,9 +369,36 @@ const WorkflowBuilderContent = () => {
       'content-creation': {
         nodes: [
           { id: 'start', type: 'input', position: { x: 100, y: 100 }, data: { label: '🚀 Start' } },
-          { id: 'ideation', type: 'agent', position: { x: 300, y: 100 }, data: { label: 'Ideation Agent', agentType: 'gemini', prompt: 'Generate creative content ideas based on the brief' } },
-          { id: 'writing', type: 'agent', position: { x: 500, y: 100 }, data: { label: 'Writing Agent', agentType: 'chatgpt', prompt: 'Write engaging content based on the selected idea' } },
-          { id: 'editing', type: 'agent', position: { x: 700, y: 100 }, data: { label: 'Editor Agent', agentType: 'claude', prompt: 'Edit and refine the content for clarity and impact' } },
+          {
+            id: 'ideation',
+            type: 'agent',
+            position: { x: 300, y: 100 },
+            data: {
+              label: 'Ideation Agent',
+              agentType: 'gemini',
+              prompt: 'Generate creative content ideas based on the brief',
+            },
+          },
+          {
+            id: 'writing',
+            type: 'agent',
+            position: { x: 500, y: 100 },
+            data: {
+              label: 'Writing Agent',
+              agentType: 'chatgpt',
+              prompt: 'Write engaging content based on the selected idea',
+            },
+          },
+          {
+            id: 'editing',
+            type: 'agent',
+            position: { x: 700, y: 100 },
+            data: {
+              label: 'Editor Agent',
+              agentType: 'claude',
+              prompt: 'Edit and refine the content for clarity and impact',
+            },
+          },
         ],
         edges: [
           { id: 'e1', source: 'start', target: 'ideation' },
@@ -341,10 +409,46 @@ const WorkflowBuilderContent = () => {
       'data-processing': {
         nodes: [
           { id: 'start', type: 'input', position: { x: 100, y: 100 }, data: { label: '🚀 Start' } },
-          { id: 'ingest', type: 'mcpTool', position: { x: 300, y: 100 }, data: { label: 'Data Ingestion', tool: 'file-system', parameters: '{"action": "read", "path": "data/"}' } },
-          { id: 'clean', type: 'agent', position: { x: 500, y: 100 }, data: { label: 'Data Cleaner', agentType: 'claude', prompt: 'Clean and normalize the data' } },
-          { id: 'analyze', type: 'agent', position: { x: 700, y: 100 }, data: { label: 'Data Analyst', agentType: 'gemini', prompt: 'Analyze the data and generate insights' } },
-          { id: 'visualize', type: 'mcpTool', position: { x: 900, y: 100 }, data: { label: 'Visualization', tool: 'database', parameters: '{"action": "create_chart"}' } },
+          {
+            id: 'ingest',
+            type: 'mcpTool',
+            position: { x: 300, y: 100 },
+            data: {
+              label: 'Data Ingestion',
+              tool: 'file-system',
+              parameters: '{"action": "read", "path": "data/"}',
+            },
+          },
+          {
+            id: 'clean',
+            type: 'agent',
+            position: { x: 500, y: 100 },
+            data: {
+              label: 'Data Cleaner',
+              agentType: 'claude',
+              prompt: 'Clean and normalize the data',
+            },
+          },
+          {
+            id: 'analyze',
+            type: 'agent',
+            position: { x: 700, y: 100 },
+            data: {
+              label: 'Data Analyst',
+              agentType: 'gemini',
+              prompt: 'Analyze the data and generate insights',
+            },
+          },
+          {
+            id: 'visualize',
+            type: 'mcpTool',
+            position: { x: 900, y: 100 },
+            data: {
+              label: 'Visualization',
+              tool: 'database',
+              parameters: '{"action": "create_chart"}',
+            },
+          },
         ],
         edges: [
           { id: 'e1', source: 'start', target: 'ingest' },
@@ -357,23 +461,25 @@ const WorkflowBuilderContent = () => {
 
     const template = templates[templateName as keyof typeof templates];
     if (template) {
-      setNodes(template.nodes.map(node => ({
-        ...node,
-        data: {
-          ...node.data,
-          onChange: (field: string, value: string) => {
-            setNodes((nds) =>
-              nds.map((n) =>
-                n.id === node.id
-                  ? { ...n, data: { ...n.data, [field]: value } }
-                  : n
-              )
-            );
-          }
-        }
-      })));
+      setNodes(
+        template.nodes.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            onChange: (field: string, value: string) => {
+              setNodes((nds) =>
+                nds.map((n) =>
+                  n.id === node.id ? { ...n, data: { ...n.data, [field]: value } } : n
+                )
+              );
+            },
+          },
+        }))
+      );
       setEdges(template.edges);
-      setWorkflowName(`${templateName.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Workflow`);
+      setWorkflowName(
+        `${templateName.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())} Workflow`
+      );
     }
   };
 
@@ -410,11 +516,7 @@ const WorkflowBuilderContent = () => {
           <button onClick={saveWorkflow} className="btn btn-secondary">
             💾 Save
           </button>
-          <button 
-            onClick={executeWorkflow} 
-            className="btn btn-primary"
-            disabled={isExecuting}
-          >
+          <button onClick={executeWorkflow} className="btn btn-primary" disabled={isExecuting}>
             {isExecuting ? '⏳ Executing...' : '▶️ Execute'}
           </button>
         </div>
@@ -424,7 +526,7 @@ const WorkflowBuilderContent = () => {
         {/* Sidebar */}
         <div className="builder-sidebar">
           <h3>Node Library</h3>
-          
+
           <div className="node-category">
             <h4>🤖 AI Agents</h4>
             <div
@@ -467,7 +569,9 @@ const WorkflowBuilderContent = () => {
               <h4>📋 Execution Log</h4>
               <div className="log-content">
                 {executionLog.map((log, index) => (
-                  <div key={index} className="log-entry">{log}</div>
+                  <div key={index} className="log-entry">
+                    {log}
+                  </div>
                 ))}
               </div>
             </div>
@@ -489,7 +593,7 @@ const WorkflowBuilderContent = () => {
           >
             <Background color="#1f2937" gap={20} />
             <Controls />
-            <MiniMap 
+            <MiniMap
               nodeColor="#374151"
               maskColor="rgba(0, 0, 0, 0.2)"
               onClick={handleMiniMapClick}
@@ -505,7 +609,6 @@ const WorkflowBuilderContent = () => {
           </ReactFlow>
         </div>
       </div>
-
     </div>
   );
 };

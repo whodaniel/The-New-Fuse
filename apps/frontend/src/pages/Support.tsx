@@ -1,10 +1,10 @@
+import { SiteFooter } from '@/components/SiteFooter';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Book, Clock, Headset, MessageCircle, Rocket } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { SiteFooter } from '@/components/SiteFooter';
 
 const SupportOptionCard = ({
   icon: Icon,

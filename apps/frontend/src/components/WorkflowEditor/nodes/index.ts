@@ -25,5 +25,5 @@ export const CUSTOM_NODE_TYPES = {
   input: AIProcessingNode,
   output: AIProcessingNode,
   notification: slackNode,
-  a2a: AIProcessingNode
+  a2a: AIProcessingNode,
 };

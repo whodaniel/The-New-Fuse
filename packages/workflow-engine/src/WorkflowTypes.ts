@@ -58,6 +58,8 @@ export enum StepType {
   ITERATION = 'ITERATION',
   START = 'START',
   END = 'END',
+  A2A_HANDOFF = 'A2A_HANDOFF',
+  NOTIFICATION = 'NOTIFICATION',
 }
 
 // ------------------- Workflow Definition -------------------
@@ -105,6 +107,12 @@ export interface WorkflowStep {
   // Iteration logic
   iteration?: IterationDetails;
 
+  // A2A Handoff details
+  a2aHandoff?: A2AHandoffDetails;
+
+  // Notification details
+  notification?: NotificationDetails;
+
   // Agent assignment
   assignee: StepAssignee;
 
@@ -142,6 +150,39 @@ export interface IterationDetails {
   collection: string; // e.g., "workflow.inputs.urls"
   itemVariable: string; // e.g., "currentUrl"
   concurrency?: number;
+}
+
+export interface A2AHandoffDetails {
+    // Schema definition for the data to be passed to the next agent
+    // Key: target variable name, Value: source path (e.g. "outputs.step1.summary")
+    handoffSchema: Record<string, string>;
+    // Optional context instructions to be prepended
+    contextInstructions?: string;
+}
+
+export interface NotificationDetails {
+    channelSelector: 'SLACK' | 'EMAIL' | 'WEBHOOK';
+    config: NotificationConfig;
+    template: string; // Message template (e.g. "Task {{id}} completed with result {{result}}")
+}
+
+export type NotificationConfig = SlackConfig | EmailConfig | WebhookConfig;
+
+export interface SlackConfig {
+    channelId: string;
+    messageType?: 'text' | 'block';
+}
+
+export interface EmailConfig {
+    recipientEmail: string;
+    subject?: string;
+    cc?: string[];
+}
+
+export interface WebhookConfig {
+    url: string;
+    method: 'POST' | 'PUT' | 'GET';
+    headers?: Record<string, string>;
 }
 
 export interface StepAssignee {
@@ -195,6 +236,9 @@ export interface WorkflowInstance {
 
   // State of each step in the instance
   stepStates: Map<string, WorkflowStepState>;
+
+  // Pending context to be passed to the next agent (from A2A_HANDOFF)
+  pendingContext?: string;
 }
 
 export interface WorkflowStepState {
@@ -227,6 +271,9 @@ export interface WorkflowTask {
   assignedAgentId?: string;
   createdAt: Date;
   updatedAt: Date;
+
+  // Context to be added to the agent's system prompt
+  context?: string;
 }
 
 // Payload for an event that can trigger a workflow
