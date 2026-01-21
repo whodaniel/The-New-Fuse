@@ -130,16 +130,16 @@ export default function Settings() {
           </p>
         </motion.div>
 
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Sidebar Navigation */}
+        <div className="flex flex-col gap-6">
+          {/* Top Navigation Tabs */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="w-full md:w-72"
+            className="w-full"
           >
             <GlassCard>
-              <nav className="space-y-1 p-2">
+              <nav className="flex flex-row overflow-x-auto p-2 gap-2 no-scrollbar">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -147,7 +147,7 @@ export default function Settings() {
                       key={item.id}
                       variants={itemVariants}
                       onClick={() => setActiveTab(item.id)}
-                      className={`w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 ${
+                      className={`min-w-[200px] text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 flex-shrink-0 ${
                         activeTab === item.id
                           ? 'bg-gradient-to-r from-purple-500/30 to-blue-500/30 border border-purple-500/30 text-white'
                           : 'hover:bg-white/5 text-gray-400 hover:text-white'

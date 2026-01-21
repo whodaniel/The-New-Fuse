@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import { PremiumLayout } from './layouts/PremiumLayout'; // Import PremiumLayout
 import { PublicLayout } from './layouts/PublicLayout';
 
@@ -250,7 +250,7 @@ export default function ComprehensiveRouter() {
           <Routes>
             {/* Core Routes */}
             <Route path="/" element={<LandingRevolutionPage />} />
-            <Route path="/home" element={<LandingRevolutionPage />} />
+            <Route path="/home" element={<Navigate to="/" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/sophisticated-hub" element={<SophisticatedTNFHub />} />
             <Route
@@ -271,7 +271,7 @@ export default function ComprehensiveRouter() {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/ai-agents" element={<AIAgentPortalPage />} />
             <Route path="/agent-builder" element={<UnifiedAgentCreator />} />
-            <Route path="/agent-management" element={<AgentsPage />} />
+            <Route path="/agent-management" element={<Navigate to="/agents" replace />} />
             <Route path="/agents" element={<AgentsPage />} />
             <Route
               path="/agents/new"
@@ -403,9 +403,8 @@ export default function ComprehensiveRouter() {
             <Route path="/not-found" element={<NotFound />} />
 
             {/* High Priority Missing Routes - Using Actual Components */}
-            <Route path="/chat-page" element={<ChatPage />} />
-            <Route path="/workspace-chat" element={<WorkspaceChatPage />} />
-            <Route path="/workspace/chat" element={<WorkspaceChatPage />} />
+            <Route path="/chat-page" element={<Navigate to="/chat" replace />} />
+            <Route path="/workspace/chat" element={<Navigate to="/workspace-chat" replace />} />
             <Route path="/workspace/layout" element={<WorkspaceLayoutPage />} />
             <Route path="/workspace" element={<WorkspaceIndexPage />} />
 
@@ -419,8 +418,8 @@ export default function ComprehensiveRouter() {
             <Route path="/legal/terms" element={<TermsOfServicePage />} />
 
             {/* Enhanced Landing Pages */}
-            <Route path="/landing-page" element={<LandingRevolutionPage />} />
-            <Route path="/simple-landing" element={<LandingRevolutionPage />} />
+            <Route path="/landing-page" element={<Navigate to="/landing" replace />} />
+            <Route path="/simple-landing" element={<Navigate to="/landing" replace />} />
             <Route path="/home-page" element={<HomePage />} />
 
             {/* Component Navigation */}
@@ -523,14 +522,7 @@ export default function ComprehensiveRouter() {
                 </Suspense>
               }
             />
-            <Route
-              path="/user/profile"
-              element={
-                <Suspense fallback={<LoadingFallback name="User Profile" />}>
-                  <UserProfilePage />
-                </Suspense>
-              }
-            />
+            <Route path="/user/profile" element={<Navigate to="/profile" replace />} />
 
             {/* HTML prototype routes (for reference) */}
             <Route
