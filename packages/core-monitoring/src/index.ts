@@ -18,7 +18,7 @@ export * from './sentry/sentry-config';
 export * from './sentry/sentry-integrations';
 
 // Logging
-// Avoid duplicate type names with Logger.ts by exporting only specific members
+// Avoid duplicate type names// This usage is just a thought, I will view the file first.
 export { WinstonLogger, createLogger, type LoggerConfig } from './logging/winston-logger';
 
 // Metrics
@@ -28,10 +28,10 @@ export * from './metrics/prometheus-metrics';
 // Avoid duplicate HealthStatus name (already exported by IMonitoring)
 export {
   HealthCheckService,
+  type HealthCheckFunction,
   type HealthCheckResult,
   type ServiceHealth,
   type SystemHealthStatus,
-  type HealthCheckFunction,
 } from './health/health-check';
 
 // Alerts

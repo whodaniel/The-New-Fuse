@@ -5,15 +5,15 @@
 
 import { EventEmitter } from 'events';
 import {
-  IErrorHandlerSystem,
   BaseError,
+  ErrorCategory,
   ErrorContext,
   ErrorHandler,
-  RecoveryStrategy,
-  RecoveryResult,
-  ErrorStatistics,
   ErrorSeverity,
-  ErrorCategory
+  ErrorStatistics,
+  IErrorHandlerSystem,
+  RecoveryResult,
+  RecoveryStrategy,
 } from '../interfaces/IErrorHandling.js';
 import { Logger } from '../utils/Logger.js';
 
@@ -31,12 +31,17 @@ export interface BaseErrorHandlerConfig {
 /**
  * Base error handler that can be extended
  */
-export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TContext extends ErrorContext = ErrorContext>
-  extends EventEmitter implements IErrorHandlerSystem<TError, TContext> {
-
+export abstract class BaseErrorHandler<
+  TError extends BaseError = BaseError,
+  TContext extends ErrorContext = ErrorContext,
+>
+  extends EventEmitter
+  implements IErrorHandlerSystem<TError, TContext>
+{
   protected readonly config: BaseErrorHandlerConfig;
-  protected readonly logger: Logger;
-  protected readonly recoveryStrategies: Map<string, RecoveryStrategy<TError, TContext>> = new Map();
+  public readonly logger: Logger;
+  protected readonly recoveryStrategies: Map<string, RecoveryStrategy<TError, TContext>> =
+    new Map();
   protected readonly errorHandlers: Map<number, ErrorHandler<TError, TContext>> = new Map();
   protected readonly statistics: ErrorStatistics;
   protected readonly errorHistory: TError[] = [];
@@ -44,18 +49,18 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
 
   constructor(config: Partial<BaseErrorHandlerConfig> = {}, logger?: Logger) {
     super();
-    
+
     this.config = {
       enableAutoRecovery: true,
       maxRecoveryAttempts: 3,
       statisticsInterval: 60000, // 1 minute
       enableLogging: true,
       logLevel: 'error',
-      ...config
+      ...config,
     };
 
     this.logger = logger || new Logger('BaseErrorHandler');
-    
+
     this.statistics = {
       totalErrors: 0,
       errorsByCategory: {} as Record<ErrorCategory, number>,
@@ -63,12 +68,12 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
       errorsByCode: {},
       errorRate: 0,
       lastError: undefined,
-      mostCommonError: undefined
+      mostCommonError: undefined,
     };
 
     this.initializeDefaultRecoveryStrategies();
     this.initializeDefaultErrorHandlers();
-    
+
     if (this.config.statisticsInterval > 0) {
       this.startStatisticsCollection();
     }
@@ -181,7 +186,7 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
 
     // Find applicable recovery strategies
     const strategies = Array.from(this.recoveryStrategies.values())
-      .filter(strategy => strategy.applicableErrorCodes.includes(error.code))
+      .filter((strategy) => strategy.applicableErrorCodes.includes(error.code))
       .sort((a, b) => a.delay - b.delay); // Try faster strategies first
 
     for (const strategy of strategies) {
@@ -191,24 +196,26 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
 
       try {
         attempts++;
-        this.logger.debug(`Attempting recovery with strategy: ${strategy.name} (attempt ${attempts})`);
-        
+        this.logger.debug(
+          `Attempting recovery with strategy: ${strategy.name} (attempt ${attempts})`
+        );
+
         const success = await strategy.recover(error, context);
-        
+
         if (success) {
           const duration = Date.now() - startTime;
           this.logger.info(`Recovery successful with strategy: ${strategy.name}`, {
             attempts,
             duration,
-            errorCode: error.code
+            errorCode: error.code,
           });
-          
+
           this.emit('recoverySuccess', {
             error,
             context,
             strategy: strategy.name,
             attempts,
-            duration
+            duration,
           });
 
           return {
@@ -216,7 +223,7 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
             strategy: strategy.name,
             attempts,
             duration,
-            data: { strategyUsed: strategy.name }
+            data: { strategyUsed: strategy.name },
           };
         }
 
@@ -224,9 +231,9 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
         if (strategy.delay > 0 && attempts < this.config.maxRecoveryAttempts) {
           await this.delay(strategy.delay);
         }
-
       } catch (recoveryError) {
-        lastError = recoveryError instanceof Error ? recoveryError : new Error(String(recoveryError));
+        lastError =
+          recoveryError instanceof Error ? recoveryError : new Error(String(recoveryError));
         this.logger.warn(`Recovery strategy ${strategy.name} failed:`, lastError);
       }
     }
@@ -235,7 +242,7 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
     this.logger.error(`All recovery attempts failed for error code: ${error.code}`, {
       attempts,
       duration,
-      lastError: lastError?.message
+      lastError: lastError?.message,
     });
 
     this.emit('recoveryFailure', {
@@ -243,7 +250,7 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
       context,
       attempts,
       duration,
-      lastError
+      lastError,
     });
 
     return {
@@ -251,7 +258,7 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
       strategy: 'none',
       attempts,
       duration,
-      error: lastError
+      error: lastError,
     };
   }
 
@@ -283,16 +290,15 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
     this.statistics.lastError = error.timestamp;
 
     // Update category statistics
-    this.statistics.errorsByCategory[error.category] = 
+    this.statistics.errorsByCategory[error.category] =
       (this.statistics.errorsByCategory[error.category] || 0) + 1;
 
     // Update severity statistics
-    this.statistics.errorsBySeverity[error.severity] = 
+    this.statistics.errorsBySeverity[error.severity] =
       (this.statistics.errorsBySeverity[error.severity] || 0) + 1;
 
     // Update code statistics
-    this.statistics.errorsByCode[error.code] = 
-      (this.statistics.errorsByCode[error.code] || 0) + 1;
+    this.statistics.errorsByCode[error.code] = (this.statistics.errorsByCode[error.code] || 0) + 1;
 
     // Update most common error
     const currentCount = this.statistics.errorsByCode[error.code];
@@ -300,7 +306,7 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
       this.statistics.mostCommonError = {
         code: error.code,
         message: error.message,
-        count: currentCount
+        count: currentCount,
       };
     }
 
@@ -323,7 +329,7 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
       correlationId: error.correlationId || context.correlationId,
       component: context.component,
       operation: context.operation,
-      metadata: context.metadata
+      metadata: context.metadata,
     };
 
     switch (error.severity) {
@@ -358,11 +364,11 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
   protected calculateErrorRate(): void {
     const now = Date.now();
     const oneMinuteAgo = now - 60000;
-    
+
     const recentErrors = this.errorHistory.filter(
-      error => error.timestamp.getTime() > oneMinuteAgo
+      (error) => error.timestamp.getTime() > oneMinuteAgo
     );
-    
+
     this.statistics.errorRate = recentErrors.length;
   }
 
@@ -370,6 +376,6 @@ export abstract class BaseErrorHandler<TError extends BaseError = BaseError, TCo
    * Utility delay function
    */
   protected delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
