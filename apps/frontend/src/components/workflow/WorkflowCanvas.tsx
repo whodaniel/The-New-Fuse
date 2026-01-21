@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import ReactFlow, {
   Background,
   Connection,
@@ -11,6 +11,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { nodeTypes } from './nodes/nodeTypes';
+import { validateWorkflowWithErrors } from '../../utils/workflow-schema-validator';
 
 interface WorkflowCanvasProps {
   onNodeSelect?: (node: Node | null) => void;
@@ -40,6 +41,27 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
     },
     [onNodeSelect]
   );
+
+  // Validate and inject errors
+  const nodesWithErrors = useMemo(() => {
+    // Create a workflow object structure that matches schema expectations
+    const workflowForValidation = {
+      id: 'temp',
+      name: 'temp',
+      nodes: nodes,
+      edges: edges
+    };
+
+    const { errors } = validateWorkflowWithErrors(workflowForValidation);
+
+    return nodes.map(node => ({
+      ...node,
+      data: {
+        ...node.data,
+        error: errors[node.id]
+      }
+    }));
+  }, [nodes, edges]);
 
   // Handle dropping nodes from the node library
   const onDrop = useCallback(
@@ -86,7 +108,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
   return (
     <div className="h-full w-full relative bg-slate-950" onDrop={onDrop} onDragOver={onDragOver}>
       <ReactFlow
-        nodes={nodes}
+        nodes={nodesWithErrors}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}

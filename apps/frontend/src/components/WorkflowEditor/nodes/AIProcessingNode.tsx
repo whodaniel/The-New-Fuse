@@ -7,13 +7,22 @@ export const AIProcessingNode = ({ data, isConnectable }) => {
   }, [data]);
 
   return (
-    <div className="node-container" style={{
-      background: 'white',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      padding: '10px',
-      width: '250px'
-    }}>
+    <div
+      className="node-container"
+      style={{
+        background: 'white',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        padding: '10px',
+        width: '250px',
+        // Apply red glow if error exists
+        boxShadow: data.error
+          ? '0 0 10px red'
+          : '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+      }}
+      // Show error message on hover
+      title={data.error}
+    >
       <Handle type="target" position={Position.Top} isConnectable={isConnectable} />
 
       <div className="node-header" style={{
@@ -28,7 +37,7 @@ export const AIProcessingNode = ({ data, isConnectable }) => {
         <div className="form-group" style={{ marginBottom: '10px' }}>
           <label>AI Task:</label>
           <select
-            value={data.parameters.aiTask}
+            value={data.parameters?.aiTask}
             onChange={(e) => onParameterChange('aiTask', e.target.value)}
             style={{
               width: '100%',
@@ -43,7 +52,7 @@ export const AIProcessingNode = ({ data, isConnectable }) => {
         <div className="form-group">
           <label>Text Input:</label>
           <textarea
-            value={data.parameters.textInput}
+            value={data.parameters?.textInput}
             onChange={(e) => onParameterChange('textInput', e.target.value)}
             placeholder="Enter text to analyze"
             style={{

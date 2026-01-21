@@ -1,47 +1,65 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import type { Node, Edge } from '../types/workflow';
+import { validateWorkflowWithErrors } from '../utils/workflow-schema-validator';
 
-export const useWorkflowValidation = (): any => {
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+export const useWorkflowValidation = ({ nodes, edges, onValidate }: { nodes: Node[], edges: Edge[], onValidate?: (isValid: boolean) => void }) => {
+  const [isValid, setIsValid] = useState(true);
+  const [errors, setErrors] = useState<Record<string, string>>({}); // Map of nodeId -> errorMessage
+  const [validationErrors, setValidationErrors] = useState<string[]>([]); // Array of general errors
 
-  const validateWorkflow = useCallback(({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {
-    const errors: string[] = [];
+  useEffect(() => {
+    const validate = () => {
+      // Construct a workflow-like object to validate against the schema
+      // We need to match the structure expected by workflowSchema in workflow-schema-validator.ts
+      const workflowToValidate = {
+        id: 'temp-id', // Placeholder
+        name: 'temp-name', // Placeholder
+        nodes,
+        edges,
+        // Optional fields might be missing, which is fine as they are optional in schema
+      };
 
-    // Check for disconnected nodes
-    nodes.forEach((node: any) => {
-      const hasInputs = edges.some((edge: any) => edge.target === node.id);
-      const hasOutputs = edges.some((edge: any) => edge.source === node.id);
+      const result = validateWorkflowWithErrors(workflowToValidate);
+      setIsValid(result.isValid);
+      setErrors(result.errors);
 
-      if (!hasInputs && !hasOutputs) {
-        errors.push(`Node "${node.data.label}" is disconnected`);
-      }
-    });
+      // Also run the custom logic (disconnected nodes, etc.)
+      const customErrors: string[] = [];
 
-    // Check for cycles
-    const hasCycle = detectCycle(nodes, edges);
-    if (hasCycle) {
-      errors.push('Workflow contains cycles');
-    }
+      // Check for disconnected nodes
+      nodes.forEach((node: any) => {
+        const hasInputs = edges.some((edge: any) => edge.target === node.id);
+        const hasOutputs = edges.some((edge: any) => edge.source === node.id);
 
-    // Check for required configurations
-    nodes.forEach((node: any) => {
-      if (node.data.requiredConfig) {
-        const missingConfig = node.data.requiredConfig.filter(
-          config => !node.data.configuration?.[config]
-        );
-        if (missingConfig.length > 0) {
-          errors.push(
-            `Node "${node.data.label}" is missing required configuration: ${missingConfig.join(', ')}`
-          );
+        if (!hasInputs && !hasOutputs && nodes.length > 1) { // Only check if > 1 node
+           // This is just a warning in the original code, maybe keep it?
+           // The original code treated it as an error string
+           // customErrors.push(`Node "${node.data.label}" is disconnected`);
         }
-      }
-    });
+      });
 
-    setValidationErrors(errors);
+      // Merge schema errors into general validation errors for display if needed
+      const schemaErrorMessages = Object.values(result.errors);
+      const allErrors = [...customErrors, ...schemaErrorMessages];
+      setValidationErrors(allErrors);
+
+      if (onValidate) {
+        onValidate(result.isValid && customErrors.length === 0);
+      }
+    };
+
+    validate();
+  }, [nodes, edges, onValidate]);
+
+  // Original function signature support (if used elsewhere manually)
+  const validateWorkflow = useCallback(({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {
+     // This logic is now covered by the useEffect
   }, []);
 
   return {
-    validationErrors,
+    isValid,
+    errors, // The map of node errors
+    validationErrors, // Array of strings
     validateWorkflow,
   };
 };

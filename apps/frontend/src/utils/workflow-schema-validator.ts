@@ -84,6 +84,46 @@ export function validateWorkflow(workflow: any) {
   return workflowSchema.parse(workflow);
 }
 
+export type ValidationResult = {
+  isValid: boolean;
+  errors: Record<string, string>; // Map of nodeId -> errorMessage
+};
+
+/**
+ * Validates a workflow and returns validation result with mapped errors
+ */
+export function validateWorkflowWithErrors(workflow: any): ValidationResult {
+  try {
+    workflowSchema.parse(workflow);
+    return { isValid: true, errors: {} };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const nodeErrors: Record<string, string> = {};
+
+      error.errors.forEach((err) => {
+        // Check if the error is related to a node
+        // Path example: ['nodes', 0, 'data', 'label']
+        if (err.path[0] === 'nodes' && typeof err.path[1] === 'number') {
+          const nodeIndex = err.path[1];
+          const node = workflow.nodes[nodeIndex];
+          if (node && node.id) {
+            // Create a user-friendly message
+            const fieldPath = err.path.slice(2).join('.');
+            nodeErrors[node.id] = fieldPath
+              ? `${fieldPath}: ${err.message}`
+              : err.message;
+          }
+        }
+      });
+
+      return { isValid: false, errors: nodeErrors };
+    }
+
+    // Non-Zod error
+    return { isValid: false, errors: {} };
+  }
+}
+
 /**
  * Validates a workflow execution against the schema
  * @param execution The workflow execution to validate

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { ReactFlow, Controls, Background, MiniMap, Panel } from 'reactflow';
 import { useSelector, useDispatch } from 'react-redux';
 import { NodeLibrary } from './NodeLibrary';
@@ -23,8 +23,28 @@ export const WorkflowCanvas: React.FC = () => {
   // Initialize hooks
   const { undo, redo, canUndo, canRedo } = useWorkflowHistory();
   const { saveWorkflow, lastSaved } = useAutoSave();
-  const { validationErrors, validateWorkflow } = useWorkflowValidation();
+
+  // Use the updated validation hook
+  const { validationErrors, errors } = useWorkflowValidation({
+    nodes,
+    edges,
+    onValidate: (isValid) => {
+        // Optional: handle validation state change
+    }
+  });
+
   const { collaborators, onUserAction } = useRealTimeCollaboration();
+
+  // Inject error data into nodes
+  const nodesWithErrors = useMemo(() => {
+    return nodes.map(node => ({
+      ...node,
+      data: {
+        ...node.data,
+        error: errors[node.id], // Inject the error message if it exists
+      },
+    }));
+  }, [nodes, errors]);
 
   // Node and edge event handlers
   const onNodesChange = useCallback((changes) => {
@@ -41,11 +61,6 @@ export const WorkflowCanvas: React.FC = () => {
     dispatch({ type: 'ADD_EDGE', payload: connection });
     onUserAction('connect', connection);
   }, [dispatch, onUserAction]);
-
-  // Validate workflow on changes
-  useEffect(() => {
-    validateWorkflow({ nodes, edges });
-  }, [nodes, edges, validateWorkflow]);
 
   return (
     <ErrorBoundary>
@@ -68,7 +83,7 @@ export const WorkflowCanvas: React.FC = () => {
 
           <div className="flex-grow relative">
             <ReactFlow
-              nodes={nodes}
+              nodes={nodesWithErrors}
               edges={edges}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
