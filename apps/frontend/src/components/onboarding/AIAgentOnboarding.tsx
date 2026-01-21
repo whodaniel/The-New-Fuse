@@ -133,7 +133,7 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
 
   return (
     <div className="max-w-[800px] mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-      <h2 className="text-2xl font-bold mb-6">AI Agent Onboarding</h2>
+      <h2 className="text-2xl font-bold mb-6 !text-slate-900">AI Agent Onboarding</h2>
 
       <div className="mb-8">
         <ProgressBar value={(
@@ -155,7 +155,7 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
 
       {step === 'detection' && (
         <div>
-          <h3 className="text-lg font-bold mb-4">Detecting Agent Type</h3>
+          <h3 className="text-lg font-bold mb-4 !text-slate-900">Detecting Agent Type</h3>
           <p className="mb-4 text-gray-600">Analyzing connection patterns and headers...</p>
           <div className="flex justify-center py-4">
              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -165,23 +165,23 @@ export const AIAgentOnboarding: React.FC<AIAgentOnboardingProps> = ({ agentId, o
 
       {step === 'registration' && (
         <div>
-          <h3 className="text-lg font-bold mb-4">Agent Registration</h3>
+          <h3 className="text-lg font-bold mb-4 !text-slate-900">Agent Registration</h3>
           <p className="mb-4 text-gray-600">Register your AI agent with The New Fuse platform.</p>
 
           <div className="flex flex-col gap-4 mb-6">
             <div>
-              <p className="font-bold">Agent ID</p>
-              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono">{agentData.id}</code>
+              <p className="font-bold text-slate-900">Agent ID</p>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">{agentData.id}</code>
             </div>
 
             <div>
-              <p className="font-bold">Registration Endpoint</p>
-              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono">/api/onboarding/ai-agent-registration</code>
+              <p className="font-bold text-slate-900">Registration Endpoint</p>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">/api/onboarding/ai-agent-registration</code>
             </div>
 
             <div>
-              <p className="font-bold">Required Headers</p>
-              <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap">
+              <p className="font-bold text-slate-900">Required Headers</p>
+              <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap text-slate-700 border border-gray-200">
 {`Content-Type: application/json
 X-Agent-ID: ${agentData.id}
 X-Agent-Type: ai_agent`}
@@ -201,7 +201,7 @@ X-Agent-Type: ai_agent`}
 
       {step === 'capabilities' && (
         <div>
-          <h3 className="text-lg font-bold mb-4">Capability Assessment</h3>
+          <h3 className="text-lg font-bold mb-4 !text-slate-900">Capability Assessment</h3>
           <p className="mb-4 text-gray-600">Let's test your agent's capabilities to determine what tools it can use.</p>
 
           <div className="flex flex-col gap-4 mb-6">
@@ -240,12 +240,12 @@ X-Agent-Type: ai_agent`}
 
       {step === 'communication' && (
         <div>
-          <h3 className="text-lg font-bold mb-4">Communication Setup</h3>
+          <h3 className="text-lg font-bold mb-4 !text-slate-900">Communication Setup</h3>
           <p className="mb-4 text-gray-600">Set up communication channels between your agent and The New Fuse platform.</p>
 
           <div className="flex flex-col gap-4 mb-6">
             <div>
-              <p className="font-bold">Available Channels</p>
+              <p className="font-bold text-slate-900">Available Channels</p>
               <div className="flex gap-2 mt-2">
                 <Badge variant="success">HTTP</Badge>
                 <Badge variant="primary">WebSocket</Badge>
@@ -254,8 +254,8 @@ X-Agent-Type: ai_agent`}
             </div>
 
             <div>
-              <p className="font-bold">Communication Endpoints</p>
-              <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap">
+              <p className="font-bold text-slate-900">Communication Endpoints</p>
+              <pre className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono whitespace-pre-wrap text-slate-700 border border-gray-200">
 {`HTTP: /api/agents/${agentData.id}/messages
 WebSocket: ws://your-domain.com/api/agents/${agentData.id}/ws
 Event Stream: /api/agents/${agentData.id}/events`}
@@ -263,7 +263,7 @@ Event Stream: /api/agents/${agentData.id}/events`}
             </div>
 
             <div>
-              <p className="font-bold">Authentication</p>
+              <p className="font-bold text-slate-900">Authentication</p>
               <p className="text-sm text-gray-600 mt-1">Use the agent token provided during registration for all communications.</p>
             </div>
           </div>
@@ -280,17 +280,17 @@ Event Stream: /api/agents/${agentData.id}/events`}
 
       {step === 'complete' && (
         <div>
-          <h3 className="text-lg font-bold mb-4">Onboarding Complete</h3>
+          <h3 className="text-lg font-bold mb-4 !text-slate-900">Onboarding Complete</h3>
           <p className="mb-4 text-gray-600">Your AI agent has been successfully onboarded to The New Fuse platform.</p>
 
           <div className="flex flex-col gap-4 mb-6">
             <div>
-              <p className="font-bold">Agent ID</p>
-              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono">{agentData.id}</code>
+              <p className="font-bold text-slate-900">Agent ID</p>
+              <code className="p-2 bg-gray-100 rounded block mt-1 text-sm font-mono text-slate-700 border border-gray-200">{agentData.id}</code>
             </div>
 
             <div>
-              <p className="font-bold">Capabilities</p>
+              <p className="font-bold text-slate-900">Capabilities</p>
               <div className="flex flex-wrap gap-2 mt-2">
                 {agentData.capabilities.map((cap: string, idx: number) => (
                   <Badge key={idx} variant="success">{cap}</Badge>
@@ -299,7 +299,7 @@ Event Stream: /api/agents/${agentData.id}/events`}
             </div>
 
             <div>
-              <p className="font-bold">Communication Channels</p>
+              <p className="font-bold text-slate-900">Communication Channels</p>
               <div className="flex gap-2 mt-2">
                 {agentData.communicationChannels.map((channel: string, idx: number) => (
                   <Badge key={idx} variant="primary">{channel}</Badge>
