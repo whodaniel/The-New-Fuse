@@ -232,3 +232,135 @@ export const detectWorkflowCycles = (nodes: any[], edges: any[]): boolean => {
 
   return false;
 };
+
+export interface DryRunValidationResult {
+  isValid: boolean;
+  errors: string[];
+  invalidNodeIds: string[];
+}
+
+export const validateWorkflowDryRun = (nodes: any[], edges: any[]): DryRunValidationResult => {
+  const errors: string[] = [];
+  const invalidNodeIds: string[] = [];
+
+  // 1. Identify Orphaned Nodes (No inputs AND No outputs, i.e., disconnected)
+  // Or simpler: Nodes with no connections at all are definitely islands.
+  // But also nodes that are part of a disconnected component that doesn't reach an end node.
+
+  const inDegree = new Map<string, number>();
+  const outDegree = new Map<string, number>();
+
+  nodes.forEach(node => {
+    inDegree.set(node.id, 0);
+    outDegree.set(node.id, 0);
+  });
+
+  edges.forEach(edge => {
+    const source = edge.source;
+    const target = edge.target;
+    outDegree.set(source, (outDegree.get(source) || 0) + 1);
+    inDegree.set(target, (inDegree.get(target) || 0) + 1);
+  });
+
+  // Check for disconnected nodes (islands)
+  // Exception: Maybe single node workflows are allowed? Assuming not for a "Dry Run" of a complex flow.
+  // Let's mark nodes with 0 in-degree AND 0 out-degree as orphans.
+  nodes.forEach(node => {
+    if ((inDegree.get(node.id) === 0) && (outDegree.get(node.id) === 0)) {
+        errors.push(`Node "${node.data.label}" is isolated (orphaned).`);
+        invalidNodeIds.push(node.id);
+    }
+  });
+
+  // 2. Check for nodes with no inputs (except valid start nodes)
+  // Assuming 'input' type nodes are valid start points.
+  // If a node is NOT an 'input' node and has in-degree 0, it might be an issue (unless it's an island caught above).
+  // But let's stick to the prompt: "orphaned nodes (nodes with no inputs or outputs)"
+  // The prompt says "nodes with no inputs or outputs". This is slightly ambiguous.
+  // Usually "no inputs" is bad unless it's a start node. "No outputs" is bad unless it's a terminal node.
+
+  nodes.forEach(node => {
+    // Check missing inputs (if not a start node)
+    // We don't have a strict 'start' type in all templates, but typically 'input' or 'trigger'.
+    // Let's assume nodes with 0 in-degree that are NOT explicitly 'input' or 'trigger' might be suspicious,
+    // but the prompt specifically asks to ensure "every path eventually leads to a terminal 'Output' or 'Response' node".
+
+    // Let's focus on the path reachability first, as that covers "dead ends".
+  });
+
+  // 3. Reachability Check: Every path must lead to a terminal node.
+  // Terminal nodes are those with type 'output' or 'response'.
+  // Or simply nodes that have 0 out-degree should be of type 'output' or 'response'.
+
+  const terminalTypes = ['output', 'response', 'end']; // Add more if needed
+
+  // Find all nodes that have 0 out-degree.
+  const endNodes = nodes.filter(n => outDegree.get(n.id) === 0);
+
+  endNodes.forEach(node => {
+    // If it's not a terminal type, it's a dead end.
+    // However, some valid flows might end at an action that doesn't produce output?
+    // The prompt says "eventually leads to a terminal 'Output' or 'Response' node".
+    if (!terminalTypes.includes(node.type) && !node.data.label.toLowerCase().includes('output') && !node.data.label.toLowerCase().includes('response')) {
+       // It's a dead end that isn't marked as terminal.
+       errors.push(`Node "${node.data.label}" is a dead end but not a terminal node.`);
+       invalidNodeIds.push(node.id);
+    }
+  });
+
+  // Also need to check if there are nodes from which you CANNOT reach a terminal node.
+  // We can do a reverse BFS/DFS from all valid terminal nodes.
+  // Any node not visited in this reverse traversal (and not a terminal node itself)
+  // is a node that cannot reach a terminal node.
+
+  const validTerminalNodes = nodes.filter(n =>
+      terminalTypes.includes(n.type) ||
+      n.data.label.toLowerCase().includes('output') ||
+      n.data.label.toLowerCase().includes('response')
+  );
+
+  if (validTerminalNodes.length === 0 && nodes.length > 0) {
+      errors.push("No terminal (Output/Response) nodes found in the workflow.");
+      // Mark all end nodes as invalid maybe?
+      endNodes.forEach(n => invalidNodeIds.push(n.id));
+  } else {
+      // Reverse graph
+      const reverseAdj = new Map<string, string[]>();
+      nodes.forEach(n => reverseAdj.set(n.id, []));
+      edges.forEach(e => {
+          reverseAdj.get(e.target)?.push(e.source);
+      });
+
+      const visitedReverse = new Set<string>();
+      const queue = [...validTerminalNodes.map(n => n.id)];
+      queue.forEach(id => visitedReverse.add(id));
+
+      while (queue.length > 0) {
+          const curr = queue.shift()!;
+          const preds = reverseAdj.get(curr) || [];
+          for (const pred of preds) {
+              if (!visitedReverse.has(pred)) {
+                  visitedReverse.add(pred);
+                  queue.push(pred);
+              }
+          }
+      }
+
+      // Any node not in visitedReverse cannot reach a terminal node.
+      nodes.forEach(node => {
+          if (!visitedReverse.has(node.id)) {
+              // Only report if we haven't already reported it as an isolated node
+              if (!invalidNodeIds.includes(node.id)) {
+                  errors.push(`Node "${node.data.label}" cannot reach a terminal node.`);
+                  invalidNodeIds.push(node.id);
+              }
+          }
+      });
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    invalidNodeIds: [...new Set(invalidNodeIds)]
+  };
+};

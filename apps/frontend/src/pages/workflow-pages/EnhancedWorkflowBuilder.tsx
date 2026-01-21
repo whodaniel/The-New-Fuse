@@ -35,7 +35,7 @@ import { Input } from '../../components/ui/input';
 import { Select } from '../../components/ui/select';
 import { Textarea } from '../../components/ui/textarea';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FiDownload, FiEye, FiPlay, FiPlus, FiSave, FiXCircle } from 'react-icons/fi';
+import { FiDownload, FiEye, FiPlay, FiPlus, FiSave, FiXCircle, FiGrid, FiCheckCircle, FiRotateCcw, FiRotateCw } from 'react-icons/fi';
 import ReactFlow, {
   addEdge,
   Background,
@@ -49,10 +49,16 @@ import ReactFlow, {
   ReactFlowProvider,
   useEdgesState,
   useNodesState,
+  NodeChange,
+  EdgeChange,
+  applyNodeChanges,
+  applyEdgeChanges,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { enhancedNodeTypes } from '../../components/workflow/EnhancedNodeTypes';
-import { detectWorkflowCycles } from '../../utils/workflowValidation';
+import { detectWorkflowCycles, validateWorkflowDryRun } from '../../utils/workflowValidation';
+import { getLayoutedElements } from '../../utils/workflowLayout';
+import { useUndoRedo } from '../../hooks/useUndoRedo';
 
 // Node templates for the library
 interface NodeTemplate {
@@ -184,9 +190,132 @@ interface ExecutionState {
 }
 
 const EnhancedWorkflowBuilder: React.FC = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes] = useNodesState([]);
+  const [edges, setEdges] = useEdgesState(initialEdges);
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
+
+  const { undo, redo, canUndo, canRedo, takeSnapshot, history } = useUndoRedo({ nodes: [], edges: [] });
+
+  // Initialize history with initial state
+  useEffect(() => {
+    if (history.past.length === 0 && history.future.length === 0 && history.present.nodes.length === 0) {
+      takeSnapshot({ nodes, edges });
+    }
+  }, []);
+
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      setNodes((nds) => {
+        const nextNodes = applyNodeChanges(changes, nds);
+        return nextNodes;
+      });
+    },
+    [setNodes]
+  );
+
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      setEdges((eds) => {
+        const nextEdges = applyEdgeChanges(changes, eds);
+        return nextEdges;
+      });
+    },
+    [setEdges]
+  );
+
+  // Snapshot on drag stop (when user interaction ends)
+  const onNodeDragStop = useCallback(() => {
+    takeSnapshot({ nodes, edges });
+  }, [nodes, edges, takeSnapshot]);
+
+  const onNodesDelete = useCallback(
+    (deleted: Node[]) => {
+      // Snapshot state BEFORE deletion? Or AFTER?
+      // Usually we want to be able to Undo the deletion, so we need the previous state in history.
+      // But `takeSnapshot` pushes the current `nodes` and `edges` to history and sets them as present.
+      // Wait, `takeSnapshot` is called with the *new* state to set it as present.
+      // The current state is automatically pushed to past.
+      // So here we need to calculate the state *after* deletion and pass it to takeSnapshot.
+
+      // However, ReactFlow handles the deletion internally via onNodesChange if we use useNodesState.
+      // But we are intercepting onNodesChange.
+      // Actually, ReactFlow calls onNodesDelete *after* the nodes are removed if we let it handle state?
+      // No, onNodesDelete is just an event.
+      // If we rely on onNodesChange to handle the actual removal, we need to snapshot *after* that.
+
+      // Easier: just snapshot the *current* state (which still has the nodes) before they are gone?
+      // No, `takeSnapshot` takes the NEW state.
+
+      // Let's rely on onNodesChange to do the update, but we need to know when a "unit of work" is done.
+      // Deletion is a distinct action.
+      // ReactFlow triggers onNodesChange with type 'remove'.
+
+      // The issue is onNodesChange triggers for selection changes too.
+      // We only want to snapshot on meaningful changes.
+
+      // If onNodesDelete is called, it means nodes ARE being deleted.
+      // We can use this to trigger a snapshot of the *resulting* state.
+      // But we don't have the resulting state easily here because onNodesChange happens separately.
+
+      // ALTERNATIVE: Snapshot *before* the deletion happens?
+      // If we snapshot the current state, it goes to 'past'.
+      // Then the state updates to 'deleted'.
+      // Then if we Undo, we go back to 'past' (with nodes).
+      // So we should call takeSnapshot with the *current* state?
+      // No, takeSnapshot(newState) sets present=newState and past.push(oldPresent).
+
+      // So we need to call takeSnapshot(stateAfterDeletion).
+      // But calculating stateAfterDeletion is hard here because onNodesDelete receives the deleted nodes,
+      // but we need to filter them out from `nodes`.
+
+      const deletedIds = new Set(deleted.map(n => n.id));
+      const remainingNodes = nodes.filter(n => !deletedIds.has(n.id));
+      const remainingEdges = edges.filter(e => !deletedIds.has(e.source) && !deletedIds.has(e.target));
+
+      takeSnapshot({ nodes: remainingNodes, edges: remainingEdges });
+    },
+    [nodes, edges, takeSnapshot]
+  );
+
+  const onEdgesDelete = useCallback(
+    (deleted: Edge[]) => {
+      const deletedIds = new Set(deleted.map(e => e.id));
+      const remainingEdges = edges.filter(e => !deletedIds.has(e.id));
+
+      takeSnapshot({ nodes, edges: remainingEdges });
+    },
+    [nodes, edges, takeSnapshot]
+  );
+
+  // Handle Undo/Redo shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        if (event.shiftKey) {
+          if (canRedo) {
+            const nextState = redo();
+            setNodes(nextState.nodes);
+            setEdges(nextState.edges);
+          }
+        } else {
+          if (canUndo) {
+            const prevState = undo();
+            setNodes(prevState.nodes);
+            setEdges(prevState.edges);
+          }
+        }
+      } else if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+        if (canRedo) {
+          const nextState = redo();
+          setNodes(nextState.nodes);
+          setEdges(nextState.edges);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo, canUndo, canRedo, setNodes, setEdges]);
   const [workflowDescription, setWorkflowDescription] = useState('');
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [executionState, setExecutionState] = useState<ExecutionState>({
@@ -287,9 +416,11 @@ const EnhancedWorkflowBuilder: React.FC = () => {
         return;
       }
 
-      setEdges((eds) => addEdge(edge, eds));
+      const newEdges = addEdge(edge, edges);
+      setEdges(newEdges);
+      takeSnapshot({ nodes, edges: newEdges });
     },
-    [setEdges, edges, nodes, toast]
+    [setEdges, edges, nodes, toast, takeSnapshot]
   );
 
   const addNodeToWorkflow = (template: NodeTemplate) => {
@@ -309,7 +440,10 @@ const EnhancedWorkflowBuilder: React.FC = () => {
       },
     };
 
-    setNodes((nds) => [...nds, newNode]);
+    const newNodes = [...nodes, newNode];
+    setNodes(newNodes);
+    takeSnapshot({ nodes: newNodes, edges });
+
     onNodeLibraryClose();
 
     toast.addToast({
@@ -318,6 +452,71 @@ const EnhancedWorkflowBuilder: React.FC = () => {
       variant: 'success',
       duration: 2000,
     });
+  };
+
+  const onLayout = useCallback(
+    (direction: string) => {
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        nodes,
+        edges,
+        direction
+      );
+
+      setNodes([...layoutedNodes]);
+      setEdges([...layoutedEdges]);
+      takeSnapshot({ nodes: [...layoutedNodes], edges: [...layoutedEdges] });
+
+      toast.addToast({
+        title: 'Auto Layout Applied',
+        description: `Workflow arranged in ${direction === 'TB' ? 'vertical' : 'horizontal'} layout`,
+        variant: 'success',
+        duration: 2000,
+      });
+    },
+    [nodes, edges, setNodes, setEdges, toast, takeSnapshot]
+  );
+
+  const onDryRun = () => {
+    const { isValid, errors, invalidNodeIds } = validateWorkflowDryRun(nodes, edges);
+
+    if (isValid) {
+      // Clear previous validation styling
+      setNodes((nds) =>
+        nds.map((node) => ({
+          ...node,
+          style: { ...node.style, border: 'none' },
+        }))
+      );
+
+      toast.addToast({
+        title: 'Validation Passed',
+        description: 'Workflow structure is valid.',
+        variant: 'success',
+        duration: 3000,
+      });
+    } else {
+      // Highlight invalid nodes
+      setNodes((nds) =>
+        nds.map((node) => ({
+          ...node,
+          style: {
+            ...node.style,
+            border: invalidNodeIds.includes(node.id) ? '2px solid red' : 'none',
+          },
+        }))
+      );
+
+      toast.addToast({
+        title: 'Validation Failed',
+        description: `${errors.length} issues found. See highlighted nodes.`,
+        variant: 'destructive',
+        duration: 5000,
+      });
+
+      // Optionally log errors to console or execution log
+      console.error('Validation Errors:', errors);
+      // We could also open the execution log and show errors there if we wanted
+    }
   };
 
   const executeWorkflow = async () => {
@@ -549,6 +748,9 @@ const EnhancedWorkflowBuilder: React.FC = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={onNodeClick}
+          onNodeDragStop={onNodeDragStop}
+          onNodesDelete={onNodesDelete}
+          onEdgesDelete={onEdgesDelete}
           nodeTypes={enhancedNodeTypes}
           fitView
           snapToGrid
@@ -660,6 +862,66 @@ const EnhancedWorkflowBuilder: React.FC = () => {
                       className="h-8 w-8"
                     >
                       <FiEye className="h-4 w-4" />
+                    </Button>
+                  </Tooltip>
+
+                  <Tooltip label="Auto Layout">
+                    <Button
+                      size="icon"
+                      onClick={() => onLayout('TB')}
+                      variant="secondary"
+                      className="h-8 w-8"
+                    >
+                      <FiGrid className="h-4 w-4" />
+                    </Button>
+                  </Tooltip>
+
+                  <Tooltip label="Dry Run Validation">
+                    <Button
+                      size="icon"
+                      onClick={onDryRun}
+                      variant="outline"
+                      className="h-8 w-8 text-blue-500 border-blue-500"
+                    >
+                      <FiCheckCircle className="h-4 w-4" />
+                    </Button>
+                  </Tooltip>
+
+                  <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1" />
+
+                  <Tooltip label="Undo (Ctrl+Z)">
+                    <Button
+                      size="icon"
+                      onClick={() => {
+                        if (canUndo) {
+                          const prevState = undo();
+                          setNodes(prevState.nodes);
+                          setEdges(prevState.edges);
+                        }
+                      }}
+                      variant="ghost"
+                      className="h-8 w-8"
+                      disabled={!canUndo}
+                    >
+                      <FiRotateCcw className="h-4 w-4" />
+                    </Button>
+                  </Tooltip>
+
+                  <Tooltip label="Redo (Ctrl+Y)">
+                    <Button
+                      size="icon"
+                      onClick={() => {
+                        if (canRedo) {
+                          const nextState = redo();
+                          setNodes(nextState.nodes);
+                          setEdges(nextState.edges);
+                        }
+                      }}
+                      variant="ghost"
+                      className="h-8 w-8"
+                      disabled={!canRedo}
+                    >
+                      <FiRotateCw className="h-4 w-4" />
                     </Button>
                   </Tooltip>
 
