@@ -5,9 +5,15 @@ export default {
   testMatch: ['**/__tests__/**/*.test.ts?(x)'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^@the-new-fuse/a2a-core$': '<rootDir>/../a2a-core/src',
+    '^@the-new-fuse/api-client$': '<rootDir>/../api-client/src',
+    '^@the-new-fuse/api-types/(.*)$': '<rootDir>/../api-types/$1',
+    '^@the-new-fuse/hooks$': '<rootDir>/../hooks/src',
+    '^@the-new-fuse/utils$': '<rootDir>/../utils/src',
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       tsconfig: 'tsconfig.json',

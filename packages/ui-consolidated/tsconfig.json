@@ -22,6 +22,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@the-new-fuse/a2a-core": ["../a2a-core/src"],
       "@the-new-fuse/api-client": ["../api-client/src"],
       "@the-new-fuse/api-types/*": ["../api-types/*"],
       "@the-new-fuse/hooks": ["../hooks/src"],
