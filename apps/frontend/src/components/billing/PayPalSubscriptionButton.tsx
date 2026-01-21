@@ -8,7 +8,7 @@ interface PayPalSubscriptionButtonProps {
 }
 
 export const PayPalSubscriptionButton = ({
-  planId = import.meta.env.VITE_PAYPAL_PLAN_ID,
+  planId = import.meta.env.VITE_PAYPAL_PLAN_ID || 'P-96650453L6697471BM63TJ2Y',
   onSuccess,
   onError,
 }: PayPalSubscriptionButtonProps) => {
@@ -19,7 +19,9 @@ export const PayPalSubscriptionButton = ({
   }
 
   const initialOptions = {
-    clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
+    clientId:
+      import.meta.env.VITE_PAYPAL_CLIENT_ID ||
+      'AV2Eo0_OPFXA9KV5P6p8B8er2UXt3d2HCChifFAu6Wsqft_ugihbYhgwd9v7lCXpUvs9m_C7BxntbtbM',
     intent: 'subscription',
     vault: true,
   };
