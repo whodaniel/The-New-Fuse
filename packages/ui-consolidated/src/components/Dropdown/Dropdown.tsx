@@ -126,7 +126,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       
       {isOpen && (
         <div 
-          className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700"
+          className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
           style={{ maxHeight, overflowY: 'auto' }}
         >
           <ul className="py-1">

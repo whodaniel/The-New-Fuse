@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { cn } from '../../lib/utils';
 
 // Simple select component that matches the API used in the pages
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -27,12 +28,12 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       // Simple select with option children
       return (
         <select
-          className={`
-            flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
-            ring-offset-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            disabled:cursor-not-allowed disabled:opacity-50
-            ${className}
-          `}
+          className={cn(
+            "flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm",
+            "ring-offset-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+            "disabled:cursor-not-allowed disabled:opacity-50",
+            className
+          )}
           onChange={handleChange}
           ref={ref}
           {...props}
@@ -115,12 +116,12 @@ const SelectTrigger: React.FC<SelectTriggerProps> = ({ className = '', children 
     <button
       ref={ref}
       type="button"
-      className={`
-        flex h-10 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
-        ring-offset-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-        disabled:cursor-not-allowed disabled:opacity-50
-        ${className}
-      `}
+      className={cn(
+        "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm",
+        "ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
       onClick={() => context.setOpen(!context.open)}
     >
       {children}
@@ -180,11 +181,11 @@ const SelectContent: React.FC<SelectContentProps> = ({ className = '', children 
   return (
     <div
       ref={ref}
-      className={`
-        absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-lg
-        animate-in fade-in-0 zoom-in-95
-        ${className}
-      `}
+      className={cn(
+        "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-background p-1 text-foreground shadow-lg",
+        "animate-in fade-in-0 zoom-in-95",
+        className
+      )}
     >
       {children}
     </div>
@@ -208,12 +209,12 @@ const SelectItem: React.FC<SelectItemProps> = ({ value, className = '', children
 
   return (
     <div
-      className={`
-        relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none
-        hover:bg-gray-100 focus:bg-gray-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50
-        ${isSelected ? 'bg-gray-100' : ''}
-        ${className}
-      `}
+      className={cn(
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
+        "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        isSelected && "bg-accent text-accent-foreground",
+        className
+      )}
       onClick={() => context.onValueChange?.(value)}
     >
       {isSelected && (
@@ -246,10 +247,10 @@ interface SelectLabelProps {
 const SelectLabel: React.FC<SelectLabelProps> = ({ className = '', children }) => {
   return (
     <div
-      className={`
-        py-1.5 pl-8 pr-2 text-sm font-semibold text-gray-900
-        ${className}
-      `}
+      className={cn(
+        "py-1.5 pl-8 pr-2 text-sm font-semibold text-foreground",
+        className
+      )}
     >
       {children}
     </div>
