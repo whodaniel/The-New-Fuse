@@ -97,6 +97,8 @@
     "health-check:full": "pnpm run validate:clean-scripts && pnpm run type-check && pnpm run test && pnpm run validate:build"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/dompurify": "^3.2.0",
     "@types/node": "^24.0.13",
     "@types/uuid": "^11.0.0",
@@ -113,6 +115,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "glob": "^11.0.3",
     "husky": "^9.1.7",
+    "jsdom": "^27.4.0",
     "lint-staged": "^16.2.6",
     "madge": "^8.0.0",
     "node-gyp": "^10.1.0",
@@ -139,8 +142,6 @@
     "@nestjs/websockets": "^11.1.11",
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "^2.78.0",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/otplib": "^10.0.0",
     "@types/react-speech-recognition": "^3.9.6",
@@ -151,7 +152,6 @@
     "chokidar": "^4.0.3",
     "css-minimizer-webpack-plugin": "^7.0.4",
     "diff": "^8.0.2",
-    "jsdom": "^27.4.0",
     "mime-types": "^2.1.35",
     "mini-css-extract-plugin": "^2.9.4",
     "moment": "^2.30.1",

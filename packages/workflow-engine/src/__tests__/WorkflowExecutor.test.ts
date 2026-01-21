@@ -1,15 +1,12 @@
-import { WorkflowExecutor } from '../WorkflowExecutor';
+import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import { WorkflowEngine } from '../WorkflowEngine';
-import { MasterAgentRegistry, Logger } from '@the-new-fuse/relay-core';
+import { WorkflowExecutor } from '../WorkflowExecutor';
 import {
-  WorkflowStep,
   StepType,
-  WorkflowInstance,
-  WorkflowStepStatus,
   TaskPriority,
-  TaskStatus,
   WorkflowDefinition,
-  WorkflowStatus
+  WorkflowStatus,
+  WorkflowStep,
 } from '../WorkflowTypes';
 
 // Mock dependencies
@@ -47,10 +44,10 @@ describe('WorkflowExecutor', () => {
         a2aHandoff: {
           handoffSchema: {
             summary: 'some summary',
-            data: 'some data'
+            data: 'some data',
           },
-          contextInstructions: 'Please analyze this.'
-        }
+          contextInstructions: 'Please analyze this.',
+        },
       };
 
       const workflow: WorkflowDefinition = {
@@ -68,7 +65,7 @@ describe('WorkflowExecutor', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         authorId: 'user1',
-        tags: []
+        tags: [],
       };
 
       (mockWorkflowEngine.getWorkflow as jest.Mock).mockResolvedValue(workflow);
@@ -83,9 +80,11 @@ describe('WorkflowExecutor', () => {
       const completionSpy = jest.spyOn(executor, 'handleTaskCompletion');
 
       // Wait for async execution
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('A2A Handoff context prepared'));
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        expect.stringContaining('A2A Handoff context prepared')
+      );
     });
   });
 
@@ -102,8 +101,8 @@ describe('WorkflowExecutor', () => {
         notification: {
           channelSelector: 'SLACK',
           config: { channelId: 'C123' },
-          template: 'Hello {{userName}}'
-        }
+          template: 'Hello {{userName}}',
+        },
       };
 
       const workflow: WorkflowDefinition = {
@@ -121,7 +120,7 @@ describe('WorkflowExecutor', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         authorId: 'user1',
-        tags: []
+        tags: [],
       };
 
       (mockWorkflowEngine.getWorkflow as jest.Mock).mockResolvedValue(workflow);
@@ -132,12 +131,14 @@ describe('WorkflowExecutor', () => {
       await executor.executeWorkflow('wf_2', { userName: 'Alice' });
 
       // Wait for async execution
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(notificationSpy).toHaveBeenCalledWith(expect.objectContaining({
-        channel: 'SLACK',
-        message: 'Hello Alice'
-      }));
+      expect(notificationSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          channel: 'SLACK',
+          message: 'Hello Alice',
+        })
+      );
     });
   });
 
@@ -153,8 +154,8 @@ describe('WorkflowExecutor', () => {
         position: { x: 0, y: 0 },
         a2aHandoff: {
           handoffSchema: { info: 'important info' },
-          contextInstructions: 'Read this:'
-        }
+          contextInstructions: 'Read this:',
+        },
       };
 
       const taskStep: WorkflowStep = {
@@ -167,8 +168,8 @@ describe('WorkflowExecutor', () => {
         position: { x: 0, y: 0 },
         task: {
           action: 'analyze',
-          params: {}
-        }
+          params: {},
+        },
       };
 
       const workflow: WorkflowDefinition = {
@@ -186,7 +187,7 @@ describe('WorkflowExecutor', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         authorId: 'user1',
-        tags: []
+        tags: [],
       };
 
       (mockWorkflowEngine.getWorkflow as jest.Mock).mockResolvedValue(workflow);
@@ -197,7 +198,7 @@ describe('WorkflowExecutor', () => {
       await executor.executeWorkflow('wf_3', {});
 
       // Wait for async execution including the 1000ms delay for task completion
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       expect(taskCreatedSpy).toHaveBeenCalledTimes(1);
       const task = taskCreatedSpy.mock.calls[0][0];

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, createContext, useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Settings, Play, Pause, Download, Sparkles, Copy, X, Lightbulb, Bot, RefreshCw, Users, Zap, Eraser } from 'lucide-react';
+import { Plus, Settings, Play, Pause, Download, Sparkles, Copy, X, Lightbulb, Bot, RefreshCw, Users, Zap, Eraser, Send, Paperclip } from 'lucide-react';
 import { chatApiService, type Message, type ChatAgent, type ConversationRule, type SynthesisJob } from '../../services/chatApi';
 
 // Context for shared state
@@ -343,39 +343,6 @@ function ChatPage() {
     }
   };
 
-  const generateAgentResponse = (userInput: string, agentId: string): string => {
-    const input = userInput.toLowerCase();
-    
-    switch (agentId) {
-      case 'codehelper':
-        if (input.includes('code') || input.includes('programming') || input.includes('bug')) {
-          return `I can help you with coding! Here are some suggestions:\n\n\`\`\`javascript\n// Example code structure\nfunction solveProblem() {\n  // Your solution here\n  return result;\n}\n\`\`\`\n\nWould you like me to help with a specific programming language or framework?`;
-        }
-        return 'I\'m the Code Helper! I can assist with programming, debugging, code reviews, and technical implementation. What coding challenge are you working on?';
-        
-      case 'dataanalyst':
-        if (input.includes('data') || input.includes('analytics') || input.includes('chart')) {
-          return 'I can help you analyze data and create insights! I can assist with:\n\n• Data visualization\n• Statistical analysis\n• Report generation\n• KPI tracking\n• Trend analysis\n\nWhat kind of data analysis do you need?';
-        }
-        return 'Hello! I\'m the Data Analyst agent. I specialize in data analysis, visualization, and generating actionable insights from your data. How can I help you today?';
-        
-      case 'support':
-        return 'Hi! I\'m here to provide technical support and help resolve any issues you might be experiencing. Please describe the problem you\'re facing, and I\'ll do my best to assist you.';
-        
-      default:
-        if (input.includes('hello') || input.includes('hi')) {
-          return 'Hello! I\'m happy to help you today. I can assist with general questions, provide information about The New Fuse platform, or direct you to the right specialist agent.';
-        }
-        if (input.includes('task') || input.includes('project')) {
-          return 'I can help you with task and project management! Would you like me to:\n\n• Create a new task\n• Check project status\n• Assign team members\n• Set deadlines\n• Track progress\n\nWhat would you like to do?';
-        }
-        if (input.includes('agent') || input.includes('ai')) {
-          return 'I can help you work with AI agents! You can:\n\n• Deploy new agents\n• Monitor agent performance\n• Configure agent settings\n• View agent analytics\n\nWhich agent-related task interests you?';
-        }
-        return `I understand you said: "${userInput}"\n\nI'm here to help! I can assist with various tasks including:\n• General questions about the platform\n• Task and project management\n• Agent coordination\n• Workspace management\n\nWhat would you like to know more about?`;
-    }
-  };
-
   const getStatusBadge = (status: ChatAgent['status']) => {
     switch (status) {
       case 'online':
@@ -407,47 +374,47 @@ function ChatPage() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-7xl mx-auto">
+      <div className="p-8 max-w-7xl mx-auto min-h-screen bg-background text-foreground">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="h-[calc(100vh-64px)] w-full p-6 bg-background text-foreground flex flex-col">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6 flex-none">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">💬 Chat Center</h1>
-            <p className="text-gray-600">Communicate with AI agents and get instant help</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">💬 Chat Center</h1>
+            <p className="text-muted-foreground">Communicate with AI agents and get instant help</p>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-wrap gap-3">
             <button 
               onClick={() => setIsAgentModalOpen(true)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center shadow-sm"
             >
               <Users size={16} className="mr-2" />
               Agents ({agents?.length || 0})
             </button>
             <button 
               onClick={() => setIsGoalModalOpen(true)}
-              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center"
+              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center shadow-sm"
             >
               <Lightbulb size={16} className="mr-2" />
               Set Goal
             </button>
             <button 
               onClick={() => setIsRuleModalOpen(true)}
-              className="bg-yellow-500 text-black px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center"
+              className="bg-yellow-500 text-black px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center shadow-sm"
             >
               <Copy size={16} className="mr-2" />
               Rules
             </button>
             <button 
-              className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors flex items-center"
+              className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors flex items-center shadow-sm"
               disabled={isSynthesizing}
             >
               <Sparkles size={16} className="mr-2" />
@@ -457,31 +424,33 @@ function ChatPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 overflow-hidden">
         {/* Agent Selection Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Agents</h2>
-            <div className="space-y-3">
+        <div className="flex flex-col gap-6 overflow-hidden h-full">
+          <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm p-4 flex flex-col h-full overflow-hidden">
+            <h2 className="text-lg font-semibold mb-4 flex-none">Available Agents</h2>
+            <div className="space-y-3 flex-1 overflow-y-auto pr-2">
               {agents.map((agent) => (
                 <button
                   key={agent.id}
                   onClick={() => setSelectedAgent(agent.id)}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
+                  className={`w-full text-left p-3 rounded-lg transition-all border ${
                     selectedAgent === agent.id
-                      ? 'bg-blue-100 border-blue-200 border-2'
-                      : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
+                      ? 'bg-accent text-accent-foreground border-primary'
+                      : 'bg-card hover:bg-accent/50 border-border'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
                     <div className="text-2xl">{agent.avatar}</div>
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900">{agent.name}</div>
-                      <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 text-xs rounded-full border ${getStatusBadge(agent.status)}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium truncate">{agent.name}</div>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        <span className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(agent.status)}`}>
                           {getStatusIcon(agent.status)} {agent.status}
                         </span>
-                        <span className="text-xs text-gray-500">{agent.type}</span>
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-secondary text-secondary-foreground border border-secondary">
+                          {agent.type}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -489,15 +458,15 @@ function ChatPage() {
               ))}
             </div>
 
-            {/* Enhanced Controls */}
-            <div className="mt-6 space-y-4">
-              <h3 className="text-sm font-medium text-gray-700">Conversation Controls</h3>
+            {/* Conversation Controls */}
+            <div className="mt-6 pt-4 border-t border-border space-y-4 flex-none">
+              <h3 className="text-sm font-medium text-muted-foreground">Conversation Controls</h3>
               
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Mode:</span>
                 <button 
                   onClick={() => setMode(mode === 'manual' ? 'auto' : 'manual')}
-                  className={`px-3 py-1 rounded-full text-sm ${mode === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-3 py-1 rounded-full text-sm transition-colors ${mode === 'auto' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
                 >
                   {mode === 'auto' ? 'Auto' : 'Manual'}
                 </button>
@@ -508,7 +477,7 @@ function ChatPage() {
                   <span className="text-sm">Auto-responses:</span>
                   <button 
                     onClick={() => setIsPaused(!isPaused)}
-                    className="p-2 text-gray-400 hover:text-white rounded-full"
+                    className="p-2 text-muted-foreground hover:text-foreground rounded-full"
                   >
                     {isPaused ? <Play size={16} /> : <Pause size={16} />}
                   </button>
@@ -519,7 +488,7 @@ function ChatPage() {
                 <span className="text-sm">Text-to-Speech:</span>
                 <button 
                   onClick={() => setIsTtsEnabled(!isTtsEnabled)}
-                  className={`px-3 py-1 rounded-full text-sm ${isTtsEnabled ? 'bg-green-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-3 py-1 rounded-full text-sm transition-colors ${isTtsEnabled ? 'bg-green-500 text-white' : 'bg-secondary text-secondary-foreground'}`}
                 >
                   {isTtsEnabled ? 'ON' : 'OFF'}
                 </button>
@@ -528,25 +497,25 @@ function ChatPage() {
               <div className="space-y-2">
                 <Link
                   to="/agents"
-                  className="block w-full text-left p-2 text-sm text-purple-600 hover:bg-purple-50 rounded"
+                  className="block w-full text-left p-2 text-sm text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors"
                 >
                   🤖 Manage All Agents
                 </Link>
                 <Link
                   to="/agents/new"
-                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 rounded"
+                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
                 >
                   ➕ Create New Agent
                 </Link>
                 <Link
                   to="/tasks/new"
-                  className="block w-full text-left p-2 text-sm text-blue-600 hover:bg-blue-50 rounded"
+                  className="block w-full text-left p-2 text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
                 >
                   📋 Create Task
                 </Link>
                 <button
                   onClick={() => setIsGalleryOpen(true)}
-                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 rounded"
+                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
                 >
                   🎬 Synthesis Gallery
                 </button>
@@ -556,33 +525,34 @@ function ChatPage() {
         </div>
 
         {/* Chat Interface */}
-        <div className="lg:col-span-3">
-          <div className="bg-white rounded-lg shadow-lg flex flex-col h-[600px]">
+        <div className="lg:col-span-1 h-full overflow-hidden">
+          <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm flex flex-col h-full">
             {/* Chat Header */}
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-4 border-b border-border flex-none">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="text-2xl">
                     {agents.find(a => a.id === selectedAgent)?.avatar}
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">
+                    <h3 className="font-medium text-foreground">
                       {agents.find(a => a.id === selectedAgent)?.name}
                     </h3>
-                    <p className="text-sm text-gray-500">
-                      {agents.find(a => a.id === selectedAgent)?.type} • {' '}
-                      <span className={getStatusBadge(agents.find(a => a.id === selectedAgent)?.status || 'offline')}>
+                    <p className="text-sm text-muted-foreground flex items-center gap-2">
+                      <span>{agents.find(a => a.id === selectedAgent)?.type}</span>
+                      <span>•</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs border ${getStatusBadge(agents.find(a => a.id === selectedAgent)?.status || 'offline')}`}>
                         {agents.find(a => a.id === selectedAgent)?.status}
                       </span>
                     </p>
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="p-2 text-gray-400 hover:text-gray-600 rounded">
-                    📎
+                  <button className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
+                    <Paperclip size={20} />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-gray-600 rounded">
-                    ⚙️
+                  <button className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
+                    <Settings size={20} />
                   </button>
                 </div>
               </div>
@@ -598,35 +568,35 @@ function ChatPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm ${
                       message.sender === 'user'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-primary text-primary-foreground'
                         : message.sender === 'system'
-                        ? 'bg-gray-100 text-gray-800'
-                        : 'bg-gray-50 text-gray-900'
+                        ? 'bg-muted text-muted-foreground'
+                        : 'bg-secondary text-secondary-foreground'
                     }`}
                   >
                     {message.sender === 'agent' && (
                       <div className="flex items-center space-x-2 mb-1">
                         <span className="text-lg">{message.agentAvatar}</span>
-                        <span className="text-xs font-medium text-gray-600">
+                        <span className="text-xs font-medium opacity-75">
                           {message.agentName}
                         </span>
                       </div>
                     )}
                     {message.sender === 'system' && (
-                      <div className="text-xs font-medium text-gray-500 mb-1">
+                      <div className="text-xs font-medium opacity-75 mb-1">
                         System Message
                       </div>
                     )}
-                    <div className="whitespace-pre-wrap">
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
                       {message.content.includes('```') ? (
                         <div className="space-y-2">
                           {message.content.split('```').map((part, index) => 
                             index % 2 === 0 ? (
                               <div key={index}>{part}</div>
                             ) : (
-                              <div key={index} className="bg-gray-800 text-green-400 p-2 rounded text-sm font-mono overflow-x-auto">
+                              <div key={index} className="bg-black/80 text-green-400 p-2 rounded text-xs font-mono overflow-x-auto my-1">
                                 {part}
                               </div>
                             )
@@ -637,10 +607,10 @@ function ChatPage() {
                       )}
                     </div>
                     <div
-                      className={`text-xs mt-1 ${
+                      className={`text-xs mt-1 text-right ${
                         message.sender === 'user'
-                          ? 'text-blue-200'
-                          : 'text-gray-500'
+                          ? 'text-primary-foreground/70'
+                          : 'text-muted-foreground'
                       }`}
                     >
                       {formatTimestamp(message.timestamp)}
@@ -651,17 +621,17 @@ function ChatPage() {
               
               {isGenerating && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-50 text-gray-900 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+                  <div className="bg-secondary text-secondary-foreground max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className="text-lg">🤖</span>
-                      <span className="text-xs font-medium text-gray-600">
+                      <span className="text-xs font-medium opacity-75">
                         Agent thinking...
                       </span>
                     </div>
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50"></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -670,52 +640,57 @@ function ChatPage() {
             </div>
 
             {/* Enhanced Message Input */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex items-center gap-2 mb-3">
-                <label className="text-sm">From:</label>
-                <select 
-                  value={senderId}
-                  onChange={e => setSenderId(e.target.value)}
-                  className="flex-1 p-2 border rounded-lg bg-gray-50 border-gray-300 text-sm"
-                >
-                  <option value="You">You</option>
-                  {agents?.map(a => (
-                    <option key={a.id} value={a.id}>{a.name}</option>
-                  ))}
-                </select>
+            <div className="p-4 border-t border-border bg-card flex-none">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="flex-1 flex items-center gap-2">
+                  <label className="text-sm font-medium text-foreground whitespace-nowrap">From:</label>
+                  <select
+                    value={senderId}
+                    onChange={e => setSenderId(e.target.value)}
+                    className="flex-1 p-2 border rounded-lg bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
+                  >
+                    <option value="You">You</option>
+                    {agents?.map(a => (
+                      <option key={a.id} value={a.id}>{a.name}</option>
+                    ))}
+                  </select>
+                </div>
                 
-                <label className="text-sm">To:</label>
-                <select 
-                  value={recipientAgentId}
-                  onChange={e => setRecipientAgentId(e.target.value)}
-                  className="flex-1 p-2 border rounded-lg bg-gray-50 border-gray-300 text-sm"
-                >
-                  <option value="">Select Agent</option>
-                  {agents?.map(a => (
-                    <option key={a.id} value={a.id}>{a.name}</option>
-                  ))}
-                </select>
+                <div className="flex-1 flex items-center gap-2">
+                  <label className="text-sm font-medium text-foreground whitespace-nowrap">To:</label>
+                  <select
+                    value={recipientAgentId}
+                    onChange={e => setRecipientAgentId(e.target.value)}
+                    className="flex-1 p-2 border rounded-lg bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
+                  >
+                    <option value="">Select Agent</option>
+                    {agents?.map(a => (
+                      <option key={a.id} value={a.id}>{a.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 items-center">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder={isGenerating ? "Thinking..." : "Type a message..."}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-4 py-2 border border-input bg-secondary text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
                   disabled={isGenerating || !agents || agents.length === 0}
                 />
                 <button
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim() || isGenerating || !agents || agents.length === 0 || !recipientAgentId}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  Send
+                  <Send size={18} />
+                  <span className="sr-only">Send</span>
                 </button>
               </div>
-              <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+              <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
                 <span>Press Enter to send</span>
                 <span>{newMessage.length}/500</span>
               </div>

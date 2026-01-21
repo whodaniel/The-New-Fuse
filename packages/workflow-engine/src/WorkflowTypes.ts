@@ -153,36 +153,36 @@ export interface IterationDetails {
 }
 
 export interface A2AHandoffDetails {
-    // Schema definition for the data to be passed to the next agent
-    // Key: target variable name, Value: source path (e.g. "outputs.step1.summary")
-    handoffSchema: Record<string, string>;
-    // Optional context instructions to be prepended
-    contextInstructions?: string;
+  // Schema definition for the data to be passed to the next agent
+  // Key: target variable name, Value: source path (e.g. "outputs.step1.summary")
+  handoffSchema: Record<string, string>;
+  // Optional context instructions to be prepended
+  contextInstructions?: string;
 }
 
 export interface NotificationDetails {
-    channelSelector: 'SLACK' | 'EMAIL' | 'WEBHOOK';
-    config: NotificationConfig;
-    template: string; // Message template (e.g. "Task {{id}} completed with result {{result}}")
+  channelSelector: 'SLACK' | 'EMAIL' | 'WEBHOOK';
+  config: NotificationConfig;
+  template: string; // Message template (e.g. "Task {{id}} completed with result {{result}}")
 }
 
 export type NotificationConfig = SlackConfig | EmailConfig | WebhookConfig;
 
 export interface SlackConfig {
-    channelId: string;
-    messageType?: 'text' | 'block';
+  channelId: string;
+  messageType?: 'text' | 'block';
 }
 
 export interface EmailConfig {
-    recipientEmail: string;
-    subject?: string;
-    cc?: string[];
+  recipientEmail: string;
+  subject?: string;
+  cc?: string[];
 }
 
 export interface WebhookConfig {
-    url: string;
-    method: 'POST' | 'PUT' | 'GET';
-    headers?: Record<string, string>;
+  url: string;
+  method: 'POST' | 'PUT' | 'GET';
+  headers?: Record<string, string>;
 }
 
 export interface StepAssignee {
