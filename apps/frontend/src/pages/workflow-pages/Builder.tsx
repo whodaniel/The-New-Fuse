@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 /**
@@ -292,11 +291,9 @@ const WorkflowBuilder: React.FC = () => {
 
           {/* Center - Workflow canvas */}
           <div className="flex-1 overflow-hidden">
-            <ReactFlowProvider>
-              <WorkflowProvider>
-                <WorkflowCanvas onNodeSelect={setSelectedNode} />
-              </WorkflowProvider>
-            </ReactFlowProvider>
+            <WorkflowProvider>
+              <WorkflowCanvas onNodeSelect={setSelectedNode} />
+            </WorkflowProvider>
           </div>
 
           {/* Right sidebar - Node properties - Only shows when node is selected */}
