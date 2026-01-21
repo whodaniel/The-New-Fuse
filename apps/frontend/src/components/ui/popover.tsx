@@ -2,8 +2,8 @@
  * Popover Component - Chakra-compatible Popover for The New Fuse
  */
 
-import React, { useState, useRef, useEffect, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface PopoverProps {
   trigger: ReactNode;
@@ -25,8 +25,25 @@ export const Popover = ({
   className,
 }: PopoverProps) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
-  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
-  const setIsOpen = onClose ? () => onClose() : setInternalIsOpen;
+  const isControlled = controlledIsOpen !== undefined;
+  const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
+
+  const toggleOpen = () => {
+    if (isControlled && onClose) {
+      // For controlled mode, we can only close
+      if (isOpen) onClose();
+    } else {
+      setInternalIsOpen((prev) => !prev);
+    }
+  };
+
+  const closePopover = () => {
+    if (isControlled && onClose) {
+      onClose();
+    } else {
+      setInternalIsOpen(false);
+    }
+  };
 
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -72,22 +89,18 @@ export const Popover = ({
           triggerRef.current &&
           !triggerRef.current.contains(event.target as Node)
         ) {
-          setIsOpen(false);
+          closePopover();
         }
       };
 
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [closeOnBlur, isOpen, setIsOpen]);
+  }, [closeOnBlur, isOpen]);
 
   return (
     <>
-      <div
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className="inline-block cursor-pointer"
-      >
+      <div ref={triggerRef} onClick={toggleOpen} className="inline-block cursor-pointer">
         {trigger}
       </div>
 
@@ -95,7 +108,7 @@ export const Popover = ({
         <div
           ref={popoverRef}
           className={cn(
-            'fixed z-[1050] bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-200 dark:border-neutral-700',
+            'fixed z-1050 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-neutral-200 dark:border-neutral-700',
             'animate-in fade-in-0 zoom-in-95 duration-200',
             className
           )}
@@ -112,26 +125,62 @@ export const Popover = ({
 };
 
 export const PopoverTrigger = ({ children }: { children: ReactNode }) => <>{children}</>;
-export const PopoverContent = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn('p-4', className)}>{children}</div>
-);
-export const PopoverHeader = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn('px-4 pt-4 pb-2 font-semibold border-b border-neutral-200 dark:border-neutral-700', className)}>
+export const PopoverContent = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => <div className={cn('p-4', className)}>{children}</div>;
+export const PopoverHeader = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => (
+  <div
+    className={cn(
+      'px-4 pt-4 pb-2 font-semibold border-b border-neutral-200 dark:border-neutral-700',
+      className
+    )}
+  >
     {children}
   </div>
 );
-export const PopoverBody = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn('p-4', className)}>{children}</div>
-);
-export const PopoverFooter = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn('px-4 pb-4 pt-2 border-t border-neutral-200 dark:border-neutral-700', className)}>
+export const PopoverBody = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => <div className={cn('p-4', className)}>{children}</div>;
+export const PopoverFooter = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => (
+  <div
+    className={cn('px-4 pb-4 pt-2 border-t border-neutral-200 dark:border-neutral-700', className)}
+  >
     {children}
   </div>
 );
-export const PopoverCloseButton = ({ onClick, className }: { onClick?: () => void; className?: string }) => (
+export const PopoverCloseButton = ({
+  onClick,
+  className,
+}: {
+  onClick?: () => void;
+  className?: string;
+}) => (
   <button
     onClick={onClick}
-    className={cn('absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors', className)}
+    className={cn(
+      'absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors',
+      className
+    )}
   >
     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
