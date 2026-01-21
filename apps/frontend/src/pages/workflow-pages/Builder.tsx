@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 /**
@@ -263,62 +264,64 @@ const WorkflowBuilder: React.FC = () => {
         </div>
 
         {/* Main content */}
-        <div className="flex-1 flex overflow-hidden relative">
-          {/* Left sidebar - Node toolbox - Collapses to LEFT */}
-          <div
-            className={`${
-              showLeftPanel ? 'w-56' : 'w-0'
-            } relative z-20 h-full border-r border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out`}
-          >
-            <div className="w-56 p-3 h-full overflow-y-auto">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-white">Nodes</h3>
-              </div>
-              <NodeToolbox />
-            </div>
-          </div>
-
-          {/* Collapsed left panel indicator */}
-          {!showLeftPanel && (
-            <button
-              onClick={() => setShowLeftPanel(true)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-slate-800 border border-white/10 rounded-r-lg p-1 hover:bg-slate-700 transition-colors"
-              title="Show nodes panel"
+        <ReactFlowProvider>
+          <div className="flex-1 flex overflow-hidden relative">
+            {/* Left sidebar - Node toolbox - Collapses to LEFT */}
+            <div
+              className={`${
+                showLeftPanel ? 'w-56' : 'w-0'
+              } relative z-20 h-full border-r border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out`}
             >
-              <ChevronRight className="h-4 w-4 text-gray-400" />
-            </button>
-          )}
-
-          {/* Center - Workflow canvas */}
-          <div className="flex-1 overflow-hidden">
-            <WorkflowProvider>
-              <WorkflowCanvas onNodeSelect={setSelectedNode} />
-            </WorkflowProvider>
-          </div>
-
-          {/* Right sidebar - Node properties - Only shows when node is selected */}
-          {showRightPanel && selectedNode && (
-            <div className="w-72 relative z-20 h-full border-l border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden">
-              <div className="p-3 h-full overflow-y-auto">
+              <div className="w-56 p-3 h-full overflow-y-auto">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-white">Node Properties</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setShowRightPanel(false);
-                      setSelectedNode(null);
-                    }}
-                    className="h-6 w-6 p-0 text-gray-400 hover:text-white"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                  <h3 className="text-sm font-semibold text-white">Nodes</h3>
                 </div>
-                <NodeProperties node={selectedNode} />
+                <NodeToolbox />
               </div>
             </div>
-          )}
-        </div>
+
+            {/* Collapsed left panel indicator */}
+            {!showLeftPanel && (
+              <button
+                onClick={() => setShowLeftPanel(true)}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-slate-800 border border-white/10 rounded-r-lg p-1 hover:bg-slate-700 transition-colors"
+                title="Show nodes panel"
+              >
+                <ChevronRight className="h-4 w-4 text-gray-400" />
+              </button>
+            )}
+
+            {/* Center - Workflow canvas */}
+            <div className="flex-1 overflow-hidden">
+              <WorkflowProvider>
+                <WorkflowCanvas onNodeSelect={setSelectedNode} />
+              </WorkflowProvider>
+            </div>
+
+            {/* Right sidebar - Node properties - Only shows when node is selected */}
+            {showRightPanel && selectedNode && (
+              <div className="w-72 relative z-20 h-full border-l border-white/10 bg-slate-900/95 backdrop-blur-md overflow-hidden">
+                <div className="p-3 h-full overflow-y-auto">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold text-white">Node Properties</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setShowRightPanel(false);
+                        setSelectedNode(null);
+                      }}
+                      className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <NodeProperties node={selectedNode} />
+                </div>
+              </div>
+            )}
+          </div>
+        </ReactFlowProvider>
       </main>
     </div>
   );

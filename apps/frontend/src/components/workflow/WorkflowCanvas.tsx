@@ -5,7 +5,6 @@ import ReactFlow, {
   Controls,
   MiniMap,
   Node,
-  ReactFlowProvider,
   addEdge,
   useEdgesState,
   useNodesState,
@@ -18,10 +17,11 @@ interface WorkflowCanvasProps {
 }
 
 /**
- * Inner canvas component that uses ReactFlow hooks
- * Must be wrapped in ReactFlowProvider
+ * WorkflowCanvas component
+ * Note: Must be wrapped in ReactFlowProvider in a parent component
+ * to allow siblings (like NodeProperties) to access the flow state.
  */
-const WorkflowCanvasInner: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
+export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -110,17 +110,5 @@ const WorkflowCanvasInner: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) =>
         />
       </ReactFlow>
     </div>
-  );
-};
-
-/**
- * WorkflowCanvas component with built-in ReactFlowProvider
- * This ensures hooks are always used within the provider context
- */
-export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = (props) => {
-  return (
-    <ReactFlowProvider>
-      <WorkflowCanvasInner {...props} />
-    </ReactFlowProvider>
   );
 };
