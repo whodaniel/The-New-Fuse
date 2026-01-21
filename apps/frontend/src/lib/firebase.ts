@@ -1,7 +1,6 @@
 import { initializeApp, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { initializeFirestore, getFirestore, CACHE_SIZE_UNLIMITED } from 'firebase/firestore';
-import 'firebase/firestore'; // Ensure side-effects for component registration
 
 // Default configuration with hardcoded values as fallback
 const firebaseConfig = {
@@ -27,26 +26,17 @@ export const auth = getAuth(app);
 // Initialize Firestore with proper error handling
 let db;
 try {
-  // Check if Firestore is already initialized in the default app
+  // Try to initialize with custom settings first
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED
+  });
+} catch (error) {
+  // If it fails (likely because it's already initialized), fallback to getting the instance
   try {
-      db = getFirestore(app);
-      console.log('Firestore already initialized, reusing instance.');
-  } catch (e) {
-      // Not initialized, proceed to initialize
-      db = initializeFirestore(app, {
-        experimentalForceLongPolling: true,
-        cacheSizeBytes: CACHE_SIZE_UNLIMITED
-      });
-  }
-} catch (error: any) {
-  console.warn('Firestore initialization warning:', error.message);
-  try {
-    // If complex initialization failed, try simple getFirestore again as last resort
     db = getFirestore(app);
-  } catch (getError: any) {
+  } catch (getError) {
     console.error('Failed to get Firestore instance:', getError);
-    // If it still fails, it might be that the SDK component isn't registered.
-    // The side-effect import above should prevent this, but if it happens, we can't do much.
   }
 }
 
@@ -55,5 +45,3 @@ export const googleProvider = new GoogleAuthProvider();
 export { signInWithPopup };
 
 export default app;
-
-
