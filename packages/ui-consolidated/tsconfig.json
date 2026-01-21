@@ -25,7 +25,8 @@
       "@the-new-fuse/api-client": ["../api-client/src"],
       "@the-new-fuse/api-types/*": ["../api-types/*"],
       "@the-new-fuse/hooks": ["../hooks/src"],
-      "@the-new-fuse/types": ["../types/src"]
+      "@the-new-fuse/types": ["../types/src"],
+      "@the-new-fuse/utils": ["../utils/src"]
     },
     "types": ["node", "jest", "react"]
   },
