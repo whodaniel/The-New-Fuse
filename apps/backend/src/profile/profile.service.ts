@@ -13,7 +13,7 @@ export class ProfileService {
   ) {}
 
   async getProfile(userId: string) {
-    const user = await this.usersService.findOne(userId);
+    const user = await this.usersService.findById(userId);
     return this.enrichUserProfile(user);
   }
 
