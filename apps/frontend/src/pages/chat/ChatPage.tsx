@@ -1,7 +1,23 @@
-import React, { useState, useEffect, useRef, useCallback, createContext, useContext, useMemo } from 'react';
+import {
+  Copy,
+  Lightbulb,
+  Paperclip,
+  Pause,
+  Play,
+  Send,
+  Settings,
+  Sparkles,
+  Users,
+} from 'lucide-react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Settings, Play, Pause, Download, Sparkles, Copy, X, Lightbulb, Bot, RefreshCw, Users, Zap, Eraser, Send, Paperclip } from 'lucide-react';
-import { chatApiService, type Message, type ChatAgent, type ConversationRule, type SynthesisJob } from '../../services/chatApi';
+import {
+  chatApiService,
+  type ChatAgent,
+  type ConversationRule,
+  type Message,
+  type SynthesisJob,
+} from '../../services/chatApi';
 
 // Context for shared state
 const ChatContext = createContext<any>(null);
@@ -26,13 +42,15 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis?.getVoices() || [];
-      setVoices(availableVoices.map(v => ({ 
-        name: v.name, 
-        lang: v.lang,
-        voice: v
-      })));
+      setVoices(
+        availableVoices.map((v) => ({
+          name: v.name,
+          lang: v.lang,
+          voice: v,
+        }))
+      );
     };
-    
+
     if (window.speechSynthesis) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
       setTimeout(loadVoices, 100);
@@ -40,105 +58,125 @@ const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // Text-to-speech function
-  const speak = useCallback((text: string, voiceName?: string) => {
-    return new Promise<void>((resolve) => {
-      if (!isTtsEnabled || !text || typeof text !== 'string' || text.trim() === '') {
-        resolve();
-        return;
-      }
-      
-      const allVoices = window.speechSynthesis?.getVoices() || [];
-      if (allVoices.length === 0) {
-        resolve();
-        return;
-      }
-      
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(text.replace(/\*/g, ''));
-      utterance.voice = allVoices.find(v => v.name === voiceName) || 
-                       allVoices.find(v => v.lang.startsWith('en') && v.default) || 
-                       allVoices[0];
-      utterance.onend = () => resolve();
-      utterance.onerror = () => resolve();
-      
-      setTimeout(() => {
-        try {
-          window.speechSynthesis.speak(utterance);
-        } catch (error) {
-          console.warn('TTS failed:', error);
+  const speak = useCallback(
+    (text: string, voiceName?: string) => {
+      return new Promise<void>((resolve) => {
+        if (!isTtsEnabled || !text || typeof text !== 'string' || text.trim() === '') {
           resolve();
+          return;
         }
-      }, 100);
-    });
-  }, [isTtsEnabled]);
+
+        const allVoices = window.speechSynthesis?.getVoices() || [];
+        if (allVoices.length === 0) {
+          resolve();
+          return;
+        }
+
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text.replace(/\*/g, ''));
+        utterance.voice =
+          allVoices.find((v) => v.name === voiceName) ||
+          allVoices.find((v) => v.lang.startsWith('en') && v.default) ||
+          allVoices[0];
+        utterance.onend = () => resolve();
+        utterance.onerror = () => resolve();
+
+        setTimeout(() => {
+          try {
+            window.speechSynthesis.speak(utterance);
+          } catch (error) {
+            console.warn('TTS failed:', error);
+            resolve();
+          }
+        }, 100);
+      });
+    },
+    [isTtsEnabled]
+  );
 
   // API call functions using the backend service
-  const callTextApi = useCallback(async (prompt: string, systemPrompt = "You are a helpful assistant.") => {
-    try {
-      return await chatApiService.callTextApi(prompt, systemPrompt);
-    } catch (error) {
-      console.error('Text API error:', error);
-      return 'I apologize, but I encountered an error while processing your request.';
-    }
-  }, []);
-
-  const addMessage = useCallback(async (message: Omit<Message, 'id'>) => {
-    try {
-      // Add to local state immediately for real-time UI
-      const newMessage = {
-        ...message,
-        id: Date.now().toString()
-      };
-      setMessages(prev => [...prev, newMessage]);
-      
-      // Sync with backend if we have a chat ID
-      if (currentChatId) {
-        await chatApiService.addMessage(currentChatId, message);
+  const callTextApi = useCallback(
+    async (prompt: string, systemPrompt = 'You are a helpful assistant.') => {
+      try {
+        return await chatApiService.callTextApi(prompt, systemPrompt);
+      } catch (error) {
+        console.error('Text API error:', error);
+        return 'I apologize, but I encountered an error while processing your request.';
       }
-      
-      return newMessage;
-    } catch (error) {
-      console.error('Error adding message:', error);
-      return {
-        ...message,
-        id: Date.now().toString()
-      };
-    }
-  }, [currentChatId, setMessages]);
+    },
+    []
+  );
 
-  const getAgentById = useCallback((id: string) => {
-    return agents.find(a => a.id === id);
-  }, [agents]);
+  const addMessage = useCallback(
+    async (message: Omit<Message, 'id'>) => {
+      try {
+        // Add to local state immediately for real-time UI
+        const newMessage = {
+          ...message,
+          id: Date.now().toString(),
+        };
+        setMessages((prev) => [...prev, newMessage]);
+
+        // Sync with backend if we have a chat ID
+        if (currentChatId) {
+          await chatApiService.addMessage(currentChatId, message);
+        }
+
+        return newMessage;
+      } catch (error) {
+        console.error('Error adding message:', error);
+        return {
+          ...message,
+          id: Date.now().toString(),
+        };
+      }
+    },
+    [currentChatId, setMessages]
+  );
+
+  const getAgentById = useCallback(
+    (id: string) => {
+      return agents.find((a) => a.id === id);
+    },
+    [agents]
+  );
 
   const contextValue = {
-    agents, setAgents,
-    messages, setMessages,
-    rules, setRules,
-    synthesisJobs, setSynthesisJobs,
-    conversationGoal, setConversationGoal,
-    isGenerating, setIsGenerating,
-    isAutomating, setIsAutomating,
-    isSynthesizing, setIsSynthesizing,
-    mode, setMode,
-    isPaused, setIsPaused,
-    isTtsEnabled, setIsTtsEnabled,
+    agents,
+    setAgents,
+    messages,
+    setMessages,
+    rules,
+    setRules,
+    synthesisJobs,
+    setSynthesisJobs,
+    conversationGoal,
+    setConversationGoal,
+    isGenerating,
+    setIsGenerating,
+    isAutomating,
+    setIsAutomating,
+    isSynthesizing,
+    setIsSynthesizing,
+    mode,
+    setMode,
+    isPaused,
+    setIsPaused,
+    isTtsEnabled,
+    setIsTtsEnabled,
     voices,
     speak,
     callTextApi,
     addMessage,
     getAgentById,
     currentChatId,
-    setCurrentChatId
+    setCurrentChatId,
   };
 
-  return (
-    <ChatContext.Provider value={contextValue}>
-      {children}
-    </ChatContext.Provider>
-  );
+  return <ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>;
 };
 
 function ChatPage() {
@@ -154,23 +192,31 @@ function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
-    agents, setAgents,
-    messages, setMessages,
+    agents,
+    setAgents,
+    messages,
+    setMessages,
     rules,
-    conversationGoal, setConversationGoal,
-    isGenerating, setIsGenerating,
-    isAutomating, setIsAutomating,
+    conversationGoal,
+    setConversationGoal,
+    isGenerating,
+    setIsGenerating,
+    isAutomating,
+    setIsAutomating,
     isSynthesizing,
-    mode, setMode,
-    isPaused, setIsPaused,
-    isTtsEnabled, setIsTtsEnabled,
+    mode,
+    setMode,
+    isPaused,
+    setIsPaused,
+    isTtsEnabled,
+    setIsTtsEnabled,
     voices,
     speak,
     callTextApi,
     addMessage,
     getAgentById,
     currentChatId,
-    setCurrentChatId
+    setCurrentChatId,
   } = useContext(ChatContext) || {};
 
   // Initialize default agents if none exist
@@ -185,7 +231,7 @@ function ChatPage() {
           type: 'assistant',
           systemPrompt: 'You are a helpful general assistant.',
           model: 'GPT-4',
-          voice: voices[0]?.name || ''
+          voice: voices[0]?.name || '',
         },
         {
           id: 'codehelper',
@@ -195,7 +241,7 @@ function ChatPage() {
           type: 'specialist',
           systemPrompt: 'You are a coding specialist who helps with programming questions.',
           model: 'GPT-4',
-          voice: voices[0]?.name || ''
+          voice: voices[0]?.name || '',
         },
         {
           id: 'dataanalyst',
@@ -205,7 +251,7 @@ function ChatPage() {
           type: 'specialist',
           systemPrompt: 'You are a data analysis expert.',
           model: 'Claude-3',
-          voice: voices[0]?.name || ''
+          voice: voices[0]?.name || '',
         },
         {
           id: 'support',
@@ -215,8 +261,8 @@ function ChatPage() {
           type: 'admin',
           systemPrompt: 'You provide technical support and help resolve issues.',
           model: 'GPT-3.5',
-          voice: voices[0]?.name || ''
-        }
+          voice: voices[0]?.name || '',
+        },
       ];
       setAgents(defaultAgents);
     }
@@ -227,19 +273,20 @@ function ChatPage() {
     if (messages && messages.length === 0) {
       setTimeout(() => {
         addMessage({
-          content: 'Hello! I\'m your General Assistant. How can I help you today?',
+          content: "Hello! I'm your General Assistant. How can I help you today?",
           sender: 'agent',
           timestamp: new Date(Date.now() - 300000).toISOString(),
           agentId: 'general',
           agentName: 'General Assistant',
           agentAvatar: '🤖',
-          type: 'text'
+          type: 'text',
         });
         addMessage({
-          content: 'Welcome to The New Fuse Enhanced Chat! You can now interact with multiple AI agents simultaneously, set conversation goals, and use automation features.',
+          content:
+            'Welcome to The New Fuse Enhanced Chat! You can now interact with multiple AI agents simultaneously, set conversation goals, and use automation features.',
           sender: 'system',
           timestamp: new Date(Date.now() - 240000).toISOString(),
-          type: 'text'
+          type: 'text',
         });
         setLoading(false);
       }, 1000);
@@ -258,36 +305,41 @@ function ChatPage() {
     if (mode !== 'auto' || isGenerating || !messages || messages.length === 0 || isPaused) {
       return;
     }
-    
+
     const lastMessage = messages[messages.length - 1];
     if (lastMessage.sender === 'You' || lastMessage.sender === 'system' || !lastMessage.agentId) {
       return;
     }
-    
-    const nextRule = rules?.find(rule => rule.sourceId === lastMessage.agentId);
+
+    const nextRule = rules?.find((rule) => rule.sourceId === lastMessage.agentId);
     if (!nextRule?.targetId) return;
-    
+
     const nextAgent = getAgentById(nextRule.targetId);
     if (!nextAgent) return;
-    
+
     const timeoutId = setTimeout(async () => {
       try {
         setIsGenerating(true);
-        const history = messages.slice(-10).map(m => `${m.sender}: ${m.content}`).join('\n');
-        const goalPrompt = conversationGoal ? `The current conversation goal is: "${conversationGoal}".` : '';
+        const history = messages
+          .slice(-10)
+          .map((m) => `${m.sender}: ${m.content}`)
+          .join('\n');
+        const goalPrompt = conversationGoal
+          ? `The current conversation goal is: "${conversationGoal}".`
+          : '';
         const finalPrompt = `${goalPrompt}\n\nPrevious conversation:\n${history}\n\nYour turn, ${nextAgent.name}. What is your response? Keep it conversational and concise.`;
-        
+
         const botText = await callTextApi(finalPrompt, nextAgent.systemPrompt);
-        await addMessage({ 
-          content: botText, 
-          sender: 'agent', 
+        await addMessage({
+          content: botText,
+          sender: 'agent',
           timestamp: new Date().toISOString(),
           agentId: nextAgent.id,
           agentName: nextAgent.name,
           agentAvatar: nextAgent.avatar,
-          type: 'text'
+          type: 'text',
         });
-        
+
         await speak(botText, nextAgent.voice);
       } catch (error) {
         console.error('Auto-response error:', error);
@@ -295,46 +347,60 @@ function ChatPage() {
         setIsGenerating(false);
       }
     }, 1500);
-    
+
     return () => clearTimeout(timeoutId);
-  }, [mode, messages, rules, isGenerating, isPaused, conversationGoal, getAgentById, callTextApi, addMessage, speak]);
+  }, [
+    mode,
+    messages,
+    rules,
+    isGenerating,
+    isPaused,
+    conversationGoal,
+    getAgentById,
+    callTextApi,
+    addMessage,
+    speak,
+  ]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !recipientAgentId) return;
-    
+
     const respondingAgent = getAgentById(recipientAgentId);
     if (!respondingAgent) return;
-    
-    const userMessage = { 
-      content: newMessage, 
+
+    const userMessage = {
+      content: newMessage,
       sender: senderId === 'You' ? 'You' : getAgentById(senderId)?.name || 'You',
       timestamp: new Date().toISOString(),
-      type: 'text' as const
+      type: 'text' as const,
     };
     setNewMessage('');
-    
+
     try {
       await addMessage(userMessage);
       setIsGenerating(true);
-      
-      const history = [...messages, userMessage].slice(-10)
-        .map(m => `${m.sender}: ${m.content}`)
+
+      const history = [...messages, userMessage]
+        .slice(-10)
+        .map((m) => `${m.sender}: ${m.content}`)
         .join('\n');
-        
-      const goalPrompt = conversationGoal ? `The current conversation goal is: "${conversationGoal}".` : '';
+
+      const goalPrompt = conversationGoal
+        ? `The current conversation goal is: "${conversationGoal}".`
+        : '';
       const finalPrompt = `${goalPrompt}\n\nPrevious conversation:\n${history}\n\nYour turn, ${respondingAgent.name}. What is your response?`;
-      
+
       const botText = await callTextApi(finalPrompt, respondingAgent.systemPrompt);
-      await addMessage({ 
-        content: botText, 
+      await addMessage({
+        content: botText,
         sender: 'agent',
         timestamp: new Date().toISOString(),
         agentId: respondingAgent.id,
         agentName: respondingAgent.name,
         agentAvatar: respondingAgent.avatar,
-        type: 'text'
+        type: 'text',
       });
-      
+
       await speak(botText, respondingAgent.voice);
     } catch (error) {
       console.error('Error sending message:', error);
@@ -358,17 +424,21 @@ function ChatPage() {
 
   const getStatusIcon = (status: ChatAgent['status']) => {
     switch (status) {
-      case 'online': return '🟢';
-      case 'busy': return '🟡';
-      case 'offline': return '⚫';
-      default: return '⚪';
+      case 'online':
+        return '🟢';
+      case 'busy':
+        return '🟡';
+      case 'offline':
+        return '⚫';
+      default:
+        return '⚪';
     }
   };
 
   const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString('en-US', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -392,28 +462,28 @@ function ChatPage() {
             <p className="text-muted-foreground">Communicate with AI agents and get instant help</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button 
+            <button
               onClick={() => setIsAgentModalOpen(true)}
               className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center shadow-sm"
             >
               <Users size={16} className="mr-2" />
               Agents ({agents?.length || 0})
             </button>
-            <button 
+            <button
               onClick={() => setIsGoalModalOpen(true)}
               className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center shadow-sm"
             >
               <Lightbulb size={16} className="mr-2" />
               Set Goal
             </button>
-            <button 
+            <button
               onClick={() => setIsRuleModalOpen(true)}
               className="bg-yellow-500 text-black px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center shadow-sm"
             >
               <Copy size={16} className="mr-2" />
               Rules
             </button>
-            <button 
+            <button
               className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors flex items-center shadow-sm"
               disabled={isSynthesizing}
             >
@@ -445,7 +515,9 @@ function ChatPage() {
                     <div className="flex-1 min-w-0">
                       <div className="font-medium truncate">{agent.name}</div>
                       <div className="flex flex-wrap gap-2 mt-1">
-                        <span className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(agent.status)}`}>
+                        <span
+                          className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(agent.status)}`}
+                        >
                           {getStatusIcon(agent.status)} {agent.status}
                         </span>
                         <span className="px-2 py-0.5 text-xs rounded-full bg-secondary text-secondary-foreground border border-secondary">
@@ -461,21 +533,21 @@ function ChatPage() {
             {/* Conversation Controls */}
             <div className="mt-6 pt-4 border-t border-border space-y-4 flex-none">
               <h3 className="text-sm font-medium text-muted-foreground">Conversation Controls</h3>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Mode:</span>
-                <button 
+                <button
                   onClick={() => setMode(mode === 'manual' ? 'auto' : 'manual')}
                   className={`px-3 py-1 rounded-full text-sm transition-colors ${mode === 'auto' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
                 >
                   {mode === 'auto' ? 'Auto' : 'Manual'}
                 </button>
               </div>
-              
+
               {mode === 'auto' && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Auto-responses:</span>
-                  <button 
+                  <button
                     onClick={() => setIsPaused(!isPaused)}
                     className="p-2 text-muted-foreground hover:text-foreground rounded-full"
                   >
@@ -483,17 +555,17 @@ function ChatPage() {
                   </button>
                 </div>
               )}
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm">Text-to-Speech:</span>
-                <button 
+                <button
                   onClick={() => setIsTtsEnabled(!isTtsEnabled)}
                   className={`px-3 py-1 rounded-full text-sm transition-colors ${isTtsEnabled ? 'bg-green-500 text-white' : 'bg-secondary text-secondary-foreground'}`}
                 >
                   {isTtsEnabled ? 'ON' : 'OFF'}
                 </button>
               </div>
-              
+
               <div className="space-y-2">
                 <Link
                   to="/agents"
@@ -532,17 +604,19 @@ function ChatPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="text-2xl">
-                    {agents.find(a => a.id === selectedAgent)?.avatar}
+                    {agents.find((a) => a.id === selectedAgent)?.avatar}
                   </div>
                   <div>
                     <h3 className="font-medium text-foreground">
-                      {agents.find(a => a.id === selectedAgent)?.name}
+                      {agents.find((a) => a.id === selectedAgent)?.name}
                     </h3>
                     <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <span>{agents.find(a => a.id === selectedAgent)?.type}</span>
+                      <span>{agents.find((a) => a.id === selectedAgent)?.type}</span>
                       <span>•</span>
-                      <span className={`px-2 py-0.5 rounded-full text-xs border ${getStatusBadge(agents.find(a => a.id === selectedAgent)?.status || 'offline')}`}>
-                        {agents.find(a => a.id === selectedAgent)?.status}
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs border ${getStatusBadge(agents.find((a) => a.id === selectedAgent)?.status || 'offline')}`}
+                      >
+                        {agents.find((a) => a.id === selectedAgent)?.status}
                       </span>
                     </p>
                   </div>
@@ -563,40 +637,37 @@ function ChatPage() {
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${
-                    message.sender === 'user' ? 'justify-end' : 'justify-start'
-                  }`}
+                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
                     className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm ${
                       message.sender === 'user'
                         ? 'bg-primary text-primary-foreground'
                         : message.sender === 'system'
-                        ? 'bg-muted text-muted-foreground'
-                        : 'bg-secondary text-secondary-foreground'
+                          ? 'bg-muted text-muted-foreground'
+                          : 'bg-secondary text-secondary-foreground'
                     }`}
                   >
                     {message.sender === 'agent' && (
                       <div className="flex items-center space-x-2 mb-1">
                         <span className="text-lg">{message.agentAvatar}</span>
-                        <span className="text-xs font-medium opacity-75">
-                          {message.agentName}
-                        </span>
+                        <span className="text-xs font-medium opacity-75">{message.agentName}</span>
                       </div>
                     )}
                     {message.sender === 'system' && (
-                      <div className="text-xs font-medium opacity-75 mb-1">
-                        System Message
-                      </div>
+                      <div className="text-xs font-medium opacity-75 mb-1">System Message</div>
                     )}
                     <div className="whitespace-pre-wrap text-sm leading-relaxed">
                       {message.content.includes('```') ? (
                         <div className="space-y-2">
-                          {message.content.split('```').map((part, index) => 
+                          {message.content.split('```').map((part, index) =>
                             index % 2 === 0 ? (
                               <div key={index}>{part}</div>
                             ) : (
-                              <div key={index} className="bg-black/80 text-green-400 p-2 rounded text-xs font-mono overflow-x-auto my-1">
+                              <div
+                                key={index}
+                                className="bg-black/80 text-green-400 p-2 rounded text-xs font-mono overflow-x-auto my-1"
+                              >
                                 {part}
                               </div>
                             )
@@ -618,20 +689,24 @@ function ChatPage() {
                   </div>
                 </div>
               ))}
-              
+
               {isGenerating && (
                 <div className="flex justify-start">
                   <div className="bg-secondary text-secondary-foreground max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className="text-lg">🤖</span>
-                      <span className="text-xs font-medium opacity-75">
-                        Agent thinking...
-                      </span>
+                      <span className="text-xs font-medium opacity-75">Agent thinking...</span>
                     </div>
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50"></div>
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50" style={{ animationDelay: '0.2s' }}></div>
+                      <div
+                        className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50"
+                        style={{ animationDelay: '0.1s' }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-current rounded-full animate-bounce opacity-50"
+                        style={{ animationDelay: '0.2s' }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -643,47 +718,61 @@ function ChatPage() {
             <div className="p-4 border-t border-border bg-card flex-none">
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex-1 flex items-center gap-2">
-                  <label className="text-sm font-medium text-foreground whitespace-nowrap">From:</label>
+                  <label className="text-sm font-medium text-foreground whitespace-nowrap">
+                    From:
+                  </label>
                   <select
                     value={senderId}
-                    onChange={e => setSenderId(e.target.value)}
+                    onChange={(e) => setSenderId(e.target.value)}
                     className="flex-1 p-2 border rounded-lg bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
                   >
                     <option value="You">You</option>
-                    {agents?.map(a => (
-                      <option key={a.id} value={a.id}>{a.name}</option>
+                    {agents?.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.name}
+                      </option>
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="flex-1 flex items-center gap-2">
-                  <label className="text-sm font-medium text-foreground whitespace-nowrap">To:</label>
+                  <label className="text-sm font-medium text-foreground whitespace-nowrap">
+                    To:
+                  </label>
                   <select
                     value={recipientAgentId}
-                    onChange={e => setRecipientAgentId(e.target.value)}
+                    onChange={(e) => setRecipientAgentId(e.target.value)}
                     className="flex-1 p-2 border rounded-lg bg-secondary text-secondary-foreground border-input text-sm focus:ring-2 focus:ring-ring focus:outline-none"
                   >
                     <option value="">Select Agent</option>
-                    {agents?.map(a => (
-                      <option key={a.id} value={a.id}>{a.name}</option>
+                    {agents?.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.name}
+                      </option>
                     ))}
                   </select>
                 </div>
               </div>
-              
+
               <div className="flex space-x-2 items-center">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder={isGenerating ? "Thinking..." : "Type a message..."}
+                  placeholder={isGenerating ? 'Thinking...' : 'Type a message...'}
                   className="flex-1 px-4 py-2 border border-input bg-secondary text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
                   disabled={isGenerating || !agents || agents.length === 0}
                 />
                 <button
                   onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || isGenerating || !agents || agents.length === 0 || !recipientAgentId}
+                  disabled={
+                    !newMessage.trim() ||
+                    isGenerating ||
+                    !agents ||
+                    agents.length === 0 ||
+                    !recipientAgentId
+                  }
                   className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <Send size={18} />

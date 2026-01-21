@@ -86,8 +86,8 @@
           // Override with bound function
           Object.defineProperty(customElements, 'define', {
             value: boundSafeDefine,
-            configurable: false,
-            writable: false,
+            configurable: true,
+            writable: true,
           });
 
           // Lock the customElements object itself to prevent polyfills from replacing it
@@ -325,7 +325,7 @@
     <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
     <!-- SEO and Meta Information -->
     <title>
-      The New Fuse - AI Collaboration Platform | Workflow Automation & Agent Orchestration
+      The New Fuse - DEBUG MODE
     </title>
     <meta
       name="description"

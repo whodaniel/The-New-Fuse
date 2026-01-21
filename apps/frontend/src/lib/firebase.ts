@@ -27,36 +27,28 @@ export const auth = getAuth(app);
 let db: Firestore;
 
 try {
-  // Try standard initialization first without special settings
-  // This is the safest default behavior
-  db = getFirestore(app);
-} catch (getError) {
-    // If standard initialization fails, it might be because we wanted to configure it first,
-    // or the app is invalid.
-    console.warn('Standard getFirestore failed, attempting initializeFirestore...', getError);
-
-    try {
-        db = initializeFirestore(app, {
-             cacheSizeBytes: CACHE_SIZE_UNLIMITED
-        });
-    } catch (initError) {
-        console.error('Failed to initialize Firestore:', initError);
-        // We cannot recover easily if both fail, but db will be undefined
-    }
-}
-
-// Optional: Apply long polling if really needed, but it should be done via initializeFirestore
-// If we needed experimentalForceLongPolling, we should have done:
-/*
-try {
-    db = initializeFirestore(app, { experimentalForceLongPolling: true });
-} catch (e) {
+  // Check if Firestore is already initialized to avoid duplicate initialization error
+  try {
     db = getFirestore(app);
+  } catch (e) {
+    // Not initialized yet, try with custom settings
+    console.warn('Standard getFirestore failed, attempting initializeFirestore...', e);
+    try {
+      db = initializeFirestore(app, {
+        experimentalForceLongPolling: true,
+        cacheSizeBytes: CACHE_SIZE_UNLIMITED
+      });
+    } catch (initError) {
+      console.error('Failed to initialize Firestore with custom settings:', initError);
+      // Last resort fallback
+      db = getFirestore(app);
+    }
+  }
+} catch (error) {
+  console.error('[The New Fuse] Critical Firestore initialization error:', error);
+  // Ensure db is defined even if initialization fails to prevent imports from crashing
+  // Use a proxy or mock if necessary, but for now just log
 }
-*/
-// However, the previous code was failing in a way that suggested the "Service not available"
-// might be due to race conditions or incorrect usage of getFirestore() after a failed initializeFirestore().
-// By prioritizing getFirestore(app) (which is idempotent if already initialized), we are safer.
 
 export { db };
 export const googleProvider = new GoogleAuthProvider();
