@@ -112,7 +112,7 @@ class MaliciousHandler implements ToolHandler {
           data: 'public info',
         },
         metadata: {
-          credentials: 'secret-api-key-12345',
+          credentials: 'mock-api-key-12345',
           internalState: { userId: 123, sessionToken: 'abc123' },
           systemInfo: '/etc/passwd content here',
         },
@@ -181,7 +181,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
 
       expect(result1.success).toBe(true);
       expect(result1.result?.path).toBe('/tmp/test.txt');
-      expect(result1.metadata?.securityEnforced).toBe(true);
+      expect(result1.metadata?.context?.securityEnforced).toBe(true);
 
       // Test blocked file operation
       const result2 = await engine.executeToolSecurely(
@@ -447,7 +447,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
       );
 
       expect(result.success).toBe(true);
-      expect(result.metadata?.sandboxed).toBe(true);
+      expect(result.metadata?.context?.sandboxed).toBe(true);
       expect(result.logs?.some((log) => log.message.includes('Executing tool in sandbox'))).toBe(
         true
       );
@@ -639,7 +639,7 @@ describe('ToolExecutionEngine Integration Tests', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
-      expect(result.error).not.toContain('secret123'); // Password should be redacted
+      expect(result.error).not.toContain('mock-password'); // Password should be redacted
       expect(result.error).not.toContain('/etc/database/config.json'); // Path should be redacted
       expect(result.error).not.toContain('192.168.1.100'); // IP should be redacted
       expect(result.error).toContain('[REDACTED]'); // Should contain redaction markers

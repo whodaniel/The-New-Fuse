@@ -15,7 +15,10 @@ export class SecurityService {
   ) {}
 
   async encrypt(data: string): Promise<{ encrypted: Buffer; iv: Buffer; tag: Buffer; salt?: Buffer }> {
-    const encryptedString = await this.encryption.encrypt(data, Buffer.from(process.env.ENCRYPTION_KEY || ''));
+    if (!process.env.ENCRYPTION_KEY) {
+      throw new Error('ENCRYPTION_KEY is not defined');
+    }
+    const encryptedString = await this.encryption.encrypt(data, Buffer.from(process.env.ENCRYPTION_KEY));
     // Parse the "iv:tag:encryptedData" format
     const parts = encryptedString.split(':');
     const iv = Buffer.from(parts[0], 'hex');
@@ -30,9 +33,12 @@ export class SecurityService {
   }
 
   async decrypt(encryptedData: Buffer, iv: Buffer, tag: Buffer, _salt?: Buffer): Promise<string> {
+    if (!process.env.ENCRYPTION_KEY) {
+      throw new Error('ENCRYPTION_KEY is not defined');
+    }
     // Reconstruct the "iv:tag:encryptedData" format
     const encryptedString = `${iv.toString('hex')}:${tag.toString('hex')}:${encryptedData.toString('hex')}`;
-    return this.encryption.decrypt(encryptedString, Buffer.from(process.env.ENCRYPTION_KEY || ''));
+    return this.encryption.decrypt(encryptedString, Buffer.from(process.env.ENCRYPTION_KEY));
   }
 
   async checkRateLimit(req: Request): Promise<boolean> {

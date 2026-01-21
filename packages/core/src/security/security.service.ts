@@ -44,7 +44,10 @@ export class SecurityService {
   encryptText(text: string): { encryptedData: string; iv: string; authTag: string } {
     try {
       const iv = crypto.randomBytes(12);
-      const key = crypto.scryptSync(this.config.jwtSecret || 'secret', 'salt', 32);
+      if (!this.config.jwtSecret) {
+        throw new Error('JWT secret is not configured');
+      }
+      const key = crypto.scryptSync(this.config.jwtSecret, 'salt', 32);
       const cipher = crypto.createCipheriv(this.algorithm, key, iv);
 
       let encryptedData = cipher.update(text, 'utf8', 'hex');
@@ -66,7 +69,10 @@ export class SecurityService {
 
   decryptText(encryptedData: string, iv: string, authTag: string): string {
     try {
-      const key = crypto.scryptSync(this.config.jwtSecret || 'secret', 'salt', 32);
+      if (!this.config.jwtSecret) {
+        throw new Error('JWT secret is not configured');
+      }
+      const key = crypto.scryptSync(this.config.jwtSecret, 'salt', 32);
       const decipher = crypto.createDecipheriv(this.algorithm, key, Buffer.from(iv, 'hex'));
       decipher.setAuthTag(Buffer.from(authTag, 'hex'));
 

@@ -33,14 +33,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
     const secret = process.env.JWT_SECRET;
 
     if (!secret) {
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error('JWT_SECRET is not defined');
-      }
-      console.warn('JWT_SECRET is not defined, using unsafe default for development');
-      // Only for non-production to avoid crashing during local setup if env is missing
+      throw new Error('JWT_SECRET is not defined');
     }
 
-    const decoded = jwt.verify(token, secret || 'your-secret-key');
+    const decoded = jwt.verify(token, secret);
     (req as any).user = decoded;
     next();
   } catch (error) {
