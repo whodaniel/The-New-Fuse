@@ -1,247 +1,243 @@
-/******/ (() => {
-  // webpackBootstrap
-  /******/ 'use strict';
-  /**
-   * Fuse Connect v6 - Popup Logic
-   */
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/**
+ * Fuse Connect v6 - Popup Logic
+ */
 
-  const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
+const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
 
-  class FuseConnectPopup {
-    constructor() {
-      this.state = {
-        connectionStatus: 'disconnected',
-        agents: [],
-        platform: null,
-        messages: [],
-        services: {
-          relay: { running: false, port: 3001 },
-          backend: { running: false, port: 3000 },
-          frontend: { running: false, port: 3002 },
-        },
-        nativeHostAvailable: false,
-        settings: {
-          relayUrl: 'ws://localhost:3001/ws',
-          autoReconnect: true,
-          showPanel: true,
-          debugMode: false,
-        },
-      };
+class FuseConnectPopup {
+  constructor() {
+    this.state = {
+      connectionStatus: 'disconnected',
+      agents: [],
+      platform: null,
+      messages: [],
+      services: {
+        relay: { running: false, port: 3001 },
+        backend: { running: false, port: 3000 },
+        frontend: { running: false, port: 3002 },
+      },
+      nativeHostAvailable: false,
+      settings: {
+        relayUrl: 'ws://localhost:3001/ws',
+        autoReconnect: true,
+        showPanel: true,
+        debugMode: false,
+      },
+    };
 
-      this.init();
-    }
+    this.init();
+  }
 
-    async init() {
-      // Setup tab navigation
-      this.setupTabs();
+  async init() {
+    // Setup tab navigation
+    this.setupTabs();
 
-      // Setup event handlers
-      this.setupEventHandlers();
+    // Setup event handlers
+    this.setupEventHandlers();
 
-      // Load initial state from background
-      await this.loadState();
+    // Load initial state from background
+    await this.loadState();
 
-      // Listen for updates
-      this.setupMessageListener();
+    // Listen for updates
+    this.setupMessageListener();
 
-      // Load settings
-      await this.loadSettings();
+    // Load settings
+    await this.loadSettings();
 
-      // Check native host
-      await this.checkNativeHost();
+    // Check native host
+    await this.checkNativeHost();
 
-      // Check relay health and show helper if needed
-      await this.checkRelayAndUpdateHelper();
+    // Check relay health and show helper if needed
+    await this.checkRelayAndUpdateHelper();
 
-      // Update UI
-      this.updateUI();
-    }
+    // Update UI
+    this.updateUI();
+  }
 
-    async checkRelayAndUpdateHelper() {
-      const helper = document.getElementById('quick-start-helper');
-      if (!helper) return;
+  async checkRelayAndUpdateHelper() {
+    const helper = document.getElementById('quick-start-helper');
+    if (!helper) return;
 
-      try {
-        const response = await fetch('http://localhost:3001/health', {
-          method: 'GET',
-          signal: AbortSignal.timeout(2000),
-        });
-        const data = await response.json();
-        if (data.status === 'ok') {
-          helper.style.display = 'none';
-        } else {
-          helper.style.display = 'block';
-        }
-      } catch (e) {
-        // Relay not running, show helper
+    try {
+      const response = await fetch('http://localhost:3001/health', {
+        method: 'GET',
+        signal: AbortSignal.timeout(2000),
+      });
+      const data = await response.json();
+      if (data.status === 'ok') {
+        helper.style.display = 'none';
+      } else {
         helper.style.display = 'block';
       }
+    } catch (e) {
+      // Relay not running, show helper
+      helper.style.display = 'block';
     }
+  }
 
-    setupTabs() {
-      const tabs = document.querySelectorAll('.tab');
+  setupTabs() {
+    const tabs = document.querySelectorAll('.tab');
 
-      tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-          const tabId = tab.dataset.tab;
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.dataset.tab;
 
-          // Update active tab
-          tabs.forEach((t) => t.classList.remove('active'));
-          tab.classList.add('active');
+        // Update active tab
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
 
-          // Show tab content
-          document.querySelectorAll('.tab-content').forEach((content) => {
-            content.classList.remove('active');
-          });
-          document.getElementById(`tab-${tabId}`)?.classList.add('active');
-
-          // Refresh services when switching to services tab
-          if (tabId === 'services') {
-            this.refreshServiceStatus();
-          }
+        // Show tab content
+        document.querySelectorAll('.tab-content').forEach((content) => {
+          content.classList.remove('active');
         });
-      });
-    }
+        document.getElementById(`tab-${tabId}`)?.classList.add('active');
 
-    setupEventHandlers() {
-      // Connect button
-      document.getElementById('connect-btn')?.addEventListener('click', () => {
-        if (this.state.connectionStatus === 'connected') {
-          this.disconnect();
-        } else {
-          this.connect();
+        // Refresh services when switching to services tab
+        if (tabId === 'services') {
+          this.refreshServiceStatus();
         }
       });
+    });
+  }
 
-      // Refresh agents
-      document.getElementById('refresh-agents')?.addEventListener('click', () => {
-        chrome.runtime.sendMessage({ type: 'REQUEST_SYNC' });
-      });
+  setupEventHandlers() {
+    // Connect button
+    document.getElementById('connect-btn')?.addEventListener('click', () => {
+      if (this.state.connectionStatus === 'connected') {
+        this.disconnect();
+      } else {
+        this.connect();
+      }
+    });
 
-      // Open Panel on current page
-      document.getElementById('open-panel-btn')?.addEventListener('click', () => {
-        this.openPanelOnPage();
-      });
+    // Refresh agents
+    document.getElementById('refresh-agents')?.addEventListener('click', () => {
+      chrome.runtime.sendMessage({ type: 'REQUEST_SYNC' });
+    });
 
-      // Refresh services
-      document.getElementById('refresh-services')?.addEventListener('click', () => {
-        this.refreshServiceStatus();
-      });
+    // Open Panel on current page
+    document.getElementById('open-panel-btn')?.addEventListener('click', () => {
+      this.openPanelOnPage();
+    });
 
-      // Service control buttons
-      document.querySelectorAll('[data-action]').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          const action = e.target.dataset.action;
-          const service = e.target.dataset.service;
-          if (action && service) {
-            this.controlService(action, service);
-          }
-        });
-      });
+    // Refresh services
+    document.getElementById('refresh-services')?.addEventListener('click', () => {
+      this.refreshServiceStatus();
+    });
 
-      // Start all services
-      document.getElementById('start-all-services')?.addEventListener('click', () => {
-        this.controlService('start', 'all');
+    // Service control buttons
+    document.querySelectorAll('[data-action]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const action = e.target.dataset.action;
+        const service = e.target.dataset.service;
+        if (action && service) {
+          this.controlService(action, service);
+        }
       });
+    });
 
-      // Stop all services
-      document.getElementById('stop-all-services')?.addEventListener('click', () => {
-        this.controlService('stop', 'all');
-      });
+    // Start all services
+    document.getElementById('start-all-services')?.addEventListener('click', () => {
+      this.controlService('start', 'all');
+    });
 
-      // Save settings
-      document.getElementById('save-settings')?.addEventListener('click', () => {
-        this.saveSettings();
-      });
+    // Stop all services
+    document.getElementById('stop-all-services')?.addEventListener('click', () => {
+      this.controlService('stop', 'all');
+    });
 
-      // Settings inputs
-      document.getElementById('relay-url')?.addEventListener('change', (e) => {
-        this.state.settings.relayUrl = e.target.value;
-      });
+    // Save settings
+    document.getElementById('save-settings')?.addEventListener('click', () => {
+      this.saveSettings();
+    });
 
-      document.getElementById('auto-reconnect')?.addEventListener('change', (e) => {
-        this.state.settings.autoReconnect = e.target.checked;
-      });
+    // Settings inputs
+    document.getElementById('relay-url')?.addEventListener('change', (e) => {
+      this.state.settings.relayUrl = e.target.value;
+    });
 
-      document.getElementById('show-panel')?.addEventListener('change', (e) => {
-        this.state.settings.showPanel = e.target.checked;
-      });
+    document.getElementById('auto-reconnect')?.addEventListener('change', (e) => {
+      this.state.settings.autoReconnect = e.target.checked;
+    });
 
-      document.getElementById('debug-mode')?.addEventListener('change', (e) => {
-        this.state.settings.debugMode = e.target.checked;
-      });
+    document.getElementById('show-panel')?.addEventListener('change', (e) => {
+      this.state.settings.showPanel = e.target.checked;
+    });
 
-      // Export logs
-      document.getElementById('export-logs')?.addEventListener('click', () => {
-        this.exportLogs();
-      });
+    document.getElementById('debug-mode')?.addEventListener('change', (e) => {
+      this.state.settings.debugMode = e.target.checked;
+    });
 
-      // Quick start relay button
-      document.getElementById('quick-start-relay')?.addEventListener('click', () => {
-        this.quickStartRelay();
-      });
+    // Export logs
+    document.getElementById('export-logs')?.addEventListener('click', () => {
+      this.exportLogs();
+    });
+
+    // Quick start relay button
+    document.getElementById('quick-start-relay')?.addEventListener('click', () => {
+      this.quickStartRelay();
+    });
+  }
+
+  async quickStartRelay() {
+    const btn = document.getElementById('quick-start-relay');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Starting...';
     }
 
-    async quickStartRelay() {
-      const btn = document.getElementById('quick-start-relay');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Starting...';
-      }
+    if (this.state.nativeHostAvailable) {
+      // Use native host to open Terminal and run relay command
+      try {
+        const response = await this.sendNativeMessage({
+          action: 'open-terminal',
+          command: 'pnpm relay:start',
+        });
 
-      if (this.state.nativeHostAvailable) {
-        // Use native host to open Terminal and run relay command
-        try {
-          const response = await this.sendNativeMessage({
-            action: 'open-terminal',
-            command: 'pnpm relay:start',
-          });
-
-          if (response.success) {
-            this.showToast('Terminal opened! Wait for relay to start...');
-            // Wait and try to connect
+        if (response.success) {
+          this.showToast('Terminal opened! Wait for relay to start...');
+          // Wait and try to connect
+          setTimeout(() => {
+            this.connect();
+            this.checkRelayAndUpdateHelper();
+          }, 5000);
+        } else {
+          // Fallback to background start
+          const startResponse = await this.sendNativeMessage({ action: 'start', service: 'relay' });
+          if (startResponse.result?.success) {
+            this.showToast('Relay started! Connecting...');
             setTimeout(() => {
               this.connect();
               this.checkRelayAndUpdateHelper();
-            }, 5000);
+            }, 3000);
           } else {
-            // Fallback to background start
-            const startResponse = await this.sendNativeMessage({
-              action: 'start',
-              service: 'relay',
-            });
-            if (startResponse.result?.success) {
-              this.showToast('Relay started! Connecting...');
-              setTimeout(() => {
-                this.connect();
-                this.checkRelayAndUpdateHelper();
-              }, 3000);
-            } else {
-              this.showToast(startResponse.result?.error || 'Failed to start relay');
-            }
+            this.showToast(startResponse.result?.error || 'Failed to start relay');
           }
-        } catch (e) {
-          this.showToast('Error: ' + e.message);
         }
-      } else {
-        // No native host - show installation helper
-        this.showInstallHelper();
+      } catch (e) {
+        this.showToast('Error: ' + e.message);
       }
-
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '🚀 Start Relay Server';
-      }
+    } else {
+      // No native host - show installation helper
+      this.showInstallHelper();
     }
 
-    showInstallHelper() {
-      // Create a modal/overlay with installation instructions
-      const extensionId = chrome.runtime.id;
-      const installPath = `${chrome.runtime.getURL('native-host/install-macos.sh')}`;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '🚀 Start Relay Server';
+    }
+  }
 
-      const modal = document.createElement('div');
-      modal.id = 'install-helper-modal';
-      modal.innerHTML = `
+  showInstallHelper() {
+    // Create a modal/overlay with installation instructions
+    const extensionId = chrome.runtime.id;
+    const installPath = `${chrome.runtime.getURL('native-host/install-macos.sh')}`;
+
+    const modal = document.createElement('div');
+    modal.id = 'install-helper-modal';
+    modal.innerHTML = `
       <div class="modal-overlay">
         <div class="modal-content">
           <h3 style="margin:0 0 12px 0; color: var(--neon-cyan);">⚡ Setup Required</h3>
@@ -280,8 +276,8 @@
       </div>
     `;
 
-      // Add modal styles
-      const styles = `
+    // Add modal styles
+    const styles = `
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -357,403 +353,401 @@
       }
     `;
 
-      const styleEl = document.createElement('style');
-      styleEl.textContent = styles;
-      document.head.appendChild(styleEl);
-      document.body.appendChild(modal);
+    const styleEl = document.createElement('style');
+    styleEl.textContent = styles;
+    document.head.appendChild(styleEl);
+    document.body.appendChild(modal);
 
-      // Event handlers
-      document.getElementById('copy-install-cmd')?.addEventListener('click', () => {
-        navigator.clipboard.writeText(
-          'cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension && ./install.sh'
-        );
-        this.showToast('Command copied!');
-      });
+    // Event handlers
+    document.getElementById('copy-install-cmd')?.addEventListener('click', () => {
+      navigator.clipboard.writeText(
+        'cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/chrome-extension && ./install.sh'
+      );
+      this.showToast('Command copied!');
+    });
 
-      document.getElementById('copy-manual-cmd')?.addEventListener('click', () => {
-        navigator.clipboard.writeText(
-          'cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm relay:start'
-        );
-        this.showToast('Command copied!');
-        modal.remove();
-        styleEl.remove();
-      });
+    document.getElementById('copy-manual-cmd')?.addEventListener('click', () => {
+      navigator.clipboard.writeText(
+        'cd ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm relay:start'
+      );
+      this.showToast('Command copied!');
+      modal.remove();
+      styleEl.remove();
+    });
 
-      document.getElementById('close-modal')?.addEventListener('click', () => {
-        modal.remove();
-        styleEl.remove();
-      });
-    }
+    document.getElementById('close-modal')?.addEventListener('click', () => {
+      modal.remove();
+      styleEl.remove();
+    });
+  }
 
-    async openPanelOnPage() {
-      // Get the active tab
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tabs[0]?.id) {
-        try {
-          // Did we inject?
-          const isScriptInjected = await this.checkContentScript(tabs[0].id);
+  async openPanelOnPage() {
+    // Get the active tab
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tabs[0]?.id) {
+      try {
+        // Did we inject?
+        const isScriptInjected = await this.checkContentScript(tabs[0].id);
 
-          if (!isScriptInjected) {
-            this.showToast('Injecting content script...');
-            await chrome.scripting.executeScript({
-              target: { tabId: tabs[0].id },
-              files: ['content/index.js'],
-            });
-            // Brief wait for initialization
-            await new Promise((r) => setTimeout(r, 500));
+        if (!isScriptInjected) {
+          this.showToast('Injecting content script...');
+          await chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            files: ['content/index.js'],
+          });
+          // Brief wait for initialization
+          await new Promise((r) => setTimeout(r, 500));
+        }
+
+        // Send message to content script to show panel
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'SHOW_PANEL' }, (response) => {
+          if (chrome.runtime.lastError) {
+            const err = chrome.runtime.lastError;
+            const errMsg = err.message || JSON.stringify(err);
+            this.showToast(`Cannot open panel: ${errMsg}`);
+            console.error('Fuse Panel Open Error:', errMsg, err);
+          } else if (response?.success) {
+            this.showToast('Panel opened! (Ctrl+Shift+F to toggle)');
+            // Close popup after opening panel
+            window.close();
           }
-
-          // Send message to content script to show panel
-          chrome.tabs.sendMessage(tabs[0].id, { type: 'SHOW_PANEL' }, (response) => {
-            if (chrome.runtime.lastError) {
-              const err = chrome.runtime.lastError;
-              const errMsg = err.message || JSON.stringify(err);
-              this.showToast(`Cannot open panel: ${errMsg}`);
-              console.error('Fuse Panel Open Error:', errMsg, err);
-            } else if (response?.success) {
-              this.showToast('Panel opened! (Ctrl+Shift+F to toggle)');
-              // Close popup after opening panel
-              window.close();
-            }
-          });
-        } catch (e) {
-          this.showToast(`Cannot open panel: ${e.message}`);
-          console.error('Fuse Panel Exception:', e);
-        }
-      } else {
-        this.showToast('No active tab found');
-      }
-    }
-
-    async checkContentScript(tabId) {
-      try {
-        const response = await chrome.tabs.sendMessage(tabId, { type: 'GET_PANEL_STATUS' });
-        return !!response;
+        });
       } catch (e) {
-        return false;
+        this.showToast(`Cannot open panel: ${e.message}`);
+        console.error('Fuse Panel Exception:', e);
       }
+    } else {
+      this.showToast('No active tab found');
     }
+  }
 
-    async checkNativeHost() {
+  async checkContentScript(tabId) {
+    try {
+      const response = await chrome.tabs.sendMessage(tabId, { type: 'GET_PANEL_STATUS' });
+      return !!response;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async checkNativeHost() {
+    try {
+      const response = await this.sendNativeMessage({ action: 'ping' });
+      this.state.nativeHostAvailable = response.action === 'pong';
+    } catch (e) {
+      this.state.nativeHostAvailable = false;
+    }
+    this.updateNativeHostIndicator();
+  }
+
+  async sendNativeMessage(message) {
+    return new Promise((resolve, reject) => {
       try {
-        const response = await this.sendNativeMessage({ action: 'ping' });
-        this.state.nativeHostAvailable = response.action === 'pong';
+        chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+          } else {
+            resolve(response);
+          }
+        });
       } catch (e) {
-        this.state.nativeHostAvailable = false;
+        reject(e);
       }
-      this.updateNativeHostIndicator();
-    }
+    });
+  }
 
-    async sendNativeMessage(message) {
-      return new Promise((resolve, reject) => {
-        try {
-          chrome.runtime.sendNativeMessage(NATIVE_HOST_NAME, message, (response) => {
-            if (chrome.runtime.lastError) {
-              reject(new Error(chrome.runtime.lastError.message));
-            } else {
-              resolve(response);
-            }
-          });
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }
-
-    async refreshServiceStatus() {
+  async refreshServiceStatus() {
+    if (!this.state.nativeHostAvailable) {
+      // Try to check again
+      await this.checkNativeHost();
       if (!this.state.nativeHostAvailable) {
-        // Try to check again
-        await this.checkNativeHost();
-        if (!this.state.nativeHostAvailable) {
-          return;
-        }
-      }
-
-      try {
-        const response = await this.sendNativeMessage({ action: 'status' });
-        if (response.services) {
-          this.state.services = response.services;
-          this.updateServiceUI();
-        }
-      } catch (e) {
-        console.error('Failed to get service status:', e);
-      }
-    }
-
-    async controlService(action, service) {
-      // Handle AI Studio specific actions
-      if (service === 'ai-studio') {
-        if (action === 'auth') {
-          this.handleAIStudioAuth();
-          return;
-        } else if (action === 'process') {
-          this.handleAIStudioProcess();
-          return;
-        }
-      }
-
-      if (!this.state.nativeHostAvailable) {
-        this.showToast('Native host not available. Run the install script.');
         return;
       }
+    }
 
-      this.showToast(`${action === 'start' ? 'Starting' : 'Stopping'} ${service}...`);
+    try {
+      const response = await this.sendNativeMessage({ action: 'status' });
+      if (response.services) {
+        this.state.services = response.services;
+        this.updateServiceUI();
+      }
+    } catch (e) {
+      console.error('Failed to get service status:', e);
+    }
+  }
 
-      try {
-        const response = await this.sendNativeMessage({ action, service });
+  async controlService(action, service) {
+    // Handle AI Studio specific actions
+    if (service === 'ai-studio') {
+      if (action === 'auth') {
+        this.handleAIStudioAuth();
+        return;
+      } else if (action === 'process') {
+        this.handleAIStudioProcess();
+        return;
+      }
+    }
 
-        if (response.result?.success || response.results) {
-          this.showToast(response.result?.message || `${service} ${action} completed`);
+    if (!this.state.nativeHostAvailable) {
+      this.showToast('Native host not available. Run the install script.');
+      return;
+    }
 
-          // Refresh status after action
-          setTimeout(() => this.refreshServiceStatus(), 2000);
+    this.showToast(`${action === 'start' ? 'Starting' : 'Stopping'} ${service}...`);
+
+    try {
+      const response = await this.sendNativeMessage({ action, service });
+
+      if (response.result?.success || response.results) {
+        this.showToast(response.result?.message || `${service} ${action} completed`);
+
+        // Refresh status after action
+        setTimeout(() => this.refreshServiceStatus(), 2000);
+      } else {
+        this.showToast(`Failed: ${response.result?.error || response.message || 'Unknown error'}`);
+      }
+    } catch (e) {
+      this.showToast(`Error: ${e.message}`);
+    }
+  }
+
+  async handleAIStudioAuth() {
+    this.showToast('Opening Google OAuth...');
+    try {
+      chrome.runtime.sendMessage({ type: 'AI_STUDIO_AUTH' }, (response) => {
+        if (response?.success) {
+          this.showToast('Authenticated successfully!');
+          this.updateAIStudioStatus('connected');
         } else {
-          this.showToast(
-            `Failed: ${response.result?.error || response.message || 'Unknown error'}`
-          );
+          this.showToast('Authentication failed');
         }
-      } catch (e) {
-        this.showToast(`Error: ${e.message}`);
-      }
+      });
+    } catch (e) {
+      this.showToast(`Auth error: ${e.message}`);
     }
+  }
 
-    async handleAIStudioAuth() {
-      this.showToast('Opening Google OAuth...');
-      try {
-        chrome.runtime.sendMessage({ type: 'AI_STUDIO_AUTH' }, (response) => {
-          if (response?.success) {
-            this.showToast('Authenticated successfully!');
-            this.updateAIStudioStatus('connected');
-          } else {
-            this.showToast('Authentication failed');
-          }
-        });
-      } catch (e) {
-        this.showToast(`Auth error: ${e.message}`);
-      }
-    }
-
-    async handleAIStudioProcess() {
-      this.showToast('Opening AI Studio panel...');
-      try {
-        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              type: 'SHOW_PANEL',
-              activeTab: 'services',
-            },
-            (response) => {
-              if (response?.success) {
-                this.showToast('Panel opened! Check the Services tab.');
-                window.close();
-              }
+  async handleAIStudioProcess() {
+    this.showToast('Opening AI Studio panel...');
+    try {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            type: 'SHOW_PANEL',
+            activeTab: 'services',
+          },
+          (response) => {
+            if (response?.success) {
+              this.showToast('Panel opened! Check the Services tab.');
+              window.close();
             }
-          );
-        }
-      } catch (e) {
-        this.showToast(`Error: ${e.message}`);
-      }
-    }
-
-    updateAIStudioStatus(status) {
-      const statusEl = document.getElementById('service-ai-studio-status');
-      if (statusEl) {
-        const dot = statusEl.querySelector('.status-dot');
-        if (dot) {
-          dot.className = `status-dot ${status === 'connected' ? 'connected' : 'disconnected'}`;
-        }
-      }
-    }
-
-    updateNativeHostIndicator() {
-      const indicator = document.getElementById('native-host-indicator');
-      if (indicator) {
-        if (this.state.nativeHostAvailable) {
-          indicator.textContent = '🟢 Connected';
-          indicator.style.color = '#00ff88';
-        } else {
-          indicator.textContent = '🔴 Not Installed';
-          indicator.style.color = '#ff3366';
-        }
-      }
-    }
-
-    updateServiceUI() {
-      for (const [serviceName, status] of Object.entries(this.state.services)) {
-        const card = document.querySelector(`[data-service="${serviceName}"]`);
-        if (card) {
-          const statusDot = card.querySelector('.status-dot');
-          if (statusDot) {
-            statusDot.className = `status-dot ${status.running ? 'connected' : 'disconnected'}`;
           }
-
-          // Update card class
-          if (status.running) {
-            card.classList.add('running');
-          } else {
-            card.classList.remove('running');
-          }
-
-          // Update buttons
-          const startBtn = card.querySelector('[data-action="start"]');
-          const stopBtn = card.querySelector('[data-action="stop"]');
-          if (startBtn) startBtn.disabled = status.running;
-          if (stopBtn) stopBtn.disabled = !status.running;
-        }
+        );
       }
+    } catch (e) {
+      this.showToast(`Error: ${e.message}`);
     }
+  }
 
-    async loadState() {
-      return new Promise((resolve) => {
-        chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
-          if (response) {
-            this.state.connectionStatus = response.connectionStatus || 'disconnected';
-            this.state.agents = response.agents || [];
-          }
-          resolve();
-        });
-      });
-    }
-
-    async loadSettings() {
-      return new Promise((resolve) => {
-        chrome.storage.local.get(['fuse_settings'], (result) => {
-          if (result.fuse_settings) {
-            this.state.settings = { ...this.state.settings, ...result.fuse_settings };
-
-            // Update UI
-            const relayUrl = document.getElementById('relay-url');
-            if (relayUrl) relayUrl.value = this.state.settings.relayUrl;
-
-            const autoReconnect = document.getElementById('auto-reconnect');
-            if (autoReconnect) autoReconnect.checked = this.state.settings.autoReconnect;
-
-            const showPanel = document.getElementById('show-panel');
-            if (showPanel) showPanel.checked = this.state.settings.showPanel;
-
-            const debugMode = document.getElementById('debug-mode');
-            if (debugMode) debugMode.checked = this.state.settings.debugMode;
-          }
-          resolve();
-        });
-      });
-    }
-
-    async saveSettings() {
-      await chrome.storage.local.set({ fuse_settings: this.state.settings });
-      this.showToast('Settings saved!');
-    }
-
-    setupMessageListener() {
-      chrome.runtime.onMessage.addListener((message) => {
-        switch (message.type) {
-          case 'CONNECTION_STATUS':
-            this.state.connectionStatus = message.status;
-            this.updateUI();
-            break;
-
-          case 'AGENTS_UPDATE':
-            this.state.agents = message.agents;
-            this.updateAgentsList();
-            this.updateStats();
-            break;
-
-          case 'NEW_MESSAGE':
-            this.state.messages.unshift(message.message);
-            if (this.state.messages.length > 20) {
-              this.state.messages = this.state.messages.slice(0, 20);
-            }
-            this.updateMessageList();
-            break;
-        }
-      });
-    }
-
-    connect() {
-      chrome.runtime.sendMessage({ type: 'CONNECT' });
-      this.state.connectionStatus = 'connecting';
-      this.updateUI();
-    }
-
-    disconnect() {
-      chrome.runtime.sendMessage({ type: 'DISCONNECT' });
-      this.state.connectionStatus = 'disconnected';
-      this.updateUI();
-    }
-
-    updateUI() {
-      this.updateConnectionStatus();
-      this.updateAgentsList();
-      this.updateStats();
-      this.updateServiceUI();
-      this.updateNativeHostIndicator();
-      this.updateQuickStartHelper();
-    }
-
-    updateQuickStartHelper() {
-      const helper = document.getElementById('quick-start-helper');
-      if (!helper) return;
-
-      // Hide helper if connected
-      if (this.state.connectionStatus === 'connected') {
-        helper.style.display = 'none';
-      }
-    }
-
-    updateConnectionStatus() {
-      const { connectionStatus } = this.state;
-
-      // Update indicator dot
-      const dot = document.querySelector('.status-dot');
+  updateAIStudioStatus(status) {
+    const statusEl = document.getElementById('service-ai-studio-status');
+    if (statusEl) {
+      const dot = statusEl.querySelector('.status-dot');
       if (dot) {
-        dot.className = `status-dot ${connectionStatus}`;
-      }
-
-      // Update connection icon
-      const icon = document.getElementById('connection-icon');
-      if (icon) {
-        icon.className = `connection-icon ${connectionStatus}`;
-      }
-
-      // Update status text
-      const statusText = document.getElementById('connection-status-text');
-      if (statusText) {
-        const texts = {
-          connected: 'Connected',
-          connecting: 'Connecting...',
-          disconnected: 'Disconnected',
-          reconnecting: 'Reconnecting...',
-          error: 'Connection Error',
-        };
-        statusText.textContent = texts[connectionStatus] || 'Unknown';
-      }
-
-      // Update button
-      const btn = document.getElementById('connect-btn');
-      if (btn) {
-        if (connectionStatus === 'connected') {
-          btn.innerHTML = '<span class="btn-icon">🔌</span> Disconnect';
-          btn.classList.add('disconnect');
-        } else if (connectionStatus === 'connecting' || connectionStatus === 'reconnecting') {
-          btn.innerHTML = '<span class="btn-icon">⏳</span> Connecting...';
-          btn.disabled = true;
-        } else {
-          btn.innerHTML = '<span class="btn-icon">🔌</span> Connect to Relay';
-          btn.classList.remove('disconnect');
-          btn.disabled = false;
-        }
+        dot.className = `status-dot ${status === 'connected' ? 'connected' : 'disconnected'}`;
       }
     }
+  }
 
-    updateAgentsList() {
-      const container = document.getElementById('agents-list');
-      if (!container) return;
+  updateNativeHostIndicator() {
+    const indicator = document.getElementById('native-host-indicator');
+    if (indicator) {
+      if (this.state.nativeHostAvailable) {
+        indicator.textContent = '🟢 Connected';
+        indicator.style.color = '#00ff88';
+      } else {
+        indicator.textContent = '🔴 Not Installed';
+        indicator.style.color = '#ff3366';
+      }
+    }
+  }
 
-      if (this.state.agents.length === 0) {
-        const isConnected = this.state.connectionStatus === 'connected';
-        container.innerHTML = `
+  updateServiceUI() {
+    for (const [serviceName, status] of Object.entries(this.state.services)) {
+      const card = document.querySelector(`[data-service="${serviceName}"]`);
+      if (card) {
+        const statusDot = card.querySelector('.status-dot');
+        if (statusDot) {
+          statusDot.className = `status-dot ${status.running ? 'connected' : 'disconnected'}`;
+        }
+
+        // Update card class
+        if (status.running) {
+          card.classList.add('running');
+        } else {
+          card.classList.remove('running');
+        }
+
+        // Update buttons
+        const startBtn = card.querySelector('[data-action="start"]');
+        const stopBtn = card.querySelector('[data-action="stop"]');
+        if (startBtn) startBtn.disabled = status.running;
+        if (stopBtn) stopBtn.disabled = !status.running;
+      }
+    }
+  }
+
+  async loadState() {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
+        if (response) {
+          this.state.connectionStatus = response.connectionStatus || 'disconnected';
+          this.state.agents = response.agents || [];
+        }
+        resolve();
+      });
+    });
+  }
+
+  async loadSettings() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(['fuse_settings'], (result) => {
+        if (result.fuse_settings) {
+          this.state.settings = { ...this.state.settings, ...result.fuse_settings };
+
+          // Update UI
+          const relayUrl = document.getElementById('relay-url');
+          if (relayUrl) relayUrl.value = this.state.settings.relayUrl;
+
+          const autoReconnect = document.getElementById('auto-reconnect');
+          if (autoReconnect) autoReconnect.checked = this.state.settings.autoReconnect;
+
+          const showPanel = document.getElementById('show-panel');
+          if (showPanel) showPanel.checked = this.state.settings.showPanel;
+
+          const debugMode = document.getElementById('debug-mode');
+          if (debugMode) debugMode.checked = this.state.settings.debugMode;
+        }
+        resolve();
+      });
+    });
+  }
+
+  async saveSettings() {
+    await chrome.storage.local.set({ fuse_settings: this.state.settings });
+    this.showToast('Settings saved!');
+  }
+
+  setupMessageListener() {
+    chrome.runtime.onMessage.addListener((message) => {
+      switch (message.type) {
+        case 'CONNECTION_STATUS':
+          this.state.connectionStatus = message.status;
+          this.updateUI();
+          break;
+
+        case 'AGENTS_UPDATE':
+          this.state.agents = message.agents;
+          this.updateAgentsList();
+          this.updateStats();
+          break;
+
+        case 'NEW_MESSAGE':
+          this.state.messages.unshift(message.message);
+          if (this.state.messages.length > 20) {
+            this.state.messages = this.state.messages.slice(0, 20);
+          }
+          this.updateMessageList();
+          break;
+      }
+    });
+  }
+
+  connect() {
+    chrome.runtime.sendMessage({ type: 'CONNECT' });
+    this.state.connectionStatus = 'connecting';
+    this.updateUI();
+  }
+
+  disconnect() {
+    chrome.runtime.sendMessage({ type: 'DISCONNECT' });
+    this.state.connectionStatus = 'disconnected';
+    this.updateUI();
+  }
+
+  updateUI() {
+    this.updateConnectionStatus();
+    this.updateAgentsList();
+    this.updateStats();
+    this.updateServiceUI();
+    this.updateNativeHostIndicator();
+    this.updateQuickStartHelper();
+  }
+
+  updateQuickStartHelper() {
+    const helper = document.getElementById('quick-start-helper');
+    if (!helper) return;
+
+    // Hide helper if connected
+    if (this.state.connectionStatus === 'connected') {
+      helper.style.display = 'none';
+    }
+  }
+
+  updateConnectionStatus() {
+    const { connectionStatus } = this.state;
+
+    // Update indicator dot
+    const dot = document.querySelector('.status-dot');
+    if (dot) {
+      dot.className = `status-dot ${connectionStatus}`;
+    }
+
+    // Update connection icon
+    const icon = document.getElementById('connection-icon');
+    if (icon) {
+      icon.className = `connection-icon ${connectionStatus}`;
+    }
+
+    // Update status text
+    const statusText = document.getElementById('connection-status-text');
+    if (statusText) {
+      const texts = {
+        connected: 'Connected',
+        connecting: 'Connecting...',
+        disconnected: 'Disconnected',
+        reconnecting: 'Reconnecting...',
+        error: 'Connection Error',
+      };
+      statusText.textContent = texts[connectionStatus] || 'Unknown';
+    }
+
+    // Update button
+    const btn = document.getElementById('connect-btn');
+    if (btn) {
+      if (connectionStatus === 'connected') {
+        btn.innerHTML = '<span class="btn-icon">🔌</span> Disconnect';
+        btn.classList.add('disconnect');
+      } else if (connectionStatus === 'connecting' || connectionStatus === 'reconnecting') {
+        btn.innerHTML = '<span class="btn-icon">⏳</span> Connecting...';
+        btn.disabled = true;
+      } else {
+        btn.innerHTML = '<span class="btn-icon">🔌</span> Connect to Relay';
+        btn.classList.remove('disconnect');
+        btn.disabled = false;
+      }
+    }
+  }
+
+  updateAgentsList() {
+    const container = document.getElementById('agents-list');
+    if (!container) return;
+
+    if (this.state.agents.length === 0) {
+      const isConnected = this.state.connectionStatus === 'connected';
+      container.innerHTML = `
         <div class="empty-state">
           <span class="empty-icon">🤖</span>
           <p>${isConnected ? 'Waiting for agents...' : 'No agents connected'}</p>
@@ -782,17 +776,17 @@
         </div>
       `;
 
-        // Add click handler for connect button
-        document.getElementById('go-to-connect')?.addEventListener('click', () => {
-          // Switch to Connect tab
-          document.querySelector('[data-tab="connect"]')?.click();
-        });
-        return;
-      }
+      // Add click handler for connect button
+      document.getElementById('go-to-connect')?.addEventListener('click', () => {
+        // Switch to Connect tab
+        document.querySelector('[data-tab="connect"]')?.click();
+      });
+      return;
+    }
 
-      container.innerHTML = this.state.agents
-        .map(
-          (agent) => `
+    container.innerHTML = this.state.agents
+      .map(
+        (agent) => `
       <div class="agent-card" data-agent-id="${agent.id}">
         <div class="agent-avatar">${this.getAgentIcon(agent.platform)}</div>
         <div class="agent-info">
@@ -802,43 +796,43 @@
         <div class="agent-status-indicator ${agent.status}"></div>
       </div>
     `
-        )
-        .join('');
+      )
+      .join('');
 
-      // Add click handlers for direct message
-      container.querySelectorAll('.agent-card').forEach((card) => {
-        card.addEventListener('click', () => {
-          const agentId = card.dataset.agentId;
-          this.showDirectMessagePrompt(agentId);
-        });
+    // Add click handlers for direct message
+    container.querySelectorAll('.agent-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const agentId = card.dataset.agentId;
+        this.showDirectMessagePrompt(agentId);
       });
-    }
+    });
+  }
 
-    updateStats() {
-      const agentsEl = document.getElementById('stat-agents');
-      if (agentsEl) agentsEl.textContent = this.state.agents.length.toString();
+  updateStats() {
+    const agentsEl = document.getElementById('stat-agents');
+    if (agentsEl) agentsEl.textContent = this.state.agents.length.toString();
 
-      const messagesEl = document.getElementById('stat-messages');
-      if (messagesEl) messagesEl.textContent = this.state.messages.length.toString();
-    }
+    const messagesEl = document.getElementById('stat-messages');
+    if (messagesEl) messagesEl.textContent = this.state.messages.length.toString();
+  }
 
-    updateMessageList() {
-      const container = document.getElementById('message-list');
-      if (!container) return;
+  updateMessageList() {
+    const container = document.getElementById('message-list');
+    if (!container) return;
 
-      if (this.state.messages.length === 0) {
-        container.innerHTML = `
+    if (this.state.messages.length === 0) {
+      container.innerHTML = `
         <div class="empty-state small">
           <p>No recent messages</p>
         </div>
       `;
-        return;
-      }
+      return;
+    }
 
-      container.innerHTML = this.state.messages
-        .slice(0, 10)
-        .map(
-          (msg) => `
+    container.innerHTML = this.state.messages
+      .slice(0, 10)
+      .map(
+        (msg) => `
       <div class="message-item">
         <div class="message-item-header">
           <span class="message-item-from">${msg.from}</span>
@@ -847,46 +841,46 @@
         <div class="message-item-content">${this.truncate(msg.content, 80)}</div>
       </div>
     `
-        )
-        .join('');
+      )
+      .join('');
+  }
+
+  showDirectMessagePrompt(agentId) {
+    const agent = this.state.agents.find((a) => a.id === agentId);
+    if (!agent) return;
+
+    const message = prompt(`Send message to ${agent.name}:`);
+    if (message) {
+      chrome.runtime.sendMessage({
+        type: 'SEND_TO_AGENT',
+        agentId,
+        content: message,
+      });
     }
+  }
 
-    showDirectMessagePrompt(agentId) {
-      const agent = this.state.agents.find((a) => a.id === agentId);
-      if (!agent) return;
+  async exportLogs() {
+    // Get logs from storage
+    const result = await chrome.storage.local.get(['fuse_logs']);
+    const logs = result.fuse_logs || [];
 
-      const message = prompt(`Send message to ${agent.name}:`);
-      if (message) {
-        chrome.runtime.sendMessage({
-          type: 'SEND_TO_AGENT',
-          agentId,
-          content: message,
-        });
-      }
-    }
+    // Create download
+    const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
 
-    async exportLogs() {
-      // Get logs from storage
-      const result = await chrome.storage.local.get(['fuse_logs']);
-      const logs = result.fuse_logs || [];
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fuse-connect-logs-${Date.now()}.json`;
+    a.click();
 
-      // Create download
-      const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+    URL.revokeObjectURL(url);
+    this.showToast('Logs exported!');
+  }
 
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `fuse-connect-logs-${Date.now()}.json`;
-      a.click();
-
-      URL.revokeObjectURL(url);
-      this.showToast('Logs exported!');
-    }
-
-    showToast(message) {
-      // Simple toast notification
-      const toast = document.createElement('div');
-      toast.style.cssText = `
+  showToast(message) {
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.style.cssText = `
       position: fixed;
       bottom: 20px;
       left: 50%;
@@ -900,47 +894,47 @@
       z-index: 10000;
       animation: fadeInUp 0.3s ease;
     `;
-      toast.textContent = message;
-      document.body.appendChild(toast);
+    toast.textContent = message;
+    document.body.appendChild(toast);
 
-      setTimeout(() => {
-        toast.style.animation = 'fadeOut 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-      }, 2000);
-    }
-
-    getAgentIcon(platform) {
-      const icons = {
-        'chrome-extension': '🌐',
-        vscode: '🔷',
-        antigravity: '🌌',
-        claude: '🤖',
-        chatgpt: '💬',
-        gemini: '✨',
-        'electron-desktop': '🖥️',
-        'api-gateway': '🚀',
-        'backend-service': '⚙️',
-      };
-      return icons[platform] || '🤖';
-    }
-
-    formatTime(timestamp) {
-      return new Date(timestamp).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    }
-
-    truncate(text, length) {
-      return text.length > length ? text.substring(0, length) + '...' : text;
-    }
+    setTimeout(() => {
+      toast.style.animation = 'fadeOut 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, 2000);
   }
 
-  // Initialize
-  document.addEventListener('DOMContentLoaded', () => {
-    new FuseConnectPopup();
-  });
+  getAgentIcon(platform) {
+    const icons = {
+      'chrome-extension': '🌐',
+      vscode: '🔷',
+      antigravity: '🌌',
+      claude: '🤖',
+      chatgpt: '💬',
+      gemini: '✨',
+      'electron-desktop': '🖥️',
+      'api-gateway': '🚀',
+      'backend-service': '⚙️',
+    };
+    return icons[platform] || '🤖';
+  }
 
-  /******/
-})();
+  formatTime(timestamp) {
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  truncate(text, length) {
+    return text.length > length ? text.substring(0, length) + '...' : text;
+  }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  new FuseConnectPopup();
+});
+
+/******/ })()
+;
 //# sourceMappingURL=popup.js.map

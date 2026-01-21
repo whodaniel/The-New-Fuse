@@ -43,6 +43,25 @@ try {
       };
       // Mark as guarded
       (customElements.define as any).__isSafeGuarded = true;
+
+      // Lock the customElements object itself to prevent polyfills from replacing it
+      try {
+        const originalCustomElements = window.customElements;
+        Object.defineProperty(window, 'customElements', {
+          get() {
+            return originalCustomElements;
+          },
+          set(v) {
+            console.warn(
+              '[FuseConnect Guard] Prevented external script from overwriting window.customElements'
+            );
+          },
+          configurable: false,
+        });
+      } catch (e) {
+        // Ignore if already non-configurable
+      }
+
       console.log('[FuseConnect] Custom Element Guard activated');
     }
   }

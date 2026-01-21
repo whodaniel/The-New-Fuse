@@ -75,8 +75,13 @@
             }
           };
 
+          // Mark as guarded so other scripts know
+          safeDefine.__isSafeGuarded = true;
+
           // Bind the function to customElements to maintain context
           const boundSafeDefine = safeDefine.bind(customElements);
+          // Also mark the bound function
+          boundSafeDefine.__isSafeGuarded = true;
 
           // Override with bound function
           Object.defineProperty(customElements, 'define', {
@@ -84,6 +89,24 @@
             configurable: false,
             writable: false,
           });
+
+          // Lock the customElements object itself to prevent polyfills from replacing it
+          try {
+            const originalCustomElements = window.customElements;
+            Object.defineProperty(window, 'customElements', {
+              get() {
+                return originalCustomElements;
+              },
+              set(v) {
+                console.warn(
+                  '[The New Fuse] Prevented external script from overwriting window.customElements'
+                );
+              },
+              configurable: false,
+            });
+          } catch (e) {
+            // Ignore if already non-configurable
+          }
 
           console.log('[The New Fuse] Custom Element Guard activated (FIRST) - Registry Locked');
         } catch (e) {
