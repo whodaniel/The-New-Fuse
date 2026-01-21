@@ -106,7 +106,7 @@
     "rxjs": "^7.8.2",
     "socket.io-client": "^4.7.5",
     "tailwind-merge": "^3.4.0",
-    "text-case": "^1.2.9",
+    "text-case": "^1.2.10",
     "three": "^0.181.2",
     "truncate": "^3.0.0",
     "uuid": "^13.0.0",
