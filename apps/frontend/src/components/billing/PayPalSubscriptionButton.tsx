@@ -8,7 +8,7 @@ interface PayPalSubscriptionButtonProps {
 }
 
 export const PayPalSubscriptionButton = ({
-  planId = import.meta.env.VITE_PAYPAL_PLAN_ID || 'P-96650453L6697471BM63TJ2Y',
+  planId = import.meta.env.VITE_PAYPAL_PLAN_ID || 'P-3WD251534W148423SNFXJQVI',
   onSuccess,
   onError,
 }: PayPalSubscriptionButtonProps) => {
@@ -28,13 +28,14 @@ export const PayPalSubscriptionButton = ({
 
   return (
     <PayPalScriptProvider options={initialOptions}>
-      <div className="w-full max-w-md mx-auto relative z-10">
+      <div className="w-full max-w-[250px] mx-auto relative z-10 mt-2">
         <PayPalButtons
           style={{
             shape: 'rect',
             color: 'blue',
             layout: 'vertical',
             label: 'subscribe',
+            height: 48,
           }}
           createSubscription={(data, actions) => {
             return actions.subscription.create({
