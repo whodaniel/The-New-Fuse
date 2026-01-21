@@ -24,11 +24,11 @@ export const BaseNode: React.FC<BaseNodeProps> = memo(
     inputHandles = [{ id: 'default', label: 'Input' }],
     outputHandles = [{ id: 'default', label: 'Output' }],
   }) => {
-    // Default to expanded so users can see node content immediately
-    const [expanded, setExpanded] = useState(true);
+    // Default to collapsed for a cleaner canvas - user can expand as needed
+    const [expanded, setExpanded] = useState(false);
 
     return (
-      <div className="relative" style={{ minWidth: '220px', maxWidth: '260px' }}>
+      <div className="relative" style={{ minWidth: '160px', maxWidth: '200px' }}>
         {/* Port labels - Input (left) */}
         {inputHandles.map((handle: any, index: number) => (
           <div

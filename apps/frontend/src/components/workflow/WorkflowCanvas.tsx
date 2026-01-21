@@ -89,10 +89,20 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) 
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
         fitView
+        proOptions={{ hideAttribution: true }}
+        defaultEdgeOptions={{
+          style: { stroke: '#64748b', strokeWidth: 2 },
+          animated: true,
+        }}
       >
-        <Background />
-        <Controls />
-        <MiniMap />
+        <Background color="#334155" gap={16} size={1} />
+        <Controls className="bg-slate-800! border-slate-600! shadow-lg! [&>button]:bg-slate-700! [&>button]:border-slate-600! [&>button]:fill-white! [&>button:hover]:bg-slate-600!" />
+        <MiniMap
+          className="bg-slate-800! border-slate-600!"
+          nodeColor="#1e40af"
+          maskColor="rgba(15, 23, 42, 0.7)"
+          nodeBorderRadius={4}
+        />
       </ReactFlow>
     </div>
   );
