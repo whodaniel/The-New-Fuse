@@ -13,7 +13,7 @@
 const WebSocket = require('ws');
 
 // Configuration
-const RELAY_URL = process.env.RELAY_URL || 'ws://localhost:3001/ws';
+const RELAY_URL = process.env.RELAY_URL || 'ws://localhost:3000/ws';
 const AGENT_ID = `listener-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
 const AGENT_NAME = 'AI Bridge Listener';
 const TARGET_CHANNEL = process.argv[2] || null;

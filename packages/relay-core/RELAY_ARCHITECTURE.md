@@ -19,10 +19,10 @@ in The New Fuse ecosystem.
 │  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
 │                                                                 │
 │  Endpoints:                                                     │
-│    WebSocket: ws://localhost:3001/ws                            │
-│    Health:    http://localhost:3001/health                      │
-│    Agents:    http://localhost:3001/agents                      │
-│    Channels:  http://localhost:3001/channels                    │
+│    WebSocket: ws://localhost:3000/ws                            │
+│    Health:    http://localhost:3000/health                      │
+│    Agents:    http://localhost:3000/agents                      │
+│    Channels:  http://localhost:3000/channels                    │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
            ┌────────────────┼────────────────┐
@@ -63,7 +63,7 @@ PORT=3002 pnpm relay:start
 
 ### Connection
 
-Connect to `ws://localhost:3001/ws`
+Connect to `ws://localhost:3000/ws`
 
 ### Message Format
 
@@ -145,12 +145,12 @@ interface ProtocolMessage {
 ## Chrome Extension Integration
 
 The Chrome Extension v6 automatically connects to the relay at
-`ws://localhost:3001/ws`.
+`ws://localhost:3000/ws`.
 
 ### Configuration
 
 - **Background Service**: `apps/chrome-extension/src/v5/background/index.ts`
-- **Default URL**: `ws://localhost:3001/ws` (defined in `constants.ts`)
+- **Default URL**: `ws://localhost:3000/ws` (defined in `constants.ts`)
 
 ### Native Messaging Host
 
@@ -173,8 +173,8 @@ The native messaging host can start the relay from the extension:
 
 | File                    | Change                               |
 | ----------------------- | ------------------------------------ |
-| `connection-manager.ts` | `relayUrl: 'ws://localhost:3001/ws'` |
-| `popup-neon.js`         | `relayUrl: 'ws://localhost:3001/ws'` |
+| `connection-manager.ts` | `relayUrl: 'ws://localhost:3000/ws'` |
+| `popup-neon.js`         | `relayUrl: 'ws://localhost:3000/ws'` |
 | `popup-neon.html`       | Default input value updated          |
 | `SettingsTab.tsx`       | Default relay URL updated            |
 | `BUILD_INSTRUCTIONS.md` | Documentation updated                |
@@ -184,7 +184,7 @@ The native messaging host can start the relay from the extension:
 ```typescript
 import { TNFRelayServer } from '@the-new-fuse/relay-core';
 
-const relay = new TNFRelayServer(3001);
+const relay = new TNFRelayServer(3000);
 
 // Event handlers
 relay.on('agent:registered', (agent) => {

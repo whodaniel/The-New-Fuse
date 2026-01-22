@@ -851,10 +851,12 @@ class EnhancedFloatingPanel {
                 if (!this.myAgentId && response.agentId?.startsWith('page-agent-')) {
                     this.myAgentId = response.agentId;
                 }
-                // Restore current channel if we have one stored
-                chrome.storage.local.get(['fuse_current_channel'], (result) => {
-                    if (result.fuse_current_channel) {
-                        this.currentChannel = result.fuse_current_channel;
+                // Restore current channel if we have one stored (tab-specific)
+                // Use panel-specific key to prevent cross-tab sync
+                const channelKey = `fuse_channel_${this.panelId}`;
+                chrome.storage.local.get([channelKey], (result) => {
+                    if (result[channelKey]) {
+                        this.currentChannel = result[channelKey];
                     }
                     this.update();
                 });
@@ -1477,14 +1479,19 @@ class EnhancedFloatingPanel {
                 this.selectChannel(select.value || null);
             });
         }
-        // Listen for storage changes to sync across tabs
+        // NOTE: Channel selection is now tab-specific (per-panel), so we do NOT sync across tabs.
+        // Each panel maintains its own independent channel selection.
+        // Listen for storage changes for OTHER settings that should sync (like channels list, agents, etc.)
         this.storageListener = (changes, areaName) => {
-            if (areaName === 'local' && changes.fuse_current_channel) {
-                const newChannel = changes.fuse_current_channel.newValue;
-                if (newChannel !== this.currentChannel) {
-                    console.log('[FuseConnect] Syncing channel from storage:', newChannel);
-                    this.currentChannel = newChannel;
-                    this.update();
+            if (areaName === 'local') {
+                // Sync channels list changes (not channel SELECTION, but the list of available channels)
+                if (changes.fuse_channels) {
+                    const newChannels = changes.fuse_channels.newValue;
+                    if (newChannels && Array.isArray(newChannels)) {
+                        console.log('[FuseConnect] Syncing channels list from storage:', newChannels.length);
+                        this.channels = newChannels;
+                        this.update();
+                    }
                 }
             }
         };
@@ -2374,8 +2381,9 @@ class EnhancedFloatingPanel {
      */
     joinChannel(channelId) {
         this.currentChannel = channelId;
-        // Persist channel selection for background script access
-        chrome.storage.local.set({ fuse_current_channel: channelId });
+        // Persist channel selection for background script access (tab-specific)
+        const channelKey = `fuse_channel_${this.panelId}`;
+        chrome.storage.local.set({ [channelKey]: channelId });
         this.safeSendMessage({
             type: 'CHANNEL_JOIN',
             channelId,
@@ -2389,8 +2397,10 @@ class EnhancedFloatingPanel {
         const previousChannel = this.currentChannel;
         this.currentChannel = channelId;
         console.log(`[FuseConnect] Panel ${this.panelId} switching channel: ${previousChannel} → ${channelId}`);
-        // Persist channel selection for background script access
-        chrome.storage.local.set({ fuse_current_channel: channelId });
+        // Persist channel selection for background script access (tab-specific)
+        // Each tab maintains its own channel selection independently
+        const channelKey = `fuse_channel_${this.panelId}`;
+        chrome.storage.local.set({ [channelKey]: channelId });
         if (channelId) {
             this.safeSendMessage({
                 type: 'CHANNEL_JOIN',
@@ -2971,6 +2981,12 @@ class EnhancedFloatingPanel {
         console.log('[FuseConnect] Panel assigned Agent ID:', id);
         this.myAgentId = id;
         this.update(); // Update UI if needed (e.g. to show ID)
+    }
+    /**
+     * Get the current channel this panel is connected to
+     */
+    getCurrentChannel() {
+        return this.currentChannel;
     }
     /**
      * Update streaming state
@@ -4616,10 +4632,13 @@ class FuseConnectContentScript {
                 if (!this.pageAgentId) {
                     console.warn('[FuseConnect v6] ⚠️ Page Agent ID missing during response! This may cause message drop.');
                 }
+                // Get current channel from panel for proper routing
+                const currentChannel = this.panel?.getCurrentChannel() || null;
                 const responseMetadata = {
                     agentId: this.pageAgentId,
                     responseType: 'ai-response',
                     timestamp: Date.now(),
+                    channel: currentChannel, // Include channel for per-tab routing
                 };
                 if (pendingRequest) {
                     // Correlate this response with the original request
@@ -4633,6 +4652,7 @@ class FuseConnectContentScript {
                 this.safeSendMessage({
                     type: 'RESPONSE_COMPLETE',
                     content: content.length > 50000 ? content.substring(0, 50000) : content,
+                    channel: currentChannel, // Also pass at top level for easier access
                     metadata: responseMetadata,
                 });
                 // Trigger queue processing after response

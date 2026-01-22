@@ -1297,62 +1297,64 @@ class BackgroundService {
 
               console.log('[FuseConnect v6] AI Response from agent:', senderId);
 
-              chrome.storage.local.get(['fuse_current_channel'], (result) => {
-                let channel = result.fuse_current_channel;
+              // Get channel from message metadata (set by the content script when the user selected it)
+              // This supports per-tab channel selection where each tab maintains its own channel
+              let channel = message.channel || message.metadata?.channel;
 
-                if (!channel && this.joinedChannels.size > 0) {
-                  channel = Array.from(this.joinedChannels)[0];
+              if (!channel && this.joinedChannels.size > 0) {
+                // Fallback to first joined channel if no specific channel provided
+                channel = Array.from(this.joinedChannels)[0];
+                console.log('[FuseConnect v6] Using fallback channel:', channel);
+              }
+
+              if (channel) {
+                // Get platform name for context (inline detection)
+                const tabUrl = sender.tab?.url || '';
+                let platformName = message.platform || 'unknown';
+                if (!message.platform) {
+                  if (tabUrl.includes('gemini.google')) platformName = 'Gemini';
+                  else if (tabUrl.includes('chat.openai') || tabUrl.includes('chatgpt'))
+                    platformName = 'ChatGPT';
+                  else if (tabUrl.includes('claude.ai')) platformName = 'Claude';
+                  else if (tabUrl.includes('copilot')) platformName = 'Copilot';
                 }
 
-                if (channel) {
-                  // Get platform name for context (inline detection)
-                  const tabUrl = sender.tab?.url || '';
-                  let platformName = message.platform || 'unknown';
-                  if (!message.platform) {
-                    if (tabUrl.includes('gemini.google')) platformName = 'Gemini';
-                    else if (tabUrl.includes('chat.openai') || tabUrl.includes('chatgpt'))
-                      platformName = 'ChatGPT';
-                    else if (tabUrl.includes('claude.ai')) platformName = 'Claude';
-                    else if (tabUrl.includes('copilot')) platformName = 'Copilot';
-                  }
+                // FEDERATION IMPROVEMENT: Include correlation metadata for response matching
+                const responseMetadata: any = {
+                  senderId: senderId, // KEY: Used to prevent self-injection
+                  senderType: 'ai-agent',
+                  platform: platformName,
+                  isAIResponse: true,
+                  timestamp: Date.now(),
+                };
 
-                  // FEDERATION IMPROVEMENT: Include correlation metadata for response matching
-                  const responseMetadata: any = {
-                    senderId: senderId, // KEY: Used to prevent self-injection
-                    senderType: 'ai-agent',
-                    platform: platformName,
-                    isAIResponse: true,
-                    timestamp: Date.now(),
-                  };
-
-                  // Include correlation info if present (from orchestrator requests)
-                  if (message.metadata?.correlationId) {
-                    responseMetadata.correlationId = message.metadata.correlationId;
-                    responseMetadata.taskId = message.metadata.taskId;
-                    responseMetadata.inResponseTo = message.metadata.inResponseTo;
-                    console.log(
-                      '[FuseConnect v6] 🔗 Including correlation in broadcast:',
-                      message.metadata.correlationId
-                    );
-                  }
-
-                  this.send({
-                    type: 'MESSAGE_SEND',
-                    to: 'broadcast',
-                    channel: channel,
-                    content: message.content,
-                    messageType: 'ai-response',
-                    metadata: responseMetadata,
-                  });
-                  console.log('[FuseConnect v6] AI response broadcast to channel:', {
-                    channel,
-                    senderId,
-                    platform: platformName,
-                    contentLength: message.content.length,
-                    hasCorrelation: !!message.metadata?.correlationId,
-                  });
+                // Include correlation info if present (from orchestrator requests)
+                if (message.metadata?.correlationId) {
+                  responseMetadata.correlationId = message.metadata.correlationId;
+                  responseMetadata.taskId = message.metadata.taskId;
+                  responseMetadata.inResponseTo = message.metadata.inResponseTo;
+                  console.log(
+                    '[FuseConnect v6] 🔗 Including correlation in broadcast:',
+                    message.metadata.correlationId
+                  );
                 }
-              });
+
+                this.send({
+                  type: 'MESSAGE_SEND',
+                  to: 'broadcast',
+                  channel: channel,
+                  content: message.content,
+                  messageType: 'ai-response',
+                  metadata: responseMetadata,
+                });
+                console.log('[FuseConnect v6] AI response broadcast to channel:', {
+                  channel,
+                  senderId,
+                  platform: platformName,
+                  contentLength: message.content.length,
+                  hasCorrelation: !!message.metadata?.correlationId,
+                });
+              }
             } else {
               console.log('[FuseConnect v6] Skipping duplicate AI response broadcast');
             }

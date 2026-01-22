@@ -6,14 +6,14 @@
  * Part of @the-new-fuse/relay-core package
  *
  * Usage:
- *   pnpm run relay         # Start on default port 3001
+ *   pnpm run relay         # Start on default port 3000
  *   PORT=3002 pnpm run relay  # Start on custom port
  *
  * Endpoints:
- *   WebSocket: ws://localhost:3001/ws
- *   Health:    http://localhost:3001/health
- *   Agents:    http://localhost:3001/agents
- *   Channels:  http://localhost:3001/channels
+ *   WebSocket: ws://localhost:3000/ws
+ *   Health:    http://localhost:3000/health
+ *   Agents:    http://localhost:3000/agents
+ *   Channels:  http://localhost:3000/channels
  */
 
 import { EventEmitter } from 'events';
@@ -37,7 +37,7 @@ import type { RedisRelayBridge } from './redis-relay-bridge';
 import type { StallDetector } from './services/stall-detector';
 
 // Configuration
-const PORT = parseInt(process.env.PORT || '3001', 10);
+const PORT = parseInt(process.env.PORT || '3000', 10);
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
 

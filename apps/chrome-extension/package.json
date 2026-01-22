@@ -10,7 +10,9 @@
     "generate-notification-icons": "node scripts/generate-notification-icons.cjs",
     "build": "webpack --config webpack.config.cjs --mode production",
     "build:v5": "webpack --config webpack.v5.config.cjs --mode production",
+    "build:v6": "webpack --config webpack.v6.config.cjs --mode production",
     "dev:v5": "webpack --config webpack.v5.config.cjs --mode development --watch",
+    "dev:v6": "webpack --config webpack.v6.config.cjs --mode development --watch",
     "prebuild": "node generate-icons.cjs && node scripts/generate-notification-icons.cjs",
     "dev": "webpack --mode development --watch",
     "package": "node scripts/package-extension.js",
@@ -21,6 +23,7 @@
     "clean": "rimraf dist icons coverage .turbo node_modules/.cache",
     "clean:build": "rimraf dist icons coverage",
     "clean:v5": "rimraf dist-v5",
+    "clean:v6": "rimraf dist-v6",
     "typecheck": "tsc --noEmit",
     "build:package": "pnpm run build && pnpm run package"
   },

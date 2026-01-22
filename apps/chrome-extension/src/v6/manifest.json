@@ -1,0 +1,128 @@
+{
+  "manifest_version": 3,
+  "name": "Fuse Connect",
+  "version": "6.0.0",
+  "description": "The ultimate AI agent bridge - Universal chat detection, federation channels, multi-node connectivity, streaming detection. Part of The New Fuse agent network.",
+
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr+lzRXCbTyLBs8ZsIkNMTKRCgy/AHKEdZM8bR0QyEFhFnFlgLjd89/cTG6EN6uNeEkI2vbIklajpqtlus5r373a5yX4AgIRDyeQCStXp1GxQqn7xIEuF3fQIO5amjAQ5dnSpOhxJKrhdRFSUb2IWbOxLGWCjGfzolxMUjQFsvwRGA0MagKk/FSQeBdO3zGEmu6G+1LW7CTmEWlqW6bPHbov+M7ruLCYAHpG0ggtnDT+hphbH3Y9ayycCfUvBxv/gOBW2p/h11+LrHqQz2Y3Ze6KNXPbpVdy1TEcNV9/HfJW/l9aLM4eA6yJXgLEvzFPV9RcSOQ2LszGkvFpNybSH/QIDAQAB",
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Fuse Connect"
+  },
+
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://gemini.google.com/*",
+        "https://bard.google.com/*",
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://perplexity.ai/*",
+        "https://www.perplexity.ai/*",
+        "https://poe.com/*",
+        "http://localhost:*/*",
+        "https://thenewfuse.com/*",
+        "https://*.thenewfuse.com/*"
+      ],
+      "js": ["content/index.js"],
+      "css": [],
+      "run_at": "document_idle",
+      "all_frames": false,
+      "match_about_blank": false
+    },
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["content/ai-studio-automation.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.usercontent.goog/*"],
+      "js": ["content/iframe-bridge.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["content/youtube-integration.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://notebooklm.google.com/*"],
+      "js": ["content/notebooklm-integration.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "tabs",
+    "notifications",
+    "nativeMessaging",
+    "scripting",
+    "identity",
+    "cookies",
+    "alarms",
+    "contextMenus",
+    "webRequest"
+  ],
+
+  "oauth2": {
+    "client_id": "637776200146-52ih7qr2o6961mbs5cb3mg6m0ceheu61.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/youtube.readonly",
+      "https://www.googleapis.com/auth/drive.appdata",
+      "profile",
+      "email"
+    ]
+  },
+
+  "host_permissions": [
+    "<all_urls>",
+    "ws://localhost:*/*",
+    "wss://localhost:*/*",
+    "wss://relay.thenewfuse.com/*",
+    "https://*.youtube.com/*",
+    "https://aistudio.google.com/*",
+    "https://notebooklm.google.com/*",
+    "https://www.googleapis.com/*",
+    "https://*.usercontent.goog/*"
+  ],
+
+  "commands": {
+    "toggle-panel": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "Command+Shift+F"
+      },
+      "description": "Toggle the Fuse Connect floating panel"
+    }
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "popup/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

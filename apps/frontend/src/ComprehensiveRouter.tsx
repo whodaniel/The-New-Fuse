@@ -188,6 +188,10 @@ const MainPage = lazy(() => import('./pages/Main'));
 // Live View - Real-time AI browser activity viewer
 const LiveViewPage = lazy(() => import('./pages/LiveView'));
 
+// AI Command Center - Multiple AI chat interfaces in one view
+const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
+
+
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
   <div className="p-8 max-w-4xl mx-auto">
@@ -494,6 +498,17 @@ export default function ComprehensiveRouter() {
                 </Suspense>
               }
             />
+
+            {/* AI Command Center - Multiple AI chats in iframes */}
+            <Route
+              path="/ai-command-center"
+              element={
+                <Suspense fallback={<LoadingFallback name="AI Command Center" />}>
+                  <AICommandCenter />
+                </Suspense>
+              }
+            />
+
 
             {/* Additional missing routes */}
             <Route

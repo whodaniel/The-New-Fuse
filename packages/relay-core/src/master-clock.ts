@@ -76,7 +76,7 @@ const CONFIG = {
   MAX_RECOVERY_ATTEMPTS: 5,
 
   // Connections
-  RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3001/ws',
+  RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
   REDIS_URL: process.env.REDIS_URL,
 
   // Channels to monitor

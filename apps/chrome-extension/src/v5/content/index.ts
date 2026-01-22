@@ -101,10 +101,15 @@ class FuseConnectContentScript {
             '[FuseConnect v6] ⚠️ Page Agent ID missing during response! This may cause message drop.'
           );
         }
+
+        // Get current channel from panel for proper routing
+        const currentChannel = this.panel?.getCurrentChannel() || null;
+
         const responseMetadata: any = {
           agentId: this.pageAgentId,
           responseType: 'ai-response',
           timestamp: Date.now(),
+          channel: currentChannel, // Include channel for per-tab routing
         };
 
         if (pendingRequest) {
@@ -123,6 +128,7 @@ class FuseConnectContentScript {
         this.safeSendMessage({
           type: 'RESPONSE_COMPLETE',
           content: content.length > 50000 ? content.substring(0, 50000) : content,
+          channel: currentChannel, // Also pass at top level for easier access
           metadata: responseMetadata,
         });
 
