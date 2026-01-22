@@ -83,6 +83,14 @@ export class AIService {
         return isAvailable;
       }
 
+      // CLI Agents don't need API keys (they rely on local setup)
+      if (provider.endsWith('-cli')) {
+        const cliConfig = config.getCLIAgentConfig(provider);
+        const isAvailable = !!cliConfig && cliConfig.enabled;
+        this.updateProviderStatus(provider, isAvailable);
+        return isAvailable;
+      }
+
       // Other providers need API keys
       const apiKey = await config.getApiKey(provider);
       const isAvailable = !!apiKey && apiKey.length > 0;
@@ -112,6 +120,7 @@ export class AIService {
   private async autoSelectProvider(): Promise<void> {
     // Priority order for auto-selection (December 2025)
     const providers: LLMProviderType[] = [
+      'gemini-cli', // Priority for local user request
       'openai', // GPT-5.2
       'anthropic', // Claude Opus 4.5
       'gemini', // Gemini 3 Pro

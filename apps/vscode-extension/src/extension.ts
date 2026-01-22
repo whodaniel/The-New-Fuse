@@ -8,6 +8,7 @@
 import * as vscode from 'vscode';
 import { registerCommands } from './commands';
 import { ConfigManager } from './core/config';
+import { LLMProviderType, MCPServerConfig, RegisteredAgent, TheNewFuseAPI } from './core/types';
 import { ChatViewProvider } from './providers/ChatViewProvider';
 import { AIService, getAIService } from './services/AIService';
 import { ChatService } from './services/ChatService';
@@ -17,7 +18,7 @@ import { log, logger } from './utils/logger';
 /**
  * Extension activation
  */
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
+export async function activate(context: vscode.ExtensionContext): Promise<TheNewFuseAPI> {
   log.info('🚀 The New Fuse v9.0.0 activating...');
   const startTime = Date.now();
 
@@ -66,10 +67,63 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     log.info(`✅ The New Fuse activated successfully in ${elapsed}ms`);
 
     vscode.window.setStatusBarMessage('$(check) The New Fuse Ready', 3000);
+
+    // Return the Extension API
+    return new ExtensionAPI(chatViewProvider);
   } catch (error) {
     log.error('Extension activation failed', error);
     vscode.window.showErrorMessage(`The New Fuse failed to activate: ${(error as Error).message}`);
     throw error;
+  }
+}
+
+/**
+ * API Implementation for other extensions to consume
+ */
+class ExtensionAPI implements TheNewFuseAPI {
+  constructor(private chatViewProvider: ChatViewProvider) {}
+
+  registerAgent(agent: RegisteredAgent): void {
+    log.info(`API: Registering agent ${agent.name} (${agent.id})`);
+    // TODO: Register agent with orchestration service
+    // For now, we can add it to the CLI Agents configuration if it doesn't exist
+    const config = ConfigManager.getInstance();
+    const existing = config.getCLIAgentConfig(agent.id as LLMProviderType);
+
+    if (!existing) {
+      config.addCLIAgent({
+        name: agent.name,
+        command: `agent-bridge --id ${agent.id}`, // Placeholder command
+        args: [],
+        inputFormat: 'stdin',
+        outputFormat: 'json',
+        enabled: true,
+        timeout: 60000,
+      });
+    }
+  }
+
+  async sendMessage(message: string, context?: unknown): Promise<void> {
+    log.info('API: Sending message');
+    // We can expose a method on ChatViewProvider to inject messages
+    // This requires a minor update to ChatViewProvider to publicize 'addMessageToChat' functionality
+    // For now, we'll assume the provider has a way to handle this or we can add it.
+    // Ideally, we'd use the ChatService directly but the View controls the UI.
+
+    // As a temporary workaround if the method doesn't exist on public interface:
+    vscode.commands.executeCommand('theNewFuse.sendMessage', message);
+  }
+
+  getActiveProvider(): LLMProviderType | null {
+    const aiService = AIService.getInstance();
+    return aiService.getActiveProvider();
+  }
+
+  getMCPServers(): MCPServerConfig[] {
+    const mcpService = MCPService.getInstance();
+    // Assuming MCPService has a method to get servers, or we use ConfigManager
+    const config = ConfigManager.getInstance();
+    return config.getMCPServers();
   }
 }
 

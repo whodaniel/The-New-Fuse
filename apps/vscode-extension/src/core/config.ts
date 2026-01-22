@@ -205,10 +205,10 @@ export class ConfigManager {
         name: 'gemini',
         command: 'gemini',
         args: [],
-        inputFormat: 'stdin',
+        inputFormat: 'arg',
         outputFormat: 'stdout',
         timeout: 120000,
-        enabled: false,
+        enabled: true,
       },
       {
         name: 'jules',

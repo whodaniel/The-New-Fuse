@@ -199,3 +199,42 @@ export interface SystemStatus {
   mcpStatus: 'active' | 'inactive' | 'partial';
   mcpServerCount: number;
 }
+
+// ============================================
+// Extension API (For other extensions)
+// ============================================
+
+export interface AgentCapabilities {
+  supportsStreaming: boolean;
+  supportsImages: boolean;
+  supportsTools: boolean;
+}
+
+export interface RegisteredAgent {
+  id: string;
+  name: string;
+  description: string;
+  capabilities: AgentCapabilities;
+}
+
+export interface TheNewFuseAPI {
+  /**
+   * Register a new AI agent with the platform
+   */
+  registerAgent(agent: RegisteredAgent): void;
+
+  /**
+   * Send a message to the orchestrator/chat
+   */
+  sendMessage(message: string, context?: unknown): Promise<void>;
+
+  /**
+   * Get the current active LLM provider
+   */
+  getActiveProvider(): LLMProviderType | null;
+
+  /**
+   * Get list of connected MCP servers
+   */
+  getMCPServers(): MCPServerConfig[];
+}
