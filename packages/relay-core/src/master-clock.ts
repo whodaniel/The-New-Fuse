@@ -58,10 +58,10 @@
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
 
-const WebSocket = require('ws');
-const { createClient } = require('redis');
-const fs = require('fs').promises;
-const path = require('path');
+import WebSocket from 'ws';
+import { createClient, RedisClientType } from 'redis';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 // ============================================================================
 // CONFIGURATION
@@ -69,10 +69,10 @@ const path = require('path');
 
 const CONFIG = {
   // Timing (in milliseconds)
-  HEARTBEAT_INTERVAL: parseInt(process.env.HEARTBEAT_INTERVAL) || 3000, // 3 seconds
-  STALL_THRESHOLD: parseInt(process.env.STALL_THRESHOLD) || 5000, // 5 seconds
-  RECOVERY_INTERVAL: parseInt(process.env.RECOVERY_INTERVAL) || 10000, // 10 seconds
-  ONBOARDING_TIMEOUT: parseInt(process.env.ONBOARDING_TIMEOUT) || 30000, // 30 seconds
+  HEARTBEAT_INTERVAL: parseInt(process.env.HEARTBEAT_INTERVAL || '') || 3000, // 3 seconds
+  STALL_THRESHOLD: parseInt(process.env.STALL_THRESHOLD || '') || 5000, // 5 seconds
+  RECOVERY_INTERVAL: parseInt(process.env.RECOVERY_INTERVAL || '') || 10000, // 10 seconds
+  ONBOARDING_TIMEOUT: parseInt(process.env.ONBOARDING_TIMEOUT || '') || 30000, // 30 seconds
   MAX_RECOVERY_ATTEMPTS: 5,
 
   // Connections
@@ -103,10 +103,18 @@ const CONFIG = {
 // LOGGING
 // ============================================================================
 
-const LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3 };
+const LOG_LEVELS: Record<string, number> = { debug: 0, info: 1, warn: 2, error: 3 };
 const currentLogLevel = LOG_LEVELS[CONFIG.LOG_LEVEL] || 1;
 
-function log(level, category, message, data = {}) {
+interface LogEntry {
+  timestamp: string;
+  level: string;
+  category: string;
+  message: string;
+  [key: string]: any;
+}
+
+function log(level: string, category: string, message: string, data: any = {}) {
   if (LOG_LEVELS[level] < currentLogLevel) return;
 
   const timestamp = new Date().toISOString();
@@ -118,7 +126,7 @@ function log(level, category, message, data = {}) {
       error: '❌',
     }[level] || '📍';
 
-  const entry = { timestamp, level, category, message, ...data };
+  const entry: LogEntry = { timestamp, level, category, message, ...data };
   console.log(
     `${prefix} [${timestamp}] [${category}] ${message}`,
     data.agentId ? `(${data.agentId})` : ''
@@ -128,7 +136,7 @@ function log(level, category, message, data = {}) {
   logToFile(entry).catch(() => {});
 }
 
-async function logToFile(entry) {
+async function logToFile(entry: LogEntry) {
   try {
     await fs.mkdir(CONFIG.LOG_DIR, { recursive: true });
     const logFile = path.join(
@@ -145,14 +153,33 @@ async function logToFile(entry) {
 // AGENT REGISTRY
 // ============================================================================
 
+interface Agent {
+  agentId: string;
+  sourceId: string;
+  platform: string;
+  name: string;
+  capabilities: string[];
+  registeredAt: number;
+  lastHeartbeat: number;
+  lastActivity: number;
+  status: 'active' | 'stalled' | 'offline';
+  messageCount: number;
+  violations: number;
+  channel: string | null;
+}
+
 class AgentRegistry {
+  agents: Map<string, Agent>;
+  nextAgentNumber: number;
+  pendingOnboarding: Map<string, any>;
+
   constructor() {
     this.agents = new Map();
     this.nextAgentNumber = 1;
     this.pendingOnboarding = new Map();
   }
 
-  assignAgentId(sourceId, info = {}) {
+  assignAgentId(sourceId: string, info: any = {}): string {
     // Check if already assigned
     for (const [id, agent] of this.agents) {
       if (agent.sourceId === sourceId) {
@@ -164,7 +191,7 @@ class AgentRegistry {
     const agentNum = String(this.nextAgentNumber++).padStart(2, '0');
     const agentId = `AGENT-${agentNum}`;
 
-    const agent = {
+    const agent: Agent = {
       agentId,
       sourceId,
       platform: info.platform || 'unknown',
@@ -188,7 +215,7 @@ class AgentRegistry {
     return agentId;
   }
 
-  recordHeartbeat(agentId) {
+  recordHeartbeat(agentId: string) {
     const agent = this.agents.get(agentId);
     if (agent) {
       agent.lastHeartbeat = Date.now();
@@ -196,7 +223,7 @@ class AgentRegistry {
     }
   }
 
-  recordActivity(agentId) {
+  recordActivity(agentId: string) {
     const agent = this.agents.get(agentId);
     if (agent) {
       agent.lastActivity = Date.now();
@@ -205,7 +232,7 @@ class AgentRegistry {
     }
   }
 
-  recordViolation(agentId, type) {
+  recordViolation(agentId: string, type: string) {
     const agent = this.agents.get(agentId);
     if (agent) {
       agent.violations++;
@@ -217,11 +244,11 @@ class AgentRegistry {
     }
   }
 
-  getAgent(agentId) {
+  getAgent(agentId: string): Agent | undefined {
     return this.agents.get(agentId);
   }
 
-  getAgentBySource(sourceId) {
+  getAgentBySource(sourceId: string): Agent | null {
     for (const [_, agent] of this.agents) {
       if (agent.sourceId === sourceId) {
         return agent;
@@ -230,9 +257,9 @@ class AgentRegistry {
     return null;
   }
 
-  getStaleAgents(thresholdMs) {
+  getStaleAgents(thresholdMs: number): Agent[] {
     const now = Date.now();
-    const stale = [];
+    const stale: Agent[] = [];
     for (const [id, agent] of this.agents) {
       if (agent.status !== 'offline' && now - agent.lastHeartbeat > thresholdMs) {
         stale.push(agent);
@@ -241,7 +268,7 @@ class AgentRegistry {
     return stale;
   }
 
-  markOffline(agentId) {
+  markOffline(agentId: string) {
     const agent = this.agents.get(agentId);
     if (agent) {
       agent.status = 'offline';
@@ -268,7 +295,34 @@ class AgentRegistry {
 // MASTER CLOCK
 // ============================================================================
 
+interface Metrics {
+  heartbeatsSent: number;
+  stallsDetected: number;
+  recoveryAttempts: number;
+  messagesProcessed: number;
+  agentsOnboarded: number;
+}
+
+interface ChannelData {
+  members: Set<string>;
+  lastActivity: number;
+  messageCount: number;
+}
+
 class MasterClock {
+  sessionId: string;
+  registry: AgentRegistry;
+  ws: WebSocket | null;
+  redis: ReturnType<typeof createClient> | null;
+  redisSub: ReturnType<typeof createClient> | null;
+  isRunning: boolean;
+  heartbeatInterval: NodeJS.Timeout | null;
+  stallCheckInterval: NodeJS.Timeout | null;
+  channels: Map<string, ChannelData>;
+  recoveryAttempts: Map<string, number>;
+  metrics: Metrics;
+  reconnectTimer: NodeJS.Timeout | null = null;
+
   constructor() {
     this.sessionId = `ORCHESTRATOR-${Date.now()}`;
     this.registry = new AgentRegistry();
@@ -319,7 +373,7 @@ class MasterClock {
 
       this.isRunning = true;
       log('info', 'MASTER', '✅ MASTER CLOCK IS NOW THE BATON HOLDER');
-    } catch (error) {
+    } catch (error: any) {
       log('error', 'MASTER', `Failed to start: ${error.message}`);
       this.scheduleReconnect();
     }
@@ -331,14 +385,14 @@ class MasterClock {
     this.redis = createClient({ url: CONFIG.REDIS_URL });
     this.redisSub = createClient({ url: CONFIG.REDIS_URL });
 
-    this.redis.on('error', (err) => log('error', 'REDIS', `Client error: ${err.message}`));
-    this.redisSub.on('error', (err) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
+    this.redis.on('error', (err: any) => log('error', 'REDIS', `Client error: ${err.message}`));
+    this.redisSub.on('error', (err: any) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
 
     await this.redis.connect();
     await this.redisSub.connect();
 
     // Subscribe to ingress for messages from other components
-    await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS, (message) => {
+    await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS, (message: string) => {
       try {
         const envelope = JSON.parse(message);
         this.handleRedisMessage(envelope);
@@ -350,7 +404,7 @@ class MasterClock {
     log('info', 'REDIS', '✅ Connected to Redis cloud coordination');
   }
 
-  async connectRelay() {
+  async connectRelay(): Promise<void> {
     return new Promise((resolve, reject) => {
       log('info', 'RELAY', `Connecting to ${CONFIG.RELAY_URL}...`);
 
@@ -368,7 +422,7 @@ class MasterClock {
         resolve();
       });
 
-      this.ws.on('message', (data) => {
+      this.ws.on('message', (data: any) => {
         this.handleRelayMessage(data);
       });
 
@@ -377,7 +431,7 @@ class MasterClock {
         this.scheduleReconnect();
       });
 
-      this.ws.on('error', (err) => {
+      this.ws.on('error', (err: any) => {
         log('error', 'RELAY', `Connection error: ${err.message}`);
         clearTimeout(timeout);
         reject(err);
@@ -551,7 +605,7 @@ class MasterClock {
     }
   }
 
-  attemptRecovery(agentId, attemptNumber) {
+  attemptRecovery(agentId: string, attemptNumber: number) {
     this.recoveryAttempts.set(agentId, attemptNumber);
     this.metrics.recoveryAttempts++;
 
@@ -589,7 +643,7 @@ class MasterClock {
   // MESSAGE HANDLING
   // --------------------------------------------------------------------------
 
-  handleRelayMessage(data) {
+  handleRelayMessage(data: any) {
     try {
       const msg = JSON.parse(data.toString());
       this.processMessage(msg, 'relay');
@@ -598,11 +652,11 @@ class MasterClock {
     }
   }
 
-  handleRedisMessage(envelope) {
+  handleRedisMessage(envelope: any) {
     this.processMessage(envelope, 'redis');
   }
 
-  processMessage(msg, source) {
+  processMessage(msg: any, source: string) {
     this.metrics.messagesProcessed++;
 
     switch (msg.type) {
@@ -624,7 +678,7 @@ class MasterClock {
     }
   }
 
-  handleChannelMessage(msg) {
+  handleChannelMessage(msg: any) {
     const content = msg.payload?.content || '';
     const sourceId = msg.payload?.from || msg.source;
     const channel = msg.channel || msg.payload?.channel;
@@ -661,12 +715,14 @@ class MasterClock {
     // Update channel activity
     if (channel && this.channels.has(channel)) {
       const ch = this.channels.get(channel);
-      ch.lastActivity = Date.now();
-      ch.messageCount++;
+      if (ch) {
+        ch.lastActivity = Date.now();
+        ch.messageCount++;
+      }
     }
   }
 
-  handleAgentHeartbeat(msg) {
+  handleAgentHeartbeat(msg: any) {
     const agentId = msg.payload?.agentId || msg.source;
     const existingAgent = this.registry.getAgentBySource(agentId);
 
@@ -676,7 +732,7 @@ class MasterClock {
     }
   }
 
-  handleAgentRegistration(msg) {
+  handleAgentRegistration(msg: any) {
     const info = msg.payload?.agent || {};
     const sourceId = info.id || msg.source;
 
@@ -696,13 +752,13 @@ class MasterClock {
     }
   }
 
-  handleAgentJoined(msg) {
+  handleAgentJoined(msg: any) {
     const channel = msg.channel;
     const agentId = msg.payload?.agentId || msg.source;
 
     if (channel && this.channels.has(channel) && agentId) {
       const ch = this.channels.get(channel);
-      ch.members.add(agentId);
+      if (ch) ch.members.add(agentId);
 
       // Check if this agent needs onboarding
       const existingAgent = this.registry.getAgentBySource(agentId);
@@ -717,7 +773,7 @@ class MasterClock {
   // UTILITY METHODS
   // --------------------------------------------------------------------------
 
-  send(msg) {
+  send(msg: any) {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(
         JSON.stringify({
@@ -729,7 +785,7 @@ class MasterClock {
     }
   }
 
-  broadcastToChannel(channel, content) {
+  broadcastToChannel(channel: string, content: string) {
     this.send({
       type: 'MESSAGE_SEND',
       channel,
@@ -774,7 +830,7 @@ Current Status:
     }
   }
 
-  createAssignmentMessage(agentId) {
+  createAssignmentMessage(agentId: string) {
     return `
 ╔═══════════════════════════════════════════════════════════════╗
 ║  🎫 AGENT ID ASSIGNMENT                                       ║
@@ -791,7 +847,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
 `;
   }
 
-  broadcastAgentOffline(agentId) {
+  broadcastAgentOffline(agentId: string) {
     for (const channel of CONFIG.CHANNELS) {
       this.broadcastToChannel(
         channel,
@@ -800,19 +856,19 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     }
   }
 
-  sendSigningReminder(channel, agentId) {
+  sendSigningReminder(channel: string, agentId: string) {
     this.broadcastToChannel(
       channel,
       `⚠️ Reminder: ${agentId}, please sign your messages with [${agentId}]`
     );
   }
 
-  isSignedMessage(content, agentId) {
+  isSignedMessage(content: string, agentId: string) {
     if (!content || !agentId) return false;
     return content.includes(`[${agentId}]`) || content.startsWith(`[${agentId}]`);
   }
 
-  detectPlatform(content) {
+  detectPlatform(content: string) {
     const lower = content.toLowerCase();
     if (lower.includes('gemini')) return 'gemini';
     if (lower.includes('claude')) return 'claude';
@@ -824,7 +880,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     return 'unknown';
   }
 
-  detectCapabilities(content) {
+  detectCapabilities(content: string) {
     const capabilities = [];
     const lower = content.toLowerCase();
 
