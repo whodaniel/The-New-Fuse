@@ -102,4 +102,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 # Start command - substitute environment variables and start nginx
 # Set defaults for PORT and BACKEND_URL if not provided
 # Then use envsubst to replace variables in nginx config
-CMD ["sh", "-c", "export PORT=${PORT:-3000} && export BACKEND_URL=${BACKEND_URL:-http://backend:3001} && envsubst '$$PORT $$BACKEND_URL' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+CMD ["sh", "-c", "echo 'Starting nginx with PORT=${PORT:-3000}' && export PORT=${PORT:-3000} && export BACKEND_URL=${BACKEND_URL:-https://api.thenewfuse.com} && envsubst '$$PORT $$BACKEND_URL' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf && echo 'Nginx config generated:' && head -50 /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
