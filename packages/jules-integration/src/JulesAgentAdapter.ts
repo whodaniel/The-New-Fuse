@@ -25,7 +25,7 @@ export class JulesAgentAdapter {
   async registerJulesAgent(tenantId: string): Promise<any> {
     const agentId = `jules-agent-${tenantId}`;
 
-    let agent = await this.agentRepo.findById(agentId);
+    let agent = await this.agentRepo.findById(agentId, tenantId);
 
     if (!agent) {
       const agentData = {
@@ -149,7 +149,7 @@ export class JulesAgentAdapter {
     await this.agentRepo.updateStatus(agentId, status);
 
     // Update in Redis registry
-    const agent = await this.agentRepo.findById(agentId);
+    const agent = await this.agentRepo.findById(agentId, tenantId);
     if (agent) {
       const agentMetadata: Omit<AgentMetadata, 'lastSeen'> = {
         id: agent.id,
