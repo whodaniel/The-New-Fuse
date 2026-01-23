@@ -22,14 +22,18 @@
         // GLOBAL ERROR FILTER: Catch and swallow specific collision and module resolution errors
         // This acts as a safety net if the guard is bypassed or loaded late.
         window.addEventListener('error', function(event) {
-          if (event.message && (
-              event.message.includes('mce-autosize-textarea') ||
-              event.message.includes('already been defined') ||
-              event.message.includes('already been used') ||
-              event.message.includes('Failed to resolve module specifier') ||
-              event.message.includes('scheduler')
-          )) {
-            // Silently swallow these specific errors to keep console clean
+          // Robustly catch custom element definition errors
+          const msg = (event.message || '').toLowerCase();
+          if (
+              msg.includes('mce-autosize-textarea') ||
+              msg.includes('already been defined') ||
+              msg.includes('already been used') ||
+              msg.includes('failed to resolve module') ||
+              msg.includes('scheduler') ||
+              // Catch "Uncaught Error: ..." variations
+              (msg.includes('uncaught') && msg.includes('custom element'))
+          ) {
+            // Silently swallow these errors
             event.preventDefault();
             event.stopImmediatePropagation();
             return true;

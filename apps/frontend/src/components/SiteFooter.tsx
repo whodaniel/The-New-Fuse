@@ -55,35 +55,6 @@ export const SiteFooter = () => {
             <h3 className="font-semibold text-white mb-4">Product</h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link
-                  to="/dashboard"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link to="/agents" className="text-gray-400 hover:text-white transition-colors">
-                  AI Agents
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/workflows"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Workflows
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/workflows/builder"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Builder
-                </Link>
-              </li>
-              <li>
                 <Link to="/pricing" className="text-gray-400 hover:text-white transition-colors">
                   Pricing
                 </Link>
@@ -96,26 +67,12 @@ export const SiteFooter = () => {
             <h3 className="font-semibold text-white mb-4">Resources</h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link
-                  to="/workflows/templates"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Templates
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/community"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <Link to="/community" className="text-gray-400 hover:text-white transition-colors">
                   Community
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/docs"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <Link to="/docs" className="text-gray-400 hover:text-white transition-colors">
                   API Reference
                 </Link>
               </li>

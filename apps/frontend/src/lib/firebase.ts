@@ -50,22 +50,20 @@ export const auth = getAuth(app);
 let db: Firestore;
 
 try {
-  // Check if Firestore is already initialized to avoid duplicate initialization error
   try {
-    db = getFirestore(app);
-  } catch (e) {
-    // Not initialized yet, try with custom settings
-    console.warn('Standard getFirestore failed, attempting initializeFirestore...', e);
+    // Check if Firestore is already initialized
     try {
+      db = getFirestore(app);
+    } catch {
+      // If not, initialize it with standard settings
       db = initializeFirestore(app, {
-        experimentalForceLongPolling: true,
         cacheSizeBytes: CACHE_SIZE_UNLIMITED
       });
-    } catch (initError) {
-      console.error('Failed to initialize Firestore with custom settings:', initError);
-      // Last resort fallback
-      db = getFirestore(app);
     }
+  } catch (e) {
+    console.error('[The New Fuse] Firestore init failed:', e);
+    // Fallback to default instance to prevent crash
+    db = getFirestore(app);
   }
 } catch (error) {
   console.error('[The New Fuse] Critical Firestore initialization error:', error);
