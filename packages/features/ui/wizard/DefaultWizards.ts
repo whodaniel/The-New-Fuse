@@ -410,9 +410,9 @@ export function createDeployToRailwayWizard(): WizardDefinition {
         return { valid: true };
       },
       previousStep: 'deploy',
-      nextStep: (context) => {
+      nextStep: ((context: WizardContext): string | null => {
         return context.data.configureCustomDomain ? 'custom-domain' : 'completion';
-      },
+      }) as any,
     })
     .addStep({
       id: 'custom-domain',
@@ -432,9 +432,9 @@ export function createDeployToRailwayWizard(): WizardDefinition {
       component: 'DeploymentSuccess',
       canSkip: false,
       estimatedTime: 30,
-      previousStep: (context) => {
+      previousStep: ((context: WizardContext): string | null => {
         return context.data.configureCustomDomain ? 'custom-domain' : 'verify-deployment';
-      },
+      }) as any,
     })
     .build();
 }
@@ -561,7 +561,7 @@ export function createTroubleshootingWizard(): WizardDefinition {
       component: 'IssueIdentifier',
       canSkip: false,
       estimatedTime: 60,
-      nextStep: (context) => {
+      nextStep: ((context: WizardContext): string | null => {
         const issueType = context.data.issueType as string;
 
         switch (issueType) {
@@ -576,7 +576,7 @@ export function createTroubleshootingWizard(): WizardDefinition {
           default:
             return 'general-troubleshooting';
         }
-      },
+      }) as any,
     })
     .addStep({
       id: 'auth-troubleshooting',
@@ -635,9 +635,9 @@ export function createTroubleshootingWizard(): WizardDefinition {
       component: 'ResolutionCheck',
       canSkip: false,
       estimatedTime: 30,
-      nextStep: (context) => {
+      nextStep: ((context: WizardContext): string | null => {
         return context.data.resolved ? 'completion' : 'contact-support';
-      },
+      }) as any,
     })
     .addStep({
       id: 'contact-support',

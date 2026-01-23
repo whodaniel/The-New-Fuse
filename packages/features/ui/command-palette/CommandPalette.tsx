@@ -3,7 +3,7 @@ import {
   Cloud,
   Code,
   Database,
-  Docker,
+  Box,
   FileCode,
   GitBranch,
   Package,
@@ -87,7 +87,7 @@ const CATEGORIES: Record<
   },
   docker: {
     label: 'Docker',
-    icon: Docker,
+    icon: Box,
     color: '#06B6D4',
     bgColor: '#CFFAFE',
   },
@@ -360,7 +360,7 @@ const COMMANDS: Command[] = [
     command: 'pnpm docker:start',
     category: 'docker',
     tags: ['docker', 'start', 'containers', 'postgres', 'redis'],
-    icon: Docker,
+    icon: Box,
   },
   {
     id: 'docker-stop',

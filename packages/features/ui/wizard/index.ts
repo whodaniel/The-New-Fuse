@@ -16,7 +16,7 @@ export {
 } from './WizardSystem';
 
 // Default wizards
-export {
+import {
   createAgentCreationWizard,
   createConfigureRBACWizard,
   createDeployToRailwayWizard,
@@ -24,6 +24,15 @@ export {
   createTroubleshootingWizard,
   DEFAULT_WIZARDS,
 } from './DefaultWizards';
+
+export {
+  createAgentCreationWizard,
+  createConfigureRBACWizard,
+  createDeployToRailwayWizard,
+  createGetStartedWizard,
+  createTroubleshootingWizard,
+  DEFAULT_WIZARDS,
+};
 
 // React components
 export { Wizard, WizardList, type WizardListProps, type WizardUIProps } from './WizardUI';
@@ -67,7 +76,6 @@ export function initializeWizardSystem(): WizardStateManagerClass {
   const stateManager = new WizardStateManagerClass();
 
   // Register all default wizards
-  const { DEFAULT_WIZARDS } = require('./DefaultWizards');
   DEFAULT_WIZARDS.forEach((wizard: any) => {
     stateManager.registerWizard(wizard);
   });

@@ -10,7 +10,7 @@
     "types": [],
     "jsx": "react-jsx"
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["ui/**/*.ts", "ui/**/*.tsx"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [{ "path": "./ai/llm" }, { "path": "../types" }]
+  "references": [{ "path": "../types" }]
 }

@@ -4,32 +4,38 @@
  * All step components for the wizard system
  */
 
-// Onboarding steps
-export { ProfileSetup, type ProfileSetupProps } from './ProfileSetup';
-export { WelcomeScreen, type WelcomeScreenProps } from './WelcomeScreen';
-export { WorkspaceSetup, type WorkspaceSetupProps } from './WorkspaceSetup';
+import { ProfileSetup, type ProfileSetupProps } from './ProfileSetup';
+import { WelcomeScreen, type WelcomeScreenProps } from './WelcomeScreen';
+import { WorkspaceSetup, type WorkspaceSetupProps } from './WorkspaceSetup';
+import { AgentCapabilities, type AgentCapabilitiesProps } from './AgentCapabilities';
+import { AgentConfiguration, type AgentConfigurationProps } from './AgentConfiguration';
+import { AgentTesting, type AgentTestingProps } from './AgentTesting';
+import { DeploymentConfiguration, type DeploymentConfigurationProps } from './DeploymentConfiguration';
+import { DeploymentProgress, type DeploymentProgressProps } from './DeploymentProgress';
+import { RailwayConnection, type RailwayConnectionProps } from './RailwayConnection';
+import { PermissionMatrix, type PermissionMatrixProps } from './PermissionMatrix';
+import { RoleConfiguration, type RoleConfigurationProps } from './RoleConfiguration';
+import { DiagnosticsRunner, type DiagnosticsRunnerProps } from './DiagnosticsRunner';
+import { ProblemIdentification, type ProblemIdentificationProps } from './ProblemIdentification';
+import { SolutionSteps, type SolutionStepsProps } from './SolutionSteps';
 
-// Agent creation steps
-export { AgentCapabilities, type AgentCapabilitiesProps } from './AgentCapabilities';
-export { AgentConfiguration, type AgentConfigurationProps } from './AgentConfiguration';
-export { AgentTesting, type AgentTestingProps } from './AgentTesting';
-
-// Deployment steps
+// Re-export
 export {
-  DeploymentConfiguration,
-  type DeploymentConfigurationProps,
-} from './DeploymentConfiguration';
-export { DeploymentProgress, type DeploymentProgressProps } from './DeploymentProgress';
-export { RailwayConnection, type RailwayConnectionProps } from './RailwayConnection';
-
-// RBAC steps
-export { PermissionMatrix, type PermissionMatrixProps } from './PermissionMatrix';
-export { RoleConfiguration, type RoleConfigurationProps } from './RoleConfiguration';
-
-// Troubleshooting steps
-export { DiagnosticsRunner, type DiagnosticsRunnerProps } from './DiagnosticsRunner';
-export { ProblemIdentification, type ProblemIdentificationProps } from './ProblemIdentification';
-export { SolutionSteps, type SolutionStepsProps } from './SolutionSteps';
+  ProfileSetup, type ProfileSetupProps,
+  WelcomeScreen, type WelcomeScreenProps,
+  WorkspaceSetup, type WorkspaceSetupProps,
+  AgentCapabilities, type AgentCapabilitiesProps,
+  AgentConfiguration, type AgentConfigurationProps,
+  AgentTesting, type AgentTestingProps,
+  DeploymentConfiguration, type DeploymentConfigurationProps,
+  DeploymentProgress, type DeploymentProgressProps,
+  RailwayConnection, type RailwayConnectionProps,
+  PermissionMatrix, type PermissionMatrixProps,
+  RoleConfiguration, type RoleConfigurationProps,
+  DiagnosticsRunner, type DiagnosticsRunnerProps,
+  ProblemIdentification, type ProblemIdentificationProps,
+  SolutionSteps, type SolutionStepsProps
+};
 
 // Step component mapping for dynamic rendering
 export const STEP_COMPONENTS: Record<

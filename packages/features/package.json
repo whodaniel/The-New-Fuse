@@ -21,6 +21,7 @@
     }
   },
   "scripts": {
+    "build": "tsc --build",
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
