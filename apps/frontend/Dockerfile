@@ -47,13 +47,8 @@ ENV VITE_API_URL=/api
 ENV VITE_BACKEND_URL=/api
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
-# Set Firebase environment variables for Vite build
-ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
-ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
-ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
-ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
-ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
-ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
+# Firebase configuration is loaded from .env.production which is committed to the repo
+# Do NOT set empty ENV vars here as they override .env.production values
 
 # Build foundational packages first to ensure they're available
 # This avoids Turbo cache issues in fresh Docker builds
