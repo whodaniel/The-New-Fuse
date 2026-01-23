@@ -51,14 +51,10 @@ ENV NODE_ENV=production
 ENV VITE_API_URL=https://api.thenewfuse.com
 ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
 
-# Set Firebase environment variables for Vite build
-ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
-ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
-ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
-ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
-ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
-ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
+# Firebase config is loaded from .env.production (committed to repo)
+# Do NOT set empty ENV vars here - they would override .env.production values
 
+# Force cache invalidation: 2026-01-23T11:15:00Z
 RUN echo "Building with NODE_ENV=$NODE_ENV" && pnpm run build -- --mode production
 
 #------------------------------------------------------------------------------
@@ -85,4 +81,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # -s enables SPA mode (serves index.html for all routes)
 # -n disables clipboard notifications
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
-# Force rebuild Fri Jan 23 05:15:41 EST 2026
+# Force rebuild Thu Jan 23 06:15:00 EST 2026
