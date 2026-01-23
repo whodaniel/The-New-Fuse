@@ -109,6 +109,7 @@ export default defineConfig(({ mode }) => {
         mysql2: path.resolve(__dirname, 'src/stubs/empty.ts'),
         '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
         '@nestjs/swagger': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
+        'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
         // Stub @uauth/js which has browser-incompatible @unstoppabledomains/resolution deps
         '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
       },
