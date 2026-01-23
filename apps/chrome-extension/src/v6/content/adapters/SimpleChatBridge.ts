@@ -29,6 +29,7 @@ class SimpleChatBridge {
   private readonly CACHE_DURATION = 10000; // 10 seconds
 
   // Supported AI chat platforms for element detection logging
+  // NOTE: Only include actual AI chat interfaces - thenewfuse.com is NOT a chat interface
   private readonly SUPPORTED_CHAT_PLATFORMS = [
     'gemini.google.com',
     'bard.google.com',
@@ -37,8 +38,9 @@ class SimpleChatBridge {
     'claude.ai',
     'perplexity.ai',
     'poe.com',
-    'localhost', // Local development
-    'thenewfuse.com', // Our app
+    'aistudio.google.com',
+    'localhost:3000', // Local dev with chat
+    'localhost:3001', // Local backend
   ];
 
   /**
@@ -321,37 +323,33 @@ class SimpleChatBridge {
       }
 
       if (!isReady) {
-        // Content script now only runs on known sites or when explicitly activated
-        // so we always log when elements aren't found (user expects it to work here)
+        // Only log on supported AI chat platforms AND when DEBUG is enabled
+        // This prevents confusing users on non-chat sites
         const isSupportedSite = this.isSupportedPlatform();
 
-        if (stateChanged && (isSupportedSite || DEBUG)) {
-          // Add platform info to help debugging on unknown sites
+        if (stateChanged && isSupportedSite && DEBUG) {
+          // Add platform info to help debugging
           logData.isKnownPlatform = isSupportedSite;
 
-          console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
-        }
+          console.log('[SimpleChatBridge] Elements NOT ready:', logData);
 
-        // Provide hints for debugging (only on supported platforms once per state change)
-        if (!input && stateChanged && (isSupportedSite || DEBUG)) {
-          console.debug(
-            '[SimpleChatBridge] 💡 Enable debug mode: window.__FUSE_DEBUG_SELECTORS = true'
-          );
-          console.debug(
-            '[SimpleChatBridge] 💡 Available elements:',
-            'contenteditable count:',
-            document.querySelectorAll('[contenteditable="true"]').length,
-            'buttons with aria-label:',
-            document.querySelectorAll('button[aria-label]').length
-          );
-          if (!isSupportedSite) {
-            console.debug(
-              '[SimpleChatBridge] 💡 This is an unknown platform - you may need to add custom selectors'
+          // Provide hints for debugging
+          if (!input) {
+            console.log(
+              '[SimpleChatBridge] 💡 Enable debug mode: window.__FUSE_DEBUG_SELECTORS = true'
+            );
+            console.log(
+              '[SimpleChatBridge] 💡 Available elements:',
+              'contenteditable count:',
+              document.querySelectorAll('[contenteditable="true"]').length,
+              'buttons with aria-label:',
+              document.querySelectorAll('button[aria-label]').length
             );
           }
         }
-      } else {
-        console.debug('[SimpleChatBridge] ✅ Elements ready:', logData);
+      } else if (stateChanged) {
+        // Only log ready state when it actually changes (not on every scan)
+        console.log('[SimpleChatBridge] ✅ Elements ready:', logData);
       }
     }
 

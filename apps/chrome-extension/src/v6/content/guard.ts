@@ -5,6 +5,44 @@
  */
 
 try {
+  // GLOBAL ERROR LISTENER: Catch errors that bypass our patch (including scheduler module errors)
+  window.addEventListener(
+    'error',
+    (event) => {
+      if (
+        event.message &&
+        (event.message.includes('mce-autosize-textarea') ||
+          event.message.includes('already been defined') ||
+          event.message.includes('already been used') ||
+          event.message.includes('Failed to resolve module specifier') ||
+          event.message.includes('scheduler'))
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+    },
+    true
+  ); // Capture phase
+
+  // Also catch unhandled promise rejections for module loading failures
+  window.addEventListener(
+    'unhandledrejection',
+    (event) => {
+      if (
+        event.reason &&
+        event.reason.message &&
+        (event.reason.message.includes('Failed to resolve module specifier') ||
+          event.reason.message.includes('scheduler') ||
+          event.reason.message.includes('already been defined'))
+      ) {
+        event.preventDefault();
+        return;
+      }
+    },
+    true
+  );
+
   const originalDefine =
     typeof customElements !== 'undefined' && customElements ? customElements.define : undefined;
 
@@ -21,13 +59,13 @@ try {
         constructor: CustomElementConstructor,
         options?: ElementDefinitionOptions
       ) {
+        // SWALLOW known problematic elements
+        if (name === 'mce-autosize-textarea') {
+          if (customElements.get(name)) return;
+        }
+
         if (customElements.get(name)) {
-          // If in development, log a warning, otherwise fail silently to prevent crash
-          if (process.env.NODE_ENV === 'development') {
-            console.warn(
-              `[FuseConnect Guard] Custom element '${name}' is already defined. Skipping definition.`
-            );
-          }
+          // Silently skip - already defined
           return;
         }
 
@@ -35,7 +73,7 @@ try {
           originalDefine.call(this, name, constructor, options);
         } catch (e: any) {
           if (e.message && e.message.includes('already been defined')) {
-            console.warn(`[FuseConnect Guard] Collision caught for '${name}'.`);
+            // Silently skip collision
             return;
           }
           throw e;
@@ -52,21 +90,17 @@ try {
             return originalCustomElements;
           },
           set(v) {
-            console.warn(
-              '[FuseConnect Guard] Prevented external script from overwriting window.customElements'
-            );
+            // Silently prevent overwriting
           },
           configurable: false,
         });
       } catch (e) {
         // Ignore if already non-configurable
       }
-
-      console.debug('[FuseConnect] Custom Element Guard activated');
     }
   }
 } catch (e) {
-  console.error('[FuseConnect] Failed to activate Custom Element Guard', e);
+  // Silently fail - guard is optional
 }
 
 export {};

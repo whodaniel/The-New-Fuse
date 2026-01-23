@@ -4,21 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Import Map: Provides fallback resolution for bare module specifiers that external scripts may try to load -->
+    <script type="importmap">
+      {
+        "imports": {
+          "scheduler": "data:text/javascript,export const unstable_scheduleCallback=(p,c)=>setTimeout(c,0);export const unstable_cancelCallback=t=>clearTimeout(t);export const unstable_now=()=>performance.now();export const unstable_getCurrentPriorityLevel=()=>3;export const unstable_ImmediatePriority=1;export const unstable_UserBlockingPriority=2;export const unstable_NormalPriority=3;export const unstable_LowPriority=4;export const unstable_IdlePriority=5;export const unstable_runWithPriority=(p,c)=>c();export const unstable_next=c=>c();export const unstable_wrapCallback=c=>c;export const unstable_shouldYield=()=>false;export const unstable_requestPaint=()=>{};export const unstable_Profiling=null;export default{unstable_scheduleCallback,unstable_cancelCallback,unstable_now,unstable_getCurrentPriorityLevel,unstable_ImmediatePriority,unstable_UserBlockingPriority,unstable_NormalPriority,unstable_LowPriority,unstable_IdlePriority,unstable_runWithPriority,unstable_next,unstable_wrapCallback,unstable_shouldYield,unstable_requestPaint,unstable_Profiling};",
+          "scheduler/tracing": "data:text/javascript,export const __interactionsRef={current:new Set};export const __subscriberRef={current:null};export const unstable_clear=c=>c();export const unstable_getCurrent=()=>new Set;export const unstable_getThreadID=()=>0;export const unstable_subscribe=()=>{};export const unstable_trace=(n,t,c)=>c();export const unstable_unsubscribe=()=>{};export const unstable_wrap=c=>c;"
+        }
+      }
+    </script>
+
     <!-- CRITICAL: Custom Element Guard MUST be first to intercept browser extension scripts -->
     <script>
       (function () {
-        console.log('[The New Fuse] Custom Element Guard (V4-HOTFIX) - Initializing...');
-        
-        // GLOBAL ERROR FILTER: Catch and swallow the specific 'mce-autosize-textarea' collision error
+        console.log('[The New Fuse] Custom Element Guard (V5) - Initializing...');
+
+        // GLOBAL ERROR FILTER: Catch and swallow specific collision and module resolution errors
         // This acts as a safety net if the guard is bypassed or loaded late.
         window.addEventListener('error', function(event) {
           if (event.message && (
-              event.message.includes('mce-autosize-textarea') || 
-              event.message.includes('already been defined')
+              event.message.includes('mce-autosize-textarea') ||
+              event.message.includes('already been defined') ||
+              event.message.includes('already been used') ||
+              event.message.includes('Failed to resolve module specifier') ||
+              event.message.includes('scheduler')
           )) {
-            // Silently swallow this specific collision error to keep console clean
+            // Silently swallow these specific errors to keep console clean
             event.preventDefault();
             event.stopImmediatePropagation();
+            return true;
+          }
+        }, true);
+
+        // Also catch unhandled promise rejections for module loading failures
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event.reason && event.reason.message && (
+              event.reason.message.includes('Failed to resolve module specifier') ||
+              event.reason.message.includes('scheduler') ||
+              event.reason.message.includes('already been defined')
+          )) {
+            event.preventDefault();
             return true;
           }
         }, true);
@@ -130,7 +155,7 @@
             // Ignore if already non-configurable
           }
 
-          console.log('[The New Fuse] Custom Element Guard activated (V4) - Registry Locked');
+          console.log('[The New Fuse] Custom Element Guard activated (V5) - Registry Locked');
         } catch (e) {
           console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
         }
@@ -334,6 +359,48 @@
             }
             if (moduleName === '@emotion/is-prop-valid') {
               return { default: () => true };
+            }
+
+            // Scheduler module - used internally by React, some external scripts try to import it directly
+            if (moduleName === 'scheduler' || moduleName === 'scheduler/tracing') {
+              // Return a minimal scheduler shim that provides the essential APIs
+              if (window._schedulerShim) return window._schedulerShim;
+
+              const schedulerShim = {
+                unstable_scheduleCallback: function(priority, callback) {
+                  return setTimeout(callback, 0);
+                },
+                unstable_cancelCallback: function(task) {
+                  clearTimeout(task);
+                },
+                unstable_now: function() {
+                  return performance.now();
+                },
+                unstable_getCurrentPriorityLevel: function() {
+                  return 3; // NormalPriority
+                },
+                unstable_ImmediatePriority: 1,
+                unstable_UserBlockingPriority: 2,
+                unstable_NormalPriority: 3,
+                unstable_LowPriority: 4,
+                unstable_IdlePriority: 5,
+                unstable_runWithPriority: function(priority, callback) {
+                  return callback();
+                },
+                unstable_next: function(callback) {
+                  return callback();
+                },
+                unstable_wrapCallback: function(callback) {
+                  return callback;
+                },
+                unstable_shouldYield: function() {
+                  return false;
+                },
+                unstable_requestPaint: function() {},
+                unstable_Profiling: null,
+              };
+              window._schedulerShim = schedulerShim;
+              return schedulerShim;
             }
 
             return emptyModule;

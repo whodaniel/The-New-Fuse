@@ -77,9 +77,9 @@ export default defineConfig(({ mode }) => {
         'react-router-dom',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
+        'scheduler',
         '@types/react',
         '@types/react-dom',
-        'scheduler',
       ],
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -143,6 +143,7 @@ export default defineConfig(({ mode }) => {
         'react',
         'react-dom',
         'react-router-dom',
+        'scheduler', // React's internal scheduler - pre-bundle to ensure proper resolution
         '@emotion/is-prop-valid',
       ],
       exclude: [
