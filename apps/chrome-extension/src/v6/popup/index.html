@@ -306,6 +306,39 @@
           </div>
 
           <div class="settings-section">
+            <h3 class="section-title">Managed Sites</h3>
+            <div
+              class="setting-description"
+              style="margin-bottom: 12px; font-size: 11px; color: var(--text-secondary)"
+            >
+              Add custom sites to enable Fuse Connect on them.
+            </div>
+
+            <div class="sites-list" id="sites-list">
+              <!-- Sites injected by JS -->
+              <div class="empty-sites">Loading sites...</div>
+            </div>
+
+            <div class="add-site-row" style="display: flex; gap: 8px; margin-top: 12px">
+              <input
+                type="text"
+                id="new-site-input"
+                placeholder="example.com"
+                style="
+                  flex: 1;
+                  padding: 8px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border-subtle);
+                  background: var(--bg-input);
+                  color: var(--text-primary);
+                  font-size: 12px;
+                "
+              />
+              <button class="btn-secondary" id="add-site-btn" style="padding: 0 12px">Add</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
             <h3 class="section-title">Interface</h3>
             <div class="setting-item">
               <label>Show Panel on All Pages</label>

@@ -25,6 +25,7 @@
           autoReconnect: true,
           showPanel: true,
           debugMode: false,
+          allowedSites: [],
         },
       };
 
@@ -169,6 +170,22 @@
 
       document.getElementById('debug-mode')?.addEventListener('change', (e) => {
         this.state.settings.debugMode = e.target.checked;
+      });
+
+      // Managed Sites
+      document.getElementById('add-site-btn')?.addEventListener('click', () => {
+        this.addManagedSite();
+      });
+
+      document.getElementById('new-site-input')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') this.addManagedSite();
+      });
+
+      document.getElementById('sites-list')?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-site-btn')) {
+          const site = e.target.dataset.site;
+          this.removeManagedSite(site);
+        }
       });
 
       // Export logs
@@ -711,6 +728,8 @@
 
             const debugMode = document.getElementById('debug-mode');
             if (debugMode) debugMode.checked = this.state.settings.debugMode;
+
+            this.updateManagedSitesList();
           }
           resolve();
         });
@@ -821,6 +840,65 @@
           btn.disabled = false;
         }
       }
+    }
+
+    updateManagedSitesList() {
+      const list = document.getElementById('sites-list');
+      const sites = this.state.settings.allowedSites || [];
+
+      if (list) {
+        if (sites.length === 0) {
+          list.innerHTML = '<div class="empty-sites">No custom sites added</div>';
+        } else {
+          list.innerHTML = sites
+            .map(
+              (site) => `
+          <div class="site-item">
+            <span class="site-url">${site}</span>
+            <button class="delete-site-btn" data-site="${site}" title="Remove">✕</button>
+          </div>
+        `
+            )
+            .join('');
+        }
+      }
+    }
+
+    addManagedSite() {
+      const input = document.getElementById('new-site-input');
+      if (!input) return;
+
+      const rawSite = input.value.trim().toLowerCase();
+      if (!rawSite) return;
+
+      // Basic clean up: remove http://, https://, www.
+      let site = rawSite.replace(/^https?:\/\//, '').replace(/^www\./, '');
+
+      // Remove path, keep only hostname
+      site = site.split('/')[0];
+
+      if (!site) return;
+
+      if (!this.state.settings.allowedSites) {
+        this.state.settings.allowedSites = [];
+      }
+
+      if (!this.state.settings.allowedSites.includes(site)) {
+        this.state.settings.allowedSites.push(site);
+        this.saveSettings();
+        this.updateManagedSitesList();
+        input.value = '';
+      } else {
+        this.showToast('Site already added');
+      }
+    }
+
+    removeManagedSite(site) {
+      if (!this.state.settings.allowedSites) return;
+
+      this.state.settings.allowedSites = this.state.settings.allowedSites.filter((s) => s !== site);
+      this.saveSettings();
+      this.updateManagedSitesList();
     }
 
     updateAgentsList() {

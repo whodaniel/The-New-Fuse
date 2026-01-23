@@ -31,8 +31,10 @@
         'poe.com',
         'aistudio.google.com',
         'localhost:3000', // Local dev with chat
+        'localhost:3000', // Local dev with chat
         'localhost:3001', // Local backend
       ];
+      this.customSites = [];
     }
     /**
      * Check if current page is a supported chat platform
@@ -40,9 +42,11 @@
      */
     isSupportedPlatform() {
       const hostname = window.location.hostname.toLowerCase();
-      return this.SUPPORTED_CHAT_PLATFORMS.some(
+      const isDefault = this.SUPPORTED_CHAT_PLATFORMS.some(
         (platform) => hostname === platform || hostname.endsWith('.' + platform)
       );
+      if (isDefault) return true;
+      return this.customSites.some((site) => hostname === site || hostname.endsWith('.' + site));
     }
     /**
      * Initialize the bridge with callbacks
@@ -52,6 +56,23 @@
       // Suppress initialization log unless explicitly debugging or first time
       if (window.__FUSE_DEBUG_SELECTORS) {
         console.log('[SimpleChatBridge] Initialized');
+      }
+      // Load custom sites from storage
+      this.loadCustomSites();
+    }
+    /**
+     * Load custom allowed sites from storage
+     */
+    loadCustomSites() {
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        chrome.storage.local.get(['fuse_settings'], (result) => {
+          if (result.fuse_settings && result.fuse_settings.allowedSites) {
+            this.customSites = result.fuse_settings.allowedSites;
+            if (window.__FUSE_DEBUG_SELECTORS) {
+              console.log('[SimpleChatBridge] Loaded custom sites:', this.customSites);
+            }
+          }
+        });
       }
     }
     /**
