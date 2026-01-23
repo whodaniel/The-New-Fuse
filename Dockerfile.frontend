@@ -18,6 +18,10 @@ COPY pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml ./
 COPY package.json ./
 
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
+COPY tsconfig.standard.json ./
+
 # Copy all necessary workspace packages
 COPY packages ./packages
 COPY apps/frontend ./apps/frontend

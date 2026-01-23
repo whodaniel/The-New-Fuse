@@ -26,7 +26,9 @@ WORKDIR /app
 COPY pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml ./
 COPY package.json ./
-COPY tsconfig*.json ./
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
+COPY tsconfig.standard.json ./
 COPY scripts ./scripts
 
 # Copy all necessary workspace packages
@@ -81,4 +83,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # -s enables SPA mode (serves index.html for all routes)
 # -n disables clipboard notifications
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
-# Force rebuild Thu Jan 23 06:15:00 EST 2026
+# Force rebuild Thu Jan 23 06:30:00 EST 2026
