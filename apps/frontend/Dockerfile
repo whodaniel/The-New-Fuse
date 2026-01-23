@@ -10,6 +10,14 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
+# Accept Firebase environment variables as build args
+ARG VITE_FIREBASE_API_KEY
+ARG VITE_FIREBASE_AUTH_DOMAIN
+ARG VITE_FIREBASE_PROJECT_ID
+ARG VITE_FIREBASE_STORAGE_BUCKET
+ARG VITE_FIREBASE_MESSAGING_SENDER_ID
+ARG VITE_FIREBASE_APP_ID
+
 # Check if we're in the frontend directory or monorepo root
 # by looking for the presence of app-specific files
 
@@ -38,6 +46,14 @@ ENV NODE_ENV=production
 ENV VITE_API_URL=/api
 ENV VITE_BACKEND_URL=/api
 ENV NODE_OPTIONS=--max-old-space-size=4096
+
+# Set Firebase environment variables for Vite build
+ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
+ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
+ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
+ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
+ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
+ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
 
 # Build foundational packages first to ensure they're available
 # This avoids Turbo cache issues in fresh Docker builds
