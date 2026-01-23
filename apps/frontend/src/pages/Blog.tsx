@@ -108,39 +108,6 @@ export const Blog = () => {
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center gap-3 mb-4 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <Rocket className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold">The New Fuse</span>
-          </Link>
-          <p className="text-gray-400 text-sm mb-4">AI Agent Orchestration Platform</p>
-          <div className="flex justify-center gap-6 text-sm text-gray-400">
-            <Link to="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <Link to="/pricing" className="hover:text-white transition-colors">
-              Pricing
-            </Link>
-            <Link to="/legal/privacy" className="hover:text-white transition-colors">
-              Privacy
-            </Link>
-            <Link to="/legal/terms" className="hover:text-white transition-colors">
-              Terms
-            </Link>
-          </div>
-          <p className="text-xs text-gray-500 mt-4">
-            © {new Date().getFullYear()} The New Fuse. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };

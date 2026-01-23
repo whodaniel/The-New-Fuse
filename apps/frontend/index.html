@@ -46,6 +46,13 @@
               return;
             }
 
+            // Final safety check: if already defined in the global registry, skip
+            if (customElements.get(name)) {
+              console.warn(`[The New Fuse] Element '${name}' already detected in registry. Skipping.`);
+              registeredElements.add(name);
+              return;
+            }
+
             // Mark as being defined
             definingElements.add(name);
 
@@ -53,22 +60,21 @@
               originalDefine(name, constructor, options);
               registeredElements.add(name);
             } catch (e) {
-              const msg = e.message || '';
+              const msg = (e && e.message) || String(e || '');
               if (
-                msg.includes('already been defined') ||
-                msg.includes('has already been used') ||
-                msg.includes('NotSupportedError') ||
-                msg.includes('is already defined') ||
-                msg.includes('has already been')
+                msg.toLowerCase().includes('already') ||
+                msg.toLowerCase().includes('defined') ||
+                msg.toLowerCase().includes('used') ||
+                msg.includes('NotSupportedError')
               ) {
                 // Silently handle - element is already defined
-                console.warn(`[The New Fuse] Duplicate definition prevented for '${name}'`);
+                console.warn(`[The New Fuse] caught duplicate for '${name}': ${msg}`);
                 registeredElements.add(name);
                 return;
               }
               // Re-throw unexpected errors
-              console.error(`[The New Fuse] Unexpected error defining '${name}':`, e);
-              throw e;
+              console.error(`[The New Fuse] Error defining '${name}':`, e);
+              // don't throw to prevent crashing the whole app
             } finally {
               // Remove from defining set
               definingElements.delete(name);
@@ -93,17 +99,19 @@
           // Lock the customElements object itself to prevent polyfills from replacing it
           try {
             const originalCustomElements = window.customElements;
-            Object.defineProperty(window, 'customElements', {
-              get() {
-                return originalCustomElements;
-              },
-              set(v) {
-                console.warn(
-                  '[The New Fuse] Prevented external script from overwriting window.customElements'
-                );
-              },
-              configurable: false,
-            });
+            if (originalCustomElements) {
+              Object.defineProperty(window, 'customElements', {
+                get() {
+                  return originalCustomElements;
+                },
+                set(v) {
+                  console.warn(
+                    '[The New Fuse] Prevented external script from overwriting window.customElements'
+                  );
+                },
+                configurable: false,
+              });
+            }
           } catch (e) {
             // Ignore if already non-configurable
           }

@@ -278,7 +278,13 @@ class SimpleChatBridge {
 
     // Enhanced logging with selector diagnostics
     // ONLY log if state changed or debug mode is on to preventing spamming
-    const stateChanged = !this.cachedElements || result.isReady !== this.cachedElements.isReady;
+    const isReady = !!(input && sendButton);
+    const result = { input, sendButton, isReady };
+
+    // Enhanced logging with selector diagnostics
+    // ONLY log if state changed or debug mode is on to preventing spamming
+    const prevStateReady = this.cachedElements ? this.cachedElements.isReady : null;
+    const stateChanged = prevStateReady === null || result.isReady !== prevStateReady;
 
     if (stateChanged || DEBUG) {
       const logData: any = {
@@ -350,10 +356,12 @@ class SimpleChatBridge {
       }
     }
 
-    // Update cache if elements are ready
+    // Update cache - ALWAYS update to maintain state tracking, but only set expiry if ready
+    this.cachedElements = result;
     if (result.isReady) {
-      this.cachedElements = result;
       this.cacheValidUntil = Date.now() + this.CACHE_DURATION;
+    } else {
+      this.cacheValidUntil = 0; // Force re-scan next time if not ready
     }
 
     return result;
