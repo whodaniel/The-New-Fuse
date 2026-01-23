@@ -3,18 +3,19 @@
 
 ARG NODE_VERSION=22
 
+#------------------------------------------------------------------------------
+# Builder stage
+#------------------------------------------------------------------------------
+FROM node:${NODE_VERSION}-alpine AS builder
+
 # Accept Firebase environment variables as build args
+# These must be declared AFTER FROM to be available in this stage
 ARG VITE_FIREBASE_API_KEY
 ARG VITE_FIREBASE_AUTH_DOMAIN
 ARG VITE_FIREBASE_PROJECT_ID
 ARG VITE_FIREBASE_STORAGE_BUCKET
 ARG VITE_FIREBASE_MESSAGING_SENDER_ID
 ARG VITE_FIREBASE_APP_ID
-
-#------------------------------------------------------------------------------
-# Builder stage
-#------------------------------------------------------------------------------
-FROM node:${NODE_VERSION}-alpine AS builder
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
