@@ -1,95 +1,88 @@
 /**
  * MCP Integration bridges and Platform Integrations
- * 
+ *
  * This module provides integration bridges for connecting MCP core
  * with other platform components and The New Fuse ecosystem.
  */
 
 // Legacy relay bridge (deprecated - use relay-core integration)
 export {
-  RelayBridge,
   createRelayBridge,
+  RelayBridge,
   replaceMCPTransport,
-  type RelayBridgeConfig
+  type RelayBridgeConfig,
 } from './RelayBridge';
 
 // SkIDEancer IDE integration bridge
 export {
-  SkIDEancerMCPBridge,
   createSkIDEancerMCPBridge,
-  type SkIDEancerMCPBridgeConfig
-} from './SkIDEancerMCPBridge';
+  SkIDEancerMCPBridge,
+  type SkIDEancerMCPBridgeConfig,
+} from './TheiaMCPBridge';
 
 // MCP System Factory and related exports
 export {
   MCPSystemFactory,
+  type MCPSystem,
   type MCPSystemConfig,
-  type MCPSystem
 } from '../factory/MCPSystemFactory';
 
 // Platform integrations (new)
+export * from './database';
 export * from './platform-types';
 export * from './relay-core';
-export * from './database';
 
 // Workflow integration
 export {
   MCPWorkflowIntegration,
-  type MCPWorkflowIntegrationConfig
+  type MCPWorkflowIntegrationConfig,
 } from './MCPWorkflowIntegration';
 
 // Agent integration
-export {
-  MCPAgentIntegration,
-  type MCPAgentIntegrationConfig
-} from './MCPAgentIntegration';
+export { MCPAgentIntegration, type MCPAgentIntegrationConfig } from './MCPAgentIntegration';
 
 // Service mesh integration
 export {
-  MCPServiceMesh,
-  type ServiceMeshProvider,
-  type ServiceMeshConfig
-} from './MCPServiceMesh';
+  MCPCallbackHandler,
+  type CallbackHandlerConfig,
+  type CallbackProcessingResult,
+  type CallbackQueueEntry,
+  type CallbackRegistration,
+  type CallbackStatistics,
+} from './MCPCallbackHandler';
+export { MCPServiceMesh, type ServiceMeshConfig, type ServiceMeshProvider } from './MCPServiceMesh';
 export {
   KubernetesServiceMeshProvider,
-  type KubernetesConfig
+  type KubernetesConfig,
 } from './providers/KubernetesServiceMeshProvider';
 export {
   ServiceMeshMonitor,
-  type ServiceMeshMonitorConfig,
-  type ServiceMonitoringData,
   type Alert,
   type AlertStatus,
-  type MonitoringStatistics
+  type MonitoringStatistics,
+  type ServiceMeshMonitorConfig,
+  type ServiceMonitoringData,
 } from './ServiceMeshMonitor';
 export {
   ServiceMeshScaler,
-  type ServiceMeshScalerConfig,
   type ScalingDecision,
+  type ScalingStatistics,
+  type ServiceMeshScalerConfig,
   type ServiceScalingState,
-  type ScalingStatistics
 } from './ServiceMeshScaler';
 export {
   WorkflowExecutionMonitor,
-  type ExecutionMetrics,
+  type AlertConfig,
+  type AlertEvent,
   type ExecutionEvent,
   type ExecutionHistoryEntry,
-  type AlertConfig,
-  type AlertEvent
+  type ExecutionMetrics,
 } from './WorkflowExecutionMonitor';
-export {
-  MCPCallbackHandler,
-  type CallbackHandlerConfig,
-  type CallbackRegistration,
-  type CallbackQueueEntry,
-  type CallbackProcessingResult,
-  type CallbackStatistics
-} from './MCPCallbackHandler';
 
 // Platform integration manager
+import { DatabaseIntegration, DatabaseIntegrationFactory } from './database';
 import { PlatformTypesBridge, PlatformUtils } from './platform-types';
 import { RelayIntegration, RelayIntegrationFactory } from './relay-core';
-import { DatabaseIntegration, DatabaseIntegrationFactory } from './database';
 
 /**
  * Platform Integration Manager
@@ -101,13 +94,13 @@ export class PlatformIntegrationManager {
   private integrations = {
     platformTypes: PlatformTypesBridge,
     relayCore: RelayIntegration,
-    database: DatabaseIntegration
+    database: DatabaseIntegration,
   };
-  
+
   private config = {
     platformTypes: { enabled: true },
     relayCore: { enabled: true, autoRegister: true },
-    database: { enabled: true, enableMetrics: true, enableAuditLog: true }
+    database: { enabled: true, enableMetrics: true, enableAuditLog: true },
   };
 
   private constructor() {}
@@ -137,9 +130,9 @@ export class PlatformIntegrationManager {
         integrations: {
           platformTypes: this.integrations.platformTypes.isAvailable,
           relayCore: this.integrations.relayCore.isAvailable,
-          database: this.integrations.database.isAvailable
+          database: this.integrations.database.isAvailable,
         },
-        errors: []
+        errors: [],
       };
     }
 
@@ -147,7 +140,7 @@ export class PlatformIntegrationManager {
     const integrationStatus = {
       platformTypes: false,
       relayCore: false,
-      database: false
+      database: false,
     };
 
     try {
@@ -166,7 +159,7 @@ export class PlatformIntegrationManager {
         const relayFactory = RelayIntegrationFactory.create(config?.relayCore);
         const initialized = await relayFactory.initialize();
         integrationStatus.relayCore = initialized;
-        
+
         if (!initialized) {
           errors.push('Failed to initialize relay core integration');
         }
@@ -176,7 +169,7 @@ export class PlatformIntegrationManager {
       if (this.config.database.enabled && this.integrations.database.isAvailable) {
         const dbFactory = await DatabaseIntegrationFactory.create(config?.database);
         integrationStatus.database = dbFactory.isInitialized;
-        
+
         if (!dbFactory.isInitialized) {
           errors.push('Failed to initialize database integration');
         }
@@ -187,15 +180,17 @@ export class PlatformIntegrationManager {
       return {
         success: errors.length === 0,
         integrations: integrationStatus,
-        errors
+        errors,
       };
     } catch (error) {
-      errors.push(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      
+      errors.push(
+        `Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+
       return {
         success: false,
         integrations: integrationStatus,
-        errors
+        errors,
       };
     }
   }
@@ -216,7 +211,7 @@ export class PlatformIntegrationManager {
     const results = {
       platformTypes: false,
       relayCore: false,
-      database: false
+      database: false,
     };
 
     try {
@@ -226,7 +221,9 @@ export class PlatformIntegrationManager {
           const agentInfo = this.integrations.platformTypes.mapServiceToAgent(serviceInfo);
           results.platformTypes = !!agentInfo;
         } catch (error) {
-          errors.push(`Platform types registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(
+            `Platform types registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
         }
       }
 
@@ -234,16 +231,18 @@ export class PlatformIntegrationManager {
       if (this.integrations.relayCore.isAvailable) {
         try {
           const registered = await this.integrations.relayCore.registerMCPService(
-            serviceInfo, 
+            serviceInfo,
             this.config.relayCore
           );
           results.relayCore = registered;
-          
+
           if (!registered) {
             errors.push('Relay core registration returned false');
           }
         } catch (error) {
-          errors.push(`Relay core registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(
+            `Relay core registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
         }
       }
 
@@ -252,27 +251,31 @@ export class PlatformIntegrationManager {
         try {
           const saved = await this.integrations.database.saveServiceInfo(serviceInfo);
           results.database = !!saved;
-          
+
           if (!saved) {
             errors.push('Database registration returned null');
           }
         } catch (error) {
-          errors.push(`Database registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(
+            `Database registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
         }
       }
 
       return {
         success: errors.length === 0 || Object.values(results).some(Boolean),
         results,
-        errors
+        errors,
       };
     } catch (error) {
-      errors.push(`Service registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      
+      errors.push(
+        `Service registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+
       return {
         success: false,
         results,
-        errors
+        errors,
       };
     }
   }
@@ -286,18 +289,18 @@ export class PlatformIntegrationManager {
       integrations: {
         platformTypes: {
           available: this.integrations.platformTypes.isAvailable,
-          enabled: this.config.platformTypes.enabled
+          enabled: this.config.platformTypes.enabled,
         },
         relayCore: {
           available: this.integrations.relayCore.isAvailable,
-          enabled: this.config.relayCore.enabled
+          enabled: this.config.relayCore.enabled,
         },
         database: {
           available: this.integrations.database.isAvailable,
-          enabled: this.config.database.enabled
-        }
+          enabled: this.config.database.enabled,
+        },
       },
-      config: this.config
+      config: this.config,
     };
   }
 
@@ -337,17 +340,17 @@ export const IntegrationUtils = {
    */
   getIntegrationStatus() {
     return platformIntegration.getStatus();
-  }
+  },
 };
 
 // Export individual integrations for direct access
 export {
+  DatabaseIntegration,
+  DatabaseIntegrationFactory,
   PlatformTypesBridge,
   PlatformUtils,
   RelayIntegration,
   RelayIntegrationFactory,
-  DatabaseIntegration,
-  DatabaseIntegrationFactory
 };
 
 export default PlatformIntegrationManager;
