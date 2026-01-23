@@ -33,6 +33,8 @@ dockerfilePath = "Dockerfile"
 # Build context is from repository root (not a subdirectory)
 # This allows access to workspace files like pnpm-lock.yaml
 watchPaths = ["apps/frontend/**", "packages/**"]
+# Pass Firebase environment variables as Docker build args
+dockerBuildArgs = { VITE_FIREBASE_API_KEY = "$VITE_FIREBASE_API_KEY", VITE_FIREBASE_AUTH_DOMAIN = "$VITE_FIREBASE_AUTH_DOMAIN", VITE_FIREBASE_PROJECT_ID = "$VITE_FIREBASE_PROJECT_ID", VITE_FIREBASE_STORAGE_BUCKET = "$VITE_FIREBASE_STORAGE_BUCKET", VITE_FIREBASE_MESSAGING_SENDER_ID = "$VITE_FIREBASE_MESSAGING_SENDER_ID", VITE_FIREBASE_APP_ID = "$VITE_FIREBASE_APP_ID" }
 [services.TheNewFuse.deploy]
 healthcheckPath = "/"
 
@@ -43,6 +45,8 @@ builder = "DOCKERFILE"
 [services.frontend.build]
 dockerfilePath = "Dockerfile"
 watchPaths = ["apps/frontend/**", "packages/**"]
+# Pass Firebase environment variables as Docker build args
+dockerBuildArgs = { VITE_FIREBASE_API_KEY = "$VITE_FIREBASE_API_KEY", VITE_FIREBASE_AUTH_DOMAIN = "$VITE_FIREBASE_AUTH_DOMAIN", VITE_FIREBASE_PROJECT_ID = "$VITE_FIREBASE_PROJECT_ID", VITE_FIREBASE_STORAGE_BUCKET = "$VITE_FIREBASE_STORAGE_BUCKET", VITE_FIREBASE_MESSAGING_SENDER_ID = "$VITE_FIREBASE_MESSAGING_SENDER_ID", VITE_FIREBASE_APP_ID = "$VITE_FIREBASE_APP_ID" }
 [services.frontend.deploy]
 healthcheckPath = "/"
 
@@ -52,6 +56,8 @@ builder = "DOCKERFILE"
 [services."Frontend Application".build]
 dockerfilePath = "Dockerfile"
 watchPaths = ["apps/frontend/**", "packages/**"]
+# Pass Firebase environment variables as Docker build args
+dockerBuildArgs = { VITE_FIREBASE_API_KEY = "$VITE_FIREBASE_API_KEY", VITE_FIREBASE_AUTH_DOMAIN = "$VITE_FIREBASE_AUTH_DOMAIN", VITE_FIREBASE_PROJECT_ID = "$VITE_FIREBASE_PROJECT_ID", VITE_FIREBASE_STORAGE_BUCKET = "$VITE_FIREBASE_STORAGE_BUCKET", VITE_FIREBASE_MESSAGING_SENDER_ID = "$VITE_FIREBASE_MESSAGING_SENDER_ID", VITE_FIREBASE_APP_ID = "$VITE_FIREBASE_APP_ID" }
 [services."Frontend Application".deploy]
 healthcheckPath = "/"
 
