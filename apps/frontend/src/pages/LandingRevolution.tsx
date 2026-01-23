@@ -1,20 +1,3 @@
-import { Button } from '@/components/ui/button';
-import {
-  ArrowRight,
-  Bot,
-  CheckCircle,
-  Code,
-  Globe,
-  Network,
-  Rocket,
-  Shield,
-  Sparkles,
-  Terminal,
-  Workflow,
-  Zap,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-
 /**
  * COMPLETELY REDESIGNED LANDING PAGE
  * Modern, Bold, Premium - Built from Scratch
@@ -22,16 +5,16 @@ import { Link } from 'react-router-dom';
 export const LandingPageRevolution = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
-      {/* HERO SECTION - MASSIVE & BOLD */}
+      {/* HERO SECTION - MASSIVE & BOLD
       <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 pt-32">
-        {/* Background Glow Effects */}
+        {/* Background Glow Effects }
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-1/4 w-48 sm:w-72 lg:w-96 h-48 sm:h-72 lg:h-96 bg-blue-500/20 rounded-full blur-[80px] sm:blur-[100px] lg:blur-[128px] animate-pulse" />
           <div className="absolute bottom-0 right-1/4 w-48 sm:w-72 lg:w-96 h-48 sm:h-72 lg:h-96 bg-purple-500/20 rounded-full blur-[80px] sm:blur-[100px] lg:blur-[128px] animate-pulse delay-1000" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          {/* Badge */}
+          {/* Badge }
           <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 mb-6 sm:mb-8 lg:mb-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
             <span className="text-xs sm:text-sm font-semibold tracking-wide">
@@ -39,7 +22,7 @@ export const LandingPageRevolution = () => {
             </span>
           </div>
 
-          {/* Main Headline - RESPONSIVE */}
+          {/* Main Headline - RESPONSIVE }
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-4 sm:mb-6 lg:mb-8 leading-tight sm:leading-none">
             <span className="block text-white">Build Your</span>
             <span className="block bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -47,14 +30,14 @@ export const LandingPageRevolution = () => {
             </span>
           </h1>
 
-          {/* Subheadline */}
+          {/* Subheadline }
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-300 mb-8 sm:mb-10 lg:mb-16 max-w-4xl mx-auto leading-relaxed font-light px-2">
             Deploy autonomous agents. Orchestrate multi-model workflows. Scale infinitely.
             <br className="hidden sm:block" />
             <span className="text-white font-semibold">No code. No limits. No compromise.</span>
           </p>
 
-          {/* CTA Buttons - RESPONSIVE */}
+          {/* CTA Buttons - RESPONSIVE }
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6 justify-center items-center px-4">
             <Button
               asChild
@@ -78,7 +61,7 @@ export const LandingPageRevolution = () => {
             </Button>
           </div>
 
-          {/* Trust Indicators */}
+          {/* Trust Indicators }
           <div className="mt-10 sm:mt-14 lg:mt-20 flex flex-wrap gap-4 sm:gap-6 lg:gap-12 justify-center items-center opacity-60 px-2">
             <div className="flex items-center gap-2 sm:gap-3">
               <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-400" />
@@ -96,12 +79,12 @@ export const LandingPageRevolution = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* FEATURES SECTION - BOLD CARDS */}
+      {/* FEATURES SECTION - BOLD CARDS
       <section id="features" className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
+           {/* Section Header }
           <div className="text-center mb-10 sm:mb-14 lg:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6">
               <span className="text-white">Why Developers</span>{' '}
@@ -114,9 +97,9 @@ export const LandingPageRevolution = () => {
             </p>
           </div>
 
-          {/* Feature Grid */}
+          {/* Feature Grid }
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {/* Feature 1 */}
+            {/* Feature 1 }
             <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-blue-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
               <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
@@ -133,7 +116,7 @@ export const LandingPageRevolution = () => {
               </div>
             </div>
 
-            {/* Feature 2 */}
+            {/* Feature 2 }
             <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
               <div className="absolute inset-0 bg-linear-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
@@ -150,7 +133,7 @@ export const LandingPageRevolution = () => {
               </div>
             </div>
 
-            {/* Feature 3 */}
+            {/* Feature 3 }
             <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-green-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
               <div className="absolute inset-0 bg-linear-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
@@ -167,7 +150,7 @@ export const LandingPageRevolution = () => {
               </div>
             </div>
 
-            {/* Feature 4 */}
+            {/* Feature 4 }
             <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-orange-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
               <div className="absolute inset-0 bg-linear-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
@@ -184,7 +167,7 @@ export const LandingPageRevolution = () => {
               </div>
             </div>
 
-            {/* Feature 5 */}
+            {/* Feature 5 }
             <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-pink-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
               <div className="absolute inset-0 bg-linear-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
@@ -200,7 +183,7 @@ export const LandingPageRevolution = () => {
               </div>
             </div>
 
-            {/* Feature 6 */}
+            {/* Feature 6 }
             <div className="group relative p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/10 hover:border-cyan-500/50 transition-all duration-500 hover:bg-white/5 cursor-pointer">
               <div className="absolute inset-0 bg-linear-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl" />
               <div className="relative z-10">
@@ -220,7 +203,7 @@ export const LandingPageRevolution = () => {
         </div>
       </section>
 
-      {/* FINAL CTA - RESPONSIVE */}
+      {/* FINAL CTA - RESPONSIVE 
       <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-4 sm:mb-6 lg:mb-8 leading-tight sm:leading-none">
@@ -247,7 +230,7 @@ export const LandingPageRevolution = () => {
             No credit card required · Deploy in 60 seconds
           </p>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
