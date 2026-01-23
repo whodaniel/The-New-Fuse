@@ -28,10 +28,10 @@ export class JulesWebhookController {
 
       await this.webhookHandler.handleWebhook(payload, encodedContext);
       return { received: true };
-    } catch (error) {
+    } catch (error: any) {
       console.error(
-        `[JulesWebhookController] Failed to handle webhook: ${error.message}`,
-        error.stack
+        `[JulesWebhookController] Failed to handle webhook: ${error?.message || 'Unknown error'}`,
+        error?.stack
       );
 
       // Re-throw specific known errors or a generic one

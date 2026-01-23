@@ -20,6 +20,13 @@ const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
 const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
 const AgencyOnboarding = lazy(() => import('./pages/Agency/AgencyOnboarding'));
+const MCPHub = lazy(() => import('./pages/mcp/MCPHub'));
+const A2AControl = lazy(() => import('./pages/A2AControl'));
+const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
+const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionConsole'));
+const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
+const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
+const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows'));
@@ -36,7 +43,7 @@ const SettingsSecurity = lazy(() => import('./pages/settings/Security'));
 const SettingsAPI = lazy(() => import('./pages/settings/API'));
 const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
 const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
-const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
+const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat/index'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
@@ -70,7 +77,6 @@ const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
-const AdminSystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const AdminFeatureFlags = lazy(() => import('./pages/Admin/FeatureFlags'));
 const AdminPortManagement = lazy(() => import('./pages/Admin/PortManagement'));
 
@@ -116,7 +122,7 @@ const NewTaskPage = lazy(() => import('./pages/Tasks/New'));
 
 // Additional pages
 const UnauthorizedPage = lazy(() => import('./pages/Unauthorized'));
-const AIAgentPortalPage = lazy(() => import('./pages/AIAgentPortal'));
+const AIAgentRegistration = lazy(() => import('./pages/AIAgentPortal/index'));
 const FrontendShowcasePage = lazy(() => import('./pages/FrontendShowcase'));
 const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
 
@@ -167,18 +173,18 @@ const WebSearchSelection = lazy(() => import('./pages/Admin/Agents/WebSearchSele
 
 // Additional missing routes from audit
 const TasksPageComponent = lazy(() => import('./pages/Tasks/TasksPage'));
-const GeneralSettingsPage = lazy(() => import('./pages/GeneralSettings'));
+const GeneralSettingsPage = lazy(() => import('./pages/GeneralSettingsPage'));
 const GeneralSettingsEmbeddingPage = lazy(
   () => import('./pages/GeneralSettings/EmbeddingPreference')
 );
-const GeneralSettings = lazy(() => import('./pages/GeneralSettings'));
+const GeneralSettings = lazy(() => import('./pages/GeneralSettings/index'));
 const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
 const AgentDashboard = lazy(() => import('./pages/dashboard/AgentDashboard'));
 const DashboardSettings = lazy(() => import('./pages/dashboard/DashboardSettings'));
 const CommunityHub = lazy(() => import('./pages/Community/CommunityHub'));
 const LayoutExamples = lazy(() => import('./pages/Layout/LayoutExamples'));
-const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal'));
+const AIAgentDashboard = lazy(() => import('./pages/AIAgentDashboard'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const UserProfilePage = lazy(() => import('./components/profile/UserProfilePage'));
 
@@ -190,7 +196,6 @@ const LiveViewPage = lazy(() => import('./pages/LiveView'));
 
 // AI Command Center - Multiple AI chat interfaces in one view
 const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
-
 
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
@@ -278,9 +283,9 @@ export default function ComprehensiveRouter() {
 
             {/* All routes using LazyPage for now to avoid import issues */}
             <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
-            <Route path="/ai-portal" element={<AIAgentPortal />} />
+            <Route path="/ai-portal" element={<AIAgentDashboard />} />
             <Route path="/chat" element={<ChatPage />} />
-            <Route path="/ai-agents" element={<AIAgentPortalPage />} />
+            <Route path="/ai-agents" element={<AIAgentRegistration />} />
             <Route path="/agent-builder" element={<UnifiedAgentCreator />} />
             <Route path="/agent-management" element={<AgentsPage />} />
             <Route path="/agents" element={<AgentsPage />} />
@@ -293,6 +298,8 @@ export default function ComprehensiveRouter() {
               }
             />
             <Route path="/agents/:id" element={<AgentDetail />} />
+            <Route path="/agents/:id/identity" element={<AgentIdentity />} />
+            <Route path="/observatory" element={<SystemObservatory />} />
             <Route
               path="/agents/onboard"
               element={
@@ -310,13 +317,17 @@ export default function ComprehensiveRouter() {
             <Route path="/tasks" element={<TasksPage />} />
             <Route path="/workflows" element={<Workflows />} />
             <Route path="/workflows/builder" element={<WorkflowBuilder />} />
+            <Route path="/workflows/console" element={<ExecutionConsole />} />
             <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
             <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/mcp-hub" element={<MCPHub />} />
+            <Route path="/knowledge-hub" element={<KnowledgeHub />} />
+            <Route path="/a2a-control" element={<A2AControl />} />
             <Route path="/agency/dashboard" element={<AgencyDashboard />} />
             <Route path="/agency/onboard" element={<AgencyOnboarding />} />
             <Route path="/admin/users" element={<AdminUserManagement />} />
-            <Route path="/admin/system-health" element={<AdminSystemHealth />} />
+            <Route path="/admin/system-health" element={<SystemHealth />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/general" element={<GeneralSettings />} />
             <Route path="/login" element={<LoginPage />} />
@@ -409,7 +420,7 @@ export default function ComprehensiveRouter() {
             <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
             <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
-            <Route path="/ai-agent-portal" element={<AIAgentPortalPage />} />
+            <Route path="/ai-agent-portal" element={<AIAgentRegistration />} />
 
             {/* Critical Missing Routes */}
             <Route path="/dashboard/analytics" element={<Analytics />} />
@@ -508,7 +519,6 @@ export default function ComprehensiveRouter() {
                 </Suspense>
               }
             />
-
 
             {/* Additional missing routes */}
             <Route

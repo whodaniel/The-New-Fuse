@@ -4,7 +4,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
+    "build": "tsc -b",
     "dev": "tsc -w",
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "test": "echo \"Tests temporarily disabled for this package\"",

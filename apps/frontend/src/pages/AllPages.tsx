@@ -24,24 +24,54 @@ const AllPages: React.FC = () => {
     { name: 'AI Agent Portal Index', path: '/ai-agent-portal', description: 'Agent Portal Index' },
     { name: 'Chat', path: '/chat', description: 'Basic Chat Interface' },
     { name: 'Chat Page', path: '/chat-page', description: 'Dedicated Chat Page' },
+    {
+      name: 'AI Command Center',
+      path: '/ai-command-center',
+      description: 'Unified AI Grid Interface',
+    },
+    { name: 'Live View', path: '/live-view', description: 'Real-time AI Activity Monitor' },
     { name: 'All Agents', path: '/agents', description: 'Agent List' },
     { name: 'New Agent', path: '/agents/new', description: 'Create New Agent' },
     { name: 'Agent Detail', path: '/agents/:id', description: 'Agent Details' },
-    { name: 'NFT Marketplace', path: '/agents/nft-marketplace', description: 'NFT Marketplace for Agents' },
-    { name: 'Revenue Dashboard', path: '/agents/revenue-dashboard', description: 'Agent Revenue Analytics' },
-    { name: 'Unified Agent Creator', path: '/agents/unified-creator', description: 'Advanced Agent Creation' },
+    {
+      name: 'NFT Marketplace',
+      path: '/agents/nft-marketplace',
+      description: 'NFT Marketplace for Agents',
+    },
+    {
+      name: 'Revenue Dashboard',
+      path: '/agents/revenue-dashboard',
+      description: 'Agent Revenue Analytics',
+    },
+    {
+      name: 'Unified Agent Creator',
+      path: '/agents/unified-creator',
+      description: 'Advanced Agent Creation',
+    },
     { name: 'Agent Dashboard', path: '/dashboard/agents', description: 'Agent Dashboard' },
     { name: 'Create Agent', path: '/dashboard/agents/new', description: 'Create Agent Form' },
-    { name: 'Agent Detail Dashboard', path: '/dashboard/agents/:id', description: 'Dashboard Agent Detail' },
+    {
+      name: 'Agent Detail Dashboard',
+      path: '/dashboard/agents/:id',
+      description: 'Dashboard Agent Detail',
+    },
 
     // Workspace Management
     { name: 'Workspace Overview', path: '/workspace/overview', description: 'Main Workspace View' },
     { name: 'Workspace Analytics', path: '/workspace/analytics', description: 'Workspace Metrics' },
     { name: 'Workspace Members', path: '/workspace/members', description: 'Team Management' },
-    { name: 'Workspace Settings', path: '/workspace/settings', description: 'Workspace Configuration' },
+    {
+      name: 'Workspace Settings',
+      path: '/workspace/settings',
+      description: 'Workspace Configuration',
+    },
     { name: 'Workspace Chat', path: '/workspace-chat', description: 'Team Chat' },
     { name: 'Workspace Chat Index', path: '/workspace/chat', description: 'Workspace Chat Index' },
-    { name: 'Workspace Layout', path: '/workspace/layout', description: 'Workspace Layout Management' },
+    {
+      name: 'Workspace Layout',
+      path: '/workspace/layout',
+      description: 'Workspace Layout Management',
+    },
 
     // Tasks & Workflows
     { name: 'All Tasks', path: '/tasks', description: 'Task Management' },
@@ -50,13 +80,33 @@ const AllPages: React.FC = () => {
     { name: 'Edit Task', path: '/tasks/:id/edit', description: 'Edit Task' },
     { name: 'Tasks Page', path: '/tasks-page', description: 'Dedicated Tasks Page' },
     { name: 'Workflows', path: '/workflows', description: 'Workflow Management' },
-    { name: 'Workflow Builder', path: '/workflows/builder', description: 'Visual Workflow Builder' },
-    { name: 'Advanced Builder', path: '/workflows/advanced-builder', description: 'Advanced n8n-Compatible Workflow Builder' },
+    {
+      name: 'Workflow Builder',
+      path: '/workflows/builder',
+      description: 'Visual Workflow Builder',
+    },
+    {
+      name: 'Advanced Builder',
+      path: '/workflows/advanced-builder',
+      description: 'Advanced n8n-Compatible Workflow Builder',
+    },
     { name: 'Workflow Templates', path: '/workflows/templates', description: 'Template Library' },
     { name: 'Workflow Detail', path: '/workflows/:id', description: 'Workflow Details' },
-    { name: 'Workflow Execution', path: '/workflows/:id/execution', description: 'Workflow Execution View' },
-    { name: 'Execution Monitor', path: '/workflows/executions', description: 'Workflow Execution History & Monitoring' },
-    { name: 'Enhanced Workflows', path: '/workflows-enhanced', description: 'Enhanced Workflow Interface' },
+    {
+      name: 'Workflow Execution',
+      path: '/workflows/:id/execution',
+      description: 'Workflow Execution View',
+    },
+    {
+      name: 'Execution Monitor',
+      path: '/workflows/executions',
+      description: 'Workflow Execution History & Monitoring',
+    },
+    {
+      name: 'Enhanced Workflows',
+      path: '/workflows-enhanced',
+      description: 'Enhanced Workflow Interface',
+    },
 
     // Suggestions System
     { name: 'Suggestions', path: '/suggestions', description: 'AI Suggestions' },
@@ -74,12 +124,28 @@ const AllPages: React.FC = () => {
     { name: 'Admin Onboarding', path: '/admin/onboarding', description: 'Admin Onboarding' },
     { name: 'Admin Dashboard', path: '/admin/dashboard', description: 'Admin Dashboard View' },
     { name: 'Admin Layout', path: '/admin/layout', description: 'Admin Layout Management' },
-    { name: 'Experimental Features', path: '/admin/experimental-features', description: 'Beta Features' },
-    { name: 'Agent Skills Admin', path: '/admin/agents/skills', description: 'Agent Skills Management' },
-    { name: 'Web Search Selection', path: '/admin/agents/web-search', description: 'Web Search Provider Configuration' },
+    {
+      name: 'Experimental Features',
+      path: '/admin/experimental-features',
+      description: 'Beta Features',
+    },
+    {
+      name: 'Agent Skills Admin',
+      path: '/admin/agents/skills',
+      description: 'Agent Skills Management',
+    },
+    {
+      name: 'Web Search Selection',
+      path: '/admin/agents/web-search',
+      description: 'Web Search Provider Configuration',
+    },
 
     // Dashboard & Analytics
-    { name: 'Dashboard Analytics', path: '/dashboard/analytics', description: 'Analytics Dashboard' },
+    {
+      name: 'Dashboard Analytics',
+      path: '/dashboard/analytics',
+      description: 'Analytics Dashboard',
+    },
     { name: 'Dashboard Settings', path: '/dashboard/settings', description: 'Dashboard Config' },
     { name: 'Analytics', path: '/analytics', description: 'Main Analytics' },
 
@@ -87,15 +153,47 @@ const AllPages: React.FC = () => {
     { name: 'Settings', path: '/settings', description: 'Main Settings' },
     { name: 'General Settings', path: '/settings/general', description: 'General Configuration' },
     { name: 'Appearance Settings', path: '/settings/appearance', description: 'UI Customization' },
-    { name: 'Notification Settings', path: '/settings/notifications', description: 'Notification Preferences' },
-    { name: 'Security Settings', path: '/settings/security', description: 'Security Configuration' },
+    {
+      name: 'Notification Settings',
+      path: '/settings/notifications',
+      description: 'Notification Preferences',
+    },
+    {
+      name: 'Security Settings',
+      path: '/settings/security',
+      description: 'Security Configuration',
+    },
     { name: 'API Settings', path: '/settings/api', description: 'API Configuration' },
-    { name: 'General Settings Alt', path: '/general-settings', description: 'Alternative General Settings' },
-    { name: 'Embedding Preferences', path: '/general-settings/embedding', description: 'Embedding Configuration' },
-    { name: 'Community Hub', path: '/general-settings/community-hub', description: 'Community Features' },
-    { name: 'Workspace LLM Selection', path: '/workspace-settings/llm-selection', description: 'LLM Configuration' },
-    { name: 'Chat Model Selection', path: '/workspace-settings/chat-model', description: 'Chat Model Settings' },
-    { name: 'Agent Model Selection', path: '/workspace-settings/agent-model', description: 'Agent Model Configuration' },
+    {
+      name: 'General Settings Alt',
+      path: '/general-settings',
+      description: 'Alternative General Settings',
+    },
+    {
+      name: 'Embedding Preferences',
+      path: '/general-settings/embedding',
+      description: 'Embedding Configuration',
+    },
+    {
+      name: 'Community Hub',
+      path: '/general-settings/community-hub',
+      description: 'Community Features',
+    },
+    {
+      name: 'Workspace LLM Selection',
+      path: '/workspace-settings/llm-selection',
+      description: 'LLM Configuration',
+    },
+    {
+      name: 'Chat Model Selection',
+      path: '/workspace-settings/chat-model',
+      description: 'Chat Model Settings',
+    },
+    {
+      name: 'Agent Model Selection',
+      path: '/workspace-settings/agent-model',
+      description: 'Agent Model Configuration',
+    },
 
     // Authentication
     { name: 'Login', path: '/login', description: 'Main Login' },
@@ -124,13 +222,21 @@ const AllPages: React.FC = () => {
     // Components & Demos
     { name: 'UI Components', path: '/components', description: 'Component Showcase' },
     { name: 'Components Navigation', path: '/components-nav', description: 'Component Navigation' },
-    { name: 'Components Showcase', path: '/components-showcase', description: 'Advanced Component Demo' },
+    {
+      name: 'Components Showcase',
+      path: '/components-showcase',
+      description: 'Advanced Component Demo',
+    },
     { name: 'Timeline Demo', path: '/timeline-demo', description: 'Timeline Component' },
     { name: 'Graph Demo', path: '/graph-demo', description: 'Graph Visualization' },
     { name: 'Frontend Showcase', path: '/frontend-showcase', description: 'Frontend Demo' },
     { name: 'Layout Example', path: '/layout-example', description: 'Layout Demo' },
     { name: 'Simple Test', path: '/simple-test', description: 'Simple Testing Interface' },
-    { name: 'Multi Agent Chat Demo', path: '/multi-agent-chat-demo', description: 'Multi Agent Chat Demo' },
+    {
+      name: 'Multi Agent Chat Demo',
+      path: '/multi-agent-chat-demo',
+      description: 'Multi Agent Chat Demo',
+    },
 
     // Development & Debug
     { name: 'Debug Info', path: '/debug', description: 'Debug Information' },
@@ -140,19 +246,43 @@ const AllPages: React.FC = () => {
     { name: 'Test Page', path: '/test', description: 'Testing Interface' },
 
     // API Endpoints (Admin Access)
-    { name: 'Admin Database API', path: '/api/admin/database', description: 'Database Administration API' },
-    { name: 'Admin Features API', path: '/api/admin/features', description: 'Feature Management API' },
-    { name: 'Feature Evaluation API', path: '/api/admin/features/:id/evaluate', description: 'Feature Evaluation API' },
+    {
+      name: 'Admin Database API',
+      path: '/api/admin/database',
+      description: 'Database Administration API',
+    },
+    {
+      name: 'Admin Features API',
+      path: '/api/admin/features',
+      description: 'Feature Management API',
+    },
+    {
+      name: 'Feature Evaluation API',
+      path: '/api/admin/features/:id/evaluate',
+      description: 'Feature Evaluation API',
+    },
 
     // Error Handling
     { name: '404 Page', path: '/404', description: 'Not Found Page' },
     { name: 'Not Found', path: '/not-found', description: 'Alternative Not Found Page' },
 
     // Package-Level Pages (Alternative Implementations)
-    { name: 'Package Dashboard', path: '/package/dashboard', description: 'Package Dashboard Implementation' },
+    {
+      name: 'Package Dashboard',
+      path: '/package/dashboard',
+      description: 'Package Dashboard Implementation',
+    },
     { name: 'Package Login', path: '/package/login', description: 'Package Login Implementation' },
-    { name: 'Package Agents', path: '/package/agents', description: 'Package Agents Implementation' },
-    { name: 'Package Workflows', path: '/package/workflows', description: 'Package Workflows Implementation' },
+    {
+      name: 'Package Agents',
+      path: '/package/agents',
+      description: 'Package Agents Implementation',
+    },
+    {
+      name: 'Package Workflows',
+      path: '/package/workflows',
+      description: 'Package Workflows Implementation',
+    },
     { name: 'User Profile', path: '/user/profile', description: 'User Profile Management' },
 
     // Static HTML Pages (Development/Prototyping)
@@ -187,16 +317,17 @@ const AllPages: React.FC = () => {
 
   // Filter pages based on search and category
   const filteredCategories = pageCategories
-    .map(category => ({
+    .map((category) => ({
       ...category,
-      pages: category.pages.filter(page => 
-        (selectedCategory === 'All' || category.name === selectedCategory) &&
-        (page.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         page.path.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         (page.description && page.description.toLowerCase().includes(searchTerm.toLowerCase())))
-      )
+      pages: category.pages.filter(
+        (page) =>
+          (selectedCategory === 'All' || category.name === selectedCategory) &&
+          (page.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            page.path.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (page.description && page.description.toLowerCase().includes(searchTerm.toLowerCase())))
+      ),
     }))
-    .filter(category => category.pages.length > 0);
+    .filter((category) => category.pages.length > 0);
 
   const totalPages = allPages.length;
 
@@ -234,7 +365,7 @@ const AllPages: React.FC = () => {
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="All">All Categories</option>
-              {pageCategories.map(category => (
+              {pageCategories.map((category) => (
                 <option key={category.name} value={category.name}>
                   {category.name} ({category.pages.length})
                 </option>
@@ -254,7 +385,10 @@ const AllPages: React.FC = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {category.pages.map((page, pageIndex) => (
-                <div key={pageIndex} className="p-6 border rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div
+                  key={pageIndex}
+                  className="p-6 border rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                >
                   <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
                     {page.name}
                   </h3>

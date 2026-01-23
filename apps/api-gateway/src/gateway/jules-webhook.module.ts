@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { DatabaseService } from '@the-new-fuse/database';
 import { JulesWebhookHandler } from '@the-new-fuse/jules-integration';
 import { Redis } from 'ioredis';
 import { JulesWebhookController } from './jules-webhook.controller';
@@ -17,18 +17,32 @@ class JulesUsageTracker {
 @Module({
   controllers: [JulesWebhookController],
   providers: [
-    JulesWebhookHandler,
     {
-      provide: PrismaClient,
-      useValue: new PrismaClient(),
+      provide: JulesWebhookHandler,
+      useFactory: (db: DatabaseService, redis: Redis, usageTracker: JulesUsageTracker) => {
+        // We cast redis to any because the handler expects RedisClientType from 'redis'
+        // but often we use 'ioredis'. We should ensure compatibility.
+        return new JulesWebhookHandler(db as any, redis as any, usageTracker);
+      },
+      inject: [DatabaseService, 'REDIS_CLIENT', JulesUsageTracker],
+    },
+    {
+      provide: DatabaseService,
+      useClass: DatabaseService,
+    },
+    {
+      provide: 'REDIS_CLIENT',
+      useFactory: () => {
+        return new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+      },
     },
     {
       provide: Redis,
-      useValue: new Redis(),
+      useExisting: 'REDIS_CLIENT',
     },
     {
       provide: JulesUsageTracker,
-      useValue: new JulesUsageTracker(),
+      useClass: JulesUsageTracker,
     },
   ],
 })
