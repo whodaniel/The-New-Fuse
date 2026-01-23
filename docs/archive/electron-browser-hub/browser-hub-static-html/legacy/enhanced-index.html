@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TNF Browser Hub - Enhanced with Theia IDE</title>
+    <title>TNF Browser Hub - Enhanced with SkIDEancer IDE</title>
     <style>
         * {
             margin: 0;
@@ -21,7 +21,7 @@
             overflow: hidden;
         }
 
-        /* Enhanced Title Bar with Theia Integration */
+        /* Enhanced Title Bar with SkIDEancer Integration */
         .title-bar {
             background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
             height: 45px;
@@ -65,7 +65,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        .ide-btn.theia {
+        .ide-btn.ide {
             background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
         }
 
@@ -584,7 +584,7 @@
                 <span>Integrated Development Environment</span>
                 <div style="margin-left: auto; display: flex; gap: 4px;">
                     <span class="status-dot connected"></span>
-                    <span style="font-size: 11px;">Theia Ready</span>
+                    <span style="font-size: 11px;">SkIDEancer Ready</span>
                 </div>
             </div>
             <div class="ide-buttons">
@@ -592,7 +592,7 @@
                     <span>🌐</span>
                     <span>Browser Hub</span>
                 </button>
-                <button class="ide-service-btn" onclick="openTheiaTerminal()">
+                <button class="ide-service-btn" onclick="openSkIDEancerTerminal()">
                     <span>📟</span>
                     <span>IDE Terminal</span>
                 </button>
@@ -629,7 +629,7 @@
                     <span>🚀</span>
                     <span>TNF Browser Hub</span>
                 </h1>
-                <h2>Enhanced with Theia IDE Integration</h2>
+                <h2>Enhanced with SkIDEancer IDE Integration</h2>
                 <p>Start coding, browsing, or automating with integrated development tools</p>
                 
                 <div class="quick-actions">
@@ -659,7 +659,7 @@
         <div class="status-left">
             <div class="status-indicator">
                 <span class="status-dot connected"></span>
-                <span>Theia IDE Ready</span>
+                <span>SkIDEancer IDE Ready</span>
             </div>
             <div class="status-indicator">
                 <span class="status-dot partial"></span>
@@ -796,10 +796,10 @@
             }
         }
 
-        function openTheiaTerminal() {
-            console.log('Opening Theia Terminal');
+        function openSkIDEancerTerminal() {
+            console.log('Opening SkIDEancer Terminal');
             if (window.electronAPI) {
-                window.electronAPI.openTheiaTerminal();
+                window.electronAPI.openSkIDEancerTerminal();
             }
         }
 
@@ -829,16 +829,16 @@
         }
 
         function openGitInterface() {
-            console.log('Opening Git Interface in Theia');
+            console.log('Opening Git Interface in SkIDEancer');
             if (window.electronAPI) {
-                window.electronAPI.openTheiaGit();
+                window.electronAPI.openSkIDEancerGit();
             }
         }
 
         function openDebugger() {
-            console.log('Opening Debugger in Theia');
+            console.log('Opening Debugger in SkIDEancer');
             if (window.electronAPI) {
-                window.electronAPI.openTheiaDebugger();
+                window.electronAPI.openSkIDEancerDebugger();
             }
         }
 
@@ -847,8 +847,8 @@
             openBrowserHub(); // For now, open Browser Hub which has project explorer
         }
 
-        // Theia Server Management
-        async function checkTheiaStatus() {
+        // SkIDEancer Server Management
+        async function checkSkIDEancerStatus() {
             try {
                 const response = await fetch('http://localhost:3000', { 
                     method: 'HEAD',
@@ -860,13 +860,13 @@
             }
         }
 
-        function startTheiaServer() {
-            console.log('Starting Theia Server');
+        function startSkIDEancerServer() {
+            console.log('Starting SkIDEancer Server');
             if (window.electronAPI) {
-                window.electronAPI.startTheiaServer();
+                window.electronAPI.startSkIDEancerServer();
             } else {
                 // Fallback: try to start via command
-                console.warn('Electron API not available, cannot start Theia server automatically');
+                console.warn('Electron API not available, cannot start SkIDEancer server automatically');
             }
         }
 
@@ -957,11 +957,11 @@
         }
 
         function updateServiceStatus() {
-            // Check Theia status
-            checkTheiaStatus().then(isRunning => {
-                const theiaIndicators = document.querySelectorAll('.status-dot');
-                theiaIndicators.forEach(dot => {
-                    if (dot.nextSibling?.textContent?.includes('Theia')) {
+            // Check SkIDEancer status
+            checkSkIDEancerStatus().then(isRunning => {
+                const ideIndicators = document.querySelectorAll('.status-dot');
+                ideIndicators.forEach(dot => {
+                    if (dot.nextSibling?.textContent?.includes('SkIDEancer')) {
                         dot.className = `status-dot ${isRunning ? 'connected' : 'partial'}`;
                     }
                 });

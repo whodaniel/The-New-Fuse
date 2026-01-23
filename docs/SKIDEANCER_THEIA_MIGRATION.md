@@ -1,8 +1,8 @@
-# SkIDEancer → Theia Migration Plan
+# SkIDEancer → SkIDEancer Migration Plan
 
 **Date**: December 21, 2025  
 **Source**: `/apps/SkIDEancer/SkIDEancer` (VS Code fork)  
-**Target**: Theia IDE at `ide.thenewfuse.com`
+**Target**: SkIDEancer IDE at `ide.thenewfuse.com`
 
 ---
 
@@ -12,10 +12,10 @@
 
 | Item         | Source Path                                     | Migration Strategy            |
 | ------------ | ----------------------------------------------- | ----------------------------- |
-| Main Icon    | `resources/darwin/code.icns`                    | Convert to PNG/SVG for Theia  |
-| Favicon      | `resources/server/favicon.ico`                  | Copy to Theia `lib/frontend/` |
+| Main Icon    | `resources/darwin/code.icns`                    | Convert to PNG/SVG for SkIDEancer  |
+| Favicon      | `resources/server/favicon.ico`                  | Copy to SkIDEancer `lib/frontend/` |
 | Server Icons | `resources/server/code-192.png`, `code-512.png` | Use for PWA manifest          |
-| Linux Icon   | `resources/linux/code.png`                      | Convert for Theia             |
+| Linux Icon   | `resources/linux/code.png`                      | Convert for SkIDEancer             |
 
 ### Built-in Extensions (from product.json)
 
@@ -98,11 +98,11 @@
 
 ---
 
-## 2. Theia Equivalent Extensions
+## 2. SkIDEancer Equivalent Extensions
 
-### Already in Theia IDE
+### Already in SkIDEancer IDE
 
-The current Theia deployment has built-in:
+The current SkIDEancer deployment has built-in:
 
 - ✅ Monaco Editor (same as VS Code)
 - ✅ Git integration
@@ -112,11 +112,11 @@ The current Theia deployment has built-in:
 
 ### Extensions to Add via Open VSX
 
-Add to `fuse-theia-ide/package.json`:
+Add to `skideancer-ide/package.json`:
 
 ```json
 {
-  "theiaPlugins": {
+  "idePlugins": {
     "vscode-builtin-typescript": "https://open-vsx.org/api/vscode/typescript-language-features/1.87.0/file/vscode.typescript-language-features-1.87.0.vsix",
     "vscode-builtin-javascript": "https://open-vsx.org/api/vscode/javascript/1.87.0/file/vscode.javascript-1.87.0.vsix",
     "vscode-builtin-python": "https://open-vsx.org/api/ms-python/python/2024.2.1/file/ms-python.python-2024.2.1.vsix",
@@ -139,10 +139,10 @@ Add to `fuse-theia-ide/package.json`:
 
 ```bash
 cp apps/SkIDEancer/SkIDEancer/resources/server/favicon.ico \
-   fuse-theia-ide/lib/frontend/favicon.ico
+   skideancer-ide/lib/frontend/favicon.ico
 ```
 
-### Step 2: Update Theia index.html
+### Step 2: Update SkIDEancer index.html
 
 Add favicon and PWA metadata:
 
@@ -157,7 +157,7 @@ Add favicon and PWA metadata:
 
 ### Step 3: Custom Branding Module
 
-Create `fuse-theia-ide/custom-branding/`:
+Create `skideancer-ide/custom-branding/`:
 
 ```typescript
 // branding.ts
@@ -170,7 +170,7 @@ export const welcomeMessage = 'Welcome to SkIDEancer AI-Powered IDE';
 
 ## 4. Default Settings Migration
 
-Map VS Code settings to Theia preferences:
+Map VS Code settings to SkIDEancer preferences:
 
 ```json
 {
@@ -192,14 +192,14 @@ Map VS Code settings to Theia preferences:
 
 ### Phase 1: Quick Wins (Today)
 
-1. ✅ Theia IDE is live at ide.thenewfuse.com
+1. ✅ SkIDEancer IDE is live at ide.thenewfuse.com
 2. [ ] Add favicon from SkIDEancer resources
 3. [ ] Update page title to "SkIDEancer"
 4. [ ] Add PWA icons
 
 ### Phase 2: Core Extensions (This Week)
 
-1. [ ] Add theiaPlugins to package.json
+1. [ ] Add idePlugins to package.json
 2. [ ] Bundle essential language features
 3. [ ] Test TypeScript/JavaScript LSP
 4. [ ] Test Python language support
@@ -222,13 +222,13 @@ Map VS Code settings to Theia preferences:
 
 ## 6. Files to Copy
 
-| From SkIDEancer                 | To Theia               | Purpose          |
+| From SkIDEancer                 | To SkIDEancer               | Purpose          |
 | ------------------------------- | ---------------------- | ---------------- |
 | `resources/server/favicon.ico`  | `lib/frontend/`        | Browser favicon  |
 | `resources/server/code-192.png` | `lib/frontend/`        | PWA icon         |
 | `resources/server/code-512.png` | `lib/frontend/`        | PWA splash       |
-| `extensions/theme-monokai/`     | Custom Theia extension | Theme            |
-| `.vscode/settings.json`         | Theia preferences      | Default settings |
+| `extensions/theme-monokai/`     | Custom SkIDEancer extension | Theme            |
+| `.vscode/settings.json`         | SkIDEancer preferences      | Default settings |
 
 ---
 
@@ -244,10 +244,10 @@ Map VS Code settings to Theia preferences:
 ### What Needs Custom Work
 
 - ⚠️ Some Microsoft-specific extensions won't work (licensing)
-- ⚠️ UI layout changes require Theia modules
+- ⚠️ UI layout changes require SkIDEancer modules
 - ⚠️ Custom keybindings may need adjustment
 
-### Theia Advantages
+### SkIDEancer Advantages
 
 - ✨ Native browser support (no Electron overhead for web)
 - ✨ Built-in AI integrations
@@ -258,14 +258,14 @@ Map VS Code settings to Theia preferences:
 
 ## 8. Next Action
 
-**Immediate**: Copy the favicon and branding assets to the Theia repo:
+**Immediate**: Copy the favicon and branding assets to the SkIDEancer repo:
 
 ```bash
-# Copy favicon to Theia
-cp /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/favicon.ico /tmp/fuse-theia-ide/lib/frontend/
+# Copy favicon to SkIDEancer
+cp /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/favicon.ico /tmp/skideancer-ide/lib/frontend/
 
 # Copy PWA icons
-cp /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/code-*.png /tmp/fuse-theia-ide/lib/frontend/
+cp /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/SkIDEancer/SkIDEancer/resources/server/code-*.png /tmp/skideancer-ide/lib/frontend/
 ```
 
 Would you like me to execute this migration now?

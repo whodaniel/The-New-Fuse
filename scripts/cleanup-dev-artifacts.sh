@@ -3,9 +3,9 @@
 echo "🧹 Cleaning up development artifacts to free disk space..."
 
 # Kill any running processes first
-pkill -f "theia build" 2>/dev/null || true
+pkill -f "ide build" 2>/dev/null || true
 pkill -f "memory-optimized-build" 2>/dev/null || true
-pkill -f "npx theia" 2>/dev/null || true
+pkill -f "npx ide" 2>/dev/null || true
 
 # Function to show disk usage before and after
 show_disk_usage() {

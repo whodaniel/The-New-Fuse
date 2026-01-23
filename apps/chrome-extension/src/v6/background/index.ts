@@ -1139,6 +1139,65 @@ class BackgroundService {
           });
           return true;
 
+        case 'AI_VIDEO_GET_STATS':
+          chrome.storage.local.get(
+            [
+              'ai_video_processed_count',
+              'ai_video_total_count',
+              'ai_video_estimated_cost',
+              'ai_studio_token',
+              'videoQueue',
+            ],
+            (result) => {
+              sendResponse({
+                processed: result.ai_video_processed_count || 0,
+                total: result.ai_video_total_count || result.videoQueue?.length || 0,
+                cost: result.ai_video_estimated_cost || 0,
+                account: result.ai_studio_token ? 'Authenticated' : 'None',
+              });
+            }
+          );
+          return true;
+
+        case 'AI_VIDEO_GENERATE_HISTORY_PROMPT':
+          const historyPrompt = `Using your Personal Intelligence access to my YouTube watch history,
+provide my last 50 watched videos.
+
+Filter out political content.
+
+Format as JSON array:
+[
+  {
+    "title": "Video Title",
+    "url": "https://www.youtube.com/watch?v=...",
+    "channel": "Channel Name",
+    "description": "Brief description"
+  }
+]`;
+          sendResponse({ prompt: historyPrompt });
+          break;
+
+        case 'AI_VIDEO_EXPORT':
+          chrome.storage.local.get(['videoQueue', 'ai_studio_queue'], (result) => {
+            const queue =
+              message.format === 'urls'
+                ? (result.videoQueue || []).map((v: any) => v.url).join('\n')
+                : JSON.stringify(result.videoQueue || [], null, 2);
+            sendResponse({ content: queue });
+          });
+          return true;
+
+        case 'TASK_COMPLETE':
+          if (message.taskType === 'PROCESS_SEGMENT' && message.success) {
+            chrome.storage.local.get(['ai_video_processed_count'], (result) => {
+              const current = result.ai_video_processed_count || 0;
+              chrome.storage.local.set({ ai_video_processed_count: current + 1 });
+            });
+          }
+          this.broadcastToTabs(message);
+          sendResponse({ success: true });
+          break;
+
         case 'BROADCAST_MESSAGE':
           // CRITICAL FIX: Preserve the `metadata` including `senderId` so receiving tabs
           // can identify messages that originated from themselves and avoid self-injection loops.

@@ -136,9 +136,9 @@ docs/
 **Feature-Specific Documentation:**
 - ✅ MCP_INTEGRATION_TASKS.md → `src/mcp/docs/`
 - ✅ NFT_MARKETPLACE_INTEGRATION.md → `packages/contracts/docs/`
-- ✅ THEIA_AI_SETUP_COMPLETE.md → `theia-workspace/docs/`
-- ✅ THEIA_FUNCTIONALITY_SOLUTION.md → `theia-workspace/docs/`
-- ✅ THEIA_IDE_INTEGRATION_COMPLETE.md → `theia-workspace/docs/`
+- ✅ THEIA_AI_SETUP_COMPLETE.md → `ide-workspace/docs/`
+- ✅ THEIA_FUNCTIONALITY_SOLUTION.md → `ide-workspace/docs/`
+- ✅ THEIA_IDE_INTEGRATION_COMPLETE.md → `ide-workspace/docs/`
 
 ---
 

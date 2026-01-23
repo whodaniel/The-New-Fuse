@@ -1,7 +1,7 @@
 # The New Fuse - Complete Codebase Analysis
 
 **Generated**: December 18, 2025  
-**Purpose**: Full scope understanding of TNF architecture for Theia IDE
+**Purpose**: Full scope understanding of TNF architecture for SkIDEancer IDE
 integration
 
 ---
@@ -225,7 +225,7 @@ From `TNF_AGENT_THREE_PILLARS.md`:
 
 ---
 
-## Current Integration Points for Theia IDE
+## Current Integration Points for SkIDEancer IDE
 
 ### Recommended Integration Architecture
 
@@ -255,16 +255,16 @@ From `TNF_AGENT_THREE_PILLARS.md`:
 
 ### Key Integration Files to Connect
 
-1. **Relay Core** → Theia Extension
+1. **Relay Core** → SkIDEancer Extension
    - `packages/relay-core/src/index.ts`
 
-2. **MCP Core** → Theia Language Server
+2. **MCP Core** → SkIDEancer Language Server
    - `packages/mcp-core/src/index.ts`
 
-3. **Workflow Engine** → Theia Task Runner
+3. **Workflow Engine** → SkIDEancer Task Runner
    - `packages/workflow-engine/src/index.ts`
 
-4. **Agent Coordination** → Theia Commands
+4. **Agent Coordination** → SkIDEancer Commands
    - `packages/agent-coordination/src/index.ts`
 
 ---
@@ -288,31 +288,31 @@ The files in `packages/agent/src/implementations/` are stubs (12 bytes each):
 - `research_agent.ts`
 - etc.
 
-### 3. Theia Integration (Pending)
+### 3. SkIDEancer Integration (Pending)
 
-- Theia IDE as cloud browser
+- SkIDEancer IDE as cloud browser
 - Direct file editing via MCP
 - Terminal integration
 - Custom extensions
 
 ---
 
-## Recommendations for Theia Integration
+## Recommendations for SkIDEancer Integration
 
-1. **Deploy Theia alongside Cloud Sandbox on Railway**
+1. **Deploy SkIDEancer alongside Cloud Sandbox on Railway**
    - Share network with sandbox
    - Access same file system
 
-2. **Create MCP Bridge to Theia**
+2. **Create MCP Bridge to SkIDEancer**
    - `ide_open_file`, `ide_edit`, `ide_search`, `ide_terminal`
    - Extensions for agent-controlled editing
 
-3. **Connect Heartbeat to Theia**
+3. **Connect Heartbeat to SkIDEancer**
    - Monitor IDE health
    - Track editor activity
 
 4. **Integrate Workflow Engine**
-   - Visual workflow editor in Theia
+   - Visual workflow editor in SkIDEancer
    - Task execution from IDE
 
 ---
@@ -327,4 +327,4 @@ The files in `packages/agent/src/implementations/` are stubs (12 bytes each):
 - **Active deployment**: Railway (cloud sandbox)
 - **Desktop app**: Tauri (connected, working)
 
-**Ready for Theia IDE integration!**
+**Ready for SkIDEancer IDE integration!**

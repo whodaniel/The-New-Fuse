@@ -54,7 +54,7 @@
 - **2024 Pre-Restructure Migration Docs** (7 files):
   - Chakra UI migration documents
   - Consolidation checklists
-  - Theia build process documentation
+  - SkIDEancer build process documentation
 
 ### README Files (4 files)
 - `apps/electron-desktop/extensions/browser-mcp/README.md`
@@ -140,7 +140,7 @@ Missing components in project-reconstruction:
 - `src/pages/Community/CommunityHub.tsx`
 - `src/pages/GeneralSettings.tsx`
 - `src/pages/Hub/SophisticatedTNFHub.tsx`
-- `src/pages/IDE/TheiaIDE.tsx`
+- `src/pages/IDE/SkIDEancerIDE.tsx`
 - `src/pages/WorkflowTemplates.tsx`
 - `src/pages/WorkspaceChat.tsx`
 - `src/pages/dashboard/AgentDashboard.tsx`
@@ -314,7 +314,7 @@ git merge project-reconstruction --strategy-option theirs
 1. **Frontend Features**:
    - Does project-reconstruction have AI Agent Portal functionality?
    - Are Admin/Workspace/Community features still supported?
-   - Is the TheiaIDE page needed?
+   - Is the SkIDEancerIDE page needed?
 
 2. **Database**:
    - Does project-reconstruction's Prisma schema include all tables from schema.enhanced.prisma?

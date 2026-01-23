@@ -27,7 +27,7 @@ Extension capabilities into The New Fuse Tauri desktop application.
           ▼
    Railway Cloud Sandbox
    - Playwright Browser Control
-   - Theia IDE
+   - SkIDEancer IDE
 ```
 
 ## Antigravity Extension Analysis

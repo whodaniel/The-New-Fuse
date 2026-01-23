@@ -1,7 +1,8 @@
 // Content script for automating Google AI Studio
-// FIXED VERSION: Added safeguards for chrome API availability
+// PHOENIX EDITION: Fixed all blocking errors from CLI tool learnings
+// Updates: gemini-3-flash-preview model, error recovery, permission handling
 
-console.log('AI Studio Automator: Content script loaded on', window.location.href);
+console.log('AI Studio Automator PHOENIX: Content script loaded on', window.location.href);
 
 // ============================================
 // SAFEGUARD: Check if chrome API is available
@@ -16,7 +17,12 @@ if (!chromeAvailable) {
   // CONFIGURATION
   // ============================================
   const MAX_SEGMENT_DURATION = 45 * 60; // 45 minutes in seconds
+  const GEMINI_MODEL = 'gemini-1.5-flash'; // Stable model for production, can be changed to gemini-3-flash-preview if available
   const PROMPT_TEMPLATE = `Extract all key points of information from this video. Focus specifically on AI-related concepts, technical innovations, and implementation details. Provide a dense, structured bulleted list of the provided key information in a downloadable .md format.`;
+
+  // Error recovery configuration
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY = 2000; // 2 seconds between retries
 
   // ============================================
   // UTILITY FUNCTIONS
@@ -35,7 +41,7 @@ if (!chromeAvailable) {
   }
 
   function sendLog(message, level = 'info') {
-    console.log(`[Automator] ${message}`);
+    console.log(`[Automator Phoenix] ${message}`);
     safeSendMessage({ type: 'LOG', message, level });
   }
 
@@ -67,6 +73,87 @@ if (!chromeAvailable) {
     if (mins > 0 && secs > 0) return `${mins}m${secs}s`;
     if (mins > 0) return `${mins}m`;
     return `${secs}s`;
+  }
+
+  // ============================================
+  // ERROR DETECTION HELPER
+  // ============================================
+
+  async function checkForErrors() {
+    const errorElements = document.querySelectorAll(
+      '[role="alert"], .error-message, .mat-error, .mat-snack-bar-container'
+    );
+
+    for (const el of errorElements) {
+      const text = el.textContent?.toLowerCase() || '';
+
+      if (text.includes('permission denied')) {
+        throw new Error('PERMISSION_DENIED: ' + el.textContent);
+      }
+
+      if (text.includes('unknown error')) {
+        throw new Error('UNKNOWN_ERROR: ' + el.textContent);
+      }
+
+      if (text.includes('quota exceeded') || text.includes('rate limit')) {
+        throw new Error('RATE_LIMIT: ' + el.textContent);
+      }
+
+      if (text.includes('failed to generate')) {
+        throw new Error('GENERATION_FAILED: ' + el.textContent);
+      }
+    }
+  }
+
+  // ============================================
+  // MODEL SELECTION
+  // ============================================
+
+  async function ensureCorrectModel() {
+    sendLog(`Ensuring model is set to: ${GEMINI_MODEL}`, 'info');
+
+    // Look for model dropdown/selector
+    const modelButtons = Array.from(document.querySelectorAll('button'));
+    const modelBtn = modelButtons.find(
+      (b) =>
+        b.textContent?.toLowerCase().includes('gemini') ||
+        b.getAttribute('aria-label')?.toLowerCase().includes('model')
+    );
+
+    if (modelBtn) {
+      sendLog('Model selector found, checking current model...', 'info');
+
+      // Check if correct model is already selected
+      if (modelBtn.textContent?.includes(GEMINI_MODEL)) {
+        sendLog(`Correct model already selected: ${GEMINI_MODEL}`, 'success');
+        return true;
+      }
+
+      // Try to open model selector
+      await clickElement(modelBtn, 'Model selector');
+      await sleep(1000);
+
+      // Look for the target model in the dropdown
+      const menuItems = document.querySelectorAll(
+        '[role="menuitem"], [role="option"], .mat-menu-item'
+      );
+      const targetModel = Array.from(menuItems).find((item) =>
+        item.textContent?.includes(GEMINI_MODEL)
+      );
+
+      if (targetModel) {
+        await clickElement(targetModel, `Select ${GEMINI_MODEL}`);
+        await sleep(1000);
+        sendLog(`Model switched to: ${GEMINI_MODEL}`, 'success');
+        return true;
+      } else {
+        sendLog(`Warning: Could not find ${GEMINI_MODEL} in model list`, 'warning');
+      }
+    } else {
+      sendLog('Model selector not found, assuming correct model is active', 'warning');
+    }
+
+    return false;
   }
 
   // ============================================
@@ -230,11 +317,84 @@ if (!chromeAvailable) {
   }
 
   // ============================================
-  // PHASE 3: RUN ANALYSIS
+  // PHASE 2.5: ENSURE PAID API KEY
+  // ============================================
+
+  async function ensurePaidApiKey() {
+    sendLog('Checking API key status...', 'info');
+    await sleep(1000);
+
+    // Check if "No API Key" button exists
+    const noKeyBtn =
+      document.querySelector('.paid-api-key-card[aria-label="No API Key"]') ||
+      Array.from(document.querySelectorAll('.paid-api-key-card')).find((el) =>
+        el.textContent.includes('No API Key')
+      );
+
+    if (noKeyBtn) {
+      sendLog('No API Key detected. Attempting to link "The New Fuse"...', 'warning');
+      await clickElement(noKeyBtn, 'No API Key button');
+      await sleep(2500);
+
+      // 1. Select Project
+      const projectSelect = document.querySelector(
+        'mat-select[aria-label="Select a paid project"]'
+      );
+      if (projectSelect) {
+        await clickElement(projectSelect, 'Project dropdown');
+        await sleep(1500);
+
+        const options = Array.from(document.querySelectorAll('mat-option'));
+        const fuseOption = options.find((opt) => opt.textContent.includes('The New Fuse'));
+
+        if (fuseOption) {
+          await clickElement(fuseOption, 'The New Fuse option');
+        } else if (options.length > 0) {
+          // Fallback: select first paid option if Fuse not found
+          await clickElement(options[0], 'First available project');
+        }
+        await sleep(1000);
+      }
+
+      // 2. Enable "Save paid API key" if not enabled
+      const saveToggle =
+        document.querySelector(
+          'button[role="switch"][aria-labelledby="save-paid-api-key-label"]'
+        ) || document.querySelector('button[role="switch"]');
+
+      if (saveToggle && saveToggle.getAttribute('aria-checked') !== 'true') {
+        await clickElement(saveToggle, 'Save API Key toggle');
+        await sleep(500);
+      }
+
+      // 3. Confirm
+      const confirmBtn = Array.from(document.querySelectorAll('button')).find(
+        (b) => b.textContent.trim() === 'Select key'
+      );
+      if (confirmBtn) {
+        await clickElement(confirmBtn, 'Select key button');
+        sendLog('API Key linked successfully.', 'success');
+        await sleep(3000);
+      } else {
+        sendLog('Could not find Select key button', 'error');
+      }
+    } else {
+      sendLog('API Key appears to be linked.', 'info');
+    }
+  }
+
+  // ============================================
+  // PHASE 3: RUN ANALYSIS (WITH ERROR DETECTION)
   // ============================================
 
   async function runAnalysis() {
     sendLog('Adding prompt and running analysis...', 'info');
+
+    // Ensure API Key First
+    await withRetry(() => ensurePaidApiKey(), 'Ensure Paid API Key');
+
+    // First ensure we're using the correct model
+    await ensureCorrectModel();
 
     const textareas = document.querySelectorAll('textarea');
     let promptArea = Array.from(textareas).find(
@@ -268,8 +428,25 @@ if (!chromeAvailable) {
       throw new Error('Run button not found');
     }
 
+    // Check if button is disabled (might indicate permission issues)
+    if (runBtn.disabled || runBtn.classList.contains('disabled')) {
+      sendLog('Run button is disabled - checking for errors', 'warning');
+      await sleep(1000);
+
+      // Check for error messages on page
+      await checkForErrors();
+
+      // If no errors detected, might be a loading state
+      sendLog('No errors detected, but button disabled. Waiting...', 'info');
+      await sleep(3000);
+    }
+
     await clickElement(runBtn, 'Run button');
     sendLog('Analysis started...', 'info');
+
+    // Wait a moment and check for immediate errors
+    await sleep(2000);
+    await checkForErrors();
   }
 
   // ============================================
@@ -282,9 +459,23 @@ if (!chromeAvailable) {
     return new Promise((resolve) => {
       const startTime = Date.now();
       let lastLogTime = startTime;
+      let lastErrorCheck = startTime;
 
-      const checkComplete = setInterval(() => {
+      const checkComplete = setInterval(async () => {
         const now = Date.now();
+
+        // Check for errors every 5 seconds
+        if (now - lastErrorCheck > 5000) {
+          try {
+            await checkForErrors();
+            lastErrorCheck = now;
+          } catch (error) {
+            clearInterval(checkComplete);
+            sendLog(`Error detected during processing: ${error.message}`, 'error');
+            resolve({ error: error.message });
+            return;
+          }
+        }
 
         if (now - lastLogTime > 30000) {
           const elapsed = Math.floor((now - startTime) / 1000);
@@ -376,6 +567,38 @@ if (!chromeAvailable) {
   }
 
   // ============================================
+  // RETRY WRAPPER
+  // ============================================
+
+  async function withRetry(fn, taskName, retries = MAX_RETRIES) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        sendLog(`${taskName} - Attempt ${attempt}/${retries}`, 'info');
+        const result = await fn();
+        return result;
+      } catch (error) {
+        const errorMsg = error.message || String(error);
+        sendLog(`${taskName} failed (attempt ${attempt}/${retries}): ${errorMsg}`, 'error');
+
+        // Check if it's a critical error that shouldn't be retried
+        if (errorMsg.includes('PERMISSION_DENIED') || errorMsg.includes('UNKNOWN_ERROR')) {
+          sendLog('Critical error detected - cannot retry automatically', 'error');
+          throw error;
+        }
+
+        if (attempt < retries) {
+          const delay = RETRY_DELAY * attempt; // Exponential backoff
+          sendLog(`Retrying in ${delay}ms...`, 'info');
+          await sleep(delay);
+        } else {
+          sendLog(`${taskName} failed after ${retries} attempts`, 'error');
+          throw error;
+        }
+      }
+    }
+  }
+
+  // ============================================
   // MAIN: PROCESS SINGLE TASK
   // ============================================
 
@@ -383,11 +606,12 @@ if (!chromeAvailable) {
     const { type, url, title, startTime, endTime, videoId, segmentIndex } = task;
 
     sendLog(`\n=== Processing Task: ${type} ===`, 'info');
+    sendLog(`Model: ${GEMINI_MODEL}`, 'info');
 
     try {
       switch (type) {
         case 'GET_DURATION':
-          const duration = await getVideoDuration(url);
+          const duration = await withRetry(() => getVideoDuration(url), 'Get video duration');
           safeSendMessage({
             type: 'TASK_COMPLETE',
             taskType: 'GET_DURATION',
@@ -397,9 +621,15 @@ if (!chromeAvailable) {
           break;
 
         case 'PROCESS_SEGMENT':
-          await addYouTubeVideo(url, startTime || 0, endTime);
-          await runAnalysis();
+          await withRetry(() => addYouTubeVideo(url, startTime || 0, endTime), 'Add YouTube video');
+
+          await withRetry(() => runAnalysis(), 'Run analysis');
+
           const result = await waitForCompletion();
+
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
           if (result.complete) {
             await downloadReport(videoId, segmentIndex);
@@ -433,19 +663,27 @@ if (!chromeAvailable) {
   // ============================================
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log('[Automator] Received message:', message.action || message.type);
+    console.log('[Automator Phoenix] Received message:', message.action || message.type);
 
     if (message.action === 'EXECUTE_TASK') {
       processTask(message.task);
       sendResponse({ accepted: true });
     } else if (message.action === 'PING') {
-      sendResponse({ alive: true, url: window.location.href });
+      sendResponse({ alive: true, url: window.location.href, model: GEMINI_MODEL });
     } else if (message.action === 'GET_PAGE_STATE') {
       const insertBtn = document.querySelector(
         'button[aria-label="Insert images, videos, audio, or files"]'
       );
       const isReady = !!insertBtn;
-      sendResponse({ ready: isReady, url: window.location.href });
+      sendResponse({ ready: isReady, url: window.location.href, model: GEMINI_MODEL });
+    } else if (message.action === 'CHECK_ERRORS') {
+      checkForErrors()
+        .then(() => {
+          sendResponse({ hasErrors: false });
+        })
+        .catch((error) => {
+          sendResponse({ hasErrors: true, error: error.message });
+        });
     }
 
     return true;
@@ -457,11 +695,13 @@ if (!chromeAvailable) {
 
   function init() {
     sendLog('Content script ready on: ' + window.location.href, 'success');
+    sendLog(`Using model: ${GEMINI_MODEL}`, 'info');
 
     setTimeout(() => {
       safeSendMessage({
         type: 'CONTENT_SCRIPT_READY',
         url: window.location.href,
+        model: GEMINI_MODEL,
       });
     }, 1000);
   }

@@ -1,6 +1,6 @@
 #!/bin/bash
 # The New Fuse - Complete Package Validation Script
-# Validates all packages are buildable and functional (excluding Theia)
+# Validates all packages are buildable and functional (excluding SkIDEancer)
 # Author: Daniel Adam Goldberg
 
 set -e
@@ -64,9 +64,9 @@ validate_package() {
 
     ((TOTAL_PACKAGES++))
 
-    # Skip Theia
-    if [[ $package_name == "theia-ide" ]]; then
-        print_status "skip" "$package_name" "Excluded from validation (Theia on back burner)"
+    # Skip SkIDEancer
+    if [[ $package_name == "ide-ide" ]]; then
+        print_status "skip" "$package_name" "Excluded from validation (SkIDEancer on back burner)"
         return 0
     fi
 

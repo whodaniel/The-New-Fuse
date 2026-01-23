@@ -13,12 +13,12 @@ export {
   type RelayBridgeConfig
 } from './RelayBridge';
 
-// Theia IDE integration bridge
+// SkIDEancer IDE integration bridge
 export {
-  TheiaMCPBridge,
-  createTheiaMCPBridge,
-  type TheiaMCPBridgeConfig
-} from './TheiaMCPBridge';
+  SkIDEancerMCPBridge,
+  createSkIDEancerMCPBridge,
+  type SkIDEancerMCPBridgeConfig
+} from './SkIDEancerMCPBridge';
 
 // MCP System Factory and related exports
 export {

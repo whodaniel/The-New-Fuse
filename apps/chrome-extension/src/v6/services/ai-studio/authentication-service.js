@@ -365,6 +365,40 @@ class AuthenticationService {
       reason: 'Free transcript analysis',
       cost: 0,
     };
+  // Fix multi-account switching issue
+  async detectAccountChange() {
+    try {
+      // Fetch fresh token - if user changed accounts in Gemini/YouTube,
+      // chrome.identity might return a different token or need refreshing.
+      const token = await chrome.identity.getAuthToken({ interactive: false });
+
+      const stored = await chrome.storage.local.get('youtubeToken');
+      if (token && token !== stored.youtubeToken) {
+        console.log('Account change detected! Updating tokens...');
+        await chrome.storage.local.set({ youtubeToken: token });
+        this.accounts.youtube = { token };
+        return true;
+      }
+    } catch (e) {
+      // Silently fail if not logged in
+    }
+    return false;
+  }
+
+  // Clear all tokens (useful for troubleshooting)
+  async resetAllTokens() {
+    const data = await chrome.storage.local.get();
+    const keysToRemove = Object.keys(data).filter((k) =>
+      k.includes('Token') || k.includes('Auth') || k.includes('ApiKey')
+    );
+    await chrome.storage.local.remove(keysToRemove);
+    this.authStatus = {
+      youtube: false,
+      geminiApi: false,
+      aiStudio: false,
+      googleSearch: false,
+    };
+    return true;
   }
 }
 

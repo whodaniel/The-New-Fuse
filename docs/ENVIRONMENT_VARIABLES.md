@@ -478,7 +478,7 @@ WEBHOOKS_SERVICE_URL=https://webhooks-production.up.railway.app
 **Required:** No
 **Default:** `http://localhost:3007`
 
-Theia IDE service URL.
+SkIDEancer IDE service URL.
 
 ```bash
 THEIA_IDE_URL=https://ide-production.up.railway.app

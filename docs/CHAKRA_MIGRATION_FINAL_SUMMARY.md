@@ -87,7 +87,7 @@ migrated carefully with thorough testing.
 - AIAgentOnboarding.tsx
 - BundleAnalyzer.tsx
 - PopupContainer.tsx
-- TheiaIDE.tsx
+- SkIDEancerIDE.tsx
 - MemoryInspector.tsx
 - MetricsDashboard.tsx
 - FairtableDashboard.tsx

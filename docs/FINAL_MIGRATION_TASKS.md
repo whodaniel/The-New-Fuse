@@ -61,7 +61,7 @@ Already migrated - no action needed.
 
 #### Pages (5 files)
 
-29. [ ] `/src/pages/IDE/TheiaIDE.tsx`
+29. [ ] `/src/pages/IDE/SkIDEancerIDE.tsx`
 30. [ ] `/src/pages/MemoryInspector.tsx`
 31. [ ] `/src/pages/MetricsDashboard.tsx`
 32. [ ] `/src/pages/fairtable/FairtableDashboard.tsx`

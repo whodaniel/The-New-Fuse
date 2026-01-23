@@ -1,20 +1,20 @@
-# SkIDEancer (Theia IDE) Deployment Guide
+# SkIDEancer (SkIDEancer IDE) Deployment Guide
 
 **Date:** December 25, 2025  
-**Repository:** https://github.com/whodaniel/fuse-theia-ide  
+**Repository:** https://github.com/whodaniel/skideancer-ide  
 **Deployment URL:** https://ide.thenewfuse.com /
 https://skideancer.thenewfuse.com
 
 ## Overview
 
 SkIDEancer is the cloud-based IDE component of The New Fuse platform, built on
-Eclipse Theia 1.67 with full AI integrations.
+Eclipse SkIDEancer 1.67 with full AI integrations.
 
 ## Architecture
 
-The Theia IDE is deployed separately from the main TNF monorepo because:
+The SkIDEancer IDE is deployed separately from the main TNF monorepo because:
 
-- Theia requires **Yarn** while the main monorepo uses **pnpm**
+- SkIDEancer requires **Yarn** while the main monorepo uses **pnpm**
 - Mixing package managers causes lockfile conflicts and build issues
 - Separate deployment allows independent scaling and updates
 
@@ -22,7 +22,7 @@ The Theia IDE is deployed separately from the main TNF monorepo because:
 
 ### Railway Configuration
 
-- **Service:** `fuse-theia-ide`
+- **Service:** `skideancer-ide`
 - **Builder:** Dockerfile
 - **Domain:** `ide.thenewfuse.com`
 
@@ -32,7 +32,7 @@ The Theia IDE is deployed separately from the main TNF monorepo because:
 | ----------------------------- | ------------------------------- |
 | `Dockerfile`                  | Build and runtime configuration |
 | `railway.toml`                | Railway-specific settings       |
-| `package.json`                | Theia dependencies (Yarn-based) |
+| `package.json`                | SkIDEancer dependencies (Yarn-based) |
 | `src-gen/backend/main.js`     | Production entry point          |
 | `src-gen/frontend/index.html` | Frontend entry point            |
 
@@ -44,7 +44,7 @@ The Theia IDE is deployed separately from the main TNF monorepo because:
 
 **Root Causes:**
 
-1. Wrong start command (`yarn theia start` instead of
+1. Wrong start command (`yarn ide start` instead of
    `node src-gen/backend/main.js`)
 2. Railway custom start command overriding Dockerfile CMD
 
@@ -62,13 +62,13 @@ Error: The configuration is not set. Did you call FrontendApplicationConfigProvi
 ```
 
 **Root Cause:** Webpack bundling created multiple copies of the config provider
-module. Theia's singleton pattern using `Symbol('...')` created unique symbols
+module. SkIDEancer's singleton pattern using `Symbol('...')` created unique symbols
 per copy, breaking the pattern.
 
 **Solution:** Three-phase patching to replace `Symbol('...')` with
 `Symbol.for('...')`:
 
-1. **Phase 1:** Patch `@theia` source files before build
+1. **Phase 1:** Patch `@ide` source files before build
 2. **Phase 2:** Patch generated `src-gen/frontend/index.js`
 3. **Phase 3:** Patch compiled `lib/frontend/*.js` bundles
 
@@ -104,7 +104,7 @@ CLOUD_SANDBOX_WS=wss://tnf-cloud-sandbox-production.up.railway.app/ws
 
 ## Related Documentation
 
-- [TROUBLESHOOTING.md](https://github.com/whodaniel/fuse-theia-ide/blob/main/docs/TROUBLESHOOTING.md) -
+- [TROUBLESHOOTING.md](https://github.com/whodaniel/skideancer-ide/blob/main/docs/TROUBLESHOOTING.md) -
   Detailed troubleshooting guide
-- [README.md](https://github.com/whodaniel/fuse-theia-ide/blob/main/README.md) -
+- [README.md](https://github.com/whodaniel/skideancer-ide/blob/main/README.md) -
   Quick start guide

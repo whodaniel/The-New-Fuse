@@ -265,7 +265,7 @@ import { Button, Card, Badge } from '@/components/ui/design-system';
 40. [ ] `/src/components/onboarding/AIAgentOnboarding.tsx`
 41. [ ] `/src/components/performance/BundleAnalyzer.tsx`
 42. [ ] `/src/components/ui/popup/PopupContainer.tsx`
-43. [ ] `/src/pages/IDE/TheiaIDE.tsx`
+43. [ ] `/src/pages/IDE/SkIDEancerIDE.tsx`
 44. [ ] `/src/pages/MemoryInspector.tsx`
 45. [ ] `/src/pages/MetricsDashboard.tsx`
 46. [ ] `/src/pages/fairtable/FairtableDashboard.tsx`

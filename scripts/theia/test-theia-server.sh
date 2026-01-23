@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Test Theia Server Script
-# Tests if the enhanced Theia server starts correctly
+# Test SkIDEancer Server Script
+# Tests if the enhanced SkIDEancer server starts correctly
 
-echo "🧪 Testing Theia Enhanced Server..."
+echo "🧪 Testing SkIDEancer Enhanced Server..."
 
 # Change to the correct directory
 cd "$(dirname "$0")/.."
@@ -17,7 +17,7 @@ echo "🔧 Port: $PORT"
 
 # Start the server in background
 echo "🚀 Starting enhanced server..."
-node apps/theia-ide/enhanced-server.js &
+node apps/ide-ide/enhanced-server.js &
 SERVER_PID=$!
 
 # Wait a moment for server to start

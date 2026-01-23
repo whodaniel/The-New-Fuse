@@ -1355,7 +1355,7 @@ dy>
         let serviceStatus = {
             frontend: false,
             gateway: false,
-            theia: false,
+            ide: false,
             ml: false
         };
 
@@ -1714,7 +1714,7 @@ dy>
                 'perplexity': 'https://perplexity.ai',
                 
                 // Development Tools
-                'theia': THEIA_URL,
+                'ide': THEIA_URL,
                 'vscode': 'https://vscode.dev',
                 'github': 'https://github.com',
                 'terminal': THEIA_URL + '/#/terminal',
@@ -1751,7 +1751,7 @@ dy>
         }
 
         function isInternalService(serviceName) {
-            const internalServices = ['dashboard', 'agents', 'workflows', 'analytics', 'browser-use', 'screenshot', 'theia'];
+            const internalServices = ['dashboard', 'agents', 'workflows', 'analytics', 'browser-use', 'screenshot', 'ide'];
             return internalServices.includes(serviceName);
         }
 
@@ -1763,7 +1763,7 @@ dy>
                 'analytics': 'frontend',
                 'browser-use': 'frontend',
                 'screenshot': 'frontend',
-                'theia': 'theia'
+                'ide': 'ide'
             };
             
             const serviceKey = serviceMapping[serviceName];
@@ -1804,7 +1804,7 @@ dy>
                 'gemini': 'Gemini',
                 'chatgpt': 'ChatGPT',
                 'perplexity': 'Perplexity',
-                'theia': 'Theia IDE',
+                'ide': 'SkIDEancer IDE',
                 'vscode': 'VS Code',
                 'github': 'GitHub',
                 'terminal': 'Terminal',
@@ -1823,7 +1823,7 @@ dy>
             const services = [
                 { name: 'frontend', url: FRONTEND_URL, healthPath: '/health', port: 3000 },
                 { name: 'gateway', url: API_BASE.replace('/v1', ''), healthPath: '/health', port: 3005 },
-                { name: 'theia', url: THEIA_URL, healthPath: '/', port: 3007 }, // Theia doesn't have /health
+                { name: 'ide', url: THEIA_URL, healthPath: '/', port: 3007 }, // SkIDEancer doesn't have /health
                 { name: 'ml', url: 'http://localhost:3008', healthPath: '/health', port: 3008 }
             ];
             
@@ -1834,8 +1834,8 @@ dy>
                     // Use different approach for different services
                     let isOnline = false;
                     
-                    if (service.name === 'theia') {
-                        // For Theia, just check if the port responds
+                    if (service.name === 'ide') {
+                        // For SkIDEancer, just check if the port responds
                         const response = await fetch(service.url, { 
                             method: 'HEAD',
                             mode: 'no-cors',
@@ -1918,7 +1918,7 @@ dy>
             }
 
             // Update individual service status
-            const services = ['frontend', 'gateway', 'theia', 'ml'];
+            const services = ['frontend', 'gateway', 'ide', 'ml'];
             services.forEach(service => {
                 const element = document.getElementById(service + 'Status');
                 if (element) {
@@ -2321,7 +2321,7 @@ dy>
         // Update navigation item status based on service health
         function updateNavItemStatus() {
             const serviceMapping = {
-                'theia': 'theia',
+                'ide': 'ide',
                 'agents': 'gateway',
                 'workflows': 'frontend',
                 'analytics': 'frontend'

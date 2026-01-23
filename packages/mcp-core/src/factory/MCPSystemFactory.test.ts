@@ -36,7 +36,7 @@ describe('MCPSystemFactory', () => {
       expect(system.config.server.port).toBe(3001);
       expect(system.config.server.enableAuth).toBe(false);
       expect(system.config.server.logLevel).toBe(LogLevel.DEBUG);
-      expect(system.config.theia?.enabled).toBe(true);
+      expect(system.config.ide?.enabled).toBe(true);
       expect(system.config.development?.debugMode).toBe(true);
       expect(system.config.development?.hotReload).toBe(true);
     });
@@ -51,7 +51,7 @@ describe('MCPSystemFactory', () => {
       expect(system.config.server.logLevel).toBe(LogLevel.ERROR);
       expect(system.config.relay?.enabled).toBe(false);
       expect(system.config.workflow?.enabled).toBe(false);
-      expect(system.config.theia?.enabled).toBe(false);
+      expect(system.config.ide?.enabled).toBe(false);
     });
 
     it('should create custom system with provided configuration', () => {

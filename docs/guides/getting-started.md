@@ -131,7 +131,7 @@ The-New-Fuse/
 │   ├── frontend/           # React frontend
 │   ├── api-gateway/        # API gateway
 │   ├── electron-desktop/   # Electron app
-│   └── theia-ide/         # Theia IDE
+│   └── ide-ide/         # SkIDEancer IDE
 ├── packages/               # Shared packages
 │   ├── mcp-core/          # MCP implementation
 │   ├── sync-core/         # Sync services

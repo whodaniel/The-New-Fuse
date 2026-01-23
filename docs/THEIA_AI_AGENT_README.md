@@ -1,6 +1,6 @@
-# @fuse/theia-ai-agent
+# @fuse/ide-ai-agent
 
-Advanced AI Agent system for Theia IDE with memory, flow orchestration, and code analysis.
+Advanced AI Agent system for SkIDEancer IDE with memory, flow orchestration, and code analysis.
 
 **Ported from SkIDEancer's Windsurf-inspired AI platform.**
 
@@ -37,7 +37,7 @@ Advanced AI Agent system for Theia IDE with memory, flow orchestration, and code
 ## Directory Structure
 
 ```
-packages/theia-ai-agent/
+packages/ide-ai-agent/
 ├── src/
 │   ├── browser/                    # Frontend (browser) code
 │   │   ├── ai-agent-frontend-module.ts
@@ -86,7 +86,7 @@ Command Palette > AI Agent: Clear Memory
 ### Using Agent Service
 
 ```typescript
-import { AgentService } from "@fuse/theia-ai-agent";
+import { AgentService } from "@fuse/ide-ai-agent";
 
 // Process user input
 const response = await agentService.process("analyze this code");
@@ -101,7 +101,7 @@ const pref = agentService.recall("userPreference", "long");
 ### Using AI Flow Service
 
 ```typescript
-import { AIFlowService, IAIFlowGraph } from "@fuse/theia-ai-agent";
+import { AIFlowService, IAIFlowGraph } from "@fuse/ide-ai-agent";
 
 // Define a flow
 const flow: IAIFlowGraph = {
@@ -125,7 +125,7 @@ const result = await flowService.executeGraph(flow);
 ### Registering Custom Capability
 
 ```typescript
-import { IAgentCapability } from "@fuse/theia-ai-agent";
+import { IAgentCapability } from "@fuse/ide-ai-agent";
 
 const myCapability: IAgentCapability = {
   id: "myCustomCapability",

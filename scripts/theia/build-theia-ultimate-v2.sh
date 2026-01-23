@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Ultimate Theia Build Script (v7)
-# This script performs a full pnpm install and then builds Theia and other packages.
+# Ultimate SkIDEancer Build Script (v7)
+# This script performs a full pnpm install and then builds SkIDEancer and other packages.
 
 set -e
 
-echo "🚀 Starting the ULTIMATE Theia build process (v3 - full install)..."
+echo "🚀 Starting the ULTIMATE SkIDEancer build process (v3 - full install)..."
 
 # 0. Set Node.js version
 echo "
@@ -24,7 +24,7 @@ echo "
 --- Step 1: Performing clean install ---"
 echo "Removing old node_modules and bun.lockb..."
 rm -rf node_modules bun.lockb
-rm -rf apps/theia-ide/node_modules
+rm -rf apps/ide-ide/node_modules
 echo "Installing all dependencies (allowing scripts)..."
 pnpm install
 echo "✅ Clean install complete."
@@ -35,15 +35,15 @@ echo "
 bun prisma generate --schema packages/database/prisma/schema.prisma
 echo "✅ Prisma Client generated."
 
-# 3. Build Theia IDE
+# 3. Build SkIDEancer IDE
 echo "
---- Step 3: Building Theia IDE ---"
+--- Step 3: Building SkIDEancer IDE ---"
 # Create the symlink to solve workspace issues
-echo "Creating symlink for Theia's node_modules..."
-ln -s ../../node_modules apps/theia-ide/node_modules
+echo "Creating symlink for SkIDEancer's node_modules..."
+ln -s ../../node_modules apps/ide-ide/node_modules
 
-(cd apps/theia-ide && pnpm dlx @theia/cli@1.59.0 build --mode production)
-echo "✅ Theia IDE build complete."
+(cd apps/ide-ide && pnpm dlx @ide/cli@1.59.0 build --mode production)
+echo "✅ SkIDEancer IDE build complete."
 
 # 4. Build the rest of the packages
 echo "

@@ -1,8 +1,6 @@
 ---
 name: i18n-localization
-description:
-  Internationalization and localization patterns. Detecting hardcoded strings,
-  managing translations, locale files, RTL support.
+description: Internationalization and localization patterns. Detecting hardcoded strings, managing translations, locale files, RTL support.
 allowed-tools: Read, Glob, Grep
 ---
 
@@ -14,24 +12,24 @@ allowed-tools: Read, Glob, Grep
 
 ## 1. Core Concepts
 
-| Term       | Meaning                                        |
-| ---------- | ---------------------------------------------- |
-| **i18n**   | Internationalization - making app translatable |
-| **L10n**   | Localization - actual translations             |
-| **Locale** | Language + Region (en-US, tr-TR)               |
-| **RTL**    | Right-to-left languages (Arabic, Hebrew)       |
+| Term | Meaning |
+|------|---------|
+| **i18n** | Internationalization - making app translatable |
+| **L10n** | Localization - actual translations |
+| **Locale** | Language + Region (en-US, tr-TR) |
+| **RTL** | Right-to-left languages (Arabic, Hebrew) |
 
 ---
 
 ## 2. When to Use i18n
 
-| Project Type      | i18n Needed?       |
-| ----------------- | ------------------ |
-| Public web app    | ✅ Yes             |
-| SaaS product      | ✅ Yes             |
-| Internal tool     | ⚠️ Maybe           |
+| Project Type | i18n Needed? |
+|--------------|--------------|
+| Public web app | ✅ Yes |
+| SaaS product | ✅ Yes |
+| Internal tool | ⚠️ Maybe |
 | Single-region app | ⚠️ Consider future |
-| Personal project  | ❌ Optional        |
+| Personal project | ❌ Optional |
 
 ---
 
@@ -110,13 +108,13 @@ locales/
 
 ## 6. Common Issues
 
-| Issue               | Solution                     |
-| ------------------- | ---------------------------- |
+| Issue | Solution |
+|-------|----------|
 | Missing translation | Fallback to default language |
-| Hardcoded strings   | Use linter/checker script    |
-| Date format         | Use Intl.DateTimeFormat      |
-| Number format       | Use Intl.NumberFormat        |
-| Pluralization       | Use ICU message format       |
+| Hardcoded strings | Use linter/checker script |
+| Date format | Use Intl.DateTimeFormat |
+| Number format | Use Intl.NumberFormat |
+| Pluralization | Use ICU message format |
 
 ---
 
@@ -125,11 +123,11 @@ locales/
 ```css
 /* CSS Logical Properties */
 .container {
-  margin-inline-start: 1rem; /* Not margin-left */
-  padding-inline-end: 1rem; /* Not padding-right */
+  margin-inline-start: 1rem;  /* Not margin-left */
+  padding-inline-end: 1rem;   /* Not padding-right */
 }
 
-[dir='rtl'] .icon {
+[dir="rtl"] .icon {
   transform: scaleX(-1);
 }
 ```
@@ -151,6 +149,6 @@ Before shipping:
 
 ## Script
 
-| Script                    | Purpose                                         | Command                                         |
-| ------------------------- | ----------------------------------------------- | ----------------------------------------------- |
+| Script | Purpose | Command |
+|--------|---------|---------|
 | `scripts/i18n_checker.py` | Detect hardcoded strings & missing translations | `python scripts/i18n_checker.py <project_path>` |

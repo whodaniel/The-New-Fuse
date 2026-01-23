@@ -70,7 +70,7 @@ VITE_WS_URL=<WebSocket_Server_URL>
 - Backend Service
 - API Service
 - Webhooks Service
-- Theia IDE (optional)
+- SkIDEancer IDE (optional)
 
 **Required Environment Variables:**
 ```bash

@@ -154,7 +154,7 @@ PORT=8080
 BACKEND_SERVICE_URL=https://backend-production.up.railway.app
 WEBHOOKS_SERVICE_URL=https://webhooks-production.up.railway.app
 AGENTS_SERVICE_URL=https://api-service-production.up.railway.app
-THEIA_IDE_URL=https://theia-ide-production.up.railway.app
+THEIA_IDE_URL=https://ide-ide-production.up.railway.app
 
 # CORS (update with actual frontend URL)
 CORS_ORIGINS=https://your-frontend.vercel.app,https://your-frontend.railway.app
@@ -243,7 +243,7 @@ VITE_WS_URL=wss://api-gateway-production.up.railway.app
 
 # Service URLs
 VITE_FRONTEND_URL=https://frontend-production.up.railway.app
-VITE_THEIA_IDE_URL=https://theia-ide-production.up.railway.app
+VITE_THEIA_IDE_URL=https://ide-ide-production.up.railway.app
 
 # Feature Flags
 VITE_ENABLE_ANALYTICS=true

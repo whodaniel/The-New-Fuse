@@ -1,4 +1,4 @@
-# Theia IDE Railway Deployment - Diagnosis & Fix
+# SkIDEancer IDE Railway Deployment - Diagnosis & Fix
 
 **Issue Date**: December 20, 2025  
 **Status**: Container Online, UI Not Loading  
@@ -13,11 +13,11 @@
 - ✅ Service: **Online** (healthcheck passing)
 - 🌐 Domains: `ide.thenewfuse.com`, `skideancer.thenewfuse.com`
 - ⚠️ **Port**: 3000 (configured in Railway)
-- 📦 Repository: `whodaniel/fuse-theia-ide`
+- 📦 Repository: `whodaniel/skideancer-ide`
 
 ### Expected Configuration (Per THEIA_ISOLATION_STRATEGY.md)
 
-- 🎯 Port: **3007** (Theia default)
+- 🎯 Port: **3007** (SkIDEancer default)
 - 📝 Start command:
   `node src-gen/backend/server.js --hostname=0.0.0.0 --port=3007`
 - 🐳 Dockerfile: Should expose port 3007
@@ -33,8 +33,8 @@ x-powered-by: Express
 **Meaning**:
 
 - ✅ Container is running (Express is responding)
-- ❌ Theia IDE is not serving on the configured port
-- ⚠️ Port mismatch: Railway expects 3000, Theia listens on 3007
+- ❌ SkIDEancer IDE is not serving on the configured port
+- ⚠️ Port mismatch: Railway expects 3000, SkIDEancer listens on 3007
 
 ---
 
@@ -53,9 +53,9 @@ Change Railway's public networking port from 3000 to 3007:
 4. Click **Update**
 5. Wait 30 seconds for routing to update
 
-### Option 2: Update Theia Start Command
+### Option 2: Update SkIDEancer Start Command
 
-If you prefer to keep port 3000, update the Theia service:
+If you prefer to keep port 3000, update the SkIDEancer service:
 
 **In Railway Service Settings**:
 
@@ -98,8 +98,8 @@ After making changes:
 
    ```bash
    # Should see:
-   Theia IDE v2.0.0 started successfully
-   Theia app listening on: 0.0.0.0:3007
+   SkIDEancer IDE v2.0.0 started successfully
+   SkIDEancer app listening on: 0.0.0.0:3007
    ```
 
 2. **Test Endpoint**
@@ -111,7 +111,7 @@ After making changes:
 
 3. **Access UI**
    - Open: https://ide.thenewfuse.com
-   - Should load Theia IDE interface
+   - Should load SkIDEancer IDE interface
    - No "Cannot GET /" error
 
 ---
@@ -132,13 +132,13 @@ CLOUD_SANDBOX_URL=https://tnf-cloud-sandbox-production.up.railway.app
 
 Current healthcheck path: `/healthz`
 
-**Issue**: Theia doesn't have this endpoint by default
+**Issue**: SkIDEancer doesn't have this endpoint by default
 
 **Fix**: Change healthcheck to:
 
 - Path: `/` (root)
 - Or remove healthcheck entirely
-- Or add custom healthcheck endpoint to Theia
+- Or add custom healthcheck endpoint to SkIDEancer
 
 ### Check Logs for Errors
 
@@ -147,7 +147,7 @@ Look for:
 - ❌ "Port already in use"
 - ❌ "EADDRINUSE"
 - ❌ "Connection refused"
-- ✅ "Theia app listening on..."
+- ✅ "SkIDEancer app listening on..."
 
 ---
 
@@ -173,7 +173,7 @@ Look for:
 
 | Service            | Default Port | Railway Port | Status       |
 | ------------------ | ------------ | ------------ | ------------ |
-| Theia (Documented) | 3007         | 3000 ❌      | **Mismatch** |
+| SkIDEancer (Documented) | 3007         | 3000 ❌      | **Mismatch** |
 | Cloud Sandbox      | Auto         | Auto ✅      | Working      |
 | TNF Relay          | 3000         | N/A          | Local only   |
 
@@ -189,7 +189,7 @@ The Railway dashboard shows "Online" because:
 
 But the IDE doesn't load because:
 
-1. ❌ Theia listens on port 3007
+1. ❌ SkIDEancer listens on port 3007
 2. ❌ Railway routes traffic to port 3000
 3. ❌ No service on port 3000 to handle requests
 4. Result: **404 Cannot GET /**
@@ -201,9 +201,9 @@ But the IDE doesn't load because:
 1. **Update Railway port configuration** (Option 1 above)
 2. **Test the subdomain**: https://ide.thenewfuse.com
 3. **If still broken**: Check deployment logs in Railway dashboard
-4. **If working**: Add Theia link to Tauri UI and Website
+4. **If working**: Add SkIDEancer link to Tauri UI and Website
 
 ---
 
-**Expected Result**: Theia IDE loads successfully with full AI integrations
+**Expected Result**: SkIDEancer IDE loads successfully with full AI integrations
 enabled.

@@ -171,18 +171,18 @@ export type MemoryCallback = (usage: MemoryUsage) => void;
 export type BuildEventCallback = (event: BuildEventData) => void;
 
 /**
- * Theia IDE specific configuration
+ * SkIDEancer IDE specific configuration
  */
-export interface TheiaConfiguration {
-  /** Whether Theia should be built first */
+export interface SkIDEancerConfiguration {
+  /** Whether SkIDEancer should be built first */
   buildFirst: boolean;
-  /** Estimated memory usage for Theia build in MB */
+  /** Estimated memory usage for SkIDEancer build in MB */
   estimatedMemoryUsage: number;
-  /** Whether to cleanup after Theia build */
+  /** Whether to cleanup after SkIDEancer build */
   cleanupAfterBuild: boolean;
-  /** Yarn command to use for Theia build */
+  /** Yarn command to use for SkIDEancer build */
   yarnCommand?: string;
-  /** Build directory for Theia */
+  /** Build directory for SkIDEancer */
   buildDirectory?: string;
 }
 
@@ -215,8 +215,8 @@ export type BuildEnvironment = 'development' | 'production' | 'ci' | 'local';
 export interface EnhancedBuildConfiguration extends BuildConfiguration {
   /** Build environment */
   environment: BuildEnvironment;
-  /** Theia IDE configuration */
-  theiaConfig?: TheiaConfiguration;
+  /** SkIDEancer IDE configuration */
+  ideConfig?: SkIDEancerConfiguration;
   /** Monorepo specific settings */
   monorepoConfig?: MonorepoConfiguration;
   /** Whether to force memory optimization regardless of environment */

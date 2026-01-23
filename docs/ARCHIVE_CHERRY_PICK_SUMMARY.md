@@ -8,18 +8,18 @@
 
 ## Files Successfully Cherry-Picked
 
-### 1. ✅ Theia IDE v2.0.0 (`apps/theia-ide/`)
+### 1. ✅ SkIDEancer IDE v2.0.0 (`apps/ide-ide/`)
 
-**Source**: `non-saas Nov-15-25/theia-ide-version2/`
+**Source**: `non-saas Nov-15-25/ide-ide-version2/`
 
 **AI Integrations Included**:
 
-- `@theia/ai-anthropic` v1.59.0
-- `@theia/ai-openai` v1.59.0
-- `@theia/ai-ollama` v1.59.0
-- `@theia/ai-huggingface` v1.59.0
-- `@theia/ai-chat` v1.59.0
-- `@theia/ai-core` v1.59.0
+- `@ide/ai-anthropic` v1.59.0
+- `@ide/ai-openai` v1.59.0
+- `@ide/ai-ollama` v1.59.0
+- `@ide/ai-huggingface` v1.59.0
+- `@ide/ai-chat` v1.59.0
+- `@ide/ai-core` v1.59.0
 - `@modelcontextprotocol/sdk` v1.16.0 (MCP!)
 
 **Full Feature Set**:
@@ -43,17 +43,17 @@
 
 ---
 
-### 2. ✅ Theia Build Scripts (`scripts/theia/`)
+### 2. ✅ SkIDEancer Build Scripts (`scripts/ide/`)
 
 **Source**: `non-saas Nov-15-25/scripts/`
 
 **Files Copied**: | File | Size | Purpose | |------|------|---------| |
-`build-theia-final.sh` | 2KB | Final production build script | |
-`build-theia-ultimate-v2.sh` | 1.5KB | Ultimate build v2 | |
-`build-theia-ultimate.sh` | 2.2KB | Ultimate build v1 | |
-`build-theia-yarn-ultimate.sh` | 2.6KB | Yarn-based build | |
-`test-theia-server.sh` | 1.8KB | Server testing script | |
-`verify-theia-build.cjs` | 2.4KB | Build verification |
+`build-ide-final.sh` | 2KB | Final production build script | |
+`build-ide-ultimate-v2.sh` | 1.5KB | Ultimate build v2 | |
+`build-ide-ultimate.sh` | 2.2KB | Ultimate build v1 | |
+`build-ide-yarn-ultimate.sh` | 2.6KB | Yarn-based build | |
+`test-ide-server.sh` | 1.8KB | Server testing script | |
+`verify-ide-build.cjs` | 2.4KB | Build verification |
 
 ---
 
@@ -140,16 +140,16 @@ rm -rf "non-saas Nov-15-25/"
 
 ### Immediate
 
-1. [ ] Test Theia IDE startup:
-       `cd apps/theia-ide && node src-gen/backend/server.js`
+1. [ ] Test SkIDEancer IDE startup:
+       `cd apps/ide-ide && node src-gen/backend/server.js`
 2. [ ] Install dependencies if needed: `pnpm install`
-3. [ ] Create Dockerfile for Theia (Railway deployment)
+3. [ ] Create Dockerfile for SkIDEancer (Railway deployment)
 
 ### Integration
 
-1. [ ] Connect Theia to cloud sandbox MCP
-2. [ ] Add Theia navigation to Tauri desktop
-3. [ ] Wire up heartbeat monitoring for Theia
+1. [ ] Connect SkIDEancer to cloud sandbox MCP
+2. [ ] Add SkIDEancer navigation to Tauri desktop
+3. [ ] Wire up heartbeat monitoring for SkIDEancer
 
 ### Cleanup
 
@@ -162,7 +162,7 @@ rm -rf "non-saas Nov-15-25/"
 
 | Category            | Items Migrated                  |
 | ------------------- | ------------------------------- |
-| Theia IDE           | Full application (531+ files)   |
+| SkIDEancer IDE           | Full application (531+ files)   |
 | Build Scripts       | 6 scripts                       |
 | AI Agent Configs    | 2 configs                       |
 | Documentation       | 1 comprehensive doc (846 lines) |

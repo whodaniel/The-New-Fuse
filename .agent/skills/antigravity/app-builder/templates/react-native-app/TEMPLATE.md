@@ -1,21 +1,20 @@
 ---
 name: react-native-app
-description:
-  React Native mobile app template principles. Expo, TypeScript, navigation.
+description: React Native mobile app template principles. Expo, TypeScript, navigation.
 ---
 
 # React Native App Template
 
 ## Tech Stack
 
-| Component  | Technology            |
-| ---------- | --------------------- |
-| Framework  | React Native + Expo   |
-| Language   | TypeScript            |
-| Navigation | Expo Router           |
-| State      | Zustand + React Query |
-| Styling    | NativeWind            |
-| Testing    | Jest + RNTL           |
+| Component | Technology |
+|-----------|------------|
+| Framework | React Native + Expo |
+| Language | TypeScript |
+| Navigation | Expo Router |
+| State | Zustand + React Query |
+| Styling | NativeWind |
+| Testing | Jest + RNTL |
 
 ---
 
@@ -44,35 +43,35 @@ project-name/
 
 ## Navigation Patterns
 
-| Pattern | Use               |
-| ------- | ----------------- |
-| Stack   | Page hierarchy    |
-| Tabs    | Bottom navigation |
-| Drawer  | Side menu         |
-| Modal   | Overlay screens   |
+| Pattern | Use |
+|---------|-----|
+| Stack | Page hierarchy |
+| Tabs | Bottom navigation |
+| Drawer | Side menu |
+| Modal | Overlay screens |
 
 ---
 
 ## State Management
 
-| Type    | Tool             |
-| ------- | ---------------- |
-| Local   | Zustand          |
-| Server  | React Query      |
-| Forms   | React Hook Form  |
+| Type | Tool |
+|------|------|
+| Local | Zustand |
+| Server | React Query |
+| Forms | React Hook Form |
 | Storage | Expo SecureStore |
 
 ---
 
 ## Key Packages
 
-| Package               | Purpose            |
-| --------------------- | ------------------ |
-| expo-router           | File-based routing |
-| zustand               | Local state        |
-| @tanstack/react-query | Server state       |
-| nativewind            | Tailwind styling   |
-| expo-secure-store     | Secure storage     |
+| Package | Purpose |
+|---------|---------|
+| expo-router | File-based routing |
+| zustand | Local state |
+| @tanstack/react-query | Server state |
+| nativewind | Tailwind styling |
+| expo-secure-store | Secure storage |
 
 ---
 

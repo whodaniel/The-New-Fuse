@@ -1,6 +1,7 @@
-import { Bell, Camera, Lock, Mail, Palette, Save, Shield, User } from 'lucide-react';
+import { Bell, Camera, Globe, Lock, Mail, Palette, Save, Shield, User, Zap } from 'lucide-react';
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useAuth } from '../../providers/AuthProvider';
+import { useAuthorization } from '../../hooks/useAuthorization';
 
 // This should match the UserProfile type in apps/api/src/services/userService.ts
 interface UserProfile {
@@ -20,6 +21,7 @@ const UserProfilePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { user } = useAuth();
+  const { userRole, isAdmin } = useAuthorization();
 
   // Form state
   const [displayName, setDisplayName] = useState<string>('');
@@ -43,9 +45,9 @@ const UserProfilePage: React.FC = () => {
           // If API fails, use Firebase user data as fallback
           if (user) {
             const fallbackProfile: UserProfile = {
-              id: user.uid,
+              id: user.id,
               email: user.email || '',
-              displayName: user.displayName || '',
+              displayName: user.name || '',
               bio: '',
               preferences: {
                 theme: 'system',
@@ -73,9 +75,9 @@ const UserProfilePage: React.FC = () => {
         // Use Firebase user as ultimate fallback
         if (user) {
           const fallbackProfile: UserProfile = {
-            id: user.uid,
+            id: user.id,
             email: user.email || '',
-            displayName: user.displayName || '',
+            displayName: user.name || '',
             bio: '',
             preferences: {
               theme: 'system',
@@ -224,7 +226,7 @@ const UserProfilePage: React.FC = () => {
             <div className="relative group">
               <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1">
                 <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-white text-4xl font-bold">
-                  {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                  {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </div>
               </div>
               <button className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-lg">
@@ -234,7 +236,7 @@ const UserProfilePage: React.FC = () => {
 
             {/* User Info */}
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-white mb-1">{user?.displayName || 'User'}</h1>
+              <h1 className="text-3xl font-bold text-white mb-1">{user?.name || 'User'}</h1>
               <p className="text-gray-300 flex items-center gap-2 justify-center md:justify-start">
                 <Mail className="w-4 h-4" />
                 {user?.email || profile?.email}
@@ -249,6 +251,48 @@ const UserProfilePage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Sovereign Context Section */}
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 mb-6 fade-in scale-in">
+             <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
+                        <Globe className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-bold text-white">Sovereign Context</h2>
+                        <p className="text-sm text-gray-400">Your presence across the multitenant framework</p>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <span className="text-[10px] uppercase font-black text-gray-500 tracking-widest block">System Privilege</span>
+                    <span className="text-lg font-extrabold text-blue-400">{userRole}</span>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-black/40 border border-white/5">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-gray-500 uppercase">Primary Agency</span>
+                        <Zap className="w-3 h-3 text-amber-400" />
+                    </div>
+                    <div className="text-white font-bold">The New Fuse Core</div>
+                    <div className="text-[10px] text-gray-500 mt-1">ID: agency-core-001</div>
+                </div>
+                <div className="p-4 rounded-xl bg-black/40 border border-white/5 opacity-50">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-gray-500 uppercase">Secondary Nodes</span>
+                    </div>
+                    <div className="text-gray-400 italic text-sm">No secondary agencies linked</div>
+                </div>
+            </div>
+            
+            {isAdmin && (
+                <div className="mt-6 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-emerald-300 text-xs leading-relaxed">
+                    <strong>Global Admin Note:</strong> You have absolute observability across all provisioned agencies. Tenancy isolation is bypassed for administrative operations.
+                </div>
+            )}
         </div>
 
         {/* Messages */}

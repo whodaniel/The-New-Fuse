@@ -8,7 +8,7 @@
 | --------------------- | -------------------- | ---------------- | -------------------- |
 | **Main Platform**     | The New Fuse (TNF)   | SaaS Website     | **🌟 Neon Monogram** |
 | **Desktop App**       | **Fuse Desktop**     | Tauri/Desktop    | **🌟 Neon Monogram** |
-| **Cloud IDE**         | **SkIDEancer**       | Theia-based IDE  | **🌟 Neon Monogram** |
+| **Cloud IDE**         | **SkIDEancer**       | SkIDEancer-based IDE  | **🌟 Neon Monogram** |
 | **Browser Extension** | **Fuse Connect**     | Chrome Extension | **🌟 Neon Monogram** |
 | **VS Code Extension** | **Fuse for VS Code** | IDE Extension    | **🌟 Neon Monogram** |
 
@@ -75,7 +75,7 @@ design philosophy.
 | About Dialog       | Abstract Gradient | 128px   | PNG     |
 | Dock/Taskbar       | Abstract Gradient | 128x128 | PNG     |
 
-#### SkIDEancer (Theia IDE)
+#### SkIDEancer (SkIDEancer IDE)
 
 | Location     | Logo                        | Size             | Format  |
 | ------------ | --------------------------- | ---------------- | ------- |
@@ -213,7 +213,7 @@ design philosophy.
 - [ ] splash.png (256px centered)
 - [ ] tray-icon.png (24px, 32px)
 
-#### [ ] SkIDEancer (Theia)
+#### [ ] SkIDEancer (SkIDEancer)
 
 - [ ] favicon.ico (16, 32, 48)
 - [ ] code-192.png (PWA)
@@ -327,7 +327,7 @@ Website | Desktop App | SkIDEancer IDE | Chrome Extension | GitHub | Docs
 
 ### Phase 4: SkIDEancer Complete Rebrand
 
-- [ ] Replace Theia default icons
+- [ ] Replace SkIDEancer default icons
 - [ ] Update welcome page
 - [ ] Apply custom theme
 - [ ] Add product links

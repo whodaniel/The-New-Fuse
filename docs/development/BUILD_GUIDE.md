@@ -8,7 +8,7 @@ The following packages/directories were removed:
 - `apps/extension` (VSCode/Chrome extension remnants)
 - `apps/client` (Desktop/Electron app remnants)
 - `apps/web` (Progressive Web App remnants)
-- `apps/theia-ide` (Theia IDE remnants)
+- `apps/ide-ide` (SkIDEancer IDE remnants)
 
 Scripts referencing these packages (e.g., `clean:chrome`) have been removed from
 `package.json`.

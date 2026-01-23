@@ -216,7 +216,7 @@
             <div class="service-icon">🎬</div>
             <div class="service-info">
               <div class="service-name">AI Video Intelligence</div>
-              <div class="service-port">YouTube + AI Studio</div>
+              <div class="service-port">YouTube + AI Studio + NotebookLM</div>
             </div>
             <div class="service-status" id="service-ai-studio-status">
               <span class="status-dot disconnected"></span>
@@ -226,6 +226,29 @@
               <button class="btn-small" data-action="process" data-service="ai-studio">
                 Process
               </button>
+              <button class="btn-small" data-action="history" data-service="ai-studio">
+                History
+              </button>
+              <button class="btn-small" data-action="export" data-service="ai-studio">
+                Export
+              </button>
+            </div>
+            <!-- Stats and Account Info -->
+            <div
+              class="service-stats"
+              style="
+                margin-top: 10px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                font-size: 11px;
+                opacity: 0.8;
+              "
+            >
+              <div class="stat-line">Processed: <strong id="ai-video-processed">0</strong></div>
+              <div class="stat-line">Library: <strong id="ai-video-total">0</strong></div>
+              <div class="stat-line">Cost: <strong id="ai-video-cost">$0.00</strong></div>
+              <div class="stat-line">Account: <strong id="ai-video-account">None</strong></div>
             </div>
           </div>
 

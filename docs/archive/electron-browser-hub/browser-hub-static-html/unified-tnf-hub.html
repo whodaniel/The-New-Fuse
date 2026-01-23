@@ -512,8 +512,8 @@
                 <span>Relay</span>
             </div>
             <div class="status-group">
-                <div class="status-dot" id="theia-status"></div>
-                <span>Theia IDE</span>
+                <div class="status-dot" id="ide-status"></div>
+                <span>SkIDEancer IDE</span>
             </div>
         </div>
 
@@ -608,9 +608,9 @@
                     <div class="status-dot" id="dev-tools-status"></div>
                 </div>
                 <div class="service-buttons">
-                    <button class="service-btn" onclick="openTheiaIDE()">
+                    <button class="service-btn" onclick="openSkIDEancerIDE()">
                         <span class="icon">🌟</span>
-                        <span>Theia IDE</span>
+                        <span>SkIDEancer IDE</span>
                     </button>
                     <button class="service-btn" onclick="openVSCode()">
                         <span class="icon">💻</span>
@@ -796,9 +796,9 @@
                     <h3>Dashboard</h3>
                     <p>Monitor system status, agents, and workflows</p>
                 </div>
-                <div class="quick-action" onclick="openTheiaIDE()">
+                <div class="quick-action" onclick="openSkIDEancerIDE()">
                     <span class="icon">💻</span>
-                    <h3>Theia IDE</h3>
+                    <h3>SkIDEancer IDE</h3>
                     <p>Full-stack development environment</p>
                 </div>
                 <div class="quick-action" onclick="openAgents()">
@@ -852,7 +852,7 @@
             tnfCore: false,
             database: false,
             relay: false,
-            theiaIDE: false
+            ideIDE: false
         };
 
         // Initialize the application
@@ -954,7 +954,7 @@
                         tnfCore: Math.random() > 0.3,
                         database: Math.random() > 0.2,
                         relay: Math.random() > 0.4,
-                        theiaIDE: Math.random() > 0.5
+                        ideIDE: Math.random() > 0.5
                     };
                 }
                 
@@ -970,7 +970,7 @@
                 'tnf-core-status': systemStatus.tnfCore,
                 'database-status': systemStatus.database,
                 'relay-status': systemStatus.relay,
-                'theia-status': systemStatus.theiaIDE
+                'ide-status': systemStatus.ideIDE
             };
 
             Object.entries(indicators).forEach(([id, status]) => {
@@ -1002,7 +1002,7 @@
         function updateServiceStatuses() {
             const serviceStatuses = {
                 'ai-services-status': true, // Always available
-                'dev-tools-status': systemStatus.theiaIDE,
+                'dev-tools-status': systemStatus.ideIDE,
                 'automation-status': systemStatus.tnfCore,
                 'tnf-services-status': systemStatus.tnfCore && systemStatus.database,
                 'mcp-status': systemStatus.relay,
@@ -1137,7 +1137,7 @@
                 'agents': () => openAgents(),
                 'tasks': () => openTasks(),
                 'workflows': () => openWorkflows(),
-                'theia': () => openTheiaIDE(),
+                'ide': () => openSkIDEancerIDE(),
                 'admin': () => openAdminPanel(),
                 'claude': () => openClaude(),
                 'gemini': () => openGemini(),
@@ -1191,9 +1191,9 @@
                         <h3>Dashboard</h3>
                         <p>Monitor system status, agents, and workflows</p>
                     </div>
-                    <div class="quick-action" onclick="openTheiaIDE()">
+                    <div class="quick-action" onclick="openSkIDEancerIDE()">
                         <span class="icon">💻</span>
-                        <h3>Theia IDE</h3>
+                        <h3>SkIDEancer IDE</h3>
                         <p>Full-stack development environment</p>
                     </div>
                     <div class="quick-action" onclick="openAgents()">
@@ -1287,12 +1287,12 @@
         }
 
         // Development Tools
-        function openTheiaIDE() {
-            console.log('Opening Theia IDE');
+        function openSkIDEancerIDE() {
+            console.log('Opening SkIDEancer IDE');
             if (window.electronAPI) {
-                window.electronAPI.openTheia();
+                window.electronAPI.openSkIDEancer();
             } else {
-                navigateToService('http://localhost:3000', 'Theia IDE', '💻');
+                navigateToService('http://localhost:3000', 'SkIDEancer IDE', '💻');
             }
         }
 

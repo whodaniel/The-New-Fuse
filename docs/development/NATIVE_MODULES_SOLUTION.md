@@ -78,7 +78,7 @@ This document outlines the complete automated solution for native module issues 
 
 ### Original Problems
 - ❌ `drivelist.node` missing - build failures
-- ❌ `node-pty/spawn-helper` missing - Theia IDE wouldn't work
+- ❌ `node-pty/spawn-helper` missing - SkIDEancer IDE wouldn't work
 - ❌ `canvas.node` missing - rendering issues
 - ❌ `@vscode/ripgrep/bin/rg` missing - search functionality broken
 - ❌ Manual intervention required for every build

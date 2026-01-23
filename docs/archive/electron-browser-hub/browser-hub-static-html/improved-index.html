@@ -569,7 +569,7 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
-        .quick-action-btn.theia {
+        .quick-action-btn.ide {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
 
@@ -681,7 +681,7 @@
         <div class="service-status">
             <div class="service-indicator">
                 <span class="status-dot connected"></span>
-                <span>Theia</span>
+                <span>SkIDEancer</span>
             </div>
             <div class="service-indicator">
                 <span class="status-dot partial"></span>
@@ -782,9 +782,9 @@
                     </div>
                 </div>
                 <div class="service-buttons">
-                    <button class="service-btn" onclick="openTheiaIDE()">
+                    <button class="service-btn" onclick="openSkIDEancerIDE()">
                         <span class="icon">💻</span>
-                        <span class="text">Theia IDE</span>
+                        <span class="text">SkIDEancer IDE</span>
                     </button>
                     <button class="service-btn" onclick="openVSCode()">
                         <span class="icon">⚡</span>
@@ -969,14 +969,14 @@
                 <h2>Advanced Multi-Service Development Platform</h2>
                 <p>
                     Seamlessly integrate development, automation, AI services, and web browsing 
-                    in one unified platform. Start coding with Theia IDE, automate tasks with 
+                    in one unified platform. Start coding with SkIDEancer IDE, automate tasks with 
                     AI agents, or browse the web with advanced developer tools.
                 </p>
                 
                 <div class="quick-actions">
-                    <button class="quick-action-btn theia" onclick="openTheiaIDE()">
+                    <button class="quick-action-btn ide" onclick="openSkIDEancerIDE()">
                         <span>💻</span>
-                        <span>Launch Theia IDE</span>
+                        <span>Launch SkIDEancer IDE</span>
                     </button>
                     <button class="quick-action-btn" onclick="createNewTab()">
                         <span>🌐</span>
@@ -1034,7 +1034,7 @@
         ];
         let tabCounter = 1;
         let services = {
-            theia: { status: 'connected', port: 3000 },
+            ide: { status: 'connected', port: 3000 },
             mcp: { status: 'partial', port: 8080 },
             ai: { status: 'disconnected', port: null }
         };
@@ -1206,8 +1206,8 @@
                     activeTab.url = targetUrl;
                     
                     // Update title based on URL
-                    if (targetUrl.includes('theia') || targetUrl.includes(':3000')) {
-                        activeTab.title = 'Theia IDE';
+                    if (targetUrl.includes('ide') || targetUrl.includes(':3000')) {
+                        activeTab.title = 'SkIDEancer IDE';
                         activeTab.favicon = '💻';
                     } else if (targetUrl.includes('github')) {
                         activeTab.title = 'GitHub';
@@ -1272,29 +1272,29 @@
         }
 
         // IDE Integration
-        async function openTheiaIDE() {
-            console.log('Opening Theia IDE');
+        async function openSkIDEancerIDE() {
+            console.log('Opening SkIDEancer IDE');
             
             try {
-                // Check if Theia is running
-                const isRunning = await checkTheiaStatus();
+                // Check if SkIDEancer is running
+                const isRunning = await checkSkIDEancerStatus();
                 if (!isRunning) {
-                    await startTheiaServer();
+                    await startSkIDEancerServer();
                     // Wait a bit for server to start
                     await new Promise(resolve => setTimeout(resolve, 3000));
                 }
                 
-                createNewTab('http://localhost:3000', 'Theia IDE', '💻');
+                createNewTab('http://localhost:3000', 'SkIDEancer IDE', '💻');
                 
                 if (window.electronAPI) {
-                    window.electronAPI.openTheia();
+                    window.electronAPI.openSkIDEancer();
                 }
             } catch (error) {
-                console.error('Failed to open Theia IDE:', error);
+                console.error('Failed to open SkIDEancer IDE:', error);
             }
         }
 
-        async function checkTheiaStatus() {
+        async function checkSkIDEancerStatus() {
             try {
                 const response = await fetch('http://localhost:3000', { 
                     method: 'HEAD',
@@ -1306,10 +1306,10 @@
             }
         }
 
-        async function startTheiaServer() {
-            console.log('Starting Theia Server');
+        async function startSkIDEancerServer() {
+            console.log('Starting SkIDEancer Server');
             if (window.electronAPI) {
-                return window.electronAPI.startTheiaServer();
+                return window.electronAPI.startSkIDEancerServer();
             }
             throw new Error('Electron API not available');
         }
@@ -1334,7 +1334,7 @@
 
         function openWorkspace() {
             console.log('Opening Workspace');
-            openTheiaIDE(); // Use Theia as primary workspace
+            openSkIDEancerIDE(); // Use SkIDEancer as primary workspace
         }
 
         function openGitInterface() {
@@ -1573,8 +1573,8 @@
             const indicators = document.querySelectorAll('.status-dot');
             
             // This would check real service status
-            checkTheiaStatus().then(isRunning => {
-                services.theia.status = isRunning ? 'connected' : 'disconnected';
+            checkSkIDEancerStatus().then(isRunning => {
+                services.ide.status = isRunning ? 'connected' : 'disconnected';
                 updateServiceIndicators();
             });
         }
@@ -1582,7 +1582,7 @@
         function updateServiceIndicators() {
             const titleIndicators = document.querySelectorAll('.title-bar .status-dot');
             if (titleIndicators.length >= 3) {
-                titleIndicators[0].className = `status-dot ${services.theia.status}`;
+                titleIndicators[0].className = `status-dot ${services.ide.status}`;
                 titleIndicators[1].className = `status-dot ${services.mcp.status}`;
                 titleIndicators[2].className = `status-dot ${services.ai.status}`;
             }

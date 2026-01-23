@@ -48,8 +48,8 @@ export interface MCPSystemConfig {
     engineConfig?: any;
   };
   
-  /** Theia integration configuration */
-  theia?: {
+  /** SkIDEancer integration configuration */
+  ide?: {
     enabled: boolean;
     port?: number;
     aiFeatures?: boolean;
@@ -112,7 +112,7 @@ export interface SystemHealth {
     database?: 'up' | 'down' | 'degraded';
     relay?: 'up' | 'down' | 'degraded';
     workflow?: 'up' | 'down' | 'degraded';
-    theia?: 'up' | 'down' | 'degraded';
+    ide?: 'up' | 'down' | 'degraded';
   };
   timestamp: Date;
   uptime: number;
@@ -155,7 +155,7 @@ export interface SystemComponents {
     logger?: Logger;
   };
   workflow?: any;
-  theia?: any;
+  ide?: any;
 }
 
 /**
@@ -741,10 +741,10 @@ class MCPSystemImpl implements MCPSystem {
       // TODO: Initialize workflow integration
     }
     
-    // Start Theia integration if enabled
-    if (this.config.theia?.enabled) {
-      this.log('info', 'Starting Theia integration...');
-      // TODO: Initialize Theia integration
+    // Start SkIDEancer integration if enabled
+    if (this.config.ide?.enabled) {
+      this.log('info', 'Starting SkIDEancer integration...');
+      // TODO: Initialize SkIDEancer integration
     }
   }
 
@@ -753,9 +753,9 @@ class MCPSystemImpl implements MCPSystem {
    */
   private async stopAdditionalComponents(): Promise<void> {
     // Stop components in reverse order
-    if (this.config.theia?.enabled) {
-      this.log('info', 'Stopping Theia integration...');
-      // TODO: Stop Theia integration
+    if (this.config.ide?.enabled) {
+      this.log('info', 'Stopping SkIDEancer integration...');
+      // TODO: Stop SkIDEancer integration
     }
     
     if (this.config.workflow?.enabled) {
@@ -819,7 +819,7 @@ export class MCPSystemFactory {
       workflow: {
         enabled: true
       },
-      theia: {
+      ide: {
         enabled: false
       },
       monitoring: {
@@ -860,7 +860,7 @@ export class MCPSystemFactory {
       workflow: {
         enabled: true
       },
-      theia: {
+      ide: {
         enabled: true,
         port: 3006,
         aiFeatures: true
@@ -903,7 +903,7 @@ export class MCPSystemFactory {
       workflow: {
         enabled: false
       },
-      theia: {
+      ide: {
         enabled: false
       },
       monitoring: {

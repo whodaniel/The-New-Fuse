@@ -49,7 +49,7 @@ export const DEFAULT_CONFIG = {
   /** Default maximum concurrency for large monorepo */
   MAX_CONCURRENCY: 3,
   
-  /** Build strategies optimized for monorepo with Theia IDE */
+  /** Build strategies optimized for monorepo with SkIDEancer IDE */
   STRATEGIES: {
     /** Development builds - always memory optimized for dev workflow */
     development: {
@@ -77,13 +77,13 @@ export const DEFAULT_CONFIG = {
     }
   },
   
-  /** Theia IDE specific configuration */
+  /** SkIDEancer IDE specific configuration */
   THEIA_CONFIG: {
-    /** Theia must be built with yarn before bun build */
+    /** SkIDEancer must be built with yarn before bun build */
     buildFirst: true,
-    /** Estimated memory usage for Theia build in MB */
+    /** Estimated memory usage for SkIDEancer build in MB */
     estimatedMemoryUsage: 2048,
-    /** Cleanup after Theia build before continuing */
+    /** Cleanup after SkIDEancer build before continuing */
     cleanupAfterBuild: true
   },
   
@@ -94,7 +94,7 @@ export const DEFAULT_CONFIG = {
     /** Packages to prioritize in early stages */
     priorityPackages: ['@the-new-fuse/types', '@the-new-fuse/utils', '@the-new-fuse/core'],
     /** Packages that require more memory */
-    heavyPackages: ['@the-new-fuse/theia-ide', '@the-new-fuse/electron-desktop'],
+    heavyPackages: ['@the-new-fuse/ide-ide', '@the-new-fuse/electron-desktop'],
     /** Maximum packages per stage for memory efficiency */
     maxPackagesPerStage: 8
   }

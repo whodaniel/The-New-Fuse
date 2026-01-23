@@ -36,8 +36,8 @@
         (`apps/tauri-desktop/src/components/Terminal.tsx`)
 12. [x] Quick Actions Dashboard
         (`apps/tauri-desktop/src/components/QuickActionsDashboard.tsx`)
-13. [x] Theia IDE deployment on Railway (`https://ide.thenewfuse.com`)
-14. [x] SkIDEancer features ported to Theia (`packages/theia-ai-agent`)
+13. [x] SkIDEancer IDE deployment on Railway (`https://ide.thenewfuse.com`)
+14. [x] SkIDEancer features ported to SkIDEancer (`packages/ide-ai-agent`)
 
 ### 🔄 IN PROGRESS / REMAINING
 
@@ -51,7 +51,7 @@
     - Updated: SkIDEancer, Fuse Desktop, Fuse Connect
     - PWA manifest and favicons for website
     - Product naming: Fuse Desktop, SkIDEancer, Fuse Connect
-17. [ ] Theia 1.67 upgrade (pending npm publication)
+17. [ ] SkIDEancer 1.67 upgrade (pending npm publication)
     - Packages announced Dec 18, but not all published yet
     - Will upgrade when available; using 1.59.0 for now
 18. [ ] End-to-end testing of full agent network
@@ -148,16 +148,16 @@ Native Rust commands for computer-use automation in Tauri.
 
 ---
 
-## 📦 Deliverable 4: Theia Integration ✅ COMPLETE
+## 📦 Deliverable 4: SkIDEancer Integration ✅ COMPLETE
 
 ### Status
 
-- ✅ Repository: `whodaniel/fuse-theia-ide`
+- ✅ Repository: `whodaniel/skideancer-ide`
 - ✅ Railway Service: Live at `https://ide.thenewfuse.com`
 - ✅ SkIDEancer branding applied
-- ✅ AI Agent extension created (`packages/theia-ai-agent`)
+- ✅ AI Agent extension created (`packages/ide-ai-agent`)
 
-### Theia AI Agent Extension Features
+### SkIDEancer AI Agent Extension Features
 
 | Component            | Lines | Description                               |
 | -------------------- | ----- | ----------------------------------------- |
@@ -170,14 +170,14 @@ Native Rust commands for computer-use automation in Tauri.
 | Related Info Service | 250+  | Related docs/commands lookup              |
 | UI Widget            | 400+  | React chat interface                      |
 
-### Theia AI Packages
+### SkIDEancer AI Packages
 
-- `@theia/ai-anthropic` - Claude integration
-- `@theia/ai-chat` - Chat UI
-- `@theia/ai-core` - Core AI features
-- `@theia/ai-huggingface` - HuggingFace models
-- `@theia/ai-ollama` - Local Ollama
-- `@theia/ai-openai` - OpenAI/GPT
+- `@ide/ai-anthropic` - Claude integration
+- `@ide/ai-chat` - Chat UI
+- `@ide/ai-core` - Core AI features
+- `@ide/ai-huggingface` - HuggingFace models
+- `@ide/ai-ollama` - Local Ollama
+- `@ide/ai-openai` - OpenAI/GPT
 
 ---
 
@@ -208,7 +208,7 @@ Native Rust commands for computer-use automation in Tauri.
 | ---------------- | ----------------------------------------------------------------- |
 | AI Agents        | Join Network, View Agents, Start Conversation, Orchestration Demo |
 | Analysis & Tools | TypeScript Check, Lint, Test, Build                               |
-| External Tools   | Open Theia, Open Website, Open GitHub, Railway Dashboard          |
+| External Tools   | Open SkIDEancer, Open Website, Open GitHub, Railway Dashboard          |
 | Development      | Start Dev, Start Redis, Check Services, Clean Node Modules        |
 | Settings         | Edit Environment, View Modes, View Config                         |
 
@@ -220,11 +220,11 @@ Native Rust commands for computer-use automation in Tauri.
 
 - ✅ "Launch Desktop App" button possible via `tnf://` deep links
 
-### Website → Theia
+### Website → SkIDEancer
 
 - ✅ "Open IDE" button → https://ide.thenewfuse.com
 
-### Tauri → Theia
+### Tauri → SkIDEancer
 
 - ✅ External link button in Quick Actions
 - Embedded iframe option available
@@ -286,7 +286,7 @@ Users can use Quick Actions Dashboard for all basic features.
 7. ✅ Orchestration demo
 8. ✅ Terminal component
 9. ✅ Quick Actions Dashboard
-10. ✅ Theia deployment
+10. ✅ SkIDEancer deployment
 11. ✅ SkIDEancer feature port
 
 ### Next Steps
@@ -300,8 +300,8 @@ Users can use Quick Actions Dashboard for all basic features.
 
 ## 📝 Notes
 
-- Theia is in separate repo: `whodaniel/fuse-theia-ide`
-- Railway service: `tnf-theia-ide` at `https://ide.thenewfuse.com`
+- SkIDEancer is in separate repo: `whodaniel/skideancer-ide`
+- Railway service: `tnf-ide-ide` at `https://ide.thenewfuse.com`
 - Agent wrappers require Redis running locally
 - OAGI features need Tauri build with native dependencies
 

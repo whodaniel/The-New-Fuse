@@ -31,7 +31,7 @@
    - Files consolidated:
      - 4 Chakra UI migration documents
      - 4 Redis migration documents
-     - 2 Theia/Browser Hub documents
+     - 2 SkIDEancer/Browser Hub documents
      - 3 Consolidation planning documents
      - 2 Blockchain implementation documents
      - 2 Setup/testing documents

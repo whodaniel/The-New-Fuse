@@ -1,12 +1,12 @@
-# SkIDEancer Theia IDE - Version 2.1.0
+# SkIDEancer SkIDEancer IDE - Version 2.1.0
 
-## Updated to Eclipse Theia 1.67 (December 2025)
+## Updated to Eclipse SkIDEancer 1.67 (December 2025)
 
-This document outlines all the new features available in SkIDEancer after the upgrade to Theia 1.67.
+This document outlines all the new features available in SkIDEancer after the upgrade to SkIDEancer 1.67.
 
 ---
 
-## 🆕 New Features in Theia 1.67
+## 🆕 New Features in SkIDEancer 1.67
 
 ### 1. Terminal Manager for Multiple Terminals
 
@@ -45,7 +45,7 @@ Set to `"separate"` for traditional behavior.
 **Benefits:**
 
 - Clear guidance on missing API keys
-- Quick recommendations for agents like "Theia Coder"
+- Quick recommendations for agents like "SkIDEancer Coder"
 - No more confusing automatic Orchestrator delegation
 
 ---
@@ -58,7 +58,7 @@ Set to `"separate"` for traditional behavior.
 
 1. You're in a chat with Claude
 2. You edit a previous message
-3. Theia automatically creates a fork (new branch)
+3. SkIDEancer automatically creates a fork (new branch)
 4. Original conversation is preserved
 
 **Use Case:** Try multiple approaches without losing context of initial attempts.
@@ -192,9 +192,9 @@ The enhanced file replacer (experimental in 1.66) is now **default**.
 
 ## SkIDEancer-Specific Features
 
-In addition to Theia 1.67 features, SkIDEancer includes:
+In addition to SkIDEancer 1.67 features, SkIDEancer includes:
 
-### AI Agent Extension (`@fuse/theia-ai-agent`)
+### AI Agent Extension (`@fuse/ide-ai-agent`)
 
 | Feature              | Description                         |
 | -------------------- | ----------------------------------- |
@@ -229,7 +229,7 @@ All new 1.67 features are enabled by default in:
 ```json
 {
   "terminal.grouping.mode": "tree",
-  "ai.defaultAgent": "Theia Coder",
+  "ai.defaultAgent": "SkIDEancer Coder",
   "ai.enhancedFileReplacer": true,
   "ai.chat.enableSessionForking": true,
   "debug.autoExpandLazyVariables": true
@@ -240,32 +240,32 @@ All new 1.67 features are enabled by default in:
 
 ## Upgrading
 
-The IDE has been upgraded from Theia 1.59.0 to 1.67.0, which includes:
+The IDE has been upgraded from SkIDEancer 1.59.0 to 1.67.0, which includes:
 
 **New Packages Added:**
 
-- `@theia/terminal-manager` - Multiple terminal management
-- `@theia/ai-terminal` - AI-powered terminal assistance
-- `@theia/ai-mcp` - Model Context Protocol support
-- `@theia/ai-workspace-agent` - Workspace-aware AI
-- `@theia/ai-code-completion` - Enhanced code completion
-- `@theia/timeline` - File history timeline
-- `@theia/keymaps` - Keybinding management
-- `@theia/file-search` - Fast file search
-- `@theia/mini-browser` - Embedded browser
-- `@theia/task` - Task runner support
-- `@theia/process` - Process management
-- `@theia/property-view` - Property viewer
-- `@theia/variable-resolver` - Variable support
+- `@ide/terminal-manager` - Multiple terminal management
+- `@ide/ai-terminal` - AI-powered terminal assistance
+- `@ide/ai-mcp` - Model Context Protocol support
+- `@ide/ai-workspace-agent` - Workspace-aware AI
+- `@ide/ai-code-completion` - Enhanced code completion
+- `@ide/timeline` - File history timeline
+- `@ide/keymaps` - Keybinding management
+- `@ide/file-search` - Fast file search
+- `@ide/mini-browser` - Embedded browser
+- `@ide/task` - Task runner support
+- `@ide/process` - Process management
+- `@ide/property-view` - Property viewer
+- `@ide/variable-resolver` - Variable support
 
 ---
 
 ## Resources
 
-- [Theia 1.67 Release Notes](https://eclipsesource.com/blogs/2025/12/18/eclipse-theia-1-67-release-news-and-noteworthy/)
-- [Theia AI Documentation](https://theia-ide.org/docs/user_ai/)
-- [Slash Commands Guide](https://theia-ide.org/docs/user_ai/#slash-commands)
-- [GitHub Milestone](https://github.com/eclipse-theia/theia/milestone/76?closed=1)
+- [SkIDEancer 1.67 Release Notes](https://eclipsesource.com/blogs/2025/12/18/eclipse-ide-1-67-release-news-and-noteworthy/)
+- [SkIDEancer AI Documentation](https://ide-ide.org/docs/user_ai/)
+- [Slash Commands Guide](https://ide-ide.org/docs/user_ai/#slash-commands)
+- [GitHub Milestone](https://github.com/eclipse-ide/ide/milestone/76?closed=1)
 
 ---
 

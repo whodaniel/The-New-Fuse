@@ -1,16 +1,22 @@
 import {
+  Activity,
   Bell,
   ChevronDown,
   ChevronRight,
+  Database,
   Home,
   LogOut,
   Menu,
   Moon,
+  PlusCircle,
   Search,
   Settings,
+  Share2,
+  Shield,
   Sun,
   User,
   X,
+  Zap,
 } from 'lucide-react';
 import React, { ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -143,7 +149,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
                       className="flex items-center gap-2 p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
                     >
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
-                        {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                        {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                       </div>
                       <ChevronDown
                         className={`h-4 w-4 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`}
@@ -155,7 +161,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
                       <div className="absolute right-0 mt-2 w-56 backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl shadow-2xl overflow-hidden">
                         <div className="p-3 border-b border-white/10">
                           <p className="text-sm font-semibold text-white truncate">
-                            {user.displayName || 'User'}
+                            {user.name || 'User'}
                           </p>
                           <p className="text-xs text-gray-400 truncate">{user.email}</p>
                         </div>
@@ -247,12 +253,26 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
         {showSidebar && layout.sidebarOpen && (
           <aside className="hidden md:block w-64 fixed left-0 top-16 bottom-0 backdrop-blur-xl bg-white/5 border-r border-white/10 shadow-2xl overflow-y-auto">
             <nav className="p-4 space-y-2">
-              <SidebarLink to="/" icon={<Home className="w-5 h-5" />} label="Home" />
-              <SidebarLink
-                to="/dashboard"
-                icon={<Settings className="w-5 h-5" />}
-                label="Dashboard"
-              />
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-4">Core</div>
+              <SidebarLink to="/dashboard" icon={<Home className="w-5 h-5" />} label="Command Center" />
+              <SidebarLink to="/ai-portal" icon={<User className="w-5 h-5" />} label="AI Agents" />
+              <SidebarLink to="/multi-agent-chat" icon={<Bell className="w-5 h-5" />} label="Multi-Agent Chat" />
+              
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">Automation</div>
+              <SidebarLink to="/workflows" icon={<Settings className="w-5 h-5" />} label="Workflow Engine" />
+              <SidebarLink to="/workflows/builder" icon={<PlusCircle className="w-5 h-5" />} label="Pipeline Builder" />
+              <SidebarLink to="/workflows/console" icon={<Activity className="w-5 h-5" />} label="Workflow Runtime" />
+              
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">Orchestration</div>
+              <SidebarLink to="/mcp-hub" icon={<Zap className="w-5 h-5" />} label="MCP Hub" />
+              <SidebarLink to="/knowledge-hub" icon={<Database className="w-5 h-5" />} label="Knowledge Studio" />
+              <SidebarLink to="/a2a-control" icon={<Share2 className="w-5 h-5" />} label="A2A Coordination" />
+              <SidebarLink to="/live-view" icon={<Activity className="w-5 h-5" />} label="Direct Live View" />
+              
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">Infrastructure</div>
+              <SidebarLink to="/admin/system-health" icon={<Activity className="w-5 h-5" />} label="System Metrics" />
+              <SidebarLink to="/admin/port-management" icon={<Shield className="w-5 h-5" />} label="Port Firewall" />
+              <SidebarLink to="/build-info" icon={<Settings className="w-5 h-5" />} label="System Config" />
             </nav>
           </aside>
         )}

@@ -138,7 +138,7 @@ kill_processes "webpack" "Webpack"
 kill_processes "vite" "Vite"
 kill_processes "next" "Next.js"
 kill_processes "electron" "Electron"
-kill_processes "theia" "Theia IDE"
+kill_processes "ide" "SkIDEancer IDE"
 
 # Clear common development ports
 print_status "🔌 Clearing development ports..."
@@ -149,7 +149,7 @@ clear_port 3003 "Message Broker"
 clear_port 3004 "Backend API"
 clear_port 3005 "API Gateway"
 clear_port 3006 "A2A Service"
-clear_port 3007 "Theia IDE"
+clear_port 3007 "SkIDEancer IDE"
 clear_port 8080 "Browser Hub"
 clear_port 8081 "Development Server"
 clear_port 5173 "Vite Dev Server"
@@ -178,8 +178,8 @@ remove_dirs ".turbo" "nested Turbo caches"
 # Remove TypeScript build outputs
 remove_dirs "dist" "TypeScript dist folders"
 remove_dirs "lib" "lib folders"
-safe_remove "apps/theia-ide/lib" "Theia IDE lib folder"
-safe_remove "apps/theia-ide/src-gen" "Theia IDE generated sources"
+safe_remove "apps/ide-ide/lib" "SkIDEancer IDE lib folder"
+safe_remove "apps/ide-ide/src-gen" "SkIDEancer IDE generated sources"
 
 # Remove test coverage and artifacts
 remove_dirs "coverage" "test coverage reports"

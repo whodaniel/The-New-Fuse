@@ -969,7 +969,7 @@
                 <h2>Advanced Multi-Service Development Platform</h2>
                 <p>
                     Seamlessly integrate development, automation, AI services, and web browsing 
-                    in one unified platform. Start coding with Theia IDE, automate tasks with 
+                    in one unified platform. Start coding with SkIDEancer IDE, automate tasks with 
                     AI agents, or browse the web with advanced developer tools.
                 </p>
                 
@@ -1034,7 +1034,7 @@
         ];
         let tabCounter = 1;
         let services = {
-            theia: { status: 'connected', port: 3000 },
+            ide: { status: 'connected', port: 3000 },
             mcp: { status: 'partial', port: 8080 },
             ai: { status: 'disconnected', port: null }
         };
@@ -1206,8 +1206,8 @@
                     activeTab.url = targetUrl;
                     
                     // Update title based on URL
-                    if (targetUrl.includes('theia') || targetUrl.includes(':3000')) {
-                        activeTab.title = 'Theia IDE';
+                    if (targetUrl.includes('ide') || targetUrl.includes(':3000')) {
+                        activeTab.title = 'SkIDEancer IDE';
                         activeTab.favicon = '💻';
                     } else if (targetUrl.includes('github')) {
                         activeTab.title = 'GitHub';
@@ -1290,7 +1290,7 @@
             }
         }
 
-        async function checkTheiaStatus() {
+        async function checkSkIDEancerStatus() {
             try {
                 const response = await fetch('http://localhost:3000', { 
                     method: 'HEAD',
@@ -1302,10 +1302,10 @@
             }
         }
 
-        async function startTheiaServer() {
-            console.log('Starting Theia Server');
+        async function startSkIDEancerServer() {
+            console.log('Starting SkIDEancer Server');
             if (window.electronAPI) {
-                return window.electronAPI.startTheiaServer();
+                return window.electronAPI.startSkIDEancerServer();
             }
             throw new Error('Electron API not available');
         }
@@ -1569,8 +1569,8 @@
             const indicators = document.querySelectorAll('.status-dot');
             
             // This would check real service status
-            checkTheiaStatus().then(isRunning => {
-                services.theia.status = isRunning ? 'connected' : 'disconnected';
+            checkSkIDEancerStatus().then(isRunning => {
+                services.ide.status = isRunning ? 'connected' : 'disconnected';
                 updateServiceIndicators();
             });
         }
@@ -1578,7 +1578,7 @@
         function updateServiceIndicators() {
             const titleIndicators = document.querySelectorAll('.title-bar .status-dot');
             if (titleIndicators.length >= 3) {
-                titleIndicators[0].className = `status-dot ${services.theia.status}`;
+                titleIndicators[0].className = `status-dot ${services.ide.status}`;
                 titleIndicators[1].className = `status-dot ${services.mcp.status}`;
                 titleIndicators[2].className = `status-dot ${services.ai.status}`;
             }

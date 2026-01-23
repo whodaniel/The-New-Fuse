@@ -370,7 +370,7 @@ describe('BuildStrategyManager', () => {
     it('should merge partial configuration with defaults', () => {
       const partial: Partial<EnhancedBuildConfiguration> = {
         maxConcurrency: 6,
-        theiaConfig: {
+        ideConfig: {
           buildFirst: false,
           estimatedMemoryUsage: 1024,
           cleanupAfterBuild: false
@@ -381,8 +381,8 @@ describe('BuildStrategyManager', () => {
 
       expect(merged.maxConcurrency).toBe(6); // From partial
       expect(merged.strategy).toBe('development'); // From defaults
-      expect(merged.theiaConfig?.buildFirst).toBe(false); // From partial
-      expect(merged.theiaConfig?.estimatedMemoryUsage).toBe(1024); // From partial
+      expect(merged.ideConfig?.buildFirst).toBe(false); // From partial
+      expect(merged.ideConfig?.estimatedMemoryUsage).toBe(1024); // From partial
       expect(merged.monorepoConfig?.totalPackages).toBe(50); // From defaults
     });
 
@@ -391,7 +391,7 @@ describe('BuildStrategyManager', () => {
 
       expect(merged.strategy).toBe('development');
       expect(merged.maxConcurrency).toBe(3);
-      expect(merged.theiaConfig).toBeDefined();
+      expect(merged.ideConfig).toBeDefined();
       expect(merged.monorepoConfig).toBeDefined();
     });
 

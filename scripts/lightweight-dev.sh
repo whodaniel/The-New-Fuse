@@ -55,9 +55,9 @@ pnpm run dev &
 FRONTEND_PID=$!
 cd - > /dev/null
 
-# Start Theia IDE (most important for development)
-echo "💻 Starting Theia IDE..."
-cd apps/theia-ide
+# Start SkIDEancer IDE (most important for development)
+echo "💻 Starting SkIDEancer IDE..."
+cd apps/ide-ide
 pnpm run dev &
 THEIA_PID=$!
 cd - > /dev/null
@@ -82,9 +82,9 @@ else
 fi
 
 if kill -0 $THEIA_PID 2>/dev/null; then
-    echo "✅ Theia IDE (PID: $THEIA_PID)"
+    echo "✅ SkIDEancer IDE (PID: $THEIA_PID)"
 else
-    echo "❌ Theia IDE failed"
+    echo "❌ SkIDEancer IDE failed"
 fi
 
 echo ""
@@ -93,7 +93,7 @@ echo ""
 echo "📋 Access your services:"
 echo "• 🌐 Frontend: http://localhost:3000"
 echo "• 📡 API Gateway: http://localhost:3005"
-echo "• 💻 Theia IDE: http://localhost:3008"
+echo "• 💻 SkIDEancer IDE: http://localhost:3008"
 echo ""
 echo "💡 This mode uses minimal memory by running only essential services."
 echo "🔍 Monitor with: ps aux | grep -E '(bun|node)' | grep -v grep"
@@ -120,6 +120,6 @@ while true; do
     fi
     
     if ! kill -0 $THEIA_PID 2>/dev/null; then
-        echo "⚠️  Theia IDE stopped unexpectedly"
+        echo "⚠️  SkIDEancer IDE stopped unexpectedly"
     fi
 done

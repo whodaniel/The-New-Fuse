@@ -30,13 +30,13 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
             sleep 30
             
             # Clean up any hanging processes
-            pkill -f "theia" || true
+            pkill -f "ide" || true
             pkill -f "webpack" || true
             
             # Clear some caches to free memory
             echo "🧹 Clearing build caches..."
-            rm -rf apps/theia-ide/lib/.cache || true
-            rm -rf apps/theia-ide/node_modules/.cache || true
+            rm -rf apps/ide-ide/lib/.cache || true
+            rm -rf apps/ide-ide/node_modules/.cache || true
         else
             echo "❌ Build failed after $MAX_RETRIES attempts"
             exit 1

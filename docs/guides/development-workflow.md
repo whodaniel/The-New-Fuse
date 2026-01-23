@@ -101,9 +101,9 @@ The build system includes comprehensive native module management:
 - **Cross-Platform Support**: Handles macOS, Linux, and Windows differences
 
 ### Key Native Modules
-- **canvas**: HTML5 canvas support (required for Theia IDE)
+- **canvas**: HTML5 canvas support (required for SkIDEancer IDE)
 - **drivelist**: System drive enumeration  
-- **node-pty**: Pseudo-terminal support (required for Theia IDE)
+- **node-pty**: Pseudo-terminal support (required for SkIDEancer IDE)
 - **@vscode/ripgrep**: Fast text search functionality
 
 ### Setup Commands

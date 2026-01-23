@@ -14,7 +14,7 @@ echo ""
 
 # Check for running processes
 echo -e "${BLUE}📋 Checking for running development processes...${NC}"
-dev_processes=$(pgrep -f "node.*dev\|bun.*dev\|yarn.*dev\|npm.*dev\|turbo.*dev\|webpack\|vite\|electron\|theia" 2>/dev/null || true)
+dev_processes=$(pgrep -f "node.*dev\|bun.*dev\|yarn.*dev\|npm.*dev\|turbo.*dev\|webpack\|vite\|electron\|ide" 2>/dev/null || true)
 if [ -z "$dev_processes" ]; then
     echo -e "${GREEN}✅ No development processes running${NC}"
 else

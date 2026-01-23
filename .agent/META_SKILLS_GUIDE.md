@@ -116,13 +116,60 @@ Agent has full meta-context and knows what it knows
 
 ---
 
-### 2. Skill Builder
+### 3. Context Frontloader (NEW) ⭐⭐⭐
 
-**Location**: `.agent/skills/skill-builder/SKILL.md`
+**Location**: `.agent/skills/context-frontloader/SKILL.md`
 
-**Type**: Meta-Skill (Skill Generator)
+**Type**: Foundational Context Meta-Skill
 
-**Purpose**: Create new skills based on patterns and requirements.
+**Purpose**: Ensures every agent session starts with full ecosystem awareness.
+Inspired by the **Ralph Wiggum Technique**.
+
+#### What It Does
+
+```typescript
+interface ContextFrontloader {
+  // Core Functions
+  injectIdentity(): void; // Establish TNF identity (SYSTEM_PROMPT.md)
+  discoverCapabilities(): void; // Map skills via resource-map.md
+  restoreSession(): void; // Load handoff_notes.txt & planning files
+  syncMemories(): void; // Load accumulated wisdom from memories.md
+  verifyContext(): boolean; // Verify alignment before execution
+}
+```
+
+#### Key Capabilities
+
+1. **Identity & Ecosystem Injection**
+   - Auto-injects `.agent/SYSTEM_PROMPT.md`
+   - Establishes core identity and meta-rules at startup.
+
+2. **Ralph Wiggum "Fresh Context" Implementation**
+   - Each session/loop is treated as a clean slate.
+   - Forces re-reading of specs, plans, and patterns to ensure reliability.
+
+3. **Multi-Platform Consistency**
+   - Standardizes frontloading across Antigravity, Claude, and VS Code.
+
+#### Bootstrap Sequence (Updated)
+
+```javascript
+Agent Initializes
+  ↓
+Load: context-frontloader/SKILL.md (THIS SKILL)
+  ↓
+Read: .agent/SYSTEM_PROMPT.md
+  ↓
+Read: .agent/context/resource-map.md
+  ↓
+Read: .agent/handoff_notes.txt & .agent/memories.md
+  ↓
+Agent has 100% ecosystem awareness
+```
+
+---
+
+### 4. Skill Builder (Previously #2)
 
 #### What It Does
 

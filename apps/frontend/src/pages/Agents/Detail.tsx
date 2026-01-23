@@ -12,6 +12,7 @@ import {
   CheckCircle,
   Clock,
   Edit,
+  Fingerprint,
   History,
   List,
   Loader2,
@@ -454,6 +455,13 @@ const AgentDetail: React.FC = () => {
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
               </TabsTrigger>
+              <TabsTrigger
+                value="identity"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white rounded-lg px-4 py-2 text-gray-400 transition-all"
+              >
+                <Fingerprint className="w-4 h-4 mr-2" />
+                Identity
+              </TabsTrigger>
             </TabsList>
           </motion.div>
 
@@ -674,6 +682,24 @@ const AgentDetail: React.FC = () => {
                   </div>
                 </GlassCard>
               </motion.div>
+            </TabsContent>
+
+            {/* Identity Tab Redirect Placeholder or Inline? Let's use inline link for now as it is a separate page in router */}
+            <TabsContent value="identity">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <GlassCard className="p-8 text-center border-blue-500/20">
+                        <Fingerprint className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">Sovereign Entity Certificate</h3>
+                        <p className="text-gray-400 mb-6 font-mono text-sm underline group-hover:text-blue-300 cursor-pointer">
+                            SEC-7X-IDENTITY-PROXIMAL
+                        </p>
+                        <Link to={`/agents/${id}/identity`}>
+                            <PremiumButton variant="primary">
+                                Launch Identity Studio
+                            </PremiumButton>
+                        </Link>
+                    </GlassCard>
+                </motion.div>
             </TabsContent>
           </AnimatePresence>
         </Tabs>

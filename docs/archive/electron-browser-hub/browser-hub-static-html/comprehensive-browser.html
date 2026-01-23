@@ -753,15 +753,15 @@
         // Initialize
         createNewTab();
 
-        // Add Theia IDE integration
-        function openTheiaIDE() {
-            console.log('Opening Theia IDE');
+        // Add SkIDEancer IDE integration
+        function openSkIDEancerIDE() {
+            console.log('Opening SkIDEancer IDE');
             if (window.electronAPI) {
-                window.electronAPI.openTheia();
+                window.electronAPI.openSkIDEancer();
             } else {
-                // Fallback to opening Theia in current window
-                const theiaUrl = 'http://localhost:3000'; // Default Theia port
-                window.location.href = theiaUrl;
+                // Fallback to opening SkIDEancer in current window
+                const ideUrl = 'http://localhost:3000'; // Default SkIDEancer port
+                window.location.href = ideUrl;
             }
         }
 

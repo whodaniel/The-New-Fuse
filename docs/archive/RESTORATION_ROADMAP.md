@@ -223,13 +223,13 @@
 ## 8. THEIA IDE INTEGRATION RESTORATION
 
 ### 8.1 IDE Integration Points
-- [ ] **Theia IDE setup**:
-  - Theia IDE configuration and startup
+- [ ] **SkIDEancer IDE setup**:
+  - SkIDEancer IDE configuration and startup
   - Extension loading and management
   - Workspace configuration
   - Debug configuration
 - [ ] **MCP SDK Integration**:
-  - MCP SDK properly integrated with Theia
+  - MCP SDK properly integrated with SkIDEancer
   - Module resolution working correctly
   - Native dependency compilation
   - Plugin API integration

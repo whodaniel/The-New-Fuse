@@ -162,7 +162,7 @@ VITE_BACKEND_URL=https://your-backend-service.railway.app
 
 These services were intentionally excluded from Railway deployment:
 
-- ❌ `apps/electron-desktop` - Theia IDE (Desktop app)
+- ❌ `apps/electron-desktop` - SkIDEancer IDE (Desktop app)
 - ❌ `apps/browser-hub` - Electron Browser Hub (Desktop app)
 - ❌ `apps/vscode-extension` - VS Code Extension
 - ❌ `apps/extension` - Chrome Extension

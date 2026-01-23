@@ -144,24 +144,24 @@ function createNewTab(url = 'about:blank', title = 'New Tab', icon = 'fas fa-glo
   const tabId = 'tab-' + Date.now();
   const frameId = 'frame-' + tabId;
 
-  // Check if this is Theia IDE
-  const isTheia = url.includes('localhost:3007') || title.includes('Theia');
+  // Check if this is SkIDEancer IDE
+  const isSkIDEancer = url.includes('localhost:3007') || title.includes('SkIDEancer');
 
-  // Create loading overlay for Theia
+  // Create loading overlay for SkIDEancer
   let loadingOverlay = null;
-  if (isTheia) {
+  if (isSkIDEancer) {
     loadingOverlay = document.createElement('div');
     loadingOverlay.id = `loading-${frameId}`;
-    loadingOverlay.className = 'theia-loading-overlay';
+    loadingOverlay.className = 'ide-loading-overlay';
     loadingOverlay.innerHTML = `
-            <div class="theia-loading-content">
+            <div class="ide-loading-content">
                 <div class="loading-spinner">
                     <div class="spinner-ring"></div>
                     <div class="spinner-ring"></div>
                     <div class="spinner-ring"></div>
                 </div>
                 <h2>🚀 The New Fuse IDE Loading...</h2>
-                <p>Please allow time for Theia IDE to fully load</p>
+                <p>Please allow time for SkIDEancer IDE to fully load</p>
             </div>
           `;
     document.getElementById('contentArea').appendChild(loadingOverlay);
@@ -176,7 +176,7 @@ function createNewTab(url = 'about:blank', title = 'New Tab', icon = 'fas fa-glo
 
   // Handle load completion
   frame.addEventListener('dom-ready', () => {
-    if (isTheia && loadingOverlay) {
+    if (isSkIDEancer && loadingOverlay) {
       setTimeout(() => {
         loadingOverlay.style.opacity = '0';
         setTimeout(() => loadingOverlay.remove(), 500);

@@ -18,10 +18,10 @@
     },
     "frontend": {
       "description": "Frontend applications and UI packages",
-      "pattern": "./apps/{frontend,theia-ide,electron-desktop}",
+      "pattern": "./apps/{frontend,ide-ide,electron-desktop}",
       "examples": [
-        "pnpm --filter './apps/{frontend,theia-ide,electron-desktop}' run build",
-        "pnpm --filter './apps/{frontend,theia-ide,electron-desktop}' run dev"
+        "pnpm --filter './apps/{frontend,ide-ide,electron-desktop}' run build",
+        "pnpm --filter './apps/{frontend,ide-ide,electron-desktop}' run dev"
       ]
     },
     "packages": {
@@ -112,7 +112,7 @@
     "dev_frontend": {
       "description": "Start frontend development servers",
       "commands": [
-        "pnpm --filter './apps/{frontend,theia-ide}' --parallel run dev"
+        "pnpm --filter './apps/{frontend,ide-ide}' --parallel run dev"
       ]
     },
     "build_production": {
@@ -136,14 +136,14 @@
       "@the-new-fuse/features": "./packages/features",
       "@the-new-fuse/feature-tracker": "./packages/feature-tracker",
       "@the-new-fuse/frontend": "./apps/frontend",
-      "@the-new-fuse/theia-ide": "./apps/theia-ide",
+      "@the-new-fuse/ide-ide": "./apps/ide-ide",
       "@the-new-fuse/electron-desktop": "./apps/electron-desktop",
       "@the-new-fuse/port-manager": "./tools/port-manager"
     },
     "by_category": {
       "infrastructure": ["core", "types", "utils", "shared"],
       "backend": ["backend", "workflow-engine", "mcp-core", "extension-system"],
-      "frontend": ["frontend", "theia-ide", "electron-desktop"],
+      "frontend": ["frontend", "ide-ide", "electron-desktop"],
       "features": ["features", "feature-tracker"],
       "tools": ["port-manager"],
       "extensions": ["browser-mcp", "browser-tools-mcp"]
@@ -169,7 +169,7 @@
       "pnpm --filter '...@the-new-fuse/core' run test",
       "",
       "# Test frontend apps only",
-      "pnpm --filter './apps/{frontend,theia-ide}' --parallel run test"
+      "pnpm --filter './apps/{frontend,ide-ide}' --parallel run test"
     ],
     "selective_building": [
       "# Build core packages first",

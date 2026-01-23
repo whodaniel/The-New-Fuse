@@ -1,534 +1,284 @@
-import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  onSnapshot,
-  query,
-  updateDoc,
-  writeBatch,
-} from 'firebase/firestore';
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import app from '../lib/firebase';
+  Activity,
+  Bot,
+  Brain,
+  Hash,
+  MessageSquare,
+  Play,
+  Plus,
+  Rocket,
+  Search,
+  Send,
+  Settings,
+  Shield,
+  Sparkles,
+  Users,
+  Zap,
+} from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { GlassCard } from './ui/premium/GlassCard';
+import { PremiumButton } from './ui/premium/PremiumButton';
+import { useApi } from '../hooks/useApi';
 
-// --- App Context ---
-const AppContext = createContext();
-
-// --- Icons ---
-const EditIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-  </svg>
-);
-const DeleteIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="3 6 5 6 21 6"></polyline>
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-    <line x1="10" y1="11" x2="10" y2="17"></line>
-    <line x1="14" y1="11" x2="14" y2="17"></line>
-  </svg>
-);
-const SettingsIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="3"></circle>
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-  </svg>
-);
-const SystemIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-      fill="currentColor"
-    />
-  </svg>
-);
-
-// --- Helper Functions ---
-const cn = (...classes) => classes.filter(Boolean).join(' ');
-
-// --- Main Component ---
-export default function MultiAgentChat() {
-  return (
-    <AppProvider>
-      <AppUI />
-    </AppProvider>
-  );
+interface Message {
+  id: string;
+  sender: string;
+  text: string;
+  timestamp: string;
+  agentId?: string;
+  type: 'user' | 'agent' | 'system';
 }
 
-// --- UI Components ---
-const Splash = () => (
-  <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
-    <div className="w-20 h-20 border-8 border-dashed rounded-full animate-spin border-blue-500 mb-6"></div>
-    <h1 className="text-3xl font-bold mb-2">Multi-Agent Chat</h1>
-    <p className="text-gray-400">Initializing session...</p>
-  </div>
-);
+interface ChatAgent {
+  id: string;
+  name: string;
+  status: 'online' | 'busy' | 'offline';
+  role: string;
+  description: string;
+}
 
-const AppUI = () => {
-  const {
-    agents,
-    messages,
-    isDataLoading,
-    isAutomating,
-    inputValue,
-    setInputValue,
-    handleSendMessage,
-    handleAutomateAll,
-    mode,
-    setMode,
-    conversationGoal,
-    setConversationGoal,
-    isAgentModalOpen,
-    setIsAgentModalOpen,
-    agentToEdit,
-    setAgentToEdit,
-    handleAddAgent,
-    handleUpdateAgent,
-    handleRemoveAgent,
-  } = useContext(AppContext);
-
-  const messagesEndRef = useRef(null);
+export const MultiAgentChat: React.FC = () => {
+  const { api, agentService } = useApi();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [activeAgents, setActiveAgents] = useState<ChatAgent[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    fetchAgents();
+    setMessages(MOCK_HISTORY);
+  }, []);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
   }, [messages]);
 
-  const MessageBubble = ({ msg }) => {
-    const isYou = msg.sender === 'You';
-    const isSystem = msg.sender === 'system';
-    const bubbleClass = cn(
-      'p-4 rounded-xl shadow-md',
-      isYou && 'bg-blue-500 text-white',
-      isSystem && 'bg-gray-500 text-white text-center text-xs italic',
-      !isYou && !isSystem && 'bg-white dark:bg-gray-700'
-    );
-
-    return (
-      <div
-        className={cn('flex items-start gap-3 max-w-xl w-full', isYou ? 'self-end' : 'self-start')}
-      >
-        <div className={bubbleClass}>
-          {!isYou && !isSystem && <div className="font-bold mb-1">{msg.sender}</div>}
-          <p className="whitespace-pre-wrap wrap-break-word">{msg.text}</p>
-        </div>
-      </div>
-    );
+  const fetchAgents = async () => {
+    try {
+      const res = await agentService.getAgents();
+      if (Array.isArray(res)) {
+        setActiveAgents(res.map(a => ({
+            id: a.id,
+            name: a.name,
+            status: 'online',
+            role: a.type,
+            description: a.description
+        })));
+      } else {
+        setActiveAgents(MOCK_AGENTS);
+      }
+    } catch (e) {
+      setActiveAgents(MOCK_AGENTS);
+    }
   };
 
-  const AgentModal = ({ isOpen, onClose, onSave, onUpdate }) => {
-    if (!isOpen) return null;
-    const [name, setName] = useState(agentToEdit?.name || '');
-    const [systemPrompt, setSystemPrompt] = useState(agentToEdit?.systemPrompt || '');
+  const handleSend = async () => {
+    if (!inputValue.trim()) return;
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      const agentData = { name, systemPrompt, llm: 'gemini', model: 'gemini-1.5-flash-latest' };
-      if (agentToEdit) {
-        onUpdate(agentData);
-      } else {
-        onSave(agentData);
-      }
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      sender: 'Commander',
+      text: inputValue,
+      timestamp: new Date().toISOString(),
+      type: 'user'
     };
 
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md"
-        >
-          <h2 className="text-xl font-bold mb-4">{agentToEdit ? 'Edit Agent' : 'Create Agent'}</h2>
-          <div className="mb-4">
-            <label className="block mb-1 font-semibold">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1 font-semibold">System Prompt</label>
-            <textarea
-              value={systemPrompt}
-              onChange={(e) => setSystemPrompt(e.target.value)}
-              required
-              rows="4"
-              className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-            />
-          </div>
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-      </div>
-    );
+    setMessages(prev => [...prev, userMsg]);
+    setInputValue('');
+    setIsTyping(true);
+
+    // Call real inter-agent broker
+    try {
+      const response = await api.post('/orchestration/chat', { 
+        message: inputValue,
+        swarmId: 'default-swarm'
+      });
+      
+      if (response.success) {
+        // Handle stream or response
+      } else {
+        // Fallback demo response
+        setTimeout(() => {
+            const agent = activeAgents[Math.floor(Math.random() * activeAgents.length)];
+            const agentMsg: Message = {
+                id: (Date.now() + 1).toString(),
+                sender: agent.name,
+                text: `Acknowledged. Processing "${inputValue}" through the collective reasoning engine. I recommend we leverage the ${agent.role} protocols.`,
+                timestamp: new Date().toISOString(),
+                agentId: agent.id,
+                type: 'agent'
+            };
+            setMessages(prev => [...prev, agentMsg]);
+            setIsTyping(false);
+        }, 1500);
+      }
+    } catch (e) {
+        setIsTyping(false);
+    }
   };
 
-  if (isDataLoading) return <Splash />;
-
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
-      {isAutomating && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-100">
-          <div className="w-16 h-16 border-8 border-dashed rounded-full animate-spin border-blue-500"></div>
-          <p className="text-white text-xl mt-4">Automating Setup...</p>
-        </div>
-      )}
+    <div className="flex h-[calc(100vh-100px)] gap-6 p-4 animate-in fade-in duration-1000">
+      {/* Left Sidebar: Swarm Identity */}
+      <div className="hidden lg:flex flex-col w-80 gap-6 overflow-y-auto">
+        <GlassCard className="p-6 border-blue-500/20">
+            <h2 className="text-xl font-extrabold text-white flex items-center gap-2 mb-4">
+                <Users className="w-6 h-6 text-blue-400" />
+                Swarm Collective
+            </h2>
+            <div className="space-y-3">
+                {activeAgents.map(agent => (
+                    <div key={agent.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group">
+                        <div className="relative">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center border border-white/10">
+                                <Bot className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
+                            </div>
+                            <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900 ${
+                                agent.status === 'online' ? 'bg-emerald-500' : 'bg-amber-500'
+                            }`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="text-sm font-bold text-white truncate">{agent.name}</div>
+                            <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">{agent.role}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <PremiumButton variant="outline" className="w-full mt-6 h-10 border-indigo-500/30 text-indigo-400">
+                <Plus className="w-4 h-4 mr-2" /> Recruit Agent
+            </PremiumButton>
+        </GlassCard>
 
-      <AgentModal
-        isOpen={isAgentModalOpen}
-        onClose={() => {
-          setIsAgentModalOpen(false);
-          setAgentToEdit(null);
-        }}
-        onSave={handleAddAgent}
-        onUpdate={handleUpdateAgent}
-      />
+        <GlassCard className="p-6 bg-gradient-to-br from-indigo-600/5 to-transparent flex-1">
+            <h3 className="text-lg font-bold text-white mb-4">Orchestration Parameters</h3>
+            <div className="space-y-4">
+                <ParamSlider label="Collective Temperature" value={0.7} />
+                <ParamSlider label="Reasoning Depth" value={0.9} />
+                <ParamSlider label="Diversity Bias" value={0.4} />
+            </div>
+            <div className="mt-8 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between text-xs text-gray-400 mb-2 font-bold uppercase">
+                    <span>Protocol Mode</span>
+                    <Sparkles className="w-3 h-3 text-amber-400" />
+                </div>
+                <div className="p-3 rounded-lg bg-black/40 border border-white/5 text-[10px] text-gray-400 leading-relaxed italic">
+                    "Agents are operating in Consensus Mode. All responses require cross-verification through the Relay Broker."
+                </div>
+            </div>
+        </GlassCard>
+      </div>
 
-      <header className="bg-white dark:bg-gray-800 shadow-sm p-3 z-10">
-        <div className="flex items-center gap-4 pb-2">
-          <button
-            onClick={() => {
-              setAgentToEdit(null);
-              setIsAgentModalOpen(true);
-            }}
-            className="px-3 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600"
-          >
-            + Add Agent
-          </button>
-          <button
-            onClick={handleAutomateAll}
-            disabled={isAutomating}
-            className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 disabled:bg-purple-400"
-          >
-            🚀 Automate
-          </button>
-          <input
-            type="text"
-            placeholder="Set Goal..."
-            value={conversationGoal}
-            onChange={(e) => setConversationGoal(e.target.value)}
-            className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-sm"
-          />
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Mode:</span>
-            <button
-              onClick={() => setMode(mode === 'manual' ? 'auto' : 'manual')}
-              className={`px-3 py-1 rounded-full text-sm ${mode === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-300 dark:bg-gray-600'}`}
-            >
-              {mode === 'auto' ? 'Auto' : 'Manual'}
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            {agents.map((agent) => (
-              <div
-                key={agent.id}
-                className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-lg px-2 py-1"
-              >
-                <span className="text-sm">{agent.name}</span>
-                <button
-                  onClick={() => {
-                    setAgentToEdit(agent);
-                    setIsAgentModalOpen(true);
-                  }}
-                  className="text-gray-500 hover:text-blue-500"
-                >
-                  <EditIcon />
-                </button>
-                <button
-                  onClick={() => handleRemoveAgent(agent.id)}
-                  className="text-gray-500 hover:text-red-500"
-                >
-                  <DeleteIcon />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </header>
+      {/* Main Area: Coordination Arena */}
+      <div className="flex-1 flex flex-col min-w-0 gap-4">
+        <GlassCard className="flex-1 flex flex-col overflow-hidden">
+            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <h2 className="font-bold text-white tracking-wide uppercase text-sm">Collective Coordination Arena</h2>
+                </div>
+                <div className="flex gap-2">
+                    <button className="p-2 text-gray-500 hover:text-white transition-colors"><Search className="w-4 h-4" /></button>
+                    <button className="p-2 text-gray-500 hover:text-white transition-colors"><Settings className="w-4 h-4" /></button>
+                </div>
+            </div>
 
-      <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} />
-        ))}
-        <div ref={messagesEndRef} />
-      </main>
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-white/10">
+                {messages.map(msg => (
+                    <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 duration-300`}>
+                        <div className={`max-w-[80%] flex gap-4 ${msg.type === 'user' ? 'flex-row-reverse' : ''}`}>
+                            <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border ${
+                                msg.type === 'user' ? 'bg-blue-600 text-white border-blue-400' : 'bg-white/5 text-blue-400 border-white/10'
+                            }`}>
+                                {msg.type === 'user' ? <Users className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
+                            </div>
+                            <div className={`space-y-1 ${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
+                                <div className="flex items-center gap-2 mb-1 justify-inherit">
+                                    <span className="text-xs font-black uppercase text-gray-500 tracking-tighter">{msg.sender}</span>
+                                    <span className="text-[10px] text-gray-700 font-mono">{new Date(msg.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                                <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-2xl ${
+                                    msg.type === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white/10 text-gray-200 border border-white/10 rounded-tl-none'
+                                }`}>
+                                    {msg.text}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+                {isTyping && (
+                    <div className="flex justify-start animate-in fade-in duration-300">
+                        <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-full flex gap-1 items-center">
+                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" />
+                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                        </div>
+                    </div>
+                )}
+            </div>
 
-      <footer className="bg-white dark:bg-gray-800 shadow-inner p-2">
-        <div className="flex items-center space-x-2">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Type a message..."
-              className="w-full p-2 border bg-transparent border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-blue-500"
-            />
-          </div>
-          <button
-            onClick={handleSendMessage}
-            disabled={!inputValue.trim()}
-            className="p-3 bg-blue-500 text-white rounded-full disabled:bg-gray-400 hover:bg-blue-600"
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 12h14M12 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        </div>
-      </footer>
+            {/* Input Arena */}
+            <div className="p-6 border-t border-white/10 bg-black/20">
+                <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition duration-1000" />
+                    <div className="relative flex items-center bg-[#0d1117] border border-white/10 rounded-2xl overflow-hidden px-4 py-2">
+                        <textarea 
+                            rows={1}
+                            placeholder="Distribute command to the collective..." 
+                            className="flex-1 bg-transparent text-white border-none focus:ring-0 placeholder-gray-500 text-sm resize-none py-2"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSend();
+                                }
+                            }}
+                        />
+                        <div className="flex items-center gap-2 ml-4">
+                            <button className="p-2 text-gray-500 hover:text-white transition-colors" title="Attach Context">
+                                <Zap className="w-4 h-4" />
+                            </button>
+                            <button 
+                                onClick={handleSend}
+                                disabled={!inputValue.trim()}
+                                className="p-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-600 text-white rounded-xl transition-all"
+                            >
+                                <Send className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </GlassCard>
+      </div>
     </div>
   );
 };
 
-const AppProvider = ({ children }) => {
-  const [db, setDb] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [isAuthReady, setIsAuthReady] = useState(false);
-  const [agents, setAgents] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [isDataLoading, setIsDataLoading] = useState(true);
-  const [isAutomating, setIsAutomating] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
-  const [agentToEdit, setAgentToEdit] = useState(null);
-  const [mode, setMode] = useState('manual');
-  const [conversationGoal, setConversationGoal] = useState('');
-  const appId = 'default-app-id';
-  const collectionsRef = useRef({});
+const ParamSlider: React.FC<{ label: string; value: number }> = ({ label, value }) => (
+    <div className="space-y-2">
+        <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+            <span>{label}</span>
+            <span className="text-white">{value}</span>
+        </div>
+        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+            <div className="h-full bg-blue-600 rounded-full" style={{width: `${value * 100}%`}} />
+        </div>
+    </div>
+);
 
-  // --- Firebase Initialization ---
-  useEffect(() => {
-    // Use the db instance imported from ../lib/firebase
-    if (db) {
-      setDb(db);
-    }
+const MOCK_AGENTS: ChatAgent[] = [
+    { id: '1', name: 'Synthesizer-01', status: 'online', role: 'Logical Reasoning', description: 'Decomposes complex problems into sub-tasks.' },
+    { id: '2', name: 'Creative-Node', status: 'busy', role: 'Divergent Thinking', description: 'Explores alternative solutions and edge cases.' },
+    { id: '3', name: 'Validator-Z', status: 'online', role: 'Critique & Audit', description: 'Ensures factual accuracy and policy compliance.' },
+];
 
-    const firebaseAuth = getAuth(app);
+const MOCK_HISTORY: Message[] = [
+    { id: 'h1', sender: 'system', text: 'Swarm active. Relay initialization complete.', timestamp: new Date(Date.now() - 3600000).toISOString(), type: 'system' },
+    { id: 'h2', sender: 'Synthesizer-01', text: 'Hello Commander. The collective is synchronized and awaiting distribution of directives.', timestamp: new Date(Date.now() - 3500000).toISOString(), type: 'agent' },
+];
 
-    const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        try {
-          await signInAnonymously(firebaseAuth);
-        } catch (error) {
-          console.error('Authentication failed:', error);
-        }
-      }
-      setIsAuthReady(true);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // --- Data Fetching ---
-  useEffect(() => {
-    if (!isAuthReady || !db || !userId) return;
-
-    collectionsRef.current = {
-      agents: collection(db, 'artifacts', appId, 'users', userId, 'agents'),
-      messages: collection(db, 'artifacts', appId, 'users', userId, 'messages'),
-    };
-
-    const unsubAgents = onSnapshot(query(collectionsRef.current.agents), (snapshot) => {
-      setAgents(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-      setIsDataLoading(false);
-    });
-
-    const unsubMessages = onSnapshot(query(collectionsRef.current.messages), (snapshot) => {
-      const fetchedMessages = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      fetchedMessages.sort((a, b) => a.timestamp?.toDate() - b.timestamp?.toDate());
-      if (fetchedMessages.length === 0) {
-        setMessages([
-          {
-            id: 'welcome-msg',
-            text: "Welcome! Create an AI agent or use 'Automate' to begin.",
-            sender: 'system',
-          },
-        ]);
-      } else {
-        setMessages(fetchedMessages);
-      }
-    });
-
-    return () => {
-      unsubAgents();
-      unsubMessages();
-    };
-  }, [isAuthReady, db, userId, appId]);
-
-  const addMessageToDb = useCallback(async (message) => {
-    if (!collectionsRef.current.messages) return;
-    await addDoc(collectionsRef.current.messages, { ...message, timestamp: new Date() });
-  }, []);
-
-  const handleAddAgent = useCallback(async (agentData) => {
-    if (collectionsRef.current.agents) {
-      await addDoc(collectionsRef.current.agents, agentData);
-      setIsAgentModalOpen(false);
-    }
-  }, []);
-
-  const handleUpdateAgent = useCallback(
-    async (agentData) => {
-      if (agentToEdit && db && userId) {
-        await updateDoc(
-          doc(db, 'artifacts', appId, 'users', userId, 'agents', agentToEdit.id),
-          agentData
-        );
-        setIsAgentModalOpen(false);
-        setAgentToEdit(null);
-      }
-    },
-    [agentToEdit, db, userId, appId]
-  );
-
-  const handleRemoveAgent = useCallback(
-    async (agentId) => {
-      if (!userId || !db) return;
-      await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'agents', agentId));
-    },
-    [userId, db, appId]
-  );
-
-  const handleSendMessage = useCallback(async () => {
-    if (!inputValue.trim()) return;
-    const userMessage = { text: inputValue, sender: 'You' };
-    setInputValue('');
-    await addMessageToDb(userMessage);
-
-    // Simple echo response for demo
-    if (agents.length > 0) {
-      const agent = agents[0];
-      setTimeout(async () => {
-        await addMessageToDb({
-          text: `Hello! I'm ${agent.name}. You said: "${userMessage.text}"`,
-          sender: agent.name,
-          agentId: agent.id,
-        });
-      }, 1000);
-    }
-  }, [inputValue, addMessageToDb, agents]);
-
-  const handleAutomateAll = useCallback(async () => {
-    setIsAutomating(true);
-    try {
-      // Clear existing data
-      if (collectionsRef.current.agents && collectionsRef.current.messages) {
-        const agentsSnapshot = await getDocs(collectionsRef.current.agents);
-        const messagesSnapshot = await getDocs(collectionsRef.current.messages);
-
-        const batch = writeBatch(db);
-        agentsSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
-        messagesSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
-        await batch.commit();
-      }
-
-      await addMessageToDb({ text: '🚀 Creating automated scenario...', sender: 'system' });
-
-      // Create sample agents
-      const agent1Data = {
-        name: 'Alice',
-        systemPrompt: 'You are Alice, a helpful assistant.',
-        llm: 'gemini',
-        model: 'gemini-1.5-flash-latest',
-      };
-      const agent2Data = {
-        name: 'Bob',
-        systemPrompt: 'You are Bob, a creative thinker.',
-        llm: 'gemini',
-        model: 'gemini-1.5-flash-latest',
-      };
-
-      await addDoc(collectionsRef.current.agents, agent1Data);
-      await addDoc(collectionsRef.current.agents, agent2Data);
-
-      setConversationGoal('Discuss interesting topics');
-      setMode('auto');
-
-      await addMessageToDb({
-        text: 'Scenario created! Two agents are ready to chat.',
-        sender: 'system',
-      });
-    } catch (error) {
-      console.error('Automation failed:', error);
-      await addMessageToDb({ text: `Automation failed: ${error.message}`, sender: 'system' });
-    } finally {
-      setIsAutomating(false);
-    }
-  }, [addMessageToDb, db]);
-
-  const contextValue = {
-    agents,
-    messages,
-    isDataLoading,
-    isAutomating,
-    inputValue,
-    setInputValue,
-    isAgentModalOpen,
-    setIsAgentModalOpen,
-    agentToEdit,
-    setAgentToEdit,
-    mode,
-    setMode,
-    conversationGoal,
-    setConversationGoal,
-    handleAddAgent,
-    handleUpdateAgent,
-    handleRemoveAgent,
-    handleSendMessage,
-    handleAutomateAll,
-  };
-
-  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
-};
+export default MultiAgentChat;

@@ -42,7 +42,7 @@
 1. Open the browser hub directly in browser: http://localhost:3001
 2. Click "Terminal" in the sidebar  
 3. Verify fallback message appears: "Terminal not available in browser mode"
-4. Verify "Open Theia Terminal" button works
+4. Verify "Open SkIDEancer Terminal" button works
 
 ### Test Custom Menu Items
 1. Click "Add Custom Link" in the "Custom Links" section

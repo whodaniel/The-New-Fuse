@@ -58,8 +58,8 @@ pnpm run dev:legacy
 graph TD
     A[Start Development] --> B{Choose Mode}
     B -->|none| C[Core Services Only]
-    B -->|local| D[Core + Local Theia]
-    B -->|cloud| E[Core + Cloud Theia]
+    B -->|local| D[Core + Local SkIDEancer]
+    B -->|cloud| E[Core + Cloud SkIDEancer]
 
     C --> F[API Gateway :3005]
     C --> G[Backend API :3001]
@@ -67,10 +67,10 @@ graph TD
     C --> I[Electron App]
 
     D --> F & G & H & I
-    D --> J[Local Theia :3007]
+    D --> J[Local SkIDEancer :3007]
 
     E --> F & G & H & I
-    E --> K[Cloud Theia Remote]
+    E --> K[Cloud SkIDEancer Remote]
 
     F & G & H & I --> L[Ready in ~11s]
     J --> M[Ready in ~20s]

@@ -170,7 +170,7 @@
 }
 ```
 
-## Proposed Theia/IDE Tools (4 new)
+## Proposed SkIDEancer/IDE Tools (4 new)
 
 ### 9. ide_open_file
 
@@ -248,7 +248,7 @@
 2. llm_generate_code - Code generation
 3. llm_analyze_code - Code review
 
-### Phase 2 (After Theia)
+### Phase 2 (After SkIDEancer)
 
 4. ide_open_file
 5. ide_edit

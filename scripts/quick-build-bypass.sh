@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "🚀 Quick Build Bypass - Getting The New Fuse running without full Theia build"
+echo "🚀 Quick Build Bypass - Getting The New Fuse running without full SkIDEancer build"
 
 # Kill any hanging processes
-pkill -f "theia build" 2>/dev/null || true
+pkill -f "ide build" 2>/dev/null || true
 pkill -f "memory-optimized-build" 2>/dev/null || true
 
 # Install dependencies
@@ -11,17 +11,17 @@ echo "📦 Installing dependencies..."
 pnpm install
 
 # Create necessary directories
-mkdir -p apps/theia-ide/lib
+mkdir -p apps/ide-ide/lib
 mkdir -p apps/electron-desktop/dist
 mkdir -p apps/browser-hub/dist
 
 # Create build markers for completed components
 echo "✅ Creating build markers..."
 
-# Theia IDE fallback
-cat > apps/theia-ide/lib/build-info.json << 'EOF'
+# SkIDEancer IDE fallback
+cat > apps/ide-ide/lib/build-info.json << 'EOF'
 {
-  "name": "@the-new-fuse/theia-ide",
+  "name": "@the-new-fuse/ide-ide",
   "version": "2.0.0",
   "built": true,
   "buildType": "bypass",
@@ -60,7 +60,7 @@ echo ""
 echo "🎯 Available launch options:"
 echo "1. Browser Hub: pnpm run dev:browser"
 echo "2. Electron Desktop: pnpm run dev:electron"
-echo "3. Theia IDE: cd apps/theia-ide && pnpm run dev"
+echo "3. SkIDEancer IDE: cd apps/ide-ide && pnpm run dev"
 echo "4. All services: pnpm run dev"
 echo ""
 echo "💡 This bypass allows you to run the system immediately while avoiding build issues."

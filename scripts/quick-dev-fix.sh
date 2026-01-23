@@ -11,7 +11,7 @@ echo "⚡ Quick fix for development environment..."
 echo "🔨 Rebuilding find-git-repositories native module..."
 
 # Navigate to the problematic module
-cd node_modules/@theia/git/node_modules/find-git-repositories
+cd node_modules/@ide/git/node_modules/find-git-repositories
 
 # Clean and rebuild
 rm -rf build/
@@ -40,7 +40,7 @@ pnpm add electron@latest --dev
 # Fix 3: Clear problematic build artifacts
 echo "🧹 Clearing build artifacts..."
 rm -rf .turbo/
-rm -rf apps/theia-ide/lib/
-rm -rf apps/theia-ide/src-gen/
+rm -rf apps/ide-ide/lib/
+rm -rf apps/ide-ide/src-gen/
 
 echo "✅ Quick fix complete! Try running 'pnpm run dev' again."

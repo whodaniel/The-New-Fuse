@@ -42,7 +42,7 @@ done
 # Also kill any node processes that might be related to our project
 echo "🔍 Checking for related Node.js processes..."
 pkill -f "enhanced-server.js" 2>/dev/null || true
-pkill -f "theia" 2>/dev/null || true
+pkill -f "ide" 2>/dev/null || true
 pkill -f "memory-optimized-dev" 2>/dev/null || true
 
 echo "✨ All development ports cleared!"

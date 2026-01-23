@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Ultimate Theia Build Script (Yarn Edition)
-# This script performs a full yarn install and then builds Theia and other packages.
+# Ultimate SkIDEancer Build Script (Yarn Edition)
+# This script performs a full yarn install and then builds SkIDEancer and other packages.
 
 set -e
 
-echo "🚀 Starting the ULTIMATE Theia build process (Yarn Edition)..."
+echo "🚀 Starting the ULTIMATE SkIDEancer build process (Yarn Edition)..."
 
 # 0. Set Node.js version
 echo "
@@ -24,7 +24,7 @@ echo "
 --- Step 1: Performing clean install ---"
 echo "Removing old node_modules and yarn.lock..."
 rm -rf node_modules yarn.lock
-rm -rf apps/theia-ide/node_modules
+rm -rf apps/ide-ide/node_modules
 echo "Installing all dependencies (allowing scripts) with yarn..."
 yarn install
 echo "✅ Clean install complete."
@@ -68,15 +68,15 @@ echo "
 yarn prisma generate --schema packages/database/prisma/schema.prisma
 echo "✅ Prisma Client generated."
 
-# 5. Build Theia IDE
+# 5. Build SkIDEancer IDE
 echo "
---- Step 5: Building Theia IDE ---"
+--- Step 5: Building SkIDEancer IDE ---"
 # Create the symlink to solve workspace issues
-echo "Creating symlink for Theia's node_modules..."
-ln -s ../../node_modules apps/theia-ide/node_modules
+echo "Creating symlink for SkIDEancer's node_modules..."
+ln -s ../../node_modules apps/ide-ide/node_modules
 
-(cd apps/theia-ide && yarn theia build --mode production)
-echo "✅ Theia IDE build complete."
+(cd apps/ide-ide && yarn ide build --mode production)
+echo "✅ SkIDEancer IDE build complete."
 
 # 6. Build the rest of the packages
 echo "

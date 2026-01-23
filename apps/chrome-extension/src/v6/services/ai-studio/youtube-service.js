@@ -395,23 +395,46 @@ class YouTubeService {
     }
   }
 
-  // Sign out
-  async signOut() {
+  // Get Liked Videos (as proxy for watch history)
+  async getLikedVideos(maxResults = 50) {
     try {
-      if (this.accessToken) {
-        await chrome.identity.removeCachedAuthToken({ token: this.accessToken });
-      }
+      const data = await this.makeRequest('videos', {
+        part: 'snippet,contentDetails',
+        myRating: 'like',
+        maxResults: maxResults,
+      });
 
-      this.accessToken = null;
-      this.tokenExpiry = null;
-
-      await chrome.storage.local.remove(['youtubeToken', 'youtubeTokenExpiry']);
-
-      return true;
+      return data.items.map((item) => ({
+        id: item.id,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnail: item.snippet.thumbnails?.default?.url,
+        channelTitle: item.snippet.channelTitle,
+        publishedAt: item.snippet.publishedAt,
+        url: `https://www.youtube.com/watch?v=${item.id}`,
+      }));
     } catch (error) {
-      console.error('Failed to sign out:', error);
+      console.error('Failed to fetch liked videos:', error);
       throw error;
     }
+  }
+
+  // Generate prompt for Gemini Personal Intelligence
+  generateWatchHistoryPrompt(videoCount = 50) {
+    return `Using your Personal Intelligence access to my YouTube watch history,
+provide my last ${videoCount} watched videos.
+
+Filter out political content.
+
+Format as JSON array:
+[
+  {
+    "title": "Video Title",
+    "url": "https://www.youtube.com/watch?v=...",
+    "channel": "Channel Name",
+    "description": "Brief description"
+  }
+]`;
   }
 }
 

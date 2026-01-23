@@ -549,12 +549,12 @@
 
                         <div class="service-card">
                             <div class="service-header">
-                                <div class="service-title">Theia IDE</div>
-                                <div class="service-status warning" id="theia-status"></div>
+                                <div class="service-title">SkIDEancer IDE</div>
+                                <div class="service-status warning" id="ide-status"></div>
                             </div>
                             <div class="service-description">Integrated development environment</div>
                             <div class="service-url">http://localhost:3007</div>
-                            <button class="button secondary" onclick="startService('theia')">Restart</button>
+                            <button class="button secondary" onclick="startService('ide')">Restart</button>
                         </div>
                     </div>
                 </div>
@@ -601,7 +601,7 @@
             'frontend': { status: 'active', url: 'http://localhost:3000' },
             'backend': { status: 'active', url: 'http://localhost:3004' },
             'gateway': { status: 'inactive', url: 'http://localhost:3005' },
-            'theia': { status: 'warning', url: 'http://localhost:3007' }
+            'ide': { status: 'warning', url: 'http://localhost:3007' }
         };
 
         // Tab switching

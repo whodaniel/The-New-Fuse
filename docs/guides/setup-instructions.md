@@ -6,7 +6,7 @@ All AI enhancements and capabilities have been successfully implemented and are 
 
 ### **🎯 What's Ready Now**
 
-#### 1. ✅ **Theia IDE with Full AI Capabilities**
+#### 1. ✅ **SkIDEancer IDE with Full AI Capabilities**
 - **Status**: ✅ ACTIVE AND RUNNING
 - **URL**: http://localhost:3003  
 - **Features**: VSCode-compatible IDE with 39+ extensions
@@ -59,8 +59,8 @@ pnpm run launch
 
 ### **Individual Services**
 ```bash
-# Start Theia IDE only
-cd apps/theia-ide && pnpm run start
+# Start SkIDEancer IDE only
+cd apps/ide-ide && pnpm run start
 
 # Open Browser Hub
 open apps/browser-hub/enhanced-browser-hub.html
@@ -71,7 +71,7 @@ cd apps/backend && pnpm run simple-main
 
 ## 🤖 **AI Features Usage**
 
-### **In Theia IDE (http://localhost:3003)**
+### **In SkIDEancer IDE (http://localhost:3003)**
 
 #### **AI Chat View**
 - Press `Ctrl+Shift+P` → "AI: Open Chat View"
@@ -116,13 +116,13 @@ export GEMINI_API_KEY="your-key-here"  # Optional
 ```
 
 ### **Configuration Files**
-- **AI Settings**: `apps/theia-ide/theia.json` 
-- **MCP Config**: `apps/theia-ide/mcp-config.json`
-- **Launch Script**: `apps/browser-hub/launch-with-theia.js`
+- **AI Settings**: `apps/ide-ide/ide.json` 
+- **MCP Config**: `apps/ide-ide/mcp-config.json`
+- **Launch Script**: `apps/browser-hub/launch-with-ide.js`
 
 ## 🎯 **Service Endpoints**
 
-- **Theia IDE**: http://localhost:3003
+- **SkIDEancer IDE**: http://localhost:3003
 - **Browser Hub**: `/apps/browser-hub/enhanced-browser-hub.html`
 - **Enhanced Server**: http://localhost:3002  
 - **WebSocket**: ws://localhost:3004

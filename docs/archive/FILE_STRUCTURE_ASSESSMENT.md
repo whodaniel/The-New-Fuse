@@ -189,7 +189,7 @@ mv SAAS_LAUNCH_STATUS.md docs/deployment/
 
 # 4. Move feature-specific docs to appropriate packages
 mv MCP_INTEGRATION_TASKS.md src/mcp/
-mv THEIA_*.md theia-workspace/docs/
+mv THEIA_*.md ide-workspace/docs/
 mv NFT_MARKETPLACE_INTEGRATION.md packages/contracts/docs/
 
 # 5. Consolidate README variants

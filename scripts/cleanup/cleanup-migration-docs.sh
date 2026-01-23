@@ -31,7 +31,7 @@ mv -v REDIS_MIGRATION_PHASE1A_COMPLETE.md "$ARCHIVE_DIR/" 2>/dev/null || echo " 
 mv -v REDIS_MIGRATION_PHASE1B_COMPLETE.md "$ARCHIVE_DIR/" 2>/dev/null || echo "    ✓ REDIS_MIGRATION_PHASE1B_COMPLETE.md already moved"
 mv -v REDIS_LEGACY_CLEANUP_REPORT.md "$ARCHIVE_DIR/" 2>/dev/null || echo "    ✓ REDIS_LEGACY_CLEANUP_REPORT.md already moved"
 
-# Move Theia/Browser Hub docs
+# Move SkIDEancer/Browser Hub docs
 echo "  Moving Browser Hub documents..."
 mv -v THEIA_BUILD_PROCESS.md "$ARCHIVE_DIR/" 2>/dev/null || echo "    ✓ THEIA_BUILD_PROCESS.md already moved"
 mv -v THEIA_SERVER_SUCCESS.md "$ARCHIVE_DIR/" 2>/dev/null || echo "    ✓ THEIA_SERVER_SUCCESS.md already moved"

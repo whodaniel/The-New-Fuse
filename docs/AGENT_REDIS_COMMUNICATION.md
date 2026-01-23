@@ -242,13 +242,13 @@ Become the broker for the current conversation.
 
 ## 🛠️ Implementation Steps
 
-### Phase 1: CLI Agent Base (Today's Goal)
+### Phase 1: CLI Agent Base (✅ COMPLETED)
 
-1. Create `scripts/tnf-agent-cli.ts` - CLI agent runner
-2. Create `packages/agent/src/redis-agent.ts` - Redis-connected agent
-3. Test direct conversation between Antigravity and Gemini
+1. Create `scripts/tnf-agent-cli.ts` -> Now `@the-new-fuse/tnf-cli` package
+2. Create `packages/agent/src/redis-agent.ts` -> Integrated into `RedisAgentClient`
+3. Test direct conversation between Antigravity and Gemini -> Verified
 
-### Phase 2: Orchestration
+### Phase 2: Orchestration (IN PROGRESS)
 
 1. Implement orchestrator role in `MasterOrchestratorRegistration`
 2. Add task delegation over Redis

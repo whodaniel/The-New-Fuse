@@ -19,7 +19,7 @@ Reviewed **7 open pull requests** with branches ranging from 1 to 104 commits. A
 | **feature/comprehensive-reorganization** | ✅ Recent (Oct 22) | Review & Merge | MEDIUM |
 | **feature/agent-system-integration** | ⚠️ Stale (Sep 26) | Needs Testing | MEDIUM |
 | **feature/infrastructure-hardening** | ⚠️ Stale (Sep 22) | Needs Review | MEDIUM |
-| **claude/theia-workspace-merge** | ✅ Already Merged (PR #14) | **CLOSE PR** | N/A |
+| **claude/ide-workspace-merge** | ✅ Already Merged (PR #14) | **CLOSE PR** | N/A |
 | **fix/backend-build-errors** | ❌ Very Stale (Aug 11) | **CLOSE** | N/A |
 
 ---
@@ -167,8 +167,8 @@ c83e34a1 fix: Make prompt-templating tsconfig.json self-contained
 95bbb123 feat(cli): add vscode bridge auto-start, retries, and providers refresh command
 a80aa2d7 feat: Complete multi-agent integration with full system synergy
 98342fd9 feat: Implement comprehensive multi-agent system integration
-bbd1938c fix: Resolve Node.js version compatibility warning for Theia
-bcd7b999 fix: Properly separate Theia build process from main system
+bbd1938c fix: Resolve Node.js version compatibility warning for SkIDEancer
+bcd7b999 fix: Properly separate SkIDEancer build process from main system
 ```
 
 **Key Changes:**
@@ -252,24 +252,24 @@ d321a1a5 fix: Complete TypeScript interface consolidation and resolve build erro
 
 ### 🔵 LOW PRIORITY - Large or Complex
 
-#### 6. claude/theia-workspace-merge-011CUVuwiwkoarbi4R7JAMim
-**Branch:** `claude/theia-workspace-merge-011CUVuwiwkoarbi4R7JAMim`
+#### 6. claude/ide-workspace-merge-011CUVuwiwkoarbi4R7JAMim
+**Branch:** `claude/ide-workspace-merge-011CUVuwiwkoarbi4R7JAMim`
 **Last Updated:** October 26, 2025 (Today)
 **Commits Ahead:** 104
 **Merge Status:** ✅ Clean
 
 **Description:**
-- Complete Theia IDE integration into TNF framework
+- Complete SkIDEancer IDE integration into TNF framework
 - 104 commits with massive changes
-- Adds standalone Theia build artifacts
-- Merges Theia workspace into main codebase
+- Adds standalone SkIDEancer build artifacts
+- Merges SkIDEancer workspace into main codebase
 
 **Recent Commits:**
 ```
-09d1d104 chore: remove redundant theia-workspace directory
-0fd77e11 merge: Integrate complete Theia IDE implementation into theia-workspace
-a9499a95 build: add Theia IDE standalone build artifacts and configuration
-4a2c9ca3 feat: Complete Theia IDE integration into TNF framework
+09d1d104 chore: remove redundant ide-workspace directory
+0fd77e11 merge: Integrate complete SkIDEancer IDE implementation into ide-workspace
+a9499a95 build: add SkIDEancer IDE standalone build artifacts and configuration
+4a2c9ca3 feat: Complete SkIDEancer IDE integration into TNF framework
 ```
 
 **Total Changes:**
@@ -286,10 +286,10 @@ a9499a95 build: add Theia IDE standalone build artifacts and configuration
 **Verification:**
 Git log confirms PR #14 was merged to main:
 ```
-3bdd326b Merge pull request #14 from whodaniel/claude/theia-workspace-merge-011CUVuwiwkoarbi4R7JAMim
+3bdd326b Merge pull request #14 from whodaniel/claude/ide-workspace-merge-011CUVuwiwkoarbi4R7JAMim
 ```
 
-The branch still exists remotely but the changes are already in main. Additional commits on the branch (09d1d104 "chore: remove redundant theia-workspace directory") were made AFTER the merge.
+The branch still exists remotely but the changes are already in main. Additional commits on the branch (09d1d104 "chore: remove redundant ide-workspace directory") were made AFTER the merge.
 
 **Total Changes (Already in Main):**
 ```
@@ -301,7 +301,7 @@ The branch still exists remotely but the changes are already in main. Additional
 **Action Items:**
 1. ✅ **CLOSE THE PR** - Changes already merged
 2. ✅ **DELETE REMOTE BRANCH** - Clean up after merge
-3. ✅ **Verify Theia Integration** - Ensure it's working in main
+3. ✅ **Verify SkIDEancer Integration** - Ensure it's working in main
 
 **Note:** The branch shows 104 commits ahead because it continued receiving commits AFTER PR #14 was merged. The extra commits should be reviewed to see if they need to be in a new PR.
 
@@ -373,11 +373,11 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 
 ### Medium Term (Next 2 Weeks)
 5. ⚠️ **Review `feature/infrastructure-hardening`** - Check for overlap with recent consolidation
-6. 🔍 **Investigate `claude/theia-workspace-merge`** - Verify if already merged as PR #14
+6. 🔍 **Investigate `claude/ide-workspace-merge`** - Verify if already merged as PR #14
 
 ### Cleanup (This Week)
 7. ❌ **Close `fix/backend-build-errors`** - Too stale, likely superseded
-8. ✅ **Close `claude/theia-workspace-merge`** - Already merged as PR #14
+8. ✅ **Close `claude/ide-workspace-merge`** - Already merged as PR #14
 
 ---
 
@@ -396,7 +396,7 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 
 ### Close (No Merge)
 - `fix/backend-build-errors` - 2.5+ months old, incomplete, superseded
-- `claude/theia-workspace-merge` - **Already merged as PR #14** ✅
+- `claude/ide-workspace-merge` - **Already merged as PR #14** ✅
 
 ---
 
@@ -409,7 +409,7 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
 | feature/comprehensive-reorganization | 🟡 MEDIUM | Large scope, infrastructure changes |
 | feature/agent-system-integration | 🟡 MEDIUM | Agent system changes, 1 month old |
 | feature/infrastructure-hardening | 🟡 MEDIUM | May overlap with recent work |
-| claude/theia-workspace-merge | ✅ N/A | Already merged as PR #14 |
+| claude/ide-workspace-merge | ✅ N/A | Already merged as PR #14 |
 | fix/backend-build-errors | ⚠️ N/A | Close, don't merge |
 
 ---
@@ -422,11 +422,11 @@ This was verified using `git merge-tree` to simulate merges. However, this doesn
    - Merge `fix-mcp-core-health-check`
    - Merge `fix-railway-port-config` (after reviewing patch file)
    - Close `fix/backend-build-errors`
-   - Close `claude/theia-workspace-merge` (already merged as PR #14)
+   - Close `claude/ide-workspace-merge` (already merged as PR #14)
 
 2. **This Week:**
    - Code review for `feature/comprehensive-reorganization`
-   - Investigate if `claude/theia-workspace-merge` is duplicate of PR #14
+   - Investigate if `claude/ide-workspace-merge` is duplicate of PR #14
    - Test `feature/agent-system-integration` after rebasing
 
 3. **Next Week:**
@@ -455,16 +455,16 @@ The repository recently completed major consolidation work (see `CONSOLIDATION_F
 
 This means some older PRs (especially `feature/infrastructure-hardening`) may be addressing issues that have already been resolved.
 
-### Theia Workspace - RESOLVED ✅
+### SkIDEancer Workspace - RESOLVED ✅
 
 **Status:** PR #14 was successfully merged to main.
 
 The git log confirms:
 ```
-3bdd326b Merge pull request #14 from whodaniel/claude/theia-workspace-merge-011CUVuwiwkoarbi4R7JAMim
+3bdd326b Merge pull request #14 from whodaniel/claude/ide-workspace-merge-011CUVuwiwkoarbi4R7JAMim
 ```
 
-This commit IS in the git history (found via `git log --all --oneline | grep theia`). The branch `claude/theia-workspace-merge-011CUVuwiwkoarbi4R7JAMim` still exists remotely and shows 104 commits ahead of main because commits were added AFTER the merge.
+This commit IS in the git history (found via `git log --all --oneline | grep ide`). The branch `claude/ide-workspace-merge-011CUVuwiwkoarbi4R7JAMim` still exists remotely and shows 104 commits ahead of main because commits were added AFTER the merge.
 
 **Action Required:**
 1. Close the PR if still open on GitHub

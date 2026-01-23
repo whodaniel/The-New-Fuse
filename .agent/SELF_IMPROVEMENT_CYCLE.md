@@ -115,7 +115,7 @@ Monitor progress: `jules remote list --session`
 | **electron-desktop** | Desktop application                 | 🔍 Needs Audit    | LOW      |
 | **frontend**         | React web frontend                  | 🔍 Needs Audit    | HIGH     |
 | **relay-server**     | WebSocket relay for agents          | ✅ Recently Fixed | MEDIUM   |
-| **fuse-theia-ide**   | Theia IDE integration               | 🔍 Needs Audit    | LOW      |
+| **skideancer-ide**   | SkIDEancer IDE integration               | 🔍 Needs Audit    | LOW      |
 | **mcp-servers**      | MCP server implementations          | 🔍 Needs Audit    | MEDIUM   |
 | **tauri-desktop**    | Tauri desktop app                   | 🔍 Needs Audit    | LOW      |
 | **vscode-extension** | VS Code extension                   | 🔍 Needs Audit    | MEDIUM   |

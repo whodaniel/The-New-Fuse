@@ -15,7 +15,7 @@
 8. **packages/core-vector-db** - Vector Database Service
 
 ## Services to EXCLUDE (Desktop/Browser Only)
-- apps/electron-desktop (Theia IDE)
+- apps/electron-desktop (SkIDEancer IDE)
 - apps/browser-hub (Electron app)
 - apps/vscode-extension
 - apps/extension (Chrome extension)

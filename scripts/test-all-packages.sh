@@ -1,6 +1,6 @@
 #!/bin/bash
 # The New Fuse - Complete Package Testing Script
-# Runs all tests across the monorepo (excluding Theia)
+# Runs all tests across the monorepo (excluding SkIDEancer)
 # Author: Daniel Adam Goldberg
 
 set -e
@@ -28,9 +28,9 @@ run_tests() {
     local package_dir=$1
     local package_name=$(basename $package_dir)
 
-    # Skip Theia
-    if [[ $package_name == "theia-ide" ]]; then
-        echo -e "${YELLOW}⊘${NC} Skipping $package_name (Theia excluded)"
+    # Skip SkIDEancer
+    if [[ $package_name == "ide-ide" ]]; then
+        echo -e "${YELLOW}⊘${NC} Skipping $package_name (SkIDEancer excluded)"
         ((SKIPPED_TEST_SUITES++))
         return 0
     fi

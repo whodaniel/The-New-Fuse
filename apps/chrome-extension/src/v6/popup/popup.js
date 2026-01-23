@@ -483,6 +483,12 @@ class FuseConnectPopup {
       } else if (action === 'process') {
         this.handleAIStudioProcess();
         return;
+      } else if (action === 'history') {
+        this.handleAIStudioHistory();
+        return;
+      } else if (action === 'export') {
+        this.handleAIStudioExport();
+        return;
       }
     }
 
@@ -549,6 +555,53 @@ class FuseConnectPopup {
     }
   }
 
+  async handleAIStudioHistory() {
+    this.showToast('Generating watch history prompt...');
+    try {
+      chrome.runtime.sendMessage({ type: 'AI_VIDEO_GENERATE_HISTORY_PROMPT' }, (response) => {
+        if (response?.prompt) {
+          // Show prompt in a way user can copy it
+          const textArea = document.createElement('textarea');
+          textArea.value = response.prompt;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          this.showToast('Prompt copied to clipboard! Paste it into Gemini.');
+
+          // Open Gemini
+          window.open('https://gemini.google.com/', '_blank');
+        } else {
+          this.showToast('Failed to generate prompt');
+        }
+      });
+    } catch (e) {
+      this.showToast(`Error: ${e.message}`);
+    }
+  }
+
+  async handleAIStudioExport() {
+    this.showToast('Preparing export...');
+    try {
+      chrome.runtime.sendMessage({ type: 'AI_VIDEO_EXPORT', format: 'urls' }, (response) => {
+        if (response?.content) {
+          const blob = new Blob([response.content], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `notebooklm-urls-${Date.now()}.txt`;
+          a.click();
+          URL.revokeObjectURL(url);
+          this.showToast('Export complete!');
+        } else {
+          this.showToast('Export failed');
+        }
+      });
+    } catch (e) {
+      this.showToast(`Error: ${e.message}`);
+    }
+  }
+
   updateAIStudioStatus(status) {
     const statusEl = document.getElementById('service-ai-studio-status');
     if (statusEl) {
@@ -594,6 +647,29 @@ class FuseConnectPopup {
         if (startBtn) startBtn.disabled = status.running;
         if (stopBtn) stopBtn.disabled = !status.running;
       }
+    }
+
+    // Refresh AI Video Stats if visible
+    this.refreshAIVideoStats();
+  }
+
+  async refreshAIVideoStats() {
+    try {
+      chrome.runtime.sendMessage({ type: 'AI_VIDEO_GET_STATS' }, (stats) => {
+        if (stats) {
+          const processedEl = document.getElementById('ai-video-processed');
+          const totalEl = document.getElementById('ai-video-total');
+          const costEl = document.getElementById('ai-video-cost');
+          const accountEl = document.getElementById('ai-video-account');
+
+          if (processedEl) processedEl.textContent = stats.processed || '0';
+          if (totalEl) totalEl.textContent = stats.total || '0';
+          if (costEl) costEl.textContent = `$${(stats.cost || 0).toFixed(2)}`;
+          if (accountEl) accountEl.textContent = stats.account || 'None';
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to refresh AI Video stats:', e);
     }
   }
 

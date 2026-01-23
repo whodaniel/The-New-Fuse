@@ -49,6 +49,69 @@ capabilities.
 - **Use When**: User requests new capabilities, extending TNF
 - **Special**: This is a meta-skill - it builds other skills
 
+### 5. **planning-with-files** (Context Engineering) ⭐⭐
+
+- **Location**: `.agent/skills/planning-with-files/SKILL.md`
+- **Purpose**: Manus-style + BMAD-inspired file-based planning
+- **Use When**: Complex multi-step tasks, >5 tool calls, multi-session work
+- **Key Features**:
+  - 3-File Pattern: `task_plan.md`, `findings.md`, `progress.md`
+  - BMAD 4-Phase Workflow: ANALYSIS → PLANNING → SOLUTIONING → IMPLEMENTATION
+  - Session recovery after `/clear`
+  - 2-Action Rule for multimodal content
+  - 3-Strike Error Protocol
+  - Cross-session handoff notes
+- **Templates**:
+  - `templates/task_plan.md` - Phase tracking (TNF-enhanced)
+  - `templates/findings.md` - Research storage
+  - `templates/progress.md` - Session logging
+  - `templates/tnf_handoff.md` - Cross-session handoff
+- **Scripts**:
+  - `scripts/init-session.sh` - Initialize planning files
+  - `scripts/check-complete.sh` - Verify phases complete
+  - `scripts/session-catchup.py` - Recover prior context
+- **Version**: 3.0.0-tnf (Unified Manus + BMAD)
+
+### 6. **jules-delegation**
+
+- **Location**: `.agent/skills/jules-delegation/SKILL.md`
+- **Purpose**: Delegate complex tasks to Jules autonomous agent
+- **Use When**: Tasks >30 min, parallel execution needed, async work
+- **Commands**:
+  - `jules new "description"` - Create task
+  - `jules new --parallel 4` - Parallel execution
+  - `jules remote list --session` - Monitor progress
+
+---
+
+## 📄 Available Context Resources
+
+### 1. **browser-workflow**
+
+- **Location**: `.agent/context/browser-workflow.md`
+- **Content**: Complete browser operation workflow
+- **Sections**:
+  - Phase-by-phase checklist
+  - Common failure points
+  - Keyboard shortcuts
+  - Extension verification
+- **Referenced By**: `browser-automation` skill
+
+### 7. **context-frontloader** (Context Engineering) ⭐⭐⭐
+
+- **Location**: `.agent/skills/context-frontloader/SKILL.md`
+- **Purpose**: Ensures every AI session starts with full ecosystem awareness.
+- **Use When**: Session start, context clear, or switching platforms.
+- **Key Features**:
+  - Auto-injection of `SYSTEM_PROMPT.md`
+  - Integration with Ralph Wiggum "Fresh Context" technique
+  - Cross-platform frontloading guides
+  - Automated context verification
+- **Resources**:
+  - `.agent/SYSTEM_PROMPT.md` — Global TNF identity
+  - `.agent/memories.md` — Persistent cross-session wisdom
+- **Version**: 1.0.0
+
 ---
 
 ## 📄 Available Context Resources
@@ -71,12 +134,19 @@ capabilities.
 - **Purpose**: Self-referential discovery
 - **Use**: Start here for any new task
 
-### 3. **relay-protocol** (Planned)
+### 3. **memories**
+
+- **Location**: `.agent/memories.md`
+- **Content**: Persistent cross-session wisdom, patterns, and decisions.
+- **Purpose**: Historical awareness and learning preservation.
+- **Use**: Read to understand architectural decisions and proven patterns.
+
+### 4. **relay-protocol** (Planned)
 
 - **Purpose**: TNF Relay message structure, channels
 - **Format**: Message schemas, channel conventions
 
-### 4. **keyboard-shortcuts** (Planned)
+### 5. **keyboard-shortcuts** (Planned)
 
 - **Purpose**: All TNF keyboard shortcuts
 - **Contents**:
@@ -194,13 +264,15 @@ Done (New skill now available)
 
 ### When to Load What
 
-| Task Type           | Primary Skill        | Referenced Resources                  |
-| ------------------- | -------------------- | ------------------------------------- |
-| Browser operation   | browser-automation   | browser-workflow.md                   |
-| Send relay message  | relay-communication  | relay-protocol.md, browser-automation |
-| Check system status | system-diagnostics   | -                                     |
-| Create new skill    | skill-builder (meta) | All existing skills, pattern library  |
-| Troubleshoot        | Multiple skills      | Diagnostic context, logs              |
+| Task Type               | Primary Skill        | Referenced Resources                  |
+| ----------------------- | -------------------- | ------------------------------------- |
+| Browser operation       | browser-automation   | browser-workflow.md                   |
+| Send relay message      | relay-communication  | relay-protocol.md, browser-automation |
+| Check system status     | system-diagnostics   | -                                     |
+| Create new skill        | skill-builder (meta) | All existing skills, pattern library  |
+| Complex task (>5 steps) | planning-with-files  | BMAD workflow, handoff notes          |
+| Long-running task       | jules-delegation     | Jules CLI, async execution            |
+| Troubleshoot            | Multiple skills      | Diagnostic context, logs              |
 
 ### Keyword → Skill Mapping
 
@@ -210,6 +282,9 @@ Done (New skill now available)
 | "relay", "message", "channel", "broadcast"       | relay-communication  |
 | "port", "service", "status", "running"           | system-diagnostics   |
 | "create skill", "new capability", "add function" | skill-builder (meta) |
+| "plan", "complex", "multi-step", "phases"        | planning-with-files  |
+| "findings", "progress", "handoff", "session"     | planning-with-files  |
+| "delegate", "jules", "async", "parallel"         | jules-delegation     |
 
 ---
 

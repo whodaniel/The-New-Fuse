@@ -20,7 +20,7 @@ This checklist ensures all packages are functional and ready for production depl
 - ✅ TypeScript compiles without errors
 - ✅ Build scripts execute successfully
 - ✅ No missing dependencies
-- ✅ Theia properly excluded
+- ✅ SkIDEancer properly excluded
 
 **Expected Output:**
 ```
@@ -149,8 +149,8 @@ pnpm exec tsc --noEmit --skipLibCheck
 ### Development Build
 
 ```bash
-# Build all packages except Theia
-pnpm run build --filter='!theia-ide'
+# Build all packages except SkIDEancer
+pnpm run build --filter='!ide-ide'
 ```
 
 **Expected:**
@@ -165,7 +165,7 @@ pnpm run build --filter='!theia-ide'
 export NODE_ENV=production
 
 # Build for production
-pnpm run build --filter='!theia-ide'
+pnpm run build --filter='!ide-ide'
 
 # Test production builds
 node apps/api/dist/main.js &
@@ -380,7 +380,7 @@ Run all validation:
 pnpm audit
 
 # 5. Build production
-NODE_ENV=production pnpm run build --filter='!theia-ide'
+NODE_ENV=production pnpm run build --filter='!ide-ide'
 ```
 
 **All must pass:**

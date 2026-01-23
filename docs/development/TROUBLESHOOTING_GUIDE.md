@@ -100,7 +100,7 @@
    # Frontend
    curl http://localhost:3000
    
-   # Theia
+   # SkIDEancer
    curl http://localhost:3007
    
    # Backend
@@ -209,7 +209,7 @@ tail -f /tmp/tnf-services.log
 # Individual service logs
 cd apps/frontend && pnpm run dev
 cd apps/api-gateway && pnpm run dev
-cd apps/theia-ide && pnpm run dev
+cd apps/ide-ide && pnpm run dev
 ```
 
 ### **Network Debugging**
@@ -293,16 +293,16 @@ cd apps/api-gateway
 pnpm run dev
 ```
 
-### **Theia IDE Issues**
+### **SkIDEancer IDE Issues**
 ```bash
-# Check Theia status
+# Check SkIDEancer status
 curl -I http://localhost:3007
 
-# Check Theia build
-ls -la apps/theia-ide/lib/
+# Check SkIDEancer build
+ls -la apps/ide-ide/lib/
 
-# Start Theia manually
-cd apps/theia-ide
+# Start SkIDEancer manually
+cd apps/ide-ide
 pnpm run dev
 ```
 

@@ -21,7 +21,7 @@ the-new-fuse/
 │   ├── frontend/            # Main React frontend
 │   ├── mcp-servers/         # MCP server implementations
 │   ├── relay-server/        # Relay server
-│   └── theia-ide/           # Theia IDE integration
+│   └── ide-ide/           # SkIDEancer IDE integration
 ├── packages/                # Shared packages
 │   ├── @the-new-fuse/       # Core packages
 │   ├── a2a-core/           # A2A protocol core

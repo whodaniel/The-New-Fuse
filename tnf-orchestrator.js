@@ -225,7 +225,7 @@ async function main() {
 ║   ${results.localRelay.status === 'online' ? '✅' : '❌'} Local Relay Server      ${results.localRelay.status.toUpperCase().padEnd(10)} (ws://localhost:3001)   ║
 ║   ${results.redis.status === 'online' ? '✅' : '❌'} Redis Server             ${results.redis.status.toUpperCase().padEnd(10)} (localhost:6379)        ║
 ║   ${results.cloudApi.status === 'online' ? '✅' : '❌'} Cloud API               ${results.cloudApi.status.toUpperCase().padEnd(10)} (thenewfuse.com)        ║
-║   ${results.cloudIde.status === 'online' ? '✅' : '❌'} Cloud IDE (Theia)       ${results.cloudIde.status.toUpperCase().padEnd(10)} (ide.thenewfuse.com)    ║
+║   ${results.cloudIde.status === 'online' ? '✅' : '❌'} Cloud IDE (SkIDEancer)       ${results.cloudIde.status.toUpperCase().padEnd(10)} (ide.thenewfuse.com)    ║
 ║                                                                              ║
 ║ DESKTOP & EXTENSION APPS                                                     ║
 ║   ❓ Chrome Extension       CHECK      (chrome://extensions)                 ║

@@ -29,7 +29,7 @@ const ICONS = {
   relay: '🔄',
   jules: '⚡',
   antigravity: '🌌',
-  theia: '💻',
+  ide: '💻',
   tauri: '🦀',
   chrome: '🌐',
   vscode: '📝',
@@ -144,8 +144,8 @@ async function orchestrate() {
   // Tauri
   log(ICONS.tauri, 'Tauri-App', 'HEARTBEAT', 'Sandbox Bridge: ACTIVE', COLORS.green);
 
-  // Theia
-  log(ICONS.theia, 'Theia-IDE', 'HEARTBEAT', 'Cloud Workspace: IDLE', COLORS.yellow);
+  // SkIDEancer
+  log(ICONS.ide, 'SkIDEancer-IDE', 'HEARTBEAT', 'Cloud Workspace: IDLE', COLORS.yellow);
 
   // Chrome Extension
   log(ICONS.chrome, 'Chrome-Ext', 'HEARTBEAT', 'Content Script: INJECTED', COLORS.green);

@@ -19,7 +19,7 @@ pnpm run hub:functional
 
 ### **Build Commands**
 ```bash
-# Full build (includes Theia IDE)
+# Full build (includes SkIDEancer IDE)
 pnpm run build
 
 # Build specific components
@@ -51,8 +51,8 @@ cd apps/api-gateway
 pnpm run build
 pnpm run dev
 
-# Theia IDE
-cd apps/theia-ide
+# SkIDEancer IDE
+cd apps/ide-ide
 pnpm run build
 pnpm run dev
 

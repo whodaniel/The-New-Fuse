@@ -246,14 +246,14 @@ getLoadedExtensions(); // Fetch loaded extensions list
 (toggleBookmarks, showHistory, showDownloads, showMore);
 
 // IDE Integration
-(openTheia,
-  startTheiaServer,
+(openSkIDEancer,
+  startSkIDEancerServer,
   openVSCode,
   openTerminal,
   openFileExplorer,
-  openTheiaTerminal,
-  openTheiaGit,
-  openTheiaDebugger);
+  openSkIDEancerTerminal,
+  openSkIDEancerGit,
+  openSkIDEancerDebugger);
 
 // Services
 (refreshServices, getTerminalOutput, clearTerminal);

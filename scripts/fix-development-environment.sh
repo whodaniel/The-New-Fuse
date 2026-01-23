@@ -24,7 +24,7 @@ rebuild_native_modules() {
     
     # Rebuild find-git-repositories specifically
     echo "🔍 Rebuilding find-git-repositories..."
-    cd node_modules/@theia/git/node_modules/find-git-repositories
+    cd node_modules/@ide/git/node_modules/find-git-repositories
     
     # Clean any existing build
     rm -rf build/

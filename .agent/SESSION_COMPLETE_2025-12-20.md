@@ -138,9 +138,9 @@ Open in browser: http://localhost:3002
    cd apps/tauri-desktop && pnpm tauri dev
    ```
 
-2. **Fix Theia IDE** (404 error on Railway)
+2. **Fix SkIDEancer IDE** (404 error on Railway)
    - Check Railway dashboard
-   - Verify whodaniel/fuse-theia-ide repo
+   - Verify whodaniel/skideancer-ide repo
    - Redeploy if needed
 
 3. **Test OAGI Commands**

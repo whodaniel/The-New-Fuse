@@ -61,7 +61,7 @@
   - Run Orchestration Demo
   - TypeScript Check
   - Build Project
-  - Open Theia IDE
+  - Open SkIDEancer IDE
   - Open TNF Website
   - Start Dev Server
   - And more!
@@ -95,22 +95,22 @@
 
 ## ⚠️ THEIA STATUS
 
-**Railway URL**: `https://tnf-theia-ide-production.up.railway.app`  
+**Railway URL**: `https://tnf-ide-ide-production.up.railway.app`  
 **Current Status**: Returns 404 (not deployed or misconfigured)
 
-**Theia Repository**: `whodaniel/fuse-theia-ide` (separate repo)
+**SkIDEancer Repository**: `whodaniel/skideancer-ide` (separate repo)
 
 **AI Packages Configured**:
 
-- `@theia/ai-anthropic` - Claude
-- `@theia/ai-openai` - OpenAI/GPT
-- `@theia/ai-ollama` - Local Ollama
-- `@theia/ai-huggingface` - HuggingFace
+- `@ide/ai-anthropic` - Claude
+- `@ide/ai-openai` - OpenAI/GPT
+- `@ide/ai-ollama` - Local Ollama
+- `@ide/ai-huggingface` - HuggingFace
 
-**Next Steps for Theia**:
+**Next Steps for SkIDEancer**:
 
 1. Check Railway dashboard for deployment status
-2. Verify `fuse-theia-ide` repo exists
+2. Verify `skideancer-ide` repo exists
 3. Redeploy if needed
 4. Add button in Tauri and Website
 
@@ -127,12 +127,12 @@
    `base64`
 4. Integrate Terminal and QuickActionsDashboard into Tauri app
 
-### Priority 2: Theia
+### Priority 2: SkIDEancer
 
 1. Check Railway dashboard
-2. Verify/create `whodaniel/fuse-theia-ide` repo
+2. Verify/create `whodaniel/skideancer-ide` repo
 3. Deploy to Railway if not done
-4. Add "Open Theia" buttons to Tauri and Website
+4. Add "Open SkIDEancer" buttons to Tauri and Website
 
 ### Priority 3: More UI for Non-Technical Users
 
@@ -163,7 +163,7 @@
 - [ ] Register commands in main.rs
 - [ ] Test screen capture
 
-### Theia Integration
+### SkIDEancer Integration
 
 - [ ] Verify Railway deployment
 - [ ] Add button to Tauri header

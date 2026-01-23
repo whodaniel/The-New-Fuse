@@ -211,33 +211,33 @@ export interface IBuildMetricsCollector {
 }
 
 /**
- * Interface for Theia IDE build management
+ * Interface for SkIDEancer IDE build management
  */
-export interface ITheiaBuilder {
+export interface ISkIDEancerBuilder {
   /**
-   * Build Theia IDE with yarn
+   * Build SkIDEancer IDE with yarn
    */
-  buildTheia(): Promise<boolean>;
+  buildSkIDEancer(): Promise<boolean>;
 
   /**
-   * Check if Theia build is required
+   * Check if SkIDEancer build is required
    */
-  isTheiaBuildRequired(): Promise<boolean>;
+  isSkIDEancerBuildRequired(): Promise<boolean>;
 
   /**
-   * Get Theia build status
+   * Get SkIDEancer build status
    */
-  getTheiaBuildStatus(): Promise<'not-built' | 'building' | 'built' | 'failed'>;
+  getSkIDEancerBuildStatus(): Promise<'not-built' | 'building' | 'built' | 'failed'>;
 
   /**
-   * Cleanup after Theia build
+   * Cleanup after SkIDEancer build
    */
-  cleanupAfterTheiaBuild(): Promise<void>;
+  cleanupAfterSkIDEancerBuild(): Promise<void>;
 
   /**
-   * Get Theia build metrics
+   * Get SkIDEancer build metrics
    */
-  getTheiaBuildMetrics(): any;
+  getSkIDEancerBuildMetrics(): any;
 }
 
 /**
@@ -275,14 +275,14 @@ export interface IMonorepoManager {
  */
 export interface IEnhancedBuildOrchestrator extends IBuildOrchestrator {
   /**
-   * Execute monorepo build with Theia pre-build
+   * Execute monorepo build with SkIDEancer pre-build
    */
   executeMonorepoBuild(): Promise<BuildResult>;
 
   /**
-   * Handle Theia pre-build process
+   * Handle SkIDEancer pre-build process
    */
-  handleTheiaBuild(): Promise<boolean>;
+  handleSkIDEancerBuild(): Promise<boolean>;
 
   /**
    * Execute staged package builds

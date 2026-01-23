@@ -106,7 +106,7 @@ export class BuildStrategyManager {
       monitoringInterval: this.parseEnvNumber('MONITORING_INTERVAL', DEFAULT_CONFIG.MONITORING_INTERVAL),
       environment,
       forceMemoryOptimization: this.parseEnvBoolean('FORCE_MEMORY_OPTIMIZATION', false),
-      theiaConfig: {
+      ideConfig: {
         buildFirst: this.parseEnvBoolean('THEIA_BUILD_FIRST', DEFAULT_CONFIG.THEIA_CONFIG.buildFirst),
         estimatedMemoryUsage: DEFAULT_CONFIG.THEIA_CONFIG.estimatedMemoryUsage,
         cleanupAfterBuild: this.parseEnvBoolean('THEIA_CLEANUP_AFTER_BUILD', DEFAULT_CONFIG.THEIA_CONFIG.cleanupAfterBuild)
@@ -178,7 +178,7 @@ export class BuildStrategyManager {
         monitoringInterval: 1000,
         environment: 'development',
         forceMemoryOptimization: true,
-        theiaConfig: {
+        ideConfig: {
           buildFirst: true,
           estimatedMemoryUsage: 1536,
           cleanupAfterBuild: true
@@ -201,7 +201,7 @@ export class BuildStrategyManager {
         monitoringInterval: 2000,
         environment: 'production',
         forceMemoryOptimization: false,
-        theiaConfig: {
+        ideConfig: {
           buildFirst: true,
           estimatedMemoryUsage: 2048,
           cleanupAfterBuild: false
@@ -224,7 +224,7 @@ export class BuildStrategyManager {
         monitoringInterval: 1500,
         environment: 'ci',
         forceMemoryOptimization: true,
-        theiaConfig: {
+        ideConfig: {
           buildFirst: true,
           estimatedMemoryUsage: 2048,
           cleanupAfterBuild: true
@@ -250,10 +250,10 @@ export class BuildStrategyManager {
     const result: EnhancedBuildConfiguration = {
       ...defaults,
       ...config,
-      theiaConfig: {
-        buildFirst: config.theiaConfig?.buildFirst ?? defaults.theiaConfig?.buildFirst ?? true,
-        estimatedMemoryUsage: config.theiaConfig?.estimatedMemoryUsage ?? defaults.theiaConfig?.estimatedMemoryUsage ?? 2048,
-        cleanupAfterBuild: config.theiaConfig?.cleanupAfterBuild ?? defaults.theiaConfig?.cleanupAfterBuild ?? true
+      ideConfig: {
+        buildFirst: config.ideConfig?.buildFirst ?? defaults.ideConfig?.buildFirst ?? true,
+        estimatedMemoryUsage: config.ideConfig?.estimatedMemoryUsage ?? defaults.ideConfig?.estimatedMemoryUsage ?? 2048,
+        cleanupAfterBuild: config.ideConfig?.cleanupAfterBuild ?? defaults.ideConfig?.cleanupAfterBuild ?? true
       },
       monorepoConfig: {
         totalPackages: config.monorepoConfig?.totalPackages ?? defaults.monorepoConfig?.totalPackages ?? 50,

@@ -53,12 +53,12 @@ else
     echo "  ⚠️  API Gateway (port 3005) - Starting..."
 fi
 
-# Check Theia IDE (port 3007)
+# Check SkIDEancer IDE (port 3007)
 if curl -s -f http://localhost:3007 > /dev/null 2>&1; then
-    echo "  ✅ Theia IDE (port 3007) - Online"
+    echo "  ✅ SkIDEancer IDE (port 3007) - Online"
     ((SERVICE_COUNT++))
 else
-    echo "  ⚠️  Theia IDE (port 3007) - Starting..."
+    echo "  ⚠️  SkIDEancer IDE (port 3007) - Starting..."
 fi
 
 # Check Frontend (port 3000)
@@ -85,7 +85,7 @@ echo ""
 echo "🎉 Browser Hub is starting with the following services:"
 echo "   • TNF Dashboard: http://localhost:3000"
 echo "   • API Gateway: http://localhost:3005"
-echo "   • Theia IDE: http://localhost:3007"
+echo "   • SkIDEancer IDE: http://localhost:3007"
 echo ""
 echo "Press Ctrl+C to stop all services and close the browser."
 echo ""

@@ -207,11 +207,11 @@
 
 | Folder               | Children | Items Viewed                                   |
 | -------------------- | -------- | ---------------------------------------------- |
-| `theia-ide`          | 7        | -                                              |
-| `theia-ide-version2` | 555      | ✅ `package.json`, `src-gen/backend/server.js` |
-| `theia-workspace`    | 3        | Listed only                                    |
+| `ide-ide`          | 7        | -                                              |
+| `ide-ide-version2` | 555      | ✅ `package.json`, `src-gen/backend/server.js` |
+| `ide-workspace`    | 3        | Listed only                                    |
 | `vscode-extension`   | 191      | ✅ `tnf_integration_docs.md` (846 lines!)      |
-| `scripts`            | 40       | ✅ `build-theia-final.sh`                      |
+| `scripts`            | 40       | ✅ `build-ide-final.sh`                      |
 | `browser-hub.1`      | 26       | Listed files only                              |
 | `local-ai-agents`    | 2        | ✅ `local-ai-claude code cli.json`             |
 | `tools`              | 10       | Listed only                                    |
@@ -226,14 +226,14 @@
 
 ### HIGH PRIORITY - Copy to Main Project
 
-#### 1. **Theia IDE Version 2** (`theia-ide-version2/`)
+#### 1. **SkIDEancer IDE Version 2** (`ide-ide-version2/`)
 
 ```
-Source: non-saas Nov-15-25/theia-ide-version2/
-Target: apps/theia-ide/
-Why: Complete working Theia with AI integrations (Anthropic, OpenAI, Ollama, HuggingFace)
+Source: non-saas Nov-15-25/ide-ide-version2/
+Target: apps/ide-ide/
+Why: Complete working SkIDEancer with AI integrations (Anthropic, OpenAI, Ollama, HuggingFace)
 Key files:
-- package.json (has @theia/ai-* packages)
+- package.json (has @ide/ai-* packages)
 - src-gen/backend/server.js (AI modules loaded)
 - lib/ (531 compiled files)
 ```
@@ -241,13 +241,13 @@ Key files:
 #### 2. **Build Scripts** (`scripts/`)
 
 ```
-Source: non-saas Nov-15-25/scripts/build-theia-*.sh
-Target: scripts/theia/
-Why: Tested build scripts for Theia with native module handling
+Source: non-saas Nov-15-25/scripts/build-ide-*.sh
+Target: scripts/ide/
+Why: Tested build scripts for SkIDEancer with native module handling
 Key files:
-- build-theia-final.sh
-- build-theia-ultimate-v2.sh
-- verify-theia-build.cjs
+- build-ide-final.sh
+- build-ide-ultimate-v2.sh
+- verify-ide-build.cjs
 ```
 
 #### 3. **Local AI Agent Configs** (`local-ai-agents/`)
@@ -298,8 +298,8 @@ Key files:
 
 ### Immediate Actions
 
-1. [ ] Copy `theia-ide-version2/` to `apps/theia-ide/`
-2. [ ] Copy Theia build scripts to `scripts/theia/`
+1. [ ] Copy `ide-ide-version2/` to `apps/ide-ide/`
+2. [ ] Copy SkIDEancer build scripts to `scripts/ide/`
 3. [ ] Copy local AI agent configs to `config/ai-agents/`
 4. [ ] Copy integration docs to `docs/vscode-extension/`
 
@@ -327,5 +327,5 @@ The exploration prioritized:
 
 1. Architecture understanding
 2. Protocol documentation
-3. Integration points for Theia
+3. Integration points for SkIDEancer
 4. Recently modified/created files

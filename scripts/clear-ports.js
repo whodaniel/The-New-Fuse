@@ -9,12 +9,12 @@ import { execSync } from 'child_process';
  * - Backend API: 3001  
  * - Backend App: 3004
  * - API Gateway: 3005
- * - Theia IDE: 3006, 3007, 3008
+ * - SkIDEancer IDE: 3006, 3007, 3008
  * - Database UI: 5555 (Prisma Studio)
  * - Frontend Dev: 5173 (Vite)
  */
 
-// Note: Port 3008 is used by Theia IDE WebSocket server and should not be cleared
+// Note: Port 3008 is used by SkIDEancer IDE WebSocket server and should not be cleared
 const PORTS_TO_CLEAR = [3000, 3001, 3004, 3005, 3006, 3007, 5173, 5174, 5555];
 
 function findProcessOnPort(port) {

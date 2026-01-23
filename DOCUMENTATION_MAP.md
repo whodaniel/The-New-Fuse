@@ -210,6 +210,7 @@ This document provides a complete map of all documentation in The New Fuse proje
 - [docs/AGENT-COMMUNICATION-GUIDE.md](./docs/AGENT-COMMUNICATION-GUIDE.md)
 - [docs/AGENT_REDIS_COMMUNICATION.md](./docs/AGENT_REDIS_COMMUNICATION.md)
 - [docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md](./docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
+- [packages/tnf-cli/README.md](./packages/tnf-cli/README.md) - TNF CLI Agent System
 
 **Agent Discovery:**
 - [docs/agents/AGENT_DISCOVERY_SUMMARY.md](./docs/agents/AGENT_DISCOVERY_SUMMARY.md)

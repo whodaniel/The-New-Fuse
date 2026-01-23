@@ -338,6 +338,21 @@ class KnowledgeBaseService {
 
     return false;
   }
+  // Consolidate multiple reports at once
+  async consolidateAll(reports) {
+    let totalAdded = 0;
+    for (const report of reports) {
+      if (report.content && report.metadata) {
+        const result = await this.addReport(report.content, report.metadata);
+        totalAdded += result.conceptsAdded;
+      }
+    }
+    await this.save();
+    return {
+      totalAdded,
+      totalConcepts: this.concepts.size,
+    };
+  }
 }
 
 // Export singleton

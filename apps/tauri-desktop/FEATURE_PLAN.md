@@ -109,6 +109,6 @@
          ▼                    ▼                    ▼
 ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
 │  TNF Backend   │ │ Relay Server   │ │ Cloud Sandbox  │
-│  (Railway)     │ │ (WebSocket)    │ │ (Theia IDE)    │
+│  (Railway)     │ │ (WebSocket)    │ │ (SkIDEancer IDE)    │
 └────────────────┘ └────────────────┘ └────────────────┘
 ```

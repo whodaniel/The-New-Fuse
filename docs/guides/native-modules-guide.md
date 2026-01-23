@@ -11,7 +11,7 @@ The following native modules are required for full functionality:
 ### Core Modules
 - **canvas** - HTML5 canvas support for server-side rendering
 - **drivelist** - Drive enumeration for system integration
-- **node-pty** - Pseudo-terminal support for Theia IDE
+- **node-pty** - Pseudo-terminal support for SkIDEancer IDE
 - **@vscode/ripgrep** - Fast text search functionality
 
 ### Optional Modules
@@ -281,7 +281,7 @@ ls -la node_modules/@vscode/ripgrep/bin/
 The native module system is integrated with:
 - **Turbo**: Monorepo build orchestration
 - **TypeScript**: Type checking and compilation
-- **Webpack**: Theia IDE bundling
+- **Webpack**: SkIDEancer IDE bundling
 - **Prisma**: Database client generation
 
 All these systems respect native module dependencies and will trigger setup when needed.

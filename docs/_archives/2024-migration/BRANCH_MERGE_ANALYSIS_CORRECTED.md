@@ -35,7 +35,7 @@ Apps ONLY in project-reconstruction:
 
 Apps in BOTH branches: (10 apps)
   api, api-gateway, backend, browser-hub, client,
-  electron-desktop, extension, frontend, mcp-servers, theia-ide
+  electron-desktop, extension, frontend, mcp-servers, ide-ide
 ```
 
 ### Package.json Scripts

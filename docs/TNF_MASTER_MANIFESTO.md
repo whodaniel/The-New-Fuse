@@ -55,7 +55,7 @@ system.
 4. **Federation**: Group browser tabs into channels for coordinated AI sessions
 5. **Agentic Orchestration**: Redis as "central nervous system" for timed,
    controlled multi-agent communication
-6. **Theia Reintegration**: Bring isolated Theia IDE back with functional links
+6. **SkIDEancer Reintegration**: Bring isolated SkIDEancer IDE back with functional links
 7. **OAGI/Lux Protocol**: Native desktop automation (mouse, keyboard, screen)
 
 ---
@@ -555,7 +555,7 @@ Federation "My AI Team"
 | **Tauri Backend**       | ✅ Ready          | Now named "Fuse Desktop"               |
 | **Chrome Extension**    | ✅ Complete       | Now named "Fuse Connect", Redis bridge |
 | **VS Code Extension**   | 🔄 In Progress    | Compile and test embedded browser      |
-| **Theia IDE**           | ✅ Online         | SkIDEancer @ ide.thenewfuse.com        |
+| **SkIDEancer IDE**           | ✅ Online         | SkIDEancer @ ide.thenewfuse.com        |
 | **Federation**          | ✅ Implemented    | Multi-tab channel grouping             |
 | **Brand Consistency**   | ✅ Complete       | Neon Monogram applied everywhere       |
 | **Agent Network Start** | ✅ Script Ready   | `./scripts/start-agent-network.sh`     |
@@ -581,10 +581,10 @@ Federation "My AI Team"
 
 #### High Priority
 
-1. **Theia Reintegration**
+1. **SkIDEancer Reintegration**
    - Check Railway dashboard for deployment status
-   - Fix 404 error on `https://tnf-theia-ide-production.up.railway.app`
-   - Verify `whodaniel/fuse-theia-ide` repository
+   - Fix 404 error on `https://tnf-ide-ide-production.up.railway.app`
+   - Verify `whodaniel/skideancer-ide` repository
    - Add UI access points in Website and Tauri
 
 2. **Extension Builds**
@@ -962,7 +962,7 @@ interface AGUIEvent {
 
 - [ ] Complete Node.js installation
 - [ ] Test all OAGI commands on Retina display
-- [ ] Fix Theia Railway 404 error
+- [ ] Fix SkIDEancer Railway 404 error
 - [ ] Build production Tauri app (DMG)
 - [ ] Record demo video of multi-agent conversation
 
@@ -1069,7 +1069,7 @@ pnpm run start
 ### Key Repositories
 
 - **Main Monorepo**: `whodaniel/fuse`
-- **Theia IDE**: `whodaniel/fuse-theia-ide` (isolated)
+- **SkIDEancer IDE**: `whodaniel/skideancer-ide` (isolated)
 
 ---
 
@@ -1080,7 +1080,7 @@ pnpm run start
 - **3000**: TNF Relay Server (WebSocket)
 - **3001**: API Server
 - **6379**: Redis
-- **8080**: Theia IDE (Railway)
+- **8080**: SkIDEancer IDE (Railway)
 
 ### Environment Variables
 

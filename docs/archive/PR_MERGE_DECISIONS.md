@@ -153,7 +153,7 @@ Service Architecture:
 
 ---
 
-### ❌ claude/theia-workspace-merge-011CUVuwiwkoarbi4R7JAMim
+### ❌ claude/ide-workspace-merge-011CUVuwiwkoarbi4R7JAMim
 **Status:** ❌ **SHOULD CLOSE**
 **Reason:** Already merged as PR #14
 
@@ -161,7 +161,7 @@ Service Architecture:
 ```
 git log | grep "3bdd326b Merge pull request #14"
 ```
-Found: `3bdd326b Merge pull request #14 from whodaniel/claude/theia-workspace-merge-011CUVuwiwkoarbi4R7JAMim`
+Found: `3bdd326b Merge pull request #14 from whodaniel/claude/ide-workspace-merge-011CUVuwiwkoarbi4R7JAMim`
 
 **Decision:** Close PR and optionally delete remote branch.
 
@@ -179,7 +179,7 @@ Found: `3bdd326b Merge pull request #14 from whodaniel/claude/theia-workspace-me
 | feature/agent-system-integration | ⏳ Test | Pending |
 | feature/infrastructure-hardening | ⏳ Compare | Pending |
 | fix/backend-build-errors | ❌ Close | Stale |
-| claude/theia-workspace-merge | ❌ Close | Already merged |
+| claude/ide-workspace-merge | ❌ Close | Already merged |
 
 **Key Decision:**
 The health check PR was the correct solution. The port config PR would have broken the architecture by causing port conflicts. Railway needs HTTP health checks on PORT, while WebSocket servers should stay on their dedicated ports.

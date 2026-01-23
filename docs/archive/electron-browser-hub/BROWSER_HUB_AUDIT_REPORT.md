@@ -18,7 +18,7 @@
   visibility, but JS only set `display: flex`
 - **Fix**: Updated all modal open/close functions to add/remove `.active` class
 
-### 3. **Theia IDE Removed** ✅
+### 3. **SkIDEancer IDE Removed** ✅
 
 - Removed from Quick Access section (not ready for ecosystem)
 - VS Code Web remains as the primary web IDE option

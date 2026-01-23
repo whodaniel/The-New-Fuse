@@ -2,7 +2,7 @@
 
 **Date**: December 21, 2025  
 **Purpose**: Document custom Windsurf-inspired features in SkIDEancer VS Code
-fork for porting to Theia
+fork for porting to SkIDEancer
 
 ---
 
@@ -201,24 +201,24 @@ Features:
 
 ---
 
-## 🔧 Porting Strategy to Theia
+## 🔧 Porting Strategy to SkIDEancer
 
-### Already Native in Theia IDE
+### Already Native in SkIDEancer IDE
 
 - ✅ Multiple LLM providers (Anthropic, OpenAI, Ollama, HuggingFace)
 - ✅ AI Chat view
 - ✅ Basic code completion via AI
 
-### Needs Porting as Theia Extensions
+### Needs Porting as SkIDEancer Extensions
 
-| SkIDEancer Feature           | Theia Implementation                       |
+| SkIDEancer Feature           | SkIDEancer Implementation                       |
 | ---------------------------- | ------------------------------------------ |
-| **AIFlowService (Cascade)**  | Create `@theia/ai-flow` extension          |
-| **AgentService**             | Create `@theia/agent-core` extension       |
-| **Code Analysis Capability** | Extend existing Theia AI analysis          |
+| **AIFlowService (Cascade)**  | Create `@ide/ai-flow` extension          |
+| **AgentService**             | Create `@ide/agent-core` extension       |
+| **Code Analysis Capability** | Extend existing SkIDEancer AI analysis          |
 | **Suggestion Processor**     | Create enhanced inline completion provider |
 | **Semantic Navigation**      | Create AI-powered navigation extension     |
-| **Memory System**            | Integrate with Theia preferences/state     |
+| **Memory System**            | Integrate with SkIDEancer preferences/state     |
 
 ### Priority Order for Porting
 
@@ -290,10 +290,10 @@ src/vs/workbench/services/aiEmbeddingVector/
 
 ## 🎯 Next Steps
 
-1. **Create Theia Extension Structure**
+1. **Create SkIDEancer Extension Structure**
 
    ```
-   packages/theia-ai-agent/
+   packages/ide-ai-agent/
    ├── src/
    │   ├── browser/
    │   │   ├── agent-frontend-module.ts
@@ -305,8 +305,8 @@ src/vs/workbench/services/aiEmbeddingVector/
    ```
 
 2. **Port Core Services**
-   - AgentService → TheiaAgentService
-   - AIFlowService → TheiaFlowOrchestrator
+   - AgentService → SkIDEancerAgentService
+   - AIFlowService → SkIDEancerFlowOrchestrator
    - LLMProvider interface adaptation
 
 3. **Create Visual Components**
@@ -321,9 +321,9 @@ src/vs/workbench/services/aiEmbeddingVector/
 
 ---
 
-## Comparison: SkIDEancer vs Current Theia
+## Comparison: SkIDEancer vs Current SkIDEancer
 
-| Feature              | SkIDEancer       | Current Theia  |
+| Feature              | SkIDEancer       | Current SkIDEancer  |
 | -------------------- | ---------------- | -------------- |
 | Multi-provider LLM   | ✅ 7 providers   | ✅ 4 providers |
 | Agent with Memory    | ✅ Full          | ❌ None        |
@@ -334,4 +334,4 @@ src/vs/workbench/services/aiEmbeddingVector/
 | Embedding Vectors    | ✅ Full          | ❌ None        |
 
 **Bottom Line**: SkIDEancer has ~5,000+ lines of AI agent code that needs
-porting to Theia for feature parity.
+porting to SkIDEancer for feature parity.

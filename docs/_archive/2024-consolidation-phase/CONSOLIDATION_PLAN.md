@@ -384,7 +384,7 @@ Current: 12 launch variations
   - `launch-functional-browser.sh` (redundant)
   - `launch-mcp-wizard.sh` (move to mcp/)
   - `launch-the-new-fuse.sh` (redundant)
-  - `launch-theia-standalone.sh` (niche, archive)
+  - `launch-ide-standalone.sh` (niche, archive)
   - `launch-trae.sh` (what is this?)
   - `launch.sh` (too generic)
   - `launch-prod.sh` (rename to production.sh)

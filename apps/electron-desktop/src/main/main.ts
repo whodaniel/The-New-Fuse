@@ -35,7 +35,7 @@ class ElectronMain {
           responseHeaders['Access-Control-Allow-Headers'] = ['*'];
           responseHeaders['Access-Control-Expose-Headers'] = ['Content-Length,ETag'];
 
-          // Remove iframe-blocking headers for Theia integration
+          // Remove iframe-blocking headers for SkIDEancer integration
           delete responseHeaders['X-Frame-Options'];
           delete responseHeaders['x-frame-options'];
 
@@ -391,14 +391,14 @@ class ElectronMain {
     ipcMain.handle('browser:show-more', async () => ({ success: true }));
 
     // App integrations (stubs)
-    ipcMain.handle('app:open-theia', async () => ({ success: true }));
-    ipcMain.handle('app:start-theia', async () => ({ success: true }));
+    ipcMain.handle('app:open-ide', async () => ({ success: true }));
+    ipcMain.handle('app:start-ide', async () => ({ success: true }));
     ipcMain.handle('app:open-vscode', async () => ({ success: true }));
     ipcMain.handle('app:open-terminal', async () => ({ success: true }));
     ipcMain.handle('app:open-file-explorer', async () => ({ success: true }));
-    ipcMain.handle('app:open-theia-terminal', async () => ({ success: true }));
-    ipcMain.handle('app:open-theia-git', async () => ({ success: true }));
-    ipcMain.handle('app:open-theia-debugger', async () => ({ success: true }));
+    ipcMain.handle('app:open-ide-terminal', async () => ({ success: true }));
+    ipcMain.handle('app:open-ide-git', async () => ({ success: true }));
+    ipcMain.handle('app:open-ide-debugger', async () => ({ success: true }));
     ipcMain.handle('app:refresh-services', async () => ({ success: true }));
 
     // Terminal integration

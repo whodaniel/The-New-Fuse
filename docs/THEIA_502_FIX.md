@@ -1,4 +1,4 @@
-# Theia 502 Bad Gateway - Application Not Responding
+# SkIDEancer 502 Bad Gateway - Application Not Responding
 
 **Updated**: December 20, 2025 - 20:03 EST  
 **Status**: Port routing fixed, application not responding  
@@ -10,9 +10,9 @@
 
 - ✅ Port updated from 3000 → 3007
 - ✅ Railway is routing correctly to port 3007
-- ❌ Theia application not responding on port 3007
+- ❌ SkIDEancer application not responding on port 3007
 
-**This is progress!** The routing is correct now; we just need to fix the Theia
+**This is progress!** The routing is correct now; we just need to fix the SkIDEancer
 startup.
 
 ---
@@ -30,7 +30,7 @@ startup.
 
 - ✅ Railway is routing traffic to port 3007 correctly
 - ❌ No process is listening on port 3007
-- ❌ Theia server didn't start, or started on wrong port
+- ❌ SkIDEancer server didn't start, or started on wrong port
 
 ---
 
@@ -58,7 +58,7 @@ Error: Port 3007 is already in use
 #### ❌ Common Error #2: Missing Dependencies
 
 ```
-Error: Cannot find module '@theia/core'
+Error: Cannot find module '@ide/core'
 yarn install failed
 ```
 
@@ -70,7 +70,7 @@ yarn install failed
 Error: Cannot find module 'src-gen/backend/server.js'
 ```
 
-**Solution**: Need to run `theia build` first
+**Solution**: Need to run `ide build` first
 
 #### ❌ Common Error #4: Node Version
 
@@ -86,7 +86,7 @@ Error: The engine "node" is incompatible with this module
 
 ### Fix #1: Missing Build Step (Most Likely)
 
-Theia requires compilation before running. The start command should be:
+SkIDEancer requires compilation before running. The start command should be:
 
 **Current (Broken)**:
 
@@ -120,12 +120,12 @@ This uses `$PORT` if set, falls back to 3007.
 
 ### Fix #3: Check package.json Scripts
 
-The `package.json` in `whodaniel/fuse-theia-ide` should have:
+The `package.json` in `whodaniel/skideancer-ide` should have:
 
 ```json
 {
   "scripts": {
-    "build": "theia build --mode production",
+    "build": "ide build --mode production",
     "start": "node src-gen/backend/server.js",
     "start:production": "node src-gen/backend/server.js --hostname=0.0.0.0 --port=${PORT:-3007}"
   }
@@ -156,13 +156,13 @@ RUN yarn install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build Theia
+# Build SkIDEancer
 RUN yarn build
 
 # Expose port (Railway will override this)
 EXPOSE 3007
 
-# Start Theia
+# Start SkIDEancer
 CMD ["node", "src-gen/backend/server.js", "--hostname=0.0.0.0", "--port=${PORT:-3007}"]
 ```
 
@@ -233,7 +233,7 @@ Then click **Redeploy** from Deployments tab.
 ✓ yarn install
 ✓ Building frontend...
 ✓ Webpack compiled successfully
-✓ Theia app listening on: 0.0.0.0:3007
+✓ SkIDEancer app listening on: 0.0.0.0:3007
 ✓ Server running at http://0.0.0.0:3007
 ```
 
@@ -259,7 +259,7 @@ If logs show complex errors, try a clean redeploy:
 2. **Create New Service**:
    - Click **"New Service"**
    - Select **"GitHub Repo"**
-   - Choose `whodaniel/fuse-theia-ide`
+   - Choose `whodaniel/skideancer-ide`
 
 3. **Configure**:
    - Set build command: `yarn install && yarn build`
@@ -278,7 +278,7 @@ If logs show complex errors, try a clean redeploy:
 | -------------------- | --------- | ----------- | ------------- |
 | Port Routing         | 3007      | 3007        | ✅ Fixed      |
 | Application Response | 200 OK    | 502         | ❌ Fix Needed |
-| Theia Process        | Running   | Not Running | ❌ Fix Needed |
+| SkIDEancer Process        | Running   | Not Running | ❌ Fix Needed |
 | Build Step           | Completed | ?           | ❓ Check Logs |
 
 ---

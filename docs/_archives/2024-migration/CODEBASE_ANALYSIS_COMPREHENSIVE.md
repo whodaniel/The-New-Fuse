@@ -39,7 +39,7 @@ The-New-Fuse/
 - apps/backend               # Backend services
 - apps/electron-desktop      # Electron app
 - apps/browser-hub           # Browser-based hub
-- apps/theia-ide             # Web IDE
+- apps/ide-ide             # Web IDE
 - apps/mcp-servers           # MCP protocol servers
 ```
 

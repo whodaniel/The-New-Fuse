@@ -1910,8 +1910,8 @@
                 }
             };
             
-            // Handle load completion for Theia
-            if (isTheia) {
+            // Handle load completion for SkIDEancer
+            if (isSkIDEancer) {
                 frame.onload = function() {
                     // Remove loading overlay after a fixed delay, as direct iframe content access is restricted.
                     setTimeout(() => {
@@ -7994,7 +7994,7 @@
         // Service Configuration
         let serviceEndpoints = {
             dashboard: 'http://localhost:3000',
-            theia: 'http://localhost:3007',
+            ide: 'http://localhost:3007',
             database: 'http://localhost:5555',
             claude: 'https://claude.ai',
             chatgpt: 'https://chat.openai.com',
@@ -8051,7 +8051,7 @@
         function getServiceDisplayName(service) {
             const names = {
                 dashboard: 'TNF Dashboard',
-                theia: 'Theia IDE',
+                ide: 'SkIDEancer IDE',
                 database: 'Database',
                 claude: 'Claude AI',
                 chatgpt: 'ChatGPT',
@@ -8160,7 +8160,7 @@
             if (confirm('Reset all service endpoints to defaults?')) {
                 serviceEndpoints = {
                     dashboard: 'http://localhost:3000',
-                    theia: 'http://localhost:3007',
+                    ide: 'http://localhost:3007',
                     database: 'http://localhost:5555',
                     claude: 'https://claude.ai',
                     chatgpt: 'https://chat.openai.com',
@@ -8218,7 +8218,7 @@
             }
         }
         
-        // Terminal functionality removed - Theia IDE has its own integrated terminal
+        // Terminal functionality removed - SkIDEancer IDE has its own integrated terminal
         
         // Browser Features - Fully Functional Implementation
         function toggleBookmarks() {
@@ -8926,7 +8926,7 @@
             // Implementation for dev tools
         }
         
-        // Terminal integration removed - using Theia's built-in terminal
+        // Terminal integration removed - using SkIDEancer's built-in terminal
         
         function toggleExtensionsEnabled(toggle) {
             toggle.classList.toggle('active');
@@ -9876,7 +9876,7 @@
         function generateBookmarkList() {
             const bookmarks = [
                 { title: 'TNF Dashboard', url: 'http://localhost:3000', folder: 'TNF' },
-                { title: 'Theia IDE', url: 'http://localhost:3007', folder: 'Development' },
+                { title: 'SkIDEancer IDE', url: 'http://localhost:3007', folder: 'Development' },
                 { title: 'GitHub', url: 'https://github.com', folder: 'Development' },
                 { title: 'Stack Overflow', url: 'https://stackoverflow.com', folder: 'Development' },
                 { title: 'Mozilla Developer Network', url: 'https://developer.mozilla.org', folder: 'Development' },
@@ -9908,7 +9908,7 @@
         function generateHistoryList() {
             const history = [
                 { title: 'TNF Dashboard - AI-Powered Collaboration Platform', url: 'http://localhost:3000', time: '2 minutes ago' },
-                { title: 'Theia IDE - Cloud & Desktop IDE', url: 'http://localhost:3007', time: '5 minutes ago' },
+                { title: 'SkIDEancer IDE - Cloud & Desktop IDE', url: 'http://localhost:3007', time: '5 minutes ago' },
                 { title: 'GitHub - Where the world builds software', url: 'https://github.com', time: '10 minutes ago' },
                 { title: 'Stack Overflow - Where Developers Learn', url: 'https://stackoverflow.com', time: '15 minutes ago' },
                 { title: 'Claude AI - Constitutional AI Assistant', url: 'https://claude.ai', time: '1 hour ago' },
@@ -9939,7 +9939,7 @@
         
         function generateDownloadsList() {
             const downloads = [
-                { title: 'theia-extensions-pack.vsix', size: '2.4 MB', status: 'completed', time: '5 minutes ago' },
+                { title: 'ide-extensions-pack.vsix', size: '2.4 MB', status: 'completed', time: '5 minutes ago' },
                 { title: 'claude-code-cli.zip', size: '15.8 MB', status: 'completed', time: '1 hour ago' },
                 { title: 'browser-use-extension.crx', size: '890 KB', status: 'completed', time: '2 hours ago' },
                 { title: 'tnf-backup-20250118.zip', size: '45.2 MB', status: 'completed', time: '1 day ago' },
@@ -10211,7 +10211,7 @@
         async function checkServiceHealth() {
             const services = [
                 { name: 'TNF Dashboard', url: 'http://localhost:3000', element: 'dashboard' },
-                { name: 'Theia IDE', url: 'http://localhost:3007', element: 'theia' },
+                { name: 'SkIDEancer IDE', url: 'http://localhost:3007', element: 'ide' },
                 { name: 'Claude AI', url: 'https://claude.ai', element: 'claude' },
                 { name: 'ChatGPT', url: 'https://chat.openai.com', element: 'chatgpt' },
                 { name: 'Perplexity', url: 'https://perplexity.ai', element: 'perplexity' },
@@ -10296,7 +10296,7 @@
         function getServiceName(element) {
             const serviceNames = {
                 dashboard: 'TNF Dashboard',
-                theia: 'Theia IDE',
+                ide: 'SkIDEancer IDE',
                 claude: 'Claude AI',
                 chatgpt: 'ChatGPT',
                 perplexity: 'Perplexity',

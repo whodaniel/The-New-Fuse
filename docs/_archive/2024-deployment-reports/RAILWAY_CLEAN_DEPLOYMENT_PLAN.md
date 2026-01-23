@@ -84,7 +84,7 @@ The following services are NOT deployed to Railway:
 - **browser-hub** (`apps/browser-hub`) - Electron desktop application
 - **mcp-servers** (`apps/mcp-servers`) - Local MCP servers
 - **relay-server** (`apps/relay-server`) - Local relay server
-- **theia-ide** - IDE extension
+- **ide-ide** - IDE extension
 - **vscode-extension** - VS Code extension
 - **chrome-extension** - Chrome browser extension
 

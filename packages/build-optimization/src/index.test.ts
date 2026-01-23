@@ -45,7 +45,7 @@ describe('Build Optimization Package', () => {
     expect(ultraMemoryStrategy.stageSize).toBe(4);
   });
 
-  it('should have Theia and monorepo configuration', () => {
+  it('should have SkIDEancer and monorepo configuration', () => {
     expect(DEFAULT_CONFIG.THEIA_CONFIG).toBeDefined();
     expect(DEFAULT_CONFIG.THEIA_CONFIG.buildFirst).toBe(true);
     expect(DEFAULT_CONFIG.THEIA_CONFIG.estimatedMemoryUsage).toBe(2048);

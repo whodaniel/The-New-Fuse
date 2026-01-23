@@ -18,9 +18,9 @@ export const EXTENSION_ID = 'fuse-connect-v6';
 
 export const DEFAULT_NODES = {
   relay: 'ws://localhost:3000/ws',
-  apiGateway: 'http://localhost:3000',
-  backend: 'http://localhost:3000',
-  saas: 'https://app.thenewfuse.com',
+  apiGateway: 'http://localhost:8080',
+  backend: 'http://localhost:3001',
+  saas: 'http://localhost:3002',
 };
 
 // ============================================

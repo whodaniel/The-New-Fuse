@@ -1,0 +1,32 @@
+{
+  "name": "@the-new-fuse/tnf-cli",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TNF Agent CLI - Redis-Based Agent Communication System",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tnf-agent": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rimraf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ioredis": "^5.8.2",
+    "uuid": "^9.0.1",
+    "commander": "^13.1.0",
+    "chalk": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "@types/uuid": "^9.0.8",
+    "typescript": "^5.9.3",
+    "tsx": "^4.20.3",
+    "rimraf": "^5.0.10"
+  }
+}

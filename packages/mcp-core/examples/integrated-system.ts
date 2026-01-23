@@ -30,7 +30,7 @@ async function createIntegratedMCPSystem() {
     workflow: {
       enabled: true
     },
-    theia: {
+    ide: {
       enabled: false // Disable for this example
     },
     development: {
@@ -319,7 +319,7 @@ async function demonstrateSystemVariants() {
     workflow: {
       enabled: true
     },
-    theia: {
+    ide: {
       enabled: true,
       port: 3006,
       aiFeatures: true

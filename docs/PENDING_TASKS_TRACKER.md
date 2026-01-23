@@ -102,23 +102,23 @@ The Vector Memory System was already integrated:
 
 ---
 
-## 📋 MANUAL: Priority 4 - Attach Railway Volume to Theia IDE
+## 📋 MANUAL: Priority 4 - Attach Railway Volume to SkIDEancer IDE
 
 ### Instructions
 
 1. Open Railway Dashboard: https://railway.app/dashboard
-2. Navigate to your project containing `fuse-theia-ide`
-3. Click on the `fuse-theia-ide` service
+2. Navigate to your project containing `skideancer-ide`
+3. Click on the `skideancer-ide` service
 4. Go to **Settings** → **Volumes**
 5. Click **"Add Volume"**
 6. Configure:
-   - **Mount Path**: `/home/theia`
+   - **Mount Path**: `/home/ide`
    - **Size**: 10GB (or as needed)
 7. Wait for the service to redeploy
 
 ### Why This Matters
 
-Without a volume, files created in the Theia IDE will be lost on container
+Without a volume, files created in the SkIDEancer IDE will be lost on container
 restart.
 
 ### Status: 📋 MANUAL ACTION REQUIRED
@@ -181,15 +181,15 @@ New Files:
 │  │  ├─ Dashboard   │              │                         │  │
 │  │  ├─ MCP Tools   │              │  ├─ /ws (MCP Tools)     │  │
 │  │  ├─ Browser     │              │  ├─ /ws/heartbeat ★NEW  │  │
-│  │  ├─ Theia IDE   │              │  └─ Browser Automation  │  │
+│  │  ├─ SkIDEancer IDE   │              │  └─ Browser Automation  │  │
 │  │  └─ Heartbeat ★ │              │                         │  │
 │  └─────────────────┘              └─────────────────────────┘  │
 │                                                                 │
 │  ┌─────────────────┐              ┌─────────────────────────┐  │
-│  │   Frontend      │              │    Theia IDE            │  │
+│  │   Frontend      │              │    SkIDEancer IDE            │  │
 │  │  (thenewfuse)   │              │    (Railway)            │  │
 │  │                 │              │                         │  │
-│  │  ├─ nginx proxy │              │  Volume: /home/theia    │  │
+│  │  ├─ nginx proxy │              │  Volume: /home/ide    │  │
 │  │  │  /api → BE   │              │  (NEEDS MANUAL CONFIG)  │  │
 │  │  │  /ws → BE    │              │                         │  │
 │  │  └─ WebSocket ★ │              │                         │  │
@@ -211,7 +211,7 @@ New Files:
    git push origin main
    ```
 
-2. **Attach Theia Volume** (Manual - see instructions above)
+2. **Attach SkIDEancer Volume** (Manual - see instructions above)
 
 3. **Test Heartbeat Panel in Tauri**
 
@@ -230,4 +230,4 @@ New Files:
 ## Session Complete! 🎉
 
 All programmatic tasks have been completed. The only remaining item is the
-manual Railway volume configuration for Theia IDE.
+manual Railway volume configuration for SkIDEancer IDE.

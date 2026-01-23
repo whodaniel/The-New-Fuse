@@ -9,7 +9,7 @@
  * - Local Relay Server (WebSocket hub)
  * - Redis (pub/sub for cross-instance communication)
  * - Cloud Sandbox (Railway - headless browser automation)
- * - Cloud IDE (Theia at ide.thenewfuse.com)
+ * - Cloud IDE (SkIDEancer at ide.thenewfuse.com)
  * - Chrome Extension
  * - VSCode Extension
  * - Electron Desktop App
@@ -218,7 +218,7 @@ class TNFOrchestrator extends EventEmitter {
       HealthChecker.checkHttp(CONFIG.localRelayHealth, 'Local Relay'),
       HealthChecker.checkRedis(CONFIG.redisUrl),
       HealthChecker.checkHttp(`${CONFIG.cloudApi}/health`, 'Cloud API'),
-      HealthChecker.checkHttp(CONFIG.cloudIde, 'Cloud IDE (Theia)'),
+      HealthChecker.checkHttp(CONFIG.cloudIde, 'Cloud IDE (SkIDEancer)'),
       HealthChecker.checkHttp(`${CONFIG.cloudSandbox}/health`, 'Cloud Sandbox'),
     ];
 

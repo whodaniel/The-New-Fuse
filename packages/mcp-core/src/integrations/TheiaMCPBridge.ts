@@ -1,8 +1,8 @@
 /**
- * Theia MCP Bridge
+ * SkIDEancer MCP Bridge
  * 
- * This bridge integrates mcp-core with Theia IDE, providing MCP server
- * functionality that's compatible with Theia's AI features and MCP expectations.
+ * This bridge integrates mcp-core with SkIDEancer IDE, providing MCP server
+ * functionality that's compatible with SkIDEancer's AI features and MCP expectations.
  */
 
 import { MCPServer } from '../server/MCPServer';
@@ -10,10 +10,10 @@ import { MCPSystemFactory, MCPSystemConfig } from '../factory/MCPSystemFactory';
 import { LogLevel } from '../types/common';
 
 /**
- * Configuration for Theia MCP Bridge
+ * Configuration for SkIDEancer MCP Bridge
  */
-export interface TheiaMCPBridgeConfig {
-  /** MCP server configuration for Theia */
+export interface SkIDEancerMCPBridgeConfig {
+  /** MCP server configuration for SkIDEancer */
   server: {
     name: string;
     version: string;
@@ -23,13 +23,13 @@ export interface TheiaMCPBridgeConfig {
     logLevel: LogLevel;
   };
   
-  /** Theia-specific configuration */
-  theia: {
+  /** SkIDEancer-specific configuration */
+  ide: {
     /** Enable AI chat features */
     enableAIFeatures: boolean;
     /** Enable MCP tool integration */
     enableToolIntegration: boolean;
-    /** Enable resource access from Theia */
+    /** Enable resource access from SkIDEancer */
     enableResourceAccess: boolean;
     /** Workspace root path */
     workspaceRoot?: string;
@@ -37,7 +37,7 @@ export interface TheiaMCPBridgeConfig {
   
   /** Bridge options */
   options?: {
-    /** Enable stdio transport for Theia MCP */
+    /** Enable stdio transport for SkIDEancer MCP */
     enableStdioTransport: boolean;
     /** Enable WebSocket transport */
     enableWebSocketTransport: boolean;
@@ -51,31 +51,31 @@ export interface TheiaMCPBridgeConfig {
 }
 
 /**
- * Theia MCP Bridge implementation
+ * SkIDEancer MCP Bridge implementation
  */
-export class TheiaMCPBridge {
+export class SkIDEancerMCPBridge {
   private mcpSystem: any;
-  private config: TheiaMCPBridgeConfig;
+  private config: SkIDEancerMCPBridgeConfig;
   private isInitialized = false;
   private stdioTransport: any = null;
 
-  constructor(config: TheiaMCPBridgeConfig) {
+  constructor(config: SkIDEancerMCPBridgeConfig) {
     this.config = config;
   }
 
   /**
-   * Initialize the Theia MCP bridge
+   * Initialize the SkIDEancer MCP bridge
    */
   async initialize(): Promise<void> {
     if (this.isInitialized) {
-      console.warn('TheiaMCPBridge is already initialized');
+      console.warn('SkIDEancerMCPBridge is already initialized');
       return;
     }
 
     try {
-      console.log('🎨 Initializing Theia MCP Bridge...');
+      console.log('🎨 Initializing SkIDEancer MCP Bridge...');
 
-      // Create integrated MCP system for Theia
+      // Create integrated MCP system for SkIDEancer
       const systemConfig: Partial<MCPSystemConfig> = {
         server: {
           name: this.config.server.name,
@@ -88,10 +88,10 @@ export class TheiaMCPBridge {
           enableTLS: false,
           logLevel: this.config.server.logLevel
         },
-        theia: {
+        ide: {
           enabled: true,
           port: this.config.server.port || 3006,
-          aiFeatures: this.config.theia.enableAIFeatures
+          aiFeatures: this.config.ide.enableAIFeatures
         },
         development: {
           hotReload: true,
@@ -103,9 +103,9 @@ export class TheiaMCPBridge {
       // Create the integrated system
       this.mcpSystem = MCPSystemFactory.createDevelopmentSystem(systemConfig);
 
-      // Register Theia-specific resources and tools
-      await this.registerTheiaResources();
-      await this.registerTheiaTools();
+      // Register SkIDEancer-specific resources and tools
+      await this.registerSkIDEancerResources();
+      await this.registerSkIDEancerTools();
 
       // Setup stdio transport if enabled
       if (this.config.options?.enableStdioTransport) {
@@ -113,16 +113,16 @@ export class TheiaMCPBridge {
       }
 
       this.isInitialized = true;
-      console.log('✅ Theia MCP Bridge initialized successfully');
+      console.log('✅ SkIDEancer MCP Bridge initialized successfully');
 
     } catch (error) {
-      console.error('❌ Failed to initialize Theia MCP Bridge', error);
+      console.error('❌ Failed to initialize SkIDEancer MCP Bridge', error);
       throw error;
     }
   }
 
   /**
-   * Start the Theia MCP bridge
+   * Start the SkIDEancer MCP bridge
    */
   async start(): Promise<void> {
     if (!this.isInitialized) {
@@ -130,21 +130,21 @@ export class TheiaMCPBridge {
     }
 
     try {
-      console.log('🚀 Starting Theia MCP Bridge...');
+      console.log('🚀 Starting SkIDEancer MCP Bridge...');
       
       await this.mcpSystem.start();
       
-      console.log('✅ Theia MCP Bridge started successfully');
+      console.log('✅ SkIDEancer MCP Bridge started successfully');
       console.log(`🌐 MCP Server available at http://${this.config.server.host || 'localhost'}:${this.config.server.port || 3006}`);
 
     } catch (error) {
-      console.error('❌ Failed to start Theia MCP Bridge', error);
+      console.error('❌ Failed to start SkIDEancer MCP Bridge', error);
       throw error;
     }
   }
 
   /**
-   * Stop the Theia MCP bridge
+   * Stop the SkIDEancer MCP bridge
    */
   async stop(): Promise<void> {
     if (!this.mcpSystem) {
@@ -152,7 +152,7 @@ export class TheiaMCPBridge {
     }
 
     try {
-      console.log('🛑 Stopping Theia MCP Bridge...');
+      console.log('🛑 Stopping SkIDEancer MCP Bridge...');
       
       // Stop stdio transport if running
       if (this.stdioTransport) {
@@ -162,10 +162,10 @@ export class TheiaMCPBridge {
       
       await this.mcpSystem.stop();
       
-      console.log('✅ Theia MCP Bridge stopped successfully');
+      console.log('✅ SkIDEancer MCP Bridge stopped successfully');
 
     } catch (error) {
-      console.error('❌ Error stopping Theia MCP Bridge', error);
+      console.error('❌ Error stopping SkIDEancer MCP Bridge', error);
       throw error;
     }
   }
@@ -175,7 +175,7 @@ export class TheiaMCPBridge {
    */
   getMCPServer(): MCPServer {
     if (!this.mcpSystem) {
-      throw new Error('Theia MCP Bridge not initialized');
+      throw new Error('SkIDEancer MCP Bridge not initialized');
     }
     return this.mcpSystem.server;
   }
@@ -188,29 +188,29 @@ export class TheiaMCPBridge {
   }
 
   /**
-   * Register Theia-specific resources
+   * Register SkIDEancer-specific resources
    */
-  private async registerTheiaResources(): Promise<void> {
+  private async registerSkIDEancerResources(): Promise<void> {
     const server = this.mcpSystem.server;
     const config = this.config;
 
     // Register workspace resource
-    if (config.theia.enableResourceAccess) {
+    if (config.ide.enableResourceAccess) {
       server.registerResource({
-        uri: 'theia://workspace',
-        name: 'Theia Workspace',
-        description: 'Access to the current Theia workspace',
+        uri: 'ide://workspace',
+        name: 'SkIDEancer Workspace',
+        description: 'Access to the current SkIDEancer workspace',
         handler: {
           async read() {
             const workspaceInfo = {
-              root: config.theia.workspaceRoot || process.cwd(),
-              name: 'Theia Workspace',
+              root: config.ide.workspaceRoot || process.cwd(),
+              name: 'SkIDEancer Workspace',
               type: 'workspace',
               timestamp: new Date().toISOString()
             };
 
             return {
-              uri: 'theia://workspace',
+              uri: 'ide://workspace',
               mimeType: 'application/json',
               content: JSON.stringify(workspaceInfo, null, 2),
               metadata: {
@@ -225,15 +225,15 @@ export class TheiaMCPBridge {
     // Register file system resource
     if (config.options?.enableFileSystemAccess) {
       server.registerResource({
-        uri: 'theia://filesystem',
+        uri: 'ide://filesystem',
         name: 'File System Access',
-        description: 'Access to file system through Theia',
+        description: 'Access to file system through SkIDEancer',
         handler: {
           async read(uri: string, params?: { path?: string }) {
             const fs = await import('fs/promises');
             const path = await import('path');
             
-            const targetPath = params?.path || config.theia.workspaceRoot || process.cwd();
+            const targetPath = params?.path || config.ide.workspaceRoot || process.cwd();
             
             try {
               const stats = await fs.stat(targetPath);
@@ -281,14 +281,14 @@ export class TheiaMCPBridge {
     // Register git resource
     if (config.options?.enableGitIntegration) {
       server.registerResource({
-        uri: 'theia://git',
+        uri: 'ide://git',
         name: 'Git Repository Info',
         description: 'Access to git repository information',
         handler: {
           async read() {
             try {
               const { execSync } = await import('child_process');
-              const workspaceRoot = config.theia.workspaceRoot || process.cwd();
+              const workspaceRoot = config.ide.workspaceRoot || process.cwd();
               
               const gitInfo = {
                 branch: execSync('git branch --show-current', { cwd: workspaceRoot, encoding: 'utf8' }).trim(),
@@ -298,7 +298,7 @@ export class TheiaMCPBridge {
               };
 
               return {
-                uri: 'theia://git',
+                uri: 'ide://git',
                 mimeType: 'application/json',
                 content: JSON.stringify(gitInfo, null, 2),
                 metadata: {
@@ -308,7 +308,7 @@ export class TheiaMCPBridge {
               };
             } catch (error) {
               return {
-                uri: 'theia://git',
+                uri: 'ide://git',
                 mimeType: 'application/json',
                 content: JSON.stringify({
                   error: 'Git not available or not a git repository',
@@ -321,20 +321,20 @@ export class TheiaMCPBridge {
       });
     }
 
-    console.log('📋 Registered Theia-specific resources');
+    console.log('📋 Registered SkIDEancer-specific resources');
   }
 
   /**
-   * Register Theia-specific tools
+   * Register SkIDEancer-specific tools
    */
-  private async registerTheiaTools(): Promise<void> {
+  private async registerSkIDEancerTools(): Promise<void> {
     const server = this.mcpSystem.server;
 
     // Register file read tool
-    if (this.config.theia.enableToolIntegration) {
+    if (this.config.ide.enableToolIntegration) {
       server.registerTool({
-        name: 'theia-read-file',
-        description: 'Read a file from the Theia workspace',
+        name: 'ide-read-file',
+        description: 'Read a file from the SkIDEancer workspace',
         inputSchema: {
           type: 'object',
           properties: {
@@ -349,7 +349,7 @@ export class TheiaMCPBridge {
               const fs = await import('fs/promises');
               const path = await import('path');
               
-              const workspaceRoot = this.config.theia.workspaceRoot || process.cwd();
+              const workspaceRoot = this.config.ide.workspaceRoot || process.cwd();
               const fullPath = path.resolve(workspaceRoot, params.path);
               
               // Security check: ensure file is within workspace
@@ -386,8 +386,8 @@ export class TheiaMCPBridge {
 
       // Register file write tool
       server.registerTool({
-        name: 'theia-write-file',
-        description: 'Write content to a file in the Theia workspace',
+        name: 'ide-write-file',
+        description: 'Write content to a file in the SkIDEancer workspace',
         inputSchema: {
           type: 'object',
           properties: {
@@ -403,7 +403,7 @@ export class TheiaMCPBridge {
               const fs = await import('fs/promises');
               const path = await import('path');
               
-              const workspaceRoot = this.config.theia.workspaceRoot || process.cwd();
+              const workspaceRoot = this.config.ide.workspaceRoot || process.cwd();
               const fullPath = path.resolve(workspaceRoot, params.path);
               
               // Security check: ensure file is within workspace
@@ -444,8 +444,8 @@ export class TheiaMCPBridge {
     // Register terminal execution tool
     if (this.config.options?.enableTerminalAccess) {
       server.registerTool({
-        name: 'theia-execute-command',
-        description: 'Execute a command in the Theia workspace terminal',
+        name: 'ide-execute-command',
+        description: 'Execute a command in the SkIDEancer workspace terminal',
         inputSchema: {
           type: 'object',
           properties: {
@@ -461,7 +461,7 @@ export class TheiaMCPBridge {
               const { promisify } = await import('util');
               const execAsync = promisify(exec);
               
-              const workspaceRoot = this.config.theia.workspaceRoot || process.cwd();
+              const workspaceRoot = this.config.ide.workspaceRoot || process.cwd();
               
               const { stdout, stderr } = await execAsync(params.command, {
                 cwd: workspaceRoot,
@@ -495,11 +495,11 @@ export class TheiaMCPBridge {
       });
     }
 
-    console.log('🔧 Registered Theia-specific tools');
+    console.log('🔧 Registered SkIDEancer-specific tools');
   }
 
   /**
-   * Setup stdio transport for Theia MCP integration
+   * Setup stdio transport for SkIDEancer MCP integration
    */
   private async setupStdioTransport(): Promise<void> {
     try {
@@ -507,10 +507,10 @@ export class TheiaMCPBridge {
       // For now, we'll create a placeholder that can be extended
       
       this.stdioTransport = {
-        name: 'theia-stdio',
+        name: 'ide-stdio',
         isConnected: () => this.isRunning(),
         start: async () => {
-          console.log('📡 Stdio transport started for Theia MCP');
+          console.log('📡 Stdio transport started for SkIDEancer MCP');
           return true;
         },
         stop: async () => {
@@ -518,7 +518,7 @@ export class TheiaMCPBridge {
         }
       };
 
-      console.log('📡 Stdio transport configured for Theia MCP');
+      console.log('📡 Stdio transport configured for SkIDEancer MCP');
     } catch (error) {
       console.error('❌ Failed to setup stdio transport', error);
       // Don't throw - stdio transport failure shouldn't stop the bridge
@@ -526,12 +526,12 @@ export class TheiaMCPBridge {
   }
 
   /**
-   * Create Theia-compatible server configuration
+   * Create SkIDEancer-compatible server configuration
    */
-  static createTheiaCompatibleServer(config: Partial<TheiaMCPBridgeConfig> = {}): TheiaMCPBridge {
-    const defaultConfig: TheiaMCPBridgeConfig = {
+  static createSkIDEancerCompatibleServer(config: Partial<SkIDEancerMCPBridgeConfig> = {}): SkIDEancerMCPBridge {
+    const defaultConfig: SkIDEancerMCPBridgeConfig = {
       server: {
-        name: 'theia-mcp-server',
+        name: 'ide-mcp-server',
         version: '1.0.0',
         port: 3006,
         host: 'localhost',
@@ -539,12 +539,12 @@ export class TheiaMCPBridge {
         logLevel: LogLevel.INFO,
         ...config.server
       },
-      theia: {
+      ide: {
         enableAIFeatures: true,
         enableToolIntegration: true,
         enableResourceAccess: true,
         workspaceRoot: process.cwd(),
-        ...config.theia
+        ...config.ide
       },
       options: {
         enableStdioTransport: true,
@@ -556,35 +556,35 @@ export class TheiaMCPBridge {
       }
     };
 
-    return new TheiaMCPBridge(defaultConfig);
+    return new SkIDEancerMCPBridge(defaultConfig);
   }
 
   /**
-   * Register with Theia's MCP system
+   * Register with SkIDEancer's MCP system
    */
-  static async registerWithTheia(server: MCPServer): Promise<void> {
+  static async registerWithSkIDEancer(server: MCPServer): Promise<void> {
     try {
-      // This would integrate with Theia's MCP registration system
+      // This would integrate with SkIDEancer's MCP registration system
       // For now, we'll log that registration would happen here
       
-      console.log('🎨 Registering MCP server with Theia...');
+      console.log('🎨 Registering MCP server with SkIDEancer...');
       console.log(`📡 MCP Server registered: ${server.getServerInfo().name}`);
       
     } catch (error) {
-      console.error('❌ Failed to register with Theia', error);
+      console.error('❌ Failed to register with SkIDEancer', error);
       throw error;
     }
   }
 }
 
 /**
- * Factory function for creating Theia MCP bridges
+ * Factory function for creating SkIDEancer MCP bridges
  */
-export function createTheiaMCPBridge(config?: Partial<TheiaMCPBridgeConfig>): TheiaMCPBridge {
-  return TheiaMCPBridge.createTheiaCompatibleServer(config);
+export function createSkIDEancerMCPBridge(config?: Partial<SkIDEancerMCPBridgeConfig>): SkIDEancerMCPBridge {
+  return SkIDEancerMCPBridge.createSkIDEancerCompatibleServer(config);
 }
 
 /**
  * Default export for convenience
  */
-export default TheiaMCPBridge;
+export default SkIDEancerMCPBridge;

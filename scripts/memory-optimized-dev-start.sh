@@ -82,16 +82,16 @@ fi
 
 sleep 5
 
-# 3. Start Theia IDE (high memory - only if we have enough)
+# 3. Start SkIDEancer IDE (high memory - only if we have enough)
 if check_memory; then
-    if start_service_safe "Theia IDE" 3008 "cd apps/theia-ide && pnpm run dev"; then
-        echo "✅ Theia IDE running"
+    if start_service_safe "SkIDEancer IDE" 3008 "cd apps/ide-ide && pnpm run dev"; then
+        echo "✅ SkIDEancer IDE running"
     else
-        echo "⚠️  Theia IDE failed, but other services are running"
+        echo "⚠️  SkIDEancer IDE failed, but other services are running"
     fi
 else
-    echo "⚠️  Skipping Theia IDE due to memory constraints"
-    echo "💡 You can start it manually later with: cd apps/theia-ide && pnpm run dev"
+    echo "⚠️  Skipping SkIDEancer IDE due to memory constraints"
+    echo "💡 You can start it manually later with: cd apps/ide-ide && pnpm run dev"
 fi
 
 sleep 3
@@ -111,12 +111,12 @@ echo ""
 echo "📋 Service Status:"
 echo "• API Gateway: http://localhost:3005"
 echo "• Frontend: http://localhost:3000"
-echo "• Theia IDE: http://localhost:3008 (if started)"
+echo "• SkIDEancer IDE: http://localhost:3008 (if started)"
 echo ""
 echo "💡 Tips:"
 echo "• Monitor memory usage with: top -o mem"
 echo "• If services crash, try starting them individually"
-echo "• Use Theia IDE at http://localhost:3008 for the best experience"
+echo "• Use SkIDEancer IDE at http://localhost:3008 for the best experience"
 echo ""
 echo "🔍 To check running services:"
 echo "lsof -i :3000,3005,3008"

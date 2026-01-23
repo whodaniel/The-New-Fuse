@@ -31,7 +31,7 @@ echo ""
 
 # Fix TypeScript issues
 echo -e "${BLUE}2. Fixing TypeScript configurations...${NC}"
-for tsconfig in $(find . -name "tsconfig.json" -not -path "*/node_modules/*" -not -path "*/dist/*" -not -path "*/theia-ide/*"); do
+for tsconfig in $(find . -name "tsconfig.json" -not -path "*/node_modules/*" -not -path "*/dist/*" -not -path "*/ide-ide/*"); do
     dir=$(dirname "$tsconfig")
     package_name=$(basename "$dir")
 
@@ -80,7 +80,7 @@ echo ""
 
 # Build all packages
 echo -e "${BLUE}6. Building all packages...${NC}"
-pnpm run build --filter='!theia-ide' || echo -e "${YELLOW}⚠${NC} Some builds failed"
+pnpm run build --filter='!ide-ide' || echo -e "${YELLOW}⚠${NC} Some builds failed"
 echo ""
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

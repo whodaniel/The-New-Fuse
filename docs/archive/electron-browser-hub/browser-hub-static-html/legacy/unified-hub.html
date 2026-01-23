@@ -1311,14 +1311,14 @@
         function openGitInterface() {
             console.log('Opening Git Interface');
             if (window.electronAPI) {
-                window.electronAPI.invoke('native:execute', 'open_theia_git');
+                window.electronAPI.invoke('native:execute', 'open_ide_git');
             }
         }
 
         function openDebugger() {
             console.log('Opening Debugger');
             if (window.electronAPI) {
-                window.electronAPI.invoke('native:execute', 'open_theia_debugger');
+                window.electronAPI.invoke('native:execute', 'open_ide_debugger');
             }
         }
 
@@ -1445,7 +1445,7 @@
             console.log('Refreshing services status');
             if (window.electronAPI) {
                 try {
-                    const theiaStatusResponse = await window.electronAPI.invoke('native:execute', 'get_service_status', ['theia']);
+                    const ideStatusResponse = await window.electronAPI.invoke('native:execute', 'get_service_status', ['ide']);
                     console.log('Refreshed System Status:', status);
                     updateServiceStatus(status.statuses);
                 } catch (error) {

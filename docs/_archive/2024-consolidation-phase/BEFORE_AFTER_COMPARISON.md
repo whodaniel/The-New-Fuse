@@ -251,7 +251,7 @@ scripts/
 ├── build-vscode-extension.sh ⚠️
 ├── build-vscode-fixed.sh ⚠️
 ├── build-with-memory-optimization.sh ⚠️
-├── build-with-yarn-theia.sh ⚠️
+├── build-with-yarn-ide.sh ⚠️
 ├── build.js ⚠️
 ├── build.sh ⚠️ 14 build scripts!!!
 │
@@ -282,7 +282,7 @@ scripts/
 ├── launch-prod.sh ⚠️
 ├── launch-streamlined.sh ⚠️
 ├── launch-the-new-fuse.sh ⚠️
-├── launch-theia-standalone.sh ⚠️
+├── launch-ide-standalone.sh ⚠️
 ├── launch-trae.sh ⚠️ What's trae?
 ├── launch-unified.sh ⚠️
 ├── launch-with-services.sh ⚠️
@@ -567,7 +567,7 @@ scripts/:
 ├── build-vscode-extension.sh ⚠️
 ├── build-vscode-fixed.sh ⚠️
 ├── build-with-memory-optimization.sh ⚠️
-├── build-with-yarn-theia.sh ⚠️
+├── build-with-yarn-ide.sh ⚠️
 └── build.sh ⚠️
 
 scripts/deprecated-build-scripts/:
@@ -631,7 +631,7 @@ scripts/:
 ├── launch-prod.sh ⚠️
 ├── launch-streamlined.sh ⚠️
 ├── launch-the-new-fuse.sh ⚠️
-├── launch-theia-standalone.sh ⚠️
+├── launch-ide-standalone.sh ⚠️
 ├── launch-trae.sh ⚠️
 ├── launch-unified.sh ⚠️
 ├── launch-with-services.sh ⚠️
