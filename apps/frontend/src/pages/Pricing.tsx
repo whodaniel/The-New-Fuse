@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Check, Rocket } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { SiteFooter } from '@/components/SiteFooter';
 
 const PricingCard = ({
   title,
@@ -274,9 +273,6 @@ export const Pricing = () => {
             ))}
           </div>
         </section>
-
-        {/* Footer */}
-        <SiteFooter />
       </main>
     </div>
   );

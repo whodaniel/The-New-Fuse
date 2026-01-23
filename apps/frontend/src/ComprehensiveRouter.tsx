@@ -29,7 +29,7 @@ const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
-const Workflows = lazy(() => import('./pages/Workflows'));
+const Workflows = lazy(() => import('./pages/Workflows.tsx'));
 const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
@@ -129,24 +129,11 @@ const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
 // Chat pages
 const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
 
-// Admin pages that exist
-const AdminOnboardingPage = lazy(() => import('./pages/Admin/Onboarding'));
-const AdminDashboardPage = lazy(() => import('./pages/Admin/Dashboard'));
-const ExperimentalFeaturesPage = () => (
-  <div className="p-8 text-white">Experimental Features Config (Coming Soon)</div>
-);
-
 // Legal pages
-const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
-const TermsOfServicePage = lazy(() => import('./pages/legal/TermsOfService'));
 
 // Workspace pages
-const WorkspaceLayoutPage = lazy(() => import('./pages/workspace/WorkspaceLayout'));
-const WorkspaceIndexPage = lazy(() => import('./pages/workspace'));
 
 // Additional component pages
-const ComponentsNavPage = lazy(() => import('./pages/ComponentsNav'));
-const HomePage = lazy(() => import('./pages/Home'));
 
 // Enhanced workflow pages
 const WorkflowsEnhancedPage = lazy(() => import('./pages/WorkflowsEnhanced'));
@@ -172,8 +159,6 @@ const AdminAgentSkillsPage = lazy(() => import('./pages/Admin/Agents/skills'));
 const WebSearchSelection = lazy(() => import('./pages/Admin/Agents/WebSearchSelection'));
 
 // Additional missing routes from audit
-const TasksPageComponent = lazy(() => import('./pages/Tasks/TasksPage'));
-const GeneralSettingsPage = lazy(() => import('./pages/GeneralSettingsPage'));
 const GeneralSettingsEmbeddingPage = lazy(
   () => import('./pages/GeneralSettings/EmbeddingPreference')
 );
@@ -182,7 +167,6 @@ const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
 const AgentDashboard = lazy(() => import('./pages/dashboard/AgentDashboard'));
 const DashboardSettings = lazy(() => import('./pages/dashboard/DashboardSettings'));
-const CommunityHub = lazy(() => import('./pages/Community/CommunityHub'));
 const LayoutExamples = lazy(() => import('./pages/Layout/LayoutExamples'));
 const AIAgentDashboard = lazy(() => import('./pages/AIAgentDashboard'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -315,11 +299,18 @@ export default function ComprehensiveRouter() {
             <Route path="/workspace/members" element={<WorkspaceMembers />} />
             <Route path="/workspace/settings" element={<WorkspaceSettings />} />
             <Route path="/tasks" element={<TasksPage />} />
+            {/* Workflow Routes */}
             <Route path="/workflows" element={<Workflows />} />
             <Route path="/workflows/builder" element={<WorkflowBuilder />} />
+            <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
+            <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
+            <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
             <Route path="/workflows/console" element={<ExecutionConsole />} />
             <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
             <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
+            <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
+            <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
+            <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/mcp-hub" element={<MCPHub />} />
             <Route path="/knowledge-hub" element={<KnowledgeHub />} />
@@ -416,9 +407,6 @@ export default function ComprehensiveRouter() {
 
             {/* Additional Routes */}
             <Route path="/test" element={<TestPage />} />
-            <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
-            <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
-            <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="/ai-agent-portal" element={<AIAgentRegistration />} />
 
@@ -427,35 +415,6 @@ export default function ComprehensiveRouter() {
             <Route path="/dashboard/settings" element={<DashboardSettings />} />
             <Route path="/components-showcase" element={<ComponentsShowcase />} />
             <Route path="/not-found" element={<NotFound />} />
-
-            {/* High Priority Missing Routes - Using Actual Components */}
-            <Route path="/chat-page" element={<ChatPage />} />
-            <Route path="/workspace/chat" element={<WorkspaceChatPage />} />
-            <Route path="/workspace/layout" element={<WorkspaceLayoutPage />} />
-            <Route path="/workspace" element={<WorkspaceIndexPage />} />
-
-            {/* Admin Routes - Existing Components */}
-            <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
-            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-            <Route path="/admin/experimental-features" element={<ExperimentalFeaturesPage />} />
-
-            {/* Legal Pages - Actual Components */}
-            <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
-            <Route path="/legal/terms" element={<TermsOfServicePage />} />
-
-            {/* Enhanced Landing Pages */}
-            <Route path="/landing-page" element={<LandingRevolutionPage />} />
-            <Route path="/simple-landing" element={<LandingRevolutionPage />} />
-            <Route path="/home-page" element={<HomePage />} />
-
-            {/* Component Navigation */}
-            <Route path="/components-nav" element={<ComponentsNavPage />} />
-
-            {/* Enhanced Workflow Routes */}
-            <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
-            <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
-            <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
-            <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
 
             {/* Preview Routes */}
             <Route path="/preview/onboarding" element={<OnboardingPreviewPage />} />
@@ -477,9 +436,6 @@ export default function ComprehensiveRouter() {
               }
             />
 
-            {/* Agent-Specific Routes */}
-            <Route path="/agents/unified-creator" element={<UnifiedAgentCreator />} />
-
             {/* Admin Tools Routes */}
             <Route path="/admin/agents/skills" element={<AdminAgentSkillsPage />} />
             <Route
@@ -490,12 +446,6 @@ export default function ComprehensiveRouter() {
                 </Suspense>
               }
             />
-
-            {/* Additional Missing Routes from Audit */}
-            <Route path="/tasks-page" element={<TasksPageComponent />} />
-            <Route path="/general-settings" element={<GeneralSettingsPage />} />
-            <Route path="/general-settings/embedding" element={<GeneralSettingsEmbeddingPage />} />
-            <Route path="/general-settings/community-hub" element={<CommunityHub />} />
 
             {/* Main workspace page */}
             <Route path="/main" element={<MainPage />} />
@@ -520,7 +470,6 @@ export default function ComprehensiveRouter() {
               }
             />
 
-            {/* Additional missing routes */}
             <Route
               path="/admin/layout"
               element={<LazyPage name="Admin Layout" path="/admin/layout" />}

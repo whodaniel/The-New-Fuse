@@ -14,7 +14,6 @@ import {
   Zap,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { SiteFooter } from '@/components/SiteFooter';
 
 /**
  * COMPLETELY REDESIGNED LANDING PAGE
@@ -249,9 +248,6 @@ export const LandingPageRevolution = () => {
           </p>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <SiteFooter />
     </div>
   );
 };

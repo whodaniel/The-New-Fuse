@@ -1,30 +1,39 @@
-import React, { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { GraphVisualization } from '../components/ui/graph-visualization';
 
 // Mock useGraphWebSocket hook for demo purposes
-const useGraphWebSocket = (config) => ({
-  sendMessage: (type, data) => {
-    console.log('Sending message:', type, data);
-  }
-});
+const useGraphWebSocket = (config: { url: string; autoConnect: boolean }) => {
+  console.log('Simulating connection with config:', config);
+  return {
+    sendMessage: (type: string, data: any) => {
+      console.log('Sending message:', type, data);
+    },
+  };
+};
 
 class CognitiveCore {
-  constructor() { }
+  constructor() {}
 }
 
 class MetaLearner {
-  constructor() { }
+  constructor() {}
 }
 
 class SocialCore {
-  constructor() { }
+  constructor() {}
 }
 
 class EmergenceCore {
-  constructor() { }
+  constructor() {}
 }
 
 export class AgentOrchestrator {
+  public cognitive: CognitiveCore;
+  public learning: MetaLearner;
+  public social: SocialCore;
+  public emergence: EmergenceCore;
+  public agentStates: Map<string, any>;
+
   constructor() {
     this.cognitive = new CognitiveCore();
     this.learning = new MetaLearner();
@@ -42,32 +51,34 @@ export function GraphDemo() {
   const [edgeWeight, setEdgeWeight] = useState('1');
 
   const { sendMessage } = useGraphWebSocket({
-    url: 'ws://localhost:3000/graph',
-    autoConnect: true
+    url: import.meta.env.VITE_WS_URL || '/ws',
+    autoConnect: true,
   });
 
-  const handleAddNode = (e) => {
+  const handleAddNode = (e: FormEvent) => {
     e.preventDefault();
     if (nodeId && nodeData) {
       sendMessage('updateGraph', {
         nodes: [{ id: nodeId, data: { label: nodeData } }],
-        edges: []
+        edges: [],
       });
       setNodeId('');
       setNodeData('');
     }
   };
 
-  const handleAddEdge = (e) => {
+  const handleAddEdge = (e: FormEvent) => {
     e.preventDefault();
     if (edgeSource && edgeTarget) {
       sendMessage('updateGraph', {
         nodes: [],
-        edges: [{
-          source: edgeSource,
-          target: edgeTarget,
-          weight: parseFloat(edgeWeight)
-        }]
+        edges: [
+          {
+            source: edgeSource,
+            target: edgeTarget,
+            weight: parseFloat(edgeWeight),
+          },
+        ],
       });
       setEdgeSource('');
       setEdgeTarget('');
@@ -172,10 +183,10 @@ export function GraphDemo() {
       </div>
 
       <div className="bg-white rounded-lg shadow-lg p-6" style={{ height: '600px' }}>
-        <GraphVisualization 
-          websocketUrl="ws://localhost:3000/graph" 
-          showMiniMap 
-          showControls 
+        <GraphVisualization
+          websocketUrl={import.meta.env.VITE_WS_URL || '/ws'}
+          showMiniMap
+          showControls
         />
       </div>
 

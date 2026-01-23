@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ComprehensiveRouter from '../ComprehensiveRouter';
-import AgencyDashboard from '../pages/Agency/AgencyDashboard';
 
 // Mock function to determine if we are on an agency subdomain
 const getSubdomain = () => {
   const hostname = window.location.hostname;
   // Handle localhost (e.g. agency.localhost) or production (agency.thenewfuse.hub)
   const parts = hostname.split('.');
-  
+
   if (hostname.includes('localhost')) {
     // localhost is typically plain "localhost", so parts.length === 1
     // if "agency.localhost", parts.length === 2
@@ -32,35 +31,32 @@ const SubdomainRouter: React.FC = () => {
 
   // If we are on a subdomain (e.g., alpha.thenewfuse.hub), we might want to show
   // the Agency's Public Landing Page OR their Admin Dashboard if they are logged in as owner.
-  // For the purpose of "Accessing their own super admin account", 
+  // For the purpose of "Accessing their own super admin account",
   // let's route /admin on a subdomain to the AgencyDashboard.
-  
+
   // Actually, typical White Label structure:
   // 1. agency.thenewfuse.hub -> The Agency's "SaaS" (multitenant instance for THEIR users)
   // 2. app.thenewfuse.hub/agency/dashboard -> Where the Agency Owner manages their empire
-  
+
   // The user asked: "infrastructure... to have their own multitenent system for their own Users"
   // So `agency.thenewfuse.hub` should look like a branded version of TNF.
-  
+
   if (subdomain) {
     // WHITE LABEL MODE
     // In a full implementation, we would fetch the Agency's 'Theme' here
     // and pass it to a <ThemeProvider>.
     // For now, we render the main app but maybe injected with agency context?
-    
-    // BUT, if the user explicitly wants to see the "Agency Owner Dashboard", 
+
+    // BUT, if the user explicitly wants to see the "Agency Owner Dashboard",
     // that might be a specific route.
-    
-    // Let's assume for this Demo, if you go to `agency.localhost:3000`, 
-    // you see the Multitenant App.
-    // If you go to `/agency-admin`, you see the AgencyDashboard.
-    
+
+    // For this implementation, if you go to a subdomain,
+    // you see the Multitenant App with that subdomain context.
+
     return (
-        <div data-agency-mode={subdomain}>
-            {/* We reuse the main router, but the Theme Context would change colors */}
-            {/* And the 'AgencyDashboard' route is injected */}
-            <ComprehensiveRouter /> 
-        </div>
+      <div data-agency-mode={subdomain}>
+        <ComprehensiveRouter />
+      </div>
     );
   }
 
