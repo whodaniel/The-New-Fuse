@@ -88,6 +88,7 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
+        '@the-new-fuse/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
         '@the-new-fuse/feature-suggestions': path.resolve(
           __dirname,
           '../../packages/feature-suggestions/src'
