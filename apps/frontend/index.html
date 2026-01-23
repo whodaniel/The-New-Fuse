@@ -18,9 +18,15 @@
 
           // Create a safer define function
           const safeDefine = function (name, constructor, options) {
+            // SPECIAL CASE: mce-autosize-textarea is notoriously problematic with polyfills
+            if (name === 'mce-autosize-textarea') {
+              if (customElements.get(name) || registeredElements.has(name)) {
+                return;
+              }
+            }
+
             // Double-check if already registered in our tracker
             if (registeredElements.has(name)) {
-              console.warn(`[The New Fuse] Element '${name}' already in registry. Skipping.`);
               return;
             }
 
@@ -28,9 +34,6 @@
             try {
               const existing = originalGet(name);
               if (existing) {
-                console.warn(
-                  `[The New Fuse] Element '${name}' already defined in customElements. Skipping.`
-                );
                 registeredElements.add(name);
                 return;
               }
@@ -40,15 +43,11 @@
 
             // Check if currently being defined (race condition)
             if (definingElements.has(name)) {
-              console.warn(
-                `[The New Fuse] Element '${name}' is currently being defined. Skipping duplicate.`
-              );
               return;
             }
 
             // Final safety check: if already defined in the global registry, skip
             if (customElements.get(name)) {
-              console.warn(`[The New Fuse] Element '${name}' already detected in registry. Skipping.`);
               registeredElements.add(name);
               return;
             }
@@ -68,7 +67,6 @@
                 msg.includes('NotSupportedError')
               ) {
                 // Silently handle - element is already defined
-                console.warn(`[The New Fuse] caught duplicate for '${name}': ${msg}`);
                 registeredElements.add(name);
                 return;
               }
@@ -92,8 +90,8 @@
           // Override with bound function
           Object.defineProperty(customElements, 'define', {
             value: boundSafeDefine,
-            configurable: true,
-            writable: true,
+            configurable: false,
+            writable: false,
           });
 
           // Lock the customElements object itself to prevent polyfills from replacing it
@@ -116,7 +114,7 @@
             // Ignore if already non-configurable
           }
 
-          console.log('[The New Fuse] Custom Element Guard activated (FIRST) - Registry Locked');
+          console.log('[The New Fuse] Custom Element Guard activated (V2) - Registry Locked');
         } catch (e) {
           console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
         }

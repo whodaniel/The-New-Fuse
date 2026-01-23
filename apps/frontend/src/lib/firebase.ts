@@ -9,8 +9,24 @@ const firebaseConfig = {
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
+
+// Sanity check for Firebase API Key
+if (firebaseConfig.apiKey) {
+  const key = firebaseConfig.apiKey;
+  if (key.length < 30) {
+    console.error(
+      `[The New Fuse] Firebase API Key seems too short (${key.length} chars). Check Railway variables.`
+    );
+  } else {
+    console.log(
+      `[The New Fuse] Firebase config detected (Key starts with: ${key.substring(0, 8)}...)`
+    );
+  }
+} else {
+  console.error('[The New Fuse] Firebase API Key is missing! Auth will fail.');
+}
 
 // Initialize Firebase (with hot-reload protection)
 let app: FirebaseApp;

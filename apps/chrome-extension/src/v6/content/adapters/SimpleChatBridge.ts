@@ -325,11 +325,15 @@ class SimpleChatBridge {
         if (stateChanged) {
           // Add platform info to help debugging on unknown sites
           logData.isKnownPlatform = isSupportedSite;
-          console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
+
+          // ONLY log on supported platforms or if debug mode is on
+          if (isSupportedSite || DEBUG) {
+            console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
+          }
         }
 
-        // Provide hints for debugging (only once per state change)
-        if (!input && stateChanged) {
+        // Provide hints for debugging (only on supported platforms once per state change)
+        if (!input && stateChanged && (isSupportedSite || DEBUG)) {
           console.debug(
             '[SimpleChatBridge] 💡 Enable debug mode: window.__FUSE_DEBUG_SELECTORS = true'
           );
