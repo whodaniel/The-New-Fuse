@@ -322,14 +322,11 @@ class SimpleChatBridge {
         // so we always log when elements aren't found (user expects it to work here)
         const isSupportedSite = this.isSupportedPlatform();
 
-        if (stateChanged) {
+        if (stateChanged && (isSupportedSite || DEBUG)) {
           // Add platform info to help debugging on unknown sites
           logData.isKnownPlatform = isSupportedSite;
 
-          // ONLY log on supported platforms or if debug mode is on
-          if (isSupportedSite || DEBUG) {
-            console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
-          }
+          console.debug('[SimpleChatBridge] Elements NOT ready:', logData);
         }
 
         // Provide hints for debugging (only on supported platforms once per state change)
