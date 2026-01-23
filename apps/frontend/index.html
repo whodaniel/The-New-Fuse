@@ -7,6 +7,22 @@
     <!-- CRITICAL: Custom Element Guard MUST be first to intercept browser extension scripts -->
     <script>
       (function () {
+        console.log('[The New Fuse] Custom Element Guard (V4-HOTFIX) - Initializing...');
+        
+        // GLOBAL ERROR FILTER: Catch and swallow the specific 'mce-autosize-textarea' collision error
+        // This acts as a safety net if the guard is bypassed or loaded late.
+        window.addEventListener('error', function(event) {
+          if (event.message && (
+              event.message.includes('mce-autosize-textarea') || 
+              event.message.includes('already been defined')
+          )) {
+            // Silently swallow this specific collision error to keep console clean
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return true;
+          }
+        }, true);
+
         try {
           // Keep track of all registered elements
           const registeredElements = new Set();
@@ -114,7 +130,7 @@
             // Ignore if already non-configurable
           }
 
-          console.log('[The New Fuse] Custom Element Guard activated (V2) - Registry Locked');
+          console.log('[The New Fuse] Custom Element Guard activated (V4) - Registry Locked');
         } catch (e) {
           console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
         }

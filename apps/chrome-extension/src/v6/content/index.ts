@@ -72,7 +72,7 @@ class FuseConnectContentScript {
     if (this.isInitialized) return;
     this.isInitialized = true;
 
-    console.log('[FuseConnect v6] Content script initialized (panel AUTO-OPEN disabled)');
+    console.debug('[FuseConnect v6] Content script initialized (panel AUTO-OPEN disabled)');
 
     // Auto-open panel disabled by default per user request
     // try {
@@ -254,7 +254,7 @@ class FuseConnectContentScript {
       },
     };
 
-    console.log('[FuseConnect v6] Debug utils available at window.__FUSE_DEBUG');
+    console.debug('[FuseConnect v6] Debug utils available at window.__FUSE_DEBUG');
   }
 
   /**

@@ -62,7 +62,7 @@ try {
         // Ignore if already non-configurable
       }
 
-      console.log('[FuseConnect] Custom Element Guard activated');
+      console.debug('[FuseConnect] Custom Element Guard activated');
     }
   }
 } catch (e) {

@@ -85,4 +85,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # -s enables SPA mode (serves index.html for all routes)
 # -n disables clipboard notifications
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
-# Force rebuild Fri Jan 23 01:38:05 EST 2026
+# Force rebuild Fri Jan 23 05:15:41 EST 2026

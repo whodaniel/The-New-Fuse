@@ -13,19 +13,26 @@ const firebaseConfig = {
 };
 
 // Sanity check for Firebase API Key
-if (firebaseConfig.apiKey) {
+if (firebaseConfig.apiKey && firebaseConfig.apiKey !== '${VITE_FIREBASE_API_KEY}') {
   const key = firebaseConfig.apiKey;
   if (key.length < 30) {
     console.error(
       `[The New Fuse] Firebase API Key seems too short (${key.length} chars). Check Railway variables.`
     );
   } else {
-    console.log(
-      `[The New Fuse] Firebase config detected (Key starts with: ${key.substring(0, 8)}...)`
-    );
+    // Only log this once in production to reduce noise
+    if (import.meta.env.DEV) {
+      console.log(
+        `[The New Fuse] Firebase config detected (Key starts with: ${key.substring(0, 8)}...)`
+      );
+    }
   }
 } else {
-  console.error('[The New Fuse] Firebase API Key is missing! Auth will fail.');
+  const isEnvPlaceholder = firebaseConfig.apiKey === '${VITE_FIREBASE_API_KEY}';
+  console.error(
+    `[The New Fuse] Firebase API Key is ${isEnvPlaceholder ? 'unresolved placeholder' : 'missing'}! Auth will fail. ` +
+    'Action Required: Set VITE_FIREBASE_API_KEY in Railway environment variables and redeploy.'
+  );
 }
 
 // Initialize Firebase (with hot-reload protection)

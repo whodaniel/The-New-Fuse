@@ -57,7 +57,10 @@ class SimpleChatBridge {
    */
   init(callbacks: ChatBridgeCallbacks): void {
     this.callbacks = callbacks;
-    console.log('[SimpleChatBridge] Initialized');
+    // Suppress initialization log unless explicitly debugging or first time
+    if ((window as any).__FUSE_DEBUG_SELECTORS) {
+      console.log('[SimpleChatBridge] Initialized');
+    }
   }
 
   /**
@@ -348,7 +351,7 @@ class SimpleChatBridge {
           }
         }
       } else {
-        console.log('[SimpleChatBridge] ✅ Elements ready:', logData);
+        console.debug('[SimpleChatBridge] ✅ Elements ready:', logData);
       }
     }
 
