@@ -94,9 +94,10 @@ RUN mkdir -p /tmp/client_body /tmp/proxy /tmp/fastcgi /tmp/uwsgi /tmp/scgi && \
 # Expose port (Railway will inject PORT env var)
 EXPOSE ${PORT:-3000}
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/health || exit 1
+# Health check - Railway injects PORT, but healthcheck runs before CMD exports it
+# Use a script that reads PORT from env or defaults to 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/ || exit 1
 
 # Start command - substitute environment variables and start nginx
 # Set defaults for PORT and BACKEND_URL if not provided
