@@ -55,6 +55,19 @@ const AllPages: React.FC = () => {
       path: '/dashboard/agents/:id',
       description: 'Dashboard Agent Detail',
     },
+    {
+      name: 'Sophisticated Hub',
+      path: '/sophisticated-hub',
+      description: 'Advanced AI Control Center',
+    },
+    { name: 'Modern Hub', path: '/hub', description: 'Modern Integrated AI Workspace' },
+    {
+      name: 'A2A Control',
+      path: '/a2a-control',
+      description: 'Agent-to-Agent Communication Control',
+    },
+    { name: 'Knowledge Hub', path: '/knowledge-hub', description: 'Central Knowledge Repository' },
+    { name: 'MCP Hub', path: '/mcp-hub', description: 'Model Context Protocol Management' },
 
     // Workspace Management
     { name: 'Workspace Overview', path: '/workspace/overview', description: 'Main Workspace View' },

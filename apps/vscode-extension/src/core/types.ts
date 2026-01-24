@@ -26,8 +26,9 @@ export interface FileAttachment {
   name: string;
   path: string;
   size: number;
-  type: string;
-  content?: string;
+  type: 'text' | 'image' | 'pdf' | 'other';
+  content?: string; // Base64 for images, text for documents
+  mimeType?: string; // e.g., 'image/png', 'image/jpeg', 'text/plain'
 }
 
 // ============================================
@@ -110,6 +111,10 @@ export interface LLMRequest {
   maxTokens?: number;
   stream?: boolean;
   systemPrompt?: string;
+  tools?: ToolDefinition[]; // Tool definitions for function calling
+  onChunk?: (chunk: string) => void; // Streaming callback
+  enableThinking?: boolean; // For Claude 3.7+ and o1
+  thinkingBudget?: number; // For o1 models
 }
 
 export interface LLMResponse {
@@ -121,6 +126,7 @@ export interface LLMResponse {
     totalTokens: number;
   };
   finishReason?: string;
+  toolCalls?: any[]; // Tool calls requested by the model
 }
 
 // ============================================
@@ -155,6 +161,126 @@ export interface MCPResource {
   name: string;
   mimeType?: string;
   description?: string;
+}
+
+// ============================================
+// Tool Orchestration Types
+// ============================================
+
+/**
+ * Tool definition for LLM function calling
+ * Compatible with both Anthropic and OpenAI formats
+ */
+export interface ToolDefinition {
+  name: string;
+  description: string;
+  input_schema: {
+    type: 'object';
+    properties: Record<string, unknown>;
+    required?: string[];
+  };
+}
+
+/**
+ * Tool use request from LLM (Anthropic format)
+ */
+export interface ToolUse {
+  id: string;
+  name: string;
+  input: Record<string, unknown>;
+}
+
+/**
+ * Tool execution result
+ */
+export interface ToolResult {
+  tool_use_id: string;
+  content: string | Record<string, unknown>;
+  is_error?: boolean;
+}
+
+/**
+ * Tool call from OpenAI format
+ */
+export interface FunctionCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string; // JSON string
+  };
+}
+
+// ============================================
+// Workspace Service Types
+// ============================================
+
+/**
+ * Options for text search in workspace
+ */
+export interface SearchOptions {
+  pattern: string; // Search text or regex
+  isRegex?: boolean;
+  isCaseSensitive?: boolean;
+  includePattern?: string; // Glob pattern for files to include
+  excludePattern?: string; // Glob pattern for files to exclude
+  maxResults?: number; // Limit number of results
+}
+
+/**
+ * Single search result
+ */
+export interface SearchResult {
+  file: string; // File path
+  line: number; // Line number (1-indexed)
+  column: number; // Column number (1-indexed)
+  matchText: string; // The matching line
+  contextBefore?: string[]; // Lines before the match
+  contextAfter?: string[]; // Lines after the match
+}
+
+/**
+ * Workspace file tree node
+ */
+export interface FileTree {
+  name: string;
+  path: string;
+  type: 'file' | 'directory';
+  children?: FileTree[];
+  size?: number;
+}
+
+// ============================================
+// Git Service Types
+// ============================================
+
+/**
+ * Git commit information
+ */
+export interface GitCommit {
+  hash: string;
+  author: string;
+  email: string;
+  date: Date;
+  message: string;
+}
+
+/**
+ * Git file status
+ */
+export interface GitFileStatus {
+  path: string;
+  status: 'added' | 'modified' | 'deleted' | 'renamed' | 'untracked';
+  staged: boolean;
+}
+
+/**
+ * Git blame information for a line
+ */
+export interface GitBlameInfo {
+  commit: GitCommit;
+  line: number;
+  originalLine: number;
 }
 
 // ============================================

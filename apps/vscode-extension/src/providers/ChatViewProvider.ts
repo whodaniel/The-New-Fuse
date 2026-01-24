@@ -1,8 +1,9 @@
 /**
  * The New Fuse VSCode Extension - Chat View Provider
- * Version 9.0.0 - Clean Architecture
+ * Version 9.1.0 - Frontier Capabilities
  *
  * Webview provider for the main chat interface
+ * Now with streaming support and tool orchestration
  */
 
 import * as vscode from 'vscode';
@@ -52,6 +53,13 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     });
     chatService.onClear(() => {
       this.sendToWebview({ type: 'clearChat' });
+    });
+    chatService.onStreamingChunk((messageId, chunk) => {
+      // Send incremental update to webview for streaming
+      this.sendToWebview({
+        type: 'updateMessage',
+        payload: { messageId, chunk },
+      });
     });
 
     log.info('ChatViewProvider initialized');
@@ -131,6 +139,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
   /**
    * Handle user message from webview
+   * Now with streaming support enabled by default
    */
   async handleUserMessage(content: string): Promise<void> {
     if (!content?.trim()) return;
@@ -148,7 +157,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
     try {
       const chatService = getChatService();
-      await chatService.sendMessage(content);
+
+      // Enable streaming for better UX (real-time response)
+      const enableStreaming = true;
+      await chatService.sendMessage(content, enableStreaming);
 
       this.sendToWebview({ type: 'updateStatus', payload: { status: 'Ready' } });
     } catch (error) {

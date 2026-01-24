@@ -682,19 +682,24 @@
     "@types/node": "18.x",
     "@types/uuid": "^11.0.0",
     "@types/vscode": "^1.90.0",
+    "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.3.9",
     "@vscode/vsce": "^2.32.0",
     "esbuild": "^0.27.1",
     "eslint": "^9.13.0",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^0.0.1-alpha.0"
+    "typescript-eslint": "^0.0.1-alpha.0",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@vscode/codicons": "^0.0.36",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "electron": "^28.0.0",
+    "lru-cache": "^11.2.4",
+    "tiktoken": "^1.0.22",
     "zod": "^4.3.5",
     "zod-to-json-schema": "^3.25.1"
   },

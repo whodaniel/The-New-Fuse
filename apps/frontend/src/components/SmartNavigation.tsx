@@ -101,6 +101,12 @@ function SmartNavigation() {
               >
                 Pricing
               </Link>
+              <Link
+                to="/all-pages"
+                className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/30"
+              >
+                📂 All Pages
+              </Link>
             </div>
 
             {/* Auth Buttons */}
@@ -170,6 +176,48 @@ function SmartNavigation() {
                 </Link>
                 <Link to="/dashboard/agents" className="block px-4 py-2 hover:bg-gray-100">
                   📊 Agent Dashboard
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Explore Hubs Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => toggleDropdown('explore')}
+              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-cyan-700 flex items-center"
+            >
+              🌐 Explore <span className="ml-1">▼</span>
+            </button>
+            {activeDropdown === 'explore' && (
+              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-56">
+                <Link
+                  to="/sophisticated-hub"
+                  className="block px-4 py-2 hover:bg-gray-100 font-bold text-cyan-600"
+                >
+                  🏛️ Sophisticated Hub
+                </Link>
+                <Link to="/hub" className="block px-4 py-2 hover:bg-gray-100">
+                  🏙️ Modern Hub
+                </Link>
+                <Link to="/mcp-hub" className="block px-4 py-2 hover:bg-gray-100">
+                  🔌 MCP Hub
+                </Link>
+                <Link to="/knowledge-hub" className="block px-4 py-2 hover:bg-gray-100">
+                  🧠 Knowledge Hub
+                </Link>
+                <Link to="/a2a-control" className="block px-4 py-2 hover:bg-gray-100">
+                  🎮 A2A Control
+                </Link>
+                <Link to="/agency/dashboard" className="block px-4 py-2 hover:bg-gray-100">
+                  🏢 Agency Dashboard
+                </Link>
+                <div className="border-t border-gray-100 my-1"></div>
+                <Link
+                  to="/all-pages"
+                  className="block px-4 py-2 hover:bg-gray-100 font-medium text-blue-600"
+                >
+                  📁 Site Directory (All Pages)
                 </Link>
               </div>
             )}
@@ -303,6 +351,13 @@ function SmartNavigation() {
                   <Link to="/admin/settings" className="block px-4 py-2 hover:bg-gray-100">
                     ⚙️ Admin Settings
                   </Link>
+                  <div className="border-t border-gray-100 my-1"></div>
+                  <Link
+                    to="/all-pages"
+                    className="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600"
+                  >
+                    📁 All Pages Directory
+                  </Link>
                 </div>
               )}
             </div>
@@ -352,6 +407,12 @@ function SmartNavigation() {
                 </Link>
                 <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">
                   ⚙️ Settings
+                </Link>
+                <Link
+                  to="/all-pages"
+                  className="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600"
+                >
+                  📁 Site Directory (All Pages)
                 </Link>
                 <div className="border-t border-gray-200"></div>
                 <button

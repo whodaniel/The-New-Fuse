@@ -1,8 +1,9 @@
 /**
  * The New Fuse VSCode Extension
- * Version 9.0.0 - Clean Architecture
+ * Version 9.1.0 - Frontier Capabilities
  *
  * Main extension entry point
+ * Now with tool orchestration, workspace awareness, and streaming support
  */
 
 import * as vscode from 'vscode';
@@ -13,13 +14,15 @@ import { ChatViewProvider } from './providers/ChatViewProvider';
 import { AIService, getAIService } from './services/AIService';
 import { ChatService } from './services/ChatService';
 import { MCPService, getMCPService } from './services/MCPService';
+import { ToolOrchestrationService } from './services/ToolOrchestrationService';
+import { WorkspaceService } from './services/WorkspaceService';
 import { log, logger } from './utils/logger';
 
 /**
  * Extension activation
  */
 export async function activate(context: vscode.ExtensionContext): Promise<TheNewFuseAPI> {
-  log.info('🚀 The New Fuse v9.0.0 activating...');
+  log.info('🚀 The New Fuse v9.1.0 (Frontier Capabilities) activating...');
   const startTime = Date.now();
 
   try {
@@ -129,21 +132,35 @@ class ExtensionAPI implements TheNewFuseAPI {
 
 /**
  * Initialize all services
+ * Now includes Workspace and Tool Orchestration services
  */
 async function initializeServices(): Promise<void> {
   // Initialize AI Service
   const aiService = AIService.getInstance();
   await aiService.initialize();
+  log.debug('✓ AI Service ready');
 
   // Initialize Chat Service
   const chatService = ChatService.getInstance();
   await chatService.initialize();
+  log.debug('✓ Chat Service ready');
+
+  // Initialize Workspace Service (NEW in v9.1.0)
+  const workspaceService = WorkspaceService.getInstance();
+  // Workspace service is ready immediately (singleton pattern)
+  log.debug('✓ Workspace Service ready');
+
+  // Initialize Tool Orchestration Service (NEW in v9.1.0)
+  const orchestrationService = ToolOrchestrationService.getInstance();
+  // Orchestration service is ready immediately (singleton pattern)
+  log.debug('✓ Tool Orchestration Service ready');
 
   // Initialize MCP Service (non-blocking)
   const mcpService = MCPService.getInstance();
   mcpService.initialize().catch((error) => {
     log.warn('MCP service initialization failed (non-critical)', error);
   });
+  log.debug('✓ MCP Service initializing');
 }
 
 /**

@@ -39,7 +39,7 @@ interface ExecuteBMADCycleDto {
   variables: Record<string, unknown>;
 }
 
-@Controller('api/autonomous')
+@Controller('autonomous')
 export class TNFAutonomousController {
   private readonly logger = new Logger(TNFAutonomousController.name);
 

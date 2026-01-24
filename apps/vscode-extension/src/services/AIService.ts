@@ -279,6 +279,28 @@ export class AIService {
     signal: AbortSignal
   ): Promise<LLMResponse> {
     const messages = this.formatMessagesForOpenAI(request);
+    const enableStreaming = request.stream ?? false;
+
+    // Build request body
+    const requestBody: any = {
+      model: request.model || config.model,
+      messages,
+      temperature: request.temperature ?? config.temperature,
+      max_tokens: request.maxTokens ?? config.maxTokens,
+      stream: enableStreaming,
+    };
+
+    // Add tools if provided
+    if (request.tools && request.tools.length > 0) {
+      requestBody.tools = request.tools.map((tool) => ({
+        type: 'function',
+        function: {
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.input_schema,
+        },
+      }));
+    }
 
     const response = await fetch(`${config.baseUrl}/chat/completions`, {
       method: 'POST',
@@ -286,13 +308,7 @@ export class AIService {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${config.apiKey}`,
       },
-      body: JSON.stringify({
-        model: request.model || config.model,
-        messages,
-        temperature: request.temperature ?? config.temperature,
-        max_tokens: request.maxTokens ?? config.maxTokens,
-        stream: false,
-      }),
+      body: JSON.stringify(requestBody),
       signal,
     });
 
@@ -301,8 +317,14 @@ export class AIService {
       throw new Error(`API error: ${response.status} - ${error}`);
     }
 
+    // Handle streaming response
+    if (enableStreaming) {
+      return this.handleOpenAIStreamingResponse(response, request.onChunk);
+    }
+
+    // Handle non-streaming response
     const data = (await response.json()) as {
-      choices: Array<{ message: { content: string } }>;
+      choices: Array<{ message: { content: string; tool_calls?: any[] } }>;
       model: string;
       usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
     };
@@ -317,6 +339,64 @@ export class AIService {
             totalTokens: data.usage.total_tokens,
           }
         : undefined,
+      toolCalls: data.choices[0]?.message?.tool_calls,
+    };
+  }
+
+  /**
+   * Handle OpenAI-compatible streaming response
+   */
+  private async handleOpenAIStreamingResponse(
+    response: Response,
+    onChunk?: (chunk: string) => void
+  ): Promise<LLMResponse> {
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('Response body is not readable');
+    }
+
+    const decoder = new TextDecoder();
+    let fullContent = '';
+    let model = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter((line) => line.trim() !== '');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content || '';
+              model = parsed.model || model;
+
+              if (content) {
+                fullContent += content;
+                if (onChunk) {
+                  onChunk(content);
+                }
+              }
+            } catch (e) {
+              // Skip invalid JSON
+              log.warn('Failed to parse streaming chunk', e);
+            }
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    return {
+      content: fullContent,
+      model,
     };
   }
 
@@ -329,6 +409,29 @@ export class AIService {
     signal: AbortSignal
   ): Promise<LLMResponse> {
     const { systemPrompt, messages } = this.formatMessagesForAnthropic(request);
+    const enableStreaming = request.stream ?? false;
+
+    // Build request body
+    const requestBody: any = {
+      model: request.model || config.model,
+      max_tokens: request.maxTokens ?? config.maxTokens,
+      system: systemPrompt,
+      messages,
+      stream: enableStreaming,
+    };
+
+    // Add tools if provided
+    if (request.tools && request.tools.length > 0) {
+      requestBody.tools = request.tools;
+    }
+
+    // Add extended thinking if enabled (Claude 3.7+)
+    if (request.enableThinking) {
+      requestBody.thinking = {
+        type: 'enabled',
+        budget_tokens: request.thinkingBudget || 10000,
+      };
+    }
 
     const response = await fetch(`${config.baseUrl}/messages`, {
       method: 'POST',
@@ -337,12 +440,7 @@ export class AIService {
         'x-api-key': config.apiKey || '',
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify({
-        model: request.model || config.model,
-        max_tokens: request.maxTokens ?? config.maxTokens,
-        system: systemPrompt,
-        messages,
-      }),
+      body: JSON.stringify(requestBody),
       signal,
     });
 
@@ -351,14 +449,36 @@ export class AIService {
       throw new Error(`Anthropic API error: ${response.status} - ${error}`);
     }
 
+    // Handle streaming response
+    if (enableStreaming) {
+      return this.handleAnthropicStreamingResponse(response, request.onChunk);
+    }
+
+    // Handle non-streaming response
     const data = (await response.json()) as {
-      content: Array<{ text: string }>;
+      content: Array<{ type: string; text?: string; name?: string; input?: any; id?: string }>;
       model: string;
       usage?: { input_tokens: number; output_tokens: number };
     };
 
+    // Extract text content and tool uses
+    let textContent = '';
+    const toolUses: any[] = [];
+
+    for (const block of data.content) {
+      if (block.type === 'text' && block.text) {
+        textContent += block.text;
+      } else if (block.type === 'tool_use') {
+        toolUses.push({
+          id: block.id,
+          name: block.name,
+          input: block.input,
+        });
+      }
+    }
+
     return {
-      content: data.content[0]?.text || '',
+      content: textContent,
       model: data.model,
       usage: data.usage
         ? {
@@ -367,6 +487,69 @@ export class AIService {
             totalTokens: data.usage.input_tokens + data.usage.output_tokens,
           }
         : undefined,
+      toolCalls: toolUses.length > 0 ? toolUses : undefined,
+    };
+  }
+
+  /**
+   * Handle Anthropic streaming response
+   */
+  private async handleAnthropicStreamingResponse(
+    response: Response,
+    onChunk?: (chunk: string) => void
+  ): Promise<LLMResponse> {
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('Response body is not readable');
+    }
+
+    const decoder = new TextDecoder();
+    let fullContent = '';
+    let model = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter((line) => line.trim() !== '');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+
+            try {
+              const parsed = JSON.parse(data);
+
+              // Handle different event types
+              if (parsed.type === 'content_block_delta') {
+                const content = parsed.delta?.text || '';
+                model = parsed.model || model;
+
+                if (content) {
+                  fullContent += content;
+                  if (onChunk) {
+                    onChunk(content);
+                  }
+                }
+              } else if (parsed.type === 'message_start') {
+                model = parsed.message?.model || model;
+              }
+            } catch (e) {
+              // Skip invalid JSON
+              log.warn('Failed to parse Anthropic streaming chunk', e);
+            }
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    return {
+      content: fullContent,
+      model,
     };
   }
 
@@ -380,19 +563,39 @@ export class AIService {
   ): Promise<LLMResponse> {
     const contents = this.formatMessagesForGemini(request);
     const model = request.model || config.model;
+    const enableStreaming = request.stream ?? false;
+
+    // Build request body
+    const requestBody: any = {
+      contents,
+      generationConfig: {
+        temperature: request.temperature ?? config.temperature,
+        maxOutputTokens: request.maxTokens ?? config.maxTokens,
+      },
+    };
+
+    // Add tools if provided (Gemini uses function calling)
+    if (request.tools && request.tools.length > 0) {
+      requestBody.tools = [
+        {
+          functionDeclarations: request.tools.map((tool) => ({
+            name: tool.name,
+            description: tool.description,
+            parameters: tool.input_schema,
+          })),
+        },
+      ];
+    }
+
+    // Determine endpoint based on streaming
+    const endpoint = enableStreaming ? 'streamGenerateContent' : 'generateContent';
 
     const response = await fetch(
-      `${config.baseUrl}/models/${model}:generateContent?key=${config.apiKey}`,
+      `${config.baseUrl}/models/${model}:${endpoint}?key=${config.apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents,
-          generationConfig: {
-            temperature: request.temperature ?? config.temperature,
-            maxOutputTokens: request.maxTokens ?? config.maxTokens,
-          },
-        }),
+        body: JSON.stringify(requestBody),
         signal,
       }
     );
@@ -402,8 +605,16 @@ export class AIService {
       throw new Error(`Gemini API error: ${response.status} - ${error}`);
     }
 
+    // Handle streaming response
+    if (enableStreaming) {
+      return this.handleGeminiStreamingResponse(response, model, request.onChunk);
+    }
+
+    // Handle non-streaming response
     const data = (await response.json()) as {
-      candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
+      candidates: Array<{
+        content: { parts: Array<{ text?: string; functionCall?: any }> };
+      }>;
       usageMetadata?: {
         promptTokenCount: number;
         candidatesTokenCount: number;
@@ -411,8 +622,21 @@ export class AIService {
       };
     };
 
+    // Extract text content and function calls
+    let textContent = '';
+    const functionCalls: any[] = [];
+
+    const parts = data.candidates[0]?.content?.parts || [];
+    for (const part of parts) {
+      if (part.text) {
+        textContent += part.text;
+      } else if (part.functionCall) {
+        functionCalls.push(part.functionCall);
+      }
+    }
+
     return {
-      content: data.candidates[0]?.content?.parts[0]?.text || '',
+      content: textContent,
       model,
       usage: data.usageMetadata
         ? {
@@ -421,6 +645,58 @@ export class AIService {
             totalTokens: data.usageMetadata.totalTokenCount,
           }
         : undefined,
+      toolCalls: functionCalls.length > 0 ? functionCalls : undefined,
+    };
+  }
+
+  /**
+   * Handle Gemini streaming response
+   */
+  private async handleGeminiStreamingResponse(
+    response: Response,
+    model: string,
+    onChunk?: (chunk: string) => void
+  ): Promise<LLMResponse> {
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('Response body is not readable');
+    }
+
+    const decoder = new TextDecoder();
+    let fullContent = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter((line) => line.trim() !== '');
+
+        for (const line of lines) {
+          try {
+            const parsed = JSON.parse(line);
+            const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+            if (text) {
+              fullContent += text;
+              if (onChunk) {
+                onChunk(text);
+              }
+            }
+          } catch (e) {
+            // Skip invalid JSON
+            log.warn('Failed to parse Gemini streaming chunk', e);
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    return {
+      content: fullContent,
+      model,
     };
   }
 

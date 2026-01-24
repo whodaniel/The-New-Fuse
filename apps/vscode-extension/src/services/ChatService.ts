@@ -1,15 +1,16 @@
 /**
  * The New Fuse VSCode Extension - Chat Service
- * Version 9.0.0 - Clean Architecture
+ * Version 9.1.0 - Frontier Capabilities
  *
  * Manages chat history, message handling, and conversation state
+ * Now with tool orchestration and streaming support
  */
 
 import { ConfigManager } from '../core/config';
 import { ChatMessage, FileAttachment } from '../core/types';
 import { generateId } from '../utils/helpers';
 import { log } from '../utils/logger';
-import { getAIService } from './AIService';
+import { getToolOrchestrationService } from './ToolOrchestrationService';
 
 const CHAT_HISTORY_KEY = 'chatHistory';
 const MAX_HISTORY_LENGTH = 100;
@@ -23,6 +24,7 @@ export class ChatService {
   private attachments: FileAttachment[] = [];
   private onMessageCallbacks: Array<(message: ChatMessage) => void> = [];
   private onClearCallbacks: Array<() => void> = [];
+  private onStreamingChunkCallbacks: Array<(messageId: string, chunk: string) => void> = [];
 
   private constructor() {}
 
@@ -63,8 +65,9 @@ export class ChatService {
 
   /**
    * Send a user message and get AI response
+   * Now with tool orchestration and streaming support
    */
-  async sendMessage(content: string): Promise<ChatMessage> {
+  async sendMessage(content: string, enableStreaming: boolean = false): Promise<ChatMessage> {
     // Create user message
     const userMessage: ChatMessage = {
       id: generateId(),
@@ -87,39 +90,87 @@ export class ChatService {
       fullContent = content + attachmentContext;
     }
 
-    // Get AI response
-    const aiService = getAIService();
+    // Create assistant message placeholder for streaming
+    const assistantMessageId = generateId();
+    const assistantMessage: ChatMessage = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date().toISOString(),
+      metadata: {},
+    };
+
+    if (enableStreaming) {
+      // Add empty assistant message for streaming updates
+      this.addMessage(assistantMessage);
+    }
+
+    // Get tool orchestration service
+    const orchestrationService = getToolOrchestrationService();
 
     try {
       const startTime = Date.now();
-      const response = await aiService.chat({
-        messages: this.getContextMessages(),
-        systemPrompt: this.getSystemPrompt(),
-      });
 
-      const assistantMessage: ChatMessage = {
-        id: generateId(),
-        role: 'assistant',
-        content: response.content,
-        timestamp: new Date().toISOString(),
+      // Execute conversation with tool support
+      const result = await orchestrationService.executeConversationWithTools(
+        this.getContextMessages(),
+        this.getSystemPrompt(),
+        enableStreaming
+          ? (chunk: string) => {
+              // Update assistant message content incrementally
+              assistantMessage.content += chunk;
+              this.notifyStreamingChunk(assistantMessageId, chunk);
+            }
+          : undefined
+      );
+
+      // Update or create assistant message with final result
+      const finalMessage: ChatMessage = {
+        ...assistantMessage,
+        content: result.finalMessage.content,
         metadata: {
-          model: response.model,
-          tokens: response.usage?.totalTokens,
+          model: result.finalMessage.metadata?.model,
+          tokens: result.finalMessage.metadata?.tokens,
           processingTime: Date.now() - startTime,
+          toolCallsCount: result.toolCalls.length,
+          iterations: result.iterations,
         },
       };
 
-      this.addMessage(assistantMessage);
-      return assistantMessage;
+      if (enableStreaming) {
+        // Update existing message
+        const messageIndex = this.messages.findIndex((m) => m.id === assistantMessageId);
+        if (messageIndex >= 0) {
+          this.messages[messageIndex] = finalMessage;
+          this.persistHistory();
+          this.notifyMessageAdded(finalMessage);
+        }
+      } else {
+        // Add new message
+        this.addMessage(finalMessage);
+      }
+
+      return finalMessage;
     } catch (error) {
       const errorMessage: ChatMessage = {
-        id: generateId(),
+        id: assistantMessageId,
         role: 'assistant',
         content: `❌ Error: ${(error as Error).message}`,
         timestamp: new Date().toISOString(),
       };
 
-      this.addMessage(errorMessage);
+      if (enableStreaming) {
+        // Update existing message
+        const messageIndex = this.messages.findIndex((m) => m.id === assistantMessageId);
+        if (messageIndex >= 0) {
+          this.messages[messageIndex] = errorMessage;
+          this.persistHistory();
+          this.notifyMessageAdded(errorMessage);
+        }
+      } else {
+        this.addMessage(errorMessage);
+      }
+
       throw error;
     }
   }
@@ -200,6 +251,19 @@ export class ChatService {
   }
 
   /**
+   * Subscribe to streaming chunks
+   */
+  onStreamingChunk(callback: (messageId: string, chunk: string) => void): () => void {
+    this.onStreamingChunkCallbacks.push(callback);
+    return () => {
+      const index = this.onStreamingChunkCallbacks.indexOf(callback);
+      if (index >= 0) {
+        this.onStreamingChunkCallbacks.splice(index, 1);
+      }
+    };
+  }
+
+  /**
    * Get messages for AI context (last N messages)
    */
   private getContextMessages(): ChatMessage[] {
@@ -208,22 +272,38 @@ export class ChatService {
   }
 
   /**
-   * Get system prompt
+   * Get system prompt with tool awareness
    */
   private getSystemPrompt(): string {
-    return `You are The New Fuse AI Assistant, a helpful and knowledgeable coding companion.
+    return `You are The New Fuse AI Assistant, a frontier-level coding companion with powerful workspace capabilities.
 
-You help users with:
-- Writing, reviewing, and debugging code
-- Explaining programming concepts
-- Suggesting improvements and best practices
-- Answering technical questions
+CAPABILITIES:
+- Full workspace access (search files, read code, explore structure)
+- Tool execution via Model Context Protocol (MCP)
+- Multi-provider LLM routing
+- Real-time code analysis
 
-Guidelines:
+AVAILABLE ACTIONS:
+- Search workspace files using glob patterns
+- Find text/code across all files (grep functionality)
+- Read any file in the workspace
+- Explore workspace structure and symbols
+- Execute MCP tools for extended functionality
+
+GUIDELINES:
+- Use tools proactively to explore the codebase before answering
+- Always read relevant files before suggesting changes
+- Search the workspace to find related code
+- Provide specific, actionable suggestions with file:line references
 - Be concise but thorough
 - Use code examples when helpful
 - Format responses with markdown
-- Acknowledge when you're unsure about something`;
+
+When asked about code, FIRST use your tools to:
+1. Search for relevant files
+2. Read the actual implementation
+3. Analyze the context
+4. Then provide informed answers`;
   }
 
   private trimHistory(): void {
@@ -257,6 +337,16 @@ Guidelines:
         callback();
       } catch (error) {
         log.error('Error in clear callback', error);
+      }
+    }
+  }
+
+  private notifyStreamingChunk(messageId: string, chunk: string): void {
+    for (const callback of this.onStreamingChunkCallbacks) {
+      try {
+        callback(messageId, chunk);
+      } catch (error) {
+        log.error('Error in streaming chunk callback', error);
       }
     }
   }

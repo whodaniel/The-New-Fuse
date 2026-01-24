@@ -136,8 +136,8 @@
   "portManagement.autoResolveConflicts": true,
   "portManagement.monitorInterval": 30000,
 
-  // Jest
-  "jest.rootPath": "./src/vscode-extension",
+  // Jest (configured in workspace file for multi-root workspace)
+  "jest.autoRun": "off",
 
   // Search
   "search.exclude": {
