@@ -148,5 +148,17 @@
     "**/.next": true,
     "**/.turbo": true,
     "**/pnpm-lock.yaml": true
-  }
+  },
+
+  // Git - Enhanced visibility
+  "git.enableStatusBarSync": true,
+  "git.showPushSuccessNotification": true,
+  "git.showCommitInput": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "git.autofetchPeriod": 180,
+  "git.showUnpushedChangesButton": true,
+  "scm.alwaysShowActions": true,
+  "scm.alwaysShowRepositories": true,
+  "scm.defaultViewMode": "tree"
 }
