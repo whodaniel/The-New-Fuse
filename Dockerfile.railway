@@ -65,7 +65,9 @@ ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 ARG PNPM_VERSION=10.22.0
 
-RUN npm i -g pnpm@${PNPM_VERSION} && apk add --no-cache netcat-openbsd
+RUN apk add --no-cache netcat-openbsd && \
+    corepack enable && \
+    corepack prepare pnpm@${PNPM_VERSION} --activate
 
 
 
