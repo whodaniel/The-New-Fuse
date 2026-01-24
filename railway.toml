@@ -2,16 +2,25 @@
 # NOTE: Do NOT set global [build] section - each service specifies its own builder
 
 # API Gateway Service (uses Docker)
+# API Gateway Service (uses Docker)
 [services.api-gateway]
 builder = "DOCKERFILE"
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "api-gateway", SERVICE_NAME = "@the-new-fuse/api-gateway" } }
-deploy = { healthcheckPath = "/health" }
+[services.api-gateway.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "api-gateway", SERVICE_NAME = "@the-new-fuse/api-gateway" }
+watchPaths = ["apps/api-gateway/**", "packages/**"]
+[services.api-gateway.deploy]
+healthcheckPath = "/health"
 
 # API Service (uses Docker)
 [services.api]
 builder = "DOCKERFILE"
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" } }
-deploy = { healthcheckPath = "/health" }
+[services.api.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" }
+watchPaths = ["apps/api/**", "packages/**"]
+[services.api.deploy]
+healthcheckPath = "/health"
 startCommand = "./run-service.sh"
 restartPolicyType = "ON_FAILURE"
 # Redis service is linked - REDIS_URL will be automatically provided by Railway
@@ -19,8 +28,12 @@ restartPolicyType = "ON_FAILURE"
 # Backend Service (uses Docker)
 [services.backend]
 builder = "DOCKERFILE"
-build = { dockerfilePath = "Dockerfile.railway", dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" } }
-deploy = { healthcheckPath = "/health" }
+[services.backend.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/backend-app" }
+watchPaths = ["apps/backend/**", "packages/**"]
+[services.backend.deploy]
+healthcheckPath = "/health"
 # Redis service is linked - REDIS_URL will be automatically provided by Railway
 
 # Frontend Service (uses root Dockerfile)
