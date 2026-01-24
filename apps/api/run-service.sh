@@ -20,40 +20,35 @@ else
   # Run Drizzle migrations for api service
   if [ "$SERVICE_PATH" = "api" ] && [ -n "$DATABASE_URL" ]; then
     echo "Running Drizzle migrations..."
-    
+
     # Define paths with fallbacks
     DB_PKG_PATH=""
-    
+
     # 1. Find Database Package
     if [ -d "/app/packages/database" ]; then
       DB_PKG_PATH="/app/packages/database"
     elif [ -d "../../packages/database" ]; then
       DB_PKG_PATH="../../packages/database"
     fi
-    
+
     if [ -n "$DB_PKG_PATH" ]; then
       echo "Found database package at $DB_PKG_PATH"
       CURRENT_DIR=$(pwd)
       cd "$DB_PKG_PATH"
-      
+
       echo "Executing Drizzle migrations..."
-      # Use the script defined in database package.json
-      # We attempt to use pnpm if available, else npm
-      if command -v pnpm >/dev/null 2>&1; then
-        pnpm drizzle:migrate
-      else
-        npm run drizzle:migrate
-      fi
-      
+      # Force use of npm run to avoid pnpm executable issues
+      npm run drizzle:migrate
+
       MIGRATE_EXIT_CODE=$?
       cd "$CURRENT_DIR"
-      
+
       if [ $MIGRATE_EXIT_CODE -eq 0 ]; then
         echo "Drizzle migrations completed successfully."
       else
         echo "WARNING: Drizzle migrations failed with exit code $MIGRATE_EXIT_CODE"
-        # We don't exit here to allow the service to attempt startup anyway, 
-        # similar to how the previous script verified connectivity but didn't strictly block 
+        # We don't exit here to allow the service to attempt startup anyway,
+        # similar to how the previous script verified connectivity but didn't strictly block
         # (though the previous script did try emergency repair).
       fi
     else
