@@ -65,12 +65,16 @@ ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 ARG PNPM_VERSION=10.22.0
 
-RUN apk add --no-cache netcat-openbsd && \
+RUN apk add --no-cache netcat-openbsd curl && \
     npm install -g pnpm@${PNPM_VERSION} && \
-    PNPM_PATH=$(which pnpm) && \
-    echo "pnpm installed at $PNPM_PATH" && \
-    ln -sf $PNPM_PATH /bin/pnpm && \
-    ln -sf $PNPM_PATH /usr/bin/pnpm
+    ln -sf /usr/local/bin/pnpm /bin/pnpm && \
+    ln -sf /usr/local/bin/pnpm /usr/bin/pnpm && \
+    echo "Files in /bin:" && ls -la /bin/pnpm && \
+    echo "Files in /usr/bin:" && ls -la /usr/bin/pnpm && \
+    pnpm --version
+
+# Ensure PATH includes all possible binary locations
+ENV PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
 
 
 
