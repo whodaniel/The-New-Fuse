@@ -7,6 +7,8 @@ import { PublicLayout } from './layouts/PublicLayout';
 import LoginPage from './pages/auth/Login';
 import RegisterPage from './pages/auth/Register';
 
+import RequireAuth from './components/RequireAuth';
+
 // Lazy load heavy components for better performance
 const MultiAgentChat = lazy(() => import('./components/MultiAgentChat'));
 const WorkspaceAnalytics = lazy(() => import('./pages/workspace/WorkspaceAnalytics'));
@@ -251,14 +253,32 @@ export default function ComprehensiveRouter() {
             {/* Core Routes */}
             <Route path="/" element={<LandingRevolutionPage />} />
             <Route path="/home" element={<LandingRevolutionPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/sophisticated-hub" element={<SophisticatedTNFHub />} />
+
+            {/* Protected Core Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <RequireAuth>
+                  <Dashboard />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/sophisticated-hub"
+              element={
+                <RequireAuth>
+                  <SophisticatedTNFHub />
+                </RequireAuth>
+              }
+            />
             <Route
               path="/hub"
               element={
-                <Suspense fallback={<LoadingFallback name="Hub" />}>
-                  <ModernHub />
-                </Suspense>
+                <RequireAuth>
+                  <Suspense fallback={<LoadingFallback name="Hub" />}>
+                    <ModernHub />
+                  </Suspense>
+                </RequireAuth>
               }
             />
 

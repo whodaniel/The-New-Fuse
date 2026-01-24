@@ -50,25 +50,28 @@ export const auth = getAuth(app);
 let db: Firestore;
 
 try {
+  // Ensure app is initialized before accessing Firestore
+  const currentApp = getApp();
+
   try {
-    // Check if Firestore is already initialized
+    // Try to get existing instance
+    db = getFirestore(currentApp);
+  } catch (e) {
+    // If getting existing failed, try initializing
     try {
-      db = getFirestore(app);
-    } catch {
-      // If not, initialize it with standard settings
-      db = initializeFirestore(app, {
+      db = initializeFirestore(currentApp, {
         cacheSizeBytes: CACHE_SIZE_UNLIMITED
       });
+    } catch (initError) {
+      // If initialization failed (e.g. already exists but getFirestore failed?), fallback
+      console.warn('[The New Fuse] Firestore init fallback:', initError);
+      db = getFirestore(currentApp);
     }
-  } catch (e) {
-    console.error('[The New Fuse] Firestore init failed:', e);
-    // Fallback to default instance to prevent crash
-    db = getFirestore(app);
   }
 } catch (error) {
-  console.error('[The New Fuse] Critical Firestore initialization error:', error);
-  // Ensure db is defined even if initialization fails to prevent imports from crashing
-  // Use a proxy or mock if necessary, but for now just log
+  console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
+  // Prevent crash by creating a dummy object if needed, or letting it throw later
+  // For now, allow it to be undefined and let explicit usage fail if critical
 }
 
 export { db };
