@@ -49,11 +49,13 @@ healthcheckPath = "/"
 # Another fallback for "Frontend Application" service name (with space)
 [services."Frontend Application"]
 builder = "DOCKERFILE"
+[services."Frontend Application".deploy]
+healthcheckPath = "/"
+
 [services."Frontend Application".build]
 dockerfilePath = "Dockerfile"
 watchPaths = ["apps/frontend/**", "packages/**"]
-[services."Frontend Application".deploy]
-healthcheckPath = "/"
+dockerBuildArgs = { VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}" }
 
 # TNF Cloud Sandbox (MCP Server for Tauri bridge)
 # Uses shared Dockerfile.railway from repository root
