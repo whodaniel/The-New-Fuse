@@ -13,13 +13,13 @@ watchPaths = ["apps/api-gateway/**", "packages/**"]
 healthcheckPath = "/health"
 
 # API Service (uses Docker)
-[services.api]
+[services.api-server-v2]
 builder = "DOCKERFILE"
-[services.api.build]
+[services.api-server-v2.build]
 dockerfilePath = "Dockerfile.railway"
 dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" }
 watchPaths = ["apps/api/**", "packages/**"]
-[services.api.deploy]
+[services.api-server-v2.deploy]
 healthcheckPath = "/health"
 startCommand = "./run-service.sh"
 restartPolicyType = "ON_FAILURE"
