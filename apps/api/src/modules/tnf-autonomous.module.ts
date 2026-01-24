@@ -31,6 +31,7 @@ export interface TNFAutonomousConfig {
   discoveryIntervalMs: number;
   redisEnabled: boolean;
   redisHost?: string;
+  redisPort?: number;
   redisPassword?: string;
   redisUrl?: string;
 }
@@ -85,8 +86,13 @@ export class DirectorServiceProvider implements OnModuleInit {
     if (this.config.redisEnabled && !this.redis) {
       try {
         if (this.config.redisUrl) {
+          const redactedUrl = this.config.redisUrl.replace(/:[^:@]+@/, ':***@');
+          this.logger.log(`Connecting to Redis via URL: ${redactedUrl}`);
           this.redis = new Redis(this.config.redisUrl);
         } else {
+          this.logger.log(
+            `Connecting to Redis via Host: ${this.config.redisHost} (Password set: ${!!this.config.redisPassword})`
+          );
           this.redis = new Redis({
             host: this.config.redisHost,
             port: this.config.redisPort,
