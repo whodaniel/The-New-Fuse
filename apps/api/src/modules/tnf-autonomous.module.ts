@@ -12,8 +12,8 @@
 
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { CascadeContext, CascadeMode, CascadeService } from '@the-new-fuse/core';
 import { Redis } from 'ioredis';
-import { CascadeService, CascadeMode, CascadeStep, CascadeContext } from '@the-new-fuse/core';
 // ScheduleModule is configured at root AppModule level
 
 // Note: These are implemented but may need path adjustments based on your build setup
@@ -31,7 +31,8 @@ export interface TNFAutonomousConfig {
   discoveryIntervalMs: number;
   redisEnabled: boolean;
   redisHost?: string;
-  redisPort?: number;
+  redisPassword?: string;
+  redisUrl?: string;
 }
 
 const DEFAULT_CONFIG: TNFAutonomousConfig = {
@@ -41,9 +42,11 @@ const DEFAULT_CONFIG: TNFAutonomousConfig = {
   heartbeatIntervalMs: 30000,
   enableA2ADiscovery: true,
   discoveryIntervalMs: 60000,
-  redisEnabled: process.env.REDIS_HOST !== undefined,
+  redisEnabled: process.env.REDIS_HOST !== undefined || process.env.REDIS_URL !== undefined,
   redisHost: process.env.REDIS_HOST || 'localhost',
   redisPort: parseInt(process.env.REDIS_PORT || '6379'),
+  redisPassword: process.env.REDIS_PASSWORD,
+  redisUrl: process.env.REDIS_URL,
 };
 
 /**
@@ -61,7 +64,7 @@ export class DirectorServiceProvider implements OnModuleInit {
   constructor(
     private readonly swarmProvider: AgentSwarmProvider,
     private readonly cascadeService: CascadeService,
-    config?: Partial<TNFAutonomousConfig>,
+    config?: Partial<TNFAutonomousConfig>
   ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
   }
@@ -81,10 +84,16 @@ export class DirectorServiceProvider implements OnModuleInit {
 
     if (this.config.redisEnabled && !this.redis) {
       try {
-        this.redis = new Redis({
-          host: this.config.redisHost,
-          port: this.config.redisPort,
-        });
+        if (this.config.redisUrl) {
+          this.redis = new Redis(this.config.redisUrl);
+        } else {
+          this.redis = new Redis({
+            host: this.config.redisHost,
+            port: this.config.redisPort,
+            password: this.config.redisPassword,
+          });
+        }
+
         this.redis.on('error', (err) => {
           this.logger.error('Redis error', err);
         });
@@ -187,7 +196,9 @@ export class DirectorServiceProvider implements OnModuleInit {
     return tasks;
   }
 
-  private async executeTasks(tasks: Array<{ id: string; name: string; data?: any }>): Promise<number> {
+  private async executeTasks(
+    tasks: Array<{ id: string; name: string; data?: any }>
+  ): Promise<number> {
     if (tasks.length === 0) return 0;
 
     const controllerName = `director-cycle-${Date.now()}`;
@@ -215,8 +226,10 @@ export class DirectorServiceProvider implements OnModuleInit {
 
       // Count successful executions (non-null results in PARALLEL mode)
       const successCount = Array.isArray(results)
-        ? results.filter(r => r !== null).length
-        : (results ? 1 : 0);
+        ? results.filter((r) => r !== null).length
+        : results
+          ? 1
+          : 0;
 
       return successCount;
     } catch (error) {
