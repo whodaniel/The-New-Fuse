@@ -10,6 +10,7 @@ ARG SERVICE_ROOT=apps
 FROM node:${NODE_VERSION}-alpine AS builder
 ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
+ARG PNPM_VERSION=10.22.0
 
 RUN npm i -g pnpm@${PNPM_VERSION}
 
@@ -62,6 +63,7 @@ RUN pnpm --filter=./${SERVICE_ROOT}/${SERVICE_PATH}... build
 FROM node:${NODE_VERSION}-alpine AS runner
 ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
+ARG PNPM_VERSION=10.22.0
 
 RUN npm i -g pnpm@${PNPM_VERSION} && apk add --no-cache netcat-openbsd
 
@@ -76,6 +78,9 @@ COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps ./apps
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+
+# Remove packageManager field to prevent npm from enforcing pnpm (fixes "pnpm not found" errors)
+RUN npm pkg delete packageManager || true
 
 # Verify critical dist folders exist in runner stage
 RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/index.js || (echo "ERROR: types dist not found in runner!" && exit 1)

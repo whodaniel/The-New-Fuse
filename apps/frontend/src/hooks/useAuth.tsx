@@ -88,6 +88,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
+      // Manually update user state to prevent race conditions
+      if (result.user) {
+        setUser(mapUser(result.user));
+      }
       return result;
     } catch (error: any) {
       setError(error.message || 'Failed to login');
@@ -105,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (result.user) {
         await updateProfile(result.user, { displayName: name });
-        // Force update user state since onAuthStateChanged might fire before updateProfile
+        // Manually update user state
         setUser(mapUser({ ...result.user, displayName: name }));
       }
       return result;
@@ -122,6 +126,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
+      // Manually update user state to prevent race conditions
+      if (result.user) {
+        setUser(mapUser(result.user));
+      }
       return result;
     } catch (error: any) {
       setError(error.message || 'Failed to sign in with Google');
@@ -152,10 +160,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const { token, user: backendUser } = await response.json();
-      
+
       // Store token
       localStorage.setItem('auth_token', token);
-      
+
       // Set user state
       setUser({
         id: backendUser.id,
