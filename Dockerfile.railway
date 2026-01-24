@@ -11,7 +11,7 @@ FROM node:${NODE_VERSION}-alpine AS builder
 ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 ARG PNPM_VERSION=10.22.0
-
+RUN apk add --no-cache python3 make g++ cairo-dev pango-dev jpeg-dev giflib-dev
 RUN npm i -g pnpm@${PNPM_VERSION}
 
 WORKDIR /app

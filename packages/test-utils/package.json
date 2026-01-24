@@ -23,14 +23,14 @@
   "dependencies": {
     "@testing-library/react": "^16.3.0",
     "@testing-library/jest-dom": "^6.9.1",
-    "react": "^19.2.0",
+    "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "react": "^19.2.0",
+    "react": "^19.2.3",
     "react-dom": "^19.2.3"
   }
 }
