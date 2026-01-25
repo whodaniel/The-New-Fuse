@@ -8,6 +8,7 @@ import LoginPage from './pages/auth/Login';
 import RegisterPage from './pages/auth/Register';
 
 import RequireAuth from './components/RequireAuth';
+import RequirePermission from './components/auth/RequirePermission';
 
 // Lazy load heavy components for better performance
 const MultiAgentChat = lazy(() => import('./components/MultiAgentChat'));
@@ -81,6 +82,17 @@ const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
 const AdminFeatureFlags = lazy(() => import('./pages/Admin/FeatureFlags'));
 const AdminPortManagement = lazy(() => import('./pages/Admin/PortManagement'));
+
+// Comprehensive Admin Pages (Full-featured versions for SUPER_ADMIN)
+const ComprehensiveAdminDashboard = lazy(() => import('./pages/Admin/ComprehensiveAdminDashboard'));
+const UserManagementFull = lazy(() => import('./pages/Admin/UserManagementFull'));
+const SystemMetricsDashboard = lazy(() => import('./pages/Admin/SystemMetricsDashboard'));
+const AgentManagementFull = lazy(() => import('./pages/Admin/AgentManagementFull'));
+const DatabaseAdminPanel = lazy(() => import('./pages/Admin/DatabaseAdminPanel'));
+const APIAnalyticsFull = lazy(() => import('./pages/Admin/APIAnalyticsFull'));
+const ConfigurationManagement = lazy(() => import('./pages/Admin/ConfigurationManagement'));
+const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
+const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
 
 // Auth components
 const AuthIndexPage = lazy(() => import('./pages/auth'));
@@ -331,14 +343,145 @@ export default function ComprehensiveRouter() {
             <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
             <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
             <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
-            <Route path="/admin" element={<AdminPanel />} />
+            {/* Master Admin Routes - Requires SUPER_ADMIN role */}
+            <Route
+              path="/admin"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <ComprehensiveAdminDashboard />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/user-management"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <UserManagementFull />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/system-metrics"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <SystemMetricsDashboard />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/agent-management"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <AgentManagementFull />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/database"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <DatabaseAdminPanel />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/api-analytics"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <APIAnalyticsFull />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/configuration"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <ConfigurationManagement />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/audit-logs"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <AuditLogViewer />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/backup-restore"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <BackupRestore />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/system-health"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <SystemHealth />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/feature-flags"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <AdminFeatureFlags />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/port-management"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <AdminPortManagement />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/workspaces"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <WorkspaceManagement />
+                </RequirePermission>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <AdminSettings />
+                </RequirePermission>
+              }
+            />
+
+            {/* Legacy admin routes (kept for backwards compatibility) */}
+            <Route
+              path="/admin/users"
+              element={
+                <RequirePermission roles={['SUPER_ADMIN']}>
+                  <AdminUserManagement />
+                </RequirePermission>
+              }
+            />
+
+            {/* Agency Routes - Requires AGENCY_OWNER/AGENCY_ADMIN/AGENCY_MANAGER */}
+            <Route
+              path="/agency/dashboard"
+              element={
+                <RequirePermission roles={['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']}>
+                  <AgencyDashboard />
+                </RequirePermission>
+              }
+            />
+            <Route path="/agency/onboard" element={<AgencyOnboarding />} />
+
+            {/* Other routes */}
             <Route path="/mcp-hub" element={<MCPHub />} />
             <Route path="/knowledge-hub" element={<KnowledgeHub />} />
             <Route path="/a2a-control" element={<A2AControl />} />
-            <Route path="/agency/dashboard" element={<AgencyDashboard />} />
-            <Route path="/agency/onboard" element={<AgencyOnboarding />} />
-            <Route path="/admin/users" element={<AdminUserManagement />} />
-            <Route path="/admin/system-health" element={<SystemHealth />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/general" element={<GeneralSettings />} />
             <Route path="/login" element={<LoginPage />} />
@@ -358,11 +501,7 @@ export default function ComprehensiveRouter() {
             <Route path="/suggestions/new" element={<NewSuggestionPage />} />
             <Route path="/suggestions/:id" element={<SuggestionDetailPage />} />
 
-            {/* Enhanced Admin Routes - Additional admin features */}
-            <Route path="/admin/feature-flags" element={<AdminFeatureFlags />} />
-            <Route path="/admin/port-management" element={<AdminPortManagement />} />
-            <Route path="/admin/workspaces" element={<WorkspaceManagement />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
+            {/* Admin routes have been consolidated above with permission guards */}
 
             {/* Enhanced Auth Routes */}
             <Route path="/auth" element={<AuthIndexPage />} />
