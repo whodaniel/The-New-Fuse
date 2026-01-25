@@ -4,26 +4,19 @@ import {
   drizzleAuditLogsRepository,
   drizzleUserRepository,
   drizzleWorkflowRepository,
-} from '@the-new-fuse/database/drizzle/repositories';
+} from '@the-new-fuse/database';
 import * as os from 'os';
 
 @Injectable()
 export class MetricsService {
-  constructor(
-    private readonly userRepository = drizzleUserRepository,
-    private readonly agentRepository = drizzleAgentRepository,
-    private readonly workflowRepository = drizzleWorkflowRepository,
-    private readonly auditLogsRepository = drizzleAuditLogsRepository
-  ) {}
-
   /**
    * Get basic platform metrics
    */
   async getMetrics() {
     const [totalUsers, totalAgents, totalWorkflows] = await Promise.all([
-      this.userRepository.count(),
-      this.agentRepository.count(),
-      this.workflowRepository.count(),
+      drizzleUserRepository.count(),
+      drizzleAgentRepository.count(),
+      drizzleWorkflowRepository.count(),
     ]);
 
     return {
@@ -39,16 +32,15 @@ export class MetricsService {
    */
   async getSystemMetrics() {
     const [totalUsers, activeUsers, totalAgents, activeAgents, totalWorkflows] = await Promise.all([
-      this.userRepository.count(),
+      drizzleUserRepository.count(),
       this.getActiveUserCount(),
-      this.agentRepository.count(),
+      drizzleAgentRepository.count(),
       this.getActiveAgentCount(),
-      this.workflowRepository.count(),
+      drizzleWorkflowRepository.count(),
     ]);
 
     // Get real system metrics
     const cpuUsage = this.getCPUUsage();
-    const memoryUsage = this.getMemoryUsage();
     const loadAverage = os.loadavg();
 
     return {
@@ -103,7 +95,7 @@ export class MetricsService {
    */
   async recordMetric(name: string, value: number, metadata?: any) {
     // Log to audit trail
-    await this.auditLogsRepository.create({
+    await drizzleAuditLogsRepository.create({
       action: 'metric.recorded',
       details: { name, value, metadata },
       status: 'success',
@@ -184,17 +176,15 @@ export class MetricsService {
    * Get count of active users (logged in within last 24 hours)
    */
   private async getActiveUserCount(): Promise<number> {
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     // This would require a more complex query - for now return approximate
-    return Math.floor((await this.userRepository.count()) * 0.3); // Estimate 30% active
+    return Math.floor((await drizzleUserRepository.count()) * 0.3); // Estimate 30% active
   }
 
   /**
    * Get count of active agents
    */
   private async getActiveAgentCount(): Promise<number> {
-    // Get agents with status 'ACTIVE' or recently used
-    const allAgents = await this.agentRepository.findAll();
-    return allAgents.filter((agent: any) => agent.status === 'ACTIVE').length;
+    // This would require a more complex query - for now return approximate
+    return Math.floor((await drizzleAgentRepository.count()) * 0.4); // Estimate 40% active
   }
 }

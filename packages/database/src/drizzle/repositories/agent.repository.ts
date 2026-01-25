@@ -603,6 +603,18 @@ export class DrizzleAgentRepository {
       onboardingEvents,
     };
   }
+
+  /**
+   * Count total agents
+   */
+  async count(): Promise<number> {
+    const result = await db
+      .select({ count: db.$count(agents) })
+      .from(agents)
+      .where(isNull(agents.deletedAt));
+
+    return result[0]?.count ?? 0;
+  }
 }
 
 // Export singleton instance

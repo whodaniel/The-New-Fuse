@@ -457,6 +457,18 @@ export class DrizzleWorkflowRepository {
 
     return result;
   }
+
+  /**
+   * Count total workflows
+   */
+  async count(): Promise<number> {
+    const result = await db
+      .select({ count: db.$count(workflows) })
+      .from(workflows)
+      .where(isNull(workflows.deletedAt));
+
+    return result[0]?.count ?? 0;
+  }
 }
 
 // Export singleton instance

@@ -3,7 +3,12 @@
  */
 export { DrizzleAgentRepository, drizzleAgentRepository } from './agent.repository';
 export { DrizzleApiLogsRepository, drizzleApiLogsRepository } from './api-logs.repository';
-export { DrizzleAuditLogsRepository, drizzleAuditLogsRepository } from './audit-logs.repository';
+export {
+  DrizzleAuditLogsRepository,
+  drizzleAuditLogsRepository,
+  type AuditLogEntry,
+  type AuditLogQuery,
+} from './audit-logs.repository';
 export { DrizzleChatRepository, drizzleChatRepository } from './chat.repository';
 export {
   DrizzleConfigurationRepository,

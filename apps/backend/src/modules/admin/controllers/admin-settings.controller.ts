@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 import { Roles } from '../../../auth/decorators/roles.decorator';
-import { User } from '../../../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { ConfigurationService } from '../../configuration/configuration.service';
@@ -22,7 +22,7 @@ export class AdminSettingsController {
 
   @Put()
   @ApiOperation({ summary: 'Update application settings' })
-  async updateSettings(@Body() settings: any, @User() user: any) {
+  async updateSettings(@Body() settings: any, @CurrentUser() user: any) {
     return this.configService.updateAdminSettings(settings, user?.id);
   }
 }

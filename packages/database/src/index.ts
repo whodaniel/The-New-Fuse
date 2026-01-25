@@ -83,6 +83,7 @@ export type {
 // Export Drizzle repositories
 export {
   DrizzleAgentRepository,
+  DrizzleAuditLogsRepository,
   DrizzleChatRepository,
   DrizzlePromptTemplateRepository,
   DrizzleTaskRepository,
@@ -93,6 +94,7 @@ export {
   agentPromptVersionRepository,
   drizzleAgentRepository,
   drizzleApiLogsRepository,
+  drizzleAuditLogsRepository,
   drizzleChatRepository,
   drizzlePromptTemplateRepository,
   drizzleTaskRepository,
@@ -105,6 +107,8 @@ export {
   revenueStreamRepository,
   validationDatasetRepository,
   workflowTopologyRepository,
+  type AuditLogEntry,
+  type AuditLogQuery,
 } from './drizzle/repositories';
 
 // Export backwards compatibility repository aliases
