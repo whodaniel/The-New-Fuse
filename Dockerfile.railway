@@ -46,6 +46,8 @@ RUN pnpm --filter @the-new-fuse/core-vector-db build
 RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/mcp-core build
+RUN pnpm --filter @the-new-fuse/n8n-workflows build
+RUN pnpm --filter @the-new-fuse/relay-core build
 RUN pnpm --filter @the-new-fuse/ui-consolidated build
 RUN pnpm --filter @the-new-fuse/port-management build
 RUN pnpm --filter @the-new-fuse/prompt-templating build
@@ -55,6 +57,10 @@ RUN pnpm --filter @the-new-fuse/shared build
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies
 RUN pnpm --filter=./${SERVICE_ROOT}/${SERVICE_PATH}... build
+
+# Verify critical package builds
+RUN echo "Verifying n8n-workflows build..." && ls -la packages/n8n-workflows/dist/index.js || (echo "ERROR: n8n-workflows dist not found!" && exit 1)
+RUN echo "Verifying relay-core build..." && ls -la packages/relay-core/dist/index.js || (echo "ERROR: relay-core dist not found!" && exit 1)
 
 # NOTE: Prisma has been migrated to Drizzle ORM - no generation step needed
 
@@ -96,6 +102,9 @@ RUN npm pkg delete packageManager || true
 # Verify critical dist folders exist in runner stage
 RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/index.js || (echo "ERROR: types dist not found in runner!" && exit 1)
 RUN echo "Runner stage - verifying types package.json..." && cat packages/types/package.json | grep -E '"main"|"type"'
+RUN echo "Runner stage - verifying n8n-workflows dist..." && ls -la packages/n8n-workflows/dist/index.js || (echo "ERROR: n8n-workflows dist not found in runner!" && exit 1)
+RUN echo "Runner stage - verifying relay-core dist..." && ls -la packages/relay-core/dist/index.js || (echo "ERROR: relay-core dist not found in runner!" && exit 1)
+RUN echo "Runner stage - checking node_modules symlink for n8n-workflows..." && ls -laR node_modules/@the-new-fuse/n8n-workflows 2>&1 | head -20 || echo "Symlink check failed"
 
 # Copy scripts from builder stage with executable permissions (before switching to non-root user)
 COPY --from=builder --chmod=755 /app/scripts/run-service.sh ./${SERVICE_ROOT}/${SERVICE_PATH}/run-service.sh
