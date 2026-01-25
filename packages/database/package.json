@@ -31,6 +31,7 @@
     "drizzle:pull": "drizzle-kit pull",
     "drizzle:studio": "drizzle-kit studio",
     "drizzle:check": "drizzle-kit check",
+    "admin:set-super": "tsx scripts/set-super-admin.ts",
     "test": "echo \"Tests temporarily disabled for this package\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
