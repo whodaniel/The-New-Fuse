@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
@@ -7,7 +7,13 @@ export interface SecurityLogEntry {
   timestamp: string;
   level: string;
   message: string;
-  category: 'authentication' | 'authorization' | 'rate_limit' | 'input_validation' | 'api_access' | 'security_violation';
+  category:
+    | 'authentication'
+    | 'authorization'
+    | 'rate_limit'
+    | 'input_validation'
+    | 'api_access'
+    | 'security_violation';
   requestId?: string;
   userId?: string;
   ip?: string;
@@ -31,10 +37,7 @@ export class SecurityLoggingService {
     // Main application logger
     const appTransports: any[] = [
       new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.colorize(),
-          winston.format.simple()
-        ),
+        format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
       }),
     ];
 
@@ -50,27 +53,25 @@ export class SecurityLoggingService {
             maxFiles: '14d',
           })
         );
-      } catch (error) {
-        console.warn('Failed to initialize file logging, using console only:', error);
+      } catch (error: any) {
+        if (error.code === 'EACCES') {
+          console.warn('File logging disabled: No write permission for logs directory.');
+        } else {
+          console.warn('Failed to initialize file logging, using console only:', error);
+        }
       }
     }
 
     this.logger = winston.createLogger({
       level: 'info',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       transports: appTransports,
     });
 
     // Dedicated security logger - console only in production
     const securityTransports: any[] = [
       new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.colorize(),
-          winston.format.simple()
-        ),
+        format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
       }),
     ];
 
@@ -85,17 +86,18 @@ export class SecurityLoggingService {
             maxFiles: '30d',
           })
         );
-      } catch (error) {
-        console.warn('Failed to initialize security file logging, using console only:', error);
+      } catch (error: any) {
+        if (error.code === 'EACCES') {
+          console.warn('Security file logging disabled: No write permission for logs directory.');
+        } else {
+          console.warn('Failed to initialize security file logging, using console only:', error);
+        }
       }
     }
 
     this.securityLogger = winston.createLogger({
       level: 'info',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       transports: securityTransports,
     });
   }
@@ -271,7 +273,12 @@ export class SecurityLoggingService {
    * Log security violations
    */
   logSecurityViolation(
-    violation: 'sql_injection' | 'xss_attempt' | 'path_traversal' | 'unauthorized_access' | 'suspicious_pattern',
+    violation:
+      | 'sql_injection'
+      | 'xss_attempt'
+      | 'path_traversal'
+      | 'unauthorized_access'
+      | 'suspicious_pattern',
     details: {
       ip?: string;
       userId?: string;

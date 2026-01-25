@@ -8,6 +8,7 @@ import { SecurityLoggingService } from '../../security/security-logging.service'
 import { AuditService } from '../../services/audit.service';
 import { MetricsService } from '../../services/metrics.service';
 import { RoleService } from '../../services/role.service';
+import { AuthModule } from '../auth/auth.module';
 
 /**
  * Admin Module
@@ -25,7 +26,7 @@ import { RoleService } from '../../services/role.service';
  * - Configuration management
  */
 @Module({
-  imports: [JwtModule],
+  imports: [JwtModule, AuthModule],
   controllers: [
     AdminController,
     AdminUsersController,
