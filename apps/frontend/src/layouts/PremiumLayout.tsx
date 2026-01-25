@@ -11,6 +11,7 @@ interface PremiumLayoutProps {
 
 export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <div className="min-h-screen w-full text-gray-100 font-sans selection:bg-blue-500/30 border-4 border-yellow-500">
@@ -32,9 +33,18 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
       </a>
       <PremiumBackground />
 
-      <PremiumSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <PremiumSidebar
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+      />
 
-      <div className="lg:pl-72 w-full flex flex-col min-h-screen transition-all duration-300">
+      <div
+        className={`w-full flex flex-col min-h-screen transition-all duration-300 ${
+          isCollapsed ? 'lg:pl-20' : 'lg:pl-72'
+        }`}
+      >
         <PremiumHeader onMenuClick={() => setIsSidebarOpen(true)} />
 
         <main id="main-content" className="flex-1 w-full p-4 sm:p-6 lg:p-8 relative z-10">

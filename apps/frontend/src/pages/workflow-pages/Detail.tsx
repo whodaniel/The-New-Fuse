@@ -1,4 +1,3 @@
-import { Sidebar } from '@/components/layout/Sidebar';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -45,62 +44,43 @@ const WorkflowDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-background">
-        <Sidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto py-6">
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-          </div>
-        </main>
+      <div className="container mx-auto py-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex h-screen bg-background">
-        <Sidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto py-6">
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-              {error.message}
-            </div>
-          </div>
-        </main>
+      <div className="container mx-auto py-6">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+          {error.message}
+        </div>
       </div>
     );
   }
 
   if (!workflow) {
     return (
-      <div className="flex h-screen bg-background">
-        <Sidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto py-6">
-            <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md">
-              Workflow not found. The workflow may have been deleted or you may not have access to
-              it.
-            </div>
-            <div className="mt-4">
-              <Button variant="outline" onClick={() => navigate('/workflows')}>
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                Back to Workflows
-              </Button>
-            </div>
-          </div>
-        </main>
+      <div className="container mx-auto py-6">
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md">
+          Workflow not found. The workflow may have been deleted or you may not have access to
+          it.
+        </div>
+        <div className="mt-4">
+          <Button variant="outline" onClick={() => navigate('/workflows')}>
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Back to Workflows
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar />
-
-      <main className="flex-1 overflow-auto">
-        <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto py-6 space-y-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <Button
