@@ -1,10 +1,13 @@
 import {
+  Activity,
   BarChart3,
   Bot,
   BrainCircuit,
   Briefcase,
   ChevronLeft,
   ChevronRight,
+  Cpu,
+  Eye,
   Globe,
   Home,
   LayoutDashboard,
@@ -15,7 +18,6 @@ import {
   LogOut,
   MessageSquare,
   Settings,
-  Shield,
   Workflow,
   X,
   Zap,
@@ -31,11 +33,11 @@ interface PremiumSidebarProps {
   setIsCollapsed: (isCollapsed: boolean) => void;
 }
 
-export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({ 
-  isOpen, 
+export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
+  isOpen,
   setIsOpen,
   isCollapsed,
-  setIsCollapsed
+  setIsCollapsed,
 }) => {
   const { pathname } = useLocation();
   const { logout } = useAuth();
@@ -47,6 +49,9 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
     { name: 'AI Portal', href: '/ai-portal', icon: BrainCircuit },
     { name: 'AI Agents', href: '/agents', icon: Bot },
     { name: 'Multi-chat', href: '/multi-agent-chat', icon: MessageSquare },
+    { name: 'Live View', href: '/live-view', icon: Activity },
+    { name: 'AI Command', href: '/ai-command-center', icon: Cpu },
+    { name: 'Observatory', href: '/observatory', icon: Eye },
     { name: 'Workflows', href: '/workflows', icon: Workflow },
     { name: 'Tasks', href: '/tasks', icon: Briefcase },
     { name: 'Workspace', href: '/workspace/overview', icon: LayoutGrid },
@@ -85,7 +90,9 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
         <div className="flex flex-col h-full">
           {/* Logo Area */}
           <div className="h-16 flex items-center px-6 border-b border-white/10">
-            <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>
+            <div
+              className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}
+            >
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
                 <Zap className="w-5 h-5 text-white" />
               </div>
@@ -123,7 +130,9 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                   <item.icon
                     className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
                   />
-                  {!isCollapsed && <span className="font-medium whitespace-nowrap">{item.name}</span>}
+                  {!isCollapsed && (
+                    <span className="font-medium whitespace-nowrap">{item.name}</span>
+                  )}
                   {isActive && !isCollapsed && (
                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
                   )}
@@ -134,11 +143,15 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
 
           {/* Collapse Toggle */}
           <div className="hidden lg:flex p-4 border-t border-white/10 bg-black/20 justify-end">
-             <button
+            <button
               onClick={() => setIsCollapsed(!isCollapsed)}
               className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors w-full flex justify-center"
             >
-              {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+              {isCollapsed ? (
+                <ChevronRight className="w-5 h-5" />
+              ) : (
+                <ChevronLeft className="w-5 h-5" />
+              )}
             </button>
           </div>
 
