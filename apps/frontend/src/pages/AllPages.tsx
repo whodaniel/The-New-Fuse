@@ -16,7 +16,11 @@ const AllPages: React.FC = () => {
     // Core Application Pages
     { name: 'Home', path: '/', description: 'Enhanced Home Page with Production Status' },
     { name: 'Dashboard', path: '/dashboard', description: 'Main Dashboard with Metrics' },
-    { name: 'Home Alt', path: '/home', description: 'Alternative Home Route' },
+    {
+      name: 'Home Alt aka Dev Index',
+      path: '/home',
+      description: 'Complete Page Directory (Dev Index)',
+    },
 
     // AI & Agents
     { name: 'Multi-Agent Chat', path: '/multi-agent-chat', description: 'Main Chat Interface' },

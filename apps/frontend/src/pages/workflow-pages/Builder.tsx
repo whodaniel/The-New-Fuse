@@ -149,8 +149,8 @@ const WorkflowBuilder: React.FC = () => {
                       size="sm"
                       className="h-8 px-2 text-gray-400 hover:text-white"
                     >
-                      <Settings2 className="h-4 w-4 mr-1" />
-                      <span className="hidden md:inline text-xs">Properties</span>
+                      <Settings2 className="h-4 w-4 shrink-0" />
+                      <span className="hidden md:inline text-xs ml-1">Properties</span>
                     </Button>
                   }
                   placement="bottom"

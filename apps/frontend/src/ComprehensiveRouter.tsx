@@ -252,7 +252,7 @@ export default function ComprehensiveRouter() {
           <Routes>
             {/* Core Routes */}
             <Route path="/" element={<LandingRevolutionPage />} />
-            <Route path="/home" element={<LandingRevolutionPage />} />
+            <Route path="/home" element={<AllPages />} />
 
             {/* Protected Core Routes */}
             <Route

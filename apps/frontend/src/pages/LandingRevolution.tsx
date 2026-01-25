@@ -78,6 +78,16 @@ export const LandingPageRevolution = () => {
             </Button>
           </div>
 
+          <div className="mt-8 flex justify-center">
+            <Link
+              to="/all-pages"
+              className="text-gray-400 hover:text-white underline underline-offset-4 transition-colors text-sm sm:text-base flex items-center gap-2"
+            >
+              <Code className="w-4 h-4" />
+              View Complete Page Directory (Dev Index)
+            </Link>
+          </div>
+
           {/* Trust Indicators */}
           <div className="mt-10 sm:mt-14 lg:mt-20 flex flex-wrap gap-4 sm:gap-6 lg:gap-12 justify-center items-center opacity-60 px-2">
             <div className="flex items-center gap-2 sm:gap-3">
