@@ -38,6 +38,8 @@ RUN pnpm --filter @the-new-fuse/api-types build
 RUN pnpm --filter @the-new-fuse/utils build
 RUN pnpm --filter @the-new-fuse/common build
 RUN pnpm --filter @the-new-fuse/infrastructure build
+RUN pnpm --filter @the-new-fuse/ap2-protocol build
+RUN pnpm --filter @the-new-fuse/a2a-core build
 RUN pnpm --filter @the-new-fuse/core-error-handling build
 RUN pnpm --filter @the-new-fuse/core-monitoring build
 RUN pnpm --filter @the-new-fuse/core-vector-db build
