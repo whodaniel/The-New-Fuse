@@ -4,6 +4,7 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 interface PopoverProps {
   trigger: ReactNode;
@@ -104,24 +105,26 @@ export const Popover = ({
         {trigger}
       </div>
 
-      {isOpen && (
-        <div
-          ref={popoverRef}
-          className={cn(
-            'fixed rounded-lg shadow-2xl border',
-            'bg-slate-900 border-slate-600 text-white',
-            'animate-in fade-in-0 zoom-in-95 duration-200',
-            className
-          )}
-          style={{
-            top: `${position.top}px`,
-            left: `${position.left}px`,
-            zIndex: 9999, // Ensure it's above ReactFlow's z-index
-          }}
-        >
-          {children}
-        </div>
-      )}
+      {isOpen &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            className={cn(
+              'fixed rounded-lg shadow-2xl border',
+              'bg-slate-900 border-slate-600 text-white',
+              'animate-in fade-in-0 zoom-in-95 duration-200',
+              className
+            )}
+            style={{
+              top: `${position.top}px`,
+              left: `${position.left}px`,
+              zIndex: 9999, // Ensure it's above ReactFlow's z-index
+            }}
+          >
+            {children}
+          </div>,
+          document.body
+        )}
     </>
   );
 };
