@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
@@ -23,6 +23,8 @@ import { SelfImprovementModule } from './modules/self-improvement/self-improveme
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
 // PrismaModule removed - migrated to DrizzleModule
+import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
+import { AdminModule } from './modules/admin/admin.module';
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
 
@@ -61,6 +63,7 @@ import { UsersModule } from './users/users.module';
     // Database module - Drizzle ORM
     DrizzleModule.forRootAsync(),
     AuthModule,
+    AdminModule,
     UsersModule,
     ApiModule,
     MassModule,
@@ -79,4 +82,8 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController, CacheController],
   providers: [AppService, EventBus, LoggingService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggerMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

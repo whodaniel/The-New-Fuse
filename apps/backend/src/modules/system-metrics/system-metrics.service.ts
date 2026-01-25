@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { db, drizzleApiLogsRepository } from '@the-new-fuse/database';
 import { exec } from 'child_process';
+import { sql } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as os from 'os';
 import { promisify } from 'util';
@@ -20,7 +22,7 @@ export class SystemMetricsService {
     const disk = await this.getDiskMetrics();
     const network = await this.getNetworkMetrics();
     const database = await this.getDatabaseMetrics();
-    const api = this.getApiMetrics();
+    const api = await this.getApiMetrics();
     const services = await this.getServicesHealth();
 
     // Determine overall status based on services
@@ -171,33 +173,69 @@ export class SystemMetricsService {
   }
 
   private async getDatabaseMetrics() {
-    // Mock database metrics - replace with actual database queries
-    return {
-      status: 'connected',
-      activeConnections: Math.floor(Math.random() * 20) + 5,
-      totalQueries: 15234,
-      avgQueryTime: parseFloat((Math.random() * 50 + 10).toFixed(1)),
-    };
+    const start = Date.now();
+    try {
+      // Execute a simple query to test connection and latency
+      await db.execute(sql`SELECT 1`);
+      const latency = Date.now() - start;
+
+      // In a real scenario, we might query pg_stat_activity for active connections
+      // For now, we'll estimate based on pool settings or use a separate query if permissions allow
+      // Use a safe fallback for active connections if detailed stats aren't available
+
+      return {
+        status: 'connected',
+        activeConnections: 0, // Placeholder, implementing pg_stat_activity requires specific permissions
+        totalQueries: 0, // Placeholder
+        avgQueryTime: latency,
+      };
+    } catch (error) {
+      this.logger.error(`Database metric check failed: ${error.message}`);
+      return {
+        status: 'disconnected',
+        activeConnections: 0,
+        totalQueries: 0,
+        avgQueryTime: 0,
+      };
+    }
   }
 
-  private getApiMetrics() {
-    // Mock API metrics - in production, integrate with actual monitoring
-    return {
-      totalRequests: 100000,
-      requestsPerMinute: Math.floor(Math.random() * 100) + 100,
-      avgResponseTime: parseFloat((Math.random() * 100 + 50).toFixed(1)),
-      errorRate: parseFloat((Math.random() * 2).toFixed(2)),
-      statusCodeDistribution: {
-        '200': 95000,
-        '201': 3000,
-        '400': 1500,
-        '500': 500,
-      },
-    };
+  private async getApiMetrics() {
+    try {
+      const statsArray = await drizzleApiLogsRepository.getStats(new Date(Date.now() - 60000)); // Last minute
+      const stats = statsArray[0];
+      const totalRequests = Number(stats?.count || 0);
+
+      return {
+        totalRequests, // In this context, it's last minute requests, but UI expects total. Maybe fetch total separately if needed.
+        requestsPerMinute: totalRequests,
+        avgResponseTime: Number(stats?.avgDuration || 0),
+        errorRate: totalRequests > 0 ? (Number(stats?.errorCount || 0) / totalRequests) * 100 : 0,
+        statusCodeDistribution: {}, // Deprecated in favor of separate charting endpoint
+      };
+    } catch (e) {
+      this.logger.error(`Failed to get API metrics: ${e.message}`);
+      return {
+        totalRequests: 0,
+        requestsPerMinute: 0,
+        avgResponseTime: 0,
+        errorRate: 0,
+        statusCodeDistribution: {},
+      };
+    }
   }
 
   private async getServicesHealth() {
-    // Mock service health checks - replace with actual health check implementations
+    let dbStatus: 'healthy' | 'unhealthy' = 'healthy';
+    let dbLatency = 0;
+    try {
+      const start = Date.now();
+      await db.execute(sql`SELECT 1`);
+      dbLatency = Date.now() - start;
+    } catch (e) {
+      dbStatus = 'unhealthy';
+    }
+
     const services: Array<{
       name: string;
       status: 'healthy' | 'degraded' | 'unhealthy';
@@ -207,10 +245,10 @@ export class SystemMetricsService {
     }> = [
       {
         name: 'database',
-        status: 'healthy',
-        responseTime: 5,
+        status: dbStatus,
+        responseTime: dbLatency,
         lastCheck: new Date(),
-        message: 'Database connection stable',
+        message: dbStatus === 'healthy' ? 'Database connection stable' : 'Database unreachable',
       },
       {
         name: 'redis',

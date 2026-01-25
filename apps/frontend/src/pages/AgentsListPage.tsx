@@ -1,4 +1,3 @@
-import { ActionCard, GlassCard, PremiumButton, StatsCard } from '../components/ui/premium'; // Fixed import path
 import {
   Activity,
   AlertCircle,
@@ -12,6 +11,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ActionCard, GlassCard, PremiumButton, StatsCard } from '../components/ui/premium';
+import { agentService, type Agent as ServiceAgent } from '../services/AgentService';
 
 interface Agent {
   id: string;
@@ -28,42 +29,30 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading agents from API
-    setTimeout(() => {
-      setAgents([
-        {
-          id: '1',
-          name: 'Data Analyst Champion',
-          type: 'Analytics Specialist',
-          status: 'active',
-          lastActive: 'Active now',
-          description:
-            'Elite intelligence unit mastering data patterns and generating strategic insights',
-          capabilities: ['Neural Data Processing', 'Predictive Analytics', 'Visual Intelligence'],
-        },
-        {
-          id: '2',
-          name: 'Support Commander',
-          type: 'Customer Relations',
-          status: 'active',
-          lastActive: 'Conquering workflows',
-          description: 'Frontline warrior handling customer missions with precision and empathy',
-          capabilities: ['Real-time Support', 'Intelligent Triage', 'Knowledge Synthesis'],
-        },
-        {
-          id: '3',
-          name: 'Code Guardian',
-          type: 'Development Sentinel',
-          status: 'inactive',
-          lastActive: 'Standing by',
-          description:
-            'Vigilant protector analyzing code architecture and security vulnerabilities',
-          capabilities: ['Deep Code Analysis', 'Threat Detection', 'Architecture Review'],
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+    loadAgents();
   }, []);
+
+  const loadAgents = async () => {
+    try {
+      const fetchedAgents = await agentService.getAgents();
+      // Transform API agents to UI Agents
+      const uiAgents: Agent[] = fetchedAgents.map((a: ServiceAgent) => ({
+        id: a.id,
+        name: a.name,
+        type: a.type || 'Custom Agent',
+        status: (a.status as any) || 'inactive',
+        lastActive: a.updatedAt ? new Date(a.updatedAt).toLocaleDateString() : 'Unknown', // Using date string for now
+        description: a.description || 'No description provided.',
+        capabilities: a.capabilities || [],
+      }));
+      setAgents(uiAgents);
+    } catch (error) {
+      console.error('Failed to load agents', error);
+      // Fallback or empty state could be handled here
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -98,7 +87,9 @@ export default function AgentsPage() {
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center relative z-10">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-400 mx-auto mb-4"></div>
-          <p className="text-white text-lg font-semibold animate-pulse">Assembling your AI army...</p>
+          <p className="text-white text-lg font-semibold animate-pulse">
+            Assembling your AI army...
+          </p>
         </div>
       </div>
     );
@@ -109,9 +100,7 @@ export default function AgentsPage() {
       {/* Header */}
       <div className="flex justify-between items-center animate-in slide-in-from-top-4 duration-500">
         <div>
-          <h1 className="text-4xl font-bold text-white mb-2">
-            AI Command Center
-          </h1>
+          <h1 className="text-4xl font-bold text-white mb-2">AI Command Center</h1>
           <p className="text-gray-400 text-lg">Command and monitor your elite AI champions</p>
         </div>
         <Link to="/agents/new">

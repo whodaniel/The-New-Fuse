@@ -54,10 +54,10 @@ const MOCK_AGENTS: Agent[] = [
     metadata: {
       tasksCompleted: 1243,
       successRate: 98.5,
-      avgResponseTime: '1.2s'
+      avgResponseTime: '1.2s',
     },
     createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-03-20')
+    updatedAt: new Date('2024-03-20'),
   },
   {
     id: 'agent-2',
@@ -72,10 +72,10 @@ const MOCK_AGENTS: Agent[] = [
     metadata: {
       tasksCompleted: 856,
       successRate: 99.1,
-      avgResponseTime: '2.5s'
+      avgResponseTime: '2.5s',
     },
     createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-03-18')
+    updatedAt: new Date('2024-03-18'),
   },
   {
     id: 'agent-3',
@@ -90,10 +90,10 @@ const MOCK_AGENTS: Agent[] = [
     metadata: {
       tasksCompleted: 5432,
       successRate: 99.9,
-      avgResponseTime: '0.5s'
+      avgResponseTime: '0.5s',
     },
     createdAt: new Date('2023-11-10'),
-    updatedAt: new Date('2024-03-21')
+    updatedAt: new Date('2024-03-21'),
   },
   {
     id: 'agent-4',
@@ -108,10 +108,10 @@ const MOCK_AGENTS: Agent[] = [
     metadata: {
       tasksCompleted: 321,
       successRate: 96.5,
-      avgResponseTime: '0.8s'
+      avgResponseTime: '0.8s',
     },
     createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-03-10')
+    updatedAt: new Date('2024-03-10'),
   },
   {
     id: 'agent-5',
@@ -126,11 +126,11 @@ const MOCK_AGENTS: Agent[] = [
     metadata: {
       tasksCompleted: 15420,
       successRate: 85.2,
-      avgResponseTime: '0.3s'
+      avgResponseTime: '0.3s',
     },
     createdAt: new Date('2023-12-01'),
-    updatedAt: new Date('2024-03-22')
-  }
+    updatedAt: new Date('2024-03-22'),
+  },
 ];
 
 class AgentService {
@@ -192,7 +192,7 @@ class AgentService {
       const agent = await this.request<any>(`/agents/${id}`);
       return this.transformAgent(agent);
     } catch (error) {
-      const mock = MOCK_AGENTS.find(a => a.id === id);
+      const mock = MOCK_AGENTS.find((a) => a.id === id);
       if (mock) return mock;
       // Return first mock if not found, or throw
       return MOCK_AGENTS[0];
@@ -215,7 +215,7 @@ class AgentService {
         updatedAt: new Date(),
         metadata: { tasksCompleted: 0, successRate: 100, avgResponseTime: '0s' },
         configuration: agent.configuration || {},
-        status: 'active'
+        status: 'active',
       } as Agent;
     }
   }
@@ -229,7 +229,7 @@ class AgentService {
       return this.transformAgent(updated);
     } catch (error) {
       console.log('Mock updating agent');
-      const mock = MOCK_AGENTS.find(a => a.id === id) || MOCK_AGENTS[0];
+      const mock = MOCK_AGENTS.find((a) => a.id === id) || MOCK_AGENTS[0];
       return { ...mock, ...updates, updatedAt: new Date() };
     }
   }
@@ -241,6 +241,41 @@ class AgentService {
       });
     } catch (error) {
       console.log('Mock deleting agent');
+    }
+  }
+
+  // Agent Lifecycle
+  async startAgent(id: string): Promise<Agent> {
+    try {
+      const agent = await this.request<any>(`/agents/${id}/start`, {
+        method: 'POST',
+      });
+      return this.transformAgent(agent);
+    } catch (error) {
+      console.log('Mock starting agent');
+      const mock = MOCK_AGENTS.find((a) => a.id === id);
+      if (mock) {
+        mock.status = 'active';
+        return mock;
+      }
+      throw error;
+    }
+  }
+
+  async stopAgent(id: string): Promise<Agent> {
+    try {
+      const agent = await this.request<any>(`/agents/${id}/stop`, {
+        method: 'POST',
+      });
+      return this.transformAgent(agent);
+    } catch (error) {
+      console.log('Mock stopping agent');
+      const mock = MOCK_AGENTS.find((a) => a.id === id);
+      if (mock) {
+        mock.status = 'inactive';
+        return mock;
+      }
+      throw error;
     }
   }
 
@@ -269,7 +304,7 @@ class AgentService {
         status: 'running',
         startTime: new Date(),
         input: { task, parameters },
-        logs: ['Agent started', 'Analyzing task...', 'Executing step 1...']
+        logs: ['Agent started', 'Analyzing task...', 'Executing step 1...'],
       };
     }
   }
@@ -288,16 +323,14 @@ class AgentService {
         endTime: new Date(),
         input: {},
         output: { result: 'Success' },
-        logs: ['Completed']
+        logs: ['Completed'],
       };
     }
   }
 
   async getExecutions(agentId?: string): Promise<AgentExecution[]> {
     try {
-      const endpoint = agentId 
-        ? `/agents/${agentId}/executions`
-        : '/agents/executions';
+      const endpoint = agentId ? `/agents/${agentId}/executions` : '/agents/executions';
       const executions = await this.request<any[]>(endpoint);
       return executions.map(this.transformExecution);
     } catch (error) {
@@ -311,8 +344,20 @@ class AgentService {
       return await this.request<AgentCapability[]>('/agents/capabilities');
     } catch (error) {
       return [
-        { id: 'cap-1', name: 'Web Search', description: 'Search the web', category: 'tools', parameters: {} },
-        { id: 'cap-2', name: 'Code Analysis', description: 'Analyze code', category: 'dev', parameters: {} }
+        {
+          id: 'cap-1',
+          name: 'Web Search',
+          description: 'Search the web',
+          category: 'tools',
+          parameters: {},
+        },
+        {
+          id: 'cap-2',
+          name: 'Code Analysis',
+          description: 'Analyze code',
+          category: 'dev',
+          parameters: {},
+        },
       ];
     }
   }
@@ -322,7 +367,13 @@ class AgentService {
       return await this.request<AgentCapability[]>(`/agents/${agentId}/capabilities`);
     } catch (error) {
       return [
-        { id: 'cap-1', name: 'Web Search', description: 'Search the web', category: 'tools', parameters: {} }
+        {
+          id: 'cap-1',
+          name: 'Web Search',
+          description: 'Search the web',
+          category: 'tools',
+          parameters: {},
+        },
       ];
     }
   }
@@ -353,7 +404,7 @@ class AgentService {
       return {
         temperature: 0.7,
         maxTokens: 2048,
-        systemPrompt: "You are a helpful assistant."
+        systemPrompt: 'You are a helpful assistant.',
       };
     }
   }

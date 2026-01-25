@@ -92,10 +92,38 @@ export default function Settings() {
   const [apiAccess, setApiAccess] = useState(true);
   const [autoSave, setAutoSave] = useState(false);
 
+  useState(() => {
+    const saved = localStorage.getItem('tnf_settings');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setEmailNotif(parsed.emailNotif ?? true);
+        setPushNotif(parsed.pushNotif ?? true);
+        setAgentNotif(parsed.agentNotif ?? true);
+        setApiAccess(parsed.apiAccess ?? true);
+        setAutoSave(parsed.autoSave ?? false);
+      } catch (e) {
+        console.error('Failed to parse settings', e);
+      }
+    }
+  });
+
   const handleSave = async () => {
     setSaving(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Persist to localStorage for now
+    localStorage.setItem(
+      'tnf_settings',
+      JSON.stringify({
+        emailNotif,
+        pushNotif,
+        agentNotif,
+        apiAccess,
+        autoSave,
+        language: 'english', // default
+        timezone: 'utc', // default
+      })
+    );
+    await new Promise((resolve) => setTimeout(resolve, 600)); // Small delay for UX feedback
     setSaving(false);
   };
 

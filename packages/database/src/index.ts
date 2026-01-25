@@ -92,6 +92,7 @@ export {
   agentNftRepository,
   agentPromptVersionRepository,
   drizzleAgentRepository,
+  drizzleApiLogsRepository,
   drizzleChatRepository,
   drizzlePromptTemplateRepository,
   drizzleTaskRepository,

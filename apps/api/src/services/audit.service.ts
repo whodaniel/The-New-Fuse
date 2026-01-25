@@ -1,26 +1,87 @@
 import { Injectable } from '@nestjs/common';
+import {
+  AuditLogEntry,
+  AuditLogQuery,
+  drizzleAuditLogsRepository,
+} from '@the-new-fuse/database/drizzle/repositories';
 
 @Injectable()
 export class AuditService {
-  async log(action: string, data: any) {
-    // Basic audit logging implementation
-    // eslint-disable-next-line no-console
-    console.log(`Audit: ${action}`, data);
+  constructor(private readonly auditLogsRepository = drizzleAuditLogsRepository) {}
+
+  /**
+   * Create an audit log entry
+   */
+  async log(
+    action: string,
+    data: {
+      userId?: string;
+      resourceType?: string;
+      resourceId?: string;
+      details?: any;
+      ipAddress?: string;
+      userAgent?: string;
+      status?: string;
+      errorMessage?: string;
+      metadata?: any;
+    }
+  ): Promise<AuditLogEntry> {
+    return this.auditLogsRepository.create({
+      action,
+      ...data,
+    });
   }
 
-  async getLogs() {
-    // Return audit logs - would fetch from database in real implementation
-    return [
-      { id: '1', action: 'user_login', timestamp: new Date(), data: {} },
-      { id: '2', action: 'agent_created', timestamp: new Date(), data: {} }
-    ];
+  /**
+   * Get all audit logs with optional filtering and pagination
+   */
+  async getLogs(query?: AuditLogQuery): Promise<AuditLogEntry[]> {
+    return this.auditLogsRepository.findAll(query);
   }
 
-  async findAll() {
-    return [];
+  /**
+   * Get audit logs with pagination
+   */
+  async findAll(limit?: number, offset?: number): Promise<AuditLogEntry[]> {
+    return this.auditLogsRepository.findAll({ limit, offset });
   }
 
-  async findById(_id: string) {
-    return null;
+  /**
+   * Find audit log by ID
+   */
+  async findById(id: string): Promise<AuditLogEntry | null> {
+    return this.auditLogsRepository.findById(id);
+  }
+
+  /**
+   * Get audit logs for a specific user
+   */
+  async findByUserId(userId: string, limit?: number): Promise<AuditLogEntry[]> {
+    return this.auditLogsRepository.findByUserId(userId, limit);
+  }
+
+  /**
+   * Get audit logs for a specific resource
+   */
+  async findByResource(
+    resourceType: string,
+    resourceId: string,
+    limit?: number
+  ): Promise<AuditLogEntry[]> {
+    return this.auditLogsRepository.findByResource(resourceType, resourceId, limit);
+  }
+
+  /**
+   * Get audit log statistics
+   */
+  async getStatistics(startDate?: Date, endDate?: Date) {
+    return this.auditLogsRepository.getStatistics(startDate, endDate);
+  }
+
+  /**
+   * Count audit logs with filters
+   */
+  async count(query?: AuditLogQuery): Promise<number> {
+    return this.auditLogsRepository.count(query);
   }
 }

@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
 import {
-  Settings,
-  Save,
-  RefreshCw,
+  AlertTriangle,
+  CheckCircle,
+  Download,
   Edit,
   Eye,
   EyeOff,
-  AlertTriangle,
-  CheckCircle,
-  Search,
   Plus,
+  Save,
+  Search,
+  Settings,
   Trash2,
-  Download,
   Upload,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface ConfigItem {
   key: string;
@@ -26,54 +25,8 @@ interface ConfigItem {
 }
 
 export default function ConfigurationManagement() {
-  const [configs, setConfigs] = useState<ConfigItem[]>([
-    {
-      key: 'DATABASE_URL',
-      value: 'postgresql://localhost:5432/mydb',
-      category: 'Database',
-      description: 'Primary database connection string',
-      sensitive: true,
-      updatedAt: new Date('2024-01-15'),
-      updatedBy: 'admin@example.com',
-    },
-    {
-      key: 'REDIS_URL',
-      value: 'redis://localhost:6379',
-      category: 'Cache',
-      description: 'Redis cache connection string',
-      sensitive: true,
-      updatedAt: new Date('2024-02-10'),
-      updatedBy: 'admin@example.com',
-    },
-    {
-      key: 'MAX_UPLOAD_SIZE',
-      value: '10485760',
-      category: 'Application',
-      description: 'Maximum file upload size in bytes',
-      sensitive: false,
-      updatedAt: new Date('2024-03-05'),
-      updatedBy: 'john@example.com',
-    },
-    {
-      key: 'SESSION_TIMEOUT',
-      value: '3600',
-      category: 'Security',
-      description: 'Session timeout in seconds',
-      sensitive: false,
-      updatedAt: new Date('2024-01-20'),
-      updatedBy: 'admin@example.com',
-    },
-    {
-      key: 'API_RATE_LIMIT',
-      value: '1000',
-      category: 'API',
-      description: 'API rate limit per hour',
-      sensitive: false,
-      updatedAt: new Date('2024-02-28'),
-      updatedBy: 'admin@example.com',
-    },
-  ]);
-
+  const [configs, setConfigs] = useState<ConfigItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showSensitive, setShowSensitive] = useState<Set<string>>(new Set());
@@ -81,7 +34,42 @@ export default function ConfigurationManagement() {
   const [editValue, setEditValue] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
 
-  const categories = ['all', ...new Set(configs.map(c => c.category))];
+  const categories = ['all', ...new Set(configs.map((c) => c.category))];
+
+  useEffect(() => {
+    loadConfigs();
+  }, []);
+
+  const loadConfigs = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/admin/config', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch configuration: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Transform API response to match UI interface
+      const transformedConfigs: ConfigItem[] = data.map((item: any) => ({
+        ...item,
+        updatedAt: new Date(item.updatedAt),
+      }));
+
+      setConfigs(transformedConfigs);
+    } catch (error) {
+      console.error('Error loading configuration:', error);
+      setConfigs([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredConfigs = configs.filter((config) => {
     const matchesSearch =
@@ -106,14 +94,35 @@ export default function ConfigurationManagement() {
     setEditValue(config.value);
   };
 
-  const handleSave = (key: string) => {
-    setConfigs(configs.map(c =>
-      c.key === key
-        ? { ...c, value: editValue, updatedAt: new Date(), updatedBy: 'current@example.com' }
-        : c
-    ));
-    setEditingKey(null);
-    setHasChanges(true);
+  const handleSave = async (key: string) => {
+    try {
+      const response = await fetch(`/api/admin/config/${key}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ value: editValue }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update configuration: ${response.statusText}`);
+      }
+
+      const updatedConfig = await response.json();
+
+      setConfigs(
+        configs.map((c) =>
+          c.key === key ? { ...updatedConfig, updatedAt: new Date(updatedConfig.updatedAt) } : c
+        )
+      );
+
+      setEditingKey(null);
+      setHasChanges(false);
+    } catch (error) {
+      console.error('Error saving configuration:', error);
+      alert('Failed to save configuration. Please try again.');
+    }
   };
 
   const handleCancel = () => {
@@ -121,10 +130,10 @@ export default function ConfigurationManagement() {
     setEditValue('');
   };
 
-  const saveAllChanges = () => {
-    console.log('Saving all configuration changes...');
+  const saveAllChanges = async () => {
+    // Reload configurations to ensure we have latest values
+    await loadConfigs();
     setHasChanges(false);
-    // API call to save changes
   };
 
   return (
@@ -168,7 +177,8 @@ export default function ConfigurationManagement() {
           <div>
             <h3 className="text-sm font-medium text-yellow-800">Configuration Warning</h3>
             <p className="mt-1 text-sm text-yellow-700">
-              Changes to system configuration may require application restart. Always test changes in a staging environment first.
+              Changes to system configuration may require application restart. Always test changes
+              in a staging environment first.
             </p>
           </div>
         </div>
@@ -187,7 +197,7 @@ export default function ConfigurationManagement() {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Sensitive Values</div>
           <div className="text-3xl font-bold text-gray-900">
-            {configs.filter(c => c.sensitive).length}
+            {configs.filter((c) => c.sensitive).length}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
@@ -258,7 +268,9 @@ export default function ConfigurationManagement() {
                 <tr key={config.key} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="text-sm font-medium text-gray-900 font-mono">{config.key}</div>
+                      <div className="text-sm font-medium text-gray-900 font-mono">
+                        {config.key}
+                      </div>
                       {config.sensitive && (
                         <span className="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
                           Sensitive
@@ -319,10 +331,7 @@ export default function ConfigurationManagement() {
                         >
                           <CheckCircle className="h-5 w-5" />
                         </button>
-                        <button
-                          onClick={handleCancel}
-                          className="text-red-600 hover:text-red-900"
-                        >
+                        <button onClick={handleCancel} className="text-red-600 hover:text-red-900">
                           <Trash2 className="h-5 w-5" />
                         </button>
                       </div>

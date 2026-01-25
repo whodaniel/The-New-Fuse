@@ -260,11 +260,27 @@ const AgentDetail: React.FC = () => {
   const handleToggleAgent = async () => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (agent.status === 'Active') {
+        await agentService.stopAgent(agent.id);
+        setAgent((prev) => (prev ? { ...prev, status: 'Inactive' } : null));
+        toast({
+          title: 'Agent Paused',
+          description: `${agent.name} has been paused.`,
+        });
+      } else {
+        await agentService.startAgent(agent.id);
+        setAgent((prev) => (prev ? { ...prev, status: 'Active' } : null));
+        toast({
+          title: 'Agent Activated',
+          description: `${agent.name} has been activated.`,
+        });
+      }
+    } catch (err) {
+      console.error('Failed to toggle agent:', err);
       toast({
-        title: agent.status === 'Active' ? 'Agent Paused' : 'Agent Activated',
-        description: `${agent.name} has been ${agent.status === 'Active' ? 'paused' : 'activated'}.`,
+        title: 'Error',
+        description: 'Failed to update agent status',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -274,10 +290,22 @@ const AgentDetail: React.FC = () => {
   const handleRestart = async () => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Restart logic implies stopping then starting, or a specific restart endpoint if available
+      // For now, we'll stop then start
+      await agentService.stopAgent(agent.id);
+      await agentService.startAgent(agent.id);
+      setAgent((prev) => (prev ? { ...prev, status: 'Active' } : null));
+
       toast({
         title: 'Agent Restarted',
         description: `${agent.name} has been restarted successfully.`,
+      });
+    } catch (err) {
+      console.error('Failed to restart agent:', err);
+      toast({
+        title: 'Error',
+        description: 'Failed to restart agent',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -288,13 +316,20 @@ const AgentDetail: React.FC = () => {
     if (window.confirm(`Are you sure you want to delete ${agent.name}?`)) {
       setIsLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await agentService.deleteAgent(agent.id);
         toast({
           title: 'Agent Deleted',
           description: `${agent.name} has been deleted.`,
           variant: 'destructive',
         });
         navigate('/agents');
+      } catch (err) {
+        console.error('Failed to delete agent:', err);
+        toast({
+          title: 'Error',
+          description: 'Failed to delete agent',
+          variant: 'destructive',
+        });
       } finally {
         setIsLoading(false);
       }
@@ -686,20 +721,20 @@ const AgentDetail: React.FC = () => {
 
             {/* Identity Tab Redirect Placeholder or Inline? Let's use inline link for now as it is a separate page in router */}
             <TabsContent value="identity">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    <GlassCard className="p-8 text-center border-blue-500/20">
-                        <Fingerprint className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-white mb-2">Sovereign Entity Certificate</h3>
-                        <p className="text-gray-400 mb-6 font-mono text-sm underline group-hover:text-blue-300 cursor-pointer">
-                            SEC-7X-IDENTITY-PROXIMAL
-                        </p>
-                        <Link to={`/agents/${id}/identity`}>
-                            <PremiumButton variant="primary">
-                                Launch Identity Studio
-                            </PremiumButton>
-                        </Link>
-                    </GlassCard>
-                </motion.div>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <GlassCard className="p-8 text-center border-blue-500/20">
+                  <Fingerprint className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    Sovereign Entity Certificate
+                  </h3>
+                  <p className="text-gray-400 mb-6 font-mono text-sm underline group-hover:text-blue-300 cursor-pointer">
+                    SEC-7X-IDENTITY-PROXIMAL
+                  </p>
+                  <Link to={`/agents/${id}/identity`}>
+                    <PremiumButton variant="primary">Launch Identity Studio</PremiumButton>
+                  </Link>
+                </GlassCard>
+              </motion.div>
             </TabsContent>
           </AnimatePresence>
         </Tabs>

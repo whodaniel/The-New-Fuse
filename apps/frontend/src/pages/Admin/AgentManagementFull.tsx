@@ -1,23 +1,29 @@
-import React, { useState, useEffect } from 'react';
 import {
+  Activity,
+  AlertCircle,
   Bot,
-  Play,
+  CheckCircle,
+  Eye,
   Pause,
-  StopCircle,
+  Play,
+  Plus,
   RefreshCw,
   Settings,
-  Eye,
+  StopCircle,
   Trash2,
-  Plus,
-  Activity,
-  Clock,
-  Zap,
-  AlertCircle,
-  CheckCircle,
   XCircle,
-  BarChart3,
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useEffect, useState } from 'react';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 interface Agent {
   id: string;
@@ -45,82 +51,47 @@ export default function AgentManagementFull() {
     return () => clearInterval(interval);
   }, []);
 
+  const [stats, setStats] = useState({ total: 0, running: 0, error: 0 });
+
   const loadAgents = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
 
-      const mockAgents: Agent[] = [
-        {
-          id: '1',
-          name: 'ChatBot Pro',
-          type: 'chatbot',
-          status: 'running',
-          uptime: '12d 5h 32m',
-          requestsHandled: 145234,
-          avgResponseTime: 342,
-          errorRate: 0.12,
-          lastActive: new Date(),
-          cpuUsage: 45,
-          memoryUsage: 512,
-        },
-        {
-          id: '2',
-          name: 'Research Assistant',
-          type: 'assistant',
-          status: 'running',
-          uptime: '8d 2h 15m',
-          requestsHandled: 8542,
-          avgResponseTime: 1240,
-          errorRate: 0.05,
-          lastActive: new Date(Date.now() - 5 * 60000),
-          cpuUsage: 32,
-          memoryUsage: 768,
-        },
-        {
-          id: '3',
-          name: 'Workflow Automation',
-          type: 'automation',
-          status: 'stopped',
-          uptime: '0m',
-          requestsHandled: 2341,
-          avgResponseTime: 189,
-          errorRate: 0.0,
-          lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000),
-          cpuUsage: 0,
-          memoryUsage: 0,
-        },
-        {
-          id: '4',
-          name: 'Analytics Engine',
-          type: 'analytics',
-          status: 'error',
-          uptime: '0m',
-          requestsHandled: 45123,
-          avgResponseTime: 523,
-          errorRate: 15.2,
-          lastActive: new Date(Date.now() - 30 * 60000),
-          cpuUsage: 0,
-          memoryUsage: 0,
-        },
-        {
-          id: '5',
-          name: 'Code Assistant',
-          type: 'assistant',
-          status: 'starting',
-          uptime: '0m',
-          requestsHandled: 0,
-          avgResponseTime: 0,
-          errorRate: 0,
-          lastActive: new Date(),
-          cpuUsage: 12,
-          memoryUsage: 128,
-        },
-      ];
+      const [agentsRes, statsRes] = await Promise.all([
+        fetch('/api/admin/agents?limit=100', { headers }),
+        fetch('/api/admin/agents/stats', { headers }),
+      ]);
 
-      setAgents(mockAgents);
+      if (!agentsRes.ok || !statsRes.ok) throw new Error('Failed to fetch data');
 
-      // Generate performance data
+      const agentsData = await agentsRes.json();
+      const statsData = await statsRes.json();
+
+      setStats({
+        total: statsData.total || 0,
+        running: statsData.running || 0,
+        error: statsData.error || 0,
+      });
+
+      const mappedAgents: Agent[] = agentsData.data.map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        type: (a.type || 'assistant').toLowerCase(),
+        status: (a.status || 'stopped').toLowerCase(),
+        uptime: '0m', // Todo: Implement uptime tracking
+        requestsHandled: 0, // Todo: Implement metrics
+        avgResponseTime: 0,
+        errorRate: 0,
+        lastActive: new Date(a.updatedAt || Date.now()),
+        cpuUsage: 0,
+        memoryUsage: 0,
+      }));
+
+      setAgents(mappedAgents);
+
+      // Generate placeholder performance data until backend metrics are ready
       const perfData = Array.from({ length: 24 }, (_, i) => ({
         time: `${i}:00`,
         requests: Math.floor(Math.random() * 1000 + 500),
@@ -207,7 +178,7 @@ export default function AgentManagementFull() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Agents</p>
-              <p className="text-3xl font-bold text-gray-900">{agents.length}</p>
+              <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
             </div>
             <Bot className="h-12 w-12 text-blue-500 opacity-20" />
           </div>
@@ -216,9 +187,7 @@ export default function AgentManagementFull() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Running</p>
-              <p className="text-3xl font-bold text-green-600">
-                {agents.filter((a) => a.status === 'running').length}
-              </p>
+              <p className="text-3xl font-bold text-green-600">{stats.running}</p>
             </div>
             <Play className="h-12 w-12 text-green-500 opacity-20" />
           </div>
@@ -227,9 +196,7 @@ export default function AgentManagementFull() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">With Errors</p>
-              <p className="text-3xl font-bold text-red-600">
-                {agents.filter((a) => a.status === 'error').length}
-              </p>
+              <p className="text-3xl font-bold text-red-600">{stats.error}</p>
             </div>
             <AlertCircle className="h-12 w-12 text-red-500 opacity-20" />
           </div>
@@ -297,12 +264,16 @@ export default function AgentManagementFull() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeBadge(agent.type)}`}>
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeBadge(agent.type)}`}
+                      >
                         {agent.type}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadge.bg} ${statusBadge.text}`}>
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadge.bg} ${statusBadge.text}`}
+                      >
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {agent.status}
                       </span>

@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from 'react';
 import {
-  FileText,
-  Search,
-  Filter,
-  Download,
-  RefreshCw,
-  Calendar,
-  User,
-  Shield,
   Activity,
   AlertCircle,
   CheckCircle,
-  XCircle,
+  Download,
   Eye,
+  FileText,
+  RefreshCw,
+  Search,
+  Shield,
+  User,
+  XCircle,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface AuditLog {
   id: string;
@@ -43,69 +41,65 @@ export default function AuditLogViewer() {
   const loadLogs = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Build query parameters
+      const params = new URLSearchParams();
+      params.append('limit', '100');
 
-      const mockLogs: AuditLog[] = [
-        {
-          id: '1',
-          timestamp: new Date(),
-          type: 'security',
-          action: 'Failed login attempt',
-          user: 'unknown@example.com',
-          ipAddress: '192.168.1.100',
-          resource: '/api/auth/login',
-          status: 'warning',
-          details: 'Invalid credentials provided',
-        },
-        {
-          id: '2',
-          timestamp: new Date(Date.now() - 5 * 60000),
-          type: 'admin',
-          action: 'User role updated',
-          user: 'admin@example.com',
-          ipAddress: '192.168.1.50',
-          resource: '/api/admin/users/123',
-          status: 'success',
-          details: 'Changed user role from user to moderator',
-        },
-        {
-          id: '3',
-          timestamp: new Date(Date.now() - 10 * 60000),
-          type: 'user',
-          action: 'Password changed',
-          user: 'john@example.com',
-          ipAddress: '192.168.1.75',
-          resource: '/api/users/profile',
-          status: 'success',
-          details: 'User successfully changed password',
-        },
-        {
-          id: '4',
-          timestamp: new Date(Date.now() - 15 * 60000),
-          type: 'system',
-          action: 'Database backup completed',
-          user: 'system',
-          ipAddress: '127.0.0.1',
-          resource: '/backup/daily',
-          status: 'success',
-          details: 'Automated daily backup completed successfully',
-        },
-        {
-          id: '5',
-          timestamp: new Date(Date.now() - 30 * 60000),
-          type: 'security',
-          action: 'API rate limit exceeded',
-          user: 'api-user@example.com',
-          ipAddress: '203.0.113.42',
-          resource: '/api/chat/messages',
-          status: 'error',
-          details: 'Rate limit exceeded: 1000 requests in 1 hour',
-        },
-      ];
+      if (dateRange !== 'all') {
+        const now = new Date();
+        let startDate: Date;
 
-      setLogs(mockLogs);
+        switch (dateRange) {
+          case 'today':
+            startDate = new Date(now.setHours(0, 0, 0, 0));
+            break;
+          case 'week':
+            startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case 'month':
+            startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          default:
+            startDate = new Date(0);
+        }
+
+        params.append('startDate', startDate.toISOString());
+      }
+
+      if (selectedStatus !== 'all') {
+        params.append('status', selectedStatus);
+      }
+
+      const response = await fetch(`/api/admin/audit-logs?${params.toString()}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch audit logs: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Transform API response to match UI interface
+      const transformedLogs: AuditLog[] = data.map((log: any) => ({
+        id: log.id,
+        timestamp: new Date(log.createdAt),
+        type: (log.resourceType || 'system') as AuditLog['type'],
+        action: log.action,
+        user: log.userId || 'system',
+        ipAddress: log.ipAddress || 'N/A',
+        resource: log.resourceId || 'N/A',
+        status: log.status === 'success' ? 'success' : log.status === 'error' ? 'error' : 'warning',
+        details: log.errorMessage || JSON.stringify(log.details) || 'No details available',
+      }));
+
+      setLogs(transformedLogs);
     } catch (error) {
       console.error('Error loading logs:', error);
+      setLogs([]);
     } finally {
       setLoading(false);
     }
@@ -304,7 +298,9 @@ export default function AuditLogViewer() {
                         {formatTimestamp(log.timestamp)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${typeBadge.bg} ${typeBadge.text}`}>
+                        <span
+                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${typeBadge.bg} ${typeBadge.text}`}
+                        >
                           <TypeIcon className="h-3 w-3 mr-1" />
                           {log.type}
                         </span>
@@ -321,9 +317,7 @@ export default function AuditLogViewer() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
                         {log.resource}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getStatusIcon(log.status)}
-                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{getStatusIcon(log.status)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
                           onClick={() => setSelectedLog(log)}
@@ -387,7 +381,9 @@ export default function AuditLogViewer() {
               </div>
               <div>
                 <div className="text-sm text-gray-600">Details</div>
-                <div className="text-sm text-gray-900 bg-gray-50 p-4 rounded-lg">{selectedLog.details}</div>
+                <div className="text-sm text-gray-900 bg-gray-50 p-4 rounded-lg">
+                  {selectedLog.details}
+                </div>
               </div>
             </div>
             <div className="mt-6 flex justify-end">

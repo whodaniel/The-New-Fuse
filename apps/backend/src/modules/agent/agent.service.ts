@@ -225,4 +225,50 @@ export class AgentService {
       throw new InternalServerErrorException('Failed to search for agents');
     }
   }
+  async getAllAgentsSystem(
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ data: Agent[]; pagination: any }> {
+    try {
+      const { data, total } = await drizzleAgentRepository.findAllSystem(page, limit);
+
+      return {
+        data: data.map((a) => this.transformAgent(a)),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to get system agents: ${errorMessage}`);
+      throw new InternalServerErrorException('Failed to retrieve system agents');
+    }
+  }
+
+  async getSystemAgentStats() {
+    try {
+      const counts = await drizzleAgentRepository.countByStatus();
+      const stats = counts.reduce(
+        (acc, curr) => {
+          acc[curr.status.toLowerCase()] = curr.count;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+
+      return {
+        total: Object.values(stats).reduce((a, b) => a + b, 0),
+        running: stats['active'] || 0,
+        stopped: stats['inactive'] || 0,
+        error: stats['error'] || 0,
+        ...stats,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get system agent stats: ${error}`);
+      throw new InternalServerErrorException('Failed to retrieve agent stats');
+    }
+  }
 }

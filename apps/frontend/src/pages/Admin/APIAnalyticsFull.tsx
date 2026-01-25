@@ -1,33 +1,30 @@
-import React, { useState, useEffect } from 'react';
 import {
   Activity,
-  TrendingUp,
-  TrendingDown,
-  RefreshCw,
-  Download,
-  Filter,
-  Calendar,
-  Globe,
-  Zap,
   AlertTriangle,
   Clock,
+  Download,
+  Globe,
+  RefreshCw,
+  TrendingUp,
+  Zap,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import {
-  LineChart,
-  Line,
-  AreaChart,
   Area,
-  BarChart,
+  AreaChart,
   Bar,
-  PieChart,
-  Pie,
+  BarChart,
+  CartesianGrid,
   Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
 } from 'recharts';
 
 interface APIMetrics {
@@ -41,41 +38,27 @@ interface APIMetrics {
   uptime: number;
 }
 
+interface StatusCodeData {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface ChartData {
+  time: string;
+  requests: number;
+  errors: number;
+  responseTime: number;
+}
+
 export default function APIAnalyticsFull() {
   const [metrics, setMetrics] = useState<APIMetrics | null>(null);
+  const [statusCodeData, setStatusCodeData] = useState<StatusCodeData[]>([]);
+  const [methodData, setMethodData] = useState<any[]>([]);
+  const [requestData, setRequestData] = useState<ChartData[]>([]);
+  const [endpointData, setEndpointData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
-
-  const requestData = Array.from({ length: 24 }, (_, i) => ({
-    time: `${i}:00`,
-    requests: Math.floor(Math.random() * 2000 + 1000),
-    errors: Math.floor(Math.random() * 50),
-    responseTime: Math.floor(Math.random() * 200 + 100),
-  }));
-
-  const endpointData = [
-    { endpoint: '/api/auth/login', requests: 12543, avgTime: 145, errors: 23 },
-    { endpoint: '/api/users', requests: 8932, avgTime: 89, errors: 12 },
-    { endpoint: '/api/agents', requests: 7821, avgTime: 234, errors: 45 },
-    { endpoint: '/api/chat/messages', requests: 15234, avgTime: 312, errors: 67 },
-    { endpoint: '/api/workspaces', requests: 4521, avgTime: 123, errors: 8 },
-  ];
-
-  const statusCodeData = [
-    { name: '200 OK', value: 145234, color: '#10b981' },
-    { name: '201 Created', value: 12543, color: '#3b82f6' },
-    { name: '400 Bad Request', value: 234, color: '#f59e0b' },
-    { name: '401 Unauthorized', value: 156, color: '#ef4444' },
-    { name: '500 Server Error', value: 89, color: '#dc2626' },
-  ];
-
-  const methodData = [
-    { name: 'GET', value: 98234 },
-    { name: 'POST', value: 45678 },
-    { name: 'PUT', value: 12345 },
-    { name: 'DELETE', value: 5432 },
-    { name: 'PATCH', value: 3456 },
-  ];
 
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
@@ -88,17 +71,68 @@ export default function APIAnalyticsFull() {
   const loadMetrics = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMetrics({
-        totalRequests: 165234,
-        successfulRequests: 162345,
-        failedRequests: 2889,
-        avgResponseTime: 234,
-        p95ResponseTime: 567,
-        requestsPerSecond: 1.92,
-        errorRate: 1.75,
-        uptime: 99.98,
+      const token = localStorage.getItem('auth_token');
+      // Append timeRange to query params if backend supports it
+      const response = await fetch(`/api/admin/api-analytics/stats?range=${timeRange}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch analytics');
+      }
+
+      const data = await response.json();
+
+      const totalRequests = data.totalRequests || 0;
+      const errorCount = data.errorCount || 0;
+      const avgDuration = data.avgResponseTime || 0;
+      const errorRate = totalRequests > 0 ? (errorCount / totalRequests) * 100 : 0;
+
+      // Status Codes
+      const rawStatusCodes = data.statusCodes || [];
+      const statusChartData = rawStatusCodes.map((s: any, index: number) => ({
+        name: `${s.status}`,
+        value: s.count,
+        color: COLORS[index % COLORS.length] || '#000',
+      }));
+
+      // Methods
+      const rawMethods = data.methods || [];
+      const methodChartData = rawMethods.map((m: any) => ({
+        name: m.method,
+        value: m.count,
+      }));
+
+      // Time Series
+      const rawTimeSeries = data.timeSeries || [];
+      const seriesChartData = rawTimeSeries.map((t: any) => ({
+        time: new Date(t.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        requests: t.requests,
+        errors: t.errors,
+        responseTime: t.responseTime,
+      }));
+
+      // Top Endpoints
+      const rawEndpoints = data.topEndpoints || [];
+
+      setMetrics({
+        totalRequests,
+        successfulRequests: totalRequests - errorCount,
+        failedRequests: errorCount,
+        avgResponseTime: parseFloat(avgDuration.toFixed(2)),
+        p95ResponseTime: 0,
+        requestsPerSecond: 0,
+        errorRate: parseFloat(errorRate.toFixed(2)),
+        uptime: 100,
+      });
+
+      setStatusCodeData(statusChartData);
+      setMethodData(methodChartData);
+      setRequestData(seriesChartData);
+      setEndpointData(rawEndpoints);
     } catch (error) {
       console.error('Error loading metrics:', error);
     } finally {
@@ -116,7 +150,9 @@ export default function APIAnalyticsFull() {
               <Activity className="h-8 w-8 mr-3 text-blue-600" />
               API Analytics
             </h1>
-            <p className="text-gray-600">Monitor API usage, performance, and health</p>
+            <p className="text-gray-600">
+              Monitor API usage, performance, and health (Real-Time Data)
+            </p>
           </div>
           <div className="flex items-center space-x-3">
             <select
@@ -152,29 +188,23 @@ export default function APIAnalyticsFull() {
               <Globe className="h-8 w-8 text-blue-500" />
               <TrendingUp className="h-5 w-5 text-green-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{metrics.totalRequests.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Total Requests</div>
-            <div className="mt-2 text-xs text-green-600 flex items-center">
-              +12% from last period
+            <div className="text-3xl font-bold text-gray-900">
+              {metrics.totalRequests.toLocaleString()}
             </div>
+            <div className="text-sm text-gray-600">Total Requests</div>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
             <div className="flex items-center justify-between mb-2">
               <Zap className="h-8 w-8 text-green-500" />
-              <TrendingDown className="h-5 w-5 text-green-500" />
             </div>
             <div className="text-3xl font-bold text-gray-900">{metrics.avgResponseTime}</div>
             <div className="text-sm text-gray-600">Avg Response Time (ms)</div>
-            <div className="mt-2 text-xs text-gray-600">
-              P95: {metrics.p95ResponseTime}ms
-            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500">
             <div className="flex items-center justify-between mb-2">
               <AlertTriangle className="h-8 w-8 text-red-500" />
-              <TrendingDown className="h-5 w-5 text-green-500" />
             </div>
             <div className="text-3xl font-bold text-gray-900">{metrics.errorRate}%</div>
             <div className="text-sm text-gray-600">Error Rate</div>
@@ -186,13 +216,9 @@ export default function APIAnalyticsFull() {
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
             <div className="flex items-center justify-between mb-2">
               <Clock className="h-8 w-8 text-purple-500" />
-              <TrendingUp className="h-5 w-5 text-green-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{metrics.uptime}%</div>
-            <div className="text-sm text-gray-600">API Uptime</div>
-            <div className="mt-2 text-xs text-gray-600">
-              {metrics.requestsPerSecond} req/s
-            </div>
+            <div className="text-3xl font-bold text-gray-900">Active</div>
+            <div className="text-sm text-gray-600">System Status</div>
           </div>
         </div>
       )}
@@ -201,46 +227,65 @@ export default function APIAnalyticsFull() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Volume Over Time</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={requestData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Area type="monotone" dataKey="requests" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} name="Requests" />
-            </AreaChart>
-          </ResponsiveContainer>
+          {requestData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={requestData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Area
+                  type="monotone"
+                  dataKey="requests"
+                  stroke="#3b82f6"
+                  fill="#3b82f6"
+                  fillOpacity={0.6}
+                  name="Requests"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-gray-400">
+              No data available for this time range
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Response Time & Errors</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={requestData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="responseTime"
-                stroke="#10b981"
-                strokeWidth={2}
-                name="Response Time (ms)"
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="errors"
-                stroke="#ef4444"
-                strokeWidth={2}
-                name="Errors"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {requestData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={requestData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
+                <Tooltip />
+                <Legend />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="responseTime"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  name="Response Time (ms)"
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="errors"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  name="Errors"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-gray-400">
+              No data available for this time range
+            </div>
+          )}
         </div>
       </div>
 
@@ -248,37 +293,50 @@ export default function APIAnalyticsFull() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">HTTP Status Codes</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={statusCodeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                dataKey="value"
-              >
-                {statusCodeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          {statusCodeData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={statusCodeData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={100}
+                  dataKey="value"
+                >
+                  {statusCodeData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-gray-400">
+              No status codes recorded
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">HTTP Methods</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={methodData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" />
-              <Tooltip />
-              <Bar dataKey="value" fill="#3b82f6" />
-            </BarChart>
-          </ResponsiveContainer>
+          {methodData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={methodData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" />
+                <Tooltip />
+                <Bar dataKey="value" fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-gray-400">
+              No method data available
+            </div>
+          )}
         </div>
       </div>
 
@@ -286,50 +344,64 @@ export default function APIAnalyticsFull() {
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Top API Endpoints</h3>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Endpoint
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Requests
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Avg Response Time
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Errors
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Error Rate
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {endpointData.map((endpoint, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 font-mono">{endpoint.endpoint}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{endpoint.requests.toLocaleString()}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{endpoint.avgTime}ms</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-red-600">{endpoint.errors}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {((endpoint.errors / endpoint.requests) * 100).toFixed(2)}%
-                    </div>
-                  </td>
+          {endpointData.length > 0 ? (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Endpoint
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Requests
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Avg Response Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Errors
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Error Rate
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {endpointData.map((endpoint, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900 font-mono">
+                        {endpoint.endpoint}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {endpoint.requests.toLocaleString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{endpoint.avgTime.toFixed(1)}ms</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-red-600">{endpoint.errors}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {(endpoint.requests > 0
+                          ? (endpoint.errors / endpoint.requests) * 100
+                          : 0
+                        ).toFixed(2)}
+                        %
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="h-[100px] flex items-center justify-center text-gray-400">
+              No endpoint activity recorded
+            </div>
+          )}
         </div>
       </div>
     </div>

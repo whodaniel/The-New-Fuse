@@ -8,9 +8,12 @@ export * from './enums';
 
 // Tables
 export * from './agents';
+export * from './api-logs';
+export * from './audit-logs';
 export * from './billing';
 export * from './chat';
 export * from './code-execution';
+export * from './configuration';
 export * from './jules';
 export * from './marketplace';
 export * from './mass';

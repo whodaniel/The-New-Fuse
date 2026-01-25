@@ -1,29 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import {
-  Users,
-  Building,
-  Heart,
-  Database,
-  BarChart3,
-  Settings,
-  FileText,
-  HardDrive,
   Activity,
-  Flag,
-  Bot,
-  RefreshCw,
-  TrendingUp,
-  Server,
-  Shield,
-  Clock,
   AlertCircle,
-  CheckCircle,
-  XCircle,
   ArrowUp,
-  ArrowDown,
+  BarChart3,
+  Bot,
+  Building,
+  CheckCircle,
+  Clock,
+  Database,
+  FileText,
+  Flag,
+  HardDrive,
+  Heart,
+  RefreshCw,
+  Server,
+  Settings,
+  Shield,
+  TrendingUp,
+  Users,
+  XCircle,
 } from 'lucide-react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface SystemMetrics {
   totalUsers: number;
@@ -97,94 +95,68 @@ export default function ComprehensiveAdminDashboard() {
   const loadDashboardData = async () => {
     setLoading(true);
     try {
-      // In production, replace with actual API calls
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      setMetrics({
-        totalUsers: 1247,
-        activeUsers: 342,
-        totalWorkspaces: 156,
-        activeWorkspaces: 89,
-        totalAgents: 234,
-        runningAgents: 87,
-        systemUptime: '45 days, 12 hours',
-        serverHealth: 'healthy',
-        memoryUsage: 68,
-        cpuUsage: 45,
-        diskUsage: 52,
-        networkTraffic: 1.2,
-        apiRequests: 145234,
-        apiErrors: 234,
-        databaseConnections: 45,
-        cacheHitRate: 94.2,
+      // Fetch real dashboard metrics
+      const response = await fetch('/api/admin/metrics/dashboard', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
 
-      setRecentActivities([
-        {
-          id: '1',
-          type: 'user',
-          user: 'alice@example.com',
-          action: 'Created new workspace "Marketing Team"',
-          timestamp: new Date(Date.now() - 5 * 60000),
-          status: 'success',
-        },
-        {
-          id: '2',
-          type: 'agent',
-          user: 'ChatBot v3.2',
-          action: 'Agent deployed successfully',
-          timestamp: new Date(Date.now() - 12 * 60000),
-          status: 'success',
-        },
-        {
-          id: '3',
-          type: 'system',
-          user: 'System',
-          action: 'Database backup completed',
-          timestamp: new Date(Date.now() - 30 * 60000),
-          status: 'success',
-        },
-        {
-          id: '4',
-          type: 'security',
-          user: 'bob@example.com',
-          action: 'Failed login attempt detected',
-          timestamp: new Date(Date.now() - 45 * 60000),
-          status: 'warning',
-        },
-        {
-          id: '5',
-          type: 'system',
-          user: 'System',
-          action: 'Cache cleared successfully',
-          timestamp: new Date(Date.now() - 60 * 60000),
-          status: 'success',
-        },
-      ]);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch dashboard metrics: ${response.statusText}`);
+      }
 
-      setAlerts([
-        {
-          id: '1',
-          level: 'warning',
-          message: 'High CPU usage detected on server-02 (85%)',
-          timestamp: new Date(Date.now() - 10 * 60000),
-          resolved: false,
+      const data = await response.json();
+
+      // Format uptime
+      const uptimeSeconds = data.system.uptime || 0;
+      const days = Math.floor(uptimeSeconds / (24 * 60 * 60));
+      const hours = Math.floor((uptimeSeconds % (24 * 60 * 60)) / (60 * 60));
+      const uptimeStr = `${days} days, ${hours} hours`;
+
+      setMetrics({
+        totalUsers: data.users?.total || 0,
+        activeUsers: data.users?.active || 0,
+        totalWorkspaces: 0, // TODO: Add workspaces count to backend
+        activeWorkspaces: 0, // TODO: Add active workspaces count
+        totalAgents: data.agents?.total || 0,
+        runningAgents: data.agents?.active || 0,
+        systemUptime: uptimeStr,
+        serverHealth: data.system?.health || 'healthy',
+        memoryUsage: data.system?.memory?.percentage || 0,
+        cpuUsage: data.system?.cpu?.usage || 0,
+        diskUsage: 0, // TODO: Add disk usage to backend
+        networkTraffic: 0, // TODO: Add network traffic tracking
+        apiRequests: 0, // TODO: Add API request counting
+        apiErrors: 0, // TODO: Add error tracking
+        databaseConnections: 0, // TODO: Add DB connection monitoring
+        cacheHitRate: 0, // TODO: Add cache monitoring
+      });
+
+      // Fetch recent audit logs for activity feed
+      const auditResponse = await fetch('/api/admin/audit-logs?limit=5', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        {
-          id: '2',
-          level: 'info',
-          message: 'System maintenance scheduled for Saturday 2:00 AM',
-          timestamp: new Date(Date.now() - 120 * 60000),
-          resolved: false,
-        },
-        {
-          id: '3',
-          level: 'error',
-          message: 'Database connection pool exhausted',
-          timestamp: new Date(Date.now() - 180 * 60000),
-          resolved: true,
-        },
-      ]);
+      });
+
+      if (auditResponse.ok) {
+        const auditData = await auditResponse.json();
+        const activities: RecentActivity[] = auditData.map((log: any) => ({
+          id: log.id,
+          type: log.resourceType || 'system',
+          user: log.userId || 'System',
+          action: log.action,
+          timestamp: new Date(log.createdAt),
+          status: log.status === 'success' ? 'success' : 'error',
+        }));
+        setRecentActivities(activities);
+      }
+
+      // TODO: Implement alerts system
+      setAlerts([]);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {
@@ -350,9 +322,7 @@ export default function ComprehensiveAdminDashboard() {
               <Shield className="h-10 w-10 mr-3 text-blue-600" />
               Admin Dashboard
             </h1>
-            <p className="text-gray-600">
-              Comprehensive platform management and monitoring
-            </p>
+            <p className="text-gray-600">Comprehensive platform management and monitoring</p>
           </div>
           <div className="flex items-center space-x-4">
             <select
@@ -378,19 +348,22 @@ export default function ComprehensiveAdminDashboard() {
 
       {/* System Status Banner */}
       {metrics && (
-        <div className={`mb-8 p-6 rounded-lg border-2 ${
-          metrics.serverHealth === 'healthy'
-            ? 'bg-green-50 border-green-200'
-            : metrics.serverHealth === 'warning'
-            ? 'bg-yellow-50 border-yellow-200'
-            : 'bg-red-50 border-red-200'
-        }`}>
+        <div
+          className={`mb-8 p-6 rounded-lg border-2 ${
+            metrics.serverHealth === 'healthy'
+              ? 'bg-green-50 border-green-200'
+              : metrics.serverHealth === 'warning'
+                ? 'bg-yellow-50 border-yellow-200'
+                : 'bg-red-50 border-red-200'
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {getHealthIcon(metrics.serverHealth)}
               <div>
                 <h3 className="text-lg font-semibold">
-                  System Status: {metrics.serverHealth.charAt(0).toUpperCase() + metrics.serverHealth.slice(1)}
+                  System Status:{' '}
+                  {metrics.serverHealth.charAt(0).toUpperCase() + metrics.serverHealth.slice(1)}
                 </h3>
                 <p className="text-sm text-gray-600">
                   Uptime: {metrics.systemUptime} | Last updated: {new Date().toLocaleTimeString()}
@@ -423,7 +396,9 @@ export default function ComprehensiveAdminDashboard() {
               <Users className="h-8 w-8 text-blue-500" />
               <TrendingUp className="h-5 w-5 text-green-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{metrics.totalUsers.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-gray-900">
+              {metrics.totalUsers.toLocaleString()}
+            </div>
             <div className="text-sm text-gray-600">Total Users</div>
             <div className="mt-2 text-xs text-green-600 flex items-center">
               <ArrowUp className="h-3 w-3 mr-1" />
@@ -448,7 +423,9 @@ export default function ComprehensiveAdminDashboard() {
               <BarChart3 className="h-8 w-8 text-purple-500" />
               <TrendingUp className="h-5 w-5 text-green-500" />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{metrics.apiRequests.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-gray-900">
+              {metrics.apiRequests.toLocaleString()}
+            </div>
             <div className="text-sm text-gray-600">API Requests (24h)</div>
             <div className="mt-2 text-xs text-red-600 flex items-center">
               {metrics.apiErrors} errors (0.16%)
@@ -462,129 +439,26 @@ export default function ComprehensiveAdminDashboard() {
             </div>
             <div className="text-3xl font-bold text-gray-900">{metrics.totalWorkspaces}</div>
             <div className="text-sm text-gray-600">Workspaces</div>
-            <div className="mt-2 text-xs text-gray-600">
-              {metrics.activeWorkspaces} active
-            </div>
+            <div className="mt-2 text-xs text-gray-600">{metrics.activeWorkspaces} active</div>
           </div>
         </div>
       )}
 
-      {/* Performance Charts */}
+      {/* Performance Charts - Historical Data Unavailable */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">System Performance</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={performanceData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Area type="monotone" dataKey="cpu" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="CPU %" />
-              <Area type="monotone" dataKey="memory" stackId="2" stroke="#10b981" fill="#10b981" name="Memory %" />
-            </AreaChart>
-          </ResponsiveContainer>
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+          <BarChart3 className="h-16 w-16 text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">System Performance History</h3>
+          <p className="text-gray-500 text-center">
+            Historical metrics retention is not currently enabled.
+          </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">API Request Volume</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={performanceData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="requests" stroke="#8b5cf6" strokeWidth={2} name="Requests" />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+          <Activity className="h-16 w-16 text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">API Usage Trends</h3>
+          <p className="text-gray-500 text-center">Traffic history data is not available.</p>
         </div>
-      </div>
-
-      {/* API Usage Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">API Endpoints Usage</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={apiUsageData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {apiUsageData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Resource Usage */}
-        {metrics && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Resource Usage</h3>
-            <div className="space-y-6">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">CPU Usage</span>
-                  <span className="text-sm font-bold">{metrics.cpuUsage}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`h-3 rounded-full transition-all duration-300 ${getUsageColor(metrics.cpuUsage)}`}
-                    style={{ width: `${metrics.cpuUsage}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Memory Usage</span>
-                  <span className="text-sm font-bold">{metrics.memoryUsage}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`h-3 rounded-full transition-all duration-300 ${getUsageColor(metrics.memoryUsage)}`}
-                    style={{ width: `${metrics.memoryUsage}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Disk Usage</span>
-                  <span className="text-sm font-bold">{metrics.diskUsage}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`h-3 rounded-full transition-all duration-300 ${getUsageColor(metrics.diskUsage)}`}
-                    style={{ width: `${metrics.diskUsage}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Network Traffic</span>
-                  <span className="text-sm font-bold">{metrics.networkTraffic} GB/s</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className="h-3 rounded-full transition-all duration-300 bg-blue-500"
-                    style={{ width: `${Math.min(metrics.networkTraffic * 20, 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Admin Sections Grid */}
@@ -598,9 +472,7 @@ export default function ComprehensiveAdminDashboard() {
               className="bg-white rounded-lg shadow-lg p-5 hover:shadow-xl transition-all group hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-3">
-                <div className={`p-3 rounded-lg ${section.color} text-white`}>
-                  {section.icon}
-                </div>
+                <div className={`p-3 rounded-lg ${section.color} text-white`}>{section.icon}</div>
                 {section.count && (
                   <div className="text-2xl font-bold text-gray-700">{section.count}</div>
                 )}
@@ -622,16 +494,25 @@ export default function ComprehensiveAdminDashboard() {
           </div>
           <div className="space-y-4">
             {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div
+                key={activity.id}
+                className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 <div className="mt-1">{getActivityIcon(activity.type)}</div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">{activity.user}</p>
                   <p className="text-xs text-gray-600">{activity.action}</p>
-                  <p className="text-xs text-gray-400 mt-1">{formatTimestamp(activity.timestamp)}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {formatTimestamp(activity.timestamp)}
+                  </p>
                 </div>
                 <div>
-                  {activity.status === 'success' && <CheckCircle className="h-4 w-4 text-green-500" />}
-                  {activity.status === 'warning' && <AlertCircle className="h-4 w-4 text-yellow-500" />}
+                  {activity.status === 'success' && (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  )}
+                  {activity.status === 'warning' && (
+                    <AlertCircle className="h-4 w-4 text-yellow-500" />
+                  )}
                   {activity.status === 'error' && <XCircle className="h-4 w-4 text-red-500" />}
                 </div>
               </div>
@@ -652,38 +533,42 @@ export default function ComprehensiveAdminDashboard() {
             <AlertCircle className="h-5 w-5 text-gray-400" />
           </div>
           <div className="space-y-4">
-            {alerts.filter(a => !a.resolved).length === 0 ? (
+            {alerts.filter((a) => !a.resolved).length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
                 <p>No active alerts</p>
               </div>
             ) : (
-              alerts.filter(a => !a.resolved).map((alert) => (
-                <div
-                  key={alert.id}
-                  className={`p-4 rounded-lg border-l-4 ${
-                    alert.level === 'critical'
-                      ? 'bg-red-50 border-red-500'
-                      : alert.level === 'error'
-                      ? 'bg-red-50 border-red-400'
-                      : alert.level === 'warning'
-                      ? 'bg-yellow-50 border-yellow-500'
-                      : 'bg-blue-50 border-blue-500'
-                  }`}
-                >
-                  <div className="flex items-start space-x-3">
-                    {getAlertIcon(alert.level)}
-                    <div className="flex-1">
-                      <div className="text-sm font-semibold capitalize">{alert.level}</div>
-                      <div className="text-sm text-gray-700 mt-1">{alert.message}</div>
-                      <div className="text-xs text-gray-500 mt-2">{formatTimestamp(alert.timestamp)}</div>
+              alerts
+                .filter((a) => !a.resolved)
+                .map((alert) => (
+                  <div
+                    key={alert.id}
+                    className={`p-4 rounded-lg border-l-4 ${
+                      alert.level === 'critical'
+                        ? 'bg-red-50 border-red-500'
+                        : alert.level === 'error'
+                          ? 'bg-red-50 border-red-400'
+                          : alert.level === 'warning'
+                            ? 'bg-yellow-50 border-yellow-500'
+                            : 'bg-blue-50 border-blue-500'
+                    }`}
+                  >
+                    <div className="flex items-start space-x-3">
+                      {getAlertIcon(alert.level)}
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold capitalize">{alert.level}</div>
+                        <div className="text-sm text-gray-700 mt-1">{alert.message}</div>
+                        <div className="text-xs text-gray-500 mt-2">
+                          {formatTimestamp(alert.timestamp)}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
             )}
           </div>
-          {alerts.filter(a => !a.resolved).length > 0 && (
+          {alerts.filter((a) => !a.resolved).length > 0 && (
             <Link
               to="/admin/system-health"
               className="block text-center mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -710,7 +595,9 @@ export default function ComprehensiveAdminDashboard() {
             <div className="text-sm text-gray-600">Cache Hit Rate</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-gray-900">{(metrics?.apiErrors || 0) / (metrics?.apiRequests || 1) * 100}%</div>
+            <div className="text-3xl font-bold text-gray-900">
+              {((metrics?.apiErrors || 0) / (metrics?.apiRequests || 1)) * 100}%
+            </div>
             <div className="text-sm text-gray-600">Error Rate</div>
           </div>
         </div>

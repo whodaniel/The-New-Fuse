@@ -2,7 +2,13 @@
  * Drizzle Repositories Index
  */
 export { DrizzleAgentRepository, drizzleAgentRepository } from './agent.repository';
+export { DrizzleApiLogsRepository, drizzleApiLogsRepository } from './api-logs.repository';
+export { DrizzleAuditLogsRepository, drizzleAuditLogsRepository } from './audit-logs.repository';
 export { DrizzleChatRepository, drizzleChatRepository } from './chat.repository';
+export {
+  DrizzleConfigurationRepository,
+  drizzleConfigurationRepository,
+} from './configuration.repository';
 export { DrizzleJulesRepository, drizzleJulesRepository } from './jules.repository';
 export { DrizzleLLMConfigRepository, drizzleLLMConfigRepository } from './llm_config.repository';
 export * from './marketplace.repository';

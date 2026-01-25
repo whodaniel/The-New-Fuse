@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
 import {
-  Database,
-  Play,
-  Download,
-  Upload,
-  RefreshCw,
-  Table,
-  Search,
   AlertCircle,
   CheckCircle,
   Clock,
-  TrendingUp,
-  HardDrive,
-  Activity,
+  Database,
+  Download,
+  Play,
+  Table,
+  Upload,
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 interface QueryResult {
   columns: string[];
@@ -48,8 +52,18 @@ export default function DatabaseAdminPanel() {
 
   const queryHistory = [
     { query: 'SELECT * FROM users WHERE role = "admin"', time: '2m ago', rows: 12, duration: 45 },
-    { query: 'UPDATE agents SET status = "active" WHERE id = 123', time: '15m ago', rows: 1, duration: 23 },
-    { query: 'SELECT COUNT(*) FROM messages GROUP BY workspace_id', time: '1h ago', rows: 156, duration: 234 },
+    {
+      query: 'UPDATE agents SET status = "active" WHERE id = 123',
+      time: '15m ago',
+      rows: 1,
+      duration: 23,
+    },
+    {
+      query: 'SELECT COUNT(*) FROM messages GROUP BY workspace_id',
+      time: '1h ago',
+      rows: 156,
+      duration: 234,
+    },
   ];
 
   const performanceData = [
@@ -64,21 +78,26 @@ export default function DatabaseAdminPanel() {
   const executeQuery = async () => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem('token');
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Mock result
-      setQueryResult({
-        columns: ['id', 'email', 'name', 'role', 'created_at'],
-        rows: [
-          [1, 'admin@example.com', 'Admin User', 'admin', '2024-01-15'],
-          [2, 'john@example.com', 'John Doe', 'user', '2024-03-20'],
-          [3, 'jane@example.com', 'Jane Smith', 'moderator', '2024-02-10'],
-        ],
-        rowCount: 3,
-        executionTime: 42,
+      const response = await fetch('/api/admin/database/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query }),
       });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Query execution failed');
+      }
+
+      const result: QueryResult = await response.json();
+      setQueryResult(result);
     } catch (err) {
-      setError('Query execution failed');
+      setError(err instanceof Error ? err.message : 'Query execution failed');
     } finally {
       setLoading(false);
     }
@@ -204,7 +223,10 @@ export default function DatabaseAdminPanel() {
                   <thead className="bg-gray-50">
                     <tr>
                       {queryResult.columns.map((col, i) => (
-                        <th key={i} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th
+                          key={i}
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                        >
                           {col}
                         </th>
                       ))}
@@ -234,11 +256,16 @@ export default function DatabaseAdminPanel() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Query History</h3>
           <div className="space-y-3">
             {queryHistory.map((item, index) => (
-              <div key={index} className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+              <div
+                key={index}
+                className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
+              >
                 <div className="text-sm font-mono text-gray-900 mb-1">{item.query}</div>
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <span>{item.time}</span>
-                  <span>{item.rows} rows • {item.duration}ms</span>
+                  <span>
+                    {item.rows} rows • {item.duration}ms
+                  </span>
                 </div>
               </div>
             ))}

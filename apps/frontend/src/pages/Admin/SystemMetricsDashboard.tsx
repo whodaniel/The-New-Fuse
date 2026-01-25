@@ -1,36 +1,26 @@
-import React, { useState, useEffect } from 'react';
 import {
   Activity,
-  Cpu,
-  HardDrive,
-  Server,
-  RefreshCw,
-  TrendingUp,
-  TrendingDown,
-  Zap,
-  Database,
-  Globe,
   AlertCircle,
+  Cpu,
+  Database,
   Download,
+  Globe,
+  HardDrive,
+  RefreshCw,
+  Server,
+  TrendingDown,
+  TrendingUp,
+  Zap,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
   PolarAngleAxis,
+  PolarGrid,
   PolarRadiusAxis,
   Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip,
 } from 'recharts';
 
 interface SystemMetrics {
@@ -70,35 +60,47 @@ export default function SystemMetricsDashboard() {
 
   const loadMetrics = async () => {
     try {
-      // Mock data - replace with real API
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const response = await fetch('/api/system/metrics', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
 
-      const now = new Date();
+      if (!response.ok) {
+        throw new Error(`Failed to fetch metrics: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Transform API response to match UI interface
       const newMetrics: SystemMetrics = {
-        cpu: Math.random() * 100,
-        memory: 65 + Math.random() * 20,
-        disk: 52 + Math.random() * 10,
-        network: Math.random() * 5,
-        activeConnections: Math.floor(100 + Math.random() * 200),
-        requestsPerSecond: Math.floor(500 + Math.random() * 1000),
-        avgResponseTime: Math.floor(50 + Math.random() * 100),
-        errorRate: Math.random() * 2,
+        cpu: data.cpu?.usagePercent || 0,
+        memory: data.memory?.usagePercent || 0,
+        disk: data.disk?.usagePercent || 0,
+        network: (data.network?.totalTraffic || 0) / (1024 * 1024 * 1024), // Convert to GB
+        activeConnections: data.database?.activeConnections || 0,
+        requestsPerSecond: Math.floor((data.api?.requestsPerMinute || 0) / 60),
+        avgResponseTime: data.api?.avgResponseTime || 0,
+        errorRate: data.api?.errorRate || 0,
       };
 
       setMetrics(newMetrics);
 
-      // Generate historical data
+      // TODO: Fetch historical data from backend when available
+      // For now, create a simple history array with current values
+      const now = new Date();
       const historical = Array.from({ length: 24 }, (_, i) => ({
         time: new Date(now.getTime() - (23 - i) * 60 * 60 * 1000).toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
         }),
-        cpu: 30 + Math.random() * 50,
-        memory: 60 + Math.random() * 20,
-        disk: 50 + Math.random() * 10,
-        requests: 500 + Math.random() * 1500,
-        responseTime: 50 + Math.random() * 100,
-        errors: Math.random() * 50,
+        cpu: newMetrics.cpu,
+        memory: newMetrics.memory,
+        disk: newMetrics.disk,
+        requests: 0,
+        responseTime: 0,
+        errors: 0,
       }));
 
       setHistoricalData(historical);
@@ -152,8 +154,14 @@ export default function SystemMetricsDashboard() {
           <Icon className="h-6 w-6" style={{ color }} />
         </div>
         {trend && (
-          <div className={`flex items-center text-sm ${trend === 'up' ? 'text-red-600' : 'text-green-600'}`}>
-            {trend === 'up' ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
+          <div
+            className={`flex items-center text-sm ${trend === 'up' ? 'text-red-600' : 'text-green-600'}`}
+          >
+            {trend === 'up' ? (
+              <TrendingUp className="h-4 w-4 mr-1" />
+            ) : (
+              <TrendingDown className="h-4 w-4 mr-1" />
+            )}
             {trendValue}
           </div>
         )}
@@ -296,79 +304,49 @@ export default function SystemMetricsDashboard() {
         </div>
       </div>
 
-      {/* Performance Charts */}
+      {/* Performance Charts - Historical Data */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Resource Utilization</h3>
-          <ResponsiveContainer width="100%" height={350}>
-            <AreaChart data={historicalData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Area type="monotone" dataKey="cpu" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="CPU %" />
-              <Area type="monotone" dataKey="memory" stackId="1" stroke="#10b981" fill="#10b981" name="Memory %" />
-              <Area type="monotone" dataKey="disk" stackId="1" stroke="#f59e0b" fill="#f59e0b" name="Disk %" />
-            </AreaChart>
-          </ResponsiveContainer>
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+          <Activity className="h-16 w-16 text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Resource Utilization History</h3>
+          <p className="text-gray-500 text-center">
+            Historical metrics retention is not currently enabled.
+          </p>
+          <p className="text-sm text-gray-400 mt-1">Real-time monitoring is active.</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Volume & Response Time</h3>
-          <ResponsiveContainer width="100%" height={350}>
-            <LineChart data={historicalData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" tick={{ fontSize: 12 }} />
-              <YAxis yAxisId="left" tick={{ fontSize: 12 }} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="requests"
-                stroke="#8b5cf6"
-                strokeWidth={2}
-                name="Requests"
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="responseTime"
-                stroke="#ef4444"
-                strokeWidth={2}
-                name="Response Time (ms)"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+          <Zap className="h-16 w-16 text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Request Volume History</h3>
+          <p className="text-gray-500 text-center">Traffic history data is not available.</p>
+          <p className="text-sm text-gray-400 mt-1">Real-time stats are shown above.</p>
         </div>
       </div>
 
-      {/* Error Rate Chart */}
+      {/* Error Rate & Radar */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Error Rate Trend</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={historicalData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="errors" fill="#ef4444" name="Errors" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center min-h-[300px] opacity-75">
+          <AlertCircle className="h-16 w-16 text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Rate Trend</h3>
+          <p className="text-gray-500 text-center">Historical error tracking is not available.</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">System Health Radar</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            System Health Radar (Real-time)
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart data={radarData}>
               <PolarGrid />
               <PolarAngleAxis dataKey="metric" />
               <PolarRadiusAxis angle={90} domain={[0, 100]} />
-              <Radar name="Health" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
+              <Radar
+                name="Health"
+                dataKey="value"
+                stroke="#3b82f6"
+                fill="#3b82f6"
+                fillOpacity={0.6}
+              />
               <Tooltip />
             </RadarChart>
           </ResponsiveContainer>

@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from 'react';
 import {
-  Users,
-  Search,
-  Filter,
-  Plus,
-  Edit,
-  Trash2,
-  Mail,
-  Shield,
   Check,
-  X,
-  Lock,
-  Unlock,
   Download,
-  Upload,
-  RefreshCw,
-  ChevronDown,
-  UserPlus,
-  UserX,
+  Edit,
   Eye,
+  Lock,
+  Plus,
+  RefreshCw,
+  Search,
+  Shield,
+  Trash2,
+  Unlock,
+  Upload,
+  Users,
+  UserX,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface User {
   id: string;
@@ -52,73 +47,38 @@ export default function UserManagementFull() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      // Mock data - replace with API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const mockUsers: User[] = [
-        {
-          id: '1',
-          email: 'admin@example.com',
-          name: 'Admin User',
-          role: 'admin',
-          status: 'active',
-          createdAt: new Date('2024-01-15'),
-          lastLogin: new Date(),
-          emailVerified: true,
-          workspaces: 5,
-          agents: 12,
+      const response = await fetch('/api/admin/users', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        {
-          id: '2',
-          email: 'john@example.com',
-          name: 'John Doe',
-          role: 'user',
-          status: 'active',
-          createdAt: new Date('2024-03-20'),
-          lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000),
-          emailVerified: true,
-          workspaces: 3,
-          agents: 8,
-        },
-        {
-          id: '3',
-          email: 'jane@example.com',
-          name: 'Jane Smith',
-          role: 'moderator',
-          status: 'active',
-          createdAt: new Date('2024-02-10'),
-          lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000),
-          emailVerified: true,
-          workspaces: 2,
-          agents: 5,
-        },
-        {
-          id: '4',
-          email: 'inactive@example.com',
-          name: 'Inactive User',
-          role: 'user',
-          status: 'inactive',
-          createdAt: new Date('2023-12-01'),
-          lastLogin: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          emailVerified: false,
-          workspaces: 1,
-          agents: 0,
-        },
-        {
-          id: '5',
-          email: 'suspended@example.com',
-          name: 'Suspended User',
-          role: 'user',
-          status: 'suspended',
-          createdAt: new Date('2024-01-01'),
-          lastLogin: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-          emailVerified: true,
-          workspaces: 0,
-          agents: 0,
-        },
-      ];
-      setUsers(mockUsers);
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Transform API response to match UI interface
+      const transformedUsers: User[] = data.data.map((apiUser: any) => ({
+        id: apiUser.id,
+        email: apiUser.email,
+        name: apiUser.name || apiUser.username || 'Unknown',
+        role: apiUser.role.toLowerCase() as User['role'],
+        status: apiUser.isActive ? 'active' : 'inactive',
+        createdAt: new Date(apiUser.createdAt),
+        lastLogin: apiUser.lastLogin ? new Date(apiUser.lastLogin) : new Date(apiUser.createdAt),
+        emailVerified: apiUser.emailVerified || false,
+        workspaces: 0, // TODO: Count from workspaces table
+        agents: 0, // TODO: Count from agents table
+      }));
+
+      setUsers(transformedUsers);
     } catch (error) {
       console.error('Error loading users:', error);
+      // Fallback to empty array on error
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -187,9 +147,27 @@ export default function UserManagementFull() {
     }
   };
 
-  const handleDeleteUser = (userId: string) => {
+  const handleDeleteUser = async (userId: string) => {
     if (confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter((u) => u.id !== userId));
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to delete user: ${response.statusText}`);
+        }
+
+        // Remove from local state
+        setUsers(users.filter((u) => u.id !== userId));
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user. Please try again.');
+      }
     }
   };
 
@@ -368,7 +346,9 @@ export default function UserManagementFull() {
                 <th className="px-6 py-3 text-left">
                   <input
                     type="checkbox"
-                    checked={selectedUsers.size === filteredUsers.length && filteredUsers.length > 0}
+                    checked={
+                      selectedUsers.size === filteredUsers.length && filteredUsers.length > 0
+                    }
                     onChange={handleSelectAll}
                     className="h-4 w-4 text-blue-600 rounded"
                   />
@@ -441,12 +421,16 @@ export default function UserManagementFull() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadge(user.role)}`}>
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadge(user.role)}`}
+                      >
                         {user.role}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(user.status)}`}>
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(user.status)}`}
+                      >
                         {user.status}
                       </span>
                     </td>
@@ -518,9 +502,7 @@ export default function UserManagementFull() {
 
       {/* Export/Import */}
       <div className="mt-6 flex items-center justify-between">
-        <div className="text-sm text-gray-600">
-          Last updated: {new Date().toLocaleString()}
-        </div>
+        <div className="text-sm text-gray-600">Last updated: {new Date().toLocaleString()}</div>
         <div className="flex items-center space-x-3">
           <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center text-sm">
             <Download className="h-4 w-4 mr-2" />

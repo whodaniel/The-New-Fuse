@@ -2,6 +2,7 @@
  * Agent Repository - Drizzle ORM Implementation
  * Example of migrating from Prisma to Drizzle using the Repository Pattern
  */
+import * as crypto from 'crypto';
 import { and, desc, eq, isNull, like, or, sql } from 'drizzle-orm';
 import { db } from '../client';
 import {
@@ -13,7 +14,6 @@ import {
   agents,
 } from '../schema';
 import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types';
-import * as crypto from 'crypto';
 
 // HMAC-SHA256 Hashing for Auth Tokens (Deterministic)
 function hashToken(token: string): string {
@@ -126,6 +126,32 @@ export class DrizzleAgentRepository {
     }
 
     return query;
+  }
+
+  /**
+   * Find all agents (System: no userId filter)
+   */
+  async findAllSystem(page = 1, limit = 50): Promise<{ data: Agent[]; total: number }> {
+    const skip = (page - 1) * limit;
+
+    const [data, countResult] = await Promise.all([
+      db
+        .select()
+        .from(agents)
+        .where(isNull(agents.deletedAt))
+        .orderBy(desc(agents.createdAt))
+        .offset(skip)
+        .limit(limit),
+      db
+        .select({ count: sql<number>`cast(count(*) as integer)` })
+        .from(agents)
+        .where(isNull(agents.deletedAt)),
+    ]);
+
+    return {
+      data,
+      total: countResult[0]?.count ?? 0,
+    };
   }
 
   /**
@@ -419,14 +445,14 @@ export class DrizzleAgentRepository {
     // Hash auth token before storage
     const hashedData = {
       ...data,
-      authToken: hashToken(data.authToken)
+      authToken: hashToken(data.authToken),
     };
     const [registration] = await db.insert(agentRegistrations).values(hashedData).returning();
 
     // Return the original plain token so the caller can see it once
     return {
       ...registration,
-      authToken: data.authToken
+      authToken: data.authToken,
     };
   }
 
