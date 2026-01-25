@@ -14,14 +14,18 @@ export const useAuthorization = () => {
 
     // Check if user.roles array includes any of the required roles
     // Support both single 'role' field and 'roles' array
-    if (Array.isArray((user as any).roles)) {
+    if (Array.isArray((user as any).roles) && (user as any).roles.length > 0) {
       return roles.some((role) =>
         (user as any).roles.map((r: string) => r.toUpperCase()).includes(role.toUpperCase())
       );
     }
 
     // Fallback to single role check
-    return roles.map((r) => r.toUpperCase()).includes(user.role.toUpperCase());
+    if (user.role) {
+      return roles.map((r) => r.toUpperCase()).includes(user.role.toUpperCase());
+    }
+
+    return false;
   };
 
   const canAccess = (check: PermissionCheck): boolean => {
@@ -92,10 +96,14 @@ export const useAuthorization = () => {
     isAdmin: hasRole(['SUPER_ADMIN', 'ADMIN']),
     isDeveloper: hasRole(['DEVELOPER']),
     // User info
-    userRole: user?.role.toUpperCase(),
-    userRoles: Array.isArray((user as any).roles)
-      ? (user as any).roles.map((r: string) => r.toUpperCase())
-      : [user?.role.toUpperCase()],
+    userRole: user?.role?.toUpperCase() || undefined,
+    userRoles: user
+      ? Array.isArray((user as any).roles)
+        ? (user as any).roles.map((r: string) => r.toUpperCase())
+        : user.role
+          ? [user.role.toUpperCase()]
+          : []
+      : [],
     // Helper to filter items by tenancy
     filterByTenancy: <T extends { tenantId?: string; agencyId?: string }>(items: T[]): T[] => {
       if (hasRole(['SUPER_ADMIN', 'ADMIN'])) return items;
