@@ -31,10 +31,9 @@ import { AuditService } from '../services/audit.service';
 @Controller('admin/users')
 @UseGuards(SecureAuthGuard, AdminGuard)
 export class AdminUsersController {
-  constructor(
-    private readonly userRepository = drizzleUserRepository,
-    private readonly auditService: AuditService
-  ) {}
+  private readonly userRepository = drizzleUserRepository;
+
+  constructor(private readonly auditService: AuditService) {}
 
   /**
    * Get all users with pagination and filtering

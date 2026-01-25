@@ -20,13 +20,12 @@ import { MetricsService } from '../services/metrics.service';
 @Controller('admin/metrics')
 @UseGuards(SecureAuthGuard, AdminGuard)
 export class AdminMetricsController {
-  constructor(
-    private readonly metricsService: MetricsService,
-    private readonly userRepository = drizzleUserRepository,
-    private readonly agentRepository = drizzleAgentRepository,
-    private readonly workflowRepository = drizzleWorkflowRepository,
-    private readonly auditLogsRepository = drizzleAuditLogsRepository
-  ) {}
+  private readonly userRepository = drizzleUserRepository;
+  private readonly agentRepository = drizzleAgentRepository;
+  private readonly workflowRepository = drizzleWorkflowRepository;
+  private readonly auditLogsRepository = drizzleAuditLogsRepository;
+
+  constructor(private readonly metricsService: MetricsService) {}
 
   /**
    * Get comprehensive system metrics
