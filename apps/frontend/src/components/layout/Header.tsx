@@ -1,6 +1,6 @@
 import { Bell, ChevronDown, LogOut, Menu, Moon, Search, Settings, Sun, User } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useLayout } from '../../contexts/LayoutContext';
 import { useAuth } from '../../providers/AuthProvider';
 import { useTheme } from '../../providers/ThemeProvider';
@@ -9,6 +9,7 @@ export function Header() {
   const { toggleSidebar } = useLayout();
   const { theme, setTheme } = useTheme();
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -17,8 +18,13 @@ export function Header() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setUserMenuOpen(false);
+    try {
+      await logout();
+      setUserMenuOpen(false);
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (
@@ -82,10 +88,10 @@ export function Header() {
                 className="flex items-center gap-2 p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
-                  {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                  {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                 </div>
                 <span className="hidden sm:inline text-sm font-medium">
-                  {user.displayName || user.email?.split('@')[0]}
+                  {user.name || user.email?.split('@')[0]}
                 </span>
                 <ChevronDown
                   className={`h-4 w-4 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`}
@@ -101,9 +107,12 @@ export function Header() {
                   <div className="absolute right-0 mt-2 w-56 backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl shadow-2xl overflow-hidden z-50">
                     <div className="p-3 border-b border-white/10">
                       <p className="text-sm font-semibold text-white truncate">
-                        {user.displayName || 'User'}
+                        {user.name || 'User'}
                       </p>
                       <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                      {user.role && (
+                        <p className="text-xs text-blue-400 mt-1 uppercase">{user.role}</p>
+                      )}
                     </div>
                     <div className="p-2">
                       <Link

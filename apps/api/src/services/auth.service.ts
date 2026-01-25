@@ -78,11 +78,11 @@ export class AuthService {
 
   async logout(): Promise<void> {
     // Implement token blacklisting if needed
+    // For now, logout is handled client-side by removing the token
   }
 
-  async getCurrentUser(): Promise<User | null> {
-    // This method will be called after AuthGuard, so user is already in request
-    return null;
+  async getCurrentUser(userId: string): Promise<User | null> {
+    return this.db.users.findById(userId);
   }
 
   private async generateTokens(user: User): Promise<TokenDto> {

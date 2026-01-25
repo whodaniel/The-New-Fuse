@@ -1,9 +1,8 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { AuthGuard } from '../guards/auth.guard';
-import { SecureAuthGuard, SetRateLimitTier, RateLimitTier, AuthLevel } from '../guards/secure-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AuthService } from '../services/auth.service';
 
 /**
  * Authentication Controller
@@ -52,9 +51,9 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class AuthController {
   /**
    * Constructor for AuthController
-   * 
+   *
    * @param authService - The authentication service instance for handling business logic
-   * 
+   *
    * @example
    * const controller = new AuthController(authService);
    */
@@ -86,13 +85,13 @@ export class AuthController {
    *
    * @api
    * POST /auth/login
-   * 
+   *
    * @example
    * const response = await authController.login({
    *   email: 'user@example.com',
    *   password: 'password123'
    * });
-   * 
+   *
    * @example
    * // Successful response
    * {
@@ -144,7 +143,7 @@ export class AuthController {
    *
    * @api
    * POST /auth/register
-   * 
+   *
    * @example
    * const response = await authController.register({
    *   email: 'newuser@example.com',
@@ -153,7 +152,7 @@ export class AuthController {
    *   lastName: 'Smith',
    *   phone: '+1234567890'
    * });
-   * 
+   *
    * @example
    * // Successful response
    * {
@@ -201,10 +200,10 @@ export class AuthController {
    *
    * @api
    * POST /auth/refresh
-   * 
+   *
    * @example
    * const response = await authController.refresh('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
-   * 
+   *
    * @example
    * // Successful response
    * {
@@ -229,25 +228,25 @@ export class AuthController {
 
   /**
    * Logout current user
-   * 
+   *
    * Invalidates the current user's access and refresh tokens, effectively
    * logging them out of the application. This endpoint requires authentication
    * and uses the standard AuthGuard.
-   * 
+   *
    * @returns Promise containing logout confirmation
    * @returns.message - Logout success message
    * @returns.timestamp - Logout timestamp
-   * 
+   *
    * @throws UnauthorizedException - When user is not authenticated
    * @throws InternalServerErrorException - When logout operation fails
-   * 
+   *
    * @api
    * POST /auth/logout
    * @requiresAuth - Bearer token in Authorization header
-   * 
+   *
    * @example
    * const response = await authController.logout();
-   * 
+   *
    * @example
    * // Successful response
    * {
@@ -265,11 +264,11 @@ export class AuthController {
 
   /**
    * Get current user information
-   * 
+   *
    * Returns the authenticated user's profile information. This endpoint
    * requires a valid access token and is commonly used to check if a user
    * is logged in and to get their current profile data.
-   * 
+   *
    * @returns Promise containing current user information
    * @returns.id - Unique user identifier
    * @returns.email - User's email address
@@ -279,17 +278,17 @@ export class AuthController {
    * @returns.emailVerified - Whether email has been verified
    * @returns.createdAt - Account creation timestamp
    * @returns.lastLogin - Last login timestamp
-   * 
+   *
    * @throws UnauthorizedException - When user is not authenticated
    * @throws NotFoundException - When user account is not found
-   * 
+   *
    * @api
    * GET /auth/me
    * @requiresAuth - Bearer token in Authorization header
-   * 
+   *
    * @example
    * const user = await authController.me();
-   * 
+   *
    * @example
    * // Successful response
    * {
@@ -307,7 +306,8 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get current user' })
   @ApiResponse({ status: 200, description: 'Return current user' })
-  async me() {
-    return this.authService.getCurrentUser();
+  async me(@Request() req: any) {
+    // User is attached to request by AuthGuard
+    return req.user;
   }
 }
