@@ -1,15 +1,15 @@
 # Jules Orchestrator Skill
 
-**Skill Name**: `jules-orchestrator`
-**Version**: 1.0.0
-**Purpose**: Orchestrate full work management cycle with Jules CLI sessions
-**When to Use**: For complex, multi-phase development work requiring parallel Jules execution
+**Skill Name**: `jules-orchestrator` **Version**: 1.0.0 **Purpose**: Orchestrate
+full work management cycle with Jules CLI sessions **When to Use**: For complex,
+multi-phase development work requiring parallel Jules execution
 
 ---
 
 ## Overview
 
-This skill manages the complete lifecycle of delegating work to Jules CLI, from planning through testing and deployment. It handles:
+This skill manages the complete lifecycle of delegating work to Jules CLI, from
+planning through testing and deployment. It handles:
 
 - Task breakdown and planning
 - Parallel Jules session launches
@@ -40,6 +40,7 @@ Or for explicit phase control:
 ### Phase 1: Planning & Task Breakdown
 
 **What It Does:**
+
 1. Analyzes the user's request
 2. Explores codebase for context
 3. Creates detailed task breakdown
@@ -47,6 +48,7 @@ Or for explicit phase control:
 5. Creates execution plan with phases
 
 **Outputs:**
+
 - `~/.claude/plans/[session-name].md` - Comprehensive plan
 - Task phase definitions (2-10 phases typically)
 - Success criteria for each phase
@@ -58,6 +60,7 @@ Or for explicit phase control:
 ### Phase 2: Jules Session Orchestration
 
 **What It Does:**
+
 1. Creates detailed prompts for each phase
 2. Launches Jules sessions in parallel (up to 6 concurrent)
 3. Tracks session IDs and URLs
@@ -66,11 +69,13 @@ Or for explicit phase control:
    - Session tracking spreadsheet
 
 **Example Launch Pattern:**
+
 ```bash
 jules new --repo <repo-name> "<detailed-phase-description>"
 ```
 
 **Session Prompt Template:**
+
 ```
 PHASE X: [Title]
 
@@ -104,6 +109,7 @@ PHASE X: [Title]
 ### Phase 3: Session Monitoring
 
 **What It Does:**
+
 1. Polls session status every 2-5 minutes
 2. Tracks completion states:
    - ⏳ In Progress
@@ -114,11 +120,13 @@ PHASE X: [Title]
 4. Estimates completion time
 
 **Monitoring Command:**
+
 ```bash
 jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 ```
 
 **Status Updates:**
+
 - Real-time progress tracking
 - ETA calculations
 - Blockers identification
@@ -128,6 +136,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 ### Phase 4: Results Review & Application
 
 **What It Does:**
+
 1. Pulls completed session results:
    ```bash
    jules remote pull --session [SESSION_ID]
@@ -147,6 +156,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
    - Resumes once approved
 
 **Quality Checks:**
+
 - TypeScript strict mode compliance
 - No new console.log statements
 - Proper error boundaries
@@ -158,6 +168,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 ### Phase 5: Testing & Validation
 
 **What It Does:**
+
 1. Runs TypeScript type checking:
    ```bash
    cd apps/frontend && pnpm run type-check
@@ -178,6 +189,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
    - Form validation
 
 **Failure Handling:**
+
 - If type-check fails on modified files: Create fix session
 - If build fails: Investigate and fix
 - If tests fail: Analyze and address
@@ -187,12 +199,14 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 ### Phase 6: Git Commit & Merge
 
 **What It Does:**
+
 1. Reviews all changes:
    ```bash
    git status
    git diff --stat
    ```
 2. Creates meaningful commits per phase:
+
    ```bash
    git add [phase-files]
    git commit -m "feat/fix: [clear message]
@@ -205,6 +219,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 
    Co-Authored-By: Jules CLI <jules@google.com>"
    ```
+
 3. Pushes to remote:
    ```bash
    git push origin main
@@ -213,6 +228,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 5. Updates documentation
 
 **Commit Message Pattern:**
+
 - Type: `feat`, `fix`, `refactor`, `docs`, `test`
 - Scope: `(frontend)`, `(backend)`, `(api)`
 - Clear description
@@ -224,10 +240,11 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 ### Phase 7: Documentation & Reporting
 
 **What It Does:**
+
 1. Creates comprehensive documentation:
    - **EXECUTION_SUMMARY.md**: Overall execution summary
    - **docs/JULES_SESSIONS_SUMMARY.md**: Session tracking
-   - **docs/[FEATURE]_STATUS.md**: Feature-specific status
+   - **docs/[FEATURE]\_STATUS.md**: Feature-specific status
 2. Updates README or relevant docs
 3. Generates metrics report:
    - Lines added/removed
@@ -243,6 +260,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
    ```
 
 **Documentation Template Includes:**
+
 - ✅ What was accomplished
 - 🔄 What's in progress
 - ⏸️ What needs approval
@@ -255,6 +273,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 ### Phase 8: Post-Execution Cleanup
 
 **What It Does:**
+
 1. Archives session logs
 2. Updates todo list
 3. Cleans up temporary files
@@ -269,16 +288,19 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 ## Configuration Options
 
 ### Basic Usage
+
 ```
 /jules-orchestrator "Fix frontend production readiness issues"
 ```
 
 ### Advanced Usage
+
 ```
 /jules-orchestrator --phases 6 --parallel 4 --auto-apply "Implement feature X"
 ```
 
 **Parameters:**
+
 - `--phases N`: Number of phases to break work into (default: auto-detect)
 - `--parallel N`: Max concurrent Jules sessions (default: 6)
 - `--auto-apply`: Auto-apply completed sessions without review (default: false)
@@ -288,6 +310,7 @@ jules remote list --session | grep -E "(session-id-1|session-id-2|...)"
 - `--resume SESSION_ID`: Resume from a specific session
 
 ### Environment Variables
+
 ```bash
 JULES_REPO="owner/repo"              # Repository to use
 JULES_AUTO_APPROVE="false"           # Auto-approve all sessions
@@ -344,11 +367,13 @@ Done! ✅
 ### Example 1: Frontend Production Readiness
 
 **Command:**
+
 ```
 /jules-orchestrator "Make frontend production-ready: fix validation errors, remove mock data, add real metrics"
 ```
 
 **Execution:**
+
 1. Plans 6 phases:
    - Phase 1: Agent Management
    - Phase 2: Workflows
@@ -377,11 +402,13 @@ Done! ✅
 ### Example 2: API Endpoint Implementation
 
 **Command:**
+
 ```
 /jules-orchestrator --phases 4 "Implement user profile API with CRUD operations"
 ```
 
 **Execution:**
+
 1. Plans 4 phases:
    - Phase 1: Database schema & migrations
    - Phase 2: API endpoints (create, read, update, delete)
@@ -403,11 +430,13 @@ Done! ✅
 ### Example 3: Bug Fix Sweep
 
 **Command:**
+
 ```
 /jules-orchestrator --parallel 3 "Fix all TypeScript errors in admin components"
 ```
 
 **Execution:**
+
 1. Scans admin components for errors
 
 2. Groups into 3 logical phases:
@@ -430,6 +459,7 @@ Done! ✅
 ### Session Failures
 
 **If Jules session fails:**
+
 1. Capture error message
 2. Analyze failure reason:
    - Compilation error → Fix and relaunch
@@ -441,6 +471,7 @@ Done! ✅
 ### Build Failures
 
 **If build fails after applying:**
+
 1. Identify breaking changes
 2. Review Jules diff
 3. Create hotfix session targeting specific issue
@@ -450,6 +481,7 @@ Done! ✅
 ### Test Failures
 
 **If tests fail:**
+
 1. Identify failing tests
 2. Determine if:
    - Pre-existing failure → Document and skip
@@ -460,6 +492,7 @@ Done! ✅
 ### Merge Conflicts
 
 **If git push fails:**
+
 1. Pull latest changes
 2. Auto-merge if possible
 3. If conflict:
@@ -473,6 +506,7 @@ Done! ✅
 ## Success Metrics
 
 **Tracks:**
+
 - Total phases planned
 - Phases completed
 - Phases in progress
@@ -486,6 +520,7 @@ Done! ✅
 - Commits created
 
 **Reports:**
+
 - Time saved vs manual development
 - Quality improvements
 - Automation efficiency
@@ -497,7 +532,8 @@ Done! ✅
 
 ### Collaborative Agents:
 
-**frontend-debugger-agent**: Called when Jules encounters React/TypeScript issues
+**frontend-debugger-agent**: Called when Jules encounters React/TypeScript
+issues
 
 **skill-webapp-testing**: Launched after all phases complete for E2E testing
 
@@ -587,6 +623,7 @@ Done! ✅
 ## Version History
 
 **1.0.0** (2026-01-25)
+
 - Initial skill creation
 - Full lifecycle orchestration
 - Parallel session management
@@ -596,6 +633,5 @@ Done! ✅
 
 ---
 
-**Skill Author**: Claude Code + User Feedback
-**Maintained By**: The New Fuse Team
-**License**: MIT
+**Skill Author**: Claude Code + User Feedback **Maintained By**: The New Fuse
+Team **License**: MIT

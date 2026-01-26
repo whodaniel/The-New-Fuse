@@ -1,38 +1,27 @@
-import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogClose
-} from '@/components/ui/dialog';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from '@/components/ui/tabs';
-import { Label } from '@/components/ui/label';
-import {
-  PlusCircle,
-  CheckCircle,
-  Trash2,
-  Edit,
-  AlertCircle
-} from 'lucide-react';
-import { apiService } from '@/services/api';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
+import { apiService } from '@/services/api';
+import { CheckCircle, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 export interface LLMProvider {
   id: string;
@@ -56,7 +45,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
   onChange,
   label = 'LLM Provider',
   description,
-  disabled = false
+  disabled = false,
 }) => {
   const [providers, setProviders] = useState<LLMProvider[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +54,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
     provider: 'openai',
     apiKey: '',
     apiEndpoint: '',
-    modelName: ''
+    modelName: '',
   });
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
@@ -82,24 +71,81 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
 
       // If no provider is selected, select the default one
       if (!selectedProviderId && response.data.length > 0) {
-        const defaultProvider = response.data.find((p: LLMProvider) => p.isDefault) || response.data[0];
+        const defaultProvider =
+          response.data.find((p: LLMProvider) => p.isDefault) || response.data[0];
         onChange(defaultProvider.id);
       }
     } catch (error) {
       console.error('Failed to fetch LLM providers:', error);
       // Fallback to demo providers
       const demoProviders = [
-        { id: 'openai-gpt4', name: 'GPT-4', provider: 'openai', modelName: 'gpt-4', isDefault: true },
-        { id: 'openai-gpt35', name: 'GPT-3.5 Turbo', provider: 'openai', modelName: 'gpt-3.5-turbo' },
-        { id: 'anthropic-claude3', name: 'Claude 3 Opus', provider: 'anthropic', modelName: 'claude-3-opus-20240229' },
-        { id: 'anthropic-claude3-sonnet', name: 'Claude 3 Sonnet', provider: 'anthropic', modelName: 'claude-3-sonnet-20240229' },
-        { id: 'google-gemini-pro', name: 'Gemini 1.5 Pro', provider: 'google', modelName: 'gemini-1.5-pro' },
-        { id: 'groq-llama3-70b', name: 'Groq - Llama 3 70B', provider: 'groq', modelName: 'llama3-70b-8192' },
-        { id: 'groq-mixtral', name: 'Groq - Mixtral 8x7b', provider: 'groq', modelName: 'mixtral-8x7b-32768' },
-        { id: 'perplexity-sonar', name: 'Perplexity Sonar', provider: 'perplexity', modelName: 'sonar-medium-online' },
-        { id: 'mistral-large', name: 'Mistral Large', provider: 'mistral', modelName: 'mistral-large-latest' },
-        { id: 'cohere-command-r', name: 'Cohere Command R+', provider: 'cohere', modelName: 'command-r-plus' },
-        { id: 'openrouter-auto', name: 'OpenRouter Auto', provider: 'openrouter', modelName: 'auto' }
+        {
+          id: 'openai-gpt4',
+          name: 'GPT-4',
+          provider: 'openai',
+          modelName: 'gpt-4',
+          isDefault: true,
+        },
+        {
+          id: 'openai-gpt35',
+          name: 'GPT-3.5 Turbo',
+          provider: 'openai',
+          modelName: 'gpt-3.5-turbo',
+        },
+        {
+          id: 'anthropic-claude3',
+          name: 'Claude 3 Opus',
+          provider: 'anthropic',
+          modelName: 'claude-3-opus-20240229',
+        },
+        {
+          id: 'anthropic-claude3-sonnet',
+          name: 'Claude 3 Sonnet',
+          provider: 'anthropic',
+          modelName: 'claude-3-sonnet-20240229',
+        },
+        {
+          id: 'google-gemini-pro',
+          name: 'Gemini 1.5 Pro',
+          provider: 'google',
+          modelName: 'gemini-1.5-pro',
+        },
+        {
+          id: 'groq-llama3-70b',
+          name: 'Groq - Llama 3 70B',
+          provider: 'groq',
+          modelName: 'llama3-70b-8192',
+        },
+        {
+          id: 'groq-mixtral',
+          name: 'Groq - Mixtral 8x7b',
+          provider: 'groq',
+          modelName: 'mixtral-8x7b-32768',
+        },
+        {
+          id: 'perplexity-sonar',
+          name: 'Perplexity Sonar',
+          provider: 'perplexity',
+          modelName: 'sonar-medium-online',
+        },
+        {
+          id: 'mistral-large',
+          name: 'Mistral Large',
+          provider: 'mistral',
+          modelName: 'mistral-large-latest',
+        },
+        {
+          id: 'cohere-command-r',
+          name: 'Cohere Command R+',
+          provider: 'cohere',
+          modelName: 'command-r-plus',
+        },
+        {
+          id: 'openrouter-auto',
+          name: 'OpenRouter Auto',
+          provider: 'openrouter',
+          modelName: 'auto',
+        },
       ];
       setProviders(demoProviders);
 
@@ -128,7 +174,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
         name: customProviderForm.name,
         provider: customProviderForm.provider,
         modelName: customProviderForm.modelName,
-        isCustom: true
+        isCustom: true,
       };
 
       setProviders([...providers, newProvider]);
@@ -141,7 +187,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
         provider: 'openai',
         apiKey: '',
         apiEndpoint: '',
-        modelName: ''
+        modelName: '',
       });
 
       toast.success('Custom provider added successfully!');
@@ -156,12 +202,12 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
       // In a real implementation, this would call an API endpoint
       await apiService.delete(`/api/llm/providers/${id}`);
 
-      const updatedProviders = providers.filter(p => p.id !== id);
+      const updatedProviders = providers.filter((p) => p.id !== id);
       setProviders(updatedProviders);
 
       // If the deleted provider was selected, select the default or first one
       if (selectedProviderId === id && updatedProviders.length > 0) {
-        const defaultProvider = updatedProviders.find(p => p.isDefault) || updatedProviders[0];
+        const defaultProvider = updatedProviders.find((p) => p.isDefault) || updatedProviders[0];
         onChange(defaultProvider.id);
       }
 
@@ -172,7 +218,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
     }
   };
 
-  const selectedProvider = providers.find(p => p.id === selectedProviderId);
+  const selectedProvider = providers.find((p) => p.id === selectedProviderId);
 
   return (
     <div className="space-y-2">
@@ -181,12 +227,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
 
         <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 px-2 text-xs"
-              disabled={disabled}
-            >
+            <Button variant="ghost" size="sm" className="h-8 px-2 text-xs" disabled={disabled}>
               <PlusCircle className="mr-1 h-3.5 w-3.5" />
               Add Custom
             </Button>
@@ -209,7 +250,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Input
                       id="name"
                       value={customProviderForm.name}
-                      onChange={e => setCustomProviderForm({...customProviderForm, name: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({ ...customProviderForm, name: e.target.value })
+                      }
                       placeholder="e.g. My OpenAI GPT-4"
                     />
                   </div>
@@ -220,7 +263,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                       id="apiKey"
                       type="password"
                       value={customProviderForm.apiKey}
-                      onChange={e => setCustomProviderForm({...customProviderForm, apiKey: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({ ...customProviderForm, apiKey: e.target.value })
+                      }
                       placeholder="sk-..."
                     />
                   </div>
@@ -229,7 +274,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Label htmlFor="modelName">Model *</Label>
                     <Select
                       value={customProviderForm.modelName}
-                      onValueChange={value => setCustomProviderForm({...customProviderForm, modelName: value})}
+                      onValueChange={(value) =>
+                        setCustomProviderForm({ ...customProviderForm, modelName: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select model" />
@@ -248,7 +295,12 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Input
                       id="apiEndpoint"
                       value={customProviderForm.apiEndpoint}
-                      onChange={e => setCustomProviderForm({...customProviderForm, apiEndpoint: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({
+                          ...customProviderForm,
+                          apiEndpoint: e.target.value,
+                        })
+                      }
                       placeholder="https://api.openai.com/v1"
                     />
                   </div>
@@ -262,7 +314,13 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Input
                       id="name"
                       value={customProviderForm.name}
-                      onChange={e => setCustomProviderForm({...customProviderForm, name: e.target.value, provider: 'anthropic'})}
+                      onChange={(e) =>
+                        setCustomProviderForm({
+                          ...customProviderForm,
+                          name: e.target.value,
+                          provider: 'anthropic',
+                        })
+                      }
                       placeholder="e.g. My Claude 3"
                     />
                   </div>
@@ -273,7 +331,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                       id="apiKey"
                       type="password"
                       value={customProviderForm.apiKey}
-                      onChange={e => setCustomProviderForm({...customProviderForm, apiKey: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({ ...customProviderForm, apiKey: e.target.value })
+                      }
                       placeholder="sk-ant-..."
                     />
                   </div>
@@ -282,7 +342,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Label htmlFor="modelName">Model *</Label>
                     <Select
                       value={customProviderForm.modelName}
-                      onValueChange={value => setCustomProviderForm({...customProviderForm, modelName: value})}
+                      onValueChange={(value) =>
+                        setCustomProviderForm({ ...customProviderForm, modelName: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select model" />
@@ -304,7 +366,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Input
                       id="name"
                       value={customProviderForm.name}
-                      onChange={e => setCustomProviderForm({...customProviderForm, name: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({ ...customProviderForm, name: e.target.value })
+                      }
                       placeholder="e.g. My Custom LLM"
                     />
                   </div>
@@ -314,7 +378,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Input
                       id="provider"
                       value={customProviderForm.provider}
-                      onChange={e => setCustomProviderForm({...customProviderForm, provider: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({ ...customProviderForm, provider: e.target.value })
+                      }
                       placeholder="e.g. mistral, ollama, aws"
                     />
                   </div>
@@ -325,7 +391,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                       id="apiKey"
                       type="password"
                       value={customProviderForm.apiKey}
-                      onChange={e => setCustomProviderForm({...customProviderForm, apiKey: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({ ...customProviderForm, apiKey: e.target.value })
+                      }
                       placeholder="Enter your API key"
                     />
                   </div>
@@ -335,7 +403,9 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Input
                       id="modelName"
                       value={customProviderForm.modelName}
-                      onChange={e => setCustomProviderForm({...customProviderForm, modelName: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({ ...customProviderForm, modelName: e.target.value })
+                      }
                       placeholder="e.g. mistral-7b-instruct"
                     />
                   </div>
@@ -345,7 +415,12 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
                     <Input
                       id="apiEndpoint"
                       value={customProviderForm.apiEndpoint}
-                      onChange={e => setCustomProviderForm({...customProviderForm, apiEndpoint: e.target.value})}
+                      onChange={(e) =>
+                        setCustomProviderForm({
+                          ...customProviderForm,
+                          apiEndpoint: e.target.value,
+                        })
+                      }
                       placeholder="https://api.example.com/v1"
                     />
                   </div>
@@ -363,11 +438,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
         </Dialog>
       </div>
 
-      <Select
-        value={selectedProviderId}
-        onValueChange={onChange}
-        disabled={disabled || loading}
-      >
+      <Select value={selectedProviderId} onValueChange={onChange} disabled={disabled || loading}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an LLM provider" />
         </SelectTrigger>
@@ -379,38 +450,42 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
           ) : (
             <>
               <div className="p-2 text-xs font-medium text-gray-500">Default Providers</div>
-              {providers.filter(p => !p.isCustom).map(provider => (
-                <SelectItem key={provider.id} value={provider.id}>
-                  <div className="flex items-center">
-                    <span>{provider.name}</span>
-                    {provider.isDefault && (
-                      <CheckCircle className="ml-2 h-3.5 w-3.5 text-green-500" />
-                    )}
-                  </div>
-                </SelectItem>
-              ))}
+              {providers
+                .filter((p) => !p.isCustom)
+                .map((provider) => (
+                  <SelectItem key={provider.id} value={provider.id}>
+                    <div className="flex items-center">
+                      <span>{provider.name}</span>
+                      {provider.isDefault && (
+                        <CheckCircle className="ml-2 h-3.5 w-3.5 text-green-500" />
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
 
-              {providers.some(p => p.isCustom) && (
+              {providers.some((p) => p.isCustom) && (
                 <>
                   <div className="mt-2 p-2 text-xs font-medium text-gray-500">Custom Providers</div>
-                  {providers.filter(p => p.isCustom).map(provider => (
-                    <SelectItem key={provider.id} value={provider.id}>
-                      <div className="flex items-center justify-between w-full">
-                        <span>{provider.name}</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0 text-red-500"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteProvider(provider.id);
-                          }}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </SelectItem>
-                  ))}
+                  {providers
+                    .filter((p) => p.isCustom)
+                    .map((provider) => (
+                      <SelectItem key={provider.id} value={provider.id}>
+                        <div className="flex items-center justify-between w-full">
+                          <span>{provider.name}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 text-red-500"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteProvider(provider.id);
+                            }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </SelectItem>
+                    ))}
                 </>
               )}
             </>
@@ -425,9 +500,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
         </div>
       )}
 
-      {description && (
-        <p className="text-xs text-gray-500 mt-1">{description}</p>
-      )}
+      {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
     </div>
   );
 };

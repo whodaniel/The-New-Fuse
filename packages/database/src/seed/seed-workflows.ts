@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
+import { eq } from 'drizzle-orm';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { eq } from 'drizzle-orm';
 
 // Load environment variables from root BEFORE importing database client
 dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
@@ -9,10 +9,10 @@ dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 async function seedWorkflows() {
   // Dynamic import to ensure process.env.DATABASE_URL is set
   const { db } = await import('../drizzle/client');
-  const { agents, pipelines, workflows, workflowSteps, workflowExecutions, users } = await import('../drizzle/schema');
+  const { agents, pipelines, workflows, workflowSteps, workflowExecutions, users } =
+    await import('../drizzle/schema');
 
   console.log('🌱 Seeding workflows, agents, and historical data...');
-
 
   // 1. Get or Create a User (Creator)
   let creatorId = uuidv4();
@@ -25,14 +25,17 @@ async function seedWorkflows() {
     // but typically strict FKs require a record.
     // For now we assume a user exists or we insert a placeholder if strict mode off.
     console.warn('No users found. Creating placeholder user.');
-    const [newUser] = await db.insert(users).values({
-      id: creatorId,
-      email: 'admin@demo.com',
-      name: 'Admin User',
-      role: 'ADMIN',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }).returning();
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        id: creatorId,
+        email: 'admin@demo.com',
+        name: 'Admin User',
+        role: 'ADMIN',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
   }
 
   // 2. Create Agents for the Workflow
@@ -43,7 +46,7 @@ async function seedWorkflows() {
       description: 'Senior engineer persona for high-level architecture review.',
       capabilities: ['code-analysis', 'architecture-review'],
       model: 'gpt-4-turbo',
-      status: 'ACTIVE'
+      status: 'ACTIVE',
     },
     {
       name: 'Lint Bot',
@@ -51,7 +54,7 @@ async function seedWorkflows() {
       description: 'Strict linter and style enforcer.',
       capabilities: ['linting', 'formatting'],
       model: 'gpt-3.5-turbo',
-      status: 'ACTIVE'
+      status: 'ACTIVE',
     },
     {
       name: 'Security Guardian',
@@ -59,8 +62,8 @@ async function seedWorkflows() {
       description: 'Vulnerability scanner.',
       capabilities: ['security-audit', 'dependency-check'],
       model: 'claude-3-opus',
-      status: 'ACTIVE'
-    }
+      status: 'ACTIVE',
+    },
   ];
 
   const agentMap = new Map<string, string>(); // Name -> ID
@@ -70,15 +73,18 @@ async function seedWorkflows() {
     if (existing.length > 0) {
       agentMap.set(def.name, existing[0].id);
     } else {
-      const [newAgent] = await db.insert(agents).values({
-        name: def.name,
-        type: def.type as any,
-        description: def.description,
-        capabilities: def.capabilities,
-        status: def.status as any,
-        config: { model: def.model },
-        userId: creatorId,
-      }).returning();
+      const [newAgent] = await db
+        .insert(agents)
+        .values({
+          name: def.name,
+          type: def.type as any,
+          description: def.description,
+          capabilities: def.capabilities,
+          status: def.status as any,
+          config: { model: def.model },
+          userId: creatorId,
+        })
+        .returning();
       agentMap.set(def.name, newAgent.id);
     }
   }
@@ -92,7 +98,7 @@ async function seedWorkflows() {
       id: 'node-start',
       type: 'input',
       position: { x: 50, y: 50 },
-      data: { label: 'GitHub PR Open', type: 'input' }
+      data: { label: 'GitHub PR Open', type: 'input' },
     },
     {
       id: 'node-lint',
@@ -102,14 +108,14 @@ async function seedWorkflows() {
         label: 'Lint Check',
         agentId: agentMap.get('Lint Bot'),
         agentName: 'Lint Bot',
-        type: 'agent'
-      }
+        type: 'agent',
+      },
     },
     {
       id: 'node-condition',
       type: 'condition',
       position: { x: 50, y: 280 },
-      data: { label: 'Is Clean?', type: 'condition' }
+      data: { label: 'Is Clean?', type: 'condition' },
     },
     {
       id: 'node-review',
@@ -119,8 +125,8 @@ async function seedWorkflows() {
         label: 'Deep Review',
         agentId: agentMap.get('Code Critic'),
         agentName: 'Code Critic',
-        type: 'agent'
-      }
+        type: 'agent',
+      },
     },
     {
       id: 'node-security',
@@ -130,15 +136,15 @@ async function seedWorkflows() {
         label: 'Security Scan',
         agentId: agentMap.get('Security Guardian'),
         agentName: 'Security Guardian',
-        type: 'agent'
-      }
+        type: 'agent',
+      },
     },
     {
       id: 'node-end',
       type: 'output',
       position: { x: 50, y: 550 },
-      data: { label: 'Merge Report', type: 'output' }
-    }
+      data: { label: 'Merge Report', type: 'output' },
+    },
   ];
 
   const reactFlowEdges = [
@@ -147,32 +153,35 @@ async function seedWorkflows() {
     { id: 'e3', source: 'node-condition', target: 'node-review', label: 'Yes' },
     { id: 'e4', source: 'node-condition', target: 'node-security', label: 'No' },
     { id: 'e5', source: 'node-review', target: 'node-end' },
-    { id: 'e6', source: 'node-security', target: 'node-end' }
+    { id: 'e6', source: 'node-security', target: 'node-end' },
   ];
 
   const workflowDefinition = {
     nodes: reactFlowNodes,
     edges: reactFlowEdges,
-    viewport: { x: 0, y: 0, zoom: 1 }
+    viewport: { x: 0, y: 0, zoom: 1 },
   };
 
   // Insert Workflow
   console.log(`Creating workflow: Code Review Pipeline`);
-  await db.insert(workflows).values({
-    id: workflowId,
-    name: 'Code Review Pipeline',
-    description: 'Automated CI/CD pipeline for auditing pull requests.',
-    definition: workflowDefinition,
-    status: 'ACTIVE',
-    creatorId: creatorId,
-    executionCount: 2542,
-    isActive: true,
-    metadata: {
+  await db
+    .insert(workflows)
+    .values({
+      id: workflowId,
+      name: 'Code Review Pipeline',
+      description: 'Automated CI/CD pipeline for auditing pull requests.',
+      definition: workflowDefinition,
+      status: 'ACTIVE',
+      creatorId: creatorId,
+      executionCount: 2542,
+      isActive: true,
+      metadata: {
         aiGenerated: true,
         complexity: 'High',
-        tags: ['ci-cd', 'security', 'quality']
-    }
-  }).onConflictDoNothing(); // Basic idempotency
+        tags: ['ci-cd', 'security', 'quality'],
+      },
+    })
+    .onConflictDoNothing(); // Basic idempotency
 
   // 4. Generate Historical Executions (Trace Data)
   console.log('Generating execution history...');
@@ -181,7 +190,7 @@ async function seedWorkflows() {
   const now = Date.now();
 
   // Create 50 executions over last 7 days
-  for(let i=0; i<50; i++) {
+  for (let i = 0; i < 50; i++) {
     const status = statuses[i % 5];
     const duration = Math.floor(Math.random() * 5000) + 1000; // 1-6s
     const timeOffset = Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000);
@@ -194,7 +203,7 @@ async function seedWorkflows() {
       output: status === 'COMPLETED' ? { approved: true } : { error: 'Lint failed' },
       startedAt: date,
       completedAt: new Date(date.getTime() + duration),
-      projectId: null // Optional
+      projectId: null, // Optional
     });
   }
 
