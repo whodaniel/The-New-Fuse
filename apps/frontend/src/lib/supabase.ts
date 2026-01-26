@@ -43,39 +43,51 @@ export const authHelpers = {
    */
   async signIn(email: string, password: string): Promise<AuthResponse> {
     try {
-      // For now, create a mock session for demo purposes
-      // TODO: Replace with actual Railway backend API call
-      const mockUser: User = {
-        id: 'mock-user-id',
-        email: email,
-        user_metadata: {
-          name: email.split('@')[0],
-          role: 'user'
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        created_at: new Date().toISOString()
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Sign in failed');
+      }
+
+      const user: User = {
+        id: data.user.id,
+        email: data.user.email,
+        user_metadata: {
+          name: data.user.name,
+          role: data.user.role || 'user',
+        },
+        created_at: data.user.createdAt || new Date().toISOString(),
       };
 
-      const mockSession: Session = {
-        access_token: 'mock-jwt-token-' + Date.now(),
-        refresh_token: 'mock-refresh-token',
-        user: mockUser
+      const session: Session = {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken,
+        user: user,
       };
 
       // Store in localStorage
-      localStorage.setItem('auth_session', JSON.stringify(mockSession));
-      localStorage.setItem('auth_token', mockSession.access_token);
+      localStorage.setItem('auth_session', JSON.stringify(session));
+      localStorage.setItem('auth_token', session.access_token);
 
       return {
         success: true,
         data: {
-          session: mockSession,
-          user: mockUser
-        }
+          session: session,
+          user: user,
+        },
       };
     } catch (error: any) {
       return {
         success: false,
-        error: error.message || 'Sign in failed'
+        error: error.message || 'Sign in failed',
       };
     }
   },

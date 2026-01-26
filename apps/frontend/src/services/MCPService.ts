@@ -38,66 +38,6 @@ export interface MCPExecutionResult {
   executionTime?: number;
 }
 
-// Mock Data
-const MOCK_SERVERS: MCPServer[] = [
-  {
-    id: 'server-1',
-    name: 'Brave Search',
-    url: 'http://localhost:3000/mcp/brave',
-    status: 'online',
-    tools: [
-      {
-        id: 'tool-brave-search',
-        name: 'search',
-        description: 'Search the web using Brave Search',
-        parameters: {
-          query: { name: 'query', type: 'string', description: 'Search query', required: true }
-        },
-        returns: { type: 'string', description: 'Search results in JSON format' },
-        serverId: 'server-1'
-      }
-    ],
-    metadata: { version: '1.0.0', provider: 'Brave' }
-  },
-  {
-    id: 'server-2',
-    name: 'FileSystem',
-    url: 'http://localhost:3000/mcp/filesystem',
-    status: 'online',
-    tools: [
-      {
-        id: 'tool-fs-read',
-        name: 'read_file',
-        description: 'Read file content',
-        parameters: {
-          path: { name: 'path', type: 'string', description: 'File path', required: true }
-        },
-        returns: { type: 'string', description: 'File content' },
-        serverId: 'server-2'
-      },
-      {
-        id: 'tool-fs-write',
-        name: 'write_file',
-        description: 'Write content to file',
-        parameters: {
-          path: { name: 'path', type: 'string', description: 'File path', required: true },
-          content: { name: 'content', type: 'string', description: 'File content', required: true }
-        },
-        returns: { type: 'boolean', description: 'Success status' },
-        serverId: 'server-2'
-      }
-    ],
-    metadata: { version: '1.2.0', restricted: true }
-  },
-  {
-    id: 'server-3',
-    name: 'GitHub Integration',
-    url: 'http://localhost:3000/mcp/github',
-    status: 'offline',
-    tools: [],
-    metadata: { version: '0.9.0', auth_required: true }
-  }
-];
 
 class MCPService {
   private baseUrl: string;
@@ -142,45 +82,20 @@ class MCPService {
   }
 
   async getServers(): Promise<MCPServer[]> {
-    try {
-      return await this.request<MCPServer[]>('/mcp/servers');
-    } catch (error) {
-      console.log('Using mock MCP servers');
-      return MOCK_SERVERS;
-    }
+    return this.request<MCPServer[]>('/mcp/servers');
   }
 
   async getServer(serverId: string): Promise<MCPServer> {
-    try {
-      return await this.request<MCPServer>(`/mcp/servers/${serverId}`);
-    } catch (error) {
-      const server = MOCK_SERVERS.find(s => s.id === serverId);
-      if (server) return server;
-      throw error;
-    }
+    return this.request<MCPServer>(`/mcp/servers/${serverId}`);
   }
 
   async getTools(serverId?: string): Promise<MCPTool[]> {
-    try {
-      const endpoint = serverId ? `/mcp/servers/${serverId}/tools` : '/mcp/tools';
-      return await this.request<MCPTool[]>(endpoint);
-    } catch (error) {
-      if (serverId) {
-        const server = MOCK_SERVERS.find(s => s.id === serverId);
-        return server ? server.tools : [];
-      }
-      return MOCK_SERVERS.flatMap(s => s.tools);
-    }
+    const endpoint = serverId ? `/mcp/servers/${serverId}/tools` : '/mcp/tools';
+    return this.request<MCPTool[]>(endpoint);
   }
 
   async getTool(toolId: string): Promise<MCPTool> {
-    try {
-      return await this.request<MCPTool>(`/mcp/tools/${toolId}`);
-    } catch (error) {
-      const tool = MOCK_SERVERS.flatMap(s => s.tools).find(t => t.id === toolId);
-      if (tool) return tool;
-      throw error;
-    }
+    return this.request<MCPTool>(`/mcp/tools/${toolId}`);
   }
 
   async executeTool(
@@ -188,83 +103,49 @@ class MCPService {
     parameters: Record<string, any>,
     serverId?: string
   ): Promise<MCPExecutionResult> {
-    try {
-      const startTime = Date.now();
-      
-      const result = await this.request<any>('/mcp/execute', {
-        method: 'POST',
-        body: JSON.stringify({
-          toolId,
-          parameters,
-          serverId,
-        }),
-      });
+    const startTime = Date.now();
+    
+    const result = await this.request<any>('/mcp/execute', {
+      method: 'POST',
+      body: JSON.stringify({
+        toolId,
+        parameters,
+        serverId,
+      }),
+    });
 
-      const executionTime = Date.now() - startTime;
+    const executionTime = Date.now() - startTime;
 
-      return {
-        success: true,
-        result,
-        executionTime,
-      };
-    } catch (error) {
-      console.log('Mock executing tool');
-      return {
-        success: true,
-        result: {
-          output: `Mock execution of ${toolId}`,
-          parameters
-        },
-        executionTime: 125
-      };
-    }
+    return {
+      success: true,
+      result,
+      executionTime,
+    };
   }
 
   async testConnection(serverId: string): Promise<boolean> {
-    try {
-      await this.request(`/mcp/servers/${serverId}/ping`);
-      return true;
-    } catch (error) {
-      return true; // Mock success
-    }
+    await this.request(`/mcp/servers/${serverId}/ping`);
+    return true;
   }
 
   async registerServer(server: Omit<MCPServer, 'id' | 'tools'>): Promise<MCPServer> {
-    try {
-      return await this.request<MCPServer>('/mcp/servers', {
-        method: 'POST',
-        body: JSON.stringify(server),
-      });
-    } catch (error) {
-      return {
-        ...server,
-        id: `server-${Date.now()}`,
-        tools: [],
-        status: 'online'
-      };
-    }
+    return this.request<MCPServer>('/mcp/servers', {
+      method: 'POST',
+      body: JSON.stringify(server),
+    });
   }
 
   async updateServer(serverId: string, updates: Partial<MCPServer>): Promise<MCPServer> {
-    try {
-      return await this.request<MCPServer>(`/mcp/servers/${serverId}`, {
-        method: 'PATCH',
-        body: JSON.stringify(updates),
-      });
-    } catch (error) {
-      const server = MOCK_SERVERS.find(s => s.id === serverId);
-      return { ...(server || MOCK_SERVERS[0]), ...updates };
-    }
+    return this.request<MCPServer>(`/mcp/servers/${serverId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
   }
 
   async deleteServer(serverId: string): Promise<void> {
-    try {
-      await this.request(`/mcp/servers/${serverId}`, {
-        method: 'DELETE',
-      });
-    } catch (error) {
-      console.log('Mock deleting server');
-    }
+    await this.request(`/mcp/servers/${serverId}`, {
+      method: 'DELETE',
+    });
   }
 }
 
