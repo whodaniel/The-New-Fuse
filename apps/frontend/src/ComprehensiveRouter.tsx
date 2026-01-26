@@ -33,6 +33,7 @@ const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows.tsx'));
+const WorkflowResultsViewer = lazy(() => import('./pages/workflow-pages/Results'));
 const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
@@ -336,7 +337,8 @@ export default function ComprehensiveRouter() {
             <Route path="/workflows/builder" element={<WorkflowBuilder />} />
             <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
             <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
-            <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
+            <Route path="/workflows/:id/results" element={<WorkflowResultsViewer />} />
+            <Route path="/workflows/:id/results" element={<WorkflowExecutionPage />} />
             <Route path="/workflows/console" element={<ExecutionConsole />} />
             <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
             <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
