@@ -9,8 +9,19 @@ export interface PermissionCheck {
 export const useAuthorization = () => {
   const { user } = useAuth();
 
+  // Specific override for the Super Admin / Master Admin
+  const isBizSynthMasterAdmin = user?.email === 'owner@example.com';
+
   const hasRole = (roles: string[]): boolean => {
     if (!user) return false;
+
+    // Override for BizSynth Super Admin
+    if (
+      isBizSynthMasterAdmin &&
+      roles.some((r) => ['SUPER_ADMIN', 'ADMIN'].includes(r.toUpperCase()))
+    ) {
+      return true;
+    }
 
     // Check if user.roles array includes any of the required roles
     // Support both single 'role' field and 'roles' array
@@ -28,10 +39,29 @@ export const useAuthorization = () => {
     return false;
   };
 
+  const getEffectiveRoles = (): string[] => {
+    if (!user) return [];
+
+    let baseRoles: string[] = [];
+    if (Array.isArray((user as any).roles)) {
+      baseRoles = (user as any).roles.map((r: string) => r.toUpperCase());
+    } else if (user.role) {
+      baseRoles = [user.role.toUpperCase()];
+    }
+
+    // Inject SUPER_ADMIN for the master email if not present
+    if (isBizSynthMasterAdmin && !baseRoles.includes('SUPER_ADMIN')) {
+      return ['SUPER_ADMIN', ...baseRoles];
+    }
+
+    return baseRoles;
+  };
+
   const canAccess = (check: PermissionCheck): boolean => {
     if (!user) return false;
 
     // 1. SUPER_ADMIN has access to everything
+    // This now catches the bizsynth override via hasRole
     if (hasRole(['SUPER_ADMIN'])) return true;
 
     // 2. Tenancy Isolation: If a tenantId is provided, the user MUST belong to it
@@ -64,14 +94,12 @@ export const useAuthorization = () => {
 
     // Get user's permissions based on their role(s)
     let userPermissions: string[] = [];
-    if (Array.isArray((user as any).roles)) {
-      (user as any).roles.forEach((role: string) => {
-        const rolePerms = permissions[role.toUpperCase()] || [];
-        userPermissions = [...userPermissions, ...rolePerms];
-      });
-    } else {
-      userPermissions = permissions[user.role.toUpperCase()] || [];
-    }
+    const effectiveRoles = getEffectiveRoles();
+
+    effectiveRoles.forEach((role: string) => {
+      const rolePerms = permissions[role] || [];
+      userPermissions = [...userPermissions, ...rolePerms];
+    });
 
     const requiredPermission = `${check.action}:${check.resource}`;
 
@@ -83,11 +111,13 @@ export const useAuthorization = () => {
     );
   };
 
+  const effectiveRoles = getEffectiveRoles();
+
   return {
     hasRole,
     canAccess,
     // Master admin checks
-    isSuperAdmin: hasRole(['SUPER_ADMIN']),
+    isSuperAdmin: isBizSynthMasterAdmin || hasRole(['SUPER_ADMIN']),
     // Agency admin checks
     isAgencyOwner: hasRole(['AGENCY_OWNER']),
     isAgencyAdmin: hasRole(['AGENCY_ADMIN', 'AGENCY_MANAGER']),
@@ -96,14 +126,8 @@ export const useAuthorization = () => {
     isAdmin: hasRole(['SUPER_ADMIN', 'ADMIN']),
     isDeveloper: hasRole(['DEVELOPER']),
     // User info
-    userRole: user?.role?.toUpperCase() || undefined,
-    userRoles: user
-      ? Array.isArray((user as any).roles)
-        ? (user as any).roles.map((r: string) => r.toUpperCase())
-        : user.role
-          ? [user.role.toUpperCase()]
-          : []
-      : [],
+    userRole: isBizSynthMasterAdmin ? 'SUPER_ADMIN' : user?.role?.toUpperCase() || undefined,
+    userRoles: effectiveRoles,
     // Helper to filter items by tenancy
     filterByTenancy: <T extends { tenantId?: string; agencyId?: string }>(items: T[]): T[] => {
       if (hasRole(['SUPER_ADMIN', 'ADMIN'])) return items;
