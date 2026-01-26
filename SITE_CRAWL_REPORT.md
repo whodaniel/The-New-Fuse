@@ -16,12 +16,12 @@ The following frontend components attempt to call API endpoints that **do not
 exist** in the backend `AdminModule`. These will currently result in 404 errors
 or fallback states.
 
-| Frontend Component            | Target Endpoint                      | Status      | Action Required                   |
-| :---------------------------- | :----------------------------------- | :---------- | :-------------------------------- |
-| `AuditLogViewer.tsx`          | `/api/admin/audit-logs`              | **MISSING** | Create `AdminAuditLogsController` |
-| `ConfigurationManagement.tsx` | `/api/admin/config`                  | **MISSING** | Create `AdminConfigController`    |
-| `AdminSettings.tsx`           | `/api/admin/settings`                | **MISSING** | Create `AdminSettingsController`  |
-| `APIAnalyticsFull.tsx`        | `/api/admin/api-analytics` (implied) | **MISSING** | Create `AdminMetricsController`   |
+| Frontend Component            | Target Endpoint                      | Status          | Action Required                    |
+| :---------------------------- | :----------------------------------- | :-------------- | :--------------------------------- |
+| `AuditLogViewer.tsx`          | `/api/admin/audit-logs`              | **IMPLEMENTED** | Created `AdminAuditLogsController` |
+| `ConfigurationManagement.tsx` | `/api/admin/config`                  | **IMPLEMENTED** | Created `AdminConfigController`    |
+| `AdminSettings.tsx`           | `/api/admin/settings`                | **IMPLEMENTED** | Created `AdminSettingsController`  |
+| `APIAnalyticsFull.tsx`        | `/api/admin/api-analytics` (implied) | **MISSING**     | Create `AdminMetricsController`    |
 
 ## 3. Frontend Components Using Mocks
 
@@ -32,7 +32,7 @@ fetching from the backend.
 | :--------------------------- | :----------------------- | :----------------------------------------------------------------------- |
 | `Analytics.tsx`              | **All Charts & Data**    | Uses `mockData` object. API calls are made but ignored. Charts disabled. |
 | `AgencyDashboard.tsx`        | **Tenants & Revenue**    | Uses `MOCK_TENANTS` and hardcoded revenue strings.                       |
-| `AgentDetail.tsx`            | **Actions (Start/Stop)** | Uses `setTimeout` simulation instead of calling `AgentService`.          |
+| `AgentDetail.tsx`            | **Actions (Start/Stop)** | **IMPLEMENTED** (Backend Endpoints Added)                                |
 | `AgentDetail.tsx`            | **Identity Tab**         | Static/Placeholder content.                                              |
 | `SystemMetricsDashboard.tsx` | **Service Health**       | Backend service returns hardcoded static list.                           |
 

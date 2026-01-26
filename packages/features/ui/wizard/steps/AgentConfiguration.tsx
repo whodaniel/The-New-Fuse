@@ -118,12 +118,16 @@ export const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
       </div>
 
       {validationErrors.length > 0 && (
-        <div className="validation-errors">
-          {validationErrors.map((error, index) => (
-            <div key={index} className="error-message">
-              {error}
-            </div>
-          ))}
+        <div
+          className="my-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg"
+          role="alert"
+        >
+          <p className="font-bold">Please fix the following issues:</p>
+          <ul className="list-disc list-inside">
+            {validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
         </div>
       )}
 
@@ -135,18 +139,33 @@ export const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
           <input
             id="agent-name"
             type="text"
-            className="form-input"
+            className={`form-input ${
+              validationErrors.some((e) => e === 'Agent name is required') ? 'border-red-500' : ''
+            }`}
             placeholder="Enter a unique name for your agent"
             value={agentName}
             onChange={(e) => handleNameChange(e.target.value)}
             required
+            aria-invalid={validationErrors.some((e) => e === 'Agent name is required')}
+            aria-describedby="agent-name-error"
           />
+          {validationErrors.some((e) => e === 'Agent name is required') && (
+            <p id="agent-name-error" className="text-red-600 text-sm mt-1">
+              Agent name is a required field.
+            </p>
+          )}
           <p className="form-hint">Choose a descriptive name that reflects the agent's purpose</p>
         </div>
 
         <div className="form-group">
           <label className="form-label">Agent Type *</label>
-          <div className="agent-type-grid">
+          <div
+            className={`agent-type-grid ${
+              validationErrors.some((e) => e === 'Agent type is required')
+                ? 'border border-red-500 rounded-lg p-2'
+                : ''
+            }`}
+          >
             {AGENT_TYPES.map((type) => {
               const Icon = type.icon;
               const isSelected = agentType === type.id;
@@ -156,6 +175,9 @@ export const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
                   key={type.id}
                   className={`agent-type-card ${isSelected ? 'selected' : ''}`}
                   onClick={() => handleTypeChange(type.id)}
+                  role="radio"
+                  aria-checked={isSelected}
+                  tabIndex={0}
                 >
                   <div className="type-icon">
                     <Icon className="w-6 h-6" />

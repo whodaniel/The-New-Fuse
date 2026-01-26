@@ -212,12 +212,16 @@ export const AgentCapabilities: React.FC<AgentCapabilitiesProps> = ({
       </div>
 
       {validationErrors.length > 0 && (
-        <div className="validation-errors">
-          {validationErrors.map((error, index) => (
-            <div key={index} className="error-message">
-              {error}
-            </div>
-          ))}
+        <div
+          className="my-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg"
+          role="alert"
+        >
+          <p className="font-bold">Please fix the following issues:</p>
+          <ul className="list-disc list-inside">
+            {validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
         </div>
       )}
 
@@ -225,7 +229,13 @@ export const AgentCapabilities: React.FC<AgentCapabilitiesProps> = ({
         <span className="count">{selectedCapabilities.length}</span> capabilities selected
       </div>
 
-      <div className="capabilities-container">
+      <div
+        className={`capabilities-container ${
+          validationErrors.some((e) => e === 'At least one capability must be selected')
+            ? 'border border-red-500 rounded-lg p-2'
+            : ''
+        }`}
+      >
         {CATEGORIES.map((category) => {
           const categoryCapabilities = CAPABILITIES.filter((c) => c.category === category);
           const selectedInCategory = categoryCapabilities.filter((c) =>

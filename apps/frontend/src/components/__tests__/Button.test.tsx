@@ -1,4 +1,8 @@
 /**
+ * @vitest-environment jsdom
+ */
+
+/**
  * Button Component Tests
  *
  * Example tests for a Button component
@@ -7,9 +11,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 
 // This is a placeholder - adjust based on your actual Button component
-const Button = ({ onClick, children, disabled = false }: any) => (
+const Button = ({ onClick, children, disabled = false }: { onClick?: () => void, children: React.ReactNode, disabled?: boolean }) => (
   <button onClick={onClick} disabled={disabled}>
     {children}
   </button>

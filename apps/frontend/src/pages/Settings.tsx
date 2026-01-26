@@ -1,3 +1,4 @@
+import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import {
   GlassCard,
   PremiumButton,
@@ -10,14 +11,11 @@ import { useAuth } from '@/providers/AuthProvider';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bell,
-  Check,
-  Copy,
   Globe,
   Key,
   Loader2,
   Moon,
   Palette,
-  RefreshCw,
   Save,
   Settings2,
   Shield,
@@ -508,54 +506,34 @@ export default function Settings() {
                   <GlassCard
                     icon={Key}
                     title="API Keys"
-                    subtitle="Manage your API access and keys"
+                    subtitle="Manage your API access and AI configurations"
                     gradient="cyan"
                   >
-                    <div className="space-y-6 mt-6">
-                      <div className="p-4 bg-black/30 rounded-xl border border-white/5">
-                        <p className="text-sm text-gray-400 mb-3 flex items-center gap-2">
-                          <Key className="w-4 h-4" />
-                          Your API Key
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <PremiumInput
-                            type="password"
-                            value="••••••••••••••••••••••••"
-                            readOnly
-                            className="flex-1"
-                          />
-                          <PremiumButton
-                            variant="glass"
-                            size="sm"
-                            onClick={handleCopyApiKey}
-                            icon={copied ? Check : Copy}
-                          >
-                            {copied ? 'Copied!' : 'Copy'}
-                          </PremiumButton>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
-                          <Shield className="w-3 h-3" />
-                          API keys are stored securely. Contact support to regenerate your key.
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                    <div className="mt-6">
+                      <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-6 flex items-start gap-3">
+                        <Shield className="w-5 h-5 text-blue-400 mt-0.5" />
                         <div>
-                          <p className="font-medium text-white">API Access</p>
+                          <h4 className="font-medium text-blue-400 mb-1">Secure Storage</h4>
                           <p className="text-sm text-gray-400">
-                            Enable API access for external applications
+                            Your keys are encrypted at rest. We never share them with third parties
+                            except the respective providers.
                           </p>
                         </div>
-                        <ToggleSwitch checked={apiAccess} onChange={setApiAccess} />
                       </div>
 
-                      <div className="flex gap-3 pt-4">
-                        <PremiumButton onClick={handleSave} icon={RefreshCw}>
-                          Generate New Key
-                        </PremiumButton>
-                        <PremiumButton variant="ghost" icon={Trash2}>
-                          Revoke All Keys
-                        </PremiumButton>
+                      <ProviderApiKeyList />
+
+                      <div className="mt-8 pt-6 border-t border-white/10">
+                        <h3 className="text-lg font-medium text-white mb-4">Legacy Settings</h3>
+                        <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                          <div>
+                            <p className="font-medium text-white">API Access</p>
+                            <p className="text-sm text-gray-400">
+                              Enable API access for external applications (Global)
+                            </p>
+                          </div>
+                          <ToggleSwitch checked={apiAccess} onChange={setApiAccess} />
+                        </div>
                       </div>
                     </div>
                   </GlassCard>
