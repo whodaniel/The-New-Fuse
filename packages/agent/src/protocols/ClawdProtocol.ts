@@ -5,7 +5,7 @@ import { z } from 'zod';
 export const GatewayClientIdSchema = z.string().min(1);
 export const GatewayClientModeSchema = z.enum(['headless', 'desktop', 'web', 'mobile']);
 export const NonEmptyString = z.string().min(1);
-export const SnapshotSchema = z.record(z.unknown()); // Placeholder
+export const SnapshotSchema = z.record(z.string(), z.unknown()); // Placeholder
 export const StateVersionSchema = z.string(); // Placeholder
 
 // --- Events ---

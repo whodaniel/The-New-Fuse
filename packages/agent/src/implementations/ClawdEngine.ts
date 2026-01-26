@@ -26,7 +26,10 @@ export class ClawdEngine {
     this.memoryPath = path.join(root, '.clawd', 'memory');
     this.nodeId = `tnf-assimilated-${uuidv4().substring(0, 8)}`;
 
-    this.initialize();
+    void this.initialize().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('[ClawdEngine] Failed to initialize:', err);
+    });
   }
 
   private async initialize() {
@@ -98,10 +101,11 @@ export class ClawdEngine {
         default:
           throw new Error(`Method ${req.method} not implemented in Assimilated Engine`);
       }
-    } catch (e: any) {
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
       error = {
         code: 'INTERNAL_ERROR',
-        message: e.message,
+        message: errorMessage,
       };
     }
 
@@ -120,7 +124,9 @@ export class ClawdEngine {
    */
   private async executeSkill(skillName: string, args: unknown): Promise<unknown> {
     const skill = this.assimilationService.getSkill(skillName);
-    if (!skill) throw new Error(`Skill ${skillName} not found`);
+    if (!skill) {
+      throw new Error(`Skill ${skillName} not found`);
+    }
 
     // eslint-disable-next-line no-console
     console.log(`[ClawdEngine] Executing skill: ${skill.name}`);
@@ -149,7 +155,9 @@ export class ClawdEngine {
    * Cleanup and shutdown the engine
    */
   public async shutdown(): Promise<void> {
-    if (this.isShuttingDown) return;
+    if (this.isShuttingDown) {
+      return;
+    }
     this.isShuttingDown = true;
 
     if (this.heartbeatInterval) {

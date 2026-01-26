@@ -101,13 +101,17 @@ export class ClawdAssimilationService {
     const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
     const match = content.match(frontmatterRegex);
 
-    if (!match) return null;
+    if (!match) {
+      return null;
+    }
 
     const yaml = match[1];
     const nameMatch = yaml.match(/name:\s*(.*)/);
     const descMatch = yaml.match(/description:\s*(.*)/);
 
-    if (!nameMatch) return null;
+    if (!nameMatch) {
+      return null;
+    }
 
     const name = nameMatch[1].trim();
     const description = descMatch ? descMatch[1].trim() : '';
@@ -126,7 +130,9 @@ export class ClawdAssimilationService {
     const anyCodeRegex = /```(?:js|javascript|ts|typescript|bash|sh)\n([\s\S]*?)```/i;
     const codeMatch = implMatch || content.match(anyCodeRegex);
 
-    if (!codeMatch) return null;
+    if (!codeMatch) {
+      return null;
+    }
 
     return {
       name,
