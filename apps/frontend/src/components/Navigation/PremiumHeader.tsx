@@ -1,5 +1,7 @@
-import { Bell, Menu, Search, User } from 'lucide-react';
-import React from 'react';
+import { Bell, LogOut, Menu, Search, Settings, User } from 'lucide-react';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface PremiumHeaderProps {
@@ -8,7 +10,30 @@ interface PremiumHeaderProps {
 }
 
 export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed', error);
+      toast.error('Failed to logout');
+    }
+  };
+
+  const handleNotificationClick = () => {
+    toast('No new notifications', {
+      icon: '🔔',
+      style: {
+        background: '#1e293b',
+        color: '#fff',
+        border: '1px solid rgba(255,255,255,0.1)',
+      },
+    });
+  };
 
   return (
     <header
@@ -42,6 +67,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
 
           <div className="flex items-center gap-2">
             <button
+              onClick={handleNotificationClick}
               className="p-2 text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors relative"
               aria-label="View notifications"
             >
@@ -51,16 +77,63 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
 
             <div className="h-8 w-px bg-white/10 mx-2" />
 
-            <div className="flex items-center gap-3 pl-2">
-              <div className="hidden sm:block text-right">
-                <p className="text-sm font-medium text-white">{user?.name || 'User'}</p>
-                <p className="text-xs text-gray-400">{user?.role || 'Member'}</p>
-              </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-2 border-slate-800 shadow-lg cursor-pointer hover:scale-105 transition-transform">
-                <span className="text-sm font-bold text-white">
-                  {user?.name?.[0]?.toUpperCase() || <User className="w-4 h-4" />}
-                </span>
-              </div>
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center gap-3 pl-2 focus:outline-none"
+                aria-haspopup="true"
+                aria-expanded={isUserMenuOpen}
+              >
+                <div className="hidden sm:block text-right">
+                  <p className="text-sm font-medium text-white">{user?.name || 'User'}</p>
+                  <p className="text-xs text-gray-400">{user?.role || 'Member'}</p>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-2 border-slate-800 shadow-lg cursor-pointer hover:scale-105 transition-transform">
+                  <span className="text-sm font-bold text-white">
+                    {user?.name?.[0]?.toUpperCase() || <User className="w-4 h-4" />}
+                  </span>
+                </div>
+              </button>
+
+              {/* User Dropdown Menu */}
+              {isUserMenuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  ></div>
+                  <div className="absolute right-0 mt-2 w-48 bg-[#1e293b] border border-white/10 rounded-lg shadow-xl py-1 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-4 py-3 border-b border-white/10 sm:hidden">
+                      <p className="text-sm font-medium text-white">{user?.name || 'User'}</p>
+                      <p className="text-xs text-gray-400">{user?.role || 'Member'}</p>
+                    </div>
+
+                    <Link
+                      to="/user/profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Settings
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center px-4 py-2 text-sm text-red-400 hover:bg-white/5 hover:text-red-300 text-left"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
