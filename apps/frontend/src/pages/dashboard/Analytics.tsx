@@ -21,8 +21,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
   Cell,
   Legend,
@@ -308,7 +306,13 @@ const Analytics = () => {
   }
 
   // Ensure data structure exists before rendering
-  if (!data || !data.overview || !data.agentMetrics || !data.costAnalysis || !data.costAnalysis.costByProvider) {
+  if (
+    !data ||
+    !data.overview ||
+    !data.agentMetrics ||
+    !data.costAnalysis ||
+    !data.costAnalysis.costByProvider
+  ) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <GlassCard className="max-w-md">
@@ -326,10 +330,16 @@ const Analytics = () => {
 
   // Safe access to arrays
   const agentMetrics = Array.isArray(data.agentMetrics) ? data.agentMetrics : [];
-  const costByProvider = Array.isArray(data.costAnalysis?.costByProvider) ? data.costAnalysis.costByProvider : [];
-  const performanceData = Array.isArray(data.performance?.dataPoints) ? data.performance.dataPoints : [];
+  const costByProvider = Array.isArray(data.costAnalysis?.costByProvider)
+    ? data.costAnalysis.costByProvider
+    : [];
+  const performanceData = Array.isArray(data.performance?.dataPoints)
+    ? data.performance.dataPoints
+    : [];
   const qualityTrends = Array.isArray(data.qualityTrends) ? data.qualityTrends : [];
-  const dailyCosts = Array.isArray(data.costAnalysis?.dailyCosts) ? data.costAnalysis.dailyCosts : [];
+  const dailyCosts = Array.isArray(data.costAnalysis?.dailyCosts)
+    ? data.costAnalysis.dailyCosts
+    : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -363,12 +373,13 @@ const Analytics = () => {
               value={timeRange}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTimeRange(e.target.value)}
               className="w-[180px]"
-            >
-              <option value="24h">Last 24 hours</option>
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="90d">Last 90 days</option>
-            </PremiumSelect>
+              options={[
+                { value: '24h', label: 'Last 24 hours' },
+                { value: '7d', label: 'Last 7 days' },
+                { value: '30d', label: 'Last 30 days' },
+                { value: '90d', label: 'Last 90 days' },
+              ]}
+            />
             <PremiumButton
               variant="glass"
               onClick={handleRefresh}
@@ -519,8 +530,53 @@ const Analytics = () => {
                   subtitle="Request and response trends over time"
                   gradient="purple"
                 >
-                  <div className="h-[400px] mt-4 flex items-center justify-center">
-                    <p className="text-gray-400">Chart data visualization temporarily disabled for stability.</p>
+                  <div className="h-[400px] mt-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={performanceData}>
+                        <defs>
+                          <linearGradient id="requestsGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="responsesGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#06B6D4" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+                        <XAxis dataKey="timestamp" stroke="#94a3b8" fontSize={12} />
+                        <YAxis stroke="#94a3b8" fontSize={12} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend wrapperStyle={{ color: '#94a3b8' }} iconType="circle" />
+                        <Line
+                          type="monotone"
+                          dataKey="requests"
+                          stroke="#8B5CF6"
+                          strokeWidth={2}
+                          dot={{ fill: '#8B5CF6', r: 4 }}
+                          activeDot={{ r: 6 }}
+                          name="Requests"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="responses"
+                          stroke="#06B6D4"
+                          strokeWidth={2}
+                          dot={{ fill: '#06B6D4', r: 4 }}
+                          activeDot={{ r: 6 }}
+                          name="Responses"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="errors"
+                          stroke="#EF4444"
+                          strokeWidth={2}
+                          dot={{ fill: '#EF4444', r: 4 }}
+                          activeDot={{ r: 6 }}
+                          name="Errors"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
                 </GlassCard>
               </motion.div>
@@ -634,8 +690,42 @@ const Analytics = () => {
                     subtitle="Quality score and user satisfaction over time"
                     gradient="green"
                   >
-                    <div className="h-[300px] mt-4 flex items-center justify-center">
-                      <p className="text-gray-400">Visualization disabled.</p>
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={qualityTrends}>
+                          <defs>
+                            <linearGradient id="qualityGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="satisfactionGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#06B6D4" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+                          <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
+                          <YAxis stroke="#94a3b8" fontSize={12} />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend wrapperStyle={{ color: '#94a3b8' }} iconType="circle" />
+                          <Area
+                            type="monotone"
+                            dataKey="qualityScore"
+                            stroke="#10B981"
+                            fillOpacity={1}
+                            fill="url(#qualityGradient)"
+                            name="Quality Score"
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="userSatisfaction"
+                            stroke="#06B6D4"
+                            fillOpacity={1}
+                            fill="url(#satisfactionGradient)"
+                            name="User Satisfaction"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -647,8 +737,25 @@ const Analytics = () => {
                     subtitle="Error occurrences over time"
                     gradient="orange"
                   >
-                    <div className="h-[300px] mt-4 flex items-center justify-center">
-                      <p className="text-gray-400">Visualization disabled.</p>
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={qualityTrends}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+                          <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
+                          <YAxis stroke="#94a3b8" fontSize={12} />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend wrapperStyle={{ color: '#94a3b8' }} iconType="circle" />
+                          <Line
+                            type="monotone"
+                            dataKey="errorRate"
+                            stroke="#EF4444"
+                            strokeWidth={2}
+                            dot={{ fill: '#EF4444', r: 4 }}
+                            activeDot={{ r: 6 }}
+                            name="Error Rate (%)"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -670,8 +777,29 @@ const Analytics = () => {
                     subtitle="Distribution of costs across providers"
                     gradient="purple"
                   >
-                    <div className="h-[300px] mt-4 flex items-center justify-center">
-                      <p className="text-gray-400">Visualization disabled.</p>
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={costByProvider}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ provider, percentage }) =>
+                              `${provider}: ${percentage.toFixed(1)}%`
+                            }
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="cost"
+                          >
+                            {costByProvider.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend wrapperStyle={{ color: '#94a3b8' }} />
+                        </PieChart>
+                      </ResponsiveContainer>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -683,8 +811,30 @@ const Analytics = () => {
                     subtitle="Cost trends over the selected period"
                     gradient="cyan"
                   >
-                    <div className="h-[300px] mt-4 flex items-center justify-center">
-                      <p className="text-gray-400">Visualization disabled.</p>
+                    <div className="h-[300px] mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={dailyCosts}>
+                          <defs>
+                            <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+                          <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
+                          <YAxis stroke="#94a3b8" fontSize={12} />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend wrapperStyle={{ color: '#94a3b8' }} iconType="circle" />
+                          <Area
+                            type="monotone"
+                            dataKey="cost"
+                            stroke="#8B5CF6"
+                            fillOpacity={1}
+                            fill="url(#costGradient)"
+                            name="Daily Cost ($)"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
                     </div>
                   </GlassCard>
                 </motion.div>

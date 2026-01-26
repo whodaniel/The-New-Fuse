@@ -284,12 +284,19 @@ const UserProfilePage: React.FC = () => {
                 {user?.email || profile?.email}
               </p>
               <div className="mt-3 flex gap-2 justify-center md:justify-start">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-200 border border-blue-400/30">
-                  Premium User
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-200 border border-green-400/30">
-                  Verified
-                </span>
+                {/* Dynamically show badges based on real data if available in the future.
+                    For now, hiding misleading 'Verified' / 'Premium' until backend supports subscription/verification flags.
+                */}
+                {userRole === 'SUPER_ADMIN' && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-200 border border-purple-400/30">
+                    System Admin
+                  </span>
+                )}
+                {isAdmin && userRole !== 'SUPER_ADMIN' && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-200 border border-blue-400/30">
+                    Admin
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -313,24 +320,33 @@ const UserProfilePage: React.FC = () => {
               <span className="text-[10px] uppercase font-black text-gray-500 tracking-widest block">
                 System Privilege
               </span>
-              <span className="text-lg font-extrabold text-blue-400">{userRole}</span>
+              <span className="text-lg font-extrabold text-blue-400">{userRole || 'USER'}</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            {/* Dynamic Agency / Context Info */}
             <div className="p-4 rounded-xl bg-black/40 border border-white/5">
               <div className="flex justify-between items-start mb-2">
-                <span className="text-xs font-bold text-gray-500 uppercase">Primary Agency</span>
+                <span className="text-xs font-bold text-gray-500 uppercase">Current Scope</span>
                 <Zap className="w-3 h-3 text-amber-400" />
               </div>
-              <div className="text-white font-bold">The New Fuse Core</div>
-              <div className="text-[10px] text-gray-500 mt-1">ID: agency-core-001</div>
-            </div>
-            <div className="p-4 rounded-xl bg-black/40 border border-white/5 opacity-50">
-              <div className="flex justify-between items-start mb-2">
-                <span className="text-xs font-bold text-gray-500 uppercase">Secondary Nodes</span>
+              <div className="text-white font-bold">
+                {userRole === 'SUPER_ADMIN'
+                  ? 'Global System Scope'
+                  : (user as any)?.agencyId
+                    ? 'Agency Environment'
+                    : 'Personal Workspace'}
               </div>
-              <div className="text-gray-400 italic text-sm">No secondary agencies linked</div>
+              <div className="text-[10px] text-gray-500 mt-1">
+                {(user as any)?.agencyId
+                  ? `Agency ID: ${(user as any).agencyId}`
+                  : (user as any)?.tenantId
+                    ? `Tenant ID: ${(user as any).tenantId}`
+                    : userRole === 'SUPER_ADMIN'
+                      ? 'Root Access Enabled'
+                      : 'Standard Access'}
+              </div>
             </div>
           </div>
 
