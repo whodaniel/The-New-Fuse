@@ -1,12 +1,20 @@
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  Ban,
   Bot,
   CheckCheck,
   Clock,
   Globe,
   Hash,
+  Info,
   Loader2,
   Lock,
   MessageSquare,
@@ -16,11 +24,13 @@ import {
   Send,
   Settings,
   Smile,
+  Trash2,
   User,
   Users,
   X,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 interface Message {
   id: string;
@@ -309,7 +319,10 @@ const WorkspaceChat: React.FC = () => {
                 <p className="text-xs text-gray-400">{workspace?.description}</p>
               </div>
             </div>
-            <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10">
+            <button
+              onClick={() => toast('Workspace Settings coming soon!', { icon: '⚙️' })}
+              className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+            >
               <Settings className="w-4 h-4" />
             </button>
           </div>
@@ -430,9 +443,39 @@ const WorkspaceChat: React.FC = () => {
                 </p>
               </div>
             </div>
-            <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10">
-              <MoreVertical className="w-4 h-4" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10">
+                  <MoreVertical className="w-4 h-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-slate-900 border-white/10 text-white">
+                <DropdownMenuItem
+                  onClick={() => toast('Channel info', { icon: 'ℹ️' })}
+                  className="hover:bg-white/10 cursor-pointer"
+                >
+                  <Info className="w-4 h-4 mr-2" />
+                  Channel Info
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setMessages([]);
+                    toast.success('Chat history cleared');
+                  }}
+                  className="hover:bg-white/10 cursor-pointer text-red-400 focus:text-red-400"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Clear History
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => toast.error('User blocked')}
+                  className="hover:bg-white/10 cursor-pointer text-red-400 focus:text-red-400"
+                >
+                  <Ban className="w-4 h-4 mr-2" />
+                  Block User
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -582,7 +625,10 @@ const WorkspaceChat: React.FC = () => {
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
-                <button className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10">
+                <button
+                  onClick={() => toast('Emoji picker coming soon!', { icon: '😃' })}
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+                >
                   <Smile className="w-4 h-4" />
                 </button>
               </div>

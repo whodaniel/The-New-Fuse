@@ -1,4 +1,10 @@
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   AlertTriangle,
   BarChart,
   CheckCircle,
@@ -17,7 +23,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface Agent {
   id: string;
@@ -43,6 +49,7 @@ interface Agent {
 }
 
 const AgentDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -459,12 +466,49 @@ const AgentDashboard: React.FC = () => {
                   </div>
 
                   <div className="relative">
-                    <button
-                      className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                      title="Agent Options"
-                    >
-                      <MoreVertical className="w-5 h-5 text-gray-500" />
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                          title="Agent Options"
+                        >
+                          <MoreVertical className="w-5 h-5 text-gray-500" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      >
+                        <DropdownMenuItem onClick={() => handleAgentAction(agent.id, 'edit')}>
+                          <Pencil className="w-4 h-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleAgentAction(
+                              agent.id,
+                              agent.status === 'active' ? 'pause' : 'start'
+                            )
+                          }
+                        >
+                          {agent.status === 'active' ? (
+                            <>
+                              <Pause className="w-4 h-4 mr-2" />
+                              Pause
+                            </>
+                          ) : (
+                            <>
+                              <Play className="w-4 h-4 mr-2" />
+                              Start
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/dashboard/agents/${agent.id}`)}>
+                          <BarChart className="w-4 h-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 

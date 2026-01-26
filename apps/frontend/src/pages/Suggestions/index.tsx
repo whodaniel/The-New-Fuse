@@ -3,20 +3,29 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Calendar,
   Filter,
+  Flag,
   Lightbulb,
   MessageSquare,
   MoreVertical,
   Plus,
   Search,
+  Share,
   Tag,
   ThumbsDown,
   ThumbsUp,
   User,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 // Mock data for suggestions
@@ -278,9 +287,31 @@ const Suggestions: React.FC = () => {
                 <h3 className="text-xl font-semibold">{suggestion.title}</h3>
                 <div className="flex items-center">
                   {getStatusBadge(suggestion.status)}
-                  <button className="ml-2 text-gray-500 hover:text-gray-700">
-                    <MoreVertical className="h-4 w-4" />
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="ml-2 text-gray-500 hover:text-gray-700">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.href + '/' + suggestion.id);
+                          toast.success('Link copied to clipboard');
+                        }}
+                      >
+                        <Share className="h-4 w-4 mr-2" />
+                        Share
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => toast.error('Suggestion reported for review')}
+                        className="text-red-600 focus:text-red-600"
+                      >
+                        <Flag className="h-4 w-4 mr-2" />
+                        Report
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
               <p className="text-muted-foreground mb-4">{suggestion.description}</p>
@@ -322,15 +353,24 @@ const Suggestions: React.FC = () => {
             </div>
             <div className="px-6 py-4 bg-muted/50 flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <button className="flex items-center text-green-600 hover:text-green-700">
+                <button
+                  className="flex items-center text-green-600 hover:text-green-700"
+                  onClick={() => toast.success('Upvoted!')}
+                >
                   <ThumbsUp className="h-4 w-4 mr-1" />
                   Upvote
                 </button>
-                <button className="flex items-center text-red-600 hover:text-red-700">
+                <button
+                  className="flex items-center text-red-600 hover:text-red-700"
+                  onClick={() => toast('Downvoted', { icon: '👎' })}
+                >
                   <ThumbsDown className="h-4 w-4 mr-1" />
                   Downvote
                 </button>
-                <button className="flex items-center text-blue-600 hover:text-blue-700">
+                <button
+                  className="flex items-center text-blue-600 hover:text-blue-700"
+                  onClick={() => navigate(`/suggestions/${suggestion.id}`)}
+                >
                   <MessageSquare className="h-4 w-4 mr-1" />
                   Comments ({suggestion.comments})
                 </button>
