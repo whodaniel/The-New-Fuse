@@ -1,14 +1,8 @@
 @import 'tailwindcss';
-@config "../../tailwind.config.ts";
-
-/* Import comprehensive design system */
 @import './design-system.css';
-
-/* Import landing page animations */
 @import './landing-animations.css';
-
-/* Premium Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@config "../../tailwind.config.ts";
 
 @theme {
   --color-border: hsl(var(--border));

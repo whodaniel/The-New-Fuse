@@ -142,8 +142,10 @@ const MultiAgentChat: React.FC = () => {
     <div className="chat-container">
       {/* Agent Selector Sidebar */}
       <aside className="agent-selector">
-        <h3>Select Agents</h3>
-        <p className="helper-text">Choose agents to chat with</p>
+        <div className="sidebar-header">
+          <h3>Neural Link</h3>
+          <p className="helper-text">Select active nodes</p>
+        </div>
 
         <div className="agent-list">
           {activeAgents.map((agent) => (
@@ -152,7 +154,15 @@ const MultiAgentChat: React.FC = () => {
               className={`agent-item ${selectedAgents.includes(agent.id) ? 'selected' : ''}`}
               onClick={() => toggleAgent(agent.id)}
             >
-              <div className="agent-avatar" style={{ borderColor: getAgentColor(agent.type) }}>
+              <div
+                className="agent-avatar"
+                style={{
+                  borderColor: getAgentColor(agent.type),
+                  boxShadow: selectedAgents.includes(agent.id)
+                    ? `0 0 15px ${getAgentColor(agent.type)}40`
+                    : 'none',
+                }}
+              >
                 {agent.type === 'claude' && '🧠'}
                 {agent.type === 'gpt' && '🤖'}
                 {agent.type === 'gemini' && '💎'}
@@ -164,98 +174,142 @@ const MultiAgentChat: React.FC = () => {
                 <span className="agent-name">{agent.name}</span>
                 <span className="agent-model">{agent.config.model}</span>
               </div>
-              {selectedAgents.includes(agent.id) && <span className="check-mark">✓</span>}
+              {selectedAgents.includes(agent.id) && <span className="check-mark">●</span>}
             </button>
           ))}
         </div>
 
         <div className="connection-status">
-          <span className={`status-dot ${isConnected ? 'connected' : 'disconnected'}`}></span>
-          <span>{isConnected ? 'Connected' : 'Offline Mode'}</span>
+          <div className="status-indicator-wrapper">
+            <span className={`status-dot ${isConnected ? 'connected' : 'disconnected'}`}></span>
+            <span className="status-ring"></span>
+          </div>
+          <div className="status-details">
+            <span className="status-label">{isConnected ? 'SYSTEM ONLINE' : 'OFFLINE MODE'}</span>
+            <span className="status-sub">{isConnected ? 'Latency: 12ms' : 'Reconnecting...'}</span>
+          </div>
         </div>
       </aside>
 
       {/* Chat Area */}
       <main className="chat-main">
         <header className="chat-header">
-          <h2>Multi-Agent Chat</h2>
-          <div className="selected-agents">
+          <div className="header-info">
+            <h2>Swarm Protocol</h2>
+            <span className="active-count">
+              {selectedAgents.length} {selectedAgents.length === 1 ? 'Node' : 'Nodes'} Active
+            </span>
+          </div>
+          <div className="selected-agents-pills">
             {selectedAgents.map((id) => {
               const agent = agents.find((a) => a.id === id);
               if (!agent) return null;
               return (
                 <span
                   key={id}
-                  className="agent-chip"
-                  style={{ borderColor: getAgentColor(agent.type) }}
+                  className="agent-pill"
+                  style={{
+                    backgroundColor: `${getAgentColor(agent.type)}20`,
+                    borderColor: getAgentColor(agent.type),
+                    color: getAgentColor(agent.type),
+                  }}
                 >
                   {agent.name}
                 </span>
               );
             })}
-            {selectedAgents.length === 0 && (
-              <span className="no-agents">Select agents to start chatting</span>
-            )}
+            {selectedAgents.length === 0 && <span className="no-agents-pill">No active nodes</span>}
           </div>
         </header>
 
-        <div className="messages-container">
-          {messages.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">💬</span>
-              <h3>Start a Conversation</h3>
-              <p>Select one or more agents and send a message</p>
-            </div>
-          ) : (
-            messages.map((msg) => (
-              <div key={msg.id} className={`message ${msg.role}`}>
-                {msg.role === 'agent' && (
-                  <div className="message-header">
-                    <span
-                      className="agent-badge"
+        <div className="messages-viewport">
+          <div className="messages-container">
+            {messages.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-visual-ring">
+                  <div className="empty-visual-inner">⚡</div>
+                </div>
+                <h3>Neural Interface Ready</h3>
+                <p>Initialize swarm communication sequence</p>
+              </div>
+            ) : (
+              messages.map((msg) => (
+                <div key={msg.id} className={`message-row ${msg.role}`}>
+                  {msg.role === 'agent' && (
+                    <div
+                      className="message-avatar"
                       style={{
-                        backgroundColor: getAgentColor(
+                        borderColor: getAgentColor(
                           agents.find((a) => a.id === msg.agentId)?.type || 'custom'
                         ),
                       }}
                     >
-                      {msg.agentName}
+                      {agents.find((a) => a.id === msg.agentId)?.name[0]}
+                    </div>
+                  )}
+                  <div className="message-bubble-container">
+                    {msg.role === 'agent' && (
+                      <span
+                        className="message-agent-name"
+                        style={{
+                          color: getAgentColor(
+                            agents.find((a) => a.id === msg.agentId)?.type || 'custom'
+                          ),
+                        }}
+                      >
+                        {msg.agentName}
+                      </span>
+                    )}
+                    <div className="message-bubble">{msg.content}</div>
+                    <span className="message-time">
+                      {new Date(msg.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
                     </span>
                   </div>
-                )}
-                <div className="message-content">{msg.content}</div>
-                <div className="message-time">{new Date(msg.timestamp).toLocaleTimeString()}</div>
+                </div>
+              ))
+            )}
+            {isLoading && (
+              <div className="message-row agent loading">
+                <div className="message-avatar loading-pulse">...</div>
+                <div className="typing-indicator-bubble">
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                </div>
               </div>
-            ))
-          )}
-          {isLoading && (
-            <div className="message agent loading">
-              <div className="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
 
-        <div className="input-container">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder={selectedAgents.length > 0 ? 'Type your message...' : 'Select agents first'}
-            disabled={selectedAgents.length === 0}
-          />
-          <button
-            className="send-button"
-            onClick={handleSend}
-            disabled={!input.trim() || selectedAgents.length === 0}
-          >
-            Send
-          </button>
+        <div className="input-area">
+          <div className="input-wrapper">
+            <input
+              type="text"
+              className="chat-input"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              placeholder={
+                selectedAgents.length > 0
+                  ? 'Broadcast message to active nodes...'
+                  : 'Select nodes to enable transmission'
+              }
+              disabled={selectedAgents.length === 0}
+            />
+            <div className="input-actions">
+              <button
+                className="send-button"
+                onClick={handleSend}
+                disabled={!input.trim() || selectedAgents.length === 0}
+              >
+                ➤
+              </button>
+            </div>
+          </div>
         </div>
       </main>
 
@@ -263,163 +317,242 @@ const MultiAgentChat: React.FC = () => {
         .chat-container {
           display: flex;
           height: 100%;
-          background: var(--tnf-obsidian);
+          background: #0f111a;
+          color: #e0e7ff;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          overflow: hidden;
         }
 
-        /* Agent Selector Sidebar */
+        /* Sidebar */
         .agent-selector {
-          width: 280px;
-          background: var(--tnf-surface);
-          border-right: 1px solid var(--tnf-border);
-          padding: 24px;
+          width: 320px;
+          background: rgba(19, 21, 31, 0.8);
+          border-right: 1px solid #1f2937;
           display: flex;
           flex-direction: column;
+          backdrop-filter: blur(20px);
         }
 
-        .agent-selector h3 {
-          font-family: var(--tnf-font-heading);
-          margin: 0 0 4px;
+        .sidebar-header {
+          padding: 24px;
+          border-bottom: 1px solid #1f2937;
+        }
+
+        .sidebar-header h3 {
+          margin: 0;
+          font-family: 'Outfit', sans-serif;
+          font-size: 20px;
+          background: linear-gradient(135deg, #fff, #94a3b8);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
         .helper-text {
+          margin-top: 4px;
           font-size: 13px;
-          color: var(--tnf-text-muted);
-          margin: 0 0 20px;
+          color: #64748b;
         }
 
         .agent-list {
           flex: 1;
+          padding: 16px;
           overflow-y: auto;
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 12px;
         }
 
         .agent-item {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 16px;
           padding: 12px;
-          background: var(--tnf-surface-hover);
-          border: 1px solid transparent;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.05);
           border-radius: 12px;
           cursor: pointer;
-          transition: all 0.2s;
-          text-align: left;
+          transition: all 0.2s ease;
+          position: relative;
+          color: #cbd5e1;
         }
 
         .agent-item:hover {
-          border-color: var(--tnf-border);
+          background: rgba(255, 255, 255, 0.06);
+          transform: translateY(-1px);
         }
 
         .agent-item.selected {
-          border-color: var(--tnf-primary);
           background: rgba(99, 102, 241, 0.1);
+          border-color: rgba(99, 102, 241, 0.4);
         }
 
         .agent-avatar {
-          width: 40px;
-          height: 40px;
+          width: 42px;
+          height: 42px;
           border-radius: 10px;
-          border: 2px solid;
+          border: 2px solid #334155;
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 20px;
+          background: #0f172a;
+          transition: all 0.2s;
         }
 
         .agent-info {
           flex: 1;
           display: flex;
           flex-direction: column;
+          gap: 2px;
         }
 
         .agent-name {
-          font-weight: 500;
+          font-weight: 600;
           font-size: 14px;
+          color: #f1f5f9;
         }
 
         .agent-model {
           font-size: 11px;
-          color: var(--tnf-text-muted);
+          color: #94a3b8;
+          font-family: 'JetBrains Mono', monospace;
         }
 
         .check-mark {
-          color: var(--tnf-primary);
-          font-weight: bold;
+          color: #818cf8;
+          font-size: 10px;
+          text-shadow: 0 0 10px #818cf8;
         }
 
         .connection-status {
+          padding: 20px;
+          background: rgba(0, 0, 0, 0.2);
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding-top: 16px;
-          border-top: 1px solid var(--tnf-border);
-          margin-top: 16px;
-          font-size: 12px;
-          color: var(--tnf-text-muted);
+          gap: 14px;
+          border-top: 1px solid #1f2937;
+        }
+
+        .status-indicator-wrapper {
+          position: relative;
+          width: 12px;
+          height: 12px;
         }
 
         .status-dot {
           width: 8px;
           height: 8px;
           border-radius: 50%;
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          z-index: 2;
         }
 
-        .status-dot.connected {
-          background: #10b981;
-          box-shadow: 0 0 8px #10b981;
+        .status-dot.connected { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .status-dot.disconnected { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+        .status-ring {
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          width: 16px;
+          height: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 50%;
+          animation: spin 3s linear infinite;
         }
 
-        .status-dot.disconnected {
-          background: #f59e0b;
+        .status-details {
+          display: flex;
+          flex-direction: column;
         }
 
-        /* Chat Main */
+        .status-label {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          color: #e2e8f0;
+        }
+
+        .status-sub {
+          font-size: 10px;
+          color: #64748b;
+        }
+
+        /* Main Chat */
         .chat-main {
           flex: 1;
           display: flex;
           flex-direction: column;
+          background: radial-gradient(circle at top right, #1e293b 0%, #0f111a 60%);
+          position: relative;
         }
 
         .chat-header {
-          padding: 20px 24px;
-          border-bottom: 1px solid var(--tnf-border);
+          padding: 20px 32px;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          z-index: 10;
         }
 
-        .chat-header h2 {
-          font-family: var(--tnf-font-heading);
-          margin: 0 0 12px;
+        .header-info h2 {
+          margin: 0;
+          font-family: 'Outfit', sans-serif;
+          font-size: 18px;
+          letter-spacing: 0.5px;
         }
 
-        .selected-agents {
+        .active-count {
+          font-size: 12px;
+          color: #94a3b8;
+        }
+
+        .selected-agents-pills {
           display: flex;
           gap: 8px;
-          flex-wrap: wrap;
         }
 
-        .agent-chip {
+        .agent-pill {
           padding: 4px 12px;
-          border-radius: 12px;
-          font-size: 12px;
+          border-radius: 20px;
+          font-size: 11px;
+          font-weight: 600;
           border: 1px solid;
-          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(4px);
         }
 
-        .no-agents {
-          font-size: 13px;
-          color: var(--tnf-text-muted);
+        .no-agents-pill {
+          font-size: 12px;
+          color: #64748b;
           font-style: italic;
         }
 
         /* Messages */
-        .messages-container {
+        .messages-viewport {
           flex: 1;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .messages-container {
+          height: 100%;
           overflow-y: auto;
-          padding: 24px;
+          padding: 32px;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 24px;
+        }
+
+        /* Scrollbar */
+        .messages-container::-webkit-scrollbar { width: 6px; }
+        .messages-container::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 3px;
         }
 
         .empty-state {
@@ -428,134 +561,205 @@ const MultiAgentChat: React.FC = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          color: var(--tnf-text-muted);
+          color: #64748b;
+          text-align: center;
         }
 
-        .empty-icon {
-          font-size: 48px;
-          margin-bottom: 16px;
+        .empty-visual-ring {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          border: 1px dashed rgba(99, 102, 241, 0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 24px;
+          animation: spin 20s linear infinite;
         }
 
-        .empty-state h3 {
-          margin: 0 0 8px;
-          color: var(--tnf-text-primary);
+        .empty-visual-inner {
+          font-size: 32px;
+          animation: pulse 2s infinite;
         }
 
-        .message {
+        .message-row {
+          display: flex;
+          gap: 16px;
+          align-items: flex-start;
           max-width: 80%;
-          padding: 12px 16px;
-          border-radius: 16px;
         }
 
-        .message.user {
+        .message-row.user {
           align-self: flex-end;
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          color: white;
+          flex-direction: row-reverse;
         }
 
-        .message.agent {
+        .message-row.agent {
           align-self: flex-start;
-          background: var(--tnf-surface);
-          border: 1px solid var(--tnf-border);
         }
 
-        .message-header {
-          margin-bottom: 8px;
+        .message-avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 12px;
+          background: #1e293b;
+          border: 2px solid #334155;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          flex-shrink: 0;
         }
 
-        .agent-badge {
-          padding: 2px 8px;
-          border-radius: 8px;
+        .message-bubble-container {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .message-agent-name {
           font-size: 11px;
-          color: white;
+          font-weight: 700;
+          margin-bottom: 4px;
+          margin-left: 12px;
         }
 
-        .message-content {
-          line-height: 1.5;
+        .message-bubble {
+          padding: 14px 18px;
+          border-radius: 18px;
+          font-size: 15px;
+          line-height: 1.6;
+          position: relative;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .user .message-bubble {
+          background: linear-gradient(135deg, #4f46e5, #7c3aed);
+          color: white;
+          border-bottom-right-radius: 4px;
+        }
+
+        .agent .message-bubble {
+          background: rgba(31, 41, 55, 0.7);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          color: #f1f5f9;
+          border-top-left-radius: 4px;
         }
 
         .message-time {
           font-size: 10px;
-          color: var(--tnf-text-muted);
+          color: rgba(255, 255, 255, 0.3);
           margin-top: 6px;
+          align-self: flex-end;
+          margin-right: 4px;
         }
 
-        .message.user .message-time {
-          color: rgba(255, 255, 255, 0.7);
+        .user .message-time {
+          align-self: flex-start;
+          margin-left: 4px;
+          margin-right: 0;
         }
 
-        .message.loading {
-          padding: 16px;
-        }
-
-        .typing-indicator {
+        /* Typing Indicator */
+        .typing-indicator-bubble {
+          background: rgba(31, 41, 55, 0.7);
+          padding: 12px 16px;
+          border-radius: 18px;
+          border-top-left-radius: 4px;
           display: flex;
-          gap: 4px;
+          gap: 6px;
         }
 
-        .typing-indicator span {
+        .dot {
           width: 8px;
           height: 8px;
-          background: var(--tnf-text-muted);
+          background: #64748b;
           border-radius: 50%;
-          animation: bounce 1.4s infinite ease-in-out;
+          animation: bounce 1.4s infinite ease-in-out both;
         }
 
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
 
         @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-6px); }
+          0%, 80%, 100% { transform: scale(0); }
+          40% { transform: scale(1); }
         }
 
-        /* Input */
-        .input-container {
-          padding: 20px 24px;
-          border-top: 1px solid var(--tnf-border);
-          display: flex;
-          gap: 12px;
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
 
-        .input-container input {
-          flex: 1;
-          padding: 14px 20px;
-          background: var(--tnf-surface);
-          border: 1px solid var(--tnf-border);
-          border-radius: 12px;
-          color: var(--tnf-text-primary);
-          font-size: 14px;
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
 
-        .input-container input:focus {
+        /* Input Area */
+        .input-area {
+          padding: 24px 32px;
+          background: rgba(15, 23, 42, 0.8);
+          backdrop-filter: blur(12px);
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-wrapper {
+          position: relative;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
+          transition: all 0.2s;
+        }
+
+        .input-wrapper:focus-within {
+          background: rgba(255, 255, 255, 0.05);
+          border-color: #6366f1;
+          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .chat-input {
+          width: 100%;
+          padding: 18px 60px 18px 24px;
+          background: transparent;
+          border: none;
+          color: white;
+          font-size: 15px;
+        }
+
+        .chat-input:focus {
           outline: none;
-          border-color: var(--tnf-primary);
         }
 
-        .input-container input:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
+        .input-actions {
+          position: absolute;
+          right: 8px;
+          top: 8px;
+          bottom: 8px;
         }
 
         .send-button {
-          padding: 14px 28px;
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          height: 100%;
+          aspect-ratio: 1;
+          border-radius: 10px;
+          background: linear-gradient(135deg, #4f46e5, #7c3aed);
           border: none;
-          border-radius: 12px;
           color: white;
-          font-weight: 600;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
           transition: all 0.2s;
         }
 
         .send-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+          transform: scale(1.05);
+          box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
         }
 
         .send-button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
+          background: #334155;
         }
       `}</style>
     </div>
