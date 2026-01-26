@@ -8,6 +8,15 @@
  * 2. User presses Ctrl+Shift+F keyboard shortcut
  */
 
+// CRITICAL: Skip initialization on SkIDEancer IDE pages to prevent conflicts
+if (window.location.hostname === 'skideancer.thenewfuse.com') {
+  console.log('[FuseConnect v6] Skipping SkIDEancer IDE page - extension disabled on this domain');
+  // Export empty module to prevent errors
+  export {};
+  // Stop execution
+  throw new Error('FuseConnect disabled on IDE pages');
+}
+
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
 import './guard'; // MUST BE FIRST - Patches customElements.define
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
