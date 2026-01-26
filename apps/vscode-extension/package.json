@@ -333,6 +333,76 @@
         "title": "Execute Script in Browser",
         "category": "The New Fuse",
         "icon": "$(code)"
+      },
+      {
+        "command": "theNewFuse.codeLens.explain",
+        "title": "Explain Code (AI)",
+        "category": "The New Fuse - AI",
+        "icon": "$(info)"
+      },
+      {
+        "command": "theNewFuse.codeLens.optimize",
+        "title": "Optimize Code (AI)",
+        "category": "The New Fuse - AI",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "theNewFuse.codeLens.generateTests",
+        "title": "Generate Tests (AI)",
+        "category": "The New Fuse - AI",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "theNewFuse.codeLens.document",
+        "title": "Generate Documentation (AI)",
+        "category": "The New Fuse - AI",
+        "icon": "$(book)"
+      },
+      {
+        "command": "theNewFuse.hover.explain",
+        "title": "Explain Hover Element (AI)",
+        "category": "The New Fuse - AI"
+      },
+      {
+        "command": "theNewFuse.hover.toggleAIHints",
+        "title": "Toggle AI Hover Hints",
+        "category": "The New Fuse - AI",
+        "icon": "$(info)"
+      },
+      {
+        "command": "theNewFuse.completion.toggle",
+        "title": "Toggle AI Completions",
+        "category": "The New Fuse - AI",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "theNewFuse.completion.clearCache",
+        "title": "Clear AI Completion Cache",
+        "category": "The New Fuse - AI"
+      },
+      {
+        "command": "theNewFuse.completion.triggerManual",
+        "title": "Trigger AI Completion",
+        "category": "The New Fuse - AI",
+        "icon": "$(lightbulb-autofix)"
+      },
+      {
+        "command": "theNewFuse.workspace.index",
+        "title": "Index Workspace",
+        "category": "The New Fuse",
+        "icon": "$(search)"
+      },
+      {
+        "command": "theNewFuse.workspace.searchSymbols",
+        "title": "Search Symbols (AI)",
+        "category": "The New Fuse",
+        "icon": "$(symbol-field)"
+      },
+      {
+        "command": "theNewFuse.git.summary",
+        "title": "Git Repository Summary",
+        "category": "The New Fuse",
+        "icon": "$(git-branch)"
       }
     ],
     "menus": {
@@ -414,6 +484,11 @@
         "command": "theNewFuse.newChat",
         "key": "ctrl+shift+n",
         "mac": "cmd+shift+n"
+      },
+      {
+        "command": "theNewFuse.openBrowser",
+        "key": "ctrl+alt+b",
+        "mac": "cmd+alt+b"
       },
       {
         "command": "theNewFuse.inlineSuggestions",
@@ -599,6 +674,48 @@
           "minimum": 0,
           "maximum": 2,
           "description": "Response temperature (creativity)"
+        },
+        "theNewFuse.features.codeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI-powered CodeLens (inline code suggestions)"
+        },
+        "theNewFuse.features.hover.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI-powered hover hints"
+        },
+        "theNewFuse.features.hover.aiHints": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable AI-generated insights in hover hints (may slow down editor)"
+        },
+        "theNewFuse.features.completion.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI-powered code completions"
+        },
+        "theNewFuse.features.completion.triggerDelay": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 0,
+          "maximum": 5000,
+          "description": "Delay before triggering AI completions (in milliseconds)"
+        },
+        "theNewFuse.features.workspaceIndexing.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic workspace indexing for better AI context"
+        },
+        "theNewFuse.features.workspaceIndexing.autoIndex": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically index workspace on startup"
+        },
+        "theNewFuse.features.git.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Git integration for enhanced context awareness"
         },
         "theNewFuse.cliAgents": {
           "type": "array",

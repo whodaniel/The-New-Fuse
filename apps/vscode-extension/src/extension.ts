@@ -1,20 +1,27 @@
 /**
  * The New Fuse VSCode Extension
- * Version 9.1.0 - Frontier Capabilities
+ * Version 9.2.0 - Enhanced VSCode API Integration
  *
  * Main extension entry point
- * Now with tool orchestration, workspace awareness, and streaming support
+ * Now with tool orchestration, workspace awareness, streaming support,
+ * and advanced VSCode API features (CodeLens, Hover, Completion, Diff View)
  */
 
 import * as vscode from 'vscode';
 import { registerCommands } from './commands';
 import { ConfigManager } from './core/config';
 import { LLMProviderType, MCPServerConfig, RegisteredAgent, TheNewFuseAPI } from './core/types';
+import { AICodeLensProvider, registerCodeLensCommands } from './providers/AICodeLensProvider';
+import { AICompletionProvider, registerCompletionCommands } from './providers/AICompletionProvider';
+import { AIHoverProvider, registerHoverCommands } from './providers/AIHoverProvider';
 import { ChatViewProvider } from './providers/ChatViewProvider';
+import { getDiffViewProvider } from './providers/DiffViewProvider';
 import { AIService, getAIService } from './services/AIService';
 import { ChatService } from './services/ChatService';
+import { getGitIntegrationService } from './services/GitIntegrationService';
 import { MCPService, getMCPService } from './services/MCPService';
 import { ToolOrchestrationService } from './services/ToolOrchestrationService';
+import { getWorkspaceIndexingService } from './services/WorkspaceIndexingService';
 import { WorkspaceService } from './services/WorkspaceService';
 import { log, logger } from './utils/logger';
 
@@ -22,7 +29,7 @@ import { log, logger } from './utils/logger';
  * Extension activation
  */
 export async function activate(context: vscode.ExtensionContext): Promise<TheNewFuseAPI> {
-  log.info('🚀 The New Fuse v9.1.0 (Frontier Capabilities) activating...');
+  log.info('🚀 The New Fuse v9.2.0 (Enhanced VSCode API Integration) activating...');
   const startTime = Date.now();
 
   try {
@@ -45,8 +52,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<TheNew
     );
     log.info('✓ Chat view provider registered');
 
-    // Register all commands
+    // Register Language Feature Providers
+    registerLanguageProviders(context);
+    log.info('✓ Language providers registered');
+
+    // Register all commands (including new provider commands)
     registerCommands(context, chatViewProvider);
+    registerCodeLensCommands(context);
+    registerHoverCommands(context);
+    registerCompletionCommands(context);
     log.info('✓ Commands registered');
 
     // Register configuration change listener
@@ -131,8 +145,62 @@ class ExtensionAPI implements TheNewFuseAPI {
 }
 
 /**
+ * Register all language feature providers
+ * NEW in v9.2.0: CodeLens, Hover, Completion providers
+ */
+function registerLanguageProviders(context: vscode.ExtensionContext): void {
+  const supportedLanguages = [
+    'typescript',
+    'javascript',
+    'typescriptreact',
+    'javascriptreact',
+    'python',
+    'java',
+    'csharp',
+    'go',
+    'rust',
+    'cpp',
+    'c',
+    'php',
+    'ruby',
+  ];
+
+  // Register CodeLens Provider
+  const codeLensProvider = AICodeLensProvider.getInstance();
+  for (const language of supportedLanguages) {
+    context.subscriptions.push(
+      vscode.languages.registerCodeLensProvider({ language }, codeLensProvider)
+    );
+  }
+  log.debug('✓ CodeLens provider registered for supported languages');
+
+  // Register Hover Provider
+  const hoverProvider = AIHoverProvider.getInstance();
+  for (const language of supportedLanguages) {
+    context.subscriptions.push(vscode.languages.registerHoverProvider({ language }, hoverProvider));
+  }
+  log.debug('✓ Hover provider registered for supported languages');
+
+  // Register Completion Provider
+  const completionProvider = AICompletionProvider.getInstance();
+  for (const language of supportedLanguages) {
+    context.subscriptions.push(
+      vscode.languages.registerCompletionItemProvider(
+        { language },
+        completionProvider,
+        '.', // Trigger on dot
+        '(', // Trigger on open paren
+        '{', // Trigger on open brace
+        ' ' // Trigger on space
+      )
+    );
+  }
+  log.debug('✓ Completion provider registered for supported languages');
+}
+
+/**
  * Initialize all services
- * Now includes Workspace and Tool Orchestration services
+ * Now includes Workspace Indexing and Git Integration services
  */
 async function initializeServices(): Promise<void> {
   // Initialize AI Service
@@ -145,15 +213,25 @@ async function initializeServices(): Promise<void> {
   await chatService.initialize();
   log.debug('✓ Chat Service ready');
 
-  // Initialize Workspace Service (NEW in v9.1.0)
+  // Initialize Workspace Service
   const workspaceService = WorkspaceService.getInstance();
-  // Workspace service is ready immediately (singleton pattern)
   log.debug('✓ Workspace Service ready');
 
-  // Initialize Tool Orchestration Service (NEW in v9.1.0)
+  // Initialize Tool Orchestration Service
   const orchestrationService = ToolOrchestrationService.getInstance();
-  // Orchestration service is ready immediately (singleton pattern)
   log.debug('✓ Tool Orchestration Service ready');
+
+  // Initialize Workspace Indexing Service (NEW in v9.2.0)
+  const indexingService = getWorkspaceIndexingService();
+  indexingService.initialize().catch((error) => {
+    log.warn('Workspace indexing failed (non-critical)', error);
+  });
+  log.debug('✓ Workspace Indexing Service initializing');
+
+  // Initialize Git Integration Service (NEW in v9.2.0)
+  const gitService = getGitIntegrationService();
+  await gitService.initialize();
+  log.debug('✓ Git Integration Service ready');
 
   // Initialize MCP Service (non-blocking)
   const mcpService = MCPService.getInstance();
@@ -182,6 +260,38 @@ async function handleConfigurationChange(): Promise<void> {
  */
 export function deactivate(): void {
   log.info('The New Fuse deactivating...');
+
+  // Dispose all providers
+  try {
+    const codeLensProvider = AICodeLensProvider.getInstance();
+    codeLensProvider.dispose();
+
+    const hoverProvider = AIHoverProvider.getInstance();
+    hoverProvider.dispose();
+
+    const completionProvider = AICompletionProvider.getInstance();
+    completionProvider.dispose();
+
+    const diffViewProvider = getDiffViewProvider();
+    diffViewProvider.dispose();
+
+    log.debug('✓ Providers disposed');
+  } catch {
+    // Ignore errors during deactivation
+  }
+
+  // Dispose services
+  try {
+    const indexingService = getWorkspaceIndexingService();
+    indexingService.dispose();
+
+    const gitService = getGitIntegrationService();
+    gitService.dispose();
+
+    log.debug('✓ Services disposed');
+  } catch {
+    // Ignore errors during deactivation
+  }
 
   // Disconnect MCP servers
   try {

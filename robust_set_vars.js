@@ -1,5 +1,6 @@
-const fs = require('fs');
-const { exec } = require('child_process');
+/* eslint-disable no-console */
+import { exec } from 'child_process';
+import fs from 'fs';
 
 const vars = JSON.parse(fs.readFileSync('api_vars.json', 'utf8'));
 const ignore = ['SERVICE_PATH'];
