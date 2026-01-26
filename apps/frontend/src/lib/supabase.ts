@@ -208,8 +208,22 @@ export const authHelpers = {
   async getAccessToken(): Promise<string | null> {
     const session = await this.getCurrentSession();
     return session?.access_token || null;
+  },
+
+  /**
+   * Change password (mock implementation)
+   */
+  async changePassword(password: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      // In a real implementation, this would call the API
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network delay
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message || 'Failed to change password' };
+    }
   }
 };
+
 
 /**
  * Mock supabase client for compatibility
