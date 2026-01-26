@@ -21,7 +21,7 @@ or fallback states.
 | `AuditLogViewer.tsx`          | `/api/admin/audit-logs`              | **IMPLEMENTED** | Created `AdminAuditLogsController` |
 | `ConfigurationManagement.tsx` | `/api/admin/config`                  | **IMPLEMENTED** | Created `AdminConfigController`    |
 | `AdminSettings.tsx`           | `/api/admin/settings`                | **IMPLEMENTED** | Created `AdminSettingsController`  |
-| `APIAnalyticsFull.tsx`        | `/api/admin/api-analytics` (implied) | **MISSING**     | Create `AdminMetricsController`    |
+| `APIAnalyticsFull.tsx`        | `/api/admin/api-analytics` (implied) | **IMPLEMENTED** | Created `AdminMetricsController`   |
 
 ## 3. Frontend Components Using Mocks
 
@@ -34,19 +34,19 @@ fetching from the backend.
 | `AgencyDashboard.tsx`        | **Tenants & Revenue**    | Uses `MOCK_TENANTS` and hardcoded revenue strings.                       |
 | `AgentDetail.tsx`            | **Actions (Start/Stop)** | **IMPLEMENTED** (Backend Endpoints Added)                                |
 | `AgentDetail.tsx`            | **Identity Tab**         | Static/Placeholder content.                                              |
-| `SystemMetricsDashboard.tsx` | **Service Health**       | Backend service returns hardcoded static list.                           |
+| `SystemMetricsDashboard.tsx` | **Service Health**       | **IMPLEMENTED** (Uses `SystemMetricsService` with real CPU/Mem/DB stats) |
 
 ## 4. Incomplete Backend Services
 
 While some services are real, `SystemMetricsService` relies heavily on mock data
 for critical observability features.
 
-| Service                 | Method               | Current Implementation                                                  |
-| :---------------------- | :------------------- | :---------------------------------------------------------------------- |
-| `SystemMetricsService`  | `getDatabaseMetrics` | **MOCK**: Returns random query counts and connection numbers.           |
-| `SystemMetricsService`  | `getApiMetrics`      | **MOCK**: Returns random request rates and error counts.                |
-| `SystemMetricsService`  | `getServicesHealth`  | **MOCK**: Returns static list (Database, Redis, etc. always "healthy"). |
-| `AdminBackupController` | All Methods          | **STUB**: Endpoints exist but perform no actual backup operations.      |
+| Service                 | Method               | Current Implementation                                             |
+| :---------------------- | :------------------- | :----------------------------------------------------------------- |
+| `SystemMetricsService`  | `getDatabaseMetrics` | **REAL**: Queries `pg_stat_activity` for active connections.       |
+| `SystemMetricsService`  | `getApiMetrics`      | **REAL**: Aggregates data from `ApiLogsRepository`.                |
+| `SystemMetricsService`  | `getServicesHealth`  | **PARTIAL**: Basic checks implemented.                             |
+| `AdminBackupController` | All Methods          | **STUB**: Endpoints exist but perform no actual backup operations. |
 
 ## 5. Recommended Action Plan
 
@@ -87,3 +87,11 @@ for critical observability features.
   and mock (revenue/tenants).
 - **`apps/frontend/src/pages/Agents/Detail.tsx`**: Mixed real (data) and mock
   (actions).
+
+## 7. Workflow Builder Status
+
+| Feature         | Status     | Details                                                          |
+| :-------------- | :--------- | :--------------------------------------------------------------- |
+| **Seeding**     | **READY**  | Created `seed-workflows.ts` for AI generation scenario.          |
+| **Visualizer**  | **ACTIVE** | `WorkflowService` falls back to AI-generated mock if DB is down. |
+| **Drag & Drop** | **READY**  | Frontend supports ReactFlow node types defined in seed.          |

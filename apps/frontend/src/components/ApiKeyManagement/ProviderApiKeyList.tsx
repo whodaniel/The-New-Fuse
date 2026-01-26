@@ -1,4 +1,4 @@
-import { Bot, Code2, Database, Globe, Sparkles, Zap } from 'lucide-react';
+import { Bot, Code2, Database, Globe, Network, Sparkles, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 import { ApiKeyInput } from './ApiKeyInput';
 
@@ -38,6 +38,24 @@ const PROVIDERS: Provider[] = [
     id: 'mistral',
     name: 'Mistral AI',
     icon: <Code2 className="w-5 h-5 text-orange-600" />,
+  },
+  {
+    id: 'groq',
+    name: 'Groq',
+    icon: <Zap className="w-5 h-5 text-red-600" />,
+    placeholder: 'gsk_...',
+  },
+  {
+    id: 'perplexity',
+    name: 'Perplexity',
+    icon: <Globe className="w-5 h-5 text-blue-500" />,
+    placeholder: 'pplx-...',
+  },
+  {
+    id: 'openrouter',
+    name: 'OpenRouter',
+    icon: <Network className="w-5 h-5 text-purple-500" />,
+    placeholder: 'sk-or-...',
   },
   {
     id: 'supabase',
