@@ -9,10 +9,13 @@ const http = require('http');
 const https = require('https');
 const net = require('net');
 const url = require('url');
+
 const WebSocket = require('ws');
+
 const fs = require('fs').promises;
 const path = require('path');
 const { execSync } = require('child_process');
+
 const express = require('express');
 
 class ComprehensiveTNFRelay {
@@ -133,7 +136,9 @@ class ComprehensiveTNFRelay {
     app.get('*', (req, res) => {
       // Don't intercept API calls or specific extensions
       if (req.path.startsWith('/api') || req.path.includes('.')) {
-        if (!req.path.endsWith('.html')) return res.status(404).end();
+        if (!req.path.endsWith('.html')) {
+          return res.status(404).end();
+        }
       }
       res.sendFile(path.join(uiPath, 'index.html'));
     });
@@ -150,8 +155,11 @@ class ComprehensiveTNFRelay {
     // 6. Listen
     return new Promise((resolve, reject) => {
       this.httpServer.listen(this.port, (error) => {
-        if (error) reject(error);
-        else resolve();
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
       });
     });
   }
@@ -206,6 +214,87 @@ class ComprehensiveTNFRelay {
         recentMessages: this.interceptedMessages.slice(-10),
         interceptRules: Array.from(this.interceptRules.entries()),
       });
+    });
+
+    // ============================================================================
+    // ANTIGRAVITY COMPATIBILITY LAYER
+    // ============================================================================
+
+    // Status alias
+    app.get('/api/status', (req, res) => {
+      res.json({
+        connected: true,
+        statusCode: 200,
+        message: 'Connected to TNF Relay (Antigravity Mode)',
+        version: this.version,
+      });
+    });
+
+    // User settings stub
+    app.get('/api/user/settings', (req, res) => {
+      res.json({
+        theme: 'dark',
+        language: 'en',
+        autoStart: true,
+        notifications: true,
+      });
+    });
+
+    // Pages list stub (would integrate with browser agents in future)
+    app.get('/api/pages', (req, res) => {
+      // Find browser agents
+      const browserAgents = Array.from(this.agents.values()).filter((a) =>
+        a.type.includes('BROWSER')
+      );
+
+      const pages = browserAgents.map((agent, i) => ({
+        id: `page-${agent.id}`,
+        title: agent.name,
+        url: 'about:blank',
+        active: true,
+        tabId: i,
+      }));
+
+      // Add a dummy page if none found so UI shows something
+      if (pages.length === 0) {
+        pages.push({
+          id: 'demo-page-1',
+          title: 'Antigravity Hub',
+          url: 'http://localhost:3000',
+          favicon: '',
+          active: true,
+          tabId: 1,
+        });
+      }
+
+      res.json(pages);
+    });
+
+    // Smart Focus stub
+    app.post('/api/smart-focus', (req, res) => {
+      const { conversation_id } = req.body;
+      this.log(`Smart Focus requested for: ${conversation_id}`);
+      res.json({ success: true });
+    });
+
+    // Cascade Cancel stub
+    app.post('/api/cascade/cancel', (req, res) => {
+      const { invocation_id } = req.body;
+      this.log(`Cascade Cancel requested for: ${invocation_id}`);
+      res.json({ success: true });
+    });
+
+    // Cascade Validate stub
+    app.post('/api/cascade/validate', (req, res) => {
+      const { invocation_id, validate } = req.body;
+      this.log(`Cascade Validation: ${invocation_id} = ${validate}`);
+      res.json({ success: true });
+    });
+
+    // Recording Save stub (Mock)
+    app.post('/api/recording/save', (req, res) => {
+      this.log('Recording save requested (mock)');
+      res.json({ success: true });
     });
   }
 
@@ -270,7 +359,9 @@ class ComprehensiveTNFRelay {
 
   shouldIntercept(hostname) {
     // Basic check
-    if (!hostname) return false;
+    if (!hostname) {
+      return false;
+    }
     for (const [rule, config] of this.interceptRules) {
       if (config.enabled && hostname.includes(rule)) {
         return true;
@@ -354,9 +445,15 @@ class ComprehensiveTNFRelay {
 
   async stop() {
     this.isRunning = false;
-    if (this.webSocketServer) this.webSocketServer.close();
-    if (this.httpServer) this.httpServer.close();
-    if (this.proxyServer) this.proxyServer.close();
+    if (this.webSocketServer) {
+      this.webSocketServer.close();
+    }
+    if (this.httpServer) {
+      this.httpServer.close();
+    }
+    if (this.proxyServer) {
+      this.proxyServer.close();
+    }
   }
 }
 
@@ -364,7 +461,9 @@ class ComprehensiveTNFRelay {
 if (require.main === module) {
   const relay = new ComprehensiveTNFRelay();
   relay.start().then((success) => {
-    if (!success) process.exit(1);
+    if (!success) {
+      process.exit(1);
+    }
 
     // Handle signals
     process.on('SIGINT', () => {
