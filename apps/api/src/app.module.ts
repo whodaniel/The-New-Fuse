@@ -76,6 +76,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     DrizzleModule.forRootAsync(), // New Drizzle ORM - production ready
     // NOTE: ScheduleModule removed - not currently used and causes Reflector dependency issues
     JwtModule.registerAsync({
+      global: true,
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
