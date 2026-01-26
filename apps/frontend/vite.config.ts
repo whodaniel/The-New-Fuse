@@ -1,10 +1,37 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import compression from 'vite-plugin-compression';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+/**
+ * Plugin to inject module preload error handling
+ * This prevents the app from breaking when a lazy-loaded chunk fails to load
+ */
+function modulePreloadPolyfill(): Plugin {
+  return {
+    name: 'module-preload-polyfill',
+    transformIndexHtml(html) {
+      // Inject error handling for module preload failures
+      const script = `
+        <script>
+          // Handle module preload errors
+          window.addEventListener('vite:preloadError', (event) => {
+            console.error('Module preload error:', event);
+            // Reload the page to get fresh chunks
+            if (!window.__vitePreloadErrorHandled) {
+              window.__vitePreloadErrorHandled = true;
+              window.location.reload();
+            }
+          });
+        </script>
+      `;
+      return html.replace('</head>', `${script}</head>`);
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -33,6 +60,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      modulePreloadPolyfill(),
       tsconfigPaths({
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
@@ -178,6 +206,11 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: true, // Enable CSS code splitting
       // Reduce chunk size warning limit to catch large bundles earlier
       chunkSizeWarningLimit: 500,
+      // Ensure stable chunk hashes across builds for better caching
+      modulePreload: {
+        // Retry failed module preloads
+        polyfill: true,
+      },
       // Advanced terser options for production
       terserOptions: isProduction
         ? {

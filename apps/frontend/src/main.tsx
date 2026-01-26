@@ -7,6 +7,7 @@ import './lib/firebase'; // Ensure Firebase is initialized early
 import { AuthProvider } from './providers/AuthProvider';
 import { unstoppableDomainsService } from './services/unstoppableDomains.service';
 import './styles/globals.css'; // Re-add global CSS import
+import { installChunkErrorHandlers } from './utils/chunkLoadErrorHandler';
 
 // Custom Element Guard
 // Prevents collisions with already defined custom elements (like mce-autosize-textarea)
@@ -77,6 +78,9 @@ try {
 }
 
 console.log('Main.tsx starting...');
+
+// Install chunk load error handlers before anything else
+installChunkErrorHandlers();
 
 const container = document.getElementById('root');
 console.log('Container found:', container);

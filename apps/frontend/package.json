@@ -27,7 +27,9 @@
     "clear-ports": "node scripts/clear-ports.js",
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "perf:monitor": "node scripts/performance-monitor.js",
-    "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'"
+    "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'",
+    "verify-deployment": "node scripts/verify-deployment.cjs",
+    "verify-deployment:prod": "node scripts/verify-deployment.cjs https://thenewfuse.com"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
