@@ -32,6 +32,7 @@ async function seedWorkflows() {
         email: 'admin@demo.com',
         name: 'Admin User',
         role: 'ADMIN',
+        hashedPassword: '$2b$10$placeholder.hash.for.seed.user.only', // Placeholder for seed data
         createdAt: new Date(),
         updatedAt: new Date(),
       })
