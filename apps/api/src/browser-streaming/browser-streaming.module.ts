@@ -1,7 +1,5 @@
 /**
  * Browser Streaming Module
- *
- * Provides browser-as-a-service functionality with WebSocket streaming
  */
 
 import { Module } from '@nestjs/common';

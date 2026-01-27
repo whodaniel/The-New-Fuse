@@ -1,21 +1,14 @@
 /**
  * Browser Streaming Controller
- *
- * REST API endpoints for managing browser sessions
  */
 
-import { Body, Controller, Delete, Get, Logger, Param, Post } from '@nestjs/common';
-import { BrowserCommand, BrowserStreamingService } from './browser-streaming.service';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { BrowserStreamingService } from './browser-streaming.service';
 
 @Controller('api/browser-streaming')
 export class BrowserStreamingController {
-  private readonly logger = new Logger(BrowserStreamingController.name);
-
   constructor(private readonly browserService: BrowserStreamingService) {}
 
-  /**
-   * Create a new browser session
-   */
   @Post('sessions')
   async createSession(
     @Body()
@@ -27,102 +20,51 @@ export class BrowserStreamingController {
       viewportHeight?: number;
     }
   ) {
-    this.logger.log(`Creating session: ${body.id}`);
-    const session = await this.browserService.createSession(
-      body.id,
-      body.name,
-      body.url,
-      body.viewportWidth,
-      body.viewportHeight
-    );
-    return {
-      success: true,
-      session: {
-        id: session.id,
-        name: session.name,
-        url: session.url,
-        status: session.status,
-      },
-    };
-  }
-
-  /**
-   * Get all active sessions
-   */
-  @Get('sessions')
-  getAllSessions() {
-    return {
-      success: true,
-      sessions: this.browserService.getAllSessions(),
-    };
-  }
-
-  /**
-   * Get a specific session
-   */
-  @Get('sessions/:id')
-  getSession(@Param('id') id: string) {
-    const session = this.browserService.getSession(id);
-    if (!session) {
-      return {
-        success: false,
-        error: 'Session not found',
-      };
-    }
-    return {
-      success: true,
-      session: {
-        id: session.id,
-        name: session.name,
-        url: session.url,
-        status: session.status,
-        lastUpdate: session.lastUpdate,
-        viewportWidth: session.viewportWidth,
-        viewportHeight: session.viewportHeight,
-      },
-    };
-  }
-
-  /**
-   * Execute a command on a session
-   */
-  @Post('sessions/:id/command')
-  async executeCommand(
-    @Param('id') id: string,
-    @Body() command: Omit<BrowserCommand, 'sessionId'>
-  ) {
     try {
-      await this.browserService.executeCommand({
-        sessionId: id,
-        ...command,
-      });
+      const session = await this.browserService.createSession(
+        body.id,
+        body.name,
+        body.url,
+        body.viewportWidth || 800,
+        body.viewportHeight || 600
+      );
+
       return {
         success: true,
-        message: `Command ${command.type} executed on session ${id}`,
+        session: {
+          id: session.id,
+          name: session.name,
+          url: session.url,
+          status: session.status,
+          lastUpdate: session.lastUpdate,
+        },
       };
     } catch (error) {
-      this.logger.error(`Command execution failed:`, error);
       return {
         success: false,
-        error: error.message,
+        error: error.message || 'Failed to create session',
       };
     }
   }
 
-  /**
-   * Master Clock: Broadcast message to all sessions
-   */
+  @Get('sessions')
+  async getAllSessions() {
+    const sessions = this.browserService.getAllSessions();
+    return {
+      success: true,
+      sessions,
+    };
+  }
+
   @Post('broadcast')
   async broadcast(@Body() body: { message: string }) {
-    this.logger.log(`Broadcasting: "${body.message}"`);
     try {
       await this.browserService.broadcastToAll(body.message);
       return {
         success: true,
-        message: `Broadcasted to all sessions`,
+        message: 'Broadcast sent',
       };
     } catch (error) {
-      this.logger.error(`Broadcast failed:`, error);
       return {
         success: false,
         error: error.message,
@@ -130,38 +72,27 @@ export class BrowserStreamingController {
     }
   }
 
-  /**
-   * Stop a session
-   */
   @Delete('sessions/:id')
   async stopSession(@Param('id') id: string) {
-    await this.browserService.stopSession(id);
-    return {
-      success: true,
-      message: `Session ${id} stopped`,
-    };
+    try {
+      await this.browserService.stopSession(id);
+      return {
+        success: true,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
   }
 
-  /**
-   * Stop all sessions
-   */
-  @Delete('sessions')
-  async stopAllSessions() {
-    await this.browserService.stopAllSessions();
-    return {
-      success: true,
-      message: 'All sessions stopped',
-    };
-  }
-
-  /**
-   * Health check
-   */
   @Get('health')
-  getHealth() {
+  async getHealth() {
+    const health = this.browserService.getHealthStatus();
     return {
       success: true,
-      ...this.browserService.getHealthStatus(),
+      ...health,
     };
   }
 }
