@@ -134,7 +134,7 @@ async function bootstrap(): Promise<void> {
         "style-src 'self' 'unsafe-inline'; " +
         "img-src 'self' data: https:; " +
         "font-src 'self'; " +
-        "connect-src 'self' wss: https:; " +
+        "connect-src 'self' wss: https: data:; " +
         "frame-src 'none'; " +
         "object-src 'none'; " +
         "base-uri 'self'; " +
