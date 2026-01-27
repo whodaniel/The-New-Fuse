@@ -3,7 +3,7 @@
  * Provides performance monitoring and metrics aggregation
  */
 
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
 
 export interface Metric {
   name: string;
@@ -51,7 +51,7 @@ export class MetricsRegistry {
    */
   counter(name: string): Counter {
     const fullName = `${this.agentId}.${name}`;
-    
+
     if (!this.counters.has(fullName)) {
       const counter: Counter = {
         name: fullName,
@@ -63,11 +63,11 @@ export class MetricsRegistry {
         reset: () => {
           counter.value = 0;
           this.recordMetric(fullName, 0, 'count');
-        }
+        },
       };
       this.counters.set(fullName, counter);
     }
-    
+
     return this.counters.get(fullName)!;
   }
 
@@ -76,7 +76,7 @@ export class MetricsRegistry {
    */
   gauge(name: string): Gauge {
     const fullName = `${this.agentId}.${name}`;
-    
+
     if (!this.gauges.has(fullName)) {
       const gauge: Gauge = {
         name: fullName,
@@ -92,11 +92,11 @@ export class MetricsRegistry {
         decrement: (amount = 1) => {
           gauge.value -= amount;
           this.recordMetric(fullName, gauge.value, 'gauge');
-        }
+        },
       };
       this.gauges.set(fullName, gauge);
     }
-    
+
     return this.gauges.get(fullName)!;
   }
 
@@ -105,7 +105,7 @@ export class MetricsRegistry {
    */
   timer(name: string): Timer {
     const fullName = `${this.agentId}.${name}`;
-    
+
     if (!this.timers.has(fullName)) {
       const durations: number[] = [];
       const timer: Timer = {
@@ -121,7 +121,7 @@ export class MetricsRegistry {
         record: (duration: number) => {
           durations.push(duration);
           this.recordMetric(fullName, duration, 'ms');
-          
+
           // Keep only last 1000 measurements
           if (durations.length > 1000) {
             durations.splice(0, durations.length - 1000);
@@ -131,19 +131,19 @@ export class MetricsRegistry {
           if (durations.length === 0) {
             return { count: 0, avg: 0, min: 0, max: 0 };
           }
-          
+
           const sum = durations.reduce((a, b) => a + b, 0);
           return {
             count: durations.length,
             avg: sum / durations.length,
             min: Math.min(...durations),
-            max: Math.max(...durations)
+            max: Math.max(...durations),
           };
-        }
+        },
       };
       this.timers.set(fullName, timer);
     }
-    
+
     return this.timers.get(fullName)!;
   }
 
@@ -156,11 +156,11 @@ export class MetricsRegistry {
       value,
       timestamp: Date.now(),
       unit,
-      tags
+      tags,
     };
-    
+
     this.metrics.push(metric);
-    
+
     // Keep only last 10000 metrics
     if (this.metrics.length > 10000) {
       this.metrics.splice(0, this.metrics.length - 10000);
@@ -182,17 +182,17 @@ export class MetricsRegistry {
       agentId: this.agentId,
       counters: Array.from(this.counters.entries()).map(([name, counter]) => ({
         name,
-        value: counter.value
+        value: counter.value,
       })),
       gauges: Array.from(this.gauges.entries()).map(([name, gauge]) => ({
         name,
-        value: gauge.value
+        value: gauge.value,
       })),
       timers: Array.from(this.timers.entries()).map(([name, timer]) => ({
         name,
-        stats: timer.getStats()
+        stats: timer.getStats(),
       })),
-      totalMetrics: this.metrics.length
+      totalMetrics: this.metrics.length,
     };
   }
 
@@ -229,7 +229,7 @@ export class PerformanceMonitor {
     }
 
     this.isRunning = true;
-    
+
     // Collect system metrics periodically
     this.intervalId = setInterval(() => {
       this.collectSystemMetrics();
@@ -248,13 +248,11 @@ export class PerformanceMonitor {
     }
 
     this.isRunning = false;
-    
+
     if (this.intervalId) {
       clearInterval(this.intervalId as any);
       this.intervalId = undefined;
     }
-
-    
   }
 
   /**
@@ -297,16 +295,14 @@ export class PerformanceMonitor {
     try {
       const summary = this.metrics.getSummary();
       const key = `metrics:${this.agentId}`;
-      
+
       await this.redisClient.set(
         key,
         JSON.stringify(summary),
         'EX',
         300 // 5 minutes TTL
       );
-    } catch {
-      
-    }
+    } catch {}
   }
 
   /**
@@ -317,7 +313,7 @@ export class PerformanceMonitor {
       agentId: this.agentId,
       isRunning: this.isRunning,
       metrics: this.metrics.getSummary(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 }

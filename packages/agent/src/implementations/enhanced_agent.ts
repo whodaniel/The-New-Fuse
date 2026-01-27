@@ -124,7 +124,9 @@ export class EnhancedAgent extends EventEmitter {
    * Start the agent
    */
   async start(): Promise<void> {
-    if (this.isRunning) return;
+    if (this.isRunning) {
+      return;
+    }
 
     this.isRunning = true;
     this.emit('started');
@@ -283,7 +285,9 @@ export class EnhancedAgent extends EventEmitter {
       const model = this.config.models.find(
         (m) => m.id === preferredModel || m.model === preferredModel
       );
-      if (model) return model;
+      if (model) {
+        return model;
+      }
     }
 
     // Return highest priority model
@@ -440,13 +444,19 @@ export class EnhancedAgent extends EventEmitter {
     feedback: 'positive' | 'negative',
     correction?: string
   ): Promise<void> {
-    if (!this.config.learningEnabled) return;
+    if (!this.config.learningEnabled) {
+      return;
+    }
 
     const context = this.contexts.get(conversationId);
-    if (!context) return;
+    if (!context) {
+      return;
+    }
 
     const message = context.messages[messageIndex];
-    if (!message) return;
+    if (!message) {
+      return;
+    }
 
     this.emit('learning:feedback', {
       conversationId,

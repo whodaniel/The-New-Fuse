@@ -188,7 +188,9 @@ export class AgentSyncBridge extends BaseBridge {
    */
   async deleteState(agentId: string): Promise<void> {
     const existing = this.states.get(agentId);
-    if (!existing) return;
+    if (!existing) {
+      return;
+    }
 
     this.states.delete(agentId);
 
@@ -318,7 +320,9 @@ export class AgentSyncBridge extends BaseBridge {
    * Start lock cleanup
    */
   private startLockCleanup(): void {
-    if (this.lockCleanupInterval) return;
+    if (this.lockCleanupInterval) {
+      return;
+    }
 
     this.lockCleanupInterval = setInterval(() => {
       const now = new Date();
@@ -419,7 +423,9 @@ export class AgentSyncBridge extends BaseBridge {
     const parts = path.split('/').filter(Boolean);
     let current: unknown = obj;
     for (const part of parts) {
-      if (typeof current !== 'object' || current === null) return undefined;
+      if (typeof current !== 'object' || current === null) {
+        return undefined;
+      }
       current = (current as Record<string, unknown>)[part];
     }
     return current;
@@ -431,7 +437,9 @@ export class AgentSyncBridge extends BaseBridge {
     value: unknown
   ): Record<string, unknown> {
     const parts = path.split('/').filter(Boolean);
-    if (parts.length === 0) return value as Record<string, unknown>;
+    if (parts.length === 0) {
+      return value as Record<string, unknown>;
+    }
 
     let current = obj;
     for (let i = 0; i < parts.length - 1; i++) {

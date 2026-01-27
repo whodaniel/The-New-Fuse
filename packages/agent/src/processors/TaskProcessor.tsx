@@ -1,18 +1,14 @@
-import { BaseProcessor } from './BaseProcessor';
-import { Logger } from '../types/core';
-import {
-  Message,
-  MessageType,
-  Task,
-  CoreTaskResult as TaskResult,
-  TaskStatus,
-  UUID,
-} from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService';
-import { RedisService } from '../services/RedisService';
-import { MessageValidator } from '../services/MessageValidator';
-import { InterAgentChatService } from '../services/InterAgentChatService';
+import type { Message, Task, CoreTaskResult as TaskResult, UUID } from '@the-new-fuse/types';
+import { MessageType, TaskStatus } from '@the-new-fuse/types';
 
+import { Logger } from '../types/core';
+
+import { BaseProcessor } from './BaseProcessor';
+
+import type { AlertService } from '../services/AlertService';
+import type { InterAgentChatService } from '../services/InterAgentChatService';
+import type { MessageValidator } from '../services/MessageValidator';
+import type { RedisService } from '../services/RedisService';
 
 /**
  * Processes incoming task assignment messages and executes the tasks.
@@ -51,21 +47,27 @@ export class TaskProcessor extends BaseProcessor {
   private async loadUnfinishedTasks(): Promise<void> {
     this.logger.info('Checking for unfinished tasks...');
     try {
-        const keys = await this.redisService.keys('task:*:status');
-        for (const key of keys) {
-            const data = await this.redisService.get(key);
-            if (data) {
-                const taskData = JSON.parse(data);
-                if (taskData.status === TaskStatus.IN_PROGRESS) {
-                    this.logger.warn(`Task ${taskData.id} was in progress. Re-queuing is not yet implemented.`);
-                    // In a real implementation, you would re-queue or restart the task.
-                    // For now, we will just mark it as failed.
-                    await this.updateTaskStatus(taskData.id, TaskStatus.FAILED, 'Agent restarted during task execution.');
-                }
-            }
+      const keys = await this.redisService.keys('task:*:status');
+      for (const key of keys) {
+        const data = await this.redisService.get(key);
+        if (data) {
+          const taskData = JSON.parse(data);
+          if (taskData.status === TaskStatus.IN_PROGRESS) {
+            this.logger.warn(
+              `Task ${taskData.id} was in progress. Re-queuing is not yet implemented.`
+            );
+            // In a real implementation, you would re-queue or restart the task.
+            // For now, we will just mark it as failed.
+            await this.updateTaskStatus(
+              taskData.id,
+              TaskStatus.FAILED,
+              'Agent restarted during task execution.'
+            );
+          }
         }
+      }
     } catch (error) {
-        this.logger.error(`Error loading unfinished tasks: ${(error as Error).message}`);
+      this.logger.error(`Error loading unfinished tasks: ${(error as Error).message}`);
     }
   }
 
@@ -78,17 +80,21 @@ export class TaskProcessor extends BaseProcessor {
     const task = message.content as unknown as Task;
 
     if (this.activeTasks.has(task.id)) {
-        this.logger.warn(`Task ${task.id} is already being processed. Ignoring duplicate assignment.`);
-        return null;
+      this.logger.warn(
+        `Task ${task.id} is already being processed. Ignoring duplicate assignment.`
+      );
+      return null;
     }
 
-    this.logger.info(`Starting processing for task ${task.id}: "${task.title.substring(0, 50)}..."`);
+    this.logger.info(
+      `Starting processing for task ${task.id}: "${task.title.substring(0, 50)}..."`
+    );
     this.activeTasks.set(task.id, task);
     await this.updateTaskStatus(task.id, TaskStatus.IN_PROGRESS);
 
     try {
       this.logger.debug(`Executing task ${task.id}... (Placeholder)`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (this.cancelledTasks.has(task.id)) {
         this.cancelledTasks.delete(task.id);
@@ -99,8 +105,8 @@ export class TaskProcessor extends BaseProcessor {
       }
 
       const resultData = {
-          summary: `Task "${task.title}" completed successfully (placeholder).`,
-          details: { executedAt: new Date() },
+        summary: `Task "${task.title}" completed successfully (placeholder).`,
+        details: { executedAt: new Date() },
       };
 
       this.logger.info(`Task ${task.id} completed successfully.`);
@@ -114,7 +120,7 @@ export class TaskProcessor extends BaseProcessor {
         output: resultData,
         metrics: {
           duration: 1000,
-          resourceUsage: { cpuUsage: 0, memoryUsage: 0 }
+          resourceUsage: { cpuUsage: 0, memoryUsage: 0 },
         },
         timestamp: new Date(),
       };
@@ -123,15 +129,14 @@ export class TaskProcessor extends BaseProcessor {
         await this.chatService.sendMessage(task.originatorId, taskResult, MessageType.TASK_RESULT);
       }
       return taskResult;
-
     } catch (error) {
       this.logger.error(`Error processing task ${task.id}: ${(error as Error).message}`);
       await this.updateTaskStatus(task.id, TaskStatus.FAILED, (error as Error).message);
       this.activeTasks.delete(task.id);
       await this.alertService.error(
-          `Task ${task.id} failed`,
-          `Agent ${this.agentId} / TaskProcessor`,
-          { error: (error as Error).message, taskDescription: task.title }
+        `Task ${task.id} failed`,
+        `Agent ${this.agentId} / TaskProcessor`,
+        { error: (error as Error).message, taskDescription: task.title }
       );
 
       const taskResult: TaskResult = {
@@ -141,7 +146,7 @@ export class TaskProcessor extends BaseProcessor {
         error: (error as Error).message,
         metrics: {
           duration: 0,
-          resourceUsage: { cpuUsage: 0, memoryUsage: 0 }
+          resourceUsage: { cpuUsage: 0, memoryUsage: 0 },
         },
         timestamp: new Date(),
       };
@@ -156,33 +161,35 @@ export class TaskProcessor extends BaseProcessor {
   private async updateTaskStatus(taskId: UUID, status: TaskStatus, error?: string): Promise<void> {
     this.logger.debug(`Updating status for task ${taskId} to ${status}.`);
     const taskData = {
-        id: taskId,
-        status: status,
-        updatedAt: new Date().toISOString(),
-        ...(error && { error: error }),
+      id: taskId,
+      status: status,
+      updatedAt: new Date().toISOString(),
+      ...(error && { error: error }),
     };
     try {
-        await this.redisService.set(`task:${taskId}:status`, JSON.stringify(taskData), 3600 * 24);
-        await this.redisService.publish('task-status-updates', JSON.stringify(taskData));
+      await this.redisService.set(`task:${taskId}:status`, JSON.stringify(taskData), 3600 * 24);
+      await this.redisService.publish('task-status-updates', JSON.stringify(taskData));
     } catch (redisError) {
-        this.logger.error(`Failed to update task status in Redis for task ${taskId}: ${(redisError as Error).message}`);
+      this.logger.error(
+        `Failed to update task status in Redis for task ${taskId}: ${(redisError as Error).message}`
+      );
     }
   }
 
   async cancelTask(taskId: UUID): Promise<boolean> {
-      if (!this.activeTasks.has(taskId)) {
-          this.logger.warn(`Cannot cancel task ${taskId}: Not currently active.`);
-          return false;
-      }
+    if (!this.activeTasks.has(taskId)) {
+      this.logger.warn(`Cannot cancel task ${taskId}: Not currently active.`);
+      return false;
+    }
 
-      this.logger.info(`Attempting to cancel task ${taskId}...`);
-      this.cancelledTasks.add(taskId);
+    this.logger.info(`Attempting to cancel task ${taskId}...`);
+    this.cancelledTasks.add(taskId);
 
-      // In a real implementation, you would abort ongoing operations.
-      // For this placeholder, we just mark it as cancelled.
-      await this.updateTaskStatus(taskId, TaskStatus.CANCELLED);
-      this.activeTasks.delete(taskId);
-      this.logger.info(`Task ${taskId} marked as cancelled.`);
-      return true;
+    // In a real implementation, you would abort ongoing operations.
+    // For this placeholder, we just mark it as cancelled.
+    await this.updateTaskStatus(taskId, TaskStatus.CANCELLED);
+    this.activeTasks.delete(taskId);
+    this.logger.info(`Task ${taskId} marked as cancelled.`);
+    return true;
   }
 }

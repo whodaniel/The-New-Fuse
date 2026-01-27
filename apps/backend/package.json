@@ -36,6 +36,7 @@
     "@nestjs/schedule": "^4.0.2",
     "@nestjs/websockets": "^11.1.10",
     "@the-new-fuse/ag-ui-core": "workspace:*",
+    "@the-new-fuse/agent": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/feature-tracker": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",

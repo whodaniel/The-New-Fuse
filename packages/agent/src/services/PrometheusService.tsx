@@ -1,7 +1,9 @@
+import * as client from 'prom-client';
+
 import { BaseService } from '../core/BaseService'; // Corrected import path
 import { Logger } from '../types/core';
-import * as client from 'prom-client';
-import { Registry, Counter, Gauge, Histogram, Summary } from 'prom-client';
+
+import type { Counter, Gauge, Histogram, Registry, Summary } from 'prom-client';
 
 /**
  * Configuration options for the PrometheusService.
@@ -71,7 +73,7 @@ export class PrometheusService extends BaseService {
       registers: [this.register],
     });
 
-     this.responseSummary = new client.Summary({
+    this.responseSummary = new client.Summary({
       name: `${metricPrefix}response_time_summary_seconds`,
       help: 'Summary of response times in seconds',
       labelNames: ['method', 'path'],
@@ -106,7 +108,11 @@ export class PrometheusService extends BaseService {
 
   // --- Helper methods for common metric operations ---
 
-  incrementRequestsTotal(labels: { method: string; path: string; status_code: number | string }): void {
+  incrementRequestsTotal(labels: {
+    method: string;
+    path: string;
+    status_code: number | string;
+  }): void {
     this.requestsTotal.inc(labels);
   }
 
@@ -118,11 +124,14 @@ export class PrometheusService extends BaseService {
     this.activeConnections.dec();
   }
 
-  observeRequestDuration(durationSeconds: number, labels: { method: string; path: string; status_code: number | string }): void {
+  observeRequestDuration(
+    durationSeconds: number,
+    labels: { method: string; path: string; status_code: number | string }
+  ): void {
     this.requestDuration.observe(labels, durationSeconds);
   }
 
-   observeResponseSummary(durationSeconds: number, labels: { method: string; path: string }): void {
+  observeResponseSummary(durationSeconds: number, labels: { method: string; path: string }): void {
     this.responseSummary.observe(labels, durationSeconds);
   }
 
@@ -152,10 +161,15 @@ export class PrometheusService extends BaseService {
     return gauge;
   }
 
-   /**
+  /**
    * Creates a new Histogram metric.
    */
-  createHistogram<T extends string>(name: string, help: string, labelNames?: T[], buckets?: number[]): Histogram<T> {
+  createHistogram<T extends string>(
+    name: string,
+    help: string,
+    labelNames?: T[],
+    buckets?: number[]
+  ): Histogram<T> {
     const histogram = new client.Histogram<T>({
       name: this.serviceConfig.prefix ? `${this.serviceConfig.prefix}_${name}` : name,
       help,
@@ -166,10 +180,15 @@ export class PrometheusService extends BaseService {
     return histogram;
   }
 
-   /**
+  /**
    * Creates a new Summary metric.
    */
-  createSummary<T extends string>(name: string, help: string, labelNames?: T[], percentiles?: number[]): Summary<T> {
+  createSummary<T extends string>(
+    name: string,
+    help: string,
+    labelNames?: T[],
+    percentiles?: number[]
+  ): Summary<T> {
     const summary = new client.Summary<T>({
       name: this.serviceConfig.prefix ? `${this.serviceConfig.prefix}_${name}` : name,
       help,

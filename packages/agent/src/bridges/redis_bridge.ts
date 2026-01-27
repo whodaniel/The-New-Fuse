@@ -10,6 +10,7 @@
  */
 
 import { EventEmitter } from 'events';
+
 import type { TransportAdapter, TransportType, UniversalMessage } from './universal_bridge';
 
 // Redis client interface (compatible with ioredis)

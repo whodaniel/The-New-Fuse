@@ -4,7 +4,7 @@
  * Supports multi-turn dialogues, context retention, and dynamic responses
  */
 
-import { IAgent } from '../interfaces/IAgent';
+import type { IAgent } from '../interfaces/IAgent';
 
 export interface InteractiveConfig {
   agentId: string;
@@ -297,18 +297,30 @@ export class InteractiveAgent implements IAgent {
 
     const lowerContent = content.toLowerCase();
 
-    if (positive.some((word) => lowerContent.includes(word))) return 'positive';
-    if (negative.some((word) => lowerContent.includes(word))) return 'negative';
+    if (positive.some((word) => lowerContent.includes(word))) {
+      return 'positive';
+    }
+    if (negative.some((word) => lowerContent.includes(word))) {
+      return 'negative';
+    }
     return 'neutral';
   }
 
   private detectIntent(content: string): string {
     const lowerContent = content.toLowerCase();
 
-    if (/^(hi|hello|hey|greetings)/i.test(lowerContent)) return 'greeting';
-    if (/^(bye|goodbye|see you|farewell)/i.test(lowerContent)) return 'farewell';
-    if (/help|assist|support|how (do|can|to)/i.test(lowerContent)) return 'help';
-    if (/\?$/.test(content)) return 'question';
+    if (/^(hi|hello|hey|greetings)/i.test(lowerContent)) {
+      return 'greeting';
+    }
+    if (/^(bye|goodbye|see you|farewell)/i.test(lowerContent)) {
+      return 'farewell';
+    }
+    if (/help|assist|support|how (do|can|to)/i.test(lowerContent)) {
+      return 'help';
+    }
+    if (/\?$/.test(content)) {
+      return 'question';
+    }
 
     return 'general';
   }
@@ -319,7 +331,9 @@ export class InteractiveAgent implements IAgent {
 
     // Extract quoted strings
     const quoted = content.match(/"([^"]+)"/g);
-    if (quoted) entities.push(...quoted.map((q) => q.replace(/"/g, '')));
+    if (quoted) {
+      entities.push(...quoted.map((q) => q.replace(/"/g, '')));
+    }
 
     // Extract capitalized words (potential proper nouns)
     const words = content.split(/\s+/);

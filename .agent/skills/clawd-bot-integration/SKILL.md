@@ -2,7 +2,8 @@
 name: clawd-bot-integration
 description:
   Integration with Clawdbot for local, proactive, and persistent AI assistance.
-  Enables TNF agents to leverage Clawdbot's skills and system access.
+  Enables TNF agents to leverage Clawdbot's skills and system access via Cloud
+  Sandbox.
 ---
 
 # Clawdbot Integration Skill
@@ -12,91 +13,74 @@ description:
 Enable TNF agents to synergize with **Clawdbot**, leveraging its capabilities
 for:
 
-- **Persistent Memory**: Storing long-term context and user preferences locally.
-- **Proactive Actions**: Scheduling tasks and reminders.
-- **System Automation**: Executing system-level commands and scripts via
-  Clawdbot's secure sandbox.
-- **Cross-Platform Messaging**: Communicating via WhatsApp, Telegram, Discord,
-  etc.
+- **Browser Automation**: Control a headless browser via the Cloud Sandbox.
+- **System Automation**: Execute shell commands and file operations safely in a
+  remote environment.
+- **Proactive Actions**: Schedule tasks using the integrated scheduler.
 
-## When to Use This Skill
+## Architecture
 
-Activate when you need to:
+This skill uses a **Hybrid Controller-Worker** model:
 
-- **Delegate Personal Tasks**: "Remind the user to check the build in 2 hours."
-- **Access Local System Context**: Retrieve deeper system state or files via
-  Clawdbot's context.
-- **Extend Capabilities**: Generate new skills for Clawdbot to perform novel
-  tasks.
-- **Bridge Ecosystems**: Connect TNF's development workflow with Clawdbot's
-  personal assistance.
-
----
-
-## Quick Start
-
-### 1. Requirements
-
-- Clawdbot installed and running locally.
-- Access to `~/clawd/skills/` (default skill directory).
-
-### 2. Usage
-
-#### Generating a New Skill for Clawdbot
-
-To add a capability to Clawdbot, create a Markdown file in `~/clawd/skills/`.
-
-**Template:**
-
-```markdown
-# Skill Name
-
-[Description of what the skill does]
+1.  **Controller (ClawdEngine)**: Runs within the `UnifiedAgent`. Handles skill
+    logic, scheduling (cron), and orchestration.
+2.  **Worker (Cloud Sandbox)**: A remote service (MCP Server) that executes
+    heavy/unsafe tools (Browser, Shell).
 
 ## Usage
 
-[Example commands]
+### 1. Requirements
+
+- `apps/cloud-sandbox` running (locally or on Railway).
+- `CLAWD_SANDBOX_URL` environment variable set (defaults to
+  `ws://localhost:3000`).
+
+### 2. Creating Skills
+
+Create Markdown files in `~/.clawd/skills/`.
+
+**Template:**
+
+````markdown
+# My Automation
+
+## Usage
+
+Run this daily to check the server status.
 
 ## Implementation
 
-... code or script ...
+```javascript
+// You have access to 'browser', 'shell', 'fs', 'console'
+console.log('Starting check...');
+
+// Browser Automation
+await browser.navigate('https://status.thenewfuse.com');
+const content = await browser.content();
+console.log('Status page content length:', content.length);
+
+if (content.includes('Down')) {
+  console.log('ALERT directly from skill!');
+}
+
+// Shell Automation
+const res = await shell.exec('echo "Log entry" >> /tmp/status.log');
+console.log('Log updated:', res.stdout);
+```
+````
+
 ```
 
-#### Delegating a Task
+### 3. Execution
 
-(Future functionality via API Bridge)
-`node clawd-bridge.js "Check my calendar for conflicts with the deployment window"`
+The `ClawdEngine` interprets the skill code. It executes logic locally in a VM,
+but all calls to `browser.*`, `shell.*`, and `fs.*` are bridged to the
+remote Cloud Sandbox via WebSocket.
 
----
+## Advanced: Subscriptions
 
-## Synergy Protocols
-
-### 1. Skill Synthesis
-
-TNF agents can generate _Skills_ for Clawdbot. When a user requests a personal
-automation (e.g., "Check my email for server alerts"), TNF agents should:
-
-1.  **Analyze** the requirement.
-2.  **Generate** a Clawdbot-compatible skill (Markdown/Script).
-3.  **Deploy** it to the Clawdbot skills directory.
-4.  **Notify** the user to generic "Reload Skills".
-
-### 2. Context Exchange
-
-(Planned) Use a shared context file (e.g., `.clawd/context.json`) or a local
-vector store to share memory between TNF workspace and Clawdbot's personal
-context.
+The Engine listens to real-time events from the Sandbox (e.g., screenshots, logs).
+These frames are forwarded to the agent's event stream.
 
 ---
-
-## Troubleshooting
-
-### Connectivity
-
-- Ensure Clawdbot Gateway is running (default port 3000?).
-- Verify skill directory permissions.
-
-### Skill format
-
-- Clawdbot skills must follow the specific Markdown structure expected by its
-  parser. Start simple.
+```

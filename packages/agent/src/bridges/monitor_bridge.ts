@@ -123,7 +123,9 @@ export class MonitorBridge extends BaseBridge {
    * Register an agent for monitoring
    */
   registerAgent(agent: Partial<AgentMonitorData>): void {
-    if (!agent.agentId) return;
+    if (!agent.agentId) {
+      return;
+    }
 
     const fullAgent: AgentMonitorData = {
       agentId: agent.agentId,
@@ -149,7 +151,9 @@ export class MonitorBridge extends BaseBridge {
    */
   updateAgent(agentId: string, updates: Partial<AgentMonitorData>): void {
     const agent = this.agents.get(agentId);
-    if (!agent) return;
+    if (!agent) {
+      return;
+    }
 
     const updatedAgent = {
       ...agent,
@@ -219,7 +223,9 @@ export class MonitorBridge extends BaseBridge {
       const lastTriggered = this.alertCooldowns.get(`${configId}:${agent.agentId}`);
       if (lastTriggered) {
         const elapsed = Date.now() - lastTriggered.getTime();
-        if (elapsed < config.cooldownMs) continue;
+        if (elapsed < config.cooldownMs) {
+          continue;
+        }
       }
 
       // Check condition
@@ -303,7 +309,9 @@ export class MonitorBridge extends BaseBridge {
       name: 'High Failure Rate',
       condition: (agent) => {
         const total = agent.metrics.tasksCompleted + agent.metrics.tasksFailed;
-        if (total < 10) return false;
+        if (total < 10) {
+          return false;
+        }
         return agent.metrics.tasksFailed / total > 0.3;
       },
       severity: 'critical',
@@ -360,7 +368,9 @@ export class MonitorBridge extends BaseBridge {
    * Start monitoring
    */
   startMonitoring(): void {
-    if (this.monitorInterval) return;
+    if (this.monitorInterval) {
+      return;
+    }
 
     this.monitorInterval = setInterval(() => {
       this.checkAgentHealth();

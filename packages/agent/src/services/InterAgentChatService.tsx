@@ -1,4 +1,6 @@
-import { Message, MessageType } from '@the-new-fuse/types'; // Import Message and MessageType
+import type { Message } from '@the-new-fuse/types';
+import { MessageType } from '@the-new-fuse/types'; // Import Message and MessageType
+
 import { BaseService } from '../core/BaseService'; // Corrected import path
 import { Logger } from '../types/core';
 

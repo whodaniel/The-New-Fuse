@@ -454,7 +454,9 @@ export class UnifiedAgent extends EventEmitter {
    * Start heartbeat
    */
   private startHeartbeat(): void {
-    if (this.heartbeatInterval) return;
+    if (this.heartbeatInterval) {
+      return;
+    }
 
     this.heartbeatInterval = setInterval(() => {
       this.emit('heartbeat', {

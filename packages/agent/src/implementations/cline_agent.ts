@@ -4,7 +4,7 @@
  * Specializes in file operations, code generation, and terminal command execution
  */
 
-import { IAgent } from '../interfaces/IAgent';
+import type { IAgent } from '../interfaces/IAgent';
 
 export interface ClineConfig {
   agentId: string;
@@ -345,7 +345,9 @@ module.exports = { main };
   }
 
   private resolvePath(path: string): string {
-    if (path.startsWith('/')) return path;
+    if (path.startsWith('/')) {
+      return path;
+    }
     return `${this.config.workspaceRoot}/${path}`;
   }
 

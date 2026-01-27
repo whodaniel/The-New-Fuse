@@ -1,6 +1,7 @@
 // filepath: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/agent/src/processors/BaseProcessor.ts
-import { Logger } from '../types/core';
-import { Message } from '@the-new-fuse/types';
+import type { Message } from '@the-new-fuse/types';
+
+import type { Logger } from '../types/core';
 
 /**
  * Abstract base class for message processors.
@@ -66,7 +67,9 @@ export abstract class BaseProcessor {
    */
   protected logError(error: Error | string, context?: unknown): void {
     if (error instanceof Error) {
-      const errorMessage = context ? `${error.message} - Context: ${JSON.stringify(context)}` : error.message;
+      const errorMessage = context
+        ? `${error.message} - Context: ${JSON.stringify(context)}`
+        : error.message;
       this.logger.error(errorMessage);
     } else {
       const errorMessage = context ? `${error} - Context: ${JSON.stringify(context)}` : error;

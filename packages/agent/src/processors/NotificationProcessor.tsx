@@ -1,7 +1,11 @@
-import { BaseProcessor } from './BaseProcessor'; // Assuming a BaseProcessor exists
+import type { Message, Notification, UUID } from '@the-new-fuse/types';
+import { MessageType } from '@the-new-fuse/types';
+
 import { Logger } from '../types/core';
-import { Message, MessageType, Notification, UUID } from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService'; // Corrected import
+
+import { BaseProcessor } from './BaseProcessor'; // Assuming a BaseProcessor exists
+
+import type { AlertService } from '../services/AlertService'; // Corrected import
 // Import other necessary services or types (e.g., UI update service, logging service)
 
 /**
@@ -32,7 +36,11 @@ export class NotificationProcessor extends BaseProcessor {
    * @returns A Promise resolving to void or null if the message is not a notification.
    */
   async process(message: Message): Promise<void | null> {
-    if (message.type !== MessageType.NOTIFICATION || typeof message.content !== 'object' || message.content === null) {
+    if (
+      message.type !== MessageType.NOTIFICATION ||
+      typeof message.content !== 'object' ||
+      message.content === null
+    ) {
       this.logger.debug(`Skipping message ${message.id}: Not a valid notification type.`);
       return null;
     }
@@ -41,18 +49,18 @@ export class NotificationProcessor extends BaseProcessor {
     const notification = message.content as unknown as Notification; // Type assertion, consider validation
 
     if (!notification.level || !notification.text) {
-        this.logger.warn(`Received notification message ${message.id} with missing level or text.`);
-        // Optionally generate a fallback alert
-        await this.alertService.warn(
-            `Received incomplete notification: ${JSON.stringify(notification)}`,
-            `Agent ${this.agentId} / NotificationProcessor`,
-            { originalMessageId: message.id }
-        );
-        return; // Stop processing incomplete notification
+      this.logger.warn(`Received notification message ${message.id} with missing level or text.`);
+      // Optionally generate a fallback alert
+      await this.alertService.warn(
+        `Received incomplete notification: ${JSON.stringify(notification)}`,
+        `Agent ${this.agentId} / NotificationProcessor`,
+        { originalMessageId: message.id }
+      );
+      return; // Stop processing incomplete notification
     }
 
     const logMessage = `Processing notification ${message.id}: [${notification.level.toUpperCase()}] ${notification.title || ''} - ${notification.text}`;
-    
+
     if (notification.level === 'error') {
       this.logger.error(logMessage);
     } else if (notification.level === 'warning') {
@@ -83,7 +91,9 @@ export class NotificationProcessor extends BaseProcessor {
 
       await this.alertService.dispatchAlert({
         severity: alertSeverity,
-        message: notification.title ? `${notification.title}: ${notification.text}` : notification.text,
+        message: notification.title
+          ? `${notification.title}: ${notification.text}`
+          : notification.text,
         source: notification.source || `Agent ${this.agentId}`,
         details: { ...(notification.details || {}), originalMessageId: message.id },
       });
@@ -99,14 +109,13 @@ export class NotificationProcessor extends BaseProcessor {
       // await this.persistentLogService.logNotification(this.agentId, notification);
 
       this.logger.debug(`Notification ${message.id} processed successfully.`);
-
     } catch (error) {
       this.logger.error(`Error processing notification ${message.id}: ${(error as Error).message}`);
       // Optionally, create a fallback alert about the processing failure
       await this.alertService.error(
-          `Failed to process notification ${message.id}`,
-          `Agent ${this.agentId} / NotificationProcessor`,
-          { error: (error as Error).message, originalNotification: notification }
+        `Failed to process notification ${message.id}`,
+        `Agent ${this.agentId} / NotificationProcessor`,
+        { error: (error as Error).message, originalNotification: notification }
       );
     }
   }

@@ -1,6 +1,8 @@
+import type { UUID } from '@the-new-fuse/api-types';
+import type { Message } from '@the-new-fuse/types';
+import { MessageType } from '@the-new-fuse/types';
+
 import { Logger } from '../types/core';
-import { Message, MessageType } from '@the-new-fuse/types';
-import { UUID } from '@the-new-fuse/api-types';
 
 /**
  * Main processor for an agent instance.
@@ -10,9 +12,7 @@ export class AgentProcessor {
   private logger: Logger;
   private agentId: UUID;
 
-  constructor(
-    agentId: UUID
-  ) {
+  constructor(agentId: UUID) {
     this.agentId = agentId;
     this.logger = new Logger(`AgentProcessor [${this.agentId}]`);
 
@@ -40,11 +40,15 @@ export class AgentProcessor {
           // await this.notificationProcessor.process(typedMessage);
           break;
         default:
-          this.logger.warn(`Received message ${typedMessage.id} with unhandled type: ${typedMessage.type}`);
+          this.logger.warn(
+            `Received message ${typedMessage.id} with unhandled type: ${typedMessage.type}`
+          );
           break;
       }
     } catch (error) {
-        this.logger.error(`Unhandled error processing message ${typedMessage.id} (Type: ${typedMessage.type}): ${(error as Error).message}`);
+      this.logger.error(
+        `Unhandled error processing message ${typedMessage.id} (Type: ${typedMessage.type}): ${(error as Error).message}`
+      );
     }
   }
 

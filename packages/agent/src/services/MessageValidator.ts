@@ -1,8 +1,13 @@
-import { Message, MessageType } from '@the-new-fuse/types';
 import addFormats from 'ajv-formats';
+
+import type { Message } from '@the-new-fuse/types';
+import { MessageType } from '@the-new-fuse/types';
+
 import { BaseService } from '../core/BaseService';
 import { Logger } from '../types/core';
+
 const Ajv = require('ajv');
+
 type ValidateFunction = any;
 type Schema = any;
 
@@ -95,7 +100,7 @@ export class MessageValidator extends BaseService {
     }
 
     const messageType = (message as { type: MessageType | string }).type;
-    let validator = this.validators.get(messageType);
+    const validator = this.validators.get(messageType);
 
     if (!validator) {
       this.logger.debug(`No specific schema found for type "${messageType}".`);

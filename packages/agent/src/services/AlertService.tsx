@@ -1,6 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { BaseService } from '../core/BaseService';
 import { Logger } from '../types/core';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface AlertPayload {
   severity: 'info' | 'warning' | 'error' | 'critical';
@@ -49,8 +50,8 @@ export class AlertService extends BaseService {
       this.logger.error(`Dispatching alert: ${alert.message}`);
     }
 
-    const dispatchPromises = this.channels.map(channel =>
-      channel.send(alert).catch(error => {
+    const dispatchPromises = this.channels.map((channel) =>
+      channel.send(alert).catch((error) => {
         this.logger.error(`Failed to send alert via ${channel.constructor.name}: ${error.message}`);
       })
     );

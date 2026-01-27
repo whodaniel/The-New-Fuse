@@ -1,6 +1,8 @@
 // packages/agent/src/protocols/ProtocolRegistry.ts
 
-import { CommunicationProtocol, WebSocketCommunicationProtocol } from './WebSocketCommunicationProtocol';
+import { WebSocketCommunicationProtocol } from './WebSocketCommunicationProtocol';
+
+import type { CommunicationProtocol } from './WebSocketCommunicationProtocol';
 
 type ProtocolConstructor = new (...args: any[]) => CommunicationProtocol;
 

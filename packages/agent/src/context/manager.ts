@@ -3,14 +3,14 @@
  * Handles context storage, retrieval, and synchronization
  */
 
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
 
 export enum ContextType {
   AGENT = 'agent',
   SESSION = 'session',
   TASK = 'task',
   WORKFLOW = 'workflow',
-  USER = 'user'
+  USER = 'user',
 }
 
 export interface ContextEntry {
@@ -36,13 +36,17 @@ export class ContextManager {
   /**
    * Store context entry
    */
-  async store(key: string, data: Record<string, unknown>, metadata?: Record<string, unknown>): Promise<void> {
+  async store(
+    key: string,
+    data: Record<string, unknown>,
+    metadata?: Record<string, unknown>
+  ): Promise<void> {
     const entry: ContextEntry = {
       id: `${this.contextType}:${this.entityId}:${key}`,
       type: this.contextType,
       data,
       timestamp: Date.now(),
-      metadata
+      metadata,
     };
 
     // Store locally
@@ -87,7 +91,11 @@ export class ContextManager {
   /**
    * Update context entry
    */
-  async update(key: string, data: Record<string, unknown>, metadata?: Record<string, unknown>): Promise<void> {
+  async update(
+    key: string,
+    data: Record<string, unknown>,
+    metadata?: Record<string, unknown>
+  ): Promise<void> {
     const existing = await this.retrieve(key);
     if (existing) {
       existing.data = { ...existing.data, ...data };
@@ -106,7 +114,7 @@ export class ContextManager {
    */
   async remove(key: string): Promise<void> {
     this.localContext.delete(key);
-    
+
     if (this.redisClient) {
       const entryId = `${this.contextType}:${this.entityId}:${key}`;
       await this.redisClient.del(entryId);
@@ -118,7 +126,7 @@ export class ContextManager {
    */
   async clear(): Promise<void> {
     this.localContext.clear();
-    
+
     if (this.redisClient) {
       const pattern = `${this.contextType}:${this.entityId}:*`;
       const keys = await this.redisClient.keys(pattern);
@@ -133,14 +141,14 @@ export class ContextManager {
    */
   async getKeys(): Promise<string[]> {
     const localKeys = Array.from(this.localContext.keys());
-    
+
     if (this.redisClient) {
       const pattern = `${this.contextType}:${this.entityId}:*`;
       const redisKeys = await this.redisClient.keys(pattern);
-      const parsedKeys = redisKeys.map(key => key.split(':').pop() || '');
+      const parsedKeys = redisKeys.map((key) => key.split(':').pop() || '');
       return Array.from(new Set([...localKeys, ...parsedKeys]));
     }
-    
+
     return localKeys;
   }
 
@@ -151,7 +159,7 @@ export class ContextManager {
     return {
       localCount: this.localContext.size,
       type: this.contextType,
-      entityId: this.entityId
+      entityId: this.entityId,
     };
   }
 }

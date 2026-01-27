@@ -13,8 +13,9 @@ and assimilated Clawdbot capabilities.
 
 ## Clawdbot Assimilation
 
-The agent includes an assimilated `ClawdEngine` that can execute native Clawdbot
-skills (`.md` files) directly.
+The agent includes an assimilated `ClawdEngine` that coordinates with the
+`Cloud Sandbox` service (`apps/cloud-sandbox`) to execute native Clawdbot skills
+safely.
 
 ### Usage
 
