@@ -15,7 +15,14 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? [
+            'https://thenewfuse.com',
+            'https://www.thenewfuse.com',
+            'https://api-production-48f1.up.railway.app',
+          ]
+        : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
     credentials: true,
   },
 })

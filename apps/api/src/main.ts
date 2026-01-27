@@ -14,7 +14,10 @@ async function bootstrap(): Promise<void> {
       origin:
         process.env.NODE_ENV === 'production'
           ? [
-              ...(process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']),
+              'https://thenewfuse.com',
+              'https://www.thenewfuse.com',
+              'https://api-production-48f1.up.railway.app',
+              ...(process.env.ALLOWED_ORIGINS?.split(',') || []),
               'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
             ]
           : [
