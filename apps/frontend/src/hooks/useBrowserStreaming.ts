@@ -27,7 +27,7 @@ export const useBrowserStreaming = () => {
    */
   const fetchSessions = useCallback(async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/browser-streaming/sessions`);
+      const response = await fetch(`${BACKEND_URL}/browser-streaming/sessions`);
       const data = await response.json();
 
       if (data.success) {
@@ -50,7 +50,7 @@ export const useBrowserStreaming = () => {
       setError(null);
 
       try {
-        const response = await fetch(`${BACKEND_URL}/api/browser-streaming/sessions`, {
+        const response = await fetch(`${BACKEND_URL}/browser-streaming/sessions`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -91,7 +91,7 @@ export const useBrowserStreaming = () => {
       setError(null);
 
       try {
-        const response = await fetch(`${BACKEND_URL}/api/browser-streaming/sessions/${id}`, {
+        const response = await fetch(`${BACKEND_URL}/browser-streaming/sessions/${id}`, {
           method: 'DELETE',
         });
 
@@ -122,7 +122,7 @@ export const useBrowserStreaming = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/browser-streaming/broadcast`, {
+      const response = await fetch(`${BACKEND_URL}/browser-streaming/broadcast`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message }),
@@ -150,7 +150,7 @@ export const useBrowserStreaming = () => {
    */
   const getHealth = useCallback(async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/browser-streaming/health`);
+      const response = await fetch(`${BACKEND_URL}/browser-streaming/health`);
       const data = await response.json();
       return data;
     } catch (err) {
