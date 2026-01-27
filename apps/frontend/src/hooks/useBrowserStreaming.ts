@@ -5,8 +5,9 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
+import { getApiUrl } from '../config/ports';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const BACKEND_URL = getApiUrl();
 
 interface BrowserSession {
   id: string;

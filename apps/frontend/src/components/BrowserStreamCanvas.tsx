@@ -6,8 +6,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { getApiUrl } from '../config/ports';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const BACKEND_URL = getApiUrl();
 
 interface BrowserStreamCanvasProps {
   sessionId: string;

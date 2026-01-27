@@ -34,6 +34,23 @@ export const getApiUrl = () => {
     return import.meta.env.VITE_API_URL;
   }
 
+  // In browser, detect based on current location
+  if (typeof window !== 'undefined') {
+    const host = window.location.host;
+    const protocol = window.location.protocol;
+
+    // Production: thenewfuse.com
+    if (host.includes('thenewfuse.com')) {
+      // Direct connection to Railway backend until DNS/Proxy is fully propagated
+      return 'https://api-production-48f1.up.railway.app';
+    }
+
+    // Railway deployments
+    if (host.includes('railway.app')) {
+      return `${protocol}//${host}`;
+    }
+  }
+
   // Default to unified API Gateway
   return `http://localhost:${STANDARD_PORTS.API_GATEWAY}`;
 };
@@ -47,16 +64,17 @@ export const getWebSocketUrl = () => {
   // In browser, detect based on current location
   if (typeof window !== 'undefined') {
     const host = window.location.host;
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 
     // Production: thenewfuse.com
     if (host.includes('thenewfuse.com')) {
-      return `wss://thenewfuse.com/ws`;
+      // Direct connection to Railway backend
+      return 'wss://api-production-48f1.up.railway.app';
     }
 
     // Railway deployments
     if (host.includes('railway.app')) {
-      return `${protocol}//${host}/ws`;
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${protocol}//${host}`;
     }
   }
 
