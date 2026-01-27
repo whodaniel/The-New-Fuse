@@ -195,6 +195,9 @@ const LiveViewPage = lazy(() => import('./pages/LiveView'));
 
 // AI Command Center - Multiple AI chat interfaces in one view
 const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
+const AICommandCenterStreaming = lazy(
+  () => import('./pages/AICommandCenter/AICommandCenterStreaming')
+);
 
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
@@ -626,7 +629,17 @@ export default function ComprehensiveRouter() {
               path="/ai-command-center"
               element={
                 <Suspense fallback={<LoadingFallback name="AI Command Center" />}>
-                  <AICommandCenter />
+                  <AICommandCenterStreaming />
+                </Suspense>
+              }
+            />
+
+            {/* AI Command Center Streaming (Explicit route) */}
+            <Route
+              path="/ai-command-center-streaming"
+              element={
+                <Suspense fallback={<LoadingFallback name="AI Command Center Streaming" />}>
+                  <AICommandCenterStreaming />
                 </Suspense>
               }
             />

@@ -12,6 +12,7 @@ import { BrandConsistencyAgentModule } from './agents/brand-consistency-agent.mo
 import { BrowserHubSwarmModule } from './agents/browser-hub-swarm.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BrowserStreamingModule } from './browser-streaming/browser-streaming.module';
 import { CacheService } from './cache/cache.service';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
@@ -113,6 +114,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     PromptTemplatesModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
+    BrowserStreamingModule, // Browser-as-a-Service Streaming
     // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
     BillingModule,
