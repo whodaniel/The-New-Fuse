@@ -6,9 +6,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { getApiUrl } from '../config/ports';
+import { getWebSocketUrl } from '../config/ports';
 
-const BACKEND_URL = getApiUrl();
+const BACKEND_URL = getWebSocketUrl();
 
 interface BrowserStreamCanvasProps {
   sessionId: string;

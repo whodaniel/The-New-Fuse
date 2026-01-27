@@ -73,13 +73,17 @@ ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 ARG PNPM_VERSION=10.22.0
 
-RUN apk add --no-cache netcat-openbsd curl && \
+RUN apk add --no-cache netcat-openbsd curl chromium nss freetype harfbuzz ca-certificates ttf-freefont && \
     npm install -g pnpm@${PNPM_VERSION} && \
     ln -sf /usr/local/bin/pnpm /bin/pnpm && \
     ln -sf /usr/local/bin/pnpm /usr/bin/pnpm && \
     echo "Files in /bin:" && ls -la /bin/pnpm && \
     echo "Files in /usr/bin:" && ls -la /usr/bin/pnpm && \
     pnpm --version
+
+# Configure Playwright to use system Chromium
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Ensure PATH includes all possible binary locations
 ENV PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"

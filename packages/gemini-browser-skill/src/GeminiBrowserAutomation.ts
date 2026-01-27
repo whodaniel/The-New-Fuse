@@ -41,13 +41,21 @@ export class GeminiBrowserAutomation {
       console.log('[GeminiBrowser] Launching Chrome with Gemini...');
 
       // Launch Chrome with specific flags to enable Gemini
+      // Launch Chrome/Chromium
+      // In server environments (Alpine/Railway), we rely on the system-installed Chromium
+      const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined;
+      const isServer = !!process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+
       this.browser = await chromium.launch({
-        headless: false, // Gemini UI requires visible browser
-        channel: 'chrome', // Use installed Chrome (not Chromium)
+        headless: isServer ? true : false, // Headless on server, visible locally
+        channel: isServer ? undefined : 'chrome', // Use system Chromium on server, Chrome locally
+        executablePath,
         args: [
           '--enable-features=Gemini,OptimizationGuideOnDeviceModel,PromptAPIForGeminiNano',
           '--no-first-run',
           '--no-default-browser-check',
+          '--no-sandbox', // Required for Docker/Alpine
+          '--disable-setuid-sandbox',
         ],
       });
 

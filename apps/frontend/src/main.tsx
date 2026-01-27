@@ -78,6 +78,7 @@ try {
 }
 
 console.log('Main.tsx starting...');
+console.log('VERSION CHECK: 1.0.2 - Browser Streaming Fix (WS URL & Ports)');
 
 // Install chunk load error handlers before anything else
 installChunkErrorHandlers();
