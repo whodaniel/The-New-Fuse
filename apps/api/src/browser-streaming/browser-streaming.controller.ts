@@ -5,7 +5,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { BrowserStreamingService } from './browser-streaming.service';
 
-@Controller('api/browser-streaming')
+@Controller('browser-streaming')
 export class BrowserStreamingController {
   constructor(private readonly browserService: BrowserStreamingService) {}
 
