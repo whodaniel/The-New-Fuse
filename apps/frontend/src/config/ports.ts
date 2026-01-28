@@ -41,7 +41,7 @@ export const getApiUrl = () => {
 
     // Production: thenewfuse.com
     if (host.includes('thenewfuse.com')) {
-      // Direct connection to Railway backend until DNS/Proxy is fully propagated
+      // Direct connection to Railway backend
       return 'https://api-production-48f1.up.railway.app/api';
     }
 
