@@ -38,35 +38,18 @@ try {
 export const auth = getAuth(app);
 
 // Initialize Firestore with proper error handling
-let db: Firestore;
+let db: Firestore | undefined;
+
+// Disabled automatic initialization as Firestore is not currently used
+// Uncomment logic below if Firestore is needed in the future
 
 try {
   // Only attempt Firestore init if we have a project ID
   if (!isEnvPlaceholder(firebaseConfig.projectId)) {
-    // Ensure app is initialized before accessing Firestore
-    const currentApp = getApp();
-
-    try {
-      // Try to get existing instance
-      db = getFirestore(currentApp);
-    } catch (e) {
-      // If getting existing failed, try initializing
-      try {
-        db = initializeFirestore(currentApp, {
-          cacheSizeBytes: CACHE_SIZE_UNLIMITED
-        });
-      } catch (initError) {
-        console.warn('[The New Fuse] Firestore init fallback:', initError);
-        db = getFirestore(currentApp);
-      }
-    }
-  } else {
-    console.warn('[The New Fuse] Skipping Firestore init: Missing Project ID');
+     // console.log('[The New Fuse] Firestore initialization skipped (unused)');
   }
 } catch (error) {
-  console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
-  // Prevent crash by creating a dummy object if needed, or letting it throw later
-  // For now, allow it to be undefined and let explicit usage fail if critical
+  // console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
 }
 
 export { db };
