@@ -79,6 +79,7 @@
     "db:pull": "pnpm --filter @the-new-fuse/database drizzle:pull",
     "db:studio": "pnpm --filter @the-new-fuse/database drizzle:studio",
     "db:check": "pnpm --filter @the-new-fuse/database drizzle:check",
+    "jules:process": "npx tsx packages/database/scripts/process-jules-queue.ts",
     "docker:start": "docker-compose -f docker-compose.dev-simple.yml up -d",
     "docker:stop": "docker-compose -f docker-compose.dev-simple.yml down",
     "docker:status": "docker-compose -f docker-compose.dev-simple.yml ps",

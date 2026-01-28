@@ -13,7 +13,8 @@ export type {
 } from './core/base-types';
 
 // User types
-export type { UserPreferences, UserRole } from './user';
+export { UserRole } from './user';
+export type { UserPreferences } from './user';
 
 export { Permission } from './user';
 
