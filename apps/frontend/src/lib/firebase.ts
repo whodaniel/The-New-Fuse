@@ -64,7 +64,6 @@ try {
     console.warn('[The New Fuse] Skipping Firestore init: Missing Project ID');
   }
 } catch (error) {
-} catch (error) {
   console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
   // Prevent crash by creating a dummy object if needed, or letting it throw later
   // For now, allow it to be undefined and let explicit usage fail if critical
