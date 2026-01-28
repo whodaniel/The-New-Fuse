@@ -12,26 +12,17 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Sanity check for Firebase API Key
-if (firebaseConfig.apiKey && firebaseConfig.apiKey !== '${VITE_FIREBASE_API_KEY}') {
-  const key = firebaseConfig.apiKey;
-  if (key.length < 30) {
-    console.error(
-      `[The New Fuse] Firebase API Key seems too short (${key.length} chars). Check Railway variables.`
-    );
-  } else {
-    // Only log this once in production to reduce noise
-    if (import.meta.env.DEV) {
-      console.log(
-        `[The New Fuse] Firebase config detected (Key starts with: ${key.substring(0, 8)}...)`
-      );
-    }
-  }
-} else {
-  const isEnvPlaceholder = firebaseConfig.apiKey === '${VITE_FIREBASE_API_KEY}';
+// Sanity check for Firebase Config
+const isEnvPlaceholder = (val: string | undefined) => !val || val.startsWith('${');
+
+if (isEnvPlaceholder(firebaseConfig.apiKey)) {
   console.error(
-    `[The New Fuse] Firebase API Key is ${isEnvPlaceholder ? 'unresolved placeholder' : 'missing'}! Auth will fail. ` +
-    'Action Required: Set VITE_FIREBASE_API_KEY in Railway environment variables and redeploy.'
+    '[The New Fuse] Firebase API Key is missing! Auth will fail. Set VITE_FIREBASE_API_KEY.'
+  );
+}
+if (isEnvPlaceholder(firebaseConfig.projectId)) {
+  console.error(
+    '[The New Fuse] Firebase Project ID is missing! Database will fail. Set VITE_FIREBASE_PROJECT_ID.'
   );
 }
 
@@ -50,24 +41,29 @@ export const auth = getAuth(app);
 let db: Firestore;
 
 try {
-  // Ensure app is initialized before accessing Firestore
-  const currentApp = getApp();
+  // Only attempt Firestore init if we have a project ID
+  if (!isEnvPlaceholder(firebaseConfig.projectId)) {
+    // Ensure app is initialized before accessing Firestore
+    const currentApp = getApp();
 
-  try {
-    // Try to get existing instance
-    db = getFirestore(currentApp);
-  } catch (e) {
-    // If getting existing failed, try initializing
     try {
-      db = initializeFirestore(currentApp, {
-        cacheSizeBytes: CACHE_SIZE_UNLIMITED
-      });
-    } catch (initError) {
-      // If initialization failed (e.g. already exists but getFirestore failed?), fallback
-      console.warn('[The New Fuse] Firestore init fallback:', initError);
+      // Try to get existing instance
       db = getFirestore(currentApp);
+    } catch (e) {
+      // If getting existing failed, try initializing
+      try {
+        db = initializeFirestore(currentApp, {
+          cacheSizeBytes: CACHE_SIZE_UNLIMITED
+        });
+      } catch (initError) {
+        console.warn('[The New Fuse] Firestore init fallback:', initError);
+        db = getFirestore(currentApp);
+      }
     }
+  } else {
+    console.warn('[The New Fuse] Skipping Firestore init: Missing Project ID');
   }
+} catch (error) {
 } catch (error) {
   console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
   // Prevent crash by creating a dummy object if needed, or letting it throw later
