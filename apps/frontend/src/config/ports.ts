@@ -30,6 +30,11 @@ export const STANDARD_PORTS = {
 
 // Environment-based configuration
 export const getApiUrl = () => {
+  // Force the working Railway backend for production domain
+  if (typeof window !== 'undefined' && window.location.hostname.includes('thenewfuse.com')) {
+    return 'https://api-production-48f1.up.railway.app/api';
+  }
+
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
@@ -38,12 +43,6 @@ export const getApiUrl = () => {
   if (typeof window !== 'undefined') {
     const host = window.location.host;
     const protocol = window.location.protocol;
-
-    // Production: thenewfuse.com
-    if (host.includes('thenewfuse.com')) {
-      // Direct connection to Railway backend until DNS/Proxy is fully propagated
-      return 'https://api-production-48f1.up.railway.app/api';
-    }
 
     // Railway deployments
     if (host.includes('railway.app')) {
