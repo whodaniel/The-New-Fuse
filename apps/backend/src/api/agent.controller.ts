@@ -101,7 +101,7 @@ export class UpdateAgentDto {
 }
 
 @ApiTags('Agents')
-@Controller('api/agents')
+@Controller('agents')
 export class AgentController {
   constructor() {}
 

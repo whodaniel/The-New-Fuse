@@ -36,6 +36,9 @@ async function bootstrap(): Promise<void> {
     })
   );
 
+  // Global Prefix
+  app.setGlobalPrefix('api', { exclude: ['health'] });
+
   // Swagger Documentation
   const config = new DocumentBuilder()
     .setTitle('The New Fuse API')
