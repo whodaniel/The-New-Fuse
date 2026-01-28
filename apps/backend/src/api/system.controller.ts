@@ -32,7 +32,7 @@ interface SystemTool {
 
 @Controller('system')
 export class SystemController {
-  @Get('services/status')
+  @Get('status')
   async getServicesStatus(): Promise<ServiceStatus[]> {
     const services: ServiceStatus[] = [
       {
@@ -90,7 +90,7 @@ export class SystemController {
     return services;
   }
 
-  @Get('metrics')
+  @Get('stats')
   async getSystemMetrics(): Promise<SystemMetrics> {
     const memUsage = process.memoryUsage();
 
