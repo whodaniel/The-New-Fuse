@@ -385,7 +385,10 @@ const AICommandCenterStreaming: React.FC = () => {
             <span className="text-gray-500">|</span>
             <span className="text-cyan-400">Session: ORCHESTRATOR-{Date.now()}</span>
           </div>
-          <div className="text-gray-500">Press Ctrl+Shift+F for Master Clock hotkey</div>
+          <div className="text-gray-500">
+            <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+            Real-time Streaming
+          </div>
         </div>
       </footer>
     </div>
