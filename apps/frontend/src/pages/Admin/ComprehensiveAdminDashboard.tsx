@@ -23,6 +23,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import dashboardService from '../../services/dashboard.service';
+
 interface SystemMetrics {
   totalUsers: number;
   activeUsers: number;
@@ -92,7 +94,7 @@ export default function ComprehensiveAdminDashboard() {
     setError(null);
     try {
       const data = await dashboardService.getAdminDashboardMetrics();
-      
+
       const uptimeSeconds = data.system.uptime || 0;
       const days = Math.floor(uptimeSeconds / (24 * 60 * 60));
       const hours = Math.floor((uptimeSeconds % (24 * 60 * 60)) / (60 * 60));
@@ -134,12 +136,6 @@ export default function ComprehensiveAdminDashboard() {
       setLoading(false);
     }
   };
-  
-  useEffect(() => {
-    loadDashboardData();
-    const interval = setInterval(loadDashboardData, 30000);
-    return () => clearInterval(interval);
-  }, [timeRange]);
 
   useEffect(() => {
     loadDashboardData();
@@ -285,7 +281,7 @@ export default function ComprehensiveAdminDashboard() {
   if (loading && !metrics) {
     return <DashboardSkeleton />;
   }
-  
+
   if (error) {
     return (
       <div className="p-8 max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
@@ -294,12 +290,12 @@ export default function ComprehensiveAdminDashboard() {
           <h2 className="text-2xl font-bold text-red-800 mb-2">Failed to Load Data</h2>
           <p className="text-red-600 mb-6">{error}</p>
           <button
-              onClick={loadDashboardData}
-              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Retry
-            </button>
+            onClick={loadDashboardData}
+            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Retry
+          </button>
         </div>
       </div>
     );
