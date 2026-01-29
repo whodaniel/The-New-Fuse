@@ -13,6 +13,20 @@ import { SelfImprovementCronService } from './self-improvement-cron.service';
 export class SelfImprovementController {
   constructor(private readonly service: SelfImprovementCronService) {}
 
+  @Post('trigger/manual')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Manually trigger Jules improvement loop with demo pattern' })
+  async triggerManualImprovement() {
+    const demoPattern = {
+      pattern: 'Manual Admin Trigger',
+      occurrences: 1,
+      successRate: 1.0,
+      examples: ['Triggered via Admin Dashboard']
+    };
+    await this.service.triggerManualImprovement(demoPattern);
+    return { success: true, message: 'Jules improvement loop manually triggered' };
+  }
+
   @Post('trigger/patterns')
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Trigger pattern extraction immediately' })

@@ -318,6 +318,15 @@ export class SelfImprovementCronService {
   }
 
   /**
+   * Manually trigger an improvement task for a specific pattern.
+   * Useful for testing or forcing the improvement loop.
+   */
+  async triggerManualImprovement(pattern: PatternMatch): Promise<void> {
+    this.logger.log(`[Manual] Triggering improvement for pattern: ${pattern.pattern}`);
+    await this.createJulesImprovementTask(pattern);
+  }
+
+  /**
    * Extract patterns from task sequences
    */
   private async extractPatterns(tasks: Task[]): Promise<PatternMatch[]> {

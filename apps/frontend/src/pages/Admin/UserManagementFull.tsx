@@ -15,6 +15,7 @@ import {
   UserX,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { CommandDropdown } from '../../components/admin/CommandDropdown';
 
 interface User {
   id: string;
@@ -206,6 +207,7 @@ export default function UserManagementFull() {
               <Plus className="h-4 w-4 mr-2" />
               Add User
             </button>
+            <CommandDropdown />
           </div>
         </div>
       </div>

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CommandDropdown } from '../../components/admin/CommandDropdown';
 
 interface SystemMetrics {
   totalUsers: number;
@@ -330,6 +331,7 @@ export default function ComprehensiveAdminDashboard() {
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
+            <CommandDropdown />
           </div>
         </div>
       </div>
