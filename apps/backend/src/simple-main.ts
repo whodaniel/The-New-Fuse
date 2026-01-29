@@ -4,18 +4,25 @@ const cors = require('cors');
 
 async function bootstrap() {
   const app = await NestFactory.create(SimpleAppModule);
-  
+
   // Enable CORS for frontend access using direct cors middleware
   app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173', 'http://localhost:5174'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'https://thenewfuse.com',
+      'https://www.thenewfuse.com'
+    ],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Accept, Authorization'
   }));
-  
+
   const port = process.env.PORT || 3005;
   await app.listen(port);
-  
+
   console.log(`🚀 API Integration Layer is running on: http://localhost:${port}`);
   console.log(`📋 Agent API endpoints available at:`);
   console.log(`   POST   http://localhost:${port}/api/agents`);

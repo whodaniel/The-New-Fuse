@@ -11,11 +11,11 @@ export const STANDARD_PORTS = {
   API_GATEWAY: 8080,
 
   // Individual Backend Services (behind gateway)
-  BACKEND_API: 3001,
+  BACKEND_API: 3004,
   WEBHOOKS_API: 3002,
 
   // WebSocket server (Same as Backend API for NestJS)
-  WEBSOCKET: 3001,
+  WEBSOCKET: 3004,
 
   // Prisma Studio (database UI)
   DATABASE_UI: 5555,

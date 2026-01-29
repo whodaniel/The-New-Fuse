@@ -91,21 +91,34 @@ export class BrowserStreamingService implements OnModuleDestroy {
       this.logger.log(`🌐 Launching Chromium for ${id}...`);
       const browser = await chromium.launch({
         headless: true,
+        executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
         args: [
           '--disable-dev-shm-usage',
           '--disable-gpu',
           '--no-sandbox',
           '--disable-setuid-sandbox',
-          '--disable-web-security', // Allow cross-origin
+          '--disable-web-security',
           '--disable-features=IsolateOrigins,site-per-process',
+          '--font-render-hinting=none',
         ],
       });
 
       const context = await browser.newContext({
         viewport: { width: viewportWidth, height: viewportHeight },
         userAgent:
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         bypassCSP: true,
+        deviceScaleFactor: 1,
+      });
+
+      // Add stealth scripts to avoid detection
+      await context.addInitScript(() => {
+        // Mask webdriver
+        Object.defineProperty(navigator, 'webdriver', { get: () => false });
+        // Mock languages
+        Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+        // Mock plugins
+        Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
       });
 
       const page = await context.newPage();
@@ -113,9 +126,12 @@ export class BrowserStreamingService implements OnModuleDestroy {
       // Navigate to URL
       this.logger.log(`🔗 Navigating to ${url}...`);
       await page.goto(url, {
-        waitUntil: 'networkidle',
-        timeout: 30000,
+        waitUntil: 'domcontentloaded', // Faster initial load
+        timeout: 60000, // Increase timeout for Gemini
       });
+
+      // Wait a bit for Gemini to settle
+      await page.waitForTimeout(2000);
 
       session.browser = browser;
       session.page = page;
@@ -268,16 +284,39 @@ export class BrowserStreamingService implements OnModuleDestroy {
     for (const [sessionId, session] of this.sessions) {
       if (session.status === 'running' && session.page) {
         promises.push(
-          this.executeCommand({
-            sessionId,
-            type: 'type',
-            payload: {
-              selector: 'textarea, input[type="text"]', // Common AI chat input selectors
-              text: message,
-            },
-          }).catch((error) => {
-            this.logger.error(`Failed to broadcast to ${sessionId}:`, error);
-          })
+          (async () => {
+            try {
+              // Try multiple common selectors for AI chat inputs
+              const selectors = [
+                'textarea',
+                'input[type="text"]',
+                '[role="textbox"]',
+                '[contenteditable="true"]',
+                '.input-area'
+              ];
+
+              let filled = false;
+              for (const selector of selectors) {
+                try {
+                  const element = await session.page.$(selector);
+                  if (element) {
+                    await session.page.fill(selector, message);
+                    await session.page.keyboard.press('Enter');
+                    filled = true;
+                    break;
+                  }
+                } catch (e) {
+                  // Continue to next selector
+                }
+              }
+
+              if (!filled) {
+                this.logger.warn(`Could not find input element for broadcast in session ${sessionId}`);
+              }
+            } catch (error) {
+              this.logger.error(`Failed to broadcast to ${sessionId}:`, error);
+            }
+          })()
         );
       }
     }
