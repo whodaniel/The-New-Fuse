@@ -7,28 +7,6 @@
         "@modelcontextprotocol/server-filesystem",
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
       ],
-      "disabled": true,
-      "alwaysAllow": []
-    },
-    "google-docs-mcp": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/mcp-googledocs-server/dist/server.js"
-      ],
-      "env": {},
-      "disabled": false,
-      "disabledTools": ["readGoogleDoc"],
-      "alwaysAllow": []
-    },
-    "gdrive": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/dist/index.js"
-      ],
-      "env": {
-        "GOOGLE_APPLICATION_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/gcp-oauth.keys.json",
-        "MCP_GDRIVE_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/.gdrive-server-credentials.json"
-      },
       "disabled": false
     },
     "skills": {
@@ -49,8 +27,63 @@
       "env": {
         "SKILLS_BASE_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent"
       },
-      "disabled": true,
-      "alwaysAllow": []
+      "disabled": false
+    },
+    "youtube-curator": {
+      "command": "node",
+      "args": [
+        "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/youtube-mcp-server/dist/index.js"
+      ],
+      "disabled": false
+    },
+    "tnf-relay": {
+      "command": "/Users/<owner>/.nvm/versions/node/v24.12.0/bin/node",
+      "args": ["/Users/<owner>/.fuse/tnf-relay-mcp/index.js"],
+      "env": {
+        "RELAY_URL": "ws://localhost:3001/ws"
+      },
+      "disabled": false
+    },
+    "jules": {
+      "command": "node",
+      "args": [
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/jules-skill/dist/mcp-server.js"
+      ],
+      "disabled": false
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "disabled": false
+    },
+    "sequentialthinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "alwaysAllow": ["sequentialthinking"],
+      "disabled": false
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "disabled": false
+    },
+    "google-docs-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/mcp-googledocs-server/dist/server.js"
+      ],
+      "disabled": true
+    },
+    "gdrive": {
+      "command": "node",
+      "args": [
+        "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/gcp-oauth.keys.json",
+        "MCP_GDRIVE_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/.gdrive-server-credentials.json"
+      },
+      "disabled": true
     },
     "github-mcp-server": {
       "command": "node",
@@ -62,19 +95,6 @@
       },
       "disabled": true
     },
-    "prisma-mcp-server": {
-      "command": "npx",
-      "args": ["-y", "prisma", "mcp"],
-      "env": {},
-      "disabled": false
-    },
-    "sequential-thinking": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/.nvm/versions/node/v24.12.0/lib/node_modules/@modelcontextprotocol/server-sequential-thinking/dist/index.js"
-      ],
-      "env": {}
-    },
     "redis": {
       "command": "node",
       "args": [
@@ -83,89 +103,7 @@
       "env": {
         "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
       },
-      "disabled": false
-    },
-    "youtube-curator": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/youtube-mcp-server/dist/index.js"
-      ],
-      "env": {},
-      "disabled": false
-    },
-    "tnf-relay": {
-      "command": "/Users/<owner>/.nvm/versions/node/v24.12.0/bin/node",
-      "args": ["/Users/<owner>/.fuse/tnf-relay-mcp/index.js"],
-      "env": { "RELAY_URL": "ws://localhost:3001/ws" },
-      "disabled": false
-    },
-    "jules": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/jules-skill/dist/mcp-server.js"
-      ],
-      "env": {},
-      "disabled": true,
-      "alwaysAllow": []
-    },
-    "tnf-mcp-config-manager": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/tnf-mcp-config-manager.js"
-      ],
-      "env": {
-        "TNF_CORE_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data",
-        "LOG_LEVEL": "info"
-      },
-      "description": "The New Fuse MCP Configuration Manager - Universal MCP config management for any client + TNF Agent Builder integration",
-      "managed_by": "tnf-core",
-      "priority": 9,
-      "tags": [
-        "tnf-core",
-        "configuration",
-        "universal",
-        "agent-builder",
-        "passthrough"
-      ],
-      "capabilities": [
-        "Universal MCP client configuration",
-        "TNF Agent Builder integration",
-        "Passthrough configuration generation",
-        "Multi-client support",
-        "TNF registry synchronization",
-        "Configuration validation",
-        "Health monitoring"
-      ],
-      "disabled": true,
-      "alwaysAllow": []
-    },
-    "unified-config-server": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/unified-config-server.js",
-        "--no-oauth"
-      ],
-      "env": {
-        "HTTP_PORT": "3773",
-        "LOG_LEVEL": "info",
-        "CONFIG_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/mcp_config.json"
-      },
-      "disabled": true,
-      "alwaysAllow": []
-    },
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"],
-      "env": { "DEFAULT_MINIMUM_TOKENS": "" }
-    },
-    "sequentialthinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-    },
-    "puppeteer": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-      "alwaysAllow": [""]
+      "disabled": true
     }
   }
 }
