@@ -1,8 +1,8 @@
 /**
- * AI Command Center - Browser Streaming Edition
+ * AI Command Center - Consolidated Single-Browser View
  *
- * Uses headless browser streaming instead of iframes to avoid X-Frame-Options blocking.
- * Includes Master Clock orchestration for synchronized multi-AI queries.
+ * This version unifies the interface to focus on a single, high-performance Gemini instance.
+ * It uses the Browser Streaming Service to bypass X-Frame-Options restrictions.
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
@@ -121,12 +121,18 @@ const AICommandCenterStreaming: React.FC = () => {
                   <span className="text-white text-xl">🎛️</span>
                 </div>
                 <h1 className="text-xl font-bold tracking-tight text-white">
-                  AI Command<span className="text-cyan-400 underline decoration-cyan-400/30 underline-offset-4"> Center</span>
+                  AI Command
+                  <span className="text-cyan-400 underline decoration-cyan-400/30 underline-offset-4">
+                    {' '}
+                    Center
+                  </span>
                 </h1>
               </div>
 
               <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
-                <div className={`w-2 h-2 rounded-full ${runningCount > 0 ? 'bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-600'}`} />
+                <div
+                  className={`w-2 h-2 rounded-full ${runningCount > 0 ? 'bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-600'}`}
+                />
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                   {runningCount > 0 ? 'Engine Active' : 'System Idle'}
                 </span>
@@ -176,7 +182,9 @@ const AICommandCenterStreaming: React.FC = () => {
         <div className="relative overflow-hidden bg-white/[0.02] border-b border-white/5 py-8 animate-in slide-in-from-top duration-500">
           <div className="max-w-4xl mx-auto px-6">
             <div className="flex flex-col gap-4 text-center">
-              <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-cyan-500">Universal Broadcast</h2>
+              <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-cyan-500">
+                Universal Broadcast
+              </h2>
               <div className="relative group">
                 <input
                   type="text"
@@ -202,7 +210,7 @@ const AICommandCenterStreaming: React.FC = () => {
       {/* Main Content */}
       <main className="p-8 max-w-[1600px] mx-auto mb-20">
         {AI_ENDPOINTS.filter((ep) => ep.streamingEnabled).map((endpoint) => {
-          const session = sessions.find(s => s.id === endpoint.id);
+          const session = sessions.find((s) => s.id === endpoint.id);
           const isError = session?.status === 'error';
 
           return (
@@ -226,7 +234,9 @@ const AICommandCenterStreaming: React.FC = () => {
                   </div>
                   <div className="h-4 w-px bg-white/10 mx-2" />
                   <div className="flex items-center gap-3">
-                    <span className="font-bold text-sm uppercase tracking-widest text-slate-100">{endpoint.name}</span>
+                    <span className="font-bold text-sm uppercase tracking-widest text-slate-100">
+                      {endpoint.name}
+                    </span>
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/5 text-slate-500 uppercase tracking-tighter">
                       {endpoint.models[0]}
                     </span>
@@ -235,7 +245,16 @@ const AICommandCenterStreaming: React.FC = () => {
 
                 <div className="flex items-center gap-3">
                   <div className="text-[10px] font-medium text-slate-500 uppercase tracking-widest mr-4">
-                    Neural Bridge: <span className={session?.status === 'running' ? 'text-cyan-400' : isError ? 'text-red-400' : 'text-slate-600'}>
+                    Neural Bridge:{' '}
+                    <span
+                      className={
+                        session?.status === 'running'
+                          ? 'text-cyan-400'
+                          : isError
+                            ? 'text-red-400'
+                            : 'text-slate-600'
+                      }
+                    >
                       {session?.status || 'idle'}
                     </span>
                   </div>
@@ -245,7 +264,12 @@ const AICommandCenterStreaming: React.FC = () => {
                     title="Terminate Session"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -255,12 +279,19 @@ const AICommandCenterStreaming: React.FC = () => {
               <div className="relative flex-1 bg-black overflow-hidden flex items-center justify-center">
                 {isError ? (
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 text-3xl">⚠️</div>
+                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 text-3xl">
+                      ⚠️
+                    </div>
                     <div>
                       <h3 className="text-xl font-bold text-white mb-2">Neural Link Failure</h3>
-                      <p className="text-slate-400 max-w-sm">Failed to establish a secure bridge to {endpoint.name}. Google may be blocking the automated connection.</p>
+                      <p className="text-slate-400 max-w-sm">
+                        Failed to establish a secure bridge to {endpoint.name}. Google may be
+                        blocking the automated connection.
+                      </p>
                       <button
-                        onClick={() => createSession(endpoint.id, endpoint.name, endpoint.url, 1280, 800)}
+                        onClick={() =>
+                          createSession(endpoint.id, endpoint.name, endpoint.url, 1280, 800)
+                        }
                         className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest transition-all"
                       >
                         Retry Connection
@@ -286,7 +317,9 @@ const AICommandCenterStreaming: React.FC = () => {
                   <span>Latency: Optimized</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className={`w-1.5 h-1.5 rounded-full ${session?.status === 'running' ? 'bg-cyan-500 animate-pulse' : 'bg-slate-700'}`} />
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${session?.status === 'running' ? 'bg-cyan-500 animate-pulse' : 'bg-slate-700'}`}
+                  />
                   Real-time Neural Stream
                 </div>
               </div>
@@ -312,7 +345,9 @@ const AICommandCenterStreaming: React.FC = () => {
           <div className="text-slate-400 flex items-center gap-3">
             <span className="text-slate-600 font-light">The New Fuse OS</span>
             <div className="h-3 w-px bg-white/10" />
-            <span className="text-cyan-500/60 transition-opacity hover:opacity-100 cursor-default">v4.5-LTS</span>
+            <span className="text-cyan-500/60 transition-opacity hover:opacity-100 cursor-default">
+              v4.5-LTS
+            </span>
           </div>
         </div>
       </footer>

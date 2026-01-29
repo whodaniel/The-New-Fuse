@@ -9,33 +9,19 @@ import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
-    // Enable CORS with strict configuration
+    // Enable CORS with streamlined configuration
     cors: {
-      origin:
-        process.env.NODE_ENV === 'production'
-          ? [
-              'https://thenewfuse.com',
-              'https://www.thenewfuse.com',
-              'https://api-production-48f1.up.railway.app',
-              ...(process.env.ALLOWED_ORIGINS?.split(',') || []),
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
-            ]
-          : [
-              'http://localhost:3000',
-              'http://localhost:3001',
-              'http://localhost:5173',
-              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
-            ],
+      origin: [
+        'https://thenewfuse.com',
+        'https://www.thenewfuse.com',
+        'https://api-production-48f1.up.railway.app',
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:5173',
+      ],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      allowedHeaders: [
-        'Content-Type',
-        'Authorization',
-        'X-Requested-With',
-        'X-CSRF-Token',
-        'X-Request-ID',
-        'X-Client-IP',
-      ],
+      allowedHeaders: '*', // Be permissive with headers to resolve production issues
     },
   });
 
@@ -59,7 +45,7 @@ async function bootstrap(): Promise<void> {
   // These are NestJS providers, not Express middleware functions
   // They should be applied via MiddlewareConsumer in AppModule
 
-  // Set global prefix for API routes
+  // Global Prefix
   app.setGlobalPrefix('api');
 
   // Swagger API Documentation Setup
@@ -126,36 +112,6 @@ async function bootstrap(): Promise<void> {
       console.error('⚠️  Failed to setup API documentation:', error);
     }
   }
-
-  // Enhanced security headers
-  app.use((req: any, res: any, next: any) => {
-    // Content Security Policy
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src 'self' 'unsafe-inline'; " +
-        "img-src 'self' data: https:; " +
-        "font-src 'self'; " +
-        "connect-src 'self' wss: https: data:; " +
-        "frame-src 'none'; " +
-        "object-src 'none'; " +
-        "base-uri 'self'; " +
-        "form-action 'self';"
-    );
-
-    // Additional security headers
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-XSS-Protection', '1; mode=block');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=()');
-
-    // Remove server information
-    res.removeHeader('X-Powered-By');
-
-    next();
-  });
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
