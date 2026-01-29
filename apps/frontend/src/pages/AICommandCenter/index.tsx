@@ -1,4 +1,13 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+/**
+ * AI Command Center - Consolidated Single-Browser View
+ *
+ * This version unifies the interface to focus on a single, high-performance Gemini instance.
+ * It uses the Browser Streaming Service to bypass X-Frame-Options restrictions.
+ */
+
+import React, { useCallback, useEffect, useState } from 'react';
+import { BrowserStreamCanvas } from '../../components/BrowserStreamCanvas';
+import { useBrowserStreaming } from '../../hooks/useBrowserStreaming';
 
 interface AIEndpoint {
   id: string;
@@ -6,8 +15,7 @@ interface AIEndpoint {
   url: string;
   models: string[];
   loginRequired: boolean;
-  status: 'loading' | 'active' | 'blocked' | 'error';
-  memoryUsage?: number;
+  streamingEnabled: boolean;
 }
 
 interface MemoryStats {
@@ -16,97 +24,23 @@ interface MemoryStats {
   jsHeapSizeLimit: number;
 }
 
-const AI_ENDPOINTS: Omit<AIEndpoint, 'status'>[] = [
+const AI_ENDPOINTS: AIEndpoint[] = [
   {
-    id: 'duckduckgo',
-    name: 'DuckDuckGo AI',
-    url: 'https://duckduckgo.com/aichat',
-    models: ['GPT-4o mini', 'Claude 3 Haiku', 'Llama 3.1'],
-    loginRequired: false,
-  },
-  {
-    id: 'huggingchat',
-    name: 'HuggingChat',
-    url: 'https://huggingface.co/chat/',
-    models: ['Llama 3', 'Mistral', 'Qwen'],
-    loginRequired: false,
-  },
-  {
-    id: 'venice',
-    name: 'Venice AI',
-    url: 'https://venice.ai/chat',
-    models: ['Llama 3.1 70B'],
-    loginRequired: false,
-  },
-  {
-    id: 'blackbox',
-    name: 'Blackbox AI',
-    url: 'https://www.blackbox.ai/',
-    models: ['Blackbox Coding'],
-    loginRequired: false,
-  },
-  {
-    id: 'lmsys',
-    name: 'LMSYS Arena',
-    url: 'https://chat.lmsys.org/',
-    models: ['GPT-4', 'Claude 3.5', 'Gemini'],
-    loginRequired: false,
-  },
-  {
-    id: 'felo',
-    name: 'Felo AI Search',
-    url: 'https://felo.ai/search',
-    models: ['Agentic Search'],
-    loginRequired: false,
-  },
-  {
-    id: 'genspark',
-    name: 'Genspark',
-    url: 'https://www.genspark.ai/',
-    models: ['Multi-agent'],
-    loginRequired: false,
-  },
-  {
-    id: 'perplexity',
-    name: 'Perplexity',
-    url: 'https://www.perplexity.ai/',
-    models: ['Perplexity Pro'],
-    loginRequired: false,
-  },
-  {
-    id: 'you',
-    name: 'You.com',
-    url: 'https://you.com/',
-    models: ['YouChat'],
-    loginRequired: false,
-  },
-  {
-    id: 'phind',
-    name: 'Phind',
-    url: 'https://www.phind.com/',
-    models: ['Phind-70B'],
-    loginRequired: false,
+    id: 'gemini',
+    name: 'Gemini',
+    url: 'https://gemini.google.com/app',
+    models: ['Gemini Advanced'],
+    loginRequired: true,
+    streamingEnabled: true,
   },
 ];
 
-const formatBytes = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
-
 const AICommandCenter: React.FC = () => {
-  const [endpoints, setEndpoints] = useState<AIEndpoint[]>(
-    AI_ENDPOINTS.map(ep => ({ ...ep, status: 'loading' as const }))
-  );
+  const { sessions, loading, createSession, stopSession, broadcast } = useBrowserStreaming();
+
   const [memoryStats, setMemoryStats] = useState<MemoryStats | null>(null);
-  const [layout, setLayout] = useState<'grid' | 'tabs' | 'single'>('grid');
-  const [activeTab, setActiveTab] = useState<string>('duckduckgo');
-  const [columns, setColumns] = useState(2);
-  const [showBlocked, setShowBlocked] = useState(true);
-  const iframeRefs = useRef<Map<string, HTMLIFrameElement>>(new Map());
+  const [orchestratorMessage, setOrchestratorMessage] = useState('');
+  const [showOrchestratorPanel, setShowOrchestratorPanel] = useState(false);
 
   // Memory monitoring
   useEffect(() => {
@@ -126,81 +60,95 @@ const AICommandCenter: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Check iframe load status
-  const handleIframeLoad = useCallback((id: string) => {
-    setEndpoints(prev =>
-      prev.map(ep =>
-        ep.id === id ? { ...ep, status: 'active' as const } : ep
-      )
-    );
-  }, []);
+  // Initialize browser sessions for all endpoints
+  const initializeSessions = useCallback(async () => {
+    for (const endpoint of AI_ENDPOINTS) {
+      if (endpoint.streamingEnabled) {
+        // Check if session already exists
+        const existingSession = sessions.find((s) => s.id === endpoint.id);
+        if (!existingSession) {
+          try {
+            console.log(`Initializing session for ${endpoint.name}`);
+            await createSession(endpoint.id, endpoint.name, endpoint.url, 1280, 800);
+          } catch (error) {
+            console.error(`Failed to initialize ${endpoint.name}:`, error);
+          }
+        }
+      }
+    }
+  }, [sessions, createSession]);
 
-  const handleIframeError = useCallback((id: string) => {
-    setEndpoints(prev =>
-      prev.map(ep =>
-        ep.id === id ? { ...ep, status: 'blocked' as const } : ep
-      )
-    );
-  }, []);
+  // Initialize on mount
+  useEffect(() => {
+    initializeSessions();
+  }, [initializeSessions]);
 
-  // Reload specific iframe
-  const reloadIframe = (id: string) => {
-    const iframe = iframeRefs.current.get(id);
-    if (iframe) {
-      setEndpoints(prev =>
-        prev.map(ep =>
-          ep.id === id ? { ...ep, status: 'loading' as const } : ep
-        )
-      );
-      iframe.src = iframe.src;
+  // Master Clock: Broadcast message to all AI sessions
+  const handleBroadcast = async () => {
+    if (!orchestratorMessage.trim()) return;
+
+    console.log(`📡 Master Clock: Broadcasting to all sessions`);
+    try {
+      await broadcast(orchestratorMessage);
+      setOrchestratorMessage('');
+      setShowOrchestratorPanel(false);
+    } catch (error) {
+      console.error('Broadcast failed:', error);
     }
   };
 
-  // Open in new tab
-  const openInNewTab = (url: string) => {
-    window.open(url, '_blank');
-  };
-
-  // Clear memory (remove blocked iframes)
-  const clearBlockedIframes = () => {
-    setEndpoints(prev => prev.filter(ep => ep.status !== 'blocked'));
-  };
-
-  const activeEndpoints = showBlocked 
-    ? endpoints 
-    : endpoints.filter(ep => ep.status !== 'blocked');
-
-  const memoryPercentage = memoryStats 
-    ? (memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100 
+  const memoryPercentage = memoryStats
+    ? (memoryStats.usedJSHeapSize / memoryStats.jsHeapSizeLimit) * 100
     : 0;
 
+  const runningCount = sessions.filter((s) => s.status === 'running').length;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      {/* Header with Memory Stats */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/30 border-b border-white/10">
-        <div className="max-w-[1920px] mx-auto px-4 py-3">
+    <div className="min-h-screen bg-[#050510] text-slate-200 selection:bg-cyan-500/30 font-display">
+      {/* Dynamic Background Noise/Glow */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-900/10 rounded-full blur-[120px]" />
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-black/40 border-b border-white/5">
+        <div className="max-w-[1920px] mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-                🎛️ AI Command Center
-              </h1>
-              <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium animate-pulse">
-                {activeEndpoints.filter(ep => ep.status === 'active').length} Active
-              </span>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                  <span className="text-white text-xl">🎛️</span>
+                </div>
+                <h1 className="text-xl font-bold tracking-tight text-white">
+                  AI Command<span className="text-cyan-400 underline decoration-cyan-400/30 underline-offset-4"> Center</span>
+                </h1>
+              </div>
+
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                <div className={`w-2 h-2 rounded-full ${runningCount > 0 ? 'bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-600'}`} />
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  {runningCount > 0 ? 'Engine Active' : 'System Idle'}
+                </span>
+              </div>
             </div>
 
-            {/* Memory Monitor */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-5">
+              {/* Memory Monitor with stylized progress */}
               {memoryStats && (
-                <div className="flex items-center gap-3">
-                  <div className="text-sm text-gray-400">
-                    Memory: {formatBytes(memoryStats.usedJSHeapSize)} / {formatBytes(memoryStats.jsHeapSizeLimit)}
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Neural Heap Memory
+                    <span className="text-slate-300">{Math.round(memoryPercentage)}%</span>
                   </div>
-                  <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full transition-all ${
-                        memoryPercentage > 80 ? 'bg-red-500' : 
-                        memoryPercentage > 60 ? 'bg-yellow-500' : 'bg-green-500'
+                  <div className="w-40 h-1 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                    <div
+                      className={`h-full transition-all duration-1000 ease-out shadow-[0_0_10px] ${
+                        memoryPercentage > 80
+                          ? 'bg-red-500 shadow-red-500/50'
+                          : memoryPercentage > 60
+                            ? 'bg-amber-400 shadow-amber-400/50'
+                            : 'bg-cyan-400 shadow-cyan-400/50'
                       }`}
                       style={{ width: `${memoryPercentage}%` }}
                     />
@@ -208,300 +156,163 @@ const AICommandCenter: React.FC = () => {
                 </div>
               )}
 
-              {/* Layout Controls */}
-              <div className="flex items-center gap-2 bg-white/5 rounded-lg p-1">
-                <button
-                  onClick={() => setLayout('grid')}
-                  className={`px-3 py-1.5 rounded-md text-sm transition-all ${
-                    layout === 'grid' ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Grid
-                </button>
-                <button
-                  onClick={() => setLayout('tabs')}
-                  className={`px-3 py-1.5 rounded-md text-sm transition-all ${
-                    layout === 'tabs' ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Tabs
-                </button>
-                <button
-                  onClick={() => setLayout('single')}
-                  className={`px-3 py-1.5 rounded-md text-sm transition-all ${
-                    layout === 'single' ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Single
-                </button>
-              </div>
-
-              {layout === 'grid' && (
-                <select
-                  value={columns}
-                  onChange={(e) => setColumns(Number(e.target.value))}
-                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-1.5 text-sm"
-                >
-                  <option value={1}>1 Column</option>
-                  <option value={2}>2 Columns</option>
-                  <option value={3}>3 Columns</option>
-                  <option value={4}>4 Columns</option>
-                </select>
-              )}
-
-              <label className="flex items-center gap-2 text-sm text-gray-400">
-                <input
-                  type="checkbox"
-                  checked={showBlocked}
-                  onChange={(e) => setShowBlocked(e.target.checked)}
-                  className="rounded"
-                />
-                Show Blocked
-              </label>
-
               <button
-                onClick={clearBlockedIframes}
-                className="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30 transition-all"
+                onClick={() => setShowOrchestratorPanel(!showOrchestratorPanel)}
+                className={`relative px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-widest transition-all ${
+                  showOrchestratorPanel
+                    ? 'bg-cyan-500 text-black shadow-lg shadow-cyan-500/30'
+                    : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'
+                }`}
               >
-                🧹 Clear Blocked
+                ⚡ Master Clock
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Status Bar */}
-      <div className="bg-black/20 border-b border-white/5 px-4 py-2">
-        <div className="max-w-[1920px] mx-auto flex items-center gap-4 text-sm">
-          <span className="text-gray-400">
-            Total: {endpoints.length} |
-            Active: <span className="text-green-400">{endpoints.filter(ep => ep.status === 'active').length}</span> |
-            Loading: <span className="text-yellow-400">{endpoints.filter(ep => ep.status === 'loading').length}</span> |
-            Blocked: <span className="text-red-400">{endpoints.filter(ep => ep.status === 'blocked').length}</span>
-          </span>
-          <span className="text-gray-500">|</span>
-          <span className="text-cyan-400">
-            ⚡ Orchestrator Connected: Master Clock Active
-          </span>
+      {/* Orchestrator Panel */}
+      {showOrchestratorPanel && (
+        <div className="relative overflow-hidden bg-white/[0.02] border-b border-white/5 py-8 animate-in slide-in-from-top duration-500">
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="flex flex-col gap-4 text-center">
+              <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-cyan-500">Universal Broadcast</h2>
+              <div className="relative group">
+                <input
+                  type="text"
+                  value={orchestratorMessage}
+                  onChange={(e) => setOrchestratorMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleBroadcast()}
+                  placeholder="Inject prompt into all active neural sessions..."
+                  className="w-full px-6 py-4 bg-black/40 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500/50 focus:ring-4 focus:ring-cyan-500/10 transition-all text-lg font-light italic"
+                />
+                <button
+                  onClick={handleBroadcast}
+                  disabled={!orchestratorMessage.trim() || loading}
+                  className="absolute right-2 top-2 bottom-2 px-6 bg-cyan-500 text-black rounded-xl font-bold text-sm uppercase tracking-wider hover:scale-105 active:scale-95 transition-all disabled:opacity-30 disabled:hover:scale-100"
+                >
+                  {loading ? 'Transmitting...' : 'Execute'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
-      <main className="p-4">
-        {/* Grid Layout */}
-        {layout === 'grid' && (
-          <div 
-            className="grid gap-4"
-            style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
-          >
-            {activeEndpoints.map((endpoint) => (
-              <div
-                key={endpoint.id}
-                className={`rounded-xl overflow-hidden border transition-all ${
-                  endpoint.status === 'active' ? 'border-green-500/50 shadow-lg shadow-green-500/10' :
-                  endpoint.status === 'blocked' ? 'border-red-500/50' :
-                  'border-white/10'
-                }`}
-              >
-                {/* Iframe Header */}
-                <div className="flex items-center justify-between px-3 py-2 bg-black/40">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${
-                      endpoint.status === 'active' ? 'bg-green-500' :
-                      endpoint.status === 'blocked' ? 'bg-red-500' :
-                      'bg-yellow-500 animate-pulse'
-                    }`} />
-                    <span className="font-medium text-sm">{endpoint.name}</span>
-                    <span className="text-xs text-gray-500">
+      <main className="p-8 max-w-[1600px] mx-auto mb-20">
+        {AI_ENDPOINTS.filter((ep) => ep.streamingEnabled).map((endpoint) => {
+          const session = sessions.find(s => s.id === endpoint.id);
+          const isError = session?.status === 'error';
+
+          return (
+            <div
+              key={endpoint.id}
+              className="group relative flex flex-col bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden shadow-2xl transition-all hover:border-white/10"
+              style={{ minHeight: 'calc(100vh - 400px)' }}
+            >
+              {/* Session Glow Effect */}
+              {session?.status === 'running' && (
+                <div className="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-t from-cyan-500/5 to-transparent shadow-[inset_0_0_40px_rgba(6,182,212,0.1)]" />
+              )}
+
+              {/* Window Header */}
+              <div className="flex items-center justify-between px-6 py-4 bg-white/[0.02] border-b border-white/5">
+                <div className="flex items-center gap-4">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500/40" />
+                    <div className="w-3 h-3 rounded-full bg-amber-500/40" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/40" />
+                  </div>
+                  <div className="h-4 w-px bg-white/10 mx-2" />
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-sm uppercase tracking-widest text-slate-100">{endpoint.name}</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/5 text-slate-500 uppercase tracking-tighter">
                       {endpoint.models[0]}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => reloadIframe(endpoint.id)}
-                      className="p-1.5 hover:bg-white/10 rounded transition-colors"
-                      title="Reload"
-                    >
-                      🔄
-                    </button>
-                    <button
-                      onClick={() => openInNewTab(endpoint.url)}
-                      className="p-1.5 hover:bg-white/10 rounded transition-colors"
-                      title="Open in new tab"
-                    >
-                      ↗️
-                    </button>
-                  </div>
                 </div>
 
-                {/* Iframe Container */}
-                <div className="relative" style={{ height: '400px' }}>
-                  {endpoint.status === 'blocked' ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/20">
-                      <span className="text-4xl mb-2">🚫</span>
-                      <span className="text-red-400 font-medium">Blocked by X-Frame-Options</span>
-                      <button
-                        onClick={() => openInNewTab(endpoint.url)}
-                        className="mt-3 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all"
-                      >
-                        Open in New Tab ↗️
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      {endpoint.status === 'loading' && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
-                          <div className="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full" />
-                        </div>
-                      )}
-                      <iframe
-                        ref={(el) => el && iframeRefs.current.set(endpoint.id, el)}
-                        src={endpoint.url}
-                        className="w-full h-full border-0"
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                        onLoad={() => handleIframeLoad(endpoint.id)}
-                        onError={() => handleIframeError(endpoint.id)}
-                        title={endpoint.name}
-                      />
-                    </>
-                  )}
+                <div className="flex items-center gap-3">
+                  <div className="text-[10px] font-medium text-slate-500 uppercase tracking-widest mr-4">
+                    Neural Bridge: <span className={session?.status === 'running' ? 'text-cyan-400' : isError ? 'text-red-400' : 'text-slate-600'}>
+                      {session?.status || 'idle'}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => stopSession(endpoint.id)}
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white"
+                    title="Terminate Session"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
 
-        {/* Tabs Layout */}
-        {layout === 'tabs' && (
-          <div>
-            {/* Tab Bar */}
-            <div className="flex gap-1 mb-4 overflow-x-auto pb-2">
-              {activeEndpoints.map((endpoint) => (
-                <button
-                  key={endpoint.id}
-                  onClick={() => setActiveTab(endpoint.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
-                    activeTab === endpoint.id
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
-                >
-                  <span className={`w-2 h-2 rounded-full ${
-                    endpoint.status === 'active' ? 'bg-green-500' :
-                    endpoint.status === 'blocked' ? 'bg-red-500' :
-                    'bg-yellow-500'
-                  }`} />
-                  {endpoint.name}
-                </button>
-              ))}
-            </div>
-
-            {/* Active Tab Content */}
-            {activeEndpoints.map((endpoint) => (
-              <div
-                key={endpoint.id}
-                className={`${activeTab === endpoint.id ? 'block' : 'hidden'}`}
-              >
-                <div className="rounded-xl overflow-hidden border border-white/10" style={{ height: 'calc(100vh - 220px)' }}>
-                  {endpoint.status === 'blocked' ? (
-                    <div className="h-full flex flex-col items-center justify-center bg-red-900/20">
-                      <span className="text-6xl mb-4">🚫</span>
-                      <span className="text-xl text-red-400 font-medium">Site Blocked Iframe Embedding</span>
+              {/* Viewport Area */}
+              <div className="relative flex-1 bg-black overflow-hidden flex items-center justify-center">
+                {isError ? (
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 text-3xl">⚠️</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2">Neural Link Failure</h3>
+                      <p className="text-slate-400 max-w-sm">Failed to establish a secure bridge to {endpoint.name}. Google may be blocking the automated connection.</p>
                       <button
-                        onClick={() => openInNewTab(endpoint.url)}
-                        className="mt-4 px-6 py-3 bg-purple-500 rounded-lg hover:bg-purple-600 transition-all"
+                        onClick={() => createSession(endpoint.id, endpoint.name, endpoint.url, 1280, 800)}
+                        className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest transition-all"
                       >
-                        Open {endpoint.name} in New Tab ↗️
+                        Retry Connection
                       </button>
                     </div>
-                  ) : (
-                    <iframe
-                      ref={(el) => el && iframeRefs.current.set(endpoint.id, el)}
-                      src={endpoint.url}
-                      className="w-full h-full border-0"
-                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                      onLoad={() => handleIframeLoad(endpoint.id)}
-                      onError={() => handleIframeError(endpoint.id)}
-                      title={endpoint.name}
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Single Focus Layout */}
-        {layout === 'single' && (
-          <div className="flex gap-4" style={{ height: 'calc(100vh - 180px)' }}>
-            {/* Sidebar */}
-            <div className="w-64 flex-shrink-0 space-y-2 overflow-y-auto">
-              {activeEndpoints.map((endpoint) => (
-                <button
-                  key={endpoint.id}
-                  onClick={() => setActiveTab(endpoint.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                    activeTab === endpoint.id
-                      ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
-                >
-                  <span className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                    endpoint.status === 'active' ? 'bg-green-500' :
-                    endpoint.status === 'blocked' ? 'bg-red-500' :
-                    'bg-yellow-500 animate-pulse'
-                  }`} />
-                  <div className="text-left">
-                    <div className="font-medium">{endpoint.name}</div>
-                    <div className="text-xs opacity-70">{endpoint.models[0]}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 rounded-xl overflow-hidden border border-white/10">
-              {activeEndpoints.filter(ep => ep.id === activeTab).map((endpoint) => (
-                endpoint.status === 'blocked' ? (
-                  <div key={endpoint.id} className="h-full flex flex-col items-center justify-center bg-red-900/20">
-                    <span className="text-8xl mb-6">🚫</span>
-                    <span className="text-2xl text-red-400 font-medium mb-2">Iframe Embedding Blocked</span>
-                    <span className="text-gray-500 mb-6">{endpoint.url}</span>
-                    <button
-                      onClick={() => openInNewTab(endpoint.url)}
-                      className="px-8 py-4 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-xl text-lg font-medium hover:scale-105 transition-transform"
-                    >
-                      Open {endpoint.name} in New Tab ↗️
-                    </button>
                   </div>
                 ) : (
-                  <iframe
-                    key={endpoint.id}
-                    ref={(el) => el && iframeRefs.current.set(endpoint.id, el)}
-                    src={endpoint.url}
-                    className="w-full h-full border-0"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                    onLoad={() => handleIframeLoad(endpoint.id)}
-                    onError={() => handleIframeError(endpoint.id)}
-                    title={endpoint.name}
+                  <BrowserStreamCanvas
+                    sessionId={endpoint.id}
+                    name={endpoint.name}
+                    url={endpoint.url}
+                    width={1280}
+                    height={800}
                   />
-                )
-              ))}
+                )}
+              </div>
+
+              {/* Status Bar */}
+              <div className="flex items-center justify-between px-6 py-2 bg-black/40 border-t border-white/5 text-[10px] font-bold uppercase tracking-widest text-slate-600">
+                <div className="flex items-center gap-4">
+                  <span>Stream Quality: High (JPEG 70)</span>
+                  <span className="text-slate-800">|</span>
+                  <span>Latency: Optimized</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-1.5 h-1.5 rounded-full ${session?.status === 'running' ? 'bg-cyan-500 animate-pulse' : 'bg-slate-700'}`} />
+                  Real-time Neural Stream
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })}
       </main>
 
-      {/* Federation Status Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-black/40 backdrop-blur-xl border-t border-white/10 px-4 py-2">
-        <div className="max-w-[1920px] mx-auto flex items-center justify-between text-sm">
-          <div className="flex items-center gap-4">
-            <span className="text-green-400">● Master Clock: Active</span>
-            <span className="text-gray-500">|</span>
-            <span className="text-cyan-400">Session: ORCHESTRATOR-{Date.now()}</span>
+      {/* Footer / Status Bar */}
+      <footer className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/60 border-t border-white/5 px-6 py-3">
+        <div className="max-w-[1920px] mx-auto flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="text-green-500/80">Master Clock Core: Online</span>
+            </div>
+            <div className="w-px h-3 bg-white/10" />
+            <div className="flex items-center gap-2">
+              <span className="text-slate-500 text-[9px]">Uptime: </span>
+              <span className="text-slate-300">{Math.floor(Date.now() / 1000) % 10000}s</span>
+            </div>
           </div>
-          <div className="text-gray-500">
-            Press Ctrl+Shift+F in any AI chat to connect to Federation
+          <div className="text-slate-400 flex items-center gap-3">
+            <span className="text-slate-600 font-light">The New Fuse OS</span>
+            <div className="h-3 w-px bg-white/10" />
+            <span className="text-cyan-500/60 transition-opacity hover:opacity-100 cursor-default">v4.5-LTS</span>
           </div>
         </div>
       </footer>
