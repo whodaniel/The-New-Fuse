@@ -1,8 +1,10 @@
-import React, { useState, useCallback } from 'react';
-import { UnifiedWorkspace, UnifiedMessage, ChatThread } from '../../types/unified';
+import React, { useCallback, useState } from 'react';
+
 import { EnhancedChatBubble } from '../chat/EnhancedChatBubble';
+import { AgentLLMService } from '../services/llm/agent-llm';
 import { Button, Card } from '../ui';
-import { AgentLLMService } from '../../services/llm/agent-llm';
+
+import type { ChatThread, UnifiedMessage, UnifiedWorkspace } from '../types/unified';
 
 interface WorkspaceManagerProps {
   workspace: UnifiedWorkspace;
@@ -17,7 +19,9 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
   const [message, setMessage] = useState('');
 
   const handleSendMessage = useCallback(async () => {
-    if (!message.trim() || !activeThread) return;
+    if (!message.trim() || !activeThread) {
+      return;
+    }
 
     const newMessage: UnifiedMessage = {
       id: crypto.randomUUID(),
@@ -37,17 +41,21 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
 
     // Add user message to the thread
     const updatedMessages = [...activeThread.messages, newMessage];
-    setActiveThread(prev => ({
-      ...prev!,
+    setActiveThread(prev => (prev ? {
+      ...prev,
       messages: updatedMessages,
-    }));
+    } : null));
     setMessage('');
 
     try {
       // Get the active agent
       const activeAgent = workspace.agents[0]; // TODO: Implement agent selection
-      
-      // Process message with the agent
+
+      if (!activeAgent) {
+        throw new Error('No active agent available');
+      }
+
+      // Process message with the active agent using the singleton service
       const agentLLM = AgentLLMService.getInstance();
       const response = await agentLLM.processAgentMessage(
         activeAgent,
@@ -73,10 +81,10 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
         },
       };
 
-      setActiveThread(prev => ({
-        ...prev!,
-        messages: [...prev!.messages, agentMessage],
-      }));
+      setActiveThread(prev => (prev ? {
+        ...prev,
+        messages: [...prev.messages, agentMessage],
+      } : null));
     } catch (error) {
       console.error('Error processing message:', error);
       // Add error message to thread
@@ -97,10 +105,10 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
         },
       };
 
-      setActiveThread(prev => ({
-        ...prev!,
-        messages: [...prev!.messages, errorMessage],
-      }));
+      setActiveThread(prev => (prev ? {
+        ...prev,
+        messages: [...prev.messages, errorMessage],
+      } : null));
     }
   }, [message, activeThread, user, workspace]);
 

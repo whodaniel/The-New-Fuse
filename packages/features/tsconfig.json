@@ -10,7 +10,7 @@
     "types": [],
     "jsx": "react-jsx"
   },
-  "include": ["ui/**/*.ts", "ui/**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [{ "path": "../types" }]
 }
