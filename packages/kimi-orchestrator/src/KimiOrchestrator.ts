@@ -493,7 +493,7 @@ export class KimiOrchestrator extends EventEmitter {
   /**
    * Handle task failure with retry logic
    */
-  private async handleTaskFailure(task: TaskAssignment, error: Error): Promise<void> {
+  private async handleTaskFailure(task: TaskAssignment, _error: Error): Promise<void> {
     if (task.retryCount < this.config.maxRetries) {
       task.retryCount++;
 

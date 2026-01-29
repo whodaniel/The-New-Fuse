@@ -339,7 +339,7 @@ export class TaskDistributor extends EventEmitter {
    */
   private async analyzeAndCreateSubtasks(
     parentTask: TaskAssignment,
-    strategy: 'parallel' | 'sequential' | 'dag'
+    _strategy: 'parallel' | 'sequential' | 'dag'
   ): Promise<TaskAssignment[]> {
     const subtasks: TaskAssignment[] = [];
 

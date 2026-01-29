@@ -263,7 +263,7 @@ export class AgentPool extends EventEmitter {
   /**
    * Complete a task
    */
-  completeTask(taskId: string, result: unknown): boolean {
+  completeTask(taskId: string, _result: unknown): boolean {
     const task = this.taskAssignments.get(taskId);
     if (!task) {
       return false;
@@ -295,7 +295,7 @@ export class AgentPool extends EventEmitter {
   /**
    * Fail a task
    */
-  failTask(taskId: string, error: string): boolean {
+  failTask(taskId: string, _error: string): boolean {
     const task = this.taskAssignments.get(taskId);
     if (!task) {
       return false;

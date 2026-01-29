@@ -254,7 +254,7 @@ export class KimiMcpServer {
    */
   private async handleRegisterAgent(
     args: Record<string, unknown> | undefined
-  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+  ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     if (!args?.agentId || !args?.capabilities) {
       return {
         content: [{ type: 'text', text: 'Error: agentId and capabilities are required' }],
@@ -288,7 +288,7 @@ export class KimiMcpServer {
    */
   private async handleUnregisterAgent(
     args: Record<string, unknown> | undefined
-  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+  ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     if (!args?.agentId) {
       return {
         content: [{ type: 'text', text: 'Error: agentId is required' }],
@@ -313,7 +313,7 @@ export class KimiMcpServer {
    */
   private async handleAssignTask(
     args: Record<string, unknown> | undefined
-  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+  ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     if (!args?.taskType || !args?.payload) {
       return {
         content: [{ type: 'text', text: 'Error: taskType and payload are required' }],
@@ -347,7 +347,7 @@ export class KimiMcpServer {
    */
   private async handleGetAgentStatus(
     args: Record<string, unknown> | undefined
-  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+  ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     if (!args?.agentId) {
       return {
         content: [{ type: 'text', text: 'Error: agentId is required' }],
@@ -385,6 +385,7 @@ Last Seen: ${agent.lastSeen}
    */
   private async handleGetPoolStats(): Promise<{
     content: Array<{ type: string; text: string }>;
+    isError?: boolean;
   }> {
     const stats = this.orchestrator.getStats();
     const healthSummary = this.orchestrator.getHealthSummary();
@@ -418,7 +419,7 @@ Pool Utilization: ${stats.utilizationPercent.toFixed(1)}%
    */
   private async handleListAgents(
     args: Record<string, unknown> | undefined
-  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+  ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     let agents;
     if (args?.capability) {
       agents = this.orchestrator.getAgentsByCapability(args.capability as KimiCapability);
@@ -449,7 +450,7 @@ Pool Utilization: ${stats.utilizationPercent.toFixed(1)}%
    */
   private async handleCancelTask(
     args: Record<string, unknown> | undefined
-  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+  ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     if (!args?.taskId) {
       return {
         content: [{ type: 'text', text: 'Error: taskId is required' }],
@@ -479,7 +480,7 @@ Pool Utilization: ${stats.utilizationPercent.toFixed(1)}%
    */
   private async handleDecomposeTask(
     args: Record<string, unknown> | undefined
-  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+  ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     if (!args?.taskType || !args?.payload) {
       return {
         content: [{ type: 'text', text: 'Error: taskType and payload are required' }],
@@ -554,7 +555,7 @@ async function main(): Promise<void> {
 }
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   main().catch((error) => {
     console.error('Fatal error:', error);
     process.exit(1);
