@@ -4,11 +4,11 @@ export interface DashboardMetric {
   value: number | string;
   change?: {
     value: number;
-    trend: up' | 'down' | 'neutral';
+    trend: 'up' | 'down' | 'neutral';
     period: string;
   };
-  icon?: (React as any).ReactNode;
-  color?: blue' | 'green' | 'yellow' | 'red' | 'indigo' | 'purple';
+  icon?: any;
+  color?: 'blue' | 'green' | 'yellow' | 'red' | 'indigo' | 'purple';
 }
 
 export interface ChartData {
@@ -22,36 +22,28 @@ export interface ChartData {
 
 export interface DashboardWidget {
   id: string;
-  type: metric' | 'chart' | 'list' | 'custom';
+  type: string;
   title: string;
   description?: string;
-  size: small' | 'medium' | 'large';
-  data: DashboardMetric | ChartData | any;
-  loading?: boolean;
-  error?: string;
-  refreshInterval?: number;
+  dataSource: string;
+  config: Record<string, unknown>;
+  layout: {
+    i: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  };
 }
 
 export interface DashboardLayout {
   id: string;
   name: string;
-  widgets: Array<{
-    id: string;
-    position: {
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-    };
+  items: Array<{
+    i: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
   }>;
-}
-
-export interface DashboardContextType {
-  layouts: DashboardLayout[];
-  currentLayout: string;
-  widgets: DashboardWidget[];
-  setCurrentLayout: (id: string) => void;
-  updateWidget: (id: string, data: Partial<DashboardWidget>) => void;
-  updateLayout: (layout: DashboardLayout) => void;
-  refreshWidget: (id: string) => Promise<void>;
 }

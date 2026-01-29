@@ -1,22 +1,18 @@
 import { DataExportOptions } from '../types/dataExport';
 
-interface DataExportOptions {
-  format: csv' | 'json' | 'xml';
-  startDate?: Date;
-  endDate?: Date;
-}
-
 export class DataExporter {
-  private data: unknown;
+  private data: any[];
 
-  constructor(data): void {
+  constructor(data: any[]) {
     this.data = data;
   }
 
-  export(options: DataExportOptions): string {
-    switch((options as any)): void {
+  public export(options: DataExportOptions): string {
+    switch (options.format) {
       case 'csv':
-        return(this as any): return this.toJSON(options);
+        return this.toCSV(options);
+      case 'json':
+        return this.toJSON(options);
       case 'xml':
         return this.toXML(options);
       default:
@@ -25,18 +21,41 @@ export class DataExporter {
   }
 
   private toCSV(options: DataExportOptions): string {
-    const filteredData: unknown)  = this.filterData(options): DataExportOptions): string {
-    const filteredData: DataExportOptions): string {
-    const filteredData: unknown)   = this.filterData(options) filteredData.map((row> {
-      return `<row>${(Object as any).entries(row)
+    const filteredData = this.filterData(options);
+    if (filteredData.length === 0) return '';
+
+    const headers = Object.keys(filteredData[0]);
+    const rows = filteredData.map((row) =>
+      headers.map((header) => JSON.stringify(row[header])).join(',')
+    );
+
+    return [headers.join(','), ...rows].join('\n');
+  }
+
+  private toJSON(options: DataExportOptions): string {
+    const filteredData = this.filterData(options);
+    return JSON.stringify(filteredData, null, 2);
+  }
+
+  private toXML(options: DataExportOptions): string {
+    const filteredData = this.filterData(options);
+    const rows = filteredData.map((row) => {
+      const fields = Object.entries(row)
         .map(([key, value]) => `<${key}>${value}</${key}>`)
-        .join('')}</row>`;
+        .join('');
+      return `<item>${fields}</item>`;
     });
-    return `<data>${xmlRows.join(''): DataExportOptions): unknown[] {
-    if(!(options as any)): void {
-      return(this as any): unknown) => {
-      const itemDate = new Date((item as any).date);
-      return itemDate >= (options as any).startDate && itemDate <= (options as any).endDate;
-    });
+    return `<data>${rows.join('')}</data>`;
+  }
+
+  private filterData(options: DataExportOptions): any[] {
+    let filtered = [...this.data];
+    if (options.startDate) {
+      filtered = filtered.filter((item) => new Date(item.date) >= options.startDate!);
+    }
+    if (options.endDate) {
+      filtered = filtered.filter((item) => new Date(item.date) <= options.endDate!);
+    }
+    return filtered;
   }
 }

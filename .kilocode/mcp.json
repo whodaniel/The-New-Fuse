@@ -6,7 +6,9 @@
         "-y",
         "@modelcontextprotocol/server-filesystem",
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
-      ]
+      ],
+      "disabled": true,
+      "alwaysAllow": []
     },
     "google-docs-mcp": {
       "command": "node",
@@ -14,8 +16,9 @@
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/mcp-googledocs-server/dist/server.js"
       ],
       "env": {},
-      "disabled": true,
-      "disabledTools": ["readGoogleDoc"]
+      "disabled": false,
+      "disabledTools": ["readGoogleDoc"],
+      "alwaysAllow": []
     },
     "gdrive": {
       "command": "node",
@@ -46,7 +49,8 @@
       "env": {
         "SKILLS_BASE_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent"
       },
-      "disabled": false
+      "disabled": true,
+      "alwaysAllow": []
     },
     "github-mcp-server": {
       "command": "node",
@@ -92,9 +96,7 @@
     "tnf-relay": {
       "command": "/Users/<owner>/.nvm/versions/node/v24.12.0/bin/node",
       "args": ["/Users/<owner>/.fuse/tnf-relay-mcp/index.js"],
-      "env": {
-        "RELAY_URL": "ws://localhost:3001/ws"
-      },
+      "env": { "RELAY_URL": "ws://localhost:3001/ws" },
       "disabled": false
     },
     "jules": {
@@ -103,7 +105,8 @@
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/jules-skill/dist/mcp-server.js"
       ],
       "env": {},
-      "disabled": false
+      "disabled": true,
+      "alwaysAllow": []
     },
     "tnf-mcp-config-manager": {
       "command": "node",
@@ -132,7 +135,9 @@
         "TNF registry synchronization",
         "Configuration validation",
         "Health monitoring"
-      ]
+      ],
+      "disabled": true,
+      "alwaysAllow": []
     },
     "unified-config-server": {
       "command": "node",
@@ -144,7 +149,9 @@
         "HTTP_PORT": "3773",
         "LOG_LEVEL": "info",
         "CONFIG_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/mcp_config.json"
-      }
+      },
+      "disabled": true,
+      "alwaysAllow": []
     },
     "context7": {
       "command": "npx",

@@ -1,75 +1,41 @@
-import { DashboardState, ShareConfig } from '../exporters/types';
+import { DashboardState } from '../exporters/types';
 
 export class DashboardStorage {
   private storage: Storage;
   private prefix: string;
 
-  constructor(storage: Storage = localStorage, prefix = 'dashboard_') {
+  constructor(
+    storage: Storage = typeof localStorage !== 'undefined' ? localStorage : ({} as any),
+    prefix = 'dashboard_'
+  ) {
     this.storage = storage;
     this.prefix = prefix;
   }
 
-  async saveDashboard(): Promise<void> {dashboard: DashboardState): Promise<void> {
-    const key: (dashboard as any).version,
-      state: serialized,
-      timestamp: new Date(): (dashboard as any).(lastModifiedBy as any).id,
-    });
-    (this as any).(storage as any).setItem(historyKey, (JSON as any).stringify(history));
+  public async saveDashboard(dashboard: DashboardState): Promise<void> {
+    const key = this.getKey(dashboard.id);
+    const serialized = JSON.stringify(dashboard);
+    this.storage.setItem(key, serialized);
   }
 
-  async loadDashboard(): Promise<void> {id: string): Promise<DashboardState | null> {
-    const key: unknown): null;
+  public async loadDashboard(id: string): Promise<DashboardState | null> {
+    const key = this.getKey(id);
+    const serialized = this.storage.getItem(key);
+    if (!serialized) return null;
+    try {
+      return JSON.parse(serialized);
+    } catch (e) {
+      console.error('Failed to parse dashboard data', e);
+      return null;
+    }
   }
 
-  async deleteDashboard(): Promise<void> {id: string): Promise<void> {
-    const key   = this.getKey((dashboard as any).id);
-    const serialized = (JSON as any).stringify(dashboard);
-    (this as any).(storage as any).setItem(key, serialized);
-
-    // Save to version history
-    const historyKey = this.getHistoryKey((dashboard as any).id);
-    const history = this.getDashboardHistory((dashboard as any).id);
-    history.push({
-      version(this as any): Promise<DashboardState[]> {
-    const dashboards: DashboardState[]  = this.getHistoryKey(id)): void {
-      const key: unknown){
-          dashboards.push(dashboard): string,
-    config: ShareConfig
-  ): Promise<void> {
-    const key: string): Promise<ShareConfig[]> {
-    const key   = (this as any).(storage as any).key(i);
-      if (key?.startsWith(this.prefix) && !(key as any).includes('_history_')) {
-        const dashboard = await(this as any): unknown): [];
+  public async deleteDashboard(id: string): Promise<void> {
+    const key = this.getKey(id);
+    this.storage.removeItem(key);
   }
 
-  async deleteShareConfig(): Promise<void> {
-    dashboardId: string,
-    configId: string
-  ): Promise<void> {
-    const key: string,
-    version: number
-  ): Promise<DashboardState | null> {
-    const history   = (this as any).(storage as any).getItem(key)): void {
-      const dashboard: string): string {
+  private getKey(id: string): string {
     return `${this.prefix}${id}`;
-  }
-
-  private getHistoryKey(id: string): string {
-    return `${this.prefix}${id}_history`;
-  }
-
-  private getShareKey(id: string): string {
-    return `${this.prefix}${id}_share`;
-  }
-
-  private getDashboardHistory(id: string): Array< {
-    version: number;
-    state: string;
-    timestamp: Date;
-    userId: string;
-  }> {
-    const key  = (history as any).find((entry) this.getHistoryKey(id);
-    const serialized = (this as any).(storage as any).getItem(key);
-    return serialized ? (JSON as any).parse(serialized: unknown): [];
   }
 }

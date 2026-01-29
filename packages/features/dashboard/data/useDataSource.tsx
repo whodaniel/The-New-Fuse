@@ -1,19 +1,19 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DataFetcher } from './DataFetcher';
-import { WebSocketManager } from './WebSocketManager';
-import {
-  DataSourceState,
-  DataFetcherConfig,
-  WebSocketConfig,
-  CacheConfig,
-  DataTransformer,
-} from './types';
+import { WebSocketConfig, WebSocketManager } from './WebSocketManager';
 
-interface UseDataSourceOptions<T = any, R = any> {
+export interface DataSourceState {
+  loading: boolean;
+  error?: Error;
+  lastUpdated?: number;
+  nextUpdate?: number;
+}
+
+export interface UseDataSourceOptions<T = any, R = any> {
   type: 'rest' | 'websocket';
-  config: DataFetcherConfig | WebSocketConfig;
-  cacheConfig?: CacheConfig;
-  transformer?: DataTransformer<T, R>;
+  config: any; // Could be DataFetcherConfig or WebSocketConfig
+  cacheConfig?: any;
+  transformer?: (data: T) => R;
   refreshInterval?: number;
   enabled?: boolean;
 }
@@ -31,19 +31,15 @@ export function useDataSource<T = any, R = any>({
 
   const dataFetcher = useRef(new DataFetcher());
   const wsManager = useRef<WebSocketManager | null>(null);
-  const refreshTimeout = useRef<NodeJS.Timeout>();
+  const refreshTimeout = useRef<any>();
 
-  const fetchData = useCallback(async (): Promise<void> => {
+  const fetchData = useCallback(async () => {
     if (!enabled) return;
 
     setState((prev) => ({ ...prev, loading: true }));
 
     try {
-      const response = await dataFetcher.current.fetch(
-        config as DataFetcherConfig,
-        cacheConfig,
-        transformer
-      );
+      const response = await dataFetcher.current.fetch(config, cacheConfig, transformer);
 
       setData(response.data);
       setState({
@@ -63,18 +59,12 @@ export function useDataSource<T = any, R = any>({
   const setupWebSocket = useCallback(() => {
     if (!enabled || type !== 'websocket') return () => {};
 
-    // Create WebSocket instance if not already created
     if (!wsManager.current) {
-      wsManager.current = new WebSocketManager();
+      wsManager.current = new WebSocketManager(config as WebSocketConfig);
     }
-    
-    // Configure and connect
-    wsManager.current.configure(config as WebSocketConfig);
-    wsManager.current.connect();
 
-    // Subscribe to data
     const unsubscribe = wsManager.current.subscribe({
-      key: (config as WebSocketConfig).channel || 'default',
+      key: (config as any).channel || 'default',
       callback: (wsData) => {
         const transformedData = transformer ? transformer(wsData as T) : (wsData as R);
         setData(transformedData);
@@ -102,7 +92,7 @@ export function useDataSource<T = any, R = any>({
       if (refreshInterval) {
         refreshTimeout.current = setInterval(fetchData, refreshInterval);
       }
-      
+
       return () => {
         if (refreshTimeout.current) {
           clearInterval(refreshTimeout.current);
@@ -112,7 +102,7 @@ export function useDataSource<T = any, R = any>({
       const unsubscribe = setupWebSocket();
       return () => {
         unsubscribe?.();
-        wsManager.current?.close();
+        wsManager.current?.disconnect();
       };
     }
   }, [type, fetchData, refreshInterval, setupWebSocket]);

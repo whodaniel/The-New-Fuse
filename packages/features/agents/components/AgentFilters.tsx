@@ -1,65 +1,115 @@
-import React from "react";
-Object.defineProperty(exports, "__esModule", { value: true }): value }));
-    };
-    const handleCapabilityChange: value }));
-    };
-    const handleModelChange: value }));
-    };
-    import clearFilters from 'react';
-import Select_1 from '../ui/Select/Select';
-import Button_1 from '../ui/Button/Button';
-import lucide_react_1 from 'lucide-react';
-const AgentFilters = ( { filters, onFilterChange, availableCapabilities, availableModels, }) => {
-    const handleStatusChange = (value) => {
-        onFilterChange(Object.assign(Object.assign({}, filters), { status (value) => {
-        onFilterChange(Object.assign(Object.assign({}, filters), { capability (value) => {
-        onFilterChange(Object.assign(Object.assign({}, filters), { model () => {
-        onFilterChange({});
-    };
-    const hasActiveFilters = Object.values(filters).some(Boolean);
-    return (<div className="flex flex-wrap items-center gap-4">
-      <Select_1.Select value={filters.status} onValueChange={handleStatusChange}>
-        <Select_1.SelectTrigger className="w-[180px]">
-          <Select_1.SelectValue placeholder="Filter by status"/>
-        </Select_1.SelectTrigger>
-        <Select_1.SelectContent>
-          <Select_1.SelectItem value="active">Active</Select_1.SelectItem>
-          <Select_1.SelectItem value="inactive">Inactive</Select_1.SelectItem>
-          <Select_1.SelectItem value="error">Error</Select_1.SelectItem>
-        </Select_1.SelectContent>
-      </Select_1.Select>
+'use client';
 
-      <Select_1.Select value={filters.capability} onValueChange={handleCapabilityChange}>
-        <Select_1.SelectTrigger className="w-[180px]">
-          <Select_1.SelectValue placeholder="Filter by capability"/>
-        </Select_1.SelectTrigger>
-        <Select_1.SelectContent>
-          {availableCapabilities.map((capability) => (<Select_1.SelectItem key={capability} value={capability}>
-              {capability}
-            </Select_1.SelectItem>))}
-        </Select_1.SelectContent>
-      </Select_1.Select>
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { SlidersHorizontal, X } from 'lucide-react';
+import React from 'react';
+import { AgentFilters as AgentFiltersType, AgentStatus } from './types';
 
-      <Select_1.Select value={filters.model} onValueChange={handleModelChange}>
-        <Select_1.SelectTrigger className="w-[180px]">
-          <Select_1.SelectValue placeholder="Filter by model"/>
-        </Select_1.SelectTrigger>
-        <Select_1.SelectContent>
-          {availableModels.map((model) => (<Select_1.SelectItem key={model} value={model}>
-              {model}
-            </Select_1.SelectItem>))}
-        </Select_1.SelectContent>
-      </Select_1.Select>
+interface AgentFiltersProps {
+  filters: AgentFiltersType;
+  onFilterChange: (filters: AgentFiltersType) => void;
+  availableCapabilities?: string[];
+  availableModels?: string[];
+}
 
-      {hasActiveFilters && (<Button_1.Button variant="ghost" size="sm" onClick={clearFilters} icon={<lucide_react_1.X className="h-4 w-4"/>}>
+export const AgentFilters: React.FC<AgentFiltersProps> = ({
+  filters,
+  onFilterChange,
+  availableCapabilities = [],
+  availableModels = [],
+}) => {
+  const handleStatusChange = (value: AgentStatus | 'all') => {
+    onFilterChange({
+      ...filters,
+      status: value === 'all' ? undefined : value,
+    });
+  };
+
+  const handleCapabilityChange = (value: string) => {
+    onFilterChange({
+      ...filters,
+      capability: value === 'all' ? undefined : value,
+    });
+  };
+
+  const handleModelChange = (value: string) => {
+    onFilterChange({
+      ...filters,
+      model: value === 'all' ? undefined : value,
+    });
+  };
+
+  const clearFilters = () => {
+    onFilterChange({});
+  };
+
+  const hasActiveFilters = Object.values(filters).some(Boolean);
+
+  return (
+    <div className="flex flex-wrap items-center gap-4">
+      <Select value={filters.status || 'all'} onValueChange={handleStatusChange}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Filter by status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Statuses</SelectItem>
+          <SelectItem value="active">Active</SelectItem>
+          <SelectItem value="inactive">Inactive</SelectItem>
+          <SelectItem value="idle">Idle</SelectItem>
+          <SelectItem value="error">Error</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {availableCapabilities.length > 0 && (
+        <Select value={filters.capability || 'all'} onValueChange={handleCapabilityChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by capability" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Capabilities</SelectItem>
+            {availableCapabilities.map((capability) => (
+              <SelectItem key={capability} value={capability}>
+                {capability}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+      {availableModels.length > 0 && (
+        <Select value={filters.model || 'all'} onValueChange={handleModelChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by model" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Models</SelectItem>
+            {availableModels.map((model) => (
+              <SelectItem key={model} value={model}>
+                {model}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+      {hasActiveFilters && (
+        <Button variant="ghost" size="sm" onClick={clearFilters}>
+          <X className="h-4 w-4 mr-2" />
           Clear Filters
-        </Button_1.Button>)}
+        </Button>
+      )}
 
-      <Button_1.Button variant="outline" size="sm" icon={<lucide_react_1.SlidersHorizontal className="h-4 w-4"/>}>
+      <Button variant="outline" size="sm">
+        <SlidersHorizontal className="h-4 w-4 mr-2" />
         More Filters
-      </Button_1.Button>
-    </div>);
+      </Button>
+    </div>
+  );
 };
-exports.AgentFilters = AgentFilters;
-export {};
-//# sourceMappingURL=AgentFilters.js.map

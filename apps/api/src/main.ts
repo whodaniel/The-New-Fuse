@@ -92,8 +92,8 @@ async function bootstrap(): Promise<void> {
         console.log('📚 Generated OpenAPI specification from code decorators');
       }
 
-      // Setup Swagger UI
-      SwaggerModule.setup('api-docs', app, document, {
+      // Setup Swagger UI at 'docs' path (results in /api/docs with global prefix)
+      SwaggerModule.setup('docs', app, document, {
         swaggerOptions: {
           persistAuthorization: true,
           tagsSorter: 'alpha',
@@ -107,7 +107,7 @@ async function bootstrap(): Promise<void> {
         customCss: '.swagger-ui .topbar { display: none }',
       });
 
-      console.log('📖 API Documentation available at: http://localhost:3001/api-docs');
+      console.log('📖 API Documentation available at: http://localhost:3001/api/docs');
     } catch (error) {
       console.error('⚠️  Failed to setup API documentation:', error);
     }

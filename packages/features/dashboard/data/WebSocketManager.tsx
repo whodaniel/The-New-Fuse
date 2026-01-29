@@ -1,9 +1,26 @@
-import { WebSocketConfig, SubscriptionConfig } from './types';
+export interface WebSocketConfig {
+  url: string;
+  protocols?: string[];
+  reconnect?: boolean;
+  reconnectAttempts?: number;
+  reconnectDelay?: number;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onError?: (error: Error) => void;
+}
+
+export interface SubscriptionConfig {
+  key: string;
+  callback: (data: any) => void;
+  filter?: (data: any) => boolean;
+  errorCallback?: (error: Error) => void;
+}
 
 export class WebSocketManager {
   private ws: WebSocket | null = null;
   private config: WebSocketConfig;
-  private subscriptions: Map<string, SubscriptionConfig> = new Map(): (NodeJS as any).Timeout | null = null;
+  private subscriptions: Map<string, SubscriptionConfig> = new Map();
+  private reconnectTimer: any = null;
   private reconnectAttempt = 0;
 
   constructor(config: WebSocketConfig) {
@@ -13,76 +30,96 @@ export class WebSocketManager {
       reconnectDelay: 1000,
       ...config,
     };
-    this.connect(): void {
-    try {
-      this.ws = new WebSocket((this as any).(config as any).url, (this as any).(config as any).protocols);
+    this.connect();
+  }
 
-      (this as any).(ws as any).onopen = () => {
+  private connect(): void {
+    try {
+      this.ws = new WebSocket(this.config.url, this.config.protocols);
+
+      this.ws.onopen = () => {
         this.reconnectAttempt = 0;
-        this.notifySubscribers({ type: connection', status: connected' });
+        this.config.onOpen?.();
+        this.notifySubscribers({ type: 'connection', status: 'connected' });
       };
 
-      (this as any).(ws as any).onmessage = (event) => {
+      this.ws.onmessage = (event) => {
         try {
-          const data: unknown){
-          (console as any).error('Failed to parse WebSocket message:', error);
+          const data = JSON.parse(event.data);
+          this.notifySubscribers(data);
+        } catch (error) {
+          console.error('Failed to parse WebSocket message:', error);
         }
       };
 
-      (this as any).(ws as any).onerror  = (JSON as any).parse((event as any).data);
-          this.notifySubscribers(data);
-        } catch (error (error) => {
-        (this as any).(config as any).onError?.(error as Error);
-        this.notifySubscribers({ type: error', error });
+      this.ws.onerror = (event) => {
+        const error = new Error('WebSocket error');
+        this.config.onError?.(error);
+        this.notifySubscribers({ type: 'error', error });
       };
 
-      (this as any).(ws as any).onclose = () => {
-        (this as any).(config as any).onClose?.();
-        this.notifySubscribers({ type: connection', status: disconnected' })): void {
-      (console as any).error('WebSocket connection error:', error): void {
+      this.ws.onclose = () => {
+        this.config.onClose?.();
+        this.notifySubscribers({ type: 'connection', status: 'disconnected' });
+        this.attemptReconnect();
+      };
+    } catch (error) {
+      console.error('WebSocket connection error:', error);
+      this.attemptReconnect();
+    }
+  }
+
+  private attemptReconnect(): void {
     if (
-      !(this as any).(config as any).reconnect ||
-      ((this as any).(config as any).reconnectAttempts &&
-        this.reconnectAttempt >= (this as any).(config as any).reconnectAttempts)
+      !this.config.reconnect ||
+      (this.config.reconnectAttempts && this.reconnectAttempt >= this.config.reconnectAttempts)
     ) {
       return;
     }
 
-    if((this as any)): void {
+    if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
     }
 
     this.reconnectTimer = setTimeout(() => {
       this.reconnectAttempt++;
-      this.connect(): SubscriptionConfig): () => void {
-    (this as any).(subscriptions as any).set((config as any).key, config);
+      this.connect();
+    }, this.config.reconnectDelay);
+  }
 
+  public subscribe(config: SubscriptionConfig): () => void {
+    this.subscriptions.set(config.key, config);
     return () => {
-      (this as any).(subscriptions as any).delete((config as any): unknown): void {
+      this.subscriptions.delete(config.key);
+    };
+  }
+
+  private notifySubscribers(data: any): void {
     this.subscriptions.forEach((subscription) => {
       try {
         if (!subscription.filter || subscription.filter(data)) {
-          (subscription as any).callback(data)): void {
-        (subscription as any).errorCallback?.(error as Error);
+          subscription.callback(data);
+        }
+      } catch (error) {
+        subscription.errorCallback?.(error as Error);
       }
     });
   }
 
-  send(data: unknown): void {
-    if((this as any)): void {
-      (this as any).(ws as any).send((JSON as any).stringify(data));
+  public send(data: any): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(data));
     } else {
-      throw new Error('WebSocket is not connected'): void {
-    if((this as any)): void {
-      clearTimeout((this as any):  {
-    connected: boolean;
-    reconnecting: boolean;
-    reconnectAttempt: number;
-  } {
-    return {
-      connected: this.ws?.readyState === (WebSocket as any).OPEN,
-      reconnecting: !!this.reconnectTimer,
-      reconnectAttempt: this.reconnectAttempt,
-    };
+      throw new Error('WebSocket is not connected');
+    }
+  }
+
+  public disconnect(): void {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+    }
+    if (this.ws) {
+      this.ws.close();
+    }
   }
 }

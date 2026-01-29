@@ -1,13 +1,7 @@
 export interface InsightConfig {
-  type:
-    | 'trend'
-    | 'anomaly'
-    | 'correlation'
-    | 'pattern'
-    | 'forecast'
-    | 'recommendation';
+  type: 'trend' | 'anomaly' | 'correlation' | 'pattern' | 'forecast' | 'recommendation';
   metric: string;
-  timeframe: hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
+  timeframe: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
   threshold?: number;
   dimensions?: string[];
 }
@@ -17,7 +11,7 @@ export interface Insight {
   type: InsightConfig['type'];
   title: string;
   description: string;
-  importance: low' | 'medium' | 'high' | 'critical';
+  importance: 'low' | 'medium' | 'high' | 'critical';
   confidence: number;
   timestamp: Date;
   metric: string;
@@ -26,7 +20,7 @@ export interface Insight {
   change?: {
     absolute: number;
     percentage: number;
-    direction: up' | 'down' | 'stable';
+    direction: 'up' | 'down' | 'stable';
   };
   context?: {
     timeframe: string;
@@ -34,7 +28,7 @@ export interface Insight {
     factors: string[];
   };
   visualization?: {
-    type: line' | 'bar' | 'scatter' | 'heatmap';
+    type: 'line' | 'bar' | 'scatter' | 'heatmap';
     data: unknown[];
   };
   actions?: Array<{
@@ -48,15 +42,10 @@ export interface Insight {
 
 export interface OptimizationSuggestion {
   id: string;
-  type:
-    | 'performance'
-    | 'usability'
-    | 'accessibility'
-    | 'dataQuality'
-    | 'security';
+  type: 'performance' | 'usability' | 'accessibility' | 'dataQuality' | 'security';
   title: string;
   description: string;
-  priority: low' | 'medium' | 'high';
+  priority: 'low' | 'medium' | 'high';
   impact: {
     metrics: string[];
     estimate: {
@@ -66,12 +55,12 @@ export interface OptimizationSuggestion {
     };
   };
   implementation: {
-    complexity: easy' | 'medium' | 'hard';
+    complexity: 'easy' | 'medium' | 'hard';
     timeEstimate: string;
     steps: string[];
     resources?: string[];
   };
-  status: pending' | 'in_progress' | 'completed' | 'dismissed';
+  status: 'pending' | 'in_progress' | 'completed' | 'dismissed';
 }
 
 export interface SearchConfig {
@@ -88,7 +77,7 @@ export interface SearchConfig {
   };
   sort?: {
     field: string;
-    order: asc' | 'desc';
+    order: 'asc' | 'desc';
   };
   page?: number;
   pageSize?: number;
@@ -108,7 +97,7 @@ export interface SearchResult {
 }
 
 export interface SearchSuggestion {
-  type: query' | 'filter' | 'category' | 'tag';
+  type: 'query' | 'filter' | 'category' | 'tag';
   value: string;
   label: string;
   count: number;

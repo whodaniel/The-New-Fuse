@@ -1,12 +1,5 @@
-import {
-  Version,
-  VersionMetadata,
-  VersionDiff,
-  Branch,
-  VersionControlState,
-} from './types';
 import { DashboardState } from '../collaboration/types';
-import deepDiff from 'deep-diff';
+import { Version, VersionControlState, VersionMetadata } from './types';
 
 export class VersionManager {
   private state: VersionControlState;
@@ -15,152 +8,69 @@ export class VersionManager {
 
   constructor(
     initialState: VersionControlState,
-    storage: Storage = localStorage,
+    storage: Storage = typeof localStorage !== 'undefined' ? localStorage : ({} as any),
     storageKey = 'dashboard_version_control'
   ) {
     this.state = initialState;
     this.storage = storage;
     this.storageKey = storageKey;
-    this.loadState(): DashboardState,
+    this.loadState();
+  }
+
+  public createVersion(
+    dashboardState: DashboardState,
     metadata: Omit<VersionMetadata, 'id' | 'number'>
   ): string {
-    const parentVersion: Version  = (this as any).(state as any).versions[(this as any).(state as any).currentVersion];
-    const versionNumber: {
-        id: (crypto as any).randomUUID(): versionNumber,
+    const id = Math.random().toString(36).substr(2, 9);
+    const versionNumber = Object.keys(this.state.versions).length + 1;
+
+    const version: Version = {
+      id,
+      metadata: {
         ...metadata,
+        id,
+        number: versionNumber,
       },
       state: dashboardState,
-      diff: this.calculateDiff(parentVersion?.state, dashboardState),
-      parent: parentVersion?.(metadata as any).id,
+      changes: [],
       children: [],
     };
 
-    // Update parent's children
-    if (parentVersion): void {
-      (parentVersion as any).children.push((version as any): string): DashboardState {
-    const version   = (Object as any).keys((this as any).(state as any).versions).length + 1;
+    this.state.versions[id] = version;
+    this.state.currentVersion = id;
+    this.saveState();
+    return id;
+  }
 
-    const version {
-      metadata(this as any)): void {
-      throw new Error(`Version ${versionId} not found`): Omit<Branch, 'id' | 'createdAt'>): string {
-    const branchId: Branch  = (crypto as any).randomUUID();
-    const newBranch {
-      id: branchId,
-      createdAt: new Date(): string): DashboardState {
-    const branch: unknown){
-      throw new Error(`Branch ${branchId} not found`): string, targetBranchId: string): DashboardState {
-    const sourceBranch: unknown){
-      throw new Error('Source or target branch not found'): new Date(),
-      author: (sourceVersion as any).(metadata as any).author,
-      message: `Merge branch $ {(sourceBranch as any).name} into ${(targetBranch as any).name}`,
-    });
+  public getVersionHistory(): Version[] {
+    const history: Version[] = [];
+    let currentId = this.state.currentVersion;
 
-    // Update target branch head(targetBranch as any): VersionDiff[]): void {
-    this.state.(stagingArea as any).changes  = this.mergeDashboardStates(
-      (sourceVersion as any).state,
-      (targetVersion as any).state
-    );
-
-    // Create new version for the merge
-    const mergeVersion = this.createVersion(mergedState, {
-      createdAt mergeVersion;
-    this.saveState(): string): void {
-    this.state.(stagingArea as any).message = message;
-    this.saveState():  { id: string; name: string }): string {
-    if((this as any)): void {
-      throw new Error('No changes to commit'): new Date(),
-      author,
-      message: this.state.(stagingArea as any).message,
-    });
-
-    // Clear staging area
-    (this as any).(state as any).stagingArea  = (this as any).(state as any).versions[(this as any).(state as any).currentVersion];
-    const newState: [],
-      message: ',
-    };
-    this.saveState(): string): Version[] {
-    const branch: (this as any).(state as any).branches[(this as any).(state as any).currentBranch];
-
-    if (!branch: unknown){
-      throw new Error('Branch not found'): Version[]   = this.applyChanges(
-      (currentVersion as any).state,
-      this.state.(stagingArea as any).changes
-    );
-
-    const versionId = this.createVersion(newState, {
-      createdAt {
-      changes branchId
-      ? (this as any).(state as any).branches[branchId]
-       [];
-    let currentVersion = (this as any).(state as any).versions[(branch as any).head];
-
-    while (currentVersion): void {
-      history.push(currentVersion): null;
+    while (currentId && this.state.versions[currentId]) {
+      const v = this.state.versions[currentId];
+      history.push(v);
+      currentId = v.parent || '';
     }
 
     return history;
   }
 
-  // Helper Methods
-  private calculateDiff(before: unknown, after: unknown): VersionDiff[] {
-    const differences: unknown)  = (deepDiff as any).diff(before, after) || [];
-    return differences.map((diff> ({
-      type: this.getDiffType((diff as any): (diff as any).path,
-      before: (diff as any).lhs,
-      after: (diff as any).rhs,
-    }));
-  }
-
-  private getDiffType(kind: string): added' | 'removed' | 'modified' {
-    switch (kind: unknown){
-      case 'N':
-        return 'added';
-      case 'D':
-        return 'removed';
-      default:
-        return 'modified';
+  private loadState(): void {
+    if (this.storage && typeof this.storage.getItem === 'function') {
+      const saved = this.storage.getItem(this.storageKey);
+      if (saved) {
+        try {
+          this.state = JSON.parse(saved);
+        } catch (e) {
+          console.error('Failed to parse version state', e);
+        }
+      }
     }
   }
 
-  private applyChanges(state: unknown, changes: VersionDiff[]): unknown {
-    const newState: unknown){
-        current  = { ...state };
-    changes.forEach((change) => {
-      let current = newState;
-      const lastIndex): void {
-        case 'added':
-        case 'modified':
-          current[(change as any).path[lastIndex]]  = (change as any).path.length - 1;
-
-      // Navigate to the parent object
-      for(let i = 0; i < lastIndex; i++ current[(change as any): delete current[(change as any).path[lastIndex]];
-          break;
-      }
-    });
-
-    return newState;
-  }
-
-  private mergeDashboardStates(
-    source: DashboardState,
-    target: DashboardState
-  ): DashboardState {
-    // Implement your merge strategy here
-    // This is a simple example that merges widgets and layouts
-    return {
-      ...target,
-      widgets: {
-        ...(target as any).widgets,
-        ...(source as any).widgets,
-      },
-      layout: {
-        ...(target as any).layout,
-        widgets: [
-          ...(target as any).(layout as any).widgets,
-          ...(source as any).(layout as any).widgets.filter(
-            (w): void {
-    const savedState: unknown){
-      this.state  = (this as any).(storage as any).getItem((this as any): void {
-    (this as any).(storage as any).setItem(this.storageKey, (JSON as any).stringify(this.state));
+  private saveState(): void {
+    if (this.storage && typeof this.storage.setItem === 'function') {
+      this.storage.setItem(this.storageKey, JSON.stringify(this.state));
+    }
   }
 }

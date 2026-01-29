@@ -1,10 +1,10 @@
-import { DashboardWidget, DashboardLayout } from '../types';
+import { DashboardLayout, DashboardWidget } from '../types';
 
 export interface DashboardTemplate {
   id: string;
   name: string;
   description: string;
-  category: analytics' | 'monitoring' | 'development' | 'custom';
+  category: 'analytics' | 'monitoring' | 'development' | 'custom';
   thumbnail?: string;
   layout: DashboardLayout;
   widgets: DashboardWidget[];
@@ -21,40 +21,7 @@ export interface DashboardPreset {
   id: string;
   name: string;
   description: string;
-  layout: DashboardLayout;
+  templateId: string;
+  config: Record<string, unknown>;
   isDefault?: boolean;
-}
-
-export interface DataSourceConfig {
-  id: string;
-  type: api' | 'graphql' | 'websocket' | 'custom';
-  name: string;
-  description?: string;
-  config: {
-    url?: string;
-    method?: string;
-    headers?: Record<string, string>;
-    queryParams?: Record<string, string>;
-    body?: unknown;
-    interval?: number;
-    transform?: string; // JavaScript function as string for data transformation
-  };
-  credentials?: {
-    type: apiKey' | 'oauth' | 'basic';
-    [key: string]: unknown;
-  };
-}
-
-export interface WidgetDataSource {
-  sourceId: string;
-  mapping: {
-    path: string; // JSONPath or GraphQL path
-    transform?: string; // JavaScript function as string
-  };
-  refreshInterval?: number;
-  errorHandling?: {
-    retry: boolean;
-    maxRetries?: number;
-    fallbackValue?: unknown;
-  };
 }

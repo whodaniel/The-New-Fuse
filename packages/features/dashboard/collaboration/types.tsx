@@ -4,7 +4,7 @@ export interface User {
   avatar?: string;
   email: string;
   presence?: {
-    status: online' | 'away' | 'offline';
+    status: 'online' | 'away' | 'offline';
     lastSeen?: Date;
   };
 }
@@ -17,7 +17,7 @@ export interface Comment {
   updatedAt?: Date;
   attachments?: Array<{
     id: string;
-    type: image' | 'file';
+    type: 'image' | 'file';
     url: string;
     name: string;
     size: number;
@@ -74,21 +74,27 @@ export interface CollaborationState {
   comments: Comment[];
   annotations: Annotation[];
   activity: ActivityEvent[];
-  cursors: Record<string, {
-    position: { x: number; y: number };
-    timestamp: Date;
-  }>;
+  cursors: Record<
+    string,
+    {
+      position: { x: number; y: number };
+      timestamp: Date;
+    }
+  >;
 }
 
 export interface DashboardState {
-  widgets: Record<string, {
-    id: string;
-    type: string;
-    position: { x: number; y: number };
-    size: { width: number; height: number };
-    data: unknown;
-    settings?: unknown;
-  }>;
+  widgets: Record<
+    string,
+    {
+      id: string;
+      type: string;
+      position: { x: number; y: number };
+      size: { width: number; height: number };
+      data: unknown;
+      settings?: unknown;
+    }
+  >;
   layout: {
     id: string;
     name: string;

@@ -225,6 +225,17 @@ export class AgentService {
     return agents.map((agent: any) => this.mapAgentToResponse(agent));
   }
 
+  async getAgentRegistry(): Promise<AgentResponseDto[]> {
+    try {
+      // Fetch all agents to create a registry/catalog view
+      const agents = await this.agentRepository.findAll('1000');
+      return agents.map((agent: any) => this.mapAgentToResponse(agent));
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Failed to fetch agent registry: ${errorMessage}`);
+    }
+  }
+
   async getAgentStats(id: string): Promise<any> {
     try {
       const agent = await this.agentRepository.findById(id);

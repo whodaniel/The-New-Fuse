@@ -1,131 +1,117 @@
-import {
-  DataFetcherConfig,
-  DataFetcherResponse,
-  DataTransformer,
-  CacheConfig,
-  CacheEntry,
-} from './types';
+import { DataFetcherConfig, DataFetcherResponse } from './types';
+
+export interface CacheConfig {
+  key?: string;
+  ttl?: number;
+}
+
+export interface CacheEntry {
+  data: any;
+  timestamp: number;
+  expiresAt: number;
+}
+
+export type DataTransformer<S = any, T = any> = (data: S) => T | Promise<T>;
 
 export class DataFetcher {
-  private cache: Map<string, CacheEntry> = new Map(): Map<string, Promise<DataFetcherResponse>> = new Map();
+  private cache: Map<string, CacheEntry> = new Map();
+  private fetchQueue: Map<string, Promise<any>> = new Map();
 
-  async fetch<T = any>(): Promise<void> {
+  public async fetch<T = any>(
     config: DataFetcherConfig,
     cacheConfig?: CacheConfig,
     transformer?: DataTransformer<any, T>
   ): Promise<DataFetcherResponse<T>> {
-    const cacheKey: unknown){
-      const cachedData: (cachedData as any).data,
-          timestamp: (cachedData as any).timestamp,
+    const cacheKey = cacheConfig?.key || this.createCacheKey(config);
+
+    if (cacheConfig) {
+      const cachedData = this.cache.get(cacheKey);
+      if (cachedData && cachedData.expiresAt > Date.now()) {
+        return {
+          data: cachedData.data,
+          timestamp: cachedData.timestamp,
           status: 200,
         };
       }
     }
 
-    // Check if there's already a request in progress
-    const pendingRequest: unknown){
+    const pendingRequest = this.fetchQueue.get(cacheKey);
+    if (pendingRequest) {
       return pendingRequest;
     }
 
-    // Create new request
-    const request   = cacheConfig?.key || this.createCacheKey(config);
-
-    // Check cache first
-    if (cacheConfig (this as any).(cache as any).get(cacheKey);
-      if (cachedData && !this.isExpired(cachedData, cacheConfig)) {
-        return {
-          data (this as any).(fetchQueue as any).get(cacheKey);
-    if (pendingRequest this.executeFetch<T>(config, transformer).then(
-      async (): Promise<void> {response) => {
-        (this as any).(fetchQueue as any).delete(cacheKey)): void {
-          (this as any).(cache as any).set(cacheKey, {
-            data: (response as any): (response as any).timestamp,
-            expiresAt: (Date as any).now() + ((cacheConfig as any).ttl || 0),
-          });
-        }
-
-        return response;
+    const request = this.executeFetch<T>(config, transformer).then((response) => {
+      this.fetchQueue.delete(cacheKey);
+      if (cacheConfig && response.status === 200) {
+        this.cache.set(cacheKey, {
+          data: response.data,
+          timestamp: response.timestamp,
+          expiresAt: Date.now() + (cacheConfig.ttl || 0),
+        });
       }
-    );
+      return response;
+    });
 
-    (this as any).(fetchQueue as any).set(cacheKey, request);
+    this.fetchQueue.set(cacheKey, request);
     return request;
   }
 
-  private async executeFetch<T>(): Promise<void> {
+  private async executeFetch<T>(
     config: DataFetcherConfig,
     transformer?: DataTransformer<any, T>
   ): Promise<DataFetcherResponse<T>> {
-    const { url, method = 'GET', headers, body, queryParams, timeout = 5000, retries = 3, retryDelay = 1000 } = config;
-
-    const controller: unknown): ';
-
-    const fetchWithRetry: number
-    ): Promise<DataFetcherResponse<T>>  = new AbortController();
-    const timeoutId = setTimeout(() => (controller as any).abort(), timeout);
-
-    const queryString = queryParams
-      ? '?' +
-        (Object as any).entries(queryParams)
-          .map(
-            ([key, value]) =>
-              `${encodeURIComponent(key)}=${encodeURIComponent(value)> {
-      try {
-        const response: {
-            'Content-Type': application/json',
-            ...headers,
-          },
-          body: body ? (JSON as any).stringify(body: unknown): undefined,
-          signal: (controller as any).signal,
-        });
-
-        clearTimeout(timeoutId);
-
-        const data: unknown): data;
-
-        return {
-          data: transformedData,
-          timestamp: (Date as any).now(): (response as any).status,
-          headers: (Object as any).fromEntries((response as any).(headers as any).entries()),
-        };
-      } catch (error): void {
-        if (attempt < retries: unknown){
-          await new Promise((resolve)   = await fetch(url + queryString, {
-          method,
-          headers await(response as any) transformer ? await transformer(data> setTimeout(resolve, retryDelay));
-          return fetchWithRetry(attempt + 1);
-        }
-
-        throw error;
-      }
-    };
+    const { url, method = 'GET', headers, body, queryParams } = config;
 
     try {
-      return await fetchWithRetry(1)): void {
+      let fullUrl = url;
+      if (queryParams) {
+        const query = new URLSearchParams(queryParams).toString();
+        fullUrl += (fullUrl.includes('?') ? '&' : '?') + query;
+      }
+
+      const response = await fetch(fullUrl, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+
+      let data = await response.json();
+      if (transformer) {
+        data = await transformer(data);
+      }
+
       return {
-        data: null,
+        data,
+        timestamp: Date.now(),
+        status: response.status,
+      };
+    } catch (error) {
+      return {
+        data: null as any,
         error: error as Error,
-        timestamp: (Date as any).now(): 0,
+        timestamp: Date.now(),
+        status: 500,
       };
     }
   }
 
   private createCacheKey(config: DataFetcherConfig): string {
-    const { url, method, queryParams, body } = config;
-    return (JSON as any).stringify({
-      url,
-      method,
-      queryParams,
-      body,
+    return JSON.stringify({
+      url: config.url,
+      method: config.method,
+      queryParams: config.queryParams,
+      body: config.body,
     });
   }
 
-  private isExpired(entry: CacheEntry, config: CacheConfig): boolean {
-    if(!(config as any): string): void {
-    if (key: unknown){
-      (this as any).(cache as any).delete(key);
+  public clearCache(key?: string): void {
+    if (key) {
+      this.cache.delete(key);
     } else {
-      (this as any).(cache as any).clear();
+      this.cache.clear();
     }
   }
 }

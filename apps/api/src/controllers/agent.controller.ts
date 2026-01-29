@@ -305,6 +305,59 @@ export class AgentController {
   }
 
   /**
+   * Get agent registry
+   *
+   * Returns a public registry of all agents in the system with their
+   * basic information and capabilities. This endpoint provides a
+   * catalog-style view suitable for agent discovery and browsing.
+   *
+   * @returns Promise containing agent registry entries
+   * @returns[].id - Agent identifier
+   * @returns[].name - Agent name
+   * @returns[].type - Agent type
+   * @returns[].description - Agent description
+   * @returns[].status - Current agent status
+   * @returns[].capabilities - List of agent capabilities
+   * @returns[].createdAt - Creation timestamp
+   *
+   * @throws InternalServerErrorException - When unable to fetch registry
+   *
+   * @api
+   * GET /agents/registry
+   * @requiresAuth - Bearer token in Authorization header
+   *
+   * @example
+   * const registry = await agentController.getAgentRegistry();
+   *
+   * @example
+   * // Successful response
+   * [
+   *   {
+   *     "id": "agent123",
+   *     "name": "Customer Support Bot",
+   *     "type": "chat",
+   *     "description": "Handles customer inquiries",
+   *     "status": "active",
+   *     "capabilities": ["messaging", "ticketing"],
+   *     "createdAt": "2025-11-05T02:17:55.000Z"
+   *   }
+   * ]
+   */
+  @Get('registry')
+  @ApiOperation({ summary: 'Get agent registry' })
+  @ApiResponse({ status: HttpStatus.OK, type: [AgentResponseDto] })
+  async getAgentRegistry(): Promise<AgentResponseDto[]> {
+    try {
+      return await this.agentService.getAgentRegistry();
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message || 'Failed to fetch agent registry',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  /**
    * Get agent count by type
    *
    * Returns a breakdown of agent counts grouped by their type. This is useful

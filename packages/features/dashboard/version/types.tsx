@@ -1,3 +1,5 @@
+import { DashboardState } from '../collaboration/types';
+
 export interface VersionMetadata {
   id: string;
   number: number;
@@ -12,33 +14,27 @@ export interface VersionMetadata {
 }
 
 export interface VersionDiff {
-  type: added' | 'removed' | 'modified';
+  type: 'added' | 'removed' | 'modified';
   path: string[];
   before?: unknown;
   after?: unknown;
 }
 
 export interface Version {
+  id: string;
   metadata: VersionMetadata;
-  state: unknown;
-  diff: VersionDiff[];
-  parent?: string; // Parent version ID
-  children: string[]; // Child version IDs
+  state: DashboardState;
+  changes: VersionDiff[];
+  parent?: string;
+  children: string[];
 }
 
 export interface Branch {
   id: string;
   name: string;
-  description?: string;
+  head: string;
+  base: string;
   createdAt: Date;
-  author: {
-    id: string;
-    name: string;
-  };
-  head: string; // Version ID
-  base?: string; // Base branch ID
-  isDefault?: boolean;
-  protected?: boolean;
 }
 
 export interface VersionControlState {
