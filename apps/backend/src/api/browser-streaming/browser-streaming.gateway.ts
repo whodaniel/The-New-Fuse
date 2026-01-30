@@ -14,6 +14,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
+  transports: ['websocket', 'polling'], // Allow both transports
   cors: {
     origin:
       process.env.NODE_ENV === 'production'
@@ -35,6 +36,12 @@ export class BrowserStreamingGateway implements OnGatewayConnection, OnGatewayDi
 
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
+    try {
+        const origin = client.handshake.headers.origin;
+        this.logger.debug(`Connection origin: ${origin}`);
+    } catch (e) {
+        // ignore
+    }
     client.emit('connected', { message: 'Connected to browser streaming' });
   }
 

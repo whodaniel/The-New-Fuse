@@ -38,10 +38,12 @@ export const BrowserStreamCanvas: React.FC<BrowserStreamCanvasProps> = ({
 
   useEffect(() => {
     console.log(`[BrowserStream] Initializing for session: ${sessionId}`);
+    console.log(`[BrowserStream] Connecting to WebSocket: ${BACKEND_URL}`);
 
     // Create Socket.IO connection
+    // Removed explicit transports to allow default negotiation (polling -> websocket)
+    // This improves connectivity in restricted environments
     const socket = io(BACKEND_URL, {
-      transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
     });
@@ -169,6 +171,9 @@ export const BrowserStreamCanvas: React.FC<BrowserStreamCanvasProps> = ({
             {status === 'error'
               ? 'Unable to connect to browser session. Check backend connection.'
               : 'Connection to browser session lost. Attempting to reconnect...'}
+          </div>
+          <div className="text-xs text-gray-600 mt-2 font-mono">
+            {BACKEND_URL}
           </div>
         </div>
       )}
