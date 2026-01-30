@@ -29,6 +29,7 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware'
 import { AdminModule } from './modules/admin/admin.module';
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
+import { MetricsModule } from './metrics/metrics.module';
 
 // Create a comprehensive module to support all frontend routing expectations
 // TNF (The New Fuse) is the Master Agent that orchestrates all other agents
@@ -74,6 +75,7 @@ import { UsersModule } from './users/users.module';
     WorkflowTemplatesModule,
     FilesModule,
     SystemMetricsModule,
+    MetricsModule,
     CacheModule,
     MCPModule, // MCP Integration for agent communication
     OrchestratorModule, // TNF Orchestration - Heartbeat, Coordination, Handoffs
