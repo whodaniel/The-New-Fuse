@@ -2,18 +2,13 @@ import {
   Activity,
   BarChart3,
   Bot,
-  BrainCircuit,
   Briefcase,
   ChevronLeft,
   ChevronRight,
   Cpu,
   Eye,
-  Globe,
-  Home,
   LayoutDashboard,
-  LayoutGrid,
   Library,
-  Lightbulb,
   Lock,
   LogOut,
   MessageSquare,
@@ -42,24 +37,43 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   const { pathname } = useLocation();
   const { logout } = useAuth();
 
-  const navigation = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-    { name: 'AI Portal', href: '/ai-portal', icon: BrainCircuit },
-    { name: 'AI Agents', href: '/agents', icon: Bot },
-    { name: 'Multi-chat', href: '/multi-agent-chat', icon: MessageSquare },
-    { name: 'Live View', href: '/live-view', icon: Activity },
-    { name: 'AI Command', href: '/ai-command-center', icon: Cpu },
-    { name: 'Observatory', href: '/observatory', icon: Eye },
-    { name: 'Workflows', href: '/workflows', icon: Workflow },
-    { name: 'Tasks', href: '/tasks', icon: Briefcase },
-    { name: 'Workspace', href: '/workspace/overview', icon: LayoutGrid },
-    { name: 'Resources', href: '/resources', icon: Library },
-    { name: 'Hub', href: '/hub', icon: Globe },
-    { name: 'Suggestions', href: '/suggestions', icon: Lightbulb },
-    { name: 'Admin', href: '/admin', icon: Lock },
-    { name: 'Settings', href: '/settings', icon: Settings },
+  const navigationGroups = [
+    {
+      title: 'Overview',
+      items: [
+        { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+      ],
+    },
+    {
+      title: 'Intelligence',
+      items: [
+        { name: 'Agents', href: '/agents', icon: Bot },
+        { name: 'Chat', href: '/chat', icon: MessageSquare },
+        { name: 'Observatory', href: '/observatory', icon: Eye },
+      ],
+    },
+    {
+      title: 'Automation',
+      items: [
+        { name: 'Workflows', href: '/workflows', icon: Workflow },
+        { name: 'Tasks', href: '/tasks', icon: Briefcase },
+      ],
+    },
+    {
+      title: 'System',
+      items: [
+        { name: 'Live View', href: '/live-view', icon: Activity },
+        { name: 'MCP Hub', href: '/mcp-hub', icon: Cpu },
+        { name: 'Resources', href: '/resources', icon: Library },
+      ],
+    },
+    {
+      title: 'Management',
+      items: [
+        { name: 'Admin', href: '/admin', icon: Lock },
+        { name: 'Settings', href: '/settings', icon: Settings },
+      ],
+    },
   ];
 
   const handleLogout = async () => {
@@ -112,33 +126,44 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            {navigation.map((item) => {
-              const isActive = pathname.startsWith(item.href);
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-                    isActive
-                      ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.15)]'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
-                  } ${isCollapsed ? 'justify-center' : ''}`}
-                  title={isCollapsed ? item.name : undefined}
-                >
-                  <item.icon
-                    className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
-                  />
-                  {!isCollapsed && (
-                    <span className="font-medium whitespace-nowrap">{item.name}</span>
-                  )}
-                  {isActive && !isCollapsed && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
-                  )}
-                </NavLink>
-              );
-            })}
+          <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-6">
+            {navigationGroups.map((group, groupIndex) => (
+              <div key={group.title || groupIndex}>
+                {!isCollapsed && group.title && (
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-4">
+                    {group.title}
+                  </h3>
+                )}
+                <div className="space-y-1">
+                  {group.items.map((item) => {
+                    const isActive = pathname.startsWith(item.href);
+                    return (
+                      <NavLink
+                        key={item.name}
+                        to={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                          isActive
+                            ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.15)]'
+                            : 'text-gray-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
+                        } ${isCollapsed ? 'justify-center' : ''}`}
+                        title={isCollapsed ? item.name : undefined}
+                      >
+                        <item.icon
+                          className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}
+                        />
+                        {!isCollapsed && (
+                          <span className="font-medium whitespace-nowrap">{item.name}</span>
+                        )}
+                        {isActive && !isCollapsed && (
+                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                        )}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
 
           {/* Collapse Toggle */}

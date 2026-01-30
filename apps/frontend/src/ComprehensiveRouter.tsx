@@ -14,11 +14,6 @@ import RequirePermission from './components/auth/RequirePermission';
 const MultiAgentChat = lazy(() => import('./components/MultiAgentChat'));
 const WorkspaceAnalytics = lazy(() => import('./pages/workspace/WorkspaceAnalytics'));
 const WorkspaceSettings = lazy(() => import('./pages/workspace/Settings'));
-const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
-const TimelineDemo = lazy(() => import('./pages/timeline-demo'));
-const GraphDemo = lazy(() =>
-  import('./pages/graph-demo').then((module) => ({ default: module.GraphDemo }))
-);
 const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
 const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
@@ -48,11 +43,7 @@ const SettingsAPI = lazy(() => import('./pages/settings/API'));
 const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
 const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
 const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat/index'));
-const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
-const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
-const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
-const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
 
 // Resources pages
 const ResourcesDashboard = lazy(() => import('./pages/Resources/ResourcesDashboard'));
@@ -69,15 +60,6 @@ const LoadingFallback = ({ name }: { name: string }) => (
 
 // Additional real components
 import AllPages from './pages/AllPages';
-import BuildInfoPage from './pages/BuildInfo';
-import DebugPageComponent from './pages/Debug';
-import DebugRoutingComponent from './pages/DebugRouting';
-import TestPage from './pages/Test';
-
-// Suggestions components
-const SuggestionsPage = lazy(() => import('./pages/Suggestions'));
-const NewSuggestionPage = lazy(() => import('./pages/Suggestions/New'));
-const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
@@ -138,8 +120,6 @@ const NewTaskPage = lazy(() => import('./pages/Tasks/New'));
 // Additional pages
 const UnauthorizedPage = lazy(() => import('./pages/Unauthorized'));
 const AIAgentRegistration = lazy(() => import('./pages/AIAgentPortal/index'));
-const FrontendShowcasePage = lazy(() => import('./pages/FrontendShowcase'));
-const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
 
 // Chat pages
 const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
@@ -182,7 +162,6 @@ const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
 const AgentDashboard = lazy(() => import('./pages/dashboard/AgentDashboard'));
 const DashboardSettings = lazy(() => import('./pages/dashboard/DashboardSettings'));
-const LayoutExamples = lazy(() => import('./pages/Layout/LayoutExamples'));
 const AIAgentDashboard = lazy(() => import('./pages/AIAgentDashboard'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const UserProfilePage = lazy(() => import('./components/profile/UserProfilePage'));
@@ -194,21 +173,8 @@ const MainPage = lazy(() => import('./pages/Main'));
 const LiveViewPage = lazy(() => import('./pages/LiveView'));
 
 // AI Command Center - Multiple AI chat interfaces in one view
-const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
 const AICommandCenterStreaming = lazy(
   () => import('./pages/AICommandCenter/AICommandCenterStreaming')
-);
-
-// Create fallback components for pages that might have import issues
-const LazyPage = ({ name, path }: { name: string; path: string }) => (
-  <div className="p-8 max-w-4xl mx-auto">
-    <h1 className="text-3xl font-bold mb-6">🚀 {name}</h1>
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-      <p className="text-lg mb-4">This is the {name} page.</p>
-      <p className="text-gray-600 mb-4">Path: {path}</p>
-      <p className="text-sm text-gray-500">This page is working and ready for content!</p>
-    </div>
-  </div>
 );
 
 import SmartNavigation from './components/SmartNavigation';
@@ -279,29 +245,11 @@ export default function ComprehensiveRouter() {
                 </RequireAuth>
               }
             />
-            <Route
-              path="/sophisticated-hub"
-              element={
-                <RequireAuth>
-                  <SophisticatedTNFHub />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/hub"
-              element={
-                <RequireAuth>
-                  <Suspense fallback={<LoadingFallback name="Hub" />}>
-                    <ModernHub />
-                  </Suspense>
-                </RequireAuth>
-              }
-            />
 
             {/* Resources Marketplace */}
             <Route path="/resources" element={<ResourcesDashboard />} />
 
-            {/* All routes using LazyPage for now to avoid import issues */}
+            {/* Functional Routes */}
             <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
             <Route path="/ai-portal" element={<AIAgentDashboard />} />
             <Route path="/chat" element={<ChatPage />} />
@@ -328,8 +276,6 @@ export default function ComprehensiveRouter() {
                 </Suspense>
               }
             />
-            <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
-            <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
             <Route path="/workspace/overview" element={<WorkspaceOverview />} />
             <Route path="/workspace/analytics" element={<WorkspaceAnalytics />} />
             <Route path="/workspace/members" element={<WorkspaceMembers />} />
@@ -341,13 +287,13 @@ export default function ComprehensiveRouter() {
             <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
             <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
             <Route path="/workflows/:id/results" element={<WorkflowResultsViewer />} />
-            <Route path="/workflows/:id/results" element={<WorkflowExecutionPage />} />
             <Route path="/workflows/console" element={<ExecutionConsole />} />
             <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
             <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
             <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
             <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
             <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
+
             {/* Master Admin Routes - Requires SUPER_ADMIN role */}
             <Route
               path="/admin"
@@ -491,22 +437,8 @@ export default function ComprehensiveRouter() {
             <Route path="/settings/general" element={<GeneralSettings />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/components" element={<ComponentsShowcase />} />
-            <Route path="/timeline-demo" element={<TimelineDemo />} />
-            <Route path="/graph-demo" element={<GraphDemo />} />
-            <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
-            <Route path="/debug" element={<DebugPageComponent />} />
-            <Route path="/build-info" element={<BuildInfoPage />} />
-            <Route path="/debug-routing" element={<DebugRoutingComponent />} />
             <Route path="/all-pages" element={<AllPages />} />
             <Route path="/analytics" element={<Analytics />} />
-
-            {/* Suggestions Routes */}
-            <Route path="/suggestions" element={<SuggestionsPage />} />
-            <Route path="/suggestions/new" element={<NewSuggestionPage />} />
-            <Route path="/suggestions/:id" element={<SuggestionDetailPage />} />
-
-            {/* Admin routes have been consolidated above with permission guards */}
 
             {/* Enhanced Auth Routes */}
             <Route path="/auth" element={<AuthIndexPage />} />
@@ -564,20 +496,13 @@ export default function ComprehensiveRouter() {
             <Route path="/general-settings" element={<GeneralSettings />} />
             <Route path="/general-settings/embedding" element={<GeneralSettingsEmbeddingPage />} />
 
-            {/* Enhanced Component Routes */}
-            <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
-            <Route path="/layout-example" element={<LayoutExamples />} />
-            <Route path="/simple-test" element={<SimpleTestPage />} />
-
             {/* Additional Routes */}
-            <Route path="/test" element={<TestPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="/ai-agent-portal" element={<AIAgentRegistration />} />
 
             {/* Critical Missing Routes */}
             <Route path="/dashboard/analytics" element={<Analytics />} />
             <Route path="/dashboard/settings" element={<DashboardSettings />} />
-            <Route path="/components-showcase" element={<ComponentsShowcase />} />
             <Route path="/not-found" element={<NotFound />} />
 
             {/* Preview Routes */}
@@ -645,35 +570,6 @@ export default function ComprehensiveRouter() {
             />
 
             <Route
-              path="/admin/layout"
-              element={<LazyPage name="Admin Layout" path="/admin/layout" />}
-            />
-            <Route path="/multi-agent-chat-demo" element={<MultiAgentChat />} />
-            <Route
-              path="/api/admin/database"
-              element={<LazyPage name="Admin Database API" path="/api/admin/database" />}
-            />
-            <Route
-              path="/api/admin/features"
-              element={<LazyPage name="Admin Features API" path="/api/admin/features" />}
-            />
-            <Route
-              path="/package/dashboard"
-              element={<LazyPage name="Package Dashboard" path="/package/dashboard" />}
-            />
-            <Route
-              path="/package/login"
-              element={<LazyPage name="Package Login" path="/package/login" />}
-            />
-            <Route
-              path="/package/agents"
-              element={<LazyPage name="Package Agents" path="/package/agents" />}
-            />
-            <Route
-              path="/package/workflows"
-              element={<LazyPage name="Package Workflows" path="/package/workflows" />}
-            />
-            <Route
               path="/profile"
               element={
                 <Suspense fallback={<LoadingFallback name="User Profile" />}>
@@ -688,32 +584,6 @@ export default function ComprehensiveRouter() {
                   <UserProfilePage />
                 </Suspense>
               }
-            />
-
-            {/* HTML prototype routes (for reference) */}
-            <Route
-              path="/html/dashboard"
-              element={<LazyPage name="HTML Dashboard Prototype" path="/html/dashboard" />}
-            />
-            <Route
-              path="/html/admin"
-              element={<LazyPage name="HTML Admin Prototype" path="/html/admin" />}
-            />
-            <Route
-              path="/html/agents"
-              element={<LazyPage name="HTML Agents Prototype" path="/html/agents" />}
-            />
-            <Route
-              path="/html/chat"
-              element={<LazyPage name="HTML Chat Prototype" path="/html/chat" />}
-            />
-            <Route
-              path="/html/tasks"
-              element={<LazyPage name="HTML Tasks Prototype" path="/html/tasks" />}
-            />
-            <Route
-              path="/html/workflows"
-              element={<LazyPage name="HTML Workflows Prototype" path="/html/workflows" />}
             />
 
             {/* Error Handling */}
