@@ -299,7 +299,7 @@ export interface AgentConfiguration {
   mcpServers?: string[];
 }
 
-export interface AgentAsset extends MarketplaceAsset {
+export interface AgentAsset extends Omit<MarketplaceAsset, 'capabilities'> {
   type: 'AGENT';
   agentConfig: AgentConfiguration;
   capabilities: AgentCapability[];

@@ -6,6 +6,7 @@
     "declaration": true,
     "declarationMap": true,
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "ES2022",
     "lib": ["ES2022"],
     "strict": true,

@@ -106,8 +106,9 @@ export class MCPDRSClient {
    */
   async authenticate(email: string, password: string): Promise<string> {
     const response = await this.client.post('/auth/login', { email, password });
-    this.authToken = response.data.token;
-    return this.authToken;
+    const token: string = response.data.token;
+    this.authToken = token;
+    return token;
   }
 
   /**
