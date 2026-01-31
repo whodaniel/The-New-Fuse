@@ -1,5 +1,14 @@
-import { Activity, AlertTriangle, CheckCircle2, Cpu, RefreshCw, Users, Zap, Briefcase } from 'lucide-react';
-import { useEffect, useState, useCallback } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  Briefcase,
+  CheckCircle2,
+  Cpu,
+  RefreshCw,
+  Users,
+  Zap,
+} from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import dashboardService from '../services/dashboard.service';
 import { useRoute } from './route-context';
@@ -80,24 +89,25 @@ export function Dashboard() {
       </div>
 
       {/* Quick Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {loading && !metrics ? (
           <>
             <StatsCardSkeleton />
             <StatsCardSkeleton />
             <StatsCardSkeleton />
             <StatsCardSkeleton />
+            <StatsCardSkeleton />
           </>
         ) : error ? (
-           <div className="md:col-span-2 lg:col-span-4 bg-red-500/10 border border-red-500/30 text-red-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-             <AlertTriangle className="w-12 h-12 text-red-400 mb-4" />
-             <h3 className="text-xl font-bold mb-2">Error Loading Data</h3>
-             <p className="text-red-300/80 mb-6 max-w-md">{error}</p>
-             <PremiumButton variant="secondary" onClick={fetchMetrics} disabled={loading}>
-               <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-               Retry
-             </PremiumButton>
-           </div>
+          <div className="md:col-span-2 lg:col-span-4 xl:col-span-5 bg-red-500/10 border border-red-500/30 text-red-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+            <AlertTriangle className="w-12 h-12 text-red-400 mb-4" />
+            <h3 className="text-xl font-bold mb-2">Error Loading Data</h3>
+            <p className="text-red-300/80 mb-6 max-w-md">{error}</p>
+            <PremiumButton variant="secondary" onClick={fetchMetrics} disabled={loading}>
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Retry
+            </PremiumButton>
+          </div>
         ) : metrics ? (
           <>
             <StatsCard
@@ -133,12 +143,12 @@ export function Dashboard() {
               gradient="orange"
             />
             <StatsCard
-                label="Workspaces"
-                value={metrics.workspaceCount.value.toString()}
-                change={`${metrics.workspaceCount.change > 0 ? '+' : ''}${metrics.workspaceCount.change}`}
-                changeType={metrics.workspaceCount.change >= 0 ? 'positive' : 'negative'}
-                icon={Briefcase}
-                gradient="teal"
+              label="Workspaces"
+              value={metrics.workspaceCount.value.toString()}
+              change={`${metrics.workspaceCount.change > 0 ? '+' : ''}${metrics.workspaceCount.change}`}
+              changeType={metrics.workspaceCount.change >= 0 ? 'positive' : 'negative'}
+              icon={Briefcase}
+              gradient="teal"
             />
           </>
         ) : null}

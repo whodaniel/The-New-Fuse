@@ -159,6 +159,28 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
       "alwaysAllow": [""]
+    },
+    "pnpm-workspace-manager": {
+      "command": "node",
+      "args": [
+        "--loader",
+        "tsx/esm",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/pnpm-workspace-manager.ts"
+      ],
+      "env": {
+        "PROJECT_ROOT": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      }
+    },
+    "nestjs-development-helpers": {
+      "command": "node",
+      "args": [
+        "--loader",
+        "tsx/esm",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/nestjs-development-helpers.ts"
+      ],
+      "env": {
+        "PROJECT_ROOT": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      }
     }
   }
 }

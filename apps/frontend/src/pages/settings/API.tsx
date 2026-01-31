@@ -1,4 +1,4 @@
-import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
+import ProviderApiKeyList from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

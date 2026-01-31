@@ -1,0 +1,134 @@
+[
+  {
+    "id": "task_1769853300566_1",
+    "type": "exploration",
+    "description": "Explore The New Fuse framework structure to build knowledge base",
+    "status": "failed",
+    "priority": "high",
+    "created": "2026-01-31T09:55:00.566Z",
+    "startedAt": "2026-01-31T09:57:00.581Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769853420583.scpt\n/tmp/self_improve_1769853420583.scpt:544:546: script error: Expected end of line, etc. but found property. (-2741)\n",
+    "failedAt": "2026-01-31T09:57:00.748Z"
+  },
+  {
+    "id": "task_1769853300566_2",
+    "type": "enhancement",
+    "description": "Verify all MCP servers are properly configured",
+    "status": "failed",
+    "priority": "high",
+    "created": "2026-01-31T09:55:00.566Z",
+    "startedAt": "2026-01-31T09:58:00.758Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769853480760.scpt\n/tmp/self_improve_1769853480760.scpt:475:487: script error: Expected end of line, etc. but found identifier. (-2741)\n",
+    "failedAt": "2026-01-31T09:58:00.857Z"
+  },
+  {
+    "type": "reflection",
+    "description": "Reflect on recent improvements and suggest next steps",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T09:59:00.856Z",
+    "id": "task_1769853540856_3",
+    "startedAt": "2026-01-31T10:01:46.215Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769853706217.scpt\n/tmp/self_improve_1769853706217.scpt:45:54: execution error: Claude got an error: Can’t set frontmost to true. (-10006)\n",
+    "failedAt": "2026-01-31T10:02:04.669Z"
+  },
+  {
+    "type": "exploration",
+    "description": "Explore framework components for improvement opportunities",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T09:59:00.856Z",
+    "id": "task_1769853540856_4",
+    "startedAt": "2026-01-31T10:03:09.836Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769853797916.scpt\n/tmp/self_improve_1769853797916.scpt:544:546: script error: Expected end of line, etc. but found property. (-2741)\n",
+    "failedAt": "2026-01-31T10:03:19.525Z"
+  },
+  {
+    "type": "reflection",
+    "description": "Reflect on recent improvements and suggest next steps",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:04:19.528Z",
+    "id": "task_1769853859528_5",
+    "startedAt": "2026-01-31T10:05:19.531Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769853919532.scpt\n/tmp/self_improve_1769853919532.scpt:45:54: execution error: Claude got an error: Connection is invalid. (-609)\n",
+    "failedAt": "2026-01-31T10:05:39.448Z"
+  },
+  {
+    "type": "exploration",
+    "description": "Explore framework components for improvement opportunities",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:04:19.529Z",
+    "id": "task_1769853859529_6",
+    "startedAt": "2026-01-31T10:06:39.455Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769853999455.scpt\n/tmp/self_improve_1769853999455.scpt:544:546: script error: Expected end of line, etc. but found property. (-2741)\n",
+    "failedAt": "2026-01-31T10:06:40.368Z"
+  },
+  {
+    "type": "reflection",
+    "description": "Reflect on recent improvements and suggest next steps",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:07:40.371Z",
+    "id": "task_1769854060371_7",
+    "startedAt": "2026-01-31T10:08:40.375Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769854120375.scpt\n/tmp/self_improve_1769854120375.scpt:45:54: execution error: Claude got an error: Can’t set frontmost to true. (-10006)\n",
+    "failedAt": "2026-01-31T10:09:02.001Z"
+  },
+  {
+    "type": "exploration",
+    "description": "Explore framework components for improvement opportunities",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:07:40.372Z",
+    "id": "task_1769854060372_8",
+    "startedAt": "2026-01-31T10:10:02.006Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769854202008.scpt\n/tmp/self_improve_1769854202008.scpt:544:546: script error: Expected end of line, etc. but found property. (-2741)\n",
+    "failedAt": "2026-01-31T10:10:02.942Z"
+  },
+  {
+    "type": "reflection",
+    "description": "Reflect on recent improvements and suggest next steps",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:11:02.952Z",
+    "id": "task_1769854262952_9",
+    "startedAt": "2026-01-31T10:12:02.972Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769854322980.scpt\n/tmp/self_improve_1769854322980.scpt:45:54: execution error: Claude got an error: Can’t set frontmost to true. (-10006)\n",
+    "failedAt": "2026-01-31T10:12:50.842Z"
+  },
+  {
+    "type": "exploration",
+    "description": "Explore framework components for improvement opportunities",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:11:02.954Z",
+    "id": "task_1769854262954_10",
+    "startedAt": "2026-01-31T10:13:50.855Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769854430857.scpt\n/tmp/self_improve_1769854430857.scpt:544:546: script error: Expected end of line, etc. but found property. (-2741)\n",
+    "failedAt": "2026-01-31T10:13:53.759Z"
+  },
+  {
+    "type": "reflection",
+    "description": "Reflect on recent improvements and suggest next steps",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:14:53.767Z",
+    "id": "task_1769854493767_11",
+    "startedAt": "2026-01-31T10:15:53.773Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769854553773.scpt\n/tmp/self_improve_1769854553773.scpt:45:54: execution error: Claude got an error: Can’t set frontmost to true. (-10006)\n",
+    "failedAt": "2026-01-31T10:16:05.026Z"
+  },
+  {
+    "type": "exploration",
+    "description": "Explore framework components for improvement opportunities",
+    "status": "failed",
+    "priority": "medium",
+    "created": "2026-01-31T10:14:53.771Z",
+    "id": "task_1769854493771_12",
+    "startedAt": "2026-01-31T10:17:05.032Z",
+    "error": "Command failed: osascript /tmp/self_improve_1769854625033.scpt\n/tmp/self_improve_1769854625033.scpt:544:546: script error: Expected end of line, etc. but found property. (-2741)\n",
+    "failedAt": "2026-01-31T10:17:05.579Z"
+  }
+]

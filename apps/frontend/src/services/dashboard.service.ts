@@ -5,9 +5,9 @@ const API_BASE = '/api';
 class DashboardService {
   private async request(endpoint: string, options: RequestInit = {}) {
     const token = localStorage.getItem('token');
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     };
 
     if (token) {

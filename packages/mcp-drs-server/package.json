@@ -1,0 +1,13 @@
+{
+  "name": "@the-new-fuse/mcp-drs-server",
+  "version": "1.0.0",
+  "description": "MCP server for Discovery and Registry Service (DRS)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "axios": "^1.6.0"
+  }
+}

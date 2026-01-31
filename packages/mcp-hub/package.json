@@ -1,0 +1,44 @@
+{
+  "name": "@the-new-fuse/mcp-hub",
+  "version": "2.0.0",
+  "description": "Unified MCP Server Registry - Single Source of Truth for all AI client configurations",
+  "main": "scripts/generate-configs.js",
+  "bin": {
+    "mcp-generate": "./scripts/generate-configs.js",
+    "mcp-sync": "./scripts/sync-all.sh"
+  },
+  "scripts": {
+    "generate": "node scripts/generate-configs.js",
+    "sync": "bash scripts/sync-all.sh",
+    "sync:minimal": "bash scripts/sync-all.sh minimal --all",
+    "sync:core": "bash scripts/sync-all.sh core --all",
+    "sync:full": "bash scripts/sync-all.sh full --all",
+    "list:profiles": "node scripts/generate-configs.js --list-profiles",
+    "list:clients": "node scripts/generate-configs.js --list-clients",
+    "list:servers": "node scripts/generate-configs.js --list-servers",
+    "setup": "bash scripts/setup.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whodaniel/The-New-Fuse.git",
+    "directory": "packages/mcp-hub"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "gemini",
+    "ai-tools",
+    "configuration"
+  ],
+  "author": "The New Fuse Project",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "config/",
+    "scripts/",
+    "README.md"
+  ]
+}

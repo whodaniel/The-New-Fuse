@@ -9,7 +9,8 @@ export interface PromptBlock {
     | 'condition'
     | 'summary'
     | 'context'
-    | 'instruction';
+    | 'instruction'
+    | 'group'; // Container for other blocks
   content: string;
   position: number;
   locked: boolean;
@@ -23,6 +24,15 @@ export interface PromptBlock {
       type?: string;
       pattern?: string;
     };
+    // Logic for conditional blocks
+    condition?: {
+      variable: string;
+      operator: 'equals' | 'contains' | 'exists' | 'not_exists';
+      value?: any;
+    };
+    // UI state for the builder
+    color?: string;
+    icon?: string;
   };
   children?: PromptBlock[];
   parentId?: string | null;

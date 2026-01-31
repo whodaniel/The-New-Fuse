@@ -17,11 +17,13 @@ export function useUndoRedo<T>(initialState: T) {
   const canRedo = history.future.length > 0;
 
   const undo = useCallback(() => {
+    let prevState: T | undefined;
     setHistory((currentState) => {
       if (currentState.past.length === 0) return currentState;
 
       const previous = currentState.past[currentState.past.length - 1];
       const newPast = currentState.past.slice(0, currentState.past.length - 1);
+      prevState = previous;
 
       return {
         past: newPast,
@@ -29,15 +31,17 @@ export function useUndoRedo<T>(initialState: T) {
         future: [currentState.present, ...currentState.future],
       };
     });
-    return history.past[history.past.length - 1];
-  }, [history]);
+    return prevState;
+  }, []);
 
   const redo = useCallback(() => {
+    let nextState: T | undefined;
     setHistory((currentState) => {
       if (currentState.future.length === 0) return currentState;
 
       const next = currentState.future[0];
       const newFuture = currentState.future.slice(1);
+      nextState = next;
 
       return {
         past: [...currentState.past, currentState.present],
@@ -45,8 +49,8 @@ export function useUndoRedo<T>(initialState: T) {
         future: newFuture,
       };
     });
-    return history.future[0];
-  }, [history]);
+    return nextState;
+  }, []);
 
   const takeSnapshot = useCallback((newState: T) => {
     setHistory((currentState) => {
@@ -60,10 +64,6 @@ export function useUndoRedo<T>(initialState: T) {
       };
     });
   }, []);
-
-  // Sometimes we want to update the current state without pushing to history (e.g. during drag)
-  // but usually we are tracking external state (ReactFlow's nodes/edges) and just snapshotting it.
-  // This hook assumes 'present' matches the external state when we take a snapshot.
 
   return {
     undo,

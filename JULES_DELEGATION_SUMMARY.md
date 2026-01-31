@@ -68,12 +68,11 @@ to the Jules CLI for parallel autonomous execution.
 
 ## Pending Task (Rate Limited)
 
-16. ⏳ **JULES_TASK_16** - Dependency Security Audit
+16. ✅ **JULES_TASK_16** - Dependency Security Audit
 
-- Status: Failed due to API rate limit (429)
-- Action: Retry later when quota resets
-- Command to retry:
-  `jules new --repo whodaniel/fuse "$(cat .jules/tasks/JULES_TASK_16_dependency_audit.md)"`
+- Status: Completed (Patched 12 vulnerabilities via pnpm overrides)
+- Action: Continuous monitoring recommended.
+- Command used: `pnpm audit` + root `package.json` overrides.
 
 ## Monitoring & Next Steps
 

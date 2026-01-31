@@ -1,0 +1,407 @@
+{
+  "$schema": "./master-registry.schema.json",
+  "version": "2.0.0",
+  "description": "Unified MCP Server Registry - Single Source of Truth",
+  "lastUpdated": "2026-01-31T00:00:00Z",
+
+  "servers": {
+    "youtube-curator": {
+      "name": "YouTube Curator",
+      "description": "Manage YouTube Watch Later playlist",
+      "category": "google",
+      "priority": 5,
+      "tokenCost": "low",
+      "command": "node",
+      "args": ["${MCP_SERVERS_PATH}/youtube-mcp-server/dist/index.js"],
+      "env": {},
+      "capabilities": ["authenticate", "get_watch_later", "archive_video"],
+      "tags": ["youtube", "media", "playlist"],
+      "deferLoading": true,
+      "skillWrapper": "youtube"
+    },
+
+    "google-docs": {
+      "name": "Google Docs",
+      "description": "Read, edit, and format Google Docs",
+      "category": "google",
+      "priority": 5,
+      "tokenCost": "medium",
+      "command": "node",
+      "args": ["${MCP_SERVERS_PATH}/google-docs-mcp-server/dist/server.js"],
+      "env": {},
+      "capabilities": [
+        "readGoogleDoc",
+        "appendToGoogleDoc",
+        "insertText",
+        "deleteRange",
+        "applyTextStyle",
+        "applyParagraphStyle",
+        "insertTable",
+        "listGoogleDocs",
+        "searchGoogleDocs",
+        "createDocument"
+      ],
+      "tags": ["google", "docs", "documents", "writing"],
+      "deferLoading": true,
+      "skillWrapper": "gdocs"
+    },
+
+    "google-drive": {
+      "name": "Google Drive",
+      "description": "Search and read files from Google Drive",
+      "category": "google",
+      "priority": 5,
+      "tokenCost": "low",
+      "command": "node",
+      "args": ["${MCP_SERVERS_PATH}/google-drive-mcp-server/dist/index.js"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${MCP_SERVERS_PATH}/google-drive-mcp-server/credentials/gcp-oauth.keys.json",
+        "MCP_GDRIVE_CREDENTIALS": "${MCP_SERVERS_PATH}/google-drive-mcp-server/credentials/.gdrive-server-credentials.json"
+      },
+      "capabilities": ["gdrive_search", "gdrive_read_file"],
+      "tags": ["google", "drive", "files", "search"],
+      "deferLoading": true,
+      "skillWrapper": "gdrive"
+    },
+
+    "filesystem": {
+      "name": "Filesystem",
+      "description": "File system operations",
+      "category": "core",
+      "priority": 10,
+      "tokenCost": "low",
+      "command": "${NODE_BIN}/mcp-server-filesystem",
+      "args": [
+        "${HOME}",
+        "${HOME}/Desktop",
+        "${HOME}/Documents",
+        "${HOME}/Downloads"
+      ],
+      "env": {},
+      "capabilities": [
+        "read_file",
+        "write_file",
+        "list_directory",
+        "search_files"
+      ],
+      "tags": ["files", "filesystem", "core"],
+      "deferLoading": false,
+      "alwaysLoad": true
+    },
+
+    "browser": {
+      "name": "Browser (Playwright)",
+      "description": "Browser automation via Playwright",
+      "category": "automation",
+      "priority": 3,
+      "tokenCost": "high",
+      "command": "${NODE_BIN}/playwright-mcp",
+      "args": [],
+      "env": {},
+      "capabilities": ["navigate", "click", "type", "screenshot", "snapshot"],
+      "tags": ["browser", "automation", "web"],
+      "deferLoading": true,
+      "skillWrapper": "browser"
+    },
+
+    "sequential-thinking": {
+      "name": "Sequential Thinking",
+      "description": "Step-by-step reasoning protocol",
+      "category": "reasoning",
+      "priority": 7,
+      "tokenCost": "low",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {},
+      "capabilities": ["sequential_thinking"],
+      "tags": ["reasoning", "thinking", "cognition"],
+      "deferLoading": true
+    },
+
+    "redis": {
+      "name": "Redis",
+      "description": "Redis cache and messaging",
+      "category": "infrastructure",
+      "priority": 8,
+      "tokenCost": "low",
+      "command": "node",
+      "args": [
+        "${NODE_MODULES}/@modelcontextprotocol/server-redis/dist/index.js"
+      ],
+      "env": {
+        "REDIS_URL": "${REDIS_URL}"
+      },
+      "capabilities": ["get", "set", "publish", "subscribe"],
+      "tags": ["redis", "cache", "messaging", "infrastructure"],
+      "deferLoading": true,
+      "requiresEnv": ["REDIS_URL"]
+    },
+
+    "context7": {
+      "name": "Context7",
+      "description": "Upstash context management",
+      "category": "context",
+      "priority": 6,
+      "tokenCost": "low",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {},
+      "capabilities": ["context_store", "context_retrieve"],
+      "tags": ["context", "memory", "upstash"],
+      "deferLoading": true
+    },
+
+    "github": {
+      "name": "GitHub",
+      "description": "GitHub API integration",
+      "category": "development",
+      "priority": 6,
+      "tokenCost": "medium",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "capabilities": [
+        "create_issue",
+        "create_pr",
+        "list_repos",
+        "search_code"
+      ],
+      "tags": ["github", "git", "development", "code"],
+      "deferLoading": true,
+      "requiresEnv": ["GITHUB_TOKEN"]
+    },
+
+    "chrome-devtools": {
+      "name": "Chrome DevTools",
+      "description": "Chrome browser debugging",
+      "category": "development",
+      "priority": 4,
+      "tokenCost": "medium",
+      "command": "npx",
+      "args": ["chrome-devtools-mcp@latest"],
+      "env": {},
+      "capabilities": ["inspect", "debug", "network", "console"],
+      "tags": ["chrome", "devtools", "debugging", "browser"],
+      "deferLoading": true
+    },
+
+    "cloudflare-observability": {
+      "name": "Cloudflare Observability",
+      "description": "Cloudflare monitoring and observability",
+      "category": "infrastructure",
+      "priority": 4,
+      "tokenCost": "low",
+      "command": "npx",
+      "args": ["mcp-remote", "https://observability.mcp.cloudflare.com/sse"],
+      "env": {},
+      "capabilities": ["logs", "metrics", "traces"],
+      "tags": ["cloudflare", "observability", "monitoring"],
+      "deferLoading": true
+    },
+
+    "cloudflare-bindings": {
+      "name": "Cloudflare Bindings",
+      "description": "Cloudflare Workers bindings",
+      "category": "infrastructure",
+      "priority": 4,
+      "tokenCost": "low",
+      "command": "npx",
+      "args": ["mcp-remote", "https://bindings.mcp.cloudflare.com/sse"],
+      "env": {},
+      "capabilities": ["kv", "r2", "d1", "queues"],
+      "tags": ["cloudflare", "workers", "bindings"],
+      "deferLoading": true
+    },
+
+    "tnf-skills": {
+      "name": "TNF Skills",
+      "description": "The New Fuse skills library as MCP tools",
+      "category": "tnf",
+      "priority": 9,
+      "tokenCost": "variable",
+      "command": "node",
+      "args": ["${TNF_PATH}/packages/mcp-skills-server/dist/index.js"],
+      "env": {
+        "SKILLS_BASE_PATH": "${TNF_PATH}/.agent"
+      },
+      "capabilities": ["list_skills", "get_skill", "execute_skill"],
+      "tags": ["tnf", "skills", "agents"],
+      "deferLoading": false,
+      "alwaysLoad": true
+    },
+
+    "tnf-relay": {
+      "name": "TNF Relay",
+      "description": "Inter-agent communication relay",
+      "category": "tnf",
+      "priority": 9,
+      "tokenCost": "low",
+      "command": "node",
+      "args": ["${HOME}/.fuse/tnf-relay-mcp/index.js"],
+      "env": {
+        "RELAY_URL": "ws://localhost:3001/ws"
+      },
+      "capabilities": ["send_message", "broadcast", "subscribe"],
+      "tags": ["tnf", "relay", "communication", "agents"],
+      "deferLoading": false,
+      "alwaysLoad": true
+    },
+
+    "tnf-mcp-config-manager": {
+      "name": "TNF MCP Config Manager",
+      "description": "Universal MCP configuration management",
+      "category": "tnf",
+      "priority": 10,
+      "tokenCost": "low",
+      "command": "node",
+      "args": ["${TNF_PATH}/src/mcp/tnf-mcp-config-manager.js"],
+      "env": {
+        "TNF_CORE_PATH": "${TNF_PATH}/data",
+        "LOG_LEVEL": "info"
+      },
+      "capabilities": [
+        "read_config",
+        "write_config",
+        "validate_config",
+        "discover_servers"
+      ],
+      "tags": ["tnf", "config", "management"],
+      "deferLoading": false,
+      "alwaysLoad": true
+    },
+
+    "jules": {
+      "name": "Jules",
+      "description": "Jules CLI MCP integration",
+      "category": "agents",
+      "priority": 7,
+      "tokenCost": "low",
+      "command": "node",
+      "args": ["${TNF_PATH}/packages/jules-skill/dist/mcp-server.js"],
+      "env": {},
+      "capabilities": ["delegate_task", "check_status", "get_result"],
+      "tags": ["jules", "agents", "delegation"],
+      "deferLoading": true,
+      "skillWrapper": "jules"
+    },
+
+    "drs": {
+      "name": "MCP Discovery (DRS)",
+      "description": "Find and discover new MCP servers",
+      "category": "utility",
+      "priority": 2,
+      "tokenCost": "low",
+      "command": "node",
+      "args": ["${MCP_SERVERS_PATH}/mcp-drs-server/src/index.js"],
+      "env": {
+        "DRS_API_URL": "${DRS_API_URL}",
+        "DRS_API_KEY": "${DRS_API_KEY}"
+      },
+      "capabilities": ["find_mcp_servers"],
+      "tags": ["discovery", "registry", "search"],
+      "deferLoading": true
+    }
+  },
+
+  "profiles": {
+    "minimal": {
+      "description": "Minimal setup - filesystem only",
+      "servers": ["filesystem"],
+      "tokenBudget": "low"
+    },
+    "core": {
+      "description": "Core TNF servers",
+      "servers": [
+        "filesystem",
+        "tnf-skills",
+        "tnf-relay",
+        "tnf-mcp-config-manager"
+      ],
+      "tokenBudget": "medium"
+    },
+    "google": {
+      "description": "Google Workspace integration",
+      "servers": ["google-docs", "google-drive", "youtube-curator"],
+      "tokenBudget": "medium"
+    },
+    "development": {
+      "description": "Development tools",
+      "servers": [
+        "filesystem",
+        "github",
+        "chrome-devtools",
+        "sequential-thinking",
+        "drs"
+      ],
+      "tokenBudget": "medium"
+    },
+    "infrastructure": {
+      "description": "Infrastructure and cloud",
+      "servers": ["redis", "cloudflare-observability", "cloudflare-bindings"],
+      "tokenBudget": "low"
+    },
+    "full": {
+      "description": "All servers enabled",
+      "servers": ["*"],
+      "tokenBudget": "high"
+    }
+  },
+
+  "clients": {
+    "claude-desktop": {
+      "configPath": "${HOME}/Library/Application Support/Claude/claude_desktop_config.json",
+      "format": "claude-desktop",
+      "supportsEnvExpansion": true,
+      "supportsDeferLoading": false
+    },
+    "claude-code": {
+      "configPath": "${HOME}/.claude.json",
+      "format": "claude-code",
+      "supportsEnvExpansion": true,
+      "supportsDeferLoading": true,
+      "toolSearchEnabled": true
+    },
+    "gemini-cli": {
+      "configPath": "${HOME}/.gemini/settings.json",
+      "format": "gemini",
+      "supportsEnvExpansion": true,
+      "supportsDeferLoading": false
+    },
+    "gemini-antigravity": {
+      "configPath": "${HOME}/.gemini/antigravity/mcp_config.json",
+      "format": "claude-desktop",
+      "supportsEnvExpansion": true,
+      "supportsDeferLoading": false
+    },
+    "github-copilot": {
+      "configPath": "${HOME}/Library/Application Support/GitHub Copilot/mcp_config.json",
+      "format": "claude-desktop",
+      "supportsEnvExpansion": true,
+      "supportsDeferLoading": false
+    },
+    "factory-bridge": {
+      "configPath": "${HOME}/Library/Application Support/Factory Bridge/mcp.json",
+      "format": "claude-desktop",
+      "supportsEnvExpansion": true,
+      "supportsDeferLoading": false
+    },
+    "cursor": {
+      "configPath": "${HOME}/.cursor/mcp.json",
+      "format": "claude-desktop",
+      "supportsEnvExpansion": true,
+      "supportsDeferLoading": false
+    },
+    "theia": {
+      "configPath": "${HOME}/.theia/globalStorage/kilocode.kilo-code/settings/mcp_settings.json",
+      "format": "kilocode",
+      "supportsEnvExpansion": false,
+      "supportsDeferLoading": false
+    }
+  },
+
+  "variables": {
+    "//": "Variables are now dynamically computed by the generator script for portability"
+  }
+}

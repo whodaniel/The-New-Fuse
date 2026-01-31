@@ -15,6 +15,11 @@ const MultiAgentChat = lazy(() => import('./components/MultiAgentChat'));
 const WorkspaceAnalytics = lazy(() => import('./pages/workspace/WorkspaceAnalytics'));
 const WorkspaceSettings = lazy(() => import('./pages/workspace/Settings'));
 const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
+const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
+const TimelineDemo = lazy(() => import('./pages/timeline-demo'));
+const GraphDemo = lazy(() =>
+  import('./pages/graph-demo').then((module) => ({ default: module.GraphDemo }))
+);
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
 const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
 const AgencyOnboarding = lazy(() => import('./pages/Agency/AgencyOnboarding'));
@@ -59,6 +64,7 @@ const LoadingFallback = ({ name }: { name: string }) => (
 );
 
 // Additional real components
+import SmartNavigation from './components/SmartNavigation';
 import AllPages from './pages/AllPages';
 
 // Additional Admin components
@@ -173,11 +179,25 @@ const MainPage = lazy(() => import('./pages/Main'));
 const LiveViewPage = lazy(() => import('./pages/LiveView'));
 
 // AI Command Center - Multiple AI chat interfaces in one view
+
 const AICommandCenterStreaming = lazy(
   () => import('./pages/AICommandCenter/AICommandCenterStreaming')
 );
 
-import SmartNavigation from './components/SmartNavigation';
+// Prompt Builder
+const PromptBuilder = lazy(() => import('./features/prompt-builder/PromptBuilder'));
+
+// Create fallback components for pages that might have import issues
+const LazyPage = ({ name, path }: { name: string; path: string }) => (
+  <div className="p-8 max-w-4xl mx-auto">
+    <h1 className="text-3xl font-bold mb-6">🚀 {name}</h1>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <p className="text-lg mb-4">This is the {name} page.</p>
+      <p className="text-gray-600 mb-4">Path: {path}</p>
+      <p className="text-sm text-gray-500">This page is working and ready for content!</p>
+    </div>
+  </div>
+);
 
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter() {
@@ -290,6 +310,17 @@ export default function ComprehensiveRouter() {
             <Route path="/workflows/console" element={<ExecutionConsole />} />
             <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
             <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
+
+            {/* Prompt Builder */}
+            <Route
+              path="/prompt-builder"
+              element={
+                <Suspense fallback={<LoadingFallback name="Prompt Builder" />}>
+                  <PromptBuilder />
+                </Suspense>
+              }
+            />
+
             <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
             <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
             <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />

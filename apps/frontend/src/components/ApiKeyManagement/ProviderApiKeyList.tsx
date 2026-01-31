@@ -1,103 +1,36 @@
-import { Bot, Code2, Database, Globe, Network, Sparkles, Zap } from 'lucide-react';
-import React, { useState } from 'react';
-import { ApiKeyInput } from './ApiKeyInput';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-interface Provider {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  placeholder?: string;
-  description?: string;
-}
-
-const PROVIDERS: Provider[] = [
-  {
-    id: 'openai',
-    name: 'OpenAI',
-    icon: <Sparkles className="w-5 h-5 text-green-600" />,
-    placeholder: 'sk-...',
-  },
-  {
-    id: 'anthropic',
-    name: 'Anthropic (Claude)',
-    icon: <Bot className="w-5 h-5 text-purple-600" />,
-    placeholder: 'sk-ant-...',
-  },
-  {
-    id: 'google',
-    name: 'Google Gemini',
-    icon: <Zap className="w-5 h-5 text-blue-600" />,
-    placeholder: 'AIza...',
-  },
-  {
-    id: 'cohere',
-    name: 'Cohere',
-    icon: <Globe className="w-5 h-5 text-teal-600" />,
-  },
-  {
-    id: 'mistral',
-    name: 'Mistral AI',
-    icon: <Code2 className="w-5 h-5 text-orange-600" />,
-  },
-  {
-    id: 'groq',
-    name: 'Groq',
-    icon: <Zap className="w-5 h-5 text-red-600" />,
-    placeholder: 'gsk_...',
-  },
-  {
-    id: 'perplexity',
-    name: 'Perplexity',
-    icon: <Globe className="w-5 h-5 text-blue-500" />,
-    placeholder: 'pplx-...',
-  },
-  {
-    id: 'openrouter',
-    name: 'OpenRouter',
-    icon: <Network className="w-5 h-5 text-purple-500" />,
-    placeholder: 'sk-or-...',
-  },
-  {
-    id: 'supabase',
-    name: 'Supabase',
-    icon: <Database className="w-5 h-5 text-emerald-600" />,
-    placeholder: 'sbp_...',
-  },
-];
-
-export const ProviderApiKeyList: React.FC = () => {
-  // In a real app, this state would be loaded from a store/backend
-  const [keys, setKeys] = useState<Record<string, string>>({});
-
-  const handleSave = (providerId: string, value: string) => {
-    setKeys((prev) => ({
-      ...prev,
-      [providerId]: value,
-    }));
-    // TODO: Call backend API to save secure key
-  };
-
-  const handleDelete = (providerId: string) => {
-    const newKeys = { ...keys };
-    delete newKeys[providerId];
-    setKeys(newKeys);
-    // TODO: Call backend API to delete key
-  };
-
+export default function ProviderApiKeyList() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {PROVIDERS.map((provider) => (
-        <ApiKeyInput
-          key={provider.id}
-          provider={provider.name}
-          icon={provider.icon}
-          value={keys[provider.id]}
-          placeholder={provider.placeholder}
-          isSaved={!!keys[provider.id]}
-          onSave={(value) => handleSave(provider.id, value)}
-          onDelete={() => handleDelete(provider.id)}
-        />
-      ))}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Provider API Keys</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label>Provider</Label>
+              <Input placeholder="e.g. OpenAI" />
+            </div>
+            <div>
+              <Label>API Key</Label>
+              <Input type="password" placeholder="Enter your API key" />
+            </div>
+            <div className="flex items-end">
+              <Button className="w-full">Save Key</Button>
+            </div>
+          </div>
+          <div className="border rounded-md p-4 bg-slate-50 dark:bg-slate-900/20">
+            <p className="text-sm text-muted-foreground">
+              No API keys added yet. Add your keys to enable AI agent capabilities.
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
-};
+}

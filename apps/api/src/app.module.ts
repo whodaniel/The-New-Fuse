@@ -37,6 +37,7 @@ import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
+import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { SecurityModule } from './modules/security/security.module';
 import { TaskModule } from './modules/task/task.module'; // Migrated to Drizzle ORM
@@ -118,6 +119,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
     BillingModule,
+    MarketplaceModule, // Unified AI Asset Marketplace
   ],
   controllers: [
     AppController,

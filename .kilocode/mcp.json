@@ -7,7 +7,8 @@
         "@modelcontextprotocol/server-filesystem",
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
       ],
-      "disabled": false
+      "disabled": true,
+      "alwaysAllow": []
     },
     "skills": {
       "command": "node",
@@ -17,62 +18,22 @@
       "env": {
         "SKILLS_DIR": "/Users/<owner>/.gemini/antigravity/claude-skills/skills"
       },
-      "disabled": false
-    },
-    "tnf-skills": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/mcp-skills-server/dist/index.js"
-      ],
-      "env": {
-        "SKILLS_BASE_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent"
-      },
-      "disabled": false
-    },
-    "youtube-curator": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/youtube-mcp-server/dist/index.js"
-      ],
-      "disabled": false
-    },
-    "tnf-relay": {
-      "command": "/Users/<owner>/.nvm/versions/node/v24.12.0/bin/node",
-      "args": ["/Users/<owner>/.fuse/tnf-relay-mcp/index.js"],
-      "env": {
-        "RELAY_URL": "ws://localhost:3001/ws"
-      },
-      "disabled": false
-    },
-    "jules": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/jules-skill/dist/mcp-server.js"
-      ],
-      "disabled": false
-    },
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"],
-      "disabled": false
-    },
-    "sequentialthinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "alwaysAllow": ["sequentialthinking"],
-      "disabled": false
+      "disabled": true,
+      "alwaysAllow": []
     },
     "puppeteer": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-      "disabled": false
+      "disabled": true,
+      "alwaysAllow": []
     },
     "google-docs-mcp": {
       "command": "node",
       "args": [
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/mcp-googledocs-server/dist/server.js"
       ],
-      "disabled": true
+      "disabled": true,
+      "alwaysAllow": []
     },
     "gdrive": {
       "command": "node",
@@ -83,7 +44,8 @@
         "GOOGLE_APPLICATION_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/gcp-oauth.keys.json",
         "MCP_GDRIVE_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/.gdrive-server-credentials.json"
       },
-      "disabled": true
+      "disabled": true,
+      "alwaysAllow": []
     },
     "github-mcp-server": {
       "command": "node",
@@ -93,7 +55,8 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
       },
-      "disabled": true
+      "disabled": true,
+      "alwaysAllow": []
     },
     "redis": {
       "command": "node",
@@ -103,7 +66,8 @@
       "env": {
         "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
       },
-      "disabled": true
+      "disabled": true,
+      "alwaysAllow": []
     }
   }
 }
