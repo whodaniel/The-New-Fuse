@@ -17,6 +17,7 @@ import {
   HStack,
   Icon,
   SimpleGrid,
+  Stack,
   Text,
 } from '@chakra-ui/react';
 import { FiActivity, FiArrowLeft, FiChevronRight, FiCpu, FiLayers, FiWifi } from 'react-icons/fi';

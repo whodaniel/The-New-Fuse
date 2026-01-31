@@ -63,9 +63,10 @@ const ServiceArchitectureMap = () => {
       .sum((d: any) => d.size || 0)
       .sort((a, b) => (b.value || 0) - (a.value || 0));
 
-    const treemap = d3.treemap().size([width, height]).paddingOuter(10).paddingInner(4);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const treemap = d3.treemap<any>().size([width, height]).paddingOuter(10).paddingInner(4);
 
-    treemap(root);
+    treemap(root as any);
 
     const cell = svg
       .selectAll('g')
@@ -93,7 +94,7 @@ const ServiceArchitectureMap = () => {
       .data((d: any) => [d.data.name, d.data.port ? `Port: ${d.data.port}` : ''])
       .join('tspan')
       .attr('x', 5)
-      .attr('y', (d, i) => 15 + i * 15)
+      .attr('y', (_d, i) => 15 + i * 15)
       .text((d) => d)
       .attr('fill', 'white')
       .attr('font-size', '12px')
