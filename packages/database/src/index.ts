@@ -81,35 +81,7 @@ export type {
 } from './drizzle/types';
 
 // Export Drizzle repositories
-export {
-  DrizzleAgentRepository,
-  DrizzleAuditLogsRepository,
-  DrizzleChatRepository,
-  DrizzlePromptTemplateRepository,
-  DrizzleTaskRepository,
-  DrizzleUserRepository,
-  DrizzleWorkflowRepository,
-  DrizzleWorkspaceRepository,
-  agentNftRepository,
-  agentPromptVersionRepository,
-  drizzleAgentRepository,
-  drizzleApiLogsRepository,
-  drizzleAuditLogsRepository,
-  drizzleChatRepository,
-  drizzlePromptTemplateRepository,
-  drizzleTaskRepository,
-  drizzleUserRepository,
-  drizzleWorkflowRepository,
-  drizzleWorkspaceRepository,
-  fractionalShareRepository,
-  optimizationJobRepository,
-  revenueDistributionRepository,
-  revenueStreamRepository,
-  validationDatasetRepository,
-  workflowTopologyRepository,
-  type AuditLogEntry,
-  type AuditLogQuery,
-} from './drizzle/repositories';
+export * from './drizzle/repositories';
 
 // Export backwards compatibility repository aliases
 export {

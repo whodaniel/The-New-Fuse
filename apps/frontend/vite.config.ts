@@ -67,7 +67,7 @@ export default defineConfig(({ mode }) => {
       }),
       // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
       nodePolyfills({
-        include: ['buffer', 'process', 'stream', 'util', 'crypto'],
+        include: ['buffer', 'process', 'stream', 'util', 'crypto', 'perf_hooks'],
         globals: {
           Buffer: true,
           global: true,
@@ -136,12 +136,21 @@ export default defineConfig(({ mode }) => {
         'mysql2/promise': path.resolve(__dirname, 'src/stubs/empty.ts'),
         mysql2: path.resolve(__dirname, 'src/stubs/empty.ts'),
         '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
+        '@nestjs/config': path.resolve(__dirname, 'src/stubs/nestjs-config.ts'),
+        '@nestjs/core': path.resolve(__dirname, 'src/stubs/empty.ts'),
         '@nestjs/swagger': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
         'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
         // Stub @uauth/js which has browser-incompatible @unstoppabledomains/resolution deps
         '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
+        // Handle nested imports for stubbed packages using regex keys
+        '/^@nestjs\\/common\\/.*/': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
+        '/^@nestjs\\/config\\/.*/': path.resolve(__dirname, 'src/stubs/nestjs-config.ts'),
+        '/^@nestjs\\/core\\/.*/': path.resolve(__dirname, 'src/stubs/empty.ts'),
+        '/^@nestjs\\/swagger\\/.*/': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
+        perf_hooks: path.resolve(__dirname, 'src/stubs/perf-hooks.ts'),
       },
     },
+
     define: {
       // Inject environment variables at build time
       __DEPLOYMENT_CONFIG__: JSON.stringify({

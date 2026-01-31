@@ -1,4 +1,4 @@
-import { drizzlePromptTemplateRepository } from '@the-new-fuse/database';
+import { DrizzlePromptTemplateRepository } from '@the-new-fuse/database';
 import {
   PromptExecutionResult,
   PromptSnippet,
@@ -8,7 +8,7 @@ import {
 } from './types';
 
 export class PromptTemplateServiceImpl implements PromptTemplateService {
-  private repository = drizzlePromptTemplateRepository;
+  private repository = new DrizzlePromptTemplateRepository();
 
   constructor() {}
 
