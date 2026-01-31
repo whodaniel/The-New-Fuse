@@ -53,6 +53,7 @@ RUN pnpm --filter @the-new-fuse/port-management build
 RUN pnpm --filter @the-new-fuse/prompt-templating build
 RUN pnpm --filter @the-new-fuse/core build
 RUN pnpm --filter @the-new-fuse/shared build
+RUN pnpm --filter @the-new-fuse/marketplace-gateway build
 
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies
