@@ -19,9 +19,6 @@ export class SearchAssetsDto {
   tags?: string[];
 
   @IsOptional()
-  category?: string; // Handle single query param case if framework doesn't auto-parse array
-
-  @IsOptional()
   @IsEnum(['popular', 'recent', 'rating', 'price', 'downloads'])
   sort?: 'popular' | 'recent' | 'rating' | 'price' | 'downloads';
 
@@ -38,16 +35,16 @@ export class SearchAssetsDto {
 
 export class CreateAssetDto {
   @IsString()
-  type: AssetType;
+  type!: AssetType;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  description: string;
+  description!: string;
 
   @IsString()
-  version: string;
+  version!: string;
 
   @IsOptional()
   @IsString()
@@ -59,14 +56,14 @@ export class CreateAssetDto {
 
   @IsOptional()
   @IsEnum(['FREE', 'ONE_TIME', 'SUBSCRIPTION', 'PAY_PER_USE', 'REVENUE_SHARE'] as PricingType[])
-  pricingType: PricingType;
+  pricingType!: PricingType;
 
   @IsOptional()
   @IsNumber()
   price?: number;
 
   @IsString()
-  authorId: string;
+  authorId!: string;
 
   // Specific IDs
   @IsOptional()

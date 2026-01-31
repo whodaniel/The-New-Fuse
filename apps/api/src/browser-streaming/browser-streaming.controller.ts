@@ -39,10 +39,10 @@ export class BrowserStreamingController {
           lastUpdate: session.lastUpdate,
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
-        error: error.message || 'Failed to create session',
+        error: error instanceof Error ? error.message : 'Failed to create session',
       };
     }
   }
@@ -64,10 +64,10 @@ export class BrowserStreamingController {
         success: true,
         message: 'Broadcast sent',
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -79,10 +79,10 @@ export class BrowserStreamingController {
       return {
         success: true,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
