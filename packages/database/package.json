@@ -7,25 +7,25 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/esm/index.js",
+      "import": "./dist/index.js",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./drizzle": {
       "types": "./dist/drizzle/index.d.ts",
-      "import": "./dist/esm/drizzle/index.js",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
+      "import": "./dist/drizzle/index.js",
+      "require": "./dist/drizzle/index.js",
+      "default": "./dist/drizzle/index.js"
     },
     "./drizzle/repositories": {
       "types": "./dist/drizzle/repositories/index.d.ts",
-      "import": "./dist/esm/drizzle/repositories/index.js",
+      "import": "./dist/drizzle/repositories/index.js",
       "require": "./dist/drizzle/repositories/index.js",
       "default": "./dist/drizzle/repositories/index.js"
     },
     "./drizzle/schema": {
       "types": "./dist/drizzle/schema/index.d.ts",
-      "import": "./dist/esm/drizzle/schema/index.js",
+      "import": "./dist/drizzle/schema/index.js",
       "require": "./dist/drizzle/schema/index.js",
       "default": "./dist/drizzle/schema/index.js"
     }
