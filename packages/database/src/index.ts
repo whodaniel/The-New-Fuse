@@ -83,6 +83,13 @@ export type {
 // Export Drizzle repositories
 export * from './drizzle/repositories';
 
+// Explicit exports for repositories that need bundler-friendly exports
+// (Rollup/Vite can have issues with barrel re-exports from CommonJS)
+export {
+  DrizzlePromptTemplateRepository,
+  drizzlePromptTemplateRepository,
+} from './drizzle/repositories/prompt-template.repository';
+
 // Export backwards compatibility repository aliases
 export {
   AgentRepository,
