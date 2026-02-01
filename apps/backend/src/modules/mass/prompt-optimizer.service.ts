@@ -255,7 +255,7 @@ export class PromptOptimizerService {
       //   where: { id: agentId },
       //   include: { promptVersions: true },
       // });
-      const agent = await drizzleAgentRepository.findById(agentId);
+      const agent = await drizzleAgentRepository.findById(agentId, (config as any).userId);
 
       if (!agent) {
         throw new Error(`Agent ${agentId} not found`);
@@ -516,6 +516,6 @@ Return as JSON array of strings.
       exemplars: prompt.exemplars as any, // Cast for jsonb compatibility
       performanceMetrics: metrics as any,
       massStage,
-    }) as any as AgentPromptVersion;
+    } as any) as any as AgentPromptVersion;
   }
 }

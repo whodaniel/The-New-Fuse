@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { LoggingService } from '../services/loggingService';
+import { LoggingService } from '../services/logging.service';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
@@ -22,7 +22,7 @@ export class LoggingMiddleware implements NestMiddleware {
       query: req.query,
       headers: this.sanitizeHeaders(req.headers),
       ip: req.ip,
-      userId: (req as any).user?.id
+      userId: (req as any).user?.id,
     });
 
     // Capture response data
@@ -53,7 +53,7 @@ export class LoggingMiddleware implements NestMiddleware {
         statusCode: res.statusCode,
         duration,
         responseSize: Buffer.byteLength(responseBody, 'utf8'),
-        userId: (req as any).user?.id
+        userId: (req as any).user?.id,
       });
 
       // Log performance if duration exceeds threshold
@@ -61,7 +61,7 @@ export class LoggingMiddleware implements NestMiddleware {
         this.logger.logPerformance('http_request', duration, {
           requestId,
           method: req.method,
-          path: req.path
+          path: req.path,
         });
       }
 
@@ -74,8 +74,8 @@ export class LoggingMiddleware implements NestMiddleware {
   private sanitizeHeaders(headers: any): any {
     const sanitized = { ...headers };
     const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'];
-    
-    sensitiveHeaders.forEach(header => {
+
+    sensitiveHeaders.forEach((header) => {
       if (sanitized[header]) {
         sanitized[header] = '[REDACTED]';
       }
@@ -83,4 +83,4 @@ export class LoggingMiddleware implements NestMiddleware {
 
     return sanitized;
   }
-} 
+}

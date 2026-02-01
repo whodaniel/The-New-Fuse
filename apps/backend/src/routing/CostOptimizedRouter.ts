@@ -237,7 +237,7 @@ export class CostOptimizedRouter {
     // 4. Calculate cost-effectiveness score for each
     const scored = availableAgents.map((agent) => ({
       agent,
-      score: this.calculateCostEffectiveness(agent, requiredIntelligence, budget),
+      score: this.calculateCostEffectiveness(agent, requiredIntelligence, budget as number),
     }));
 
     // 5. Sort by score (higher is better)
@@ -466,7 +466,9 @@ export class CostOptimizedRouter {
     averageCost: number;
   }> {
     const usage = await this.redis.hgetall('routing:agent-usage');
-    const agentUsage = new Map(Object.entries(usage).map(([k, v]) => [k, parseInt(v, 10)]));
+    const agentUsage = new Map(
+      Object.entries(usage).map(([k, v]) => [k, parseInt(v as string, 10)])
+    );
 
     const totalRoutings = Array.from(agentUsage.values()).reduce((sum, count) => sum + count, 0);
 

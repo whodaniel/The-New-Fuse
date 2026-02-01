@@ -264,7 +264,7 @@ export class AgentDirectoryService {
         usageCount: sql`${agentDirectoryEntries.usageCount} + 1`,
         lastActiveAt: new Date(),
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(agentDirectoryEntries.agentId, agentId));
   }
 

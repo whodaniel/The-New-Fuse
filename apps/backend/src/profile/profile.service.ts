@@ -19,12 +19,15 @@ export class ProfileService {
 
   async updateProfile(userId: string, profileData: any) {
     const user = await this.usersService.update(userId, profileData);
-    await this.eventBus.publish(new ProfileUpdatedEvent(user));
+    await this.eventBus.publish(new ProfileUpdatedEvent(userId, user, profileData));
     return this.enrichUserProfile(user);
   }
 
-  async updateAvatar(userId: string, file: Express.Multer.File) {
-    const avatarUrl = await this.storageService.uploadFile(file);
+  async updateAvatar(userId: string, file: any) {
+    const { url: avatarUrl } = await this.storageService.uploadFile(
+      file.buffer,
+      file.originalname || `avatar-${userId}`
+    );
     return this.usersService.update(userId, { avatarUrl });
   }
 

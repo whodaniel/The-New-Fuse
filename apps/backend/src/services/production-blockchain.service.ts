@@ -6,6 +6,7 @@ import { BlockchainUtilService } from './blockchain-util.service';
 
 export interface AgentNFTCreationRequest {
   agentId: string;
+  userId: string;
   ownerAddress: string;
   metadataUri?: string;
   smartAccountAddress?: string;
@@ -52,7 +53,7 @@ export class ProductionBlockchainService {
       }
 
       // Get agent details
-      const agent = await drizzleAgentRepository.findById(request.agentId);
+      const agent = await drizzleAgentRepository.findById(request.agentId, request.userId);
 
       if (!agent) {
         throw new Error(`Agent not found: ${request.agentId}`);
@@ -172,7 +173,7 @@ export class ProductionBlockchainService {
 
     // Check if agent exists
     if (request.agentId) {
-      const agent = await drizzleAgentRepository.findById(request.agentId);
+      const agent = await drizzleAgentRepository.findById(request.agentId, request.userId);
 
       if (!agent) {
         errors.push(`Agent not found: ${request.agentId}`);

@@ -11,16 +11,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import {
-  and,
-  db,
-  desc,
-  drizzleSchema,
-  eq,
-  lt,
-  sql,
-  type DrizzleTask as Task,
-} from '@the-new-fuse/database';
+import { and, db, desc, drizzleSchema, eq, lt, sql, type Task } from '@the-new-fuse/database';
 
 const { agents, tasks, agentRegistrations, julesSessions } = drizzleSchema;
 
@@ -85,13 +76,13 @@ export class SelfImprovementCronService {
           // Mark as offline
           await db
             .update(agentRegistrations)
-            .set({ isOnline: false, updatedAt: new Date() })
+            .set({ isOnline: false, updatedAt: new Date() } as any)
             .where(eq(agentRegistrations.id, reg.id));
 
           // Also update parent agent status if needed
           await db
             .update(agents)
-            .set({ status: 'OFFLINE', updatedAt: new Date() })
+            .set({ status: 'OFFLINE', updatedAt: new Date() } as any)
             .where(eq(agents.id, reg.agentId));
 
           this.logger.log(`[Health] Marked agent ${reg.agentId} as OFFLINE due to stale heartbeat`);
@@ -557,7 +548,11 @@ export class SelfImprovementCronService {
     try {
       // Find system agent
       let systemAgent = (
-        await db.select().from(agents).where(eq(agents.type, 'SYSTEM')).limit(1)
+        await db
+          .select()
+          .from(agents)
+          .where(eq(agents.type, 'SYSTEM' as any))
+          .limit(1)
       )[0];
 
       if (!systemAgent) {
@@ -600,7 +595,7 @@ export class SelfImprovementCronService {
           userId: systemAgent.userId, // Inherit user ID
           description: prompt,
           metadata: { pattern: pattern.pattern },
-        })
+        } as any)
         .returning();
 
       // Create Jules Session
@@ -614,7 +609,7 @@ export class SelfImprovementCronService {
           prompt,
           pattern: pattern.pattern,
         },
-      });
+      } as any);
 
       this.logger.log(`[Patterns] Created Jules improvement task for pattern: ${pattern.pattern}`);
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { AdvancedCacheManager } from './advanced-cache.manager';
 
@@ -24,7 +24,7 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
 
   constructor(
     private readonly cacheManager: AdvancedCacheManager,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   async onModuleInit() {
@@ -50,7 +50,7 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
 
     this.invalidationRules.set(rule.name, {
       ...rule,
-      enabled: rule.enabled !== false,
+      enabled: true,
     });
 
     this.logger.debug(`Registered invalidation rule: ${rule.name} for event: ${rule.event}`);
@@ -109,11 +109,7 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
   /**
    * Schedule cache invalidation after a delay
    */
-  scheduleInvalidation(
-    name: string,
-    strategy: InvalidationStrategy,
-    delayMs: number,
-  ): void {
+  scheduleInvalidation(name: string, strategy: InvalidationStrategy, delayMs: number): void {
     // Clear existing scheduled invalidation
     if (this.scheduledInvalidations.has(name)) {
       clearTimeout(this.scheduledInvalidations.get(name));
@@ -206,10 +202,7 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
    */
   @OnEvent('order.created')
   async onOrderCreated(payload: { userId: string; productIds: string[] }): Promise<void> {
-    const tags = [
-      `user:${payload.userId}`,
-      ...payload.productIds.map((id) => `product:${id}`),
-    ];
+    const tags = [`user:${payload.userId}`, ...payload.productIds.map((id) => `product:${id}`)];
 
     await this.invalidate({
       tags,
@@ -252,7 +245,7 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
   async invalidateRelated(
     entityType: string,
     entityId: string,
-    relations: string[] = [],
+    relations: string[] = []
   ): Promise<void> {
     const tags = [
       `${entityType}:${entityId}`,
@@ -263,7 +256,7 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
     await this.invalidate({ tags });
 
     this.logger.debug(
-      `Invalidated related cache for ${entityType}:${entityId} with ${relations.length} relations`,
+      `Invalidated related cache for ${entityType}:${entityId} with ${relations.length} relations`
     );
   }
 
@@ -277,7 +270,9 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
       total += await this.invalidate(strategy);
     }
 
-    this.logger.debug(`Batch invalidated ${total} cache entries across ${strategies.length} strategies`);
+    this.logger.debug(
+      `Batch invalidated ${total} cache entries across ${strategies.length} strategies`
+    );
 
     return total;
   }
@@ -287,7 +282,7 @@ export class CacheInvalidationService implements OnModuleInit, OnModuleDestroy {
    */
   async conditionalInvalidate(
     condition: () => boolean | Promise<boolean>,
-    strategy: InvalidationStrategy,
+    strategy: InvalidationStrategy
   ): Promise<number> {
     const shouldInvalidate = await Promise.resolve(condition());
 

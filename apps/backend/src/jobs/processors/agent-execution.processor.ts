@@ -56,6 +56,7 @@ export class AgentExecutionProcessor {
       // Execute the Skill via handleRequest
       // We assume the skill name is in 'task' and args in 'parameters'
       const response = await engine.handleRequest({
+        type: 'req',
         id: job.id.toString(),
         method: 'node.invoke',
         params: { skillName: task, args: parameters || {} },

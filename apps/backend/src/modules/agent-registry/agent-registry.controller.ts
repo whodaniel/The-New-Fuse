@@ -61,7 +61,7 @@ export class AgentRegistryController {
   @ApiHeader({ name: 'X-Agent-Token', description: 'Agent authentication token' })
   async getRegistration(@Param('id') id: string, @Headers('x-agent-token') token: string) {
     await this.verifyAgentToken(token);
-    return this.registrationService.getRegistration(id);
+    return this.registrationService.getRegistration(id, 'system');
   }
 
   @Post('heartbeat')

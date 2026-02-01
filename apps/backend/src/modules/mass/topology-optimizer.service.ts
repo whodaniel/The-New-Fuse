@@ -78,7 +78,7 @@ export class TopologyOptimizerService {
     // Manually fetch agents and their latest prompt versions
     const agents = await Promise.all(
       agentIds.map(async (id) => {
-        const agent = await drizzleAgentRepository.findById(id);
+        const agent = await drizzleAgentRepository.findById(id, userId);
         if (!agent || agent.userId !== userId) return null;
 
         // Fetch latest block-level prompt version
@@ -199,7 +199,7 @@ export class TopologyOptimizerService {
     // Generate random combinations based on influence weights
     for (let i = 0; i < 3; i++) {
       try {
-        const randomTopology = this.generateRandomTopology(agents, influenceScores, config);
+        const randomTopology = await this.generateRandomTopology(agents, influenceScores, config);
         candidates.push(randomTopology);
       } catch (error) {
         this.logger.warn(`Failed to generate random topology ${i}:`, error);
@@ -207,6 +207,117 @@ export class TopologyOptimizerService {
     }
 
     return candidates;
+  }
+
+  private async generateRandomTopology(
+    agents: any[],
+    influenceScores: Record<string, number>,
+    config: TopologyOptimizationConfig
+  ): Promise<WorkflowTopology> {
+    // Create weighted random selection based on influence scores
+    const totalInfluence = Object.values(influenceScores).reduce((sum, score) => sum + score, 0);
+    const selectedAgents = this.weightedRandomSelection(
+      agents,
+      influenceScores,
+      Math.min(4, agents.length)
+    );
+
+    // Randomly choose a pattern for the selected agents
+    const patterns = ['linear', 'parallel', 'reflect', 'aggregate'];
+    const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+
+    return this.generateTopologyByPattern(randomPattern, selectedAgents, influenceScores, config);
+  }
+
+  private weightedRandomSelection(
+    agents: any[],
+    influenceScores: Record<string, number>,
+    count: number
+  ): any[] {
+    const selected = [];
+    const available = [...agents];
+
+    for (let i = 0; i < count && available.length > 0; i++) {
+      const totalWeight = available.reduce(
+        (sum, agent) => sum + (influenceScores[agent.id] || 0.1),
+        0
+      );
+      let random = Math.random() * totalWeight;
+
+      let selectedIndex = 0;
+      for (let j = 0; j < available.length; j++) {
+        random -= influenceScores[available[j].id] || 0.1;
+        if (random <= 0) {
+          selectedIndex = j;
+          break;
+        }
+      }
+
+      selected.push(available[selectedIndex]);
+      available.splice(selectedIndex, 1);
+    }
+
+    return selected;
+  }
+
+  private async evaluateTopology(
+    topology: WorkflowTopology,
+    config: TopologyOptimizationConfig
+  ): Promise<PerformanceMetrics> {
+    // Get validation dataset
+    const dataset = await validationDatasetRepository.findById(config.validationDatasetId);
+
+    if (!dataset) {
+      throw new Error(`Validation dataset ${config.validationDatasetId} not found`);
+    }
+
+    // Use evaluation harness to evaluate the topology
+    return this.evaluationHarness.evaluateTopology(
+      topology.id || 'temp_topology',
+      dataset.items as any[],
+      config
+    );
+  }
+
+  private selectBestTopology(evaluationResults: any[]): any {
+    // Select based on primary metric with tie-breaking
+    const sorted = evaluationResults.sort((a, b) => {
+      const aScore = a.metrics.accuracy || 0;
+      const bScore = b.metrics.accuracy || 0;
+
+      if (Math.abs(aScore - bScore) < 0.01) {
+        // Tie-break by efficiency (lower latency + cost)
+        const aEfficiency = (a.metrics.latency || 1000) + (a.metrics.cost || 1) * 1000;
+        const bEfficiency = (b.metrics.latency || 1000) + (b.metrics.cost || 1) * 1000;
+        return aEfficiency - bEfficiency;
+      }
+
+      return bScore - aScore;
+    });
+
+    return sorted[0];
+  }
+
+  private async saveTopology(
+    topology: WorkflowTopology,
+    metrics: PerformanceMetrics,
+    userId: string
+  ): Promise<WorkflowTopology> {
+    const saved = await workflowTopologyRepository.create({
+      name: topology.name,
+      description: topology.description,
+      nodes: topology.nodes as any,
+      edges: topology.edges as any,
+      performanceMetrics: metrics as any,
+      massOptimized: true,
+      userId,
+    } as any);
+
+    return {
+      ...topology,
+      id: saved.id,
+      performanceMetrics: metrics,
+    };
   }
 
   private async generateTopologyByPattern(
@@ -497,117 +608,6 @@ export class TopologyOptimizerService {
       userId: config.userId,
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
-  }
-
-  private generateRandomTopology(
-    agents: any[],
-    influenceScores: Record<string, number>,
-    config: TopologyOptimizationConfig
-  ): WorkflowTopology {
-    // Create weighted random selection based on influence scores
-    const totalInfluence = Object.values(influenceScores).reduce((sum, score) => sum + score, 0);
-    const selectedAgents = this.weightedRandomSelection(
-      agents,
-      influenceScores,
-      Math.min(4, agents.length)
-    );
-
-    // Randomly choose a pattern for the selected agents
-    const patterns = ['linear', 'parallel', 'reflect', 'aggregate'];
-    const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
-
-    return this.generateTopologyByPattern(randomPattern, selectedAgents, influenceScores, config);
-  }
-
-  private weightedRandomSelection(
-    agents: any[],
-    influenceScores: Record<string, number>,
-    count: number
-  ): any[] {
-    const selected = [];
-    const available = [...agents];
-
-    for (let i = 0; i < count && available.length > 0; i++) {
-      const totalWeight = available.reduce(
-        (sum, agent) => sum + (influenceScores[agent.id] || 0.1),
-        0
-      );
-      let random = Math.random() * totalWeight;
-
-      let selectedIndex = 0;
-      for (let j = 0; j < available.length; j++) {
-        random -= influenceScores[available[j].id] || 0.1;
-        if (random <= 0) {
-          selectedIndex = j;
-          break;
-        }
-      }
-
-      selected.push(available[selectedIndex]);
-      available.splice(selectedIndex, 1);
-    }
-
-    return selected;
-  }
-
-  private async evaluateTopology(
-    topology: WorkflowTopology,
-    config: TopologyOptimizationConfig
-  ): Promise<PerformanceMetrics> {
-    // Get validation dataset
-    const dataset = await validationDatasetRepository.findById(config.validationDatasetId);
-
-    if (!dataset) {
-      throw new Error(`Validation dataset ${config.validationDatasetId} not found`);
-    }
-
-    // Use evaluation harness to evaluate the topology
-    return this.evaluationHarness.evaluateTopology(
-      topology.id || 'temp_topology',
-      dataset.items as any[],
-      config
-    );
-  }
-
-  private selectBestTopology(evaluationResults: any[]): any {
-    // Select based on primary metric with tie-breaking
-    const sorted = evaluationResults.sort((a, b) => {
-      const aScore = a.metrics.accuracy || 0;
-      const bScore = b.metrics.accuracy || 0;
-
-      if (Math.abs(aScore - bScore) < 0.01) {
-        // Tie-break by efficiency (lower latency + cost)
-        const aEfficiency = (a.metrics.latency || 1000) + (a.metrics.cost || 1) * 1000;
-        const bEfficiency = (b.metrics.latency || 1000) + (b.metrics.cost || 1) * 1000;
-        return aEfficiency - bEfficiency;
-      }
-
-      return bScore - aScore;
-    });
-
-    return sorted[0];
-  }
-
-  private async saveTopology(
-    topology: WorkflowTopology,
-    metrics: PerformanceMetrics,
-    userId: string
-  ): Promise<WorkflowTopology> {
-    const saved = await workflowTopologyRepository.create({
-      name: topology.name,
-      description: topology.description,
-      nodes: topology.nodes as any,
-      edges: topology.edges as any,
-      performanceMetrics: metrics as any,
-      massOptimized: true,
-      userId,
-    });
-
-    return {
-      ...topology,
-      id: saved.id,
-      performanceMetrics: metrics,
     };
   }
 }

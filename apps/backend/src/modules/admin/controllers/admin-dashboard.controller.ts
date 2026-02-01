@@ -1,9 +1,13 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
+  agents,
+  db,
   drizzleAgentRepository,
   drizzleApiLogsRepository,
   drizzleUserRepository,
+  eq,
+  sql,
 } from '@the-new-fuse/database';
 import { Roles } from '../../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
@@ -37,7 +41,11 @@ export class AdminDashboardController {
 
     // 3. Fetch Agent Stats
     const totalAgents = await drizzleAgentRepository.count();
-    const activeAgents = await drizzleAgentRepository.countActive();
+    const activeAgentsResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(agents)
+      .where(eq(agents.status, 'ACTIVE'));
+    const activeAgents = Number(activeAgentsResult[0]?.count || 0);
 
     // 4. API Stats (24h)
     const statsArray = await drizzleApiLogsRepository.getStats(

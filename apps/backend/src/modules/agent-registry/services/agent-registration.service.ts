@@ -38,7 +38,7 @@ export class AgentRegistrationService {
           author: data.author,
           ...data.metadata,
         },
-      });
+      } as any);
 
       // Generate authentication token
       const authToken = this.generateAuthToken();
@@ -147,8 +147,8 @@ export class AgentRegistrationService {
   /**
    * Get registration details
    */
-  async getRegistration(registrationId: string) {
-    return drizzleAgentRepository.findRegistrationWithDetails(registrationId);
+  async getRegistration(registrationId: string, userId: string) {
+    return drizzleAgentRepository.findRegistrationWithDetails(registrationId, userId);
   }
 
   /**
