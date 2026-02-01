@@ -92,4 +92,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # -s enables SPA mode (serves index.html for all routes)
 # -n disables clipboard notifications
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
-# Force rebuild Thu Jan 23 06:30:00 EST 2026
+# Force rebuild Sat Feb 01 00:00:00 EST 2026 - Cache bust for Railway

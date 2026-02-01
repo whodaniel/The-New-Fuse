@@ -1,6 +1,7 @@
 # Multi-stage Dockerfile for The New Fuse Frontend
 # This Dockerfile works when build context is apps/frontend OR monorepo root
 # Railway configuration should NOT set a root directory for this service
+# Cache bust: 2026-02-01-v1 - Force rebuild to use updated dist path logic
 
 # Stage 1: Build stage
 FROM node:22-alpine AS builder
