@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "prebuild": "pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/mcp-core build && pnpm --filter @the-new-fuse/ag-ui-core build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build",
-    "build": "rm -rf dist && nest build || echo 'Build completed with warnings'",
+    "build": "rm -rf dist && nest build",
     "build:watch": "nest build --watch",
     "trigger:jules": "tsx scripts/trigger-jules-improvement.ts",
     "dev": "cross-env PORT=3004 ts-node-dev --respawn --transpile-only src/simple-main.ts",
@@ -124,7 +124,9 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "uuid": "^13.0.0",
-    "webpack": "^5.103.0"
+    "webpack": "^5.103.0",
+    "@swc/cli": "^0.7.10",
+    "@swc/core": "^1.11.9"
   },
   "jest": {
     "moduleFileExtensions": [

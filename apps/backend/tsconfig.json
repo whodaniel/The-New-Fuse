@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2022",
     "module": "CommonJS",
     "moduleResolution": "Node",
     "outDir": "./dist",
@@ -29,6 +29,7 @@
   "exclude": [
     "node_modules",
     "../../node_modules",
+    "**/node_modules/**",
     "dist",
     "test",
     "tests",
