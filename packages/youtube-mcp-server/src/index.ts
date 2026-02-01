@@ -129,12 +129,14 @@ server.tool(
 );
 
 // Tool: Get Watch Later Videos
+const getWatchLaterSchema = {
+  maxResults: z.number().optional().default(10).describe('Number of videos to return'),
+};
+
 server.tool(
   'get_watch_later',
   "Retrieve videos from the user's Watch Later playlist.",
-  {
-    maxResults: z.number().optional().default(10).describe('Number of videos to return'),
-  },
+  getWatchLaterSchema,
   async ({ maxResults }: { maxResults: number }) => {
     const client = await getOAuthClient();
 
@@ -190,13 +192,15 @@ server.tool(
 );
 
 // Tool: Archive Video (Remove from Playlist)
+const archiveVideoSchema = {
+  videoId: z.string().describe('The ID of the video to remove (not the playlist item ID)'),
+  playlistId: z.string().optional().default('WL').describe('The playlist ID to remove from'),
+};
+
 server.tool(
   'archive_video',
   'Remove a video from a playlist (default: Watch Later) after watching.',
-  {
-    videoId: z.string().describe('The ID of the video to remove (not the playlist item ID)'),
-    playlistId: z.string().optional().default('WL').describe('The playlist ID to remove from'),
-  },
+  archiveVideoSchema,
   async ({ videoId, playlistId }: { videoId: string; playlistId: string }) => {
     const client = await getOAuthClient();
     if (!client.credentials?.access_token) {
