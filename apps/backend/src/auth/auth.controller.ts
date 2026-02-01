@@ -149,7 +149,6 @@ export class AuthController {
         email: user.email || domain,
         name: user.name || domain,
         role: user.role || 'user',
-        photoURL: user.photoURL,
       },
     };
   }

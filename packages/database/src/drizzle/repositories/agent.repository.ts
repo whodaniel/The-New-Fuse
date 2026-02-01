@@ -101,13 +101,23 @@ export class DrizzleAgentRepository {
   }
 
   /**
-   * Find all active agents
+   * Find all active agents (User Specific)
    */
   async findActive(userId: string): Promise<Agent[]> {
     return db
       .select()
       .from(agents)
       .where(and(eq(agents.status, 'ACTIVE'), eq(agents.userId, userId), isNull(agents.deletedAt)));
+  }
+
+  /**
+   * Find all active agents (System: no userId filter)
+   */
+  async findActiveSystem(): Promise<Agent[]> {
+    return db
+      .select()
+      .from(agents)
+      .where(and(eq(agents.status, 'ACTIVE'), isNull(agents.deletedAt)));
   }
 
   /**

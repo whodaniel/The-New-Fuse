@@ -250,7 +250,7 @@ export class AgentDirectoryService {
   async updateRating(agentId: string, rating: number): Promise<void> {
     await db
       .update(agentDirectoryEntries)
-      .set({ rating, updatedAt: new Date() })
+      .set({ rating, updatedAt: new Date() } as any)
       .where(eq(agentDirectoryEntries.agentId, agentId));
   }
 

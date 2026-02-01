@@ -51,7 +51,7 @@ export class GoogleAuthService {
         emailVerified: true,
         role: 'USER',
         isActive: true,
-      });
+      } as any);
     }
 
     // Generate JWT

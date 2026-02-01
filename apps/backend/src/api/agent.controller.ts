@@ -140,7 +140,7 @@ export class AgentController {
   @Get('active')
   @ApiOperation({ summary: 'List active agents' })
   async getActiveAgents(): Promise<any[]> {
-    return drizzleAgentRepository.findByStatus('ACTIVE');
+    return drizzleAgentRepository.findActiveSystem();
   }
 
   @Get('discover')
@@ -153,7 +153,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Get agent by ID' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   async getAgentById(@Param('id') id: string): Promise<any> {
-    const agent = await drizzleAgentRepository.findById(id);
+    const agent = await drizzleAgentRepository.findByIdSystem(id);
 
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
@@ -165,7 +165,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Update agent / Configure agent' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   async updateAgent(@Param('id') id: string, @Body() updates: UpdateAgentDto): Promise<any> {
-    const agent = await drizzleAgentRepository.findById(id);
+    const agent = await drizzleAgentRepository.findByIdSystem(id);
 
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
@@ -205,7 +205,7 @@ export class AgentController {
       data.config = newConfig;
     }
 
-    return drizzleAgentRepository.update(id, data);
+    return drizzleAgentRepository.update(id, agent.userId, data);
   }
 
   @Put(':id/status')
@@ -214,19 +214,25 @@ export class AgentController {
     @Param('id') id: string,
     @Body('status') status: AgentStatus
   ): Promise<any> {
-    const agent = await drizzleAgentRepository.findById(id);
+    const agent = await drizzleAgentRepository.findByIdSystem(id);
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
     }
 
-    return drizzleAgentRepository.update(id, { status: status as any });
+    return drizzleAgentRepository.update(id, agent.userId, { status: status as any } as any);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete agent' })
   async deleteAgent(@Param('id') id: string): Promise<{ message: string }> {
     try {
-      const deleted = await drizzleAgentRepository.softDelete(id);
+      // We need to fetch the agent first to get the userId for the softDelete call
+      const agent = await drizzleAgentRepository.findByIdSystem(id);
+      if (!agent) {
+        throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
+      }
+
+      const deleted = await drizzleAgentRepository.softDelete(id, agent.userId);
       if (!deleted) {
         throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
       }

@@ -25,11 +25,11 @@ import { SelfImprovementModule } from './modules/self-improvement/self-improveme
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
 // PrismaModule removed - migrated to DrizzleModule
+import { MetricsModule } from './metrics/metrics.module';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { AdminModule } from './modules/admin/admin.module';
 import { LoggingService } from './services/logging.service';
 import { UsersModule } from './users/users.module';
-import { MetricsModule } from './metrics/metrics.module';
 
 // Create a comprehensive module to support all frontend routing expectations
 // TNF (The New Fuse) is the Master Agent that orchestrates all other agents
@@ -58,7 +58,7 @@ import { MetricsModule } from './metrics/metrics.module';
         secret:
           configService.get<string>('JWT_SECRET') || 'development-jwt-secret-change-in-production',
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
+          expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as any,
           issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
         },
       }),

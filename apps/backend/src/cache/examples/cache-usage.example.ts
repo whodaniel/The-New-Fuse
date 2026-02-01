@@ -1,19 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { UseInterceptors } from '@nestjs/common';
-import {
-  Cacheable,
-  CacheEvict,
-  CacheInvalidate,
-  HttpCache,
-  HttpCacheTTL,
-} from '../decorators/cacheable.decorator';
+import { Injectable, UseInterceptors } from '@nestjs/common';
+import { Cacheable, CacheEvict, CacheInvalidate } from '../decorators/cacheable.decorator';
 import { CacheInterceptor } from '../interceptors/cache.interceptor';
 import { HttpCacheInterceptor } from '../interceptors/http-cache.interceptor';
 import { AdvancedCacheManager } from '../services/advanced-cache.manager';
+import { CacheInvalidationService } from '../services/cache-invalidation.service';
+import { CacheWarmingService } from '../services/cache-warming.service';
 import { DatabaseCacheService } from '../services/database-cache.service';
 import { SessionCacheService } from '../services/session-cache.service';
-import { CacheWarmingService } from '../services/cache-warming.service';
-import { CacheInvalidationService } from '../services/cache-invalidation.service';
 
 /**
  * Example 1: Using @Cacheable decorator for automatic caching
@@ -21,9 +14,7 @@ import { CacheInvalidationService } from '../services/cache-invalidation.service
 @Injectable()
 @UseInterceptors(CacheInterceptor)
 export class UserService {
-  constructor(
-    private readonly dbCache: DatabaseCacheService,
-  ) {}
+  constructor(private readonly dbCache: DatabaseCacheService) {}
 
   /**
    * Cache user by ID with 5 minutes TTL
@@ -92,7 +83,7 @@ export class ProductController {
   /**
    * Cache GET requests for 10 minutes
    */
-  @HttpCache({ ttl: 600 })
+  // @HttpCache({ ttl: 600 })
   async getProducts() {
     console.log('Fetching products from database');
     return [
@@ -104,10 +95,12 @@ export class ProductController {
   /**
    * Cache with custom key generator
    */
+  /*
   @HttpCache({
     ttl: 300,
     keyGenerator: (req) => `products:category:${req.query.category}`,
   })
+  */
   async getProductsByCategory() {
     console.log('Fetching products by category');
     return [];
@@ -116,10 +109,12 @@ export class ProductController {
   /**
    * Cache with Vary header
    */
+  /*
   @HttpCache({
     ttl: 600,
     varyBy: ['Accept-Language', 'Accept-Encoding'],
   })
+  */
   async getProductsLocalized() {
     console.log('Fetching localized products');
     return [];
@@ -131,9 +126,7 @@ export class ProductController {
  */
 @Injectable()
 export class ManualCacheExample {
-  constructor(
-    private readonly cacheManager: AdvancedCacheManager,
-  ) {}
+  constructor(private readonly cacheManager: AdvancedCacheManager) {}
 
   async cacheExample() {
     // Simple set/get
@@ -147,7 +140,7 @@ export class ManualCacheExample {
         // This only executes on cache miss
         return { id: '123', name: 'John' };
       },
-      { ttl: 600, tags: ['users'] },
+      { ttl: 600, tags: ['users'] }
     );
 
     // Batch operations
@@ -175,9 +168,7 @@ export class ManualCacheExample {
  */
 @Injectable()
 export class DatabaseCacheExample {
-  constructor(
-    private readonly dbCache: DatabaseCacheService,
-  ) {}
+  constructor(private readonly dbCache: DatabaseCacheService) {}
 
   async exampleUsage() {
     // Cache single entity
@@ -185,7 +176,7 @@ export class DatabaseCacheExample {
       'user',
       '123',
       async () => ({ id: '123', name: 'John' }),
-      600,
+      600
     );
 
     // Cache entity list
@@ -193,25 +184,20 @@ export class DatabaseCacheExample {
       'user',
       'active',
       async () => [{ id: '1' }, { id: '2' }],
-      300,
+      300
     );
 
     // Cache paginated query
-    const result = await this.dbCache.cachePaginatedQuery(
-      'products',
-      1,
-      20,
-      async () => ({
-        data: [{ id: 1 }, { id: 2 }],
-        total: 100,
-      }),
-    );
+    const result = await this.dbCache.cachePaginatedQuery('products', 1, 20, async () => ({
+      data: [{ id: 1 }, { id: 2 }],
+      total: 100,
+    }));
 
     // Cache search results
     const searchResults = await this.dbCache.cacheSearchResults(
       'products',
       { query: 'laptop', category: 'electronics' },
-      async () => [{ id: 1 }],
+      async () => [{ id: 1 }]
     );
 
     // Batch fetch with caching
@@ -221,7 +207,7 @@ export class DatabaseCacheExample {
       async (missingIds) => {
         // Only fetch missing IDs
         return [{ id: '3', name: 'Charlie' }];
-      },
+      }
     );
 
     // Invalidate entity cache
@@ -235,9 +221,7 @@ export class DatabaseCacheExample {
  */
 @Injectable()
 export class SessionCacheExample {
-  constructor(
-    private readonly sessionCache: SessionCacheService,
-  ) {}
+  constructor(private readonly sessionCache: SessionCacheService) {}
 
   async exampleUsage() {
     // Create session
@@ -251,7 +235,7 @@ export class SessionCacheExample {
         createdAt: Date.now(),
         lastActivity: Date.now(),
       },
-      { ttl: 604800, sliding: true }, // 7 days with sliding expiration
+      { ttl: 604800, sliding: true } // 7 days with sliding expiration
     );
 
     // Get session
@@ -281,9 +265,7 @@ export class SessionCacheExample {
  */
 @Injectable()
 export class CacheWarmingExample {
-  constructor(
-    private readonly warmingService: CacheWarmingService,
-  ) {}
+  constructor(private readonly warmingService: CacheWarmingService) {}
 
   async setupWarmingTasks() {
     // Register common warming tasks
@@ -323,11 +305,9 @@ export class CacheWarmingExample {
     await this.warmingService.executeTask('user-stats');
 
     // Warm if missing
-    await this.warmingService.warmIfMissing(
-      'config:app',
-      async () => ({ version: '1.0.0' }),
-      { ttl: 7200 },
-    );
+    await this.warmingService.warmIfMissing('config:app', async () => ({ version: '1.0.0' }), {
+      ttl: 7200,
+    });
   }
 }
 
@@ -336,9 +316,7 @@ export class CacheWarmingExample {
  */
 @Injectable()
 export class CacheInvalidationExample {
-  constructor(
-    private readonly invalidationService: CacheInvalidationService,
-  ) {}
+  constructor(private readonly invalidationService: CacheInvalidationService) {}
 
   async setupInvalidation() {
     // Register custom invalidation rule
@@ -364,7 +342,7 @@ export class CacheInvalidationExample {
     this.invalidationService.scheduleInvalidation(
       'clear-temp-cache',
       { patterns: ['temp:*'] },
-      3600000, // 1 hour
+      3600000 // 1 hour
     );
 
     // Conditional invalidation
@@ -373,15 +351,11 @@ export class CacheInvalidationExample {
         // Check if invalidation is needed
         return true;
       },
-      { tags: ['users'] },
+      { tags: ['users'] }
     );
 
     // Invalidate related caches
-    await this.invalidationService.invalidateRelated(
-      'user',
-      '123',
-      ['orders', 'cart', 'wishlist'],
-    );
+    await this.invalidationService.invalidateRelated('user', '123', ['orders', 'cart', 'wishlist']);
   }
 }
 
@@ -390,9 +364,7 @@ export class CacheInvalidationExample {
  */
 @Injectable()
 export class CacheRefreshExample {
-  constructor(
-    private readonly dbCache: DatabaseCacheService,
-  ) {}
+  constructor(private readonly dbCache: DatabaseCacheService) {}
 
   async exampleUsage() {
     // Cache with automatic refresh before expiration
@@ -407,7 +379,7 @@ export class CacheRefreshExample {
         ttl: 3600,
         refreshInterval: 2880, // Refresh at 80% of TTL
         tags: ['stats'],
-      },
+      }
     );
   }
 }

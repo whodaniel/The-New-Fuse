@@ -15,7 +15,7 @@ import { Cron } from '@nestjs/schedule';
 import { LRUCache } from 'lru-cache';
 
 // Types for relay integration (we'll define these inline to avoid import issues)
-interface RelayConfig {
+export interface RelayConfig {
   id: string;
   version: string;
   workspaceDir: string;
@@ -41,7 +41,7 @@ interface RelayConfig {
   };
 }
 
-interface Agent {
+export interface Agent {
   id: string;
   name: string;
   type: string;
@@ -51,7 +51,7 @@ interface Agent {
   metadata?: Record<string, unknown>;
 }
 
-interface RelayMessage {
+export interface RelayMessage {
   id: string;
   type: string;
   source: string;
@@ -61,7 +61,7 @@ interface RelayMessage {
   metadata?: Record<string, unknown>;
 }
 
-interface SystemStatus {
+export interface SystemStatus {
   relayId: string;
   uptime: number;
   agentCount: number;
@@ -372,7 +372,9 @@ export class RelayService implements OnModuleInit, OnModuleDestroy {
 
   @Cron('*/10 * * * *') // Runs every 10 minutes
   logMemoryUsage() {
-    this.logger.log(`Memory Usage: Agents -> ${this.agents.size}, Message Queue -> ${this.messageQueue.length}, Agent Evictions -> ${this.agentEvictionCount}, Message Evictions -> ${this.messageEvictionCount}`);
+    this.logger.log(
+      `Memory Usage: Agents -> ${this.agents.size}, Message Queue -> ${this.messageQueue.length}, Agent Evictions -> ${this.agentEvictionCount}, Message Evictions -> ${this.messageEvictionCount}`
+    );
   }
 
   @Cron('*/5 * * * *') // Runs every 5 minutes
