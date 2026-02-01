@@ -9,6 +9,7 @@
  * - message-bridge.js
  */
 
+import { LocalExtensionRegistry } from '@the-new-fuse/extension-system';
 import { EventEmitter } from 'events';
 import { UnifiedBridge } from '../adapters/UnifiedBridge.js';
 import { createAuthService, JWTAuthService } from '../auth/JWTAuthService.js';
@@ -49,6 +50,7 @@ export class RelayServer extends EventEmitter {
   private interceptedMessages: RelayMessage[] = [];
   private orchestratorService: OrchestratorIntegrationService;
   private authService: JWTAuthService;
+  private extensionRegistry: LocalExtensionRegistry;
 
   constructor(config: RelayConfig) {
     super();
@@ -60,6 +62,8 @@ export class RelayServer extends EventEmitter {
     this.bridge = new UnifiedBridge(this.logger);
     this.protocolTranslator = new ProtocolTranslator(this.logger);
     this.authService = createAuthService();
+    // Initialize extension registry in workspace root
+    this.extensionRegistry = new LocalExtensionRegistry(`${config.workspaceDir}/extensions`);
 
     // Initialize orchestrator integration service
     this.orchestratorService = new OrchestratorIntegrationService(
@@ -285,6 +289,21 @@ export class RelayServer extends EventEmitter {
         case 'WORKFLOW_EXECUTION':
           await this.handleWorkflowExecution(translatedMessage);
           break;
+
+        // Protocol Implementation for Bridge Verification
+        case 'AGENT_LIST_REQUEST':
+          await this.handleAgentListRequest(translatedMessage);
+          break;
+        case 'WORKFLOW_LIST_REQUEST':
+          await this.handleWorkflowListRequest(translatedMessage);
+          break;
+        case 'MCP_SERVER_LIST_REQUEST':
+          await this.handleMCPListRequest(translatedMessage);
+          break;
+        case 'EXTENSION_LIST_REQUEST':
+          await this.handleExtensionListRequest(translatedMessage);
+          break;
+
         default:
           // Route message through message router
           await this.messageRouter.route(translatedMessage, this.transports, this.agentRegistry);
@@ -382,6 +401,87 @@ export class RelayServer extends EventEmitter {
   private async handleWorkflowExecution(message: RelayMessage): Promise<void> {
     // Delegate to workflow execution handler
     this.emit('workflowExecution', message);
+  }
+
+  // ==========================================
+  // Request Handlers (Bridge Verification)
+  // ==========================================
+
+  private async handleAgentListRequest(message: RelayMessage): Promise<void> {
+    const agents = this.agentRegistry.getAllAgents();
+    const reply: RelayMessage = {
+      id: `reply_${Date.now()}`,
+      type: 'AGENT_LIST_UPDATE',
+      source: this.config.id,
+      target: message.source,
+      payload: agents,
+      timestamp: new Date().toISOString(),
+    };
+    await this.messageRouter.route(reply, this.transports, this.agentRegistry);
+  }
+
+  private async handleWorkflowListRequest(message: RelayMessage): Promise<void> {
+    // Return real orchestration metrics/status
+    const status = this.orchestratorService.getServiceStatus();
+    const reply: RelayMessage = {
+      id: `reply_${Date.now()}`,
+      type: 'WORKFLOW_LIST_UPDATE',
+      source: this.config.id,
+      target: message.source,
+      payload: [
+        // Map metrics to workflow structure
+        {
+          id: 'system-orchestrator',
+          name: 'System Orchestrator',
+          status: status.metrics.activeTasks > 0 ? 'active' : 'idle',
+          nodes: status.taskStates,
+        },
+      ],
+      timestamp: new Date().toISOString(),
+    };
+    await this.messageRouter.route(reply, this.transports, this.agentRegistry);
+  }
+
+  private async handleMCPListRequest(message: RelayMessage): Promise<void> {
+    // Check MCP Transport availability
+    const mcpTransport = this.transports.get('mcp');
+    const servers = mcpTransport
+      ? [{ id: 'local-mcp', name: 'Local MCP', status: 'connected' }]
+      : [];
+
+    const reply: RelayMessage = {
+      id: `reply_${Date.now()}`,
+      type: 'MCP_SERVER_LIST_UPDATE',
+      source: this.config.id,
+      target: message.source,
+      payload: servers,
+      timestamp: new Date().toISOString(),
+    };
+    await this.messageRouter.route(reply, this.transports, this.agentRegistry);
+  }
+
+  private async handleExtensionListRequest(message: RelayMessage): Promise<void> {
+    const rawExtensions = this.extensionRegistry.list();
+    const extensions = rawExtensions.map((ext) => ({
+      id: ext.id,
+      name: ext.manifest.name,
+      version: ext.manifest.version,
+      description: ext.manifest.description,
+      author: ext.manifest.author,
+      type: ext.manifest.type,
+      status: ext.status,
+      permissions: ext.manifest.permissions,
+    }));
+
+    const reply: RelayMessage = {
+      id: `reply_${Date.now()}`,
+      type: 'EXTENSION_LIST_UPDATE',
+      source: this.config.id,
+      target: message.source,
+      payload: extensions,
+      timestamp: new Date().toISOString(),
+    };
+    await this.messageRouter.route(reply, this.transports, this.agentRegistry);
   }
 
   public getRelayCapabilities(): string[] {

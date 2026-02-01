@@ -108,7 +108,9 @@
     "tnf-mcp-config-manager": {
       "command": "node",
       "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/tnf-mcp-config-manager.js"
+        "--import",
+        "tsx/esm",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/tnf-mcp-config-manager.ts"
       ],
       "env": {
         "TNF_CORE_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data",
@@ -137,7 +139,9 @@
     "unified-config-server": {
       "command": "node",
       "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/unified-config-server.js",
+        "--import",
+        "tsx/esm",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/unified-config-server.ts",
         "--no-oauth"
       ],
       "env": {
@@ -163,7 +167,7 @@
     "pnpm-workspace-manager": {
       "command": "node",
       "args": [
-        "--loader",
+        "--import",
         "tsx/esm",
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/pnpm-workspace-manager.ts"
       ],
@@ -174,7 +178,7 @@
     "nestjs-development-helpers": {
       "command": "node",
       "args": [
-        "--loader",
+        "--import",
         "tsx/esm",
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/src/mcp/nestjs-development-helpers.ts"
       ],

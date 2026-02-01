@@ -2,11 +2,7 @@
   "mcpServers": {
     "tnf-complete-api-wrapper": {
       "command": "node",
-      "args": [
-        "--loader",
-        "tsx/esm",
-        "src/mcp/complete-api-mcp-server.ts"
-      ],
+      "args": ["--import", "tsx/esm", "src/mcp/complete-api-mcp-server.ts"],
       "env": {
         "TNF_API_BASE_URL": "http://localhost:8080/v1",
         "NODE_ENV": "development"
@@ -14,7 +10,7 @@
       "description": "Complete API wrapper for The New Fuse platform - provides 80+ MCP tools for full platform access",
       "capabilities": [
         "Authentication management",
-        "Agent CRUD operations", 
+        "Agent CRUD operations",
         "Chat session management",
         "Webhook configuration",
         "MCP server management",
@@ -28,7 +24,7 @@
       "tools": {
         "authentication": [
           "auth_login",
-          "auth_register", 
+          "auth_register",
           "auth_refresh",
           "auth_logout",
           "auth_set_credentials"
@@ -37,7 +33,7 @@
           "agent_list",
           "agent_create",
           "agent_get",
-          "agent_update", 
+          "agent_update",
           "agent_update_status",
           "agent_delete",
           "agent_list_active"
@@ -130,7 +126,7 @@
       },
       "resources": [
         "tnf://api/schema",
-        "tnf://api/endpoints", 
+        "tnf://api/endpoints",
         "tnf://platform/status",
         "tnf://auth/context",
         "tnf://tools/catalog",

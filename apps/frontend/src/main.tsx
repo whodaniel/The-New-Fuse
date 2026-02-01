@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
+import { RelayProvider } from './bridges'; // Import RelayProvider
 import { ToastProvider } from './components/ui/toast';
 import './lib/firebase'; // Ensure Firebase is initialized early
 import { AuthProvider } from './providers/AuthProvider';
@@ -61,7 +62,9 @@ try {
       <BrowserRouter>
         <AuthProvider>
           <ToastProvider>
-            <App />
+            <RelayProvider>
+              <App />
+            </RelayProvider>
           </ToastProvider>
         </AuthProvider>
       </BrowserRouter>

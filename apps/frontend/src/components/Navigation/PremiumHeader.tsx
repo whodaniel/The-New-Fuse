@@ -2,6 +2,7 @@ import { Bell, LogOut, Menu, Search, Settings, User } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
+import { BridgeConnectionStatus } from '../../bridges';
 import { useAuth } from '../../hooks/useAuth';
 
 interface PremiumHeaderProps {
@@ -66,6 +67,8 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
           </div>
 
           <div className="flex items-center gap-2">
+            <BridgeConnectionStatus />
+
             <button
               onClick={handleNotificationClick}
               className="p-2 text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors relative"

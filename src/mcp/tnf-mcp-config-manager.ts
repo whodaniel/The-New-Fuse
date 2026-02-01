@@ -15,8 +15,8 @@ import {
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
 import * as fs from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
 
 interface MCPServerConfig {
   command: string;
@@ -87,17 +87,17 @@ class TNFMCPConfigManager {
             properties: {
               config_path: {
                 type: 'string',
-                description: 'Path to config file. If not provided, searches common locations'
+                description: 'Path to config file. If not provided, searches common locations',
               },
               client_type: {
                 type: 'string',
                 enum: ['tnf', 'claude-desktop', 'custom'],
-                description: 'Type of MCP client configuration'
+                description: 'Type of MCP client configuration',
               },
               include_health: { type: 'boolean', default: true },
-              include_tnf_managed: { type: 'boolean', default: true }
-            }
-          }
+              include_tnf_managed: { type: 'boolean', default: true },
+            },
+          },
         },
         {
           name: 'add_mcp_server',
@@ -115,10 +115,10 @@ class TNFMCPConfigManager {
               tags: { type: 'array', items: { type: 'string' } },
               priority: { type: 'number', minimum: 1, maximum: 10 },
               tnf_integration: { type: 'boolean', default: false },
-              agent_builder_compatible: { type: 'boolean', default: false }
+              agent_builder_compatible: { type: 'boolean', default: false },
             },
-            required: ['name', 'command']
-          }
+            required: ['name', 'command'],
+          },
         },
         {
           name: 'remove_mcp_server',
@@ -129,10 +129,10 @@ class TNFMCPConfigManager {
               config_path: { type: 'string' },
               client_type: { type: 'string', enum: ['tnf', 'claude-desktop', 'custom'] },
               name: { type: 'string' },
-              create_backup: { type: 'boolean', default: true }
+              create_backup: { type: 'boolean', default: true },
             },
-            required: ['name']
-          }
+            required: ['name'],
+          },
         },
         {
           name: 'generate_client_config',
@@ -148,12 +148,12 @@ class TNFMCPConfigManager {
                 type: 'object',
                 properties: {
                   host: { type: 'string', default: 'localhost' },
-                  port: { type: 'number', default: 3001 }
-                }
-              }
+                  port: { type: 'number', default: 3001 },
+                },
+              },
             },
-            required: ['client_type']
-          }
+            required: ['client_type'],
+          },
         },
         {
           name: 'sync_with_tnf_registry',
@@ -163,9 +163,9 @@ class TNFMCPConfigManager {
             properties: {
               config_path: { type: 'string' },
               direction: { type: 'string', enum: ['to_tnf', 'from_tnf', 'bidirectional'] },
-              merge_strategy: { type: 'string', enum: ['replace', 'merge', 'preserve_local'] }
-            }
-          }
+              merge_strategy: { type: 'string', enum: ['replace', 'merge', 'preserve_local'] },
+            },
+          },
         },
         {
           name: 'validate_config',
@@ -175,9 +175,9 @@ class TNFMCPConfigManager {
             properties: {
               config_path: { type: 'string' },
               check_tnf_compatibility: { type: 'boolean', default: true },
-              suggest_agent_builder_integration: { type: 'boolean', default: true }
-            }
-          }
+              suggest_agent_builder_integration: { type: 'boolean', default: true },
+            },
+          },
         },
         {
           name: 'get_tnf_passthrough_config',
@@ -187,12 +187,12 @@ class TNFMCPConfigManager {
             properties: {
               client_type: { type: 'string', enum: ['claude-desktop', 'custom'] },
               tnf_endpoint: { type: 'string', default: 'http://localhost:3001' },
-              include_direct_servers: { type: 'boolean', default: false }
+              include_direct_servers: { type: 'boolean', default: false },
             },
-            required: ['client_type']
-          }
-        }
-      ]
+            required: ['client_type'],
+          },
+        },
+      ],
     }));
 
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -224,49 +224,61 @@ class TNFMCPConfigManager {
     });
   }
 
-  private async listMCPServers(args: any): Promise<{ content: Array<{ type: string; text: string }> }> {
+  private async listMCPServers(
+    args: any
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
     const { config_path, client_type, include_health = true, include_tnf_managed = true } = args;
-    
+
     const configPath = this.resolveConfigPath(config_path, client_type);
     const config = await this.loadConfig(configPath);
-    
+
     const servers = config.mcpServers || config.servers || {};
     const serverList = await Promise.all(
       Object.entries(servers).map(async ([name, serverConfig]) => ({
         name,
         ...serverConfig,
         managed_by_tnf: serverConfig.managed_by === 'tnf-core',
-        health_status: include_health ? await this.checkServerHealth(name, serverConfig) : 'unknown'
+        health_status: include_health
+          ? await this.checkServerHealth(name, serverConfig)
+          : 'unknown',
       }))
     );
 
     return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify({
-          config_path: configPath,
-          client_type: this.detectClientType(config),
-          tnf_integration: config.metadata?.tnf_integration || false,
-          server_count: serverList.length,
-          servers: serverList
-        }, null, 2)
-      }]
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(
+            {
+              config_path: configPath,
+              client_type: this.detectClientType(config),
+              tnf_integration: config.metadata?.tnf_integration || false,
+              server_count: serverList.length,
+              servers: serverList,
+            },
+            null,
+            2
+          ),
+        },
+      ],
     };
   }
 
-  private async addMCPServer(args: any): Promise<{ content: Array<{ type: string; text: string }> }> {
-    const { 
-      config_path, 
-      client_type, 
-      name, 
-      command, 
-      args: serverArgs = [], 
-      env = {}, 
+  private async addMCPServer(
+    args: any
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+    const {
+      config_path,
+      client_type,
+      name,
+      command,
+      args: serverArgs = [],
+      env = {},
       description = '',
       tags = [],
       priority = 5,
       tnf_integration = false,
-      agent_builder_compatible = false
+      agent_builder_compatible = false,
     } = args;
 
     const configPath = this.resolveConfigPath(config_path, client_type);
@@ -278,16 +290,20 @@ class TNFMCPConfigManager {
       args: serverArgs,
       env,
       description,
-      tags: [...tags, ...(tnf_integration ? ['tnf-integrated'] : []), ...(agent_builder_compatible ? ['agent-builder'] : [])],
+      tags: [
+        ...tags,
+        ...(tnf_integration ? ['tnf-integrated'] : []),
+        ...(agent_builder_compatible ? ['agent-builder'] : []),
+      ],
       priority,
       managed_by: 'tnf-mcp-config-manager',
-      enabled: true
+      enabled: true,
     };
 
     // Add to appropriate section based on client type
     const serversSection = config.mcpServers || config.servers || {};
     serversSection[name] = serverConfig;
-    
+
     if (config.mcpServers) {
       config.mcpServers = serversSection;
     } else {
@@ -299,22 +315,26 @@ class TNFMCPConfigManager {
       ...config.metadata,
       managed_by: 'tnf-mcp-config-manager',
       last_updated: new Date().toISOString(),
-      tnf_integration: tnf_integration || config.metadata?.tnf_integration || false
+      tnf_integration: tnf_integration || config.metadata?.tnf_integration || false,
     };
 
     await this.saveConfig(configPath, config);
 
     return {
-      content: [{
-        type: 'text',
-        text: `MCP server '${name}' added successfully to ${configPath}\n\nConfiguration:\n${JSON.stringify(serverConfig, null, 2)}\n\nNext steps:\n- Restart your MCP client to activate the server\n- Use 'validate_config' to verify setup\n${tnf_integration ? '- Server is configured for TNF integration\n' : ''}${agent_builder_compatible ? '- Server is compatible with TNF Agent Builder\n' : ''}`
-      }]
+      content: [
+        {
+          type: 'text',
+          text: `MCP server '${name}' added successfully to ${configPath}\n\nConfiguration:\n${JSON.stringify(serverConfig, null, 2)}\n\nNext steps:\n- Restart your MCP client to activate the server\n- Use 'validate_config' to verify setup\n${tnf_integration ? '- Server is configured for TNF integration\n' : ''}${agent_builder_compatible ? '- Server is compatible with TNF Agent Builder\n' : ''}`,
+        },
+      ],
     };
   }
 
-  private async removeMCPServer(args: any): Promise<{ content: Array<{ type: string; text: string }> }> {
+  private async removeMCPServer(
+    args: any
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
     const { config_path, client_type, name, create_backup = true } = args;
-    
+
     const configPath = this.resolveConfigPath(config_path, client_type);
     const config = await this.loadConfig(configPath);
 
@@ -332,41 +352,49 @@ class TNFMCPConfigManager {
     await this.saveConfig(configPath, config);
 
     return {
-      content: [{
-        type: 'text',
-        text: `MCP server '${name}' removed from ${configPath}${create_backup ? `\nBackup created at ${configPath}.backup.${Date.now()}` : ''}\n\nRestart your MCP client to deactivate the server.`
-      }]
+      content: [
+        {
+          type: 'text',
+          text: `MCP server '${name}' removed from ${configPath}${create_backup ? `\nBackup created at ${configPath}.backup.${Date.now()}` : ''}\n\nRestart your MCP client to deactivate the server.`,
+        },
+      ],
     };
   }
 
-  private async generateClientConfig(args: any): Promise<{ content: Array<{ type: string; text: string }> }> {
-    const { 
-      client_type, 
-      output_path, 
-      include_servers = [], 
+  private async generateClientConfig(
+    args: any
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+    const {
+      client_type,
+      output_path,
+      include_servers = [],
       tnf_passthrough = true,
-      network_config = { host: 'localhost', port: 3001 }
+      network_config = { host: 'localhost', port: 3001 },
     } = args;
 
     // Load TNF registry
     const tnfConfig = await this.loadConfig(path.join(this.tnfCorePath, 'mcp_config.json'));
-    
+
     let clientConfig: any = {};
 
     if (client_type === 'claude-desktop') {
       clientConfig = { mcpServers: {} };
-      
+
       if (tnf_passthrough) {
         // Configure TNF as primary server with passthrough
         clientConfig.mcpServers['the-new-fuse'] = {
           command: 'node',
-          args: ['--loader', 'tsx/esm', path.join(this.tnfCorePath, '..', 'src', 'mcp', 'server.ts')],
+          args: [
+            '--import',
+            'tsx/esm',
+            path.join(this.tnfCorePath, '..', 'src', 'mcp', 'server.ts'),
+          ],
           env: {
             TNF_PASSTHROUGH: 'true',
             TNF_HOST: network_config.host,
-            TNF_PORT: network_config.port.toString()
+            TNF_PORT: network_config.port.toString(),
           },
-          description: 'The New Fuse MCP Server with passthrough to all registered servers'
+          description: 'The New Fuse MCP Server with passthrough to all registered servers',
         };
       }
     }
@@ -382,22 +410,26 @@ class TNFMCPConfigManager {
     }
 
     const configText = JSON.stringify(clientConfig, null, 2);
-    
+
     if (output_path) {
       await fs.promises.writeFile(output_path, configText);
     }
 
     return {
-      content: [{
-        type: 'text',
-        text: `Generated ${client_type} configuration:\n\n${configText}${output_path ? `\n\nSaved to: ${output_path}` : ''}\n\n${tnf_passthrough ? 'Configuration uses TNF as primary server with passthrough capabilities.' : 'Configuration includes direct server connections.'}`
-      }]
+      content: [
+        {
+          type: 'text',
+          text: `Generated ${client_type} configuration:\n\n${configText}${output_path ? `\n\nSaved to: ${output_path}` : ''}\n\n${tnf_passthrough ? 'Configuration uses TNF as primary server with passthrough capabilities.' : 'Configuration includes direct server connections.'}`,
+        },
+      ],
     };
   }
 
-  private async syncWithTNFRegistry(args: any): Promise<{ content: Array<{ type: string; text: string }> }> {
+  private async syncWithTNFRegistry(
+    args: any
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
     const { config_path, direction = 'bidirectional', merge_strategy = 'merge' } = args;
-    
+
     const externalConfig = await this.loadConfig(config_path);
     const tnfRegistryPath = path.join(this.tnfCorePath, 'mcp_config.json');
     const tnfConfig = await this.loadConfig(tnfRegistryPath);
@@ -408,14 +440,14 @@ class TNFMCPConfigManager {
       // Sync external config to TNF registry
       const externalServers = externalConfig.mcpServers || externalConfig.servers || {};
       const tnfServers = tnfConfig.mcpServers || tnfConfig.servers || {};
-      
+
       for (const [name, config] of Object.entries(externalServers)) {
         if (merge_strategy === 'replace' || !tnfServers[name]) {
           tnfServers[name] = { ...config, managed_by: 'synced-from-external' };
           syncResults.push(`Synced '${name}' to TNF registry`);
         }
       }
-      
+
       tnfConfig.mcpServers = tnfServers;
       await this.saveConfig(tnfRegistryPath, tnfConfig);
     }
@@ -424,37 +456,45 @@ class TNFMCPConfigManager {
       // Sync TNF registry to external config
       const tnfServers = tnfConfig.mcpServers || tnfConfig.servers || {};
       const externalServers = externalConfig.mcpServers || externalConfig.servers || {};
-      
+
       for (const [name, config] of Object.entries(tnfServers)) {
         if (merge_strategy === 'replace' || !externalServers[name]) {
           externalServers[name] = config;
           syncResults.push(`Synced '${name}' from TNF registry`);
         }
       }
-      
+
       externalConfig.mcpServers = externalServers;
       await this.saveConfig(config_path, externalConfig);
     }
 
     return {
-      content: [{
-        type: 'text',
-        text: `Sync completed between ${config_path} and TNF registry:\n\n${syncResults.join('\n')}\n\nDirection: ${direction}\nMerge strategy: ${merge_strategy}`
-      }]
+      content: [
+        {
+          type: 'text',
+          text: `Sync completed between ${config_path} and TNF registry:\n\n${syncResults.join('\n')}\n\nDirection: ${direction}\nMerge strategy: ${merge_strategy}`,
+        },
+      ],
     };
   }
 
-  private async validateConfig(args: any): Promise<{ content: Array<{ type: string; text: string }> }> {
-    const { config_path, check_tnf_compatibility = true, suggest_agent_builder_integration = true } = args;
-    
+  private async validateConfig(
+    args: any
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+    const {
+      config_path,
+      check_tnf_compatibility = true,
+      suggest_agent_builder_integration = true,
+    } = args;
+
     const configPath = this.resolveConfigPath(config_path);
     const config = await this.loadConfig(configPath);
-    
+
     const issues: string[] = [];
     const suggestions: string[] = [];
-    
+
     const servers = config.mcpServers || config.servers || {};
-    
+
     for (const [name, serverConfig] of Object.entries(servers)) {
       // Check if command exists
       try {
@@ -480,18 +520,22 @@ class TNFMCPConfigManager {
     }
 
     return {
-      content: [{
-        type: 'text',
-        text: `Configuration validation for ${configPath}:\n\n${issues.length > 0 ? `Issues:\n${issues.join('\n')}\n\n` : ''}${suggestions.length > 0 ? `Suggestions:\n${suggestions.join('\n')}\n\n` : ''}${issues.length === 0 ? 'Configuration is valid!' : ''}`
-      }]
+      content: [
+        {
+          type: 'text',
+          text: `Configuration validation for ${configPath}:\n\n${issues.length > 0 ? `Issues:\n${issues.join('\n')}\n\n` : ''}${suggestions.length > 0 ? `Suggestions:\n${suggestions.join('\n')}\n\n` : ''}${issues.length === 0 ? 'Configuration is valid!' : ''}`,
+        },
+      ],
     };
   }
 
-  private async getTNFPassthroughConfig(args: any): Promise<{ content: Array<{ type: string; text: string }> }> {
-    const { 
-      client_type, 
-      tnf_endpoint = 'http://localhost:3001', 
-      include_direct_servers = false 
+  private async getTNFPassthroughConfig(
+    args: any
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
+    const {
+      client_type,
+      tnf_endpoint = 'http://localhost:3001',
+      include_direct_servers = false,
     } = args;
 
     const passthroughConfig: any = {};
@@ -500,14 +544,18 @@ class TNFMCPConfigManager {
       passthroughConfig.mcpServers = {
         'the-new-fuse-main': {
           command: 'node',
-          args: ['--loader', 'tsx/esm', path.join(this.tnfCorePath, '..', 'src', 'mcp', 'server.ts')],
+          args: [
+            '--import',
+            'tsx/esm',
+            path.join(this.tnfCorePath, '..', 'src', 'mcp', 'server.ts'),
+          ],
           env: {
             TNF_PASSTHROUGH_MODE: 'true',
             TNF_ENDPOINT: tnf_endpoint,
-            NODE_ENV: 'development'
+            NODE_ENV: 'development',
           },
-          description: 'The New Fuse MCP Server - Passthrough to all TNF registered servers'
-        }
+          description: 'The New Fuse MCP Server - Passthrough to all TNF registered servers',
+        },
       };
 
       if (include_direct_servers) {
@@ -515,31 +563,39 @@ class TNFMCPConfigManager {
         passthroughConfig.mcpServers.filesystem = {
           command: 'npx',
           args: ['-y', '@modelcontextprotocol/server-filesystem', '--allow-dir', this.tnfCorePath],
-          description: 'Filesystem access for TNF project'
+          description: 'Filesystem access for TNF project',
         };
       }
     }
 
     return {
-      content: [{
-        type: 'text',
-        text: `TNF Passthrough Configuration for ${client_type}:\n\n${JSON.stringify(passthroughConfig, null, 2)}\n\nThis configuration connects to The New Fuse as the primary MCP server, which will provide passthrough access to all registered MCP servers in the TNF ecosystem.\n\nTNF Endpoint: ${tnf_endpoint}\nDirect servers included: ${include_direct_servers}`
-      }]
+      content: [
+        {
+          type: 'text',
+          text: `TNF Passthrough Configuration for ${client_type}:\n\n${JSON.stringify(passthroughConfig, null, 2)}\n\nThis configuration connects to The New Fuse as the primary MCP server, which will provide passthrough access to all registered MCP servers in the TNF ecosystem.\n\nTNF Endpoint: ${tnf_endpoint}\nDirect servers included: ${include_direct_servers}`,
+        },
+      ],
     };
   }
 
   private resolveConfigPath(configPath?: string, clientType?: string): string {
     if (configPath) return configPath;
-    
+
     // Auto-detect common config paths
     if (clientType === 'claude-desktop') {
-      return path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json');
+      return path.join(
+        os.homedir(),
+        'Library',
+        'Application Support',
+        'Claude',
+        'claude_desktop_config.json'
+      );
     }
-    
+
     if (clientType === 'tnf') {
       return path.join(this.tnfCorePath, 'mcp_config.json');
     }
-    
+
     // Default to TNF config
     return path.join(this.tnfCorePath, 'mcp_config.json');
   }
@@ -557,8 +613,8 @@ class TNFMCPConfigManager {
           metadata: {
             managed_by: 'tnf-mcp-config-manager',
             last_updated: new Date().toISOString(),
-            tnf_integration: true
-          }
+            tnf_integration: true,
+          },
         };
         await this.saveConfig(configPath, defaultConfig);
         return defaultConfig;
@@ -571,13 +627,13 @@ class TNFMCPConfigManager {
     // Ensure directory exists
     const dir = path.dirname(configPath);
     await fs.promises.mkdir(dir, { recursive: true });
-    
+
     // Update metadata
     config.metadata = {
       ...config.metadata,
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     };
-    
+
     await fs.promises.writeFile(configPath, JSON.stringify(config, null, 2));
   }
 
@@ -591,7 +647,11 @@ class TNFMCPConfigManager {
   private async checkServerHealth(name: string, config: MCPServerConfig): Promise<string> {
     // Basic health check - could be expanded
     try {
-      if (fs.existsSync(config.command) || config.command.startsWith('npx') || config.command === 'node') {
+      if (
+        fs.existsSync(config.command) ||
+        config.command.startsWith('npx') ||
+        config.command === 'node'
+      ) {
         return 'healthy';
       }
       return 'unhealthy';

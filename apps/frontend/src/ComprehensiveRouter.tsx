@@ -63,6 +63,8 @@ const LoadingFallback = ({ name }: { name: string }) => (
   </div>
 );
 
+import { BridgeDiagnosticDashboard } from './pages/BridgeTestPage';
+
 // Additional real components
 import SmartNavigation from './components/SmartNavigation';
 import AllPages from './pages/AllPages';
@@ -599,6 +601,9 @@ export default function ComprehensiveRouter() {
                 </Suspense>
               }
             />
+
+            {/* Bridge Layer Verification - Phase 2 */}
+            <Route path="/bridge-test" element={<BridgeDiagnosticDashboard />} />
 
             <Route
               path="/profile"

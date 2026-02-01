@@ -7,7 +7,7 @@
         "@modelcontextprotocol/server-filesystem",
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
       ],
-      "disabled": true,
+      "disabled": false,
       "alwaysAllow": []
     },
     "skills": {
@@ -18,13 +18,13 @@
       "env": {
         "SKILLS_DIR": "/Users/<owner>/.gemini/antigravity/claude-skills/skills"
       },
-      "disabled": true,
+      "disabled": false,
       "alwaysAllow": []
     },
     "puppeteer": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-      "disabled": true,
+      "disabled": false,
       "alwaysAllow": []
     },
     "google-docs-mcp": {
@@ -32,7 +32,7 @@
       "args": [
         "/Users/<owner>/Desktop/A1-Inter-LLM-Com/mcp-googledocs-server/dist/server.js"
       ],
-      "disabled": true,
+      "disabled": false,
       "alwaysAllow": []
     },
     "gdrive": {
@@ -44,7 +44,7 @@
         "GOOGLE_APPLICATION_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/gcp-oauth.keys.json",
         "MCP_GDRIVE_CREDENTIALS": "/Users/<owner>/.gemini/antigravity/scratch/mcp-servers/gdrive-mcp-server/credentials/.gdrive-server-credentials.json"
       },
-      "disabled": true,
+      "disabled": false,
       "alwaysAllow": []
     },
     "github-mcp-server": {
@@ -55,7 +55,7 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
       },
-      "disabled": true,
+      "disabled": false,
       "alwaysAllow": []
     },
     "redis": {
@@ -66,7 +66,7 @@
       "env": {
         "REDIS_URL": "redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570"
       },
-      "disabled": true,
+      "disabled": false,
       "alwaysAllow": []
     }
   }
