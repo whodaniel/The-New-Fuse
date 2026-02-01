@@ -17,7 +17,9 @@ export class AdminGuard implements CanActivate {
     const userRoles = Array.isArray(user.roles) ? user.roles : [user.role];
     const adminRoles = ['SUPER_ADMIN', 'ADMIN', 'AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'];
 
-    const hasAdminAccess = userRoles.some((role) => adminRoles.includes(role?.toUpperCase()));
+    const hasAdminAccess = userRoles.some((role: string | null | undefined) =>
+      adminRoles.includes(role?.toUpperCase() ?? '')
+    );
 
     if (!hasAdminAccess) {
       throw new UnauthorizedException('Admin access required');

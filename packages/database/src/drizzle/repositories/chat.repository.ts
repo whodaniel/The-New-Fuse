@@ -295,8 +295,16 @@ export class DrizzleChatRepository {
   }
 
   /**
-   * Find active rooms
+   * Find all active rooms (System level - no userId filter)
    */
+  async findActiveRooms(): Promise<ChatRoom[]> {
+    return db
+      .select()
+      .from(chatRooms)
+      .where(and(eq(chatRooms.isActive, true), isNull(chatRooms.deletedAt)))
+      .orderBy(desc(chatRooms.lastMessageAt));
+  }
+
   /**
    * Find public active rooms
    */

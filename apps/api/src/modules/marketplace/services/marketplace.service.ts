@@ -1,7 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { DatabaseService } from '@the-new-fuse/database/drizzle';
+import { and, DatabaseService, desc, eq, sql } from '@the-new-fuse/database';
 import { marketplaceAssets, skills } from '@the-new-fuse/database/drizzle/schema';
-import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { CreateAssetDto, SearchAssetsDto } from '../dto/marketplace.dto';
 import { PayPalService } from './paypal.service';
 
@@ -26,13 +25,16 @@ export class MarketplaceService {
     }
 
     if (type && type.length > 0) {
-      filters.push(inArray(marketplaceAssets.type, type));
+      // Use raw SQL to avoid drizzle-orm version mismatch issues
+      filters.push(sql`${marketplaceAssets.type} = ANY(${type})`);
     }
 
     if (category) {
       // Support array or string
       const categories = Array.isArray(category) ? category : [category];
-      if (categories.length > 0) filters.push(inArray(marketplaceAssets.category, categories));
+      if (categories.length > 0) {
+        filters.push(sql`${marketplaceAssets.category} = ANY(${categories})`);
+      }
     }
 
     // Simple tag logic (jsonb containment)

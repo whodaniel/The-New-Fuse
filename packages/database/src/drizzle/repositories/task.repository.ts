@@ -38,6 +38,17 @@ export class DrizzleTaskRepository {
   }
 
   /**
+   * Find tasks created after a certain date (System: no userId filter)
+   */
+  async findTasksCreatedAfterSystem(date: Date): Promise<Task[]> {
+    return db
+      .select()
+      .from(tasks)
+      .where(and(gte(tasks.createdAt, date), isNull(tasks.deletedAt)))
+      .orderBy(desc(tasks.createdAt));
+  }
+
+  /**
    * Find task by ID
    */
   async findTaskById(id: string): Promise<Task | null> {
@@ -83,6 +94,17 @@ export class DrizzleTaskRepository {
       .select()
       .from(tasks)
       .where(and(...conditions))
+      .orderBy(desc(tasks.createdAt));
+  }
+
+  /**
+   * Find tasks by status (System: no userId filter)
+   */
+  async findTasksByStatusSystem(status: string): Promise<Task[]> {
+    return db
+      .select()
+      .from(tasks)
+      .where(and(eq(tasks.status, status as any), isNull(tasks.deletedAt)))
       .orderBy(desc(tasks.createdAt));
   }
 

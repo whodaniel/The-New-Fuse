@@ -71,8 +71,16 @@ export class DrizzleWorkflowRepository {
   }
 
   /**
-   * Find active workflows
+   * Find all active workflows (System level - no creatorId filter)
    */
+  async findActiveWorkflowsSystem(): Promise<Workflow[]> {
+    return db
+      .select()
+      .from(workflows)
+      .where(and(eq(workflows.isActive, true), isNull(workflows.deletedAt)))
+      .orderBy(desc(workflows.updatedAt));
+  }
+
   /**
    * Find active workflows for a creator
    */

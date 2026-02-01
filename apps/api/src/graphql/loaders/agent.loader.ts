@@ -15,7 +15,8 @@ export class AgentLoader {
   constructor(private readonly db: DatabaseService) {
     this.batchAgents = new DataLoader<string, Agent | null>(async (agentIds: readonly string[]) => {
       // Load each agent individually since there's no batch method
-      const results = await Promise.all(agentIds.map((id) => this.db.agents.findById(id)));
+      // Use findByIdSystem for system-level DataLoader access
+      const results = await Promise.all(agentIds.map((id) => this.db.agents.findByIdSystem(id)));
       return results;
     });
 

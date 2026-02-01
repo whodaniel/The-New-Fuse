@@ -9,7 +9,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
 
 // In-memory storage for prompt templates until full schema is created
-interface PromptTemplate {
+export interface PromptTemplate {
   id: string;
   name: string;
   description?: string;
@@ -23,7 +23,7 @@ interface PromptTemplate {
   versions: PromptVersion[];
 }
 
-interface PromptVersion {
+export interface PromptVersion {
   id: string;
   templateId: string;
   version: number;
@@ -35,7 +35,7 @@ interface PromptVersion {
   createdAt: Date;
 }
 
-interface PromptSnippet {
+export interface PromptSnippet {
   id: string;
   name: string;
   content: string;

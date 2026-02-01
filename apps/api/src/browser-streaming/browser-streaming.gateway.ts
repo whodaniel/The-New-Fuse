@@ -28,7 +28,7 @@ import { Server, Socket } from 'socket.io';
 })
 export class BrowserStreamingGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(BrowserStreamingGateway.name);
   private subscriptions = new Map<string, Set<string>>();

@@ -598,11 +598,12 @@ export class AgencyController {
       const now = new Date();
       const startDate = this.getDateFromTimeframe(timeframe, now);
 
-      // Fetch analytics data using Drizzle
-      const agents = await this.db.agents.findAll(100);
+      // Fetch analytics data using Drizzle (system-level access for analytics)
+      const agentsResult = await this.db.agents.findAllSystem(1, 100);
+      const agents = agentsResult.data;
 
-      // Tasks filtering
-      const tasks = await this.db.tasks.findTasksCreatedAfter(startDate);
+      // Tasks filtering (system-level access for analytics)
+      const tasks = await this.db.tasks.findTasksCreatedAfterSystem(startDate);
 
       const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED');
       const failedTasks = tasks.filter((t: any) => t.status === 'FAILED');

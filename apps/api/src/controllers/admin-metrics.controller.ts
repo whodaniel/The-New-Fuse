@@ -170,8 +170,9 @@ export class AdminMetricsController {
    * Get active agent count
    */
   private async getActiveAgentCount(): Promise<number> {
-    const allAgents = await this.agentRepository.findAll();
-    return allAgents.filter((agent: any) => agent.status === 'ACTIVE').length;
+    // Use system-level access for admin metrics
+    const result = await this.agentRepository.findAllSystem(1, 1000);
+    return result.data.filter((agent: any) => agent.status === 'ACTIVE').length;
   }
 
   /**
