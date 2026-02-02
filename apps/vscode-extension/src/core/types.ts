@@ -115,6 +115,8 @@ export interface LLMRequest {
   onChunk?: (chunk: string) => void; // Streaming callback
   enableThinking?: boolean; // For Claude 3.7+ and o1
   thinkingBudget?: number; // For o1 models
+  // Tool Discovery Protocol support
+  enableToolSearch?: boolean; // Enable dynamic tool search (adds beta headers)
 }
 
 export interface LLMResponse {
@@ -127,6 +129,8 @@ export interface LLMResponse {
   };
   finishReason?: string;
   toolCalls?: any[]; // Tool calls requested by the model
+  // Tool Discovery Protocol support
+  toolSearchResults?: any[]; // Results from tool_search_tool (contains tool_reference blocks)
 }
 
 // ============================================
@@ -139,6 +143,9 @@ export interface MCPServerConfig {
   args?: string[];
   env?: Record<string, string>;
   enabled: boolean;
+  // Tool Discovery Protocol support
+  default_defer_loading?: boolean; // Whether to defer tools by default
+  always_loaded_tools?: string[]; // Tools to never defer (always load immediately)
 }
 
 export interface MCPConnection {
@@ -154,6 +161,11 @@ export interface MCPTool {
   name: string;
   description: string;
   inputSchema?: Record<string, unknown>;
+  // Tool Discovery Protocol support (Anthropic advanced-tool-use-2025-11-20)
+  defer_loading?: boolean; // Whether tool should be loaded lazily via search
+  always_load?: boolean; // Whether tool must always be loaded (never deferred)
+  category?: string; // Tool category for filtering
+  keywords?: string[]; // Keywords for BM25 search indexing
 }
 
 export interface MCPResource {
@@ -170,6 +182,7 @@ export interface MCPResource {
 /**
  * Tool definition for LLM function calling
  * Compatible with both Anthropic and OpenAI formats
+ * Extended with Tool Discovery Protocol support
  */
 export interface ToolDefinition {
   name: string;
@@ -179,6 +192,8 @@ export interface ToolDefinition {
     properties: Record<string, unknown>;
     required?: string[];
   };
+  // Tool Discovery Protocol (Anthropic advanced-tool-use-2025-11-20)
+  defer_loading?: boolean; // Mark tool for lazy loading via search
 }
 
 /**
@@ -324,6 +339,41 @@ export interface SystemStatus {
   activeProvider: string | null;
   mcpStatus: 'active' | 'inactive' | 'partial';
   mcpServerCount: number;
+}
+
+// ============================================
+// Tool Discovery Protocol Types
+// ============================================
+
+/**
+ * Configuration for Anthropic Tool Search/Discovery Protocol
+ * See: https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool
+ */
+export interface ToolSearchConfig {
+  enabled: boolean; // Enable tool search protocol
+  maxResults: number; // Max tools returned per search (default: 5)
+  defaultMethod: 'regex' | 'bm25'; // Default search algorithm
+  alwaysLoadedTools: string[]; // Tools to never defer
+  deferredCategories: string[]; // Tool categories to defer by default
+}
+
+/**
+ * Tool search result from tool_search_tool
+ */
+export interface ToolSearchResult {
+  tools: ToolDefinition[]; // Discovered tools
+  search_query: string; // The query used
+  search_method: 'regex' | 'bm25'; // Search method used
+  total_available: number; // Total deferred tools available
+  processing_time_ms: number; // Search time in milliseconds
+}
+
+/**
+ * Tool reference returned by tool search (before expansion)
+ */
+export interface ToolReference {
+  type: 'tool_reference';
+  tool_name: string;
 }
 
 // ============================================

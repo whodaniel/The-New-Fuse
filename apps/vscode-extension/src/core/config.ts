@@ -10,6 +10,7 @@ import {
   LLMProviderConfig,
   LLMProviderType,
   MCPServerConfig,
+  ToolSearchConfig,
 } from './types';
 
 const CONFIG_NAMESPACE = 'theNewFuse';
@@ -124,6 +125,45 @@ export class ConfigManager {
   getMCPServers(): MCPServerConfig[] {
     const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
     return config.get<MCPServerConfig[]>('mcpServers', []);
+  }
+
+  // ============================================
+  // Tool Discovery Protocol Configuration
+  // ============================================
+
+  /**
+   * Get Tool Search configuration for Anthropic Tool Discovery Protocol
+   * See: https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool
+   */
+  getToolSearchConfig(): ToolSearchConfig {
+    const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
+    return {
+      enabled: config.get<boolean>('toolSearch.enabled', true),
+      maxResults: config.get<number>('toolSearch.maxResults', 5),
+      defaultMethod: config.get<'regex' | 'bm25'>('toolSearch.defaultMethod', 'bm25'),
+      alwaysLoadedTools: config.get<string[]>('toolSearch.alwaysLoadedTools', [
+        'read_file',
+        'write_file',
+        'list_directory',
+        'search_files',
+      ]),
+      deferredCategories: config.get<string[]>('toolSearch.deferredCategories', [
+        'google',
+        'automation',
+        'external',
+        'database',
+      ]),
+    };
+  }
+
+  /**
+   * Update Tool Search configuration
+   */
+  async updateToolSearchConfig(updates: Partial<ToolSearchConfig>): Promise<void> {
+    const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
+    for (const [key, value] of Object.entries(updates)) {
+      await config.update(`toolSearch.${key}`, value, vscode.ConfigurationTarget.Global);
+    }
   }
 
   async addMCPServer(server: MCPServerConfig): Promise<void> {

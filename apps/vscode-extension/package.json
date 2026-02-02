@@ -590,6 +590,18 @@
                 "type": "boolean",
                 "default": true,
                 "description": "Whether the server is enabled"
+              },
+              "default_defer_loading": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether to defer loading tools from this server by default (Tool Discovery Protocol)"
+              },
+              "always_loaded_tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tool names that should always be loaded (never deferred)"
               }
             },
             "required": [
@@ -597,6 +609,57 @@
               "command"
             ]
           }
+        },
+        "theNewFuse.toolSearch.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Anthropic Tool Discovery Protocol for dynamic tool loading"
+        },
+        "theNewFuse.toolSearch.maxResults": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Maximum number of tools returned per search (3-5 recommended)"
+        },
+        "theNewFuse.toolSearch.defaultMethod": {
+          "type": "string",
+          "default": "bm25",
+          "enum": [
+            "regex",
+            "bm25"
+          ],
+          "enumDescriptions": [
+            "Regex pattern matching (exact patterns)",
+            "BM25 relevance ranking (natural language)"
+          ],
+          "description": "Default search algorithm for tool discovery"
+        },
+        "theNewFuse.toolSearch.alwaysLoadedTools": {
+          "type": "array",
+          "default": [
+            "read_file",
+            "write_file",
+            "list_directory",
+            "search_files"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Tools that should always be loaded immediately (never deferred)"
+        },
+        "theNewFuse.toolSearch.deferredCategories": {
+          "type": "array",
+          "default": [
+            "google",
+            "automation",
+            "external",
+            "database"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Tool categories to defer by default"
         },
         "theNewFuse.providers.openai.baseUrl": {
           "type": "string",

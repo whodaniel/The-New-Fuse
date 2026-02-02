@@ -89,11 +89,20 @@ export class MCPService {
 
       // List available tools
       const toolsResult = await client.listTools();
-      const tools: MCPTool[] = toolsResult.tools.map((t) => ({
+
+      // Apply defer_loading based on server configuration
+      const allTools: MCPTool[] = toolsResult.tools.map((t) => ({
         name: t.name,
         description: t.description || '',
         inputSchema: t.inputSchema as Record<string, unknown>,
+        // Tool Discovery Protocol: Apply deferral based on config
+        defer_loading: this.shouldDeferTool(t.name, serverConfig),
+        always_load: this.shouldAlwaysLoad(t.name, serverConfig),
       }));
+
+      // Separate active (non-deferred) tools from deferred tools
+      const activeTools = allTools.filter((t) => !t.defer_loading || t.always_load);
+      const deferredTools = allTools.filter((t) => t.defer_loading && !t.always_load);
 
       // List available resources
       let resources: MCPResource[] = [];
@@ -110,15 +119,19 @@ export class MCPService {
         log.debug('Resources not available for this MCP server');
       }
 
-      // Update state
+      // Update state with Tool Discovery Protocol support
       state.client = client;
       state.transport = transport;
       state.status = 'connected';
-      state.tools = tools;
+      state.tools = activeTools; // Only active tools loaded initially
+      state.deferredTools = deferredTools; // Deferred tools for lazy loading
+      state.allTools = allTools; // All tools for reference
       state.resources = resources;
 
       log.info(`Connected to MCP server: ${serverConfig.name}`, {
-        tools: tools.length,
+        activeTools: activeTools.length,
+        deferredTools: deferredTools.length,
+        totalTools: allTools.length,
         resources: resources.length,
       });
 
@@ -229,7 +242,7 @@ export class MCPService {
   }
 
   /**
-   * Get all available tools across all connections
+   * Get all available tools across all connections (active tools only)
    */
   getAllTools(): (MCPTool & { connectionId: string; serverName: string })[] {
     const tools: (MCPTool & { connectionId: string; serverName: string })[] = [];
@@ -247,6 +260,117 @@ export class MCPService {
     }
 
     return tools;
+  }
+
+  /**
+   * Get all deferred tools across all connections
+   * Tool Discovery Protocol: These tools are loaded lazily via search
+   */
+  getAllDeferredTools(): (MCPTool & { connectionId: string; serverName: string })[] {
+    const tools: (MCPTool & { connectionId: string; serverName: string })[] = [];
+
+    for (const [id, state] of this.connections) {
+      if (state.status === 'connected' && state.deferredTools) {
+        for (const tool of state.deferredTools) {
+          tools.push({
+            ...tool,
+            connectionId: id,
+            serverName: state.config.name,
+          });
+        }
+      }
+    }
+
+    return tools;
+  }
+
+  /**
+   * Get all tools (active + deferred) across all connections
+   */
+  getAllToolsIncludingDeferred(): (MCPTool & { connectionId: string; serverName: string })[] {
+    const tools: (MCPTool & { connectionId: string; serverName: string })[] = [];
+
+    for (const [id, state] of this.connections) {
+      if (state.status === 'connected' && state.allTools) {
+        for (const tool of state.allTools) {
+          tools.push({
+            ...tool,
+            connectionId: id,
+            serverName: state.config.name,
+          });
+        }
+      }
+    }
+
+    return tools;
+  }
+
+  /**
+   * Load a deferred tool on demand (move from deferred to active)
+   * Tool Discovery Protocol: Called when tool_search returns a tool_reference
+   */
+  async loadDeferredTool(connectionId: string, toolName: string): Promise<MCPTool | null> {
+    const state = this.connections.get(connectionId);
+    if (!state || !state.deferredTools) {
+      return null;
+    }
+
+    const toolIndex = state.deferredTools.findIndex((t) => t.name === toolName);
+    if (toolIndex === -1) {
+      return null;
+    }
+
+    // Move tool from deferred to active
+    const tool = state.deferredTools[toolIndex];
+    tool.defer_loading = false; // Mark as now loaded
+    state.tools.push(tool);
+    state.deferredTools.splice(toolIndex, 1);
+
+    log.info(`Loaded deferred tool: ${toolName} from ${state.config.name}`);
+    this.notifyConnectionChange();
+
+    return tool;
+  }
+
+  /**
+   * Load multiple deferred tools by name
+   * Tool Discovery Protocol: Bulk load after tool_search
+   */
+  async loadDeferredTools(toolNames: string[]): Promise<MCPTool[]> {
+    const loadedTools: MCPTool[] = [];
+
+    for (const [connectionId, state] of this.connections) {
+      if (state.status === 'connected' && state.deferredTools) {
+        for (const name of toolNames) {
+          const tool = await this.loadDeferredTool(connectionId, name);
+          if (tool) {
+            loadedTools.push(tool);
+          }
+        }
+      }
+    }
+
+    return loadedTools;
+  }
+
+  /**
+   * Determine if a tool should be deferred based on server config
+   */
+  private shouldDeferTool(toolName: string, config: MCPServerConfig): boolean {
+    // Check if tool is in always-loaded list
+    if (config.always_loaded_tools?.includes(toolName)) {
+      return false;
+    }
+
+    // Apply default deferral setting (defaults to false if not specified)
+    return config.default_defer_loading ?? false;
+  }
+
+  /**
+   * Determine if a tool should always be loaded
+   */
+  private shouldAlwaysLoad(toolName: string, config: MCPServerConfig): boolean {
+    return config.always_loaded_tools?.includes(toolName) ?? false;
   }
 
   /**
@@ -469,9 +593,12 @@ interface MCPConnectionState {
   status: 'connected' | 'disconnected' | 'connecting' | 'error';
   client: Client | null;
   transport: StdioClientTransport | null;
-  tools: MCPTool[];
+  tools: MCPTool[]; // Active (non-deferred) tools
   resources: MCPResource[];
   lastError?: string;
+  // Tool Discovery Protocol support
+  deferredTools?: MCPTool[]; // Tools marked for lazy loading
+  allTools?: MCPTool[]; // All tools (active + deferred)
 }
 
 // Export singleton getter
