@@ -9,7 +9,7 @@
  * - message-bridge.js
  */
 
-import { LocalExtensionRegistry } from '@the-new-fuse/extension-system';
+import { LocalExtensionRegistry, type Extension } from '@the-new-fuse/extension-system';
 import { EventEmitter } from 'events';
 import { UnifiedBridge } from '../adapters/UnifiedBridge.js';
 import { createAuthService, JWTAuthService } from '../auth/JWTAuthService.js';
@@ -462,7 +462,7 @@ export class RelayServer extends EventEmitter {
 
   private async handleExtensionListRequest(message: RelayMessage): Promise<void> {
     const rawExtensions = this.extensionRegistry.list();
-    const extensions = rawExtensions.map((ext) => ({
+    const extensions = rawExtensions.map((ext: Extension) => ({
       id: ext.id,
       name: ext.manifest.name,
       version: ext.manifest.version,

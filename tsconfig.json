@@ -11,6 +11,9 @@
     { "path": "./packages/prompt-templating" },
     { "path": "./packages/feature-suggestions" },
     { "path": "./packages/port-management" },
-    { "path": "./packages/ui-consolidated" }
+    { "path": "./packages/ui-consolidated" },
+    { "path": "./packages/extension-system" },
+    { "path": "./packages/relay-core" },
+    { "path": "./packages/database" }
   ]
 }
