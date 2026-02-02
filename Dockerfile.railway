@@ -47,6 +47,7 @@ RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/mcp-core build
 RUN pnpm --filter @the-new-fuse/n8n-workflows build
+RUN pnpm --filter @the-new-fuse/extension-system build
 RUN pnpm --filter @the-new-fuse/relay-core build
 RUN pnpm --filter @the-new-fuse/ui-consolidated build
 RUN pnpm --filter @the-new-fuse/port-management build
