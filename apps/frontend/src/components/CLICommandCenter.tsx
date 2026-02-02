@@ -203,7 +203,7 @@ function TabPanel(props: TabPanelProps) {
  * <CLICommandCenter />
  * ```
  */
-export function CLICommandCenter(): JSX.Element {
+export function CLICommandCenter(): React.ReactElement {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<CLICategory>('agent');
   const [selectedCommand, setSelectedCommand] = useState<string>('');
@@ -334,7 +334,7 @@ export function CLICommandCenter(): JSX.Element {
       {/* Command Builder Tab */}
       <TabPanel value={activeTab} index={0}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardHeader title="Build Command" />
               <CardContent>
@@ -426,7 +426,7 @@ export function CLICommandCenter(): JSX.Element {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardHeader title="Output" />
               <CardContent>
@@ -509,7 +509,7 @@ export function CLICommandCenter(): JSX.Element {
       {/* Tasks Tab */}
       <TabPanel value={activeTab} index={2}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardHeader
                 title="Tasks"
@@ -569,7 +569,7 @@ export function CLICommandCenter(): JSX.Element {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardHeader title="Create Task" />
               <CardContent>
@@ -597,7 +597,7 @@ export function CLICommandCenter(): JSX.Element {
             ) : (
               <Grid container spacing={2}>
                 {templates.map((template) => (
-                  <Grid item xs={12} md={6} key={template.id}>
+                  <Grid size={{ xs: 12, md: 6 }} key={template.id}>
                     <Card variant="outlined">
                       <CardContent>
                         <Typography variant="h6">{template.name}</Typography>
@@ -623,7 +623,7 @@ export function CLICommandCenter(): JSX.Element {
       {/* IDE Commands Tab */}
       <TabPanel value={activeTab} index={5}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardHeader title="IDE Commands" subheader="VSCode Extension Commands" />
               <CardContent>
@@ -645,7 +645,7 @@ export function CLICommandCenter(): JSX.Element {
                     <AccordionDetails>
                       <Grid container spacing={1}>
                         {category.commands.map((command) => (
-                          <Grid item key={command}>
+                          <Grid key={command}>
                             <Button
                               variant="outlined"
                               size="small"
@@ -664,7 +664,7 @@ export function CLICommandCenter(): JSX.Element {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardHeader title="Output" />
               <CardContent>
@@ -697,7 +697,7 @@ interface CreateTaskFormProps {
   onSuccess: () => void;
 }
 
-function CreateTaskForm({ onSuccess }: CreateTaskFormProps): JSX.Element {
+function CreateTaskForm({ onSuccess }: CreateTaskFormProps): React.ReactElement {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<'low' | 'normal' | 'high' | 'critical'>('normal');
@@ -764,7 +764,7 @@ function CreateTaskForm({ onSuccess }: CreateTaskFormProps): JSX.Element {
 /**
  * Monitoring Panel Component
  */
-function MonitoringPanel(): JSX.Element {
+function MonitoringPanel(): React.ReactElement {
   const [health, setHealth] = useState<{
     status: string;
     redis: boolean;
@@ -800,7 +800,7 @@ function MonitoringPanel(): JSX.Element {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardHeader
             title="System Health"
@@ -840,7 +840,7 @@ function MonitoringPanel(): JSX.Element {
         </Card>
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardHeader
             title="Task Statistics"
