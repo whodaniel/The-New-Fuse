@@ -35,6 +35,7 @@
     "@the-new-fuse/relay-core": "workspace:*",
     "@the-new-fuse/security": "workspace:*",
     "@the-new-fuse/shared": "workspace:*",
+    "@the-new-fuse/tnf-cli": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
     "@types/bcrypt": "^6.0.0",

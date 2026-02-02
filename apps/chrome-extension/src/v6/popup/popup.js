@@ -573,23 +573,24 @@ class FuseConnectPopup {
   }
 
   async handleAIStudioHistory() {
-    this.showToast('Generating watch history prompt...');
+    this.showToast('Extracting watch history...');
     try {
-      chrome.runtime.sendMessage({ type: 'AI_VIDEO_GENERATE_HISTORY_PROMPT' }, (response) => {
-        if (response?.prompt) {
-          // Show prompt in a way user can copy it
-          const textArea = document.createElement('textarea');
-          textArea.value = response.prompt;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          this.showToast('Prompt copied to clipboard! Paste it into Gemini.');
+      chrome.runtime.sendMessage({ type: 'AI_VIDEO_GET_HISTORY' }, (response) => {
+        if (response?.success && response.videos) {
+          const count = response.videos.length;
+          const content = response.videos.map((v) => `${v.title} (${v.url})`).join('\n');
 
-          // Open Gemini
-          window.open('https://gemini.google.com/', '_blank');
+          const blob = new Blob([content], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `watch-history-${Date.now()}.txt`;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          this.showToast(`Extracted ${count} videos! Download started.`);
         } else {
-          this.showToast('Failed to generate prompt');
+          this.showToast('Failed: ' + (response?.error || 'Unknown error'));
         }
       });
     } catch (e) {
