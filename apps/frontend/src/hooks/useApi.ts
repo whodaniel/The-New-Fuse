@@ -1,11 +1,11 @@
-import { useState, useMemo, useCallback } from 'react';
 import {
-  createApiClient,
+  ApiClient,
+  createAgentService,
   createAuthService,
   createUserService,
-  createAgentService,
-  createWorkflowService
+  createWorkflowService,
 } from '@the-new-fuse/api-client';
+import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from './useAuth';
 import { useToast } from './useToast';
 
@@ -30,25 +30,20 @@ export function useApi() {
 
   // Create API client and services
   const api = useMemo(() => {
-    return createApiClient({
+    return new ApiClient({
       baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
-      token: localStorage.getItem('auth_token') || undefined,
-      onUnauthorized: () => {
-        localStorage.removeItem('auth_token');
-        window.location.href = '/auth/login';
-      },
-      refreshToken: async () => {
-        try {
-          const authService = createAuthService(createApiClient({
-            baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
-          }));
-          const newToken = await authService.refreshToken();
-          localStorage.setItem('auth_token', newToken);
-          return newToken;
-        } catch (error) {
+      tokenStorage: {
+        getAccessToken: async () => localStorage.getItem('auth_token'),
+        getRefreshToken: async () => localStorage.getItem('refresh_token'),
+        setTokens: async (access: string, refresh: string) => {
+          localStorage.setItem('auth_token', access);
+          if (refresh) localStorage.setItem('refresh_token', refresh);
+        },
+        clearTokens: async () => {
           localStorage.removeItem('auth_token');
-          throw error;
-        }
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/auth/login';
+        },
       },
     });
   }, []);
@@ -60,28 +55,31 @@ export function useApi() {
   const workflowService = useMemo(() => createWorkflowService(api), [api]);
 
   // Generic API call function with loading and error handling
-  const callApi = useCallback(async <T>(apiCall: () => Promise<T>): Promise<T | null> => {
-    setLoading(true);
-    setError(null);
+  const callApi = useCallback(
+    async <T>(apiCall: () => Promise<T>): Promise<T | null> => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const result = await apiCall();
-      return result;
-    } catch (err) {
-      const error = err as Error;
-      setError(error);
+      try {
+        const result = await apiCall();
+        return result;
+      } catch (err) {
+        const error = err as Error;
+        setError(error);
 
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
+        toast({
+          title: 'Error',
+          description: error.message,
+          variant: 'destructive',
+        });
 
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [toast]
+  );
 
   return {
     api,
@@ -92,6 +90,6 @@ export function useApi() {
     isAuthenticated: !!user,
     loading,
     error,
-    callApi
+    callApi,
   };
 }

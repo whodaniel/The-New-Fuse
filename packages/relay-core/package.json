@@ -27,6 +27,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/extension-system": "workspace:*",
     "chokidar": "^4.0.3",
     "ethers": "^6.15.0",
     "express": "^4.22.0",

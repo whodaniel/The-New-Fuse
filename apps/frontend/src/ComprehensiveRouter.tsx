@@ -98,6 +98,11 @@ const UnstoppableDomainsCallbackPage = lazy(
 
 // Landing components
 const LandingRevolutionPage = lazy(() => import('./pages/LandingRevolution'));
+
+// CLI components
+const CLICommandCenter = lazy(() =>
+  import('./components/CLICommandCenter').then((module) => ({ default: module.CLICommandCenter }))
+);
 const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 const PricingPage = lazy(() => import('./pages/Pricing'));
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
@@ -598,6 +603,16 @@ export default function ComprehensiveRouter() {
               element={
                 <Suspense fallback={<LoadingFallback name="AI Command Center Streaming" />}>
                   <AICommandCenterStreaming />
+                </Suspense>
+              }
+            />
+
+            {/* CLI Command Center Web UI */}
+            <Route
+              path="/cli-command-center"
+              element={
+                <Suspense fallback={<LoadingFallback name="CLI Command Center" />}>
+                  <CLICommandCenter />
                 </Suspense>
               }
             />

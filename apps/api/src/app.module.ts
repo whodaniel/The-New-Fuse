@@ -16,6 +16,7 @@ import { BrowserStreamingModule } from './browser-streaming/browser-streaming.mo
 import { CacheService } from './cache/cache.service';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
+import { CLIController } from './controllers/cli.controller';
 import { HealthController } from './controllers/health.controller';
 import { MCPController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
@@ -35,6 +36,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
+import { CLIModule } from './modules/cli/cli.module';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
@@ -97,6 +99,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     AgentsModule, // Self-Improvement Agents Module
     AgencyHubModule, // Agency Hub with Swarm coordination
     ChatModule,
+    CLIModule, // CLI command execution
     TaskModule, // Task management - Migrated to Drizzle ORM
     EntityDiscoveryModule,
     ClaudeDevAutomationModule,
@@ -124,6 +127,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
   controllers: [
     AppController,
     A2AController,
+    CLIController, // CLI command execution endpoints
     HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
     MCPController, // MCP server management (20+ endpoints)

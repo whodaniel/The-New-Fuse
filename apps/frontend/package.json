@@ -32,10 +32,14 @@
     "verify-deployment:prod": "node scripts/verify-deployment.cjs https://thenewfuse.com"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@hello-pangea/dnd": "^18.0.1",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^5.2.2",
     "@monaco-editor/react": "^4.7.0",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/material": "^7.3.7",
     "@paypal/react-paypal-js": "^8.8.1",
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-toast": "^1.2.15",
