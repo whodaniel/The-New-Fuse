@@ -8,10 +8,6 @@
     "declaration": true,
     "composite": true,
     "baseUrl": ".",
-    "paths": {
-      "@the-new-fuse/extension-system": ["../extension-system/src/index.ts"],
-      "@the-new-fuse/database": ["../database/src/index.ts"]
-    },
     "types": ["node"],
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
