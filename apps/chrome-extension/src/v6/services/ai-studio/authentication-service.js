@@ -1,4 +1,4 @@
-// Multi-Account Authentication Service
+// The New Fuse - Multi-Account Authentication Service
 // Supports: YouTube OAuth, Gemini API Key, AI Studio (user's Gemini Pro), Google Search
 
 class AuthenticationService {
@@ -26,10 +26,15 @@ class AuthenticationService {
       'geminiApiKey',
       'aiStudioAuth',
       'googleSearchAuth',
+      'youtubeApiKey',
     ]);
 
     if (saved.youtubeToken) {
       this.authStatus.youtube = true;
+    }
+
+    if (saved.youtubeApiKey) {
+      this.accounts.youtubeApiKey = saved.youtubeApiKey;
     }
 
     if (saved.geminiApiKey) {
@@ -64,7 +69,27 @@ class AuthenticationService {
 
       return { success: false, error: 'No token received' };
     } catch (error) {
-      console.error('YouTube auth failed:', error);
+      console.error('[TNF Auth] YouTube auth failed:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Set User-provided YouTube API Key (to offload quota)
+  async setYouTubeApiKey(apiKey) {
+    try {
+      if (!apiKey) {
+        await chrome.storage.local.remove('youtubeApiKey');
+        this.accounts.youtubeApiKey = null;
+        return { success: true };
+      }
+
+      // Basic validation (optional: make a test call)
+      await chrome.storage.local.set({ youtubeApiKey: apiKey });
+      this.accounts.youtubeApiKey = apiKey;
+
+      return { success: true };
+    } catch (error) {
+      console.error('[TNF Auth] YouTube API key setup failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -85,7 +110,7 @@ class AuthenticationService {
 
       return { success: true };
     } catch (error) {
-      console.error('Gemini API key setup failed:', error);
+      console.error('[TNF Auth] Gemini API key setup failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -100,26 +125,6 @@ class AuthenticationService {
       return response.ok;
     } catch (error) {
       return false;
-    }
-  }
-
-  // Set User-provided YouTube API Key (to offload quota)
-  async setYouTubeApiKey(apiKey) {
-    try {
-      if (!apiKey) {
-        await chrome.storage.local.remove('youtubeApiKey');
-        this.accounts.youtubeApiKey = null;
-        return { success: true };
-      }
-
-      // Basic validation (optional: make a test call)
-      await chrome.storage.local.set({ youtubeApiKey: apiKey });
-      this.accounts.youtubeApiKey = apiKey;
-
-      return { success: true };
-    } catch (error) {
-      console.error('YouTube API key setup failed:', error);
-      return { success: false, error: error.message };
     }
   }
 
@@ -150,7 +155,7 @@ class AuthenticationService {
         message: 'Please sign in to AI Studio in the opened tab',
       };
     } catch (error) {
-      console.error('AI Studio auth failed:', error);
+      console.error('[TNF Auth] AI Studio auth failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -175,7 +180,7 @@ class AuthenticationService {
       // For now, we'll use YouTube API which is also free
       return null;
     } catch (error) {
-      console.error('Google Search failed:', error);
+      console.error('[TNF Auth] Google Search failed:', error);
       return null;
     }
   }
@@ -365,6 +370,8 @@ class AuthenticationService {
       reason: 'Free transcript analysis',
       cost: 0,
     };
+  }
+
   // Fix multi-account switching issue
   async detectAccountChange() {
     try {
@@ -374,7 +381,7 @@ class AuthenticationService {
 
       const stored = await chrome.storage.local.get('youtubeToken');
       if (token && token !== stored.youtubeToken) {
-        console.log('Account change detected! Updating tokens...');
+        console.log('[TNF Auth] Account change detected! Updating tokens...');
         await chrome.storage.local.set({ youtubeToken: token });
         this.accounts.youtube = { token };
         return true;
@@ -388,8 +395,8 @@ class AuthenticationService {
   // Clear all tokens (useful for troubleshooting)
   async resetAllTokens() {
     const data = await chrome.storage.local.get();
-    const keysToRemove = Object.keys(data).filter((k) =>
-      k.includes('Token') || k.includes('Auth') || k.includes('ApiKey')
+    const keysToRemove = Object.keys(data).filter(
+      (k) => k.includes('Token') || k.includes('Auth') || k.includes('ApiKey')
     );
     await chrome.storage.local.remove(keysToRemove);
     this.authStatus = {

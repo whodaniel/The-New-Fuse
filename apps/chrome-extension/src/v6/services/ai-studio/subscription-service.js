@@ -1,13 +1,13 @@
-// Subscription Service
+// The New Fuse - Subscription Service
 // Manages user subscription tiers, feature access, and usage limits
 
 class SubscriptionService {
   constructor() {
-    this.apiUrl = process.env.API_URL || 'https://api.aivideointelligence.com';
+    this.apiUrl = 'https://aivideointel.thenewfuse.com/api';
     this.tiers = {
       free: 'free',
       pro: 'pro',
-      enterprise: 'enterprise',
+      tnf: 'tnf',
     };
   }
 
@@ -37,7 +37,7 @@ class SubscriptionService {
         expiresAt: data.subscriptionExpiry,
       };
     } catch (error) {
-      console.error('Failed to check subscription:', error);
+      console.error('[TNF Subscription] Failed to check subscription:', error);
       return {
         tier: 'free',
         features: this.getFeatures('free'),
@@ -50,8 +50,8 @@ class SubscriptionService {
     switch (tier) {
       case 'pro':
         return this.getProFeatures();
-      case 'enterprise':
-        return this.getEnterpriseFeatures();
+      case 'tnf':
+        return this.getTnfFeatures();
       default:
         return this.getFreeFeatures();
     }
@@ -105,10 +105,10 @@ class SubscriptionService {
     };
   }
 
-  // Enterprise tier features
-  getEnterpriseFeatures() {
+  // TNF tier features (The New Fuse Premium)
+  getTnfFeatures() {
     return {
-      tier: 'enterprise',
+      tier: 'tnf',
       dailyLimit: Infinity,
       concurrentProcesses: 10,
       customPrompts: true,
@@ -138,7 +138,7 @@ class SubscriptionService {
     ]);
 
     // Paid tiers have unlimited processing
-    if (tier === 'pro' || tier === 'enterprise') {
+    if (tier === 'pro' || tier === 'tnf') {
       return true;
     }
 
@@ -157,7 +157,7 @@ class SubscriptionService {
       'dailyLimit',
     ]);
 
-    if (tier === 'pro' || tier === 'enterprise') {
+    if (tier === 'pro' || tier === 'tnf') {
       return Infinity;
     }
 
@@ -186,14 +186,14 @@ class SubscriptionService {
       const { userId } = await chrome.storage.local.get('userId');
 
       // Create checkout session
-      const checkoutUrl = `${this.apiUrl}/checkout?tier=${targetTier}&userId=${userId}`;
+      const checkoutUrl = `${this.apiUrl}/subscriptions/checkout?tier=${targetTier}&userId=${userId}`;
 
       // Open checkout in new tab
       chrome.tabs.create({ url: checkoutUrl });
 
       return { checkoutUrl };
     } catch (error) {
-      console.error('Failed to initiate upgrade:', error);
+      console.error('[TNF Subscription] Failed to initiate upgrade:', error);
       throw error;
     }
   }
@@ -201,7 +201,7 @@ class SubscriptionService {
   // Verify subscription (called after payment)
   async verifySubscription(sessionId) {
     try {
-      const response = await fetch(`${this.apiUrl}/verify-subscription`, {
+      const response = await fetch(`${this.apiUrl}/subscriptions/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ class SubscriptionService {
 
       return data;
     } catch (error) {
-      console.error('Failed to verify subscription:', error);
+      console.error('[TNF Subscription] Failed to verify subscription:', error);
       throw error;
     }
   }
@@ -237,7 +237,7 @@ class SubscriptionService {
         'subscriptionId',
       ]);
 
-      const response = await fetch(`${this.apiUrl}/cancel-subscription`, {
+      const response = await fetch(`${this.apiUrl}/subscriptions/cancel`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +258,7 @@ class SubscriptionService {
 
       return { cancelled: true };
     } catch (error) {
-      console.error('Failed to cancel subscription:', error);
+      console.error('[TNF Subscription] Failed to cancel subscription:', error);
       throw error;
     }
   }
@@ -287,26 +287,38 @@ class SubscriptionService {
         features: [
           'Unlimited videos',
           '3 concurrent processes',
-          'Custom prompts (50)',
+          'Custom prompts (50 templates)',
           'NotebookLM integration',
-          'Podcast creation (5 podcasts)',
+          'Podcast creation (5/month)',
+          'Personal knowledge base browser',
+          'Topic extraction & organization',
           'Cloud sync',
           'Advanced retry logic',
+          'Auto-download reports',
+          'Analytics dashboard',
           'Priority support',
         ],
       },
-      enterprise: {
-        name: 'Enterprise',
-        price: 29.99,
+      tnf: {
+        name: 'The New Fuse',
+        price: 30,
         period: 'month',
-        yearlyPrice: 299,
+        yearlyPrice: 300,
         yearlyDiscount: '17%',
+        description: 'The complete AI-powered productivity suite',
+        isExternalProduct: true,
+        learnMoreUrl: 'https://thenewfuse.com',
         features: [
           'Everything in Pro',
+          'The New Fuse Chrome extension',
           '10 concurrent processes',
           'Unlimited custom prompts',
           'Unlimited podcasts',
           'API access',
+          'RAG semantic search',
+          'Personal AI assistant',
+          'Agent integration',
+          'Knowledge base as agent memory',
           'Team collaboration',
           'White-label option',
           'Dedicated support',
