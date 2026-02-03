@@ -16,7 +16,6 @@ import {
   getConfigManager,
   Orchestrator,
   RedisAgentClient,
-  Task,
   TaskCreateRequest,
   TaskManager,
   TaskState,
@@ -74,7 +73,7 @@ export class CLIService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {
     this.configManager = getConfigManager();
     this.taskManager = new TaskManager();
-    this.circuitBreaker = new CircuitBreaker({
+    this.circuitBreaker = new CircuitBreaker('api-cli-service', {
       failureThreshold: 5,
       successThreshold: 3,
       timeoutMs: 60000,
@@ -262,7 +261,7 @@ export class CLIService implements OnModuleInit, OnModuleDestroy {
           title: (args?.title as string) || 'Untitled Task',
           description: args?.description as string,
           assignedTo: args?.assign as string,
-          priority: (options?.priority as Task['metadata']['priority']) || 'normal',
+          priority: (options?.priority as TaskCreateRequest['priority']) || 'normal',
           tags: (options?.tags as string)?.split(',') || [],
           deadline: options?.deadline as string,
         };
@@ -396,19 +395,19 @@ export class CLIService implements OnModuleInit, OnModuleDestroy {
           parsedValue = args.value;
         }
 
-        // Navigate to nested property
+        // Navigate to nested property using safe access
         const keys = (args.key as string).split('.');
         const config = this.configManager.getConfig();
-        let current: Record<string, unknown> = config as Record<string, unknown>;
+        let current = config;
 
         for (let i = 0; i < keys.length - 1; i++) {
           if (!(keys[i] in current)) {
-            current[keys[i]] = {};
+            (current as any)[keys[i]] = {};
           }
-          current = current[keys[i]] as Record<string, unknown>;
+          current = (current as any)[keys[i]];
         }
 
-        current[keys[keys.length - 1]] = parsedValue;
+        (current as any)[keys[keys.length - 1]] = parsedValue;
         this.configManager.update(config);
         return { success: true, key: args.key, value: parsedValue };
 

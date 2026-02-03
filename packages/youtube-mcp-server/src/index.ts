@@ -1,27 +1,16 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import { DEFAULT_CONFIG, fileExists, getConfig, readJsonFile, writeJsonFile } from './config.js';
 // Lazy load these types to avoid runtime cost
-import fs from 'fs-extra';
 import type { OAuth2Client } from 'google-auth-library';
 import http from 'http';
 import open from 'open';
-import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Configuration Constants
 const __filename = fileURLToPath(import.meta.url);
-
-// Constants
-const CREDENTIALS_PATH =
-  '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/tauri-desktop/src-tauri/credentials/client_secret.json';
-const TOKEN_PATH = path.join(path.dirname(__filename), '..', 'tokens.json');
-const SCOPES = [
-  'https://www.googleapis.com/auth/youtube',
-  'https://www.googleapis.com/auth/youtube.force-ssl',
-  'https://www.googleapis.com/auth/youtube.readonly',
-  'https://www.googleapis.com/auth/youtube.upload',
-];
+const SCOPES = DEFAULT_CONFIG.scopes;
 
 // Initialize Server immediately
 const server = new McpServer({
@@ -34,11 +23,15 @@ let oauth2Client: OAuth2Client | null = null;
 async function getOAuthClient() {
   if (oauth2Client) return oauth2Client;
 
-  if (!fs.existsSync(CREDENTIALS_PATH)) {
-    throw new Error(`Credentials file not found at ${CREDENTIALS_PATH}`);
+  const config = getConfig();
+
+  if (!(await fileExists(config.credentialsPath))) {
+    throw new Error(
+      `YouTube credentials file not found at ${config.credentialsPath}. Please set the YOUTUBE_CREDENTIALS_PATH environment variable or place client_secret.json in the working directory.`
+    );
   }
 
-  const content = await fs.readJson(CREDENTIALS_PATH);
+  const content = await readJsonFile<any>(config.credentialsPath);
   const { client_secret, client_id } = content.installed || content.web;
 
   // Lazy load googleapis here
@@ -48,12 +41,12 @@ async function getOAuthClient() {
   oauth2Client = new google.auth.OAuth2(
     client_id,
     client_secret,
-    'http://localhost' // Initial placeholder
+    config.redirectUri // Use configured redirect URI
   );
 
   // Try to load tokens
-  if (fs.existsSync(TOKEN_PATH)) {
-    const tokens = await fs.readJson(TOKEN_PATH);
+  if (await fileExists(config.tokenPath)) {
+    const tokens = await readJsonFile<any>(config.tokenPath);
     oauth2Client.setCredentials(tokens);
   }
 
@@ -61,8 +54,9 @@ async function getOAuthClient() {
 }
 
 async function saveTokens(tokens: any) {
-  await fs.writeJson(TOKEN_PATH, tokens);
-  console.error('Tokens saved to', TOKEN_PATH);
+  const config = getConfig();
+  await writeJsonFile(config.tokenPath, tokens);
+  console.error(`Tokens saved to ${config.tokenPath}`);
 }
 
 // Tool: Authenticate
@@ -129,7 +123,7 @@ server.tool(
 );
 
 // Tool: Get Watch Later Videos
-const getWatchLaterSchema = {
+const getWatchLaterSchema: Record<string, any> = {
   maxResults: z.number().optional().default(10).describe('Number of videos to return'),
 };
 
@@ -137,7 +131,8 @@ server.tool(
   'get_watch_later',
   "Retrieve videos from the user's Watch Later playlist.",
   getWatchLaterSchema,
-  async ({ maxResults }: { maxResults: number }) => {
+  async (args: any) => {
+    const { maxResults = 10 } = args as { maxResults?: number };
     const client = await getOAuthClient();
 
     if (!client.credentials || !client.credentials.access_token) {
@@ -192,7 +187,7 @@ server.tool(
 );
 
 // Tool: Archive Video (Remove from Playlist)
-const archiveVideoSchema = {
+const archiveVideoSchema: Record<string, any> = {
   videoId: z.string().describe('The ID of the video to remove (not the playlist item ID)'),
   playlistId: z.string().optional().default('WL').describe('The playlist ID to remove from'),
 };
@@ -201,7 +196,8 @@ server.tool(
   'archive_video',
   'Remove a video from a playlist (default: Watch Later) after watching.',
   archiveVideoSchema,
-  async ({ videoId, playlistId }: { videoId: string; playlistId: string }) => {
+  async (args: any) => {
+    const { videoId, playlistId = 'WL' } = args as { videoId: string; playlistId?: string };
     const client = await getOAuthClient();
     if (!client.credentials?.access_token) {
       return { content: [{ type: 'text', text: 'Auth required.' }] };

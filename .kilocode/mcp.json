@@ -24,7 +24,7 @@
     "puppeteer": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-      "disabled": false,
+      "disabled": true,
       "alwaysAllow": []
     },
     "google-docs-mcp": {

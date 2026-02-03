@@ -81,7 +81,7 @@
     "yargs": "^18.0.0"
   },
   "scripts": {
-    "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
+    "build": "cd ../../packages/tnf-cli && pnpm run build && tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
     "build:watch": "tsc --watch --skipLibCheck --noEmitOnError false",
     "migrate:deploy": "SERVICE_PATH=api sh ./run-service.sh",
     "dev": "nest start --watch",
