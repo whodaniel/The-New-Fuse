@@ -28,6 +28,7 @@ import {
   SetRateLimitTier,
 } from '../guards/secure-auth.guard';
 import { AgentService } from '../services/agent.service';
+import { RegistrySyncService } from '../services/agent/RegistrySyncService';
 
 /**
  * Agent Controller
@@ -80,9 +81,12 @@ export class AgentController {
    * @param agentService - The agent service instance for handling business logic
    *
    * @example
-   * const controller = new AgentController(agentService);
+   * const controller = new AgentController(agentService, syncService);
    */
-  constructor(private readonly agentService: AgentService) {}
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly syncService: RegistrySyncService
+  ) {}
 
   /**
    * Create a new agent
@@ -165,6 +169,20 @@ export class AgentController {
         HttpStatus.BAD_REQUEST
       );
     }
+  }
+
+  @Post('sync')
+  @ApiOperation({ summary: 'Sync local agent definitions' })
+  @ApiResponse({ status: HttpStatus.OK })
+  async syncAgents() {
+    return await this.syncService.syncLocalAgents();
+  }
+
+  @Post('sync/pydantic')
+  @ApiOperation({ summary: 'Sync Pydantic agent definitions' })
+  @ApiResponse({ status: HttpStatus.OK })
+  async syncPydantic() {
+    return await this.syncService.syncPydanticDefinitions();
   }
 
   /**

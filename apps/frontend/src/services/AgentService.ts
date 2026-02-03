@@ -14,6 +14,7 @@ export interface Agent {
   provider?: string;
   configuration: Record<string, any>;
   metadata: Record<string, any>;
+  avatarUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -56,6 +57,7 @@ const MOCK_AGENTS: Agent[] = [
       successRate: 98.5,
       avgResponseTime: '1.2s',
     },
+    avatarUrl: '/assets/agents/coder.png',
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-03-20'),
   },
@@ -74,6 +76,7 @@ const MOCK_AGENTS: Agent[] = [
       successRate: 99.1,
       avgResponseTime: '2.5s',
     },
+    avatarUrl: '/assets/agents/base.png',
     createdAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-03-18'),
   },
@@ -92,6 +95,7 @@ const MOCK_AGENTS: Agent[] = [
       successRate: 99.9,
       avgResponseTime: '0.5s',
     },
+    avatarUrl: '/assets/agents/base.png',
     createdAt: new Date('2023-11-10'),
     updatedAt: new Date('2024-03-21'),
   },
@@ -110,6 +114,7 @@ const MOCK_AGENTS: Agent[] = [
       successRate: 96.5,
       avgResponseTime: '0.8s',
     },
+    avatarUrl: '/assets/agents/base.png',
     createdAt: new Date('2024-02-15'),
     updatedAt: new Date('2024-03-10'),
   },
@@ -128,6 +133,7 @@ const MOCK_AGENTS: Agent[] = [
       successRate: 85.2,
       avgResponseTime: '0.3s',
     },
+    avatarUrl: '/assets/agents/base.png',
     createdAt: new Date('2023-12-01'),
     updatedAt: new Date('2024-03-22'),
   },

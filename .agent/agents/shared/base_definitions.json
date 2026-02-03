@@ -1,0 +1,23 @@
+{
+  "agent_types": [
+    "CODER",
+    "DEFI",
+    "COMPUTE",
+    "MEMORY",
+    "ORCHESTRATOR",
+    "RESEARCHER",
+    "SECURITY",
+    "UI_UX",
+    "SYSTEM",
+    "META"
+  ],
+  "naming_convention": "[agent-name]-[llm-provider]-[class-number]",
+  "standard_capabilities": [
+    "code_generation",
+    "system_diagnostics",
+    "crypto_operations",
+    "orchestration",
+    "resource_management",
+    "ui_development"
+  ]
+}

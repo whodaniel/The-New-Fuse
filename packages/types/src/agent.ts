@@ -31,6 +31,7 @@ export class Agent implements BaseEntity {
   systemPrompt?: string;
   capabilities?: AgentCapability[];
   configuration?: unknown;
+  avatarUrl?: string;
 
   constructor(data: Partial<Agent>) {
     this.id = data.id || '';
@@ -43,6 +44,7 @@ export class Agent implements BaseEntity {
     this.systemPrompt = data.systemPrompt;
     this.capabilities = data.capabilities;
     this.configuration = data.configuration;
+    this.avatarUrl = data.avatarUrl;
   }
 }
 
@@ -202,6 +204,7 @@ export class AgentResponseDto {
   provider?: string;
   lastActive?: Date;
   metadata?: unknown;
+  avatarUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 
@@ -215,6 +218,7 @@ export class AgentResponseDto {
     this.provider = data.provider;
     this.lastActive = data.lastActive;
     this.metadata = data.metadata;
+    this.avatarUrl = data.avatarUrl;
     this.createdAt = data.createdAt || new Date();
     this.updatedAt = data.updatedAt || new Date();
   }

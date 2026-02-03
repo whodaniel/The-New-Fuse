@@ -35,6 +35,7 @@ export class AgentService {
         capabilities: createAgentDto.capabilities as any,
         config: createAgentDto.configuration as any,
         provider: createAgentDto.provider,
+        avatarUrl: (createAgentDto as any).avatarUrl,
         status: AgentStatus.INACTIVE as any,
         userId: userId,
       };
@@ -341,6 +342,7 @@ export class AgentService {
       capabilities: agent.capabilities
         ? agent.capabilities.map((cap: any) => cap as AgentCapability)
         : [],
+      avatarUrl: agent.avatarUrl,
       lastActive: agent.lastActiveAt || new Date(),
     } as AgentResponseDto;
   }

@@ -54,6 +54,7 @@ interface AgentDetails {
   createdAt: string;
   createdBy: string;
   capabilities: string[];
+  avatarUrl?: string;
   configuration: {
     model: string;
     temperature: number;
@@ -80,6 +81,7 @@ const transformAgentToDetails = (agent: Agent): AgentDetails => ({
   createdAt: agent.createdAt ? new Date(agent.createdAt).toISOString().split('T')[0] : 'Unknown',
   createdBy: agent.metadata?.createdBy || 'System',
   capabilities: agent.capabilities || [],
+  avatarUrl: (agent as any).avatarUrl,
   configuration: {
     model: agent.model || 'gpt-4',
     temperature: agent.configuration?.temperature || 0.7,
@@ -362,8 +364,16 @@ const AgentDetail: React.FC = () => {
 
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
-                <Bot className="w-8 h-8 text-purple-400" />
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10 overflow-hidden">
+                {agent.avatarUrl ? (
+                  <img
+                    src={agent.avatarUrl}
+                    alt={agent.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Bot className="w-8 h-8 text-purple-400" />
+                )}
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-1">

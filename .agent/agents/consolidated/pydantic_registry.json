@@ -1,0 +1,20 @@
+[
+  {
+    "agent_id": "test-agent-python-v1",
+    "name": "Test Python Agent",
+    "version": "1.0.0",
+    "description": "A test agent registered via Pydantic",
+    "type": "CODER",
+    "provider": "OPENAI",
+    "capabilities": [
+      {
+        "name": "testing",
+        "description": "Testing capability",
+        "version": "1.0.0",
+        "parameters": null
+      }
+    ],
+    "config": null,
+    "tags": ["test", "python"]
+  }
+]
