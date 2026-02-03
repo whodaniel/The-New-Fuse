@@ -43,7 +43,7 @@
         {
           "id": "theNewFuse",
           "title": "The New Fuse",
-          "icon": "$(robot)"
+          "icon": "media/sidebar-icon.jpg"
         }
       ]
     },
