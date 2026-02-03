@@ -21,23 +21,19 @@ import { users } from './users';
 // =============================================================================
 
 export const agents = pgTable('agents', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  id: varchar('id', { length: 255 }).primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   type: agentTypeEnum('type').notNull(),
-  status: agentStatusEnum('status').default('INACTIVE').notNull(),
+  status: agentStatusEnum('status').default('IDLE').notNull(),
   description: text('description'),
-  systemPrompt: text('system_prompt'),
+  systemPrompt: text('systemPrompt'),
   config: jsonb('config'),
-  capabilities: jsonb('capabilities').$type<string[]>().default([]).notNull(),
+  capabilities: text('capabilities').array().notNull().default([]),
   provider: varchar('provider', { length: 100 }).default('default').notNull(),
-  reputationScore: integer('reputation_score').default(0).notNull(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  avatarUrl: text('avatar_url'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  deletedAt: timestamp('deleted_at'),
+  userId: varchar('userId', { length: 255 }),
+  avatarUrl: text('avatarUrl'),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });
 
 // =============================================================================

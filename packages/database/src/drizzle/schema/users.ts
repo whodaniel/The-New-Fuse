@@ -2,7 +2,7 @@
  * Drizzle ORM Schema - User Management & Authentication
  */
 import { relations } from 'drizzle-orm';
-import { boolean, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, jsonb, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { userRoleEnum } from './enums';
 
 // =============================================================================
@@ -10,22 +10,14 @@ import { userRoleEnum } from './enums';
 // =============================================================================
 
 export const users = pgTable('users', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  id: varchar('id', { length: 255 }).primaryKey(),
   email: varchar('email', { length: 255 }).unique().notNull(),
-  username: varchar('username', { length: 255 }).unique(),
+  // username: varchar('username', { length: 255 }).unique(),
   name: varchar('name', { length: 255 }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  hashedPassword: varchar('hashed_password', { length: 255 }).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+  hashedPassword: varchar('passwordHash', { length: 255 }),
   role: userRoleEnum('role').default('USER').notNull(),
-  roles: jsonb('roles').$type<string[]>().default(['USER']).notNull(),
-  isActive: boolean('is_active').default(true).notNull(),
-  lastLogin: timestamp('last_login'),
-  preferences: jsonb('preferences'),
-  refreshToken: text('refresh_token'),
-  deletedAt: timestamp('deleted_at'),
-  emailVerified: boolean('email_verified').default(false).notNull(),
-  walletAddress: varchar('wallet_address', { length: 255 }).unique(),
 });
 
 // =============================================================================
