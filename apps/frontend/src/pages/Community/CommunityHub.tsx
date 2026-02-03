@@ -1,3 +1,4 @@
+import { GlassCard } from '@/components/ui/premium';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -23,8 +24,8 @@ import {
   HeartIcon as HeartSolidIcon,
   StarIcon as StarSolidIcon,
 } from '@heroicons/react/24/solid';
-import { GlassCard } from '@/components/ui/premium';
 import React, { useEffect, useState } from 'react';
+import { AgentActivityFeed } from './components/AgentActivityFeed';
 
 interface CommunityPost {
   id: string;
@@ -63,6 +64,7 @@ interface CommunityStats {
 }
 
 const CommunityHub: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'discussions' | 'feed'>('discussions');
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [stats, setStats] = useState<CommunityStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -338,242 +340,282 @@ const CommunityHub: React.FC = () => {
             </div>
           )}
 
-          {/* Search and Filters */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search posts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              />
-            </div>
+          {/* Navigation Tabs */}
+          <div className="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-800">
             <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setActiveTab('discussions')}
+              className={`pb-4 px-2 text-sm font-medium transition-colors relative ${
+                activeTab === 'discussions'
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
             >
-              <FunnelIcon className="w-5 h-5" />
-              <span>Filters</span>
+              Discussions
+              {activeTab === 'discussions' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('feed')}
+              className={`pb-4 px-2 text-sm font-medium transition-colors relative ${
+                activeTab === 'feed'
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
+            >
+              Agent Feed
+              <span className="ml-2 px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs">
+                Live
+              </span>
+              {activeTab === 'feed' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+              )}
             </button>
           </div>
 
-          {/* Filters Panel */}
-          {showFilters && (
-            <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg p-4 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Category
-                  </label>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    title="Select category"
-                  >
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
+          {activeTab === 'feed' ? (
+            <AgentActivityFeed />
+          ) : (
+            <>
+              {/* Search and Filters */}
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search posts..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Sort By
-                  </label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    title="Sort posts by"
-                  >
-                    {sortOptions.map((option) => (
-                      <option key={option.id} value={option.id}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <FunnelIcon className="w-5 h-5" />
+                  <span>Filters</span>
+                </button>
               </div>
-            </div>
-          )}
-        </div>
 
-        {/* Posts List */}
-        <div className="space-y-4">
-          {posts.map((post) => (
-            <div
-              key={post.id}
-              className={`bg-slate-900/60 backdrop-blur-md rounded-lg shadow-sm border border-white/10 p-6 hover:shadow-md transition-shadow ${
-                post.isPinned ? 'border-l-4 border-l-blue-500' : ''
-              }`}
-            >
-              <div className="flex items-start space-x-4">
-                {/* Vote Section */}
-                <div className="flex flex-col items-center space-y-1 min-w-0">
-                  <button
-                    onClick={() => handleVote(post.id, 'up')}
-                    className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                      post.votes.userVote === 'up' ? 'text-green-600' : 'text-gray-400'
-                    }`}
-                    title="Upvote"
-                  >
-                    <ArrowUpIcon className="w-5 h-5" />
-                  </button>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    {post.votes.upvotes - post.votes.downvotes}
-                  </span>
-                  <button
-                    onClick={() => handleVote(post.id, 'down')}
-                    className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                      post.votes.userVote === 'down' ? 'text-red-600' : 'text-gray-400'
-                    }`}
-                    title="Downvote"
-                  >
-                    <ArrowDownIcon className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* Post Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      {post.isPinned && (
-                        <span className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
-                          Pinned
-                        </span>
-                      )}
-                      {post.isFeatured && (
-                        <span className="inline-flex items-center px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs rounded-full">
-                          <StarSolidIcon className="w-3 h-3 mr-1" />
-                          Featured
-                        </span>
-                      )}
-                      <span className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs rounded-full">
-                        {categories.find((c) => c.id === post.category)?.name || post.category}
-                      </span>
+              {/* Filters Panel */}
+              {showFilters && (
+                <div className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-lg p-4 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Category
+                      </label>
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        title="Select category"
+                      >
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Sort By
+                      </label>
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        title="Sort posts by"
+                      >
+                        {sortOptions.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
+                </div>
+              )}
 
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
-                    {post.title}
-                  </h3>
-
-                  <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                    {post.content}
-                  </p>
-
-                  {/* Tags */}
-                  {post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {post.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+              {/* Posts List */}
+              <div className="space-y-4">
+                {posts.map((post) => (
+                  <div
+                    key={post.id}
+                    className={`bg-slate-900/60 backdrop-blur-md rounded-lg shadow-sm border border-white/10 p-6 hover:shadow-md transition-shadow ${
+                      post.isPinned ? 'border-l-4 border-l-blue-500' : ''
+                    }`}
+                  >
+                    <div className="flex items-start space-x-4">
+                      {/* Vote Section */}
+                      <div className="flex flex-col items-center space-y-1 min-w-0">
+                        <button
+                          onClick={() => handleVote(post.id, 'up')}
+                          className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                            post.votes.userVote === 'up' ? 'text-green-600' : 'text-gray-400'
+                          }`}
+                          title="Upvote"
                         >
-                          <TagIcon className="w-3 h-3 mr-1" />
-                          {tag}
+                          <ArrowUpIcon className="w-5 h-5" />
+                        </button>
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {post.votes.upvotes - post.votes.downvotes}
                         </span>
-                      ))}
-                    </div>
-                  )}
+                        <button
+                          onClick={() => handleVote(post.id, 'down')}
+                          className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                            post.votes.userVote === 'down' ? 'text-red-600' : 'text-gray-400'
+                          }`}
+                          title="Downvote"
+                        >
+                          <ArrowDownIcon className="w-5 h-5" />
+                        </button>
+                      </div>
 
-                  {/* Author and Meta */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                          <UserIcon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                        </div>
-                        <div>
+                      {/* Post Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
-                              {post.author.name}
-                            </span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {post.author.reputation} rep
+                            {post.isPinned && (
+                              <span className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
+                                Pinned
+                              </span>
+                            )}
+                            {post.isFeatured && (
+                              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs rounded-full">
+                                <StarSolidIcon className="w-3 h-3 mr-1" />
+                                Featured
+                              </span>
+                            )}
+                            <span className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs rounded-full">
+                              {categories.find((c) => c.id === post.category)?.name ||
+                                post.category}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            {post.author.badges.map((badge) => (
+                        </div>
+
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+                          {post.title}
+                        </h3>
+
+                        <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                          {post.content}
+                        </p>
+
+                        {/* Tags */}
+                        {post.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {post.tags.map((tag) => (
                               <span
-                                key={badge}
-                                className="text-xs text-blue-600 dark:text-blue-400"
+                                key={tag}
+                                className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
                               >
-                                {badge}
+                                <TagIcon className="w-3 h-3 mr-1" />
+                                {tag}
                               </span>
                             ))}
                           </div>
+                        )}
+
+                        {/* Author and Meta */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                                <UserIcon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                              </div>
+                              <div>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                    {post.author.name}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {post.author.reputation} rep
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  {post.author.badges.map((badge) => (
+                                    <span
+                                      key={badge}
+                                      className="text-xs text-blue-600 dark:text-blue-400"
+                                    >
+                                      {badge}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {formatTimeAgo(post.createdAt)}
+                            </span>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
+                              <EyeIcon className="w-4 h-4" />
+                              <span className="text-sm">{post.views}</span>
+                            </div>
+                            <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
+                              <ChatBubbleOvalLeftIcon className="w-4 h-4" />
+                              <span className="text-sm">{post.comments}</span>
+                            </div>
+                            <button
+                              onClick={() => handleLike(post.id)}
+                              className={`flex items-center space-x-1 transition-colors ${
+                                post.isLiked
+                                  ? 'text-red-600'
+                                  : 'text-gray-500 dark:text-gray-400 hover:text-red-600'
+                              }`}
+                              title="Like post"
+                            >
+                              {post.isLiked ? (
+                                <HeartSolidIcon className="w-4 h-4" />
+                              ) : (
+                                <HeartIcon className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleBookmark(post.id)}
+                              className={`flex items-center space-x-1 transition-colors ${
+                                post.isBookmarked
+                                  ? 'text-yellow-600'
+                                  : 'text-gray-500 dark:text-gray-400 hover:text-yellow-600'
+                              }`}
+                              title="Bookmark post"
+                            >
+                              {post.isBookmarked ? (
+                                <BookmarkSolidIcon className="w-4 h-4" />
+                              ) : (
+                                <BookmarkIcon className="w-4 h-4" />
+                              )}
+                              <span className="text-sm">{post.bookmarks}</span>
+                            </button>
+                            <button
+                              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                              title="Share post"
+                            >
+                              <ShareIcon className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatTimeAgo(post.createdAt)}
-                      </span>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
-                        <EyeIcon className="w-4 h-4" />
-                        <span className="text-sm">{post.views}</span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
-                        <ChatBubbleOvalLeftIcon className="w-4 h-4" />
-                        <span className="text-sm">{post.comments}</span>
-                      </div>
-                      <button
-                        onClick={() => handleLike(post.id)}
-                        className={`flex items-center space-x-1 transition-colors ${
-                          post.isLiked
-                            ? 'text-red-600'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-red-600'
-                        }`}
-                        title="Like post"
-                      >
-                        {post.isLiked ? (
-                          <HeartSolidIcon className="w-4 h-4" />
-                        ) : (
-                          <HeartIcon className="w-4 h-4" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleBookmark(post.id)}
-                        className={`flex items-center space-x-1 transition-colors ${
-                          post.isBookmarked
-                            ? 'text-yellow-600'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-yellow-600'
-                        }`}
-                        title="Bookmark post"
-                      >
-                        {post.isBookmarked ? (
-                          <BookmarkSolidIcon className="w-4 h-4" />
-                        ) : (
-                          <BookmarkIcon className="w-4 h-4" />
-                        )}
-                        <span className="text-sm">{post.bookmarks}</span>
-                      </button>
-                      <button
-                        className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                        title="Share post"
-                      >
-                        <ShareIcon className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
 
-        {/* Load More */}
-        <div className="text-center mt-8">
-          <button className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-            Load More Posts
-          </button>
+              {/* Load More */}
+              <div className="text-center mt-8">
+                <button className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  Load More Posts
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

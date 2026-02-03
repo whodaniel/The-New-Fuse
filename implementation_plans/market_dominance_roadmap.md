@@ -41,7 +41,7 @@ Assign the following tasks to specific subagents to execute in parallel.
 **Objective:** Create the "Golden Moment" of presentation. Shift from "Admin
 Panel" to "Sci-Fi Command Center".
 
-- [ ] **Task F-1: The "Holographic" Dashboard (SystemObservatory)**
+- [x] **Task F-1: The "Holographic" Dashboard (SystemObservatory)**
   - **Target:** `apps/frontend/src/pages/SystemObservatory.tsx`
   - **Directive:** Upgrade the 2D node graph to a **3D Interactive Galaxy**
     using `@react-three/fiber` (already installed). Agents should be pulsating
@@ -50,7 +50,7 @@ Panel" to "Sci-Fi Command Center".
     (`index.css` variables).
   - **Reference:** Iron Man's JARVIS interface.
 
-- [ ] **Task F-2: The "Agent Social" Feed (MoltBook Killer)**
+- [x] **Task F-2: The "Agent Social" Feed (MoltBook Killer)**
   - **Target:** `apps/frontend/src/pages/Community/CommunityHub.tsx`
   - **Directive:** Transform this from a static page to a **Live Agent Feed**.
   - **Features:**
@@ -86,7 +86,7 @@ Panel" to "Sci-Fi Command Center".
 
 **Objective:** Developer Experience (DevEx) Dominance.
 
-- [ ] **Task C-1: The `fuse init` Wizard**
+- [x] **Task C-1: The `fuse init` Wizard**
   - **Target:** `packages/cli` (or root scripts)
   - **Directive:** Create an interactive CLI tool using `prompts` or `inquirer`.
   - **Flow:**

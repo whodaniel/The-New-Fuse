@@ -4,30 +4,32 @@
 
 ### The New Fuse Ecosystem
 
-| Product               | Official Name        | Type             | Primary Logo         |
-| --------------------- | -------------------- | ---------------- | -------------------- |
-| **Main Platform**     | The New Fuse (TNF)   | SaaS Website     | **🌟 Neon Monogram** |
-| **Desktop App**       | **Fuse Desktop**     | Tauri/Desktop    | **🌟 Neon Monogram** |
-| **Cloud IDE**         | **SkIDEancer**       | SkIDEancer-based IDE  | **🌟 Neon Monogram** |
-| **Browser Extension** | **Fuse Connect**     | Chrome Extension | **🌟 Neon Monogram** |
-| **VS Code Extension** | **Fuse for VS Code** | IDE Extension    | **🌟 Neon Monogram** |
+| Product               | Official Name        | Type                 | Primary Logo           |
+| --------------------- | -------------------- | -------------------- | ---------------------- |
+| **Main Platform**     | The New Fuse (TNF)   | SaaS Website         | **🧠 Cyberpunk Brain** |
+| **Desktop App**       | **Fuse Desktop**     | Tauri/Desktop        | **🧠 Cyberpunk Brain** |
+| **Cloud IDE**         | **SkIDEancer**       | SkIDEancer-based IDE | **🧠 Cyberpunk Brain** |
+| **Browser Extension** | **Fuse Connect**     | Chrome Extension     | **🧠 Cyberpunk Brain** |
+| **VS Code Extension** | **Fuse for VS Code** | IDE Extension        | **🧠 Cyberpunk Brain** |
 
 ---
 
-## 🌟 PRIMARY LOGO: Neon Monogram
+## 🌟 PRIMARY LOGO: Cyberpunk Brain
 
-> **The Neon Monogram is the official primary logo for ALL TNF products.**
+> **The Cyberpunk Brain is the official primary logo for ALL TNF products.**
 
 ### Description
 
-Futuristic 3D intertwining "TNF" letters with glowing cyan and purple accents.
-Features a cyberpunk aesthetic that embodies the "Deep Space Premium Dark"
-design philosophy.
+A front-facing, perfectly symmetrical digital brain constructed entirely from
+intricate, glowing circuit board traces and electronic components in electric
+blue and neon purple. The "TNF" logo is integrated as the central glowing core.
+Features a high-contrast, self-contained high-tech aesthetics on a pure black or
+dark background.
 
 ### File Location
 
 ```
-/apps/frontend/public/assets/brand/logo-monogram-neon.png
+/apps/frontend/public/logo.png
 ```
 
 ### Pre-Generated Sizes
@@ -55,44 +57,44 @@ design philosophy.
 
 #### thenewfuse.com (Website)
 
-| Location    | Logo          | Size                | Format  |
-| ----------- | ------------- | ------------------- | ------- |
-| Header/Nav  | Neon Monogram | 40px height         | PNG/SVG |
-| Favicon     | Neon Monogram | 16x16, 32x32, 48x48 | ICO     |
-| Footer      | Neon Monogram | 32px height         | PNG     |
-| Apple Touch | Neon Monogram | 180x180             | PNG     |
-| Open Graph  | Neon Monogram | 1200x630            | PNG     |
-| PWA Icons   | Neon Monogram | 192x192, 512x512    | PNG     |
+| Location    | Logo            | Size                | Format |
+| ----------- | --------------- | ------------------- | ------ |
+| Header/Nav  | Cyberpunk Brain | 40px height         | PNG    |
+| Favicon     | Cyberpunk Brain | 16x16, 32x32, 48x48 | PNG    |
+| Footer      | Cyberpunk Brain | 32px height         | PNG    |
+| Apple Touch | Cyberpunk Brain | 180x180             | PNG    |
+| Open Graph  | Cyberpunk Brain | 1200x630            | PNG    |
+| PWA Icons   | Cyberpunk Brain | 192x192, 512x512    | PNG    |
 
 #### Fuse Desktop (Tauri App)
 
-| Location           | Logo              | Size    | Format  |
-| ------------------ | ----------------- | ------- | ------- |
-| Window Title Bar   | Abstract Gradient | 24px    | ICO/PNG |
-| App Icon (macOS)   | Abstract Gradient | 512x512 | ICNS    |
-| App Icon (Windows) | Abstract Gradient | 256x256 | ICO     |
-| Splash Screen      | Abstract Gradient | 256px   | PNG     |
-| About Dialog       | Abstract Gradient | 128px   | PNG     |
-| Dock/Taskbar       | Abstract Gradient | 128x128 | PNG     |
+| Location           | Logo            | Size    | Format |
+| ------------------ | --------------- | ------- | ------ |
+| Window Title Bar   | Cyberpunk Brain | 24px    | PNG    |
+| App Icon (macOS)   | Cyberpunk Brain | 512x512 | PNG    |
+| App Icon (Windows) | Cyberpunk Brain | 256x256 | PNG    |
+| Splash Screen      | Cyberpunk Brain | 256px   | PNG    |
+| About Dialog       | Cyberpunk Brain | 128px   | PNG    |
+| Dock/Taskbar       | Cyberpunk Brain | 128x128 | PNG    |
 
 #### SkIDEancer (SkIDEancer IDE)
 
-| Location     | Logo                        | Size             | Format  |
-| ------------ | --------------------------- | ---------------- | ------- |
-| Browser Tab  | Circuit Network             | 16x16, 32x32     | ICO/PNG |
-| Welcome Page | Circuit Network             | 128px            | SVG/PNG |
-| Activity Bar | Circuit Network             | 24px             | SVG     |
-| About/Help   | Circuit Network + Full Name | 256px            | PNG     |
-| PWA Icons    | Circuit Network             | 192x192, 512x512 | PNG     |
+| Location     | Logo                        | Size             | Format |
+| ------------ | --------------------------- | ---------------- | ------ |
+| Browser Tab  | Cyberpunk Brain             | 16x16, 32x32     | PNG    |
+| Welcome Page | Cyberpunk Brain             | 128px            | PNG    |
+| Activity Bar | Cyberpunk Brain             | 24px             | PNG    |
+| About/Help   | Cyberpunk Brain + Full Name | 256px            | PNG    |
+| PWA Icons    | Cyberpunk Brain             | 192x192, 512x512 | PNG    |
 
 #### Fuse Connect (Chrome Extension)
 
-| Location     | Logo          | Size                  | Format |
-| ------------ | ------------- | --------------------- | ------ |
-| Toolbar Icon | Neon Monogram | 16x16, 48x48, 128x128 | PNG    |
-| Popup Header | Neon Monogram | 32px                  | PNG    |
-| Options Page | Neon Monogram | 48px                  | PNG    |
-| Chrome Store | Neon Monogram | 128x128, 440x280      | PNG    |
+| Location     | Logo            | Size                  | Format |
+| ------------ | --------------- | --------------------- | ------ |
+| Toolbar Icon | Cyberpunk Brain | 16x16, 48x48, 128x128 | PNG    |
+| Popup Header | Cyberpunk Brain | 32px                  | PNG    |
+| Options Page | Cyberpunk Brain | 48px                  | PNG    |
+| Chrome Store | Cyberpunk Brain | 128x128, 440x280      | PNG    |
 
 ---
 

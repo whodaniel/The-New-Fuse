@@ -15,19 +15,19 @@ import { CircuitBreaker, getCircuitBreakerRegistry } from './circuit-breaker.js'
 import { ConfigManager } from './config.js';
 import { Logger, createLogger } from './logger.js';
 import { TaskManager } from './task-manager.js';
-import {
+import { AgentPlatform, AgentRole } from './types.js';
+
+import type {
   AgentCard,
   AgentInfo,
   AgentMessage,
-  AgentPlatform,
-  AgentRole,
   CLIConfig,
   MessageAck,
   Task,
   TaskCreateRequest,
 } from './types.js';
 
-export { AgentInfo, AgentMessage };
+export type { AgentInfo, AgentMessage };
 
 export const CONFIG = {
   redis: {

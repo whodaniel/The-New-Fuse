@@ -2,7 +2,7 @@
   "name": "the-new-fuse",
   "displayName": "The New Fuse",
   "description": "AI-Powered Development Assistant with Multi-Provider LLM Support & MCP Integration",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "publisher": "TheNewFuse",
   "license": "MIT",
   "repository": {

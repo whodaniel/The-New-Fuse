@@ -30,6 +30,7 @@ export const agents = pgTable('agents', {
   config: jsonb('config'),
   capabilities: jsonb('capabilities').$type<string[]>().default([]).notNull(),
   provider: varchar('provider', { length: 100 }).default('default').notNull(),
+  reputationScore: integer('reputation_score').default(0).notNull(),
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),

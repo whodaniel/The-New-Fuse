@@ -1,6 +1,5 @@
 import {
   Activity,
-  BarChart3,
   Bot,
   Briefcase,
   ChevronLeft,
@@ -15,7 +14,6 @@ import {
   Settings,
   Workflow,
   X,
-  Zap,
 } from 'lucide-react';
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -40,9 +38,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   const navigationGroups = [
     {
       title: 'Overview',
-      items: [
-        { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      ],
+      items: [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }],
     },
     {
       title: 'Intelligence',
@@ -107,8 +103,8 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
             <div
               className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
-                <Zap className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 shrink-0">
+                <img src="/logo.png" alt="TNF Logo" className="w-full h-full object-contain" />
               </div>
               {!isCollapsed && (
                 <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 whitespace-nowrap">
