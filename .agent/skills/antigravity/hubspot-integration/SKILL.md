@@ -1,6 +1,10 @@
 ---
 name: hubspot-integration
-description: "Expert patterns for HubSpot CRM integration including OAuth authentication, CRM objects, associations, batch operations, webhooks, and custom objects. Covers Node.js and Python SDKs. Use when: hubspot, hubspot api, hubspot crm, hubspot integration, contacts api."
+description:
+  'Expert patterns for HubSpot CRM integration including OAuth authentication,
+  CRM objects, associations, batch operations, webhooks, and custom objects.
+  Covers Node.js and Python SDKs. Use when: hubspot, hubspot api, hubspot crm,
+  hubspot integration, contacts api.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -31,12 +35,12 @@ Create, read, update, delete CRM records
 ## ⚠️ Sharp Edges
 
 | Issue | Severity | Solution |
-|-------|----------|----------|
-| Issue | high | See docs |
-| Issue | high | See docs |
+| ----- | -------- | -------- |
+| Issue | high     | See docs |
+| Issue | high     | See docs |
 | Issue | critical | See docs |
-| Issue | high | See docs |
+| Issue | high     | See docs |
 | Issue | critical | See docs |
-| Issue | medium | See docs |
-| Issue | high | See docs |
-| Issue | medium | See docs |
+| Issue | medium   | See docs |
+| Issue | high     | See docs |
+| Issue | medium   | See docs |

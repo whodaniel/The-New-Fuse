@@ -1,16 +1,22 @@
 ---
 name: Red Team Tools and Methodology
-description: This skill should be used when the user asks to "follow red team methodology", "perform bug bounty hunting", "automate reconnaissance", "hunt for XSS vulnerabilities", "enumerate subdomains", or needs security researcher techniques and tool configurations from top bug bounty hunters.
+description:
+  This skill should be used when the user asks to "follow red team methodology",
+  "perform bug bounty hunting", "automate reconnaissance", "hunt for XSS
+  vulnerabilities", "enumerate subdomains", or needs security researcher
+  techniques and tool configurations from top bug bounty hunters.
 metadata:
   author: zebbern
-  version: "1.1"
+  version: '1.1'
 ---
 
 # Red Team Tools and Methodology
 
 ## Purpose
 
-Implement proven methodologies and tool workflows from top security researchers for effective reconnaissance, vulnerability discovery, and bug bounty hunting. Automate common tasks while maintaining thorough coverage of attack surfaces.
+Implement proven methodologies and tool workflows from top security researchers
+for effective reconnaissance, vulnerability discovery, and bug bounty hunting.
+Automate common tasks while maintaining thorough coverage of attack surfaces.
 
 ## Inputs/Prerequisites
 
@@ -142,6 +148,7 @@ cat all_urls.txt | unfurl paths | sort -u > custom_wordlist.txt
 6. **Error Pages** - Exotic injection points
 
 **Analysis Questions:**
+
 - How does the app pass data? (Params, API, Hybrid)
 - Where does the app talk about users? (UID, UUID endpoints)
 - Does the site have multi-tenancy or user levels?
@@ -234,16 +241,16 @@ echo "[+] Recon complete!"
 
 ### Essential Tools
 
-| Tool | Purpose |
-|------|---------|
-| Amass | Subdomain enumeration |
-| Subfinder | Fast subdomain discovery |
-| httpx/httprobe | Live host detection |
-| ffuf | Content discovery |
-| Nuclei | Vulnerability scanning |
-| Burp Suite | Manual testing |
-| Dalfox | XSS automation |
-| waybackurls | Historical URL mining |
+| Tool           | Purpose                  |
+| -------------- | ------------------------ |
+| Amass          | Subdomain enumeration    |
+| Subfinder      | Fast subdomain discovery |
+| httpx/httprobe | Live host detection      |
+| ffuf           | Content discovery        |
+| Nuclei         | Vulnerability scanning   |
+| Burp Suite     | Manual testing           |
+| Dalfox         | XSS automation           |
+| waybackurls    | Historical URL mining    |
 
 ### Key API Endpoints to Check
 
@@ -300,11 +307,11 @@ amass enum -d target.com | httpx | nuclei -t ~/nuclei-templates/
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Rate limited | Use proxy rotation, reduce concurrency |
-| Too many results | Focus on specific technology stacks |
-| False positives | Manually verify findings before reporting |
-| Missing subdomains | Combine multiple enumeration sources |
-| API key errors | Verify keys in config files |
-| Tools not found | Install Go tools with `go install` |
+| Issue              | Solution                                  |
+| ------------------ | ----------------------------------------- |
+| Rate limited       | Use proxy rotation, reduce concurrency    |
+| Too many results   | Focus on specific technology stacks       |
+| False positives    | Manually verify findings before reporting |
+| Missing subdomains | Combine multiple enumeration sources      |
+| API key errors     | Verify keys in config files               |
+| Tools not found    | Install Go tools with `go install`        |

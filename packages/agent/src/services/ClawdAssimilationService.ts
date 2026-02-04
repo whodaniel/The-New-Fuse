@@ -77,7 +77,6 @@ export class ClawdAssimilationService {
       const skill = this.parseSkillContent(content, filePath);
       if (skill) {
         this.assimilatedSkills.set(skill.name, skill);
-        // console.log(`Assimilated skill: ${skill.name}`);
       }
     } catch (error) {
       console.warn(`Failed to assimilate skill at ${filePath}:`, error);

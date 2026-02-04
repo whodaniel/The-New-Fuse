@@ -1,6 +1,7 @@
 # Advanced Cloud Pentesting Scripts
 
-Reference: [Cloud Pentesting Cheatsheet by Beau Bullock](https://github.com/dafthack/CloudPentestCheatsheets)
+Reference:
+[Cloud Pentesting Cheatsheet by Beau Bullock](https://github.com/dafthack/CloudPentestCheatsheets)
 
 ## Azure Automation Runbooks
 
@@ -127,6 +128,7 @@ $instance
 ## AWS Region Iteration Scripts
 
 Create `regions.txt`:
+
 ```
 us-east-1
 us-east-2
@@ -291,28 +293,28 @@ az rest --method POST --uri https://graph.microsoft.com/v1.0/roleManagement/dire
 
 ## Additional Tools Reference
 
-| Tool | URL | Purpose |
-|------|-----|---------|
-| MicroBurst | github.com/NetSPI/MicroBurst | Azure security assessment |
-| PowerZure | github.com/hausec/PowerZure | Azure post-exploitation |
-| ROADTools | github.com/dirkjanm/ROADtools | Azure AD enumeration |
-| Stormspotter | github.com/Azure/Stormspotter | Azure attack path graphing |
-| MSOLSpray | github.com/dafthack | O365 password spraying |
-| AzureHound | github.com/BloodHoundAD/AzureHound | Azure AD attack paths |
-| WeirdAAL | github.com/carnal0wnage/weirdAAL | AWS enumeration |
-| Pacu | github.com/RhinoSecurityLabs/pacu | AWS exploitation |
-| ScoutSuite | github.com/nccgroup/ScoutSuite | Multi-cloud auditing |
-| cloud_enum | github.com/initstring/cloud_enum | Public resource discovery |
-| GitLeaks | github.com/zricethezav/gitleaks | Secret scanning |
-| TruffleHog | github.com/dxa4481/truffleHog | Git secret scanning |
-| ip2Provider | github.com/oldrho/ip2provider | Cloud IP identification |
-| FireProx | github.com/ustayready/fireprox | IP rotation via AWS API Gateway |
+| Tool         | URL                                | Purpose                         |
+| ------------ | ---------------------------------- | ------------------------------- |
+| MicroBurst   | github.com/NetSPI/MicroBurst       | Azure security assessment       |
+| PowerZure    | github.com/hausec/PowerZure        | Azure post-exploitation         |
+| ROADTools    | github.com/dirkjanm/ROADtools      | Azure AD enumeration            |
+| Stormspotter | github.com/Azure/Stormspotter      | Azure attack path graphing      |
+| MSOLSpray    | github.com/dafthack                | O365 password spraying          |
+| AzureHound   | github.com/BloodHoundAD/AzureHound | Azure AD attack paths           |
+| WeirdAAL     | github.com/carnal0wnage/weirdAAL   | AWS enumeration                 |
+| Pacu         | github.com/RhinoSecurityLabs/pacu  | AWS exploitation                |
+| ScoutSuite   | github.com/nccgroup/ScoutSuite     | Multi-cloud auditing            |
+| cloud_enum   | github.com/initstring/cloud_enum   | Public resource discovery       |
+| GitLeaks     | github.com/zricethezav/gitleaks    | Secret scanning                 |
+| TruffleHog   | github.com/dxa4481/truffleHog      | Git secret scanning             |
+| ip2Provider  | github.com/oldrho/ip2provider      | Cloud IP identification         |
+| FireProx     | github.com/ustayready/fireprox     | IP rotation via AWS API Gateway |
 
 ## Vulnerable Training Environments
 
-| Platform | URL | Purpose |
-|----------|-----|---------|
-| CloudGoat | github.com/RhinoSecurityLabs/cloudgoat | AWS vulnerable lab |
-| SadCloud | github.com/nccgroup/sadcloud | Terraform misconfigs |
-| Flaws Cloud | flaws.cloud | AWS CTF challenges |
-| Thunder CTF | thunder-ctf.cloud | GCP CTF challenges |
+| Platform    | URL                                    | Purpose              |
+| ----------- | -------------------------------------- | -------------------- |
+| CloudGoat   | github.com/RhinoSecurityLabs/cloudgoat | AWS vulnerable lab   |
+| SadCloud    | github.com/nccgroup/sadcloud           | Terraform misconfigs |
+| Flaws Cloud | flaws.cloud                            | AWS CTF challenges   |
+| Thunder CTF | thunder-ctf.cloud                      | GCP CTF challenges   |

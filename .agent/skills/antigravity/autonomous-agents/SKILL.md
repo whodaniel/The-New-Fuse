@@ -1,6 +1,13 @@
 ---
 name: autonomous-agents
-description: "Autonomous agents are AI systems that can independently decompose goals, plan actions, execute tools, and self-correct without constant human guidance. The challenge isn't making them capable - it's making them reliable. Every extra decision multiplies failure probability.  This skill covers agent loops (ReAct, Plan-Execute), goal decomposition, reflection patterns, and production reliability. Key insight: compounding error rates kill autonomous agents. A 95% success rate per step drops to 60% b"
+description:
+  "Autonomous agents are AI systems that can independently decompose goals, plan
+  actions, execute tools, and self-correct without constant human guidance. The
+  challenge isn't making them capable - it's making them reliable. Every extra
+  decision multiplies failure probability.  This skill covers agent loops
+  (ReAct, Plan-Execute), goal decomposition, reflection patterns, and production
+  reliability. Key insight: compounding error rates kill autonomous agents. A
+  95% success rate per step drops to 60% b"
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -52,17 +59,18 @@ Self-evaluation and iterative improvement
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
-| Issue | critical | ## Reduce step count |
-| Issue | critical | ## Set hard cost limits |
+| Issue | Severity | Solution                           |
+| ----- | -------- | ---------------------------------- |
+| Issue | critical | ## Reduce step count               |
+| Issue | critical | ## Set hard cost limits            |
 | Issue | critical | ## Test at scale before production |
-| Issue | high | ## Validate against ground truth |
-| Issue | high | ## Build robust API clients |
-| Issue | high | ## Least privilege principle |
-| Issue | medium | ## Track context usage |
-| Issue | medium | ## Structured logging |
+| Issue | high     | ## Validate against ground truth   |
+| Issue | high     | ## Build robust API clients        |
+| Issue | high     | ## Least privilege principle       |
+| Issue | medium   | ## Track context usage             |
+| Issue | medium   | ## Structured logging              |
 
 ## Related Skills
 
-Works well with: `agent-tool-builder`, `agent-memory-systems`, `multi-agent-orchestration`, `agent-evaluation`
+Works well with: `agent-tool-builder`, `agent-memory-systems`,
+`multi-agent-orchestration`, `agent-evaluation`

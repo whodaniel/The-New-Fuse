@@ -20,19 +20,19 @@ Complete guide to async/await patterns and custom error handling.
 ```typescript
 // ❌ NEVER: Unhandled async errors
 async function fetchData() {
-    const data = await database.query(); // If throws, unhandled!
-    return data;
+  const data = await database.query(); // If throws, unhandled!
+  return data;
 }
 
 // ✅ ALWAYS: Wrap in try-catch
 async function fetchData() {
-    try {
-        const data = await database.query();
-        return data;
-    } catch (error) {
-        Sentry.captureException(error);
-        throw error;
-    }
+  try {
+    const data = await database.query();
+    return data;
+  } catch (error) {
+    Sentry.captureException(error);
+    throw error;
+  }
 }
 ```
 
@@ -41,24 +41,24 @@ async function fetchData() {
 ```typescript
 // ❌ AVOID: Promise chains
 function processData() {
-    return fetchData()
-        .then(data => transform(data))
-        .then(transformed => save(transformed))
-        .catch(error => {
-            console.error(error);
-        });
+  return fetchData()
+    .then((data) => transform(data))
+    .then((transformed) => save(transformed))
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
 // ✅ PREFER: Async/await
 async function processData() {
-    try {
-        const data = await fetchData();
-        const transformed = await transform(data);
-        return await save(transformed);
-    } catch (error) {
-        Sentry.captureException(error);
-        throw error;
-    }
+  try {
+    const data = await fetchData();
+    const transformed = await transform(data);
+    return await save(transformed);
+  } catch (error) {
+    Sentry.captureException(error);
+    throw error;
+  }
 }
 ```
 
@@ -71,30 +71,30 @@ async function processData() {
 ```typescript
 // ✅ Handle errors in Promise.all
 try {
-    const [users, profiles, settings] = await Promise.all([
-        userService.getAll(),
-        profileService.getAll(),
-        settingsService.getAll(),
-    ]);
+  const [users, profiles, settings] = await Promise.all([
+    userService.getAll(),
+    profileService.getAll(),
+    settingsService.getAll(),
+  ]);
 } catch (error) {
-    // One failure fails all
-    Sentry.captureException(error);
-    throw error;
+  // One failure fails all
+  Sentry.captureException(error);
+  throw error;
 }
 
 // ✅ Handle errors individually with Promise.allSettled
 const results = await Promise.allSettled([
-    userService.getAll(),
-    profileService.getAll(),
-    settingsService.getAll(),
+  userService.getAll(),
+  profileService.getAll(),
+  settingsService.getAll(),
 ]);
 
 results.forEach((result, index) => {
-    if (result.status === 'rejected') {
-        Sentry.captureException(result.reason, {
-            tags: { operation: ['users', 'profiles', 'settings'][index] }
-        });
-    }
+  if (result.status === 'rejected') {
+    Sentry.captureException(result.reason, {
+      tags: { operation: ['users', 'profiles', 'settings'][index] },
+    });
+  }
 });
 ```
 
@@ -107,41 +107,41 @@ results.forEach((result, index) => {
 ```typescript
 // Base error class
 export class AppError extends Error {
-    constructor(
-        message: string,
-        public code: string,
-        public statusCode: number,
-        public isOperational: boolean = true
-    ) {
-        super(message);
-        this.name = this.constructor.name;
-        Error.captureStackTrace(this, this.constructor);
-    }
+  constructor(
+    message: string,
+    public code: string,
+    public statusCode: number,
+    public isOperational: boolean = true
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
 }
 
 // Specific error types
 export class ValidationError extends AppError {
-    constructor(message: string) {
-        super(message, 'VALIDATION_ERROR', 400);
-    }
+  constructor(message: string) {
+    super(message, 'VALIDATION_ERROR', 400);
+  }
 }
 
 export class NotFoundError extends AppError {
-    constructor(message: string) {
-        super(message, 'NOT_FOUND', 404);
-    }
+  constructor(message: string) {
+    super(message, 'NOT_FOUND', 404);
+  }
 }
 
 export class ForbiddenError extends AppError {
-    constructor(message: string) {
-        super(message, 'FORBIDDEN', 403);
-    }
+  constructor(message: string) {
+    super(message, 'FORBIDDEN', 403);
+  }
 }
 
 export class ConflictError extends AppError {
-    constructor(message: string) {
-        super(message, 'CONFLICT', 409);
-    }
+  constructor(message: string) {
+    super(message, 'CONFLICT', 409);
+  }
 }
 ```
 
@@ -150,27 +150,27 @@ export class ConflictError extends AppError {
 ```typescript
 // Throw specific errors
 if (!user) {
-    throw new NotFoundError('User not found');
+  throw new NotFoundError('User not found');
 }
 
 if (user.age < 18) {
-    throw new ValidationError('User must be 18+');
+  throw new ValidationError('User must be 18+');
 }
 
 // Error boundary handles them
 function errorBoundary(error, req, res, next) {
-    if (error instanceof AppError) {
-        return res.status(error.statusCode).json({
-            error: {
-                message: error.message,
-                code: error.code
-            }
-        });
-    }
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+  }
 
-    // Unknown error
-    Sentry.captureException(error);
-    res.status(500).json({ error: { message: 'Internal server error' } });
+  // Unknown error
+  Sentry.captureException(error);
+  res.status(500).json({ error: { message: 'Internal server error' } });
 }
 ```
 
@@ -182,15 +182,15 @@ function errorBoundary(error, req, res, next) {
 
 ```typescript
 export function asyncErrorWrapper(
-    handler: (req: Request, res: Response, next: NextFunction) => Promise<any>
+  handler: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) {
-    return async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            await handler(req, res, next);
-        } catch (error) {
-            next(error);
-        }
-    };
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await handler(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 ```
 
@@ -199,15 +199,18 @@ export function asyncErrorWrapper(
 ```typescript
 // Without wrapper - error can be unhandled
 router.get('/users', async (req, res) => {
-    const users = await userService.getAll(); // If throws, unhandled!
-    res.json(users);
+  const users = await userService.getAll(); // If throws, unhandled!
+  res.json(users);
 });
 
 // With wrapper - errors caught
-router.get('/users', asyncErrorWrapper(async (req, res) => {
+router.get(
+  '/users',
+  asyncErrorWrapper(async (req, res) => {
     const users = await userService.getAll();
     res.json(users);
-}));
+  })
+);
 ```
 
 ---
@@ -219,30 +222,30 @@ router.get('/users', asyncErrorWrapper(async (req, res) => {
 ```typescript
 // ✅ Propagate errors up the stack
 async function repositoryMethod() {
-    try {
-        return await PrismaService.main.user.findMany();
-    } catch (error) {
-        Sentry.captureException(error, { tags: { layer: 'repository' } });
-        throw error; // Propagate to service
-    }
+  try {
+    return await PrismaService.main.user.findMany();
+  } catch (error) {
+    Sentry.captureException(error, { tags: { layer: 'repository' } });
+    throw error; // Propagate to service
+  }
 }
 
 async function serviceMethod() {
-    try {
-        return await repositoryMethod();
-    } catch (error) {
-        Sentry.captureException(error, { tags: { layer: 'service' } });
-        throw error; // Propagate to controller
-    }
+  try {
+    return await repositoryMethod();
+  } catch (error) {
+    Sentry.captureException(error, { tags: { layer: 'service' } });
+    throw error; // Propagate to controller
+  }
 }
 
 async function controllerMethod(req, res) {
-    try {
-        const result = await serviceMethod();
-        res.json(result);
-    } catch (error) {
-        this.handleError(error, res, 'controllerMethod'); // Final handler
-    }
+  try {
+    const result = await serviceMethod();
+    res.json(result);
+  } catch (error) {
+    this.handleError(error, res, 'controllerMethod'); // Final handler
+  }
 }
 ```
 
@@ -255,27 +258,27 @@ async function controllerMethod(req, res) {
 ```typescript
 // ❌ NEVER: Fire and forget
 async function processRequest(req, res) {
-    sendEmail(user.email); // Fires async, errors unhandled!
-    res.json({ success: true });
+  sendEmail(user.email); // Fires async, errors unhandled!
+  res.json({ success: true });
 }
 
 // ✅ ALWAYS: Await or handle
 async function processRequest(req, res) {
-    try {
-        await sendEmail(user.email);
-        res.json({ success: true });
-    } catch (error) {
-        Sentry.captureException(error);
-        res.status(500).json({ error: 'Failed to send email' });
-    }
+  try {
+    await sendEmail(user.email);
+    res.json({ success: true });
+  } catch (error) {
+    Sentry.captureException(error);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
 }
 
 // ✅ OR: Intentional background task
 async function processRequest(req, res) {
-    sendEmail(user.email).catch(error => {
-        Sentry.captureException(error);
-    });
-    res.json({ success: true });
+  sendEmail(user.email).catch((error) => {
+    Sentry.captureException(error);
+  });
+  res.json({ success: true });
 }
 ```
 
@@ -284,24 +287,25 @@ async function processRequest(req, res) {
 ```typescript
 // ✅ Global handler for unhandled rejections
 process.on('unhandledRejection', (reason, promise) => {
-    Sentry.captureException(reason, {
-        tags: { type: 'unhandled_rejection' }
-    });
-    console.error('Unhandled Rejection:', reason);
+  Sentry.captureException(reason, {
+    tags: { type: 'unhandled_rejection' },
+  });
+  console.error('Unhandled Rejection:', reason);
 });
 
 process.on('uncaughtException', (error) => {
-    Sentry.captureException(error, {
-        tags: { type: 'uncaught_exception' }
-    });
-    console.error('Uncaught Exception:', error);
-    process.exit(1);
+  Sentry.captureException(error, {
+    tags: { type: 'uncaught_exception' },
+  });
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
 });
 ```
 
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md)
 - [sentry-and-monitoring.md](sentry-and-monitoring.md)
 - [complete-examples.md](complete-examples.md)

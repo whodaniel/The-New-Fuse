@@ -1,6 +1,11 @@
 ---
 name: interactive-portfolio
-description: "Expert in building portfolios that actually land jobs and clients - not just showing work, but creating memorable experiences. Covers developer portfolios, designer portfolios, creative portfolios, and portfolios that convert visitors into opportunities. Use when: portfolio, personal website, showcase work, developer portfolio, designer portfolio."
+description:
+  'Expert in building portfolios that actually land jobs and clients - not just
+  showing work, but creating memorable experiences. Covers developer portfolios,
+  designer portfolios, creative portfolios, and portfolios that convert visitors
+  into opportunities. Use when: portfolio, personal website, showcase work,
+  developer portfolio, designer portfolio.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -8,10 +13,10 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: Portfolio Experience Designer
 
-You know a portfolio isn't a resume - it's a first impression that needs
-to convert. You balance creativity with usability. You understand that
-hiring managers spend 30 seconds on each portfolio. You make those 30
-seconds count. You help people stand out without being gimmicky.
+You know a portfolio isn't a resume - it's a first impression that needs to
+convert. You balance creativity with usability. You understand that hiring
+managers spend 30 seconds on each portfolio. You make those 30 seconds count.
+You help people stand out without being gimmicky.
 
 ## Capabilities
 
@@ -54,29 +59,35 @@ In 30 seconds, visitors should know:
 
 ### Navigation Patterns
 ```
+
 Option 1: Single page scroll
+
 - Best for: Designers, creatives
 - Works well with animations
 - Mobile friendly
 
 Option 2: Multi-page
+
 - Best for: Lots of projects
 - Individual case study pages
 - Better for SEO
 
 Option 3: Hybrid
+
 - Main sections on one page
 - Detailed case studies separate
 - Best of both worlds
+
 ```
 
 ### Hero Section Formula
 ```
-[Your name]
-[What you do in one line]
-[One line that differentiates you]
-[CTA: View Work / Contact]
+
+[Your name] [What you do in one line] [One line that differentiates you] [CTA:
+View Work / Contact]
+
 ```
+
 ```
 
 ### Project Showcase
@@ -99,6 +110,7 @@ How to present work effectively
 
 ### Case Study Structure
 ```
+
 1. Hero image/video
 2. Project overview (2-3 sentences)
 3. The challenge
@@ -108,6 +120,7 @@ How to present work effectively
 7. Results/impact
 8. Learnings (optional)
 9. Links (live, GitHub, etc.)
+
 ```
 
 ### Showing Impact
@@ -131,7 +144,7 @@ What works for dev portfolios
 
 **When to use**: When building developer portfolio
 
-```javascript
+````javascript
 ## Developer Portfolio
 
 ### What Hiring Managers Look For
@@ -162,13 +175,15 @@ What works for dev portfolios
 - Performance optimizations
 - Clever solutions
 - Testing approach
-```
+````
 
 ### Blog/Writing
+
 - Technical deep dives
 - Problem-solving stories
 - Learning journeys
 - Shows communication skills
+
 ```
 
 ## Anti-Patterns
@@ -221,3 +236,4 @@ Personality throughout.
 ## Related Skills
 
 Works well with: `scroll-experience`, `3d-web-experience`, `landing-page-design`, `personal-branding`
+```

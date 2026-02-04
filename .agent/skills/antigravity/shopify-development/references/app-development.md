@@ -1,6 +1,7 @@
 # App Development Reference
 
-Guide for building Shopify apps with OAuth, GraphQL/REST APIs, webhooks, and billing.
+Guide for building Shopify apps with OAuth, GraphQL/REST APIs, webhooks, and
+billing.
 
 ## OAuth Authentication
 
@@ -19,12 +20,12 @@ https://{shop}.myshopify.com/admin/oauth/authorize?
 **2. Handle Callback:**
 
 ```javascript
-app.get("/auth/callback", async (req, res) => {
+app.get('/auth/callback', async (req, res) => {
   const { code, shop, state } = req.query;
 
   // Verify state to prevent CSRF
   if (state !== storedState) {
-    return res.status(403).send("Invalid state");
+    return res.status(403).send('Invalid state');
   }
 
   // Exchange code for access token
@@ -42,8 +43,8 @@ app.get("/auth/callback", async (req, res) => {
 ```javascript
 async function exchangeCodeForToken(shop, code) {
   const response = await fetch(`https://${shop}/admin/oauth/access_token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       client_id: process.env.SHOPIFY_API_KEY,
       client_secret: process.env.SHOPIFY_API_SECRET,
@@ -101,13 +102,13 @@ async function graphqlRequest(shop, accessToken, query, variables = {}) {
   const response = await fetch(
     `https://${shop}/admin/api/2026-01/graphql.json`,
     {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "X-Shopify-Access-Token": accessToken,
-        "Content-Type": "application/json",
+        'X-Shopify-Access-Token': accessToken,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, variables }),
-    },
+    }
   );
 
   const data = await response.json();
@@ -285,31 +286,31 @@ shop_deletion_url = "/webhooks/gdpr/shop-deletion"
 ### Webhook Handler
 
 ```javascript
-import crypto from "crypto";
+import crypto from 'crypto';
 
 function verifyWebhook(req) {
-  const hmac = req.headers["x-shopify-hmac-sha256"];
+  const hmac = req.headers['x-shopify-hmac-sha256'];
   const body = req.rawBody; // Raw body buffer
 
   const hash = crypto
-    .createHmac("sha256", process.env.SHOPIFY_API_SECRET)
-    .update(body, "utf8")
-    .digest("base64");
+    .createHmac('sha256', process.env.SHOPIFY_API_SECRET)
+    .update(body, 'utf8')
+    .digest('base64');
 
   return hmac === hash;
 }
 
-app.post("/webhooks/orders/create", async (req, res) => {
+app.post('/webhooks/orders/create', async (req, res) => {
   if (!verifyWebhook(req)) {
-    return res.status(401).send("Unauthorized");
+    return res.status(401).send('Unauthorized');
   }
 
   const order = req.body;
-  console.log("New order:", order.id, order.name);
+  console.log('New order:', order.id, order.name);
 
   // Process order...
 
-  res.status(200).send("OK");
+  res.status(200).send('OK');
 });
 ```
 
@@ -524,7 +525,7 @@ const response = await graphqlRequest(shop, token, query);
 const cost = response.extensions?.cost;
 
 console.log(
-  `Cost: ${cost.actualQueryCost}/${cost.throttleStatus.maximumAvailable}`,
+  `Cost: ${cost.actualQueryCost}/${cost.throttleStatus.maximumAvailable}`
 );
 ```
 
@@ -536,7 +537,7 @@ async function graphqlWithRetry(shop, token, query, retries = 3) {
     try {
       return await graphqlRequest(shop, token, query);
     } catch (error) {
-      if (error.message.includes("Throttled") && i < retries - 1) {
+      if (error.message.includes('Throttled') && i < retries - 1) {
         await sleep(Math.pow(2, i) * 1000); // Exponential backoff
         continue;
       }

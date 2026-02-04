@@ -1,6 +1,7 @@
 # Modern Minimalist
 
-A clean and contemporary theme with a sophisticated grayscale palette for maximum versatility.
+A clean and contemporary theme with a sophisticated grayscale palette for
+maximum versatility.
 
 ## Color Palette
 
@@ -16,4 +17,5 @@ A clean and contemporary theme with a sophisticated grayscale palette for maximu
 
 ## Best Used For
 
-Tech presentations, architecture portfolios, design showcases, modern business proposals, data visualization.
+Tech presentations, architecture portfolios, design showcases, modern business
+proposals, data visualization.

@@ -4,13 +4,16 @@
 
 **Category**: Network Debugging & Analysis
 
-**Compatible With**: Claude Code, Gemini Antigravity, Any MCP-enabled AI assistant
+**Compatible With**: Claude Code, Gemini Antigravity, Any MCP-enabled AI
+assistant
 
 ---
 
 ## Purpose
 
-Comprehensive network traffic analysis using Chrome DevTools Network panel. Monitor HTTP requests, analyze load times, debug API failures, inspect headers, and optimize resource loading for web applications.
+Comprehensive network traffic analysis using Chrome DevTools Network panel.
+Monitor HTTP requests, analyze load times, debug API failures, inspect headers,
+and optimize resource loading for web applications.
 
 ## Prerequisites
 
@@ -37,29 +40,29 @@ Add to your MCP config file:
 
 **Tool Name**: `list_network_requests`
 
-**Purpose**: Retrieve all network requests made by the page since last navigation
+**Purpose**: Retrieve all network requests made by the page since last
+navigation
 
 **Parameters**:
-- `includePreservedRequests` (optional, boolean): Include requests from previous navigations
+
+- `includePreservedRequests` (optional, boolean): Include requests from previous
+  navigations
 - `pageIdx` (optional, integer): Page index for pagination (default: 0)
 - `pageSize` (optional, integer): Requests per page (default: 100)
-- `resourceTypes` (optional, array): Filter by type: `["document", "stylesheet", "image", "script", "xhr", "fetch", "font", "media", "websocket", "other"]`
+- `resourceTypes` (optional, array): Filter by type:
+  `["document", "stylesheet", "image", "script", "xhr", "fetch", "font", "media", "websocket", "other"]`
 
 **Example Usage**:
+
 ```markdown
 Agent: "List all failed network requests on this page"
 
-Tool Call:
-{
-  "name": "list_network_requests",
-  "arguments": {
-    "resourceTypes": ["xhr", "fetch"],
-    "pageSize": 50
-  }
-}
+Tool Call: { "name": "list_network_requests", "arguments": { "resourceTypes":
+["xhr", "fetch"], "pageSize": 50 } }
 ```
 
 **Use Cases**:
+
 - Debug failed API calls (404, 500 errors)
 - Find slow-loading resources
 - Analyze third-party requests
@@ -75,9 +78,12 @@ Tool Call:
 **Purpose**: Retrieve detailed information about a specific network request
 
 **Parameters**:
-- `reqid` (optional, number): Request ID from `list_network_requests`. If omitted, returns currently selected request in DevTools.
+
+- `reqid` (optional, number): Request ID from `list_network_requests`. If
+  omitted, returns currently selected request in DevTools.
 
 **Returns**:
+
 - **Request headers**: All sent headers
 - **Response headers**: All received headers
 - **Status code**: HTTP status
@@ -86,19 +92,15 @@ Tool Call:
 - **Initiator**: What triggered this request
 
 **Example Usage**:
+
 ```markdown
 Agent: "Get full details of request #42 including headers and response body"
 
-Tool Call:
-{
-  "name": "get_network_request",
-  "arguments": {
-    "reqid": 42
-  }
-}
+Tool Call: { "name": "get_network_request", "arguments": { "reqid": 42 } }
 ```
 
 **Use Cases**:
+
 - Inspect API response payloads
 - Debug CORS errors
 - Analyze authentication headers
@@ -111,109 +113,81 @@ Tool Call:
 
 ### Example 1: Debug Failed API Calls
 
-```markdown
+````markdown
 **User Request**: "The login API is returning 401 errors. Find out why."
 
 **Agent Workflow**:
 
-1. Navigate to login page:
-   Tool: navigate_page({ url: "http://localhost:3000/login" })
+1. Navigate to login page: Tool: navigate_page({ url:
+   "http://localhost:3000/login" })
 
-2. Clear previous network logs:
-   Tool: evaluate_script({ function: "performance.clearResourceTimings()" })
+2. Clear previous network logs: Tool: evaluate_script({ function:
+   "performance.clearResourceTimings()" })
 
-3. Perform login action:
-   Tool: fill({ uid: "#username", value: "test@example.com" })
-   Tool: fill({ uid: "#password", value: "password123" })
+3. Perform login action: Tool: fill({ uid: "#username", value:
+   "test@example.com" }) Tool: fill({ uid: "#password", value: "password123" })
    Tool: click({ uid: "#login-btn" })
 
-4. List all XHR/Fetch requests:
-   Tool: list_network_requests({ resourceTypes: ["xhr", "fetch"] })
+4. List all XHR/Fetch requests: Tool: list_network_requests({ resourceTypes:
+   ["xhr", "fetch"] })
 
-   Response:
-   [
-     { id: 1, url: "/api/auth/login", status: 401, method: "POST", time: 245 },
-     { id: 2, url: "/api/user/profile", status: 0, method: "GET", time: 0 }
-   ]
+   Response: [ { id: 1, url: "/api/auth/login", status: 401, method: "POST",
+   time: 245 }, { id: 2, url: "/api/user/profile", status: 0, method: "GET",
+   time: 0 } ]
 
-5. Get details of failed request:
-   Tool: get_network_request({ reqid: 1 })
+5. Get details of failed request: Tool: get_network_request({ reqid: 1 })
 
-   Response:
-   {
-     url: "/api/auth/login",
-     status: 401,
-     method: "POST",
-     requestHeaders: {
-       "Content-Type": "application/json",
-       "Authorization": "Bearer undefined"  // ❌ Problem found!
-     },
-     responseHeaders: {
-       "WWW-Authenticate": "Bearer realm=\"api\""
-     },
-     requestBody: {
-       "email": "test@example.com",
-       "password": "password123"
-     },
-     responseBody: {
-       "error": "Invalid or missing authentication token"
-     },
-     timing: {
-       total: 245,
-       dns: 2,
-       connect: 12,
-       ssl: 45,
-       send: 1,
-       wait: 180,
-       receive: 5
-     }
-   }
+   Response: { url: "/api/auth/login", status: 401, method: "POST",
+   requestHeaders: { "Content-Type": "application/json", "Authorization":
+   "Bearer undefined" // ❌ Problem found! }, responseHeaders: {
+   "WWW-Authenticate": "Bearer realm=\"api\"" }, requestBody: { "email":
+   "test@example.com", "password": "password123" }, responseBody: { "error":
+   "Invalid or missing authentication token" }, timing: { total: 245, dns: 2,
+   connect: 12, ssl: 45, send: 1, wait: 180, receive: 5 } }
 
-6. Check console for related errors:
-   Tool: list_console_messages({ types: ["error"] })
+6. Check console for related errors: Tool: list_console_messages({ types:
+   ["error"] })
 
-**Agent Response**:
-"🔴 **Login Failure Root Cause Found**
+**Agent Response**: "🔴 **Login Failure Root Cause Found**
 
 **Issue**: 401 Unauthorized Error
 
-**Problem**:
-The Authorization header is being sent as 'Bearer undefined' instead of
-a valid token.
+**Problem**: The Authorization header is being sent as 'Bearer undefined'
+instead of a valid token.
 
 **Details**:
+
 - Request: POST /api/auth/login
 - Status: 401 Unauthorized
 - Header Issue: Authorization: 'Bearer undefined'
 - Response: 'Invalid or missing authentication token'
 
-**Root Cause**:
-The client is trying to send an auth token before login (chicken-egg problem).
-The login endpoint should NOT require authentication.
+**Root Cause**: The client is trying to send an auth token before login
+(chicken-egg problem). The login endpoint should NOT require authentication.
 
-**Fix Recommendation**:
-Remove the Authorization header from the login request:
+**Fix Recommendation**: Remove the Authorization header from the login request:
 
 ```javascript
 // BEFORE (incorrect)
 fetch('/api/auth/login', {
   headers: {
-    'Authorization': `Bearer ${token}`,  // ❌ token is undefined
-    'Content-Type': 'application/json'
-  }
-})
+    Authorization: `Bearer ${token}`, // ❌ token is undefined
+    'Content-Type': 'application/json',
+  },
+});
 
 // AFTER (correct)
 fetch('/api/auth/login', {
   headers: {
-    'Content-Type': 'application/json'  // ✅ No auth needed for login
-  }
-})
+    'Content-Type': 'application/json', // ✅ No auth needed for login
+  },
+});
 ```
+````
 
-**File**: src/api/auth.js:23
-**Priority**: Critical - blocks all logins"
-```
+**File**: src/api/auth.js:23 **Priority**: Critical - blocks all logins"
+
+````
 
 ### Example 2: Find Slow Loading Resources
 
@@ -303,12 +277,14 @@ fetch('/api/auth/login', {
 <script defer src="/js/analytics.js"></script>  <!-- Self-hosted + defer -->
 <img src="hero-image.webp" loading="lazy">      <!-- Compressed + lazy -->
 <video src="video.mp4" preload="none">          <!-- No autoload -->
-```
+````
 
 **Expected Improvement**:
+
 - Page Load Time: 5.2s → 1.8s (65% faster)
 - Data Transferred: 12.3MB → 2.1MB (83% less)"
-```
+
+````
 
 ### Example 3: Debug CORS Errors
 
@@ -384,16 +360,18 @@ app.use((req, res, next) => {
   }
   next();
 });
-```
+````
 
 **Temporary Dev Fix** (disable CORS in Chrome):
+
 ```bash
 # Launch Chrome with CORS disabled (DEVELOPMENT ONLY)
 chrome --disable-web-security --user-data-dir=/tmp/chrome-dev
 ```
 
 **Alternative** (use proxy):
-```javascript
+
+````javascript
 // Add to vite.config.js / webpack.config.js
 proxy: {
   '/api': {
@@ -402,7 +380,7 @@ proxy: {
   }
 }
 ```"
-```
+````
 
 ---
 
@@ -423,12 +401,12 @@ const waterfall = await evaluate_script({
         type: r.initiatorType
       }))
       .sort((a, b) => a.start - b.start)
-  `
+  `,
 });
 
 // Identify blocking chains
-const blocking_resources = waterfall.filter(r =>
-  r.start < 1000 && r.type === 'script'
+const blocking_resources = waterfall.filter(
+  (r) => r.start < 1000 && r.type === 'script'
 );
 ```
 
@@ -450,7 +428,7 @@ const cache_analysis = await evaluate_script({
       uncached: resources.filter(r => r.transferSize > 0)
         .map(r => ({ url: r.name, size: r.transferSize }))
     }
-  `
+  `,
 });
 ```
 
@@ -484,7 +462,7 @@ const third_party = await evaluate_script({
     return Object.entries(byDomain)
       .map(([domain, stats]) => ({ domain, ...stats }))
       .sort((a, b) => b.size - a.size);
-  `
+  `,
 });
 ```
 
@@ -493,17 +471,17 @@ const third_party = await evaluate_script({
 ```javascript
 // Track API endpoint performance
 const api_performance = await list_network_requests({
-  resourceTypes: ["xhr", "fetch"]
+  resourceTypes: ['xhr', 'fetch'],
 });
 
 const api_analysis = api_performance
-  .filter(req => req.url.includes('/api/'))
-  .map(req => ({
+  .filter((req) => req.url.includes('/api/'))
+  .map((req) => ({
     endpoint: req.url.split('/api/')[1],
     method: req.method,
     status: req.status,
     duration: req.time,
-    size: req.size
+    size: req.size,
   }))
   .reduce((acc, req) => {
     const key = `${req.method} ${req.endpoint}`;
@@ -538,18 +516,21 @@ Receive: Time to download response
 ### Key Metrics
 
 **Time to First Byte (TTFB)**:
+
 - **Good**: < 200ms
 - **Needs Improvement**: 200-500ms
 - **Poor**: > 500ms
 - Measures server response time
 
 **Resource Size**:
+
 - **Images**: < 200KB (compressed)
 - **Scripts**: < 100KB per bundle
 - **Fonts**: < 100KB total
 - **CSS**: < 50KB
 
 **Number of Requests**:
+
 - **Good**: < 50 requests
 - **Acceptable**: 50-100 requests
 - **Poor**: > 100 requests
@@ -564,11 +545,10 @@ Receive: Time to download response
 ```markdown
 **Symptom**: Resources fail to load on HTTPS pages
 
-**Check**:
-Tool: list_console_messages({ types: ["warning"] })
+**Check**: Tool: list_console_messages({ types: ["warning"] })
 
-Look for: "Mixed Content: The page at 'https://...' was loaded over HTTPS,
-but requested an insecure resource 'http://...'."
+Look for: "Mixed Content: The page at 'https://...' was loaded over HTTPS, but
+requested an insecure resource 'http://...'."
 
 **Fix**: Update all HTTP resources to HTTPS
 ```
@@ -578,12 +558,10 @@ but requested an insecure resource 'http://...'."
 ```markdown
 **Symptom**: Many 304 responses
 
-**Analysis**:
-Tool: list_network_requests({})
-Filter: status === 304
+**Analysis**: Tool: list_network_requests({}) Filter: status === 304
 
-**Interpretation**: This is GOOD! Resources are properly cached.
-304 means "not modified, use cached version"
+**Interpretation**: This is GOOD! Resources are properly cached. 304 means "not
+modified, use cached version"
 ```
 
 ### Issue 3: Redirect Chains
@@ -591,13 +569,11 @@ Filter: status === 304
 ```markdown
 **Symptom**: Multiple 301/302 redirects
 
-**Check**:
-Tool: get_network_request({ reqid: X })
+**Check**: Tool: get_network_request({ reqid: X })
 
-Look for:
-Request 1: http://site.com → 301 → https://site.com
-Request 2: https://site.com → 302 → https://www.site.com
-Request 3: https://www.site.com → 200
+Look for: Request 1: http://site.com → 301 → https://site.com Request 2:
+https://site.com → 302 → https://www.site.com Request 3: https://www.site.com →
+200
 
 **Impact**: Each redirect adds ~100-200ms latency
 
@@ -611,14 +587,12 @@ Request 3: https://www.site.com → 200
 ### Combined Workflow: Full Diagnostic
 
 ```markdown
-1. **Performance Trace**:
-   performance_start_trace({ autoStop: true, reload: true })
+1. **Performance Trace**: performance_start_trace({ autoStop: true, reload: true
+   })
 
-2. **Network Analysis**:
-   list_network_requests({})
+2. **Network Analysis**: list_network_requests({})
 
-3. **Console Errors**:
-   list_console_messages({ types: ["error", "warning"] })
+3. **Console Errors**: list_console_messages({ types: ["error", "warning"] })
 
 4. **Correlate Issues**:
    - Performance: "Slow LCP (4.2s)"
@@ -636,24 +610,24 @@ Request 3: https://www.site.com → 200
 
 ```javascript
 // Clear previous requests
-navigate_page({ url: currentUrl, ignoreCache: true })
+navigate_page({ url: currentUrl, ignoreCache: true });
 ```
 
 ### 2. Filter by Resource Type
 
 ```javascript
 // Only analyze specific types
-list_network_requests({ resourceTypes: ["script", "stylesheet"] })
+list_network_requests({ resourceTypes: ['script', 'stylesheet'] });
 ```
 
 ### 3. Use Pagination for Large Sites
 
 ```javascript
 // Get first 100 requests
-list_network_requests({ pageSize: 100, pageIdx: 0 })
+list_network_requests({ pageSize: 100, pageIdx: 0 });
 
 // Get next 100
-list_network_requests({ pageSize: 100, pageIdx: 1 })
+list_network_requests({ pageSize: 100, pageIdx: 1 });
 ```
 
 ### 4. Check Request Headers for Auth Issues
@@ -663,7 +637,7 @@ const request = await get_network_request({ reqid: X });
 
 // Verify auth header
 if (!request.requestHeaders.Authorization) {
-  console.log("Missing authentication header!");
+  console.log('Missing authentication header!');
 }
 ```
 

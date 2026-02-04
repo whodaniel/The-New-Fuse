@@ -196,7 +196,7 @@ node scripts/RelayHealthCheck.cjs
 | Chrome Extension    | 🔄 Needs build   | Almost              |
 | VS Code Extension   | 🔄 Needs compile | Almost              |
 | Tauri App           | 🔄 Needs launch  | Almost              |
-| SkIDEancer IDE           | ❌ 404 Error     | No                  |
+| SkIDEancer IDE      | ❌ 404 Error     | No                  |
 
 ---
 

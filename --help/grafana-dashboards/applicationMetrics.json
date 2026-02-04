@@ -3,10 +3,7 @@
     "id": null,
     "title": "Application Metrics",
     "description": "Detailed application performance and business metrics",
-    "tags": [
-      "monitoring",
-      "production"
-    ],
+    "tags": ["monitoring", "production"],
     "timezone": "browser",
     "panels": [
       {

@@ -32,7 +32,7 @@ ci:
 
 # Documentation
 documentation:
-  - '**/*.md'
+  - "**/*.md"
   - docs/**/*
   - README*
 
@@ -40,14 +40,14 @@ documentation:
 database:
   - prisma/**/*
   - packages/database/**/*
-  - '**/migrations/**/*'
+  - "**/migrations/**/*"
 
 # Testing
 testing:
-  - '**/*.test.ts'
-  - '**/*.test.tsx'
-  - '**/*.spec.ts'
-  - '**/*.spec.tsx'
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
   - packages/testing/**/*
   - packages/test-utils/**/*
   - test/**/*
@@ -55,10 +55,10 @@ testing:
 
 # Configuration
 config:
-  - '**/*.config.ts'
-  - '**/*.config.js'
-  - '**/*.config.mjs'
-  - '**/*.config.cjs'
+  - "**/*.config.ts"
+  - "**/*.config.js"
+  - "**/*.config.mjs"
+  - "**/*.config.cjs"
   - tsconfig*.json
   - .eslintrc*
   - .prettierrc*
@@ -68,13 +68,13 @@ config:
 security:
   - packages/security/**/*
   - packages/core-auth/**/*
-  - '**/security/**/*'
+  - "**/security/**/*"
 
 # Dependencies
 dependencies:
   - package.json
   - pnpm-lock.yaml
-  - '**/package.json'
+  - "**/package.json"
 
 # Performance
 performance:
@@ -94,6 +94,6 @@ api:
 ui-ux:
   - packages/ui-consolidated/**/*
   - apps/frontend/src/components/**/*
-  - '**/*.css'
-  - '**/*.scss'
+  - "**/*.css"
+  - "**/*.scss"
   - tailwind.config.*

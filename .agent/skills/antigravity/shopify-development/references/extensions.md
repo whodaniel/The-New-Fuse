@@ -51,22 +51,22 @@ import {
   TextField,
   Checkbox,
   useApi,
-} from "@shopify/ui-extensions-react/checkout";
+} from '@shopify/ui-extensions-react/checkout';
 
-export default reactExtension("purchase.checkout.block.render", () => (
+export default reactExtension('purchase.checkout.block.render', () => (
   <Extension />
 ));
 
 function Extension() {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [isGift, setIsGift] = useState(false);
   const { applyAttributeChange } = useApi();
 
   useEffect(() => {
     if (isGift) {
       applyAttributeChange({
-        type: "updateAttribute",
-        key: "gift_message",
+        type: 'updateAttribute',
+        key: 'gift_message',
         value: message,
       });
     }
@@ -121,8 +121,8 @@ const applyChange = useApplyCartLinesChange();
 
 async function addItem() {
   await applyChange({
-    type: "addCartLine",
-    merchandiseId: "gid://shopify/ProductVariant/123",
+    type: 'addCartLine',
+    merchandiseId: 'gid://shopify/ProductVariant/123',
     quantity: 1,
   });
 }
@@ -178,9 +178,9 @@ import {
   reactExtension,
   AdminAction,
   Button,
-} from "@shopify/ui-extensions-react/admin";
+} from '@shopify/ui-extensions-react/admin';
 
-export default reactExtension("admin.product-details.action.render", () => (
+export default reactExtension('admin.product-details.action.render', () => (
   <Extension />
 ));
 
@@ -188,11 +188,11 @@ function Extension() {
   const { data } = useData();
 
   async function handleExport() {
-    const response = await fetch("/api/export", {
-      method: "POST",
+    const response = await fetch('/api/export', {
+      method: 'POST',
       body: JSON.stringify({ productId: data.product.id }),
     });
-    console.log("Exported:", await response.json());
+    console.log('Exported:', await response.json());
   }
 
   return (
@@ -220,9 +220,9 @@ import {
   BlockStack,
   Text,
   Badge,
-} from "@shopify/ui-extensions-react/admin";
+} from '@shopify/ui-extensions-react/admin';
 
-export default reactExtension("admin.product-details.block.render", () => (
+export default reactExtension('admin.product-details.block.render', () => (
   <Extension />
 ));
 
@@ -239,8 +239,8 @@ function Extension() {
       <Text variant="headingMd">Product Analytics</Text>
       <Text>Views: {analytics?.views || 0}</Text>
       <Text>Conversions: {analytics?.conversions || 0}</Text>
-      <Badge tone={analytics?.trending ? "success" : "info"}>
-        {analytics?.trending ? "Trending" : "Normal"}
+      <Badge tone={analytics?.trending ? 'success' : 'info'}>
+        {analytics?.trending ? 'Trending' : 'Normal'}
       </Badge>
     </BlockStack>
   );
@@ -265,9 +265,9 @@ Quick access action on POS home screen.
 import {
   reactExtension,
   SmartGridTile,
-} from "@shopify/ui-extensions-react/pos";
+} from '@shopify/ui-extensions-react/pos';
 
-export default reactExtension("pos.home.tile.render", () => <Extension />);
+export default reactExtension('pos.home.tile.render', () => <Extension />);
 
 function Extension() {
   function handlePress() {
@@ -295,13 +295,13 @@ import {
   BlockStack,
   Button,
   TextField,
-} from "@shopify/ui-extensions-react/pos";
+} from '@shopify/ui-extensions-react/pos';
 
-export default reactExtension("pos.home.modal.render", () => <Extension />);
+export default reactExtension('pos.home.modal.render', () => <Extension />);
 
 function Extension() {
   const { navigation } = useApi();
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState('');
 
   function handleIssue() {
     // Issue gift card
@@ -332,11 +332,11 @@ import {
   BlockStack,
   Text,
   Button,
-} from "@shopify/ui-extensions-react/customer-account";
+} from '@shopify/ui-extensions-react/customer-account';
 
 export default reactExtension(
-  "customer-account.order-status.block.render",
-  () => <Extension />,
+  'customer-account.order-status.block.render',
+  () => <Extension />
 );
 
 function Extension() {
@@ -443,7 +443,7 @@ export default function orderDiscount(input) {
 ```javascript
 export default function paymentCustomization(input) {
   const hidePaymentMethods = input.cart.lines.some(
-    (line) => line.merchandise.product.hasTag,
+    (line) => line.merchandise.product.hasTag
   );
 
   if (!hidePaymentMethods) {
@@ -454,7 +454,7 @@ export default function paymentCustomization(input) {
     operations: [
       {
         hide: {
-          paymentMethodId: "gid://shopify/PaymentMethod/123",
+          paymentMethodId: 'gid://shopify/PaymentMethod/123',
         },
       },
     ],
@@ -471,20 +471,20 @@ export default function cartValidation(input) {
   // Max 5 items per cart
   if (input.cart.lines.length > 5) {
     errors.push({
-      localizedMessage: "Maximum 5 items allowed per order",
-      target: "cart",
+      localizedMessage: 'Maximum 5 items allowed per order',
+      target: 'cart',
     });
   }
 
   // Min $50 for wholesale
   const isWholesale = input.cart.lines.some(
-    (line) => line.merchandise.product.hasTag,
+    (line) => line.merchandise.product.hasTag
   );
 
   if (isWholesale && input.cart.cost.totalAmount.amount < 50) {
     errors.push({
-      localizedMessage: "Wholesale orders require $50 minimum",
-      target: "cart",
+      localizedMessage: 'Wholesale orders require $50 minimum',
+      target: 'cart',
     });
   }
 
@@ -497,7 +497,7 @@ export default function cartValidation(input) {
 Extensions can call external APIs.
 
 ```javascript
-import { useApi } from "@shopify/ui-extensions-react/checkout";
+import { useApi } from '@shopify/ui-extensions-react/checkout';
 
 function Extension() {
   const { sessionToken } = useApi();
@@ -505,10 +505,10 @@ function Extension() {
   async function fetchData() {
     const token = await sessionToken.get();
 
-    const response = await fetch("https://your-app.com/api/data", {
+    const response = await fetch('https://your-app.com/api/data', {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 

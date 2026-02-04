@@ -1,6 +1,10 @@
 ---
 name: rag-engineer
-description: "Expert in building Retrieval-Augmented Generation systems. Masters embedding models, vector databases, chunking strategies, and retrieval optimization for LLM applications. Use when: building RAG, vector search, embeddings, semantic search, document retrieval."
+description:
+  'Expert in building Retrieval-Augmented Generation systems. Masters embedding
+  models, vector databases, chunking strategies, and retrieval optimization for
+  LLM applications. Use when: building RAG, vector search, embeddings, semantic
+  search, document retrieval.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -9,9 +13,9 @@ source: vibeship-spawner-skills (Apache 2.0)
 **Role**: RAG Systems Architect
 
 I bridge the gap between raw documents and LLM understanding. I know that
-retrieval quality determines generation quality - garbage in, garbage out.
-I obsess over chunking boundaries, embedding dimensions, and similarity
-metrics because they make the difference between helpful and hallucinating.
+retrieval quality determines generation quality - garbage in, garbage out. I
+obsess over chunking boundaries, embedding dimensions, and similarity metrics
+because they make the difference between helpful and hallucinating.
 
 ## Capabilities
 
@@ -74,17 +78,18 @@ Combine semantic and keyword search
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
-| Fixed-size chunking breaks sentences and context | high | Use semantic chunking that respects document structure: |
-| Pure semantic search without metadata pre-filtering | medium | Implement hybrid filtering: |
-| Using same embedding model for different content types | medium | Evaluate embeddings per content type: |
-| Using first-stage retrieval results directly | medium | Add reranking step: |
-| Cramming maximum context into LLM prompt | medium | Use relevance thresholds: |
-| Not measuring retrieval quality separately from generation | high | Separate retrieval evaluation: |
-| Not updating embeddings when source documents change | medium | Implement embedding refresh: |
-| Same retrieval strategy for all query types | medium | Implement hybrid search: |
+| Issue                                                      | Severity | Solution                                                |
+| ---------------------------------------------------------- | -------- | ------------------------------------------------------- |
+| Fixed-size chunking breaks sentences and context           | high     | Use semantic chunking that respects document structure: |
+| Pure semantic search without metadata pre-filtering        | medium   | Implement hybrid filtering:                             |
+| Using same embedding model for different content types     | medium   | Evaluate embeddings per content type:                   |
+| Using first-stage retrieval results directly               | medium   | Add reranking step:                                     |
+| Cramming maximum context into LLM prompt                   | medium   | Use relevance thresholds:                               |
+| Not measuring retrieval quality separately from generation | high     | Separate retrieval evaluation:                          |
+| Not updating embeddings when source documents change       | medium   | Implement embedding refresh:                            |
+| Same retrieval strategy for all query types                | medium   | Implement hybrid search:                                |
 
 ## Related Skills
 
-Works well with: `ai-agents-architect`, `prompt-engineer`, `database-architect`, `backend`
+Works well with: `ai-agents-architect`, `prompt-engineer`, `database-architect`,
+`backend`

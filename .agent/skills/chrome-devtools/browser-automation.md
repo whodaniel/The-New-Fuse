@@ -4,13 +4,17 @@
 
 **Category**: Browser Automation & Testing
 
-**Compatible With**: Claude Code, Gemini Antigravity, Any MCP-enabled AI assistant
+**Compatible With**: Claude Code, Gemini Antigravity, Any MCP-enabled AI
+assistant
 
 ---
 
 ## Purpose
 
-Comprehensive browser automation using Chrome DevTools Protocol. Control Chrome programmatically to click elements, fill forms, navigate pages, handle dialogs, upload files, and perform complex user interaction scenarios for testing and debugging.
+Comprehensive browser automation using Chrome DevTools Protocol. Control Chrome
+programmatically to click elements, fill forms, navigate pages, handle dialogs,
+upload files, and perform complex user interaction scenarios for testing and
+debugging.
 
 ## Prerequisites
 
@@ -42,10 +46,12 @@ Add to your MCP config file:
 **Purpose**: Click on a page element by its unique identifier
 
 **Parameters**:
+
 - `uid` (required, string): Unique element identifier from `take_snapshot`
 - `dblClick` (optional, boolean): Perform double-click instead of single click
 
 **Example**:
+
 ```json
 {
   "name": "click",
@@ -65,10 +71,12 @@ Add to your MCP config file:
 **Purpose**: Type text into input, textarea, or select an option from `<select>`
 
 **Parameters**:
+
 - `uid` (required, string): Element identifier
 - `value` (required, string): Text to type or option to select
 
 **Example**:
+
 ```json
 {
   "name": "fill",
@@ -88,9 +96,11 @@ Add to your MCP config file:
 **Purpose**: Fill multiple form elements at once
 
 **Parameters**:
+
 - `elements` (required, array): Array of `{ uid, value }` objects
 
 **Example**:
+
 ```json
 {
   "name": "fill_form",
@@ -114,9 +124,11 @@ Add to your MCP config file:
 **Purpose**: Trigger hover effects on an element
 
 **Parameters**:
+
 - `uid` (required, string): Element identifier
 
 **Example**:
+
 ```json
 {
   "name": "hover",
@@ -135,14 +147,17 @@ Add to your MCP config file:
 **Purpose**: Press keyboard keys or key combinations
 
 **Parameters**:
+
 - `key` (required, string): Key name or combination
 
 **Supported Keys**:
+
 - Single keys: `"Enter"`, `"Escape"`, `"Tab"`, `"Backspace"`, `"Delete"`
 - Combinations: `"Control+A"`, `"Control+C"`, `"Control+V"`, `"Control+Shift+R"`
 - Arrow keys: `"ArrowUp"`, `"ArrowDown"`, `"ArrowLeft"`, `"ArrowRight"`
 
 **Example**:
+
 ```json
 {
   "name": "press_key",
@@ -169,10 +184,12 @@ Add to your MCP config file:
 **Purpose**: Drag one element onto another
 
 **Parameters**:
+
 - `from_uid` (required, string): Source element identifier
 - `to_uid` (required, string): Target element identifier
 
 **Example**:
+
 ```json
 {
   "name": "drag",
@@ -192,10 +209,12 @@ Add to your MCP config file:
 **Purpose**: Upload a file through a file input element
 
 **Parameters**:
+
 - `filePath` (required, string): Absolute path to file
 - `uid` (required, string): File input element identifier
 
 **Example**:
+
 ```json
 {
   "name": "upload_file",
@@ -215,10 +234,12 @@ Add to your MCP config file:
 **Purpose**: Handle browser dialogs (alert, confirm, prompt)
 
 **Parameters**:
+
 - `action` (required, enum): `"accept"` or `"dismiss"`
 - `promptText` (optional, string): Text to enter in prompt dialogs
 
 **Example**:
+
 ```json
 // Accept alert
 {
@@ -249,12 +270,14 @@ Add to your MCP config file:
 **Purpose**: Navigate the current page to a URL or use browser navigation
 
 **Parameters**:
+
 - `type` (optional, enum): `"url"`, `"back"`, `"forward"`, `"reload"`
 - `url` (optional, string): URL to navigate to (required if type is "url")
 - `ignoreCache` (optional, boolean): Bypass cache when reloading
 - `timeout` (optional, integer): Navigation timeout in ms (default: 30000)
 
 **Example**:
+
 ```json
 // Navigate to URL
 {
@@ -292,10 +315,12 @@ Add to your MCP config file:
 **Purpose**: Open a new browser tab/page
 
 **Parameters**:
+
 - `url` (required, string): URL to load in new page
 - `timeout` (optional, integer): Load timeout in ms
 
 **Example**:
+
 ```json
 {
   "name": "new_page",
@@ -319,6 +344,7 @@ Add to your MCP config file:
 **Returns**: Array of `{ id, url, title }` objects
 
 **Example**:
+
 ```json
 {
   "name": "list_pages",
@@ -335,10 +361,12 @@ Add to your MCP config file:
 **Purpose**: Switch to a different browser tab/page
 
 **Parameters**:
+
 - `pageId` (required, number): Page ID from `list_pages`
 - `bringToFront` (optional, boolean): Bring page to front/focus
 
 **Example**:
+
 ```json
 {
   "name": "select_page",
@@ -358,11 +386,13 @@ Add to your MCP config file:
 **Purpose**: Close a browser tab/page by its ID
 
 **Parameters**:
+
 - `pageId` (required, number): Page ID from `list_pages`
 
 **Note**: Cannot close the last open page
 
 **Example**:
+
 ```json
 {
   "name": "close_page",
@@ -381,10 +411,12 @@ Add to your MCP config file:
 **Purpose**: Wait for specific text to appear on the page
 
 **Parameters**:
+
 - `text` (required, string): Text to wait for
 - `timeout` (optional, integer): Max wait time in ms (default: 30000)
 
 **Example**:
+
 ```json
 {
   "name": "wait_for",
@@ -406,6 +438,7 @@ Add to your MCP config file:
 **Purpose**: Capture screenshot of page or specific element
 
 **Parameters**:
+
 - `filePath` (optional, string): Where to save screenshot
 - `format` (optional, enum): `"png"`, `"jpeg"`, `"webp"` (default: "png")
 - `quality` (optional, number): 0-100 (for jpeg/webp)
@@ -413,6 +446,7 @@ Add to your MCP config file:
 - `uid` (optional, string): Capture specific element only
 
 **Example**:
+
 ```json
 // Full page screenshot
 {
@@ -442,12 +476,14 @@ Add to your MCP config file:
 **Purpose**: Get text representation of page structure with element UIDs
 
 **Parameters**:
+
 - `filePath` (optional, string): Save snapshot to file
 - `verbose` (optional, boolean): Include additional element details
 
 **Returns**: Accessibility tree with unique IDs for each interactive element
 
 **Example**:
+
 ```json
 {
   "name": "take_snapshot",
@@ -470,11 +506,15 @@ Add to your MCP config file:
 **Purpose**: Emulate CPU throttling, network conditions, and geolocation
 
 **Parameters**:
-- `cpuThrottlingRate` (optional, number): CPU slowdown multiplier (e.g., 4 = 4x slower)
-- `networkConditions` (optional, enum): `"Slow-3G"`, `"Fast-3G"`, `"Slow-4G"`, `"Fast-4G"`, `"Offline"`
+
+- `cpuThrottlingRate` (optional, number): CPU slowdown multiplier (e.g., 4 = 4x
+  slower)
+- `networkConditions` (optional, enum): `"Slow-3G"`, `"Fast-3G"`, `"Slow-4G"`,
+  `"Fast-4G"`, `"Offline"`
 - `geolocation` (optional, object): `{ latitude, longitude, accuracy }`
 
 **Example**:
+
 ```json
 // Emulate slow mobile device
 {
@@ -507,10 +547,12 @@ Add to your MCP config file:
 **Purpose**: Resize browser window to specific dimensions
 
 **Parameters**:
+
 - `width` (required, number): Width in pixels
 - `height` (required, number): Height in pixels
 
 **Example**:
+
 ```json
 // Mobile viewport
 {
@@ -542,41 +584,38 @@ Add to your MCP config file:
 
 **Agent Workflow**:
 
-1. Navigate to contact page:
-   Tool: navigate_page({ type: "url", url: "https://example.com/contact" })
+1. Navigate to contact page: Tool: navigate_page({ type: "url", url:
+   "https://example.com/contact" })
 
-2. Wait for form to load:
-   Tool: wait_for({ text: "Contact Us", timeout: 5000 })
+2. Wait for form to load: Tool: wait_for({ text: "Contact Us", timeout: 5000 })
 
-3. Take snapshot to get element UIDs:
-   Tool: take_snapshot({ verbose: false })
+3. Take snapshot to get element UIDs: Tool: take_snapshot({ verbose: false })
 
    Response:
-   ```
-   heading "Contact Us"
-   textbox "Name" [#name-input]
-   textbox "Email" [#email-input]
-   textbox "Message" [#message-textarea]
-   button "Submit" [#submit-btn]
-   ```
+```
+
+heading "Contact Us" textbox "Name" [#name-input] textbox "Email" [#email-input]
+textbox "Message" [#message-textarea] button "Submit" [#submit-btn]
+
+```
 
 4. Fill form:
-   Tool: fill_form({
-     elements: [
-       { uid: "#name-input", value: "John Doe" },
-       { uid: "#email-input", value: "john@example.com" },
-       { uid: "#message-textarea", value: "Hello, I have a question..." }
-     ]
-   })
+Tool: fill_form({
+  elements: [
+    { uid: "#name-input", value: "John Doe" },
+    { uid: "#email-input", value: "john@example.com" },
+    { uid: "#message-textarea", value: "Hello, I have a question..." }
+  ]
+})
 
 5. Submit form:
-   Tool: click({ uid: "#submit-btn" })
+Tool: click({ uid: "#submit-btn" })
 
 6. Wait for success message:
-   Tool: wait_for({ text: "Message sent successfully", timeout: 5000 })
+Tool: wait_for({ text: "Message sent successfully", timeout: 5000 })
 
 7. Take screenshot of confirmation:
-   Tool: take_screenshot({ filePath: "/tmp/success.png" })
+Tool: take_screenshot({ filePath: "/tmp/success.png" })
 
 **Agent Response**:
 "✅ Form submitted successfully!
@@ -584,9 +623,9 @@ Add to your MCP config file:
 **Actions Performed**:
 1. Navigated to contact page
 2. Filled in:
-   - Name: John Doe
-   - Email: john@example.com
-   - Message: Hello, I have a question...
+- Name: John Doe
+- Email: john@example.com
+- Message: Hello, I have a question...
 3. Clicked Submit button
 4. Confirmed: 'Message sent successfully' appears
 
@@ -600,46 +639,34 @@ Screenshot saved to: /tmp/success.png"
 
 **Agent Workflow**:
 
-1. Navigate to product page:
-   Tool: navigate_page({ type: "url", url: "https://shop.example.com/products" })
+1. Navigate to product page: Tool: navigate_page({ type: "url", url:
+   "https://shop.example.com/products" })
 
-2. For each of 3 products:
-   a. Take snapshot to find product elements
-   b. Click "Add to Cart" button
-   c. Wait for cart count to update
+2. For each of 3 products: a. Take snapshot to find product elements b. Click
+   "Add to Cart" button c. Wait for cart count to update
 
-3. Navigate to cart:
-   Tool: click({ uid: "#cart-icon" })
+3. Navigate to cart: Tool: click({ uid: "#cart-icon" })
 
-4. Verify cart contents:
-   Tool: take_snapshot({ verbose: true })
-   Tool: evaluate_script({
-     function: "document.querySelectorAll('.cart-item').length"
+4. Verify cart contents: Tool: take_snapshot({ verbose: true }) Tool:
+   evaluate_script({ function: "document.querySelectorAll('.cart-item').length"
    })
 
-5. Proceed to checkout:
-   Tool: click({ uid: "#checkout-btn" })
+5. Proceed to checkout: Tool: click({ uid: "#checkout-btn" })
 
-6. Fill checkout form:
-   Tool: fill_form({
-     elements: [
-       { uid: "#shipping-name", value: "Jane Smith" },
-       { uid: "#shipping-address", value: "123 Main St" },
-       { uid: "#shipping-city", value: "San Francisco" },
-       { uid: "#shipping-zip", value: "94102" }
-     ]
-   })
+6. Fill checkout form: Tool: fill_form({ elements: [ { uid: "#shipping-name",
+   value: "Jane Smith" }, { uid: "#shipping-address", value: "123 Main St" }, {
+   uid: "#shipping-city", value: "San Francisco" }, { uid: "#shipping-zip",
+   value: "94102" } ] })
 
-7. Handle confirmation dialog:
-   Tool: handle_dialog({ action: "accept" })
+7. Handle confirmation dialog: Tool: handle_dialog({ action: "accept" })
 
-8. Take final screenshot:
-   Tool: take_screenshot({ fullPage: true, filePath: "/tmp/checkout.png" })
+8. Take final screenshot: Tool: take_screenshot({ fullPage: true, filePath:
+   "/tmp/checkout.png" })
 
-**Agent Response**:
-"✅ Shopping flow completed!
+**Agent Response**: "✅ Shopping flow completed!
 
 **Summary**:
+
 - Added 3 items to cart:
   1. Widget A ($29.99)
   2. Gadget B ($49.99)
@@ -658,35 +685,28 @@ Screenshot: /tmp/checkout.png"
 
 **Agent Workflow**:
 
-1. Create pages:
-   Tool: new_page({ url: "https://example.com/page1" })
-   Tool: new_page({ url: "https://example.com/page2" })
-   Tool: new_page({ url: "https://example.com/page3" })
+1. Create pages: Tool: new_page({ url: "https://example.com/page1" }) Tool:
+   new_page({ url: "https://example.com/page2" }) Tool: new_page({ url:
+   "https://example.com/page3" })
 
-2. List all pages:
-   Tool: list_pages()
+2. List all pages: Tool: list_pages()
 
-   Response:
-   [
-     { id: 1, url: "https://example.com/page1", title: "Page 1" },
-     { id: 2, url: "https://example.com/page2", title: "Page 2" },
-     { id: 3, url: "https://example.com/page3", title: "Page 3" }
-   ]
+   Response: [ { id: 1, url: "https://example.com/page1", title: "Page 1" }, {
+   id: 2, url: "https://example.com/page2", title: "Page 2" }, { id: 3, url:
+   "https://example.com/page3", title: "Page 3" } ]
 
-3. For each page:
-   a. Select page: select_page({ pageId: X, bringToFront: true })
-   b. Wait for content: wait_for({ text: "Loaded", timeout: 5000 })
-   c. Check for errors: list_console_messages({ types: ["error"] })
-   d. Take screenshot: take_screenshot({ filePath: `/tmp/page${X}.png` })
+3. For each page: a. Select page: select_page({ pageId: X, bringToFront: true })
+   b. Wait for content: wait_for({ text: "Loaded", timeout: 5000 }) c. Check for
+   errors: list_console_messages({ types: ["error"] }) d. Take screenshot:
+   take_screenshot({ filePath: `/tmp/page${X}.png` })
 
-4. Close extra pages:
-   Tool: close_page({ pageId: 2 })
-   Tool: close_page({ pageId: 3 })
+4. Close extra pages: Tool: close_page({ pageId: 2 }) Tool: close_page({ pageId:
+   3 })
 
-**Agent Response**:
-"✅ Multi-tab test complete!
+**Agent Response**: "✅ Multi-tab test complete!
 
 **Results**:
+
 - Page 1: ✅ Loaded successfully (0 errors)
 - Page 2: ✅ Loaded successfully (0 errors)
 - Page 3: ⚠️ Loaded with 1 warning: 'Deprecated API usage'
@@ -705,21 +725,21 @@ All pages functional. Screenshots saved to /tmp/"
 const loadAllItems = async () => {
   let previousHeight = 0;
   let currentHeight = await evaluate_script({
-    function: "document.body.scrollHeight"
+    function: 'document.body.scrollHeight',
   });
 
   while (currentHeight > previousHeight) {
     // Scroll to bottom
     await evaluate_script({
-      function: "window.scrollTo(0, document.body.scrollHeight)"
+      function: 'window.scrollTo(0, document.body.scrollHeight)',
     });
 
     // Wait for new content
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     previousHeight = currentHeight;
     currentHeight = await evaluate_script({
-      function: "document.body.scrollHeight"
+      function: 'document.body.scrollHeight',
     });
   }
 };
@@ -729,16 +749,16 @@ const loadAllItems = async () => {
 
 ```javascript
 // Fill input and select from autocomplete dropdown
-await fill({ uid: "#search-input", value: "San Francisco" });
+await fill({ uid: '#search-input', value: 'San Francisco' });
 
 // Wait for dropdown to appear
-await wait_for({ text: "San Francisco, CA" });
+await wait_for({ text: 'San Francisco, CA' });
 
 // Press arrow down to highlight first option
-await press_key({ key: "ArrowDown" });
+await press_key({ key: 'ArrowDown' });
 
 // Press enter to select
-await press_key({ key: "Enter" });
+await press_key({ key: 'Enter' });
 ```
 
 ### Pattern 3: File Upload with Validation
@@ -746,8 +766,8 @@ await press_key({ key: "Enter" });
 ```javascript
 // Upload file and wait for processing
 await upload_file({
-  filePath: "/path/to/document.pdf",
-  uid: "#file-input"
+  filePath: '/path/to/document.pdf',
+  uid: '#file-input',
 });
 
 // Wait for upload progress bar to disappear
@@ -761,11 +781,11 @@ await evaluate_script({
         }
       }, 100);
     })
-  `
+  `,
 });
 
 // Verify upload success
-await wait_for({ text: "Upload complete" });
+await wait_for({ text: 'Upload complete' });
 ```
 
 ### Pattern 4: Drag and Drop List Reordering
@@ -776,8 +796,8 @@ const items = await take_snapshot();
 
 // Move item from position 3 to position 1
 await drag({
-  from_uid: "#list-item-3",
-  to_uid: "#list-item-1"
+  from_uid: '#list-item-3',
+  to_uid: '#list-item-1',
 });
 
 // Verify new order
@@ -785,7 +805,7 @@ const newOrder = await evaluate_script({
   function: `
     Array.from(document.querySelectorAll('.list-item'))
       .map(item => item.textContent.trim())
-  `
+  `,
 });
 ```
 
@@ -798,28 +818,28 @@ const newOrder = await evaluate_script({
 ```javascript
 const testLogin = async (credentials) => {
   // Navigate
-  await navigate_page({ type: "url", url: "http://app.com/login" });
+  await navigate_page({ type: 'url', url: 'http://app.com/login' });
 
   // Fill credentials
   await fill_form({
     elements: [
-      { uid: "#username", value: credentials.username },
-      { uid: "#password", value: credentials.password }
-    ]
+      { uid: '#username', value: credentials.username },
+      { uid: '#password', value: credentials.password },
+    ],
   });
 
   // Submit
-  await click({ uid: "#login-btn" });
+  await click({ uid: '#login-btn' });
 
   // Verify success
-  await wait_for({ text: "Dashboard", timeout: 5000 });
+  await wait_for({ text: 'Dashboard', timeout: 5000 });
 
   // Check for errors
-  const errors = await list_console_messages({ types: ["error"] });
+  const errors = await list_console_messages({ types: ['error'] });
 
   return {
     success: errors.length === 0,
-    errors: errors
+    errors: errors,
   };
 };
 ```
@@ -828,16 +848,16 @@ const testLogin = async (credentials) => {
 
 ```javascript
 const viewports = [
-  { name: "Mobile", width: 375, height: 667 },
-  { name: "Tablet", width: 768, height: 1024 },
-  { name: "Desktop", width: 1920, height: 1080 }
+  { name: 'Mobile', width: 375, height: 667 },
+  { name: 'Tablet', width: 768, height: 1024 },
+  { name: 'Desktop', width: 1920, height: 1080 },
 ];
 
 for (const viewport of viewports) {
   await resize_page({ width: viewport.width, height: viewport.height });
   await take_screenshot({
     filePath: `/tmp/${viewport.name}.png`,
-    fullPage: true
+    fullPage: true,
   });
 
   // Check for mobile menu
@@ -851,20 +871,20 @@ for (const viewport of viewports) {
 ```javascript
 const testFormValidation = async () => {
   // Submit empty form
-  await click({ uid: "#submit-btn" });
+  await click({ uid: '#submit-btn' });
 
   // Check for validation messages
   const snapshot = await take_snapshot({ verbose: true });
 
   // Verify error messages appear
-  await wait_for({ text: "Email is required", timeout: 1000 });
-  await wait_for({ text: "Password is required", timeout: 1000 });
+  await wait_for({ text: 'Email is required', timeout: 1000 });
+  await wait_for({ text: 'Password is required', timeout: 1000 });
 
   // Take screenshot of validation state
-  await take_screenshot({ filePath: "/tmp/validation-errors.png" });
+  await take_screenshot({ filePath: '/tmp/validation-errors.png' });
 
   return {
-    validationWorking: true
+    validationWorking: true,
   };
 };
 ```
@@ -878,23 +898,23 @@ const testFormValidation = async () => {
 ```javascript
 // ✅ Good: Get UIDs first
 const snapshot = await take_snapshot();
-await click({ uid: "#button-from-snapshot" });
+await click({ uid: '#button-from-snapshot' });
 
 // ❌ Bad: Guess element selectors
-await click({ uid: "#button" });  // May not work
+await click({ uid: '#button' }); // May not work
 ```
 
 ### 2. Use wait_for After Navigation
 
 ```javascript
 // ✅ Good: Wait for page to load
-await navigate_page({ type: "url", url: "http://site.com" });
-await wait_for({ text: "Welcome", timeout: 5000 });
+await navigate_page({ type: 'url', url: 'http://site.com' });
+await wait_for({ text: 'Welcome', timeout: 5000 });
 await take_snapshot();
 
 // ❌ Bad: Interact immediately
-await navigate_page({ type: "url", url: "http://site.com" });
-await click({ uid: "#button" });  // May fail if page not loaded
+await navigate_page({ type: 'url', url: 'http://site.com' });
+await click({ uid: '#button' }); // May fail if page not loaded
 ```
 
 ### 3. Handle Dialogs Proactively
@@ -902,12 +922,12 @@ await click({ uid: "#button" });  // May fail if page not loaded
 ```javascript
 // ✅ Good: Set up handler before triggering dialog
 const clickAndHandle = async () => {
-  await click({ uid: "#delete-btn" });
-  await handle_dialog({ action: "accept" });
+  await click({ uid: '#delete-btn' });
+  await handle_dialog({ action: 'accept' });
 };
 
 // ❌ Bad: Dialog may block automation
-await click({ uid: "#delete-btn" });
+await click({ uid: '#delete-btn' });
 // Browser stuck on unhandled confirm dialog
 ```
 
@@ -915,10 +935,10 @@ await click({ uid: "#delete-btn" });
 
 ```javascript
 // ✅ Good: Adjust timeout based on expected load time
-await wait_for({ text: "Large dataset loaded", timeout: 30000 });
+await wait_for({ text: 'Large dataset loaded', timeout: 30000 });
 
 // ❌ Bad: Default timeout too short for slow operations
-await wait_for({ text: "Large dataset loaded" });  // May timeout
+await wait_for({ text: 'Large dataset loaded' }); // May timeout
 ```
 
 ---

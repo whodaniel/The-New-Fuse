@@ -1,19 +1,28 @@
 ---
 name: software-architecture
-description: Guide for quality focused software architecture. This skill should be used when users want to write code, design architecture, analyze code, in any case that relates to software development.
+description:
+  Guide for quality focused software architecture. This skill should be used
+  when users want to write code, design architecture, analyze code, in any case
+  that relates to software development.
 ---
 
 # Software Architecture Development Skill
 
-This skill provides guidance for quality focused software development and architecture. It is based on Clean Architecture and Domain Driven Design principles.
+This skill provides guidance for quality focused software development and
+architecture. It is based on Clean Architecture and Domain Driven Design
+principles.
 
 ## Code Style Rules
 
 ### General Principles
 
-- **Early return pattern**: Always use early returns when possible, over nested conditions for better readability
+- **Early return pattern**: Always use early returns when possible, over nested
+  conditions for better readability
 - Avoid code duplication through creation of reusable functions and modules
-- Decompose long (more than 80 lines of code) components and functions into multiple smaller components and functions. If they cannot be used anywhere else, keep it in the same file. But if file longer than 200 lines of code, it should be split into multiple files.
+- Decompose long (more than 80 lines of code) components and functions into
+  multiple smaller components and functions. If they cannot be used anywhere
+  else, keep it in the same file. But if file longer than 200 lines of code, it
+  should be split into multiple files.
 - Use arrow functions instead of function declarations when possible
 
 ### Best Practices
@@ -24,7 +33,8 @@ This skill provides guidance for quality focused software development and archit
   - Check npm for existing libraries that solve the problem
   - Evaluate existing services/SaaS solutions
   - Consider third-party APIs for common functionality
-- Use libraries instead of writing your own utils or helpers. For example, use `cockatiel` instead of writing your own retry logic.
+- Use libraries instead of writing your own utils or helpers. For example, use
+  `cockatiel` instead of writing your own retry logic.
 - **When custom code IS justified:**
   - Specific business logic unique to the domain
   - Performance-critical paths with special requirements
@@ -41,7 +51,8 @@ This skill provides guidance for quality focused software development and archit
   - Define use cases clearly and keep them isolated
 - **Naming Conventions:**
   - **AVOID** generic names: `utils`, `helpers`, `common`, `shared`
-  - **USE** domain-specific names: `OrderCalculator`, `UserAuthenticator`, `InvoiceGenerator`
+  - **USE** domain-specific names: `OrderCalculator`, `UserAuthenticator`,
+    `InvoiceGenerator`
   - Follow bounded context naming patterns
   - Each module should have a single, clear purpose
 - **Separation of Concerns:**
@@ -64,7 +75,8 @@ This skill provides guidance for quality focused software development and archit
   - `utils.js` with 50 unrelated functions
   - `helpers/misc.js` as a dumping ground
   - `common/shared.js` with unclear purpose
-- Remember: Every line of custom code is a liability that needs maintenance, testing, and documentation
+- Remember: Every line of custom code is a liability that needs maintenance,
+  testing, and documentation
 
 #### Code Quality
 

@@ -15,6 +15,7 @@ Video demonstration of Loki Mode - Multi-agent autonomous startup system.
 ## Full End-to-End Demo
 
 The `record-full-demo.sh` script creates a real demo showing:
+
 - Loki Mode running autonomously
 - Dashboard with agents and tasks
 - App being built in real-time
@@ -50,12 +51,12 @@ The dashboard opens at: http://127.0.0.1:57374/dashboard/index.html
 
 ## Demo Contents
 
-| File | Purpose |
-|------|---------|
-| `run-demo.sh` | Interactive demo script |
-| `record-demo.sh` | Records demo with asciinema |
-| `voice-over-script.md` | Narration script for video |
-| `vhs-tape.tape` | VHS script for GIF/video generation |
+| File                   | Purpose                             |
+| ---------------------- | ----------------------------------- |
+| `run-demo.sh`          | Interactive demo script             |
+| `record-demo.sh`       | Records demo with asciinema         |
+| `voice-over-script.md` | Narration script for video          |
+| `vhs-tape.tape`        | VHS script for GIF/video generation |
 
 ## Recording Options
 
@@ -104,6 +105,7 @@ See `voice-over-script.md` for the complete narration script with timestamps.
 ## Demo Scenarios
 
 ### Simple Todo App (5 min)
+
 Best for quick demos. Shows core Loki Mode workflow.
 
 ```bash
@@ -111,7 +113,9 @@ Best for quick demos. Shows core Loki Mode workflow.
 ```
 
 ### Full-Stack Demo (15-20 min)
+
 Complete demonstration including:
+
 - Kanban board visualization
 - Parallel agent execution
 - Code review process
@@ -123,10 +127,10 @@ Complete demonstration including:
 
 ## Published Demos
 
-| Demo | Duration | Link |
-|------|----------|------|
-| Quick Start | 5 min | [asciinema](https://asciinema.org/a/loki-quick-start) |
-| Full Demo | 15 min | [YouTube](https://youtube.com/watch?v=loki-demo) |
+| Demo        | Duration | Link                                                  |
+| ----------- | -------- | ----------------------------------------------------- |
+| Quick Start | 5 min    | [asciinema](https://asciinema.org/a/loki-quick-start) |
+| Full Demo   | 15 min   | [YouTube](https://youtube.com/watch?v=loki-demo)      |
 
 ## Creating Final Video
 

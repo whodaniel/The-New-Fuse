@@ -95,7 +95,11 @@ const ENV_VARS: EnvVarConfig[] = [
 /**
  * Validates a single environment variable
  */
-function validateEnvVar(config: EnvVarConfig): { valid: boolean; error?: string; warning?: string } {
+function validateEnvVar(config: EnvVarConfig): {
+  valid: boolean;
+  error?: string;
+  warning?: string;
+} {
   const value = process.env[config.name];
 
   // Check if required variable is missing
@@ -160,9 +164,7 @@ export function validateEnvironment(): EnvValidationResult {
     for (const urlVar of serviceUrls) {
       const url = process.env[urlVar];
       if (url && !url.startsWith('https://')) {
-        warnings.push(
-          `⚠️  ${urlVar} should use HTTPS in production (current: ${url})`
-        );
+        warnings.push(`⚠️  ${urlVar} should use HTTPS in production (current: ${url})`);
       }
     }
 
@@ -190,14 +192,14 @@ export function validateEnvironmentOrExit(): void {
   // Print warnings
   if (result.warnings.length > 0) {
     console.log('⚠️  Warnings:\n');
-    result.warnings.forEach(warning => console.log(warning));
+    result.warnings.forEach((warning) => console.log(warning));
     console.log('');
   }
 
   // Print errors and exit if validation failed
   if (!result.isValid) {
     console.error('❌ Environment validation failed!\n');
-    result.errors.forEach(error => console.error(error));
+    result.errors.forEach((error) => console.error(error));
     console.error('\n💡 Tip: Copy .env.example to .env and fill in the required values.\n');
     process.exit(1);
   }

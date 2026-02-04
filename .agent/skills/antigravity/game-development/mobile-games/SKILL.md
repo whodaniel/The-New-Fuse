@@ -1,6 +1,8 @@
 ---
 name: mobile-games
-description: Mobile game development principles. Touch input, battery, performance, app stores.
+description:
+  Mobile game development principles. Touch input, battery, performance, app
+  stores.
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -14,13 +16,13 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Key Constraints
 
-| Constraint | Strategy |
-|------------|----------|
-| **Touch input** | Large hit areas, gestures |
-| **Battery** | Limit CPU/GPU usage |
-| **Thermal** | Throttle when hot |
-| **Screen size** | Responsive UI |
-| **Interruptions** | Pause on background |
+| Constraint        | Strategy                  |
+| ----------------- | ------------------------- |
+| **Touch input**   | Large hit areas, gestures |
+| **Battery**       | Limit CPU/GPU usage       |
+| **Thermal**       | Throttle when hot         |
+| **Screen size**   | Responsive UI             |
+| **Interruptions** | Pause on background       |
 
 ---
 
@@ -28,12 +30,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Touch vs Controller
 
-| Touch | Desktop/Console |
-|-------|-----------------|
-| Imprecise | Precise |
-| Occludes screen | No occlusion |
-| Limited buttons | Many buttons |
-| Gestures available | Buttons/sticks |
+| Touch              | Desktop/Console |
+| ------------------ | --------------- |
+| Imprecise          | Precise         |
+| Occludes screen    | No occlusion    |
+| Limited buttons    | Many buttons    |
+| Gestures available | Buttons/sticks  |
 
 ### Best Practices
 
@@ -48,11 +50,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Thermal Management
 
-| Action | Trigger |
-|--------|---------|
-| Reduce quality | Device warm |
-| Limit FPS | Device hot |
-| Pause effects | Critical temp |
+| Action         | Trigger       |
+| -------------- | ------------- |
+| Reduce quality | Device warm   |
+| Limit FPS      | Device hot    |
+| Pause effects  | Critical temp |
 
 ### Battery Optimization
 
@@ -67,42 +69,43 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### iOS (App Store)
 
-| Requirement | Note |
-|-------------|------|
-| Privacy labels | Required |
+| Requirement      | Note                       |
+| ---------------- | -------------------------- |
+| Privacy labels   | Required                   |
 | Account deletion | If account creation exists |
-| Screenshots | For all device sizes |
+| Screenshots      | For all device sizes       |
 
 ### Android (Google Play)
 
-| Requirement | Note |
-|-------------|------|
-| Target API | Current year's SDK |
-| 64-bit | Required |
-| App bundles | Recommended |
+| Requirement | Note               |
+| ----------- | ------------------ |
+| Target API  | Current year's SDK |
+| 64-bit      | Required           |
+| App bundles | Recommended        |
 
 ---
 
 ## 5. Monetization Models
 
-| Model | Best For |
-|-------|----------|
-| **Premium** | Quality games, loyal audience |
-| **Free + IAP** | Casual, progression-based |
-| **Ads** | Hyper-casual, high volume |
-| **Subscription** | Content updates, multiplayer |
+| Model            | Best For                      |
+| ---------------- | ----------------------------- |
+| **Premium**      | Quality games, loyal audience |
+| **Free + IAP**   | Casual, progression-based     |
+| **Ads**          | Hyper-casual, high volume     |
+| **Subscription** | Content updates, multiplayer  |
 
 ---
 
 ## 6. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Desktop controls on mobile | Design for touch |
-| Ignore battery drain | Monitor thermals |
-| Force landscape | Support player preference |
-| Always-on network | Cache and sync |
+| ❌ Don't                   | ✅ Do                     |
+| -------------------------- | ------------------------- |
+| Desktop controls on mobile | Design for touch          |
+| Ignore battery drain       | Monitor thermals          |
+| Force landscape            | Support player preference |
+| Always-on network          | Cache and sync            |
 
 ---
 
-> **Remember:** Mobile is the most constrained platform. Respect battery and attention.
+> **Remember:** Mobile is the most constrained platform. Respect battery and
+> attention.

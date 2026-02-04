@@ -1,7 +1,10 @@
+"use strict";
 /**
  * Simple Logger Service for MCP Server
  */
-export class Logger {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Logger = void 0;
+class Logger {
     context;
     constructor(context) {
         this.context = context || 'Logger';
@@ -31,4 +34,5 @@ export class Logger {
         this.context = context;
     }
 }
+exports.Logger = Logger;
 //# sourceMappingURL=logger.service.js.map

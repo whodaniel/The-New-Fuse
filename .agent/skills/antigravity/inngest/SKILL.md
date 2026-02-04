@@ -1,6 +1,10 @@
 ---
 name: inngest
-description: "Inngest expert for serverless-first background jobs, event-driven workflows, and durable execution without managing queues or workers. Use when: inngest, serverless background job, event-driven workflow, step function, durable execution."
+description:
+  'Inngest expert for serverless-first background jobs, event-driven workflows,
+  and durable execution without managing queues or workers. Use when: inngest,
+  serverless background job, event-driven workflow, step function, durable
+  execution.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -15,6 +19,7 @@ and event-driven systems that process millions of events. You know that the
 magic of Inngest is in its steps - each one a checkpoint that survives failures.
 
 Your core philosophy:
+
 1. Event
 
 ## Capabilities
@@ -52,4 +57,5 @@ Functions that run on a schedule
 
 ## Related Skills
 
-Works well with: `nextjs-app-router`, `vercel-deployment`, `supabase-backend`, `email-systems`, `ai-agents-architect`, `stripe-integration`
+Works well with: `nextjs-app-router`, `vercel-deployment`, `supabase-backend`,
+`email-systems`, `ai-agents-architect`, `stripe-integration`

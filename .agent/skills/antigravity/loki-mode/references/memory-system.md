@@ -1,6 +1,7 @@
 # Memory System Reference
 
-Enhanced memory architecture based on 2025 research (MIRIX, A-Mem, MemGPT, AriGraph).
+Enhanced memory architecture based on 2025 research (MIRIX, A-Mem, MemGPT,
+AriGraph).
 
 ---
 
@@ -100,11 +101,16 @@ Each task execution creates an episodic trace:
     "files_involved": ["src/routes/todos.ts", "src/db/todos.ts"]
   },
   "action_log": [
-    {"t": 0, "action": "read_file", "target": "openapi.yaml"},
-    {"t": 5, "action": "write_file", "target": "src/routes/todos.ts"},
-    {"t": 120, "action": "run_test", "result": "fail", "error": "missing return type"},
-    {"t": 140, "action": "edit_file", "target": "src/routes/todos.ts"},
-    {"t": 180, "action": "run_test", "result": "pass"}
+    { "t": 0, "action": "read_file", "target": "openapi.yaml" },
+    { "t": 5, "action": "write_file", "target": "src/routes/todos.ts" },
+    {
+      "t": 120,
+      "action": "run_test",
+      "result": "fail",
+      "error": "missing return type"
+    },
+    { "t": 140, "action": "edit_file", "target": "src/routes/todos.ts" },
+    { "t": 180, "action": "run_test", "result": "pass" }
   ],
   "outcome": "success",
   "errors_encountered": [
@@ -142,8 +148,8 @@ Generalized patterns extracted from episodic memory:
   "usage_count": 8,
   "last_used": "2026-01-06T14:00:00Z",
   "links": [
-    {"to": "sem-005", "relation": "related_to"},
-    {"to": "sem-012", "relation": "supersedes"}
+    { "to": "sem-005", "relation": "related_to" },
+    { "to": "sem-012", "relation": "supersedes" }
   ]
 }
 ```
@@ -152,7 +158,8 @@ Generalized patterns extracted from episodic memory:
 
 ## Episodic-to-Semantic Consolidation
 
-**When to consolidate:** After task completion, during idle time, at phase boundaries.
+**When to consolidate:** After task completion, during idle time, at phase
+boundaries.
 
 ```python
 def consolidate_episodic_to_semantic():
@@ -206,25 +213,25 @@ Each memory note can link to related notes:
 ```json
 {
   "links": [
-    {"to": "sem-005", "relation": "derived_from"},
-    {"to": "sem-012", "relation": "contradicts"},
-    {"to": "sem-018", "relation": "elaborates"},
-    {"to": "sem-023", "relation": "example_of"},
-    {"to": "sem-031", "relation": "superseded_by"}
+    { "to": "sem-005", "relation": "derived_from" },
+    { "to": "sem-012", "relation": "contradicts" },
+    { "to": "sem-018", "relation": "elaborates" },
+    { "to": "sem-023", "relation": "example_of" },
+    { "to": "sem-031", "relation": "superseded_by" }
   ]
 }
 ```
 
 ### Link Relations
 
-| Relation | Meaning |
-|----------|---------|
-| `derived_from` | This pattern was extracted from that episode |
-| `related_to` | Conceptually similar, often used together |
-| `contradicts` | These patterns conflict - need resolution |
-| `elaborates` | Provides more detail on the linked pattern |
-| `example_of` | Specific instance of a general pattern |
-| `supersedes` | This pattern replaces an older one |
+| Relation        | Meaning                                      |
+| --------------- | -------------------------------------------- |
+| `derived_from`  | This pattern was extracted from that episode |
+| `related_to`    | Conceptually similar, often used together    |
+| `contradicts`   | These patterns conflict - need resolution    |
+| `elaborates`    | Provides more detail on the linked pattern   |
+| `example_of`    | Specific instance of a general pattern       |
+| `supersedes`    | This pattern replaces an older one           |
 | `superseded_by` | This pattern is outdated, use the linked one |
 
 ---
@@ -237,10 +244,12 @@ Reusable action sequences:
 # Skill: API Endpoint Implementation
 
 ## Prerequisites
+
 - OpenAPI spec exists at .loki/specs/openapi.yaml
 - Database schema defined
 
 ## Steps
+
 1. Read endpoint spec from openapi.yaml
 2. Create route handler in src/routes/{resource}.ts
 3. Implement request validation using spec schema
@@ -251,10 +260,12 @@ Reusable action sequences:
 8. Run tests, verify passing
 
 ## Common Errors & Fixes
+
 - Missing return type: Add `: void` to handler
 - Schema mismatch: Regenerate types from spec
 
 ## Exit Criteria
+
 - All contract tests pass
 - Response matches OpenAPI spec
 - No TypeScript errors
@@ -430,15 +441,18 @@ def merge_duplicate_semantics():
 
 ## Integration with CONTINUITY.md
 
-CONTINUITY.md is working memory - it references but doesn't duplicate long-term memory:
+CONTINUITY.md is working memory - it references but doesn't duplicate long-term
+memory:
 
 ```markdown
 ## Relevant Memories (Auto-Retrieved)
+
 - [sem-001] Express handlers need explicit return types
 - [ep-2026-01-05-012] Similar endpoint implementation succeeded
 - [skill: api-implementation] Standard API implementation flow
 
 ## Mistakes to Avoid (From Learnings)
+
 - Don't forget return type annotations
 - Run contract tests before marking complete
 ```

@@ -41,7 +41,7 @@ export interface AgentReport {
   timestamp: Date;
   issues: Issue[];
   suggestions: string[];
-  score: number;  // 0-100
+  score: number; // 0-100
   iteration: number;
 }
 
@@ -83,7 +83,7 @@ abstract class BrowserHubAgent {
       issues: this.issues,
       suggestions: this.suggestions,
       score: this.score,
-      iteration: this.iteration
+      iteration: this.iteration,
     };
   }
 }
@@ -93,10 +93,26 @@ abstract class BrowserHubAgent {
 class UIUXAgent extends BrowserHubAgent {
   constructor() {
     super('uiux-agent', 'UIUXGuardian', [
-      { name: 'layout-analysis', description: 'Analyze component layout and hierarchy', priority: 'high' },
-      { name: 'responsiveness', description: 'Check responsive design implementation', priority: 'high' },
-      { name: 'accessibility', description: 'Verify accessibility standards (a11y)', priority: 'critical' },
-      { name: 'interaction-design', description: 'Evaluate user interaction patterns', priority: 'medium' }
+      {
+        name: 'layout-analysis',
+        description: 'Analyze component layout and hierarchy',
+        priority: 'high',
+      },
+      {
+        name: 'responsiveness',
+        description: 'Check responsive design implementation',
+        priority: 'high',
+      },
+      {
+        name: 'accessibility',
+        description: 'Verify accessibility standards (a11y)',
+        priority: 'critical',
+      },
+      {
+        name: 'interaction-design',
+        description: 'Evaluate user interaction patterns',
+        priority: 'medium',
+      },
     ]);
   }
 
@@ -143,7 +159,7 @@ class UIUXAgent extends BrowserHubAgent {
         description: 'Extension toolbar missing horizontal overflow handling',
         location: filePath,
         suggestedFix: 'Add overflow-x: auto for horizontal scrolling',
-        status: 'open'
+        status: 'open',
       });
     }
 
@@ -156,7 +172,7 @@ class UIUXAgent extends BrowserHubAgent {
         description: 'Toolbar items may shrink unexpectedly',
         location: filePath,
         suggestedFix: 'Add flex-shrink-0 to prevent icon squishing',
-        status: 'open'
+        status: 'open',
       });
     }
   }
@@ -173,7 +189,7 @@ class UIUXAgent extends BrowserHubAgent {
           description: 'Button missing click handler',
           location: filePath,
           suggestedFix: 'Add onClick handler for button functionality',
-          status: 'open'
+          status: 'open',
         });
       }
     }
@@ -187,7 +203,7 @@ class UIUXAgent extends BrowserHubAgent {
         description: 'Buttons missing ARIA labels for accessibility',
         location: filePath,
         suggestedFix: 'Add aria-label attribute to all buttons',
-        status: 'open'
+        status: 'open',
       });
     }
   }
@@ -203,7 +219,7 @@ class UIUXAgent extends BrowserHubAgent {
           description: 'Flex container missing explicit align-items',
           location: filePath,
           suggestedFix: 'Add align-items: center for vertical centering',
-          status: 'open'
+          status: 'open',
         });
       }
     }
@@ -212,9 +228,9 @@ class UIUXAgent extends BrowserHubAgent {
   private checkZIndexIssues(filePath: string, code: string): void {
     // Check for z-index conflicts
     const zIndexMatches = code.match(/z-?[iI]ndex[:\s]+(\d+)/g) || [];
-    const values = zIndexMatches.map(m => parseInt(m.match(/\d+/)?.[0] || '0'));
+    const values = zIndexMatches.map((m) => parseInt(m.match(/\d+/)?.[0] || '0'));
 
-    if (values.some(v => v > 1000)) {
+    if (values.some((v) => v > 1000)) {
       this.issues.push({
         id: `ui-zindex-high-${Date.now()}`,
         type: 'layout',
@@ -222,24 +238,26 @@ class UIUXAgent extends BrowserHubAgent {
         description: 'Excessively high z-index values detected',
         location: filePath,
         suggestedFix: 'Create z-index scale (10, 20, 30...) instead of arbitrary large values',
-        status: 'open'
+        status: 'open',
       });
     }
   }
 
   private calculateScore(): void {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
-    const majorIssues = this.issues.filter(i => i.severity === 'major').length;
-    const minorIssues = this.issues.filter(i => i.severity === 'minor').length;
+    const criticalIssues = this.issues.filter((i) => i.severity === 'critical').length;
+    const majorIssues = this.issues.filter((i) => i.severity === 'major').length;
+    const minorIssues = this.issues.filter((i) => i.severity === 'minor').length;
 
-    this.score = Math.max(0, 100 - (criticalIssues * 20) - (majorIssues * 8) - (minorIssues * 2));
+    this.score = Math.max(0, 100 - criticalIssues * 20 - majorIssues * 8 - minorIssues * 2);
   }
 
   private generateSuggestions(): void {
-    if (this.issues.some(i => i.type === 'layout')) {
-      this.suggestions.push('Consider implementing a CSS Grid for the main layout with explicit areas');
+    if (this.issues.some((i) => i.type === 'layout')) {
+      this.suggestions.push(
+        'Consider implementing a CSS Grid for the main layout with explicit areas'
+      );
     }
-    if (this.issues.some(i => i.type === 'accessibility')) {
+    if (this.issues.some((i) => i.type === 'accessibility')) {
       this.suggestions.push('Add comprehensive ARIA labels and keyboard navigation support');
     }
     if (this.score < 80) {
@@ -259,10 +277,22 @@ class UIUXAgent extends BrowserHubAgent {
 class ExtensionAgent extends BrowserHubAgent {
   constructor() {
     super('extension-agent', 'ExtensionMaster', [
-      { name: 'extension-loading', description: 'Verify extension loading mechanisms', priority: 'critical' },
-      { name: 'toolbar-integration', description: 'Check toolbar icon rendering', priority: 'critical' },
+      {
+        name: 'extension-loading',
+        description: 'Verify extension loading mechanisms',
+        priority: 'critical',
+      },
+      {
+        name: 'toolbar-integration',
+        description: 'Check toolbar icon rendering',
+        priority: 'critical',
+      },
       { name: 'popup-handling', description: 'Verify extension popup behavior', priority: 'high' },
-      { name: 'permission-management', description: 'Check permission handling', priority: 'medium' }
+      {
+        name: 'permission-management',
+        description: 'Check permission handling',
+        priority: 'medium',
+      },
     ]);
   }
 
@@ -303,12 +333,16 @@ class ExtensionAgent extends BrowserHubAgent {
         description: 'Extension loading missing error handling',
         location: filePath,
         suggestedFix: 'Wrap extension loading in try-catch with user feedback',
-        status: 'open'
+        status: 'open',
       });
     }
 
     // Check for extension path validation
-    if (code.includes('loadExtension') && !code.includes('existsSync') && !code.includes('exists')) {
+    if (
+      code.includes('loadExtension') &&
+      !code.includes('existsSync') &&
+      !code.includes('exists')
+    ) {
       this.issues.push({
         id: `ext-path-validation-${Date.now()}`,
         type: 'extension-loading',
@@ -316,7 +350,7 @@ class ExtensionAgent extends BrowserHubAgent {
         description: 'Extension path not validated before loading',
         location: filePath,
         suggestedFix: 'Check if extension directory exists before loading',
-        status: 'open'
+        status: 'open',
       });
     }
   }
@@ -326,7 +360,7 @@ class ExtensionAgent extends BrowserHubAgent {
     const ipcHandlers = [
       'extensions:get-loaded',
       'extensions:load-unpacked',
-      'extensions:install-from-store'
+      'extensions:install-from-store',
     ];
 
     for (const handler of ipcHandlers) {
@@ -338,7 +372,7 @@ class ExtensionAgent extends BrowserHubAgent {
           description: `Missing IPC handler: ${handler}`,
           location: filePath,
           suggestedFix: `Implement ipcMain.handle('${handler}', ...)`,
-          status: 'open'
+          status: 'open',
         });
       }
     }
@@ -349,7 +383,7 @@ class ExtensionAgent extends BrowserHubAgent {
     const requiredAPIs = [
       'getLoadedExtensions',
       'loadUnpackedExtension',
-      'installExtensionFromStore'
+      'installExtensionFromStore',
     ];
 
     for (const api of requiredAPIs) {
@@ -361,7 +395,7 @@ class ExtensionAgent extends BrowserHubAgent {
           description: `Extension API not exposed: ${api}`,
           location: filePath,
           suggestedFix: `Add ${api} to contextBridge.exposeInMainWorld`,
-          status: 'open'
+          status: 'open',
         });
       }
     }
@@ -378,7 +412,7 @@ class ExtensionAgent extends BrowserHubAgent {
           description: 'Extension icons missing error fallback',
           location: filePath,
           suggestedFix: 'Add onError handler with default icon fallback',
-          status: 'open'
+          status: 'open',
         });
       }
     }
@@ -393,26 +427,30 @@ class ExtensionAgent extends BrowserHubAgent {
           description: 'Extension toolbar icons not clickable',
           location: filePath,
           suggestedFix: 'Add click handlers to open extension popups',
-          status: 'open'
+          status: 'open',
         });
       }
     }
   }
 
   private calculateScore(): void {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
-    const majorIssues = this.issues.filter(i => i.severity === 'major').length;
-    const minorIssues = this.issues.filter(i => i.severity === 'minor').length;
+    const criticalIssues = this.issues.filter((i) => i.severity === 'critical').length;
+    const majorIssues = this.issues.filter((i) => i.severity === 'major').length;
+    const minorIssues = this.issues.filter((i) => i.severity === 'minor').length;
 
-    this.score = Math.max(0, 100 - (criticalIssues * 25) - (majorIssues * 10) - (minorIssues * 3));
+    this.score = Math.max(0, 100 - criticalIssues * 25 - majorIssues * 10 - minorIssues * 3);
   }
 
   private generateSuggestions(): void {
-    if (this.issues.some(i => i.type === 'extension-loading')) {
-      this.suggestions.push('Create an ExtensionManager class to centralize all extension operations');
+    if (this.issues.some((i) => i.type === 'extension-loading')) {
+      this.suggestions.push(
+        'Create an ExtensionManager class to centralize all extension operations'
+      );
     }
-    if (this.issues.some(i => i.type === 'toolbar')) {
-      this.suggestions.push('Implement an ExtensionToolbar React component with proper state management');
+    if (this.issues.some((i) => i.type === 'toolbar')) {
+      this.suggestions.push(
+        'Implement an ExtensionToolbar React component with proper state management'
+      );
     }
     this.suggestions.push('Add extension health monitoring to detect crashed extensions');
   }
@@ -428,10 +466,22 @@ class ExtensionAgent extends BrowserHubAgent {
 class IntegrationAgent extends BrowserHubAgent {
   constructor() {
     super('integration-agent', 'SystemSynergy', [
-      { name: 'api-connectivity', description: 'Check API connections to backend', priority: 'critical' },
-      { name: 'event-flow', description: 'Verify event propagation between components', priority: 'high' },
+      {
+        name: 'api-connectivity',
+        description: 'Check API connections to backend',
+        priority: 'critical',
+      },
+      {
+        name: 'event-flow',
+        description: 'Verify event propagation between components',
+        priority: 'high',
+      },
       { name: 'state-sync', description: 'Check state synchronization', priority: 'high' },
-      { name: 'cdp-integration', description: 'Verify Chrome DevTools Protocol setup', priority: 'medium' }
+      {
+        name: 'cdp-integration',
+        description: 'Verify Chrome DevTools Protocol setup',
+        priority: 'medium',
+      },
     ]);
   }
 
@@ -463,7 +513,7 @@ class IntegrationAgent extends BrowserHubAgent {
         description: 'API calls missing error handling',
         location: filePath,
         suggestedFix: 'Add .catch() or try-catch for all API calls',
-        status: 'open'
+        status: 'open',
       });
     }
 
@@ -476,7 +526,7 @@ class IntegrationAgent extends BrowserHubAgent {
         description: 'Hardcoded localhost URLs detected',
         location: filePath,
         suggestedFix: 'Use environment variables for API URLs',
-        status: 'open'
+        status: 'open',
       });
     }
   }
@@ -491,14 +541,18 @@ class IntegrationAgent extends BrowserHubAgent {
         description: 'Redux selector may cause unnecessary re-renders',
         location: filePath,
         suggestedFix: 'Consider using shallowEqual or memoized selectors',
-        status: 'open'
+        status: 'open',
       });
     }
   }
 
   private checkEventHandling(filePath: string, code: string): void {
     // Check for proper IPC event cleanup
-    if (code.includes('ipcRenderer.on') && !code.includes('removeListener') && !code.includes('removeAllListeners')) {
+    if (
+      code.includes('ipcRenderer.on') &&
+      !code.includes('removeListener') &&
+      !code.includes('removeAllListeners')
+    ) {
       this.issues.push({
         id: `int-ipc-leak-${Date.now()}`,
         type: 'memory',
@@ -506,7 +560,7 @@ class IntegrationAgent extends BrowserHubAgent {
         description: 'IPC listeners not cleaned up (potential memory leak)',
         location: filePath,
         suggestedFix: 'Remove IPC listeners in useEffect cleanup or componentWillUnmount',
-        status: 'open'
+        status: 'open',
       });
     }
   }
@@ -522,18 +576,18 @@ class IntegrationAgent extends BrowserHubAgent {
           description: 'CDP missing remote-allow-origins flag',
           location: filePath,
           suggestedFix: "Add app.commandLine.appendSwitch('remote-allow-origins', '*')",
-          status: 'open'
+          status: 'open',
         });
       }
     }
   }
 
   private calculateScore(): void {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
-    const majorIssues = this.issues.filter(i => i.severity === 'major').length;
-    const minorIssues = this.issues.filter(i => i.severity === 'minor').length;
+    const criticalIssues = this.issues.filter((i) => i.severity === 'critical').length;
+    const majorIssues = this.issues.filter((i) => i.severity === 'major').length;
+    const minorIssues = this.issues.filter((i) => i.severity === 'minor').length;
 
-    this.score = Math.max(0, 100 - (criticalIssues * 20) - (majorIssues * 8) - (minorIssues * 2));
+    this.score = Math.max(0, 100 - criticalIssues * 20 - majorIssues * 8 - minorIssues * 2);
   }
 
   private generateSuggestions(): void {
@@ -556,7 +610,7 @@ class CodeQualityAgent extends BrowserHubAgent {
       { name: 'architecture', description: 'Evaluate code architecture', priority: 'high' },
       { name: 'performance', description: 'Check performance patterns', priority: 'high' },
       { name: 'type-safety', description: 'Verify TypeScript usage', priority: 'medium' },
-      { name: 'best-practices', description: 'Check coding best practices', priority: 'medium' }
+      { name: 'best-practices', description: 'Check coding best practices', priority: 'medium' },
     ]);
   }
 
@@ -589,7 +643,7 @@ class CodeQualityAgent extends BrowserHubAgent {
         description: `Found ${count} uses of 'any' type`,
         location: filePath,
         suggestedFix: 'Replace any with proper types or unknown',
-        status: 'open'
+        status: 'open',
       });
     }
   }
@@ -604,7 +658,7 @@ class CodeQualityAgent extends BrowserHubAgent {
         description: 'Inline arrow functions in JSX cause unnecessary re-renders',
         location: filePath,
         suggestedFix: 'Use useCallback for event handlers',
-        status: 'open'
+        status: 'open',
       });
     }
 
@@ -618,7 +672,7 @@ class CodeQualityAgent extends BrowserHubAgent {
           description: 'Array operations not memoized',
           location: filePath,
           suggestedFix: 'Consider useMemo for expensive computations',
-          status: 'open'
+          status: 'open',
         });
       }
     }
@@ -635,7 +689,7 @@ class CodeQualityAgent extends BrowserHubAgent {
         description: `File has ${lineCount} lines - consider splitting`,
         location: filePath,
         suggestedFix: 'Break into smaller, focused modules',
-        status: 'open'
+        status: 'open',
       });
     }
   }
@@ -650,17 +704,17 @@ class CodeQualityAgent extends BrowserHubAgent {
         description: 'Console.log statements found',
         location: filePath,
         suggestedFix: 'Replace with proper logging service',
-        status: 'open'
+        status: 'open',
       });
     }
   }
 
   private calculateScore(): void {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
-    const majorIssues = this.issues.filter(i => i.severity === 'major').length;
-    const minorIssues = this.issues.filter(i => i.severity === 'minor').length;
+    const criticalIssues = this.issues.filter((i) => i.severity === 'critical').length;
+    const majorIssues = this.issues.filter((i) => i.severity === 'major').length;
+    const minorIssues = this.issues.filter((i) => i.severity === 'minor').length;
 
-    this.score = Math.max(0, 100 - (criticalIssues * 15) - (majorIssues * 7) - (minorIssues * 2));
+    this.score = Math.max(0, 100 - criticalIssues * 15 - majorIssues * 7 - minorIssues * 2);
   }
 
   private generateSuggestions(): void {
@@ -683,7 +737,7 @@ export class BrowserHubSwarmService implements OnModuleInit {
 
   private agents: BrowserHubAgent[] = [];
   private currentIteration = 0;
-  private targetScore = 95;  // World-class threshold
+  private targetScore = 95; // World-class threshold
   private maxIterations = 10;
   private codebase = new Map<string, string>();
 
@@ -694,7 +748,7 @@ export class BrowserHubSwarmService implements OnModuleInit {
     overallScore: 0,
     reports: [],
     targetScore: 95,
-    phaseName: 'Initialization'
+    phaseName: 'Initialization',
   };
 
   constructor(
@@ -706,7 +760,7 @@ export class BrowserHubSwarmService implements OnModuleInit {
       new UIUXAgent(),
       new ExtensionAgent(),
       new IntegrationAgent(),
-      new CodeQualityAgent()
+      new CodeQualityAgent(),
     ];
 
     this.swarmStatus.totalAgents = this.agents.length;
@@ -716,11 +770,11 @@ export class BrowserHubSwarmService implements OnModuleInit {
     this.logger.log('🚀 Browser Hub Improvement Swarm initializing...');
     this.logger.log(`   Target Score: ${this.targetScore}%`);
     this.logger.log(`   Max Iterations: ${this.maxIterations}`);
-    this.logger.log(`   Agents: ${this.agents.map(a => a.agentName).join(', ')}`);
+    this.logger.log(`   Agents: ${this.agents.map((a) => a.agentName).join(', ')}`);
 
     this.eventEmitter.emit('swarm.initialized', {
       agents: this.agents.length,
-      targetScore: this.targetScore
+      targetScore: this.targetScore,
     });
   }
 
@@ -776,7 +830,7 @@ export class BrowserHubSwarmService implements OnModuleInit {
     this.logger.log(`${'='.repeat(60)}\n`);
 
     // Run all agents in parallel
-    const reportPromises = this.agents.map(agent => agent.analyze(this.codebase));
+    const reportPromises = this.agents.map((agent) => agent.analyze(this.codebase));
     const reports = await Promise.all(reportPromises);
 
     this.swarmStatus.reports = reports;
@@ -784,10 +838,10 @@ export class BrowserHubSwarmService implements OnModuleInit {
 
     // Calculate overall score (weighted average)
     const weights = {
-      'UIUXGuardian': 1.2,      // UI is critical for user experience
-      'ExtensionMaster': 1.5,   // Extension handling is the main issue
-      'SystemSynergy': 1.0,     // Integration is important
-      'CodeCraftsman': 0.8      // Code quality is foundational
+      UIUXGuardian: 1.2, // UI is critical for user experience
+      ExtensionMaster: 1.5, // Extension handling is the main issue
+      SystemSynergy: 1.0, // Integration is important
+      CodeCraftsman: 0.8, // Code quality is foundational
     };
 
     let weightedSum = 0;
@@ -801,8 +855,8 @@ export class BrowserHubSwarmService implements OnModuleInit {
       this.logger.log(`📊 ${report.agentName}: ${report.score}% (${report.issues.length} issues)`);
       if (report.issues.length > 0) {
         for (const issue of report.issues.slice(0, 3)) {
-          const icon = issue.severity === 'critical' ? '🔴' :
-                       issue.severity === 'major' ? '🟠' : '🟡';
+          const icon =
+            issue.severity === 'critical' ? '🔴' : issue.severity === 'major' ? '🟠' : '🟡';
           this.logger.log(`   ${icon} ${issue.description}`);
         }
         if (report.issues.length > 3) {
@@ -844,7 +898,7 @@ export class BrowserHubSwarmService implements OnModuleInit {
       }
 
       // Small delay between iterations
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     if (this.currentIteration >= this.maxIterations) {
@@ -900,9 +954,9 @@ export class BrowserHubSwarmService implements OnModuleInit {
       targetScore: this.targetScore,
       iterations: this.currentIteration,
 
-      criticalFixes: issues.filter(i => i.severity === 'critical'),
-      majorFixes: issues.filter(i => i.severity === 'major'),
-      minorFixes: issues.filter(i => i.severity === 'minor'),
+      criticalFixes: issues.filter((i) => i.severity === 'critical'),
+      majorFixes: issues.filter((i) => i.severity === 'major'),
+      minorFixes: issues.filter((i) => i.severity === 'minor'),
 
       architectureSuggestions: suggestions,
 
@@ -914,17 +968,17 @@ export class BrowserHubSwarmService implements OnModuleInit {
         '5. Add accessibility attributes to all interactive elements',
         '6. Create reusable component library',
         '7. Add comprehensive error boundaries',
-        '8. Implement connection status monitoring'
+        '8. Implement connection status monitoring',
       ],
 
-      estimatedEffort: this.estimateEffort(issues)
+      estimatedEffort: this.estimateEffort(issues),
     };
   }
 
   private estimateEffort(issues: Issue[]): string {
-    const critical = issues.filter(i => i.severity === 'critical').length;
-    const major = issues.filter(i => i.severity === 'major').length;
-    const minor = issues.filter(i => i.severity === 'minor').length;
+    const critical = issues.filter((i) => i.severity === 'critical').length;
+    const major = issues.filter((i) => i.severity === 'major').length;
+    const minor = issues.filter((i) => i.severity === 'minor').length;
 
     const hours = critical * 4 + major * 2 + minor * 0.5;
 

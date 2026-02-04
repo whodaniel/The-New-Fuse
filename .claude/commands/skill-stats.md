@@ -1,11 +1,13 @@
 ---
-description: "View statistics and information about loaded Claude skills"
-category: "claude-skills"
+description: 'View statistics and information about loaded Claude skills'
+category: 'claude-skills'
 ---
 
-Display statistics and information about the Claude Skills integration in The New Fuse.
+Display statistics and information about the Claude Skills integration in The
+New Fuse.
 
 **Shows**:
+
 - Total number of loaded skills
 - Skills by category breakdown
 - Available categories and tags
@@ -13,6 +15,7 @@ Display statistics and information about the Claude Skills integration in The Ne
 - Repository status and last update
 
 **Example Usage**:
+
 ```
 /skill-stats
 /skill-stats detailed
@@ -22,6 +25,7 @@ Display statistics and information about the Claude Skills integration in The Ne
 **Parameters**: $ARGUMENTS (optional: "detailed" or category filter)
 
 **Output includes**:
+
 - Total skills loaded
 - Skills by category (e.g., 4 document-processing, 3 development-technical)
 - Total categories available

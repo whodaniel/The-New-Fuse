@@ -1,16 +1,20 @@
 # Quality Control Reference
 
-Quality gates, code review process, and severity blocking rules.
-Enhanced with 2025 research on anti-sycophancy, heterogeneous teams, and OpenAI Agents SDK patterns.
+Quality gates, code review process, and severity blocking rules. Enhanced with
+2025 research on anti-sycophancy, heterogeneous teams, and OpenAI Agents SDK
+patterns.
 
 ---
 
 ## Core Principle: Guardrails, Not Just Acceleration
 
-**CRITICAL:** Speed without quality controls creates "AI slop" - semi-functional code that accumulates technical debt. Loki Mode enforces strict quality guardrails.
+**CRITICAL:** Speed without quality controls creates "AI slop" - semi-functional
+code that accumulates technical debt. Loki Mode enforces strict quality
+guardrails.
 
-**Research Insight:** Heterogeneous review teams outperform homogeneous ones by 4-6% (A-HMAD, 2025).
-**OpenAI Insight:** "Think of guardrails as a layered defense mechanism. Multiple specialized guardrails create resilient agents."
+**Research Insight:** Heterogeneous review teams outperform homogeneous ones by
+4-6% (A-HMAD, 2025). **OpenAI Insight:** "Think of guardrails as a layered
+defense mechanism. Multiple specialized guardrails create resilient agents."
 
 ---
 
@@ -76,10 +80,10 @@ async def check_secrets(output, context):
 
 ### Execution Modes
 
-| Mode | Behavior | Use When |
-|------|----------|----------|
-| **Blocking** | Guardrail completes before agent starts | Expensive models, sensitive ops |
-| **Parallel** | Guardrail runs with agent | Fast checks, acceptable token loss |
+| Mode         | Behavior                                | Use When                           |
+| ------------ | --------------------------------------- | ---------------------------------- |
+| **Blocking** | Guardrail completes before agent starts | Expensive models, sensitive ops    |
+| **Parallel** | Guardrail runs with agent               | Fast checks, acceptable token loss |
 
 ```python
 # Blocking: prevents token consumption on fail
@@ -111,24 +115,24 @@ except OutputGuardrailTripwireTriggered as e:
 ```yaml
 guardrail_layers:
   layer_1_input:
-    - scope_validation      # Is task within bounds?
-    - pii_detection         # Contains sensitive data?
-    - injection_detection   # Prompt injection attempt?
+    - scope_validation # Is task within bounds?
+    - pii_detection # Contains sensitive data?
+    - injection_detection # Prompt injection attempt?
 
   layer_2_pre_execution:
-    - cost_estimation       # Will this exceed budget?
-    - dependency_check      # Are dependencies available?
-    - conflict_detection    # Conflicts with in-progress work?
+    - cost_estimation # Will this exceed budget?
+    - dependency_check # Are dependencies available?
+    - conflict_detection # Conflicts with in-progress work?
 
   layer_3_output:
-    - static_analysis       # Code quality issues?
-    - secret_detection      # Secrets in output?
-    - spec_compliance       # Matches OpenAPI spec?
+    - static_analysis # Code quality issues?
+    - secret_detection # Secrets in output?
+    - spec_compliance # Matches OpenAPI spec?
 
   layer_4_post_action:
-    - test_validation       # Tests pass?
-    - review_approval       # Review passed?
-    - deployment_safety     # Safe to deploy?
+    - test_validation # Tests pass?
+    - review_approval # Review passed?
+    - deployment_safety # Safe to deploy?
 ```
 
 See `references/openai-patterns.md` for full guardrails implementation.
@@ -140,6 +144,7 @@ See `references/openai-patterns.md` for full guardrails implementation.
 **Never ship code without passing all quality gates:**
 
 ### 1. Static Analysis (Automated)
+
 - CodeQL security scanning
 - ESLint/Pylint/Rubocop for code style
 - Unused variable/import detection
@@ -159,15 +164,18 @@ IMPLEMENT -> BLIND REVIEW (parallel) -> DEBATE (if disagreement) -> AGGREGATE ->
 ```
 
 **Important:**
+
 - ALWAYS launch all 3 reviewers in a single message (3 Task calls)
 - ALWAYS specify model: "opus" for each reviewer
-- ALWAYS use blind review mode (reviewers cannot see each other's findings initially)
+- ALWAYS use blind review mode (reviewers cannot see each other's findings
+  initially)
 - NEVER dispatch reviewers sequentially (always parallel - 3x faster)
 - NEVER aggregate before all 3 reviewers complete
 
 ### Anti-Sycophancy Protocol (CONSENSAGENT Research)
 
-**Problem:** Reviewers may reinforce each other's findings instead of critically engaging.
+**Problem:** Reviewers may reinforce each other's findings instead of critically
+engaging.
 
 **Solution: Blind Review + Devil's Advocate**
 
@@ -210,33 +218,35 @@ else:
 
 **Each reviewer has distinct personality/focus:**
 
-| Reviewer | Model | Expertise | Personality |
-|----------|-------|-----------|-------------|
-| Code Quality | Opus | SOLID, patterns, maintainability | Perfectionist |
-| Business Logic | Opus | Requirements, edge cases, UX | Pragmatic |
-| Security | Opus | OWASP, auth, injection | Paranoid |
+| Reviewer       | Model | Expertise                        | Personality   |
+| -------------- | ----- | -------------------------------- | ------------- |
+| Code Quality   | Opus  | SOLID, patterns, maintainability | Perfectionist |
+| Business Logic | Opus  | Requirements, edge cases, UX     | Pragmatic     |
+| Security       | Opus  | OWASP, auth, injection           | Paranoid      |
 
 This diversity prevents groupthink and catches more issues.
 
 ### 3. Severity-Based Blocking
 
-| Severity | Action | Continue? |
-|----------|--------|-----------|
-| **Critical** | BLOCK - Fix immediately | NO |
-| **High** | BLOCK - Fix immediately | NO |
-| **Medium** | BLOCK - Fix before proceeding | NO |
-| **Low** | Add `// TODO(review): ...` comment | YES |
-| **Cosmetic** | Add `// FIXME(nitpick): ...` comment | YES |
+| Severity     | Action                               | Continue? |
+| ------------ | ------------------------------------ | --------- |
+| **Critical** | BLOCK - Fix immediately              | NO        |
+| **High**     | BLOCK - Fix immediately              | NO        |
+| **Medium**   | BLOCK - Fix before proceeding        | NO        |
+| **Low**      | Add `// TODO(review): ...` comment   | YES       |
+| **Cosmetic** | Add `// FIXME(nitpick): ...` comment | YES       |
 
-**Critical/High/Medium = BLOCK and fix before proceeding**
-**Low/Cosmetic = Add TODO/FIXME comment, continue**
+**Critical/High/Medium = BLOCK and fix before proceeding** **Low/Cosmetic = Add
+TODO/FIXME comment, continue**
 
 ### 4. Test Coverage Gates
+
 - Unit tests: 100% pass, >80% coverage
 - Integration tests: 100% pass
 - E2E tests: critical flows pass
 
 ### 5. Rulesets (Blocking Merges)
+
 - No secrets in code
 - No unhandled exceptions
 - No SQL injection vulnerabilities
@@ -268,7 +278,8 @@ Task(subagent_type="general-purpose", model="opus",
 
 ### After Fixes
 
-- ALWAYS re-run ALL 3 reviewers after fixes (not just the one that found the issue)
+- ALWAYS re-run ALL 3 reviewers after fixes (not just the one that found the
+  issue)
 - Wait for all reviews to complete before aggregating results
 
 ---
@@ -279,23 +290,26 @@ Task(subagent_type="general-purpose", model="opus",
 
 ```markdown
 ## GOAL (What success looks like)
-[High-level objective, not just the action]
-Example: "Refactor authentication for maintainability and testability"
-NOT: "Refactor the auth file"
+
+[High-level objective, not just the action] Example: "Refactor authentication
+for maintainability and testability" NOT: "Refactor the auth file"
 
 ## CONSTRAINTS (What you cannot do)
+
 - No third-party dependencies without approval
 - Maintain backwards compatibility with v1.x API
 - Keep response time under 200ms
 - Follow existing error handling patterns
 
 ## CONTEXT (What you need to know)
+
 - Related files: [list with brief descriptions]
 - Architecture decisions: [relevant ADRs or patterns]
 - Previous attempts: [what was tried, why it failed]
 - Dependencies: [what this depends on, what depends on this]
 
 ## OUTPUT FORMAT (What to deliver)
+
 - [ ] Pull request with Why/What/Trade-offs description
 - [ ] Unit tests with >90% coverage
 - [ ] Update API documentation
@@ -312,6 +326,7 @@ NOT: "Refactor the auth file"
 ## Task Completion Report
 
 ### WHY (Problem & Solution Rationale)
+
 - **Problem**: [What was broken/missing/suboptimal]
 - **Root Cause**: [Why it happened]
 - **Solution Chosen**: [What we implemented]
@@ -320,6 +335,7 @@ NOT: "Refactor the auth file"
   2. [Option B]: Rejected because [reason]
 
 ### WHAT (Changes Made)
+
 - **Files Modified**: [with line ranges and purpose]
   - `src/auth.ts:45-89` - Extracted token validation to separate function
   - `src/auth.test.ts:120-156` - Added edge case tests
@@ -328,6 +344,7 @@ NOT: "Refactor the auth file"
 - **Dependencies Added/Removed**: [with justification]
 
 ### TRADE-OFFS (Gains & Costs)
+
 - **Gained**:
   - Better testability (extracted pure functions)
   - 40% faster token validation
@@ -339,17 +356,20 @@ NOT: "Refactor the auth file"
   - No performance change for standard use cases
 
 ### RISKS & MITIGATIONS
+
 - **Risk**: Existing custom validators may break
   - **Mitigation**: Added backwards-compatibility shim, deprecation warning
 - **Risk**: New validation logic untested at scale
   - **Mitigation**: Gradual rollout with feature flag, rollback plan ready
 
 ### TEST RESULTS
+
 - Unit: 24/24 passed (coverage: 92%)
 - Integration: 8/8 passed
 - Performance: p99 improved from 145ms -> 87ms
 
 ### NEXT STEPS (if any)
+
 - [ ] Monitor error rates for 24h post-deploy
 - [ ] Create follow-up task to remove compatibility shim in v3.0
 ```
@@ -359,6 +379,7 @@ NOT: "Refactor the auth file"
 ## Preventing "AI Slop"
 
 ### Warning Signs
+
 - Tests pass but code quality degraded
 - Copy-paste duplication instead of abstraction
 - Over-engineered solutions to simple problems
@@ -370,6 +391,7 @@ NOT: "Refactor the auth file"
 - TODO comments without GitHub issues
 
 ### When Detected
+
 1. Fail the task immediately
 2. Add to failed queue with detailed feedback
 3. Re-dispatch with stricter constraints
@@ -380,6 +402,7 @@ NOT: "Refactor the auth file"
 ## Quality Gate Hooks
 
 ### Pre-Write Hook (BLOCKING)
+
 ```bash
 #!/bin/bash
 # .loki/hooks/pre-write.sh
@@ -399,6 +422,7 @@ fi
 ```
 
 ### Post-Write Hook (AUTO-FIX)
+
 ```bash
 #!/bin/bash
 # .loki/hooks/post-write.sh
@@ -421,17 +445,20 @@ npx tsc --noEmit
 Quality gates are enforced by `autonomy/CONSTITUTION.md`:
 
 **Pre-Commit (BLOCKING):**
+
 - Linting (auto-fix enabled)
 - Type checking (strict mode)
 - Contract tests (80% coverage minimum)
 - Spec validation (Spectral)
 
 **Post-Implementation (AUTO-FIX):**
+
 - Static analysis (ESLint, Prettier, TSC)
 - Security scan (Semgrep, Snyk)
 - Performance check (Lighthouse score 90+)
 
 **Runtime Invariants:**
+
 - `SPEC_BEFORE_CODE`: Implementation tasks require spec reference
 - `TASK_HAS_COMMIT`: Completed tasks have git commit SHA
 - `QUALITY_GATES_PASSED`: Completed tasks passed all quality checks

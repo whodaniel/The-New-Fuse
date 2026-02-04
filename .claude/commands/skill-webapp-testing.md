@@ -1,13 +1,16 @@
 ---
-description: "Use Claude's Web App Testing skill with Playwright for automated testing"
-category: "claude-skills"
+description:
+  "Use Claude's Web App Testing skill with Playwright for automated testing"
+category: 'claude-skills'
 ---
 
-Activate Claude's Web App Testing skill for automated testing of web applications using Playwright for UI verification and debugging.
+Activate Claude's Web App Testing skill for automated testing of web
+applications using Playwright for UI verification and debugging.
 
 **Skill**: webapp-testing (from Anthropic's skills repository)
 
 **Capabilities**:
+
 - Write and execute Playwright tests
 - UI verification and validation
 - Cross-browser testing
@@ -17,6 +20,7 @@ Activate Claude's Web App Testing skill for automated testing of web application
 - Visual regression testing
 
 **Example Usage**:
+
 ```
 /skill-webapp-testing test the login flow at http://localhost:3000
 /skill-webapp-testing verify that clicking "Submit" shows a success message
@@ -26,4 +30,5 @@ Activate Claude's Web App Testing skill for automated testing of web application
 
 **Parameters**: $ARGUMENTS (description of web app testing task)
 
-The skill enables comprehensive automated testing of local and remote web applications with detailed reporting.
+The skill enables comprehensive automated testing of local and remote web
+applications with detailed reporting.

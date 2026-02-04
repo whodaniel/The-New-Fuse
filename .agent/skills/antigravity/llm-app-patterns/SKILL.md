@@ -1,11 +1,16 @@
 ---
 name: llm-app-patterns
-description: "Production-ready patterns for building LLM applications. Covers RAG pipelines, agent architectures, prompt IDEs, and LLMOps monitoring. Use when designing AI applications, implementing RAG, building agents, or setting up LLM observability."
+description:
+  'Production-ready patterns for building LLM applications. Covers RAG
+  pipelines, agent architectures, prompt IDEs, and LLMOps monitoring. Use when
+  designing AI applications, implementing RAG, building agents, or setting up
+  LLM observability.'
 ---
 
 # 🤖 LLM Application Patterns
 
-> Production-ready patterns for building LLM applications, inspired by [Dify](https://github.com/langgenius/dify) and industry best practices.
+> Production-ready patterns for building LLM applications, inspired by
+> [Dify](https://github.com/langgenius/dify) and industry best practices.
 
 ## When to Use This Skill
 

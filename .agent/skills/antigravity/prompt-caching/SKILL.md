@@ -1,20 +1,24 @@
 ---
 name: prompt-caching
-description: "Caching strategies for LLM prompts including Anthropic prompt caching, response caching, and CAG (Cache Augmented Generation) Use when: prompt caching, cache prompt, response cache, cag, cache augmented."
+description:
+  'Caching strategies for LLM prompts including Anthropic prompt caching,
+  response caching, and CAG (Cache Augmented Generation) Use when: prompt
+  caching, cache prompt, response cache, cag, cache augmented.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
 # Prompt Caching
 
-You're a caching specialist who has reduced LLM costs by 90% through strategic caching.
-You've implemented systems that cache at multiple levels: prompt prefixes, full responses,
-and semantic similarity matches.
+You're a caching specialist who has reduced LLM costs by 90% through strategic
+caching. You've implemented systems that cache at multiple levels: prompt
+prefixes, full responses, and semantic similarity matches.
 
-You understand that LLM caching is different from traditional caching—prompts have
-prefixes that can be cached, responses vary with temperature, and semantic similarity
-often matters more than exact match.
+You understand that LLM caching is different from traditional caching—prompts
+have prefixes that can be cached, responses vary with temperature, and semantic
+similarity often matters more than exact match.
 
 Your core principles:
+
 1. Cache at the right level—prefix, response, or both
 2. K
 
@@ -50,12 +54,13 @@ Pre-cache documents in prompt instead of RAG retrieval
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
-| Cache miss causes latency spike with additional overhead | high | // Optimize for cache misses, not just hits |
-| Cached responses become incorrect over time | high | // Implement proper cache invalidation |
-| Prompt caching doesn't work due to prefix changes | medium | // Structure prompts for optimal caching |
+| Issue                                                    | Severity | Solution                                    |
+| -------------------------------------------------------- | -------- | ------------------------------------------- |
+| Cache miss causes latency spike with additional overhead | high     | // Optimize for cache misses, not just hits |
+| Cached responses become incorrect over time              | high     | // Implement proper cache invalidation      |
+| Prompt caching doesn't work due to prefix changes        | medium   | // Structure prompts for optimal caching    |
 
 ## Related Skills
 
-Works well with: `context-window-management`, `rag-implementation`, `conversation-memory`
+Works well with: `context-window-management`, `rag-implementation`,
+`conversation-memory`

@@ -35,11 +35,13 @@ Loki Mode can be installed for Claude Code in three ways:
 ### Option A: Git Clone (Recommended)
 
 **Personal installation (available in all projects):**
+
 ```bash
 git clone https://github.com/asklokesh/loki-mode.git ~/.claude/skills/loki-mode
 ```
 
 **Project-specific installation:**
+
 ```bash
 # Navigate to your project directory first
 cd /path/to/your/project
@@ -89,7 +91,8 @@ curl -o ~/.claude/skills/loki-mode/references/business-ops.md \
   https://raw.githubusercontent.com/asklokesh/loki-mode/main/references/business-ops.md
 ```
 
-**Note:** This minimal install won't include examples, tests, or the autonomous runner. Use Option A or B for full functionality.
+**Note:** This minimal install won't include examples, tests, or the autonomous
+runner. Use Option A or B for full functionality.
 
 ---
 
@@ -114,7 +117,8 @@ For using Loki Mode on the Claude.ai web interface:
 4. Click **Upload Skill**
 5. Select the downloaded `.zip` or `.skill` file
 
-**File Structure:** The Claude.ai package has `SKILL.md` at the root level as required by the web interface.
+**File Structure:** The Claude.ai package has `SKILL.md` at the root level as
+required by the web interface.
 
 ---
 
@@ -127,7 +131,8 @@ For using Loki Mode through the Anthropic API Console (console.anthropic.com):
 1. Go to [Releases](https://github.com/asklokesh/loki-mode/releases)
 2. Download **`loki-mode-api-X.X.X.zip`** (note the `-api-` version)
 
-   **Important:** The API version has a different file structure than the web version.
+   **Important:** The API version has a different file structure than the web
+   version.
 
 ### Step 2: Upload to API Console
 
@@ -136,7 +141,8 @@ For using Loki Mode through the Anthropic API Console (console.anthropic.com):
 3. Click **Upload Skill**
 4. Select the downloaded `loki-mode-api-X.X.X.zip` file
 
-**File Structure:** The API package has `SKILL.md` inside a `loki-mode/` folder as required by the API.
+**File Structure:** The API package has `SKILL.md` inside a `loki-mode/` folder
+as required by the API.
 
 ---
 
@@ -151,6 +157,7 @@ cat ~/.claude/skills/loki-mode/SKILL.md | head -10
 ```
 
 **Expected output:** Should show YAML frontmatter starting with:
+
 ```yaml
 ---
 name: loki-mode
@@ -205,7 +212,8 @@ loki-mode/
     └── vibe-kanban.md
 ```
 
-**Note:** Some files/directories (autonomy, tests, examples) are only available with full installation (Options A or B).
+**Note:** Some files/directories (autonomy, tests, examples) are only available
+with full installation (Options A or B).
 
 ---
 
@@ -216,15 +224,19 @@ loki-mode/
 **Problem:** Claude doesn't recognize "Loki Mode" command.
 
 **Solutions:**
+
 1. **Check installation path:**
+
    ```bash
    ls -la ~/.claude/skills/loki-mode/SKILL.md
    ```
 
 2. **Verify YAML frontmatter:**
+
    ```bash
    cat ~/.claude/skills/loki-mode/SKILL.md | head -5
    ```
+
    Should show `name: loki-mode`
 
 3. **Restart Claude Code:**
@@ -237,6 +249,7 @@ loki-mode/
 **Problem:** Cannot create directories or download files.
 
 **Solution:**
+
 ```bash
 # Ensure skills directory exists
 mkdir -p ~/.claude/skills
@@ -250,9 +263,11 @@ ls -la ~/.claude/
 **Problem:** curl or wget commands fail.
 
 **Solutions:**
+
 1. **Check internet connection**
 
 2. **Try alternate download method:**
+
    ```bash
    # Use wget instead of curl
    wget -O ~/.claude/skills/loki-mode/SKILL.md \
@@ -268,12 +283,15 @@ ls -la ~/.claude/
 **Problem:** `./autonomy/run.sh` gives "command not found" or permission errors.
 
 **Solutions:**
+
 1. **Make executable:**
+
    ```bash
    chmod +x autonomy/run.sh
    ```
 
 2. **Run from repository root:**
+
    ```bash
    # Make sure you're in the loki-mode directory
    cd ~/.claude/skills/loki-mode
@@ -281,6 +299,7 @@ ls -la ~/.claude/
    ```
 
 3. **Check prerequisites:**
+
    ```bash
    # Ensure Claude Code is installed
    claude --version
@@ -294,6 +313,7 @@ ls -la ~/.claude/
 **Problem:** Skill loads but agent definitions or deployment guides are missing.
 
 **Solution:**
+
 ```bash
 # Ensure all reference files are present
 ls -la ~/.claude/skills/loki-mode/references/
@@ -361,6 +381,7 @@ rm -rf ~/.claude/skills/loki-mode
 After installation:
 
 1. **Quick Test:** Run a simple example
+
    ```bash
    ./autonomy/run.sh examples/simple-todo-app.md
    ```
@@ -369,14 +390,17 @@ After installation:
 
 3. **Create Your First PRD:** See the Quick Start section in README
 
-4. **Join the Community:** Report issues or contribute at [GitHub](https://github.com/asklokesh/loki-mode)
+4. **Join the Community:** Report issues or contribute at
+   [GitHub](https://github.com/asklokesh/loki-mode)
 
 ---
 
 ## Need Help?
 
-- **Issues/Bugs:** [GitHub Issues](https://github.com/asklokesh/loki-mode/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/asklokesh/loki-mode/discussions)
+- **Issues/Bugs:**
+  [GitHub Issues](https://github.com/asklokesh/loki-mode/issues)
+- **Discussions:**
+  [GitHub Discussions](https://github.com/asklokesh/loki-mode/discussions)
 - **Documentation:** [README.md](README.md)
 
 ---

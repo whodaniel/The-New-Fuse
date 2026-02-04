@@ -3,16 +3,8 @@
  * Proxies authentication requests to backend services
  */
 
-import {
-  Controller,
-  Post,
-  Body,
-  Headers,
-  Res,
-  HttpStatus,
-  Version,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Body, Controller, Headers, HttpStatus, Post, Res, Version } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
@@ -27,11 +19,7 @@ export class AuthController {
   @ApiBody({ description: 'Login credentials' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(
-    @Body() body: any,
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async login(@Body() body: any, @Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',
@@ -59,7 +47,7 @@ export class AuthController {
   async register(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -88,7 +76,7 @@ export class AuthController {
   async refresh(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -112,10 +100,7 @@ export class AuthController {
   @Version('1')
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Logout successful' })
-  async logout(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async logout(@Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',

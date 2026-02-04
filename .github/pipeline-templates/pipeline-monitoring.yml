@@ -9,45 +9,45 @@ monitoring:
       description: "Total pipeline execution time"
       labels: ["pipeline", "branch", "environment", "status"]
       buckets: [30, 60, 120, 300, 600, 1200, 1800, 3600]
-      
+
     - name: "pipeline_success_rate"
       type: "gauge"
       description: "Pipeline success rate over time"
       labels: ["pipeline", "branch", "environment"]
-      
+
     - name: "stage_duration"
       type: "histogram"
       description: "Individual stage execution time"
       labels: ["pipeline", "stage", "branch", "environment"]
       buckets: [10, 30, 60, 120, 300, 600, 1200]
-      
+
     - name: "test_execution_time"
       type: "histogram"
       description: "Test suite execution time"
       labels: ["test_type", "shard", "branch"]
       buckets: [30, 60, 120, 300, 600, 1200, 1800]
-      
+
     - name: "build_size"
       type: "gauge"
       description: "Build artifact size in bytes"
       labels: ["service", "branch", "environment"]
-      
+
     - name: "deployment_frequency"
       type: "counter"
       description: "Number of deployments per environment"
       labels: ["environment", "service", "status"]
-      
+
     - name: "lead_time"
       type: "histogram"
       description: "Time from commit to production deployment"
       labels: ["service", "branch"]
       buckets: [300, 600, 1200, 1800, 3600, 7200, 14400, 28800]
-      
+
     - name: "change_failure_rate"
       type: "gauge"
       description: "Percentage of deployments causing failures"
       labels: ["environment", "service"]
-      
+
     - name: "mean_time_to_recovery"
       type: "histogram"
       description: "Time to recover from deployment failures"
@@ -69,7 +69,7 @@ monitoring:
           channel: "#ci-cd-alerts"
         - type: "email"
           recipients: ["devops-team@company.com"]
-          
+
     - name: "pipeline_duration_high"
       description: "Pipeline taking longer than expected"
       condition: "pipeline_duration > 1800"
@@ -78,7 +78,7 @@ monitoring:
       annotations:
         summary: "Pipeline duration is {{ $value }}s"
         description: "Pipeline {{ $labels.pipeline }} is taking {{ $value }}s to complete"
-        
+
     - name: "deployment_failure"
       description: "Deployment has failed"
       condition: "deployment_frequency{status='failed'} > 0"
@@ -93,7 +93,7 @@ monitoring:
           mention: "@devops-oncall"
         - type: "pagerduty"
           service_key: "deployment-failures"
-          
+
     - name: "change_failure_rate_high"
       description: "Change failure rate is above threshold"
       condition: "change_failure_rate > 0.15"
@@ -112,65 +112,65 @@ monitoring:
           type: "stat"
           query: "avg(pipeline_success_rate)"
           unit: "percent"
-          
+
         - title: "Average Pipeline Duration"
           type: "stat"
           query: "avg(pipeline_duration)"
           unit: "seconds"
-          
+
         - title: "Deployments per Day"
           type: "graph"
           query: "sum(rate(deployment_frequency[24h])) by (environment)"
-          
+
         - title: "Pipeline Execution Times"
           type: "heatmap"
           query: "pipeline_duration"
-          
+
         - title: "Stage Duration Breakdown"
           type: "graph"
           query: "avg(stage_duration) by (stage)"
-          
+
     - name: "Deployment Metrics"
       description: "Deployment-specific metrics and trends"
       panels:
         - title: "Deployment Frequency"
           type: "graph"
           query: "sum(rate(deployment_frequency[1h])) by (environment)"
-          
+
         - title: "Lead Time"
           type: "histogram"
           query: "lead_time"
-          
+
         - title: "Change Failure Rate"
           type: "stat"
           query: "avg(change_failure_rate)"
           unit: "percent"
-          
+
         - title: "Mean Time to Recovery"
           type: "stat"
           query: "avg(mean_time_to_recovery)"
           unit: "seconds"
-          
+
         - title: "Deployment Status by Service"
           type: "table"
           query: "deployment_frequency"
-          
+
     - name: "Test Metrics"
       description: "Test execution and coverage metrics"
       panels:
         - title: "Test Execution Time"
           type: "graph"
           query: "avg(test_execution_time) by (test_type)"
-          
+
         - title: "Test Success Rate"
           type: "stat"
           query: "avg(test_success_rate)"
           unit: "percent"
-          
+
         - title: "Coverage Trends"
           type: "graph"
           query: "test_coverage"
-          
+
         - title: "Flaky Test Detection"
           type: "table"
           query: "flaky_test_rate"
@@ -187,30 +187,31 @@ reporting:
         - title: "Pipeline Performance"
           metrics: ["pipeline_success_rate", "pipeline_duration", "deployment_frequency"]
           time_range: "7d"
-          
+
         - title: "Quality Metrics"
           metrics: ["test_coverage", "security_scan_results", "code_quality_score"]
           time_range: "7d"
-          
+
         - title: "Deployment Summary"
           metrics: ["lead_time", "change_failure_rate", "mean_time_to_recovery"]
           time_range: "7d"
-          
+
     - name: "Monthly Engineering Metrics"
       schedule: "0 9 1 * *"
       recipients: ["engineering-team@company.com", "management@company.com"]
       format: "pdf"
       sections:
         - title: "DORA Metrics"
-          metrics: ["deployment_frequency", "lead_time", "change_failure_rate", "mean_time_to_recovery"]
+          metrics:
+            ["deployment_frequency", "lead_time", "change_failure_rate", "mean_time_to_recovery"]
           time_range: "30d"
           trends: true
-          
+
         - title: "Quality Trends"
           metrics: ["test_coverage", "code_quality_score", "security_vulnerabilities"]
           time_range: "30d"
           trends: true
-          
+
         - title: "Performance Analysis"
           metrics: ["pipeline_duration", "build_size", "test_execution_time"]
           time_range: "30d"
@@ -224,21 +225,21 @@ reporting:
           events: ["pipeline_start", "pipeline_complete", "deployment_start", "deployment_complete"]
           filters:
             branches: ["main", "staging"]
-            
+
         - name: "#deployments"
           events: ["deployment_start", "deployment_complete", "deployment_failed", "rollback"]
           filters:
             environments: ["staging", "production"]
-            
+
         - name: "#test-results"
           events: ["test_failure", "coverage_drop", "flaky_test_detected"]
-          
+
     email:
       groups:
         - name: "devops-team"
           recipients: ["devops@company.com"]
           events: ["pipeline_failure", "deployment_failure", "security_alert"]
-          
+
         - name: "engineering-leads"
           recipients: ["tech-leads@company.com"]
           events: ["quality_gate_failure", "performance_regression"]
@@ -255,16 +256,16 @@ data_management:
           retention: "30d"
         - resolution: "1h"
           retention: "90d"
-          
+
     - metric_type: "test_results"
       retention_period: "30d"
-      
+
     - metric_type: "deployment_logs"
       retention_period: "180d"
-      
+
     - metric_type: "security_scans"
       retention_period: "365d"
-      
+
   backup:
     enabled: true
     frequency: "daily"
@@ -276,18 +277,18 @@ integrations:
   prometheus:
     endpoint: "http://prometheus:9090"
     scrape_interval: "30s"
-    
+
   grafana:
     endpoint: "http://grafana:3000"
     api_key: "${GRAFANA_API_KEY}"
-    
+
   slack:
     webhook_url: "${SLACK_WEBHOOK_URL}"
     bot_token: "${SLACK_BOT_TOKEN}"
-    
+
   pagerduty:
     integration_key: "${PAGERDUTY_INTEGRATION_KEY}"
-    
+
   datadog:
     api_key: "${DATADOG_API_KEY}"
     app_key: "${DATADOG_APP_KEY}"

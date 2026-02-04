@@ -1,16 +1,24 @@
 ---
 name: Privilege Escalation Methods
-description: This skill should be used when the user asks to "escalate privileges", "get root access", "become administrator", "privesc techniques", "abuse sudo", "exploit SUID binaries", "Kerberoasting", "pass-the-ticket", "token impersonation", or needs guidance on post-exploitation privilege escalation for Linux or Windows systems.
+description:
+  This skill should be used when the user asks to "escalate privileges", "get
+  root access", "become administrator", "privesc techniques", "abuse sudo",
+  "exploit SUID binaries", "Kerberoasting", "pass-the-ticket", "token
+  impersonation", or needs guidance on post-exploitation privilege escalation
+  for Linux or Windows systems.
 metadata:
   author: zebbern
-  version: "1.1"
+  version: '1.1'
 ---
 
 # Privilege Escalation Methods
 
 ## Purpose
 
-Provide comprehensive techniques for escalating privileges from a low-privileged user to root/administrator access on compromised Linux and Windows systems. Essential for penetration testing post-exploitation phase and red team operations.
+Provide comprehensive techniques for escalating privileges from a low-privileged
+user to root/administrator access on compromised Linux and Windows systems.
+Essential for penetration testing post-exploitation phase and red team
+operations.
 
 ## Inputs/Prerequisites
 
@@ -248,36 +256,39 @@ copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\Windows\System32\config\SYS
 
 ## Quick Reference
 
-| Technique | OS | Domain Required | Tool |
-|-----------|-----|-----------------|------|
-| Sudo Binary Abuse | Linux | No | GTFOBins |
-| Cron Job Exploit | Linux | No | Manual |
-| Capability Abuse | Linux | No | getcap |
-| NFS no_root_squash | Linux | No | mount |
-| Token Impersonation | Windows | No | SweetPotato |
-| Service Abuse | Windows | No | PowerUp |
-| Kerberoasting | Windows | Yes | Rubeus/Impacket |
-| AS-REP Roasting | Windows | Yes | Rubeus |
-| Golden Ticket | Windows | Yes | Mimikatz |
-| Pass-the-Ticket | Windows | Yes | Rubeus |
-| DCSync | Windows | Yes | Mimikatz |
-| LLMNR Poisoning | Windows | Yes | Responder |
+| Technique           | OS      | Domain Required | Tool            |
+| ------------------- | ------- | --------------- | --------------- |
+| Sudo Binary Abuse   | Linux   | No              | GTFOBins        |
+| Cron Job Exploit    | Linux   | No              | Manual          |
+| Capability Abuse    | Linux   | No              | getcap          |
+| NFS no_root_squash  | Linux   | No              | mount           |
+| Token Impersonation | Windows | No              | SweetPotato     |
+| Service Abuse       | Windows | No              | PowerUp         |
+| Kerberoasting       | Windows | Yes             | Rubeus/Impacket |
+| AS-REP Roasting     | Windows | Yes             | Rubeus          |
+| Golden Ticket       | Windows | Yes             | Mimikatz        |
+| Pass-the-Ticket     | Windows | Yes             | Rubeus          |
+| DCSync              | Windows | Yes             | Mimikatz        |
+| LLMNR Poisoning     | Windows | Yes             | Responder       |
 
 ---
 
 ## Constraints
 
 **Must:**
+
 - Have initial shell access before attempting escalation
 - Verify target OS and environment before selecting technique
 - Use appropriate tool for domain vs local escalation
 
 **Must Not:**
+
 - Attempt techniques on production systems without authorization
 - Leave persistence mechanisms without client approval
 - Ignore detection mechanisms (EDR, SIEM)
 
 **Should:**
+
 - Enumerate thoroughly before exploitation
 - Document all successful escalation paths
 - Clean up artifacts after engagement
@@ -314,19 +325,20 @@ $ hashcat -m 13100 hashes.txt rockyou.txt
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| sudo -l requires password | Try other enumeration (SUID, cron, capabilities) |
-| Mimikatz blocked by AV | Use Invoke-Mimikatz or SafetyKatz |
-| Kerberoasting returns no hashes | Check for service accounts with SPNs |
-| Token impersonation fails | Verify SeImpersonatePrivilege is present |
-| NFS mount fails | Check NFS version compatibility (vers=2,3,4) |
+| Issue                           | Solution                                         |
+| ------------------------------- | ------------------------------------------------ |
+| sudo -l requires password       | Try other enumeration (SUID, cron, capabilities) |
+| Mimikatz blocked by AV          | Use Invoke-Mimikatz or SafetyKatz                |
+| Kerberoasting returns no hashes | Check for service accounts with SPNs             |
+| Token impersonation fails       | Verify SeImpersonatePrivilege is present         |
+| NFS mount fails                 | Check NFS version compatibility (vers=2,3,4)     |
 
 ---
 
 ## Additional Resources
 
 For detailed enumeration scripts, use:
+
 - **LinPEAS**: Linux privilege escalation enumeration
 - **WinPEAS**: Windows privilege escalation enumeration
 - **BloodHound**: Active Directory attack path mapping

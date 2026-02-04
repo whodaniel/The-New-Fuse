@@ -27,28 +27,30 @@ export class ClawdEngine {
   private sandboxClient: RemoteSandboxClient;
   private scheduler: ClawdScheduler; // Kept local for now, transition to Redis later
 
+  private initializationPromise: Promise<void>;
+
   constructor(rootPath?: string) {
     const root = rootPath || os.homedir();
     this.assimilationService = new ClawdAssimilationService(root);
     this.memoryPath = path.join(root, '.clawd', 'memory');
     this.nodeId = `tnf-assimilated-${uuidv4().substring(0, 8)}`;
 
-    // Connect to the Cloud Sandbox Service
-    // In dev: localhost:3000 (if running locally)
+    // Connect to the OpenClaw Gateway Service (Assimilated)
+    // In dev: localhost:18789 (The new OpenClaw port)
     // In prod: via env var provided by Railway
     this.sandboxClient = new RemoteSandboxClient(
-      process.env.CLAWD_SANDBOX_URL || 'ws://localhost:3000'
+      process.env.OPENCLAW_GATEWAY_URL || 'ws://localhost:18789'
     );
 
-    // Initialize Local Scheduler (Phase 1 of Synergy)
+    // Initialize Local Scheduler
     this.scheduler = new ClawdScheduler({
       redisUrl: process.env.REDIS_URL,
       nodeId: this.nodeId,
     });
 
-    void this.initialize().catch((err) => {
+    this.initializationPromise = this.initialize().catch((err) => {
       // eslint-disable-next-line no-console
-      console.error('[ClawdEngine] Failed to initialize:', err);
+      console.error('[OpenClawEngine] Failed to initialize:', err);
     });
   }
 
@@ -56,21 +58,21 @@ export class ClawdEngine {
     await this.assimilationService.assimilateSkills();
     this.ensureMemory();
 
-    // Connect to remote sandbox
+    // Connect to remote gateway
     try {
       await this.sandboxClient.connect();
       // eslint-disable-next-line no-console
-      console.log('[ClawdEngine] Connected to Cloud Sandbox');
+      console.log('[OpenClawEngine] Connected to OpenClaw Gateway');
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn('[ClawdEngine] Failed to connect to Cloud Sandbox (Will retry on usage):', e);
+      console.warn('[OpenClawEngine] Failed to connect to OpenClaw Gateway (Will retry on usage):', e);
     }
 
     // Initialize Scheduler with proactive skills
     await this.initializeProactiveSkills();
 
     // eslint-disable-next-line no-console
-    console.log(`[ClawdEngine] Initialized as Node: ${this.nodeId}`);
+    console.log(`[OpenClawEngine] Initialized as Node: ${this.nodeId}`);
   }
 
   private ensureMemory() {
@@ -91,12 +93,12 @@ export class ClawdEngine {
           if (trigger.startsWith('cron:')) {
             const expression = trigger.replace('cron:', '').trim();
             // eslint-disable-next-line no-console
-            console.log(`[ClawdEngine] Scheduling skill '${skill.name}' with cron: ${expression}`);
+            console.log(`[OpenClawEngine] Scheduling skill '${skill.name}' with cron: ${expression}`);
 
             await this.scheduler.scheduleSkill(skill.name, expression, {}, async () => {
               // Fallback / Local Handler
               // eslint-disable-next-line no-console
-              console.log(`[ClawdEngine] PROACTIVE TRIGGER (Local): ${skill.name}`);
+              console.log(`[OpenClawEngine] PROACTIVE TRIGGER (Local): ${skill.name}`);
               await this.executeSkill(skill.name, { trigger: 'cron', expression });
             });
           }
@@ -109,8 +111,9 @@ export class ClawdEngine {
    * Handle Protocol Request
    */
   public async handleRequest(req: IRequestFrame): Promise<IResponseFrame> {
+    await this.initializationPromise;
     // eslint-disable-next-line no-console
-    console.log(`[ClawdEngine] Processing request: ${req.method}`);
+    console.log(`[OpenClawEngine] Processing request: ${req.method}`);
 
     let result: unknown;
     let error: any;
@@ -131,7 +134,7 @@ export class ClawdEngine {
           break;
         }
         default:
-          throw new Error(`Method ${req.method} not implemented in Assimilated Engine`);
+          throw new Error(`Method ${req.method} not implemented in OpenClawEngine`);
       }
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : String(e);
@@ -153,34 +156,8 @@ export class ClawdEngine {
   /**
    * Execute Skill
    *
-   * IMPORTANT: This now routes execution based on skill type.
-   * - If it's a pure logic skill, run locally (maybe).
-   * - If it involves browser/shell/fs, DELEGATE to Remote Sandbox.
-   *
-   * For the "Assimilation" phase 1, we treat the skill implementation string
-   * as something to be sent to the sandbox if it matches certain heuristics,
-   * otherwise we might need a parser.
-   *
-   * However, `apps/cloud-sandbox` expects specific tool calls (browser_navigate, run_command),
-   * NOT raw JS code injection (unless we add an 'eval' tool).
-   *
-   * The `ClawdSkill` we parse from markdown usually contains code.
-   * We need to execute that code.
-   *
-   * STRATEGY: We send the code to the sandbox to be executed via a new `eval_script` tool
-   * or similar if supported, OR we run it here and bridge the API calls.
-   *
-   * Given `ClawdSandbox` allowed `eval`, we will use the `RemoteSandboxClient` to bridge.
-   * But `apps/cloud-sandbox` DOES NOT possess a generic `eval` tool.
-   * It has `run_command`, `browser_*`.
-   *
-   * ADAPTATION: We will implement a "Smart Router" here.
-   * If the skill is markdown with specific intent, we map it to tools.
-   * If it's generic JS, we unfortunately still need a local runtime to orchestrate the remote tools.
-   *
-   * REVISED APPROACH: We run the code LOCALLY in a safe VM, but inject the
-   * `sandboxClient` methods as the API (browser, shell).
-   * This is the Hybrid "Controller-Worker" model.
+   * SECURITY NOTE: All tool execution is delegated to the OpenClaw Gateway,
+   * which enforces Docker sandboxing and RBAC.
    */
   private async executeSkill(skillName: string, args: unknown): Promise<unknown> {
     const skill = this.assimilationService.getSkill(skillName);
@@ -189,11 +166,7 @@ export class ClawdEngine {
     }
 
     // eslint-disable-next-line no-console
-    console.log(`[ClawdEngine] Executing skill: ${skill.name}`);
-
-    // Dynamic import to avoid circular dependencies if any, or just use our new Client
-    // We execute the code LOCALLY, but the 'browser' and 'shell' globals
-    // map to RPC calls to the remote sandbox.
+    console.log(`[OpenClawEngine] Executing skill: ${skill.name}`);
 
     // We revive the Sandbox for logic execution, but backed by Remote Client
     const { ClawdSandbox } = await import('./ClawdSandbox.js');
@@ -201,7 +174,7 @@ export class ClawdEngine {
     const localSandbox = new ClawdSandbox({
       allowedGlobals: {
         console,
-        // The Bridge:
+        // The Bridge to OpenClaw Gateway:
         browser: {
           navigate: (url: string) => this.sandboxClient.callTool('browser_navigate', { url }),
           screenshot: () => this.sandboxClient.callTool('browser_screenshot', {}),
@@ -231,9 +204,8 @@ export class ClawdEngine {
     this.isShuttingDown = true;
 
     this.scheduler.stopAll();
-    // this.sandboxClient.disconnect(); // If we implemented disconnect
 
     // eslint-disable-next-line no-console
-    console.log(`[ClawdEngine] Shutdown complete for Node: ${this.nodeId}`);
+    console.log(`[OpenClawEngine] Shutdown complete for Node: ${this.nodeId}`);
   }
 }

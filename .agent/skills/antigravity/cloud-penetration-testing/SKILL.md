@@ -1,20 +1,30 @@
 ---
 name: Cloud Penetration Testing
-description: This skill should be used when the user asks to "perform cloud penetration testing", "assess Azure or AWS or GCP security", "enumerate cloud resources", "exploit cloud misconfigurations", "test O365 security", "extract secrets from cloud environments", or "audit cloud infrastructure". It provides comprehensive techniques for security assessment across major cloud platforms.
+description:
+  This skill should be used when the user asks to "perform cloud penetration
+  testing", "assess Azure or AWS or GCP security", "enumerate cloud resources",
+  "exploit cloud misconfigurations", "test O365 security", "extract secrets from
+  cloud environments", or "audit cloud infrastructure". It provides
+  comprehensive techniques for security assessment across major cloud platforms.
 metadata:
   author: zebbern
-  version: "1.1"
+  version: '1.1'
 ---
 
 # Cloud Penetration Testing
 
 ## Purpose
 
-Conduct comprehensive security assessments of cloud infrastructure across Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP). This skill covers reconnaissance, authentication testing, resource enumeration, privilege escalation, data extraction, and persistence techniques for authorized cloud security engagements.
+Conduct comprehensive security assessments of cloud infrastructure across
+Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP).
+This skill covers reconnaissance, authentication testing, resource enumeration,
+privilege escalation, data extraction, and persistence techniques for authorized
+cloud security engagements.
 
 ## Prerequisites
 
 ### Required Tools
+
 ```bash
 # Azure tools
 Install-Module -Name Az -AllowClobber -Force
@@ -34,19 +44,22 @@ pip install scoutsuite pacu
 ```
 
 ### Required Knowledge
+
 - Cloud architecture fundamentals
 - Identity and Access Management (IAM)
 - API authentication mechanisms
 - DevOps and automation concepts
 
 ### Required Access
+
 - Written authorization for testing
 - Test credentials or access tokens
 - Defined scope and rules of engagement
 
 ## Outputs and Deliverables
 
-1. **Cloud Security Assessment Report** - Comprehensive findings and risk ratings
+1. **Cloud Security Assessment Report** - Comprehensive findings and risk
+   ratings
 2. **Resource Inventory** - Enumerated services, storage, and compute instances
 3. **Credential Findings** - Exposed secrets, keys, and misconfigurations
 4. **Remediation Recommendations** - Hardening guidance per platform
@@ -357,76 +370,79 @@ gcloud auth list
 
 ### Azure Key Commands
 
-| Action | Command |
-|--------|---------|
-| Login | `Connect-AzAccount` |
-| List subscriptions | `Get-AzSubscription` |
-| List users | `Get-MsolUser -All` |
-| List groups | `Get-MsolGroup -All` |
-| Current roles | `Get-AzRoleAssignment` |
-| List VMs | `Get-AzVM` |
-| List storage | `Get-AzStorageAccount` |
-| Key Vault secrets | `az keyvault secret list --vault-name <name>` |
+| Action             | Command                                       |
+| ------------------ | --------------------------------------------- |
+| Login              | `Connect-AzAccount`                           |
+| List subscriptions | `Get-AzSubscription`                          |
+| List users         | `Get-MsolUser -All`                           |
+| List groups        | `Get-MsolGroup -All`                          |
+| Current roles      | `Get-AzRoleAssignment`                        |
+| List VMs           | `Get-AzVM`                                    |
+| List storage       | `Get-AzStorageAccount`                        |
+| Key Vault secrets  | `az keyvault secret list --vault-name <name>` |
 
 ### AWS Key Commands
 
-| Action | Command |
-|--------|---------|
-| Configure | `aws configure` |
-| Caller identity | `aws sts get-caller-identity` |
-| List users | `aws iam list-users` |
-| List S3 buckets | `aws s3 ls` |
-| List EC2 | `aws ec2 describe-instances` |
-| List Lambda | `aws lambda list-functions` |
-| Metadata | `curl http://169.254.169.254/latest/meta-data/` |
+| Action          | Command                                         |
+| --------------- | ----------------------------------------------- |
+| Configure       | `aws configure`                                 |
+| Caller identity | `aws sts get-caller-identity`                   |
+| List users      | `aws iam list-users`                            |
+| List S3 buckets | `aws s3 ls`                                     |
+| List EC2        | `aws ec2 describe-instances`                    |
+| List Lambda     | `aws lambda list-functions`                     |
+| Metadata        | `curl http://169.254.169.254/latest/meta-data/` |
 
 ### GCP Key Commands
 
-| Action | Command |
-|--------|---------|
-| Login | `gcloud auth login` |
-| List projects | `gcloud projects list` |
-| List instances | `gcloud compute instances list` |
-| List buckets | `gsutil ls` |
-| List clusters | `gcloud container clusters list` |
-| IAM policy | `gcloud projects get-iam-policy <project>` |
-| Metadata | `curl -H "Metadata-Flavor: Google" http://metadata.google.internal/...` |
+| Action         | Command                                                                 |
+| -------------- | ----------------------------------------------------------------------- |
+| Login          | `gcloud auth login`                                                     |
+| List projects  | `gcloud projects list`                                                  |
+| List instances | `gcloud compute instances list`                                         |
+| List buckets   | `gsutil ls`                                                             |
+| List clusters  | `gcloud container clusters list`                                        |
+| IAM policy     | `gcloud projects get-iam-policy <project>`                              |
+| Metadata       | `curl -H "Metadata-Flavor: Google" http://metadata.google.internal/...` |
 
 ### Metadata Service URLs
 
-| Provider | URL |
-|----------|-----|
-| AWS | `http://169.254.169.254/latest/meta-data/` |
-| Azure | `http://169.254.169.254/metadata/instance?api-version=2018-02-01` |
-| GCP | `http://metadata.google.internal/computeMetadata/v1/` |
+| Provider | URL                                                               |
+| -------- | ----------------------------------------------------------------- |
+| AWS      | `http://169.254.169.254/latest/meta-data/`                        |
+| Azure    | `http://169.254.169.254/metadata/instance?api-version=2018-02-01` |
+| GCP      | `http://metadata.google.internal/computeMetadata/v1/`             |
 
 ### Useful Tools
 
-| Tool | Purpose |
-|------|---------|
+| Tool       | Purpose                       |
+| ---------- | ----------------------------- |
 | ScoutSuite | Multi-cloud security auditing |
-| Pacu | AWS exploitation framework |
-| AzureHound | Azure AD attack path mapping |
-| ROADTools | Azure AD enumeration |
-| WeirdAAL | AWS service enumeration |
-| MicroBurst | Azure security assessment |
-| PowerZure | Azure post-exploitation |
+| Pacu       | AWS exploitation framework    |
+| AzureHound | Azure AD attack path mapping  |
+| ROADTools  | Azure AD enumeration          |
+| WeirdAAL   | AWS service enumeration       |
+| MicroBurst | Azure security assessment     |
+| PowerZure  | Azure post-exploitation       |
 
 ## Constraints and Limitations
 
 ### Legal Requirements
+
 - Only test with explicit written authorization
 - Respect scope boundaries between cloud accounts
 - Do not access production customer data
 - Document all testing activities
 
 ### Technical Limitations
+
 - MFA may prevent credential-based attacks
 - Conditional Access policies may restrict access
 - CloudTrail/Activity Logs record all API calls
 - Some resources require specific regional access
 
 ### Detection Considerations
+
 - Cloud providers log all API activity
 - Unusual access patterns trigger alerts
 - Use slow, deliberate enumeration
@@ -489,13 +505,15 @@ gcloud beta compute ssh instance-name --zone us-central1-a --project target-proj
 
 ## Troubleshooting
 
-| Issue | Solutions |
-|-------|-----------|
-| Authentication failures | Verify credentials; check MFA; ensure correct tenant/project; try alternative auth methods |
-| Permission denied | List current roles; try different resources; check resource policies; verify region |
-| Metadata service blocked | Check IMDSv2 (AWS); verify instance role; check firewall for 169.254.169.254 |
-| Rate limiting | Add delays; spread across regions; use multiple credentials; focus on high-value targets |
+| Issue                    | Solutions                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| Authentication failures  | Verify credentials; check MFA; ensure correct tenant/project; try alternative auth methods |
+| Permission denied        | List current roles; try different resources; check resource policies; verify region        |
+| Metadata service blocked | Check IMDSv2 (AWS); verify instance role; check firewall for 169.254.169.254               |
+| Rate limiting            | Add delays; spread across regions; use multiple credentials; focus on high-value targets   |
 
 ## References
 
-- [Advanced Cloud Scripts](references/advanced-cloud-scripts.md) - Azure Automation runbooks, Function Apps enumeration, AWS data exfiltration, GCP advanced exploitation
+- [Advanced Cloud Scripts](references/advanced-cloud-scripts.md) - Azure
+  Automation runbooks, Function Apps enumeration, AWS data exfiltration, GCP
+  advanced exploitation

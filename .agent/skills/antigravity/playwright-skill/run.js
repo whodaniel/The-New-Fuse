@@ -86,10 +86,10 @@ function getCodeToExecute() {
 function cleanupOldTempFiles() {
   try {
     const files = fs.readdirSync(__dirname);
-    const tempFiles = files.filter(f => f.startsWith('.temp-execution-') && f.endsWith('.js'));
+    const tempFiles = files.filter((f) => f.startsWith('.temp-execution-') && f.endsWith('.js'));
 
     if (tempFiles.length > 0) {
-      tempFiles.forEach(file => {
+      tempFiles.forEach((file) => {
         const filePath = path.join(__dirname, file);
         try {
           fs.unlinkSync(filePath);
@@ -210,7 +210,6 @@ async function main() {
 
     // Note: Temp file will be cleaned up on next run
     // This allows long-running async operations to complete safely
-
   } catch (error) {
     console.error('❌ Execution failed:', error.message);
     if (error.stack) {
@@ -222,7 +221,7 @@ async function main() {
 }
 
 // Run main function
-main().catch(error => {
+main().catch((error) => {
   console.error('❌ Fatal error:', error.message);
   process.exit(1);
 });

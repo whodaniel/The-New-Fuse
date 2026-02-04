@@ -93,7 +93,7 @@ export default function ComprehensiveAdminDashboard() {
     setError(null);
     try {
       const data = await dashboardService.getAdminDashboardMetrics();
-      
+
       const uptimeSeconds = data.system.uptime || 0;
       const days = Math.floor(uptimeSeconds / (24 * 60 * 60));
       const hours = Math.floor((uptimeSeconds % (24 * 60 * 60)) / (60 * 60));
@@ -135,7 +135,7 @@ export default function ComprehensiveAdminDashboard() {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     loadDashboardData();
     const interval = setInterval(loadDashboardData, 30000);
@@ -280,7 +280,7 @@ export default function ComprehensiveAdminDashboard() {
   if (loading && !metrics) {
     return <DashboardSkeleton />;
   }
-  
+
   if (error) {
     return (
       <div className="p-8 max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">

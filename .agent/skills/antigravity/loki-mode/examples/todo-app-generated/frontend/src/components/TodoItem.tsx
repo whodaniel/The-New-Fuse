@@ -24,9 +24,7 @@ export const TodoItem = ({ todo, onToggle, onDelete }: TodoItemProps) => {
           onChange={handleToggle}
           className="todo-checkbox"
         />
-        <span className={todo.completed ? 'todo-title completed' : 'todo-title'}>
-          {todo.title}
-        </span>
+        <span className={todo.completed ? 'todo-title completed' : 'todo-title'}>{todo.title}</span>
       </div>
       <button onClick={handleDelete} className="delete-button">
         Delete

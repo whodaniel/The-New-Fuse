@@ -1,6 +1,7 @@
 # Loki Mode - Autonomous Runner
 
-Single script that handles everything: prerequisites, setup, Vibe Kanban monitoring, and autonomous execution with auto-resume.
+Single script that handles everything: prerequisites, setup, Vibe Kanban
+monitoring, and autonomous execution with auto-resume.
 
 ## Quick Start
 
@@ -13,6 +14,7 @@ Single script that handles everything: prerequisites, setup, Vibe Kanban monitor
 ```
 
 That's it! The script will:
+
 1. Check all prerequisites (Claude CLI, Python, Git, etc.)
 2. Verify skill installation
 3. Initialize the `.loki/` directory
@@ -23,7 +25,8 @@ That's it! The script will:
 
 ## Live Output
 
-Claude's output is displayed in real-time - you can see exactly what's happening:
+Claude's output is displayed in real-time - you can see exactly what's
+happening:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -67,14 +70,14 @@ cat .loki/STATUS.txt
 
 ## What Gets Checked
 
-| Prerequisite | Required | Notes |
-|--------------|----------|-------|
-| Claude Code CLI | Yes | Install from https://claude.ai/code |
-| Python 3 | Yes | For state management |
-| Git | Yes | For version control |
-| curl | Yes | For web fetches |
-| Node.js | No | Needed for some builds |
-| jq | No | Helpful for JSON parsing |
+| Prerequisite    | Required | Notes                               |
+| --------------- | -------- | ----------------------------------- |
+| Claude Code CLI | Yes      | Install from https://claude.ai/code |
+| Python 3        | Yes      | For state management                |
+| Git             | Yes      | For version control                 |
+| curl            | Yes      | For web fetches                     |
+| Node.js         | No       | Needed for some builds              |
+| jq              | No       | Helpful for JSON parsing            |
 
 ## Configuration
 
@@ -159,25 +162,29 @@ The script detects the previous state and continues from where it left off.
 
 ## Differences from Manual Mode
 
-| Feature | Manual Mode | Autonomy Mode |
-|---------|-------------|---------------|
-| Start | `claude --dangerously-skip-permissions` | `./autonomy/run.sh` |
-| Prereq check | Manual | Automatic |
-| Rate limit handling | Manual restart | Auto-resume |
-| State persistence | Manual checkpoint | Automatic |
-| Logging | Console only | Console + file |
-| Max runtime | Session-based | Configurable retries |
+| Feature             | Manual Mode                             | Autonomy Mode        |
+| ------------------- | --------------------------------------- | -------------------- |
+| Start               | `claude --dangerously-skip-permissions` | `./autonomy/run.sh`  |
+| Prereq check        | Manual                                  | Automatic            |
+| Rate limit handling | Manual restart                          | Auto-resume          |
+| State persistence   | Manual checkpoint                       | Automatic            |
+| Logging             | Console only                            | Console + file       |
+| Max runtime         | Session-based                           | Configurable retries |
 
 ## Troubleshooting
 
 ### "Claude Code CLI not found"
+
 ```bash
 npm install -g @anthropic-ai/claude-code
 # or visit https://claude.ai/code
 ```
 
 ### "SKILL.md not found"
-Make sure you're running from the loki-mode directory or have installed the skill:
+
+Make sure you're running from the loki-mode directory or have installed the
+skill:
+
 ```bash
 # Option 1: Run from project directory
 cd /path/to/loki-mode
@@ -188,7 +195,9 @@ cp -r . ~/.claude/skills/loki-mode/
 ```
 
 ### "Max retries exceeded"
+
 The task is taking too long or repeatedly failing. Check:
+
 ```bash
 # View logs
 cat .loki/logs/autonomy-*.log | tail -100

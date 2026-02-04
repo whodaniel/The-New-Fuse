@@ -1,6 +1,7 @@
 # Sunset Boulevard
 
-A warm and vibrant theme inspired by golden hour sunsets, perfect for energetic and creative presentations.
+A warm and vibrant theme inspired by golden hour sunsets, perfect for energetic
+and creative presentations.
 
 ## Color Palette
 
@@ -16,4 +17,5 @@ A warm and vibrant theme inspired by golden hour sunsets, perfect for energetic 
 
 ## Best Used For
 
-Creative pitches, marketing presentations, lifestyle brands, event promotions, inspirational content.
+Creative pitches, marketing presentations, lifestyle brands, event promotions,
+inspirational content.

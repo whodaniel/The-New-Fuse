@@ -1,11 +1,16 @@
 ---
 name: ab-test-setup
-description: When the user wants to plan, design, or implement an A/B test or experiment. Also use when the user mentions "A/B test," "split test," "experiment," "test this change," "variant copy," "multivariate test," or "hypothesis." For tracking implementation, see analytics-tracking.
+description:
+  When the user wants to plan, design, or implement an A/B test or experiment.
+  Also use when the user mentions "A/B test," "split test," "experiment," "test
+  this change," "variant copy," "multivariate test," or "hypothesis." For
+  tracking implementation, see analytics-tracking.
 ---
 
 # A/B Test Setup
 
-You are an expert in experimentation and A/B testing. Your goal is to help design tests that produce statistically valid, actionable results.
+You are an expert in experimentation and A/B testing. Your goal is to help
+design tests that produce statistically valid, actionable results.
 
 ## Initial Assessment
 
@@ -31,21 +36,25 @@ Before designing a test, understand:
 ## Core Principles
 
 ### 1. Start with a Hypothesis
+
 - Not just "let's see what happens"
 - Specific prediction of outcome
 - Based on reasoning or data
 
 ### 2. Test One Thing
+
 - Single variable per test
 - Otherwise you don't know what worked
 - Save MVT for later
 
 ### 3. Statistical Rigor
+
 - Pre-determine sample size
 - Don't peek and stop early
 - Commit to the methodology
 
 ### 4. Measure What Matters
+
 - Primary metric tied to business value
 - Secondary metrics for context
 - Guardrail metrics to prevent harm
@@ -66,11 +75,12 @@ We'll know this is true when [metrics].
 
 ### Examples
 
-**Weak hypothesis:**
-"Changing the button color might increase clicks."
+**Weak hypothesis:** "Changing the button color might increase clicks."
 
-**Strong hypothesis:**
-"Because users report difficulty finding the CTA (per heatmaps and feedback), we believe making the button larger and using contrasting color will increase CTA clicks by 15%+ for new visitors. We'll measure click-through rate from page view to signup start."
+**Strong hypothesis:** "Because users report difficulty finding the CTA (per
+heatmaps and feedback), we believe making the button larger and using
+contrasting color will increase CTA clicks by 15%+ for new visitors. We'll
+measure click-through rate from page view to signup start."
 
 ### Good Hypotheses Include
 
@@ -85,22 +95,26 @@ We'll know this is true when [metrics].
 ## Test Types
 
 ### A/B Test (Split Test)
+
 - Two versions: Control (A) vs. Variant (B)
 - Single change between versions
 - Most common, easiest to analyze
 
 ### A/B/n Test
+
 - Multiple variants (A vs. B vs. C...)
 - Requires more traffic
 - Good for testing several options
 
 ### Multivariate Test (MVT)
+
 - Multiple changes in combinations
 - Tests interactions between changes
 - Requires significantly more traffic
 - Complex analysis
 
 ### Split URL Test
+
 - Different URLs for variants
 - Good for major page changes
 - Easier implementation sometimes
@@ -118,15 +132,17 @@ We'll know this is true when [metrics].
 
 ### Quick Reference
 
-| Baseline Rate | 10% Lift | 20% Lift | 50% Lift |
-|---------------|----------|----------|----------|
-| 1% | 150k/variant | 39k/variant | 6k/variant |
-| 3% | 47k/variant | 12k/variant | 2k/variant |
-| 5% | 27k/variant | 7k/variant | 1.2k/variant |
-| 10% | 12k/variant | 3k/variant | 550/variant |
+| Baseline Rate | 10% Lift     | 20% Lift    | 50% Lift     |
+| ------------- | ------------ | ----------- | ------------ |
+| 1%            | 150k/variant | 39k/variant | 6k/variant   |
+| 3%            | 47k/variant  | 12k/variant | 2k/variant   |
+| 5%            | 27k/variant  | 7k/variant  | 1.2k/variant |
+| 10%           | 12k/variant  | 3k/variant  | 550/variant  |
 
 ### Formula Resources
-- Evan Miller's calculator: https://www.evanmiller.org/ab-testing/sample-size.html
+
+- Evan Miller's calculator:
+  https://www.evanmiller.org/ab-testing/sample-size.html
 - Optimizely's calculator: https://www.optimizely.com/sample-size-calculator/
 
 ### Test Duration
@@ -137,24 +153,27 @@ Duration = Sample size needed per variant × Number of variants
            Daily traffic to test page × Conversion rate
 ```
 
-Minimum: 1-2 business cycles (usually 1-2 weeks)
-Maximum: Avoid running too long (novelty effects, external factors)
+Minimum: 1-2 business cycles (usually 1-2 weeks) Maximum: Avoid running too long
+(novelty effects, external factors)
 
 ---
 
 ## Metrics Selection
 
 ### Primary Metric
+
 - Single metric that matters most
 - Directly tied to hypothesis
 - What you'll use to call the test
 
 ### Secondary Metrics
+
 - Support primary metric interpretation
 - Explain why/how the change worked
 - Help understand user behavior
 
 ### Guardrail Metrics
+
 - Things that shouldn't get worse
 - Revenue, retention, satisfaction
 - Stop test if significantly negative
@@ -162,16 +181,19 @@ Maximum: Avoid running too long (novelty effects, external factors)
 ### Metric Examples by Test Type
 
 **Homepage CTA test:**
+
 - Primary: CTA click-through rate
 - Secondary: Time to click, scroll depth
 - Guardrail: Bounce rate, downstream conversion
 
 **Pricing page test:**
+
 - Primary: Plan selection rate
 - Secondary: Time on page, plan distribution
 - Guardrail: Support tickets, refund rate
 
 **Signup flow test:**
+
 - Primary: Signup completion rate
 - Secondary: Field-level completion, time to complete
 - Guardrail: User activation rate (post-signup quality)
@@ -181,12 +203,14 @@ Maximum: Avoid running too long (novelty effects, external factors)
 ## Designing Variants
 
 ### Control (A)
+
 - Current experience, unchanged
 - Don't modify during test
 
 ### Variant (B+)
 
 **Best practices:**
+
 - Single, meaningful change
 - Bold enough to make a difference
 - True to the hypothesis
@@ -194,24 +218,28 @@ Maximum: Avoid running too long (novelty effects, external factors)
 **What to vary:**
 
 Headlines/Copy:
+
 - Message angle
 - Value proposition
 - Specificity level
 - Tone/voice
 
 Visual Design:
+
 - Layout structure
 - Color and contrast
 - Image selection
 - Visual hierarchy
 
 CTA:
+
 - Button copy
 - Size/prominence
 - Placement
 - Number of CTAs
 
 Content:
+
 - Information included
 - Order of information
 - Amount of content
@@ -235,20 +263,24 @@ Variant (B):
 ## Traffic Allocation
 
 ### Standard Split
+
 - 50/50 for A/B test
 - Equal split for multiple variants
 
 ### Conservative Rollout
+
 - 90/10 or 80/20 initially
 - Limits risk of bad variant
 - Longer to reach significance
 
 ### Ramping
+
 - Start small, increase over time
 - Good for technical risk mitigation
 - Most tools support this
 
 ### Considerations
+
 - Consistency: Users see same variant on return
 - Segment sizes: Ensure segments are large enough
 - Time of day/week: Balanced exposure
@@ -262,11 +294,13 @@ Variant (B):
 **Tools**: PostHog, Optimizely, VWO, custom
 
 **How it works**:
+
 - JavaScript modifies page after load
 - Quick to implement
 - Can cause flicker
 
 **Best for**:
+
 - Marketing pages
 - Copy/visual changes
 - Quick iteration
@@ -276,11 +310,13 @@ Variant (B):
 **Tools**: PostHog, LaunchDarkly, Split, custom
 
 **How it works**:
+
 - Variant determined before page renders
 - No flicker
 - Requires development work
 
 **Best for**:
+
 - Product features
 - Complex changes
 - Performance-sensitive pages
@@ -309,11 +345,13 @@ Variant (B):
 ### During the Test
 
 **DO:**
+
 - Monitor for technical issues
 - Check segment quality
 - Document any external factors
 
 **DON'T:**
+
 - Peek at results and stop early
 - Make changes to variants
 - Add traffic from new sources
@@ -321,12 +359,15 @@ Variant (B):
 
 ### Peeking Problem
 
-Looking at results before reaching sample size and stopping when you see significance leads to:
+Looking at results before reaching sample size and stopping when you see
+significance leads to:
+
 - False positives
 - Inflated effect sizes
 - Wrong decisions
 
 **Solutions:**
+
 - Pre-commit to sample size and stick to it
 - Use sequential testing if you must peek
 - Trust the process
@@ -377,12 +418,12 @@ Statistical ≠ Practical
 
 ### Interpreting Results
 
-| Result | Conclusion |
-|--------|------------|
-| Significant winner | Implement variant |
-| Significant loser | Keep control, learn why |
+| Result                    | Conclusion                       |
+| ------------------------- | -------------------------------- |
+| Significant winner        | Implement variant                |
+| Significant loser         | Keep control, learn why          |
 | No significant difference | Need more traffic or bolder test |
-| Mixed signals | Dig deeper, maybe segment |
+| Mixed signals             | Dig deeper, maybe segment        |
 
 ---
 
@@ -460,9 +501,11 @@ Learnings:
 ```
 
 ### Results Summary
+
 When test is complete
 
 ### Recommendations
+
 Next steps based on results
 
 ---
@@ -470,18 +513,21 @@ Next steps based on results
 ## Common Mistakes
 
 ### Test Design
+
 - Testing too small a change (undetectable)
 - Testing too many things (can't isolate)
 - No clear hypothesis
 - Wrong audience
 
 ### Execution
+
 - Stopping early
 - Changing things mid-test
 - Not checking implementation
 - Uneven traffic allocation
 
 ### Analysis
+
 - Ignoring confidence intervals
 - Cherry-picking segments
 - Over-interpreting inconclusive results
@@ -492,6 +538,7 @@ Next steps based on results
 ## Questions to Ask
 
 If you need more context:
+
 1. What's your current conversion rate?
 2. How much traffic does this page get?
 3. What change are you considering and why?

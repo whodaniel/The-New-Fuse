@@ -1,6 +1,8 @@
 ---
 name: concise-planning
-description: Use when a user asks for a plan for a coding task, to generate a clear, actionable, and atomic checklist.
+description:
+  Use when a user asks for a plan for a coding task, to generate a clear,
+  actionable, and atomic checklist.
 ---
 
 # Concise Planning
@@ -44,11 +46,8 @@ Use the following structure:
 
 ## Action Items
 
-[ ] <Step 1: Discovery>
-[ ] <Step 2: Implementation>
-[ ] <Step 3: Implementation>
-[ ] <Step 4: Validation/Testing>
-[ ] <Step 5: Rollout/Commit>
+[ ] <Step 1: Discovery> [ ] <Step 2: Implementation> [ ] <Step 3:
+Implementation> [ ] <Step 4: Validation/Testing> [ ] <Step 5: Rollout/Commit>
 
 ## Open Questions
 

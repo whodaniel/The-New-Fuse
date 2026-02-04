@@ -1,6 +1,11 @@
 ---
 name: twilio-communications
-description: "Build communication features with Twilio: SMS messaging, voice calls, WhatsApp Business API, and user verification (2FA). Covers the full spectrum from simple notifications to complex IVR systems and multi-channel authentication. Critical focus on compliance, rate limits, and error handling. Use when: twilio, send SMS, text message, voice call, phone verification."
+description:
+  'Build communication features with Twilio: SMS messaging, voice calls,
+  WhatsApp Business API, and user verification (2FA). Covers the full spectrum
+  from simple notifications to complex IVR systems and multi-channel
+  authentication. Critical focus on compliance, rate limits, and error handling.
+  Use when: twilio, send SMS, text message, voice call, phone verification.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -10,18 +15,18 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 ### SMS Sending Pattern
 
-Basic pattern for sending SMS messages with Twilio.
-Handles the fundamentals: phone number formatting, message delivery,
-and delivery status callbacks.
+Basic pattern for sending SMS messages with Twilio. Handles the fundamentals:
+phone number formatting, message delivery, and delivery status callbacks.
 
 Key considerations:
+
 - Phone numbers must be in E.164 format (+1234567890)
 - Default rate limit: 80 messages per second (MPS)
 - Messages over 160 characters are split (and cost more)
 - Carrier filtering can block messages (especially to US numbers)
 
-
-**When to use**: ['Sending notifications to users', 'Transactional messages (order confirmations, shipping)', 'Alerts and reminders']
+**When to use**: ['Sending notifications to users', 'Transactional messages
+(order confirmations, shipping)', 'Alerts and reminders']
 
 ```python
 from twilio.rest import Client
@@ -98,20 +103,22 @@ class TwilioSMS:
 
 ### Twilio Verify Pattern (2FA/OTP)
 
-Use Twilio Verify for phone number verification and 2FA.
-Handles code generation, delivery, rate limiting, and fraud prevention.
+Use Twilio Verify for phone number verification and 2FA. Handles code
+generation, delivery, rate limiting, and fraud prevention.
 
 Key benefits over DIY OTP:
+
 - Twilio manages code generation and expiration
 - Built-in fraud prevention (saved customers $82M+ blocking 747M attempts)
 - Handles rate limiting automatically
 - Multi-channel: SMS, Voice, Email, Push, WhatsApp
 
-Google found SMS 2FA blocks "100% of automated bots, 96% of bulk
-phishing attacks, and 76% of targeted attacks."
+Google found SMS 2FA blocks "100% of automated bots, 96% of bulk phishing
+attacks, and 76% of targeted attacks."
 
-
-**When to use**: ['User phone number verification at signup', 'Two-factor authentication (2FA)', 'Password reset verification', 'High-value transaction confirmation']
+**When to use**: ['User phone number verification at signup', 'Two-factor
+authentication (2FA)', 'Password reset verification', 'High-value transaction
+confirmation']
 
 ```python
 from twilio.rest import Client
@@ -191,11 +198,11 @@ class TwilioVerify:
 
 ### TwiML IVR Pattern
 
-Build Interactive Voice Response (IVR) systems using TwiML.
-TwiML (Twilio Markup Language) is XML that tells Twilio what to do
-when receiving calls.
+Build Interactive Voice Response (IVR) systems using TwiML. TwiML (Twilio Markup
+Language) is XML that tells Twilio what to do when receiving calls.
 
 Core TwiML verbs:
+
 - <Say>: Text-to-speech
 - <Play>: Play audio file
 - <Gather>: Collect keypad/speech input
@@ -203,11 +210,12 @@ Core TwiML verbs:
 - <Record>: Record caller's voice
 - <Redirect>: Move to another TwiML endpoint
 
-Key insight: Twilio makes HTTP request to your webhook, you return
-TwiML, Twilio executes it. Stateless, so use URL params or sessions.
+Key insight: Twilio makes HTTP request to your webhook, you return TwiML, Twilio
+executes it. Stateless, so use URL params or sessions.
 
-
-**When to use**: ['Phone menu systems (press 1 for sales...)', 'Automated customer support', 'Appointment reminders with confirmation', 'Voicemail systems']
+**When to use**: ['Phone menu systems (press 1 for sales...)', 'Automated
+customer support', 'Appointment reminders with confirmation', 'Voicemail
+systems']
 
 ```python
 from flask import Flask, request, Response
@@ -279,17 +287,17 @@ def menu_selection():
 
     elif digit == "3":
         # Voicemail
-        response.say("Please leave a message after 
+        response.say("Please leave a message after
 ```
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
-| Issue | high | ## Track opt-out status in your database |
-| Issue | medium | ## Implement retry logic for transient failures |
-| Issue | high | ## Register for A2P 10DLC (US requirement) |
-| Issue | critical | ## ALWAYS validate the signature |
-| Issue | high | ## Track session windows per user |
-| Issue | critical | ## Never hardcode credentials |
-| Issue | medium | ## Implement application-level rate limiting too |
+| Issue | Severity | Solution                                         |
+| ----- | -------- | ------------------------------------------------ |
+| Issue | high     | ## Track opt-out status in your database         |
+| Issue | medium   | ## Implement retry logic for transient failures  |
+| Issue | high     | ## Register for A2P 10DLC (US requirement)       |
+| Issue | critical | ## ALWAYS validate the signature                 |
+| Issue | high     | ## Track session windows per user                |
+| Issue | critical | ## Never hardcode credentials                    |
+| Issue | medium   | ## Implement application-level rate limiting too |

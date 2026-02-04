@@ -7,6 +7,7 @@ description: Search and discover resources from the Resource Registry
 You are helping the user search for resources in The New Fuse Resource Registry.
 
 ## Available Resource Categories:
+
 - CLAUDE_SKILL - Claude AI Skills
 - N8N_WORKFLOW - n8n Workflow templates
 - AGENT_TEMPLATE - Agent configuration templates
@@ -24,6 +25,7 @@ You are helping the user search for resources in The New Fuse Resource Registry.
 - DATA_SOURCE - Data source connectors
 
 ## Search Options:
+
 1. Parse the user's query to extract:
    - Search terms (keywords, names, descriptions)
    - Categories to filter by
@@ -34,7 +36,8 @@ You are helping the user search for resources in The New Fuse Resource Registry.
 
 2. Use the Resource Registry API to search:
    - Endpoint: GET /api/resources
-   - Query parameters: query, category, type, tags, visibility, isVerified, isFeatured, page, limit
+   - Query parameters: query, category, type, tags, visibility, isVerified,
+     isFeatured, page, limit
 
 3. Display results in a clear, organized format:
    - Resource name and description
@@ -51,6 +54,7 @@ You are helping the user search for resources in The New Fuse Resource Registry.
    - See related resources
 
 ## Example Usage:
+
 ```
 User: /resource-search claude skills for data processing
 You: [Search for resources with query="data processing" and category="CLAUDE_SKILL"]
@@ -63,6 +67,7 @@ You: [Search for resources with query="api" and category="INTEGRATION"]
 ```
 
 ## Instructions:
+
 1. Parse the user's search request
 2. Build the appropriate API query
 3. Call the Resource Registry API

@@ -1,7 +1,8 @@
 # Mobile Navigation Reference
 
-> Navigation patterns, deep linking, back handling, and tab/stack/drawer decisions.
-> **Navigation is the skeleton of your app—get it wrong and everything feels broken.**
+> Navigation patterns, deep linking, back handling, and tab/stack/drawer
+> decisions. **Navigation is the skeleton of your app—get it wrong and
+> everything feels broken.**
 
 ---
 
@@ -107,12 +108,12 @@ Back: Screen slides out to right
 
 ### Stack Navigation Patterns
 
-| Pattern | Use Case | Implementation |
-|---------|----------|----------------|
-| **Simple Stack** | Linear flow | Push each step |
+| Pattern          | Use Case                     | Implementation   |
+| ---------------- | ---------------------------- | ---------------- |
+| **Simple Stack** | Linear flow                  | Push each step   |
 | **Nested Stack** | Sections with sub-navigation | Stack inside tab |
-| **Modal Stack** | Focused tasks | Present modally |
-| **Auth Stack** | Login vs Main | Conditional root |
+| **Modal Stack**  | Focused tasks                | Present modally  |
+| **Auth Stack**   | Login vs Main                | Conditional root |
 
 ### Back Button Handling
 
@@ -203,12 +204,12 @@ USE MODAL for:
 
 ### Modal Types
 
-| Type | iOS | Android | Use Case |
-|------|-----|---------|----------|
-| **Sheet** | `.sheet` | Bottom Sheet | Quick tasks |
-| **Full Screen** | `.fullScreenCover` | Full Activity | Complex forms |
-| **Alert** | Alert | Dialog | Confirmations |
-| **Action Sheet** | Action Sheet | Menu/Bottom Sheet | Choose from options |
+| Type             | iOS                | Android           | Use Case            |
+| ---------------- | ------------------ | ----------------- | ------------------- |
+| **Sheet**        | `.sheet`           | Bottom Sheet      | Quick tasks         |
+| **Full Screen**  | `.fullScreenCover` | Full Activity     | Complex forms       |
+| **Alert**        | Alert              | Dialog            | Confirmations       |
+| **Action Sheet** | Action Sheet       | Menu/Bottom Sheet | Choose from options |
 
 ### Modal Dismissal
 
@@ -398,15 +399,15 @@ Implementation:
 
 ### ❌ Navigation Sins
 
-| Anti-Pattern | Problem | Solution |
-|--------------|---------|----------|
-| **Inconsistent back** | User confused, can't predict | Always pop stack |
-| **Hidden navigation** | Features undiscoverable | Visible tabs/drawer trigger |
-| **Deep nesting** | User gets lost | Max 3-4 levels, breadcrumbs |
-| **Breaking swipe back** | iOS users frustrated | Never override gesture |
-| **No deep links** | Can't share, bad notifications | Plan from start |
-| **Tab stack reset** | Work lost on switch | Preserve tab states |
-| **Modal for primary flow** | Can't back track | Use stack navigation |
+| Anti-Pattern               | Problem                        | Solution                    |
+| -------------------------- | ------------------------------ | --------------------------- |
+| **Inconsistent back**      | User confused, can't predict   | Always pop stack            |
+| **Hidden navigation**      | Features undiscoverable        | Visible tabs/drawer trigger |
+| **Deep nesting**           | User gets lost                 | Max 3-4 levels, breadcrumbs |
+| **Breaking swipe back**    | iOS users frustrated           | Never override gesture      |
+| **No deep links**          | Can't share, bad notifications | Plan from start             |
+| **Tab stack reset**        | Work lost on switch            | Preserve tab states         |
+| **Modal for primary flow** | Can't back track               | Use stack navigation        |
 
 ### ❌ AI Navigation Mistakes
 
@@ -455,4 +456,6 @@ Don't reinvent navigation.
 
 ---
 
-> **Remember:** Navigation is invisible when done right. Users shouldn't think about HOW to get somewhere—they just get there. If they notice navigation, something is wrong.
+> **Remember:** Navigation is invisible when done right. Users shouldn't think
+> about HOW to get somewhere—they just get there. If they notice navigation,
+> something is wrong.

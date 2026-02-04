@@ -1,13 +1,15 @@
 ---
 description: "Use Claude's MCP Builder skill to create high-quality MCP servers"
-category: "claude-skills"
+category: 'claude-skills'
 ---
 
-Activate Claude's MCP Builder skill for creating high-quality Model Context Protocol (MCP) servers that enable LLMs to interact with external services.
+Activate Claude's MCP Builder skill for creating high-quality Model Context
+Protocol (MCP) servers that enable LLMs to interact with external services.
 
 **Skill**: mcp-builder (from Anthropic's skills repository)
 
 **Capabilities**:
+
 - Design and implement MCP servers (TypeScript/Python)
 - Create well-structured MCP tools and resources
 - Implement proper error handling and validation
@@ -16,6 +18,7 @@ Activate Claude's MCP Builder skill for creating high-quality Model Context Prot
 - Integrate external APIs as MCP tools
 
 **Example Usage**:
+
 ```
 /skill-mcp-builder create an MCP server for GitHub API integration
 /skill-mcp-builder add a tool to search GitHub repositories
@@ -25,4 +28,5 @@ Activate Claude's MCP Builder skill for creating high-quality Model Context Prot
 
 **Parameters**: $ARGUMENTS (description of MCP server to build)
 
-The skill provides comprehensive guidance on creating production-ready MCP servers following industry best practices.
+The skill provides comprehensive guidance on creating production-ready MCP
+servers following industry best practices.

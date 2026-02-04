@@ -7,6 +7,6 @@ module.exports = {
   globalTeardown: '<rootDir>/test/global-teardown.ts',
   coverageDirectory: 'coverage/integration',
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
-  }
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 };

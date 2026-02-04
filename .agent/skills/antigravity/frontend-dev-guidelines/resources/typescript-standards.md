@@ -1,6 +1,7 @@
 # TypeScript Standards
 
-TypeScript best practices for type safety and maintainability in React frontend code.
+TypeScript best practices for type safety and maintainability in React frontend
+code.
 
 ---
 
@@ -13,15 +14,16 @@ TypeScript strict mode is **enabled** in the project:
 ```json
 // tsconfig.json
 {
-    "compilerOptions": {
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true
-    }
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  }
 }
 ```
 
 **This means:**
+
 - No implicit `any` types
 - Null/undefined must be handled explicitly
 - Type safety enforced
@@ -35,27 +37,28 @@ TypeScript strict mode is **enabled** in the project:
 ```typescript
 // ❌ NEVER use any
 function handleData(data: any) {
-    return data.something;
+  return data.something;
 }
 
 // ✅ Use specific types
 interface MyData {
-    something: string;
+  something: string;
 }
 
 function handleData(data: MyData) {
-    return data.something;
+  return data.something;
 }
 
 // ✅ Or use unknown for truly unknown data
 function handleUnknown(data: unknown) {
-    if (typeof data === 'object' && data !== null && 'something' in data) {
-        return (data as MyData).something;
-    }
+  if (typeof data === 'object' && data !== null && 'something' in data) {
+    return (data as MyData).something;
+  }
 }
 ```
 
 **If you truly don't know the type:**
+
 - Use `unknown` (forces type checking)
 - Use type guards to narrow
 - Document why type is unknown
@@ -69,16 +72,16 @@ function handleUnknown(data: unknown) {
 ```typescript
 // ✅ CORRECT - Explicit return type
 function getUser(id: number): Promise<User> {
-    return apiClient.get(`/users/${id}`);
+  return apiClient.get(`/users/${id}`);
 }
 
 function calculateTotal(items: Item[]): number {
-    return items.reduce((sum, item) => sum + item.price, 0);
+  return items.reduce((sum, item) => sum + item.price, 0);
 }
 
 // ❌ AVOID - Implicit return type (less clear)
 function getUser(id: number) {
-    return apiClient.get(`/users/${id}`);
+  return apiClient.get(`/users/${id}`);
 }
 ```
 
@@ -112,10 +115,11 @@ import type { Post } from '~types/post';
 import type { SxProps, Theme } from '@mui/material';
 
 // ❌ AVOID - Mixed value and type imports
-import { User } from '~types/user';  // Unclear if type or value
+import { User } from '~types/user'; // Unclear if type or value
 ```
 
 **Benefits:**
+
 - Clearly separates types from values
 - Better tree-shaking
 - Prevents circular dependencies
@@ -156,6 +160,7 @@ export const MyComponent: React.FC<MyComponentProps> = ({
 ```
 
 **Key Points:**
+
 - Separate interface for props
 - JSDoc comments for each prop
 - Optional props use `?`
@@ -191,7 +196,7 @@ export const Container: React.FC<ContainerProps> = ({ children, title }) => {
 type UserUpdate = Partial<User>;
 
 function updateUser(id: number, updates: Partial<User>) {
-    // updates can have any subset of User properties
+  // updates can have any subset of User properties
 }
 ```
 
@@ -202,10 +207,10 @@ function updateUser(id: number, updates: Partial<User>) {
 type UserPreview = Pick<User, 'id' | 'name' | 'email'>;
 
 const preview: UserPreview = {
-    id: 1,
-    name: 'John',
-    email: 'john@example.com',
-    // Other User properties not allowed
+  id: 1,
+  name: 'John',
+  email: 'john@example.com',
+  // Other User properties not allowed
 };
 ```
 
@@ -216,10 +221,10 @@ const preview: UserPreview = {
 type UserWithoutPassword = Omit<User, 'password' | 'passwordHash'>;
 
 const publicUser: UserWithoutPassword = {
-    id: 1,
-    name: 'John',
-    email: 'john@example.com',
-    // password and passwordHash not allowed
+  id: 1,
+  name: 'John',
+  email: 'john@example.com',
+  // password and passwordHash not allowed
 };
 ```
 
@@ -227,7 +232,7 @@ const publicUser: UserWithoutPassword = {
 
 ```typescript
 // Make all properties required
-type RequiredConfig = Required<Config>;  // All optional props become required
+type RequiredConfig = Required<Config>; // All optional props become required
 ```
 
 ### Record<K, V>
@@ -235,16 +240,16 @@ type RequiredConfig = Required<Config>;  // All optional props become required
 ```typescript
 // Type-safe object/map
 const userMap: Record<string, User> = {
-    'user1': { id: 1, name: 'John' },
-    'user2': { id: 2, name: 'Jane' },
+  user1: { id: 1, name: 'John' },
+  user2: { id: 2, name: 'Jane' },
 };
 
 // For styles
 import type { SxProps, Theme } from '@mui/material';
 
 const styles: Record<string, SxProps<Theme>> = {
-    container: { p: 2 },
-    header: { mb: 1 },
+  container: { p: 2 },
+  header: { mb: 1 },
 };
 ```
 
@@ -256,17 +261,14 @@ const styles: Record<string, SxProps<Theme>> = {
 
 ```typescript
 function isUser(data: unknown): data is User {
-    return (
-        typeof data === 'object' &&
-        data !== null &&
-        'id' in data &&
-        'name' in data
-    );
+  return (
+    typeof data === 'object' && data !== null && 'id' in data && 'name' in data
+  );
 }
 
 // Usage
 if (isUser(response)) {
-    console.log(response.name);  // TypeScript knows it's User
+  console.log(response.name); // TypeScript knows it's User
 }
 ```
 
@@ -347,17 +349,17 @@ const value = element.value;
 
 // ✅ OK - API response that you've validated
 const response = await api.getData();
-const user = response.data as User;  // You know the shape
+const user = response.data as User; // You know the shape
 ```
 
 ### When NOT to Use
 
 ```typescript
 // ❌ AVOID - Circumventing type safety
-const data = getData() as any;  // WRONG - defeats TypeScript
+const data = getData() as any; // WRONG - defeats TypeScript
 
 // ❌ AVOID - Unsafe assertion
-const value = unknownValue as string;  // Might not actually be string
+const value = unknownValue as string; // Might not actually be string
 ```
 
 ---
@@ -394,7 +396,7 @@ const data = queryClient.getQueryData<Data>(['data'])!;
 // Better to check explicitly:
 const data = queryClient.getQueryData<Data>(['data']);
 if (data) {
-    // Use data
+  // Use data
 }
 ```
 
@@ -403,6 +405,7 @@ if (data) {
 ## Summary
 
 **TypeScript Checklist:**
+
 - ✅ Strict mode enabled
 - ✅ No `any` type (use `unknown` if needed)
 - ✅ Explicit return types on functions
@@ -414,5 +417,6 @@ if (data) {
 - ❌ Avoid type assertions unless necessary
 
 **See Also:**
+
 - [component-patterns.md](component-patterns.md) - Component typing
 - [data-fetching.md](data-fetching.md) - API typing

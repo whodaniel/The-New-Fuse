@@ -1,7 +1,8 @@
 # Mobile Performance Reference
 
-> Deep dive into React Native and Flutter performance optimization, 60fps animations, memory management, and battery considerations.
-> **This file covers the #1 area where AI-generated code FAILS.**
+> Deep dive into React Native and Flutter performance optimization, 60fps
+> animations, memory management, and battery considerations. **This file covers
+> the #1 area where AI-generated code FAILS.**
 
 ---
 
@@ -109,28 +110,28 @@ const getItemLayout = useCallback(
 
 ### Why Each Optimization Matters
 
-| Optimization | What It Prevents | Impact |
-|--------------|------------------|--------|
-| `React.memo` | Re-render on parent change | 🔴 Critical |
-| `useCallback renderItem` | New function every render | 🔴 Critical |
-| Stable `keyExtractor` | Wrong item recycling | 🔴 Critical |
-| `getItemLayout` | Async layout calculation | 🟡 High |
-| `removeClippedSubviews` | Memory from off-screen | 🟡 High |
-| `maxToRenderPerBatch` | Blocking main thread | 🟢 Medium |
-| `windowSize` | Memory usage | 🟢 Medium |
+| Optimization             | What It Prevents           | Impact      |
+| ------------------------ | -------------------------- | ----------- |
+| `React.memo`             | Re-render on parent change | 🔴 Critical |
+| `useCallback renderItem` | New function every render  | 🔴 Critical |
+| Stable `keyExtractor`    | Wrong item recycling       | 🔴 Critical |
+| `getItemLayout`          | Async layout calculation   | 🟡 High     |
+| `removeClippedSubviews`  | Memory from off-screen     | 🟡 High     |
+| `maxToRenderPerBatch`    | Blocking main thread       | 🟢 Medium   |
+| `windowSize`             | Memory usage               | 🟢 Medium   |
 
 ### FlashList: The Better Option
 
 ```javascript
 // Consider FlashList for better performance
-import { FlashList } from "@shopify/flash-list";
+import { FlashList } from '@shopify/flash-list';
 
 <FlashList
   data={items}
   renderItem={renderItem}
   estimatedItemSize={ITEM_HEIGHT}
   keyExtractor={keyExtractor}
-/>
+/>;
 
 // Benefits over FlatList:
 // ├── Faster recycling
@@ -159,7 +160,7 @@ Animated.timing(value, {
 // Native driver supports ONLY:
 // ├── transform (translate, scale, rotate)
 // └── opacity
-// 
+//
 // Does NOT support:
 // ├── width, height
 // ├── backgroundColor
@@ -211,7 +212,7 @@ useEffect(() => {
   const interval = setInterval(() => {
     fetchData();
   }, 5000);
-  
+
   return () => clearInterval(interval); // CLEANUP!
 }, []);
 
@@ -227,6 +228,7 @@ useEffect(() => {
 
 ```markdown
 ## Before Every List
+
 - [ ] Using FlatList or FlashList (NOT ScrollView)
 - [ ] renderItem is useCallback memoized
 - [ ] List items are React.memo wrapped
@@ -234,12 +236,14 @@ useEffect(() => {
 - [ ] getItemLayout provided (if fixed height)
 
 ## Before Every Animation
+
 - [ ] useNativeDriver: true (if possible)
 - [ ] Using Reanimated for complex animations
 - [ ] Only animating transform/opacity
 - [ ] Tested on low-end Android device
 
 ## Before Any Release
+
 - [ ] console.log statements removed
 - [ ] Cleanup functions in all useEffects
 - [ ] No memory leaks (test with profiler)
@@ -261,13 +265,13 @@ class BadCounter extends StatefulWidget {
 
 class _BadCounterState extends State<BadCounter> {
   int _counter = 0;
-  
+
   void _increment() {
     setState(() {
       _counter++; // This rebuilds EVERYTHING below!
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -288,14 +292,14 @@ class _BadCounterState extends State<BadCounter> {
 
 class GoodCounter extends StatefulWidget {
   const GoodCounter({super.key}); // CONST constructor!
-  
+
   @override
   State<GoodCounter> createState() => _GoodCounterState();
 }
 
 class _GoodCounterState extends State<GoodCounter> {
   int _counter = 0;
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -320,7 +324,7 @@ setState(() => _value = newValue);
 // ✅ ValueListenableBuilder: surgical rebuilds
 class TargetedState extends StatelessWidget {
   final ValueNotifier<int> counter = ValueNotifier(0);
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -410,7 +414,7 @@ class _MyWidgetState extends State<MyWidget> {
   late final StreamSubscription _subscription;
   late final AnimationController _controller;
   late final TextEditingController _textController;
-  
+
   @override
   void initState() {
     super.initState();
@@ -418,7 +422,7 @@ class _MyWidgetState extends State<MyWidget> {
     _controller = AnimationController(vsync: this);
     _textController = TextEditingController();
   }
-  
+
   @override
   void dispose() {
     // ALWAYS dispose in reverse order of creation
@@ -427,7 +431,7 @@ class _MyWidgetState extends State<MyWidget> {
     _subscription.cancel();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) => Container();
 }
@@ -437,22 +441,26 @@ class _MyWidgetState extends State<MyWidget> {
 
 ```markdown
 ## Before Every Widget
+
 - [ ] const constructor added (if no runtime args)
 - [ ] const keywords on static children
 - [ ] Minimal setState scope
 - [ ] Using selectors for provider watches
 
 ## Before Every List
+
 - [ ] Using ListView.builder (NOT ListView with children)
 - [ ] itemExtent provided (if fixed height)
 - [ ] Image caching with size limits
 
 ## Before Any Animation
+
 - [ ] Using Impeller (Flutter 3.16+)
 - [ ] Avoiding Opacity widget (use FadeTransition)
 - [ ] TickerProviderStateMixin for AnimationController
 
 ## Before Any Release
+
 - [ ] All dispose() methods implemented
 - [ ] No print() in production
 - [ ] Tested in profile/release mode
@@ -493,13 +501,13 @@ Everything else causes layout recalculation.
 
 ### Animation Timing Guide
 
-| Animation Type | Duration | Easing |
-|----------------|----------|--------|
-| Micro-interaction | 100-200ms | ease-out |
-| Standard transition | 200-300ms | ease-out |
-| Page transition | 300-400ms | ease-in-out |
-| Complex/dramatic | 400-600ms | ease-in-out |
-| Loading skeletons | 1000-1500ms | linear (loop) |
+| Animation Type      | Duration    | Easing        |
+| ------------------- | ----------- | ------------- |
+| Micro-interaction   | 100-200ms   | ease-out      |
+| Standard transition | 200-300ms   | ease-out      |
+| Page transition     | 300-400ms   | ease-in-out   |
+| Complex/dramatic    | 400-600ms   | ease-in-out   |
+| Loading skeletons   | 1000-1500ms | linear (loop) |
 
 ### Spring Physics
 
@@ -535,14 +543,14 @@ SpringSimulation(
 
 ### Common Memory Leaks
 
-| Source | Platform | Solution |
-|--------|----------|----------|
-| Timers | Both | Clear in cleanup/dispose |
-| Event listeners | Both | Remove in cleanup/dispose |
-| Subscriptions | Both | Cancel in cleanup/dispose |
-| Large images | Both | Limit cache, resize |
-| Async after unmount | RN | isMounted check or AbortController |
-| Animation controllers | Flutter | Dispose controllers |
+| Source                | Platform | Solution                           |
+| --------------------- | -------- | ---------------------------------- |
+| Timers                | Both     | Clear in cleanup/dispose           |
+| Event listeners       | Both     | Remove in cleanup/dispose          |
+| Subscriptions         | Both     | Cancel in cleanup/dispose          |
+| Large images          | Both     | Limit cache, resize                |
+| Async after unmount   | RN       | isMounted check or AbortController |
+| Animation controllers | Flutter  | Dispose controllers                |
 
 ### Image Memory
 
@@ -577,14 +585,14 @@ Flutter:
 
 ### Battery Drain Sources
 
-| Source | Impact | Mitigation |
-|--------|--------|------------|
-| **Screen on** | 🔴 Highest | Dark mode on OLED |
-| **GPS continuous** | 🔴 Very high | Use significant change |
-| **Network requests** | 🟡 High | Batch, cache aggressively |
-| **Animations** | 🟡 Medium | Reduce when low battery |
-| **Background work** | 🟡 Medium | Defer non-critical |
-| **CPU computation** | 🟢 Lower | Offload to backend |
+| Source               | Impact       | Mitigation                |
+| -------------------- | ------------ | ------------------------- |
+| **Screen on**        | 🔴 Highest   | Dark mode on OLED         |
+| **GPS continuous**   | 🔴 Very high | Use significant change    |
+| **Network requests** | 🟡 High      | Batch, cache aggressively |
+| **Animations**       | 🟡 Medium    | Reduce when low battery   |
+| **Background work**  | 🟡 Medium    | Defer non-critical        |
+| **CPU computation**  | 🟢 Lower     | Offload to backend        |
 
 ### OLED Battery Saving
 
@@ -667,14 +675,14 @@ COMPRESS: Reduce payload size
 
 ### What to Test
 
-| Metric | Target | Tool |
-|--------|--------|------|
-| **Frame rate** | ≥ 60fps | Performance overlay |
-| **Memory** | Stable, no growth | Profiler |
-| **Cold start** | < 2s | Manual timing |
-| **TTI (Time to Interactive)** | < 3s | Lighthouse |
-| **List scroll** | No jank | Manual feel |
-| **Animation smoothness** | No drops | Performance monitor |
+| Metric                        | Target            | Tool                |
+| ----------------------------- | ----------------- | ------------------- |
+| **Frame rate**                | ≥ 60fps           | Performance overlay |
+| **Memory**                    | Stable, no growth | Profiler            |
+| **Cold start**                | < 2s              | Manual timing       |
+| **TTI (Time to Interactive)** | < 3s              | Lighthouse          |
+| **List scroll**               | No jank           | Manual feel         |
+| **Animation smoothness**      | No drops          | Performance monitor |
 
 ### Test on Real Devices
 
@@ -695,12 +703,14 @@ COMPRESS: Reduce payload size
 
 ```markdown
 ## During Development
+
 - [ ] Performance overlay enabled
 - [ ] Watching for dropped frames
 - [ ] Memory usage stable
 - [ ] No console warnings about performance
 
 ## Before Release
+
 - [ ] Tested on low-end device
 - [ ] Profiled memory over extended use
 - [ ] Cold start time measured
@@ -719,13 +729,21 @@ COMPRESS: Reduce payload size
 // List: Always use
 <FlatList
   data={data}
-  renderItem={useCallback(({item}) => <MemoItem item={item} />, [])}
-  keyExtractor={useCallback(item => item.id, [])}
-  getItemLayout={useCallback((_, i) => ({length: H, offset: H*i, index: i}), [])}
-/>
+  renderItem={useCallback(
+    ({ item }) => (
+      <MemoItem item={item} />
+    ),
+    []
+  )}
+  keyExtractor={useCallback((item) => item.id, [])}
+  getItemLayout={useCallback(
+    (_, i) => ({ length: H, offset: H * i, index: i }),
+    []
+  )}
+/>;
 
 // Animation: Always native
-useNativeDriver: true
+useNativeDriver: true;
 
 // Cleanup: Always present
 useEffect(() => {
@@ -764,4 +782,6 @@ Low-end Android ← Test device
 
 ---
 
-> **Remember:** Performance is not optimization—it's baseline quality. A slow app is a broken app. Test on the worst device your users have, not the best device you have.
+> **Remember:** Performance is not optimization—it's baseline quality. A slow
+> app is a broken app. Test on the worst device your users have, not the best
+> device you have.

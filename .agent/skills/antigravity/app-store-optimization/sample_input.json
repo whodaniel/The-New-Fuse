@@ -19,12 +19,7 @@
     "team collaboration",
     "project management"
   ],
-  "competitors": [
-    "Todoist",
-    "Any.do",
-    "Microsoft To Do",
-    "Things 3"
-  ],
+  "competitors": ["Todoist", "Any.do", "Microsoft To Do", "Things 3"],
   "platform": "both",
   "language": "en-US"
 }

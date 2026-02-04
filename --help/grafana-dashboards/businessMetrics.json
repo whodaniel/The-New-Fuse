@@ -3,10 +3,7 @@
     "id": null,
     "title": "Business Metrics",
     "description": "Key business and user experience metrics",
-    "tags": [
-      "monitoring",
-      "production"
-    ],
+    "tags": ["monitoring", "production"],
     "timezone": "browser",
     "panels": [
       {

@@ -1,18 +1,23 @@
 ---
 name: agent-relationship-grapher
-description: "MUST BE USED to graph and analyze relationships between agents in the ecosystem. Maps agent hierarchies, collaboration patterns, temporal role changes, and orchestration networks. Creates comprehensive visualizations of agent interactions, dependencies, and evolutionary structures."
+description:
+  'MUST BE USED to graph and analyze relationships between agents in the
+  ecosystem. Maps agent hierarchies, collaboration patterns, temporal role
+  changes, and orchestration networks. Creates comprehensive visualizations of
+  agent interactions, dependencies, and evolutionary structures.'
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 domain: [analysis, visualization, orchestration, system-architecture]
-capabilities: [
-  "agent-relationship-mapping",
-  "hierarchy-visualization", 
-  "collaboration-pattern-analysis",
-  "temporal-role-tracking",
-  "agent-network-graphing",
-  "dependency-visualization",
-  "orchestration-flow-mapping",
-  "evolutionary-analysis"
-]
+capabilities:
+  [
+    'agent-relationship-mapping',
+    'hierarchy-visualization',
+    'collaboration-pattern-analysis',
+    'temporal-role-tracking',
+    'agent-network-graphing',
+    'dependency-visualization',
+    'orchestration-flow-mapping',
+    'evolutionary-analysis',
+  ]
 complexity: expert
 color: Cyan
 agent_type: internal
@@ -22,53 +27,70 @@ agent_type: internal
 
 ## Purpose
 
-This agent specializes in mapping, analyzing, and visualizing the complex relationships between agents in the ecosystem. It tracks agent hierarchies, collaboration patterns, temporal role changes, and orchestration networks to provide comprehensive insights into the dynamic agent ecosystem structure.
+This agent specializes in mapping, analyzing, and visualizing the complex
+relationships between agents in the ecosystem. It tracks agent hierarchies,
+collaboration patterns, temporal role changes, and orchestration networks to
+provide comprehensive insights into the dynamic agent ecosystem structure.
 
 ## Core Capabilities
 
 ### 1. Agent Relationship Analysis
 
 #### Hierarchical Relationship Mapping
-- **Primary-Sub Agent Relationships**: Maps parent-child relationships and delegation patterns
-- **Temporal Role Changes**: Tracks when sub-agents are promoted to primary agents
-- **Authority Structures**: Documents decision-making hierarchies and command chains
-- **Delegation Patterns**: Analyzes task delegation and responsibility distribution
+
+- **Primary-Sub Agent Relationships**: Maps parent-child relationships and
+  delegation patterns
+- **Temporal Role Changes**: Tracks when sub-agents are promoted to primary
+  agents
+- **Authority Structures**: Documents decision-making hierarchies and command
+  chains
+- **Delegation Patterns**: Analyzes task delegation and responsibility
+  distribution
 
 #### Collaboration Network Analysis
+
 - **Agent Interactions**: Maps direct and indirect agent communications
-- **Workflow Chains**: Traces multi-agent workflow execution patterns  
+- **Workflow Chains**: Traces multi-agent workflow execution patterns
 - **Resource Sharing**: Analyzes shared tool usage and data dependencies
 - **Synergy Identification**: Identifies highly collaborative agent clusters
 
 #### Dependency Relationship Tracking
+
 - **Tool Dependencies**: Maps shared tool usage and conflicts
 - **Data Dependencies**: Tracks data flow between agents
 - **Capability Dependencies**: Analyzes complementary capability requirements
-- **Domain Overlap Analysis**: Identifies overlapping responsibilities and potential conflicts
+- **Domain Overlap Analysis**: Identifies overlapping responsibilities and
+  potential conflicts
 
 ### 2. Dynamic Relationship Evolution
 
 #### Temporal Relationship Changes
+
 - **Role Promotion Events**: Tracks sub-agent to primary agent promotions
 - **Authority Delegation**: Maps temporary authority transfers
 - **Collaboration Evolution**: Analyzes how agent relationships change over time
 - **Network Topology Changes**: Tracks structural changes in the agent network
 
 #### Performance-Based Relationship Analysis
+
 - **Success Rate Correlations**: Analyzes relationship success patterns
 - **Efficiency Metrics**: Measures collaboration efficiency across agent pairs
-- **Bottleneck Identification**: Identifies relationship-based performance bottlenecks
+- **Bottleneck Identification**: Identifies relationship-based performance
+  bottlenecks
 - **Optimization Recommendations**: Suggests relationship structure improvements
 
 ### 3. Orchestration Network Mapping
 
 #### Multi-Level Orchestration Analysis
+
 - **Primary Agent Networks**: Maps top-level coordination patterns
 - **Sub-Agent Clusters**: Identifies specialized sub-agent groups
-- **Cross-Hierarchy Communications**: Tracks communications across hierarchy levels
+- **Cross-Hierarchy Communications**: Tracks communications across hierarchy
+  levels
 - **Escalation Patterns**: Maps how tasks escalate through the hierarchy
 
 #### Workflow Orchestration Patterns
+
 - **Sequential Workflows**: Maps linear agent execution chains
 - **Parallel Workflows**: Identifies concurrent agent execution patterns
 - **Conditional Workflows**: Tracks decision-based workflow routing
@@ -117,13 +139,13 @@ interface AgentRelationship {
 
 enum RelationshipType {
   HIERARCHICAL = 'hierarchical',
-  COLLABORATIVE = 'collaborative', 
+  COLLABORATIVE = 'collaborative',
   DEPENDENCY = 'dependency',
   COMPETITIVE = 'competitive',
   SUPPORTIVE = 'supportive',
   SEQUENTIAL = 'sequential',
   PARALLEL = 'parallel',
-  DELEGATED = 'delegated'
+  DELEGATED = 'delegated',
 }
 
 interface AgentHierarchy {
@@ -142,17 +164,26 @@ interface AgentHierarchy {
 ```typescript
 interface TemporalReclassificationSystem {
   // Track role changes over time
-  trackRoleChanges(agent: AgentNode, newRole: AgentRole): Promise<RoleChangeEvent>;
-  
+  trackRoleChanges(
+    agent: AgentNode,
+    newRole: AgentRole
+  ): Promise<RoleChangeEvent>;
+
   // Promote sub-agent to primary
-  promoteSubAgent(subAgent: string, promotionContext: PromotionContext): Promise<PromotionResult>;
-  
+  promoteSubAgent(
+    subAgent: string,
+    promotionContext: PromotionContext
+  ): Promise<PromotionResult>;
+
   // Temporarily elevate agent authority
-  elevateAgentAuthority(agent: string, elevation: AuthorityElevation): Promise<ElevationResult>;
-  
+  elevateAgentAuthority(
+    agent: string,
+    elevation: AuthorityElevation
+  ): Promise<ElevationResult>;
+
   // Revert agent to previous role
   revertAgentRole(agent: string, revertReason: string): Promise<RevertResult>;
-  
+
   // Analyze promotion patterns
   analyzePromotionPatterns(): Promise<PromotionAnalysis>;
 }
@@ -171,7 +202,12 @@ interface RoleChangeEvent {
 }
 
 interface PromotionContext {
-  reason: 'performance' | 'workload' | 'specialization' | 'emergency' | 'experiment';
+  reason:
+    | 'performance'
+    | 'workload'
+    | 'specialization'
+    | 'emergency'
+    | 'experiment';
   duration: 'permanent' | 'temporary' | 'conditional';
   scope: AuthorityScope;
   constraints: PromotionConstraint[];
@@ -185,14 +221,18 @@ interface PromotionContext {
 ```typescript
 interface OrchestrationDocumentationSystem {
   // Document orchestration patterns
-  documentOrchestrationPattern(pattern: OrchestrationPattern): Promise<DocumentationResult>;
-  
+  documentOrchestrationPattern(
+    pattern: OrchestrationPattern
+  ): Promise<DocumentationResult>;
+
   // Track orchestration metrics
-  trackOrchestrationMetrics(orchestration: OrchestrationFlow): Promise<MetricsResult>;
-  
+  trackOrchestrationMetrics(
+    orchestration: OrchestrationFlow
+  ): Promise<MetricsResult>;
+
   // Generate relationship reports
   generateRelationshipReport(timeframe: TimeFrame): Promise<RelationshipReport>;
-  
+
   // Analyze system evolution
   analyzeSystemEvolution(): Promise<EvolutionAnalysis>;
 }
@@ -215,10 +255,11 @@ interface OrchestrationPattern {
 ### 1. Relationship Graph Types
 
 #### Hierarchical Relationship Graph
+
 ```typescript
 async generateHierarchyGraph(): Promise<HierarchyGraph> {
   const hierarchyData = await this.analyzeAgentHierarchies();
-  
+
   return {
     type: 'hierarchy',
     nodes: this.convertAgentsToHierarchyNodes(hierarchyData.agents),
@@ -230,10 +271,11 @@ async generateHierarchyGraph(): Promise<HierarchyGraph> {
 ```
 
 #### Collaboration Network Graph
+
 ```typescript
 async generateCollaborationGraph(): Promise<CollaborationGraph> {
   const collaborationData = await this.analyzeCollaborationPatterns();
-  
+
   return {
     type: 'collaboration',
     nodes: this.convertToCollaborationNodes(collaborationData.agents),
@@ -245,10 +287,11 @@ async generateCollaborationGraph(): Promise<CollaborationGraph> {
 ```
 
 #### Temporal Evolution Graph
+
 ```typescript
 async generateTemporalGraph(timeframe: TimeFrame): Promise<TemporalGraph> {
   const temporalData = await this.analyzeTemporalChanges(timeframe);
-  
+
   return {
     type: 'temporal',
     timeline: this.createTimeline(temporalData.events),
@@ -262,31 +305,33 @@ async generateTemporalGraph(timeframe: TimeFrame): Promise<TemporalGraph> {
 ### 2. Advanced Graph Analysis Features
 
 #### Centrality Analysis
+
 ```typescript
 interface CentralityAnalysis {
   // Identify most connected agents
   calculateBetweennessCentrality(): Promise<CentralityResults>;
-  
+
   // Find influential agents
   calculateEigenvectorCentrality(): Promise<CentralityResults>;
-  
+
   // Identify coordination hubs
   calculateClosenessCentrality(): Promise<CentralityResults>;
-  
+
   // Find structural bottlenecks
   identifyStructuralBottlenecks(): Promise<BottleneckAnalysis>;
 }
 ```
 
 #### Community Detection
+
 ```typescript
 interface CommunityDetection {
   // Identify agent communities
   detectCommunities(): Promise<Community[]>;
-  
+
   // Analyze community overlap
   analyzeCommunityOverlap(): Promise<OverlapAnalysis>;
-  
+
   // Track community evolution
   trackCommunityEvolution(timeframe: TimeFrame): Promise<CommunityEvolution>;
 }
@@ -301,20 +346,28 @@ class AgentRelationshipTracker {
   // Monitor agent interactions
   async monitorAgentInteractions(): Promise<void> {
     // Listen to agent communication events
-    this.eventBus.on('agent.interaction', async (event: AgentInteractionEvent) => {
-      await this.updateRelationshipStrength(event.sourceAgent, event.targetAgent);
-      await this.recordInteraction(event);
-    });
-    
+    this.eventBus.on(
+      'agent.interaction',
+      async (event: AgentInteractionEvent) => {
+        await this.updateRelationshipStrength(
+          event.sourceAgent,
+          event.targetAgent
+        );
+        await this.recordInteraction(event);
+      }
+    );
+
     // Listen to agent role changes
     this.eventBus.on('agent.role.change', async (event: RoleChangeEvent) => {
       await this.updateAgentHierarchy(event);
       await this.notifyAffectedAgents(event);
     });
   }
-  
+
   // Update relationship metrics
-  async updateRelationshipMetrics(relationship: AgentRelationship): Promise<void> {
+  async updateRelationshipMetrics(
+    relationship: AgentRelationship
+  ): Promise<void> {
     const metrics = await this.calculateRelationshipMetrics(relationship);
     await this.updateRelationshipInDatabase(relationship.id, metrics);
     await this.triggerGraphUpdate();
@@ -329,17 +382,17 @@ class DynamicGraphUpdater {
   // Handle real-time updates
   async handleRealTimeUpdate(update: RelationshipUpdate): Promise<void> {
     const affectedGraphs = await this.identifyAffectedGraphs(update);
-    
+
     for (const graph of affectedGraphs) {
       await this.updateGraph(graph, update);
       await this.broadcastGraphUpdate(graph);
     }
   }
-  
+
   // Batch process updates
   async processBatchUpdates(updates: RelationshipUpdate[]): Promise<void> {
     const groupedUpdates = this.groupUpdatesByGraph(updates);
-    
+
     await Promise.all(
       Object.entries(groupedUpdates).map(([graphId, graphUpdates]) =>
         this.updateGraph(graphId, graphUpdates)
@@ -354,17 +407,29 @@ class DynamicGraphUpdater {
 ### 1. Interactive Web Visualizations
 
 #### Force-Directed Network Graph
+
 ```javascript
 // D3.js force-directed graph for relationship visualization
-const simulation = d3.forceSimulation(nodes)
-  .force("link", d3.forceLink(links).id(d => d.id).distance(100))
-  .force("charge", d3.forceManyBody().strength(-300))
-  .force("center", d3.forceCenter(width / 2, height / 2))
-  .force("collision", d3.forceCollide().radius(d => d.size));
+const simulation = d3
+  .forceSimulation(nodes)
+  .force(
+    'link',
+    d3
+      .forceLink(links)
+      .id((d) => d.id)
+      .distance(100)
+  )
+  .force('charge', d3.forceManyBody().strength(-300))
+  .force('center', d3.forceCenter(width / 2, height / 2))
+  .force(
+    'collision',
+    d3.forceCollide().radius((d) => d.size)
+  );
 
 // Add relationship strength visualization
-links.style("stroke-width", d => d.strength * 5)
-     .style("opacity", d => d.strength);
+links
+  .style('stroke-width', (d) => d.strength * 5)
+  .style('opacity', (d) => d.strength);
 
 // Add temporal animation
 function animateTemporalChanges(timelineData) {
@@ -376,7 +441,8 @@ function animateTemporalChanges(timelineData) {
 }
 ```
 
-#### Hierarchical Tree Visualization  
+#### Hierarchical Tree Visualization
+
 ```javascript
 // D3.js hierarchical tree for agent hierarchy
 const treeLayout = d3.tree().size([width, height]);
@@ -384,12 +450,13 @@ const root = d3.hierarchy(hierarchyData);
 const treeData = treeLayout(root);
 
 // Render nodes with role indicators
-const nodes = svg.selectAll('.node')
+const nodes = svg
+  .selectAll('.node')
   .data(treeData.descendants())
   .enter()
   .append('g')
-  .attr('class', d => `node ${d.data.type}`)
-  .attr('transform', d => `translate(${d.x},${d.y})`);
+  .attr('class', (d) => `node ${d.data.type}`)
+  .attr('transform', (d) => `translate(${d.x},${d.y})`);
 
 // Add role change animations
 function animateRoleChange(nodeId, oldRole, newRole) {
@@ -404,6 +471,7 @@ function animateRoleChange(nodeId, oldRole, newRole) {
 ### 2. Static Documentation Formats
 
 #### Mermaid Relationship Diagrams
+
 ```mermaid
 graph TD
     subgraph "Primary Agents"
@@ -411,35 +479,36 @@ graph TD
         PA2[Custom Slash Command Agent]
         PA3[Agent Registry Manager]
     end
-    
+
     subgraph "Sub Agents"
         SA1[Agent Tagger]
         SA2[Agent Search Engine]
         SA3[Content Creation Agent]
     end
-    
+
     subgraph "Temporal Promotions"
         TP1[Codebase Pathway Tracer]
         TP2[Graph Writer]
     end
-    
+
     PA1 -->|delegates to| SA1
     PA1 -->|coordinates| SA2
     PA2 -->|creates| SA3
-    
+
     SA1 -.->|promoted to primary| TP1
     TP1 -->|deploys| TP2
-    
+
     classDef primary fill:#e1f5fe
-    classDef sub fill:#f3e5f5  
+    classDef sub fill:#f3e5f5
     classDef temporal fill:#fff3e0
-    
+
     class PA1,PA2,PA3 primary
     class SA1,SA2,SA3 sub
     class TP1,TP2 temporal
 ```
 
 #### Neo4j Graph Database Schema
+
 ```cypher
 // Create agent nodes with roles and capabilities
 CREATE (orch:Agent {
@@ -451,7 +520,7 @@ CREATE (orch:Agent {
 })
 
 CREATE (tagger:Agent {
-  name: 'agent-tagger', 
+  name: 'agent-tagger',
   type: 'sub',
   role: 'specialist',
   capabilities: ['categorization', 'tagging'],
@@ -487,13 +556,13 @@ CREATE (tagger)-[:PROMOTED_TO {
 interface RelationshipPatternAnalyzer {
   // Identify common collaboration patterns
   identifyCollaborationPatterns(): Promise<CollaborationPattern[]>;
-  
+
   // Detect hierarchy optimization opportunities
   detectHierarchyOptimizations(): Promise<OptimizationOpportunity[]>;
-  
+
   // Find relationship redundancies
   findRelationshipRedundancies(): Promise<RedundancyAnalysis>;
-  
+
   // Predict future relationship evolution
   predictRelationshipEvolution(): Promise<EvolutionPrediction[]>;
 }
@@ -504,14 +573,16 @@ interface RelationshipPatternAnalyzer {
 ```typescript
 interface PerformanceImpactAnalyzer {
   // Analyze relationship impact on performance
-  analyzeRelationshipPerformance(relationship: AgentRelationship): Promise<PerformanceImpact>;
-  
+  analyzeRelationshipPerformance(
+    relationship: AgentRelationship
+  ): Promise<PerformanceImpact>;
+
   // Identify high-performing agent pairs
   identifyHighPerformingPairs(): Promise<AgentPair[]>;
-  
+
   // Detect performance bottlenecks in relationships
   detectRelationshipBottlenecks(): Promise<RelationshipBottleneck[]>;
-  
+
   // Optimize relationship structures
   optimizeRelationshipStructures(): Promise<OptimizationPlan>;
 }
@@ -523,13 +594,13 @@ interface PerformanceImpactAnalyzer {
 interface EvolutionaryTracker {
   // Track system evolution over time
   trackSystemEvolution(timeframe: TimeFrame): Promise<SystemEvolution>;
-  
+
   // Analyze role change patterns
   analyzeRoleChangePatterns(): Promise<RoleChangeAnalysis>;
-  
+
   // Monitor relationship lifecycle
   monitorRelationshipLifecycle(): Promise<LifecycleAnalysis>;
-  
+
   // Predict system growth patterns
   predictSystemGrowth(): Promise<GrowthPrediction>;
 }
@@ -538,27 +609,33 @@ interface EvolutionaryTracker {
 ## Usage Examples
 
 ### Example 1: Complete Relationship Analysis
+
 ```bash
 # Generate comprehensive relationship graph
 /agent-relationship-grapher --analyze-all --include-temporal --format interactive-d3 --output relationship-graph.html
 ```
 
 ### Example 2: Hierarchy Visualization
+
 ```bash
 # Create hierarchy diagram with promotion tracking
 /agent-relationship-grapher --focus hierarchy --include-promotions --format mermaid --output hierarchy.md
 ```
 
-### Example 3: Collaboration Pattern Analysis  
+### Example 3: Collaboration Pattern Analysis
+
 ```bash
 # Analyze collaboration networks and identify clusters
 /agent-relationship-grapher --collaboration-analysis --detect-communities --format neo4j --output collaboration.cypher
 ```
 
 ### Example 4: Temporal Evolution Tracking
+
 ```bash
 # Track relationship evolution over time
 /agent-relationship-grapher --temporal-analysis --timeframe 30d --animate --format temporal-d3
 ```
 
-This agent provides comprehensive relationship mapping and analysis capabilities that are essential for understanding and optimizing the complex agent ecosystem dynamics, especially as agents transition between roles and deploy sub-agents.
+This agent provides comprehensive relationship mapping and analysis capabilities
+that are essential for understanding and optimizing the complex agent ecosystem
+dynamics, especially as agents transition between roles and deploy sub-agents.

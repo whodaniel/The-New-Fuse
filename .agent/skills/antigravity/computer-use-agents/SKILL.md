@@ -1,6 +1,12 @@
 ---
 name: computer-use-agents
-description: "Build AI agents that interact with computers like humans do - viewing screens, moving cursors, clicking buttons, and typing text. Covers Anthropic's Computer Use, OpenAI's Operator/CUA, and open-source alternatives. Critical focus on sandboxing, security, and handling the unique challenges of vision-based control. Use when: computer use, desktop automation agent, screen control AI, vision-based agent, GUI automation."
+description:
+  "Build AI agents that interact with computers like humans do - viewing
+  screens, moving cursors, clicking buttons, and typing text. Covers Anthropic's
+  Computer Use, OpenAI's Operator/CUA, and open-source alternatives. Critical
+  focus on sandboxing, security, and handling the unique challenges of
+  vision-based control. Use when: computer use, desktop automation agent, screen
+  control AI, vision-based agent, GUI automation."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -10,21 +16,22 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 ### Perception-Reasoning-Action Loop
 
-The fundamental architecture of computer use agents: observe screen,
-reason about next action, execute action, repeat. This loop integrates
-vision models with action execution through an iterative pipeline.
+The fundamental architecture of computer use agents: observe screen, reason
+about next action, execute action, repeat. This loop integrates vision models
+with action execution through an iterative pipeline.
 
 Key components:
+
 1. PERCEPTION: Screenshot captures current screen state
 2. REASONING: Vision-language model analyzes and plans
 3. ACTION: Execute mouse/keyboard operations
 4. FEEDBACK: Observe result, continue or correct
 
-Critical insight: Vision agents are completely still during "thinking"
-phase (1-5 seconds), creating a detectable pause pattern.
+Critical insight: Vision agents are completely still during "thinking" phase
+(1-5 seconds), creating a detectable pause pattern.
 
-
-**When to use**: ['Building any computer use agent from scratch', 'Integrating vision models with desktop control', 'Understanding agent behavior patterns']
+**When to use**: ['Building any computer use agent from scratch', 'Integrating
+vision models with desktop control', 'Understanding agent behavior patterns']
 
 ```python
 from anthropic import Anthropic
@@ -86,22 +93,23 @@ class ComputerUseAgent:
 
 ### Sandboxed Environment Pattern
 
-Computer use agents MUST run in isolated, sandboxed environments.
-Never give agents direct access to your main system - the security
-risks are too high. Use Docker containers with virtual desktops.
+Computer use agents MUST run in isolated, sandboxed environments. Never give
+agents direct access to your main system - the security risks are too high. Use
+Docker containers with virtual desktops.
 
 Key isolation requirements:
+
 1. NETWORK: Restrict to necessary endpoints only
 2. FILESYSTEM: Read-only or scoped to temp directories
 3. CREDENTIALS: No access to host credentials
 4. SYSCALLS: Filter dangerous system calls
 5. RESOURCES: Limit CPU, memory, time
 
-The goal is "blast radius minimization" - if the agent goes wrong,
-damage is contained to the sandbox.
+The goal is "blast radius minimization" - if the agent goes wrong, damage is
+contained to the sandbox.
 
-
-**When to use**: ['Deploying any computer use agent', 'Testing agent behavior safely', 'Running untrusted automation tasks']
+**When to use**: ['Deploying any computer use agent', 'Testing agent behavior
+safely', 'Running untrusted automation tasks']
 
 ```python
 # Dockerfile for sandboxed computer use environment
@@ -211,11 +219,12 @@ from dataclasses im
 
 ### Anthropic Computer Use Implementation
 
-Official implementation pattern using Claude's computer use capability.
-Claude 3.5 Sonnet was the first frontier model to offer computer use.
-Claude Opus 4.5 is now the "best model in the world for computer use."
+Official implementation pattern using Claude's computer use capability. Claude
+3.5 Sonnet was the first frontier model to offer computer use. Claude Opus 4.5
+is now the "best model in the world for computer use."
 
 Key capabilities:
+
 - screenshot: Capture current screen state
 - mouse: Click, move, drag operations
 - keyboard: Type text, press keys
@@ -223,14 +232,15 @@ Key capabilities:
 - text_editor: View and edit files
 
 Tool versions:
+
 - computer_20251124 (Opus 4.5): Adds zoom action for detailed inspection
 - computer_20250124 (All other models): Standard capabilities
 
-Critical limitation: "Some UI elements (like dropdowns and scrollbars)
-might be tricky for Claude to manipulate" - Anthropic docs
+Critical limitation: "Some UI elements (like dropdowns and scrollbars) might be
+tricky for Claude to manipulate" - Anthropic docs
 
-
-**When to use**: ['Building production computer use agents', 'Need highest quality vision understanding', 'Full desktop control (not just browser)']
+**When to use**: ['Building production computer use agents', 'Need highest
+quality vision understanding', 'Full desktop control (not just browser)']
 
 ```python
 from anthropic import Anthropic
@@ -299,17 +309,17 @@ class AnthropicComputerUse:
             subprocess.run(["scrot", "/tmp/screenshot.png"])
 
             with open("/tmp/screenshot.png", "rb") as f:
-            
+
 ```
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
+| Issue | Severity | Solution                                       |
+| ----- | -------- | ---------------------------------------------- |
 | Issue | critical | ## Defense in depth - no single solution works |
-| Issue | medium | ## Add human-like variance to actions |
-| Issue | high | ## Use keyboard alternatives when possible |
-| Issue | medium | ## Accept the tradeoff |
-| Issue | high | ## Implement context management |
-| Issue | high | ## Monitor and limit costs |
-| Issue | critical | ## ALWAYS use sandboxing |
+| Issue | medium   | ## Add human-like variance to actions          |
+| Issue | high     | ## Use keyboard alternatives when possible     |
+| Issue | medium   | ## Accept the tradeoff                         |
+| Issue | high     | ## Implement context management                |
+| Issue | high     | ## Monitor and limit costs                     |
+| Issue | critical | ## ALWAYS use sandboxing                       |

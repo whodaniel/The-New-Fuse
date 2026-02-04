@@ -1,29 +1,43 @@
 ---
 name: IDOR Vulnerability Testing
-description: This skill should be used when the user asks to "test for insecure direct object references," "find IDOR vulnerabilities," "exploit broken access control," "enumerate user IDs or object references," or "bypass authorization to access other users' data." It provides comprehensive guidance for detecting, exploiting, and remediating IDOR vulnerabilities in web applications.
+description:
+  This skill should be used when the user asks to "test for insecure direct
+  object references," "find IDOR vulnerabilities," "exploit broken access
+  control," "enumerate user IDs or object references," or "bypass authorization
+  to access other users' data." It provides comprehensive guidance for
+  detecting, exploiting, and remediating IDOR vulnerabilities in web
+  applications.
 metadata:
   author: zebbern
-  version: "1.1"
+  version: '1.1'
 ---
 
 # IDOR Vulnerability Testing
 
 ## Purpose
 
-Provide systematic methodologies for identifying and exploiting Insecure Direct Object Reference (IDOR) vulnerabilities in web applications. This skill covers both database object references and static file references, detection techniques using parameter manipulation and enumeration, exploitation via Burp Suite, and remediation strategies for securing applications against unauthorized access.
+Provide systematic methodologies for identifying and exploiting Insecure Direct
+Object Reference (IDOR) vulnerabilities in web applications. This skill covers
+both database object references and static file references, detection techniques
+using parameter manipulation and enumeration, exploitation via Burp Suite, and
+remediation strategies for securing applications against unauthorized access.
 
 ## Inputs / Prerequisites
 
 - **Target Web Application**: URL of application with user-specific resources
-- **Multiple User Accounts**: At least two test accounts to verify cross-user access
+- **Multiple User Accounts**: At least two test accounts to verify cross-user
+  access
 - **Burp Suite or Proxy Tool**: Intercepting proxy for request manipulation
 - **Authorization**: Written permission for security testing
-- **Understanding of Application Flow**: Knowledge of how objects are referenced (IDs, filenames)
+- **Understanding of Application Flow**: Knowledge of how objects are referenced
+  (IDs, filenames)
 
 ## Outputs / Deliverables
 
-- **IDOR Vulnerability Report**: Documentation of discovered access control bypasses
-- **Proof of Concept**: Evidence of unauthorized data access across user contexts
+- **IDOR Vulnerability Report**: Documentation of discovered access control
+  bypasses
+- **Proof of Concept**: Evidence of unauthorized data access across user
+  contexts
 - **Affected Endpoints**: List of vulnerable API endpoints and parameters
 - **Impact Assessment**: Classification of data exposure severity
 - **Remediation Recommendations**: Specific fixes for identified vulnerabilities
@@ -33,7 +47,10 @@ Provide systematic methodologies for identifying and exploiting Insecure Direct 
 ### 1. Understand IDOR Vulnerability Types
 
 #### Direct Reference to Database Objects
-Occurs when applications reference database records via user-controllable parameters:
+
+Occurs when applications reference database records via user-controllable
+parameters:
+
 ```
 # Original URL (authenticated as User A)
 example.com/user/profile?id=2023
@@ -43,7 +60,9 @@ example.com/user/profile?id=2022
 ```
 
 #### Direct Reference to Static Files
+
 Occurs when applications expose file paths or names that can be enumerated:
+
 ```
 # Original URL (User A's receipt)
 example.com/static/receipt/205.pdf
@@ -55,13 +74,16 @@ example.com/static/receipt/200.pdf
 ### 2. Reconnaissance and Setup
 
 #### Create Multiple Test Accounts
+
 ```
 Account 1: "attacker" - Primary testing account
 Account 2: "victim" - Account whose data we attempt to access
 ```
 
 #### Identify Object References
+
 Capture and analyze requests containing:
+
 - Numeric IDs in URLs: `/api/user/123`
 - Numeric IDs in parameters: `?id=123&action=view`
 - Numeric IDs in request body: `{"userId": 123}`
@@ -69,6 +91,7 @@ Capture and analyze requests containing:
 - GUIDs/UUIDs: `/profile/a1b2c3d4-e5f6-...`
 
 #### Map User IDs
+
 ```
 # Access user ID endpoint (if available)
 GET /api/user-id/
@@ -82,6 +105,7 @@ GET /api/user-id/
 ### 3. Detection Techniques
 
 #### URL Parameter Manipulation
+
 ```
 # Step 1: Capture original authenticated request
 GET /api/user/profile?id=1001 HTTP/1.1
@@ -95,6 +119,7 @@ Cookie: session=attacker_session
 ```
 
 #### Request Body Manipulation
+
 ```
 # Original POST request
 POST /api/address/update HTTP/1.1
@@ -108,6 +133,7 @@ Cookie: session=attacker_session
 ```
 
 #### HTTP Method Switching
+
 ```
 # Original GET request may be protected
 GET /api/admin/users/1000 → 403 Forbidden
@@ -120,6 +146,7 @@ PUT /api/admin/users/1000 → 200 OK (Vulnerable!)
 ### 4. Exploitation with Burp Suite
 
 #### Manual Exploitation
+
 ```
 1. Configure browser proxy through Burp Suite
 2. Login as "attacker" user
@@ -132,6 +159,7 @@ PUT /api/admin/users/1000 → 200 OK (Vulnerable!)
 ```
 
 #### Automated Enumeration with Intruder
+
 ```
 1. Send request to Intruder (Ctrl+I)
 2. Clear all payload positions
@@ -146,6 +174,7 @@ PUT /api/admin/users/1000 → 200 OK (Vulnerable!)
 ```
 
 #### Battering Ram Attack for Multiple Positions
+
 ```
 # When same ID appears in multiple locations
 PUT /api/addresses/§5§/update HTTP/1.1
@@ -159,6 +188,7 @@ Payload: Numbers 1-1000
 ### 5. Common IDOR Locations
 
 #### API Endpoints
+
 ```
 /api/user/{id}
 /api/profile/{id}
@@ -171,6 +201,7 @@ Payload: Numbers 1-1000
 ```
 
 #### File Downloads
+
 ```
 /download/invoice_{id}.pdf
 /static/receipts/{id}.pdf
@@ -179,6 +210,7 @@ Payload: Numbers 1-1000
 ```
 
 #### Query Parameters
+
 ```
 ?userId=123
 ?orderId=456
@@ -191,39 +223,40 @@ Payload: Numbers 1-1000
 
 ### IDOR Testing Checklist
 
-| Test | Method | Indicator of Vulnerability |
-|------|--------|---------------------------|
-| Increment/Decrement ID | Change `id=5` to `id=4` | Returns different user's data |
-| Use Victim's ID | Replace with known victim ID | Access granted to victim's resources |
-| Enumerate Range | Test IDs 1-1000 | Find valid records of other users |
-| Negative Values | Test `id=-1` or `id=0` | Unexpected data or errors |
-| Large Values | Test `id=99999999` | System information disclosure |
-| String IDs | Change format `id=user_123` | Logic bypass |
-| GUID Manipulation | Modify UUID portions | Predictable UUID patterns |
+| Test                   | Method                       | Indicator of Vulnerability           |
+| ---------------------- | ---------------------------- | ------------------------------------ |
+| Increment/Decrement ID | Change `id=5` to `id=4`      | Returns different user's data        |
+| Use Victim's ID        | Replace with known victim ID | Access granted to victim's resources |
+| Enumerate Range        | Test IDs 1-1000              | Find valid records of other users    |
+| Negative Values        | Test `id=-1` or `id=0`       | Unexpected data or errors            |
+| Large Values           | Test `id=99999999`           | System information disclosure        |
+| String IDs             | Change format `id=user_123`  | Logic bypass                         |
+| GUID Manipulation      | Modify UUID portions         | Predictable UUID patterns            |
 
 ### Response Analysis
 
-| Status Code | Interpretation |
-|-------------|----------------|
-| 200 OK | Potential IDOR - verify data ownership |
-| 403 Forbidden | Access control working |
-| 404 Not Found | Resource doesn't exist |
-| 401 Unauthorized | Authentication required |
-| 500 Error | Potential input validation issue |
+| Status Code      | Interpretation                         |
+| ---------------- | -------------------------------------- |
+| 200 OK           | Potential IDOR - verify data ownership |
+| 403 Forbidden    | Access control working                 |
+| 404 Not Found    | Resource doesn't exist                 |
+| 401 Unauthorized | Authentication required                |
+| 500 Error        | Potential input validation issue       |
 
 ### Common Vulnerable Parameters
 
-| Parameter Type | Examples |
-|----------------|----------|
-| User identifiers | `userId`, `uid`, `user_id`, `account` |
-| Resource identifiers | `id`, `pid`, `docId`, `fileId` |
-| Order/Transaction | `orderId`, `transactionId`, `invoiceId` |
-| Message/Communication | `messageId`, `threadId`, `chatId` |
-| File references | `filename`, `file`, `document`, `path` |
+| Parameter Type        | Examples                                |
+| --------------------- | --------------------------------------- |
+| User identifiers      | `userId`, `uid`, `user_id`, `account`   |
+| Resource identifiers  | `id`, `pid`, `docId`, `fileId`          |
+| Order/Transaction     | `orderId`, `transactionId`, `invoiceId` |
+| Message/Communication | `messageId`, `threadId`, `chatId`       |
+| File references       | `filename`, `file`, `document`, `path`  |
 
 ## Constraints and Limitations
 
 ### Operational Boundaries
+
 - Requires at least two valid user accounts for verification
 - Some applications use session-bound tokens instead of IDs
 - GUID/UUID references harder to enumerate but not impossible
@@ -231,12 +264,14 @@ Payload: Numbers 1-1000
 - Some IDOR requires chained vulnerabilities to exploit
 
 ### Detection Challenges
+
 - Horizontal privilege escalation (user-to-user) vs vertical (user-to-admin)
 - Blind IDOR where response doesn't confirm access
 - Time-based IDOR in asynchronous operations
 - IDOR in websocket communications
 
 ### Legal Requirements
+
 - Only test applications with explicit authorization
 - Document all testing activities and findings
 - Do not access, modify, or exfiltrate real user data
@@ -245,6 +280,7 @@ Payload: Numbers 1-1000
 ## Examples
 
 ### Example 1: Basic ID Parameter IDOR
+
 ```
 # Login as attacker (userId=1001)
 # Navigate to profile page
@@ -263,6 +299,7 @@ Cookie: session=abc123
 ```
 
 ### Example 2: IDOR in Address Update Endpoint
+
 ```
 # Intercept address update request
 PUT /api/addresses/5/update HTTP/1.1
@@ -288,6 +325,7 @@ Cookie: session=attacker_session
 ```
 
 ### Example 3: Static File IDOR
+
 ```
 # Download own receipt
 GET /api/download/5 HTTP/1.1
@@ -303,6 +341,7 @@ Cookie: session=attacker_session
 ```
 
 ### Example 4: Burp Intruder Enumeration
+
 ```
 # Configure Intruder attack
 Target: PUT /api/addresses/§1§/update
@@ -324,6 +363,7 @@ Body Template:
 ```
 
 ### Example 5: Horizontal to Vertical Escalation
+
 ```
 # Step 1: Enumerate user roles
 GET /api/user/1 → {"role": "user", "id": 1}
@@ -340,8 +380,9 @@ Cookie: session=regular_user_session
 ## Troubleshooting
 
 ### Issue: All Requests Return 403 Forbidden
-**Cause**: Server-side access control is implemented
-**Solution**:
+
+**Cause**: Server-side access control is implemented **Solution**:
+
 ```
 # Try alternative attack vectors:
 1. HTTP method switching (GET → POST → PUT)
@@ -352,8 +393,9 @@ Cookie: session=regular_user_session
 ```
 
 ### Issue: Application Uses UUIDs Instead of Sequential IDs
-**Cause**: Randomized identifiers reduce enumeration risk
-**Solution**:
+
+**Cause**: Randomized identifiers reduce enumeration risk **Solution**:
+
 ```
 # UUID discovery techniques:
 1. Check response bodies for leaked UUIDs
@@ -364,8 +406,10 @@ Cookie: session=regular_user_session
 ```
 
 ### Issue: Session Token Bound to User
+
 **Cause**: Application validates session against requested resource
 **Solution**:
+
 ```
 # Advanced bypass attempts:
 1. Test for IDOR in unauthenticated endpoints
@@ -376,8 +420,9 @@ Cookie: session=regular_user_session
 ```
 
 ### Issue: Rate Limiting Blocks Enumeration
-**Cause**: Application implements request throttling
-**Solution**:
+
+**Cause**: Application implements request throttling **Solution**:
+
 ```
 # Bypass techniques:
 1. Add delays between requests (Burp Intruder throttle)
@@ -388,8 +433,9 @@ Cookie: session=regular_user_session
 ```
 
 ### Issue: Cannot Verify IDOR Impact
-**Cause**: Response doesn't clearly indicate data ownership
-**Solution**:
+
+**Cause**: Response doesn't clearly indicate data ownership **Solution**:
+
 ```
 # Verification methods:
 1. Create unique identifiable data in victim account
@@ -402,20 +448,22 @@ Cookie: session=regular_user_session
 ## Remediation Guidance
 
 ### Implement Proper Access Control
+
 ```python
 # Django example - validate ownership
 def update_address(request, address_id):
     address = Address.objects.get(id=address_id)
-    
+
     # Verify ownership before allowing update
     if address.user != request.user:
         return HttpResponseForbidden("Unauthorized")
-    
+
     # Proceed with update
     address.update(request.data)
 ```
 
 ### Use Indirect References
+
 ```python
 # Instead of: /api/address/123
 # Use: /api/address/current-user/billing
@@ -427,6 +475,7 @@ def get_address(request):
 ```
 
 ### Server-Side Validation
+
 ```python
 # Always validate on server, never trust client input
 def download_receipt(request, receipt_id):
@@ -434,9 +483,9 @@ def download_receipt(request, receipt_id):
         id=receipt_id,
         user=request.user  # Critical: filter by current user
     ).first()
-    
+
     if not receipt:
         return HttpResponseNotFound()
-    
+
     return FileResponse(receipt.file)
 ```

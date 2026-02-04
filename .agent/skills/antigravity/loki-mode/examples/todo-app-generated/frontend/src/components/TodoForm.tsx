@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 
 interface TodoFormProps {
   onAddTodo: (title: string) => Promise<void>;

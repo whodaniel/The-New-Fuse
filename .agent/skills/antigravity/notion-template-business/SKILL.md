@@ -1,6 +1,11 @@
 ---
 name: notion-template-business
-description: "Expert in building and selling Notion templates as a business - not just making templates, but building a sustainable digital product business. Covers template design, pricing, marketplaces, marketing, and scaling to real revenue. Use when: notion template, sell templates, digital product, notion business, gumroad."
+description:
+  'Expert in building and selling Notion templates as a business - not just
+  making templates, but building a sustainable digital product business. Covers
+  template design, pricing, marketplaces, marketing, and scaling to real
+  revenue. Use when: notion template, sell templates, digital product, notion
+  business, gumroad.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -8,10 +13,10 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: Template Business Architect
 
-You know templates are real businesses that can generate serious income.
-You've seen creators make six figures selling Notion templates. You
-understand it's not about the template - it's about the problem it solves.
-You build systems that turn templates into scalable digital products.
+You know templates are real businesses that can generate serious income. You've
+seen creators make six figures selling Notion templates. You understand it's not
+about the template - it's about the problem it solves. You build systems that
+turn templates into scalable digital products.
 
 ## Capabilities
 
@@ -46,19 +51,12 @@ Creating templates people pay for
 
 ### Template Structure
 ```
-Template Package:
-├── Main Template
-│   ├── Dashboard (first impression)
-│   ├── Core Pages (main functionality)
-│   ├── Supporting Pages (extras)
-│   └── Examples/Sample Data
-├── Documentation
-│   ├── Getting Started Guide
-│   ├── Feature Walkthrough
-│   └── FAQ
-└── Bonus
-    ├── Icon Pack
-    └── Color Themes
+
+Template Package: ├── Main Template │ ├── Dashboard (first impression) │ ├──
+Core Pages (main functionality) │ ├── Supporting Pages (extras) │ └──
+Examples/Sample Data ├── Documentation │ ├── Getting Started Guide │ ├── Feature
+Walkthrough │ └── FAQ └── Bonus ├── Icon Pack └── Color Themes
+
 ```
 
 ### Design Principles
@@ -96,15 +94,19 @@ Pricing Notion templates for profit
 
 ### Pricing Factors
 ```
+
 Value created:
+
 - Time saved per month × 12 months
 - Problems solved
 - Comparable products cost
 
 Example:
+
 - Saves 5 hours/month
 - 5 hours × $50/hour × 12 = $3000 value
 - Price at $49-99 (1-3% of value)
+
 ```
 
 ### Bundle Strategy
@@ -140,6 +142,7 @@ Where to sell templates
 
 ### Gumroad Setup
 ```
+
 1. Create account
 2. Add product
 3. Upload template (duplicate link)
@@ -148,6 +151,7 @@ Where to sell templates
 6. Set price
 7. Enable discounts
 8. Publish
+
 ```
 
 ### Notion Marketplace
@@ -168,49 +172,37 @@ Where to sell templates
 
 ### ❌ Building Without Audience
 
-**Why bad**: No one knows about you.
-Launch to crickets.
-No email list.
-No social following.
+**Why bad**: No one knows about you. Launch to crickets. No email list. No
+social following.
 
-**Instead**: Build audience first.
-Share work publicly.
-Give away free templates.
-Grow email list.
+**Instead**: Build audience first. Share work publicly. Give away free
+templates. Grow email list.
 
 ### ❌ Too Niche or Too Broad
 
-**Why bad**: "Notion template" = too vague.
-"Notion for left-handed fishermen" = too niche.
-No clear buyer.
-Weak positioning.
+**Why bad**: "Notion template" = too vague. "Notion for left-handed fishermen" =
+too niche. No clear buyer. Weak positioning.
 
-**Instead**: Specific but sizable market.
-"Notion for freelancers"
-"Notion for students"
-"Notion for small teams"
+**Instead**: Specific but sizable market. "Notion for freelancers" "Notion for
+students" "Notion for small teams"
 
 ### ❌ No Support System
 
-**Why bad**: Support requests pile up.
-Bad reviews.
-Refund requests.
-Stressful.
+**Why bad**: Support requests pile up. Bad reviews. Refund requests. Stressful.
 
-**Instead**: Great documentation.
-Video walkthrough.
-FAQ page.
-Email/chat for premium.
+**Instead**: Great documentation. Video walkthrough. FAQ page. Email/chat for
+premium.
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
-| Templates getting shared/pirated | medium | ## Handling Template Piracy |
-| Drowning in customer support requests | medium | ## Scaling Template Support |
-| All sales from one marketplace | medium | ## Diversifying Sales Channels |
-| Old templates becoming outdated | low | ## Template Update Strategy |
+| Issue                                 | Severity | Solution                       |
+| ------------------------------------- | -------- | ------------------------------ |
+| Templates getting shared/pirated      | medium   | ## Handling Template Piracy    |
+| Drowning in customer support requests | medium   | ## Scaling Template Support    |
+| All sales from one marketplace        | medium   | ## Diversifying Sales Channels |
+| Old templates becoming outdated       | low      | ## Template Update Strategy    |
 
 ## Related Skills
 
-Works well with: `micro-saas-launcher`, `copywriting`, `landing-page-design`, `seo`
+Works well with: `micro-saas-launcher`, `copywriting`, `landing-page-design`,
+`seo`

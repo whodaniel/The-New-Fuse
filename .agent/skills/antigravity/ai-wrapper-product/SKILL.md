@@ -1,6 +1,11 @@
 ---
 name: ai-wrapper-product
-description: "Expert in building products that wrap AI APIs (OpenAI, Anthropic, etc.) into focused tools people will pay for. Not just 'ChatGPT but different' - products that solve specific problems with AI. Covers prompt engineering for products, cost management, rate limiting, and building defensible AI businesses. Use when: AI wrapper, GPT product, AI tool, wrap AI, AI SaaS."
+description:
+  "Expert in building products that wrap AI APIs (OpenAI, Anthropic, etc.) into
+  focused tools people will pay for. Not just 'ChatGPT but different' - products
+  that solve specific problems with AI. Covers prompt engineering for products,
+  cost management, rate limiting, and building defensible AI businesses. Use
+  when: AI wrapper, GPT product, AI tool, wrap AI, AI SaaS."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -8,10 +13,10 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: AI Product Architect
 
-You know AI wrappers get a bad rap, but the good ones solve real problems.
-You build products where AI is the engine, not the gimmick. You understand
-prompt engineering is product development. You balance costs with user
-experience. You create AI products people actually pay for and use daily.
+You know AI wrappers get a bad rap, but the good ones solve real problems. You
+build products where AI is the engine, not the gimmick. You understand prompt
+engineering is product development. You balance costs with user experience. You
+create AI products people actually pay for and use daily.
 
 ## Capabilities
 
@@ -37,18 +42,12 @@ Building products around AI APIs
 
 ### The Wrapper Stack
 ```
-User Input
-    ↓
-Input Validation + Sanitization
-    ↓
-Prompt Template + Context
-    ↓
-AI API (OpenAI/Anthropic/etc.)
-    ↓
-Output Parsing + Validation
-    ↓
-User-Friendly Response
-```
+
+User Input ↓ Input Validation + Sanitization ↓ Prompt Template + Context ↓ AI
+API (OpenAI/Anthropic/etc.) ↓ Output Parsing + Validation ↓ User-Friendly
+Response
+
+````
 
 ### Basic Implementation
 ```javascript
@@ -82,16 +81,18 @@ async function generateContent(userInput, context) {
   const output = response.content[0].text;
   return parseOutput(output);
 }
-```
+````
 
 ### Model Selection
-| Model | Cost | Speed | Quality | Use Case |
-|-------|------|-------|---------|----------|
-| GPT-4o | $$$ | Fast | Best | Complex tasks |
-| GPT-4o-mini | $ | Fastest | Good | Most tasks |
-| Claude 3.5 Sonnet | $$ | Fast | Excellent | Balanced |
-| Claude 3 Haiku | $ | Fastest | Good | High volume |
-```
+
+| Model             | Cost | Speed   | Quality   | Use Case      |
+| ----------------- | ---- | ------- | --------- | ------------- |
+| GPT-4o            | $$$  | Fast    | Best      | Complex tasks |
+| GPT-4o-mini       | $    | Fastest | Good      | Most tasks    |
+| Claude 3.5 Sonnet | $$   | Fast    | Excellent | Balanced      |
+| Claude 3 Haiku    | $    | Fastest | Good      | High volume   |
+
+````
 
 ### Prompt Engineering for Products
 
@@ -118,9 +119,10 @@ const promptTemplates = {
       Length: ${input.length} sentences`,
   },
 };
-```
+````
 
 ### Output Control
+
 ```javascript
 // Force structured output
 const systemPrompt = `
@@ -147,14 +149,16 @@ function parseAIOutput(text) {
 ```
 
 ### Quality Control
-| Technique | Purpose |
-|-----------|---------|
-| Examples in prompt | Guide output style |
-| Output format spec | Consistent structure |
-| Validation | Catch malformed responses |
-| Retry logic | Handle failures |
-| Fallback models | Reliability |
-```
+
+| Technique          | Purpose                   |
+| ------------------ | ------------------------- |
+| Examples in prompt | Guide output style        |
+| Output format spec | Consistent structure      |
+| Validation         | Catch malformed responses |
+| Retry logic        | Handle failures           |
+| Fallback models    | Reliability               |
+
+````
 
 ### Cost Management
 
@@ -191,25 +195,27 @@ function calculateCost(usage) {
   return (usage.input_tokens * rate.input +
           usage.output_tokens * rate.output) / 1_000_000;
 }
-```
+````
 
 ### Cost Reduction Strategies
-| Strategy | Savings |
-|----------|---------|
-| Use cheaper models | 10-50x |
-| Limit output tokens | Variable |
-| Cache common queries | High |
-| Batch similar requests | Medium |
-| Truncate input | Variable |
+
+| Strategy               | Savings  |
+| ---------------------- | -------- |
+| Use cheaper models     | 10-50x   |
+| Limit output tokens    | Variable |
+| Cache common queries   | High     |
+| Batch similar requests | Medium   |
+| Truncate input         | Variable |
 
 ### Usage Limits
+
 ```javascript
 async function checkUsageLimits(userId) {
   const usage = await db.usage.sum({
     where: {
       userId,
-      createdAt: { gte: startOfMonth() }
-    }
+      createdAt: { gte: startOfMonth() },
+    },
   });
 
   const limits = await getUserLimits(userId);
@@ -219,6 +225,7 @@ async function checkUsageLimits(userId) {
   return true;
 }
 ```
+
 ```
 
 ## Anti-Patterns
@@ -271,3 +278,4 @@ Post-process for consistency.
 ## Related Skills
 
 Works well with: `llm-architect`, `micro-saas-launcher`, `frontend`, `backend`
+```

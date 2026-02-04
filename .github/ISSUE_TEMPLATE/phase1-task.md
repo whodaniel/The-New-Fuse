@@ -1,8 +1,8 @@
 ---
 name: Phase 1 Task Template
 about: Template for Phase 1 Foundation tasks
-title: "[P1] {Task Number}: {Brief Task Description}"
-labels: ["phase-1", "foundation", "improvement"]
+title: '[P1] {Task Number}: {Brief Task Description}'
+labels: ['phase-1', 'foundation', 'improvement']
 assignees: []
 ---
 
@@ -27,19 +27,23 @@ assignees: []
 ## 📍 Current State Analysis
 
 **Locations to audit/modify:**
+
 - `{path/to/current/implementation1}`
 - `{path/to/current/implementation2}`
 
 **Current Issues:**
+
 - {Issue 1}
 - {Issue 2}
 
 ## 🎯 Target State
 
 **New Structure:**
+
 - `{path/to/new/unified/implementation}`
 
 **Expected Improvements:**
+
 - {Improvement 1}
 - {Improvement 2}
 
@@ -88,18 +92,22 @@ assignees: []
 ## 📊 Success Metrics
 
 **Before:**
+
 - {Current metric values}
 
 **After (Target):**
+
 - {Target metric values}
 
 ## 🚨 Risk Assessment
 
 **Potential Risks:**
+
 - {Risk 1}: {Mitigation strategy}
 - {Risk 2}: {Mitigation strategy}
 
 **Rollback Plan:**
+
 - {Clear rollback procedure}
 
 ## 📝 Notes
@@ -108,5 +116,6 @@ assignees: []
 
 ---
 
-**Roadmap Reference:** [CODEBASE_IMPROVEMENT_ROADMAP.md](../CODEBASE_IMPROVEMENT_ROADMAP.md)  
+**Roadmap Reference:**
+[CODEBASE_IMPROVEMENT_ROADMAP.md](../CODEBASE_IMPROVEMENT_ROADMAP.md)  
 **Progress Tracking:** Update roadmap checkboxes when completing tasks

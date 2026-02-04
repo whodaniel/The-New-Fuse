@@ -630,6 +630,8 @@ class TNFMCPConfigManager {
 
     // Update metadata
     config.metadata = {
+      managed_by: 'tnf-mcp-config-manager',
+      tnf_integration: false,
       ...config.metadata,
       last_updated: new Date().toISOString(),
     };

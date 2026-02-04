@@ -1,6 +1,8 @@
 ---
 name: database-design
-description: Database design principles and decision-making. Schema design, indexing strategy, ORM selection, serverless databases.
+description:
+  Database design principles and decision-making. Schema design, indexing
+  strategy, ORM selection, serverless databases.
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -10,16 +12,17 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ## 🎯 Selective Reading Rule
 
-**Read ONLY files relevant to the request!** Check the content map, find what you need.
+**Read ONLY files relevant to the request!** Check the content map, find what
+you need.
 
-| File | Description | When to Read |
-|------|-------------|--------------|
-| `database-selection.md` | PostgreSQL vs Neon vs Turso vs SQLite | Choosing database |
-| `orm-selection.md` | Drizzle vs Prisma vs Kysely | Choosing ORM |
-| `schema-design.md` | Normalization, PKs, relationships | Designing schema |
-| `indexing.md` | Index types, composite indexes | Performance tuning |
-| `optimization.md` | N+1, EXPLAIN ANALYZE | Query optimization |
-| `migrations.md` | Safe migrations, serverless DBs | Schema changes |
+| File                    | Description                           | When to Read       |
+| ----------------------- | ------------------------------------- | ------------------ |
+| `database-selection.md` | PostgreSQL vs Neon vs Turso vs SQLite | Choosing database  |
+| `orm-selection.md`      | Drizzle vs Prisma vs Kysely           | Choosing ORM       |
+| `schema-design.md`      | Normalization, PKs, relationships     | Designing schema   |
+| `indexing.md`           | Index types, composite indexes        | Performance tuning |
+| `optimization.md`       | N+1, EXPLAIN ANALYZE                  | Query optimization |
+| `migrations.md`         | Safe migrations, serverless DBs       | Schema changes     |
 
 ---
 
@@ -45,8 +48,6 @@ Before designing schema:
 
 ## Anti-Patterns
 
-❌ Default to PostgreSQL for simple apps (SQLite may suffice)
-❌ Skip indexing
-❌ Use SELECT * in production
-❌ Store JSON when structured data is better
-❌ Ignore N+1 queries
+❌ Default to PostgreSQL for simple apps (SQLite may suffice) ❌ Skip indexing
+❌ Use SELECT \* in production ❌ Store JSON when structured data is better ❌
+Ignore N+1 queries

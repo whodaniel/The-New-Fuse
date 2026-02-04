@@ -4,9 +4,9 @@
  */
 
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
@@ -29,7 +29,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      
+
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
       } else if (typeof exceptionResponse === 'object') {
@@ -55,7 +55,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     this.logger.error(
       `${request.method} ${request.url} - ${status} - ${message}`,
-      JSON.stringify(errorResponse),
+      JSON.stringify(errorResponse)
     );
 
     response.status(status).json(errorResponse);

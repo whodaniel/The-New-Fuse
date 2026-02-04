@@ -1,28 +1,38 @@
 # App Store Optimization (ASO) Skill
 
-**Version**: 1.0.0
-**Last Updated**: November 7, 2025
-**Author**: Claude Skills Factory
+**Version**: 1.0.0 **Last Updated**: November 7, 2025 **Author**: Claude Skills
+Factory
 
 ## Overview
 
-A comprehensive App Store Optimization (ASO) skill that provides complete capabilities for researching, optimizing, and tracking mobile app performance on the Apple App Store and Google Play Store. This skill empowers app developers and marketers to maximize their app's visibility, downloads, and success in competitive app marketplaces.
+A comprehensive App Store Optimization (ASO) skill that provides complete
+capabilities for researching, optimizing, and tracking mobile app performance on
+the Apple App Store and Google Play Store. This skill empowers app developers
+and marketers to maximize their app's visibility, downloads, and success in
+competitive app marketplaces.
 
 ## What This Skill Does
 
 This skill provides end-to-end ASO capabilities across seven key areas:
 
-1. **Research & Analysis**: Keyword research, competitor analysis, market trends, review sentiment
-2. **Metadata Optimization**: Title, description, keywords with platform-specific character limits
+1. **Research & Analysis**: Keyword research, competitor analysis, market
+   trends, review sentiment
+2. **Metadata Optimization**: Title, description, keywords with
+   platform-specific character limits
 3. **Conversion Optimization**: A/B testing framework, visual asset optimization
-4. **Rating & Review Management**: Sentiment analysis, response strategies, issue identification
-5. **Launch & Update Strategies**: Pre-launch checklists, timing optimization, update planning
-6. **Analytics & Tracking**: ASO scoring, keyword rankings, performance benchmarking
-7. **Localization**: Multi-language strategy, translation management, ROI analysis
+4. **Rating & Review Management**: Sentiment analysis, response strategies,
+   issue identification
+5. **Launch & Update Strategies**: Pre-launch checklists, timing optimization,
+   update planning
+6. **Analytics & Tracking**: ASO scoring, keyword rankings, performance
+   benchmarking
+7. **Localization**: Multi-language strategy, translation management, ROI
+   analysis
 
 ## Key Features
 
 ### Comprehensive Keyword Research
+
 - Search volume and competition analysis
 - Long-tail keyword discovery
 - Competitor keyword extraction
@@ -30,6 +40,7 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 - Strategic prioritization
 
 ### Platform-Specific Metadata Optimization
+
 - **Apple App Store**:
   - Title (30 chars)
   - Subtitle (30 chars)
@@ -45,6 +56,7 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 - Multiple optimization strategies
 
 ### Competitor Intelligence
+
 - Automated competitor discovery
 - Metadata strategy analysis
 - Visual asset assessment
@@ -52,6 +64,7 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 - Competitive positioning
 
 ### ASO Health Scoring
+
 - 0-100 overall score
 - Four-category breakdown (Metadata, Ratings, Keywords, Conversion)
 - Strengths and weaknesses identification
@@ -59,6 +72,7 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 - Expected impact estimates
 
 ### Scientific A/B Testing
+
 - Test design and hypothesis formulation
 - Sample size calculation
 - Statistical significance analysis
@@ -66,6 +80,7 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 - Implementation recommendations
 
 ### Global Localization
+
 - Market prioritization (Tier 1/2/3)
 - Translation cost estimation
 - Character limit adaptation by language
@@ -73,6 +88,7 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 - ROI analysis
 
 ### Review Intelligence
+
 - Sentiment analysis
 - Common theme extraction
 - Bug and issue identification
@@ -80,6 +96,7 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 - Professional response templates
 
 ### Launch Planning
+
 - Platform-specific checklists
 - Timeline generation
 - Compliance validation
@@ -91,9 +108,11 @@ This skill provides end-to-end ASO capabilities across seven key areas:
 This skill includes 8 powerful Python modules:
 
 ### 1. keyword_analyzer.py
+
 **Purpose**: Analyzes keywords for search volume, competition, and relevance
 
 **Key Functions**:
+
 - `analyze_keyword()`: Single keyword analysis
 - `compare_keywords()`: Multi-keyword comparison and ranking
 - `find_long_tail_opportunities()`: Generate long-tail variations
@@ -101,9 +120,12 @@ This skill includes 8 powerful Python modules:
 - `extract_keywords_from_text()`: Extract keywords from reviews/descriptions
 
 ### 2. metadata_optimizer.py
-**Purpose**: Optimizes titles, descriptions, keywords with character limit validation
+
+**Purpose**: Optimizes titles, descriptions, keywords with character limit
+validation
 
 **Key Functions**:
+
 - `optimize_title()`: Generate optimal title options
 - `optimize_description()`: Create conversion-focused descriptions
 - `optimize_keyword_field()`: Maximize Apple's 100-char keyword field
@@ -111,18 +133,22 @@ This skill includes 8 powerful Python modules:
 - `calculate_keyword_density()`: Analyze keyword integration
 
 ### 3. competitor_analyzer.py
+
 **Purpose**: Analyzes competitor ASO strategies
 
 **Key Functions**:
+
 - `analyze_competitor()`: Single competitor deep-dive
 - `compare_competitors()`: Multi-competitor analysis
 - `identify_gaps()`: Find competitive opportunities
 - `_calculate_competitive_strength()`: Score competitor ASO quality
 
 ### 4. aso_scorer.py
+
 **Purpose**: Calculates comprehensive ASO health score
 
 **Key Functions**:
+
 - `calculate_overall_score()`: 0-100 ASO health score
 - `score_metadata_quality()`: Evaluate metadata optimization
 - `score_ratings_reviews()`: Assess rating quality and volume
@@ -131,9 +157,11 @@ This skill includes 8 powerful Python modules:
 - `generate_recommendations()`: Prioritized improvement actions
 
 ### 5. ab_test_planner.py
+
 **Purpose**: Plans and tracks A/B tests for ASO elements
 
 **Key Functions**:
+
 - `design_test()`: Create test hypothesis and structure
 - `calculate_sample_size()`: Determine required visitors
 - `calculate_significance()`: Assess statistical validity
@@ -141,9 +169,11 @@ This skill includes 8 powerful Python modules:
 - `generate_test_report()`: Create comprehensive test reports
 
 ### 6. localization_helper.py
+
 **Purpose**: Manages multi-language ASO optimization
 
 **Key Functions**:
+
 - `identify_target_markets()`: Prioritize localization markets
 - `translate_metadata()`: Adapt metadata for languages
 - `adapt_keywords()`: Cultural keyword adaptation
@@ -151,9 +181,11 @@ This skill includes 8 powerful Python modules:
 - `calculate_localization_roi()`: Estimate investment returns
 
 ### 7. review_analyzer.py
+
 **Purpose**: Analyzes user reviews for actionable insights
 
 **Key Functions**:
+
 - `analyze_sentiment()`: Calculate sentiment distribution
 - `extract_common_themes()`: Identify frequent topics
 - `identify_issues()`: Surface bugs and problems
@@ -162,9 +194,11 @@ This skill includes 8 powerful Python modules:
 - `generate_response_templates()`: Create review responses
 
 ### 8. launch_checklist.py
+
 **Purpose**: Generates comprehensive launch and update checklists
 
 **Key Functions**:
+
 - `generate_prelaunch_checklist()`: Complete submission validation
 - `validate_app_store_compliance()`: Check guidelines compliance
 - `create_update_plan()`: Plan update cadence
@@ -176,6 +210,7 @@ This skill includes 8 powerful Python modules:
 ### For Claude Code (Desktop/CLI)
 
 #### Project-Level Installation
+
 ```bash
 # Copy skill folder to project
 cp -r app-store-optimization /path/to/your/project/.claude/skills/
@@ -184,6 +219,7 @@ cp -r app-store-optimization /path/to/your/project/.claude/skills/
 ```
 
 #### User-Level Installation (Available in All Projects)
+
 ```bash
 # Copy skill folder to user-level skills
 cp -r app-store-optimization ~/.claude/skills/
@@ -199,6 +235,7 @@ cp -r app-store-optimization ~/.claude/skills/
 ### Verification
 
 To verify installation:
+
 ```bash
 # Check if skill folder exists
 ls ~/.claude/skills/app-store-optimization/
@@ -228,6 +265,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Can you research k
 ```
 
 **What Claude will do**:
+
 - Use `keyword_analyzer.py` to research keywords
 - Use `competitor_analyzer.py` to analyze Nike Training Club and Peloton
 - Provide prioritized keyword list with search volumes, competition levels
@@ -245,6 +283,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Optimize my app's 
 ```
 
 **What Claude will do**:
+
 - Use `metadata_optimizer.py` to create optimized titles (multiple options)
 - Generate platform-specific descriptions (short and full)
 - Optimize Apple's 100-character keyword field
@@ -265,8 +304,10 @@ Hey Claude—I just added the "app-store-optimization" skill. Calculate my app's
 ```
 
 **What Claude will do**:
+
 - Use `aso_scorer.py` to calculate overall score (0-100)
-- Break down by category (Metadata: X/25, Ratings: X/25, Keywords: X/25, Conversion: X/25)
+- Break down by category (Metadata: X/25, Ratings: X/25, Keywords: X/25,
+  Conversion: X/25)
 - Identify strengths and weaknesses
 - Generate prioritized recommendations
 - Estimate impact of improvements
@@ -278,6 +319,7 @@ Hey Claude—I just added the "app-store-optimization" skill. I want to A/B test
 ```
 
 **What Claude will do**:
+
 - Use `ab_test_planner.py` to design test
 - Calculate required sample size (based on minimum detectable effect)
 - Estimate test duration for low/medium/high traffic scenarios
@@ -295,6 +337,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Analyze my last 50
 ```
 
 **What Claude will do**:
+
 - Use `review_analyzer.py` to process reviews
 - Calculate sentiment distribution
 - Extract common themes
@@ -309,6 +352,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 ```
 
 **What Claude will do**:
+
 - Use `launch_checklist.py` to generate checklists
 - Create Apple App Store checklist (metadata, assets, technical, legal)
 - Create Google Play Store checklist (metadata, assets, technical, legal)
@@ -319,6 +363,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 ## Best Practices
 
 ### Keyword Research
+
 1. Start with 20-30 seed keywords
 2. Analyze top 5 competitors in your category
 3. Balance high-volume and long-tail keywords
@@ -326,6 +371,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 5. Update keyword research quarterly
 
 ### Metadata Optimization
+
 1. Front-load keywords in title (first 15 characters most important)
 2. Use every available character (don't waste space)
 3. Write for humans first, search engines second
@@ -333,6 +379,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 5. Update descriptions with each major release
 
 ### A/B Testing
+
 1. Test one element at a time (icon vs. screenshots vs. title)
 2. Run tests to statistical significance (90%+ confidence)
 3. Test high-impact elements first (icon has biggest impact)
@@ -340,6 +387,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 5. Document learnings for future tests
 
 ### Localization
+
 1. Start with top 5 revenue markets (US, China, Japan, Germany, UK)
 2. Use professional translators, not machine translation
 3. Test translations with native speakers
@@ -347,6 +395,7 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 5. Monitor ROI by market
 
 ### Review Management
+
 1. Respond to reviews within 24-48 hours
 2. Always be professional, even with negative reviews
 3. Address specific issues raised
@@ -363,18 +412,21 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 ## Limitations
 
 ### Data Dependencies
+
 - Keyword search volumes are estimates (no official Apple/Google data)
 - Competitor data limited to publicly available information
 - Review analysis requires access to public reviews
 - Historical data may not be available for new apps
 
 ### Platform Constraints
+
 - Apple: Metadata changes require app submission (except Promotional Text)
 - Google: Metadata changes take 1-2 hours to index
 - A/B testing requires significant traffic for statistical significance
 - Store algorithms are proprietary and change without notice
 
 ### Scope
+
 - Does not include paid user acquisition (Apple Search Ads, Google Ads)
 - Does not cover in-app analytics implementation
 - Does not handle technical app development
@@ -383,20 +435,26 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 ## Troubleshooting
 
 ### Issue: Python modules not found
+
 **Solution**: Ensure all .py files are in the same directory as SKILL.md
 
 ### Issue: Character limit validation failing
+
 **Solution**: Check that you're using the correct platform ('apple' or 'google')
 
 ### Issue: Keyword research returning limited results
+
 **Solution**: Provide more context about your app, features, and target audience
 
 ### Issue: ASO score seems inaccurate
-**Solution**: Ensure you're providing accurate metrics (ratings, keyword rankings, conversion rate)
+
+**Solution**: Ensure you're providing accurate metrics (ratings, keyword
+rankings, conversion rate)
 
 ## Version History
 
 ### Version 1.0.0 (November 7, 2025)
+
 - Initial release
 - 8 Python modules with comprehensive ASO capabilities
 - Support for both Apple App Store and Google Play Store
@@ -406,7 +464,8 @@ Hey Claude—I just added the "app-store-optimization" skill. Generate a complet
 
 ## Support & Feedback
 
-This skill is designed to help app developers and marketers succeed in competitive app marketplaces. For the best results:
+This skill is designed to help app developers and marketers succeed in
+competitive app marketplaces. For the best results:
 
 1. Provide detailed context about your app
 2. Include specific metrics when available
@@ -415,16 +474,19 @@ This skill is designed to help app developers and marketers succeed in competiti
 
 ## Credits
 
-Developed by Claude Skills Factory
-Based on industry-standard ASO best practices
+Developed by Claude Skills Factory Based on industry-standard ASO best practices
 Platform requirements current as of November 2025
 
 ## License
 
-This skill is provided as-is for use with Claude Code and Claude Apps. Customize and extend as needed for your specific use cases.
+This skill is provided as-is for use with Claude Code and Claude Apps. Customize
+and extend as needed for your specific use cases.
 
 ---
 
-**Ready to optimize your app?** Start with keyword research, then move to metadata optimization, and finally implement A/B testing for continuous improvement. The skill handles everything from pre-launch planning to ongoing optimization.
+**Ready to optimize your app?** Start with keyword research, then move to
+metadata optimization, and finally implement A/B testing for continuous
+improvement. The skill handles everything from pre-launch planning to ongoing
+optimization.
 
 For detailed usage examples, see [HOW_TO_USE.md](HOW_TO_USE.md).

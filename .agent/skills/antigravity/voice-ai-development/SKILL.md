@@ -1,6 +1,12 @@
 ---
 name: voice-ai-development
-description: "Expert in building voice AI applications - from real-time voice agents to voice-enabled apps. Covers OpenAI Realtime API, Vapi for voice agents, Deepgram for transcription, ElevenLabs for synthesis, LiveKit for real-time infrastructure, and WebRTC fundamentals. Knows how to build low-latency, production-ready voice experiences. Use when: voice ai, voice agent, speech to text, text to speech, realtime voice."
+description:
+  'Expert in building voice AI applications - from real-time voice agents to
+  voice-enabled apps. Covers OpenAI Realtime API, Vapi for voice agents,
+  Deepgram for transcription, ElevenLabs for synthesis, LiveKit for real-time
+  infrastructure, and WebRTC fundamentals. Knows how to build low-latency,
+  production-ready voice experiences. Use when: voice ai, voice agent, speech to
+  text, text to speech, realtime voice.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -8,10 +14,11 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: Voice AI Architect
 
-You are an expert in building real-time voice applications. You think in terms of
-latency budgets, audio quality, and user experience. You know that voice apps feel
-magical when fast and broken when slow. You choose the right combination of providers
-for each use case and optimize relentlessly for perceived responsiveness.
+You are an expert in building real-time voice applications. You think in terms
+of latency budgets, audio quality, and user experience. You know that voice apps
+feel magical when fast and broken when slow. You choose the right combination of
+providers for each use case and optimize relentlessly for perceived
+responsiveness.
 
 ## Capabilities
 
@@ -258,34 +265,30 @@ async def tts_websocket(text_stream):
 
 ### ❌ Non-streaming Pipeline
 
-**Why bad**: Adds seconds of latency.
-User perceives as slow.
-Loses conversation flow.
+**Why bad**: Adds seconds of latency. User perceives as slow. Loses conversation
+flow.
 
 **Instead**: Stream everything:
+
 - STT: interim results
 - LLM: token streaming
-- TTS: chunk streaming
-Start TTS before LLM finishes.
+- TTS: chunk streaming Start TTS before LLM finishes.
 
 ### ❌ Ignoring Interruptions
 
-**Why bad**: Frustrating user experience.
-Feels like talking to a machine.
+**Why bad**: Frustrating user experience. Feels like talking to a machine.
 Wastes time.
 
-**Instead**: Implement barge-in detection.
-Use VAD to detect user speech.
-Stop TTS immediately.
-Clear audio queue.
+**Instead**: Implement barge-in detection. Use VAD to detect user speech. Stop
+TTS immediately. Clear audio queue.
 
 ### ❌ Single Provider Lock-in
 
-**Why bad**: May not be best quality.
-Single point of failure.
-Harder to optimize.
+**Why bad**: May not be best quality. Single point of failure. Harder to
+optimize.
 
 **Instead**: Mix best providers:
+
 - Deepgram for STT (speed + accuracy)
 - ElevenLabs for TTS (voice quality)
 - OpenAI/Anthropic for LLM

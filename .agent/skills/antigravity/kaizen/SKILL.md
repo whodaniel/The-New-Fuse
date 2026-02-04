@@ -1,15 +1,20 @@
 ---
 name: kaizen
-description: Guide for continuous improvement, error proofing, and standardization. Use this skill when the user wants to improve code quality, refactor, or discuss process improvements.
+description:
+  Guide for continuous improvement, error proofing, and standardization. Use
+  this skill when the user wants to improve code quality, refactor, or discuss
+  process improvements.
 ---
 
 # Kaizen: Continuous Improvement
 
 ## Overview
 
-Small improvements, continuously. Error-proof by design. Follow what works. Build only what's needed.
+Small improvements, continuously. Error-proof by design. Follow what works.
+Build only what's needed.
 
-**Core principle:** Many small improvements beat one big change. Prevent errors at design time, not with fixes.
+**Core principle:** Many small improvements beat one big change. Prevent errors
+at design time, not with fixes.
 
 ## When to Use
 
@@ -20,7 +25,8 @@ Small improvements, continuously. Error-proof by design. Follow what works. Buil
 - Process and workflow improvements
 - Error handling and validation
 
-**Philosophy:** Quality through incremental progress and prevention, not perfection through massive effort.
+**Philosophy:** Quality through incremental progress and prevention, not
+perfection through massive effort.
 
 ## The Four Pillars
 
@@ -62,24 +68,16 @@ const calculateTotal = (items: Item[]) => {
   return total;
 };
 
-// Iteration 2: Make it clear (refactor)
-const calculateTotal = (items: Item[]): number => {
-return items.reduce((total, item) => {
-return total + (item.price \* item.quantity);
-}, 0);
-};
+// Iteration 2: Make it clear (refactor) const calculateTotal = (items: Item[]):
+number => { return items.reduce((total, item) => { return total + (item.price \*
+item.quantity); }, 0); };
 
-// Iteration 3: Make it robust (add validation)
-const calculateTotal = (items: Item[]): number => {
-if (!items?.length) return 0;
+// Iteration 3: Make it robust (add validation) const calculateTotal = (items:
+Item[]): number => { if (!items?.length) return 0;
 
-return items.reduce((total, item) => {
-if (item.price < 0 || item.quantity < 0) {
-throw new Error('Price and quantity must be non-negative');
-}
-return total + (item.price \* item.quantity);
-}, 0);
-};
+return items.reduce((total, item) => { if (item.price < 0 || item.quantity < 0)
+{ throw new Error('Price and quantity must be non-negative'); } return total +
+(item.price \* item.quantity); }, 0); };
 
 ````
 Each step is complete, tested, and working
@@ -101,8 +99,7 @@ const calculateTotal = (items: Item[]): number => {
 };
 ````
 
-Overwhelming, error-prone, hard to verify
-</Bad>
+Overwhelming, error-prone, hard to verify </Bad>
 
 #### In Practice
 
@@ -165,19 +162,14 @@ type OrderBad = {
   total: number;
 };
 
-// Good: Only valid states possible
-type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered';
-type Order = {
-status: OrderStatus;
-total: number;
-};
+// Good: Only valid states possible type OrderStatus = 'pending' | 'processing'
+| 'shipped' | 'delivered'; type Order = { status: OrderStatus; total: number; };
 
-// Better: States with associated data
-type Order =
-| { status: 'pending'; createdAt: Date }
-| { status: 'processing'; startedAt: Date; estimatedCompletion: Date }
-| { status: 'shipped'; trackingNumber: string; shippedAt: Date }
-| { status: 'delivered'; deliveredAt: Date; signature: string };
+// Better: States with associated data type Order = | { status: 'pending';
+createdAt: Date } | { status: 'processing'; startedAt: Date;
+estimatedCompletion: Date } | { status: 'shipped'; trackingNumber: string;
+shippedAt: Date } | { status: 'delivered'; deliveredAt: Date; signature: string
+};
 
 // Now impossible to have shipped without trackingNumber
 
@@ -201,8 +193,7 @@ if (items.length > 0) {
 }
 ````
 
-Function signature guarantees safety
-</Good>
+Function signature guarantees safety </Good>
 
 #### Validation Error Proofing
 
@@ -215,37 +206,24 @@ const processPayment = (amount: number) => {
   // ...
 };
 
-// Good: Validate immediately
-const processPayment = (amount: number) => {
-if (amount <= 0) {
-throw new Error('Payment amount must be positive');
-}
-if (amount > 10000) {
-throw new Error('Payment exceeds maximum allowed');
-}
+// Good: Validate immediately const processPayment = (amount: number) => { if
+(amount <= 0) { throw new Error('Payment amount must be positive'); } if
+(amount > 10000) { throw new Error('Payment exceeds maximum allowed'); }
 
-const fee = amount \* 0.03;
-// ... now safe to use
-};
+const fee = amount \* 0.03; // ... now safe to use };
 
-// Better: Validation at boundary with branded type
-type PositiveNumber = number & { readonly \_\_brand: 'PositiveNumber' };
+// Better: Validation at boundary with branded type type PositiveNumber = number
+& { readonly \_\_brand: 'PositiveNumber' };
 
-const validatePositive = (n: number): PositiveNumber => {
-if (n <= 0) throw new Error('Must be positive');
-return n as PositiveNumber;
-};
+const validatePositive = (n: number): PositiveNumber => { if (n <= 0) throw new
+Error('Must be positive'); return n as PositiveNumber; };
 
-const processPayment = (amount: PositiveNumber) => {
-// amount is guaranteed positive, no need to check
-const fee = amount \* 0.03;
-};
+const processPayment = (amount: PositiveNumber) => { // amount is guaranteed
+positive, no need to check const fee = amount \* 0.03; };
 
-// Validate at system boundary
-const handlePaymentRequest = (req: Request) => {
+// Validate at system boundary const handlePaymentRequest = (req: Request) => {
 const amount = validatePositive(req.body.amount); // Validate once
-processPayment(amount); // Use everywhere safely
-};
+processPayment(amount); // Use everywhere safely };
 
 ````
 Validate once at boundary, safe everywhere else
@@ -277,8 +255,7 @@ const processUser = (user: User | null) => {
 };
 ````
 
-Guards make assumptions explicit and enforced
-</Good>
+Guards make assumptions explicit and enforced </Good>
 
 #### Configuration Error Proofing
 
@@ -292,27 +269,16 @@ type ConfigBad = {
 
 const client = new APIClient({ timeout: 5000 }); // apiKey missing!
 
-// Good: Required config, fails early
-type Config = {
-apiKey: string;
-timeout: number;
-};
+// Good: Required config, fails early type Config = { apiKey: string; timeout:
+number; };
 
-const loadConfig = (): Config => {
-const apiKey = process.env.API_KEY;
-if (!apiKey) {
-throw new Error('API_KEY environment variable required');
-}
+const loadConfig = (): Config => { const apiKey = process.env.API_KEY; if
+(!apiKey) { throw new Error('API_KEY environment variable required'); }
 
-return {
-apiKey,
-timeout: 5000,
-};
-};
+return { apiKey, timeout: 5000, }; };
 
-// App fails at startup if config invalid, not during request
-const config = loadConfig();
-const client = new APIClient(config);
+// App fails at startup if config invalid, not during request const config =
+loadConfig(); const client = new APIClient(config);
 
 ````
 Fail at startup, not in production
@@ -381,18 +347,16 @@ class OrderAPIClient {
 }
 ````
 
-Consistency makes codebase predictable
-</Good>
+Consistency makes codebase predictable </Good>
 
 <Bad>
 ```typescript
 // Existing pattern uses classes
 class UserAPIClient { /* ... */ }
 
-// New code introduces different pattern without discussion
-const getOrder = async (id: string): Promise<Order> => {
-// Breaking consistency "because I prefer functions"
-};
+// New code introduces different pattern without discussion const getOrder =
+async (id: string): Promise<Order> => { // Breaking consistency "because I
+prefer functions" };
 
 ````
 Inconsistency creates confusion
@@ -427,8 +391,7 @@ if (!result.ok) {
 const user = result.value; // Type-safe!
 ````
 
-Standard pattern across codebase
-</Good>
+Standard pattern across codebase </Good>
 
 #### Documentation Standards
 
@@ -482,7 +445,8 @@ Documents why, when, and how
 
 ### 4. Just-In-Time (JIT)
 
-Build what's needed now. No more, no less. Avoid premature optimization and over-engineering.
+Build what's needed now. No more, no less. Avoid premature optimization and
+over-engineering.
 
 #### Principles
 
@@ -526,22 +490,18 @@ interface LogTransport {
   write(level: LogLevel, message: string, meta?: LogMetadata): Promise<void>;
 }
 
-class ConsoleTransport implements LogTransport { /_... _/ }
-class FileTransport implements LogTransport { /_ ... _/ }
-class RemoteTransport implements LogTransport { /_ ..._/ }
+class ConsoleTransport implements LogTransport { /_... _/ } class FileTransport
+implements LogTransport { /_ ... _/ } class RemoteTransport implements
+LogTransport { /_ ..._/ }
 
-class Logger {
-private transports: LogTransport[] = [];
-private queue: LogEntry[] = [];
-private rateLimiter: RateLimiter;
-private formatter: LogFormatter;
+class Logger { private transports: LogTransport[] = []; private queue:
+LogEntry[] = []; private rateLimiter: RateLimiter; private formatter:
+LogFormatter;
 
-// 200 lines of code for "maybe we'll need it"
-}
+// 200 lines of code for "maybe we'll need it" }
 
-const logError = (error: Error) => {
-Logger.getInstance().log('error', error.message);
-};
+const logError = (error: Error) => { Logger.getInstance().log('error',
+error.message); };
 
 ````
 Building for imaginary future requirements
@@ -574,8 +534,7 @@ const formatCurrency = (amount: number, locale: string): string => {
 };
 ````
 
-Complexity added only when needed
-</Good>
+Complexity added only when needed </Good>
 
 #### Premature Abstraction
 
@@ -590,9 +549,8 @@ abstract class BaseCRUDService<T> {
   abstract delete(id: string): Promise<void>;
 }
 
-class GenericRepository<T> { /_300 lines _/ }
-class QueryBuilder<T> { /_ 200 lines_/ }
-// ... building entire ORM for single table
+class GenericRepository<T> { /_300 lines _/ } class QueryBuilder<T> { /_ 200
+lines_/ } // ... building entire ORM for single table
 
 ````
 Massive abstraction for uncertain future
@@ -612,8 +570,7 @@ const getUserById = async (id: string): Promise<User | null> => {
 // When pattern emerges across multiple entities, then abstract
 ````
 
-Abstract only when pattern proven across 3+ cases
-</Good>
+Abstract only when pattern proven across 3+ cases </Good>
 
 #### Performance Optimization
 
@@ -624,11 +581,11 @@ const filterActiveUsers = (users: User[]): User[] => {
   return users.filter(user => user.isActive);
 };
 
-// Benchmark shows: 50ms for 1000 users (acceptable)
-// ✓ Ship it, no optimization needed
+// Benchmark shows: 50ms for 1000 users (acceptable) // ✓ Ship it, no
+optimization needed
 
-// Later: After profiling shows this is bottleneck
-// Then optimize with indexed lookup or caching
+// Later: After profiling shows this is bottleneck // Then optimize with indexed
+lookup or caching
 
 ````
 Optimize based on measurement, not assumptions
@@ -647,8 +604,7 @@ const filterActiveUsers = (users: User[]): User[] => {
 };\
 ````
 
-Complex solution for unmeasured problem
-</Bad>
+Complex solution for unmeasured problem </Bad>
 
 #### In Practice
 
@@ -683,7 +639,8 @@ The Kaizen skill guides how you work. The commands provide structured analysis:
 - **`/analyse-problem`**: Comprehensive documentation (A3)
 - **`/analyse`**: Smart method selection (Gemba/VSM/Muda)
 
-Use commands for structured problem-solving. Apply skill for day-to-day development.
+Use commands for structured problem-solving. Apply skill for day-to-day
+development.
 
 ## Red Flags
 

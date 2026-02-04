@@ -4,19 +4,19 @@
  */
 
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  Headers,
+  HttpStatus,
+  Param,
   Post,
   Put,
-  Delete,
-  Param,
-  Body,
-  Headers,
   Res,
-  HttpStatus,
   Version,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
@@ -29,10 +29,7 @@ export class McpGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'Get MCP server configurations' })
   @ApiResponse({ status: 200, description: 'MCP servers retrieved successfully' })
-  async getMcpServers(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async getMcpServers(@Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',
@@ -57,7 +54,7 @@ export class McpGatewayController {
   async registerMcpServer(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -85,7 +82,7 @@ export class McpGatewayController {
   async getMcpServerStatus(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -113,7 +110,7 @@ export class McpGatewayController {
     @Param('id') id: string,
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -141,7 +138,7 @@ export class McpGatewayController {
   async removeMcpServer(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -164,10 +161,7 @@ export class McpGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'MCP OAuth Authorization Server discovery' })
   @ApiResponse({ status: 200, description: 'OAuth discovery metadata retrieved successfully' })
-  async getMcpOAuthDiscovery(
-    @Headers() headers: Record<string, string>,
-    @Res() res: Response,
-  ) {
+  async getMcpOAuthDiscovery(@Headers() headers: Record<string, string>, @Res() res: Response) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',

@@ -3,10 +3,10 @@
  * Provides routing and proxy for Theia IDE
  */
 
-import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { IdeGatewayController } from './ide-gateway.controller';
+import { Module } from '@nestjs/common';
 import { ProxyService } from '../proxy/proxy.service';
+import { IdeGatewayController } from './ide-gateway.controller';
 
 @Module({
   imports: [HttpModule],

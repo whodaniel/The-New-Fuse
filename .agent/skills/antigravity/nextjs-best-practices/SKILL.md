@@ -1,6 +1,8 @@
 ---
 name: nextjs-best-practices
-description: Next.js App Router principles. Server Components, data fetching, routing patterns.
+description:
+  Next.js App Router principles. Server Components, data fetching, routing
+  patterns.
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -23,16 +25,16 @@ Does it need...?
 ├── Direct data fetching, no interactivity
 │   └── Server Component (default)
 │
-└── Both? 
+└── Both?
     └── Split: Server parent + Client child
 ```
 
 ### By Default
 
-| Type | Use |
-|------|-----|
+| Type       | Use                                   |
+| ---------- | ------------------------------------- |
 | **Server** | Data fetching, layout, static content |
-| **Client** | Forms, buttons, interactive UI |
+| **Client** | Forms, buttons, interactive UI        |
 
 ---
 
@@ -40,18 +42,18 @@ Does it need...?
 
 ### Fetch Strategy
 
-| Pattern | Use |
-|---------|-----|
-| **Default** | Static (cached at build) |
+| Pattern        | Use                      |
+| -------------- | ------------------------ |
+| **Default**    | Static (cached at build) |
 | **Revalidate** | ISR (time-based refresh) |
-| **No-store** | Dynamic (every request) |
+| **No-store**   | Dynamic (every request)  |
 
 ### Data Flow
 
-| Source | Pattern |
-|--------|---------|
-| Database | Server Component fetch |
-| API | fetch with caching |
+| Source     | Pattern                      |
+| ---------- | ---------------------------- |
+| Database   | Server Component fetch       |
+| API        | fetch with caching           |
 | User input | Client state + server action |
 
 ---
@@ -60,21 +62,21 @@ Does it need...?
 
 ### File Conventions
 
-| File | Purpose |
-|------|---------|
-| `page.tsx` | Route UI |
-| `layout.tsx` | Shared layout |
-| `loading.tsx` | Loading state |
-| `error.tsx` | Error boundary |
-| `not-found.tsx` | 404 page |
+| File            | Purpose        |
+| --------------- | -------------- |
+| `page.tsx`      | Route UI       |
+| `layout.tsx`    | Shared layout  |
+| `loading.tsx`   | Loading state  |
+| `error.tsx`     | Error boundary |
+| `not-found.tsx` | 404 page       |
 
 ### Route Organization
 
-| Pattern | Use |
-|---------|-----|
-| Route groups `(name)` | Organize without URL |
+| Pattern                 | Use                       |
+| ----------------------- | ------------------------- |
+| Route groups `(name)`   | Organize without URL      |
 | Parallel routes `@slot` | Multiple same-level pages |
-| Intercepting `(.)` | Modal overlays |
+| Intercepting `(.)`      | Modal overlays            |
 
 ---
 
@@ -82,12 +84,12 @@ Does it need...?
 
 ### Route Handlers
 
-| Method | Use |
-|--------|-----|
-| GET | Read data |
-| POST | Create data |
+| Method    | Use         |
+| --------- | ----------- |
+| GET       | Read data   |
+| POST      | Create data |
 | PUT/PATCH | Update data |
-| DELETE | Remove data |
+| DELETE    | Remove data |
 
 ### Best Practices
 
@@ -119,9 +121,9 @@ Does it need...?
 
 ### Static vs Dynamic
 
-| Type | Use |
-|------|-----|
-| Static export | Fixed metadata |
+| Type             | Use               |
+| ---------------- | ----------------- |
+| Static export    | Fixed metadata    |
 | generateMetadata | Dynamic per-route |
 
 ### Essential Tags
@@ -137,19 +139,19 @@ Does it need...?
 
 ### Cache Layers
 
-| Layer | Control |
-|-------|---------|
-| Request | fetch options |
-| Data | revalidate/tags |
-| Full route | route config |
+| Layer      | Control         |
+| ---------- | --------------- |
+| Request    | fetch options   |
+| Data       | revalidate/tags |
+| Full route | route config    |
 
 ### Revalidation
 
-| Method | Use |
-|--------|-----|
-| Time-based | `revalidate: 60` |
-| On-demand | `revalidatePath/Tag` |
-| No cache | `no-store` |
+| Method     | Use                  |
+| ---------- | -------------------- |
+| Time-based | `revalidate: 60`     |
+| On-demand  | `revalidatePath/Tag` |
+| No cache   | `no-store`           |
 
 ---
 
@@ -172,13 +174,13 @@ Does it need...?
 
 ## 9. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| 'use client' everywhere | Server by default |
-| Fetch in client components | Fetch in server |
-| Skip loading states | Use loading.tsx |
-| Ignore error boundaries | Use error.tsx |
-| Large client bundles | Dynamic imports |
+| ❌ Don't                   | ✅ Do             |
+| -------------------------- | ----------------- |
+| 'use client' everywhere    | Server by default |
+| Fetch in client components | Fetch in server   |
+| Skip loading states        | Use loading.tsx   |
+| Ignore error boundaries    | Use error.tsx     |
+| Large client bundles       | Dynamic imports   |
 
 ---
 
@@ -200,4 +202,5 @@ app/
 
 ---
 
-> **Remember:** Server Components are the default for a reason. Start there, add client only when needed.
+> **Remember:** Server Components are the default for a reason. Start there, add
+> client only when needed.

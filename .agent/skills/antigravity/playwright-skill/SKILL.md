@@ -1,24 +1,36 @@
 ---
 name: playwright-skill
-description: Complete browser automation with Playwright. Auto-detects dev servers, writes clean test scripts to /tmp. Test pages, fill forms, take screenshots, check responsive design, validate UX, test login flows, check links, automate any browser task. Use when user wants to test websites, automate browser interactions, validate web functionality, or perform any browser-based testing.
+description:
+  Complete browser automation with Playwright. Auto-detects dev servers, writes
+  clean test scripts to /tmp. Test pages, fill forms, take screenshots, check
+  responsive design, validate UX, test login flows, check links, automate any
+  browser task. Use when user wants to test websites, automate browser
+  interactions, validate web functionality, or perform any browser-based
+  testing.
 ---
 
-**IMPORTANT - Path Resolution:**
-This skill can be installed in different locations (plugin system, manual installation, global, or project-specific). Before executing any commands, determine the skill directory based on where you loaded this SKILL.md file, and use that path in all commands below. Replace `$SKILL_DIR` with the actual discovered path.
+**IMPORTANT - Path Resolution:** This skill can be installed in different
+locations (plugin system, manual installation, global, or project-specific).
+Before executing any commands, determine the skill directory based on where you
+loaded this SKILL.md file, and use that path in all commands below. Replace
+`$SKILL_DIR` with the actual discovered path.
 
 Common installation paths:
 
-- Plugin system: `~/.claude/plugins/marketplaces/playwright-skill/skills/playwright-skill`
+- Plugin system:
+  `~/.claude/plugins/marketplaces/playwright-skill/skills/playwright-skill`
 - Manual global: `~/.claude/skills/playwright-skill`
 - Project-specific: `<project>/.claude/skills/playwright-skill`
 
 # Playwright Browser Automation
 
-General-purpose browser automation skill. I'll write custom Playwright code for any automation task you request and execute it via the universal executor.
+General-purpose browser automation skill. I'll write custom Playwright code for
+any automation task you request and execute it via the universal executor.
 
 **CRITICAL WORKFLOW - Follow these steps in order:**
 
-1. **Auto-detect dev servers** - For localhost testing, ALWAYS run server detection FIRST:
+1. **Auto-detect dev servers** - For localhost testing, ALWAYS run server
+   detection FIRST:
 
    ```bash
    cd $SKILL_DIR && node -e "require('./lib/helpers').detectDevServers().then(servers => console.log(JSON.stringify(servers)))"
@@ -28,17 +40,21 @@ General-purpose browser automation skill. I'll write custom Playwright code for 
    - If **multiple servers found**: Ask user which one to test
    - If **no servers found**: Ask for URL or offer to help start dev server
 
-2. **Write scripts to /tmp** - NEVER write test files to skill directory; always use `/tmp/playwright-test-*.js`
+2. **Write scripts to /tmp** - NEVER write test files to skill directory; always
+   use `/tmp/playwright-test-*.js`
 
-3. **Use visible browser by default** - Always use `headless: false` unless user specifically requests headless mode
+3. **Use visible browser by default** - Always use `headless: false` unless user
+   specifically requests headless mode
 
-4. **Parameterize URLs** - Always make URLs configurable via environment variable or constant at top of script
+4. **Parameterize URLs** - Always make URLs configurable via environment
+   variable or constant at top of script
 
 ## How It Works
 
 1. You describe what you want to test/automate
 2. I auto-detect running dev servers (or ask for URL if testing external site)
-3. I write custom Playwright code in `/tmp/playwright-test-*.js` (won't clutter your project)
+3. I write custom Playwright code in `/tmp/playwright-test-*.js` (won't clutter
+   your project)
 4. I execute it via: `cd $SKILL_DIR && node run.js /tmp/playwright-test-*.js`
 5. Results displayed in real-time, browser window visible for debugging
 6. Test files auto-cleaned from /tmp by your OS
@@ -254,7 +270,7 @@ const TARGET_URL = 'http://localhost:3001'; // Auto-detected
 
   for (const viewport of viewports) {
     console.log(
-      `Testing ${viewport.name} (${viewport.width}x${viewport.height})`,
+      `Testing ${viewport.name} (${viewport.width}x${viewport.height})`
     );
 
     await page.setViewportSize({
@@ -294,8 +310,10 @@ await browser.close();
 
 **When to use inline vs files:**
 
-- **Inline**: Quick one-off tasks (screenshot, check if element exists, get page title)
-- **Files**: Complex tests, responsive design checks, anything user might want to re-run
+- **Inline**: Quick one-off tasks (screenshot, check if element exists, get page
+  title)
+- **Files**: Complex tests, responsive design checks, anything user might want
+  to re-run
 
 ## Available Helpers
 
@@ -328,10 +346,12 @@ See `lib/helpers.js` for full list.
 
 ## Custom HTTP Headers
 
-Configure custom headers for all HTTP requests via environment variables. Useful for:
+Configure custom headers for all HTTP requests via environment variables. Useful
+for:
 
 - Identifying automated traffic to your backend
-- Getting LLM-optimized responses (e.g., plain text errors instead of styled HTML)
+- Getting LLM-optimized responses (e.g., plain text errors instead of styled
+  HTML)
 - Adding authentication tokens globally
 
 ### Configuration
@@ -360,17 +380,19 @@ const page = await context.newPage();
 // All requests from this page include your custom headers
 ```
 
-For scripts using raw Playwright API, use the injected `getContextOptionsWithHeaders()`:
+For scripts using raw Playwright API, use the injected
+`getContextOptionsWithHeaders()`:
 
 ```javascript
 const context = await browser.newContext(
-  getContextOptionsWithHeaders({ viewport: { width: 1920, height: 1080 } }),
+  getContextOptionsWithHeaders({ viewport: { width: 1920, height: 1080 } })
 );
 ```
 
 ## Advanced Usage
 
-For comprehensive Playwright API documentation, see [API_REFERENCE.md](API_REFERENCE.md):
+For comprehensive Playwright API documentation, see
+[API_REFERENCE.md](API_REFERENCE.md):
 
 - Selectors & Locators best practices
 - Network interception & API mocking
@@ -383,16 +405,24 @@ For comprehensive Playwright API documentation, see [API_REFERENCE.md](API_REFER
 
 ## Tips
 
-- **CRITICAL: Detect servers FIRST** - Always run `detectDevServers()` before writing test code for localhost testing
-- **Custom headers** - Use `PW_HEADER_NAME`/`PW_HEADER_VALUE` env vars to identify automated traffic to your backend
-- **Use /tmp for test files** - Write to `/tmp/playwright-test-*.js`, never to skill directory or user's project
-- **Parameterize URLs** - Put detected/provided URL in a `TARGET_URL` constant at the top of every script
-- **DEFAULT: Visible browser** - Always use `headless: false` unless user explicitly asks for headless mode
-- **Headless mode** - Only use `headless: true` when user specifically requests "headless" or "background" execution
+- **CRITICAL: Detect servers FIRST** - Always run `detectDevServers()` before
+  writing test code for localhost testing
+- **Custom headers** - Use `PW_HEADER_NAME`/`PW_HEADER_VALUE` env vars to
+  identify automated traffic to your backend
+- **Use /tmp for test files** - Write to `/tmp/playwright-test-*.js`, never to
+  skill directory or user's project
+- **Parameterize URLs** - Put detected/provided URL in a `TARGET_URL` constant
+  at the top of every script
+- **DEFAULT: Visible browser** - Always use `headless: false` unless user
+  explicitly asks for headless mode
+- **Headless mode** - Only use `headless: true` when user specifically requests
+  "headless" or "background" execution
 - **Slow down:** Use `slowMo: 100` to make actions visible and easier to follow
-- **Wait strategies:** Use `waitForURL`, `waitForSelector`, `waitForLoadState` instead of fixed timeouts
+- **Wait strategies:** Use `waitForURL`, `waitForSelector`, `waitForLoadState`
+  instead of fixed timeouts
 - **Error handling:** Always use try-catch for robust automation
-- **Console output:** Use `console.log()` to track progress and show what's happening
+- **Console output:** Use `console.log()` to track progress and show what's
+  happening
 
 ## Troubleshooting
 
@@ -402,14 +432,12 @@ For comprehensive Playwright API documentation, see [API_REFERENCE.md](API_REFER
 cd $SKILL_DIR && npm run setup
 ```
 
-**Module not found:**
-Ensure running from skill directory via `run.js` wrapper
+**Module not found:** Ensure running from skill directory via `run.js` wrapper
 
-**Browser doesn't open:**
-Check `headless: false` and ensure display available
+**Browser doesn't open:** Check `headless: false` and ensure display available
 
-**Element not found:**
-Add wait: `await page.waitForSelector('.element', { timeout: 10000 })`
+**Element not found:** Add wait:
+`await page.waitForSelector('.element', { timeout: 10000 })`
 
 ## Example Usage
 
@@ -450,4 +478,5 @@ User: "Use 3001"
 - Auto-detects running dev servers to eliminate hardcoded URLs
 - Test scripts written to `/tmp` for automatic cleanup (no clutter)
 - Code executes reliably with proper module resolution via `run.js`
-- Progressive disclosure - API_REFERENCE.md loaded only when advanced features needed
+- Progressive disclosure - API_REFERENCE.md loaded only when advanced features
+  needed

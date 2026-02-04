@@ -23,6 +23,7 @@ Development <- QA <- Deployment <- Business Ops <- Growth Loop
 **Purpose:** Initialize Loki Mode environment
 
 ### Actions:
+
 1. Create `.loki/` directory structure
 2. Initialize orchestrator state in `.loki/state/orchestrator.json`
 3. Validate PRD exists and is readable
@@ -30,6 +31,7 @@ Development <- QA <- Deployment <- Business Ops <- Growth Loop
 5. Create CONTINUITY.md
 
 ### Directory Structure Created:
+
 ```
 .loki/
 +-- CONTINUITY.md
@@ -54,6 +56,7 @@ Development <- QA <- Deployment <- Business Ops <- Growth Loop
 **Purpose:** Understand requirements and market context
 
 ### Actions:
+
 1. Parse PRD, extract requirements
 2. Spawn `biz-analytics` agent for competitive research
 3. Web search competitors, extract features, reviews
@@ -61,6 +64,7 @@ Development <- QA <- Deployment <- Business Ops <- Growth Loop
 5. Generate task backlog with priorities and dependencies
 
 ### Output:
+
 - Requirements document
 - Competitive analysis
 - Initial task backlog in `.loki/queue/pending.json`
@@ -74,6 +78,7 @@ Development <- QA <- Deployment <- Business Ops <- Growth Loop
 ### SPEC-FIRST WORKFLOW
 
 **Step 1: Extract API Requirements from PRD**
+
 - Parse PRD for user stories and functionality
 - Map to REST/GraphQL operations
 - Document data models and relationships
@@ -114,6 +119,7 @@ paths:
 ```
 
 **Step 3: Validate Spec**
+
 ```bash
 npm install -g @stoplight/spectral-cli
 spectral lint .loki/specs/openapi.yaml
@@ -121,6 +127,7 @@ swagger-cli validate .loki/specs/openapi.yaml
 ```
 
 **Step 4: Generate Artifacts from Spec**
+
 ```bash
 # TypeScript types
 npx openapi-typescript .loki/specs/openapi.yaml --output src/types/api.ts
@@ -142,12 +149,14 @@ npx redoc-cli bundle .loki/specs/openapi.yaml -o docs/api.html
 ```
 
 **Step 5: Select Tech Stack**
+
 - Spawn `eng-backend` + `eng-frontend` architects
 - Both agents review spec and propose stack
 - Consensus required (both must agree)
 - Self-reflection checkpoint with evidence
 
 **Step 6: Create Project Scaffolding**
+
 - Initialize project with tech stack
 - Install dependencies
 - Configure linters
@@ -160,6 +169,7 @@ npx redoc-cli bundle .loki/specs/openapi.yaml -o docs/api.html
 **Purpose:** Provision cloud resources and CI/CD
 
 ### Actions:
+
 1. Spawn `ops-devops` agent
 2. Provision cloud resources (see `references/deployment.md`)
 3. Set up CI/CD pipelines
@@ -167,6 +177,7 @@ npx redoc-cli bundle .loki/specs/openapi.yaml -o docs/api.html
 5. Create staging and production environments
 
 ### CI/CD Pipeline:
+
 ```yaml
 name: CI/CD Pipeline
 on: [push, pull_request]
@@ -214,6 +225,7 @@ jobs:
 ```
 
 ### Implementation Rules:
+
 - Agents implement ONLY what's in the spec
 - Must validate against openapi.yaml schema
 - Must return responses matching spec
@@ -228,73 +240,89 @@ jobs:
 ### Testing Phases:
 
 **UNIT Phase:**
+
 ```bash
 npm run test:unit
 # or
 pytest tests/unit/
 ```
+
 - Coverage: >80% required
 - All tests must pass
 
 **INTEGRATION Phase:**
+
 ```bash
 npm run test:integration
 ```
+
 - Test API endpoints against actual database
 - Test external service integrations
 - Verify data flows end-to-end
 
 **E2E Phase:**
+
 ```bash
 npx playwright test
 # or
 npx cypress run
 ```
+
 - Test complete user flows
 - Cross-browser testing
 - Mobile responsive testing
 
 **CONTRACT Phase:**
+
 ```bash
 npm run test:contract
 ```
+
 - Validate implementation matches OpenAPI spec
 - Test request/response schemas
 - Breaking change detection
 
 **SECURITY Phase:**
+
 ```bash
 npm audit
 npx snyk test
 semgrep --config=auto .
 ```
+
 - OWASP Top 10 checks
 - Dependency vulnerabilities
 - Static analysis
 
 **PERFORMANCE Phase:**
+
 ```bash
 npx k6 run tests/load.js
 npx lighthouse http://localhost:3000
 ```
+
 - Load testing: 100 concurrent users for 1 minute
 - Stress testing: 500 concurrent users for 30 seconds
 - P95 response time < 500ms required
 
 **ACCESSIBILITY Phase:**
+
 ```bash
 npx axe http://localhost:3000
 ```
+
 - WCAG 2.1 AA compliance
 - Alt text, ARIA labels, color contrast
 - Keyboard navigation, focus indicators
 
 **REGRESSION Phase:**
+
 - Compare behavior against previous version
 - Verify no features broken by recent changes
 - Test backward compatibility of APIs
 
 **UAT Phase:**
+
 - Create acceptance tests from PRD
 - Walk through complete user journeys
 - Verify business logic matches PRD
@@ -307,6 +335,7 @@ npx axe http://localhost:3000
 **Purpose:** Release to production
 
 ### Actions:
+
 1. Spawn `ops-release` agent
 2. Generate semantic version, changelog
 3. Create release branch, tag
@@ -317,6 +346,7 @@ npx axe http://localhost:3000
 ### Deployment Strategies:
 
 **Blue-Green:**
+
 ```
 1. Deploy new version to "green" environment
 2. Run smoke tests
@@ -325,6 +355,7 @@ npx axe http://localhost:3000
 ```
 
 **Canary:**
+
 ```
 1. Deploy to 5% of traffic
 2. Monitor error rates
@@ -339,6 +370,7 @@ npx axe http://localhost:3000
 **Purpose:** Non-technical business setup
 
 ### Actions:
+
 1. `biz-marketing`: Create landing page, SEO, content
 2. `biz-sales`: Set up CRM, outreach templates
 3. `biz-finance`: Configure billing (Stripe), invoicing
@@ -352,6 +384,7 @@ npx axe http://localhost:3000
 **Purpose:** Continuous improvement
 
 ### Cycle:
+
 ```
 MONITOR -> ANALYZE -> OPTIMIZE -> DEPLOY -> MONITOR
     |
@@ -363,6 +396,7 @@ Incidents -> RCA -> Prevention -> Deploy fix
 ```
 
 ### Never "Done":
+
 - Run performance optimizations
 - Add missing test coverage
 - Improve documentation
@@ -392,19 +426,19 @@ Incidents -> RCA -> Prevention -> Deploy fix
 
 ## Quality Gates Summary
 
-| Gate | Agent | Pass Criteria |
-|------|-------|---------------|
-| Unit Tests | eng-qa | 100% pass |
-| Integration Tests | eng-qa | 100% pass |
-| E2E Tests | eng-qa | 100% pass |
-| Coverage | eng-qa | > 80% |
-| Linting | eng-qa | 0 errors |
-| Type Check | eng-qa | 0 errors |
-| Security Scan | ops-security | 0 high/critical |
-| Dependency Audit | ops-security | 0 vulnerabilities |
-| Performance | eng-qa | p99 < 200ms |
-| Accessibility | eng-frontend | WCAG 2.1 AA |
-| Load Test | ops-devops | Handles 10x expected traffic |
-| Chaos Test | ops-devops | Recovers from failures |
-| Cost Estimate | ops-cost | Within budget |
-| Legal Review | biz-legal | Compliant |
+| Gate              | Agent        | Pass Criteria                |
+| ----------------- | ------------ | ---------------------------- |
+| Unit Tests        | eng-qa       | 100% pass                    |
+| Integration Tests | eng-qa       | 100% pass                    |
+| E2E Tests         | eng-qa       | 100% pass                    |
+| Coverage          | eng-qa       | > 80%                        |
+| Linting           | eng-qa       | 0 errors                     |
+| Type Check        | eng-qa       | 0 errors                     |
+| Security Scan     | ops-security | 0 high/critical              |
+| Dependency Audit  | ops-security | 0 vulnerabilities            |
+| Performance       | eng-qa       | p99 < 200ms                  |
+| Accessibility     | eng-frontend | WCAG 2.1 AA                  |
+| Load Test         | ops-devops   | Handles 10x expected traffic |
+| Chaos Test        | ops-devops   | Recovers from failures       |
+| Cost Estimate     | ops-cost     | Within budget                |
+| Legal Review      | biz-legal    | Compliant                    |

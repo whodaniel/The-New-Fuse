@@ -342,6 +342,7 @@ This skill should automatically run:
    - Aggregate into knowledge graph foundation
 
 2. **Execute Phase 2**
+
    ```bash
    node scripts/framework-consciousness/run-phase-2.cjs
    ```

@@ -4,7 +4,7 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProxyService } from './proxy.service';
 
 @Controller('proxy')
@@ -32,10 +32,10 @@ export class ProxyController {
   @ApiResponse({ status: 200, description: 'List of registered services' })
   async getServices() {
     const services = this.proxyService.getAllServices();
-    
+
     return {
       count: services.length,
-      services: services.map(service => ({
+      services: services.map((service) => ({
         name: service.name,
         baseUrl: service.baseUrl,
         healthPath: service.healthPath,

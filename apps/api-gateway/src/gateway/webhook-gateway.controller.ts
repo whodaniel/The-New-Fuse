@@ -4,18 +4,18 @@
  */
 
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Param,
-  Body,
-  Query,
   Headers,
-  Res,
   HttpStatus,
+  Param,
+  Post,
+  Query,
+  Res,
   Version,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
@@ -31,7 +31,7 @@ export class WebhookGatewayController {
   async registerWebhook(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -60,7 +60,7 @@ export class WebhookGatewayController {
     @Param('source') source: string,
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -88,7 +88,7 @@ export class WebhookGatewayController {
   async getWebhookStatus(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -116,7 +116,7 @@ export class WebhookGatewayController {
   async getEventHistory(
     @Query() query: Record<string, string>,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -145,7 +145,7 @@ export class WebhookGatewayController {
   async streamEvents(
     @Query() query: Record<string, string>,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     try {
       const response = await this.proxyService.proxyRequest(

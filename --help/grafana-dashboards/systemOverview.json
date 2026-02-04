@@ -3,10 +3,7 @@
     "id": null,
     "title": "System Overview",
     "description": "High-level system health and performance metrics",
-    "tags": [
-      "monitoring",
-      "production"
-    ],
+    "tags": ["monitoring", "production"],
     "timezone": "browser",
     "panels": [
       {

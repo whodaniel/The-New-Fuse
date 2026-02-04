@@ -1,6 +1,7 @@
 ---
 name: videos
-description: Embedding videos in Remotion - trimming, volume, speed, looping, pitch
+description:
+  Embedding videos in Remotion - trimming, volume, speed, looping, pitch
 metadata:
   tags: video, media, trim, volume, speed, loop, pitch
 ---
@@ -22,11 +23,11 @@ pnpm exec remotion add @remotion/media # If project uses pnpm
 Use `<Video>` from `@remotion/media` to embed videos into your composition.
 
 ```tsx
-import { Video } from "@remotion/media";
-import { staticFile } from "remotion";
+import { Video } from '@remotion/media';
+import { staticFile } from 'remotion';
 
 export const MyComposition = () => {
-  return <Video src={staticFile("video.mp4")} />;
+  return <Video src={staticFile('video.mp4')} />;
 };
 ```
 
@@ -38,14 +39,15 @@ Remote URLs are also supported:
 
 ## Trimming
 
-Use `trimBefore` and `trimAfter` to remove portions of the video. Values are in seconds.
+Use `trimBefore` and `trimAfter` to remove portions of the video. Values are in
+seconds.
 
 ```tsx
 const { fps } = useVideoConfig();
 
 return (
   <Video
-    src={staticFile("video.mp4")}
+    src={staticFile('video.mp4')}
     trimBefore={2 * fps} // Skip the first 2 seconds
     trimAfter={10 * fps} // End at the 10 second mark
   />
@@ -57,14 +59,14 @@ return (
 Wrap the video in a `<Sequence>` to delay when it appears:
 
 ```tsx
-import { Sequence, staticFile } from "remotion";
-import { Video } from "@remotion/media";
+import { Sequence, staticFile } from 'remotion';
+import { Video } from '@remotion/media';
 
 const { fps } = useVideoConfig();
 
 return (
   <Sequence from={1 * fps}>
-    <Video src={staticFile("video.mp4")} />
+    <Video src={staticFile('video.mp4')} />
   </Sequence>
 );
 ```
@@ -77,14 +79,14 @@ Use the `style` prop to control size and position:
 
 ```tsx
 <Video
-  src={staticFile("video.mp4")}
+  src={staticFile('video.mp4')}
   style={{
     width: 500,
     height: 300,
-    position: "absolute",
+    position: 'absolute',
     top: 100,
     left: 50,
-    objectFit: "cover",
+    objectFit: 'cover',
   }}
 />
 ```
@@ -94,21 +96,21 @@ Use the `style` prop to control size and position:
 Set a static volume (0 to 1):
 
 ```tsx
-<Video src={staticFile("video.mp4")} volume={0.5} />
+<Video src={staticFile('video.mp4')} volume={0.5} />
 ```
 
 Or use a callback for dynamic volume based on the current frame:
 
 ```tsx
-import { interpolate } from "remotion";
+import { interpolate } from 'remotion';
 
 const { fps } = useVideoConfig();
 
 return (
   <Video
-    src={staticFile("video.mp4")}
+    src={staticFile('video.mp4')}
     volume={(f) =>
-      interpolate(f, [0, 1 * fps], [0, 1], { extrapolateRight: "clamp" })
+      interpolate(f, [0, 1 * fps], [0, 1], { extrapolateRight: 'clamp' })
     }
   />
 );
@@ -117,7 +119,7 @@ return (
 Use `muted` to silence the video entirely:
 
 ```tsx
-<Video src={staticFile("video.mp4")} muted />
+<Video src={staticFile('video.mp4')} muted />
 ```
 
 ## Speed
@@ -136,17 +138,18 @@ Reverse playback is not supported.
 Use `loop` to loop the video indefinitely:
 
 ```tsx
-<Video src={staticFile("video.mp4")} loop />
+<Video src={staticFile('video.mp4')} loop />
 ```
 
-Use `loopVolumeCurveBehavior` to control how the frame count behaves when looping:
+Use `loopVolumeCurveBehavior` to control how the frame count behaves when
+looping:
 
 - `"repeat"`: Frame count resets to 0 each loop (for `volume` callback)
 - `"extend"`: Frame count continues incrementing
 
 ```tsx
 <Video
-  src={staticFile("video.mp4")}
+  src={staticFile('video.mp4')}
   loop
   loopVolumeCurveBehavior="extend"
   volume={(f) => interpolate(f, [0, 300], [1, 0])} // Fade out over multiple loops
@@ -155,7 +158,8 @@ Use `loopVolumeCurveBehavior` to control how the frame count behaves when loopin
 
 ## Pitch
 
-Use `toneFrequency` to adjust the pitch without affecting speed. Values range from 0.01 to 2:
+Use `toneFrequency` to adjust the pitch without affecting speed. Values range
+from 0.01 to 2:
 
 ```tsx
 <Video
@@ -168,4 +172,5 @@ Use `toneFrequency` to adjust the pitch without affecting speed. Values range fr
 />
 ```
 
-Pitch shifting only works during server-side rendering, not in the Remotion Studio preview or in the `<Player />`.
+Pitch shifting only works during server-side rendering, not in the Remotion
+Studio preview or in the `<Player />`.

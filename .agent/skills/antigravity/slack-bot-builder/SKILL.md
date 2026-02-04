@@ -1,6 +1,11 @@
 ---
 name: slack-bot-builder
-description: "Build Slack apps using the Bolt framework across Python, JavaScript, and Java. Covers Block Kit for rich UIs, interactive components, slash commands, event handling, OAuth installation flows, and Workflow Builder integration. Focus on best practices for production-ready Slack apps. Use when: slack bot, slack app, bolt framework, block kit, slash command."
+description:
+  'Build Slack apps using the Bolt framework across Python, JavaScript, and
+  Java. Covers Block Kit for rich UIs, interactive components, slash commands,
+  event handling, OAuth installation flows, and Workflow Builder integration.
+  Focus on best practices for production-ready Slack apps. Use when: slack bot,
+  slack app, bolt framework, block kit, slash command.'
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -10,11 +15,12 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 ### Bolt App Foundation Pattern
 
-The Bolt framework is Slack's recommended approach for building apps.
-It handles authentication, event routing, request verification, and
-HTTP request processing so you can focus on app logic.
+The Bolt framework is Slack's recommended approach for building apps. It handles
+authentication, event routing, request verification, and HTTP request processing
+so you can focus on app logic.
 
 Key benefits:
+
 - Event handling in a few lines of code
 - Security checks and payload validation built-in
 - Organized, consistent patterns
@@ -22,8 +28,8 @@ Key benefits:
 
 Available in: Python, JavaScript (Node.js), Java
 
-
-**When to use**: ['Starting any new Slack app', 'Migrating from legacy Slack APIs', 'Building production Slack integrations']
+**When to use**: ['Starting any new Slack app', 'Migrating from legacy Slack
+APIs', 'Building production Slack integrations']
 
 ```python
 # Python Bolt App
@@ -85,24 +91,26 @@ def handle_ticket_command(ack, body, client):
                     "element": {
                         "type": "static_select",
                         "action_id": "priority_select",
-   
+
 ```
 
 ### Block Kit UI Pattern
 
 Block Kit is Slack's UI framework for building rich, interactive messages.
-Compose messages using blocks (sections, actions, inputs) and elements
-(buttons, menus, text inputs).
+Compose messages using blocks (sections, actions, inputs) and elements (buttons,
+menus, text inputs).
 
 Limits:
+
 - Up to 50 blocks per message
 - Up to 100 blocks in modals/Home tabs
 - Block text limited to 3000 characters
 
 Use Block Kit Builder to prototype: https://app.slack.com/block-kit-builder
 
-
-**When to use**: ['Building rich message layouts', 'Adding interactive components to messages', 'Creating forms in modals', 'Building Home tab experiences']
+**When to use**: ['Building rich message layouts', 'Adding interactive
+components to messages', 'Creating forms in modals', 'Building Home tab
+experiences']
 
 ```python
 from slack_bolt import App
@@ -174,21 +182,21 @@ def build_notification_blocks(incident: dict) -> list:
 
 ### OAuth Installation Pattern
 
-Enable users to install your app in their workspaces via OAuth 2.0.
-Bolt handles most of the OAuth flow, but you need to configure it
-and store tokens securely.
+Enable users to install your app in their workspaces via OAuth 2.0. Bolt handles
+most of the OAuth flow, but you need to configure it and store tokens securely.
 
 Key OAuth concepts:
+
 - Scopes define permissions (request minimum needed)
 - Tokens are workspace-specific
 - Installation data must be stored persistently
 - Users can add scopes later (additive)
 
-70% of users abandon installation when confronted with excessive
-permission requests - request only what you need!
+70% of users abandon installation when confronted with excessive permission
+requests - request only what you need!
 
-
-**When to use**: ['Distributing app to multiple workspaces', 'Building public Slack apps', 'Enterprise-grade integrations']
+**When to use**: ['Distributing app to multiple workspaces', 'Building public
+Slack apps', 'Enterprise-grade integrations']
 
 ```python
 from slack_bolt import App
@@ -253,12 +261,12 @@ app = App(
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
+| Issue | Severity | Solution                                  |
+| ----- | -------- | ----------------------------------------- |
 | Issue | critical | ## Acknowledge immediately, process later |
-| Issue | critical | ## Proper state validation |
-| Issue | critical | ## Never hardcode or log tokens |
-| Issue | high | ## Request minimum required scopes |
-| Issue | medium | ## Know and respect the limits |
-| Issue | high | ## Socket Mode: Only for development |
-| Issue | critical | ## Bolt handles this automatically |
+| Issue | critical | ## Proper state validation                |
+| Issue | critical | ## Never hardcode or log tokens           |
+| Issue | high     | ## Request minimum required scopes        |
+| Issue | medium   | ## Know and respect the limits            |
+| Issue | high     | ## Socket Mode: Only for development      |
+| Issue | critical | ## Bolt handles this automatically        |

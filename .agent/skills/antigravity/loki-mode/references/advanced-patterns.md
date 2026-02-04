@@ -1,6 +1,7 @@
 # Advanced Agentic Patterns Reference
 
-Research-backed patterns from 2025-2026 literature for enhanced multi-agent orchestration.
+Research-backed patterns from 2025-2026 literature for enhanced multi-agent
+orchestration.
 
 ---
 
@@ -29,7 +30,8 @@ Research-backed patterns from 2025-2026 literature for enhanced multi-agent orch
 
 ### Episodic-to-Semantic Consolidation
 
-**Protocol:** After completing tasks, consolidate specific experiences into general knowledge.
+**Protocol:** After completing tasks, consolidate specific experiences into
+general knowledge.
 
 ```python
 def consolidate_memory(task_result):
@@ -82,8 +84,8 @@ Each memory note is atomic and linked to related notes:
   "content": "Express route handlers need explicit return types in strict mode",
   "type": "semantic",
   "links": [
-    {"to": "note-2026-01-05-042", "relation": "derived_from"},
-    {"to": "note-2026-01-06-003", "relation": "related_to"}
+    { "to": "note-2026-01-05-042", "relation": "derived_from" },
+    { "to": "note-2026-01-06-003", "relation": "related_to" }
   ],
   "tags": ["typescript", "express", "strict-mode"],
   "confidence": 0.95,
@@ -97,7 +99,8 @@ Each memory note is atomic and linked to related notes:
 
 ### Problem: Degeneration-of-Thought
 
-Single-agent self-critique leads to repeating the same flawed reasoning across iterations.
+Single-agent self-critique leads to repeating the same flawed reasoning across
+iterations.
 
 ### Solution: Structured Debate Among Persona-Based Critics
 
@@ -118,7 +121,8 @@ Single-agent self-critique leads to repeating the same flawed reasoning across i
 
 ### Anti-Sycophancy Protocol (CONSENSAGENT)
 
-**Problem:** Agents reinforce each other's responses instead of critically engaging.
+**Problem:** Agents reinforce each other's responses instead of critically
+engaging.
 
 **Solution:**
 
@@ -180,20 +184,20 @@ def synthesize_with_validity_alignment(reviews):
 
 ```yaml
 review_team:
-  - role: "security_analyst"
+  - role: 'security_analyst'
     model: opus
-    expertise: ["OWASP", "auth", "injection"]
-    personality: "paranoid"
+    expertise: ['OWASP', 'auth', 'injection']
+    personality: 'paranoid'
 
-  - role: "performance_engineer"
+  - role: 'performance_engineer'
     model: sonnet
-    expertise: ["complexity", "caching", "async"]
-    personality: "pragmatic"
+    expertise: ['complexity', 'caching', 'async']
+    personality: 'pragmatic'
 
-  - role: "maintainability_advocate"
+  - role: 'maintainability_advocate'
     model: opus
-    expertise: ["SOLID", "patterns", "readability"]
-    personality: "perfectionist"
+    expertise: ['SOLID', 'patterns', 'readability']
+    personality: 'perfectionist'
 ```
 
 ---
@@ -202,7 +206,8 @@ review_team:
 
 ### Global Planning with Hierarchical Execution
 
-**Research:** GoalAct achieved 12.22% improvement in success rate using this pattern.
+**Research:** GoalAct achieved 12.22% improvement in success rate using this
+pattern.
 
 ```
 +------------------------------------------------------------------+
@@ -298,7 +303,8 @@ class ThoughtManagementSystem:
 
 ## Iter-VF: Iterative Verification-First
 
-**Key insight:** Verify the extracted answer only, not the whole thinking process.
+**Key insight:** Verify the extracted answer only, not the whole thinking
+process.
 
 ```python
 def iterative_verify_first(task, max_iterations=3):
@@ -340,11 +346,11 @@ def iterative_verify_first(task, max_iterations=3):
 
 ### When to Use Each Structure
 
-| Structure | Use When | Loki Mode Application |
-|-----------|----------|----------------------|
-| **Centralized** | Need consistency, single source of truth | Orchestrator for phase management |
-| **Decentralized** | Need fault tolerance, parallel execution | Agent swarms for implementation |
-| **Hierarchical** | Complex tasks with clear decomposition | Global planner -> Skill -> Executor |
+| Structure         | Use When                                 | Loki Mode Application               |
+| ----------------- | ---------------------------------------- | ----------------------------------- |
+| **Centralized**   | Need consistency, single source of truth | Orchestrator for phase management   |
+| **Decentralized** | Need fault tolerance, parallel execution | Agent swarms for implementation     |
+| **Hierarchical**  | Complex tasks with clear decomposition   | Global planner -> Skill -> Executor |
 
 ### Coopetition Pattern
 
@@ -429,7 +435,8 @@ Level 4: Hierarchical Planning + Decomposition
 1. **Heterogeneous teams** outperform homogeneous by 4-6%
 2. **Iter-VF** (verify answer only) prevents context overflow
 3. **Episodic-to-semantic consolidation** enables genuine learning
-4. **Anti-sycophancy measures** (blind review, devil's advocate) improve accuracy 30%+
+4. **Anti-sycophancy measures** (blind review, devil's advocate) improve
+   accuracy 30%+
 5. **Global planning** with local execution improves success rate 12%+
 
 ### What Doesn't Work
