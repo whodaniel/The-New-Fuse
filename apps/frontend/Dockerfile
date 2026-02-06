@@ -6,8 +6,9 @@
 # Stage 1: Build stage
 FROM node:22-alpine AS builder
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm and bash (required for openclaw build scripts)
+RUN apk add --no-cache bash && \
+    corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
