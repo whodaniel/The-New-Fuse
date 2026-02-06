@@ -125,5 +125,6 @@ USER app-user
 WORKDIR /app/${SERVICE_ROOT}/${SERVICE_PATH}
 
 ENV SERVICE_PATH=$SERVICE_PATH
+ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["./healthcheck.sh"]
 CMD ["./run-service.sh"]

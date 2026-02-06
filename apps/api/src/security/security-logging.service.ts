@@ -31,34 +31,30 @@ export class SecurityLoggingService {
   private readonly securityLogger: winston.Logger;
 
   constructor(private configService: ConfigService) {
-    const isProduction = process.env.NODE_ENV === 'production';
-    const logDir = isProduction ? '/tmp/logs' : 'logs';
-
-    // Main application logger
+    // Main application logger - console only (file logging disabled for container environments)
     const appTransports: any[] = [
       new winston.transports.Console({
         format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
       }),
     ];
 
-    // Only add file logging in development or when writable dir exists
-    if (!isProduction) {
+    // Only add file logging in explicit development mode with local filesystem
+    if (process.env.NODE_ENV === 'development' && !process.env.RAILWAY_ENVIRONMENT) {
       try {
-        appTransports.push(
-          new (winston.transports as any).DailyRotateFile({
-            filename: `${logDir}/app-%DATE%.log`,
-            datePattern: 'YYYY-MM-DD',
-            zippedArchive: true,
-            maxSize: '20m',
-            maxFiles: '14d',
-          })
-        );
+        const fileTransport = new (winston.transports as any).DailyRotateFile({
+          filename: 'logs/app-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
+        });
+        // Add error handler to prevent unhandled error events
+        fileTransport.on('error', (err: any) => {
+          console.warn('File logging error (continuing with console only):', err.message);
+        });
+        appTransports.push(fileTransport);
       } catch (error: any) {
-        if (error.code === 'EACCES') {
-          console.warn('File logging disabled: No write permission for logs directory.');
-        } else {
-          console.warn('Failed to initialize file logging, using console only:', error);
-        }
+        console.warn('File logging disabled:', error.message);
       }
     }
 
@@ -68,30 +64,30 @@ export class SecurityLoggingService {
       transports: appTransports,
     });
 
-    // Dedicated security logger - console only in production
+    // Dedicated security logger - console only for production/containers
     const securityTransports: any[] = [
       new winston.transports.Console({
         format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
       }),
     ];
 
-    if (!isProduction) {
+    // Only add file logging in explicit development mode
+    if (process.env.NODE_ENV === 'development' && !process.env.RAILWAY_ENVIRONMENT) {
       try {
-        securityTransports.push(
-          new (winston.transports as any).DailyRotateFile({
-            filename: `${logDir}/security-%DATE%.log`,
-            datePattern: 'YYYY-MM-DD',
-            zippedArchive: true,
-            maxSize: '20m',
-            maxFiles: '30d',
-          })
-        );
+        const securityFileTransport = new (winston.transports as any).DailyRotateFile({
+          filename: 'logs/security-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '30d',
+        });
+        // Add error handler to prevent unhandled error events
+        securityFileTransport.on('error', (err: any) => {
+          console.warn('Security file logging error (continuing with console only):', err.message);
+        });
+        securityTransports.push(securityFileTransport);
       } catch (error: any) {
-        if (error.code === 'EACCES') {
-          console.warn('Security file logging disabled: No write permission for logs directory.');
-        } else {
-          console.warn('Failed to initialize security file logging, using console only:', error);
-        }
+        console.warn('Security file logging disabled:', error.message);
       }
     }
 
