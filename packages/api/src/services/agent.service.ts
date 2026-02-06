@@ -79,7 +79,7 @@ export class AgentService {
     try {
       const agentData: NewAgent = {
         name: data.name || 'Untitled Agent',
-        type: data.type || 'ASSISTANT',
+        type: data.type || 'GENERIC',
         userId,
         status: data.status,
         description: data.description,

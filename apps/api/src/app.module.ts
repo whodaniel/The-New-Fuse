@@ -26,10 +26,11 @@ import { UserManagementController } from './controllers/user-management.controll
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
-import { LLMProviderController } from './llm/llm-provider.controller';
-import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { AdvancedLLMProviderController } from './llm/advanced-llm-provider.controller';
 import { AdvancedLLMProviderService } from './llm/advanced-llm-provider.service';
+import { LLMProviderController } from './llm/llm-provider.controller';
+import { LLMProviderService, LLM_REGISTRY } from './llm/llm-provider.service';
+import { RealLLMRegistry } from './llm/real-llm-registry.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
 import { AdminModule } from './modules/admin/admin.module';
 import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
